@@ -70,12 +70,16 @@ export const ISOLATION_ENV = {
   CLAUDE_AGENT_SDK_CLIENT_APP: "matsuri-ikoka-server",
 } as const;
 
+/** 前後の空白と改行を落とす変数（秘密情報の管理に、改行つきで入れられても動くように） */
+const TRIMMED_ENV = new Set(["ANTHROPIC_API_KEY", "CLAUDE_CODE_OAUTH_TOKEN"]);
+
 /** 環境変数を、渡してよいものだけに絞り、切り離しの変数を足す */
 export function agentEnv(source: NodeJS.ProcessEnv): Record<string, string> {
   const allowed = new Set<string>(PASS_THROUGH_ENV);
   const env: Record<string, string> = {};
   for (const [key, value] of Object.entries(source)) {
-    if (value !== undefined && allowed.has(key.toUpperCase())) env[key] = value;
+    if (value === undefined || !allowed.has(key.toUpperCase())) continue;
+    env[key] = TRIMMED_ENV.has(key.toUpperCase()) ? value.trim() : value;
   }
   return { ...env, ...ISOLATION_ENV };
 }

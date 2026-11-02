@@ -187,6 +187,10 @@ describe("agentEnv", () => {
     }
     expect(env).toMatchObject(ISOLATION_ENV);
   });
+
+  it("API キーの前後の改行と空白を落とす", () => {
+    expect(agentEnv({ ANTHROPIC_API_KEY: " test-key\r\n" }).ANTHROPIC_API_KEY).toBe("test-key");
+  });
 });
 
 describe("createAgentWorkdir", () => {
