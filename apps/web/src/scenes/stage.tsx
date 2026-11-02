@@ -112,10 +112,11 @@ export function applyPose(
   width: number,
   height: number,
   insets: FrameInsets = NO_INSETS,
+  fit: "contain" | "cover" = "contain",
 ): void {
   camera.position.copy(pose.position);
   camera.quaternion.copy(pose.quaternion);
-  const view = frameView(width, height, pose.yfov, insets);
+  const view = frameView(width, height, pose.yfov, insets, fit);
   const aspect = width / Math.max(height, 1);
   const current = camera.view;
   if (

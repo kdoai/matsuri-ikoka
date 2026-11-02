@@ -18,6 +18,7 @@ export const SCENE_MOTIONS = [
   "carry",
   "wave",
   "sit",
+  "cheer",
 ] as const;
 export type SceneMotion = (typeof SCENE_MOTIONS)[number];
 
@@ -97,6 +98,17 @@ export function staffPlan(id: StaffId, staff: StaffState, celebrating: boolean):
   return plan("post", motion, face, WORK_PROPS[staff.motion] ?? [], {
     once: ONCE.has(staff.motion),
   });
+}
+
+/**
+ * 旅人（利用者が動かすペンギン）の段取り。カウンターの前に立ち、
+ * しおりができたら両手を上げて喜び、返事を待つ間はにこにこする。
+ */
+export function playerPlan(celebrating: boolean, talking: boolean): StaffPlan {
+  if (celebrating) {
+    return plan("home", "cheer", "sparkle", [], { once: true });
+  }
+  return plan("home", "idle", talking ? "happy" : "normal", []);
 }
 
 function spotOf(staff: StaffState): Spot {
@@ -195,12 +207,17 @@ export function frameView(
   height: number,
   designYfov: number,
   insets: FrameInsets = NO_INSETS,
+  fit: "contain" | "cover" = "contain",
 ): FrameView {
   const w = Math.max(1, width);
   const h = Math.max(1, height);
   const freeWidth = Math.max(1, w - insets.left - insets.right);
   const freeHeight = Math.max(1, h - insets.top - insets.bottom);
-  const frameHeight = Math.min(freeHeight, freeWidth / DESIGN_ASPECT);
+  // contain：枠がはみ出さない / cover：枠で画面を埋める（ゲームの画面のように、はしは切れてよい）
+  const frameHeight =
+    fit === "contain"
+      ? Math.min(freeHeight, freeWidth / DESIGN_ASPECT)
+      : Math.max(freeHeight, freeWidth / DESIGN_ASPECT);
   const fov = 2 * Math.atan((Math.tan(designYfov / 2) * h) / frameHeight);
   const centerX = insets.left + freeWidth / 2;
   const centerY = insets.top + freeHeight / 2;

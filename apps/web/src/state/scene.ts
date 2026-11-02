@@ -24,6 +24,12 @@ export interface ShopSceneProps {
   reducedMotion: boolean;
   /** 画面の部品が重なる場所（画面の並びの情報。ストアの状態ではない） */
   frame: FrameInsets;
+  /** 返答を待っているか（旅人の表情に使う） */
+  talking: boolean;
+  /** 旅人の「話す」を押したとき（会話の窓の入力欄へ） */
+  onTalk?: () => void;
+  /** 「話す」のボタンの文言（画面の言葉に合わせる） */
+  talkLabel?: string;
 }
 
 export function selectSceneProps(
@@ -33,6 +39,7 @@ export function selectSceneProps(
 ): ShopSceneProps {
   return {
     frame,
+    talking: state.session.streaming,
     staff: state.staff,
     stage: state.session.stage,
     celebrating: state.ui.celebrating,

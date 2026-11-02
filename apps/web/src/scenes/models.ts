@@ -19,6 +19,7 @@ export type ModelName =
   | "staff_owl"
   | "staff_hen"
   | "staff_sparrow"
+  | "player_penguin"
   | `motion_${string}`;
 
 export function modelUrl(name: ModelName): string {

@@ -4,6 +4,7 @@ import type { StaffState } from "../state/types";
 import {
   exteriorOpacity,
   frameView,
+  playerPlan,
   staffPlan,
   turnToward,
   WALK_SPEED,
@@ -99,6 +100,18 @@ describe("誰がどこで何をするか", () => {
   });
 });
 
+describe("旅人", () => {
+  it("カウンターの前に立ち、しおりができたら1回喜ぶ", () => {
+    expect(playerPlan(false, false)).toMatchObject({
+      spot: "home",
+      motion: "idle",
+      face: "normal",
+    });
+    expect(playerPlan(false, true)).toMatchObject({ motion: "idle", face: "happy" });
+    expect(playerPlan(true, false)).toMatchObject({ motion: "cheer", once: true, face: "sparkle" });
+  });
+});
+
 describe("歩く", () => {
   it("目的地へ速さどおりに進み、行き過ぎない", () => {
     const from = { x: 0, y: 0, z: 0 };
@@ -139,6 +152,15 @@ describe("カメラ", () => {
   it("縦長の画面では横の画角を保ち、横長の画面では縦の画角を保つ（はみ出さない）", () => {
     expect(frameHeightOf(frameView(900, 1600, DESIGN_YFOV), 1600)).toBeCloseTo(900 / (16 / 9));
     expect(frameHeightOf(frameView(3000, 900, DESIGN_YFOV), 900)).toBeCloseTo(900);
+  });
+
+  it("cover では、枠で画面を埋める（はしは切れてよい）", () => {
+    expect(frameHeightOf(frameView(3000, 900, DESIGN_YFOV, undefined, "cover"), 900)).toBeCloseTo(
+      3000 / (16 / 9),
+    );
+    expect(frameHeightOf(frameView(900, 1600, DESIGN_YFOV, undefined, "cover"), 1600)).toBeCloseTo(
+      1600,
+    );
   });
 
   it("会話の窓とパネルを避けた場所に、枠を収めて寄せる", () => {
