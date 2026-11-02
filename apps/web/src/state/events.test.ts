@@ -235,7 +235,41 @@ describe("スタッフの動き", () => {
 });
 
 describe("旅程", () => {
-  it("旅程が届くと、前の再確認は使えなくなる", () => {
+  it("旅程が持っている再確認の結果を、再確認の状態にする（同じ祭り・同じ日なら引き継がれる）", () => {
+    const verified = {
+      ...fictionalItinerary(),
+      version: 2,
+      verification: {
+        status: "as_planned" as const,
+        checkedAt: "2026-08-03T10:00:00+09:00",
+        sources: [fictionalSource("2026")],
+      },
+    };
+    let state = applyEvent(fresh(), {
+      type: "itinerary.updated",
+      data: {
+        itinerary: verified,
+        diff: { fromVersion: 1, toVersion: 2, added: [], changed: ["go"], removed: [] },
+      },
+    });
+    expect(state.verify).toMatchObject({
+      status: "done",
+      result: "as_planned",
+      festivalId: verified.mainFestivalId,
+      checkedAt: "2026-08-03T10:00:00+09:00",
+    });
+
+    state = applyEvent(state, {
+      type: "itinerary.updated",
+      data: {
+        itinerary: { ...verified, version: 3, verification: { status: "pending" } },
+        diff: { fromVersion: 2, toVersion: 3, added: [], changed: [], removed: [] },
+      },
+    });
+    expect(state.verify).toMatchObject({ status: "idle", result: null });
+  });
+
+  it("再確認の済んでいない旅程が届いたら、前の再確認は使わない", () => {
     let state = fresh();
     state = {
       ...state,
@@ -444,5 +478,83 @@ describe("エラーと送り直し", () => {
       "rate_limited",
     );
     expect(state.messages.at(-1)).toMatchObject({ code: "rate_limited", retryable: false });
+  });
+});
+
+describe("時間切れのあと（終わっていないツールの tool.end が来ない）", () => {
+  it("error と done が来たら、作業中の記録・再確認・クエスト・クイズを片付ける", () => {
+    let state = beginTurn(fresh(), {
+      kind: "chat",
+      message: "これで決定します。",
+      preferences: fresh().preferences,
+    });
+    state = apply(state, [
+      {
+        type: "staff.start",
+        data: { staff: "planner", task: "plan_route", bubble: "道のりを調べます" },
+      },
+      {
+        type: "tool.start",
+        data: { toolCallId: "a", tool: "get_access", staff: "planner", bubble: "確かめます" },
+      },
+      {
+        type: "tool.start",
+        data: {
+          toolCallId: "v",
+          tool: "verify_festival",
+          staff: "concierge",
+          bubble: "確かめます",
+        },
+      },
+    ]);
+    state = {
+      ...state,
+      quiz: {
+        offeredTurn: state.session.turn,
+        question: {
+          kind: "category",
+          festivalId: "suzunari-toro",
+          festivalName: "鈴鳴灯籠まつり",
+          choices: ["lantern", "dance"],
+          correct: 0,
+          source: fictionalSource("about"),
+        },
+        answer: null,
+      },
+    };
+    expect(state.quests.route.status).toBe("active");
+    expect(state.verify.status).toBe("checking");
+
+    state = apply(state, [
+      { type: "error", data: { code: "timeout", message: "時間切れです", retryable: true } },
+      {
+        type: "done",
+        data: { stage: "itinerary", conditions: {}, preferences: state.preferences },
+      },
+    ]);
+    state = endTurn(state, null);
+
+    expect(state.messages.filter((entry) => entry.kind === "work")).toEqual([
+      expect.objectContaining({ id: "w-a", status: "failed" }),
+      expect.objectContaining({ id: "w-v", status: "failed" }),
+    ]);
+    expect(state.verify.status).toBe("idle");
+    expect(state.quests.route.status).toBe("todo");
+    expect(state.quiz.question).toBeNull();
+    // done は届いているので「接続が切れました」は出さない
+    expect(state.messages.filter((entry) => entry.kind === "error")).toHaveLength(1);
+  });
+
+  it("前に達成したクエストは、途中で止まっても達成のまま", () => {
+    let state = fresh();
+    state = {
+      ...state,
+      quests: { ...state.quests, route: { status: "active", finished: [], completions: 1 } },
+    };
+    state = applyEvent(state, {
+      type: "done",
+      data: { stage: "itinerary", conditions: {}, preferences: state.preferences },
+    });
+    expect(state.quests.route.status).toBe("done");
   });
 });
