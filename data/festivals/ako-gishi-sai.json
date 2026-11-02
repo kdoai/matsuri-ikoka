@@ -166,13 +166,13 @@
     "fromHubs": [
       {
         "hub": "大阪駅",
-        "minutes": [84, 104],
-        "route": "JR新快速で姫路へ、山陽本線・赤穂線の播州赤穂行きに乗り継ぐ（新大阪から山陽新幹線で相生か姫路へ出ると早い）"
+        "minutes": [94, 101],
+        "route": "JR新快速の播州赤穂行きで乗り換えなし（新大阪から山陽新幹線で姫路へ出て乗り継ぐと早い）"
       },
       {
         "hub": "姫路駅",
-        "minutes": [28, 33],
-        "route": "JR山陽本線から赤穂線へ直通する播州赤穂行き（山陽新幹線で相生へ出て乗り継ぐと早い）"
+        "minutes": [33, 33],
+        "route": "JR山陽本線から赤穂線へ直通する新快速の播州赤穂行き、乗り換えなし"
       }
     ],
     "parking": "unknown",
@@ -193,14 +193,14 @@
         "confidence": "official"
       },
       {
-        "url": "https://ekitan.com/transit/route/sf-5006/st-5843?dt=20261214&tm=0730",
-        "title": "駅探 大阪から播州赤穂（2026年12月14日 7時30分出発）",
+        "url": "https://ekitan.com/transit/route/sf-5006/st-5843",
+        "title": "駅探 乗換案内 大阪→播州赤穂（2026年11月2日 19時台の出発の検索結果）",
         "checkedAt": "2026-11-02",
         "confidence": "single"
       },
       {
-        "url": "https://ekitan.com/transit/route/sf-5884/st-5843?dt=20261214&tm=0830",
-        "title": "駅探 姫路から播州赤穂（2026年12月14日 8時30分出発）",
+        "url": "https://ekitan.com/transit/route/sf-5884/st-5843",
+        "title": "駅探 乗換案内 姫路→播州赤穂（2026年11月2日 19時台の出発の検索結果）",
         "checkedAt": "2026-11-02",
         "confidence": "single"
       },

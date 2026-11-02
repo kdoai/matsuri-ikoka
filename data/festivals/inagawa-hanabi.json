@@ -174,13 +174,13 @@
     "fromHubs": [
       {
         "hub": "大阪梅田駅",
-        "minutes": [18, 25],
-        "route": "阪急宝塚線（大阪梅田駅から急行で池田駅まで、乗り換えなし）"
+        "minutes": [21, 21],
+        "route": "阪急宝塚本線で池田駅まで、乗り換えなし（調べた時間の列車は通勤急行）"
       },
       {
         "hub": "大阪駅",
-        "minutes": [19, 23],
-        "route": "JR宝塚線（大阪駅から快速で川西池田駅まで、乗り換えなし）"
+        "minutes": [17, 17],
+        "route": "JR神戸線の快速で尼崎駅へ、JR宝塚線の快速に乗り換えて川西池田駅まで"
       }
     ],
     "parking": "none",
@@ -205,14 +205,14 @@
         "confidence": "official"
       },
       {
-        "url": "https://transit.yahoo.co.jp/search/result?from=%E5%A4%A7%E9%98%AA%E6%A2%85%E7%94%B0%28%E9%98%AA%E6%80%A5%E7%B7%9A%29&to=%E6%B1%A0%E7%94%B0%28%E5%A4%A7%E9%98%AA%E5%BA%9C%29&y=2026&m=11&d=07&hh=16&m1=0&m2=0&type=1&ticket=ic&expkind=1&ws=3&s=0&al=1&shin=1&ex=1&hb=1&lb=1&sr=1",
-        "title": "Yahoo!乗換案内 大阪梅田(阪急線)→池田(大阪府) 2026年11月7日16時発",
+        "url": "https://ekitan.com/transit/route/sf-4958/st-4867",
+        "title": "駅探 乗換案内 大阪梅田(阪急)→池田(大阪)（2026年11月2日 19時台の出発の検索結果）",
         "checkedAt": "2026-11-02",
         "confidence": "single"
       },
       {
-        "url": "https://transit.yahoo.co.jp/search/result?from=%E5%A4%A7%E9%98%AA&to=%E5%B7%9D%E8%A5%BF%E6%B1%A0%E7%94%B0&y=2026&m=11&d=07&hh=16&m1=0&m2=0&type=1&ticket=ic&expkind=1&ws=3&s=0&al=1&shin=1&ex=1&hb=1&lb=1&sr=1",
-        "title": "Yahoo!乗換案内 大阪→川西池田 2026年11月7日16時発",
+        "url": "https://ekitan.com/transit/route/sf-5006/st-5125",
+        "title": "駅探 乗換案内 大阪→川西池田（2026年11月2日 19時台の出発の検索結果）",
         "checkedAt": "2026-11-02",
         "confidence": "single"
       }
