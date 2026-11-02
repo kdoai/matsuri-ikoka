@@ -216,6 +216,7 @@ export const SseEventSchema = z.discriminatedUnion("type", [
 export type StaffId = z.infer<typeof StaffIdSchema>;
 export type ToolName = z.infer<typeof ToolNameSchema>;
 export type ConversationStage = z.infer<typeof ConversationStageSchema>;
+export type ErrorCode = (typeof ERROR_CODES)[number];
 export type FestivalCandidate = z.infer<typeof FestivalCandidateSchema>;
 export type SpotPin = z.infer<typeof SpotPinSchema>;
 export type SseEvent = z.infer<typeof SseEventSchema>;

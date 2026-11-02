@@ -1,0 +1,20 @@
+{
+  "name": "@matsuri-ikoka/agent-kit",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Claude を呼ぶ処理で共通に使う、SDK に依存しない部品（JSON の取り出し、URL の確認、出典の照合、失敗の分類）",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@matsuri-ikoka/schema": "workspace:*",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5"
+  }
+}
