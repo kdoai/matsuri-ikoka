@@ -90,9 +90,19 @@ describe("吹き出し（docs/spec/api.md の例）", () => {
       toolEndBubble("update_itinerary", { saved: true, diff: { fromVersion: 1 } }).bubble,
     ).toBe("旅程を直しました");
     expect(toolEndBubble("update_itinerary", { saved: false, errors: [{}] }).ok).toBe(false);
-    expect(toolEndBubble("verify_festival", { result: "as_planned" }).bubble).toBe(
-      "開催予定を公式情報で確認しました",
-    );
+    expect(
+      toolEndBubble("verify_festival", {
+        result: "as_planned",
+        sources: [{ url: "https://example.com/a", confidence: "official" }],
+      }).bubble,
+    ).toBe("開催予定を公式情報で確認しました");
+    // 公式の出典がなければ「公式情報で」とは言わない
+    expect(
+      toolEndBubble("verify_festival", {
+        result: "as_planned",
+        sources: [{ url: "https://example.net/a", confidence: "single" }],
+      }).bubble,
+    ).toBe("開催予定を確かめました");
     expect(toolEndBubble("get_access", null)).toEqual({
       ok: false,
       bubble: "うまく調べられませんでした",

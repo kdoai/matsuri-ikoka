@@ -148,7 +148,15 @@ export function toolEndBubble(
     }
     case "verify_festival": {
       const result = output.result as VerificationResult;
-      return { ok: true, bubble: VERIFIED_BUBBLES[result] ?? FAILED_BUBBLE, count: null };
+      // 「公式情報で確認」と言うのは、公式の出典があるときだけ
+      const official =
+        Array.isArray(output.sources) &&
+        output.sources.some((s) => field(s, "confidence") === "official");
+      const bubble =
+        result === "as_planned" && !official
+          ? "開催予定を確かめました"
+          : (VERIFIED_BUBBLES[result] ?? FAILED_BUBBLE);
+      return { ok: true, bubble, count: null };
     }
   }
 }

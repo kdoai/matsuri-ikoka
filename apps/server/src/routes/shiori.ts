@@ -11,6 +11,7 @@ import type { HtmlEscapedString } from "hono/utils/html";
 import { formatMonthDayWithWeekday } from "../domain/calendar";
 import { placeLabel } from "../domain/dateWindow";
 import { occurrenceOn } from "../domain/planCheck";
+import { hasOfficialSource } from "../domain/verification";
 
 // 旅のしおり（印刷できる HTML）。祭りのデータとモデルの文章は、すべて文字列として埋め込む（エスケープする）。
 // スクリプトは使わず、Content-Security-Policy で読み込める先を絞る。
@@ -188,7 +189,7 @@ export function renderShiori(itinerary: Itinerary, festival: Festival | undefine
         <h1>${itinerary.title}</h1>
         <p class="sub">${formatMonthDayWithWeekday(itinerary.date)}・${itinerary.origin}発 ${itinerary.returnTo}着・${party}</p>
         ${
-          verification.status === "as_planned"
+          verification.status === "as_planned" && hasOfficialSource(verification.sources)
             ? html`<p class="badge">公式情報で開催予定を確認済み（${verification.checkedAt.slice(0, 16).replace("T", " ")}）</p>`
             : ""
         }

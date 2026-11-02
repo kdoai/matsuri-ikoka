@@ -29,6 +29,11 @@ function hostOf(url: string): string | null {
   }
 }
 
+/** 公式の確度の出典があるか。「公式情報で確認」と言ってよいかの判定に使う */
+export function hasOfficialSource(sources: readonly Source[]): boolean {
+  return sources.some((s) => s.confidence === "official");
+}
+
 /** 祭りのデータで「公式」とした出典のホスト */
 export function officialHosts(festival: Festival): Set<string> {
   const sources = [...festival.sources, ...festival.occurrences.flatMap((o) => o.sources)];
@@ -41,9 +46,10 @@ export function officialHosts(festival: Festival): Set<string> {
 }
 
 /**
- * 再確認の結果を決める。
- * - 予定どおり（as_planned）と言えるのは、公式のホストの出典があるか、2つ以上のホストで一致したときだけ。
- *   そうでなければ「確認できず」にして、確定させない
+ * 再確認の結果を決める（docs/spec/agent-runtime.md の「確定前の再確認」の手順4）。
+ * - 予定どおり（as_planned）と言えるのは、公式のホストの出典があるときだけ。
+ *   公式でない情報源がいくつ一致しても、「確認できず」にして確定させない
+ *   （画面としおりの「公式情報で確認」の文言と、実際の確度をそろえる）
  * - 変更・中止は、出典が1つ以上あるときだけ認める
  */
 export function decideVerification(
@@ -66,18 +72,10 @@ export function decideVerification(
     });
   }
   const note = report.note?.trim().slice(0, NOTE_MAX_LENGTH) || undefined;
-  const hosts = new Set(sources.map((s) => hostOf(s.url)));
 
   if (report.result === "as_planned") {
-    if (sources.some((s) => s.confidence === "official")) {
+    if (hasOfficialSource(sources)) {
       return { result: "as_planned", sources, ...(note ? { note } : {}) };
-    }
-    if (hosts.size >= 2) {
-      return {
-        result: "as_planned",
-        sources: sources.map((s) => ({ ...s, confidence: "corroborated" })),
-        ...(note ? { note } : {}),
-      };
     }
     return {
       result: "not_found",

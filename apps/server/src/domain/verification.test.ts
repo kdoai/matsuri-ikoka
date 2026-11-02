@@ -41,18 +41,22 @@ describe("decideVerification", () => {
     expect(decision.sources[0]?.confidence).toBe("single");
   });
 
-  it("公式でなくても、2つ以上のホストで一致すれば予定どおり（複数で確認）", () => {
+  it("公式でないホストがいくつ一致しても、予定どおりとは認めない", () => {
     const decision = decideVerification(
       festival,
       {
         result: "as_planned",
-        sources: [{ url: "https://example.net/a" }, { url: "https://example.org/b" }],
+        sources: [
+          { url: "https://example.net/a" },
+          { url: "https://example.org/b" },
+          { url: "https://blog.example.net/c" },
+        ],
       },
       today,
     );
 
-    expect(decision.result).toBe("as_planned");
-    expect(decision.sources.map((s) => s.confidence)).toEqual(["corroborated", "corroborated"]);
+    expect(decision.result).toBe("not_found");
+    expect(decision.sources.every((s) => s.confidence === "single")).toBe(true);
   });
 
   it("http(s) でない URL と重複は捨てる", () => {

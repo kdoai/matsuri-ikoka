@@ -374,6 +374,20 @@ describe("旅程としおり", () => {
     expect((await app.request("/api/itinerary/no-such")).status).toBe(404);
   });
 
+  it("公式の出典のない「予定どおり」の旅程は、しおりにしない", async () => {
+    const itineraries = new ItineraryStore();
+    const itinerary = fictionalItinerary();
+    itinerary.verification = {
+      status: "as_planned",
+      checkedAt: "2026-08-03T10:00:00+09:00",
+      sources: [{ url: "https://example.net/blog", checkedAt: "2026-08-03", confidence: "single" }],
+    };
+    itineraries.save(itinerary);
+    const { app } = setup({ itineraries });
+
+    expect((await app.request(`/shiori/${itinerary.id}`)).status).toBe(409);
+  });
+
   it("しおりは文字列をエスケープして埋め込む", async () => {
     const itineraries = new ItineraryStore();
     const itinerary = fictionalItinerary();
