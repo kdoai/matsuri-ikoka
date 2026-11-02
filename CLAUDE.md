@@ -10,6 +10,7 @@
 apps/server/       接客サーバー（Hono）。domain・data・tools・agent・routes・mock
 apps/web/          画面（Vite + React + Tailwind CSS）。state・ui・scenes・i18n
 packages/schema/   Zod のスキーマ（唯一の定義）。テスト用の架空のデータは ./testing
+packages/agent-kit/ Claude を呼ぶ処理の共通の部品（JSON の取り出し、URL の確認、出典の照合、失敗の分類）
 data/festivals/    祭りのデータ（1件1ファイル）
 data/samples/      モックで再生するサンプルの相談（架空）
 assets/3d/         3D の店内とスタッフのモデルを作るスクリプト
@@ -53,7 +54,8 @@ pnpm build            # 画面と接客サーバーのビルド
 ### エージェント
 
 - Agent SDK の書き方は、実装の前に公式のドキュメントで確かめる。推測で書かない
-- 接客エージェントは開発環境から切り離す。ファイルの設定を読み込まず、自作の MCP ツールだけを許可する（[アーキテクチャ](docs/architecture.md#接客エージェントを開発環境から切り離す)）
+- 接客エージェントは開発環境から切り離す。ファイルの設定を読み込まず、自作の MCP ツールだけを許可する。設定・フック・再確認・失敗の扱いは [接客エージェントの実行の仕様](docs/spec/agent-runtime.md) に従う
+- Claude の返答から JSON を取り出す、URL を確かめる、出典を照合する、失敗を分類するときは、`@matsuri-ikoka/agent-kit` を使い、同じ処理を別に書かない
 - モデル名は環境変数で指定し、コードに書き込まない
 - 吹き出しの文章は、ツールの入力から決まった型で作る
 
