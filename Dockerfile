@@ -44,12 +44,32 @@ RUN apt-get update \
 ENV NODE_ENV=production \
     PORT=8080 \
     HOME=/tmp \
-    TMPDIR=/tmp
+    TMPDIR=/tmp \
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 WORKDIR /app
 # pnpm-workspace.yaml はリポジトリの根の目印（data/ をここから探す）
 COPY --from=build /repo/pnpm-workspace.yaml ./
 COPY --from=build /out/server/package.json apps/server/package.json
 COPY --from=build /out/server/node_modules apps/server/node_modules
+
+# しおりの PDF：サーバーが Playwright を使うときだけ、Chromium の headless shell（画面なしの軽い版）と
+# 動作に要るライブラリを入れる。版はサーバーの依存の Playwright に合わせる
+RUN cli="$(find apps/server/node_modules/.pnpm -path '*/node_modules/playwright-core/cli.js' -print -quit)"; \
+    if [ -n "$cli" ]; then \
+      node "$cli" install --with-deps --only-shell chromium \
+      && rm -rf /var/lib/apt/lists/* /tmp/* /tmp/.[!.]*; \
+    fi
+
+# しおりの日本語フォント（assets/shiori にあれば）を置き、Chromium から使えるように登録する
+RUN --mount=type=bind,target=/context \
+    if [ -d /context/assets/shiori ]; then \
+      mkdir -p assets /usr/local/share/fonts/shiori \
+      && cp -r /context/assets/shiori assets/shiori \
+      && find assets/shiori -type f \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' \) \
+           -exec cp {} /usr/local/share/fonts/shiori/ \; \
+      && if command -v fc-cache >/dev/null; then fc-cache -f; fi; \
+    fi
+
 COPY --from=build /repo/apps/server/dist apps/server/dist
 COPY --from=build /repo/apps/web/dist apps/web/dist
 COPY data data

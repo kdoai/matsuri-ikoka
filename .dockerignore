@@ -11,7 +11,7 @@
 .env*
 CLAUDE.local.md
 .local
-assets
+assets/3d
 docs
 scripts
 *.blend
