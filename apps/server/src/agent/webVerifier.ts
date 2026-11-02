@@ -65,6 +65,8 @@ export function buildVerifierOptions(input: {
   hooks?: Options["hooks"];
   /** 差し戻しでは道具を使わせない */
   withTools: boolean;
+  /** 1回の呼び出しの費用の上限（米ドル） */
+  maxBudgetUsd?: number | undefined;
 }): Options {
   const tools = input.withTools ? WEB_TOOLS : [];
   return {
@@ -83,6 +85,7 @@ export function buildVerifierOptions(input: {
     effort: "low",
     maxTurns: input.withTools ? 6 : 1,
     persistSession: false,
+    ...(input.maxBudgetUsd ? { maxBudgetUsd: input.maxBudgetUsd } : {}),
     abortController: input.abortController,
     ...(input.hooks ? { hooks: input.hooks } : {}),
   };
@@ -120,15 +123,21 @@ export function createVerifierHooks(
   };
 }
 
-/** query を最後まで回し、成功の結果の文を返す。失敗なら null */
-async function finalText(query: QueryFn, prompt: string, options: Options): Promise<string | null> {
+/** query を最後まで回し、成功の結果の文（失敗なら null）と費用（SDK の推定）を返す */
+async function finalText(
+  query: QueryFn,
+  prompt: string,
+  options: Options,
+): Promise<{ text: string | null; costUsd: number }> {
   let text: string | null = null;
+  let costUsd = 0;
   for await (const message of query({ prompt, options })) {
     if (message.type === "result") {
       text = message.subtype === "success" && !message.is_error ? message.result : null;
+      costUsd = message.total_cost_usd ?? 0;
     }
   }
-  return text;
+  return { text, costUsd };
 }
 
 const NOT_CONFIRMED: VerificationReport = {
@@ -143,6 +152,8 @@ export function createWebVerifier(deps: {
   cwd: string;
   env: Record<string, string>;
   query: QueryFn;
+  /** 1回の呼び出しの費用の上限（米ドル） */
+  maxBudgetUsd?: number | undefined;
 }): FestivalVerifier {
   const systemPrompt = verifierSystemPrompt(deps.prompt);
   return {
@@ -169,11 +180,20 @@ export function createWebVerifier(deps: {
           cwd: deps.cwd,
           env: deps.env,
           abortController: controller,
+          maxBudgetUsd: deps.maxBudgetUsd,
           withTools,
           ...(withTools ? { hooks: createVerifierHooks(log) } : {}),
         });
+      const started = Date.now();
+      let costUsd = 0;
+      let outcome: VerificationReport["result"] = "not_found";
+      const ask = async (prompt: string, withTools: boolean) => {
+        const reply = await finalText(deps.query, prompt, options(withTools));
+        costUsd += reply.costUsd;
+        return reply.text;
+      };
       try {
-        const answer = await finalText(deps.query, request, options(true));
+        const answer = await ask(request, true);
         if (answer === null) return NOT_CONFIRMED;
         let parsed = parseJsonWithSchema(answer, ReportSchema, "object");
         if (!parsed.ok) {
@@ -181,16 +201,16 @@ export function createWebVerifier(deps: {
             parsed.reason === "parse"
               ? { reason: "parse" as const, error: parsed.error }
               : { reason: "shape" as const, issues: parsed.issues };
-          const retry = await finalText(
-            deps.query,
+          const retry = await ask(
             buildJsonRetryPrompt({ previous: answer, failure, shape: "object" }),
-            options(false),
+            false,
           );
           if (retry === null) return NOT_CONFIRMED;
           parsed = parseJsonWithSchema(retry, ReportSchema, "object");
           if (!parsed.ok) return NOT_CONFIRMED;
         }
         const { result, sources, note } = parsed.value;
+        outcome = result;
         // 実際に読んでいないページは、出典にしない
         const unread = new Set(ungroundedSources(sources, log.fetchedUrls));
         return {
@@ -200,6 +220,17 @@ export function createWebVerifier(deps: {
         };
       } finally {
         signal.removeEventListener("abort", abort);
+        // 再確認の費用・所要時間・調べた数を残す（調べた語や URL は残さない）
+        console.info(
+          JSON.stringify({
+            kind: "verify",
+            reported: outcome,
+            totalCostUsd: costUsd,
+            elapsedMs: Date.now() - started,
+            searches: log.searches.length,
+            fetched: log.fetchedUrls.length,
+          }),
+        );
       }
     },
   };

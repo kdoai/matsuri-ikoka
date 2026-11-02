@@ -209,6 +209,20 @@ describe("createAgentHooks", () => {
     expect(denied(await agent("general-purpose"))).toBe(true);
     expect(denied(await agent("planner", "scout"))).toBe(true);
   });
+
+  it("開催の再確認は1回の発言で1回まで", async () => {
+    const { events, call } = setup();
+    const verify = (id: string) =>
+      call("PreToolUse", {
+        tool_name: "mcp__matsuri__verify_festival",
+        tool_input: { festivalId: "suzunari-toro" },
+        tool_use_id: id,
+      });
+
+    expect(denied(await verify("v1"))).toBe(false);
+    expect(denied(await verify("v2"))).toBe(true);
+    expect(events.filter((e) => e.type === "tool.start")).toHaveLength(1);
+  });
 });
 
 describe("extractToolOutput", () => {

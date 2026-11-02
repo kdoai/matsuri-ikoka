@@ -67,6 +67,49 @@ describe("runTool", () => {
     expect(aborted).toBe(true);
   });
 
+  it("発言が止められたら（時間切れ・接続の切断）、ツールの signal も止めて失敗にする", async () => {
+    const turn = new AbortController();
+    let aborted = false;
+    const pending = runTool(
+      fakeTool(
+        (_args, _ctx, signal) =>
+          new Promise((resolve) => {
+            signal.addEventListener("abort", () => {
+              aborted = true;
+            });
+            setTimeout(() => resolve({}), 1000);
+          }),
+        5_000,
+      ),
+      {},
+      testToolContext([], { signal: turn.signal }),
+    );
+    turn.abort();
+    const result = await pending;
+
+    expect(result.isError).toBe(true);
+    expect(result.content[0]?.text).toContain("止められました");
+    expect(aborted).toBe(true);
+  });
+
+  it("すでに止められた発言では、ツールを動かさずに失敗にする", async () => {
+    const turn = new AbortController();
+    turn.abort();
+    let ran = false;
+
+    const result = await runTool(
+      fakeTool(async (_args, _ctx, signal) => {
+        ran = !signal.aborted;
+        return {};
+      }),
+      {},
+      testToolContext([], { signal: turn.signal }),
+    );
+
+    expect(result.isError).toBe(true);
+    expect(ran).toBe(false);
+  });
+
   it("ToolError と ZodError は区別できる", () => {
     expect(new ToolError("x")).toBeInstanceOf(Error);
     expect(z.string().safeParse(1).success).toBe(false);

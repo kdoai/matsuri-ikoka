@@ -241,3 +241,55 @@ describe("verify_festival", () => {
     expect(output.result).toBe("not_found");
   });
 });
+
+describe("止められた発言と、会話の状態", () => {
+  it("旅程の主役の祭りと違う祭りを確かめても、旅程も会話の状態も変えない", async () => {
+    const ctx = testToolContext([suzunari(), testFestival({ id: "other", date: "2026-08-16" })], {
+      report: { result: "as_planned", sources: [{ url: "https://example.com/other/2026" }] },
+    });
+    const saved = await updateItinerary.run(
+      { itinerary: draftOf(fictionalItinerary()) },
+      ctx,
+      signal,
+    );
+
+    const output = await verifyFestival.run({ festivalId: "other" }, ctx, signal);
+
+    expect(output.appliedToItinerary).toBe(false);
+    expect(ctx.turn.verification).toBeNull();
+    expect(ctx.itineraries.get(saved.itineraryId as string)?.verification.status).toBe("pending");
+  });
+
+  it("確かめている間に発言が止められたら、再確認の結果で旅程を書き換えない", async () => {
+    const controller = new AbortController();
+    const ctx = testToolContext([suzunari()]);
+    const saved = await updateItinerary.run(
+      { itinerary: draftOf(fictionalItinerary()) },
+      ctx,
+      signal,
+    );
+    ctx.verifier = {
+      async verify() {
+        controller.abort();
+        return { result: "as_planned", sources: [{ url: "https://example.com/suzunari/2026" }] };
+      },
+    };
+
+    await expect(
+      verifyFestival.run({ festivalId: "suzunari-toro" }, ctx, controller.signal),
+    ).rejects.toThrow("止められた");
+    expect(ctx.itineraries.get(saved.itineraryId as string)?.verification.status).toBe("pending");
+    expect(ctx.turn.verification).toBeNull();
+  });
+
+  it("止められたあとは、旅程を保存しない", async () => {
+    const controller = new AbortController();
+    controller.abort();
+    const ctx = testToolContext([suzunari()]);
+
+    await expect(
+      updateItinerary.run({ itinerary: draftOf(fictionalItinerary()) }, ctx, controller.signal),
+    ).rejects.toThrow("保存しません");
+    expect(ctx.session.itineraryId).toBeNull();
+  });
+});

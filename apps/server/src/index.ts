@@ -70,6 +70,7 @@ if (config.mode === "live") {
       cwd,
       env,
       query,
+      maxBudgetUsd: config.maxBudgetUsd,
     }),
     prompts,
     models: config.models,

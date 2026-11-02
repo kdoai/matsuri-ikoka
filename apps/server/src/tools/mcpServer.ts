@@ -23,16 +23,25 @@ export async function runTool(
   ctx: ToolContext,
 ): Promise<ToolCallResult> {
   const started = Date.now();
+  if (ctx.signal.aborted) {
+    log(def.name, started, false);
+    return { content: [{ type: "text", text: "この発言の返答は止められました" }], isError: true };
+  }
   const controller = new AbortController();
+  // 発言が止まったとき（時間切れ・接続の切断）も、ツールの時間の上限と同じように止める
+  const signal = AbortSignal.any([ctx.signal, controller.signal]);
   let timer: NodeJS.Timeout | undefined;
-  const timeout = new Promise<never>((_, reject) => {
+  let onTurnAbort: (() => void) | undefined;
+  const stopped = new Promise<never>((_, reject) => {
     timer = setTimeout(() => {
       controller.abort();
       reject(new ToolError(`時間の上限（${def.timeoutMs / 1000}秒）を超えました`));
     }, def.timeoutMs);
+    onTurnAbort = () => reject(new ToolError("この発言の返答は止められました"));
+    ctx.signal.addEventListener("abort", onTurnAbort, { once: true });
   });
   try {
-    const output = await Promise.race([def.run(args, ctx, controller.signal), timeout]);
+    const output = await Promise.race([def.run(args, ctx, signal), stopped]);
     log(def.name, started, true);
     return { content: [{ type: "text", text: JSON.stringify(output) }], structuredContent: output };
   } catch (error) {
@@ -49,6 +58,7 @@ export async function runTool(
     return { content: [{ type: "text", text: message }], isError: true };
   } finally {
     clearTimeout(timer);
+    if (onTurnAbort) ctx.signal.removeEventListener("abort", onTurnAbort);
   }
 }
 
