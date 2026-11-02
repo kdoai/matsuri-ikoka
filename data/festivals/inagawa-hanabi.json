@@ -1,0 +1,388 @@
+{
+  "id": "inagawa-hanabi",
+  "name": {
+    "ja": "猪名川花火大会",
+    "en": "Inagawa Fireworks Festival"
+  },
+  "category": "fireworks",
+  "municipalities": [
+    {
+      "prefecture": "大阪府",
+      "name": "池田市"
+    },
+    {
+      "prefecture": "兵庫県",
+      "name": "川西市"
+    }
+  ],
+  "venue": {
+    "name": "猪名川河川敷",
+    "lat": 34.8209,
+    "lng": 135.4189
+  },
+  "scaleTier": "M",
+  "popularity": "major",
+  "listedIn": ["walkerplus", "jalan", "rurubu", "tripadvisor"],
+  "highlights": [
+    "8月から移り、初めて11月の夜空に上がる猪名川の花火",
+    "大阪府と兵庫県の境の川をはさみ、両岸から見られる",
+    "五月山の紅葉と猪名川の夜景を題材にした演目",
+    "締めくくりは夜空を覆う空中ナイアガラ"
+  ],
+  "trivia": [
+    {
+      "text": "熱中症対策で8月から11月に移し、2026年が初めての秋の開催になる",
+      "source": {
+        "url": "https://www.city.ikeda.osaka.jp/material/files/group/1/260703-press.pdf",
+        "title": "池田市 報道資料 ふるさと納税返礼品に花火大会招待席を追加",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "費用がふくらみ、2025年は開催を見送って2年に1度の開催に切り替えた",
+      "source": {
+        "url": "https://www.city.kawanishi.hyogo.jp/shiseijoho/shokai/kisetu/1020961.html",
+        "title": "川西市 猪名川花火大会の今後の開催について",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2024年度の開催の予算は、コロナ禍の前のおよそ2倍以上になっていた",
+      "source": {
+        "url": "https://www.city.kawanishi.hyogo.jp/shiseijoho/shokai/kisetu/1020961.html",
+        "title": "川西市 猪名川花火大会の今後の開催について",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2024年の前回は、川西側5万2千人・池田側11万人の計約16万2千人が見物した",
+      "source": {
+        "url": "https://prtimes.jp/main/html/rd/p/000000331.000098199.html",
+        "title": "川西市 第76回猪名川花火大会の開催の報告",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "立入禁止区域には当日も翌日も入らない。池田市側の川沿いの道は緊急車両の通り道なので入らない",
+      "川西市側はシートでの場所取りが禁止で、原則立ち見。池田市側は前日からの場所取りと、場所取りに石を使うことが禁止",
+      "バーベキューなど火を使うことはできず、会場への火気の持ち込みも禁止。観覧エリアでおもちゃの花火をしない",
+      "会場と打ち上げ場所の上空ではドローンを使わない",
+      "観覧エリアの通路や階段で立ち止まらない。堤防の上り下りは階段かスロープを使う",
+      "空き瓶や食べ残しなどのごみは持ち帰る",
+      "雨のときは、混雑の中で危ないので傘ではなくレインコートを使う",
+      "混雑の中で歩きながらスマートフォンやゲームアプリを使わない",
+      "落ちている不発の花火（星・雷・燃えがら）は拾わず、見つけたら警察に知らせる",
+      "警察官・消防団員・市の職員・警備員の指示に従う。周辺で路上駐車をしない",
+      "不審物には触れない"
+    ],
+    "dress": "unknown",
+    "bring": ["飲み物（川西市側には露店がない）", "雨のときのレインコート（傘は使わない）"],
+    "risk": {
+      "level": "medium",
+      "reason": "前回は両岸で約16万人が集まった夜の河川敷で、立入禁止区域があり、川西市側は混雑の具合で池田市側へ案内されることがある"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "会場と打ち上げ場所の上空でのドローンは禁止。主催の両市が写真と動画を撮るので、来場者が映り込むことがある"
+    },
+    "sources": [
+      {
+        "url": "https://www.city.kawanishi.hyogo.jp/shiseijoho/shokai/kisetu/1024543.html",
+        "title": "川西市 第77回猪名川花火大会（令和8年度開催）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.ikeda.osaka.jp/material/files/group/90/panfu.pdf",
+        "title": "第77回猪名川花火大会 パンフレット（池田市）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.ikeda.osaka.jp/material/files/group/90/kiseitirasi01.pdf",
+        "title": "第77回猪名川花火大会 交通規制チラシ（池田市）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://prtimes.jp/main/html/rd/p/000000331.000098199.html",
+        "title": "川西市 第76回猪名川花火大会の開催の報告",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-07",
+      "start": "18:00",
+      "end": "18:30",
+      "status": "announced",
+      "rainPolicy": "荒天中止、順延なし。開催か中止かは、前日と当日に主催者の電話の自動音声で案内される",
+      "note": "14:30 開場（川西市の案内。池田市側の開場時刻は出典にない）、17:55 開会宣言と両市長のあいさつ、18:00〜18:30 打ち上げ（3章構成）。有料席とふるさと納税の招待席の募集は終わっている",
+      "sources": [
+        {
+          "url": "https://www.city.ikeda.osaka.jp/soshiki/siminseikatsu/citypro/event/18901.html",
+          "title": "池田市 令和8年第77回猪名川花火大会の開催について",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.kawanishi.hyogo.jp/shiseijoho/shokai/kisetu/1024543.html",
+          "title": "川西市 第77回猪名川花火大会（令和8年度開催）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.ikeda.osaka.jp/material/files/group/90/kiseitirasi01.pdf",
+          "title": "第77回猪名川花火大会 交通規制チラシ（池田市）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "阪急 池田駅",
+        "walkMinutes": [10, 15]
+      },
+      {
+        "name": "阪急 川西能勢口駅",
+        "walkMinutes": [10, 15]
+      },
+      {
+        "name": "JR 川西池田駅",
+        "walkMinutes": [15, 20]
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "大阪梅田駅",
+        "minutes": [18, 25],
+        "route": "阪急宝塚線（大阪梅田駅から急行で池田駅まで、乗り換えなし）"
+      },
+      {
+        "hub": "大阪駅",
+        "minutes": [19, 23],
+        "route": "JR宝塚線（大阪駅から快速で川西池田駅まで、乗り換えなし）"
+      }
+    ],
+    "parking": "none",
+    "trafficRestrictions": [
+      "15:30ごろ〜21:00ごろ、会場付近（川西市側・池田市側）で交通規制。川西市側には歩行者用の道路になる区域がある",
+      "16:30ごろ〜20:30、池田市側の会場付近の区域は車両通行止め",
+      "16:30〜19:30、五月山ドライブウェイは通行禁止",
+      "17:30ごろ〜20:30ごろ、阪神高速11号池田線の蛍池JCT〜池田木部は通行止め。川西小花出入口は15:30から、池田木部入口（上り）と神田入口（下り）は17:30から閉鎖",
+      "18:00ごろ〜20:30ごろ、池田駅の南側の一部の道路で交通規制（一部は東行きのみ）"
+    ],
+    "sources": [
+      {
+        "url": "https://www.city.kawanishi.hyogo.jp/shiseijoho/shokai/kisetu/1024543.html",
+        "title": "川西市 第77回猪名川花火大会（令和8年度開催）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.ikeda.osaka.jp/material/files/group/90/kiseitirasi01.pdf",
+        "title": "第77回猪名川花火大会 交通規制チラシ（池田市）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://transit.yahoo.co.jp/search/result?from=%E5%A4%A7%E9%98%AA%E6%A2%85%E7%94%B0%28%E9%98%AA%E6%80%A5%E7%B7%9A%29&to=%E6%B1%A0%E7%94%B0%28%E5%A4%A7%E9%98%AA%E5%BA%9C%29&y=2026&m=11&d=07&hh=16&m1=0&m2=0&type=1&ticket=ic&expkind=1&ws=3&s=0&al=1&shin=1&ex=1&hb=1&lb=1&sr=1",
+        "title": "Yahoo!乗換案内 大阪梅田(阪急線)→池田(大阪府) 2026年11月7日16時発",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      },
+      {
+        "url": "https://transit.yahoo.co.jp/search/result?from=%E5%A4%A7%E9%98%AA&to=%E5%B7%9D%E8%A5%BF%E6%B1%A0%E7%94%B0&y=2026&m=11&d=07&hh=16&m1=0&m2=0&type=1&ticket=ic&expkind=1&ws=3&s=0&al=1&shin=1&ex=1&hb=1&lb=1&sr=1",
+        "title": "Yahoo!乗換案内 大阪→川西池田 2026年11月7日16時発",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "cupnoodles-museum-osaka-ikeda",
+      "name": "カップヌードルミュージアム 大阪池田",
+      "kind": "sightseeing",
+      "summary": "インスタントラーメン発祥の地にある、チキンラーメンとカップヌードルの歴史の展示施設。自分で選んだスープと具でカップヌードルを作れる。火曜が祝日なら翌日休み",
+      "location": {
+        "lat": 34.8178,
+        "lng": 135.4264
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "16:30",
+        "lastEntry": "15:30"
+      },
+      "closedDays": ["tue"],
+      "price": "入館無料。マイカップヌードルファクトリーは1食500円",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.cupnoodles-museum.jp/ja/osaka_ikeda/guide/admission/",
+          "title": "カップヌードルミュージアム 大阪池田 開館時間・料金",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.cupnoodles-museum.jp/ja/osaka_ikeda/",
+          "title": "カップヌードルミュージアム 大阪池田",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "ikeda-castle-park",
+      "name": "池田城跡公園",
+      "kind": "sightseeing",
+      "summary": "室町から戦国の豪族・池田氏の城跡を整えた公園。日本庭園や茶室、櫓風の展望休憩舎があり、晴れた日は遠くまで見渡せる。火曜が祝日なら翌日休み",
+      "location": {
+        "lat": 34.827,
+        "lng": 135.4295
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": ["tue"],
+      "price": "無料",
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://osaka-info.jp/spot/ikeda-shiroato-park-ikeda-castle-ruins/",
+          "title": "大阪観光局 池田城跡公園",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "ikeda-rakugo-museum",
+      "name": "池田市立上方落語資料展示館（落語みゅーじあむ）",
+      "kind": "sightseeing",
+      "summary": "上方落語の資料を1000点以上集めた市立の展示館。映像で落語を楽しめ、高座や和室もある。月に1回、土曜の午後に有料の落語会がある。催しの日は入館を制限することがある",
+      "location": {
+        "lat": 34.8257,
+        "lng": 135.425
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "19:00"
+      },
+      "closedDays": ["tue"],
+      "price": "入館無料（落語会は木戸銭が必要）",
+      "tags": ["indoor"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.city.ikeda.osaka.jp/soshiki/siminseikatsu/diversitykyoso/shisetsu/1415930640519.html",
+          "title": "池田市 上方落語資料展示館（落語みゅーじあむ）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.ikedashi-kanko.jp/spot/recommend-spot04",
+          "title": "池田市観光協会 落語みゅーじあむ",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "azuma-ikeda",
+      "name": "吾妻",
+      "kind": "food",
+      "summary": "1864年創業のうどん店。とろみのあるだしに細いうどんの「ささめうどん」が名物。売り切れしだい閉店し、不定休もある。火曜が祝日なら翌日休み",
+      "location": {
+        "lat": 34.8263,
+        "lng": 135.4239
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:30",
+        "close": "16:00",
+        "lastEntry": "15:30"
+      },
+      "closedDays": ["tue"],
+      "price": "ささめうどん 850円",
+      "tags": ["local_food", "indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://osaka-info.jp/local_journey/stopby-osaka/ikeda-azumaudon/",
+          "title": "大阪観光局 池田 吾妻",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/80028820",
+          "title": "るるぶ&more. 吾妻",
+          "checkedAt": "2026-11-02",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://tabelog.com/osaka/A2706/A270603/27005032/",
+          "title": "食べログ 吾妻（営業時間は2025年3月更新）",
+          "checkedAt": "2026-11-02",
+          "confidence": "corroborated"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.ikeda.osaka.jp/soshiki/siminseikatsu/citypro/event/18901.html",
+      "title": "池田市 令和8年第77回猪名川花火大会の開催について",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.kawanishi.hyogo.jp/shiseijoho/shokai/kisetu/1024543.html",
+      "title": "川西市 第77回猪名川花火大会（令和8年度開催）",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.ikeda.osaka.jp/material/files/group/1/20251201_inagawahanabitaikai_reiwa08kaisai.pdf",
+      "title": "池田市 報道資料 第77回猪名川花火大会を令和8年秋開催へ",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.ikeda.osaka.jp/material/files/group/90/panfu.pdf",
+      "title": "第77回猪名川花火大会 パンフレット（池田市）",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "当日に開催か中止かを決める時刻（公式の案内にない。ウォーカープラスは当日15時までに発表と掲載）",
+    "会場のトイレの場所と数",
+    "車いすで観覧できる場所",
+    "服装についての主催者の案内（11月の夜の河川敷の寒さへの案内は見当たらない）",
+    "池田市側の露店の数と、店が出る時間"
+  ]
+}

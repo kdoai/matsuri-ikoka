@@ -1,0 +1,472 @@
+{
+  "id": "kasuga-wakamiya-onmatsuri",
+  "name": {
+    "ja": "春日若宮おん祭",
+    "en": "Kasuga Wakamiya Onmatsuri Festival"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "奈良県",
+      "name": "奈良市"
+    }
+  ],
+  "venue": {
+    "name": "お旅所（春日大社の参道、一之鳥居の内）",
+    "lat": 34.6822,
+    "lng": 135.8384
+  },
+  "scaleTier": "L",
+  "popularity": "major",
+  "listedIn": ["walkerplus", "jalan", "rurubu", "tripadvisor", "jnto"],
+  "highlights": [
+    "灯りを消した闇の参道を神霊が移る、深夜0時の遷幸の儀",
+    "馬50頭・約1,000人が平安〜江戸の装束で練るお渡り式",
+    "お旅所の芝舞台で夜まで続く、神楽・田楽・舞楽などの奉納",
+    "一之鳥居の影向の松の前で芸能を披露する松の下式"
+  ],
+  "trivia": [
+    {
+      "text": "1136年に始まり、900年近く一度も途切れずに続いている",
+      "source": {
+        "url": "https://onmatsuri.kasugataisha.or.jp/wakamiya/",
+        "title": "春日若宮おん祭 おん祭について",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "長雨や洪水、飢饉、疫病が続いた時代に、若宮の神の助けを願って始まった",
+      "source": {
+        "url": "https://onmatsuri.kasugataisha.or.jp/wakamiya/",
+        "title": "春日若宮おん祭 おん祭について",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "室町時代に旧暦11月27日へ移り、明治時代に新暦の12月17日と定められた",
+      "source": {
+        "url": "https://onmatsuri.kasugataisha.or.jp/wakamiya/",
+        "title": "春日若宮おん祭 おん祭について",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "お旅所の芝舞台は約9メートル四方。この上で夜まで芸能が奉納される",
+      "source": {
+        "url": "https://onmatsuri.kasugataisha.or.jp/otabisyosai/",
+        "title": "春日若宮おん祭 御旅所祭",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "深夜の遷幸の儀と還幸の儀では、写真を撮らず、懐中電灯などの灯りもつけない（拝観できる場所にも制限がある）",
+      "ドローンを飛ばさない（お渡り式のコースの上も禁止）",
+      "神事の妨げになる撮影をしない。三脚・一脚・自撮り棒・照明機材の使用もこれに含まれる",
+      "周辺の道路は大変混雑するので、車ではなく公共交通機関で行く"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "見学が中心だが、深夜の遷幸の儀は灯りを使えない暗い参道で拝観場所に制限があり、お渡り式の日は周辺の道路が大変混雑する"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "遷幸の儀と還幸の儀は撮影も灯りも厳禁。ドローンは禁止。神事の妨げになる三脚や自撮り棒は使わない"
+    },
+    "sources": [
+      {
+        "url": "https://onmatsuri.kasugataisha.or.jp/gyouji/",
+        "title": "春日若宮おん祭 行事案内",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kasugataisha.or.jp/calendar/winter12/",
+        "title": "春日大社 12月の行事",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kasugataisha.or.jp/wp-content/uploads/2021/07/attention-pg-jp.pdf",
+        "title": "春日大社境内における撮影について",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kasugataisha.or.jp/images/pdf/onmatsuri-map.pdf",
+        "title": "御渡り式道順と諸神事案内",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kasugataisha.or.jp/news/2025/11872/",
+        "title": "春日大社 春日若宮おん祭に伴う交通規制のお知らせ（2025年）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-15",
+      "start": "13:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "会場はお旅所ではなく、餅飯殿町の大宿所。13:00 大宿所詣（JR奈良駅から大宿所まで行列）、14:30・16:30・18:00 御湯立、17:00 大宿所祭",
+      "sources": [
+        {
+          "url": "https://narashikanko.or.jp/event/detail_10230.html",
+          "title": "奈良市観光協会 春日若宮おん祭／春日大社",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://narashikanko.or.jp/feature/onmatsuri",
+          "title": "奈良市観光協会 春日若宮おん祭を観に行こう（2026年）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://onmatsuri.kasugataisha.or.jp/gyouji/",
+          "title": "春日若宮おん祭 行事案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kasugataisha.or.jp/calendar/winter12/",
+          "title": "春日大社 12月の行事",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-12-16",
+      "start": "14:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "14:00 大和士宵宮詣（大宿所から若宮へ）、15:00 田楽座宵宮詣、16:00 宵宮祭（若宮）。この夜、日付が変わる0:00に遷幸の儀が始まる（17日の回を見る）",
+      "sources": [
+        {
+          "url": "https://narashikanko.or.jp/event/detail_10230.html",
+          "title": "奈良市観光協会 春日若宮おん祭／春日大社",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://narashikanko.or.jp/feature/onmatsuri",
+          "title": "奈良市観光協会 春日若宮おん祭を観に行こう（2026年）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://onmatsuri.kasugataisha.or.jp/gyouji/",
+          "title": "春日若宮おん祭 行事案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-12-17",
+      "start": "12:00",
+      "end": "22:30",
+      "status": "announced",
+      "rainPolicy": "荒天ではお渡り式が中止になることがある。中止の場合、桟敷席の扱いは当日9時ごろ奈良市観光協会が告知（お旅所前の桟敷席は小雨なら開設）",
+      "note": "0:00 遷幸の儀（16日の深夜。撮影・灯りは厳禁、拝観場所に制限あり）、1:00 暁祭、11:30ごろ 試しの儀（県庁の南の登大路園地）、12:00 お渡り式が県庁前を出発、12:50ごろ 南大門交名の儀（興福寺南大門跡）、13:00ごろ 松の下式・競馬（一之鳥居）、14:30ごろ 稚児流鏑馬、14:30 お旅所祭（芸能の奉納は22:30ごろまで）、23:00 還幸の儀（撮影・灯りは厳禁）。有料の特別桟敷席が3か所あり、奈良市観光協会が12月14日まで予約を受け付ける",
+      "sources": [
+        {
+          "url": "https://narashikanko.or.jp/event/detail_10230.html",
+          "title": "奈良市観光協会 春日若宮おん祭／春日大社",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://narashikanko.or.jp/feature/onmatsuri",
+          "title": "奈良市観光協会 春日若宮おん祭を観に行こう（2026年）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://onmatsuri.kasugataisha.or.jp/gyouji/",
+          "title": "春日若宮おん祭 行事案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kasugataisha.or.jp/images/pdf/onmatsuri-map.pdf",
+          "title": "御渡り式道順と諸神事案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-12-18",
+      "start": "13:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "13:00 奉納相撲（お旅所の南側の特設土俵）、14:00 後宴能（お旅所）",
+      "sources": [
+        {
+          "url": "https://narashikanko.or.jp/event/detail_10230.html",
+          "title": "奈良市観光協会 春日若宮おん祭／春日大社",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://onmatsuri.kasugataisha.or.jp/gyouji/",
+          "title": "春日若宮おん祭 行事案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kasugataisha.or.jp/calendar/winter12/",
+          "title": "春日大社 12月の行事",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "近鉄 近鉄奈良駅",
+        "walkMinutes": [15, 20],
+        "note": "登大路を東へ。お旅所の北どなりにある奈良国立博物館までの目安。市内循環バス（外回り）で「春日大社表参道」まで9〜13分の便もある"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "京都駅",
+        "minutes": [35, 45],
+        "route": "近鉄の特急（京都駅から近鉄奈良駅まで）"
+      },
+      {
+        "hub": "大阪難波駅",
+        "minutes": [40, 50],
+        "route": "近鉄電車（大阪難波駅から近鉄奈良駅まで乗り換えなしの列車がある）"
+      }
+    ],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://narashikanko.or.jp/spot/detail_10043.html",
+        "title": "奈良市観光協会 奈良国立博物館",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://narashikanko.or.jp/event/detail_10230.html",
+        "title": "奈良市観光協会 春日若宮おん祭／春日大社",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kintetsu.co.jp/nara/naraha/",
+        "title": "近畿日本鉄道 わたしは、奈良派。",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.nara.lg.jp/site/nararhythm/128259.html",
+        "title": "奈良市 奈良市のアクセス（駅周辺・各エリア紹介）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "のっぺい",
+        "note": "おん祭の17日のごちそうとして奈良の町家で食べられてきた郷土料理。春日大社の参道の春日荷茶屋が、おん祭の12月16・17日だけ「のっぺい付粥」（1,600円）を出す",
+        "sources": [
+          {
+            "url": "https://www.kasugataisha.or.jp/ninaijyaya/menu/",
+            "title": "春日荷茶屋 お品書き",
+            "checkedAt": "2026-11-02",
+            "confidence": "official"
+          },
+          {
+            "url": "https://www.kasugataisha.or.jp/news/2024/11881/",
+            "title": "春日大社 おん祭 郷土料理「のっぺい」販売のお知らせ（2024年）",
+            "checkedAt": "2026-11-02",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "kofukuji",
+      "name": "興福寺",
+      "kind": "sightseeing",
+      "summary": "お渡り式の南大門交名の儀が行われる南大門跡のある寺。国宝館・東金堂・中金堂を拝観できる。五重塔は修理中で素屋根に覆われている（2034年度まで）",
+      "location": {
+        "lat": 34.6838,
+        "lng": 135.8299
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:45"
+      },
+      "closedDays": [],
+      "price": "国宝館 900円、東金堂 500円（大人）",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://narashikanko.or.jp/spot/detail_10029.html",
+          "title": "奈良市観光協会 興福寺",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "gangoji",
+      "name": "元興寺",
+      "kind": "sightseeing",
+      "summary": "ならまち（中院町）にある世界遺産の寺。近鉄奈良駅から徒歩15分",
+      "location": {
+        "lat": 34.678,
+        "lng": 135.8312
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": [],
+      "price": "大人 700円",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://narashikanko.or.jp/spot/detail_10027.html",
+          "title": "奈良市観光協会 世界遺産 元興寺",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kasuga-ninaijaya",
+      "name": "春日荷茶屋",
+      "kind": "food",
+      "summary": "春日大社の参道、萬葉植物園の正門の横にある茶屋。月替わりの万葉粥が名物で、おん祭の12月16・17日はのっぺい付きの粥も出す。休みは月ごとに案内される",
+      "location": {
+        "lat": 34.6823,
+        "lng": 135.8434
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:30",
+        "close": "16:30",
+        "lastEntry": "16:00"
+      },
+      "closedDays": null,
+      "price": "万葉粥 1,200円",
+      "tags": ["local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.kasugataisha.or.jp/ninaijyaya/",
+          "title": "春日荷茶屋",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kasugataisha.or.jp/ninaijyaya/menu/",
+          "title": "春日荷茶屋 お品書き",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "hiraso-nara",
+      "name": "柿の葉すし 平宗 奈良店",
+      "kind": "food",
+      "summary": "柿の葉すしの店。汁物付きの盛り合わせを店内で食べられる。はなれの食事は11:30〜20:00（ラストオーダー）。月曜定休で、ほかの休みは店のカレンダーで案内",
+      "location": {
+        "lat": 34.6801,
+        "lng": 135.8303
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": ["mon"],
+      "price": "柿の葉ずし盛り合わせ 1,650円",
+      "tags": ["local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://hiraso.jp/shop/shop-nara/",
+          "title": "柿の葉すし本舗 平宗 奈良店",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://onmatsuri.kasugataisha.or.jp/",
+      "title": "春日若宮おん祭（春日若宮おん祭保存会）",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://onmatsuri.kasugataisha.or.jp/owatarishiki/",
+      "title": "春日若宮おん祭 御渡り式",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://onmatsuri.kasugataisha.or.jp/otabisyosai/",
+      "title": "春日若宮おん祭 御旅所祭",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://narashikanko.or.jp/event/detail_10230.html",
+      "title": "奈良市観光協会 春日若宮おん祭／春日大社",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2026年の交通規制（まだ発表がない。2025年は12月4日に発表された）",
+    "雨天の扱い（17日のお渡り式が荒天で中止になりうることのほかは、公式の案内が見つからない）",
+    "15・16・18日の行事の終わりの時刻と、17日の還幸の儀の終わりの時刻",
+    "15・16・18日の行事の2026年の時刻（2026年の観光協会の記事で確かめられたのは、15日17:00の大宿所祭と16日16:00の宵宮祭だけ。ほかは年の書かれていない公式の行事案内の時刻）",
+    "駅からお旅所までの徒歩の時間（公式の数字がなく、北どなりの奈良国立博物館までの目安を使った）",
+    "遷幸の儀・還幸の儀を拝観できる場所（制限があるとだけ案内されている）",
+    "服装と持ち物（厳寒の中で行われるとあるが、公式の具体的な案内はない）",
+    "祭りの日に使える駐車場",
+    "屋台・露店が出るか",
+    "春日荷茶屋の12月の休み（休みは月ごとに案内される）",
+    "平宗 奈良店の食事の営業時間（本館とはなれで分かれ、本館の食事の時間が書かれていない）",
+    "2026年ののっぺい付粥の提供の告知（荷茶屋のお品書きに年が書かれていない）"
+  ]
+}
