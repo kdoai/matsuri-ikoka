@@ -14,7 +14,7 @@ import { AgentError, type AgentRunner } from "./agent/runner";
 import { type AppDeps, createApp } from "./app";
 import { createFestivalStore, type FestivalStore, loadFestivals } from "./data/festivalStore";
 import { testFestival } from "./domain/testFestivals";
-import { DailyLimiter } from "./routes/guard";
+import { ConcurrencyLimiter, DailyLimiter } from "./routes/guard";
 import { ItineraryStore, SessionStore } from "./session/sessionStore";
 
 const root = (relative: string) => fileURLToPath(new URL(`../../../${relative}`, import.meta.url));
@@ -166,6 +166,48 @@ describe("POST /api/chat（mock）", () => {
 
     expect(second.status).toBe(429);
     expect(await second.json()).toMatchObject({ code: "rate_limited" });
+  });
+
+  it("IP ごとの1日の上限を超えたら、その IP だけ 429", async () => {
+    const { post, newSession } = setup({
+      ipLimiter: new DailyLimiter(1, () => "2026-08-03"),
+      clientIp: (c) => c.req.header("x-test-ip") ?? "unknown",
+    });
+    const sessionId = await newSession();
+
+    await (await post("/api/chat", chat(sessionId), { "x-test-ip": "203.0.113.1" })).text();
+    const same = await post("/api/chat", chat(sessionId), { "x-test-ip": "203.0.113.1" });
+    const other = await post("/api/chat", chat(sessionId), { "x-test-ip": "203.0.113.2" });
+
+    expect(same.status).toBe(429);
+    expect(other.status).toBe(200);
+    await other.text();
+  });
+
+  it("live で同時に返事を作る数を超えたら 503。返事が終われば枠を返す", async () => {
+    let finish = () => {};
+    const runner: AgentRunner = {
+      mode: "live",
+      runTurn: () =>
+        new Promise<void>((resolve) => {
+          finish = resolve;
+        }),
+    };
+    const sessions = new SessionStore();
+    const first = sessions.create();
+    const second = sessions.create();
+    const concurrency = new ConcurrencyLimiter(1);
+    const { post } = setup({ runner, sessions, concurrency });
+
+    const running = post("/api/chat", chat(first.id));
+    const busy = await post("/api/chat", chat(second.id));
+    expect(busy.status).toBe(503);
+    expect(await busy.json()).toMatchObject({ code: "upstream_unavailable", retryable: true });
+
+    const res = await running;
+    finish();
+    await res.text();
+    expect(concurrency.running).toBe(0);
   });
 
   it("返事を作っている途中の相談には 409", async () => {

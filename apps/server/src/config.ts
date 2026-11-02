@@ -17,6 +17,12 @@ export interface ServerConfig {
   accessPasscode: string | null;
   /** 1日の相談の回数の上限。なければ上限なし */
   dailyChatLimit: number | null;
+  /** 1日の相談の回数の、IP ごとの上限。なければ上限なし */
+  dailyChatLimitPerIp: number | null;
+  /** live で同時に返事を作る数の上限 */
+  maxConcurrentTurns: number;
+  /** 利用者との間に置いたプロキシの数。X-Forwarded-For の右から数えて利用者の IP を決める */
+  trustedProxyHops: number;
   /** mock の再生の速さ（1 で記録どおり） */
   replaySpeed: number;
   /** live の1回の発言の費用の上限（米ドル）。なければ上限なし */
@@ -49,15 +55,39 @@ function positiveNumber(name: string, value: string | undefined): number | null 
   return n;
 }
 
+/** live で同時に返事を作る数の上限の既定 */
+export const DEFAULT_MAX_CONCURRENT_TURNS = 4;
+
+/** 0 や空は「上限なし」 */
+function limitOf(name: string, value: string | undefined): number | null {
+  const n = positiveNumber(name, value);
+  return n === null || n === 0 ? null : Math.floor(n);
+}
+
+/**
+ * 本番の live（API キーで、公開している URL）では、使いすぎを防ぐ設定が欠けていたら起動しない（ADR 0004）
+ */
+export function checkProductionConfig(config: ServerConfig, env: NodeJS.ProcessEnv): void {
+  if (!config.production || config.mode !== "live") return;
+  const missing = [
+    config.accessPasscode === null ? "ACCESS_PASSCODE" : null,
+    config.dailyChatLimit === null ? "DAILY_CHAT_LIMIT" : null,
+    config.maxBudgetUsd === undefined ? "AGENT_MAX_BUDGET_USD" : null,
+    nonEmpty(env.ANTHROPIC_API_KEY) === undefined ? "ANTHROPIC_API_KEY" : null,
+  ].filter((name): name is string => name !== null);
+  if (missing.length > 0) {
+    throw new Error(`本番の live では、次の設定が要ります：${missing.join("、")}`);
+  }
+}
+
 export function readConfig(env: NodeJS.ProcessEnv, cwd: string = process.cwd()): ServerConfig {
   const mode = nonEmpty(env.MATSURI_AGENT_MODE) ?? "mock";
   if (mode !== "mock" && mode !== "live") {
     throw new Error("MATSURI_AGENT_MODE は mock か live にしてください");
   }
-  const limit = positiveNumber("DAILY_CHAT_LIMIT", env.DAILY_CHAT_LIMIT);
   const repoRoot = findRepoRoot(cwd);
   const production = env.NODE_ENV === "production";
-  return {
+  const config: ServerConfig = {
     port: positiveNumber("PORT", env.PORT) ?? 8787,
     mode,
     production,
@@ -65,11 +95,17 @@ export function readConfig(env: NodeJS.ProcessEnv, cwd: string = process.cwd()):
     festivalsDir: nonEmpty(env.MATSURI_FESTIVALS_DIR),
     models: { concierge: nonEmpty(env.MODEL_CONCIERGE), staff: nonEmpty(env.MODEL_STAFF) },
     accessPasscode: nonEmpty(env.ACCESS_PASSCODE) ?? null,
-    dailyChatLimit: limit === null || limit === 0 ? null : Math.floor(limit),
+    dailyChatLimit: limitOf("DAILY_CHAT_LIMIT", env.DAILY_CHAT_LIMIT),
+    dailyChatLimitPerIp: limitOf("DAILY_CHAT_LIMIT_PER_IP", env.DAILY_CHAT_LIMIT_PER_IP),
+    maxConcurrentTurns:
+      limitOf("MAX_CONCURRENT_TURNS", env.MAX_CONCURRENT_TURNS) ?? DEFAULT_MAX_CONCURRENT_TURNS,
+    trustedProxyHops: Math.floor(positiveNumber("TRUSTED_PROXY_HOPS", env.TRUSTED_PROXY_HOPS) ?? 0),
     replaySpeed: positiveNumber("MATSURI_REPLAY_SPEED", env.MATSURI_REPLAY_SPEED) ?? 1,
     maxBudgetUsd: positiveNumber("AGENT_MAX_BUDGET_USD", env.AGENT_MAX_BUDGET_USD) || undefined,
     webDist:
       nonEmpty(env.MATSURI_WEB_DIST) ??
       (production ? path.join(repoRoot, "apps", "web", "dist") : null),
   };
+  checkProductionConfig(config, env);
+  return config;
 }

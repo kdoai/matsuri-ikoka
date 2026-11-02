@@ -97,9 +97,23 @@ main ブランチには直接 push しません。人の変更も自動の更新
 | `AGENT_MAX_BUDGET_USD`           | live の1回の発言の費用の上限（米ドル、Agent SDK の推定で判定）                        |
 | `MATSURI_FESTIVALS_DIR`          | 祭りのデータを読む場所。省略時は `data/festivals`（空なら、本番でなければ架空の祭り） |
 | `MATSURI_REPLAY_SPEED`           | mock の再生の速さの倍率（1 で記録どおり、2 で2倍速、0 で待たない）                    |
+| `MATSURI_WEB_DIST`               | 同じオリジンから配る画面のビルドの場所。本番の既定は `apps/web/dist`                  |
+| `DAILY_CHAT_LIMIT_PER_IP`        | 1日の相談の回数の、IP ごとの上限。空か 0 なら上限なし                                 |
+| `MAX_CONCURRENT_TURNS`           | live で同時に返事を作る数の上限（既定 4）。超えた発言は 503 で断る                    |
+| `TRUSTED_PROXY_HOPS`             | 利用者との間のプロキシの数。`X-Forwarded-For` の右から数えて利用者の IP を決める      |
 | `GCS_BUCKET`                     | 旅程を保存するバケット（未実装）                                                      |
 
 値は `.env`（Git の対象外）か、クラウドの秘密情報の管理に置きます。[`.env.example`](../../.env.example) には変数名と説明だけを書きます。
+
+本番（`NODE_ENV=production`）の live では、`ACCESS_PASSCODE`・`DAILY_CHAT_LIMIT`・`AGENT_MAX_BUDGET_USD`・`ANTHROPIC_API_KEY` のどれかが欠けていると、サーバーは起動しません。
+
+### メモリに置くものの上限
+
+| もの                 | 上限                                                                              |
+| -------------------- | --------------------------------------------------------------------------------- |
+| 相談                 | 1000件。超えたら、いちばん長く使われていない相談から消す。6時間使われなければ消す |
+| 旅程（しおりの共有） | 最後に保存してから30日で消す。5000件を超えたら、古いものから消す                  |
+| 1日の回数の数え      | 日本の日付が変わったら数え直す                                                    |
 
 ## セキュリティ
 

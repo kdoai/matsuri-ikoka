@@ -46,15 +46,31 @@ export function randomId(prefix: string): string {
   return `${prefix}-${randomBytes(12).toString("base64url")}`;
 }
 
+/** メモリに置く相談の数の上限。超えたら、いちばん長く使われていない相談から消す */
+export const MAX_SESSIONS = 1_000;
+/** 共有のために置く旅程の期限（README の「共有のための旅程は30日で消す」） */
+export const ITINERARY_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+/** メモリに置く旅程の数の上限。超えたら、いちばん古く保存した旅程から消す */
+export const MAX_ITINERARIES = 5_000;
+
 export class SessionStore {
+  /** 使った順（いちばん古いものが先頭）に並べる */
   readonly #sessions = new Map<string, Session>();
   readonly #now: () => number;
+  readonly #max: number;
   readonly #onRemove: (session: Session) => void;
 
   /** onRemove は相談を消したときに呼ぶ（エージェントの会話の記録を消すのに使う） */
-  constructor(options: { now?: () => number; onRemove?: (session: Session) => void } = {}) {
+  constructor(
+    options: { now?: () => number; max?: number; onRemove?: (session: Session) => void } = {},
+  ) {
     this.#now = options.now ?? Date.now;
+    this.#max = options.max ?? MAX_SESSIONS;
     this.#onRemove = options.onRemove ?? (() => {});
+  }
+
+  get size(): number {
+    return this.#sessions.size;
   }
 
   #remove(session: Session): void {
@@ -64,6 +80,11 @@ export class SessionStore {
 
   create(init: Partial<Pick<Session, "preferences" | "replay">> = {}): Session {
     this.sweep();
+    // 上限なら、返事を作っている途中ではない、いちばん長く使われていない相談から消す
+    for (const oldest of this.#sessions.values()) {
+      if (this.#sessions.size < this.#max) break;
+      if (!oldest.busy) this.#remove(oldest);
+    }
     const now = this.#now();
     const session: Session = {
       id: randomId("s"),
@@ -92,6 +113,9 @@ export class SessionStore {
       return undefined;
     }
     session.lastActiveAt = this.#now();
+    // 使った相談を後ろへ移し、使った順を保つ
+    this.#sessions.delete(id);
+    this.#sessions.set(id, session);
     return session;
   }
 
@@ -104,15 +128,52 @@ export class SessionStore {
   }
 }
 
-/** 保存した旅程。しおりの URL から読む。版ごとではなく、最新の版だけを持つ */
+/**
+ * 保存した旅程。しおりの URL から読む。版ごとではなく、最新の版だけを持つ。
+ * 最後に保存してから30日で消し、数の上限を超えたら古いものから消す
+ */
 export class ItineraryStore {
-  readonly #itineraries = new Map<string, Itinerary>();
+  /** 保存した順（いちばん古いものが先頭）に並べる */
+  readonly #itineraries = new Map<string, { itinerary: Itinerary; savedAt: number }>();
+  readonly #now: () => number;
+  readonly #ttlMs: number;
+  readonly #max: number;
+
+  constructor(options: { now?: () => number; ttlMs?: number; max?: number } = {}) {
+    this.#now = options.now ?? Date.now;
+    this.#ttlMs = options.ttlMs ?? ITINERARY_TTL_MS;
+    this.#max = options.max ?? MAX_ITINERARIES;
+  }
+
+  get size(): number {
+    return this.#itineraries.size;
+  }
 
   save(itinerary: Itinerary): void {
-    this.#itineraries.set(itinerary.id, itinerary);
+    this.#itineraries.delete(itinerary.id);
+    this.#itineraries.set(itinerary.id, { itinerary, savedAt: this.#now() });
+    this.sweep();
+    for (const id of this.#itineraries.keys()) {
+      if (this.#itineraries.size <= this.#max) break;
+      this.#itineraries.delete(id);
+    }
   }
 
   get(id: string): Itinerary | undefined {
-    return this.#itineraries.get(id);
+    const entry = this.#itineraries.get(id);
+    if (entry === undefined) return undefined;
+    if (this.#now() - entry.savedAt > this.#ttlMs) {
+      this.#itineraries.delete(id);
+      return undefined;
+    }
+    return entry.itinerary;
+  }
+
+  /** 期限を過ぎた旅程を消す */
+  sweep(): void {
+    const now = this.#now();
+    for (const [id, entry] of this.#itineraries) {
+      if (now - entry.savedAt > this.#ttlMs) this.#itineraries.delete(id);
+    }
   }
 }
