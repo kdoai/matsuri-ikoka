@@ -1,0 +1,439 @@
+{
+  "id": "arashiyama-momiji-matsuri",
+  "name": {
+    "ja": "嵐山もみじ祭り",
+    "en": "Arashiyama Momiji Festival"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "京都府",
+      "name": "京都市"
+    }
+  ],
+  "venue": {
+    "name": "嵐山・渡月橋上流（大堰川左岸北乗船場）",
+    "lat": 35.0128,
+    "lng": 135.678
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "平安貴族の舟遊びを再現した船が、渡月橋の上流の大堰川に出る",
+    "8日は今様・平安管弦と、無言劇の嵯峨大念仏狂言",
+    "7日は箏曲・尺八・民謡と、日ごとに演目が変わる"
+  ],
+  "trivia": [
+    {
+      "text": "嵐山の守護神・蔵王権現に感謝する行事で、例年11月第2日曜に開かれてきた",
+      "source": {
+        "url": "https://www.arashiyamahoshokai.com/event/arashiyama-momiji-matsuri",
+        "title": "嵐山保勝会 嵐山もみじ祭り",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "嵯峨大念仏狂言は、1986年に国の重要無形民俗文化財に指定された無言劇",
+      "source": {
+        "url": "https://online.bunka.go.jp/heritages/detail/136434",
+        "title": "文化遺産オンライン 嵯峨大念仏狂言",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "渡月橋は836年の架橋とされ、もとは法輪寺橋。亀山天皇が月を見て名付けたと伝わる",
+      "source": {
+        "url": "https://www.arashiyamahoshokai.com/history",
+        "title": "嵐山保勝会 嵐山の歴史",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "秋の嵐山は混雑するため、公共交通機関で来る。車ならパークアンドライドを使う",
+      "とても混む長辻通では、歩道からはみ出さない"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "見学が中心だが、秋の行楽期の土日に川岸で見る。主催者が混雑を理由に公共交通機関を勧め、周辺には京都府警の臨時の交通規制がかかる"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.arashiyamahoshokai.com/access",
+        "title": "嵐山保勝会 アクセス",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ja.kyoto.travel/feature/traffic/access.php?id=4",
+        "title": "京都観光Navi 主要観光地への快適なアクセス 嵯峨・嵐山",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.pref.kyoto.jp/fukei/kotu/kisei_k/rinji_kisei/documents/r8-sagaarashiyama.pdf",
+        "title": "京都府警察 嵯峨・嵐山周辺の臨時交通規制（令和8年）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-07",
+      "start": "11:30",
+      "end": "15:30",
+      "status": "announced",
+      "rainPolicy": "雨天中止",
+      "note": "11:30〜12:30 箏曲、13:00〜14:00 尺八、14:30〜15:30 民謡。この日は16:00からの第4部は無い（チラシ）。会場は渡月橋上流の大堰川左岸北乗船場",
+      "sources": [
+        {
+          "url": "https://ja.kyoto.travel/resource/event/4066-pdf.pdf",
+          "title": "嵐山もみじ祭り 2026 チラシ（嵐山保勝会、京都観光Navi に掲載）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://ja.kyoto.travel/event/single.php?event_id=4066",
+          "title": "京都観光Navi 嵐山もみじ祭り",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.arashiyamahoshokai.com/event/arashiyama-momiji-matsuri",
+          "title": "嵐山保勝会 嵐山もみじ祭り",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-08",
+      "start": "11:30",
+      "end": "17:00",
+      "status": "announced",
+      "rainPolicy": "雨天中止",
+      "note": "11:30〜12:30 横笛・太鼓、13:00〜14:00 今様、14:30〜15:30 平安管弦、16:00〜17:00 嵯峨大念仏狂言。会場は渡月橋上流の大堰川左岸北乗船場",
+      "sources": [
+        {
+          "url": "https://ja.kyoto.travel/resource/event/4066-pdf.pdf",
+          "title": "嵐山もみじ祭り 2026 チラシ（嵐山保勝会、京都観光Navi に掲載）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://ja.kyoto.travel/event/single.php?event_id=4066",
+          "title": "京都観光Navi 嵐山もみじ祭り",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.arashiyamahoshokai.com/event/arashiyama-momiji-matsuri",
+          "title": "嵐山保勝会 嵐山もみじ祭り",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "嵐電 嵐山駅",
+        "walkMinutes": [2, 7]
+      },
+      {
+        "name": "JR 嵯峨嵐山駅",
+        "walkMinutes": [8, 13],
+        "note": "渡月橋までの時間"
+      },
+      {
+        "name": "京都市バス 嵐山公園バス停",
+        "walkMinutes": [0, 5],
+        "note": "28系統。下車すぐ"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "京都駅",
+        "minutes": [11, 21],
+        "route": "JR嵯峨野線（山陰本線）の快速で嵯峨嵐山駅へ、乗り換えなし"
+      }
+    ],
+    "parking": "unknown",
+    "trafficRestrictions": [
+      "10/31〜11/29の土日・休日（祭りの2日間を含む）10:00〜17:00、大河内山荘通は歩行者用道路になり、全ての車両が通れない",
+      "同じ日と時間、嵯峨嵐山駅の北側の嵯峨経256号線は、大型車など（マイクロバスを除く）が通行止め",
+      "長辻通の一方通行（11/16から）、渡月橋・嵯峨街道・長辻通の歩行者用道路（11/21から）は、祭りの2日間にはかからない。交通の状況により、マイカー規制や規制の日時の変更をすることがある"
+    ],
+    "sources": [
+      {
+        "url": "https://ja.kyoto.travel/event/single.php?event_id=4066",
+        "title": "京都観光Navi 嵐山もみじ祭り",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ja.kyoto.travel/feature/traffic/access.php?id=4",
+        "title": "京都観光Navi 主要観光地への快適なアクセス 嵯峨・嵐山",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.arashiyamahoshokai.com/access",
+        "title": "嵐山保勝会 アクセス",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.pref.kyoto.jp/fukei/kotu/kisei_k/rinji_kisei/documents/r8-sagaarashiyama.pdf",
+        "title": "京都府警察 嵯峨・嵐山周辺の臨時交通規制（令和8年）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "tenryuji",
+      "name": "天龍寺",
+      "kind": "sightseeing",
+      "summary": "1339年、足利尊氏が後醍醐天皇を弔うために建てた世界遺産の禅寺。嵐山を借景にした曹源池庭園は日本で最初の史跡・特別名勝。法堂の雲龍図は土日祝に公開（別に500円）",
+      "location": {
+        "lat": 35.0157,
+        "lng": 135.6738
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "08:30",
+        "close": "17:00",
+        "lastEntry": "16:50"
+      },
+      "closedDays": [],
+      "price": "庭園 500円（高校生以上）、諸堂は300円を追加",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.tenryuji.com/visit/",
+          "title": "天龍寺 参拝・交通案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://ja.kyoto.travel/tourism/single01.php?category_id=7&tourism_id=428",
+          "title": "京都観光Navi 天龍寺",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "hogonin",
+      "name": "宝厳院",
+      "kind": "sightseeing",
+      "summary": "天龍寺の塔頭で、ふだんは非公開。2026年秋は10月3日〜12月6日に特別拝観があり、嵐山を借景にした回遊式の庭「獅子吼の庭」と本堂の襖絵を公開（法要で襖絵を見られないことがある）",
+      "location": {
+        "lat": 35.0151,
+        "lng": 135.6752
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:45"
+      },
+      "closedDays": null,
+      "price": "庭園 700円（大人）、本堂の特別公開は別に500円",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://ja.kyoto.travel/event/single.php?event_id=3699",
+          "title": "京都観光Navi 秋の特別拝観【宝厳院】",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://hogonin.jp/",
+          "title": "大亀山 宝厳院",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "shigetsu-tenryuji",
+      "name": "天龍寺 篩月",
+      "kind": "food",
+      "summary": "天龍寺の境内にある直営の精進料理店。一汁五菜の「雪」から一汁七菜の「花」まで。どれも事前の予約が要り（雪は2日前、月・花は2名以上で3日前まで）、別に庭園の参拝料500円がかかる",
+      "location": {
+        "lat": 35.0157,
+        "lng": 135.6738
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "14:00"
+      },
+      "closedDays": ["thu"],
+      "price": "雪 3,800円、月 6,500円、花 9,000円（別に庭園参拝料500円）",
+      "tags": ["indoor", "seating"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.tenryuji.com/shigetsu/",
+          "title": "天龍寺直営 精進料理店 篩月",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "shoraian",
+      "name": "松籟庵",
+      "kind": "food",
+      "summary": "渡月橋の上流、旧近衛文麿邸を使った豆腐懐石の店で、森嘉の嵯峨豆腐を使う。土日は11:00〜20:00で17時以降は前日までの予約制。水曜定休だが11月の水曜は営業。中学生未満は入店不可",
+      "location": {
+        "lat": 35.0146,
+        "lng": 135.6714
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": ["wed"],
+      "price": null,
+      "tags": ["indoor", "local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.shoraian.jp/",
+          "title": "京都 嵐山 松籟庵",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "saga-arashiyama-museum-of-arts-and-culture",
+      "name": "嵯峨嵐山文華館",
+      "kind": "sightseeing",
+      "summary": "渡月橋の近くにある、小倉百人一首の歴史をたどれる美術館。2階の畳の広間から大堰川を望める。展示替えの期間と年末年始は休館（2026/12/15など）",
+      "location": {
+        "lat": 35.0159,
+        "lng": 135.6742
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": [],
+      "price": "一般・大学生1,000円、高校生600円、小中学生400円",
+      "tags": ["indoor"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.samac.jp/visit/",
+          "title": "嵯峨嵐山文華館 利用案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.samac.jp/",
+          "title": "嵯峨嵐山文華館 公式サイト（展覧会・休館日のカレンダー）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "sagatofu-morika",
+      "name": "嵯峨豆腐 森嘉",
+      "kind": "food",
+      "summary": "清凉寺（嵯峨釈迦堂）の近くの豆腐店。嵯峨豆腐や飛龍頭（ひろうす）などを売る。火曜にも休む日があり営業カレンダーで決まる。水曜が祝日なら翌木曜が休み",
+      "location": {
+        "lat": 35.0235,
+        "lng": 135.6745
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": ["wed"],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.sagatofu-morika.co.jp/businesshours.html",
+          "title": "嵯峨豆腐 森嘉 営業時間",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.sagatofu-morika.co.jp/calender.html",
+          "title": "嵯峨豆腐 森嘉 営業カレンダー（2026年）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.sagatofu-morika.co.jp/",
+          "title": "嵯峨豆腐 森嘉 公式サイト",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.arashiyamahoshokai.com/event/arashiyama-momiji-matsuri",
+      "title": "嵐山保勝会 嵐山もみじ祭り",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.arashiyamahoshokai.com/news/momiji-festival-2026",
+      "title": "嵐山保勝会 もみじ祭り開催のお知らせ（令和8年10月）",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://ja.kyoto.travel/event/single.php?event_id=4066",
+      "title": "京都観光Navi 嵐山もみじ祭り",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2026年の観覧席・乗船して見る席の有無と料金、申し込み方法（主催者のページは参加料無料とチケット購入の両方を載せていて、はっきりしない。川沿いからの見学は無料とする大手の観光サイトの掲載はある）",
+    "7日の終わりの時刻（主催者と京都市の観光サイトは両日11:30〜17:00、チラシは7日の第4部を「無し」としている）",
+    "雨天中止を決める時刻と、知らせる方法",
+    "見学の決まり（場所取り・撮影・ドローンなど）、服装・持ち物（出典が見つからない）",
+    "会場の駐車場（主催者は公共交通機関とパークアンドライドを勧めている）",
+    "会場の正確な位置（緯度・経度は国土地理院の住所検索の渡月橋の位置で、北乗船場そのものではない）",
+    "阪急嵐山駅から会場までの徒歩の時間と、大阪梅田駅からの所要時間",
+    "露店が出るか",
+    "規模の根拠になる船の数・出演者の数・来場者数の公表値",
+    "宝厳院の特別拝観の期間中の休み（公式・京都市の観光サイトに記載がない）",
+    "宝厳院・松籟庵の緯度・経度は国土地理院の住所検索の町の代表点、篩月は天龍寺の代表点で、建物の位置ではない",
+    "松籟庵の2026年8月の改定後の値段",
+    "嵯峨豆腐 森嘉の店先で食べられるか、品ごとの値段（公式サイトに記載がない）"
+  ]
+}
