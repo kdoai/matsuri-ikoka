@@ -51,7 +51,7 @@ const MESSAGE_PATTERNS: Array<[RegExp, FailureKind]> = [
   ],
   [/\b50[0234]\b|service unavailable|bad gateway/i, "overloaded"],
   [
-    /invalid.{0,20}api[ _-]?key|unauthori[sz]ed|authentication|\b401\b|\b403\b|credit balance/i,
+    /invalid.{0,20}api[ _-]?key|unauthori[sz]ed|authenticat|oauth|\b401\b|\b403\b|credit balance/i,
     "auth",
   ],
   [/exit(?:ed)? (?:with )?code|process (?:exited|did not exit)/i, "process"],

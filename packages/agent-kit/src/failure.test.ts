@@ -31,6 +31,7 @@ describe("classifyFailure", () => {
     ["fetch failed", "network"],
     ["Claude Code process exited with code 1", "process"],
     ["Invalid API key", "auth"],
+    ["Failed to authenticate: OAuth session expired and could not be refreshed", "auth"],
     ["想定していない誤り", "unknown"],
   ] as const)("本文「%s」は %s", (message, kind) => {
     expect(classifyFailure(new Error(message)).kind).toBe(kind);
