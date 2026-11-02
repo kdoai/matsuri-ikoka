@@ -40,8 +40,8 @@
   --color-yamabuki-700: #7a5807;
 
   --font-sans:
-    "Noto Sans JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic",
-    "Meiryo", system-ui, sans-serif;
+    "Zen Maru Gothic", "Noto Sans JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI",
+    "Yu Gothic", "Meiryo", system-ui, sans-serif;
 
   --animate-stamp: stamp 0.7s cubic-bezier(0.2, 1.4, 0.4, 1) both;
   --animate-pop: pop 0.45s cubic-bezier(0.2, 1.2, 0.4, 1) both;

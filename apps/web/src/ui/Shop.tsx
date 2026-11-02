@@ -1,56 +1,35 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { otherLocale } from "../i18n";
 import { useActions, useApp, useT } from "../state/react";
 import { type FrameInsets, NO_INSETS } from "../state/scene";
-import { PROGRESS_STEPS, progressStep } from "../state/selectors";
+import type { PanelTab } from "../state/types";
 import { Backlog } from "./Backlog";
 import { CandidateCards } from "./CandidateCards";
+import { focusComposer } from "./ChatPanel";
 import { DialogueBox } from "./Dialogue";
+import {
+  ButtonHints,
+  DateBadge,
+  GuideCard,
+  type HudPanel,
+  IconButtons,
+  Logo,
+  MiniMapCard,
+  openTripPanel,
+  SectionTabs,
+  useHudKeys,
+} from "./Hud";
 import { useMediaQuery } from "./hooks";
 import { ItineraryPanel } from "./ItineraryPanel";
 import { PasscodeDialog } from "./Passcode";
 import { GameStage } from "./SceneSlot";
 import { StaffActivity } from "./StaffPanel";
-import { playSound } from "./sound";
 import { WaitingCard } from "./Waiting";
 
 // ゲームの画面。いつも店（3D、使えないときは 2D の見取り図）を画面いっぱいに出し、
-// その上に会話の窓・旅程のパネル・待ち時間のカードを重ねる。
-// 店のカメラは、重なるものを避けた残りの場所に店を収めて映す。
-
-export function StageProgress() {
-  const t = useT();
-  const stage = useApp((state) => state.session.stage);
-  const current = PROGRESS_STEPS.indexOf(progressStep(stage));
-  return (
-    <nav aria-label={t.app.progress} data-testid="stage-progress">
-      <ol className="flex items-center gap-1 text-xs">
-        {PROGRESS_STEPS.map((step, index) => {
-          const state = index < current ? "past" : index === current ? "current" : "future";
-          return (
-            <li key={step} className="flex items-center gap-1">
-              {index > 0 ? (
-                <span aria-hidden="true" className="h-px w-2 bg-kinari-300/70 sm:w-3" />
-              ) : null}
-              <span
-                aria-current={state === "current" ? "step" : undefined}
-                className={`whitespace-nowrap rounded-full px-2 py-0.5 font-semibold ${
-                  state === "current"
-                    ? "bg-yamabuki-400 text-ink"
-                    : state === "past"
-                      ? "bg-ai-600 text-white"
-                      : "bg-ink/55 text-kinari-100"
-                }`}
-              >
-                {t.stage[step]}
-              </span>
-            </li>
-          );
-        })}
-      </ol>
-    </nav>
-  );
-}
+// その上に HUD を重ねる：上にロゴ・場面のタブ・丸いボタン、右上に旅の案内と小さな地図、
+// 下に会話の窓、左下に日付、右下にボタンの案内。旅程のパネルは右に開く。
+// 狭い画面では、タブと案内をメニューにまとめ、会話の窓を主にする。
 
 export function LanguageButton({ className = "" }: { className?: string }) {
   const t = useT();
@@ -69,88 +48,7 @@ export function LanguageButton({ className = "" }: { className?: string }) {
   );
 }
 
-const roundButton =
-  "min-h-10 rounded-full border-2 border-kinari-50/80 bg-ai-800/85 px-3 py-1 font-bold text-white text-xs shadow-md backdrop-blur-sm transition hover:bg-ai-700 sm:text-sm";
-
-function TopBar() {
-  const t = useT();
-  const actions = useActions();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const soundOn = useApp((state) => state.ui.soundOn);
-  const isMock = useApp((state) => state.transport === "mock");
-  const panelOpen = useApp((state) => state.ui.drawerOpen);
-  return (
-    <header className="no-print flex flex-wrap items-start justify-between gap-2 p-2 sm:p-3 [&>*]:pointer-events-auto">
-      <div className="flex min-w-0 flex-col gap-1.5">
-        <div className="flex flex-wrap items-center gap-2">
-          <h1 className="rounded-full border-2 border-wood-900 bg-kinari-50 px-3 py-1 font-bold text-ink text-sm tracking-wider shadow-md sm:text-base">
-            {t.app.name}
-          </h1>
-          {isMock ? (
-            <span
-              className="rounded-full bg-yamabuki-400 px-2 py-0.5 font-bold text-ink text-xs shadow"
-              title={t.app.mockNote}
-              data-testid="mock-note"
-            >
-              {t.app.mockBadge}
-            </span>
-          ) : null}
-        </div>
-        <div className="hidden max-w-full overflow-x-auto rounded-full bg-ink/35 px-1.5 py-1 backdrop-blur-sm sm:block">
-          <StageProgress />
-        </div>
-      </div>
-      <div className="relative flex flex-wrap items-center justify-end gap-1.5">
-        <button
-          type="button"
-          className={roundButton}
-          aria-expanded={panelOpen}
-          aria-controls="trip-panel"
-          onClick={() => actions.setDrawer(!panelOpen)}
-        >
-          {panelOpen ? t.itinerary.closePanel : t.itinerary.openPanel}
-        </button>
-        {/* 狭い画面では、ほかのボタンをメニューにまとめる */}
-        <button
-          type="button"
-          className={`${roundButton} lg:hidden`}
-          aria-expanded={menuOpen}
-          aria-controls="game-menu"
-          onClick={() => setMenuOpen((open) => !open)}
-        >
-          {t.app.menu}
-        </button>
-        <div
-          id="game-menu"
-          className={`${
-            menuOpen ? "flex" : "hidden"
-          } absolute top-full right-0 mt-1.5 flex-col items-stretch gap-1.5 rounded-2xl bg-ink/60 p-2 backdrop-blur-sm lg:static lg:mt-0 lg:flex lg:flex-row lg:items-center lg:bg-transparent lg:p-0 lg:backdrop-blur-none`}
-        >
-          <LanguageButton className={roundButton} />
-          <button
-            type="button"
-            className={roundButton}
-            aria-pressed={soundOn}
-            title={t.app.soundHint}
-            onClick={() => {
-              actions.setSound(!soundOn);
-              if (!soundOn) {
-                playSound("hyoshigi");
-              }
-            }}
-          >
-            {soundOn ? t.app.soundOn : t.app.soundOff}
-          </button>
-          <button type="button" className={roundButton} onClick={() => void actions.restart()}>
-            {t.app.restart}
-          </button>
-        </div>
-      </div>
-    </header>
-  );
-}
-
-/** 重なる部品の大きさを測り、店のカメラが避ける幅にする */
+/** 重なる部品の大きさを測り、2D の見取り図が避ける幅にする */
 function useFrameInsets(
   top: React.RefObject<HTMLElement | null>,
   dialogue: React.RefObject<HTMLElement | null>,
@@ -194,12 +92,30 @@ function useFrameInsets(
   return insets;
 }
 
+/** 会話の窓に出ない作業の記録が増えたら、お知らせに印を付ける */
+function useUnread(logOpen: boolean): boolean {
+  const records = useApp(
+    (state) =>
+      state.messages.filter((entry) => entry.kind === "work" || entry.kind === "error").length,
+  );
+  const [seen, setSeen] = useState(records);
+  useEffect(() => {
+    if (logOpen) setSeen(records);
+  }, [logOpen, records]);
+  return !logOpen && records > seen;
+}
+
 export function Shop() {
+  const t = useT();
   const actions = useActions();
   const panelOpen = useApp((state) => state.ui.drawerOpen);
+  const tab = useApp((state) => state.ui.tab);
   const hasItinerary = useApp((state) => state.itinerary.current !== null);
+  const isMock = useApp((state) => state.transport === "mock");
   const wide = useMediaQuery("(min-width: 1024px)");
   const [logOpen, setLogOpen] = useState(false);
+  const [menu, setMenu] = useState<HudPanel>(null);
+  const unread = useUnread(logOpen);
   const topRef = useRef<HTMLDivElement>(null);
   const dialogueRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -213,26 +129,106 @@ export function Shop() {
     }
   }, [hasItinerary, actions]);
 
+  /** 同じタブがもう開いていれば閉じ、そうでなければそのタブで開く */
+  const togglePanel = useCallback(
+    (next: PanelTab) => {
+      if (panelOpen && tab === next) {
+        actions.setDrawer(false);
+      } else {
+        openTripPanel(actions, next);
+      }
+    },
+    [actions, panelOpen, tab],
+  );
+  const openLog = useCallback(() => {
+    setMenu(null);
+    setLogOpen(true);
+  }, []);
+  const toggleMenu = useCallback(() => setMenu((open) => (open === "menu" ? null : "menu")), []);
+
+  useHudKeys({
+    talk: focusComposer,
+    details: () => togglePanel("itinerary"),
+    map: () => togglePanel("map"),
+    menu: toggleMenu,
+  });
+
   return (
     <div className="relative h-dvh w-full overflow-hidden bg-wood-900 text-ink">
-      <GameStage frame={frame} />
+      <GameStage frame={frame} onTalk={focusComposer} />
 
-      <div ref={topRef} className="pointer-events-none absolute inset-x-0 top-0 z-40">
-        <TopBar />
+      {/* 上の段：ロゴ・場面のタブ・丸いボタン */}
+      <div
+        ref={topRef}
+        className="no-print pointer-events-none absolute inset-x-0 top-0 z-40 grid grid-cols-[1fr_auto] items-start gap-2 p-2 sm:p-3 lg:grid-cols-[1fr_auto_1fr] [&>*]:pointer-events-auto"
+      >
+        <div className="flex items-center gap-2 justify-self-start">
+          <Logo />
+          {isMock ? (
+            <span
+              className="whitespace-nowrap rounded-full bg-yamabuki-400 px-2 py-0.5 font-bold text-[0.7rem] text-ink shadow sm:text-xs"
+              title={t.app.mockNote}
+              data-testid="mock-note"
+            >
+              {t.app.mockBadge}
+            </span>
+          ) : null}
+        </div>
+        <SectionTabs className="hidden lg:block" />
+        <div className="justify-self-end">
+          <IconButtons onOpenLog={openLog} unread={unread} menu={menu} onMenu={setMenu} />
+        </div>
       </div>
-      <div className="pointer-events-none absolute top-16 left-2 z-10 w-60 sm:top-24 sm:left-3 sm:w-64 [&>*]:pointer-events-auto">
+
+      {/* 左：いま動いているスタッフ */}
+      <div
+        className="pointer-events-none absolute left-2 z-10 w-56 sm:left-3 sm:w-64 [&>*]:pointer-events-auto"
+        style={{ top: frame.top + 8 }}
+      >
         <StaffActivity />
       </div>
+
+      {/* 右上：旅の案内と小さな地図（広い画面で、旅程のパネルを開いていないとき） */}
+      {wide && !panelOpen ? (
+        <div
+          className="pointer-events-none absolute right-3 z-10 flex w-80 flex-col gap-3 [&>*]:pointer-events-auto"
+          style={{ top: frame.top + 14 }}
+          data-testid="guide-column"
+        >
+          <GuideCard />
+          {hasItinerary ? <MiniMapCard /> : null}
+        </div>
+      ) : null}
 
       {/* 旅程・地図・出典の紙のパネル（広い画面は右に重ね、狭い画面は上に重ねる） */}
       {panelOpen ? (
         <div
           ref={panelRef}
           id="trip-panel"
-          className="absolute inset-x-2 top-16 bottom-2 z-30 lg:top-24 lg:right-3 lg:bottom-3 lg:left-auto lg:w-[min(30rem,38vw)]"
+          className="absolute inset-x-2 bottom-2 z-30 lg:right-3 lg:bottom-16 lg:left-auto lg:w-[min(30rem,38vw)]"
+          style={{ top: frame.top + 6 }}
           data-testid="panel-drawer"
         >
           <ItineraryPanel />
+        </div>
+      ) : null}
+
+      {/* 左下：旅の日と出発の駅 */}
+      {wide && !beside ? (
+        <div className="absolute bottom-3 left-3 z-10">
+          <DateBadge />
+        </div>
+      ) : null}
+
+      {/* 右下：ボタンの案内（旅程のパネルを開いているときは、パネルの下に横に並べる） */}
+      {wide ? (
+        <div className="no-print absolute right-3 bottom-3 z-30">
+          <ButtonHints
+            onDetails={() => togglePanel("itinerary")}
+            onMap={() => togglePanel("map")}
+            onMenu={toggleMenu}
+            stacked={!beside}
+          />
         </div>
       ) : null}
 
@@ -240,13 +236,15 @@ export function Shop() {
       <div
         ref={dialogueRef}
         className={`absolute inset-x-2 bottom-2 z-20 sm:inset-x-3 sm:bottom-3 ${
-          beside ? "lg:right-[calc(min(30rem,38vw)+1.5rem)] lg:left-3" : "lg:mx-auto lg:max-w-4xl"
+          beside
+            ? "lg:right-[calc(min(30rem,38vw)+1.5rem)] lg:left-3"
+            : "lg:inset-x-0 lg:mx-auto lg:w-[min(50rem,calc(100vw-30rem))]"
         }`}
       >
-        <div className="pointer-events-none absolute bottom-full left-0 mb-6 w-full max-w-xs [&>*]:pointer-events-auto">
+        <div className="pointer-events-none absolute bottom-full left-0 mb-8 w-full max-w-xs [&>*]:pointer-events-auto">
           <WaitingCard />
         </div>
-        <DialogueBox onOpenLog={() => setLogOpen(true)} />
+        <DialogueBox />
       </div>
 
       <CandidateCards />

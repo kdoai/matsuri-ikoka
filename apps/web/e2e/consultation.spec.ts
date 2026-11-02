@@ -5,6 +5,7 @@ import {
   enterShop,
   openLog,
   openPanel,
+  openPreferences,
   sendSampleMessage,
   snap,
   waitForReply,
@@ -39,14 +40,21 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
     /issues\/new\?template=festival-correction\.yml/,
   );
   await waitForReply(page);
-  // 会話で伝えたこだわり（穴場・地元の店）が、切り替えに反映される
-  // スマートフォンでは、こだわりの切り替えは会話の窓の中に畳んである
+  await snap(page, info, "01-candidates");
+  // 候補を閉じても、店に戻って選び直せる
+  await page.keyboard.press("Escape");
+  await expect(page.getByTestId("candidates")).toHaveCount(0);
+  // 会話で伝えたこだわり（穴場・地元の店）が、旅のこだわりの切り替えに反映される
+  await openPreferences(page);
   await expect(page.getByRole("radio", { name: "穴場", includeHidden: true })).toBeChecked();
   await expect(
     page.getByRole("radio", { name: "地元の店も楽しむ", includeHidden: true }),
   ).toBeChecked();
   await expect(page.getByTestId("condition-chips")).toContainText("みなと中央駅から");
-  await snap(page, info, "01-candidates");
+  await snap(page, info, "01b-preferences");
+  await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: "祭りの候補を見る" }).click();
+  await expect(page.getByTestId("candidates")).toBeVisible();
 
   // 2. 候補を選ぶ → 旅程と地図
   await cards.nth(0).getByRole("button", { name: "この祭りにする" }).click();
@@ -56,6 +64,8 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   const items = page.getByTestId("itinerary-item");
   await expect(items).toHaveCount(8);
   await expect(page.getByTestId("itinerary-panel")).toContainText("第1版");
+  await expect(page.getByTestId("day-card")).toContainText("1日目");
+  await expect(page.getByTestId("updated-sticker")).toHaveCount(0);
   await expect(page.locator('[data-change="added"], [data-change="changed"]')).toHaveCount(0);
   await expect(page.getByTestId("dialogue")).toContainText("旅程を組みました");
   await snap(page, info, "02-itinerary");
@@ -79,6 +89,7 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   await waitForReply(page);
   await openPanel(page);
   await expect(page.getByTestId("itinerary-panel")).toContainText("第2版");
+  await expect(page.getByTestId("updated-sticker")).toHaveText("更新！");
   await expect(items).toHaveCount(9);
   await expect(page.locator('[data-item-id="craft-hall"]')).toHaveAttribute("data-change", "added");
   await expect(page.locator('[data-item-id="riverside"]')).toHaveAttribute(
@@ -181,9 +192,9 @@ test("キーボードだけで、候補を閉じ、タブを移れる", async ({
   await expect(page.getByTestId("candidates")).toBeVisible();
   await page.keyboard.press("Escape");
 
-  // 旅程・地図・出典のパネルを開き、矢印キーでタブを移る
-  await page.getByRole("button", { name: "旅程・地図・出典を開く" }).focus();
-  await page.keyboard.press("Enter");
+  // X で旅程・地図・出典のパネルを開き、矢印キーでタブを移る
+  await page.keyboard.press("x");
+  await expect(page.getByTestId("itinerary-panel")).toBeVisible();
   await page.getByRole("tab", { name: "旅程" }).focus();
   await page.keyboard.press("ArrowRight");
   await expect(page.getByRole("tab", { name: "地図" })).toBeFocused();
@@ -214,7 +225,7 @@ test("英語に切り替えられる", async ({ page }, info) => {
   await expect(page.getByRole("button", { name: "Come in" })).toBeVisible();
   await page.getByRole("button", { name: "Come in" }).click();
   await expect(page.getByTestId("dialogue")).toContainText("Welcome!");
-  await page.getByRole("button", { name: "Open the plan, map and sources" }).click();
+  await page.getByRole("button", { name: "Plan details" }).click();
   await expect(page.getByRole("tab", { name: "Plan" })).toBeVisible();
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   await snap(page, info, "30-english");

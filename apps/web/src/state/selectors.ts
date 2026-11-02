@@ -1,5 +1,4 @@
 import {
-  type ConversationStage,
   collectItinerarySources,
   type Festival,
   type Itinerary,
@@ -65,20 +64,6 @@ export function shioriReady(state: Pick<AppData, "session" | "verify" | "itinera
     state.session.stage === "shiori" &&
     state.verify.result === "as_planned"
   );
-}
-
-/** 相談の進み具合の段（ヘッダーに出す）。修正は旅程の段に、確認はしおりの前の段に含める */
-export const PROGRESS_STEPS = [
-  "hearing",
-  "candidates",
-  "itinerary",
-  "verifying",
-  "shiori",
-] as const;
-export type ProgressStep = (typeof PROGRESS_STEPS)[number];
-
-export function progressStep(stage: ConversationStage): ProgressStep {
-  return stage === "revising" ? "itinerary" : stage;
 }
 
 export interface ConditionChip {
@@ -224,4 +209,31 @@ export function currentLine(state: Pick<AppData, "messages" | "session">): Dialo
 /** いま動いているスタッフ（待機していない人）。画面の上の「店内のようす」に出す */
 export function busyStaff(state: Pick<AppData, "staff">): StaffId[] {
   return (Object.keys(state.staff) as StaffId[]).filter((id) => state.staff[id].phase !== "idle");
+}
+
+// ---------------------------------------------------------------------------
+// ゲームの画面の上のタブ
+
+export const SECTIONS = ["guide", "candidates", "shiori", "confirm"] as const;
+export type Section = (typeof SECTIONS)[number];
+
+/**
+ * いま光らせるタブ。開いているもの（候補・パネル）を先に見て、なければ相談の進み具合で決める。
+ * 聞き取りと候補は「祭りの候補」、旅程と修正は「旅程の案内」、確定前の確認は「確認」、しおりは「旅のしおり」
+ */
+export function currentSection(state: Pick<AppData, "ui" | "session">): Section {
+  if (state.ui.candidatesOpen) return "candidates";
+  if (state.ui.drawerOpen) return state.ui.tab === "sources" ? "confirm" : "guide";
+  switch (state.session.stage) {
+    case "hearing":
+    case "candidates":
+      return "candidates";
+    case "itinerary":
+    case "revising":
+      return "guide";
+    case "verifying":
+      return "confirm";
+    case "shiori":
+      return "shiori";
+  }
 }

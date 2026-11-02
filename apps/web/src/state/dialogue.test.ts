@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { clientError } from "./errors";
 import { applyEvent } from "./events";
 import { initialData } from "./initial";
-import { busyStaff, currentLine } from "./selectors";
+import { busyStaff, currentLine, currentSection } from "./selectors";
 import { beginTurn, endTurn } from "./transitions";
 import type { AppData } from "./types";
 
@@ -90,5 +90,31 @@ describe("会話の窓のいまの一言", () => {
     });
     state = endTurn(state, null);
     expect(currentLine(state)).toMatchObject({ kind: "concierge", text: "どちらにしますか。" });
+  });
+});
+
+describe("ゲームの画面の上のタブ", () => {
+  it("開いているものを先に見て、なければ相談の進み具合で決める", () => {
+    const state = fresh();
+    expect(currentSection(state)).toBe("candidates");
+    expect(currentSection({ ...state, session: { ...state.session, stage: "itinerary" } })).toBe(
+      "guide",
+    );
+    expect(currentSection({ ...state, session: { ...state.session, stage: "verifying" } })).toBe(
+      "confirm",
+    );
+    expect(currentSection({ ...state, session: { ...state.session, stage: "shiori" } })).toBe(
+      "shiori",
+    );
+    expect(
+      currentSection({ ...state, ui: { ...state.ui, drawerOpen: true, tab: "sources" } }),
+    ).toBe("confirm");
+    expect(
+      currentSection({
+        ...state,
+        session: { ...state.session, stage: "itinerary" },
+        ui: { ...state.ui, candidatesOpen: true },
+      }),
+    ).toBe("candidates");
   });
 });

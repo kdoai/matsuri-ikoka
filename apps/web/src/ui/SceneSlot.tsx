@@ -1,6 +1,7 @@
 import { Component, type ReactNode, Suspense } from "react";
-import { useApp } from "../state/react";
+import { useApp, useT } from "../state/react";
 import { type FrameInsets, selectSceneProps } from "../state/scene";
+import { TalkButton } from "./Hud";
 import { useReducedMotion } from "./hooks";
 import { StaffFloor } from "./StaffPanel";
 import { ShopScene, useScene3d } from "./scene3d";
@@ -26,7 +27,15 @@ class SceneBoundary extends Component<{ fallback: ReactNode; children: ReactNode
 }
 
 /** 2D の見取り図は、会話の窓やパネルに隠れない場所に置く */
-function FloorBox({ frame, hidden = false }: { frame: FrameInsets; hidden?: boolean }) {
+function FloorBox({
+  frame,
+  hidden = false,
+  onTalk,
+}: {
+  frame: FrameInsets;
+  hidden?: boolean;
+  onTalk?: () => void;
+}) {
   return (
     <div
       className="absolute overflow-hidden rounded-3xl shadow-2xl ring-4 ring-wood-700/60"
@@ -39,28 +48,34 @@ function FloorBox({ frame, hidden = false }: { frame: FrameInsets; hidden?: bool
       aria-hidden={hidden}
     >
       <StaffFloor />
+      {hidden || onTalk === undefined ? null : (
+        <div className="-translate-x-1/2 absolute bottom-3 left-1/2">
+          <TalkButton onTalk={onTalk} />
+        </div>
+      )}
     </div>
   );
 }
 
-export function GameStage({ frame }: { frame: FrameInsets }) {
+export function GameStage({ frame, onTalk }: { frame: FrameInsets; onTalk: () => void }) {
+  const t = useT();
   const reducedMotion = useReducedMotion();
   const props = useApp((state) => selectSceneProps(state, reducedMotion, frame));
   const use3d = useScene3d() && ShopScene !== null;
   return (
     <div className="absolute inset-0" data-testid="game-stage">
       {use3d && ShopScene !== null ? (
-        <SceneBoundary fallback={<FloorBox frame={frame} />}>
+        <SceneBoundary fallback={<FloorBox frame={frame} onTalk={onTalk} />}>
           {/* 3D を読み込む間の見取り図。文字は「店内のようす」で読めるので、読み上げからは外す */}
           <FloorBox frame={frame} hidden />
           <Suspense fallback={null}>
             <div className="absolute inset-0">
-              <ShopScene {...props} />
+              <ShopScene {...props} onTalk={onTalk} talkLabel={t.hud.hints.talk} />
             </div>
           </Suspense>
         </SceneBoundary>
       ) : (
-        <FloorBox frame={frame} />
+        <FloorBox frame={frame} onTalk={onTalk} />
       )}
     </div>
   );
