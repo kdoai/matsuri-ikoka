@@ -1,63 +1,114 @@
 import { FestivalSchema } from "@matsuri-ikoka/schema";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import type { ChatTransport, FestivalSource, OnSseMessage } from "./types";
-import { errorCodeForStatus, TransportError } from "./types";
+import { errorFromResponse, TransportError } from "./types";
 
 // 接客サーバーとの通信。返答は POST で送りながら SSE で受け取る（docs/spec/api.md）。
+// 公開している URL では、/api のすべての呼び出しに合言葉のヘッダーを付ける。合言葉は URL に入れない。
 
 const EVENT_STREAM = "text/event-stream";
 
-async function postStream(
-  path: string,
-  method: "POST" | "PATCH",
-  body: unknown,
-  onMessage: OnSseMessage,
-  signal: AbortSignal,
-): Promise<void> {
-  await fetchEventSource(path, {
-    method,
-    headers: { "Content-Type": "application/json", Accept: EVENT_STREAM },
-    body: JSON.stringify(body),
-    signal,
-    // 別のタブに移っても接続を張り直さない（張り直すと、同じ発言をもう一度送ってしまう）
-    openWhenHidden: true,
-    async onopen(response) {
-      if (!response.ok) {
-        throw new TransportError(errorCodeForStatus(response.status), response.status);
-      }
-      if (!response.headers.get("content-type")?.startsWith(EVENT_STREAM)) {
-        throw new TransportError("invalid_event", response.status);
-      }
-    },
-    onmessage(message) {
-      // 種類のない行（空のコメントで接続を保つ行など）は読み飛ばす
-      if (message.event !== "") {
-        onMessage({ event: message.event, data: message.data });
-      }
-    },
-    onerror(error) {
-      // 自動では再接続しない。会話欄に「もう一度送る」を出す
-      throw error instanceof TransportError ? error : new TransportError("connection_lost");
-    },
-  });
+/** 合言葉を送るヘッダー（接客サーバーの routes/guard.ts と同じ名前） */
+export const PASSCODE_HEADER = "x-access-passcode";
+
+/** HTTP のヘッダーで送れる合言葉か（半角の英数字と記号だけ） */
+export function isSendablePasscode(value: string): boolean {
+  return /^[!-~]+$/.test(value);
 }
 
-export function createServerTransport(): ChatTransport {
+/** 合言葉をメモリにだけ持つ。通信の口と祭りのデータの読み込み口で共有する */
+export interface PasscodeHolder {
+  get(): string | null;
+  set(passcode: string): void;
+}
+
+export function createPasscodeHolder(): PasscodeHolder {
+  let passcode: string | null = null;
+  return {
+    get: () => passcode,
+    set(value) {
+      passcode = value === "" ? null : value;
+    },
+  };
+}
+
+function authHeaders(passcode: PasscodeHolder): Record<string, string> {
+  const value = passcode.get();
+  return value === null ? {} : { [PASSCODE_HEADER]: value };
+}
+
+export interface ServerTransportOptions {
+  passcode?: PasscodeHolder;
+  /** 接客サーバーが記録の再生（mock）で動いているとき、再生する記録の名前 */
+  sample?: string | null;
+  fetch?: typeof fetch;
+}
+
+export function createServerTransport(options: ServerTransportOptions = {}): ChatTransport {
+  const passcode = options.passcode ?? createPasscodeHolder();
+  const fetchImpl: typeof fetch = options.fetch ?? ((input, init) => globalThis.fetch(input, init));
+
+  const postStream = async (
+    path: string,
+    method: "POST" | "PATCH",
+    body: unknown,
+    onMessage: OnSseMessage,
+    signal: AbortSignal,
+  ): Promise<void> => {
+    await fetchEventSource(path, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: EVENT_STREAM,
+        ...authHeaders(passcode),
+      },
+      body: JSON.stringify(body),
+      signal,
+      fetch: fetchImpl,
+      // 別のタブに移っても接続を張り直さない（張り直すと、同じ発言をもう一度送ってしまう）
+      openWhenHidden: true,
+      async onopen(response) {
+        if (!response.ok) {
+          // SSE を始める前に断られた。本文の code・message・retryable を読む
+          throw await errorFromResponse(response, true);
+        }
+        if (!response.headers.get("content-type")?.startsWith(EVENT_STREAM)) {
+          throw new TransportError("invalid_event", { status: response.status });
+        }
+      },
+      onmessage(message) {
+        // 種類のない行（空のコメントで接続を保つ行など）は読み飛ばす
+        if (message.event !== "") {
+          onMessage({ event: message.event, data: message.data });
+        }
+      },
+      onerror(error) {
+        // 自動では再接続しない。会話欄に「もう一度送る」を出す
+        throw error instanceof TransportError ? error : new TransportError("connection_lost");
+      },
+    });
+  };
+
   return {
     kind: "server",
     async startSession(signal) {
-      const response = await fetch("/api/session", { method: "POST", signal });
+      const response = await fetchImpl("/api/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...authHeaders(passcode) },
+        body: JSON.stringify(options.sample ? { sample: options.sample } : {}),
+        ...(signal === undefined ? {} : { signal }),
+      });
       if (!response.ok) {
-        throw new TransportError(errorCodeForStatus(response.status), response.status);
+        throw await errorFromResponse(response, false);
       }
-      const body: unknown = await response.json();
+      const body: unknown = await response.json().catch(() => undefined);
       if (
         typeof body !== "object" ||
         body === null ||
         !("sessionId" in body) ||
         typeof body.sessionId !== "string"
       ) {
-        throw new TransportError("invalid_event", response.status);
+        throw new TransportError("invalid_event", { status: response.status });
       }
       return body.sessionId;
     },
@@ -67,15 +118,27 @@ export function createServerTransport(): ChatTransport {
     updatePreferences(request, onMessage, signal) {
       return postStream("/api/preferences", "PATCH", request, onMessage, signal);
     },
+    setPasscode(value) {
+      passcode.set(value);
+    },
+    hasPasscode() {
+      return passcode.get() !== null;
+    },
   };
 }
 
-/** 祭りのデータを接客サーバーから読む。掲載停止の祭りはサーバーが返さない */
-export function createServerFestivalSource(): FestivalSource {
+/** 祭りのデータを接客サーバーから読む。掲載停止・見つからない祭りは 404 で、null を返す */
+export function createServerFestivalSource(
+  options: { passcode?: PasscodeHolder; fetch?: typeof fetch } = {},
+): FestivalSource {
+  const passcode = options.passcode ?? createPasscodeHolder();
+  const fetchImpl: typeof fetch = options.fetch ?? ((input, init) => globalThis.fetch(input, init));
   return {
     async load(id) {
       try {
-        const response = await fetch(`/api/festivals/${encodeURIComponent(id)}`);
+        const response = await fetchImpl(`/api/festivals/${encodeURIComponent(id)}`, {
+          headers: authHeaders(passcode),
+        });
         if (!response.ok) {
           return null;
         }

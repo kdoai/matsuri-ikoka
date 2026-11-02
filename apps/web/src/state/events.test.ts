@@ -7,10 +7,11 @@ import {
 import { fictionalItinerary, fictionalSource } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
 import sampleJson from "../../../../data/samples/conversations/suzunari-day-trip.json";
+import { clientError } from "./errors";
 import { applyEvent } from "./events";
 import { initialData } from "./initial";
 import { allQuestsDone, itemChange, shioriReady } from "./selectors";
-import { beginTurn, endTurn, settleStaff } from "./transitions";
+import { beginTurn, endTurn, resetForNewSession, settleStaff } from "./transitions";
 import type { AppData } from "./types";
 
 const sample: SampleConversation = SampleConversationSchema.parse(sampleJson);
@@ -458,7 +459,7 @@ describe("エラーと送り直し", () => {
       message: "8月16日に行ける祭り",
       preferences: fresh().preferences,
     });
-    state = endTurn(state, "upstream_unavailable");
+    state = endTurn(state, clientError("upstream_unavailable"));
     state = beginTurn(state, {
       kind: "chat",
       message: "8月16日に行ける祭り",
@@ -475,9 +476,22 @@ describe("エラーと送り直し", () => {
   it("合言葉の誤りや回数の上限は、送り直しても直らない", () => {
     const state = endTurn(
       beginTurn(fresh(), { kind: "chat", message: "こんにちは", preferences: fresh().preferences }),
-      "rate_limited",
+      clientError("rate_limited"),
     );
     expect(state.messages.at(-1)).toMatchObject({ code: "rate_limited", retryable: false });
+  });
+
+  it("SSE の前に断られたら、サーバーの一文と送り直せるかをそのまま出す", () => {
+    const state = endTurn(
+      beginTurn(fresh(), { kind: "chat", message: "こんにちは", preferences: fresh().preferences }),
+      { code: "bad_request", message: "前の返事を作っています。", retryable: true },
+    );
+    expect(state.messages.at(-1)).toMatchObject({
+      kind: "error",
+      code: "bad_request",
+      message: "前の返事を作っています。",
+      retryable: true,
+    });
   });
 });
 
@@ -556,5 +570,23 @@ describe("時間切れのあと（終わっていないツールの tool.end が
       data: { stage: "itinerary", conditions: {}, preferences: state.preferences },
     });
     expect(state.quests.route.status).toBe("done");
+  });
+});
+
+describe("相談を覚えていなかったとき", () => {
+  it("旅程や候補を片付け、会話・こだわり・送り直す発言は残して、知らせる", () => {
+    let state = playTurns(2);
+    const lastRequest = state.session.lastRequest;
+    state = resetForNewSession(state);
+    expect(state.itinerary.current).toBeNull();
+    expect(state.candidates).toEqual([]);
+    expect(state.session).toMatchObject({ id: null, status: "closed", lastRequest });
+    expect(state.preferences.spot).toBe("hidden");
+    expect(state.messages.filter((entry) => entry.kind === "user")).toHaveLength(2);
+    expect(state.messages.at(-1)).toMatchObject({
+      kind: "error",
+      code: "session_lost",
+      retryable: true,
+    });
   });
 });

@@ -5,7 +5,11 @@ import { detectLocale } from "./i18n";
 import { StoreProvider } from "./state/react";
 import { createAppStore } from "./state/store";
 import { resolveTransport } from "./transport/mode";
-import { createServerFestivalSource, createServerTransport } from "./transport/server";
+import {
+  createPasscodeHolder,
+  createServerFestivalSource,
+  createServerTransport,
+} from "./transport/server";
 import type { ChatTransport, FestivalSource } from "./transport/types";
 import "./index.css";
 
@@ -27,7 +31,12 @@ async function connect(): Promise<{ transport: ChatTransport; festivals: Festiva
       festivals: createSampleFestivalSource(),
     };
   }
-  return { transport: createServerTransport(), festivals: createServerFestivalSource() };
+  // 合言葉は、相談の通信と祭りのデータの読み込みで共有する（メモリにだけ持つ）
+  const passcode = createPasscodeHolder();
+  return {
+    transport: createServerTransport({ passcode, sample: choice.sampleId }),
+    festivals: createServerFestivalSource({ passcode }),
+  };
 }
 
 const root = document.getElementById("root");
