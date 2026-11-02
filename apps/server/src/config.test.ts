@@ -15,7 +15,7 @@ describe("readConfig", () => {
       mode: "mock",
       production: false,
       festivalsDir: undefined,
-      models: { concierge: undefined, staff: undefined },
+      models: { concierge: undefined, staff: undefined, planner: undefined, verifier: undefined },
       accessPasscode: null,
       dailyChatLimit: null,
       replaySpeed: 1,
@@ -45,11 +45,25 @@ describe("readConfig", () => {
       port: 9000,
       mode: "live",
       production: true,
-      models: { concierge: "model-a", staff: "model-b" },
+      models: { concierge: "model-a", staff: "model-b", planner: "model-b", verifier: "model-b" },
       accessPasscode: "fictional",
       dailyChatLimit: 100,
       maxBudgetUsd: 0.5,
       webDist: path.resolve(here, "../../..", "apps", "web", "dist"),
+    });
+  });
+
+  it("旅程係と再確認のモデルは、指定があればスタッフのモデルより優先する", () => {
+    const config = readConfig(
+      { MODEL_STAFF: "model-b", MODEL_PLANNER: "model-c", MODEL_VERIFIER: "model-d" },
+      here,
+    );
+
+    expect(config.models).toEqual({
+      concierge: undefined,
+      staff: "model-b",
+      planner: "model-c",
+      verifier: "model-d",
     });
   });
 

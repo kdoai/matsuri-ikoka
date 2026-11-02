@@ -98,9 +98,20 @@ const STAFF_DESCRIPTIONS: Record<Staff, string> = {
 
 const STAFF_MAX_TURNS: Record<Staff, number> = { researcher: 4, scout: 4, planner: 10 };
 
+/**
+ * 役割ごとのモデル名（環境変数から。コードに書き込まない）。
+ * staff は祭り調査係と周辺係、planner は旅程係、verifier は確定前の再確認
+ */
+export interface AgentModels {
+  concierge?: string | undefined;
+  staff?: string | undefined;
+  planner?: string | undefined;
+  verifier?: string | undefined;
+}
+
 export interface AgentOptionsInput {
   prompts: AgentPrompts;
-  models: { concierge?: string | undefined; staff?: string | undefined };
+  models: AgentModels;
   /** 1回の発言の費用の上限（米ドル）。超えると結果が error_max_budget_usd で止まる */
   maxBudgetUsd?: number | undefined;
   mcpServer: McpSdkServerConfigWithInstance;
@@ -118,7 +129,8 @@ function staffAgent(staff: Staff, input: AgentOptionsInput): AgentDefinition {
     // 共通の前置きを先に置き、3人で同じ文字列にする（プロンプトキャッシュを共有する）
     prompt: `${input.prompts.common}\n\n${input.prompts[staff]}`,
     tools: TOOLS_BY_STAFF[staff].map((tool) => `${MCP_TOOL_PREFIX}${tool}`),
-    model: input.models.staff ?? "inherit",
+    model:
+      (staff === "planner" ? input.models.planner : undefined) ?? input.models.staff ?? "inherit",
     maxTurns: STAFF_MAX_TURNS[staff],
     // スタッフの仕事は決まった道具を呼んで報告するだけなので、浅く速く考えさせる
     effort: "low",

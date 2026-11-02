@@ -5,7 +5,13 @@ import { describe, expect, it } from "vitest";
 import { testFestival } from "../domain/testFestivals";
 import { createMatsuriMcpServer } from "../tools/mcpServer";
 import { testToolContext } from "../tools/testContext";
-import { agentEnv, buildAgentOptions, createAgentWorkdir, ISOLATION_ENV } from "./options";
+import {
+  type AgentModels,
+  agentEnv,
+  buildAgentOptions,
+  createAgentWorkdir,
+  ISOLATION_ENV,
+} from "./options";
 import type { AgentPrompts } from "./prompts";
 import { buildVerifierOptions } from "./webVerifier";
 
@@ -18,9 +24,7 @@ const prompts: AgentPrompts = {
   verifier: "再確認",
 };
 
-function options(
-  overrides: { models?: { concierge?: string; staff?: string }; resume?: string } = {},
-) {
+function options(overrides: { models?: AgentModels; resume?: string } = {}) {
   return buildAgentOptions({
     prompts,
     models: overrides.models ?? {},
@@ -107,6 +111,16 @@ describe("接客エージェントを開発環境から切り離す", () => {
     expect(withModels.agents?.planner?.model).toBe("model-b");
     expect(withoutModels.model).toBeUndefined();
     expect(withoutModels.agents?.planner?.model).toBe("inherit");
+  });
+
+  it("旅程係だけ別のモデルにでき、祭り調査係と周辺係はスタッフのモデルのまま", () => {
+    const opts = options({
+      models: { concierge: "model-a", staff: "model-b", planner: "model-c" },
+    });
+
+    expect(opts.agents?.planner?.model).toBe("model-c");
+    expect(opts.agents?.researcher?.model).toBe("model-b");
+    expect(opts.agents?.scout?.model).toBe("model-b");
   });
 
   it("考える深さはコンシェルジュ medium・スタッフ low。スタッフの指示は共通の前置きから始める", () => {
