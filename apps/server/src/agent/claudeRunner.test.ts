@@ -241,10 +241,7 @@ describe("ClaudeAgentRunner", () => {
       },
     ]);
 
-    await expect(run("こんにちは")).rejects.toMatchObject({
-      code: "upstream_unavailable",
-      retryable: false,
-    });
+    await expect(run("こんにちは")).rejects.toMatchObject({ code: "internal", retryable: false });
     expect(calls).toHaveLength(1);
   });
 
@@ -257,7 +254,7 @@ describe("ClaudeAgentRunner", () => {
       },
     ]);
 
-    await expect(run("こんにちは")).rejects.toMatchObject({ code: "upstream_unavailable" });
+    await expect(run("こんにちは")).rejects.toMatchObject({ code: "internal", retryable: true });
     expect(calls).toHaveLength(1);
   });
 });

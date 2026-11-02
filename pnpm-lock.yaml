@@ -26,6 +26,9 @@ importers:
       '@hono/node-server':
         specifier: 2.1.5
         version: 2.1.5(hono@4.13.16)
+      '@matsuri-ikoka/agent-kit':
+        specifier: workspace:*
+        version: link:../../packages/agent-kit
       '@matsuri-ikoka/schema':
         specifier: workspace:*
         version: link:../../packages/schema

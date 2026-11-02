@@ -1,9 +1,11 @@
 import { randomBytes } from "node:crypto";
+import { setTimeout as sleep } from "node:timers/promises";
 import {
   type SDKMessage,
   type SDKResultMessage,
   query as sdkQuery,
 } from "@anthropic-ai/claude-agent-sdk";
+import { backoffMs } from "@matsuri-ikoka/agent-kit";
 import type { IsoDate } from "@matsuri-ikoka/schema";
 import type { FestivalStore } from "../data/festivalStore";
 import type { ItineraryStore } from "../session/sessionStore";
@@ -12,6 +14,7 @@ import { createMatsuriMcpServer } from "../tools/mcpServer";
 import type { FestivalVerifier } from "../tools/verifier";
 import type { WeatherService } from "../tools/weather";
 import { staffBriefing, turnPrompt } from "./briefing";
+import { failureFromException, failureFromResult, toAgentError } from "./failures";
 import { createAgentHooks } from "./hooks";
 import { buildAgentOptions } from "./options";
 import type { AgentPrompts } from "./prompts";
@@ -128,73 +131,9 @@ export class ReplyStream {
   /** 最後まで受け取ったあと、残りの文を流し、失敗なら AgentError を投げる */
   finish(): void {
     this.#flush(true);
-    const result = this.#result;
-    if (result === null) {
-      throw new AgentError(
-        "upstream_unavailable",
-        "返答を最後まで受け取れませんでした。もう一度送ってください。",
-        true,
-      );
-    }
-    if (result.subtype === "error_max_turns") {
-      throw new AgentError(
-        "internal",
-        "考えがまとまりきりませんでした。もう一度送ってください。",
-        true,
-      );
-    }
-    if (result.subtype !== "success" || result.is_error) {
-      throw errorFromAssistant(this.#assistantError);
-    }
+    const failure = failureFromResult(this.#result, this.#assistantError);
+    if (failure !== null) throw toAgentError(failure);
   }
-}
-
-/** Claude からの失敗の種類を、利用者に見せるエラーに変える */
-export function errorFromAssistant(kind: string | null): AgentError {
-  switch (kind) {
-    case "rate_limit":
-    case "overloaded":
-    case "server_error":
-      return new AgentError(
-        "upstream_unavailable",
-        "いま混み合っています。少し待ってから、もう一度送ってください。",
-        true,
-      );
-    case "authentication_failed":
-    case "oauth_org_not_allowed":
-    case "account_on_hold":
-    case "billing_error":
-    case "cloud_credential_error":
-      console.error(JSON.stringify({ kind: "agent_unavailable", reason: kind }));
-      return new AgentError(
-        "upstream_unavailable",
-        "いまは接客の準備ができていません。時間をおいて試してください。",
-        false,
-      );
-    default:
-      return new AgentError(
-        "internal",
-        "うまく返事を作れませんでした。もう一度送ってください。",
-        true,
-      );
-  }
-}
-
-/** query が投げた例外を、利用者に見せるエラーに変える。認証の失敗はやり直さない */
-export function errorFromException(error: unknown): AgentError {
-  if (error instanceof AgentError) return error;
-  const text = error instanceof Error ? error.message : String(error);
-  if (/authenticat|oauth|api key|credential|\b40[13]\b/i.test(text)) {
-    return errorFromAssistant("authentication_failed");
-  }
-  if (/overloaded|rate.?limit|\b429\b|\b5\d\d\b/i.test(text))
-    return errorFromAssistant("overloaded");
-  console.error("[agent] query failed", error);
-  return new AgentError(
-    "upstream_unavailable",
-    "接客の担当とつながりませんでした。もう一度送ってください。",
-    true,
-  );
 }
 
 export class ClaudeAgentRunner implements AgentRunner {
@@ -269,7 +208,8 @@ export class ClaudeAgentRunner implements AgentRunner {
       try {
         await attempt(session.agentSessionId ?? undefined);
       } catch (error) {
-        throw signal.aborted ? error : errorFromException(error);
+        if (signal.aborted || error instanceof AgentError) throw error;
+        throw toAgentError(failureFromException(error));
       }
     };
 
@@ -279,6 +219,7 @@ export class ClaudeAgentRunner implements AgentRunner {
       // まだ何も送っていなければ、1回だけやり直す。続きの会話を読めなかったときは、店の記録だけで新しく始める
       if (!(failure instanceof AgentError) || !failure.retryable || emitted > 0) throw failure;
       if (!initSeen) session.agentSessionId = null;
+      await sleep(backoffMs(1), undefined, { signal });
       await run();
     } finally {
       session.stage = nextStage(session.stage, turn, session.itineraryId !== null);

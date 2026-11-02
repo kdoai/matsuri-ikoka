@@ -1,5 +1,4 @@
-import { ErrorEventSchema, type SseEventOf } from "@matsuri-ikoka/schema";
-import type { ErrorCode } from "../agent/runner";
+import { type ErrorCode, ErrorEventSchema, type SseEventOf } from "@matsuri-ikoka/schema";
 
 export type ErrorBody = SseEventOf<"error">["data"];
 

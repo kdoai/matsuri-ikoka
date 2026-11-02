@@ -1,5 +1,5 @@
 import type { Options, SDKMessage } from "@anthropic-ai/claude-agent-sdk";
-import type { ConversationStage, ERROR_CODES, Preferences, SseEvent } from "@matsuri-ikoka/schema";
+import type { ConversationStage, ErrorCode, Preferences, SseEvent } from "@matsuri-ikoka/schema";
 import type { Session } from "../session/sessionStore";
 import type { TurnState } from "../tools/context";
 
@@ -27,8 +27,6 @@ export interface AgentRunner {
   readonly mode: AgentMode;
   runTurn(input: TurnInput, emit: EmitEvent): Promise<void>;
 }
-
-export type ErrorCode = (typeof ERROR_CODES)[number];
 
 /** 利用者に見せる失敗。message は短い一文。詳しいことはサーバーのログに残す */
 export class AgentError extends Error {
