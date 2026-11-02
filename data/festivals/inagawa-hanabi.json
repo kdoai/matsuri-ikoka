@@ -356,6 +356,46 @@
           "confidence": "corroborated"
         }
       ]
+    },
+    {
+      "id": "kobayashi-ichizo-memorial-museum",
+      "name": "小林一三記念館",
+      "kind": "sightseeing",
+      "summary": "阪急の創業者・小林一三の旧邸「雅俗山荘」を中心に、その事績を写真や資料で紹介する施設。茶室も見られる。阪急 池田駅から徒歩13分。月曜休みだが祝日なら開き翌平日休み",
+      "location": {
+        "lat": 34.8247,
+        "lng": 135.4282
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["mon"],
+      "price": "一般・学生（高校生以上）300円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.hankyu-bunka.or.jp/kinenkan/guide/",
+          "title": "阪急文化財団 小林一三記念館 ご利用案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.hankyu-bunka.or.jp/kinenkan/",
+          "title": "阪急文化財団 小林一三記念館",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.hankyu-bunka.or.jp/access/",
+          "title": "阪急文化財団 アクセス",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
     }
   ],
   "sources": [
