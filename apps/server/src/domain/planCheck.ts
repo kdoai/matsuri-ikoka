@@ -102,6 +102,7 @@ export function occurrenceOn(festival: Festival, date: IsoDate): Occurrence | nu
   );
 }
 
+/** 時刻の幅を、旅の日の0時からの分にする。終わりが始まりより前なら日をまたぐ */
 function clockRange(start: string, end: string): [number, number] {
   const from = toMinutes(start);
   let to = toMinutes(end);
@@ -109,7 +110,21 @@ function clockRange(start: string, end: string): [number, number] {
   return [from, to];
 }
 
-function checkSpot(item: PlanItem, spot: NearbySpot, date: IsoDate, errors: PlanIssue[]) {
+/**
+ * 予定（タイムラインの分）が収まる、営業時間の窓のずれ（日）。収まらなければ null。
+ * 日をまたぐ予定と、前の晩から続く営業時間（18:00〜02:00 の店に 01:00 に寄るなど）を扱うため、
+ * 旅の日の前の日・当日・次の日の窓を順に試す
+ */
+function fittingDay(timed: TimedItem, open: number, close: number): number | null {
+  for (const day of [0, -1, 1]) {
+    const offset = day * 1440;
+    if (timed.start >= open + offset && timed.end <= close + offset) return day;
+  }
+  return null;
+}
+
+function checkSpot(timed: TimedItem, spot: NearbySpot, date: IsoDate, errors: PlanIssue[]) {
+  const { item } = timed;
   if (isClosedOn(spot, date)) {
     errors.push({
       code: "closed_day",
@@ -120,14 +135,19 @@ function checkSpot(item: PlanItem, spot: NearbySpot, date: IsoDate, errors: Plan
   }
   if (spot.hours === null) return;
   const [open, close] = clockRange(spot.hours.open, spot.hours.close);
-  const [start, end] = clockRange(item.start, item.end);
-  if (start < open || end > close) {
+  const day = fittingDay(timed, open, close);
+  if (day === null) {
     errors.push({
       code: "outside_hours",
       itemId: item.id,
       message: `「${spot.name}」の営業時間（${spot.hours.open}〜${spot.hours.close}）の外に予定が入っています`,
     });
-  } else if (spot.hours.lastEntry !== undefined && start > toMinutes(spot.hours.lastEntry)) {
+    return;
+  }
+  if (spot.hours.lastEntry === undefined) return;
+  let lastEntry = toMinutes(spot.hours.lastEntry);
+  if (lastEntry < open) lastEntry += 1440;
+  if (timed.start > lastEntry + day * 1440) {
     errors.push({
       code: "after_last_entry",
       itemId: item.id,
@@ -213,7 +233,8 @@ export function checkPlan(
   for (const festival of festivals.values()) {
     for (const spot of festival.nearby) spots.set(spot.id, spot);
   }
-  for (const item of plan.items) {
+  for (const timed of timeline) {
+    const { item } = timed;
     if (item.spotId === undefined) continue;
     const spot = spots.get(item.spotId);
     if (spot === undefined) {
@@ -223,7 +244,7 @@ export function checkPlan(
         message: `「${item.name}」（${item.spotId}）は、祭りの周辺の場所のデータにありません`,
       });
     } else {
-      checkSpot(item, spot, plan.date, errors);
+      checkSpot(timed, spot, plan.date, errors);
     }
   }
 
@@ -257,10 +278,10 @@ function checkFestivalTime(
   const entry = timeline[index];
   if (entry === undefined) return;
 
+  // 開催時間は旅の日のもの。予定はタイムラインの分（日をまたぐと 1440 を超える）で比べる
   if (occurrence.start !== null && occurrence.end !== null) {
     const [open, close] = clockRange(occurrence.start, occurrence.end);
-    const [start, end] = clockRange(entry.item.start, entry.item.end);
-    if (start < open || end > close) {
+    if (entry.start < open || entry.end > close) {
       errors.push({
         code: "festival_time_conflict",
         itemId: entry.item.id,
@@ -279,10 +300,9 @@ function checkFestivalTime(
   const walkToVenue = timeline[previousIndex + 1]?.item.move?.minutes[1] ?? 0;
   const arrival = previous.end + walkToVenue;
   const buffer = arrivalBufferMinutes(festival);
-  const festivalStart =
-    occurrence.start === null
-      ? entry.start
-      : toMinutes(occurrence.start) + (entry.start - (entry.start % 1440));
+  // 祭りに加わる時刻（タイムラインの分）の前に余裕をとる。祭りの予定は開催時間の中に収めるので、
+  // 開始と同じか、開始より後（遅れて加わる・日をまたいでから加わる）になる
+  const festivalStart = entry.start;
   if (arrival > festivalStart - buffer) {
     errors.push({
       code: "arrival_buffer",
