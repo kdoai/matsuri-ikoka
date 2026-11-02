@@ -46,6 +46,9 @@ jobs:
       - name: テスト
         run: pnpm test
 
+      - name: 祭りのデータの検証
+        run: pnpm validate:data
+
       - name: ビルド
         run: pnpm build
 
