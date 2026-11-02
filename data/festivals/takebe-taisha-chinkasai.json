@@ -1,0 +1,392 @@
+{
+  "id": "takebe-taisha-chinkasai",
+  "name": {
+    "ja": "鎮火祭",
+    "en": "Takebe Taisha Chinkasai"
+  },
+  "category": "fire",
+  "municipalities": [
+    {
+      "prefecture": "滋賀県",
+      "name": "大津市"
+    }
+  ],
+  "venue": {
+    "name": "建部大社",
+    "lat": 34.9734,
+    "lng": 135.9138
+  },
+  "scaleTier": "XS",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "本殿前で焚いた火の炎を、剣で斬って鎮める神事",
+    "日本武尊が向火で火攻めを逃れた故事にちなむ",
+    "1年の防火と火難除けを祈る",
+    "日本武尊を祀る近江国一之宮で行われる"
+  ],
+  "trivia": [
+    {
+      "text": "日本武尊が東征の途中で火攻めにあい、刈草に火を付けた向火で難を逃れた故事にちなむ神事",
+      "source": {
+        "url": "https://rurubu.jp/andmore/spot/20000311",
+        "title": "るるぶ&more. 鎮火祭・火の神事",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "日本武尊を祀る神社は全国に多いが、建部大社はその中でも最も古いものの一つ",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/R2-01369.html",
+        "title": "観光庁 地域観光資源の多言語解説文データベース 建部大社",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "本殿の前に並ぶ御神木の三本杉は、一夜で育ったと伝わる",
+      "source": {
+        "url": "https://otsu.or.jp/thingstodo/spot49/",
+        "title": "びわ湖大津観光協会 建部大社",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "捕らわれた源頼朝がここで前途を祈ったと『平治物語』にあり、源氏再興の後に神宝と神領を寄せた",
+      "source": {
+        "url": "https://takebetaisha.jp/about/",
+        "title": "建部大社 由緒",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://takebetaisha.jp/events/",
+        "title": "建部大社 主な行事",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000311",
+        "title": "るるぶ&more. 鎮火祭・火の神事（料金は無料）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-26",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "例年11月26日（2026年は木曜）。本殿前で実際に火を焚き、その炎を剣で斬って鎮め、1年の防火と火難除けを祈る。始まる時刻は公式の案内に書かれていない",
+      "sources": [
+        {
+          "url": "https://takebetaisha.jp/events/",
+          "title": "建部大社 主な行事（11月26日 鎮火祭。年の記載なし）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000311",
+          "title": "るるぶ&more. 鎮火祭・火の神事（2026年11月26日）",
+          "checkedAt": "2026-11-02",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "京阪 唐橋前駅",
+        "walkMinutes": [10, 15],
+        "note": "京阪石山坂本線。びわ湖大津観光協会の案内では徒歩約15分"
+      },
+      {
+        "name": "近江鉄道バス・帝産バス 建部大社前バス停",
+        "walkMinutes": [1, 6],
+        "note": "JR・京阪石山駅の2のりば（近江鉄道バス：瀬田駅・野郷原ゆき）か3のりば（帝産バス：龍谷大学・牧口ゆき）から。バスは約10分"
+      },
+      {
+        "name": "JR 石山駅",
+        "walkMinutes": [25, 30],
+        "note": "JR琵琶湖線。京阪石山駅と隣り合う"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "京都駅",
+        "minutes": [15, 15],
+        "route": "JR琵琶湖線の快速で石山駅まで（乗り換えなし）"
+      },
+      {
+        "hub": "大阪駅",
+        "minutes": [44, 44],
+        "route": "JR京都線・琵琶湖線の新快速で石山駅まで（乗り換えなし）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://takebetaisha.jp/access/",
+        "title": "建部大社 交通アクセス",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://otsu.or.jp/thingstodo/spot49/",
+        "title": "びわ湖大津観光協会 建部大社",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000311",
+        "title": "るるぶ&more. 鎮火祭・火の神事（石山駅からバス10分）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      },
+      {
+        "url": "https://ekitan.com/transit/route/sf-5198/st-4881",
+        "title": "駅探 乗換案内 京都→石山（2026年11月2日 19時台の出発の検索結果）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      },
+      {
+        "url": "https://ekitan.com/transit/route/sf-5006/st-4881",
+        "title": "駅探 乗換案内 大阪→石山（2026年11月2日 19時台の出発の検索結果）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "seta-no-karahashi",
+      "name": "瀬田の唐橋",
+      "kind": "sightseeing",
+      "summary": "建部大社の西約500mで瀬田川に架かる、日本三名橋の一つ。近江八景「瀬田夕照」の地で、「急がば回れ」の由来とも伝わる。今の橋は1979年の架け替えで、旧橋の擬宝珠が残る",
+      "location": {
+        "lat": 34.9757,
+        "lng": 135.9076
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": [],
+      "price": null,
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://otsu.or.jp/thingstodo/spot62/",
+          "title": "びわ湖大津観光協会 瀬田の唐橋",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.biwako-visitors.jp/spot/detail/89/",
+          "title": "滋賀県観光情報 建部大社（瀬田の唐橋の東約500m）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "ishiyamadera",
+      "name": "石山寺",
+      "kind": "sightseeing",
+      "summary": "秋は豊浄殿で「石山寺と紫式部展」（11月30日まで）、11月13日〜29日は紅葉のライトアップ「あたら夜もみじ」がある。ライトアップの催事時は本堂内陣の拝観を止める",
+      "location": {
+        "lat": 34.9606,
+        "lng": 135.9056
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "08:00",
+        "close": "16:30",
+        "lastEntry": "16:00"
+      },
+      "closedDays": [],
+      "price": "入山料 大人600円",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.ishiyamadera.or.jp/guide/fee",
+          "title": "石山寺 拝観料・拝観時間",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.ishiyamadera.or.jp/",
+          "title": "石山寺 公式サイト",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "irori-amisada",
+      "name": "囲炉裏 あみ定",
+      "kind": "food",
+      "summary": "唐橋のほとり、京阪唐橋前駅から徒歩3分の日本料理店。琵琶湖の鮎など滋賀の食材の郷土料理や季節のコースを出し、鮎を大きな囲炉裏で焼く。営業は昼12:00〜14:00と夜18:00〜20:30",
+      "location": {
+        "lat": 34.9714,
+        "lng": 135.9059
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": [],
+      "price": "昼4,980円から、夜6,980円から",
+      "tags": ["indoor", "seating", "local_food"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://irori-amisada.com/%e3%82%a2%e3%82%af%e3%82%bb%e3%82%b9/",
+          "title": "囲炉裏 あみ定 アクセス・営業時間",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://otsu.or.jp/gourmet/spot238/",
+          "title": "びわ湖大津観光協会 囲炉裏 あみ定",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kanou-shojuan-ishiyamadera",
+      "name": "叶 匠壽庵 石山寺店",
+      "kind": "food",
+      "summary": "石山寺の東大門前の和菓子店。名物の石餅は、石山寺の岩に見立てた小豆餡を2つの餅にのせたもの。店内でも食べられる（L.O. 16:00）。石山寺の行事にあわせて延長営業がある。年始などは休みが変わる",
+      "location": {
+        "lat": 34.9607,
+        "lng": 135.9077
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "16:30",
+        "lastEntry": "16:00"
+      },
+      "closedDays": ["wed"],
+      "price": "石餅（2個・お茶付き）400円",
+      "tags": ["indoor", "seating", "local_food"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://kanou.com/gnaviplus/gnaviplus/ishiyamadera/",
+          "title": "叶 匠壽庵 石山寺店",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://otsu.or.jp/gourmet/spot35/",
+          "title": "びわ湖大津観光協会 叶 匠壽庵 石山寺店",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "senshinryo",
+      "name": "淡味の膳処 洗心寮",
+      "kind": "food",
+      "summary": "石山寺の門前の食事処。しじみ釜めしを含む近江の膳などを出す。紅葉のライトアップの11月13日〜29日は夜も営業し、平日は19:30まで（L.O. 18:30）。定休日は不定休",
+      "location": {
+        "lat": 34.9606,
+        "lng": 135.9089
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "19:30",
+        "lastEntry": "18:30"
+      },
+      "closedDays": null,
+      "price": "近江の膳「湖国『夕照』」1,620円から",
+      "tags": ["indoor", "seating", "local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.sensinryo.jp/info/372.html",
+          "title": "洗心寮 石山寺あたら夜もみじ期間中 レストラン夜間営業のご案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.sensinryo.jp/",
+          "title": "洗心寮 公式サイト",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://otsu.or.jp/gourmet/spot10/",
+          "title": "びわ湖大津観光協会 淡味の膳処 洗心寮",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://takebetaisha.jp/events/",
+      "title": "建部大社 主な行事",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://takebetaisha.jp/about/",
+      "title": "建部大社 由緒",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://otsu.or.jp/thingstodo/spot49/",
+      "title": "びわ湖大津観光協会 建部大社",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20000311",
+      "title": "るるぶ&more. 鎮火祭・火の神事",
+      "checkedAt": "2026-11-02",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2026年の開催の発表（建部大社の行事の案内は「11月26日」とだけあり、年の記載がない。お知らせにも告知がまだない）",
+    "神事の始まる時刻と所要時間、当日の流れ",
+    "一般の人が見学できる場所と、火からどれだけ離れて見るか（公式の案内に記載がない）",
+    "危険についての注意・見学のきまり・服装・持ち物・撮影の可否（出典が見つからない）",
+    "雨天のときの扱い",
+    "当日に参拝者用の駐車場を使えるか",
+    "露店が出るか",
+    "規模の根拠になる見学者の数",
+    "石山駅から建部大社前までのバスの公式の所要時間と本数（約10分は観光サイトの掲載だけ）",
+    "囲炉裏 あみ定の営業時間が昼と夜に分かれること（12:00〜14:00、18:00〜20:30）と、11月26日に開いているか（店の案内は定休日なし、観光協会の案内は不定休）",
+    "洗心寮が11月26日に開いているか（定休日が不定休）",
+    "叶 匠壽庵 石山寺店の正確な位置（番地まで地図で引けず、東大門の位置で置いた）"
+  ]
+}
