@@ -41,15 +41,6 @@ export function toAgentError(failure: Failure): AgentError {
   return new AgentError(failure.errorCode, USER_MESSAGES[failure.kind], failure.retryable);
 }
 
-/** query が投げた例外の分類 */
-export function failureFromException(error: unknown): Failure {
-  const failure = classifyFailure(error);
-  if (failure.kind !== "unknown") return failure;
-  // 「Failed to authenticate」「OAuth session expired」も認証の失敗として扱う
-  const message = error instanceof Error ? error.message : String(error);
-  return /authenticat|oauth/i.test(message) ? classifyFailure({ status: 401 }) : failure;
-}
-
 export interface ResultSummary {
   subtype: string;
   is_error: boolean;
@@ -73,6 +64,6 @@ export function failureFromResult(
   const status = assistantError === null ? undefined : ASSISTANT_ERROR_STATUS[assistantError];
   if (status !== undefined) return classifyFailure({ status });
   const reason = [result.result ?? "", ...(result.errors ?? [])].join("\n");
-  const byReason = failureFromException(new Error(reason));
+  const byReason = classifyFailure(new Error(reason));
   return byReason.kind === "unknown" && bySubtype !== null ? bySubtype : byReason;
 }

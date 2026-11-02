@@ -1,13 +1,14 @@
+import { classifyFailure } from "@matsuri-ikoka/agent-kit";
 import { describe, expect, it } from "vitest";
-import { failureFromException, failureFromResult, toAgentError } from "./failures";
+import { failureFromResult, toAgentError } from "./failures";
 
-describe("failureFromException", () => {
+describe("例外の分類（共通の部品）", () => {
   it("通信・混雑はやり直せる失敗にする", () => {
-    expect(failureFromException(new Error("ECONNRESET"))).toMatchObject({
+    expect(classifyFailure(new Error("ECONNRESET"))).toMatchObject({
       kind: "network",
       retryable: true,
     });
-    expect(failureFromException(new Error("API Error: 529 overloaded"))).toMatchObject({
+    expect(classifyFailure(new Error("API Error: 529 overloaded"))).toMatchObject({
       kind: "overloaded",
       retryable: true,
     });
@@ -15,7 +16,7 @@ describe("failureFromException", () => {
 
   it("ログインの期限切れも認証の失敗にし、やり直さない", () => {
     expect(
-      failureFromException(
+      classifyFailure(
         new Error("Failed to authenticate: OAuth session expired and could not be refreshed"),
       ),
     ).toMatchObject({ kind: "auth", retryable: false });
@@ -59,7 +60,7 @@ describe("failureFromResult", () => {
 
 describe("toAgentError", () => {
   it("利用者に見せる一文と、画面のエラーの種類にする", () => {
-    const error = toAgentError(failureFromException(new Error("rate limit exceeded")));
+    const error = toAgentError(classifyFailure(new Error("rate limit exceeded")));
 
     expect(error).toMatchObject({ code: "upstream_unavailable", retryable: true });
     expect(error.message).toContain("混み合っています");

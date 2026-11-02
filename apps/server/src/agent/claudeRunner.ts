@@ -5,7 +5,7 @@ import {
   type SDKResultMessage,
   query as sdkQuery,
 } from "@anthropic-ai/claude-agent-sdk";
-import { backoffMs } from "@matsuri-ikoka/agent-kit";
+import { backoffMs, classifyFailure } from "@matsuri-ikoka/agent-kit";
 import type { IsoDate } from "@matsuri-ikoka/schema";
 import type { FestivalStore } from "../data/festivalStore";
 import type { ItineraryStore } from "../session/sessionStore";
@@ -14,7 +14,7 @@ import { createMatsuriMcpServer } from "../tools/mcpServer";
 import type { FestivalVerifier } from "../tools/verifier";
 import type { WeatherService } from "../tools/weather";
 import { staffBriefing, turnPrompt } from "./briefing";
-import { failureFromException, failureFromResult, toAgentError } from "./failures";
+import { failureFromResult, toAgentError } from "./failures";
 import { createAgentHooks } from "./hooks";
 import { buildAgentOptions } from "./options";
 import type { AgentPrompts } from "./prompts";
@@ -234,7 +234,7 @@ export class ClaudeAgentRunner implements AgentRunner {
         await attempt(session.agentSessionId ?? undefined);
       } catch (error) {
         if (signal.aborted || error instanceof AgentError) throw error;
-        throw toAgentError(failureFromException(error));
+        throw toAgentError(classifyFailure(error));
       }
     };
 
