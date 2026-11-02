@@ -169,7 +169,8 @@ export const searchFestivals = defineTool({
         scaleTier: m.festival.scaleTier,
         popularity: m.festival.popularity,
         highlights: m.festival.highlights,
-        localFood: m.festival.food.local.map((f) => f.name),
+        // 土地の味は、どこで食べられるかの補足も渡す（屋台の味と取り違えないため）
+        localFood: m.festival.food.local.map((f) => ({ name: f.name, note: f.note ?? null })),
         stalls: m.festival.food.stalls,
         rainPolicy: m.occurrence.rainPolicy,
         status: m.occurrence.status,
