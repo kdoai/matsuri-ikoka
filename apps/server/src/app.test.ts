@@ -97,6 +97,14 @@ describe("GET /healthz", () => {
 });
 
 describe("POST /api/chat（mock）", () => {
+  /** 旅程 ID は相談ごとに置き換わるので、比べるときはそろえる */
+  const withoutItineraryId = (event: SseEvent): SseEvent =>
+    event.type === "itinerary.updated"
+      ? { ...event, data: { ...event.data, itinerary: { ...event.data.itinerary, id: "trip" } } }
+      : event;
+  const itineraryIds = (events: SseEvent[]) =>
+    events.flatMap((e) => (e.type === "itinerary.updated" ? [e.data.itinerary.id] : []));
+
   it("サンプルの相談を SSE で最後まで流し、最後に必ず done を送る", async () => {
     const { post, newSession } = setup();
     const sessionId = await newSession();
@@ -107,9 +115,32 @@ describe("POST /api/chat（mock）", () => {
       expect(res.headers.get("content-type")).toContain("text/event-stream");
       const { events } = await readSse(res);
 
-      expect(events).toEqual(turn.events.map((e) => e.event));
+      expect(events.map(withoutItineraryId)).toEqual(
+        turn.events.map((e) => withoutItineraryId(e.event)),
+      );
       expect(events.filter((e) => e.type === "done")).toHaveLength(1);
     }
+  });
+
+  it("記録の旅程 ID は相談ごとに置き換え、同じ相談の中では同じにする", async () => {
+    const { post, newSession } = setup();
+    const play = async () => {
+      const sessionId = await newSession();
+      const ids: string[] = [];
+      for (const _ of samples[0]!.turns) {
+        ids.push(...itineraryIds((await readSse(await post("/api/chat", chat(sessionId)))).events));
+      }
+      return ids;
+    };
+
+    const first = await play();
+    const second = await play();
+    const recorded = itineraryIds(samples[0]!.turns.flatMap((t) => t.events.map((e) => e.event)));
+
+    expect(first.length).toBeGreaterThan(1);
+    expect(new Set(first).size).toBe(1);
+    expect(first[0]).not.toBe(second[0]);
+    expect(first).not.toContain(recorded[0]);
   });
 
   it("形の違う発言は 400、ない相談は 404 で断る", async () => {

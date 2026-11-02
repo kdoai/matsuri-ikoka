@@ -32,8 +32,11 @@ export interface Session {
   weather: Map<string, Weather>;
   /** live：Agent SDK のセッション ID（resume に使う） */
   agentSessionId: string | null;
-  /** mock：再生しているサンプルの相談と、次に再生する発言の番号 */
-  replay: { sampleId: string; nextTurn: number } | null;
+  /**
+   * mock：再生しているサンプルの相談と、次に再生する発言の番号。
+   * itineraryIds は、記録の旅程 ID からこの相談の旅程 ID への置き換え（相談どうしで旅程を取り違えないため）
+   */
+  replay: { sampleId: string; nextTurn: number; itineraryIds?: Record<string, string> } | null;
   /** 返答を作っている途中か。1つの相談で同時に返答は作らない */
   busy: boolean;
 }

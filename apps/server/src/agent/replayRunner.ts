@@ -5,7 +5,7 @@ import {
   SampleConversationSchema,
   type SseEvent,
 } from "@matsuri-ikoka/schema";
-import type { ItineraryStore, Session } from "../session/sessionStore";
+import { type ItineraryStore, randomId, type Session } from "../session/sessionStore";
 import type { AgentRunner, EmitEvent, TurnInput } from "./runner";
 
 // mock：記録したサンプルの相談（data/samples/conversations/*.json）を、記録した間隔で再生する。
@@ -23,19 +23,30 @@ export async function loadSampleConversations(dir: string): Promise<SampleConver
   );
 }
 
-function sleep(ms: number, signal: AbortSignal): Promise<void> {
+/** ms だけ待つ。止められていたら待たずに止め、待ち終えたら abort のリスナーを外す */
+export function sleep(ms: number, signal: AbortSignal): Promise<void> {
+  if (signal.aborted) return Promise.reject(signal.reason);
   if (ms <= 0) return Promise.resolve();
   return new Promise((resolve, reject) => {
-    const timer = setTimeout(resolve, ms);
-    signal.addEventListener(
-      "abort",
-      () => {
-        clearTimeout(timer);
-        reject(signal.reason);
-      },
-      { once: true },
-    );
+    const onAbort = () => {
+      clearTimeout(timer);
+      reject(signal.reason);
+    };
+    const timer = setTimeout(() => {
+      signal.removeEventListener("abort", onAbort);
+      resolve();
+    }, ms);
+    signal.addEventListener("abort", onAbort, { once: true });
   });
+}
+
+/** 記録の旅程 ID を、この相談の旅程 ID に置き換える（しおりの URL を相談ごとに分ける） */
+function localizeItinerary(event: SseEvent, ids: Record<string, string>): SseEvent {
+  if (event.type !== "itinerary.updated") return event;
+  const recorded = event.data.itinerary.id;
+  ids[recorded] ??= randomId("trip");
+  const id = ids[recorded];
+  return { ...event, data: { ...event.data, itinerary: { ...event.data.itinerary, id } } };
 }
 
 /** 記録したイベントを、相談の状態に反映する */
@@ -74,7 +85,7 @@ export class ReplayAgentRunner implements AgentRunner {
   readonly mode = "mock" as const;
   readonly #samples: Map<string, SampleConversation>;
   readonly #itineraries: ItineraryStore;
-  /** 再生の速さ。1 で記録どおり、0 で待たない（テスト用） */
+  /** 再生の速さの倍率。1 で記録どおり、2 で2倍速、0 で待たない（テスト用） */
   readonly #speed: number;
 
   constructor(
@@ -99,17 +110,18 @@ export class ReplayAgentRunner implements AgentRunner {
     session.replay = replay;
     const turn = this.#samples.get(replay.sampleId)?.turns[replay.nextTurn];
     if (turn === undefined) {
-      emit({
-        type: "message.delta",
-        data: { messageId: `end-${session.id}`, text: END_OF_SAMPLE },
-      });
+      // 返答ごとに別の messageId にする（画面は同じ messageId の文をつなげる）
+      emit({ type: "message.delta", data: { messageId: randomId("end"), text: END_OF_SAMPLE } });
       return;
     }
 
+    replay.itineraryIds ??= {};
     let elapsed = 0;
-    for (const { atMs, event } of turn.events) {
-      await sleep((atMs - elapsed) * this.#speed, signal);
-      elapsed = atMs;
+    for (const recorded of turn.events) {
+      const wait = this.#speed === 0 ? 0 : (recorded.atMs - elapsed) / this.#speed;
+      await sleep(wait, signal);
+      elapsed = recorded.atMs;
+      const event = localizeItinerary(recorded.event, replay.itineraryIds);
       applyRecordedEvent(session, this.#itineraries, event);
       // done は呼び出し側が相談の状態から送る
       if (event.type !== "done") emit(event);

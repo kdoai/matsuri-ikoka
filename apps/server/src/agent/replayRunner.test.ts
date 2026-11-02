@@ -1,9 +1,9 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { DEFAULT_PREFERENCES, type SseEvent } from "@matsuri-ikoka/schema";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { ItineraryStore, SessionStore } from "../session/sessionStore";
-import { loadSampleConversations, ReplayAgentRunner } from "./replayRunner";
+import { loadSampleConversations, ReplayAgentRunner, sleep } from "./replayRunner";
 
 const samplesDir = fileURLToPath(
   new URL("../../../../data/samples/conversations/", import.meta.url),
@@ -62,9 +62,33 @@ describe("ReplayAgentRunner", () => {
     for (const _ of samples[0]!.turns) await turn();
 
     const events = await turn();
+    const again = await turn();
 
     expect(events).toHaveLength(1);
     expect(events[0]?.type).toBe("message.delta");
+    // 返答ごとに別の messageId にする（同じだと、画面が前の返答につなげてしまう）
+    const id = (e: SseEvent | undefined) => (e?.type === "message.delta" ? e.data.messageId : null);
+    expect(id(again[0])).not.toBe(id(events[0]));
+  });
+
+  it("再生の速さは倍率。大きいほど速い", async () => {
+    const samples = await loadSampleConversations(samplesDir);
+    const recordedMs = samples[0]!.turns[0]!.events.at(-1)!.atMs;
+    const runner = new ReplayAgentRunner(samples, new ItineraryStore(), { speed: 100 });
+    const session = new SessionStore().create();
+
+    const started = Date.now();
+    await runner.runTurn(
+      {
+        session,
+        message: "x",
+        preferences: DEFAULT_PREFERENCES,
+        signal: new AbortController().signal,
+      },
+      () => {},
+    );
+
+    expect(Date.now() - started).toBeLessThan(recordedMs / 2);
   });
 
   it("記録の間隔で待ち、止められたら途中でやめる", async () => {
@@ -83,5 +107,25 @@ describe("ReplayAgentRunner", () => {
     ).rejects.toThrow("stop");
     expect(events.length).toBeLessThan(samples[0]!.turns[0]!.events.length - 1);
     expect(path.isAbsolute(samplesDir)).toBe(true);
+  });
+});
+
+describe("sleep", () => {
+  it("止められていれば、待ち時間が0でも止める", async () => {
+    const controller = new AbortController();
+    controller.abort(new Error("stop"));
+
+    await expect(sleep(0, controller.signal)).rejects.toThrow("stop");
+  });
+
+  it("待ち終えたら abort のリスナーを外す", async () => {
+    const { signal } = new AbortController();
+    const add = vi.spyOn(signal, "addEventListener");
+    const remove = vi.spyOn(signal, "removeEventListener");
+
+    await sleep(5, signal);
+
+    expect(add).toHaveBeenCalledTimes(1);
+    expect(remove).toHaveBeenCalledWith("abort", add.mock.calls[0]?.[1]);
   });
 });
