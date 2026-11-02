@@ -99,12 +99,27 @@ test("サーバーのエラーは一文だけを出し、HTML として埋め込
   await expect(page.getByTestId("chat-concierge").locator("img, b")).toHaveCount(0);
 });
 
-test("合言葉が違うときは、その旨を出す", async ({ page }) => {
-  await page.route("**/api/chat", (route) => route.fulfill({ status: 401, body: "" }));
+test("英語の画面では、サーバーの日本語の一文ではなく辞書の文言を出す", async ({ page }) => {
+  await page.route("**/api/chat", (route) =>
+    route.fulfill({
+      status: 200,
+      headers: { "content-type": "text/event-stream" },
+      body: sse([
+        {
+          type: "error",
+          data: { code: "rate_limited", message: "今日の相談はここまでです", retryable: false },
+        },
+        { type: "done", data: { stage: "hearing", conditions: {}, preferences: PREFERENCES } },
+      ]),
+    }),
+  );
   await page.goto("/?transport=server");
-  await page.getByRole("button", { name: "入店する" }).click();
-  const input = page.getByRole("textbox", { name: "相談の発言" });
-  await input.fill("こんにちは");
+  await page.getByRole("button", { name: /English/ }).click();
+  await page.getByRole("button", { name: "Come in" }).click();
+  const input = page.getByRole("textbox", { name: "Your message" });
+  await input.fill("Hello");
   await input.press("Enter");
-  await expect(page.getByTestId("chat-error")).toContainText("合言葉が違います");
+  await expect(page.getByTestId("chat-error")).toHaveText(
+    "Today's conversation limit has been reached.",
+  );
 });
