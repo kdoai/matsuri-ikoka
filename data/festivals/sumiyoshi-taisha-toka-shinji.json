@@ -1,0 +1,356 @@
+{
+  "id": "sumiyoshi-taisha-toka-shinji",
+  "name": {
+    "ja": "踏歌神事",
+    "en": "Sumiyoshi Taisha Toka Shinji"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "大阪府",
+      "name": "大阪市"
+    }
+  ],
+  "venue": {
+    "name": "住吉大社（第一本宮前）",
+    "lat": 34.6143,
+    "lng": 135.4927
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "梅の若枝の蛭子役と小餅の袋の大黒役が、掛け声を交わして歩み寄る",
+    "神楽女が白拍子舞と熊野舞を奉納し、一年の幸せを祈る",
+    "最後に、朱で「福」と押した紅白の福の餅が撒かれる",
+    "国宝の本殿が並ぶ住吉大社の、第一本宮の前で行われる"
+  ],
+  "trivia": [
+    {
+      "text": "奈良・平安時代に朝廷で行われた正月の行事で、今は形を変えて一部の神社に残る",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/R3-00145.html",
+        "title": "観光庁 地域観光資源の多言語解説文データベース 踏歌神事",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "「踏歌」は踏むと歌うを合わせた言葉で、もとは中国に根をもつ正月の神事とされる",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/R3-00145.html",
+        "title": "観光庁 地域観光資源の多言語解説文データベース 踏歌神事",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "大黒役は神前に小餅を献じ、「万歳楽」を三声唱えて納める",
+      "source": {
+        "url": "https://sumiyoshitaisha.net/events/annualevents/01.html",
+        "title": "住吉大社 年中行事（1月）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "福の餅は授かると幸運を得るといわれ、紅白そろって配られる",
+      "source": {
+        "url": "https://osaka-info.jp/event/sumiyoshitaisha-tokashinji/",
+        "title": "大阪観光局 住吉大社 踏歌神事",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "境内での飲食はしない。境内は禁煙",
+      "ドローンなど飛ぶものを使わない",
+      "動物を連れて入らない。境内でえさをやらない",
+      "自転車は一部を除いて乗り入れない",
+      "ボール遊びなど、ほかの参拝者の迷惑になることをしない"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "見学が中心で、神事の後に餅撒きがあるが、主催者による混雑や危険の注意は見当たらない"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "境内では、神社の写真室以外の業者による営利の撮影と、ドローンの使用が禁止。見学者が神事を撮ってよいかは書かれていない"
+    },
+    "sources": [
+      {
+        "url": "https://sumiyoshitaisha.net/news/detail.php?seq=13",
+        "title": "住吉大社 境内の利用について（2018年5月16日）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://sumiyoshitaisha.net/events/annualevents/01.html",
+        "title": "住吉大社 年中行事（1月）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://osaka-info.jp/event/sumiyoshitaisha-tokashinji/",
+        "title": "大阪観光局 住吉大社 踏歌神事",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-01-04",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "例年1月4日（2027年は月曜）。公式の年中行事では例年13:00から。第一本宮の前で、蛭子役と大黒役の掛け合いと小餅の献上、神楽女の白拍子舞・熊野舞、最後に福の餅撒き。2027年の時刻はまだ発表がない",
+      "sources": [
+        {
+          "url": "https://sumiyoshitaisha.net/events/annualevents/01.html",
+          "title": "住吉大社 年中行事（1月。年の記載なし）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://osaka-info.jp/event/sumiyoshitaisha-tokashinji/",
+          "title": "大阪観光局 住吉大社 踏歌神事（年の記載なし）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.nta.co.jp/kokunai/special/eventinfo/10606595.htm",
+          "title": "日本旅行 住吉大社 踏歌神事（2027年1月4日）",
+          "checkedAt": "2026-11-02",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "南海 住吉大社駅",
+        "walkMinutes": [3, 8],
+        "note": "南海本線。駅から東へ。阪堺線の住吉鳥居前駅からも歩いてすぐ"
+      },
+      {
+        "name": "南海 住吉東駅",
+        "walkMinutes": [5, 10],
+        "note": "南海高野線。駅から西へ"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "南海 なんば駅",
+        "minutes": [9, 9],
+        "route": "南海本線の普通で住吉大社駅まで、乗り換えなし"
+      },
+      {
+        "hub": "大阪駅",
+        "minutes": [31, 37],
+        "route": "Osaka Metro御堂筋線（梅田駅）でなんば駅、南海本線に乗り換え。JR大阪環状線で新今宮駅へ出て南海本線に乗り換えてもよい"
+      },
+      {
+        "hub": "新大阪駅",
+        "minutes": [32, 40],
+        "route": "Osaka Metro御堂筋線でなんば駅、南海本線に乗り換え"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://sumiyoshitaisha.net/access/",
+        "title": "住吉大社 アクセス",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://osaka-info.jp/spot/sumiyoshitaisha/",
+        "title": "大阪観光局 住吉大社",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ekitan.com/transit/route/sf-5728/st-5477",
+        "title": "駅探 難波(南海)→住吉大社（2026年11月2日の検索）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      },
+      {
+        "url": "https://ekitan.com/transit/route/sf-5006/st-5477",
+        "title": "駅探 大阪→住吉大社（2026年11月2日 平日夜の検索）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      },
+      {
+        "url": "https://ekitan.com/transit/route/sf-5429/st-5477",
+        "title": "駅探 新大阪→住吉大社（2026年11月2日 平日夜の検索）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "福の餅",
+        "note": "踏歌神事の最後に撒かれる餅。朱で「福」と押してあり、紅白そろって配られる",
+        "sources": [
+          {
+            "url": "https://osaka-info.jp/event/sumiyoshitaisha-tokashinji/",
+            "title": "大阪観光局 住吉大社 踏歌神事",
+            "checkedAt": "2026-11-02",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "sumiyoshi-park",
+      "name": "住吉公園",
+      "kind": "sightseeing",
+      "summary": "明治6年（1873）開設の大阪で最も古い公園で、もとは住吉大社の境内。中央の潮掛道はかつての表参道で、鎌倉末期に奉納されたと伝わる高灯籠（今のものは1974年の再建）が残る",
+      "location": {
+        "lat": 34.6138,
+        "lng": 135.4876
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://osaka-info.jp/spot/sumiyoshi-park/",
+          "title": "大阪観光局 住吉公園",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "fukujudo-hidenobu-tezukayama",
+      "name": "福壽堂秀信 帝塚山本店",
+      "kind": "food",
+      "summary": "昭和23年（1948）創業の和菓子店の本店。阪堺線の姫松駅から徒歩5分。同じ建物に茶寮「季」があり、平日10:00〜18:00（ラストオーダー17:30）。休みは1月1日だけ",
+      "location": {
+        "lat": 34.6229,
+        "lng": 135.5026
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "19:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["indoor", "seating"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://fukujudo-hidenobu.co.jp/shop/",
+          "title": "福壽堂秀信 店舗案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.fukujudo-hidenobu.co.jp/",
+          "title": "福壽堂秀信 公式サイト",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "sakai-rishonomori",
+      "name": "さかい利晶の杜",
+      "kind": "sightseeing",
+      "summary": "千利休と与謝野晶子の記念館と、茶の湯の体験施設がある堺市の施設。阪堺線の宿院駅から徒歩1分。休みは第3火曜（祝日なら翌日）と12月29日〜1月3日",
+      "location": {
+        "lat": 34.5762,
+        "lng": 135.4708
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "18:00",
+        "lastEntry": "17:30"
+      },
+      "closedDays": [],
+      "price": "千利休茶の湯館・与謝野晶子記念館 大人300円、高校生200円、中学生以下無料",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.sakai-rishonomori.com/open/",
+          "title": "さかい利晶の杜 開館時間・各種料金",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.sakai-rishonomori.com/",
+          "title": "さかい利晶の杜 公式サイト（年末年始の休館）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.sakai-rishonomori.com/pages/35/",
+          "title": "さかい利晶の杜 アクセス・駐車場",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://sumiyoshitaisha.net/events/annualevents/01.html",
+      "title": "住吉大社 年中行事（1月）",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://osaka-info.jp/event/sumiyoshitaisha-tokashinji/",
+      "title": "大阪観光局 住吉大社 踏歌神事",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.mlit.go.jp/tagengo-db/R3-00145.html",
+      "title": "観光庁 地域観光資源の多言語解説文データベース 踏歌神事",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://osaka-info.jp/spot/sumiyoshitaisha/",
+      "title": "大阪観光局 住吉大社",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開始時刻（住吉大社の2027年の発表がまだない。例年は13:00）",
+    "神事の終わる時刻と、餅撒きの時刻・場所・受け取り方",
+    "1月4日の混雑の目安と、見学の場所や入場の規制（三が日の交通規制と駐車場の閉鎖は12月31日〜1月3日だけと案内されているが、4日の案内は見つからない）",
+    "雨天のときの扱い",
+    "見学者が神事を撮影してよいか（境内の決まりは営利の撮影とドローンの禁止だけ）",
+    "見学の服装・持ち物（出典が見つからない）",
+    "1月4日の駐車場の台数・料金と、正月期間の閉門時間",
+    "露店が出るか",
+    "規模の根拠になる見学者数の公表値",
+    "主要駅からの所要時間は平日夜の乗換案内の結果で、1月4日昼のダイヤでの時間"
+  ]
+}
