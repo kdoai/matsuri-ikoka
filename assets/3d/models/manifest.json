@@ -1,0 +1,186 @@
+{
+  "files": [
+    {
+      "file": "exterior.glb",
+      "kilobytes": 997.3,
+      "triangles": 93742,
+      "animations": [
+        "entry"
+      ],
+      "textures": 10
+    },
+    {
+      "file": "interior.glb",
+      "kilobytes": 2260.2,
+      "triangles": 104908,
+      "animations": [
+        "gimmick.bell.ring",
+        "gimmick.cat.sleep",
+        "gimmick.cat.pet",
+        "gimmick.daruma.wobble",
+        "gimmick.furin.ring",
+        "gimmick.gacha.turn",
+        "gimmick.gate.swing",
+        "gimmick.globe.spin",
+        "gimmick.noren.sway",
+        "gimmick.omikuji.shake",
+        "gimmick.secret.open",
+        "gimmick.stamp.press"
+      ],
+      "textures": 27
+    },
+    {
+      "file": "motion_carry.glb",
+      "kilobytes": 12.3,
+      "triangles": 0,
+      "animations": [
+        "carry"
+      ],
+      "textures": 0
+    },
+    {
+      "file": "motion_cheer.glb",
+      "kilobytes": 10.5,
+      "triangles": 0,
+      "animations": [
+        "cheer"
+      ],
+      "textures": 0
+    },
+    {
+      "file": "motion_flip.glb",
+      "kilobytes": 9.8,
+      "triangles": 0,
+      "animations": [
+        "flip"
+      ],
+      "textures": 0
+    },
+    {
+      "file": "motion_idle.glb",
+      "kilobytes": 10.2,
+      "triangles": 0,
+      "animations": [
+        "idle"
+      ],
+      "textures": 0
+    },
+    {
+      "file": "motion_look_up.glb",
+      "kilobytes": 9.3,
+      "triangles": 0,
+      "animations": [
+        "look_up"
+      ],
+      "textures": 0
+    },
+    {
+      "file": "motion_nod.glb",
+      "kilobytes": 9.3,
+      "triangles": 0,
+      "animations": [
+        "nod"
+      ],
+      "textures": 0
+    },
+    {
+      "file": "motion_point.glb",
+      "kilobytes": 10.2,
+      "triangles": 0,
+      "animations": [
+        "point"
+      ],
+      "textures": 0
+    },
+    {
+      "file": "motion_reach.glb",
+      "kilobytes": 9.7,
+      "triangles": 0,
+      "animations": [
+        "reach"
+      ],
+      "textures": 0
+    },
+    {
+      "file": "motion_sit.glb",
+      "kilobytes": 10.4,
+      "triangles": 0,
+      "animations": [
+        "sit"
+      ],
+      "textures": 0
+    },
+    {
+      "file": "motion_stamp.glb",
+      "kilobytes": 10.9,
+      "triangles": 0,
+      "animations": [
+        "stamp"
+      ],
+      "textures": 0
+    },
+    {
+      "file": "motion_talk.glb",
+      "kilobytes": 10.8,
+      "triangles": 0,
+      "animations": [
+        "talk"
+      ],
+      "textures": 0
+    },
+    {
+      "file": "motion_walk.glb",
+      "kilobytes": 12.7,
+      "triangles": 0,
+      "animations": [
+        "walk"
+      ],
+      "textures": 0
+    },
+    {
+      "file": "motion_wave.glb",
+      "kilobytes": 10.2,
+      "triangles": 0,
+      "animations": [
+        "wave"
+      ],
+      "textures": 0
+    },
+    {
+      "file": "player_penguin.glb",
+      "kilobytes": 138.0,
+      "triangles": 9294,
+      "animations": [],
+      "textures": 7
+    },
+    {
+      "file": "staff_hen.glb",
+      "kilobytes": 209.0,
+      "triangles": 10254,
+      "animations": [],
+      "textures": 6
+    },
+    {
+      "file": "staff_hiyoko.glb",
+      "kilobytes": 155.8,
+      "triangles": 9830,
+      "animations": [],
+      "textures": 5
+    },
+    {
+      "file": "staff_owl.glb",
+      "kilobytes": 188.8,
+      "triangles": 10342,
+      "animations": [],
+      "textures": 6
+    },
+    {
+      "file": "staff_sparrow.glb",
+      "kilobytes": 153.8,
+      "triangles": 10362,
+      "animations": [],
+      "textures": 5
+    }
+  ],
+  "total_kilobytes": 4239.2
+}
