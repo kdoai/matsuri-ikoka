@@ -167,7 +167,7 @@ export function CandidateCards() {
   return (
     <section
       aria-labelledby="candidates-title"
-      className="fixed inset-0 z-40 overflow-y-auto bg-wood-900/55 p-3 backdrop-blur-[2px] sm:p-4 lg:absolute lg:z-20"
+      className="fixed inset-0 z-40 overflow-y-auto bg-wood-900/55 p-3 backdrop-blur-[2px] sm:p-6"
       data-testid="candidates"
       onKeyDown={(event) => {
         if (event.key === "Escape") {
@@ -175,7 +175,7 @@ export function CandidateCards() {
         }
       }}
     >
-      <div className="mb-3 flex items-center justify-between gap-2">
+      <div className="mx-auto mb-3 flex max-w-6xl items-center justify-between gap-2">
         <h2
           id="candidates-title"
           ref={headingRef}
@@ -192,7 +192,7 @@ export function CandidateCards() {
           {t.candidates.close}
         </button>
       </div>
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+      <div className="mx-auto grid max-w-6xl gap-3 md:grid-cols-2 xl:grid-cols-3">
         {candidates.map((candidate, index) => (
           <Card
             key={candidate.festivalId}

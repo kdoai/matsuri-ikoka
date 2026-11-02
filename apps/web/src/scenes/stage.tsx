@@ -14,7 +14,8 @@ import {
   Vector3,
 } from "three";
 import type { GLTF } from "three/addons/loaders/GLTFLoader.js";
-import { fitVerticalFov } from "./choreography";
+import { type FrameInsets, NO_INSETS } from "../state/scene";
+import { frameView } from "./choreography";
 import { clipNamed, findNode, originalName } from "./models";
 
 // 店内と外観を置く舞台：照明、焼き込んだマテリアルの扱い、カメラの目印。
@@ -102,29 +103,33 @@ export function cameraPose(root: Object3D, name: string): CameraPose | null {
 }
 
 /**
- * カメラを目印の姿勢にし、画面比に合わせて画角を決める。
- * shift は、絵を左へ寄せる量（NDC）。three.js の filmOffset で、カメラの向きを変えずに寄せる
+ * カメラを目印の姿勢にし、画面の大きさと、会話の窓やパネルが重なる場所に合わせて映し方を決める。
+ * カメラの位置と向きは変えず、画角と setViewOffset だけで、空いている場所に店を収める
  */
 export function applyPose(
   camera: PerspectiveCamera,
   pose: CameraPose,
-  aspect: number,
-  shift = 0,
+  width: number,
+  height: number,
+  insets: FrameInsets = NO_INSETS,
 ): void {
   camera.position.copy(pose.position);
   camera.quaternion.copy(pose.quaternion);
-  const fov = fitVerticalFov(pose.yfov, aspect);
-  const filmOffset =
-    shift * aspect * Math.tan((fov * Math.PI) / 360) * camera.filmGauge * Math.min(aspect, 1);
+  const view = frameView(width, height, pose.yfov, insets);
+  const aspect = width / Math.max(height, 1);
+  const current = camera.view;
   if (
-    Math.abs(camera.fov - fov) > 1e-3 ||
+    Math.abs(camera.fov - view.fov) > 1e-3 ||
     Math.abs(camera.aspect - aspect) > 1e-3 ||
-    Math.abs(camera.filmOffset - filmOffset) > 1e-3
+    current === null ||
+    Math.abs(current.offsetX - view.offsetX) > 0.5 ||
+    Math.abs(current.offsetY - view.offsetY) > 0.5 ||
+    current.fullWidth !== width ||
+    current.fullHeight !== height
   ) {
-    camera.fov = fov;
+    camera.fov = view.fov;
     camera.aspect = aspect;
-    camera.filmOffset = filmOffset;
-    camera.updateProjectionMatrix();
+    camera.setViewOffset(width, height, view.offsetX, view.offsetY, width, height);
   }
 }
 

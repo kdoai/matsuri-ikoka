@@ -3,8 +3,7 @@ import { IDLE_STAFF } from "../state/initial";
 import type { StaffState } from "../state/types";
 import {
   exteriorOpacity,
-  fitVerticalFov,
-  frameShift,
+  frameView,
   staffPlan,
   turnToward,
   WALK_SPEED,
@@ -126,15 +125,31 @@ describe("歩く", () => {
 });
 
 describe("カメラ", () => {
-  it("16:9 では設計どおり、横長では縦の画角を保ち、縦長では横の画角を保つ", () => {
-    const design = (DESIGN_YFOV * 180) / Math.PI;
-    expect(fitVerticalFov(DESIGN_YFOV, 16 / 9)).toBeCloseTo(design);
-    expect(fitVerticalFov(DESIGN_YFOV, 3)).toBeCloseTo(design);
-    const horizontal = 2 * Math.atan(Math.tan(DESIGN_YFOV / 2) * (16 / 9));
-    const portrait = fitVerticalFov(DESIGN_YFOV, 9 / 16);
-    expect(2 * Math.atan(Math.tan((portrait * Math.PI) / 180 / 2) * (9 / 16))).toBeCloseTo(
-      horizontal,
-    );
+  function frameHeightOf(view: { fov: number }, height: number): number {
+    // 設計した枠の高さ（px）：tan(設計の画角/2) / tan(画面の画角/2) × 画面の高さ
+    return (Math.tan(DESIGN_YFOV / 2) / Math.tan((view.fov * Math.PI) / 360)) * height;
+  }
+
+  it("重なるものがなければ、16:9 では設計どおりに映す", () => {
+    const view = frameView(1600, 900, DESIGN_YFOV);
+    expect(view.fov).toBeCloseTo((DESIGN_YFOV * 180) / Math.PI);
+    expect(view).toMatchObject({ offsetX: 0, offsetY: 0 });
+  });
+
+  it("縦長の画面では横の画角を保ち、横長の画面では縦の画角を保つ（はみ出さない）", () => {
+    expect(frameHeightOf(frameView(900, 1600, DESIGN_YFOV), 1600)).toBeCloseTo(900 / (16 / 9));
+    expect(frameHeightOf(frameView(3000, 900, DESIGN_YFOV), 900)).toBeCloseTo(900);
+  });
+
+  it("会話の窓とパネルを避けた場所に、枠を収めて寄せる", () => {
+    const insets = { top: 60, right: 440, bottom: 220, left: 0 };
+    const view = frameView(1440, 900, DESIGN_YFOV, insets);
+    const freeWidth = 1440 - 440;
+    const freeHeight = 900 - 60 - 220;
+    expect(frameHeightOf(view, 900)).toBeCloseTo(Math.min(freeHeight, freeWidth / (16 / 9)));
+    // 絵の中心は、空いている場所の中心に来る
+    expect(1440 / 2 - view.offsetX).toBeCloseTo(freeWidth / 2);
+    expect(900 / 2 - view.offsetY).toBeCloseTo(60 + freeHeight / 2);
   });
 
   it("入店のカメラが上がり始めたら外観を消す（2.25〜2.97 秒）", () => {
@@ -142,18 +157,5 @@ describe("カメラ", () => {
     expect(exteriorOpacity(2.25)).toBe(1);
     expect(exteriorOpacity(2.61)).toBeCloseTo(0.5);
     expect(exteriorOpacity(3)).toBe(0);
-  });
-
-  it("横長の枠では、右の列に隠れないよう店を左へ寄せる。寄せすぎて左にはみ出さない", () => {
-    expect(frameShift(16 / 9, 0.3)).toBe(0);
-    expect(frameShift(3, 0)).toBe(0);
-    const shift = frameShift(3.2, 0.3);
-    expect(shift).toBeGreaterThan(0);
-    const shop = 2.06 / 3.2;
-    const center = 0.5 - shift / 2;
-    expect(center + shop / 2).toBeCloseTo(0.7);
-    expect(center - shop / 2).toBeGreaterThanOrEqual(0);
-    // 店が枠いっぱいのときは、左端をそろえる（それ以上は寄せない）
-    expect(0.5 - frameShift(2, 0.3) / 2).toBeCloseTo(Math.min(1, 2.06 / 2) / 2);
   });
 });

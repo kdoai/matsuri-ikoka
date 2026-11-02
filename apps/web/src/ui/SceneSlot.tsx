@@ -1,11 +1,11 @@
 import { Component, type ReactNode, Suspense } from "react";
 import { useApp } from "../state/react";
-import { selectSceneProps } from "../state/scene";
+import { type FrameInsets, selectSceneProps } from "../state/scene";
 import { useReducedMotion } from "./hooks";
-import { StaffFloor, StaffList } from "./StaffPanel";
+import { StaffFloor } from "./StaffPanel";
 import { ShopScene, useScene3d } from "./scene3d";
 
-// 3D の店内を差し込む場所。3D の部品（src/scenes/ShopScene.tsx）は ShopSceneProps を props で受け取り、
+// ゲームの画面の背景になる店。3D の部品（src/scenes/ShopScene.tsx）は ShopSceneProps を受け取り、
 // ストアの状態だけを読む。読み込むまでは 2D の見取り図を出しておき、3D が描けたら上に重ねる。
 // WebGL が使えない・読み込めない・動きを減らす設定のときは、2D の見取り図を主にする。
 
@@ -25,33 +25,43 @@ class SceneBoundary extends Component<{ fallback: ReactNode; children: ReactNode
   }
 }
 
-/** overlay は店内の絵の上に重ねる部品（掲示板・待ち時間のカードなど） */
-export function SceneSlot({ overlay }: { overlay?: ReactNode }) {
+/** 2D の見取り図は、会話の窓やパネルに隠れない場所に置く */
+function FloorBox({ frame, hidden = false }: { frame: FrameInsets; hidden?: boolean }) {
+  return (
+    <div
+      className="absolute overflow-hidden rounded-3xl shadow-2xl ring-4 ring-wood-700/60"
+      style={{
+        top: frame.top + 8,
+        right: frame.right + 12,
+        bottom: frame.bottom + 16,
+        left: frame.left + 12,
+      }}
+      aria-hidden={hidden}
+    >
+      <StaffFloor />
+    </div>
+  );
+}
+
+export function GameStage({ frame }: { frame: FrameInsets }) {
   const reducedMotion = useReducedMotion();
-  const props = useApp((state) => selectSceneProps(state, reducedMotion));
+  const props = useApp((state) => selectSceneProps(state, reducedMotion, frame));
   const use3d = useScene3d() && ShopScene !== null;
   return (
-    <div className="flex h-full flex-col gap-1.5">
-      <div className="relative min-h-0 flex-1 overflow-hidden rounded-xl ring-1 ring-wood-700/30">
-        {use3d && ShopScene !== null ? (
-          <SceneBoundary fallback={<StaffFloor />}>
-            {/* 3D を読み込む間の見取り図。文字はスタッフの一覧で読めるので、読み上げからは外す */}
-            <div className="absolute inset-0" aria-hidden="true">
-              <StaffFloor />
+    <div className="absolute inset-0" data-testid="game-stage">
+      {use3d && ShopScene !== null ? (
+        <SceneBoundary fallback={<FloorBox frame={frame} />}>
+          {/* 3D を読み込む間の見取り図。文字は「店内のようす」で読めるので、読み上げからは外す */}
+          <FloorBox frame={frame} hidden />
+          <Suspense fallback={null}>
+            <div className="absolute inset-0">
+              <ShopScene {...props} />
             </div>
-            <Suspense fallback={null}>
-              <div className="absolute inset-0">
-                <ShopScene {...props} />
-              </div>
-            </Suspense>
-          </SceneBoundary>
-        ) : (
-          <StaffFloor />
-        )}
-        {overlay}
-      </div>
-      {/* 3D でも 2D でも、スタッフの状態と吹き出しは文字で読めるようにする */}
-      <StaffList showBubbles={use3d} />
+          </Suspense>
+        </SceneBoundary>
+      ) : (
+        <FloorBox frame={frame} />
+      )}
     </div>
   );
 }

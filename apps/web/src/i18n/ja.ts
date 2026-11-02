@@ -19,6 +19,16 @@ export const ja = {
     useServer: "接客サーバーにつなぐ",
     useMock: "画面だけのモックで見る",
     progress: "相談の進み具合",
+    menu: "メニュー",
+  },
+  dialogue: {
+    thinking: "少々お待ちください",
+    openLog: "会話の記録",
+    log: "会話の記録",
+    closeLog: "閉じる",
+  },
+  activity: {
+    title: "店内のようす",
   },
   stage: {
     hearing: "聞き取り",

@@ -28,7 +28,7 @@ function Street({ onReady }: { onReady: () => void }) {
     entry?.mixer.setTime(entry.start);
     const pose = cameraPose(exterior.scene, "cam.entry");
     if (pose !== null) {
-      applyPose(camera as PerspectiveCamera, pose, size.width / Math.max(size.height, 1));
+      applyPose(camera as PerspectiveCamera, pose, size.width, size.height);
     }
     invalidate();
     onReady();

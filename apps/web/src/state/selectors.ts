@@ -8,8 +8,9 @@ import {
   type Preferences,
   type Source,
   type SpotPin,
+  type StaffId,
 } from "@matsuri-ikoka/schema";
-import type { AppData } from "./types";
+import type { AppData, ChatEntry } from "./types";
 import { QUEST_IDS } from "./types";
 
 // ストアから画面に出す形を取り出す。部品はここを通して読む。
@@ -177,4 +178,56 @@ export function mapPoints(itinerary: Itinerary | null, spots: readonly SpotPin[]
     }
   }
   return points;
+}
+
+// ---------------------------------------------------------------------------
+// 会話の窓
+
+export type DialogueLine =
+  /** 店に入ったときのあいさつ */
+  | { kind: "greeting" }
+  /** 送ったあと、何か届くまで */
+  | { kind: "waiting"; userText: string }
+  /** スタッフが調べている間の吹き出し（コンシェルジュが話し始める前） */
+  | { kind: "work"; staff: StaffId; text: string }
+  | { kind: "concierge"; id: string; text: string; streaming: boolean }
+  | { kind: "error"; entry: Extract<ChatEntry, { kind: "error" }> };
+
+/**
+ * 会話の窓に出す、いまの一言。いちばん新しい発言のあとに届いたものから選ぶ。
+ * 返答の途中は、コンシェルジュが話し始めたらその文を、それまではスタッフの作業の吹き出しを出す。
+ * 返答のあとは、片付いていないエラーか、コンシェルジュの最後の返答を出す。
+ */
+export function currentLine(state: Pick<AppData, "messages" | "session">): DialogueLine {
+  const { messages } = state;
+  const lastUser = messages.findLastIndex((entry) => entry.kind === "user");
+  const since = messages.slice(lastUser + 1);
+  const error = since.findLast((entry) => entry.kind === "error" && !entry.resolved);
+  if (error?.kind === "error" && !state.session.streaming) {
+    return { kind: "error", entry: error };
+  }
+  const reply = since.findLast((entry) => entry.kind === "concierge");
+  if (reply?.kind === "concierge") {
+    return { kind: "concierge", id: reply.id, text: reply.text, streaming: reply.streaming };
+  }
+  if (state.session.streaming) {
+    const work = since.findLast((entry) => entry.kind === "work");
+    if (work?.kind === "work") {
+      return { kind: "work", staff: work.staff, text: work.result ?? work.bubble };
+    }
+    const user = messages[lastUser];
+    return { kind: "waiting", userText: user?.kind === "user" ? user.text : "" };
+  }
+  if (error?.kind === "error") {
+    return { kind: "error", entry: error };
+  }
+  const earlier = messages.findLast((entry) => entry.kind === "concierge");
+  return earlier?.kind === "concierge"
+    ? { kind: "concierge", id: earlier.id, text: earlier.text, streaming: false }
+    : { kind: "greeting" };
+}
+
+/** いま動いているスタッフ（待機していない人）。画面の上の「店内のようす」に出す */
+export function busyStaff(state: Pick<AppData, "staff">): StaffId[] {
+  return (Object.keys(state.staff) as StaffId[]).filter((id) => state.staff[id].phase !== "idle");
 }

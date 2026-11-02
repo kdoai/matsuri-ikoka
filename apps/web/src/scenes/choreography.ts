@@ -1,4 +1,5 @@
 import type { StaffId } from "@matsuri-ikoka/schema";
+import { type FrameInsets, NO_INSETS } from "../state/scene";
 import type { StaffMotion, StaffState } from "../state/types";
 
 // ストアのスタッフの状態から、3D の店内で「誰がどこで何をするか」を決める。
@@ -173,34 +174,37 @@ export function turnToward(a: number, b: number, t: number): number {
   return a + delta * Math.min(1, Math.max(0, t));
 }
 
-/** 設計した画面比（16:9）と、そのときの縦の画角（ラジアン） */
+/** 設計した画面比（cam.main・cam.entry は 16:9 で作ってある） */
 export const DESIGN_ASPECT = 16 / 9;
 
-/**
- * 画面比に合わせた縦の画角（度）。設計した 16:9 の枠が、いつも全部入るようにする。
- * 縦長の画面では横の画角を保ち（assets/3d/README.md）、横長の画面では縦の画角を保つ。
- */
-export function fitVerticalFov(designYfov: number, aspect: number): number {
-  const designHorizontal = 2 * Math.atan(Math.tan(designYfov / 2) * DESIGN_ASPECT);
-  const yfov =
-    aspect >= DESIGN_ASPECT
-      ? designYfov
-      : 2 * Math.atan(Math.tan(designHorizontal / 2) / Math.max(aspect, 0.1));
-  return (yfov * 180) / Math.PI;
+export interface FrameView {
+  /** 画面全体の縦の画角（度） */
+  fov: number;
+  /** 絵を寄せる量（px）。three.js の setViewOffset にそのまま渡す（正の値で左・上へ寄る） */
+  offsetX: number;
+  offsetY: number;
 }
 
-/** 横長の枠で、店（縦の画角を保ったとき）が枠の幅に占める割合の目安。16:9 で約 1.15 */
-const SHOP_WIDTH_AT_ASPECT_ONE = 2.06;
-
 /**
- * 横長の枠で、右の列（掲示板や小話のカード）に店が隠れないよう、店を左へ寄せる量（NDC）。
- * overlay は右の列が枠の幅に占める割合。店が枠に収まりきらないときは、左端をそろえる。
+ * カメラの映し方。設計した 16:9 の枠を、画面のうち会話の窓やパネルが重ならない場所に、
+ * はみ出さずに収める（縦長なら横の画角を、横長なら縦の画角を保つことになる）。
+ * カメラの位置と向きは変えず、画角と絵の寄せ方だけで合わせる。
  */
-export function frameShift(aspect: number, overlay: number): number {
-  if (overlay <= 0 || aspect <= DESIGN_ASPECT) return 0;
-  const shop = Math.min(1, SHOP_WIDTH_AT_ASPECT_ONE / aspect);
-  const center = Math.max(shop / 2, Math.min(0.5, 1 - overlay - shop / 2));
-  return 2 * (0.5 - center);
+export function frameView(
+  width: number,
+  height: number,
+  designYfov: number,
+  insets: FrameInsets = NO_INSETS,
+): FrameView {
+  const w = Math.max(1, width);
+  const h = Math.max(1, height);
+  const freeWidth = Math.max(1, w - insets.left - insets.right);
+  const freeHeight = Math.max(1, h - insets.top - insets.bottom);
+  const frameHeight = Math.min(freeHeight, freeWidth / DESIGN_ASPECT);
+  const fov = 2 * Math.atan((Math.tan(designYfov / 2) * h) / frameHeight);
+  const centerX = insets.left + freeWidth / 2;
+  const centerY = insets.top + freeHeight / 2;
+  return { fov: (fov * 180) / Math.PI, offsetX: w / 2 - centerX, offsetY: h / 2 - centerY };
 }
 
 /** 入店のカメラの経路で、外観を消し始めて消し終える時刻（秒）。経路の 50%〜66% */

@@ -1,19 +1,22 @@
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { otherLocale } from "../i18n";
 import { useActions, useApp, useT } from "../state/react";
+import { type FrameInsets, NO_INSETS } from "../state/scene";
 import { PROGRESS_STEPS, progressStep } from "../state/selectors";
+import { Backlog } from "./Backlog";
 import { CandidateCards } from "./CandidateCards";
-import { ChatLog, Composer, ConditionChips, PreferenceBar } from "./ChatPanel";
-import { buttonPrimary, buttonQuiet } from "./common";
+import { DialogueBox } from "./Dialogue";
 import { useMediaQuery } from "./hooks";
 import { ItineraryPanel } from "./ItineraryPanel";
 import { PasscodeDialog } from "./Passcode";
-import { SceneSlot } from "./SceneSlot";
+import { GameStage } from "./SceneSlot";
+import { StaffActivity } from "./StaffPanel";
 import { playSound } from "./sound";
-import { QuestBoard, WaitingCard } from "./Waiting";
+import { WaitingCard } from "./Waiting";
 
-// メインの画面：左に店内と会話、右に旅程・地図・出典のパネル。
-// スマートフォンでは、右のパネルを下から引き出す。
+// ゲームの画面。いつも店（3D、使えないときは 2D の見取り図）を画面いっぱいに出し、
+// その上に会話の窓・旅程のパネル・待ち時間のカードを重ねる。
+// 店のカメラは、重なるものを避けた残りの場所に店を収めて映す。
 
 export function StageProgress() {
   const t = useT();
@@ -27,7 +30,7 @@ export function StageProgress() {
           return (
             <li key={step} className="flex items-center gap-1">
               {index > 0 ? (
-                <span aria-hidden="true" className="h-px w-2 bg-kinari-300 sm:w-4" />
+                <span aria-hidden="true" className="h-px w-2 bg-kinari-300/70 sm:w-3" />
               ) : null}
               <span
                 aria-current={state === "current" ? "step" : undefined}
@@ -36,7 +39,7 @@ export function StageProgress() {
                     ? "bg-yamabuki-400 text-ink"
                     : state === "past"
                       ? "bg-ai-600 text-white"
-                      : "bg-ai-900/60 text-ai-100"
+                      : "bg-ink/55 text-kinari-100"
                 }`}
               >
                 {t.stage[step]}
@@ -66,38 +69,67 @@ export function LanguageButton({ className = "" }: { className?: string }) {
   );
 }
 
-function Header() {
+const roundButton =
+  "min-h-10 rounded-full border-2 border-kinari-50/80 bg-ai-800/85 px-3 py-1 font-bold text-white text-xs shadow-md backdrop-blur-sm transition hover:bg-ai-700 sm:text-sm";
+
+function TopBar() {
   const t = useT();
   const actions = useActions();
+  const [menuOpen, setMenuOpen] = useState(false);
   const soundOn = useApp((state) => state.ui.soundOn);
   const isMock = useApp((state) => state.transport === "mock");
-  const headerButton =
-    "min-h-10 rounded-lg border border-ai-200/50 px-2 py-1 font-semibold text-white text-xs hover:bg-ai-700 sm:px-2.5 sm:text-sm";
+  const panelOpen = useApp((state) => state.ui.drawerOpen);
   return (
-    <header className="no-print bg-ai-800 text-white shadow">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 px-3 py-2">
-        <h1 className="font-bold text-lg tracking-wider">
-          {t.app.name}
-          <span className="ml-2 hidden font-medium text-ai-100 text-xs sm:inline">
-            {t.app.tagline}
-          </span>
-        </h1>
-        <div className="order-3 w-full overflow-x-auto lg:order-none lg:w-auto lg:flex-1">
-          <StageProgress />
-        </div>
-        <div className="ml-auto flex items-center gap-1.5">
+    <header className="no-print flex flex-wrap items-start justify-between gap-2 p-2 sm:p-3 [&>*]:pointer-events-auto">
+      <div className="flex min-w-0 flex-col gap-1.5">
+        <div className="flex flex-wrap items-center gap-2">
+          <h1 className="rounded-full border-2 border-wood-900 bg-kinari-50 px-3 py-1 font-bold text-ink text-sm tracking-wider shadow-md sm:text-base">
+            {t.app.name}
+          </h1>
           {isMock ? (
             <span
-              className="hidden rounded bg-yamabuki-400 px-2 py-0.5 font-bold text-ink text-xs sm:inline"
+              className="rounded-full bg-yamabuki-400 px-2 py-0.5 font-bold text-ink text-xs shadow"
               title={t.app.mockNote}
+              data-testid="mock-note"
             >
               {t.app.mockBadge}
             </span>
           ) : null}
-          <LanguageButton className={headerButton} />
+        </div>
+        <div className="hidden max-w-full overflow-x-auto rounded-full bg-ink/35 px-1.5 py-1 backdrop-blur-sm sm:block">
+          <StageProgress />
+        </div>
+      </div>
+      <div className="relative flex flex-wrap items-center justify-end gap-1.5">
+        <button
+          type="button"
+          className={roundButton}
+          aria-expanded={panelOpen}
+          aria-controls="trip-panel"
+          onClick={() => actions.setDrawer(!panelOpen)}
+        >
+          {panelOpen ? t.itinerary.closePanel : t.itinerary.openPanel}
+        </button>
+        {/* 狭い画面では、ほかのボタンをメニューにまとめる */}
+        <button
+          type="button"
+          className={`${roundButton} lg:hidden`}
+          aria-expanded={menuOpen}
+          aria-controls="game-menu"
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          {t.app.menu}
+        </button>
+        <div
+          id="game-menu"
+          className={`${
+            menuOpen ? "flex" : "hidden"
+          } absolute top-full right-0 mt-1.5 flex-col items-stretch gap-1.5 rounded-2xl bg-ink/60 p-2 backdrop-blur-sm lg:static lg:mt-0 lg:flex lg:flex-row lg:items-center lg:bg-transparent lg:p-0 lg:backdrop-blur-none`}
+        >
+          <LanguageButton className={roundButton} />
           <button
             type="button"
-            className={headerButton}
+            className={roundButton}
             aria-pressed={soundOn}
             title={t.app.soundHint}
             onClick={() => {
@@ -109,7 +141,7 @@ function Header() {
           >
             {soundOn ? t.app.soundOn : t.app.soundOff}
           </button>
-          <button type="button" className={headerButton} onClick={() => void actions.restart()}>
+          <button type="button" className={roundButton} onClick={() => void actions.restart()}>
             {t.app.restart}
           </button>
         </div>
@@ -118,46 +150,63 @@ function Header() {
   );
 }
 
-/** 候補を閉じたあとに、もう一度開くボタン */
-function ReopenCandidates() {
-  const t = useT();
-  const actions = useActions();
-  const show = useApp(
-    (state) =>
-      !state.ui.candidatesOpen &&
-      state.candidates.length > 0 &&
-      (state.session.stage === "candidates" || state.itinerary.current === null),
-  );
-  if (!show) {
-    return null;
-  }
-  return (
-    <button
-      type="button"
-      className={`${buttonQuiet} bg-white/95 shadow`}
-      onClick={() => actions.setCandidatesOpen(true)}
-    >
-      {t.candidates.reopen}
-    </button>
-  );
+/** 重なる部品の大きさを測り、店のカメラが避ける幅にする */
+function useFrameInsets(
+  top: React.RefObject<HTMLElement | null>,
+  dialogue: React.RefObject<HTMLElement | null>,
+  panel: React.RefObject<HTMLElement | null>,
+  panelBeside: boolean,
+): FrameInsets {
+  const [insets, setInsets] = useState<FrameInsets>(NO_INSETS);
+  useLayoutEffect(() => {
+    const measure = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const topBar = top.current?.getBoundingClientRect();
+      const box = dialogue.current?.getBoundingClientRect();
+      const side = panel.current?.getBoundingClientRect();
+      const next: FrameInsets = {
+        top: topBar === undefined ? 0 : Math.round(topBar.bottom),
+        bottom: box === undefined ? 0 : Math.round(height - box.top),
+        right: panelBeside && side !== undefined ? Math.round(width - side.left) : 0,
+        left: 0,
+      };
+      setInsets((current) =>
+        current.top === next.top &&
+        current.bottom === next.bottom &&
+        current.right === next.right &&
+        current.left === next.left
+          ? current
+          : next,
+      );
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    for (const element of [top.current, dialogue.current, panel.current]) {
+      if (element !== null) observer.observe(element);
+    }
+    window.addEventListener("resize", measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [top, dialogue, panel, panelBeside]);
+  return insets;
 }
 
 export function Shop() {
-  const t = useT();
   const actions = useActions();
-  const drawerOpen = useApp((state) => state.ui.drawerOpen);
+  const panelOpen = useApp((state) => state.ui.drawerOpen);
   const hasItinerary = useApp((state) => state.itinerary.current !== null);
-  const isMock = useApp((state) => state.transport === "mock");
-  // 広い画面では掲示板を店内の右上に、狭い画面では店内の下に置く
-  const wide = useMediaQuery("(min-width: 640px)");
-  // 小話かクイズが出ている間は、掲示板を小さくする
-  const waitingShown = useApp(
-    (state) =>
-      state.quiz.question !== null ||
-      (state.session.streaming && Object.values(state.festivals).some((f) => f.trivia.length > 0)),
-  );
+  const wide = useMediaQuery("(min-width: 1024px)");
+  const [logOpen, setLogOpen] = useState(false);
+  const topRef = useRef<HTMLDivElement>(null);
+  const dialogueRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const beside = wide && panelOpen;
+  const frame = useFrameInsets(topRef, dialogueRef, panelRef, beside);
 
-  // 旅程ができたら、スマートフォンでもパネルを開いて見せる
+  // 旅程ができたら、旅程のパネルを開いて見せる
   useEffect(() => {
     if (hasItinerary) {
       actions.setDrawer(true);
@@ -165,71 +214,44 @@ export function Shop() {
   }, [hasItinerary, actions]);
 
   return (
-    <div className="flex min-h-dvh flex-col lg:h-dvh lg:overflow-hidden">
-      <Header />
-      {isMock ? (
-        <p className="no-print bg-yamabuki-100 px-3 py-1 text-ink text-xs" data-testid="mock-note">
-          {t.app.mockNote}
-        </p>
-      ) : null}
-      <main className="flex flex-col gap-3 p-2 pb-20 sm:p-3 sm:pb-20 lg:grid lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,1fr)_minmax(380px,34%)] lg:grid-rows-[minmax(0,1fr)] lg:pb-3">
-        {/* 左：店内と会話 */}
-        <div className="relative flex flex-col gap-2 lg:min-h-0">
-          <div className="h-[19rem] shrink-0 lg:h-[47%] lg:min-h-64">
-            <SceneSlot
-              overlay={
-                <>
-                  {/* 店内の右の列：クエストの掲示板と、待ち時間のカード */}
-                  <div className="pointer-events-none absolute inset-x-2 bottom-2 z-10 flex max-h-[calc(100%-1rem)] flex-col items-end gap-2 overflow-y-auto sm:inset-x-auto sm:top-2 sm:right-2 sm:w-[min(29%,19rem)] [&>*]:pointer-events-auto">
-                    {wide ? (
-                      <div className="w-full">
-                        <QuestBoard compact={waitingShown} />
-                      </div>
-                    ) : null}
-                    <WaitingCard />
-                  </div>
-                  <div className="pointer-events-none absolute bottom-2 left-2 z-10 [&>*]:pointer-events-auto">
-                    <ReopenCandidates />
-                  </div>
-                </>
-              }
-            />
-          </div>
-          <div className="relative flex flex-col rounded-2xl border-2 border-wood-300 bg-kinari-50 p-2 shadow-sm lg:min-h-0 lg:flex-1">
-            <ChatLog />
-            <div className="space-y-2 border-kinari-300 border-t pt-2">
-              <ConditionChips />
-              <PreferenceBar />
-              <Composer />
-            </div>
-          </div>
-          {wide ? null : <QuestBoard />}
-          <CandidateCards />
-          <PasscodeDialog />
-        </div>
+    <div className="relative h-dvh w-full overflow-hidden bg-wood-900 text-ink">
+      <GameStage frame={frame} />
 
-        {/* 右：旅程・地図・出典（スマートフォンでは下から引き出す） */}
+      <div ref={topRef} className="pointer-events-none absolute inset-x-0 top-0 z-40">
+        <TopBar />
+      </div>
+      <div className="pointer-events-none absolute top-16 left-2 z-10 w-60 sm:top-24 sm:left-3 sm:w-64 [&>*]:pointer-events-auto">
+        <StaffActivity />
+      </div>
+
+      {/* 旅程・地図・出典の紙のパネル（広い画面は右に重ね、狭い画面は上に重ねる） */}
+      {panelOpen ? (
         <div
-          className={`fixed inset-x-0 bottom-0 z-30 h-[78dvh] p-2 transition-transform duration-300 lg:static lg:z-auto lg:h-auto lg:min-h-0 lg:translate-y-0 lg:p-0 ${
-            drawerOpen ? "translate-y-0" : "translate-y-[calc(100%-3.5rem)]"
-          }`}
+          ref={panelRef}
+          id="trip-panel"
+          className="absolute inset-x-2 top-16 bottom-2 z-30 lg:top-24 lg:right-3 lg:bottom-3 lg:left-auto lg:w-[min(30rem,38vw)]"
           data-testid="panel-drawer"
-          data-open={drawerOpen}
         >
-          <button
-            type="button"
-            className={`${buttonPrimary} mb-1 w-full rounded-b-none lg:hidden`}
-            aria-expanded={drawerOpen}
-            aria-controls="itinerary-drawer"
-            onClick={() => actions.setDrawer(!drawerOpen)}
-          >
-            {drawerOpen ? t.itinerary.closePanel : t.itinerary.openPanel}
-          </button>
-          <div id="itinerary-drawer" className="h-[calc(100%-3rem)] lg:h-full">
-            <ItineraryPanel />
-          </div>
+          <ItineraryPanel />
         </div>
-      </main>
+      ) : null}
+
+      {/* 会話の窓。待ち時間のカードは、その上に出す */}
+      <div
+        ref={dialogueRef}
+        className={`absolute inset-x-2 bottom-2 z-20 sm:inset-x-3 sm:bottom-3 ${
+          beside ? "lg:right-[calc(min(30rem,38vw)+1.5rem)] lg:left-3" : "lg:mx-auto lg:max-w-4xl"
+        }`}
+      >
+        <div className="pointer-events-none absolute bottom-full left-0 mb-6 w-full max-w-xs [&>*]:pointer-events-auto">
+          <WaitingCard />
+        </div>
+        <DialogueBox onOpenLog={() => setLogOpen(true)} />
+      </div>
+
+      <CandidateCards />
+      <PasscodeDialog />
+      {logOpen ? <Backlog onClose={() => setLogOpen(false)} /> : null}
     </div>
   );
 }

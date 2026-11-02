@@ -310,12 +310,23 @@ export function Composer() {
           onKeyDown={onKeyDown}
           placeholder={t.chat.placeholder}
           disabled={!ready}
-          className="field-sizing-content max-h-32 min-h-11 flex-1 resize-none rounded-xl border-2 border-wood-400 bg-white px-3 py-2 text-base text-ink placeholder:text-stone-500 focus:border-ai-600 focus:outline-none disabled:bg-kinari-200"
+          className="field-sizing-content max-h-32 min-h-11 min-w-0 flex-1 resize-none rounded-xl border-2 border-wood-400 bg-white px-3 py-2 text-base text-ink placeholder:text-stone-500 focus:border-ai-600 focus:outline-none disabled:bg-kinari-200"
           aria-invalid={tooLong}
           aria-describedby={tooLong ? "chat-too-long" : undefined}
         />
-        <button type="submit" className={buttonPrimary} disabled={!canSend}>
-          {streaming ? t.chat.waiting : t.chat.send}
+        <button
+          type="submit"
+          className={`${buttonPrimary} shrink-0`}
+          disabled={!canSend}
+          aria-label={streaming ? t.chat.waiting : t.chat.send}
+        >
+          {/* 狭い画面では、待っている間の文を短くする（読み上げは aria-label の全文） */}
+          <span aria-hidden="true" className="sm:hidden">
+            {streaming ? "…" : t.chat.send}
+          </span>
+          <span aria-hidden="true" className="hidden sm:inline">
+            {streaming ? t.chat.waiting : t.chat.send}
+          </span>
         </button>
       </div>
       {tooLong ? (

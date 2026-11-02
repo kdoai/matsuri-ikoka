@@ -3,7 +3,17 @@ import { allQuestsDone } from "./selectors";
 import type { AppData, QuestId, QuestState, StaffState } from "./types";
 
 // 3D の店内に渡す状態。3D の部品は、これを props で受け取るだけにする（ADR 0003）。
-// 同じ情報は 2D の StaffPanel とクエストの掲示板でも、文字で読める。
+// 同じ情報は 2D のスタッフの一覧と会話の窓でも、文字で読める。
+
+/** 画面の上で、会話の窓やパネルが重なる幅（CSS の px）。3D はこの内側に店を収めて映す */
+export interface FrameInsets {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+}
+
+export const NO_INSETS: FrameInsets = Object.freeze({ top: 0, right: 0, bottom: 0, left: 0 });
 
 export interface ShopSceneProps {
   /** スタッフごとの状態（待機・移動・作業・戻る、動き、吹き出し） */
@@ -16,10 +26,17 @@ export interface ShopSceneProps {
   celebrating: boolean;
   /** 動きを減らす設定。true のときは画面が 2D を主にするので、3D は出さない */
   reducedMotion: boolean;
+  /** 画面の部品が重なる場所（画面の並びの情報。ストアの状態ではない） */
+  frame: FrameInsets;
 }
 
-export function selectSceneProps(state: AppData, reducedMotion: boolean): ShopSceneProps {
+export function selectSceneProps(
+  state: AppData,
+  reducedMotion: boolean,
+  frame: FrameInsets = NO_INSETS,
+): ShopSceneProps {
   return {
+    frame,
     staff: state.staff,
     stage: state.session.stage,
     quests: state.quests,

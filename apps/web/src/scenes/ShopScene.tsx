@@ -6,7 +6,6 @@ import type { ShopSceneProps } from "../state/scene";
 import type { StaffState } from "../state/types";
 import {
   exteriorOpacity,
-  frameShift,
   SCENE_MOTIONS,
   type SceneMotion,
   type Spot,
@@ -30,10 +29,6 @@ import {
 // 3D の店内。ストアの状態（ShopSceneProps）を読むだけで、SSE のイベントは受けない。
 // 吹き出しは 3D の上に HTML で重ねる（文字はストアのものをそのまま出す）。
 // 同じ情報は、画面の 2D の部品（スタッフの一覧・クエストの掲示板）でも文字で読める。
-
-/** 右の列が重なる幅（Tailwind の sm）と、その列が枠に占める割合 */
-const OVERLAY_MIN_WIDTH = 640;
-const OVERLAY_FRACTION = 0.3;
 
 const MOTION_MODELS = SCENE_MOTIONS.map((name) => `motion_${name}` as ModelName);
 const STAFF_MODELS = STAFF_IDS.map((id) => `staff_${STAFF_KIND[id]}` as ModelName);
@@ -141,16 +136,14 @@ function Shop({
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.1);
     const perspective = camera as PerspectiveCamera;
-    const aspect = size.width / Math.max(size.height, 1);
-    // 広い画面では、右の約3割に掲示板と小話のカードが重なる（ui/Shop.tsx）
-    const shift = frameShift(aspect, size.width >= OVERLAY_MIN_WIDTH ? OVERLAY_FRACTION : 0);
+    const { frame } = props;
     gimmicks.update(dt);
 
     if (entering.current && entry !== null) {
       entryTime.current = Math.min(entry.clip.duration, entryTime.current + dt);
       entry.mixer.setTime(entryTime.current);
       const at = cameraPose(exterior.scene, "cam.entry");
-      if (at !== null) applyPose(perspective, at, aspect, shift);
+      if (at !== null) applyPose(perspective, at, size.width, size.height, frame);
       setOpacity(exterior.scene, exteriorOpacity(entryTime.current));
       if (entryTime.current >= entry.clip.duration) {
         entering.current = false;
@@ -170,7 +163,7 @@ function Shop({
       const t = 1 - Math.exp(-dt * 3);
       pose.current.position.lerp(goal.position, t);
       pose.current.quaternion.slerp(goal.quaternion, t);
-      applyPose(perspective, pose.current, aspect, shift);
+      applyPose(perspective, pose.current, size.width, size.height, frame);
     }
 
     if (!readied.current) {

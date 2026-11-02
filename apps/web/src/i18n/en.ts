@@ -23,6 +23,16 @@ export const en: Messages = {
     useServer: "Connect to the server",
     useMock: "Use the screen-only mock",
     progress: "Conversation progress",
+    menu: "Menu",
+  },
+  dialogue: {
+    thinking: "One moment, please",
+    openLog: "Conversation log",
+    log: "Conversation log",
+    closeLog: "Close",
+  },
+  activity: {
+    title: "In the shop",
   },
   stage: {
     hearing: "Listening",
