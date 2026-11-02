@@ -1,0 +1,45 @@
+name: 掲載停止の依頼
+description: 祭りを運営する方から、MATSURI QUEST への掲載を止める依頼
+title: "[掲載停止] "
+labels: ["opt-out"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        祭りを運営する方からの依頼を受けたら、その祭りを候補に出さないようにし、情報の収集の対象からも外します。
+        理由を書いていただく必要はありません。
+
+        **この Issue は公開されます。** 電話番号や住所など、個人の連絡先は書かないでください。
+
+  - type: input
+    id: festival
+    attributes:
+      label: 祭りの名前
+    validations:
+      required: true
+
+  - type: input
+    id: place
+    attributes:
+      label: 開催地（都道府県・市町村）
+    validations:
+      required: true
+
+  - type: dropdown
+    id: relation
+    attributes:
+      label: 祭りとの関係
+      options:
+        - 主催者・実行委員会
+        - 自治体・観光協会
+        - その他の関係者
+    validations:
+      required: true
+
+  - type: textarea
+    id: note
+    attributes:
+      label: 補足
+      description: 一部の情報だけを止めたい場合などは、ここに書いてください
+    validations:
+      required: false

@@ -1,0 +1,70 @@
+name: 祭り情報の訂正
+description: 掲載している祭りの日時・場所・作法などの誤りを知らせる
+title: "[訂正] "
+labels: ["data-correction"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        掲載している祭りの情報に誤りがあれば教えてください。祭りを運営する方からのご連絡も歓迎します。
+        いただいた内容は、出典を確かめてから直します。
+
+        **この Issue は公開されます。** 電話番号や住所など、個人の連絡先は書かないでください。
+
+  - type: input
+    id: festival
+    attributes:
+      label: 祭りの名前
+      description: 候補カードやしおりに出ている名前。分かれば ID（例：suzunari-toro）も書いてください
+    validations:
+      required: true
+
+  - type: dropdown
+    id: fields
+    attributes:
+      label: 誤りのある項目
+      multiple: true
+      options:
+        - 開催日・時間・雨天の扱い
+        - 会場・アクセス・駐車場・交通規制
+        - 作法（見学か参加か・服装・持ち物・写真・危険度）
+        - 地元の味・屋台
+        - 周辺の店や施設
+        - 小話
+        - その他
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: いま掲載されている内容
+    validations:
+      required: false
+
+  - type: textarea
+    id: correct
+    attributes:
+      label: 正しい内容
+    validations:
+      required: true
+
+  - type: input
+    id: source
+    attributes:
+      label: 確かめられる出典
+      description: 公式サイトや自治体・観光協会の案内の URL があれば書いてください
+    validations:
+      required: false
+
+  - type: dropdown
+    id: relation
+    attributes:
+      label: あなたと祭りの関係
+      options:
+        - 祭りを運営している
+        - 自治体・観光協会
+        - 地元に住んでいる、参加したことがある
+        - その他
+    validations:
+      required: false

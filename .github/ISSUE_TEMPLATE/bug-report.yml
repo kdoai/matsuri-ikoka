@@ -1,0 +1,53 @@
+name: 不具合の報告
+description: アプリが期待どおりに動かないとき
+title: "[不具合] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        セキュリティに関わる問題（脆弱性）は、ここに書かず [SECURITY.md](../blob/main/SECURITY.md) の手順で知らせてください。
+        相談の内容を貼るときは、個人を特定できる情報を消してください。
+
+  - type: textarea
+    id: what
+    attributes:
+      label: 起きたこと
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 再現の手順
+      placeholder: |
+        1. …
+        2. …
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待した動き
+    validations:
+      required: false
+
+  - type: dropdown
+    id: mode
+    attributes:
+      label: どこで起きたか
+      options:
+        - 公開している URL
+        - ローカル（モックモード）
+        - ローカル（live モード）
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: ブラウザと OS
+      placeholder: 例：Chrome 140 / Windows 11
+    validations:
+      required: false
