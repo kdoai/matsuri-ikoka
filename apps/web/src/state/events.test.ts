@@ -335,6 +335,36 @@ describe("候補", () => {
   });
 });
 
+describe("候補カードの開け閉め", () => {
+  it("返答の途中で利用者が候補を閉じたら、done で開き直さない", () => {
+    let state = beginTurn(fresh(), {
+      kind: "chat",
+      message: "8月16日に行ける祭り",
+      preferences: fresh().preferences,
+    });
+    state = applyEvent(state, {
+      type: "tool.end",
+      data: {
+        toolCallId: "a",
+        tool: "search_festivals",
+        staff: "researcher",
+        ok: true,
+        bubble: "1件見つかりました",
+        count: 1,
+        candidates: [candidate],
+      },
+    });
+    expect(state.ui.candidatesOpen).toBe(true);
+    state = { ...state, ui: { ...state.ui, candidatesOpen: false } };
+    state = applyEvent(state, {
+      type: "done",
+      data: { stage: "candidates", conditions: {}, preferences: state.preferences },
+    });
+    expect(state.ui.candidatesOpen).toBe(false);
+    expect(state.candidates).toHaveLength(1);
+  });
+});
+
 describe("エラーと送り直し", () => {
   it("サーバーのエラーは、その一文を会話欄に出す", () => {
     const state = applyEvent(fresh(), {

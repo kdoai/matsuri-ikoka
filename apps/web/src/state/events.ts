@@ -318,7 +318,8 @@ function onDone(state: AppData, data: SseEventOf<"done">["data"]): AppData {
     quiz: { ...next.quiz, question: null, answer: null },
     ui: {
       ...next.ui,
-      candidatesOpen: data.stage === "candidates" && next.candidates.length > 0,
+      // 候補を開くのは候補が届いたときだけ。利用者が閉じた候補を、ここで開き直さない
+      candidatesOpen: data.stage === "candidates" && next.ui.candidatesOpen,
       celebrating: next.ui.celebrating || reachedShiori,
     },
   };
