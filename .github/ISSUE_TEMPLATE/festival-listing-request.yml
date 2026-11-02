@@ -1,0 +1,64 @@
+name: 祭りの掲載・情報提供の依頼
+description: 祭りを運営する方から、「うちの祭りも載せてほしい」と伝える窓口
+title: "[掲載の依頼] "
+labels: ["listing-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        外の人にも来てほしい祭りを教えてください。来る人に知ってほしい作法やしきたり、見どころもあわせて書けます。
+
+        いただいた情報は手がかりとして扱い、公式の情報（主催者・自治体・観光協会の案内など）と照らし合わせてから載せます。
+        そのため、載るまでに時間がかかることや、公式の情報で確かめられない項目は「不明」や「要確認」として載ることがあります。
+
+        **この Issue は公開されます。** 電話番号やメールアドレスなど、個人の連絡先は書かないでください。
+
+  - type: input
+    id: festival
+    attributes:
+      label: 祭りの名前
+    validations:
+      required: true
+
+  - type: input
+    id: place
+    attributes:
+      label: 開催地（都道府県・市町村）
+    validations:
+      required: true
+
+  - type: input
+    id: date
+    attributes:
+      label: 開催日
+      description: 分かれば書いてください。毎年の決まり（例：8月の第3土曜）でもかまいません
+    validations:
+      required: false
+
+  - type: input
+    id: official
+    attributes:
+      label: 公式の情報がある URL
+      description: 主催者・自治体・観光協会などのページ。公式の情報と照らし合わせるのに使います
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: 来る人に知ってほしいこと
+      description: 作法・しきたり（服装、立ち入ってはいけない場所、写真の決まり、参加の仕方など）や見どころ
+    validations:
+      required: false
+
+  - type: dropdown
+    id: relation
+    attributes:
+      label: 祭りとの関わり
+      options:
+        - 主催者・実行委員会
+        - 保存会
+        - 自治体・観光協会
+        - その他
+    validations:
+      required: true
