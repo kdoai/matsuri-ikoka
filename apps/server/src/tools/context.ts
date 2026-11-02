@@ -28,6 +28,11 @@ export function newTurnState(): TurnState {
 export interface ToolContext {
   session: Session;
   turn: TurnState;
+  /**
+   * 発言の signal。時間切れや接続の切断で止まる。ツールはこれと自分の時間の上限を合わせて使い、
+   * 止まったあとに相談の状態（旅程・再確認の結果）を書き換えない
+   */
+  signal: AbortSignal;
   festivals: FestivalStore;
   itineraries: ItineraryStore;
   weather: WeatherService;

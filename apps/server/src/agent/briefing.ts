@@ -91,9 +91,11 @@ const CLOSE_RECORD = "</店の記録>";
 const OPEN_MESSAGE = "<お客さまの発言>";
 const CLOSE_MESSAGE = "</お客さまの発言>";
 
-/** 利用者の発言から、記録や発言の区切りに見えるタグを取り除く */
+/** 利用者の発言の中で、記録や発言の区切りのタグを作れないようにする */
 export function sanitizeMessage(message: string): string {
-  return message.replace(/<\/?\s*(店の記録|お客さまの発言)\s*>/g, "");
+  // タグの文字列だけを消すと、入れ子（</お客さまの<お客さまの発言>発言>）で消したあとにタグができる。
+  // 山かっこを全角にして、発言の中ではどんなタグも作れないようにする
+  return message.replaceAll("<", "＜").replaceAll(">", "＞");
 }
 
 /** コンシェルジュに渡す、1回の発言のプロンプト */

@@ -3,8 +3,10 @@ import { bodyLimit } from "hono/body-limit";
 import type { FestivalStore } from "./data/festivalStore";
 import { type ChatDeps, registerChatRoutes } from "./routes/chat";
 import { apiError } from "./routes/errors";
+import { registerFestivalRoutes } from "./routes/festivals";
 import { passcodeGuard } from "./routes/guard";
 import { registerItineraryRoutes } from "./routes/itinerary";
+import { registerWebRoutes } from "./routes/web";
 import type { ItineraryStore } from "./session/sessionStore";
 
 export interface AppDeps extends ChatDeps {
@@ -12,6 +14,8 @@ export interface AppDeps extends ChatDeps {
   festivals: FestivalStore;
   /** 公開している URL の合言葉。null なら確かめない */
   accessPasscode: string | null;
+  /** 画面のビルドの場所。あれば同じオリジンから配る */
+  webDist?: string | null;
 }
 
 /** API の本文の大きさの上限（発言は1000字まで） */
@@ -36,7 +40,9 @@ export function createApp(deps: AppDeps) {
   );
   app.use("/api/*", passcodeGuard(deps.accessPasscode));
   registerChatRoutes(app, deps);
+  registerFestivalRoutes(app, deps);
   registerItineraryRoutes(app, deps);
+  if (deps.webDist) registerWebRoutes(app, { webDist: deps.webDist });
 
   app.onError((error, c) => {
     console.error("[app] unhandled", error);

@@ -318,7 +318,7 @@ export const updateItinerary = defineTool({
       "旅程の全体（id・version・verification・weather はサーバーが付ける）",
     ),
   },
-  async run(args, ctx) {
+  async run(args, ctx, signal) {
     const { session } = ctx;
     const previous = session.itineraryId
       ? (ctx.itineraries.get(session.itineraryId) ?? null)
@@ -348,6 +348,8 @@ export const updateItinerary = defineTool({
     if (!result.ok) {
       return { saved: false, errors: result.errors, warnings: result.warnings };
     }
+    // 時間切れや接続の切断のあとに、旅程を書き換えない
+    if (signal.aborted) throw new ToolError("止められたので、旅程は保存しません");
     if (!result.unchanged) {
       ctx.itineraries.save(result.itinerary);
       session.itineraryId = result.itinerary.id;
@@ -381,6 +383,8 @@ export const verifyFestival = defineTool({
     const festival = festivalOf(ctx, args.festivalId);
     const date = visitDate(ctx, festival, args.date);
     const report = await ctx.verifier.verify({ festival, date, signal });
+    // 時間切れや接続の切断のあとに、再確認の結果で旅程を書き換えない
+    if (signal.aborted) throw new ToolError("止められたので、再確認の結果は使いません");
     const decision = decideVerification(festival, report, ctx.today());
     const checkedAt = ctx.now();
     const verification = {
@@ -393,14 +397,15 @@ export const verifyFestival = defineTool({
     const itinerary = ctx.session.itineraryId
       ? ctx.itineraries.get(ctx.session.itineraryId)
       : undefined;
-    if (
+    const applied =
       itinerary !== undefined &&
       itinerary.mainFestivalId === festival.id &&
-      itinerary.date === date
-    ) {
+      itinerary.date === date;
+    if (applied) {
       ctx.itineraries.save({ ...itinerary, verification });
+      // 会話の状態（しおりへ進むか）は、旅程の再確認の結果を実際に書き換えたときだけ変える
+      ctx.turn.verification = decision.result;
     }
-    ctx.turn.verification = decision.result;
     if (decision.result === "changed" || decision.result === "cancelled") {
       // 次のデータの更新で優先して調べ直すための、食い違いの記録（会話の文は残さない）
       console.warn(
@@ -421,6 +426,8 @@ export const verifyFestival = defineTool({
       checkedAt,
       sources: decision.sources,
       ...(decision.note ? { note: decision.note } : {}),
+      /** 旅程の再確認の結果を書き換えたか。主役の祭りと日付が旅程と違えば書き換えない */
+      appliedToItinerary: applied,
       daysUntil: daysBetween(ctx.today(), date),
       occurrenceInData: occurrenceOn(festival, date),
     };

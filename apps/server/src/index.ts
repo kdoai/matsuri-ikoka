@@ -1,6 +1,8 @@
+import { existsSync } from "node:fs";
 import path from "node:path";
 import { deleteSession, query } from "@anthropic-ai/claude-agent-sdk";
 import { serve } from "@hono/node-server";
+import { getConnInfo } from "@hono/node-server/conninfo";
 import { ClaudeAgentRunner } from "./agent/claudeRunner";
 import { agentEnv, createAgentWorkdir } from "./agent/options";
 import { loadPrompts } from "./agent/prompts";
@@ -12,7 +14,7 @@ import { createApp } from "./app";
 import { readConfig } from "./config";
 import { festivalDirs, loadFestivals } from "./data/festivalStore";
 import { nowInJapan, todayInJapan } from "./domain/calendar";
-import { DailyLimiter } from "./routes/guard";
+import { ConcurrencyLimiter, clientIp, DailyLimiter } from "./routes/guard";
 import { ItineraryStore, SessionStore } from "./session/sessionStore";
 import { createJmaWeather } from "./tools/weather";
 
@@ -69,6 +71,7 @@ if (config.mode === "live") {
       cwd,
       env,
       query,
+      maxBudgetUsd: config.maxBudgetUsd,
     }),
     prompts,
     models: config.models,
@@ -92,11 +95,32 @@ const app = createApp({
   itineraries,
   festivals: festivals.store,
   limiter: new DailyLimiter(config.dailyChatLimit, today),
+  ipLimiter: new DailyLimiter(config.dailyChatLimitPerIp, today),
+  concurrency: new ConcurrencyLimiter(config.maxConcurrentTurns),
+  clientIp: (c) => {
+    let remote: string | undefined;
+    try {
+      remote = getConnInfo(c).remote.address;
+    } catch {
+      remote = undefined;
+    }
+    return clientIp(c.req.header("x-forwarded-for"), remote, config.trustedProxyHops);
+  },
   accessPasscode: config.accessPasscode,
+  webDist: config.webDist,
 });
+if (config.webDist !== null && !existsSync(path.join(config.webDist, "index.html"))) {
+  console.warn(`[web] 画面のビルドがありません：${config.webDist}（先に pnpm build）`);
+}
 
-// 使われなくなった相談を、10分ごとに片付ける
-setInterval(() => sessions.sweep(), 10 * 60 * 1000).unref();
+// 使われなくなった相談と、期限を過ぎた旅程を、10分ごとに片付ける
+setInterval(
+  () => {
+    sessions.sweep();
+    itineraries.sweep();
+  },
+  10 * 60 * 1000,
+).unref();
 
 serve({ fetch: app.fetch, port: config.port }, (info) => {
   console.info(`server listening on http://localhost:${info.port} (${config.mode})`);

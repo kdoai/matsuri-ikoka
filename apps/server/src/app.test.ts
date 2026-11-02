@@ -2,7 +2,9 @@ import { fileURLToPath } from "node:url";
 import {
   DEFAULT_PREFERENCES,
   decodeSseEvent,
+  FestivalSchema,
   type SampleConversation,
+  SessionResponseSchema,
   type SseEvent,
 } from "@matsuri-ikoka/schema";
 import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
@@ -11,7 +13,8 @@ import { loadSampleConversations, ReplayAgentRunner } from "./agent/replayRunner
 import { AgentError, type AgentRunner } from "./agent/runner";
 import { type AppDeps, createApp } from "./app";
 import { createFestivalStore, type FestivalStore, loadFestivals } from "./data/festivalStore";
-import { DailyLimiter } from "./routes/guard";
+import { testFestival } from "./domain/testFestivals";
+import { ConcurrencyLimiter, DailyLimiter } from "./routes/guard";
 import { ItineraryStore, SessionStore } from "./session/sessionStore";
 
 const root = (relative: string) => fileURLToPath(new URL(`../../../${relative}`, import.meta.url));
@@ -94,6 +97,14 @@ describe("GET /healthz", () => {
 });
 
 describe("POST /api/chat（mock）", () => {
+  /** 旅程 ID は相談ごとに置き換わるので、比べるときはそろえる */
+  const withoutItineraryId = (event: SseEvent): SseEvent =>
+    event.type === "itinerary.updated"
+      ? { ...event, data: { ...event.data, itinerary: { ...event.data.itinerary, id: "trip" } } }
+      : event;
+  const itineraryIds = (events: SseEvent[]) =>
+    events.flatMap((e) => (e.type === "itinerary.updated" ? [e.data.itinerary.id] : []));
+
   it("サンプルの相談を SSE で最後まで流し、最後に必ず done を送る", async () => {
     const { post, newSession } = setup();
     const sessionId = await newSession();
@@ -104,9 +115,32 @@ describe("POST /api/chat（mock）", () => {
       expect(res.headers.get("content-type")).toContain("text/event-stream");
       const { events } = await readSse(res);
 
-      expect(events).toEqual(turn.events.map((e) => e.event));
+      expect(events.map(withoutItineraryId)).toEqual(
+        turn.events.map((e) => withoutItineraryId(e.event)),
+      );
       expect(events.filter((e) => e.type === "done")).toHaveLength(1);
     }
+  });
+
+  it("記録の旅程 ID は相談ごとに置き換え、同じ相談の中では同じにする", async () => {
+    const { post, newSession } = setup();
+    const play = async () => {
+      const sessionId = await newSession();
+      const ids: string[] = [];
+      for (const _ of samples[0]!.turns) {
+        ids.push(...itineraryIds((await readSse(await post("/api/chat", chat(sessionId)))).events));
+      }
+      return ids;
+    };
+
+    const first = await play();
+    const second = await play();
+    const recorded = itineraryIds(samples[0]!.turns.flatMap((t) => t.events.map((e) => e.event)));
+
+    expect(first.length).toBeGreaterThan(1);
+    expect(new Set(first).size).toBe(1);
+    expect(first[0]).not.toBe(second[0]);
+    expect(first).not.toContain(recorded[0]);
   });
 
   it("形の違う発言は 400、ない相談は 404 で断る", async () => {
@@ -132,6 +166,48 @@ describe("POST /api/chat（mock）", () => {
 
     expect(second.status).toBe(429);
     expect(await second.json()).toMatchObject({ code: "rate_limited" });
+  });
+
+  it("IP ごとの1日の上限を超えたら、その IP だけ 429", async () => {
+    const { post, newSession } = setup({
+      ipLimiter: new DailyLimiter(1, () => "2026-08-03"),
+      clientIp: (c) => c.req.header("x-test-ip") ?? "unknown",
+    });
+    const sessionId = await newSession();
+
+    await (await post("/api/chat", chat(sessionId), { "x-test-ip": "203.0.113.1" })).text();
+    const same = await post("/api/chat", chat(sessionId), { "x-test-ip": "203.0.113.1" });
+    const other = await post("/api/chat", chat(sessionId), { "x-test-ip": "203.0.113.2" });
+
+    expect(same.status).toBe(429);
+    expect(other.status).toBe(200);
+    await other.text();
+  });
+
+  it("live で同時に返事を作る数を超えたら 503。返事が終われば枠を返す", async () => {
+    let finish = () => {};
+    const runner: AgentRunner = {
+      mode: "live",
+      runTurn: () =>
+        new Promise<void>((resolve) => {
+          finish = resolve;
+        }),
+    };
+    const sessions = new SessionStore();
+    const first = sessions.create();
+    const second = sessions.create();
+    const concurrency = new ConcurrencyLimiter(1);
+    const { post } = setup({ runner, sessions, concurrency });
+
+    const running = post("/api/chat", chat(first.id));
+    const busy = await post("/api/chat", chat(second.id));
+    expect(busy.status).toBe(503);
+    expect(await busy.json()).toMatchObject({ code: "upstream_unavailable", retryable: true });
+
+    const res = await running;
+    finish();
+    await res.text();
+    expect(concurrency.running).toBe(0);
   });
 
   it("返事を作っている途中の相談には 409", async () => {
@@ -279,6 +355,40 @@ describe("PATCH /api/preferences", () => {
   });
 });
 
+describe("POST /api/session", () => {
+  it("本文なしで相談を始め、セッション ID を返す", async () => {
+    const { app } = setup();
+
+    const res = await app.request("/api/session", { method: "POST" });
+
+    expect(res.status).toBe(201);
+    expect(SessionResponseSchema.safeParse(await res.json()).success).toBe(true);
+  });
+});
+
+describe("GET /api/festivals/:id", () => {
+  it("祭りのデータを FestivalSchema の形で返す", async () => {
+    const res = await setup().app.request("/api/festivals/suzunari-toro");
+
+    expect(res.status).toBe(200);
+    const festival = FestivalSchema.parse(await res.json());
+    expect(festival.id).toBe("suzunari-toro");
+    expect(festival.etiquette.participation).toBe("join_by_application");
+  });
+
+  it("ない祭り・ID の形が違う祭り・掲載停止の祭りは 404", async () => {
+    const { app } = setup({
+      festivals: createFestivalStore([testFestival({ id: "opted-out", optOut: true })]),
+    });
+
+    for (const id of ["no-such", "Not%20A%20Slug", "opted-out"]) {
+      const res = await app.request(`/api/festivals/${id}`);
+      expect(res.status).toBe(404);
+      expect(await res.json()).toMatchObject({ code: "bad_request" });
+    }
+  });
+});
+
 describe("旅程としおり", () => {
   it("サンプルの相談を最後まで流すと、旅程を JSON で、確定した旅程をしおりで引ける", async () => {
     const { app, post, newSession, sessions } = setup();
@@ -304,6 +414,20 @@ describe("旅程としおり", () => {
     expect(page).toContain("公式情報で開催予定を確認済み");
     expect(page).toContain("https://example.com/suzunari/2026");
     expect((await app.request("/api/itinerary/no-such")).status).toBe(404);
+  });
+
+  it("公式の出典のない「予定どおり」の旅程は、しおりにしない", async () => {
+    const itineraries = new ItineraryStore();
+    const itinerary = fictionalItinerary();
+    itinerary.verification = {
+      status: "as_planned",
+      checkedAt: "2026-08-03T10:00:00+09:00",
+      sources: [{ url: "https://example.net/blog", checkedAt: "2026-08-03", confidence: "single" }],
+    };
+    itineraries.save(itinerary);
+    const { app } = setup({ itineraries });
+
+    expect((await app.request(`/shiori/${itinerary.id}`)).status).toBe(409);
   });
 
   it("しおりは文字列をエスケープして埋め込む", async () => {

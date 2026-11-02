@@ -212,6 +212,19 @@ describe("再確認のエージェント", () => {
     });
   });
 
+  it("費用の上限を渡す", () => {
+    const opts = buildVerifierOptions({
+      systemPrompt: "再確認",
+      cwd: "/tmp/matsuri-agent-test",
+      env: {},
+      abortController: new AbortController(),
+      withTools: true,
+      maxBudgetUsd: 0.2,
+    });
+
+    expect(opts.maxBudgetUsd).toBe(0.2);
+  });
+
   it("差し戻しでは道具を使わせない", () => {
     const opts = verifierOptions(false);
 

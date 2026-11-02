@@ -2,7 +2,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { findRepoRoot, readConfig } from "./config";
-import { DailyLimiter } from "./routes/guard";
+import { ConcurrencyLimiter, clientIp, DailyLimiter } from "./routes/guard";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 
@@ -20,11 +20,12 @@ describe("readConfig", () => {
       dailyChatLimit: null,
       replaySpeed: 1,
       maxBudgetUsd: undefined,
+      webDist: null,
     });
     expect(config.repoRoot).toBe(path.resolve(here, "../../.."));
   });
 
-  it("環境変数から読む。DAILY_CHAT_LIMIT=0 は上限なし", () => {
+  it("環境変数から読む", () => {
     const config = readConfig(
       {
         PORT: "9000",
@@ -32,8 +33,9 @@ describe("readConfig", () => {
         MODEL_CONCIERGE: "model-a",
         MODEL_STAFF: " model-b ",
         ACCESS_PASSCODE: "fictional",
-        DAILY_CHAT_LIMIT: "0",
+        DAILY_CHAT_LIMIT: "100",
         AGENT_MAX_BUDGET_USD: "0.5",
+        ANTHROPIC_API_KEY: "test-key",
         NODE_ENV: "production",
       },
       here,
@@ -45,9 +47,14 @@ describe("readConfig", () => {
       production: true,
       models: { concierge: "model-a", staff: "model-b" },
       accessPasscode: "fictional",
-      dailyChatLimit: null,
+      dailyChatLimit: 100,
       maxBudgetUsd: 0.5,
+      webDist: path.resolve(here, "../../..", "apps", "web", "dist"),
     });
+  });
+
+  it("DAILY_CHAT_LIMIT=0 は上限なし", () => {
+    expect(readConfig({ DAILY_CHAT_LIMIT: "0" }, here).dailyChatLimit).toBeNull();
   });
 
   it("おかしな値は起動のときに止める", () => {
@@ -74,5 +81,82 @@ describe("DailyLimiter", () => {
     const limiter = new DailyLimiter(null, () => "2026-08-03");
 
     expect(Array.from({ length: 5 }, () => limiter.consume()).every(Boolean)).toBe(true);
+  });
+});
+
+describe("DailyLimiter（キーごと）と、同時の数と、利用者の IP", () => {
+  it("IP ごとに数え、allows は数えない", () => {
+    const limiter = new DailyLimiter(1, () => "2026-08-03");
+
+    expect(limiter.allows("203.0.113.1")).toBe(true);
+    expect(limiter.consume("203.0.113.1")).toBe(true);
+    expect(limiter.allows("203.0.113.1")).toBe(false);
+    expect(limiter.consume("203.0.113.2")).toBe(true);
+  });
+
+  it("同時に動かせる数を超えたら取れず、返すと取れる。2回返しても数は狂わない", () => {
+    const limiter = new ConcurrencyLimiter(1);
+    const release = limiter.tryAcquire();
+
+    expect(release).not.toBeNull();
+    expect(limiter.tryAcquire()).toBeNull();
+    release?.();
+    release?.();
+    expect(limiter.running).toBe(0);
+    expect(limiter.tryAcquire()).not.toBeNull();
+  });
+
+  it("プロキシの数だけ X-Forwarded-For の右から数え、利用者が書いた左側は使わない", () => {
+    const forwarded = "198.51.100.9, 203.0.113.7, 10.0.0.1";
+
+    expect(clientIp(forwarded, "10.0.0.2", 1)).toBe("10.0.0.1");
+    expect(clientIp(forwarded, "10.0.0.2", 2)).toBe("203.0.113.7");
+    expect(clientIp(forwarded, "10.0.0.2", 0)).toBe("10.0.0.2");
+    expect(clientIp(undefined, undefined, 1)).toBe("unknown");
+  });
+});
+
+describe("本番の live の設定の確認", () => {
+  const complete = {
+    NODE_ENV: "production",
+    MATSURI_AGENT_MODE: "live",
+    ACCESS_PASSCODE: "fictional",
+    DAILY_CHAT_LIMIT: "100",
+    AGENT_MAX_BUDGET_USD: "0.5",
+    ANTHROPIC_API_KEY: "test-key",
+  };
+
+  it("合言葉・回数の上限・費用の上限・API キーがそろっていれば起動する", () => {
+    expect(() => readConfig(complete, here)).not.toThrow();
+  });
+
+  it("欠けていれば、欠けている設定の名前を挙げて起動を止める", () => {
+    const { ACCESS_PASSCODE: _, AGENT_MAX_BUDGET_USD: __, ...partial } = complete;
+
+    expect(() => readConfig(partial, here)).toThrow("ACCESS_PASSCODE、AGENT_MAX_BUDGET_USD");
+    expect(() => readConfig({ ...complete, DAILY_CHAT_LIMIT: "0" }, here)).toThrow(
+      "DAILY_CHAT_LIMIT",
+    );
+  });
+
+  it("本番でも mock なら、開発でも live なら確かめない", () => {
+    expect(() =>
+      readConfig({ NODE_ENV: "production", MATSURI_AGENT_MODE: "mock" }, here),
+    ).not.toThrow();
+    expect(() => readConfig({ MATSURI_AGENT_MODE: "live" }, here)).not.toThrow();
+  });
+
+  it("IP ごとの上限・同時の数・プロキシの数を読む", () => {
+    expect(
+      readConfig(
+        { DAILY_CHAT_LIMIT_PER_IP: "20", MAX_CONCURRENT_TURNS: "2", TRUSTED_PROXY_HOPS: "1" },
+        here,
+      ),
+    ).toMatchObject({ dailyChatLimitPerIp: 20, maxConcurrentTurns: 2, trustedProxyHops: 1 });
+    expect(readConfig({}, here)).toMatchObject({
+      dailyChatLimitPerIp: null,
+      maxConcurrentTurns: 4,
+      trustedProxyHops: 0,
+    });
   });
 });

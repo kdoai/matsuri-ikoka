@@ -64,6 +64,11 @@ function setup(scripts: Script[]) {
     cwd: "/tmp/matsuri-agent-test",
     env: {},
     query,
+    // 名前の解決はネットワークに出ない。nip.io の形の名前は、名前に書いたアドレスを指す
+    resolveHost: async (host) => {
+      const ip = host.match(/^(\d+\.\d+\.\d+\.\d+)\.nip\.io$/)?.[1];
+      return [ip ?? "8.8.8.8"];
+    },
   });
   const verify = () =>
     verifier.verify({ festival, date: "2026-08-16", signal: new AbortController().signal });
@@ -126,6 +131,37 @@ describe("createWebVerifier", () => {
     await verify();
 
     expect(decision).toMatchObject({ hookSpecificOutput: { permissionDecision: "deny" } });
+  });
+
+  it("公開の名前でも、解決した先が内側のアドレスなら WebFetch を止める", async () => {
+    const decisions: unknown[] = [];
+    const { verify } = setup([
+      async (hook) => {
+        for (const url of [
+          "https://169.254.169.254.nip.io/latest",
+          "https://example.com/suzunari/2026",
+        ]) {
+          decisions.push(
+            await hook("PreToolUse", {
+              tool_name: "WebFetch",
+              tool_input: { url },
+              tool_use_id: url,
+            }),
+          );
+        }
+        return JSON.stringify({ result: "not_found", sources: [] });
+      },
+    ]);
+
+    await verify();
+
+    expect(decisions[0]).toMatchObject({
+      hookSpecificOutput: {
+        permissionDecision: "deny",
+        permissionDecisionReason: expect.stringContaining("内側のネットワーク"),
+      },
+    });
+    expect(decisions[1]).toEqual({});
   });
 
   it("検索だけで答えようとしたら、1回だけ続けさせる", async () => {

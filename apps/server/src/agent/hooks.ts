@@ -47,6 +47,9 @@ const STAFF_NAMES: Record<StaffId, string> = {
   planner: "旅程係",
 };
 
+/** 1回の発言で1回までの道具。再確認は Web を調べるので、費用と時間がかかる */
+const ONCE_PER_TURN: readonly ToolName[] = ["verify_festival"];
+
 /** サブエージェントを呼ぶ組み込みの道具の名前（古い版では Task） */
 const AGENT_TOOL_NAMES = new Set(["Agent", "Task"]);
 
@@ -114,6 +117,8 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
   const started = new Map<string, { tool: ToolName; staff: StaffId }>();
   /** この発言で呼ぶと決めたスタッフ（同じスタッフは1回まで） */
   const requested = new Set<Staff>();
+  /** この発言ですでに呼んだ、1回までの道具 */
+  const usedOnce = new Set<ToolName>();
   const hasItinerary = () => ctx.session.itineraryId !== null;
 
   const preToolUse: HookCallback = async (input, toolUseId) => {
@@ -141,6 +146,12 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
     if (tool === null) return deny("この店では使えない道具です");
     if (!TOOLS_BY_STAFF[staff].includes(tool)) {
       return deny(`${STAFF_NAMES[staff]}は ${tool} を使えません`);
+    }
+    if (ONCE_PER_TURN.includes(tool)) {
+      if (usedOnce.has(tool)) {
+        return deny(`この発言では、もう ${tool} を使いました。その結果を使ってください`);
+      }
+      usedOnce.add(tool);
     }
     const toolCallId = input.tool_use_id || toolUseId || "";
     turn.toolCalls.push(tool);

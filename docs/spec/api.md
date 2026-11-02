@@ -2,16 +2,34 @@
 
 ## API
 
-| メソッド | パス                 | 役割                                                  |
-| -------- | -------------------- | ----------------------------------------------------- |
-| POST     | `/api/session`       | 相談を始める。セッション ID を返す                    |
-| POST     | `/api/chat`          | 発言とこだわりを受け取り、返答を SSE のイベントで返す |
-| PATCH    | `/api/preferences`   | こだわりの切り替え。旅程係だけを動かし、SSE で返す    |
-| GET      | `/api/itinerary/:id` | 旅程の JSON を返す                                    |
-| GET      | `/shiori/:id`        | 旅のしおり（印刷できる HTML）                         |
-| GET      | `/healthz`           | 死活監視。`{ "status": "ok" }` を返す                 |
+| メソッド | パス                 | 本文                                 | 返すもの                                                                                  |
+| -------- | -------------------- | ------------------------------------ | ----------------------------------------------------------------------------------------- |
+| POST     | `/api/session`       | `SessionRequestSchema`（省略できる） | 201 `SessionResponseSchema`（`{ "sessionId": "…" }`）                                     |
+| POST     | `/api/chat`          | `ChatRequestSchema`                  | 返答を SSE のイベントで返す                                                               |
+| PATCH    | `/api/preferences`   | `PreferencesRequestSchema`           | SSE。旅程があれば旅程係だけを動かして組み直し、なければこだわりを変えて `done` だけを返す |
+| GET      | `/api/festivals/:id` | —                                    | 祭りのデータ（`FestivalSchema`）。しおりの作法・地元の味・アクセス、待ち時間の小話に使う  |
+| GET      | `/api/itinerary/:id` | —                                    | 旅程（`ItinerarySchema`）                                                                 |
+| GET      | `/shiori/:id`        | —                                    | 旅のしおり（印刷できる HTML）。公式の情報で開催予定を確かめた旅程だけ                     |
+| GET      | `/healthz`           | —                                    | 死活監視。`{ "status": "ok" }`                                                            |
 
-いま動いているのは `/healthz` だけです。
+- 型はどれも `packages/schema`（`api.ts`）にある
+- 合言葉（`ACCESS_PASSCODE`）を設定しているときは、`/api/*` にヘッダー `x-access-passcode` が要る。しおりと死活監視には要らない
+- 掲載停止の祭りは、`/api/festivals/:id` でも 404 にする
+- 本番では、同じオリジンから画面（`apps/web` のビルド）も配る
+
+### 断るときの応答
+
+SSE を始める前に断るときと、JSON を返す API が失敗したときは、HTTP の状態コードと `ApiErrorSchema` の本文（`error` イベントの data と同じ `{ code, message, retryable }`）で返します。
+
+| 状態 | `code`                 | いつ                                            |
+| ---- | ---------------------- | ----------------------------------------------- |
+| 400  | `bad_request`          | 本文の形が正しくない                            |
+| 401  | `unauthorized`         | 合言葉が違う                                    |
+| 404  | `bad_request`          | 相談・旅程・祭りが見つからない                  |
+| 409  | `bad_request`          | 同じ相談の前の返事を作っている途中（retryable） |
+| 413  | `bad_request`          | 本文が大きすぎる                                |
+| 429  | `rate_limited`         | 1日の相談の回数の上限（全体、または IP ごと）   |
+| 503  | `upstream_unavailable` | 同時に返事を作れる数を超えた（retryable）       |
 
 ### POST /api/chat
 

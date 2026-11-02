@@ -85,7 +85,7 @@ sequenceDiagram
 
 ## 接客エージェントの差し替え口
 
-接客エージェントは `AgentRunner` という1つの口の後ろに置き、環境変数 `MATSURI_AGENT_MODE`（`live` / `mock`）で切り替えます（未実装）。
+接客エージェントは `AgentRunner` という1つの口の後ろに置き、環境変数 `MATSURI_AGENT_MODE`（`live` / `mock`）で切り替えます。
 
 - **live**：Agent SDK でコンシェルジュとスタッフを動かし、フックで SSE イベントを出す
 - **mock**：[`data/samples/`](../data/samples) に記録したイベントの列を、記録した間隔で再生する。画面の開発、画面の通しテスト、キーを持たない人の動作確認に使う

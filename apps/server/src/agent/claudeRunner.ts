@@ -173,6 +173,7 @@ export class ClaudeAgentRunner implements AgentRunner {
     const ctx: ToolContext = {
       session,
       turn,
+      signal,
       festivals: deps.festivals,
       itineraries: deps.itineraries,
       weather: deps.weather,

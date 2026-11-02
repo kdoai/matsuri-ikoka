@@ -9,7 +9,12 @@ import type { WeatherService } from "./weather";
 
 export function testToolContext(
   festivals: Festival[],
-  options: { today?: string; weather?: Weather; report?: VerificationReport } = {},
+  options: {
+    today?: string;
+    weather?: Weather;
+    report?: VerificationReport;
+    signal?: AbortSignal;
+  } = {},
 ): ToolContext & { weatherCalls: string[] } {
   const weatherCalls: string[] = [];
   const weather: WeatherService = {
@@ -26,6 +31,7 @@ export function testToolContext(
   return {
     session: new SessionStore().create(),
     turn: newTurnState(),
+    signal: options.signal ?? new AbortController().signal,
     festivals: createFestivalStore(festivals),
     itineraries: new ItineraryStore(),
     weather,

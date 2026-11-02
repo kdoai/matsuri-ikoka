@@ -221,6 +221,87 @@ describe("checkPlan", () => {
   });
 });
 
+describe("checkPlan の日をまたぐ予定", () => {
+  // 架空の夜の祭り（20:00〜翌02:00）と、夜遅くまで開く架空の店（18:00〜翌02:00、最終入場 01:00）
+  const night = testFestival({
+    id: "suzunari-toro",
+    start: "20:00",
+    end: "02:00",
+    edit: (f) => {
+      f.nearby.push({
+        id: "night-bar",
+        name: "夜の茶屋",
+        kind: "rest",
+        summary: "夜遅くまで開く茶屋",
+        location: { lat: 35.12, lng: 136.08 },
+        walkMinutesFromVenue: [3, 5],
+        hours: { open: "18:00", close: "02:00", lastEntry: "01:00" },
+        closedDays: [],
+        price: null,
+        tags: [],
+        popularity: "local",
+        sources: [
+          { url: "https://example.com/night-bar", checkedAt: "2026-04-01", confidence: "single" },
+        ],
+      });
+    },
+  });
+  const findNight = lookup(night);
+  const nightFest = (start: string, end: string) =>
+    item({ id: "festival", start, end, type: "festival", festivalId: "suzunari-toro" });
+
+  it("夜の祭りの予定が深夜に入っても、開催時間の中なら誤りにしない", () => {
+    const result = checkPlan(
+      plan([
+        item({ id: "dinner", type: "meal", start: "18:00", end: "19:30" }),
+        item({ id: "late", start: "21:00", end: "23:30" }),
+        nightFest("00:00", "02:00"),
+      ]),
+      findNight,
+    );
+
+    expect(result.errors).toEqual([]);
+  });
+
+  it("夜の祭りの予定が、深夜の終わりの時刻を越えたら、祭りの時間とぶつかる", () => {
+    const result = checkPlan(plan([nightFest("20:00", "02:30")]), findNight);
+
+    expect(codes(result)).toContainEqual(["festival_time_conflict", "festival"]);
+  });
+
+  it("日をまたいで営業する店に、深夜に寄る予定は営業時間の中", () => {
+    const result = checkPlan(
+      plan([
+        nightFest("20:00", "23:30"),
+        item({ id: "bar", type: "rest", start: "00:30", end: "01:30", spotId: "night-bar" }),
+      ]),
+      findNight,
+    );
+
+    expect(result.errors).toEqual([]);
+  });
+
+  it("深夜の店の予定でも、閉店を越えれば営業時間の外、最終入場の後なら誤り", () => {
+    const pastClose = checkPlan(
+      plan([
+        nightFest("20:00", "23:30"),
+        item({ id: "bar", type: "rest", start: "00:30", end: "02:30", spotId: "night-bar" }),
+      ]),
+      findNight,
+    );
+    const lateEntry = checkPlan(
+      plan([
+        nightFest("20:00", "23:30"),
+        item({ id: "bar", type: "rest", start: "01:15", end: "01:45", spotId: "night-bar" }),
+      ]),
+      findNight,
+    );
+
+    expect(codes(pastClose)).toEqual([["outside_hours", "bar"]]);
+    expect(codes(lateEntry)).toEqual([["after_last_entry", "bar"]]);
+  });
+});
+
 describe("checkPlan のこだわりの確認（warnings）", () => {
   it("子連れで休憩が2時間を超えてあかなければ知らせる", () => {
     const items = [
