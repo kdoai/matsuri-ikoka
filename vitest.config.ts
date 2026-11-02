@@ -1,8 +1,8 @@
 import { defineConfig } from "vitest/config";
 
-// ワークスペースの各パッケージを1つのプロジェクトとして、まとめてテストする
+// ワークスペースの各パッケージと scripts/ を1つずつのプロジェクトとして、まとめてテストする
 export default defineConfig({
   test: {
-    projects: ["apps/*", "packages/*"],
+    projects: ["apps/*", "packages/*", "scripts"],
   },
 });

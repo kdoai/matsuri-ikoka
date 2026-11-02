@@ -1,0 +1,319 @@
+{
+  "id": "hiraoka-owarai-shinji",
+  "name": {
+    "ja": "注連縄掛神事（お笑い神事）",
+    "en": "Shimenawakake Shinji (Laughing Ritual)"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "大阪府",
+      "name": "東大阪市"
+    }
+  ],
+  "venue": {
+    "name": "枚岡神社",
+    "lat": 34.6699,
+    "lng": 135.6499
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "宮司に続いて参列者みんなで20分ほど大笑いする",
+    "河内国一之宮の古社で、年の瀬に新しいしめ縄を掛ける",
+    "東大阪市の民俗文化財に指定された笑いの神事"
+  ],
+  "trivia": [
+    {
+      "text": "天の岩戸開きの神話になぞらえ、笑いで一年の災いを払い福を招く神事",
+      "source": {
+        "url": "https://www.hiraoka-jinja.org/rituals/index.html",
+        "title": "枚岡神社 神事・祭典",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "日がいちばん短い冬至のころに、太陽を呼ぶため太古から行われてきたとされる",
+      "source": {
+        "url": "https://pikahiga.jp/news/2024-12-21/33469/",
+        "title": "ピカッと東大阪 お笑い神事の開催案内（2024年）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "令和7年は、過去最多の約3,500人が参列した",
+      "source": {
+        "url": "https://www.hiraoka-jinja.org/special/owarai-shinji.html",
+        "title": "枚岡神社 注連縄掛神事（通称 お笑い神事）のご案内",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "掛けるしめ縄は、当日の朝に総代が作ったものを張り渡す",
+      "source": {
+        "url": "https://pikahiga.jp/column/hiraokajinja_waraishinji2023/",
+        "title": "ピカッと東大阪 お笑い神事の開催報告（2023年）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_by_application",
+    "howToJoin": "当日、笑福守（初穂料1,000円）を受けてからゲートを通って会場に入り、宮司に続いてみなで声を出して笑う",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "境内での神事と笑いが中心で、混雑や危険についての特別な注意は見当たらない（令和7年の参列は約3,500人）"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://pikahiga.jp/hiraokajinja/",
+        "title": "ピカッと東大阪 河内国一之宮 枚岡神社",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://osaka-info.jp/local_journey/audio-travel/higashiosaka_02/",
+        "title": "大阪観光局 しっとんか大阪 東大阪の音声ガイド（枚岡神社）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://pikahiga.jp/column/hiraokajinja_waraishinji2023/",
+        "title": "ピカッと東大阪 お笑い神事の開催報告（2023年）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000792",
+        "title": "るるぶ&more. 枚岡神社 注連縄掛神事（通称：お笑い神事）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      },
+      {
+        "url": "https://www.hiraoka-jinja.org/special/owarai-shinji.html",
+        "title": "枚岡神社 注連縄掛神事（通称 お笑い神事）のご案内",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-20",
+      "start": "10:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": "雨天中止の場合あり",
+      "note": "10:00 神事。宮司に続いて3回笑い、そのあと約20分みなで笑い続ける。17:00 から天の岩戸開き神事。午前中から近くの店の出店ブースが出る。令和8年から12月の第3日曜日に変わった（以前は毎年12月23日）",
+      "sources": [
+        {
+          "url": "https://www.hiraoka-jinja.org/",
+          "title": "枚岡神社 注連掛神事・お笑い神事 日程変更のお知らせ",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.hiraoka-jinja.org/special/owarai-shinji.html",
+          "title": "枚岡神社 令和8年のお笑い神事のご案内（チラシ）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.hiraoka-jinja.org/rituals/index.html",
+          "title": "枚岡神社 神事・祭典（12月 第3日曜日 午前10時 注連縄掛神事）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000792",
+          "title": "るるぶ&more. 枚岡神社 注連縄掛神事（通称：お笑い神事）",
+          "checkedAt": "2026-11-02",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "近鉄 枚岡駅",
+        "walkMinutes": [4, 9],
+        "note": "神社の案内では「下車すぐ」。止まるのは普通が中心で、時間帯により区間準急も止まる"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "大阪駅",
+        "minutes": [50, 60],
+        "route": "JR大阪環状線（外回り）で鶴橋駅、近鉄奈良線の普通に乗り換え"
+      },
+      {
+        "hub": "京都駅",
+        "minutes": [60, 70],
+        "route": "近鉄の特急で大和西大寺駅、近鉄奈良線に乗り換え（枚岡駅に止まるのは普通が中心）"
+      }
+    ],
+    "parking": "none",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.hiraoka-jinja.org/access/index.html",
+        "title": "枚岡神社 交通アクセス",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://pikahiga.jp/hiraokajinja/",
+        "title": "ピカッと東大阪 河内国一之宮 枚岡神社",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.hiraoka-jinja.org/special/owarai-shinji.html",
+        "title": "枚岡神社 令和8年のお笑い神事のご案内（チラシ：当日は駐車場を使えない）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "hiraoka-park",
+      "name": "枚岡公園",
+      "kind": "sightseeing",
+      "summary": "生駒山のふもとに広がる府営の森林公園。展望台から大阪平野を見渡せ、子ども向けの遊具の広場「森のおもちゃ箱」もある。開園時間は公式の案内に書かれていない",
+      "location": {
+        "lat": 34.6746,
+        "lng": 135.6547
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": "入園無料",
+      "tags": ["kid_friendly"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.pref.osaka.lg.jp/o130310/yaopwo/koenmidori/section_park.html",
+          "title": "大阪府 八尾土木事務所 管内の府営公園（枚岡公園）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://hiraoka.osaka-park.or.jp/access",
+          "title": "枚岡公園 アクセス",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://osaka-info.jp/spot/hiraoka-park/",
+          "title": "大阪観光局 枚岡公園",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/80028976",
+          "title": "るるぶ&more. 枚岡公園（入園料）",
+          "checkedAt": "2026-11-02",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "id": "hyotanyama-inari-jinja",
+      "name": "瓢簞山稲荷神社",
+      "kind": "sightseeing",
+      "summary": "瓢箪の形の古墳の上に社殿が建つ稲荷神社で、辻占の総本社として知られる。近鉄 瓢箪山駅から南へ徒歩3分。営業時間は社務所のもの",
+      "location": {
+        "lat": 34.6607,
+        "lng": 135.6419
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "08:00",
+        "close": "16:30"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://osaka-info.jp/spot/hyotanyamainarijinja/",
+          "title": "大阪観光局 瓢簞山稲荷神社",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "sanuki-shido",
+      "name": "さぬき志度",
+      "kind": "food",
+      "summary": "近鉄 瓢箪山駅から徒歩6分の、地元で長く親しまれているうどん店。日・祝は11:30〜14:30と17:00〜19:30、火〜土は夜が17:30〜20:00。祝日の月曜も休み",
+      "location": {
+        "lat": 34.666,
+        "lng": 135.6402
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": ["mon"],
+      "price": "ランチ 1,000円まで（1人の目安）",
+      "tags": ["indoor", "seating"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://pikahiga.jp/eat/21220/",
+          "title": "ピカッと東大阪 さぬき志度",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.hiraoka-jinja.org/special/owarai-shinji.html",
+      "title": "枚岡神社 注連縄掛神事（通称 お笑い神事）のご案内",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.hiraoka-jinja.org/rituals/index.html",
+      "title": "枚岡神社 神事・祭典",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.hiraoka-jinja.org/",
+      "title": "枚岡神社（所在地）",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "出店の数と時間、夜の天の岩戸開き神事の内容と終わりの時刻",
+    "神事の終わりの時刻",
+    "笑福守を受けるゲートの場所と、授与が始まる時刻",
+    "笑福守を受けずに見学できるか、どこから見られるか",
+    "撮影の決まり（三脚・フラッシュ・動画）",
+    "服装・持ち物・禁止事項の案内",
+    "交通規制の有無",
+    "祭りの日だけの振る舞いや名物",
+    "枚岡公園の開園時間と休園日（公式の案内に書かれていない）",
+    "さぬき志度の営業時間は昼と夜に分かれる（日・祝は11:30〜14:30、17:00〜19:30）"
+  ]
+}

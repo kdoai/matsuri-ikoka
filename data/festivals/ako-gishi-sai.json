@@ -1,0 +1,485 @@
+{
+  "id": "ako-gishi-sai",
+  "name": {
+    "ja": "赤穂義士祭",
+    "en": "Ako Gishi Sai"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "兵庫県",
+      "name": "赤穂市"
+    }
+  ],
+  "venue": {
+    "name": "赤穂城跡・お城通り・いきつぎ広場周辺",
+    "lat": 34.7528,
+    "lng": 134.3919
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "四十七士の引き揚げを再現する義士行列が城下を歩く",
+    "忠臣蔵の名場面を再現した山車や大名行列が続く",
+    "義士を祀る大石神社と、四十七士の墓がある花岳寺が会場のそば"
+  ],
+  "trivia": [
+    {
+      "text": "刃傷の第一報を運んだ2人は早かごで約620kmを4日半揺られ、息継ぎ井戸の水で一息ついたと伝わる",
+      "source": {
+        "url": "https://ako-kankou.jp/sightseeing/ikitsugido.html",
+        "title": "赤穂観光協会 息継ぎ井戸",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "大石神社の木像奉安殿には、昭和28年に名だたる木彫家らが彫った義士など49体の木像が並ぶ",
+      "source": {
+        "url": "https://ako-kankou.jp/sightseeing/ako-ooishijinjya.html",
+        "title": "赤穂観光協会 赤穂大石神社",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "赤穂城は浅野長直が1648年から13年かけて築いた、海に面した珍しい形の平城",
+      "source": {
+        "url": "https://ako-kankou.jp/sightseeing/ako-castle.html",
+        "title": "赤穂観光協会 赤穂城跡",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2025年のパレードは総勢約450人で、大手門付近からいきつぎ広場まで約1.1kmを歩いた",
+      "source": {
+        "url": "https://www.ako-minpo.jp/smp/news_18960.html",
+        "title": "赤穂民報 華やかに元禄絵巻 赤穂義士祭にぎわう",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_by_application",
+    "howToJoin": "義士行列と山車の出演者は、主催者が毎年前もって募集する（応募の条件は未確認）",
+    "rules": [
+      "いきつぎ広場の有料の観覧席では、傘をささず、お酒を飲まない",
+      "観覧席は事前の申し込み（抽選）で、当日の販売はない（販売するときはホームページなどで知らせる）"
+    ],
+    "dress": "unknown",
+    "bring": ["雨に備えたレインコートやポンチョ（観覧席では傘を使わない）"],
+    "risk": {
+      "level": "medium",
+      "reason": "来場者が数万人規模になる街なかのパレード（2024年は6万8000人と報道）"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.ako.lg.jp/kensetsu/kankou/matsuri/kanranseki123.html",
+        "title": "赤穂市 義士祭観覧席販売のご案内（第123回）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.ako.lg.jp/kensetsu/kankou/matsuri/gishisai123.html",
+        "title": "赤穂市 第123回赤穂義士祭【2026年12月14日】",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kobe-np.co.jp/news/society/202412/0018445608.shtml",
+        "title": "神戸新聞 赤穂義士祭に6万8000人",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-14",
+      "start": "10:00",
+      "end": "16:00",
+      "status": "announced",
+      "rainPolicy": "観覧席の案内では、雨に備えてレインコートやポンチョを持つよう求め、荒天などでパレードがすべて中止になる場合にふれている。順延の案内はない",
+      "note": "パレードは10時〜15時ごろ、露店と忠臣蔵交流物産市は16時ごろまで（予定）。大石内蔵助役は招かれた俳優が務める。義士行列と山車の出演者の2026年の募集は終わっている。いきつぎ広場の観覧席は10時30分まで無料で開放（先着順）",
+      "sources": [
+        {
+          "url": "https://www.city.ako.lg.jp/kensetsu/kankou/matsuri/gishisai123.html",
+          "title": "赤穂市 第123回赤穂義士祭【2026年12月14日】",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.ako.lg.jp/kensetsu/kankou/matsuri/kanranseki123.html",
+          "title": "赤穂市 義士祭観覧席販売のご案内（第123回）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2025-12-14",
+      "start": "10:00",
+      "end": "16:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "9時45分にいきつぎ広場でオープニング、10時30分に花岳寺で法要、11時30分に大石神社で祭典。パレードは大手門前からいきつぎ広場までの約1.1kmで、最後が義士行列。前夜は花岳寺門前でニラ雑炊の振る舞い",
+      "sources": [
+        {
+          "url": "https://www.city.ako.lg.jp/kensetsu/kankou/matsuri/gishisai122.html",
+          "title": "赤穂市 第122回赤穂義士祭【2025年12月14日】",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.ako.lg.jp/kensetsu/kankou/matsuri/documents/kaizyougi.pdf",
+          "title": "赤穂市 令和7年度 赤穂義士祭会場行事等",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.ako-minpo.jp/smp/news_18953.html",
+          "title": "赤穂民報 12月14日は「赤穂義士祭」11年ぶり日曜開催",
+          "checkedAt": "2026-11-02",
+          "confidence": "single"
+        },
+        {
+          "url": "https://www.ako-minpo.jp/smp/news_18960.html",
+          "title": "赤穂民報 華やかに元禄絵巻 赤穂義士祭にぎわう",
+          "checkedAt": "2026-11-02",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 播州赤穂駅",
+        "walkMinutes": [5, 10],
+        "note": "いきつぎ広場まで。赤穂城跡の中の大石神社までは徒歩15分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "大阪駅",
+        "minutes": [84, 104],
+        "route": "JR新快速で姫路へ、山陽本線・赤穂線の播州赤穂行きに乗り継ぐ（新大阪から山陽新幹線で相生か姫路へ出ると早い）"
+      },
+      {
+        "hub": "姫路駅",
+        "minutes": [28, 33],
+        "route": "JR山陽本線から赤穂線へ直通する播州赤穂行き（山陽新幹線で相生へ出て乗り継ぐと早い）"
+      }
+    ],
+    "parking": "unknown",
+    "trafficRestrictions": [
+      "パレードのコースの周辺で交通規制がある（2025年の案内。2026年の時間と区間はまだ発表がない）"
+    ],
+    "sources": [
+      {
+        "url": "https://ako-kankou.jp/sightseeing/ikitsugido.html",
+        "title": "赤穂観光協会 息継ぎ井戸",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.ako-ooishijinjya.or.jp/access",
+        "title": "赤穂大石神社 交通のご案内",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ekitan.com/transit/route/sf-5006/st-5843?dt=20261214&tm=0730",
+        "title": "駅探 大阪から播州赤穂（2026年12月14日 7時30分出発）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      },
+      {
+        "url": "https://ekitan.com/transit/route/sf-5884/st-5843?dt=20261214&tm=0830",
+        "title": "駅探 姫路から播州赤穂（2026年12月14日 8時30分出発）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      },
+      {
+        "url": "https://www.city.ako.lg.jp/kensetsu/kankou/matsuri/gishisai122.html",
+        "title": "赤穂市 第122回赤穂義士祭【2025年12月14日】",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "塩味饅頭（志ほ万）",
+        "note": "赤穂の塩をきかせたこし餡を、落雁のような白い皮で包んだ菓子。駅に近いかん川本舗で買える",
+        "sources": [
+          {
+            "url": "https://ako-kankou.jp/shops/kankawa_honten.html",
+            "title": "赤穂観光協会 かん川本舗",
+            "checkedAt": "2026-11-02",
+            "confidence": "official"
+          }
+        ]
+      },
+      {
+        "name": "赤穂塩らーめん",
+        "note": "赤穂の塩を使ったラーメン。駅ビルの赤穂らーめん麺坊で食べられる",
+        "sources": [
+          {
+            "url": "https://ako-kankou.jp/dining/menbou.html",
+            "title": "赤穂観光協会 赤穂らーめん麺坊",
+            "checkedAt": "2026-11-02",
+            "confidence": "official"
+          }
+        ]
+      },
+      {
+        "name": "ニラ雑炊の振る舞い",
+        "note": "2025年は前夜の12月13日17時〜19時30分に花岳寺門前広場で振る舞われた（2026年はまだ発表がない）",
+        "sources": [
+          {
+            "url": "https://www.city.ako.lg.jp/kensetsu/kankou/matsuri/documents/kaizyougi.pdf",
+            "title": "赤穂市 令和7年度 赤穂義士祭会場行事等",
+            "checkedAt": "2026-11-02",
+            "confidence": "official"
+          },
+          {
+            "url": "https://www.ako-minpo.jp/smp/news_18953.html",
+            "title": "赤穂民報 12月14日は「赤穂義士祭」11年ぶり日曜開催",
+            "checkedAt": "2026-11-02",
+            "confidence": "single"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "ako-castle-ruins",
+      "name": "赤穂城跡",
+      "kind": "sightseeing",
+      "summary": "浅野長直が築いた海辺の平城の跡。本丸には御殿の間取りが復元され、天守台から町を見渡せる。本丸と二之丸庭園は年末年始に閉門",
+      "location": {
+        "lat": 34.7458,
+        "lng": 134.3889
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "16:30",
+        "lastEntry": "16:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://ako-kankou.jp/sightseeing/ako-castle.html",
+          "title": "赤穂観光協会 赤穂城跡",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "ako-oishi-jinja",
+      "name": "赤穂大石神社",
+      "kind": "sightseeing",
+      "summary": "四十七士を祀る神社。義士史料館に大石内蔵助の遺品や49体の義士木像がある。12月14日は神社でも義士祭が行われる",
+      "location": {
+        "lat": 34.7493,
+        "lng": 134.3886
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "08:30",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": [],
+      "price": "義士史料館 大人500円、中学生以下無料",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://ako-kankou.jp/sightseeing/ako-ooishijinjya.html",
+          "title": "赤穂観光協会 赤穂大石神社",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.ako-ooishijinjya.or.jp/gishi-material",
+          "title": "赤穂大石神社 義士史料館",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.ako-ooishijinjya.or.jp/events",
+          "title": "赤穂大石神社 祭典・年中行事",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kagakuji",
+      "name": "花岳寺",
+      "kind": "sightseeing",
+      "summary": "浅野長直が建てた寺。境内に四十七士の墓と義士木像堂、浅野家と義士の品を並べた宝物館がある",
+      "location": {
+        "lat": 34.7528,
+        "lng": 134.3907
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "16:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.city.ako.lg.jp/kensetsu/kankou/shisetsu/kanko/hanadakedera.html",
+          "title": "赤穂市 花岳寺",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://ako-kankou.jp/sightseeing/kagakuji.html",
+          "title": "赤穂観光協会 花岳寺",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "ako-city-museum-of-history",
+      "name": "赤穂市立歴史博物館（塩と義士の館）",
+      "kind": "sightseeing",
+      "summary": "赤穂の塩、城と城下町、赤穂義士、旧赤穂上水道の4つのテーマを展示する市の博物館。水曜休館（祝日なら翌日）、年末年始も休み",
+      "location": {
+        "lat": 34.7474,
+        "lng": 134.3904
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["wed"],
+      "price": "大人200円、小・中学生100円（特別展の会期は料金が変わることがある）",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://ako-kankou.jp/sightseeing/ako-museum.html",
+          "title": "赤穂観光協会 塩と義士の館 赤穂市立歴史博物館",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.ako.lg.jp/kensetsu/kankou/matsuri/documents/kaizyougi.pdf",
+          "title": "赤穂市 令和7年度 赤穂義士祭会場行事等",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kankawa-honpo",
+      "name": "かん川本舗",
+      "kind": "food",
+      "summary": "塩味饅頭「志ほ万」の店。赤穂の塩をきかせたこし餡を、落雁のような白い皮で包む。元日も休み",
+      "location": {
+        "lat": 34.7546,
+        "lng": 134.3929
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "08:00",
+        "close": "17:00"
+      },
+      "closedDays": ["wed"],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://ako-kankou.jp/shops/kankawa_honten.html",
+          "title": "赤穂観光協会 かん川本舗",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "ako-ramen-menbou",
+      "name": "赤穂らーめん麺坊",
+      "kind": "food",
+      "summary": "赤穂の塩を使った「赤穂塩らーめん」が名物。播州赤穂駅に続く駅ビル、プラット赤穂の2階にある",
+      "location": {
+        "lat": 34.7564,
+        "lng": 134.3922
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "20:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["local_food", "indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://ako-kankou.jp/dining/menbou.html",
+          "title": "赤穂観光協会 赤穂らーめん麺坊",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.ako.lg.jp/kensetsu/kankou/gishisai.html",
+      "title": "赤穂市 赤穂義士祭",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.ako.lg.jp/kensetsu/kankou/matsuri/gishisai123.html",
+      "title": "赤穂市 第123回赤穂義士祭【2026年12月14日】",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://ako-kankou.jp/sightseeing/ikitsugido.html",
+      "title": "赤穂観光協会 息継ぎ井戸（いきつぎ広場の位置）",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2026年の行事ごとの時刻（パレードの出発、義士行列の出発と到着、大石神社の祭典と花岳寺の法要。まだ発表がない）",
+    "2026年のパレードの経路（2026年の案内にはまだ載っていない。2025年は大手門付近からいきつぎ広場までの約1.1kmと地元紙が報道）",
+    "2026年の交通規制の時間と区間",
+    "雨天・荒天のときの開催の判断と、順延があるか",
+    "祭りの日に使える駐車場・臨時駐車場",
+    "見学の服装と、撮影についての決まり",
+    "義士行列の出演者の募集の条件（だれが応募できるか）",
+    "2026年のパレードの参加者の数（規模は2025年の総勢約450人の報道で M とした）",
+    "2026年の前夜（12月13日）の行事と、ニラ雑炊の振る舞いがあるか",
+    "赤穂城跡と花岳寺の拝観料"
+  ]
+}

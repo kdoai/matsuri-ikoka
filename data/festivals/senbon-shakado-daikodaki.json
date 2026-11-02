@@ -1,0 +1,319 @@
+{
+  "id": "senbon-shakado-daikodaki",
+  "name": {
+    "ja": "成道会と大根だき",
+    "en": "Senbon Shakado Daikodaki"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "京都府",
+      "name": "京都市"
+    }
+  ],
+  "venue": {
+    "name": "千本釈迦堂（大報恩寺）",
+    "lat": 35.0315,
+    "lng": 135.7398
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["jalan", "rurubu"],
+  "highlights": [
+    "梵字を書いて祈祷した大根を、油揚げと炊いたものを頂ける",
+    "成道会にあわせて、秘仏の本尊・釈迦如来坐像を御開帳",
+    "中風・諸病除けを祈る法要が営まれる",
+    "京都市内に残る鎌倉初期の建物で最古の、国宝の本堂"
+  ],
+  "trivia": [
+    {
+      "text": "大根の切り口に書く梵字は、釈迦如来を表す種字「バク」とされる",
+      "source": {
+        "url": "https://kyo-tsunagu.city.kyoto.lg.jp/gyoji/tsunagu300/12-2/daikodaki/",
+        "title": "京都をつなぐ無形文化遺産 大根焚き",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "大根だきは、この寺の三世・慈禅上人が成道会の法要で始めたと伝わる",
+      "source": {
+        "url": "https://daihoonji.jp/annual-events",
+        "title": "大報恩寺 年中行事",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "国宝の本堂は1227年の建立時のままで、京都市内に残る鎌倉初期の建物で最古",
+      "source": {
+        "url": "https://ja.kyoto.travel/tourism/single01.php?category_id=7&tourism_id=412",
+        "title": "京都観光Navi 大報恩寺（千本釈迦堂）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "境内のおかめ塚は、本堂の建立を機転で助けた棟梁の妻おかめを供養する塚",
+      "source": {
+        "url": "https://daihoonji.jp/",
+        "title": "大報恩寺 公式サイト",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "12月7日・8日の10:00〜16:00に参拝し、境内で大根焚き（1,000円）を頂く",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "参拝して大根を頂くことが中心で、主催者による混雑や危険の注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://ja.kyoto.travel/event/single.php?event_id=3813",
+        "title": "京都観光Navi 成道会法要と大根（だいこ）焚き【千本釈迦堂】",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://daihoonji.jp/annual-events",
+        "title": "大報恩寺 年中行事",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-07",
+      "endDate": "2026-12-08",
+      "start": "10:00",
+      "end": "16:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "両日とも同じ内容。中風・諸病除けを祈る成道会の法要にあわせ、10:00〜16:00に大根焚きを授与（1,000円）。秘仏の本尊の御開帳あり",
+      "sources": [
+        {
+          "url": "https://ja.kyoto.travel/event/single.php?event_id=3813",
+          "title": "京都観光Navi 成道会法要と大根（だいこ）焚き【千本釈迦堂】",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://daihoonji.jp/annual-events",
+          "title": "大報恩寺 年中行事",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "京都市バス 上七軒バス停",
+        "walkMinutes": [3, 8],
+        "note": "JR京都駅から市バス50系統"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "京都駅",
+        "minutes": [27, 37],
+        "route": "京都市バス50系統（京都駅前から北野天満宮・立命館大学前ゆき。上七軒で下車）"
+      }
+    ],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://daihoonji.jp/",
+        "title": "大報恩寺 公式サイト（拝観案内・交通）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ja.kyoto.travel/tourism/single01.php?category_id=7&tourism_id=412",
+        "title": "京都観光Navi 大報恩寺（千本釈迦堂）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.kyoto.lg.jp/kensetu/cmsfiles/contents/0000250/250608/kamishichiken.pdf",
+        "title": "京都市 上七軒（冊子、2013年11月発行）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "大根焚き",
+        "note": "成道会の12月7日・8日だけ境内で授与。梵字を書いて祈祷した大根を輪切りにし、油揚げと炊いたもの。1,000円",
+        "sources": [
+          {
+            "url": "https://ja.kyoto.travel/event/single.php?event_id=3813",
+            "title": "京都観光Navi 成道会法要と大根（だいこ）焚き【千本釈迦堂】",
+            "checkedAt": "2026-11-02",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "kamishichiken",
+      "name": "上七軒",
+      "kind": "sightseeing",
+      "summary": "北野天満宮のすぐ東にあり、千本釈迦堂からも歩いて行ける花街。室町時代、天満宮の造営で余った木材で七軒の茶屋を建てたのが始まりと伝わる。春に北野をどり、秋に寿会の公演がある",
+      "location": {
+        "lat": 35.0301,
+        "lng": 135.7368
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": [],
+      "price": null,
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://kyo-tsunagu.city.kyoto.lg.jp/kagai/gokagai/",
+          "title": "京都をつなぐ無形文化遺産 五花街の紹介",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kitano-tenmangu",
+      "name": "北野天満宮",
+      "kind": "sightseeing",
+      "summary": "天暦元年（947）創建の、全国の天満宮・天神社の総本社。菅原道真をまつり、国宝の本殿は豊臣秀頼の造営。境内は拝観自由で、本殿前の三光門は閉門の30分前に閉まる",
+      "location": {
+        "lat": 35.0315,
+        "lng": 135.7351
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "07:00",
+        "close": "17:00"
+      },
+      "closedDays": [],
+      "price": "境内は無料",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://kitanotenmangu.or.jp/access/",
+          "title": "北野天満宮 参拝時間・アクセス",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://ja.kyoto.travel/tourism/single01.php?category_id=7&tourism_id=2497",
+          "title": "京都観光Navi 北野天満宮",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "chogoromochi-honpo",
+      "name": "長五郎餅本舗 本店",
+      "kind": "food",
+      "summary": "北野大茶会で豊臣秀吉が用いたと伝わる長五郎餅の店。持ち帰りのほか、店内の茶席で一服できる（10:30〜15:00）。定休は原則木曜で、ほかに不定休あり",
+      "location": {
+        "lat": 35.0268,
+        "lng": 135.7384
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": ["thu"],
+      "price": "長五郎餅2個と煎茶 700円から",
+      "tags": ["indoor", "seating", "local_food"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://chogoromochi.co.jp/storeguide/",
+          "title": "長五郎餅本舗 店舗案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "oimatsu-kitano",
+      "name": "老松 北野店",
+      "kind": "food",
+      "summary": "明治41年（1908）に上七軒で創業した和菓子店の北野店。北野天満宮の東参道にあり、茶席菓子や婚礼菓子を職人に相談できる。定休日は不定休",
+      "location": {
+        "lat": 35.0307,
+        "lng": 135.7365
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "17:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://oimatu.co.jp/?mode=f1",
+          "title": "老松 店舗案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://daihoonji.jp/",
+      "title": "大報恩寺 公式サイト",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://daihoonji.jp/annual-events",
+      "title": "大報恩寺 年中行事",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://ja.kyoto.travel/tourism/single01.php?category_id=7&tourism_id=412",
+      "title": "京都観光Navi 大報恩寺（千本釈迦堂）",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "大報恩寺の公式サイトでの2026年の告知（時刻と値段は京都市の観光サイトの掲載だけで確かめた）",
+    "法要の始まる時刻と、当日の細かな流れ",
+    "待ち時間・混雑の目安と、列や整理券の決まり",
+    "雨天のときの扱い",
+    "成道会の2日間の本堂・霊宝殿の拝観料（無料で公開するとする記事はあるが、公式で確かめられない）",
+    "大根焚きの持ち帰りの可否と、梵字を書いた大根やお守りの授与",
+    "参拝の決まり・服装・持ち物・撮影の可否（出典が見つからない）",
+    "参拝者が使える駐車場の有無",
+    "露店が出るか",
+    "規模の根拠になる授与の数や参拝者数の公表値",
+    "老松 北野店が12月7日・8日に営業するか（定休日が不定休）",
+    "京都駅からの所要時間の出典が2013年発行の京都市の冊子で、今のダイヤでの時間"
+  ]
+}
