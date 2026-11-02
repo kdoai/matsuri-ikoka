@@ -33,6 +33,18 @@ const MONTHS_3 = 92;
 /** 例示用のドメイン。テストやサンプルの出典がまぎれ込んでいないかを見る */
 const EXAMPLE_HOST = /(^|\.)example\.(com|net|org)$/;
 
+/**
+ * robots.txt で取得が禁じられていると確かめたページ。出典にすると、調べ直しのたびに規約に反する。
+ * 見つけたら、ここに足す
+ */
+const DISALLOWED_SOURCES: readonly { pattern: RegExp; reason: string }[] = [
+  { pattern: /^https?:\/\/transit\.yahoo\.co\.jp\//, reason: "Yahoo!乗換案内" },
+  {
+    pattern: /^https?:\/\/(www\.)?ekitan\.com\/transit\/route\/[^?#]+\?/,
+    reason: "駅探のクエリつきの経路検索",
+  },
+];
+
 export interface ValidateOptions {
   /** 確認日の古さを測る基準の日 */
   today: IsoDate;
@@ -83,6 +95,13 @@ export function validateFestivalFiles(
       );
     }
     for (const { path, source } of sources) {
+      const disallowed = DISALLOWED_SOURCES.find(({ pattern }) => pattern.test(source.url));
+      if (disallowed !== undefined) {
+        add(
+          "error",
+          `${path}：${disallowed.reason}のページは robots.txt で取得が禁じられています。公式のアクセス案内などに替えてください`,
+        );
+      }
       if (source.checkedAt > today) {
         add("error", `${path}：確認した日（${source.checkedAt}）が今日より後です`);
       }
