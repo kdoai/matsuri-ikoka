@@ -127,7 +127,7 @@
       "end": "18:30",
       "status": "announced",
       "rainPolicy": "荒天中止、順延なし。開催か中止かは、前日と当日に主催者の電話の自動音声で案内される",
-      "note": "14:30 開場（川西市の案内。池田市側の開場時刻は出典にない）、17:55 開会宣言と両市長のあいさつ、18:00〜18:30 打ち上げ（3章構成）。有料席とふるさと納税の招待席の募集は終わっている",
+      "note": "14:30 開場（川西市の案内。池田市側の開場時刻は出典にない）、17:55 開会宣言と両市長のあいさつ、18:00〜18:30 打ち上げ（3章構成、約4,000発。発数は例年どおりの予定）。有料席とふるさと納税の招待席の募集は終わっている",
       "sources": [
         {
           "url": "https://www.city.ikeda.osaka.jp/soshiki/siminseikatsu/citypro/event/18901.html",
@@ -144,6 +144,12 @@
         {
           "url": "https://www.city.ikeda.osaka.jp/material/files/group/90/kiseitirasi01.pdf",
           "title": "第77回猪名川花火大会 交通規制チラシ（池田市）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.ikeda.osaka.jp/material/files/group/1/260703-press.pdf",
+          "title": "池田市 報道資料 ふるさと納税返礼品に花火大会招待席を追加（約4,000発）",
           "checkedAt": "2026-11-02",
           "confidence": "official"
         }
