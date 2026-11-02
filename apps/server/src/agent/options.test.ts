@@ -189,13 +189,17 @@ describe("createAgentWorkdir", () => {
 });
 
 describe("再確認のエージェント", () => {
-  it("道具は Web 検索だけで、設定も MCP も読まず、会話を残さない", () => {
-    const opts = buildVerifierOptions({
-      prompt: "再確認",
+  const verifierOptions = (withTools: boolean) =>
+    buildVerifierOptions({
+      systemPrompt: "再確認",
       cwd: "/tmp/matsuri-agent-test",
       env: agentEnv({}),
       abortController: new AbortController(),
+      withTools,
     });
+
+  it("道具は Web の検索と取得だけで、設定も MCP も読まず、会話を残さない", () => {
+    const opts = verifierOptions(true);
 
     expect(opts.tools).toEqual(["WebSearch", "WebFetch"]);
     expect(opts.allowedTools).toEqual(["WebSearch", "WebFetch"]);
@@ -206,6 +210,13 @@ describe("再確認のエージェント", () => {
       mcpServers: {},
       persistSession: false,
     });
-    expect(opts.outputFormat?.type).toBe("json_schema");
+  });
+
+  it("差し戻しでは道具を使わせない", () => {
+    const opts = verifierOptions(false);
+
+    expect(opts.tools).toEqual([]);
+    expect(opts.allowedTools).toEqual([]);
+    expect(opts.maxTurns).toBe(1);
   });
 });
