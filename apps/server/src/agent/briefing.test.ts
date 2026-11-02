@@ -36,6 +36,8 @@ describe("店の記録", () => {
 
     expect(planner).toContain(JSON.stringify(itinerary));
     expect(planner).toContain("開始の15分前までに着く");
+    // 架空の祭りは 8月16日 18:30 開始、規模 S（15分）
+    expect(planner).toContain("8月16日（日）：18:30 開始 → 18:15 までに会場に着く");
     expect(researcher).not.toContain(JSON.stringify(itinerary));
   });
 });

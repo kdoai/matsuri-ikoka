@@ -19,6 +19,7 @@ import {
 import { ClaudeAgentRunner } from "../src/agent/claudeRunner";
 import { agentEnv, createAgentWorkdir } from "../src/agent/options";
 import { loadPrompts } from "../src/agent/prompts";
+import { createWebVerifier } from "../src/agent/webVerifier";
 import { createApp } from "../src/app";
 import { findRepoRoot, readConfig } from "../src/config";
 import { loadFestivals } from "../src/data/festivalStore";
@@ -34,7 +35,21 @@ import { ItineraryStore, SessionStore } from "../src/session/sessionStore";
 import { unavailableVerifier } from "../src/tools/verifier";
 import { createJmaWeather } from "../src/tools/weather";
 
+// 発言を引数で渡すと、その発言を順に流して結果を表示するだけにする（決まった確認はしない）。
+//   check:live -- --festivals <フォルダ> --say "<発言1>" --say "<発言2>"
+// --festivals を渡すと、その祭りのデータを開催日をずらさずに使い、再確認は Web で行う。
+function argValues(name: string): string[] {
+  const values: string[] = [];
+  process.argv.forEach((arg, index) => {
+    const value = process.argv[index + 1];
+    if (arg === name && value !== undefined) values.push(value);
+  });
+  return values;
+}
+
 const withItinerary = process.argv.includes("--itinerary");
+const realFestivalsDir = argValues("--festivals")[0];
+const messages = argValues("--say");
 const repoRoot = findRepoRoot(process.cwd());
 const config = readConfig(process.env, process.cwd());
 const today = todayInJapan();
@@ -97,9 +112,16 @@ function describe(event: SseEvent): string {
     case "tool.end":
       return `tool.end     ${event.data.staff} ${event.data.tool} ok=${event.data.ok}「${event.data.bubble}」${
         event.data.candidates
-          ? ` 候補=${event.data.candidates.map((c) => `${c.festivalId}(${c.daysFromWish >= 0 ? "+" : ""}${c.daysFromWish})`).join(",")}`
+          ? ` 候補=${event.data.candidates
+              .map(
+                (c) =>
+                  `${c.festivalId}(${c.date} ${c.daysFromWish >= 0 ? "+" : ""}${c.daysFromWish} ${c.confidence}${c.confirmed ? "" : " 未確認"})`,
+              )
+              .join(",")}`
           : ""
       }`;
+    case "festival.verified":
+      return `festival.verified ${event.data.festivalId} ${event.data.result} 出典=${event.data.sources.map((s) => `${s.url}(${s.confidence})`).join(",")}${event.data.note ? `「${event.data.note}」` : ""}`;
     case "itinerary.updated":
       return `itinerary.updated 第${event.data.itinerary.version}版 予定${event.data.itinerary.items.length}件 追加=${event.data.diff.added.length}`;
     case "message.delta":
@@ -108,8 +130,6 @@ function describe(event: SseEvent): string {
       return `error ${event.data.code}「${event.data.message}」`;
     case "done":
       return `done stage=${event.data.stage} conditions=${JSON.stringify(event.data.conditions)}`;
-    default:
-      return event.type;
   }
 }
 
@@ -118,17 +138,28 @@ async function main() {
   const cwd = createAgentWorkdir();
   let agentSessionId: string | null = null;
   try {
-    await shiftedFictionalFestivals(festivalsDir);
-    const festivals = (await loadFestivals([festivalsDir])).store;
+    if (realFestivalsDir === undefined) await shiftedFictionalFestivals(festivalsDir);
+    const festivals = (await loadFestivals([realFestivalsDir ?? festivalsDir])).store;
     const itineraries = new ItineraryStore();
     const env = agentEnv(process.env);
+    const prompts = await loadPrompts();
     const runner = new ClaudeAgentRunner({
       festivals,
       itineraries,
       weather: createJmaWeather(),
       // 架空の祭りは Web で確かめられないので、再確認は使わない
-      verifier: unavailableVerifier,
-      prompts: await loadPrompts(),
+      verifier:
+        realFestivalsDir === undefined
+          ? unavailableVerifier
+          : createWebVerifier({
+              prompt: prompts.verifier,
+              model: config.models.staff,
+              cwd,
+              env,
+              query,
+              maxBudgetUsd: config.maxBudgetUsd,
+            }),
+      prompts,
       models: config.models,
       maxBudgetUsd: config.maxBudgetUsd,
       cwd,
@@ -168,6 +199,23 @@ async function main() {
       agentSessionId = sessions.get(sessionId)?.agentSessionId ?? agentSessionId;
       return events;
     };
+
+    if (messages.length > 0) {
+      for (const message of messages) await send(message);
+      const session = sessions.get(sessionId);
+      const itinerary = session?.itineraryId ? itineraries.get(session.itineraryId) : undefined;
+      if (itinerary !== undefined) {
+        console.log(
+          `\n旅程 第${itinerary.version}版 ${itinerary.date} 再確認=${itinerary.verification.status}`,
+        );
+        for (const item of itinerary.items) {
+          console.log(`  ${item.start}-${item.end} ${item.type} ${item.name}`);
+        }
+        const shiori = await app.request(`/shiori/${itinerary.id}`);
+        console.log(`しおり：${shiori.status}`);
+      }
+      return;
+    }
 
     const failures: string[] = [];
     const finalStage = (events: SseEvent[]) => {

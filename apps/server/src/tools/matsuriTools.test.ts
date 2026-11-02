@@ -20,6 +20,65 @@ function draftOf(itinerary: Itinerary) {
   return { ...rest, items: items.map(({ changedInVersion: _c, ...item }) => item) };
 }
 
+describe("search_festivals の日ごとの開催", () => {
+  it("複数の日に開かれる祭りは、探す範囲の中の日ごとの時刻と補足を渡す", async () => {
+    const festival = testFestival({
+      id: "multi-day",
+      date: "2026-08-15",
+      edit: (f) => {
+        f.occurrences.push(
+          {
+            date: "2026-08-16",
+            start: "12:00",
+            end: "22:00",
+            status: "announced",
+            rainPolicy: null,
+            note: "本祭。行列がある",
+            sources: [
+              {
+                url: "https://example.com/multi/16",
+                checkedAt: "2026-04-01",
+                confidence: "official",
+              },
+            ],
+          },
+          {
+            date: "2026-10-01",
+            start: "10:00",
+            end: "12:00",
+            status: "announced",
+            rainPolicy: null,
+            sources: [
+              {
+                url: "https://example.com/multi/10",
+                checkedAt: "2026-04-01",
+                confidence: "official",
+              },
+            ],
+          },
+        );
+      },
+    });
+    const ctx = testToolContext([festival]);
+
+    const output = await searchFestivals.run(
+      {
+        when: { kind: "range", from: "2026-08-15", to: "2026-08-16" },
+        origin: "みなと中央駅",
+        stay: "overnight",
+      },
+      ctx,
+      signal,
+    );
+
+    const [detail] = output.details as { daysInRange: { date: string; note: string | null }[] }[];
+    expect(detail?.daysInRange.map((d) => [d.date, d.note])).toEqual([
+      ["2026-08-15", null],
+      ["2026-08-16", "本祭。行列がある"],
+    ]);
+  });
+});
+
 describe("search_festivals", () => {
   it("候補を最大3件返し、聞き取れた条件とこだわりを相談に残す", async () => {
     const ctx = testToolContext([

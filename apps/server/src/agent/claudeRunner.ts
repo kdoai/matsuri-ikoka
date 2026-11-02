@@ -81,6 +81,7 @@ export class ReplyStream {
     return {
       totalCostUsd: result.total_cost_usd,
       durationMs: result.duration_ms,
+      apiMs: result.duration_api_ms,
       numTurns: result.num_turns,
       inputTokens: sum("inputTokens"),
       outputTokens: sum("outputTokens"),
@@ -191,6 +192,8 @@ export class ClaudeAgentRunner implements AgentRunner {
     let initSeen = false;
     let usage: Record<string, number> | null = null;
     const started = Date.now();
+    /** Agent SDK が起動を終える（init を受け取る）までの時間。遅れが起動か API かを分ける */
+    let initMs: number | null = null;
 
     const attempt = async (resume: string | undefined) => {
       const controller = new AbortController();
@@ -218,6 +221,7 @@ export class ClaudeAgentRunner implements AgentRunner {
         for await (const msg of this.#query({ prompt, options })) {
           reply.handle(msg);
           if (reply.sessionId !== null) {
+            initMs ??= Date.now() - started;
             initSeen = true;
             session.agentSessionId = reply.sessionId;
           }
@@ -257,6 +261,7 @@ export class ClaudeAgentRunner implements AgentRunner {
           elapsedMs: Date.now() - started,
           staff: [...turn.startedStaff],
           tools: turn.toolCalls,
+          ...(initMs === null ? {} : { initMs }),
           ...(usage ?? {}),
         }),
       );

@@ -1,6 +1,11 @@
 import type { ConversationStage, DateWish, Preferences } from "@matsuri-ikoka/schema";
 import { arrivalBufferMinutes } from "../domain/arrivalBuffer";
-import { formatMonthDay, formatMonthDayWithWeekday } from "../domain/calendar";
+import {
+  formatMonthDay,
+  formatMonthDayWithWeekday,
+  fromMinutes,
+  toMinutes,
+} from "../domain/calendar";
 import { preferenceEffects } from "../domain/preferences";
 import type { ToolContext } from "../tools/context";
 import type { Staff } from "./bubbles";
@@ -124,7 +129,18 @@ export function staffBriefing(ctx: ToolContext, staff: Staff): string {
         : undefined) ?? ctx.session.selectedFestivalId;
     const festival = festivalId ? ctx.festivals.get(festivalId) : undefined;
     if (festival !== undefined) {
-      parts.push(`会場への到着の余裕：開始の${arrivalBufferMinutes(festival)}分前までに着く`);
+      const buffer = arrivalBufferMinutes(festival);
+      parts.push(`会場への到着の余裕：開始の${buffer}分前までに着く`);
+      // 組み直しを減らすため、行く日ごとの「会場に着く締め切り」をコードで出して渡す
+      const deadlines = festival.occurrences
+        .filter((o) => o.status !== "cancelled" && (o.endDate ?? o.date) >= ctx.today())
+        .flatMap((o) => (o.start === null ? [] : [{ date: o.date, start: o.start }]))
+        .slice(0, 8)
+        .map(
+          ({ date, start }) =>
+            `- ${formatMonthDayWithWeekday(date)}：${start} 開始 → ${fromMinutes(toMinutes(start) - buffer)} までに会場に着く（祭りの前の最後の予定の終わりと、会場までの移動の目安の長いほうを足して、この時刻より前にする）`,
+        );
+      if (deadlines.length > 0) parts.push(`日ごとの到着の締め切り：\n${deadlines.join("\n")}`);
     }
     const itinerary = ctx.session.itineraryId
       ? ctx.itineraries.get(ctx.session.itineraryId)
