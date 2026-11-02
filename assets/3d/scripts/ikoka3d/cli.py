@@ -7,6 +7,9 @@ Targets (run in this order by `--target all`):
   interior    shop interior: preview, Cycles bake, interior.glb
   exterior    storefront + entry camera path: preview, bake, exterior.glb
   optimize    gltf-transform (meshopt, WebP <= 1024) out/glb -> models/, manifest.json
+
+Extra target (not part of `all`):
+  stills      staff and traveler stills for the travel booklet -> ../shiori/staff/*.webp
 """
 
 import argparse
@@ -26,15 +29,18 @@ from . import util as U
 ASSETS_3D = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 TARGETS = ("textures", "characters", "motions", "interior", "exterior", "optimize")
+EXTRA_TARGETS = ("stills",)
 
 
 def parse(argv):
     ap = argparse.ArgumentParser(prog="build.py")
     ap.add_argument("--target", default="all",
-                    help="all, or one or more of: " + ", ".join(TARGETS) + " (comma-separated)")
+                    help="all, or one or more of: " + ", ".join(TARGETS + EXTRA_TARGETS) + " (comma-separated)")
     ap.add_argument("--out", default=os.path.join(ASSETS_3D, "out"),
                     help="previews, .blend files and raw GLBs (git-ignored)")
     ap.add_argument("--dist", default=os.path.join(ASSETS_3D, "models"), help="optimized GLBs for the app")
+    ap.add_argument("--stills", default=os.path.join(ASSETS_3D, "..", "shiori", "staff"),
+                    help="staff stills for the travel booklet (target stills)")
     ap.add_argument("--res", default="1920x1080", help="preview resolution WxH")
     ap.add_argument("--samples", type=int, default=64, help="EEVEE preview samples")
     ap.add_argument("--bake-samples", type=int, default=64, help="Cycles samples for the lighting bake")
@@ -49,7 +55,7 @@ def main(argv):
     args = parse(argv)
     args.res = tuple(int(v) for v in args.res.lower().split("x"))
     targets = TARGETS if args.target == "all" else tuple(t.strip() for t in args.target.split(","))
-    unknown = [t for t in targets if t not in TARGETS]
+    unknown = [t for t in targets if t not in TARGETS + EXTRA_TARGETS]
     if unknown:
         raise SystemExit(f"unknown target(s): {', '.join(unknown)}")
     for t in targets:
@@ -233,6 +239,11 @@ def _detach(objs):
 def target_exterior(args):
     from . import exterior
     exterior.target(args, _fresh, _save, _glb)
+
+
+def target_stills(args):
+    from . import stills
+    stills.target(args, _fresh)
 
 
 def target_optimize(args):

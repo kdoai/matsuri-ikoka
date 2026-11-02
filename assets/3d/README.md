@@ -23,6 +23,7 @@ blender -b --factory-startup --python-exit-code 1 -P assets/3d/scripts/build.py 
 | `interior` | 店内と仕掛け。固定カメラのプレビュー、Cycles で焼き込み、GLB | `out/preview/interior.png`, `interior_baked.png`, `out/glb/interior.glb` |
 | `exterior` | 店の外観と入店カメラ。プレビュー、焼き込み、GLB | `out/preview/exterior*.png`, `out/glb/exterior.glb` |
 | `optimize` | meshopt 圧縮と WebP（1辺1024px以下）、サイズと三角形数の一覧 | `models/*.glb`, `models/manifest.json` |
+| `stills` | しおり用のスタッフと旅人の静止画（透過の WebP）。`all` には含まない | `../shiori/staff/*.webp` |
 
 よく使うオプション：
 
