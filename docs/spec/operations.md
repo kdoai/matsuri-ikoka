@@ -62,6 +62,7 @@ main ブランチには直接 push しません。人の変更も自動の更新
 - 同じ更新のジョブが重ならないよう、同時に動かさない設定（`concurrency`）を入れる
 - main ブランチは保護し、CI が通らない PR はマージできないようにする。履歴を読みやすく保つため、squash merge にする
 - 依存パッケージは Dependabot で毎週確かめる
+- GitHub のリポジトリの設定（秘密情報の検出と push の保護、脆弱性の非公開の報告と通知、main の保護、マージの方法、Issue テンプレートのラベル）は、[`scripts/setup-github.sh`](../../scripts/setup-github.sh) で入れて確かめる。Claude Code では `setup-github-repo` スキルから使え、`gh repo create` のあとにはフックがこのスキルを使うよう知らせる
 
 ## 実行の環境
 

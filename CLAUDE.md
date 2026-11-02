@@ -13,7 +13,9 @@ packages/schema/   Zod のスキーマ（唯一の定義）。テスト用の架
 data/festivals/    祭りのデータ（1件1ファイル）
 data/samples/      モックで再生するサンプルの相談（架空）
 assets/3d/         3D の店内とスタッフのモデルを作るスクリプト
+scripts/           開発と運用のスクリプト（setup-github.sh：GitHub のリポジトリの設定）
 docs/              課題・アーキテクチャ・仕様（spec/）・設計判断の記録（adr/）
+.claude/           共有の権限設定、フック、スキル（setup-github-repo）
 ```
 
 設計の全体は [docs/architecture.md](docs/architecture.md)、仕様は [docs/spec/](docs/spec/README.md) にある。
