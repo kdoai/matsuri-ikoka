@@ -351,8 +351,8 @@ export const updateItinerary = defineTool({
       ctx.itineraries.save(result.itinerary);
       session.itineraryId = result.itinerary.id;
       session.selectedFestivalId = result.itinerary.mainFestivalId;
-      ctx.turn.savedItinerary = true;
     }
+    ctx.turn.savedItinerary = true;
     return {
       saved: !result.unchanged,
       unchanged: result.unchanged,
