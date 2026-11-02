@@ -1,0 +1,83 @@
+# MATSURI QUEST への参加
+
+## 開発を始める
+
+必要なもの：
+
+- Node.js 22.12 以上（[`.node-version`](.node-version) は 24。CI も 24 で動かします）
+- pnpm 10（[`package.json`](package.json) の `packageManager` に合わせます。Corepack を使う場合は `corepack enable`）
+
+```bash
+pnpm install
+pnpm dev
+```
+
+画面は http://localhost:5173 、接客サーバーは http://localhost:8787 で開きます。API キーは要りません。Claude と実際に話して試すときは、[`.env.example`](.env.example) を `.env` にコピーして値を入れます。`.env` は Git の対象外です。
+
+## コマンド
+
+| コマンド         | 中身                                                          |
+| ---------------- | ------------------------------------------------------------- |
+| `pnpm dev`       | 画面と接客サーバーを開発モードで起動する                      |
+| `pnpm lint`      | Biome で lint と format を確かめる                            |
+| `pnpm format`    | Biome で直せるものを直す                                      |
+| `pnpm typecheck` | すべてのパッケージの型を確かめる                              |
+| `pnpm test`      | Vitest ですべてのテストを走らせる（`pnpm test:watch` で監視） |
+| `pnpm build`     | 画面と接客サーバーをビルドする                                |
+
+PR を出す前に、`pnpm lint`・`pnpm typecheck`・`pnpm test`・`pnpm build` がすべて通ることを確かめてください。CI でも同じ順に走ります。
+
+## ディレクトリ
+
+| パス              | 中身                                                      |
+| ----------------- | --------------------------------------------------------- |
+| `apps/server`     | 接客サーバー（Hono、Claude Agent SDK）                    |
+| `apps/web`        | 画面（Vite、React、Tailwind CSS）                         |
+| `packages/schema` | データ・旅程・SSE イベントの Zod のスキーマ（唯一の定義） |
+| `data/festivals`  | 祭りのデータ（1件1ファイル）                              |
+| `data/samples`    | モックで再生するサンプルの相談（架空）                    |
+| `docs`            | 課題、アーキテクチャ、仕様、設計判断の記録                |
+
+## 書き方
+
+- TypeScript は strict。lint と format は Biome に任せます
+- 型はスキーマ（`packages/schema`）から取り、ほかの場所で同じ型を書きません。スキーマを変えたら [仕様](docs/spec/README.md) も直します
+- 日程や所要時間などの決まった計算は、Agent SDK に依存しない関数にして、テストを付けます
+- テストは架空の祭りで書きます（`@matsuri-quest/schema/testing`）
+
+## コミット
+
+[Conventional Commits](https://www.conventionalcommits.org/ja/v1.0.0/) で書きます。本文は日本語でかまいません。
+
+```text
+feat(schema): 祭りのデータモデルを定義
+fix(server): 日帰りの移動の上限を超える祭りを除く
+docs: 旅程の仕様に差分の形を書き足す
+```
+
+| 種類       | 使いどころ             |
+| ---------- | ---------------------- |
+| `feat`     | 機能を足す             |
+| `fix`      | 誤りを直す             |
+| `docs`     | 文書だけを変える       |
+| `test`     | テストだけを変える     |
+| `refactor` | 動きを変えずに書き直す |
+| `chore`    | 設定や依存の更新       |
+| `ci`       | CI の変更              |
+
+1つのコミットには1つの目的だけを入れます。
+
+## PR
+
+- main には PR を通して入れます。CI が通ることが必要で、マージは squash merge です
+- PR のテンプレートのチェックの項目を確かめてください
+
+## 祭りの情報を直す
+
+- 誤りを見つけたら、Issue の「祭り情報の訂正」から知らせてください
+- データを直接直す PR も歓迎します。直した値には、確かめられる出典（URL・確認した日・確度）を付けてください
+- 掲載停止の依頼は、Issue の「掲載停止の依頼」から受け付けます
+
+## 脆弱性
+
+公開の Issue には書かず、[SECURITY.md](SECURITY.md) の手順で知らせてください。
