@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+<path d="M18 46q82-16 164 0l-6 16q-76-12-152 0z" fill="var(--c1, #C8473C)" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>
+<rect x="38" y="76" width="124" height="12" fill="var(--c1, #C8473C)" stroke="currentColor" stroke-width="4"/>
+<path d="M54 60v126M146 60v126" stroke="currentColor" stroke-width="16" stroke-linecap="round"/>
+<path d="M54 60v126M146 60v126" stroke="var(--c1, #C8473C)" stroke-width="8" stroke-linecap="round"/>
+<rect x="92" y="58" width="16" height="18" fill="var(--c3, #FFF4E0)" stroke="currentColor" stroke-width="3"/>
+<path d="M70 104h60" stroke="currentColor" stroke-width="3"/>
+<path d="M80 104l8 10-8 10 8 10M120 104l-8 10 8 10-8 10" fill="none" stroke="var(--c3, #FFF4E0)" stroke-width="5" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 64">
+<path d="M4 4h192v20a8 8 0 0 0 0 16v20H4V40a8 8 0 0 0 0-16z" fill="var(--ticket, #FFF4E0)" stroke="currentColor" stroke-width="2"/>
+<path d="M150 6v52" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 3"/>
+</svg>

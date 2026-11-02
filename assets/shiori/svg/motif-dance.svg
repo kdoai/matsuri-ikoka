@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+<path d="M30 92Q100 10 170 92Z" fill="var(--c2, #F2B33D)" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>
+<path d="M100 92V40M100 92L66 50M100 92L134 50M100 92L46 70M100 92L154 70" stroke="currentColor" stroke-width="2.5"/>
+<path d="M88 96h24v7H88z" fill="currentColor"/>
+<g transform="translate(70 150) rotate(-18)">
+<ellipse cx="0" cy="-22" rx="30" ry="28" fill="var(--c1, #E4572E)" stroke="currentColor" stroke-width="4"/>
+<path d="M-14-34q14-12 28 0M-16-18q16 10 32 0" fill="none" stroke="var(--c3, #FFF4E0)" stroke-width="4" stroke-linecap="round"/>
+<path d="M0 6v40" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+</g>
+<g transform="translate(142 150) rotate(16)">
+<ellipse cx="0" cy="-22" rx="30" ry="28" fill="var(--c3, #8FD3F4)" stroke="currentColor" stroke-width="4"/>
+<circle cx="0" cy="-22" r="10" fill="var(--c1, #E4572E)"/>
+<path d="M0 6v40" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+</g>
+</svg>
