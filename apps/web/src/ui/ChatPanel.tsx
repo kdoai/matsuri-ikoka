@@ -179,8 +179,8 @@ export function ConditionChips() {
       }
       case "origin":
         return t.conditions.origin(value);
-      case "stay":
-        return t.conditions.stay[value as "day_trip" | "overnight"];
+      case "nights":
+        return t.conditions.nights(Number(value));
       case "party": {
         const [adults, children] = value.split("/").map(Number);
         return t.conditions.party(adults ?? 1, children ?? 0);

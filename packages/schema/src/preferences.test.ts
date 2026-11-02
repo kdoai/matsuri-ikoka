@@ -46,11 +46,20 @@ describe("TripConditionsSchema", () => {
   const conditions = {
     when: { kind: "date", date: "2026-08-16" },
     origin: "みなと中央駅",
-    stay: "day_trip",
+    nights: 0,
   };
 
-  it("日付・出発地・日帰りか宿泊かがそろえばよい（同行者は任意）", () => {
+  it("日付・出発地・泊数がそろえばよい（同行者は任意）", () => {
     expect(TripConditionsSchema.safeParse(conditions).success).toBe(true);
+  });
+
+  it("泊数は 0（日帰り・お出かけ）から 6（6泊7日）まで", () => {
+    for (const nights of [0, 1, 6]) {
+      expect(TripConditionsSchema.safeParse({ ...conditions, nights }).success).toBe(true);
+    }
+    for (const nights of [-1, 7, 1.5]) {
+      expect(TripConditionsSchema.safeParse({ ...conditions, nights }).success).toBe(false);
+    }
   });
 
   it("出発地が空なら不正", () => {

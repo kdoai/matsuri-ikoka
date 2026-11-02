@@ -58,7 +58,11 @@ export function shopRecord(ctx: ToolContext): string {
       ? `希望日 ${wishLabel(conditions.when)}（${JSON.stringify(conditions.when)}）`
       : null,
     conditions.origin ? `出発地 ${conditions.origin}` : null,
-    conditions.stay ? (conditions.stay === "day_trip" ? "日帰り" : "宿泊") : null,
+    conditions.nights === undefined
+      ? null
+      : conditions.nights === 0
+        ? "日帰り・お出かけ（0泊）"
+        : `${conditions.nights}泊${conditions.nights + 1}日`,
     conditions.party ? `大人${conditions.party.adults}・子ども${conditions.party.children}` : null,
   ].filter((v): v is string => v !== null);
   lines.push(`聞き取れた条件：${known.length === 0 ? "まだありません" : known.join(" / ")}`);
@@ -84,8 +88,15 @@ export function shopRecord(ctx: ToolContext): string {
       itinerary.verification.status === "pending"
         ? "再確認はまだ"
         : `再確認の結果 ${itinerary.verification.status}`;
+    const first = itinerary.days[0];
+    const last = itinerary.days.at(-1);
+    const span =
+      first === undefined || last === undefined || first.date === last.date
+        ? formatMonthDay(first?.date ?? "")
+        : `${formatMonthDay(first.date)}〜${formatMonthDay(last.date)}（${itinerary.days.length}日）`;
+    const items = itinerary.days.reduce((total, day) => total + day.items.length, 0);
     lines.push(
-      `旅程：第${itinerary.version}版（主役 ${itinerary.mainFestivalId}、${formatMonthDay(itinerary.date)}、予定${itinerary.items.length}件、${verification}）`,
+      `旅程：第${itinerary.version}版（主役 ${itinerary.mainFestivalId}、${span}、予定${items}件、${verification}）`,
     );
   }
   return lines.join("\n");

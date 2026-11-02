@@ -50,17 +50,21 @@ export const DateWishSchema = z.discriminatedUnion("kind", [
 ]);
 export type DateWish = z.infer<typeof DateWishSchema>;
 
-/** 日帰りか、宿泊か */
-export const STAY_TYPES = ["day_trip", "overnight"] as const;
+/** 泊数の上限（6泊7日） */
+export const MAX_NIGHTS = 6;
+
+/** 泊数。0 は日帰り・週末のちょっとしたお出かけ、1〜6 は泊まりの旅 */
+export const NightsSchema = z.number().int().min(0).max(MAX_NIGHTS);
 
 /**
- * 旅の条件。日付・出発地・日帰りか宿泊かがそろうと、祭りを探し始める。同行者は任意。
+ * 旅の条件。日付・出発地・泊数がそろうと、祭りを探し始める。同行者は任意。
+ * 近場のお出かけと分かる相談では、泊まるかを聞き直さず 0 泊にしてよい。
  * 出発地は駅名までにとどめ、住所は聞かない。
  */
 export const TripConditionsSchema = z.strictObject({
   when: DateWishSchema,
   origin: z.string().trim().min(1).max(50),
-  stay: z.enum(STAY_TYPES),
+  nights: NightsSchema,
   party: PartySchema.optional(),
 });
 export type TripConditions = z.infer<typeof TripConditionsSchema>;

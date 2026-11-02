@@ -126,8 +126,36 @@ export const AlternativeSchema = z.strictObject({
   summary: TextSchema,
 });
 
+/** 旅程の日数の上限（6泊7日） */
+export const MAX_TRIP_DAYS = 7;
+
 /**
- * 旅程。祭りの開催時間を動かせない予定として先に置き、前後の空き時間を埋める。
+ * その夜に泊まるところ。宿の名前は持たず、泊まる地域と注意だけを案内する
+ * （データにない宿の名前を作らないため）
+ */
+export const StaySchema = z.strictObject({
+  /** 泊まる地域（例：奈良市の中心部） */
+  area: TextSchema,
+  note: TextSchema.optional(),
+});
+
+/** 旅程の1日。stay が null の日は、その日のうちに帰る（旅の最後の日は必ず null） */
+export const ItineraryDaySchema = z.strictObject({
+  date: IsoDateSchema,
+  weather: WeatherSchema,
+  items: z.array(ItineraryItemSchema).min(1),
+  stay: StaySchema.nullable(),
+});
+
+/** YYYY-MM-DD の次の日 */
+function nextDate(date: string): string {
+  const [y, m, d] = date.split("-").map(Number) as [number, number, number];
+  return new Date(Date.UTC(y, m - 1, d + 1)).toISOString().slice(0, 10);
+}
+
+/**
+ * 旅程。日帰りのお出かけ（1日）から6泊7日までを、続いた日付の日ごとの予定で持つ。
+ * 祭りの開催時間を動かせない予定として先に置き、前後の空き時間を埋める。
  * 修正のたびに版（version）が上がる。
  */
 export const ItinerarySchema = z
@@ -136,40 +164,62 @@ export const ItinerarySchema = z
     version: VersionSchema,
     /** しおりの表紙に出す名前 */
     title: TextSchema.max(40),
-    date: IsoDateSchema,
     origin: TextSchema,
     returnTo: TextSchema,
     party: PartySchema,
     preferences: PreferencesSchema,
+    /** 主役の祭り。どこかの日に必ず予定がある。ほかの日に別の祭りを入れてもよい */
     mainFestivalId: SlugSchema,
     verification: VerificationSchema,
-    weather: WeatherSchema,
-    items: z.array(ItineraryItemSchema).min(1),
+    days: z.array(ItineraryDaySchema).min(1).max(MAX_TRIP_DAYS),
     /** 持ち物と注意 */
     notes: z.array(TextSchema),
     alternatives: z.array(AlternativeSchema),
   })
   .superRefine((itinerary, ctx) => {
-    const ids = itinerary.items.map((item) => item.id);
-    if (new Set(ids).size !== ids.length) {
-      ctx.addIssue({ code: "custom", path: ["items"], message: "予定の id が重複しています" });
-    }
-    itinerary.items.forEach((item, index) => {
-      if (item.changedInVersion > itinerary.version) {
+    const { days } = itinerary;
+    days.forEach((day, index) => {
+      const previous = days[index - 1];
+      if (previous !== undefined && day.date !== nextDate(previous.date)) {
         ctx.addIssue({
           code: "custom",
-          path: ["items", index, "changedInVersion"],
-          message: "changedInVersion は旅程の版以下にしてください",
+          path: ["days", index, "date"],
+          message: "日付は1日ずつ続けてください",
         });
       }
+      if (index === days.length - 1 && day.stay !== null) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["days", index, "stay"],
+          message: "最後の日は帰る日なので、stay を null にしてください",
+        });
+      }
+      day.items.forEach((item, itemIndex) => {
+        if (item.changedInVersion > itinerary.version) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["days", index, "items", itemIndex, "changedInVersion"],
+            message: "changedInVersion は旅程の版以下にしてください",
+          });
+        }
+      });
     });
-    const hasMainFestival = itinerary.items.some(
+    const items = days.flatMap((day) => day.items);
+    const ids = items.map((item) => item.id);
+    if (new Set(ids).size !== ids.length) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["days"],
+        message: "予定の id は旅程全体で重ならないようにしてください",
+      });
+    }
+    const hasMainFestival = items.some(
       (item) => item.type === "festival" && item.festivalId === itinerary.mainFestivalId,
     );
     if (!hasMainFestival) {
       ctx.addIssue({
         code: "custom",
-        path: ["items"],
+        path: ["days"],
         message: "主役の祭り（mainFestivalId）の予定が必要です",
       });
     }
@@ -196,14 +246,18 @@ export type VerificationResult = z.infer<typeof VerificationResultSchema>;
 export type Verification = z.infer<typeof VerificationSchema>;
 export type Weather = z.infer<typeof WeatherSchema>;
 export type Alternative = z.infer<typeof AlternativeSchema>;
+export type Stay = z.infer<typeof StaySchema>;
+export type ItineraryDay = z.infer<typeof ItineraryDaySchema>;
 export type Itinerary = z.infer<typeof ItinerarySchema>;
 export type ItineraryDiff = z.infer<typeof ItineraryDiffSchema>;
 
 /** 旅程で使った出典を、URL の重複を除いて集める（しおりの「出典」に出す） */
 export function collectItinerarySources(itinerary: Itinerary): Source[] {
   const all = [
-    ...itinerary.items.flatMap((item) => item.sources),
-    ...(itinerary.weather.status === "forecast" ? [itinerary.weather.source] : []),
+    ...itineraryItems(itinerary).flatMap((item) => item.sources),
+    ...itinerary.days.flatMap((day) =>
+      day.weather.status === "forecast" ? [day.weather.source] : [],
+    ),
     ...(itinerary.verification.status === "pending" ? [] : itinerary.verification.sources),
   ];
   const byUrl = new Map<string, Source>();
@@ -213,4 +267,27 @@ export function collectItinerarySources(itinerary: Itinerary): Source[] {
     }
   }
   return [...byUrl.values()];
+}
+
+/** 旅程のすべての予定（日の順・時刻の順） */
+export function itineraryItems(itinerary: Pick<Itinerary, "days">): ItineraryItem[] {
+  return itinerary.days.flatMap((day) => day.items);
+}
+
+/** 旅程の泊数（日数 − 1）。0 は日帰り・お出かけ */
+export function itineraryNights(itinerary: Pick<Itinerary, "days">): number {
+  return itinerary.days.length - 1;
+}
+
+/** 主役の祭りの予定がある日。見つからなければ最初の日 */
+export function mainFestivalDay(
+  itinerary: Pick<Itinerary, "days" | "mainFestivalId">,
+): ItineraryDay {
+  return (
+    itinerary.days.find((day) =>
+      day.items.some(
+        (item) => item.type === "festival" && item.festivalId === itinerary.mainFestivalId,
+      ),
+    ) ?? (itinerary.days[0] as ItineraryDay)
+  );
 }

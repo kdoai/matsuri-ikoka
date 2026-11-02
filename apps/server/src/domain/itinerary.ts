@@ -1,23 +1,31 @@
 import {
   type Festival,
+  type IsoDate,
   type Itinerary,
+  type ItineraryDay,
   type ItineraryDiff,
   type ItineraryItem,
   ItinerarySchema,
+  mainFestivalDay,
   type Source,
   type Weather,
 } from "@matsuri-ikoka/schema";
 import { checkPlan, occurrenceOn, type PlanIssue } from "./planCheck";
 
 // 旅程係が書いた下書きから、保存する旅程を作る。
-// 場所・営業時間・出典は祭りのデータから入れ直し、版と差分を付け、スキーマと旅程の検証を通す。
+// 場所・営業時間・出典は祭りのデータから入れ直し、天気を日ごとに付け、版と差分を付け、
+// スキーマと旅程の検証を通す。日帰りのお出かけ（1日）から6泊7日まで同じ形で扱う。
 
 export type ItineraryItemDraft = Omit<ItineraryItem, "changedInVersion">;
 
-export type ItineraryDraft = Omit<
-  Itinerary,
-  "id" | "version" | "verification" | "weather" | "items"
-> & { items: ItineraryItemDraft[] };
+/** 下書きの1日。天気はサーバーが付ける */
+export type ItineraryDayDraft = Omit<ItineraryDay, "weather" | "items"> & {
+  items: ItineraryItemDraft[];
+};
+
+export type ItineraryDraft = Omit<Itinerary, "id" | "version" | "verification" | "days"> & {
+  days: ItineraryDayDraft[];
+};
 
 export interface ItineraryIssue {
   code: PlanIssue["code"] | "invalid" | "unknown_source";
@@ -53,33 +61,45 @@ function withoutVersion(item: ItineraryItem | ItineraryItemDraft): ItineraryItem
   return rest;
 }
 
-/** 前の版からの差分と、予定ごとの「最後に変わった版」を付ける */
-export function diffItems(
+/**
+ * 前の版からの差分と、予定ごとの「最後に変わった版」を付ける。
+ * 予定は旅程全体の id で照らし合わせ、別の日へ移った予定は変わった予定にする
+ */
+export function diffDays(
   previous: Itinerary | null,
-  items: readonly ItineraryItemDraft[],
+  days: readonly ItineraryDayDraft[],
   version: number,
-): { items: ItineraryItem[]; diff: ItineraryDiff } {
-  const before = new Map(previous?.items.map((item) => [item.id, item]) ?? []);
+): { days: Omit<ItineraryDay, "weather">[]; diff: ItineraryDiff } {
+  const before = new Map<string, { item: ItineraryItem; date: IsoDate }>();
+  for (const day of previous?.days ?? []) {
+    for (const item of day.items) before.set(item.id, { item, date: day.date });
+  }
   const added: string[] = [];
   const changed: string[] = [];
-  const next = items.map((item): ItineraryItem => {
-    const old = before.get(item.id);
-    if (old === undefined) {
-      added.push(item.id);
-      return { ...item, changedInVersion: version };
-    }
-    if (stableStringify(withoutVersion(old)) !== stableStringify(withoutVersion(item))) {
-      changed.push(item.id);
-      return { ...item, changedInVersion: version };
-    }
-    return { ...item, changedInVersion: old.changedInVersion };
-  });
-  const ids = new Set(items.map((item) => item.id));
+  const next = days.map((day) => ({
+    ...day,
+    items: day.items.map((item): ItineraryItem => {
+      const old = before.get(item.id);
+      if (old === undefined) {
+        added.push(item.id);
+        return { ...item, changedInVersion: version };
+      }
+      const same =
+        old.date === day.date &&
+        stableStringify(withoutVersion(old.item)) === stableStringify(withoutVersion(item));
+      if (!same) {
+        changed.push(item.id);
+        return { ...item, changedInVersion: version };
+      }
+      return { ...item, changedInVersion: old.item.changedInVersion };
+    }),
+  }));
+  const ids = new Set(days.flatMap((day) => day.items.map((item) => item.id)));
   const removed = [...before.values()]
-    .filter((item) => !ids.has(item.id))
-    .map((item) => ({ id: item.id, name: item.name }));
+    .filter(({ item }) => !ids.has(item.id))
+    .map(({ item }) => ({ id: item.id, name: item.name }));
   return {
-    items: next,
+    days: next,
     diff: { fromVersion: previous?.version ?? 0, toVersion: version, added, changed, removed },
   };
 }
@@ -113,7 +133,9 @@ export function enrichDraft(
   const warnings: ItineraryIssue[] = [];
   const festivalIds = new Set([
     draft.mainFestivalId,
-    ...draft.items.flatMap((item) => (item.festivalId === undefined ? [] : [item.festivalId])),
+    ...draft.days.flatMap((day) =>
+      day.items.flatMap((item) => (item.festivalId === undefined ? [] : [item.festivalId])),
+    ),
   ]);
   const festivals = [...festivalIds].flatMap((id) => {
     const festival = findFestival(id);
@@ -126,7 +148,7 @@ export function enrichDraft(
     for (const spot of festival.nearby) spots.set(spot.id, spot);
   }
 
-  const items = draft.items.map((item): ItineraryItemDraft => {
+  const enrichItem = (item: ItineraryItemDraft, date: IsoDate): ItineraryItemDraft => {
     const spot = item.spotId === undefined ? undefined : spots.get(item.spotId);
     if (spot !== undefined) {
       return { ...item, location: spot.location, hours: spot.hours, sources: spot.sources };
@@ -136,7 +158,7 @@ export function enrichDraft(
         ? festivals.find((f) => f.id === item.festivalId)
         : undefined;
     if (festival !== undefined) {
-      const occurrence = occurrenceOn(festival, draft.date);
+      const occurrence = occurrenceOn(festival, date);
       return {
         ...item,
         location: { lat: festival.venue.lat, lng: festival.venue.lng },
@@ -155,22 +177,27 @@ export function enrichDraft(
       });
     }
     return { ...item, sources: known };
-  });
+  };
 
-  return { draft: { ...draft, items }, warnings };
+  const days = draft.days.map((day) => ({
+    ...day,
+    items: day.items.map((item) => enrichItem(item, day.date)),
+  }));
+  return { draft: { ...draft, days }, warnings };
 }
 
 /**
  * 下書きから保存する旅程を作る。検証のエラーがあれば保存しない。
  * - 版は前の版の次。前の版とまったく同じなら版を上げない
- * - 主役の祭りと日付が変わらなければ、確定前の再確認の結果を引き継ぐ
+ * - 主役の祭りと、その祭りの日が変わらなければ、確定前の再確認の結果を引き継ぐ
+ * - 天気は日ごとに weatherFor から付ける
  */
 export function buildItinerary(
   draft: ItineraryDraft,
   options: {
     id: string;
     previous: Itinerary | null;
-    weather: Weather;
+    weatherFor: (date: IsoDate) => Weather;
     findFestival: (id: string) => Festival | undefined;
   },
 ): BuildItineraryResult {
@@ -178,19 +205,19 @@ export function buildItinerary(
   const enriched = enrichDraft(draft, options.findFestival);
   const warnings: ItineraryIssue[] = [...enriched.warnings];
   const version = (previous?.version ?? 0) + 1;
-  const { items, diff } = diffItems(previous, enriched.draft.items, version);
+  const { days, diff } = diffDays(previous, enriched.draft.days, version);
   const keepVerification =
     previous !== null &&
     previous.mainFestivalId === draft.mainFestivalId &&
-    previous.date === draft.date;
+    mainFestivalDay(previous).date ===
+      mainFestivalDay({ ...draft, days: days as ItineraryDay[] }).date;
 
   const candidate = {
     ...enriched.draft,
     id: options.id,
     version,
     verification: keepVerification ? previous.verification : { status: "pending" as const },
-    weather: options.weather,
-    items,
+    days: days.map((day) => ({ ...day, weather: options.weatherFor(day.date) })),
   };
   const parsed = ItinerarySchema.safeParse(candidate);
   if (!parsed.success) {
@@ -219,8 +246,14 @@ export function buildItinerary(
 
 function isSameItinerary(previous: Itinerary, next: Itinerary, diff: ItineraryDiff): boolean {
   if (diff.added.length + diff.changed.length + diff.removed.length > 0) return false;
-  const order = (itinerary: Itinerary) => itinerary.items.map((item) => item.id).join("\n");
+  const order = (itinerary: Itinerary) =>
+    itinerary.days
+      .map((day) => `${day.date}:${day.items.map((item) => item.id).join(",")}`)
+      .join("\n");
   if (order(previous) !== order(next)) return false;
-  const overview = ({ id: _id, version: _v, items: _items, ...rest }: Itinerary) => rest;
+  const overview = ({ id: _id, version: _v, days, ...rest }: Itinerary) => ({
+    ...rest,
+    days: days.map(({ items: _items, ...day }) => day),
+  });
   return stableStringify(overview(previous)) === stableStringify(overview(next));
 }

@@ -8,13 +8,16 @@ import { lookup, testFestival } from "./testFestivals";
 const festival = testFestival({ id: "suzunari-toro" });
 const find = lookup(festival);
 
-function plan(items: PlanItem[], preferences: Partial<Preferences> = {}): PlanToCheck {
+function plan(
+  items: PlanItem[],
+  preferences: Partial<Preferences> = {},
+  // 2026-08-16 は日曜
+  date = "2026-08-16",
+): PlanToCheck {
   return {
-    // 2026-08-16 は日曜
-    date: "2026-08-16",
     mainFestivalId: "suzunari-toro",
     preferences: { ...DEFAULT_PREFERENCES, ...preferences },
-    items,
+    days: [{ date, items }],
   };
 }
 
@@ -123,16 +126,15 @@ describe("checkPlan", () => {
   });
 
   it("休業日の場所を入れると誤り", () => {
-    const tuesday = {
-      ...plan([
-        item({ id: "hall", start: "14:00", end: "15:00", spotId: "suzunari-craft-hall" }),
-        fest,
-      ]),
-    };
     // 2026-08-18 は火曜。祭りもこの日に開く
+    const tuesday = plan(
+      [item({ id: "hall", start: "14:00", end: "15:00", spotId: "suzunari-craft-hall" }), fest],
+      {},
+      "2026-08-18",
+    );
     const festivalOnTuesday = testFestival({ id: "suzunari-toro", date: "2026-08-18" });
 
-    const result = checkPlan({ ...tuesday, date: "2026-08-18" }, lookup(festivalOnTuesday));
+    const result = checkPlan(tuesday, lookup(festivalOnTuesday));
 
     expect(codes(result)).toEqual([["closed_day", "hall"]]);
   });
@@ -168,9 +170,46 @@ describe("checkPlan", () => {
   });
 
   it("祭りの開かれない日の旅程は誤り", () => {
-    const result = checkPlan({ ...plan([fest]), date: "2026-08-17" }, find);
+    const result = checkPlan(plan([fest], {}, "2026-08-17"), find);
 
-    expect(codes(result)).toContainEqual(["festival_not_on_date", null]);
+    expect(codes(result)).toContainEqual(["festival_not_on_date", "festival"]);
+  });
+
+  it("泊まりの旅は日ごとに確かめ、どの日の誤りかを添える", () => {
+    const result = checkPlan(
+      {
+        ...plan([fest]),
+        days: [
+          {
+            date: "2026-08-15",
+            items: [
+              item({ id: "a", start: "10:00", end: "12:00" }),
+              item({ id: "b", start: "11:00", end: "13:00" }),
+            ],
+          },
+          { date: "2026-08-16", items: [{ ...fest, start: "18:30" }] },
+        ],
+      },
+      find,
+    );
+
+    expect(codes(result)).toEqual([["overlap", "b"]]);
+    expect(result.errors[0]?.message).toMatch(/^1日目（8月15日）：/);
+  });
+
+  it("祭りのない日だけでは、祭りの日の確かめをしない", () => {
+    const result = checkPlan(
+      {
+        ...plan([fest]),
+        days: [
+          { date: "2026-08-16", items: [fest] },
+          { date: "2026-08-17", items: [item({ id: "walk", start: "09:00", end: "11:00" })] },
+        ],
+      },
+      find,
+    );
+
+    expect(result.errors).toEqual([]);
   });
 
   it("祭りの予定が開催時間の外にはみ出すと、祭りの時間とぶつかる", () => {

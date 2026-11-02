@@ -1,5 +1,6 @@
 import {
   type FestivalCandidate,
+  itineraryItems,
   type SampleConversation,
   SampleConversationSchema,
   type SseEvent,
@@ -101,8 +102,8 @@ describe("記録した相談を通す", () => {
     const state = playTurns(2);
     const itinerary = state.itinerary.current!;
     expect(itinerary.version).toBe(1);
-    expect(itinerary.items.map((item) => itemChange(state, item))).toEqual(
-      itinerary.items.map(() => null),
+    expect(itineraryItems(itinerary).map((item) => itemChange(state, item))).toEqual(
+      itineraryItems(itinerary).map(() => null),
     );
     expect(state.spots).toHaveLength(4);
     expect(state.ui.candidatesOpen).toBe(false);
@@ -114,7 +115,7 @@ describe("記録した相談を通す", () => {
     expect(itinerary.version).toBe(2);
     expect(state.itinerary.previous?.version).toBe(1);
     const changes = Object.fromEntries(
-      itinerary.items.map((item) => [item.id, itemChange(state, item)]),
+      itineraryItems(itinerary).map((item) => [item.id, itemChange(state, item)]),
     );
     expect(changes).toMatchObject({
       "craft-hall": "added",

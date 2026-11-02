@@ -16,8 +16,14 @@ const signal = new AbortController().signal;
 const suzunari = () => testFestival({ id: "suzunari-toro" });
 
 function draftOf(itinerary: Itinerary) {
-  const { id: _id, version: _v, verification: _ver, weather: _w, items, ...rest } = itinerary;
-  return { ...rest, items: items.map(({ changedInVersion: _c, ...item }) => item) };
+  const { id: _id, version: _v, verification: _ver, days, ...rest } = itinerary;
+  return {
+    ...rest,
+    days: days.map(({ weather: _w, items, ...day }) => ({
+      ...day,
+      items: items.map(({ changedInVersion: _c, ...item }) => item),
+    })),
+  };
 }
 
 describe("search_festivals の日ごとの開催", () => {
@@ -65,7 +71,7 @@ describe("search_festivals の日ごとの開催", () => {
       {
         when: { kind: "range", from: "2026-08-15", to: "2026-08-16" },
         origin: "みなと中央駅",
-        stay: "overnight",
+        nights: 1,
       },
       ctx,
       signal,
@@ -91,7 +97,7 @@ describe("search_festivals", () => {
       {
         when: { kind: "date", date: "2026-08-16" },
         origin: "みなと中央駅",
-        stay: "day_trip",
+        nights: 0,
         party: { adults: 2, children: 0 },
         preferences: { party: "adults", spot: "hidden", food: "local", move: "train" },
       },
@@ -111,7 +117,7 @@ describe("search_festivals", () => {
     expect(ctx.session.conditions).toEqual({
       when: { kind: "date", date: "2026-08-16" },
       origin: "みなと中央駅",
-      stay: "day_trip",
+      nights: 0,
       party: { adults: 2, children: 0 },
     });
     expect(ctx.session.preferences.spot).toBe("hidden");
@@ -123,7 +129,7 @@ describe("search_festivals", () => {
     const ctx = testToolContext([suzunari()], { today: "2026-09-01" });
 
     const output = await searchFestivals.run(
-      { when: { kind: "date", date: "2026-08-16" }, origin: "みなと中央駅", stay: "overnight" },
+      { when: { kind: "date", date: "2026-08-16" }, origin: "みなと中央駅", nights: 1 },
       ctx,
       signal,
     );
@@ -136,7 +142,7 @@ describe("search_festivals", () => {
     const ctx = testToolContext([suzunari()]);
 
     await expect(
-      searchFestivals.run({ when: "8月16日", origin: "", stay: "x" }, ctx, signal),
+      searchFestivals.run({ when: "8月16日", origin: "", nights: "x" }, ctx, signal),
     ).rejects.toThrow();
   });
 });
@@ -225,7 +231,7 @@ describe("update_itinerary", () => {
     expect(ctx.weatherCalls).toEqual(["滋賀県@2026-08-16"]);
 
     const revised = draftOf(first.itinerary as Itinerary);
-    revised.items = revised.items.filter((item) => item.id !== "craft-hall");
+    revised.days[0]!.items = revised.days[0]!.items.filter((item) => item.id !== "craft-hall");
     const second = await updateItinerary.run({ itinerary: revised }, ctx, signal);
     expect(second).toMatchObject({
       saved: true,
@@ -238,7 +244,8 @@ describe("update_itinerary", () => {
   it("検証で誤りがあれば保存せず、誤りを返す", async () => {
     const ctx = testToolContext([suzunari()]);
     const draft = draftOf(fictionalItinerary());
-    draft.items[1] = { ...draft.items[1]!, start: "16:40", end: "17:30" };
+    const items = draft.days[0]!.items;
+    items[1] = { ...items[1]!, start: "16:40", end: "17:30" };
 
     const output = await updateItinerary.run({ itinerary: draft }, ctx, signal);
 

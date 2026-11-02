@@ -13,7 +13,7 @@ import { testFestival } from "./testFestivals";
 const day = (date: string) => ({ kind: "date" as const, date });
 const base = {
   origin: "みなと中央駅",
-  stay: "overnight" as const,
+  nights: 1,
   preferences: { ...DEFAULT_PREFERENCES } as Preferences,
 };
 
@@ -134,7 +134,7 @@ describe("日程のルール", () => {
 
     const result = searchFestivalDates(festivals, {
       ...base,
-      stay: "day_trip",
+      nights: 0,
       maxTravelMinutes: 90,
       wish: day("2026-08-16"),
       today: "2026-08-03",
@@ -196,7 +196,7 @@ describe("searchFestivalDates", () => {
   it("日帰りでも、移動時間の分からない祭りは除かない", () => {
     const festivals = [testFestival({ id: "unknown-travel", fromHubMinutes: null })];
 
-    const [match] = searchFestivalDates(festivals, { ...options, stay: "day_trip" }).matches;
+    const [match] = searchFestivalDates(festivals, { ...options, nights: 0 }).matches;
 
     expect(match?.festival.id).toBe("unknown-travel");
     expect(match?.travelMinutes).toBeNull();

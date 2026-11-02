@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { type Festival, FestivalSchema } from "./festival";
+import { itineraryItems } from "./itinerary";
 import { DEFAULT_PREFERENCES } from "./preferences";
 import { type RecordedEvent, SampleConversationSchema, SampleTurnSchema } from "./sample";
 
@@ -133,7 +134,7 @@ describe("data/samples（モックで再生するサンプル）", () => {
         const main = festivals.get(itinerary.mainFestivalId);
         expect(main, itinerary.mainFestivalId).toBeDefined();
         const spotIds = new Set(main?.nearby.map((spot) => spot.id));
-        for (const item of itinerary.items) {
+        for (const item of itineraryItems(itinerary)) {
           if (item.festivalId !== undefined) expect(festivals.has(item.festivalId)).toBe(true);
           if (item.spotId !== undefined) expect(spotIds.has(item.spotId), item.spotId).toBe(true);
         }
@@ -145,7 +146,7 @@ describe("data/samples（モックで再生するサンプル）", () => {
       for (const event of events) {
         if (event.type !== "itinerary.updated") continue;
         const { itinerary, diff } = event.data;
-        const ids = new Set(itinerary.items.map((item) => item.id));
+        const ids = new Set(itineraryItems(itinerary).map((item) => item.id));
         expect([...ids].filter((id) => !previousIds.has(id)).sort()).toEqual(
           [...diff.added].sort(),
         );
@@ -153,7 +154,7 @@ describe("data/samples（モックで再生するサンプル）", () => {
           [...previousIds].filter((id) => !ids.has(id)).sort(),
         );
         for (const id of [...diff.added, ...diff.changed]) {
-          const item = itinerary.items.find((i) => i.id === id);
+          const item = itineraryItems(itinerary).find((i) => i.id === id);
           expect(item?.changedInVersion, id).toBe(itinerary.version);
         }
         previousIds = ids;
