@@ -174,6 +174,23 @@ export const searchFestivals = defineTool({
         stalls: m.festival.food.stalls,
         rainPolicy: m.occurrence.rainPolicy,
         status: m.occurrence.status,
+        // 複数の日に開かれる祭りは、探す範囲の中のほかの日も渡す（日によって見どころが違う）
+        daysInRange: m.festival.occurrences
+          .filter(
+            (o) =>
+              o.status !== "cancelled" &&
+              o.status !== "postponed" &&
+              ranges.expanded !== null &&
+              o.date <= ranges.expanded.to &&
+              (o.endDate ?? o.date) >= ranges.expanded.from,
+          )
+          .map((o) => ({
+            date: o.date,
+            ...(o.endDate ? { endDate: o.endDate } : {}),
+            start: o.start,
+            end: o.end,
+            note: o.note ?? null,
+          })),
         travelMinutesEstimate: m.travelMinutes,
         arrivalBufferMinutes: arrivalBufferMinutes(m.festival),
         participation: m.festival.etiquette.participation,
@@ -346,6 +363,10 @@ export const updateItinerary = defineTool({
       findFestival: (id) => ctx.festivals.get(id),
     });
     if (!result.ok) {
+      // 旅程係の組み方の傾向をつかむため、断った理由の種類だけを残す（予定の名前や文は残さない）
+      console.info(
+        JSON.stringify({ kind: "itinerary_rejected", codes: result.errors.map((e) => e.code) }),
+      );
       return { saved: false, errors: result.errors, warnings: result.warnings };
     }
     // 時間切れや接続の切断のあとに、旅程を書き換えない
