@@ -1,0 +1,487 @@
+{
+  "id": "imamiya-tokaebisu",
+  "name": {
+    "ja": "十日戎",
+    "en": "Imamiya Ebisu Shrine Toka Ebisu"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "大阪府",
+      "name": "大阪市"
+    }
+  ],
+  "venue": {
+    "name": "今宮戎神社",
+    "lat": 34.6549,
+    "lng": 135.5025
+  },
+  "scaleTier": "L",
+  "popularity": "major",
+  "listedIn": ["walkerplus", "jalan", "rurubu", "jnto"],
+  "highlights": [
+    "福娘に、御札や小宝吉兆を福笹へ結んでもらえる",
+    "芸者衆の参詣に始まる宝恵駕行列（2027年は1月9日）",
+    "3日間とも福笹の授与は朝7時から翌1時まで"
+  ],
+  "trivia": [
+    {
+      "text": "宝恵駕行列はミナミの芸者衆の参詣が起こりで、最盛期には百挺もの駕が並んだ",
+      "source": {
+        "url": "https://www.imamiya-ebisu.jp/tokaebisu",
+        "title": "今宮戎神社 十日戎",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "本戎の神饌は今も午前3時ごろから火打石で火をおこし、かまどで調理する",
+      "source": {
+        "url": "https://www.imamiya-ebisu.jp/schedule",
+        "title": "今宮戎神社 神事・行事について",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "福笹のササは孟宗竹の枝で無料。御魂が込められているのは御札と小宝吉兆の方",
+      "source": {
+        "url": "https://www.imamiya-ebisu.jp/archives/4548",
+        "title": "今宮戎神社 福笹授与について",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "江戸時代は宵戎に雑喉場の魚市場が雌雄一対の大鯛を奉献し、今は木津市場が奉納する",
+      "source": {
+        "url": "https://www.imamiya-ebisu.jp/tokaebisu",
+        "title": "今宮戎神社 十日戎",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "1月9日〜11日の7:00〜翌1:00に、境内の笹お渡し所で笹（無料）を受け、福笹授与所で御札や小宝吉兆（有料・現金のみ）を結んでもらう",
+    "rules": [
+      "ペットなど動物は境内に入れない（盲導犬・介助犬は除く）",
+      "個人的な撮影を除き、配信など不特定多数に向けた撮影や営利目的の撮影は事前に許可を求める",
+      "授与品の支払いは現金のみで、値引きはしない",
+      "十日戎の3日間の御祈祷は予約できず、来た順に行う（10日の7:00〜9:00は神事のため受けない）",
+      "古札納所に返せるのは神社で受けた授与品だけ（露店で買った熊手などは返せない）"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "3日間で約100万人が参拝する混雑で、期間中は神社の周辺で交通規制がある"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "個人的な撮影のほかは、配信・営利目的とも事前に神社の許可が要る"
+    },
+    "sources": [
+      {
+        "url": "https://www.imamiya-ebisu.jp/archives/4548",
+        "title": "今宮戎神社 福笹授与について",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.imamiya-ebisu.jp/archives/4457",
+        "title": "今宮戎神社 十日戎 各種応対時間一覧",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.imamiya-ebisu.jp/qa",
+        "title": "今宮戎神社 よくあるご質問",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.imamiya-ebisu.jp/access",
+        "title": "今宮戎神社 アクセス",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000909",
+        "title": "るるぶ&more. 十日戎（大阪府／天王寺・新世界）",
+        "checkedAt": "2026-11-02",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://www.walkerplus.com/event/ar0727e170100/",
+        "title": "ウォーカープラス 今宮戎神社 十日戎",
+        "checkedAt": "2026-11-02",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-01-09",
+      "start": "07:00",
+      "end": "01:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "宵戎。参拝は24時間できる。福笹の授与は7:00〜翌1:00、福娘の奉仕は9:00〜21:00、御祈祷は7:00〜翌1:00。2027年の宝恵駕行列はこの日に行う（時刻と道順は神社が資料がそろい次第公開）",
+      "sources": [
+        {
+          "url": "https://www.imamiya-ebisu.jp/archives/2726",
+          "title": "今宮戎神社 令和9年十日戎各種申込",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.imamiya-ebisu.jp/archives/4457",
+          "title": "今宮戎神社 十日戎 各種応対時間一覧",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://osaka-info.jp/event/imamiyaebisu-tokaebisu/",
+          "title": "OSAKA-INFO 今宮戎神社 十日戎",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-10",
+      "start": "07:00",
+      "end": "01:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "本戎。参拝は24時間できる。7:00〜9:00は神職による十日戎の神事。福笹の授与は7:00〜翌1:00、福娘の奉仕は9:00〜21:00、御祈祷は9:00〜翌1:00",
+      "sources": [
+        {
+          "url": "https://www.imamiya-ebisu.jp/archives/4457",
+          "title": "今宮戎神社 十日戎 各種応対時間一覧",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.imamiya-ebisu.jp/archives/2726",
+          "title": "今宮戎神社 令和9年十日戎各種申込",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.imamiya-ebisu.jp/schedule",
+          "title": "今宮戎神社 神事・行事について",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-11",
+      "start": "07:00",
+      "end": "01:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "残り戎。福笹の授与は7:00〜翌1:00、福娘の奉仕は9:00〜21:00、御祈祷は7:00〜翌1:00。12日の午前1時に完全に閉門する",
+      "sources": [
+        {
+          "url": "https://www.imamiya-ebisu.jp/archives/4457",
+          "title": "今宮戎神社 十日戎 各種応対時間一覧",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.imamiya-ebisu.jp/archives/2726",
+          "title": "今宮戎神社 令和9年十日戎各種申込",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "南海 今宮戎駅",
+        "walkMinutes": [0, 5],
+        "note": "公式の案内は「降りて東へすぐ」"
+      },
+      {
+        "name": "Osaka Metro 大国町駅",
+        "walkMinutes": [8, 13],
+        "note": "御堂筋線・四つ橋線。3番出口から東へ"
+      },
+      {
+        "name": "Osaka Metro 恵美須町駅",
+        "walkMinutes": [8, 13],
+        "note": "堺筋線。5番出口から西へ"
+      },
+      {
+        "name": "阪堺電車 恵美須町駅",
+        "walkMinutes": [5, 10]
+      },
+      {
+        "name": "JR 新今宮駅",
+        "walkMinutes": [10, 15],
+        "note": "南海高野線に乗り換えて今宮戎駅で降りることもできる"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "なんば駅（南海）",
+        "minutes": [2, 2],
+        "route": "南海高野線の各駅停車で今宮戎駅まで、乗り換えなし（大阪難波駅からは歩いてなんば駅へ）"
+      },
+      {
+        "hub": "梅田駅（Osaka Metro）",
+        "minutes": [12, 12],
+        "route": "Osaka Metro御堂筋線で大国町駅まで、乗り換えなし"
+      }
+    ],
+    "parking": "none",
+    "trafficRestrictions": [
+      "十日戎の期間中とその前後は、神社の周辺で交通規制がある（2027年の交通規制図は12月初旬に神社の公式サイトで公開の予定）"
+    ],
+    "sources": [
+      {
+        "url": "https://www.imamiya-ebisu.jp/access",
+        "title": "今宮戎神社 アクセス",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.imamiya-ebisu.jp/archives/400",
+        "title": "今宮戎神社 令和9年十日戎交通規制図",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.imamiya-ebisu.jp/qa",
+        "title": "今宮戎神社 よくあるご質問（駐車場）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ekitan.com/transit/route/sf-5728/st-4929",
+        "title": "駅探 乗換案内 難波(南海)→今宮戎（2026年11月2日 19時台の出発の検索結果）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      },
+      {
+        "url": "https://ekitan.com/transit/route/sf-4960/st-5590",
+        "title": "駅探 乗換案内 梅田→大国町（2026年11月2日 19時台の出発の検索結果）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "tsutenkaku",
+      "name": "通天閣",
+      "kind": "sightseeing",
+      "summary": "新世界の真ん中に立つ展望塔。一般展望台にビリケンさんがいる。入場時間の予約が要り、夕方以降は売り切れることがある。休みや時間の変更は公式のXで案内",
+      "location": {
+        "lat": 34.6524,
+        "lng": 135.5064
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "21:45",
+        "lastEntry": "21:15"
+      },
+      "closedDays": null,
+      "price": "一般展望台 大人1,500円",
+      "tags": ["indoor"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.tsutenkaku.co.jp/annai/index.html",
+          "title": "通天閣 営業案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "shinsekai",
+      "name": "新世界",
+      "kind": "sightseeing",
+      "summary": "1903年の内国勧業博覧会の跡地に生まれた下町。通天閣、ふぐ提灯の看板、串カツやどて焼きの店が並ぶジャンジャン横丁がある。店の営業時間と休みは店ごとに違う",
+      "location": {
+        "lat": 34.65,
+        "lng": 135.5055
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://osaka-info.jp/spot/shinsekai/",
+          "title": "OSAKA-INFO 大阪・新世界 観光ガイド",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "chitose-bekkan",
+      "name": "千とせ べっかん",
+      "kind": "food",
+      "summary": "なんばグランド花月の1階にある、肉吸いの店。うどん抜きの肉うどんの注文から生まれた難波の名物。出汁がなくなりしだい閉店する",
+      "location": {
+        "lat": 34.665,
+        "lng": 135.504
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "20:00",
+        "lastEntry": "19:30"
+      },
+      "closedDays": [],
+      "price": "肉吸い 1,180円",
+      "tags": ["indoor", "seating", "local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.chitose-nikusui.com/",
+          "title": "千とせ べっかん 公式サイト",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kushikatsu-daruma-shinsekai-sohonten",
+      "name": "元祖串かつ だるま 新世界総本店",
+      "kind": "food",
+      "summary": "新世界で昭和4年（1929）から続く串かつの店の総本店。予約はできない。土日祝は10:30から。年中無休",
+      "location": {
+        "lat": 34.6516,
+        "lng": 135.5062
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:30",
+        "close": "22:30",
+        "lastEntry": "22:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["indoor", "seating", "local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.kushikatu-daruma.com/location/",
+          "title": "串かつだるま 店舗一覧（新世界総本店）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/80027970",
+          "title": "るるぶ&more. だるま 新世界総本店（創業年・住所）",
+          "checkedAt": "2026-11-02",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "id": "osaka-city-museum-of-fine-arts",
+      "name": "大阪市立美術館",
+      "kind": "sightseeing",
+      "summary": "天王寺公園の中の市立美術館で、東洋と日本の美術を所蔵する。2027年1月9日から特集展示「ベトナムと海のやきもの」。月曜休みだが祝日なら開き翌平日休み",
+      "location": {
+        "lat": 34.6502,
+        "lng": 135.5094
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["mon"],
+      "price": "企画展示 一般500円、高校・大学生200円、中学生以下無料（特別展は別料金）",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.osaka-art-museum.jp/information",
+          "title": "大阪市立美術館 開館時間・休館日・観覧料",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.osaka-art-museum.jp/",
+          "title": "大阪市立美術館 公式サイト（展覧会の予定）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.imamiya-ebisu.jp/",
+      "title": "今宮戎神社 公式サイト",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.imamiya-ebisu.jp/tokaebisu",
+      "title": "今宮戎神社 十日戎",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://osaka-info.jp/event/imamiyaebisu-tokaebisu/",
+      "title": "OSAKA-INFO 今宮戎神社 十日戎",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.osaka.lg.jp/naniwa/cmsfiles/contents/0000626/626042/20250306-07.pdf",
+      "title": "浪速区 広報紙 2025年3月号（今宮戎神社と十日戎）",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.japan.travel/en/spot/34/",
+      "title": "Travel Japan (JNTO) Toka Ebisu Festival",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_335648/",
+      "title": "じゃらんnet 今宮戎神社 十日戎",
+      "checkedAt": "2026-11-02",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の宝恵駕行列の時刻・道順・参加の規模（神社は資料がそろい次第公開とする）",
+    "2027年の交通規制の範囲と時間（規制図は12月初旬に公開の予定）",
+    "境内と参道の一方通行・入場規制のしかた",
+    "雨天のときの扱い",
+    "御札・小宝吉兆など授与品の初穂料",
+    "混雑する時間帯の目安（公式の案内が見つからない）",
+    "服装と持ち物（出典が見つからない）",
+    "露店の数・場所・営業時間（露店が出ることはJNTOと浪速区の広報紙で確かめた）",
+    "参拝者数の公式の発表（約100万人はるるぶ&more.とウォーカープラスの数字）",
+    "献鯛行事の2027年の日時",
+    "通天閣の定休日と、1月9日〜11日の営業（営業案内に定休日の記載がない）",
+    "千とせ べっかんが1月9日〜11日に営業するか（臨時休業の案内は見当たらない）",
+    "大阪市立美術館の特集展示「ベトナムと海のやきもの」の観覧料（案内は企画展示の料金だけ）"
+  ]
+}
