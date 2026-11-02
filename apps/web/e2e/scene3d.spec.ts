@@ -31,8 +31,9 @@ test("店の外観を見せてから入店し、店内のスタッフが持ち�
   const bubble = page.locator('[data-bubble="researcher"]');
   await expect(bubble).toBeVisible({ timeout: 10_000 });
   await expect(bubble).toContainText("祭りを探しています");
-  // 3D の吹き出しと同じ文は、スタッフの一覧でも文字で読める
-  await expect(page.getByTestId("staff-list")).toContainText("祭りを探しています");
+  // 3D の吹き出しと同じ文は、店内のようすと会話の窓でも文字で読める
+  await expect(page.getByTestId("staff-activity")).toContainText("祭りを探しています");
+  await expect(page.getByTestId("dialogue")).toContainText("祭りを探しています");
   await snap(page, info, "42-shop-3d-working");
   await waitForReply(page);
 });

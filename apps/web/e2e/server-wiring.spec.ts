@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { expect, type Page, test } from "@playwright/test";
-import { blockMapTiles, waitForReply } from "./helpers";
+import { blockMapTiles, openLog, waitForReply } from "./helpers";
 
 // 接客サーバーとのつなぎ：合言葉、SSE の前の断り、相談の作り直し、記録の名前、祭りのデータ、しおりの共有。
 // サーバーの代わりに、記録した架空の相談のイベントをテストの中で SSE として返す。
@@ -160,6 +160,7 @@ test("相談の途中で合言葉を求められたら聞き直し、入れ直�
   await expect(dialog).toHaveCount(0);
   await expect(page.getByTestId("candidate-card")).toHaveCount(2);
   expect(chats).toBe(2);
+  await openLog(page);
   await expect(page.getByTestId("chat-user")).toHaveCount(1);
 });
 
@@ -171,7 +172,7 @@ test("相談が見つからない（404）ときは、新しい相談を自動�
   await page.getByRole("button", { name: "入店する" }).click();
   await send(page, firstMessage);
 
-  await expect(page.getByTestId("chat-error")).toContainText("新しい相談を始めました");
+  await expect(page.getByTestId("dialogue-error")).toContainText("新しい相談を始めました");
   await page.getByRole("button", { name: "もう一度送る" }).click();
   await waitForReply(page);
   await expect(page.getByTestId("candidate-card")).toHaveCount(2);

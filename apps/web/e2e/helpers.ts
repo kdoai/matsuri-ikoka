@@ -52,3 +52,18 @@ export async function openPanel(page: Page): Promise<void> {
     await toggle.click();
   }
 }
+
+/** 会話の記録を開く（これまでのやりとりと、スタッフ全員のようす） */
+export async function openLog(page: Page): Promise<void> {
+  // 候補カードが開いていれば、閉じてから
+  if (await page.getByTestId("candidates").isVisible()) {
+    await page.keyboard.press("Escape");
+  }
+  await page.getByTestId("dialogue").getByRole("button", { name: "会話の記録" }).click();
+  await expect(page.getByTestId("backlog")).toBeVisible();
+}
+
+export async function closeLog(page: Page): Promise<void> {
+  await page.getByTestId("backlog").getByRole("button", { name: "閉じる" }).click();
+  await expect(page.getByTestId("backlog")).toHaveCount(0);
+}

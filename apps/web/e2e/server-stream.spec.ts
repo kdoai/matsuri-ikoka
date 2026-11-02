@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { blockMapTiles } from "./helpers";
+import { blockMapTiles, openLog } from "./helpers";
 
 // 接客サーバーにつなぐときの受け取り方。サーバーの代わりに、SSE の返答をテストの中で返す。
 
@@ -51,7 +51,7 @@ test("done の前に接続が切れたら「もう一度送る」を出し、送
 
   const retry = page.getByRole("button", { name: "もう一度送る" });
   await expect(retry).toBeVisible();
-  await expect(page.getByTestId("chat-error")).toContainText("接続が切れました");
+  await expect(page.getByTestId("dialogue-error")).toContainText("接続が切れました");
   await retry.click();
 
   await expect(page.getByTestId("condition-chips")).toContainText("みなと中央駅から");
@@ -62,6 +62,7 @@ test("done の前に接続が切れたら「もう一度送る」を出し、送
     message: "みなと中央駅から行ける祭りはありますか",
     preferences: PREFERENCES,
   });
+  await openLog(page);
   await expect(page.getByTestId("chat-user")).toHaveCount(1);
 });
 
@@ -92,9 +93,10 @@ test("サーバーのエラーは一文だけを出し、HTML として埋め込
   await input.fill("こんにちは");
   await input.press("Enter");
 
-  await expect(page.getByTestId("chat-error")).toHaveText("今日の相談はここまでです");
+  await expect(page.getByTestId("dialogue-error")).toHaveText("今日の相談はここまでです");
   await expect(page.getByRole("button", { name: "もう一度送る" })).toHaveCount(0);
   // 文字列として出す（タグは解釈されない）
+  await openLog(page);
   await expect(page.getByTestId("chat-concierge")).toContainText("<b>太字</b>");
   await expect(page.getByTestId("chat-concierge").locator("img, b")).toHaveCount(0);
 });
@@ -119,7 +121,7 @@ test("英語の画面では、サーバーの日本語の一文ではなく辞�
   const input = page.getByRole("textbox", { name: "Your message" });
   await input.fill("Hello");
   await input.press("Enter");
-  await expect(page.getByTestId("chat-error")).toHaveText(
+  await expect(page.getByTestId("dialogue-error")).toHaveText(
     "Today's conversation limit has been reached.",
   );
 });

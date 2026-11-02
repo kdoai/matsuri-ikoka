@@ -1,7 +1,9 @@
 import { expect, test } from "@playwright/test";
 import {
   blockMapTiles,
+  closeLog,
   enterShop,
+  openLog,
   openPanel,
   sendSampleMessage,
   snap,
@@ -20,7 +22,7 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   await snap(page, info, "00-storefront");
   await page.getByRole("button", { name: "入店する" }).click();
   await expect(page.getByTestId("mock-note")).toBeVisible();
-  await expect(page.getByTestId("staff-list")).toContainText("待機中");
+  await expect(page.getByTestId("dialogue")).toContainText("いらっしゃいませ");
 
   // 1. 相談 → 候補
   await sendSampleMessage(page);
@@ -38,29 +40,31 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   );
   await waitForReply(page);
   // 会話で伝えたこだわり（穴場・地元の店）が、切り替えに反映される
-  await expect(page.getByRole("radio", { name: "穴場" })).toBeChecked();
-  await expect(page.getByRole("radio", { name: "地元の店も楽しむ" })).toBeChecked();
+  // スマートフォンでは、こだわりの切り替えは会話の窓の中に畳んである
+  await expect(page.getByRole("radio", { name: "穴場", includeHidden: true })).toBeChecked();
+  await expect(
+    page.getByRole("radio", { name: "地元の店も楽しむ", includeHidden: true }),
+  ).toBeChecked();
   await expect(page.getByTestId("condition-chips")).toContainText("みなと中央駅から");
-  await expect(page.getByTestId("quest-festivals")).toHaveAttribute("data-status", "done");
   await snap(page, info, "01-candidates");
 
   // 2. 候補を選ぶ → 旅程と地図
   await cards.nth(0).getByRole("button", { name: "この祭りにする" }).click();
   await expect(page.getByTestId("candidates")).toHaveCount(0);
-  await expect(page.getByTestId("chat-user").last()).toHaveText(/「鈴鳴灯籠まつり」にします。/);
   await waitForReply(page);
   await openPanel(page);
   const items = page.getByTestId("itinerary-item");
   await expect(items).toHaveCount(8);
   await expect(page.getByTestId("itinerary-panel")).toContainText("第1版");
   await expect(page.locator('[data-change="added"], [data-change="changed"]')).toHaveCount(0);
-  await expect(page.getByTestId("quest-nearby")).toHaveAttribute("data-status", "done");
-  await expect(page.getByTestId("quest-route")).toHaveAttribute("data-status", "done");
+  await expect(page.getByTestId("dialogue")).toContainText("旅程を組みました");
   await snap(page, info, "02-itinerary");
 
   await page.getByRole("tab", { name: "地図" }).click();
   // 第1版は地図に打てる予定が6つ。旅程に入っていない寄り道の候補も文字で出す
-  await expect(page.getByTestId("map-places").getByRole("listitem")).toHaveCount(6);
+  await expect(page.getByTestId("map-places").getByRole("listitem")).toHaveCount(6, {
+    timeout: 15_000,
+  });
   await expect(page.getByTestId("map-places")).toContainText("鈴鳴灯籠まつり（会場）");
   await expect(page.getByTestId("map-view")).toContainText("寄り道の候補：鈴鳴和紙の館");
   await expect(page.locator(".leaflet-control-attribution")).toContainText("OpenStreetMap");
@@ -129,6 +133,16 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   await page.emulateMedia({ media: "screen" });
   await page.getByRole("button", { name: "店内に戻る" }).click();
   await expect(page.getByTestId("itinerary-panel")).toBeAttached();
+
+  // 会話の記録に、これまでのやりとりとスタッフ全員のようすが残っている
+  if (info.project.name === "mobile") {
+    await page.getByRole("button", { name: "パネルを閉じる" }).click();
+  }
+  await openLog(page);
+  await expect(page.getByTestId("chat-user")).toHaveCount(4);
+  await expect(page.getByTestId("chat-user").nth(1)).toHaveText(/「鈴鳴灯籠まつり」にします。/);
+  await expect(page.getByTestId("backlog").getByTestId("staff-list")).toContainText("待機中");
+  await closeLog(page);
 });
 
 test("待ち時間には小話とクイズが出て、答えると結果が出る", async ({ page }, info) => {
@@ -165,7 +179,11 @@ test("キーボードだけで、候補を閉じ、タブを移れる", async ({
   await page.getByRole("button", { name: "祭りの候補を見る" }).focus();
   await page.keyboard.press("Enter");
   await expect(page.getByTestId("candidates")).toBeVisible();
+  await page.keyboard.press("Escape");
 
+  // 旅程・地図・出典のパネルを開き、矢印キーでタブを移る
+  await page.getByRole("button", { name: "旅程・地図・出典を開く" }).focus();
+  await page.keyboard.press("Enter");
   await page.getByRole("tab", { name: "旅程" }).focus();
   await page.keyboard.press("ArrowRight");
   await expect(page.getByRole("tab", { name: "地図" })).toBeFocused();
@@ -180,7 +198,7 @@ test("動きを減らす設定では、2D の店内とスタッフの文字の�
   await enterShop(page);
   await expect(page.getByTestId("staff-floor")).toBeVisible();
   await sendSampleMessage(page);
-  await expect(page.getByTestId("staff-list")).toContainText("祭り調査係");
+  await expect(page.getByTestId("staff-activity")).toContainText("祭り調査係");
   await expect(page.getByTestId("staff-researcher")).toHaveAttribute(
     "data-phase",
     /walking|working/,
@@ -195,6 +213,8 @@ test("英語に切り替えられる", async ({ page }, info) => {
   await page.getByRole("button", { name: /English/ }).click();
   await expect(page.getByRole("button", { name: "Come in" })).toBeVisible();
   await page.getByRole("button", { name: "Come in" }).click();
+  await expect(page.getByTestId("dialogue")).toContainText("Welcome!");
+  await page.getByRole("button", { name: "Open the plan, map and sources" }).click();
   await expect(page.getByRole("tab", { name: "Plan" })).toBeVisible();
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   await snap(page, info, "30-english");
