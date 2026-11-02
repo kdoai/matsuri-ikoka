@@ -20,6 +20,7 @@ import { placeLabel } from "../domain/dateWindow";
 import { occurrenceOn } from "../domain/planCheck";
 import type { VerificationReport } from "../domain/verification";
 import type { FestivalVerifier } from "../tools/verifier";
+import { checkHostAddresses, type ResolveHost, resolveHost } from "./addressGuard";
 import { deny } from "./hooks";
 import type { QueryFn } from "./runner";
 
@@ -94,13 +95,17 @@ export function buildVerifierOptions(input: {
 /** 再確認のエージェントのフック。WebFetch の宛先の確認、読んだページの控え、1回だけ続けさせる */
 export function createVerifierHooks(
   log: WebActivityLog,
+  resolve: ResolveHost = resolveHost,
 ): Partial<Record<HookEvent, HookCallbackMatcher[]>> {
   let nudges = 0;
   const checkFetch: HookCallback = async (input) => {
     if (input.hook_event_name !== "PreToolUse") return {};
     const url = (input.tool_input as { url?: unknown } | null)?.url;
     const check = checkPublicWebUrl(url);
-    return check.ok ? {} : deny(`この URL は読みません：${check.reason}`);
+    if (!check.ok) return deny(`この URL は読みません：${check.reason}`);
+    // 名前の文字列だけでなく、解決した先のアドレスも外の Web かを確かめる
+    const addresses = await checkHostAddresses(check.url.hostname, resolve);
+    return addresses.ok ? {} : deny(`この URL は読みません：${addresses.reason}`);
   };
   const record: HookCallback = async (input) => {
     if (input.hook_event_name === "PostToolUse") log.record(input.tool_name, input.tool_input);
@@ -152,6 +157,8 @@ export function createWebVerifier(deps: {
   cwd: string;
   env: Record<string, string>;
   query: QueryFn;
+  /** WebFetch の宛先の名前を解決する関数（テストで差し替える） */
+  resolveHost?: ResolveHost;
   /** 1回の呼び出しの費用の上限（米ドル） */
   maxBudgetUsd?: number | undefined;
 }): FestivalVerifier {
@@ -182,7 +189,7 @@ export function createWebVerifier(deps: {
           abortController: controller,
           maxBudgetUsd: deps.maxBudgetUsd,
           withTools,
-          ...(withTools ? { hooks: createVerifierHooks(log) } : {}),
+          ...(withTools ? { hooks: createVerifierHooks(log, deps.resolveHost) } : {}),
         });
       const started = Date.now();
       let costUsd = 0;
