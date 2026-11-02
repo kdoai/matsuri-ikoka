@@ -11,7 +11,6 @@ import {
   type StaffId,
 } from "@matsuri-ikoka/schema";
 import type { AppData, ChatEntry } from "./types";
-import { QUEST_IDS } from "./types";
 
 // ストアから画面に出す形を取り出す。部品はここを通して読む。
 
@@ -66,11 +65,6 @@ export function shioriReady(state: Pick<AppData, "session" | "verify" | "itinera
     state.session.stage === "shiori" &&
     state.verify.result === "as_planned"
   );
-}
-
-/** 3つのクエストがそろったか */
-export function allQuestsDone(state: Pick<AppData, "quests">): boolean {
-  return QUEST_IDS.every((id) => state.quests[id].status === "done");
 }
 
 /** 相談の進み具合の段（ヘッダーに出す）。修正は旅程の段に、確認はしおりの前の段に含める */

@@ -88,17 +88,6 @@ export const en: Messages = {
     },
     sceneLabel: "Floor plan of the shop: where each staff member works and what they are doing",
   },
-  quests: {
-    title: "Quest board",
-    names: {
-      festivals: "Find the festival",
-      nearby: "Find side trips",
-      route: "Check the route",
-    },
-    status: { todo: "Not yet", active: "In progress", done: "Done" },
-    allDone: "All three quests done",
-    stamps: (n: number) => plural(n, "stamp", "stamps"),
-  },
   chat: {
     title: "Conversation",
     greeting:

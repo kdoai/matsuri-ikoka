@@ -1,13 +1,5 @@
 import type { Itinerary, SseEvent, SseEventOf, StaffId, ToolName } from "@matsuri-ikoka/schema";
-import type {
-  AppData,
-  ChatEntry,
-  QuestId,
-  QuestState,
-  StaffMotion,
-  StaffState,
-  VerifyState,
-} from "./types";
+import type { AppData, ChatEntry, StaffMotion, StaffState, VerifyState } from "./types";
 
 // SSE のイベントを、ストアの更新に変える。ここだけがイベントを読み、部品はストアだけを読む。
 // どれも純粋な関数にして、同じ状態と同じイベントからは、いつも同じ状態を返す。
@@ -20,22 +12,6 @@ const TOOL_MOTION: Record<ToolName, StaffMotion> = {
   get_weather: "look_up",
   update_itinerary: "flip",
   verify_festival: "flip",
-};
-
-/** ツールが進めるクエスト。再確認はクエストに入らない */
-export const TOOL_QUEST: Partial<Record<ToolName, QuestId>> = {
-  search_festivals: "festivals",
-  search_nearby: "nearby",
-  get_access: "route",
-  get_weather: "route",
-  update_itinerary: "route",
-};
-
-/** 終わるとクエストが完了になるツール */
-const QUEST_FINISHER: Record<QuestId, ToolName> = {
-  festivals: "search_festivals",
-  nearby: "search_nearby",
-  route: "update_itinerary",
 };
 
 export function applyEvent(state: AppData, event: SseEvent): AppData {
@@ -130,11 +106,6 @@ function onToolStart(state: AppData, data: SseEventOf<"tool.start">["data"]): Ap
     session: { ...next.session, turnTools: addUnique(next.session.turnTools, data.tool) },
   };
 
-  const questId = TOOL_QUEST[data.tool];
-  if (questId !== undefined) {
-    const quest = next.quests[questId];
-    next = { ...next, quests: { ...next.quests, [questId]: { ...quest, status: "active" } } };
-  }
   if (data.tool === "verify_festival") {
     next = { ...next, verify: { ...next.verify, status: "checking", result: null } };
   }
@@ -183,20 +154,6 @@ function onToolEnd(state: AppData, data: SseEventOf<"tool.end">["data"]): AppDat
     next = { ...next, spots: data.spots };
   }
 
-  const questId = TOOL_QUEST[data.tool];
-  if (questId !== undefined) {
-    const quest = next.quests[questId];
-    const updated = data.ok
-      ? data.tool === QUEST_FINISHER[questId]
-        ? {
-            status: "done" as const,
-            finished: addUnique(quest.finished, data.tool),
-            completions: quest.completions + 1,
-          }
-        : { ...quest, finished: addUnique(quest.finished, data.tool) }
-      : { ...quest, status: quest.completions > 0 ? ("done" as const) : ("todo" as const) };
-    next = { ...next, quests: { ...next.quests, [questId]: updated } };
-  }
   if (data.tool === "verify_festival" && !data.ok) {
     next = { ...next, verify: { ...next.verify, status: "idle" } };
   }
@@ -209,19 +166,11 @@ function onItineraryUpdated(
 ): AppData {
   const first = state.itinerary.current === null;
   let next = patchStaff(state, "planner", { motion: "carry" });
-  const route = next.quests.route;
   next = {
     ...next,
     itinerary: { current: data.itinerary, previous: state.itinerary.current, diff: data.diff },
     // 再確認の結果は、旅程が持っているものを正とする（同じ祭り・同じ日なら引き継がれる）
     verify: verifyFromItinerary(data.itinerary),
-    quests:
-      route.status === "done"
-        ? next.quests
-        : {
-            ...next.quests,
-            route: { ...route, status: "done", completions: route.completions + 1 },
-          },
     ui: { ...next.ui, candidatesOpen: false, tab: first ? "itinerary" : next.ui.tab },
   };
   return next;
@@ -301,7 +250,7 @@ function onError(state: AppData, data: SseEventOf<"error">["data"]): AppData {
  * 返答が終わったときの片付け。done が来たときも、来ないまま接続が閉じたときも通る。
  * 時間切れのときは、終わっていないツールの tool.end が来ないので、ここで片付ける：
  * スタッフを戻す、流れている文章を閉じる、作業中の記録を失敗にする、
- * 確かめている途中の再確認を戻す、進行中のクエストを戻す、クイズを閉じる。
+ * 確かめている途中の再確認を戻す、クイズを閉じる。
  */
 export function closeTurn(state: AppData): AppData {
   let next: AppData = {
@@ -316,14 +265,6 @@ export function closeTurn(state: AppData): AppData {
       return entry;
     }),
     verify: state.verify.status === "checking" ? { ...state.verify, status: "idle" } : state.verify,
-    quests: Object.fromEntries(
-      (Object.entries(state.quests) as [QuestId, QuestState][]).map(([id, quest]) => [
-        id,
-        quest.status === "active"
-          ? { ...quest, status: quest.completions > 0 ? "done" : "todo" }
-          : quest,
-      ]),
-    ) as Record<QuestId, QuestState>,
     quiz: { ...state.quiz, question: null, answer: null },
   };
   for (const id of Object.keys(state.staff) as StaffId[]) {

@@ -84,17 +84,6 @@ export const ja = {
     },
     sceneLabel: "店内の見取り図。スタッフの持ち場と、いまの動き",
   },
-  quests: {
-    title: "クエストの掲示板",
-    names: {
-      festivals: "祭りを探せ",
-      nearby: "寄り道を探せ",
-      route: "道のりを調べよ",
-    },
-    status: { todo: "まだ", active: "進行中", done: "達成" },
-    allDone: "3つのクエストを達成",
-    stamps: (n: number) => `スタンプ ${n}`,
-  },
   chat: {
     title: "相談",
     greeting:

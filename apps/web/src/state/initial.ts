@@ -1,13 +1,5 @@
 import { DEFAULT_PREFERENCES, STAFF_IDS, type StaffId } from "@matsuri-ikoka/schema";
-import {
-  type AppData,
-  type Locale,
-  QUEST_IDS,
-  type QuestId,
-  type QuestState,
-  type StaffState,
-  type TransportKind,
-} from "./types";
+import type { AppData, Locale, StaffState, TransportKind } from "./types";
 
 export const IDLE_STAFF: StaffState = Object.freeze({
   phase: "idle",
@@ -18,14 +10,8 @@ export const IDLE_STAFF: StaffState = Object.freeze({
   seq: 0,
 });
 
-const TODO_QUEST: QuestState = Object.freeze({ status: "todo", finished: [], completions: 0 });
-
 function byStaff<T>(value: T): Record<StaffId, T> {
   return Object.fromEntries(STAFF_IDS.map((id) => [id, value])) as Record<StaffId, T>;
-}
-
-function byQuest<T>(value: T): Record<QuestId, T> {
-  return Object.fromEntries(QUEST_IDS.map((id) => [id, value])) as Record<QuestId, T>;
 }
 
 export interface InitialOptions {
@@ -64,7 +50,6 @@ export function initialData({ transport, locale = "ja" }: InitialOptions): AppDa
       sources: [],
       note: null,
     },
-    quests: byQuest(TODO_QUEST),
     quiz: { offeredTurn: null, question: null, answer: null },
     stamps: 0,
     trivia: { index: 0 },

@@ -28,7 +28,7 @@ import {
 
 // 3D の店内。ストアの状態（ShopSceneProps）を読むだけで、SSE のイベントは受けない。
 // 吹き出しは 3D の上に HTML で重ねる（文字はストアのものをそのまま出す）。
-// 同じ情報は、画面の 2D の部品（スタッフの一覧・クエストの掲示板）でも文字で読める。
+// 同じ情報は、画面の 2D の部品（店内のようす・会話の窓・会話の記録）でも文字で読める。
 
 const MOTION_MODELS = SCENE_MOTIONS.map((name) => `motion_${name}` as ModelName);
 const STAFF_MODELS = STAFF_IDS.map((id) => `staff_${STAFF_KIND[id]}` as ModelName);

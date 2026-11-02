@@ -206,7 +206,7 @@ describe("地図の点", () => {
 });
 
 describe("効果音", () => {
-  it("スタッフが動き出したら拍子木、候補が届いたら太鼓、クエストの達成ではんこ", () => {
+  it("スタッフが動き出したら拍子木、候補が届いたら太鼓", () => {
     const before = streaming();
     const walking = applyEvent(before, {
       type: "staff.start",
@@ -245,7 +245,7 @@ describe("効果音", () => {
         ],
       },
     });
-    expect(soundCues(started, found).sort()).toEqual(["hanko", "taiko"]);
+    expect(soundCues(started, found)).toEqual(["taiko"]);
     expect(soundCues(found, found)).toEqual([]);
   });
 });

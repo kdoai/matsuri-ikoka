@@ -10,7 +10,7 @@ import sampleJson from "../../../../data/samples/conversations/suzunari-day-trip
 import { clientError } from "./errors";
 import { applyEvent } from "./events";
 import { initialData } from "./initial";
-import { allQuestsDone, itemChange, shioriReady } from "./selectors";
+import { itemChange, shioriReady } from "./selectors";
 import { beginTurn, endTurn, resetForNewSession, settleStaff } from "./transitions";
 import type { AppData } from "./types";
 
@@ -71,8 +71,6 @@ describe("記録した相談を通す", () => {
       "kazami-bon-odori",
     ]);
     expect(state.ui.candidatesOpen).toBe(true);
-    expect(state.quests.festivals).toMatchObject({ status: "done", completions: 1 });
-    expect(state.quests.nearby.status).toBe("todo");
   });
 
   it("返答の続きは1つの吹き出しにつながり、done で閉じる", () => {
@@ -108,9 +106,6 @@ describe("記録した相談を通す", () => {
     );
     expect(state.spots).toHaveLength(4);
     expect(state.ui.candidatesOpen).toBe(false);
-    expect(state.quests.nearby.status).toBe("done");
-    expect(state.quests.route).toMatchObject({ status: "done", completions: 1 });
-    expect(state.quests.route.finished).toEqual(["get_access", "get_weather", "update_itinerary"]);
   });
 
   it("修正すると、差分に載った予定だけに色が付く", () => {
@@ -128,7 +123,6 @@ describe("記録した相談を通す", () => {
       go: null,
       festival: null,
     });
-    expect(state.quests.route.completions).toBe(2);
   });
 
   it("再確認が通ると、しおりが開けるようになり、完成の演出が始まる", () => {
@@ -140,7 +134,6 @@ describe("記録した相談を通す", () => {
     });
     expect(state.session.stage).toBe("shiori");
     expect(shioriReady(state)).toBe(true);
-    expect(allQuestsDone(state)).toBe(true);
     expect(state.ui.celebrating).toBe(true);
   });
 });
@@ -172,7 +165,6 @@ describe("スタッフの動き", () => {
       motion: "point",
       tool: "search_nearby",
     });
-    expect(state.quests.nearby.status).toBe("active");
 
     const seqBeforeNod = state.staff.scout.seq;
     state = applyEvent(state, {
@@ -349,7 +341,7 @@ describe("候補", () => {
     expect(second.ui.candidatesOpen).toBe(false);
   });
 
-  it("ツールが失敗したら、作業の記録を失敗にし、クエストを戻す", () => {
+  it("ツールが失敗したら、作業の記録を失敗にする", () => {
     let state = applyEvent(fresh(), {
       type: "tool.start",
       data: { toolCallId: "a", tool: "search_festivals", staff: "researcher", bubble: "探します" },
@@ -365,7 +357,6 @@ describe("候補", () => {
         count: null,
       },
     });
-    expect(state.quests.festivals.status).toBe("todo");
     expect(state.messages.at(-1)).toMatchObject({ kind: "work", status: "failed" });
   });
 });
@@ -496,7 +487,7 @@ describe("エラーと送り直し", () => {
 });
 
 describe("時間切れのあと（終わっていないツールの tool.end が来ない）", () => {
-  it("error と done が来たら、作業中の記録・再確認・クエスト・クイズを片付ける", () => {
+  it("error と done が来たら、作業中の記録・再確認・クイズを片付ける", () => {
     let state = beginTurn(fresh(), {
       kind: "chat",
       message: "これで決定します。",
@@ -536,7 +527,6 @@ describe("時間切れのあと（終わっていないツールの tool.end が
         answer: null,
       },
     };
-    expect(state.quests.route.status).toBe("active");
     expect(state.verify.status).toBe("checking");
 
     state = apply(state, [
@@ -553,23 +543,9 @@ describe("時間切れのあと（終わっていないツールの tool.end が
       expect.objectContaining({ id: "w-v", status: "failed" }),
     ]);
     expect(state.verify.status).toBe("idle");
-    expect(state.quests.route.status).toBe("todo");
     expect(state.quiz.question).toBeNull();
     // done は届いているので「接続が切れました」は出さない
     expect(state.messages.filter((entry) => entry.kind === "error")).toHaveLength(1);
-  });
-
-  it("前に達成したクエストは、途中で止まっても達成のまま", () => {
-    let state = fresh();
-    state = {
-      ...state,
-      quests: { ...state.quests, route: { status: "active", finished: [], completions: 1 } },
-    };
-    state = applyEvent(state, {
-      type: "done",
-      data: { stage: "itinerary", conditions: {}, preferences: state.preferences },
-    });
-    expect(state.quests.route.status).toBe("done");
   });
 });
 
