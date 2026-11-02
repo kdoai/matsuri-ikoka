@@ -2,6 +2,7 @@ import type { Confidence, Source } from "@matsuri-ikoka/schema";
 import type { ReactNode } from "react";
 import { useT } from "../state/react";
 import { sourceLabel } from "./links";
+import { printedUrl } from "./text";
 
 // 確度のバッジ（緑・青・黄・灰）。色だけに頼らず、必ず文字でも出す
 const CONFIDENCE_STYLE: Record<Confidence, string> = {
@@ -44,10 +45,21 @@ export function SourceLink({ source, compact = false }: { source: Source; compac
       >
         {sourceLabel(source)}
       </a>
+      <PrintedUrl source={source} />
       {compact ? null : (
         <span className="text-ink-soft">{t.sources.checkedAt(source.checkedAt)}</span>
       )}
       <ConfidenceBadge confidence={source.confidence} />
+    </span>
+  );
+}
+
+/** 印刷したときだけ、タイトルのある出典の URL を文字で添える（画面ではリンクで足りる） */
+export function PrintedUrl({ source }: { source: Source }) {
+  const url = printedUrl(source);
+  return url === null ? null : (
+    <span className="hidden break-all text-ink-soft print:inline" data-testid="printed-url">
+      （{url}）
     </span>
   );
 }

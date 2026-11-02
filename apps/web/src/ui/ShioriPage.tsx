@@ -5,13 +5,13 @@ import {
   type Source,
   UNKNOWN,
 } from "@matsuri-ikoka/schema";
-import { lazy, type ReactNode, Suspense, useEffect, useMemo, useRef } from "react";
+import { lazy, type ReactNode, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { formatDate, formatDateTime, MESSAGES, type Messages } from "../i18n";
 import { useActions, useApp, useT } from "../state/react";
-import { mainFestival, usedSources } from "../state/selectors";
-import { buttonPrimary, buttonSecondary, ConfidenceBadge, timeRange } from "./common";
+import { mainFestival, shioriReady, usedSources } from "../state/selectors";
+import { buttonPrimary, buttonSecondary, ConfidenceBadge, PrintedUrl, timeRange } from "./common";
 import { weatherText } from "./ItineraryPanel";
-import { sourceLabel } from "./links";
+import { shioriShareUrl, sourceLabel } from "./links";
 import { FestivalStamp } from "./Waiting";
 
 // 旅のしおり。A4 縦 1〜2 枚に収まる紙面で、印刷しても読める。
@@ -260,6 +260,42 @@ function FirstTime({ festival, itinerary }: { festival: Festival; itinerary: Iti
 
 // ---------------------------------------------------------------------------
 
+/** しおりの URL と、コピーのボタン */
+function ShareBox({ url }: { url: string }) {
+  const t = useT();
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+    } catch {
+      setCopied(false);
+    }
+  };
+  return (
+    <div
+      className="w-full rounded-xl bg-kinari-50 px-3 py-2 text-ink text-sm"
+      data-testid="shiori-share"
+    >
+      <p className="font-bold">{t.shiori.share}</p>
+      <div className="mt-1 flex flex-wrap items-center gap-2">
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="break-all font-medium text-ai-700 underline underline-offset-2"
+        >
+          {url}
+        </a>
+        <button type="button" className={buttonSecondary} onClick={() => void copy()}>
+          {copied ? t.shiori.copied : t.shiori.copy}
+        </button>
+      </div>
+      <p className="mt-1 text-ink-soft text-xs">{t.shiori.shareNote}</p>
+    </div>
+  );
+}
+
 export function ShioriPage() {
   const t = useT();
   const actions = useActions();
@@ -276,6 +312,8 @@ export function ShioriPage() {
   const baseSources = useApp(usedSources);
   const sources = useMemo(() => shioriSources(baseSources, festival), [baseSources, festival]);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const transport = useApp((state) => state.transport);
+  const ready = useApp(shioriReady);
 
   useEffect(() => {
     headingRef.current?.focus();
@@ -292,6 +330,7 @@ export function ShioriPage() {
   const meals = itinerary.items.filter((item) => item.type === "meal");
   const verified = verify.result === "as_planned";
   const party = t.conditions.party(itinerary.party.adults, itinerary.party.children);
+  const shareUrl = ready ? shioriShareUrl(transport, itinerary.id, window.location.origin) : null;
 
   return (
     <div className="min-h-dvh bg-wood-800 py-4 print:bg-white print:py-0" data-testid="shiori">
@@ -306,6 +345,7 @@ export function ShioriPage() {
         <button type="button" className={buttonPrimary} onClick={() => window.print()}>
           {t.shiori.print}
         </button>
+        {shareUrl === null ? null : <ShareBox url={shareUrl} />}
       </div>
 
       <article
@@ -542,12 +582,18 @@ export function ShioriPage() {
                 >
                   {sourceLabel(source)}
                 </a>
+                <PrintedUrl source={source} />
                 <span className="text-ink-soft">{source.checkedAt}</span>
                 <ConfidenceBadge confidence={source.confidence} />
               </li>
             ))}
           </ul>
           <p className="mt-2 font-bold text-sm">{t.shiori.finalCheck}</p>
+          {shareUrl === null ? null : (
+            <p className="mt-1 break-all text-xs" data-testid="shiori-share-printed">
+              {t.shiori.share}：{shareUrl}
+            </p>
+          )}
         </Section>
       </article>
     </div>
