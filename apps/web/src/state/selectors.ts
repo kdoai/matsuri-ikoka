@@ -2,8 +2,12 @@ import {
   type ConversationStage,
   collectItinerarySources,
   type Festival,
+  type Itinerary,
   type ItineraryItem,
+  type PartialTripConditions,
+  type Preferences,
   type Source,
+  type SpotPin,
 } from "@matsuri-ikoka/schema";
 import type { AppData } from "./types";
 import { QUEST_IDS } from "./types";
@@ -88,9 +92,14 @@ export interface ConditionChip {
   value: string;
 }
 
-/** 条件のチップ。読み取れた条件の順に並べ、まだ分からないものは出さない */
-export function conditionChips(state: Pick<AppData, "session" | "preferences">): ConditionChip[] {
-  const { conditions } = state.session;
+/**
+ * 条件のチップ。読み取れた条件の順に並べ、まだ分からないものは出さない。
+ * 呼ぶたびに新しい配列を返すので、部品では useMemo で包む。
+ */
+export function conditionChips(
+  conditions: PartialTripConditions,
+  move: Preferences["move"],
+): ConditionChip[] {
   const chips: ConditionChip[] = [];
   if (conditions.when !== undefined) {
     chips.push({
@@ -115,7 +124,57 @@ export function conditionChips(state: Pick<AppData, "session" | "preferences">):
   }
   // 移動手段はこだわりで決まる。何か1つでも条件が読み取れてから出す
   if (chips.length > 0) {
-    chips.push({ key: "move", value: state.preferences.move });
+    chips.push({ key: "move", value: move });
   }
   return chips;
+}
+
+export interface MapPoint {
+  key: string;
+  name: string;
+  lat: number;
+  lng: number;
+  /** venue 主役の祭りの会場 / stop 旅程の予定 / spot 寄り道の候補（旅程に入っていない場所） */
+  kind: "venue" | "stop" | "spot";
+  /** 旅程の中での順番（1から）。寄り道の候補では null */
+  order: number | null;
+}
+
+/**
+ * 地図に打つ点。旅程の予定を順番どおりに並べ、旅程に入っていない寄り道の候補を後ろに足す。
+ * 呼ぶたびに新しい配列を返すので、部品では useMemo で包む。
+ */
+export function mapPoints(itinerary: Itinerary | null, spots: readonly SpotPin[]): MapPoint[] {
+  const points: MapPoint[] = [];
+  const usedSpots = new Set<string>();
+  let order = 0;
+  for (const item of itinerary?.items ?? []) {
+    if (item.spotId !== undefined) {
+      usedSpots.add(item.spotId);
+    }
+    if (item.location === null) {
+      continue;
+    }
+    order += 1;
+    const venue = item.type === "festival" && item.festivalId === itinerary?.mainFestivalId;
+    points.push({
+      key: `item-${item.id}`,
+      name: item.name,
+      ...item.location,
+      kind: venue ? "venue" : "stop",
+      order,
+    });
+  }
+  for (const spot of spots) {
+    if (!usedSpots.has(spot.spotId)) {
+      points.push({
+        key: `spot-${spot.spotId}`,
+        name: spot.name,
+        ...spot.location,
+        kind: "spot",
+        order: null,
+      });
+    }
+  }
+  return points;
 }

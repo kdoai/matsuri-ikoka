@@ -1,9 +1,13 @@
 import { type Festival, FestivalSchema } from "@matsuri-ikoka/schema";
-import { fictionalFestival, fictionalSource } from "@matsuri-ikoka/schema/testing";
+import {
+  fictionalFestival,
+  fictionalItinerary,
+  fictionalSource,
+} from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
 import { applyEvent } from "./events";
 import { initialData } from "./initial";
-import { conditionChips } from "./selectors";
+import { conditionChips, mapPoints } from "./selectors";
 import { soundCues } from "./sound-cues";
 import { answerQuiz, beginTurn, expectedWaitMs, offerQuiz, shouldOfferQuiz } from "./transitions";
 import type { AppData } from "./types";
@@ -162,24 +166,41 @@ describe("クイズ", () => {
 
 describe("条件のチップ", () => {
   it("読み取れた条件だけを、決まった順に出す", () => {
-    const state = initialData({ transport: "mock" });
-    expect(conditionChips(state)).toEqual([]);
-    const withConditions: AppData = {
-      ...state,
-      session: {
-        ...state.session,
-        conditions: {
+    expect(conditionChips({}, "train")).toEqual([]);
+    expect(
+      conditionChips(
+        {
           when: { kind: "date", date: "2026-08-16" },
           origin: "みなと中央駅",
           party: { adults: 2, children: 1 },
         },
-      },
-    };
-    expect(conditionChips(withConditions)).toEqual([
+        "car",
+      ),
+    ).toEqual([
       { key: "date", value: "2026-08-16" },
       { key: "origin", value: "みなと中央駅" },
       { key: "party", value: "2/1" },
-      { key: "move", value: "train" },
+      { key: "move", value: "car" },
+    ]);
+  });
+});
+
+describe("地図の点", () => {
+  it("旅程の予定を順番どおりに並べ、主役の会場を見分け、旅程にない寄り道を足す", () => {
+    const itinerary = fictionalItinerary();
+    const points = mapPoints(itinerary, [
+      {
+        spotId: "suzunari-craft-hall",
+        name: "鈴鳴和紙の館",
+        kind: "sightseeing",
+        location: { lat: 35.121, lng: 136.083 },
+      },
+      { spotId: "riverside", name: "川べり", kind: "rest", location: { lat: 35.1, lng: 136.1 } },
+    ]);
+    expect(points.map((point) => [point.name, point.kind, point.order])).toEqual([
+      ["鈴鳴和紙の館", "stop", 1],
+      ["鈴鳴灯籠まつり", "venue", 2],
+      ["川べり", "spot", null],
     ]);
   });
 });

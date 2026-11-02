@@ -355,7 +355,8 @@ export const en: Messages = {
       prohibited: "Please do not take photos",
     },
     unknown: "Unknown",
-    noTranslation: "Our data has this in Japanese only for now.",
+    noTranslation: "(Japanese only)",
+    jaOnlyNote: "Items marked “Japanese only” are described only in Japanese in our data for now.",
   },
   issues: {
     correctionTitle: (name: string) => `[訂正] ${name}`,

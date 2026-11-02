@@ -335,7 +335,8 @@ export const ja = {
       prohibited: "撮らないでください",
     },
     unknown: "不明",
-    noTranslation: "",
+    noTranslation: "（日本語のみ）",
+    jaOnlyNote: "英語の欄が「日本語のみ」の項目は、いまはデータに日本語の説明しかありません。",
   },
   issues: {
     correctionTitle: (name: string) => `[訂正] ${name}`,
