@@ -97,7 +97,7 @@ sequenceDiagram
 Agent SDK は、何も指定しないと Claude Code と同じように、ホームとプロジェクトの設定・`CLAUDE.md`・スキルを読み込みます。そのままでは、開発用の指示や手元の設定が、利用者と話すエージェントに混ざります。そこで、次のように切り離します。
 
 - ファイルの設定を読み込まない（`settingSources: []`）
-- 組み込みのツールはモデルの前から消し（`tools: []`）、自作の MCP ツールだけを許可する。事前に許していないものは聞かずに断る（`permissionMode: "dontAsk"`）。Web の検索と取得は確定前の再確認（`verify_festival`）に限る
+- 組み込みのツールは、スタッフを呼ぶ `Agent` のほかはモデルの前から消し（`tools: ["Agent"]`）、自作の MCP ツールだけを許可する。事前に許していないものは聞かずに断る（`permissionMode: "dontAsk"`）。Web の検索と取得は確定前の再確認（`verify_festival`）に限る
 - 渡した MCP サーバー以外を使わせない（`strictMcpConfig: true`）
 - 自動のメモリを無効にし、子プロセスには必要な環境変数だけを渡す
 - 作業ディレクトリは空の一時ディレクトリにする
