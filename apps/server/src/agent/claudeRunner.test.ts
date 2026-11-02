@@ -233,6 +233,21 @@ describe("ClaudeAgentRunner", () => {
     expect(error).toMatchObject({ code: "upstream_unavailable", retryable: true });
   });
 
+  it("認証の失敗はやり直さず、もう一度送っても直らないエラーにする", async () => {
+    const { calls, run } = setup([
+      async function* () {
+        yield init();
+        throw new Error("Failed to authenticate: OAuth session expired and could not be refreshed");
+      },
+    ]);
+
+    await expect(run("こんにちは")).rejects.toMatchObject({
+      code: "upstream_unavailable",
+      retryable: false,
+    });
+    expect(calls).toHaveLength(1);
+  });
+
   it("返事の途中で失敗したら、やり直さずにエラーにする", async () => {
     const { calls, run } = setup([
       async function* () {

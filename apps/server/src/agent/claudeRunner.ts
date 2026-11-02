@@ -180,6 +180,23 @@ export function errorFromAssistant(kind: string | null): AgentError {
   }
 }
 
+/** query が投げた例外を、利用者に見せるエラーに変える。認証の失敗はやり直さない */
+export function errorFromException(error: unknown): AgentError {
+  if (error instanceof AgentError) return error;
+  const text = error instanceof Error ? error.message : String(error);
+  if (/authenticat|oauth|api key|credential|\b40[13]\b/i.test(text)) {
+    return errorFromAssistant("authentication_failed");
+  }
+  if (/overloaded|rate.?limit|\b429\b|\b5\d\d\b/i.test(text))
+    return errorFromAssistant("overloaded");
+  console.error("[agent] query failed", error);
+  return new AgentError(
+    "upstream_unavailable",
+    "接客の担当とつながりませんでした。もう一度送ってください。",
+    true,
+  );
+}
+
 export class ClaudeAgentRunner implements AgentRunner {
   readonly mode = "live" as const;
   readonly #deps: ClaudeRunnerDeps;
@@ -247,24 +264,22 @@ export class ClaudeAgentRunner implements AgentRunner {
       }
     };
 
-    try {
+    const run = async () => {
       initSeen = false;
-      await attempt(session.agentSessionId ?? undefined);
-    } catch (error) {
-      if (signal.aborted) throw error;
-      const failure =
-        error instanceof AgentError
-          ? error
-          : new AgentError(
-              "upstream_unavailable",
-              "接客の担当とつながりませんでした。もう一度送ってください。",
-              true,
-            );
-      if (!(error instanceof AgentError)) console.error("[agent] query failed", error);
+      try {
+        await attempt(session.agentSessionId ?? undefined);
+      } catch (error) {
+        throw signal.aborted ? error : errorFromException(error);
+      }
+    };
+
+    try {
+      await run();
+    } catch (failure) {
       // まだ何も送っていなければ、1回だけやり直す。続きの会話を読めなかったときは、店の記録だけで新しく始める
-      if (emitted > 0 || !failure.retryable) throw failure;
+      if (!(failure instanceof AgentError) || !failure.retryable || emitted > 0) throw failure;
       if (!initSeen) session.agentSessionId = null;
-      await attempt(session.agentSessionId ?? undefined);
+      await run();
     } finally {
       session.stage = nextStage(session.stage, turn, session.itineraryId !== null);
     }
