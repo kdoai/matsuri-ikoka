@@ -1,6 +1,6 @@
 # 画面（apps/web）
 
-店内と会話、旅程・地図・出典のパネル、旅のしおりの画面です。Vite + React + Tailwind CSS で作り、状態は Zustand のストアだけが持ちます。
+ゲームの画面（3D の店）を主にし、会話の窓・旅程・地図・出典のパネルを重ねる画面と、旅のしおりです。Vite + React + Tailwind CSS で作り、状態は Zustand のストアだけが持ちます。
 
 ```text
 src/state/      ストア。SSE のイベントをストアの更新に変える（events.ts）
@@ -8,7 +8,7 @@ src/transport/  接客サーバーとの通信（POST で送りながら SSE で
 src/mock/       画面だけのモック（記録した相談をブラウザの中で再生する）
 src/ui/         2D の部品としおり
 src/i18n/       日本語と英語の辞書
-src/scenes/     3D の店内（別に作る。下の「3D の店内を差し込む」）
+src/scenes/     3D の店（店内・スタッフ・外観と入店のカメラ）
 e2e/            Playwright の通しテスト
 ```
 
@@ -59,21 +59,21 @@ pnpm --filter @matsuri-ikoka/web test:e2e        # 画面の通しテスト（Pl
 - `done` の前に接続が閉じたら、会話欄に「もう一度送る」を出します。自動では再接続しません
 - データとモデルの文章は文字列として表示し、HTML として埋め込みません（地図のピンも `textContent` で入れます）
 
-## 3D の店内を差し込む
+## ゲームの画面
 
-3D の店内は `src/scenes/ShopScene.tsx` に置き、`ShopSceneProps`（`src/state/scene.ts`）を props で受け取る部品を既定のエクスポートにします。
+画面はいつも店（3D、使えないときは 2D の見取り図）が主役で、その上に部品を重ねます。
 
-```tsx
-import type { ShopSceneProps } from "../state/scene";
+- 会話の窓（下）：話し手の名札と、いまの一言（流れてくる返答、スタッフの作業の吹き出し、エラー）を出し、その場で返事を書く。これまでのやりとりとスタッフ全員のようすは「会話の記録」で開く
+- 旅程・地図・出典の紙のパネル（広い画面は右、狭い画面は上から重ねる）
+- 店内のようす（左上）：いま動いているスタッフを文字で出す。3D の動きと吹き出しと同じ情報
+- 候補カード・小話・クイズ・しおりの完成の演出
 
-export default function ShopScene({ staff, stage, quests, celebrating }: ShopSceneProps) {
-  // staff.researcher.phase：idle 待機 / walking 持ち場へ移動 / working 作業 / returning 戻る
-  // staff.researcher.motion：idle・walk・flip・point・look_up・nod・talk・stamp・carry
-  // staff.researcher.seq が変わったら、うなずき・はんこのような1回きりの動きを出し直す
-}
-```
+店のカメラは、会話の窓やパネルが重なる幅（`ShopSceneProps.frame`）を避けた残りの場所に、設計した 16:9 の枠を収めて映します（カメラの位置と向きは変えず、画角と `setViewOffset` だけで合わせる）。
 
-- 画面は `import.meta.glob` でこのファイルを探し、あれば読み込みます。なければ、2D の見取り図を出します
-- 読み込みに失敗したとき、動きを減らす設定（`prefers-reduced-motion`）のときも、2D の見取り図に切り替えます
-- 3D の下には、スタッフの状態と吹き出しを文字で並べた一覧をいつも出します
-- クエストの掲示板・小話・クイズは、3D の上に重ねて出します
+## 3D の店
+
+- `src/scenes/ShopScene.tsx` は `ShopSceneProps`（`src/state/scene.ts`）を受け取り、ストアの状態だけを読む。SSE のイベントは受けない
+- 誰がどこで何をするか（立つ場所・モーション・表情・小物）は、`src/scenes/choreography.ts` の純粋な関数で決める
+- GLB は `assets/3d/models` だけに置き、Vite の `?url` で配る（ビルドでは `dist/assets` に出す）。meshopt と WebP をそのまま読む
+- 入店のカメラは、ページを開いて1回だけ流す。店の外観の画面には、通りから見上げた外観を背景に出す
+- 3D は遅れて読み込み、描けるまでは 2D の見取り図を出す。WebGL が使えない・読み込めない・動きを減らす設定（`prefers-reduced-motion`）・`?scene=2d`（軽い表示）のときは、2D の見取り図を主にする
