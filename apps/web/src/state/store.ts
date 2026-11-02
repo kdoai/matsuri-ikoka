@@ -8,22 +8,27 @@ import {
 } from "@matsuri-ikoka/schema";
 import { createStore, type StoreApi } from "zustand/vanilla";
 import { MESSAGES } from "../i18n";
+import { isSendablePasscode } from "../transport/server";
 import type { ChatTransport, FestivalSource, OnSseMessage } from "../transport/types";
-import { toClientErrorCode } from "../transport/types";
+import { toClientError } from "../transport/types";
+import { clientError } from "./errors";
 import { applyEvent } from "./events";
 import { initialData } from "./initial";
 import {
-  addClientError,
+  addError,
   answerQuiz,
   beginTurn,
   changePreference,
   endTurn,
   offerQuiz,
+  passcodeAccepted,
+  requirePasscode,
+  resetForNewSession,
   settleStaff,
   shouldOfferQuiz,
   type TurnStart,
 } from "./transitions";
-import type { AppData, ClientErrorCode, Locale, PanelTab } from "./types";
+import type { AppData, ClientError, Locale, PanelTab } from "./types";
 import { buildQuiz, quizFocusId } from "./waiting";
 
 // 画面の正しい状態を持つストア。通信の口から届いた SSE の1件を、ここで1か所で検証し、
@@ -47,6 +52,8 @@ export interface AppActions {
   setPreference<K extends keyof Preferences>(key: K, value: Preferences[K]): Promise<void>;
   /** 相談を最初からやり直す */
   restart(): Promise<void>;
+  /** 合言葉を入れる。相談を始める前なら始め、途中なら断られた発言を送り直す */
+  submitPasscode(passcode: string): Promise<void>;
   setDraft(text: string): void;
   setTab(tab: PanelTab): void;
   setLocale(locale: Locale): void;
@@ -139,7 +146,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
       try {
         event = decodeSseEvent(message);
       } catch {
-        update((state) => addClientError(state, "invalid_event"));
+        update((state) => addError(state, clientError("invalid_event")));
         return;
       }
       const before = get();
@@ -154,18 +161,34 @@ export function createAppStore(deps: StoreDeps): AppStore {
       update((state) => beginTurn(state, start));
       const current = new AbortController();
       controller = current;
-      let error: ClientErrorCode | null = null;
+      let error: ClientError | null = null;
       try {
         await open(receive, current.signal);
       } catch (caught) {
-        error = toClientErrorCode(caught);
+        error = toClientError(caught);
       }
       if (current.signal.aborted) {
         return;
       }
       controller = null;
       const sawDone = get().session.sawDone;
-      update((state) => endTurn(state, error));
+      if (error?.code === "session_lost") {
+        // サーバーが相談を覚えていない（再起動など）。新しい相談を自動で始め、送り直せるようにする
+        update((state) =>
+          resetForNewSession({ ...state, session: { ...state.session, streaming: false } }),
+        );
+        later(STAFF_RETURN_MS, () => update(settleStaff));
+        await startSession();
+        return;
+      }
+      const failure = error;
+      update((state) => {
+        const ended = endTurn(state, failure);
+        // 合言葉で断られたら、聞き直す。入れ直すと、断られた発言を送り直す
+        return failure?.code === "unauthorized"
+          ? requirePasscode(ended, transport.hasPasscode?.() ?? false)
+          : passcodeAccepted(ended);
+      });
       if (!sawDone) {
         later(STAFF_RETURN_MS, () => update(settleStaff));
       }
@@ -197,16 +220,34 @@ export function createAppStore(deps: StoreDeps): AppStore {
         if (current.signal.aborted) {
           return;
         }
-        update((state) => ({ ...state, session: { ...state.session, id, status: "ready" } }));
+        update((state) =>
+          passcodeAccepted({ ...state, session: { ...state.session, id, status: "ready" } }),
+        );
       } catch (caught) {
         if (current.signal.aborted) {
           return;
         }
+        const error = toClientError(caught);
+        if (error.code === "unauthorized") {
+          // 合言葉が要る（または違った）。始める前なら、店の入口で聞く
+          const rejected = transport.hasPasscode?.() ?? false;
+          update((state) =>
+            requirePasscode(
+              {
+                ...state,
+                session: { ...state.session, status: "closed" },
+                ui: {
+                  ...state.ui,
+                  view: state.messages.length === 0 ? "storefront" : state.ui.view,
+                },
+              },
+              rejected,
+            ),
+          );
+          return;
+        }
         update((state) =>
-          addClientError(
-            { ...state, session: { ...state.session, status: "failed" } },
-            toClientErrorCode(caught),
-          ),
+          addError({ ...state, session: { ...state.session, status: "failed" } }, error),
         );
       }
     };
@@ -289,6 +330,21 @@ export function createAppStore(deps: StoreDeps): AppStore {
         if (state.itinerary.current !== null && !state.session.streaming) {
           await sendPreferences();
         }
+      },
+
+      async submitPasscode(value) {
+        const passcode = value.trim();
+        if (!isSendablePasscode(passcode)) {
+          return;
+        }
+        transport.setPasscode?.(passcode);
+        update(passcodeAccepted);
+        if (get().session.status !== "ready") {
+          setUi({ view: "shop" });
+          await startSession();
+          return;
+        }
+        await actions.retry();
       },
 
       async restart() {

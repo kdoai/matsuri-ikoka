@@ -6,6 +6,7 @@ import { conditionChips, shioriReady } from "../state/selectors";
 import type { ChatEntry } from "../state/types";
 import { buttonPrimary, buttonSecondary } from "./common";
 import { STAFF_LOOK } from "./StaffPanel";
+import { errorText } from "./text";
 
 // 会話欄：コンシェルジュの返答、利用者の発言、作業の記録。返答は流れてくるそばから出す。
 
@@ -19,6 +20,7 @@ const WORK_STYLE = {
 function Entry({ entry, isLastError }: { entry: ChatEntry; isLastError: boolean }) {
   const t = useT();
   const actions = useActions();
+  const locale = useApp((state) => state.ui.locale);
   const streaming = useApp((state) => state.session.streaming);
   switch (entry.kind) {
     case "user":
@@ -84,7 +86,7 @@ function Entry({ entry, isLastError }: { entry: ChatEntry; isLastError: boolean 
           data-testid="chat-error"
           role="alert"
         >
-          <p className="font-semibold text-shu-700">{entry.message ?? t.chat.errors[entry.code]}</p>
+          <p className="font-semibold text-shu-700">{errorText(entry, locale, t)}</p>
           {entry.retryable && !entry.resolved && isLastError ? (
             <button
               type="button"

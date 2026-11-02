@@ -7,6 +7,7 @@ import { ChatLog, Composer, ConditionChips, PreferenceBar } from "./ChatPanel";
 import { buttonPrimary, buttonQuiet } from "./common";
 import { useMediaQuery } from "./hooks";
 import { ItineraryPanel } from "./ItineraryPanel";
+import { PasscodeDialog } from "./Passcode";
 import { SceneSlot } from "./SceneSlot";
 import { playSound } from "./sound";
 import { QuestBoard, WaitingCard } from "./Waiting";
@@ -204,6 +205,7 @@ export function Shop() {
           </div>
           {wide ? null : <QuestBoard />}
           <CandidateCards />
+          <PasscodeDialog />
         </div>
 
         {/* 右：旅程・地図・出典（スマートフォンでは下から引き出す） */}

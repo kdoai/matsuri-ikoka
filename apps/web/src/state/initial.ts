@@ -70,6 +70,7 @@ export function initialData({ transport, locale = "ja" }: InitialOptions): AppDa
     trivia: { index: 0 },
     festivals: {},
     festivalLoad: {},
+    auth: { needed: false, rejected: false },
     ui: {
       view: "storefront",
       tab: "itinerary",

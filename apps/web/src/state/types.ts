@@ -18,8 +18,18 @@ import type {
 // 画面の正しい状態の形。3D・会話・しおりは、どれもこの形を読むだけにする。
 
 export type StaffTask = (typeof STAFF_TASKS)[number];
-/** サーバーのエラーに、画面の側で気づくエラー（接続が切れた・形が違う）を足したもの */
-export type ClientErrorCode = ErrorCode | "connection_lost" | "invalid_event";
+/**
+ * サーバーのエラーに、画面の側で気づくエラーを足したもの。
+ * connection_lost 接続が切れた / invalid_event 形が違う / session_lost サーバーが相談を覚えていない
+ */
+export type ClientErrorCode = ErrorCode | "connection_lost" | "invalid_event" | "session_lost";
+
+/** 画面に出すエラー。message はサーバーが送った一文（なければ null で、辞書の文言を出す） */
+export interface ClientError {
+  code: ClientErrorCode;
+  message: string | null;
+  retryable: boolean;
+}
 
 export type Locale = "ja" | "en";
 
@@ -178,6 +188,12 @@ export type FestivalLoad = "loading" | "loaded" | "missing";
 export const PANEL_TABS = ["itinerary", "map", "sources"] as const;
 export type PanelTab = (typeof PANEL_TABS)[number];
 
+/** 合言葉。needed なら入力を出す。rejected は送った合言葉が違ったとき */
+export interface AuthState {
+  needed: boolean;
+  rejected: boolean;
+}
+
 export interface UiState {
   view: "storefront" | "shop" | "shiori";
   tab: PanelTab;
@@ -210,5 +226,6 @@ export interface AppData {
   trivia: { index: number };
   festivals: Record<string, Festival>;
   festivalLoad: Record<string, FestivalLoad>;
+  auth: AuthState;
   ui: UiState;
 }

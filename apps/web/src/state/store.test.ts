@@ -190,7 +190,7 @@ describe("ストア：通信のエラー", () => {
   it("相談を始められなければ、送り直しでもう一度始める", async () => {
     const startSession = vi
       .fn<ChatTransport["startSession"]>()
-      .mockRejectedValueOnce(new TransportError("upstream_unavailable", 503))
+      .mockRejectedValueOnce(new TransportError("upstream_unavailable", { status: 503 }))
       .mockResolvedValueOnce("s-2");
     const store = makeStore({
       kind: "server",
@@ -220,5 +220,148 @@ describe("ストア：通信のエラー", () => {
       value: "kids",
     });
     expect(state.session.streaming).toBe(false);
+  });
+
+  it("SSE の前に断られたら、サーバーの一文と送り直せるかを会話欄に出す", async () => {
+    const store = makeStore(
+      failing(async () => {
+        throw new TransportError("bad_request", {
+          status: 409,
+          message: "前の返事を作っています。終わってから送ってください。",
+          retryable: true,
+        });
+      }),
+    );
+    await store.getState().actions.enterShop();
+    await store.getState().actions.send("こんにちは");
+    expect(store.getState().messages.at(-1)).toMatchObject({
+      kind: "error",
+      code: "bad_request",
+      message: "前の返事を作っています。終わってから送ってください。",
+      retryable: true,
+    });
+  });
+
+  it("相談が見つからない（404）ときは、新しい相談を自動で始め、送り直すと新しい相談に送る", async () => {
+    const startSession = vi
+      .fn<ChatTransport["startSession"]>()
+      .mockResolvedValueOnce("s-old")
+      .mockResolvedValueOnce("s-new");
+    const chat = vi
+      .fn<ChatTransport["chat"]>()
+      .mockRejectedValueOnce(new TransportError("session_lost", { status: 404, retryable: true }))
+      .mockImplementationOnce(async (_request, onMessage) => {
+        onMessage({
+          event: "done",
+          data: JSON.stringify({
+            stage: "hearing",
+            conditions: {},
+            preferences: { party: "adults", spot: "auto", food: "stalls", move: "train" },
+          }),
+        });
+      });
+    const store = makeStore({
+      kind: "server",
+      startSession,
+      chat,
+      updatePreferences: async () => {},
+    });
+    const { actions } = store.getState();
+    await actions.enterShop();
+    await actions.send("8月16日に行ける祭り");
+    expect(startSession).toHaveBeenCalledTimes(2);
+    expect(store.getState().session).toMatchObject({ id: "s-new", status: "ready" });
+    expect(store.getState().messages.at(-1)).toMatchObject({
+      code: "session_lost",
+      retryable: true,
+    });
+
+    await actions.retry();
+    expect(chat.mock.calls[1]?.[0]).toMatchObject({
+      sessionId: "s-new",
+      message: "8月16日に行ける祭り",
+    });
+    expect(store.getState().messages.filter((entry) => entry.kind === "user")).toHaveLength(1);
+  });
+});
+
+describe("ストア：合言葉", () => {
+  function guarded(options: { chat?: ChatTransport["chat"] } = {}) {
+    let passcode: string | null = null;
+    const setPasscode = vi.fn((value: string) => {
+      passcode = value;
+    });
+    const transport: ChatTransport = {
+      kind: "server",
+      async startSession() {
+        if (passcode !== "matsuri") {
+          throw new TransportError("unauthorized", {
+            status: 401,
+            message: "合言葉が違います。",
+            retryable: false,
+          });
+        }
+        return "s-1";
+      },
+      chat: options.chat ?? (async () => {}),
+      updatePreferences: async () => {},
+      setPasscode,
+      hasPasscode: () => passcode !== null,
+    };
+    return { transport, setPasscode };
+  }
+
+  it("相談を始める前に断られたら、店の入口で合言葉を聞き、入れたら始める", async () => {
+    const { transport, setPasscode } = guarded();
+    const store = makeStore(transport);
+    const { actions } = store.getState();
+    await actions.enterShop();
+    expect(store.getState().ui.view).toBe("storefront");
+    expect(store.getState().auth).toEqual({ needed: true, rejected: false });
+    expect(store.getState().messages).toEqual([]);
+
+    // ヘッダーで送れない合言葉は、送らない
+    await actions.submitPasscode("まつり");
+    expect(setPasscode).not.toHaveBeenCalled();
+
+    await actions.submitPasscode("wrong");
+    expect(store.getState().auth).toEqual({ needed: true, rejected: true });
+
+    await actions.submitPasscode(" matsuri ");
+    expect(setPasscode).toHaveBeenLastCalledWith("matsuri");
+    expect(store.getState().ui.view).toBe("shop");
+    expect(store.getState().session).toMatchObject({ id: "s-1", status: "ready" });
+    expect(store.getState().auth).toEqual({ needed: false, rejected: false });
+  });
+
+  it("相談の途中で断られたら合言葉を聞き直し、入れ直すと同じ発言を送り直す", async () => {
+    const chat = vi
+      .fn<ChatTransport["chat"]>()
+      .mockRejectedValueOnce(
+        new TransportError("unauthorized", { status: 401, message: "合言葉が違います。" }),
+      )
+      .mockImplementationOnce(async (_request, onMessage) => {
+        onMessage({
+          event: "done",
+          data: JSON.stringify({
+            stage: "hearing",
+            conditions: {},
+            preferences: { party: "adults", spot: "auto", food: "stalls", move: "train" },
+          }),
+        });
+      });
+    const { transport } = guarded({ chat });
+    const store = makeStore(transport);
+    const { actions } = store.getState();
+    await actions.enterShop();
+    await actions.submitPasscode("matsuri");
+    await actions.send("こんにちは");
+    expect(store.getState().auth).toEqual({ needed: true, rejected: true });
+
+    await actions.submitPasscode("matsuri");
+    expect(chat).toHaveBeenCalledTimes(2);
+    expect(chat.mock.calls[1]?.[0]).toMatchObject({ message: "こんにちは" });
+    expect(store.getState().auth.needed).toBe(false);
+    expect(store.getState().session.sawDone).toBe(true);
   });
 });

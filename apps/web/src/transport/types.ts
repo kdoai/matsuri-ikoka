@@ -1,5 +1,12 @@
-import type { ChatRequest, Festival, Preferences, SseMessage } from "@matsuri-ikoka/schema";
-import type { ClientErrorCode, TransportKind } from "../state/types";
+import {
+  type ChatRequest,
+  ErrorEventSchema,
+  type Festival,
+  type Preferences,
+  type SseMessage,
+} from "@matsuri-ikoka/schema";
+import { clientError, retryableByDefault } from "../state/errors";
+import type { ClientError, ClientErrorCode, TransportKind } from "../state/types";
 
 // 相談の通信の口。接客サーバーへの通信と、画面だけのモックの再生を同じ形で扱う。
 // どちらも SSE の1件（event と data の文字列）を渡すだけで、検証はストアの側で1か所で行う。
@@ -24,6 +31,10 @@ export interface ChatTransport {
     onMessage: OnSseMessage,
     signal: AbortSignal,
   ): Promise<void>;
+  /** 接客サーバーのときだけ：合言葉を覚えて、これからの呼び出しに付ける */
+  setPasscode?(passcode: string): void;
+  /** 接客サーバーのときだけ：合言葉を覚えているか */
+  hasPasscode?(): boolean;
   /** モックのときだけ：次に再生する記録の発言 */
   nextSampleMessage?(): string | null;
 }
@@ -37,18 +48,27 @@ export interface FestivalSource {
 }
 
 export class TransportError extends Error {
+  readonly status: number | undefined;
+  /** サーバーが本文で送った、利用者に見せる一文 */
+  readonly serverMessage: string | null;
+  /** サーバーが本文で送った「もう一度送れば直るか」 */
+  readonly retryable: boolean | null;
+
   constructor(
     readonly code: ClientErrorCode,
-    readonly status?: number,
+    options: { status?: number; message?: string | null; retryable?: boolean | null } = {},
   ) {
-    super(status === undefined ? code : `${code} (HTTP ${status})`);
+    super(options.status === undefined ? code : `${code} (HTTP ${options.status})`);
     this.name = "TransportError";
+    this.status = options.status;
+    this.serverMessage = options.message ?? null;
+    this.retryable = options.retryable ?? null;
   }
 }
 
-/** HTTP の状態コードを、画面に出すエラーの種類に変える */
+/** HTTP の状態コードを、画面に出すエラーの種類に変える（本文が読めないとき） */
 export function errorCodeForStatus(status: number): ClientErrorCode {
-  if (status === 400 || status === 422) {
+  if (status === 400 || status === 413 || status === 422) {
     return "bad_request";
   }
   if (status === 401 || status === 403) {
@@ -66,6 +86,43 @@ export function errorCodeForStatus(status: number): ClientErrorCode {
   return "internal";
 }
 
-export function toClientErrorCode(error: unknown): ClientErrorCode {
-  return error instanceof TransportError ? error.code : "connection_lost";
+/**
+ * SSE を始める前に断られたときの応答を、エラーに変える。
+ * サーバーは状態コードに、error イベントの data と同じ形（code・message・retryable）の JSON を付ける。
+ * 相談に結びついた呼び出し（sessionBound）の 404 は、サーバーが相談を覚えていないことを表す。
+ */
+export async function errorFromResponse(
+  response: Response,
+  sessionBound: boolean,
+): Promise<TransportError> {
+  let body: unknown;
+  try {
+    body = await response.json();
+  } catch {
+    body = undefined;
+  }
+  const parsed = ErrorEventSchema.shape.data.safeParse(body);
+  const status = response.status;
+  if (sessionBound && status === 404) {
+    return new TransportError("session_lost", { status, retryable: true });
+  }
+  if (!parsed.success) {
+    return new TransportError(errorCodeForStatus(status), { status });
+  }
+  return new TransportError(parsed.data.code, {
+    status,
+    message: parsed.data.message,
+    retryable: parsed.data.retryable,
+  });
+}
+
+export function toClientError(error: unknown): ClientError {
+  if (!(error instanceof TransportError)) {
+    return clientError("connection_lost");
+  }
+  return {
+    code: error.code,
+    message: error.serverMessage,
+    retryable: error.retryable ?? retryableByDefault(error.code),
+  };
 }

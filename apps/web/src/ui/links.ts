@@ -22,3 +22,15 @@ export function sourceLabel(source: { url: string; title?: string }): string {
     return source.url;
   }
 }
+
+/**
+ * しおりを共有する URL。接客サーバーが旅程を保存しているときだけ作れる（画面だけのモックでは null）。
+ * サーバーは、公式の情報で開催予定を確かめた旅程だけを、しおりとして出す。
+ */
+export function shioriShareUrl(
+  transport: "mock" | "server",
+  itineraryId: string,
+  origin: string,
+): string | null {
+  return transport === "server" ? `${origin}/shiori/${encodeURIComponent(itineraryId)}` : null;
+}

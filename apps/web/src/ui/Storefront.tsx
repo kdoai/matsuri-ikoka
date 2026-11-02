@@ -1,5 +1,6 @@
 import { useActions, useApp, useT } from "../state/react";
 import { buttonPrimary } from "./common";
+import { PasscodeForm } from "./Passcode";
 import { LanguageButton } from "./Shop";
 
 // 店の外観：タイトルと「入店する」ボタン。すぐに相談を始められる入り口。
@@ -8,6 +9,7 @@ export function Storefront({ mockEnabled }: { mockEnabled: boolean }) {
   const t = useT();
   const actions = useActions();
   const isMock = useApp((state) => state.transport === "mock");
+  const passcodeNeeded = useApp((state) => state.auth.needed);
   const switchHref = (() => {
     const params = new URLSearchParams(window.location.search);
     params.set("transport", isMock ? "server" : "mock");
@@ -34,13 +36,19 @@ export function Storefront({ mockEnabled }: { mockEnabled: boolean }) {
           {t.app.name}
         </h1>
         <p className="mx-auto mt-4 max-w-md text-ink leading-relaxed">{t.app.lead}</p>
-        <button
-          type="button"
-          className={`${buttonPrimary} mt-6 px-10 py-3 text-lg`}
-          onClick={() => void actions.enterShop()}
-        >
-          {t.app.enter}
-        </button>
+        {passcodeNeeded ? (
+          <div className="mx-auto mt-6 max-w-sm">
+            <PasscodeForm retry={false} />
+          </div>
+        ) : (
+          <button
+            type="button"
+            className={`${buttonPrimary} mt-6 px-10 py-3 text-lg`}
+            onClick={() => void actions.enterShop()}
+          >
+            {t.app.enter}
+          </button>
+        )}
         {mockEnabled ? (
           <p className="mt-5 text-ink-soft text-sm">
             {isMock ? (

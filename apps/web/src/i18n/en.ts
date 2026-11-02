@@ -116,7 +116,19 @@ export const en: Messages = {
       internal: "Something went wrong on the server.",
       connection_lost: "The connection was lost.",
       invalid_event: "We received information in an unexpected form.",
+      session_lost:
+        "We couldn't find your earlier conversation, so we started a new one. Please send your message again.",
     },
+  },
+  passcode: {
+    title: "Passcode",
+    lead: "This shop asks for a passcode. Please enter the passcode you were given.",
+    again: "Please enter the passcode again. Your last message will be sent again afterwards.",
+    label: "Passcode",
+    submit: "Enter",
+    submitRetry: "Enter and resend",
+    wrong: "The passcode is not correct.",
+    halfWidth: "Please use half-width letters, numbers and symbols for the passcode.",
   },
   conditions: {
     title: "What we understood",
@@ -318,9 +330,14 @@ export const en: Messages = {
     localFood: "Local dishes",
     mealsInPlan: "Meals in your plan",
     noAlternatives: "No rainy-day plan yet.",
-    festivalLoading: "We could not load the festival details.",
+    festivalLoading:
+      "The festival details are not available right now. Please see the plan and sources.",
     verified: (date: string) => `Schedule confirmed with official information (${date})`,
     finalCheck: "On the day, please check the official website one last time.",
+    share: "Booklet URL",
+    shareNote: "Share this URL to show the booklet to the people coming with you.",
+    copy: "Copy URL",
+    copied: "Copied",
     homeward: "Getting home",
     cautions: "Please note",
     parking: {

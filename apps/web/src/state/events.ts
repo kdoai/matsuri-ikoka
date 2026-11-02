@@ -1,5 +1,13 @@
-import type { SseEvent, SseEventOf, StaffId, ToolName } from "@matsuri-ikoka/schema";
-import type { AppData, ChatEntry, QuestId, StaffMotion, StaffState } from "./types";
+import type { Itinerary, SseEvent, SseEventOf, StaffId, ToolName } from "@matsuri-ikoka/schema";
+import type {
+  AppData,
+  ChatEntry,
+  QuestId,
+  QuestState,
+  StaffMotion,
+  StaffState,
+  VerifyState,
+} from "./types";
 
 // SSE のイベントを、ストアの更新に変える。ここだけがイベントを読み、部品はストアだけを読む。
 // どれも純粋な関数にして、同じ状態と同じイベントからは、いつも同じ状態を返す。
@@ -205,15 +213,8 @@ function onItineraryUpdated(
   next = {
     ...next,
     itinerary: { current: data.itinerary, previous: state.itinerary.current, diff: data.diff },
-    // 旅程が変われば、前の再確認は使えない
-    verify: {
-      status: "idle",
-      festivalId: null,
-      result: null,
-      checkedAt: null,
-      sources: [],
-      note: null,
-    },
+    // 再確認の結果は、旅程が持っているものを正とする（同じ祭り・同じ日なら引き継がれる）
+    verify: verifyFromItinerary(data.itinerary),
     quests:
       route.status === "done"
         ? next.quests
@@ -224,6 +225,29 @@ function onItineraryUpdated(
     ui: { ...next.ui, candidatesOpen: false, tab: first ? "itinerary" : next.ui.tab },
   };
   return next;
+}
+
+/** 旅程が持っている再確認の結果から、再確認の状態を作る */
+export function verifyFromItinerary(itinerary: Itinerary): VerifyState {
+  const { verification } = itinerary;
+  if (verification.status === "pending") {
+    return {
+      status: "idle",
+      festivalId: null,
+      result: null,
+      checkedAt: null,
+      sources: [],
+      note: null,
+    };
+  }
+  return {
+    status: "done",
+    festivalId: itinerary.mainFestivalId,
+    result: verification.status,
+    checkedAt: verification.checkedAt,
+    sources: verification.sources,
+    note: verification.note ?? null,
+  };
 }
 
 function onFestivalVerified(
@@ -273,13 +297,34 @@ function onError(state: AppData, data: SseEventOf<"error">["data"]): AppData {
   return { ...state, messages: [...state.messages, entry] };
 }
 
-/** 返答が終わったときに、スタッフを戻し、流れている文章を閉じる（done が来なかったときにも使う） */
+/**
+ * 返答が終わったときの片付け。done が来たときも、来ないまま接続が閉じたときも通る。
+ * 時間切れのときは、終わっていないツールの tool.end が来ないので、ここで片付ける：
+ * スタッフを戻す、流れている文章を閉じる、作業中の記録を失敗にする、
+ * 確かめている途中の再確認を戻す、進行中のクエストを戻す、クイズを閉じる。
+ */
 export function closeTurn(state: AppData): AppData {
   let next: AppData = {
     ...state,
-    messages: state.messages.map((entry) =>
-      entry.kind === "concierge" && entry.streaming ? { ...entry, streaming: false } : entry,
-    ),
+    messages: state.messages.map((entry) => {
+      if (entry.kind === "concierge" && entry.streaming) {
+        return { ...entry, streaming: false };
+      }
+      if (entry.kind === "work" && entry.status === "running") {
+        return { ...entry, status: "failed" };
+      }
+      return entry;
+    }),
+    verify: state.verify.status === "checking" ? { ...state.verify, status: "idle" } : state.verify,
+    quests: Object.fromEntries(
+      (Object.entries(state.quests) as [QuestId, QuestState][]).map(([id, quest]) => [
+        id,
+        quest.status === "active"
+          ? { ...quest, status: quest.completions > 0 ? "done" : "todo" }
+          : quest,
+      ]),
+    ) as Record<QuestId, QuestState>,
+    quiz: { ...state.quiz, question: null, answer: null },
   };
   for (const id of Object.keys(state.staff) as StaffId[]) {
     const staff = state.staff[id];
@@ -315,7 +360,6 @@ function onDone(state: AppData, data: SseEventOf<"done">["data"]): AppData {
       sawDone: true,
     },
     preferences: data.preferences,
-    quiz: { ...next.quiz, question: null, answer: null },
     ui: {
       ...next.ui,
       // 候補を開くのは候補が届いたときだけ。利用者が閉じた候補を、ここで開き直さない
