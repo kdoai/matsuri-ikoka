@@ -21,6 +21,8 @@ export interface ServerConfig {
   replaySpeed: number;
   /** live の1回の発言の費用の上限（米ドル）。なければ上限なし */
   maxBudgetUsd: number | undefined;
+  /** 同じオリジンから配る画面のビルドの場所。本番では apps/web/dist、それ以外は MATSURI_WEB_DIST があるときだけ */
+  webDist: string | null;
 }
 
 /** pnpm-workspace.yaml のあるディレクトリを、start から上にたどって探す */
@@ -53,16 +55,21 @@ export function readConfig(env: NodeJS.ProcessEnv, cwd: string = process.cwd()):
     throw new Error("MATSURI_AGENT_MODE は mock か live にしてください");
   }
   const limit = positiveNumber("DAILY_CHAT_LIMIT", env.DAILY_CHAT_LIMIT);
+  const repoRoot = findRepoRoot(cwd);
+  const production = env.NODE_ENV === "production";
   return {
     port: positiveNumber("PORT", env.PORT) ?? 8787,
     mode,
-    production: env.NODE_ENV === "production",
-    repoRoot: findRepoRoot(cwd),
+    production,
+    repoRoot,
     festivalsDir: nonEmpty(env.MATSURI_FESTIVALS_DIR),
     models: { concierge: nonEmpty(env.MODEL_CONCIERGE), staff: nonEmpty(env.MODEL_STAFF) },
     accessPasscode: nonEmpty(env.ACCESS_PASSCODE) ?? null,
     dailyChatLimit: limit === null || limit === 0 ? null : Math.floor(limit),
     replaySpeed: positiveNumber("MATSURI_REPLAY_SPEED", env.MATSURI_REPLAY_SPEED) ?? 1,
     maxBudgetUsd: positiveNumber("AGENT_MAX_BUDGET_USD", env.AGENT_MAX_BUDGET_USD) || undefined,
+    webDist:
+      nonEmpty(env.MATSURI_WEB_DIST) ??
+      (production ? path.join(repoRoot, "apps", "web", "dist") : null),
   };
 }

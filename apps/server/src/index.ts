@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import path from "node:path";
 import { deleteSession, query } from "@anthropic-ai/claude-agent-sdk";
 import { serve } from "@hono/node-server";
@@ -93,7 +94,11 @@ const app = createApp({
   festivals: festivals.store,
   limiter: new DailyLimiter(config.dailyChatLimit, today),
   accessPasscode: config.accessPasscode,
+  webDist: config.webDist,
 });
+if (config.webDist !== null && !existsSync(path.join(config.webDist, "index.html"))) {
+  console.warn(`[web] 画面のビルドがありません：${config.webDist}（先に pnpm build）`);
+}
 
 // 使われなくなった相談を、10分ごとに片付ける
 setInterval(() => sessions.sweep(), 10 * 60 * 1000).unref();

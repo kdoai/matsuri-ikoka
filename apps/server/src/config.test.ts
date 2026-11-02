@@ -20,6 +20,7 @@ describe("readConfig", () => {
       dailyChatLimit: null,
       replaySpeed: 1,
       maxBudgetUsd: undefined,
+      webDist: null,
     });
     expect(config.repoRoot).toBe(path.resolve(here, "../../.."));
   });
@@ -47,6 +48,7 @@ describe("readConfig", () => {
       accessPasscode: "fictional",
       dailyChatLimit: null,
       maxBudgetUsd: 0.5,
+      webDist: path.resolve(here, "../../..", "apps", "web", "dist"),
     });
   });
 
