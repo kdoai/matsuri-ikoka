@@ -1,0 +1,363 @@
+{
+  "id": "katsube-himatsuri",
+  "name": {
+    "ja": "勝部の火まつり",
+    "en": "Katsube Fire Festival"
+  },
+  "category": "fire",
+  "municipalities": [
+    {
+      "prefecture": "滋賀県",
+      "name": "守山市"
+    }
+  ],
+  "venue": {
+    "name": "勝部神社",
+    "lat": 35.0508,
+    "lng": 135.9913
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu"],
+  "highlights": [
+    "竜（大蛇）の胴に見立てた長さ5〜6m・約400kgの大松明12基が境内に並ぶ",
+    "12基に火が入り、褌姿の若者が掛け声を上げて火の前で乱舞する",
+    "鎌倉時代の言い伝えに始まる、県選択無形民俗文化財の火まつり"
+  ],
+  "trivia": [
+    {
+      "text": "天皇の病の元とされた竜を退治した言い伝えから、浮気では竜の頭、勝部では胴に見立てた松明を燃やす",
+      "source": {
+        "url": "https://www.city.moriyama.lg.jp/_res/projects/default_project/_page_/001/013/975/20251219himaturi.pdf",
+        "title": "守山市 記者提供資料 滋賀県選択無形民俗文化財「火まつり」の実施（令和7年12月19日）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "大松明は竹・ハンノキ・菜種殻で作り、竜のうろこにはアカマツの板を使う",
+      "source": {
+        "url": "https://www.townkatsube.com/%E7%81%AB%E3%81%BE%E3%81%A4%E3%82%8A%E4%BA%A4%E6%B5%81%E9%A4%A8/%E7%81%AB%E3%81%BE%E3%81%A4%E3%82%8A%E3%81%AE%E6%AD%B4%E5%8F%B2/",
+        "title": "勝部自治会 火まつり交流館 かつべの火まつり",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "担い手の松明組は中学1年生から34歳までの地元の若者で、1年がかりで準備する",
+      "source": {
+        "url": "https://www.pref.shiga.lg.jp/ab00/23243.html",
+        "title": "滋賀県 広報レポート 800年続く「火まつり」守山2神社で催行（勝部・住吉の火まつり）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "12月には大松明の材料にする木を、栗東市の金勝山まで採りに行く",
+      "source": {
+        "url": "https://www.city.moriyama.lg.jp/_res/projects/default_project/_page_/001/013/975/20251219himaturi.pdf",
+        "title": "守山市 記者提供資料 滋賀県選択無形民俗文化財「火まつり」の実施（令和7年12月19日）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.pref.shiga.lg.jp/ab00/23243.html",
+        "title": "滋賀県 広報レポート 800年続く「火まつり」守山2神社で催行（勝部・住吉の火まつり）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.townkatsube.com/%E7%81%AB%E3%81%BE%E3%81%A4%E3%82%8A%E4%BA%A4%E6%B5%81%E9%A4%A8/%E7%81%AB%E3%81%BE%E3%81%A4%E3%82%8A%E3%81%AE%E6%AD%B4%E5%8F%B2/",
+        "title": "勝部自治会 火まつり交流館 かつべの火まつり",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-10",
+      "start": "20:30",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。市は20:30ごろ点火の予定と案内し、県の報告では21:00ごろに大松明12基へ一斉に奉火した。17:30ごろから太鼓巡行を含むライブ配信があり、守山小学校などのライブビューイング会場（17:30〜21:30ごろ）ではテントの屋台も出た",
+      "sources": [
+        {
+          "url": "https://www.city.moriyama.lg.jp/_res/projects/default_project/_page_/001/013/975/20251219himaturi.pdf",
+          "title": "守山市 記者提供資料 滋賀県選択無形民俗文化財「火まつり」の実施（令和7年12月19日）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.pref.shiga.lg.jp/ab00/23243.html",
+          "title": "滋賀県 広報レポート 800年続く「火まつり」守山2神社で催行（勝部・住吉の火まつり）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-09",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "例年1月の第2土曜日（2027年の発表はまだない）。例年、神事に続いて夜に大松明12基へ奉火する",
+      "sources": [
+        {
+          "url": "https://www.townkatsube.com/%E7%81%AB%E3%81%BE%E3%81%A4%E3%82%8A%E4%BA%A4%E6%B5%81%E9%A4%A8/%E7%81%AB%E3%81%BE%E3%81%A4%E3%82%8A%E3%81%AE%E6%AD%B4%E5%8F%B2/",
+          "title": "勝部自治会 火まつり交流館 かつべの火まつり（毎年1月の第2土曜日）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.pref.shiga.lg.jp/ab00/23243.html",
+          "title": "滋賀県 広報レポート 800年続く「火まつり」守山2神社で催行（毎年1月の第二土曜日）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 守山駅",
+        "walkMinutes": [5, 10],
+        "note": "神社は駅の西側。県の案内で徒歩5分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "京都駅",
+        "minutes": [30, 30],
+        "route": "JR琵琶湖線の快速、乗り換えなし"
+      },
+      {
+        "hub": "大阪駅",
+        "minutes": [57, 57],
+        "route": "JR京都線・琵琶湖線の新快速（直通）、乗り換えなし"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.pref.shiga.lg.jp/ab00/23243.html",
+        "title": "滋賀県 広報レポート 800年続く「火まつり」守山2神社で催行（守山駅から徒歩5分）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.moriyama.lg.jp/_res/projects/default_project/_page_/001/013/975/20251219himaturi.pdf",
+        "title": "守山市 記者提供資料（2026年は臨時駐車場なし。近隣の有料駐車場か、守山駅から徒歩）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.moriyama.lg.jp/_res/projects/default_project/_page_/001/011/126/002sigakennsenntakumukeiminnzokubunkazai_himaturinozissi.pdf",
+        "title": "守山市 記者提供資料（令和6年12月20日。2025年はエルセンターを臨時駐車場にした）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ekitan.com/transit/route/sf-5198/st-6091",
+        "title": "駅探 乗換案内 京都→守山(滋賀)（2026年11月2日 19時台の出発の検索結果）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      },
+      {
+        "url": "https://ekitan.com/transit/route/sf-5006/st-6091",
+        "title": "駅探 乗換案内 大阪→守山(滋賀)（2026年11月2日 19時台の出発の検索結果）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "moriyama-juku-unoke",
+      "name": "中山道守山宿 町家 うの家",
+      "kind": "sightseeing",
+      "summary": "中山道守山宿に残る、江戸末期から明治初期の造り酒屋の町家を活かした施設で、元首相・宇野宗佑の生家。第1・第3火曜（祝日なら翌日）と12月29日〜1月3日は休館",
+      "location": {
+        "lat": 35.0556,
+        "lng": 135.9934
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.biwako-visitors.jp/spot/detail/26263/",
+          "title": "滋賀県観光情報 中山道守山宿 町家 うの家（守山市歴史文化まちづくり館）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "tomonin-moriyama",
+      "name": "東門院（守山観音）",
+      "kind": "sightseeing",
+      "summary": "延暦年間に最澄が比叡山の東門として開いたと伝わる天台宗の寺。平安時代の不動明王坐像や鎌倉時代の石造五重塔など国の重要文化財が残る。文化財の拝観・撮影は事前の許可が要る。休みの日は案内がない",
+      "location": {
+        "lat": 35.0554,
+        "lng": 135.9913
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "16:00"
+      },
+      "closedDays": null,
+      "price": "団体は1人300円（個人の拝観料は案内がない）",
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.moriyama.lg.jp/kanko_event_manabi/kankou/1002777/1004849/1004850/1004860.html",
+          "title": "守山市 東門院（トウモンイン）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.biwako-visitors.jp/spot/detail/456/",
+          "title": "滋賀県観光情報 東門院（守山観音）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "moriyama-harie-kan",
+      "name": "たねや・クラブハリエ 守山玻璃絵館",
+      "kind": "food",
+      "summary": "たねやの和菓子とクラブハリエの洋菓子の売場があり、工房とカフェを備える。カフェのペーストリーブッフェはインターネットでの事前予約制。休業は1月1日だけ",
+      "location": {
+        "lat": 35.0594,
+        "lng": 135.9989
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "18:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://taneya.jp/shop/shiga_moriyama",
+          "title": "たねや 守山玻璃絵館 店舗案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://clubharie.jp/news/detail/660",
+          "title": "クラブハリエ 滋賀県内店 営業時間変更のご案内（2026年3月1日から9:00〜18:00）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "sagawa-art-museum",
+      "name": "佐川美術館",
+      "kind": "sightseeing",
+      "summary": "守山市北部の美術館。2026年12月8日〜2027年2月28日は「大カプコン展」を開く。月曜休館（祝日は翌日）、年末年始と展示替えの臨時休館あり",
+      "location": {
+        "lat": 35.11,
+        "lng": 135.9444
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["mon"],
+      "price": "大カプコン展 一般1,600円（WEB予約1,500円）、大学・高校生800円（同700円）、中学生以下無料",
+      "tags": ["indoor"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.sagawa-artmuseum.or.jp/use/",
+          "title": "佐川美術館 ご利用案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.sagawa-artmuseum.or.jp/plan/2026/10/post-183.html",
+          "title": "佐川美術館 大カプコン展―世界を魅了するゲームクリエイション",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.sagawa-artmuseum.or.jp/pdf/info.event_2026.pdf",
+          "title": "佐川美術館 年間予定（2027年1月の休館は1〜4日・12日・18日・25日）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.moriyama.lg.jp/_res/projects/default_project/_page_/001/013/975/20251219himaturi.pdf",
+      "title": "守山市 記者提供資料 滋賀県選択無形民俗文化財「火まつり」の実施（令和7年12月19日）",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.pref.shiga.lg.jp/ab00/23243.html",
+      "title": "滋賀県 広報レポート 800年続く「火まつり」守山2神社で催行（勝部・住吉の火まつり）",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.townkatsube.com/%E7%81%AB%E3%81%BE%E3%81%A4%E3%82%8A%E4%BA%A4%E6%B5%81%E9%A4%A8/%E7%81%AB%E3%81%BE%E3%81%A4%E3%82%8A%E3%81%AE%E6%AD%B4%E5%8F%B2/",
+      "title": "勝部自治会 火まつり交流館 かつべの火まつり",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、神事・点火の時刻（市・松明組の告知はまだ見つからない）",
+    "見学できる場所、火の粉の注意、立ち入りの決まり（公式の案内が見つからない）",
+    "危険度（主催者による、けがのおそれの注意が見つからない）",
+    "服装・持ち物・撮影の決まり",
+    "雨や雪のときの扱い",
+    "交通規制の時間と場所",
+    "2027年の臨時駐車場（2025年はエルセンターを臨時駐車場にし、2026年は臨時駐車場がなかった）",
+    "2027年のライブビューイングと屋台の有無（2026年は守山小学校などで実施）",
+    "終わる時刻と、当日の細かな流れ",
+    "見学者数の公表値",
+    "東門院の休みの日と個人の拝観料",
+    "祭りの日の夕食に使える近くの店（営業時間を公式で確かめられた店がない）",
+    "佐川美術館への、守山駅・勝部神社からのバスの所要時間"
+  ]
+}
