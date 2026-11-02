@@ -1,0 +1,7 @@
+packages:
+  - apps/*
+  - packages/*
+
+# インストール時のスクリプトは、ここに挙げたものだけ実行する
+onlyBuiltDependencies:
+  - esbuild
