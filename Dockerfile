@@ -1,0 +1,60 @@
+# syntax=docker/dockerfile:1
+# 接客サーバーと画面を1つのコンテナにする（Cloud Run 用。docs/spec/operations.md の「実行の環境」）。
+# 画面のビルドは同じオリジンから配る。Agent SDK は linux-x64（glibc）のネイティブのバイナリを使う。
+
+ARG NODE_IMAGE=node:24-bookworm-slim@sha256:c86ecead9e55a5210ac1727de38a4ca840bf03dcaf34dc9749addbf383b1920c
+
+FROM ${NODE_IMAGE} AS build
+ENV PNPM_HOME=/pnpm \
+    COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+RUN corepack enable
+WORKDIR /repo
+
+# 依存の定義だけを先に入れ、ソースの変更でインストールをやり直さない
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/server/package.json apps/server/
+COPY apps/web/package.json apps/web/
+COPY packages/schema/package.json packages/schema/
+COPY packages/agent-kit/package.json packages/agent-kit/
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
+    pnpm install --frozen-lockfile
+
+COPY tsconfig.base.json ./
+COPY packages packages
+COPY apps apps
+RUN pnpm --filter @matsuri-ikoka/server --filter @matsuri-ikoka/web run build
+
+# 実行に要る依存だけを取り出す。ワークスペースのパッケージは dist にまとめてある
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
+    pnpm --filter @matsuri-ikoka/server deploy --prod --legacy /out/server \
+ && rm -rf /out/server/node_modules/.pnpm/@anthropic-ai+claude-agent-sdk-linux-x64-musl@* \
+ && test -x /out/server/node_modules/.pnpm/@anthropic-ai+claude-agent-sdk-linux-x64@*/node_modules/@anthropic-ai/claude-agent-sdk-linux-x64/claude
+
+FROM ${NODE_IMAGE} AS runtime
+# tini：子のプロセス（Agent SDK のバイナリ）を片付け、シグナルを Node に渡す
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends ca-certificates tini \
+ && rm -rf /var/lib/apt/lists/* \
+ && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack \
+           /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack \
+           /usr/local/bin/yarn /usr/local/bin/yarnpkg /opt/yarn-*
+
+# ファイルは root の持ち物のまま置き、動かすユーザー（node）からは読むだけにする。
+# 書き込むのは /tmp だけ（Agent SDK の作業場所と会話の記録も /tmp に作る）
+ENV NODE_ENV=production \
+    PORT=8080 \
+    HOME=/tmp \
+    TMPDIR=/tmp
+WORKDIR /app
+# pnpm-workspace.yaml はリポジトリの根の目印（data/ をここから探す）
+COPY --from=build /repo/pnpm-workspace.yaml ./
+COPY --from=build /out/server/package.json apps/server/package.json
+COPY --from=build /out/server/node_modules apps/server/node_modules
+COPY --from=build /repo/apps/server/dist apps/server/dist
+COPY --from=build /repo/apps/web/dist apps/web/dist
+COPY data data
+
+USER node
+EXPOSE 8080
+ENTRYPOINT ["/usr/bin/tini", "--"]
+CMD ["node", "apps/server/dist/index.js"]
