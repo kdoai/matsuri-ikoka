@@ -2,15 +2,15 @@
 
 ## API
 
-| メソッド | パス                 | 本文                                 | 返すもの                                                                                  |
-| -------- | -------------------- | ------------------------------------ | ----------------------------------------------------------------------------------------- |
-| POST     | `/api/session`       | `SessionRequestSchema`（省略できる） | 201 `SessionResponseSchema`（`{ "sessionId": "…" }`）                                     |
-| POST     | `/api/chat`          | `ChatRequestSchema`                  | 返答を SSE のイベントで返す                                                               |
-| PATCH    | `/api/preferences`   | `PreferencesRequestSchema`           | SSE。旅程があれば旅程係だけを動かして組み直し、なければこだわりを変えて `done` だけを返す |
-| GET      | `/api/festivals/:id` | —                                    | 祭りのデータ（`FestivalSchema`）。しおりの作法・地元の味・アクセス、待ち時間の小話に使う  |
-| GET      | `/api/itinerary/:id` | —                                    | 旅程（`ItinerarySchema`）                                                                 |
-| GET      | `/shiori/:id`        | —                                    | 旅のしおり（印刷できる HTML）。公式の情報で開催予定を確かめた旅程だけ                     |
-| GET      | `/healthz`           | —                                    | 死活監視。`{ "status": "ok" }`                                                            |
+| メソッド | パス                  | 本文                                 | 返すもの                                                                                                           |
+| -------- | --------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| POST     | `/api/session`        | `SessionRequestSchema`（省略できる） | 201 `SessionResponseSchema`（`{ "sessionId": "…" }`）                                                              |
+| POST     | `/api/chat`           | `ChatRequestSchema`                  | 返答を SSE のイベントで返す                                                                                        |
+| PATCH    | `/api/preferences`    | `PreferencesRequestSchema`           | SSE。旅程があれば旅程係だけを動かして組み直し、なければこだわりを変えて `done` だけを返す                          |
+| GET      | `/api/festivals/:id`  | —                                    | 祭りのデータ（`FestivalSchema`）。しおりの作法・地元の味・アクセス、待ち時間の小話に使う                           |
+| GET      | `/api/itinerary/:id`  | —                                    | 旅程（`ItinerarySchema`）                                                                                          |
+| GET      | `/shiori/:id`         | —                                    | 旅のしおり（印刷できる HTML）。公式の情報で開催予定を確かめた旅程だけ                                              |
+| GET      | `/healthz`・`/health` | —                                    | 死活監視。`{ "status": "ok" }`。Cloud Run の既定の URL では `/healthz` が外に出ないので、外からは `/health` を使う |
 
 - 型はどれも `packages/schema`（`api.ts`）にある
 - 合言葉（`ACCESS_PASSCODE`）を設定しているときは、`/api/*` にヘッダー `x-access-passcode` が要る。しおりと死活監視には要らない

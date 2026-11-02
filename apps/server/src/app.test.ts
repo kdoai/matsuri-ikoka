@@ -87,9 +87,9 @@ const chat = (sessionId: string, message = "こんにちは") => ({
   preferences: DEFAULT_PREFERENCES,
 });
 
-describe("GET /healthz", () => {
-  it("死活監視に ok を返す", async () => {
-    const res = await setup().app.request("/healthz");
+describe("GET /healthz・/health", () => {
+  it.each(["/healthz", "/health"])("死活監視に ok を返す（%s）", async (path) => {
+    const res = await setup().app.request(path);
 
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ status: "ok" });

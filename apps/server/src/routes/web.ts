@@ -6,7 +6,7 @@ import type { Hono, MiddlewareHandler } from "hono";
 // 見つからない経路は、画面の中の経路として index.html を返す。
 
 /** API など、画面のファイルを返さない経路 */
-const SERVER_PATHS = /^\/(?:api|shiori)(?:\/|$)|^\/healthz$/;
+const SERVER_PATHS = /^\/(?:api|shiori)(?:\/|$)|^\/healthz?$/;
 
 /** 画面のページに付ける見出し。読み込める先の細かい決まり（地図のタイルなど）は画面の側で決める */
 const PAGE_HEADERS = {
