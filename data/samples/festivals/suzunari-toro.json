@@ -1,0 +1,232 @@
+{
+  "id": "suzunari-toro",
+  "name": {
+    "ja": "鈴鳴灯籠まつり",
+    "en": "Suzunari Lantern Festival"
+  },
+  "category": "lantern",
+  "municipalities": [
+    {
+      "prefecture": "滋賀県",
+      "name": "鈴鳴町"
+    }
+  ],
+  "venue": {
+    "name": "鈴鳴川の河原",
+    "lat": 35.1204,
+    "lng": 136.0812
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": ["川面に浮かぶ千の灯籠", "宵の口の子ども囃子", "灯籠流しに自分で加われる"],
+  "trivia": [
+    {
+      "text": "灯籠の和紙は、町の小学生が毎年すいている",
+      "source": {
+        "url": "https://example.com/suzunari/history",
+        "checkedAt": "2026-07-20",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "灯籠の数は、町の世帯の数に合わせて千ほどになる",
+      "source": {
+        "url": "https://example.com/suzunari/history",
+        "checkedAt": "2026-07-20",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_by_application",
+    "howToJoin": "当日16時までに河原の受付で申し込む（灯籠1つ500円）",
+    "rules": ["灯籠は係の合図のあとに流す", "立入禁止の縄の内側に入らない", "ごみは持ち帰る"],
+    "dress": ["歩きやすい靴", "河原の夜風に備えて薄手の上着"],
+    "bring": ["懐中電灯", "飲み物"],
+    "risk": {
+      "level": "low",
+      "reason": "見学と灯籠流しだけ。夜の河原は足元が暗い"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "神事の間はフラッシュを使わない"
+    },
+    "sources": [
+      {
+        "url": "https://example.com/suzunari/etiquette",
+        "checkedAt": "2026-07-20",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-16",
+      "start": "18:30",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": "小雨決行。荒天の場合は翌日に順延",
+      "note": "灯籠流しは20時ごろから",
+      "sources": [
+        {
+          "url": "https://example.com/suzunari/2026",
+          "checkedAt": "2026-07-20",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "鈴鳴駅",
+        "walkMinutes": [8, 12]
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "みなと中央駅",
+        "minutes": [40, 50],
+        "route": "鈴鳴線"
+      }
+    ],
+    "parking": "none",
+    "trafficRestrictions": ["17時から22時まで、河原沿いの道は車両通行止め"],
+    "sources": [
+      {
+        "url": "https://example.com/suzunari/access",
+        "checkedAt": "2026-07-20",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "鈴鳴そば",
+        "note": "川の水でさらす細めのそば。町内のそば店で食べられる",
+        "sources": [
+          {
+            "url": "https://example.com/suzunari/food",
+            "checkedAt": "2026-07-20",
+            "confidence": "corroborated"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "suzunari-soba-an",
+      "name": "鈴鳴そば庵",
+      "kind": "food",
+      "summary": "鈴鳴そばを出す、駅前の小さなそば店",
+      "location": {
+        "lat": 35.1221,
+        "lng": 136.0786
+      },
+      "walkMinutesFromVenue": [8, 12],
+      "hours": {
+        "open": "11:00",
+        "close": "15:00"
+      },
+      "closedDays": ["wed"],
+      "price": "そば 900円から",
+      "tags": ["local_food", "seating"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://example.com/soba-an",
+          "checkedAt": "2026-07-20",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "id": "suzunari-riverside",
+      "name": "鈴鳴川の土手道",
+      "kind": "sightseeing",
+      "summary": "会場の河原を見下ろす、桜並木の土手の散歩道",
+      "location": {
+        "lat": 35.1189,
+        "lng": 136.0835
+      },
+      "walkMinutesFromVenue": [3, 5],
+      "hours": null,
+      "closedDays": [],
+      "price": "無料",
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://example.com/suzunari/walk",
+          "checkedAt": "2026-07-20",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "suzunari-chaya",
+      "name": "川べりの茶屋",
+      "kind": "rest",
+      "summary": "川を眺めながら休める、座敷のある茶屋",
+      "location": {
+        "lat": 35.1197,
+        "lng": 136.0798
+      },
+      "walkMinutesFromVenue": [5, 8],
+      "hours": {
+        "open": "10:00",
+        "close": "18:00"
+      },
+      "closedDays": ["thu"],
+      "price": "飲み物 400円から",
+      "tags": ["indoor", "seating", "senior_friendly"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://example.com/chaya",
+          "checkedAt": "2026-07-20",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "id": "suzunari-craft-hall",
+      "name": "鈴鳴和紙の館",
+      "kind": "sightseeing",
+      "summary": "灯籠に使う和紙と同じ作り方で、和紙すきを体験できる工房",
+      "location": {
+        "lat": 35.1232,
+        "lng": 136.0849
+      },
+      "walkMinutesFromVenue": [10, 15],
+      "hours": {
+        "open": "10:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["tue"],
+      "price": "和紙すき体験 600円",
+      "tags": ["kid_friendly", "indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://example.com/suzunari/craft-hall",
+          "checkedAt": "2026-07-20",
+          "confidence": "corroborated"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://example.com/suzunari/about",
+      "checkedAt": "2026-07-20",
+      "confidence": "official"
+    }
+  ],
+  "gaps": ["会場のトイレの数", "車いすで河原へ降りられるか"]
+}

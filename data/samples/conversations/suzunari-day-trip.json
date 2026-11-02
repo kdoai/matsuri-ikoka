@@ -1,0 +1,1146 @@
+{
+  "id": "suzunari-day-trip",
+  "title": "架空の灯籠まつりへの日帰りの相談",
+  "description": "架空の町「鈴鳴町」の灯籠まつりを、友だち2人で日帰りで楽しむ相談。祭りの候補、旅程、修正、確定前の再確認までを含む。登場する祭り・店・駅・出典はすべて架空。",
+  "today": "2026-08-03",
+  "turns": [
+    {
+      "request": {
+        "message": "8月16日に、友だちと2人で、みなと中央駅から日帰りで行ける祭りはありますか。人の少ないところで、地元のごはんも食べたいです。",
+        "preferences": {
+          "party": "adults",
+          "spot": "auto",
+          "food": "stalls",
+          "move": "train"
+        }
+      },
+      "events": [
+        {
+          "atMs": 0,
+          "event": {
+            "type": "staff.start",
+            "data": {
+              "staff": "researcher",
+              "task": "find_festivals",
+              "bubble": "調べてきますね"
+            }
+          }
+        },
+        {
+          "atMs": 400,
+          "event": {
+            "type": "tool.start",
+            "data": {
+              "toolCallId": "call-1",
+              "tool": "search_festivals",
+              "staff": "researcher",
+              "bubble": "8月16日に、みなと中央駅から日帰りで行ける祭りを探しています"
+            }
+          }
+        },
+        {
+          "atMs": 3200,
+          "event": {
+            "type": "tool.end",
+            "data": {
+              "toolCallId": "call-1",
+              "tool": "search_festivals",
+              "staff": "researcher",
+              "ok": true,
+              "bubble": "2件見つかりました",
+              "count": 2,
+              "candidates": [
+                {
+                  "festivalId": "suzunari-toro",
+                  "name": "鈴鳴灯籠まつり",
+                  "date": "2026-08-16",
+                  "start": "18:30",
+                  "end": "21:00",
+                  "venueName": "鈴鳴川の河原",
+                  "place": "滋賀県鈴鳴町",
+                  "daysFromWish": 0,
+                  "confidence": "official",
+                  "confirmed": true,
+                  "highlight": "川面に浮かぶ千の灯籠",
+                  "source": {
+                    "url": "https://example.com/suzunari/2026",
+                    "checkedAt": "2026-07-20",
+                    "confidence": "official"
+                  }
+                },
+                {
+                  "festivalId": "kazami-bon-odori",
+                  "name": "風見町 盆おどり",
+                  "date": "2026-08-15",
+                  "start": "19:00",
+                  "end": "21:30",
+                  "venueName": "風見町民広場",
+                  "place": "滋賀県風見町",
+                  "daysFromWish": -1,
+                  "confidence": "single",
+                  "confirmed": false,
+                  "highlight": "やぐらを囲む町の人の輪",
+                  "source": {
+                    "url": "https://example.com/kazami/2025",
+                    "checkedAt": "2026-07-20",
+                    "confidence": "single"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "atMs": 3600,
+          "event": {
+            "type": "message.delta",
+            "data": {
+              "messageId": "m-1",
+              "text": "8月16日なら、川面に千の灯籠が浮かぶ「鈴鳴灯籠まつり」がおすすめです。大手の観光サイトにはほとんど載っていない、町の人の祭りです。"
+            }
+          }
+        },
+        {
+          "atMs": 3900,
+          "event": {
+            "type": "message.delta",
+            "data": {
+              "messageId": "m-1",
+              "text": "前の日の15日には「風見町 盆おどり」もありますが、今年の開催はまだ発表されておらず、未確認です。"
+            }
+          }
+        },
+        {
+          "atMs": 4200,
+          "event": {
+            "type": "message.delta",
+            "data": {
+              "messageId": "m-1",
+              "text": "どちらにしますか。"
+            }
+          }
+        },
+        {
+          "atMs": 4300,
+          "event": {
+            "type": "done",
+            "data": {
+              "stage": "candidates",
+              "conditions": {
+                "when": {
+                  "kind": "date",
+                  "date": "2026-08-16"
+                },
+                "origin": "みなと中央駅",
+                "stay": "day_trip",
+                "party": {
+                  "adults": 2,
+                  "children": 0
+                }
+              },
+              "preferences": {
+                "party": "adults",
+                "spot": "hidden",
+                "food": "local",
+                "move": "train"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "request": {
+        "message": "鈴鳴灯籠まつりにします。",
+        "preferences": {
+          "party": "adults",
+          "spot": "hidden",
+          "food": "local",
+          "move": "train"
+        }
+      },
+      "events": [
+        {
+          "atMs": 0,
+          "event": {
+            "type": "staff.start",
+            "data": {
+              "staff": "scout",
+              "task": "find_nearby",
+              "bubble": "寄り道を探してきます"
+            }
+          }
+        },
+        {
+          "atMs": 300,
+          "event": {
+            "type": "tool.start",
+            "data": {
+              "toolCallId": "call-2",
+              "tool": "search_nearby",
+              "staff": "scout",
+              "bubble": "会場の近くで、地元の味と人の少ない場所を探しています"
+            }
+          }
+        },
+        {
+          "atMs": 2500,
+          "event": {
+            "type": "tool.end",
+            "data": {
+              "toolCallId": "call-2",
+              "tool": "search_nearby",
+              "staff": "scout",
+              "ok": true,
+              "bubble": "4か所見つかりました",
+              "count": 4,
+              "spots": [
+                {
+                  "spotId": "suzunari-soba-an",
+                  "name": "鈴鳴そば庵",
+                  "kind": "food",
+                  "location": {
+                    "lat": 35.1221,
+                    "lng": 136.0786
+                  }
+                },
+                {
+                  "spotId": "suzunari-riverside",
+                  "name": "鈴鳴川の土手道",
+                  "kind": "sightseeing",
+                  "location": {
+                    "lat": 35.1189,
+                    "lng": 136.0835
+                  }
+                },
+                {
+                  "spotId": "suzunari-chaya",
+                  "name": "川べりの茶屋",
+                  "kind": "rest",
+                  "location": {
+                    "lat": 35.1197,
+                    "lng": 136.0798
+                  }
+                },
+                {
+                  "spotId": "suzunari-craft-hall",
+                  "name": "鈴鳴和紙の館",
+                  "kind": "sightseeing",
+                  "location": {
+                    "lat": 35.1232,
+                    "lng": 136.0849
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "atMs": 2700,
+          "event": {
+            "type": "staff.start",
+            "data": {
+              "staff": "planner",
+              "task": "plan_route",
+              "bubble": "道のりを調べます"
+            }
+          }
+        },
+        {
+          "atMs": 3000,
+          "event": {
+            "type": "tool.start",
+            "data": {
+              "toolCallId": "call-3",
+              "tool": "get_access",
+              "staff": "planner",
+              "bubble": "電車の所要時間を確かめています"
+            }
+          }
+        },
+        {
+          "atMs": 4200,
+          "event": {
+            "type": "tool.end",
+            "data": {
+              "toolCallId": "call-3",
+              "tool": "get_access",
+              "staff": "planner",
+              "ok": true,
+              "bubble": "所要時間を確かめました",
+              "count": null
+            }
+          }
+        },
+        {
+          "atMs": 4300,
+          "event": {
+            "type": "tool.start",
+            "data": {
+              "toolCallId": "call-4",
+              "tool": "get_weather",
+              "staff": "planner",
+              "bubble": "8月16日の天気を確かめています"
+            }
+          }
+        },
+        {
+          "atMs": 5000,
+          "event": {
+            "type": "tool.end",
+            "data": {
+              "toolCallId": "call-4",
+              "tool": "get_weather",
+              "staff": "planner",
+              "ok": true,
+              "bubble": "まだ予報が出ていない日でした",
+              "count": null
+            }
+          }
+        },
+        {
+          "atMs": 5200,
+          "event": {
+            "type": "tool.start",
+            "data": {
+              "toolCallId": "call-5",
+              "tool": "update_itinerary",
+              "staff": "planner",
+              "bubble": "旅程を書き込んでいます"
+            }
+          }
+        },
+        {
+          "atMs": 6400,
+          "event": {
+            "type": "tool.end",
+            "data": {
+              "toolCallId": "call-5",
+              "tool": "update_itinerary",
+              "staff": "planner",
+              "ok": true,
+              "bubble": "旅程ができました",
+              "count": null
+            }
+          }
+        },
+        {
+          "atMs": 6500,
+          "event": {
+            "type": "itinerary.updated",
+            "data": {
+              "itinerary": {
+                "id": "trip-suzunari-sample",
+                "version": 1,
+                "title": "鈴鳴の灯籠と川べりさんぽ",
+                "date": "2026-08-16",
+                "origin": "みなと中央駅",
+                "returnTo": "みなと中央駅",
+                "party": {
+                  "adults": 2,
+                  "children": 0
+                },
+                "preferences": {
+                  "party": "adults",
+                  "spot": "hidden",
+                  "food": "local",
+                  "move": "train"
+                },
+                "mainFestivalId": "suzunari-toro",
+                "verification": {
+                  "status": "pending"
+                },
+                "weather": {
+                  "status": "not_yet"
+                },
+                "items": [
+                  {
+                    "id": "go",
+                    "start": "11:00",
+                    "end": "11:50",
+                    "type": "move",
+                    "name": "みなと中央駅から鈴鳴駅へ",
+                    "location": null,
+                    "reason": "鈴鳴線で乗り換えなしで行ける",
+                    "move": {
+                      "means": "train",
+                      "minutes": [40, 50],
+                      "estimate": true,
+                      "note": "鈴鳴線"
+                    },
+                    "hours": null,
+                    "cost": null,
+                    "sources": [
+                      {
+                        "url": "https://example.com/suzunari/access",
+                        "checkedAt": "2026-07-20",
+                        "confidence": "official"
+                      }
+                    ],
+                    "changedInVersion": 1
+                  },
+                  {
+                    "id": "lunch",
+                    "start": "12:00",
+                    "end": "13:00",
+                    "type": "meal",
+                    "name": "鈴鳴そば庵",
+                    "location": {
+                      "lat": 35.1221,
+                      "lng": 136.0786
+                    },
+                    "reason": "「地元の店も楽しむ」を選んだので、町の名物の鈴鳴そばをお昼に",
+                    "move": {
+                      "means": "walk",
+                      "minutes": [5, 8],
+                      "estimate": true
+                    },
+                    "hours": {
+                      "open": "11:00",
+                      "close": "15:00"
+                    },
+                    "cost": "そば 900円から",
+                    "spotId": "suzunari-soba-an",
+                    "sources": [
+                      {
+                        "url": "https://example.com/soba-an",
+                        "checkedAt": "2026-07-20",
+                        "confidence": "single"
+                      }
+                    ],
+                    "changedInVersion": 1
+                  },
+                  {
+                    "id": "riverside",
+                    "start": "13:15",
+                    "end": "14:45",
+                    "type": "sightseeing",
+                    "name": "鈴鳴川の土手道",
+                    "location": {
+                      "lat": 35.1189,
+                      "lng": 136.0835
+                    },
+                    "reason": "人の少ない川沿いを歩きながら、夜の会場の様子を見ておける",
+                    "move": {
+                      "means": "walk",
+                      "minutes": [10, 15],
+                      "estimate": true
+                    },
+                    "hours": null,
+                    "cost": "無料",
+                    "spotId": "suzunari-riverside",
+                    "sources": [
+                      {
+                        "url": "https://example.com/suzunari/walk",
+                        "checkedAt": "2026-07-20",
+                        "confidence": "official"
+                      }
+                    ],
+                    "changedInVersion": 1
+                  },
+                  {
+                    "id": "apply",
+                    "start": "15:00",
+                    "end": "15:15",
+                    "type": "festival_prep",
+                    "name": "灯籠流しの申し込み",
+                    "location": {
+                      "lat": 35.1204,
+                      "lng": 136.0812
+                    },
+                    "reason": "灯籠流しの受付は16時までなので、先に済ませておく",
+                    "move": {
+                      "means": "walk",
+                      "minutes": [3, 5],
+                      "estimate": true
+                    },
+                    "hours": null,
+                    "cost": "灯籠1つ 500円",
+                    "festivalId": "suzunari-toro",
+                    "sources": [
+                      {
+                        "url": "https://example.com/suzunari/etiquette",
+                        "checkedAt": "2026-07-20",
+                        "confidence": "official"
+                      }
+                    ],
+                    "changedInVersion": 1
+                  },
+                  {
+                    "id": "rest",
+                    "start": "15:30",
+                    "end": "17:45",
+                    "type": "rest",
+                    "name": "川べりの茶屋",
+                    "location": {
+                      "lat": 35.1197,
+                      "lng": 136.0798
+                    },
+                    "reason": "日差しの強い時間を屋内で休み、夜に備える",
+                    "move": {
+                      "means": "walk",
+                      "minutes": [5, 8],
+                      "estimate": true
+                    },
+                    "hours": {
+                      "open": "10:00",
+                      "close": "18:00"
+                    },
+                    "cost": "飲み物 400円から",
+                    "spotId": "suzunari-chaya",
+                    "sources": [
+                      {
+                        "url": "https://example.com/chaya",
+                        "checkedAt": "2026-07-20",
+                        "confidence": "single"
+                      }
+                    ],
+                    "changedInVersion": 1
+                  },
+                  {
+                    "id": "prep",
+                    "start": "18:00",
+                    "end": "18:30",
+                    "type": "festival_prep",
+                    "name": "屋台をのぞいて河原へ",
+                    "location": {
+                      "lat": 35.1204,
+                      "lng": 136.0812
+                    },
+                    "reason": "小さな祭りなので15分前に着けば見やすい場所が取れる。屋台を見る時間を足した",
+                    "move": {
+                      "means": "walk",
+                      "minutes": [5, 8],
+                      "estimate": true
+                    },
+                    "hours": null,
+                    "cost": null,
+                    "festivalId": "suzunari-toro",
+                    "sources": [
+                      {
+                        "url": "https://example.com/suzunari/2026",
+                        "checkedAt": "2026-07-20",
+                        "confidence": "official"
+                      }
+                    ],
+                    "changedInVersion": 1
+                  },
+                  {
+                    "id": "festival",
+                    "start": "18:30",
+                    "end": "21:00",
+                    "type": "festival",
+                    "name": "鈴鳴灯籠まつり",
+                    "location": {
+                      "lat": 35.1204,
+                      "lng": 136.0812
+                    },
+                    "reason": "主役の祭り。20時ごろから灯籠流しが始まる",
+                    "move": null,
+                    "hours": null,
+                    "cost": "無料",
+                    "festivalId": "suzunari-toro",
+                    "sources": [
+                      {
+                        "url": "https://example.com/suzunari/2026",
+                        "checkedAt": "2026-07-20",
+                        "confidence": "official"
+                      }
+                    ],
+                    "changedInVersion": 1
+                  },
+                  {
+                    "id": "back",
+                    "start": "21:20",
+                    "end": "22:20",
+                    "type": "move",
+                    "name": "鈴鳴駅からみなと中央駅へ",
+                    "location": null,
+                    "reason": "終わってすぐの電車は混むので、20分ほどずらして乗る",
+                    "move": {
+                      "means": "train",
+                      "minutes": [50, 60],
+                      "estimate": true,
+                      "note": "会場から鈴鳴駅まで歩いて8〜12分。そこから鈴鳴線"
+                    },
+                    "hours": null,
+                    "cost": null,
+                    "sources": [
+                      {
+                        "url": "https://example.com/suzunari/access",
+                        "checkedAt": "2026-07-20",
+                        "confidence": "official"
+                      }
+                    ],
+                    "changedInVersion": 1
+                  }
+                ],
+                "notes": [
+                  "夜の河原は足元が暗いので、懐中電灯を持っていく",
+                  "会場の近くに駐車場はない。電車と徒歩で",
+                  "灯籠流しの受付は当日16時まで",
+                  "神事の間はフラッシュを使わない"
+                ],
+                "alternatives": [
+                  {
+                    "kind": "rain",
+                    "summary": "雨が強いときは、屋内の鈴鳴和紙の館と川べりの茶屋を中心に過ごし、開催の判断を公式サイトで確かめる"
+                  },
+                  {
+                    "kind": "cancelled",
+                    "summary": "荒天の場合は翌日に順延になる。日を変えられないときは、町の散策と鈴鳴そばだけでも楽しめる"
+                  }
+                ]
+              },
+              "diff": {
+                "fromVersion": 0,
+                "toVersion": 1,
+                "added": ["go", "lunch", "riverside", "apply", "rest", "prep", "festival", "back"],
+                "changed": [],
+                "removed": []
+              }
+            }
+          }
+        },
+        {
+          "atMs": 6800,
+          "event": {
+            "type": "message.delta",
+            "data": {
+              "messageId": "m-2",
+              "text": "旅程を組みました。お昼に町の名物の鈴鳴そばを食べ、川沿いを歩いてから、16時までに灯籠流しの申し込みを済ませます。"
+            }
+          }
+        },
+        {
+          "atMs": 7100,
+          "event": {
+            "type": "message.delta",
+            "data": {
+              "messageId": "m-2",
+              "text": "帰りは、終わってすぐの混む電車を避けて20分ほどずらします。気になるところはありますか。"
+            }
+          }
+        },
+        {
+          "atMs": 7200,
+          "event": {
+            "type": "done",
+            "data": {
+              "stage": "itinerary",
+              "conditions": {
+                "when": {
+                  "kind": "date",
+                  "date": "2026-08-16"
+                },
+                "origin": "みなと中央駅",
+                "stay": "day_trip",
+                "party": {
+                  "adults": 2,
+                  "children": 0
+                }
+              },
+              "preferences": {
+                "party": "adults",
+                "spot": "hidden",
+                "food": "local",
+                "move": "train"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "request": {
+        "message": "和紙すきの体験もしてみたいです。",
+        "preferences": {
+          "party": "adults",
+          "spot": "hidden",
+          "food": "local",
+          "move": "train"
+        }
+      },
+      "events": [
+        {
+          "atMs": 0,
+          "event": {
+            "type": "staff.start",
+            "data": {
+              "staff": "planner",
+              "task": "plan_route",
+              "bubble": "組み直します"
+            }
+          }
+        },
+        {
+          "atMs": 300,
+          "event": {
+            "type": "tool.start",
+            "data": {
+              "toolCallId": "call-6",
+              "tool": "update_itinerary",
+              "staff": "planner",
+              "bubble": "旅程を書き直しています"
+            }
+          }
+        },
+        {
+          "atMs": 1800,
+          "event": {
+            "type": "tool.end",
+            "data": {
+              "toolCallId": "call-6",
+              "tool": "update_itinerary",
+              "staff": "planner",
+              "ok": true,
+              "bubble": "旅程を直しました",
+              "count": null
+            }
+          }
+        },
+        {
+          "atMs": 1900,
+          "event": {
+            "type": "itinerary.updated",
+            "data": {
+              "itinerary": {
+                "id": "trip-suzunari-sample",
+                "version": 2,
+                "title": "鈴鳴の灯籠と川べりさんぽ",
+                "date": "2026-08-16",
+                "origin": "みなと中央駅",
+                "returnTo": "みなと中央駅",
+                "party": {
+                  "adults": 2,
+                  "children": 0
+                },
+                "preferences": {
+                  "party": "adults",
+                  "spot": "hidden",
+                  "food": "local",
+                  "move": "train"
+                },
+                "mainFestivalId": "suzunari-toro",
+                "verification": {
+                  "status": "pending"
+                },
+                "weather": {
+                  "status": "not_yet"
+                },
+                "items": [
+                  {
+                    "id": "go",
+                    "start": "11:00",
+                    "end": "11:50",
+                    "type": "move",
+                    "name": "みなと中央駅から鈴鳴駅へ",
+                    "location": null,
+                    "reason": "鈴鳴線で乗り換えなしで行ける",
+                    "move": {
+                      "means": "train",
+                      "minutes": [40, 50],
+                      "estimate": true,
+                      "note": "鈴鳴線"
+                    },
+                    "hours": null,
+                    "cost": null,
+                    "sources": [
+                      {
+                        "url": "https://example.com/suzunari/access",
+                        "checkedAt": "2026-07-20",
+                        "confidence": "official"
+                      }
+                    ],
+                    "changedInVersion": 1
+                  },
+                  {
+                    "id": "lunch",
+                    "start": "12:00",
+                    "end": "13:00",
+                    "type": "meal",
+                    "name": "鈴鳴そば庵",
+                    "location": {
+                      "lat": 35.1221,
+                      "lng": 136.0786
+                    },
+                    "reason": "「地元の店も楽しむ」を選んだので、町の名物の鈴鳴そばをお昼に",
+                    "move": {
+                      "means": "walk",
+                      "minutes": [5, 8],
+                      "estimate": true
+                    },
+                    "hours": {
+                      "open": "11:00",
+                      "close": "15:00"
+                    },
+                    "cost": "そば 900円から",
+                    "spotId": "suzunari-soba-an",
+                    "sources": [
+                      {
+                        "url": "https://example.com/soba-an",
+                        "checkedAt": "2026-07-20",
+                        "confidence": "single"
+                      }
+                    ],
+                    "changedInVersion": 1
+                  },
+                  {
+                    "id": "riverside",
+                    "start": "13:15",
+                    "end": "14:00",
+                    "type": "sightseeing",
+                    "name": "鈴鳴川の土手道",
+                    "location": {
+                      "lat": 35.1189,
+                      "lng": 136.0835
+                    },
+                    "reason": "人の少ない川沿いを歩きながら、夜の会場の様子を見ておける",
+                    "move": {
+                      "means": "walk",
+                      "minutes": [10, 15],
+                      "estimate": true
+                    },
+                    "hours": null,
+                    "cost": "無料",
+                    "spotId": "suzunari-riverside",
+                    "sources": [
+                      {
+                        "url": "https://example.com/suzunari/walk",
+                        "checkedAt": "2026-07-20",
+                        "confidence": "official"
+                      }
+                    ],
+                    "changedInVersion": 2
+                  },
+                  {
+                    "id": "craft-hall",
+                    "start": "14:10",
+                    "end": "14:45",
+                    "type": "sightseeing",
+                    "name": "鈴鳴和紙の館",
+                    "location": {
+                      "lat": 35.1232,
+                      "lng": 136.0849
+                    },
+                    "reason": "和紙すきを体験したいとのことなので。灯籠の和紙と同じ作り方を体験できる",
+                    "move": {
+                      "means": "walk",
+                      "minutes": [5, 10],
+                      "estimate": true
+                    },
+                    "hours": {
+                      "open": "10:00",
+                      "close": "17:00",
+                      "lastEntry": "16:30"
+                    },
+                    "cost": "和紙すき体験 600円",
+                    "spotId": "suzunari-craft-hall",
+                    "sources": [
+                      {
+                        "url": "https://example.com/suzunari/craft-hall",
+                        "checkedAt": "2026-07-20",
+                        "confidence": "corroborated"
+                      }
+                    ],
+                    "changedInVersion": 2
+                  },
+                  {
+                    "id": "apply",
+                    "start": "15:00",
+                    "end": "15:15",
+                    "type": "festival_prep",
+                    "name": "灯籠流しの申し込み",
+                    "location": {
+                      "lat": 35.1204,
+                      "lng": 136.0812
+                    },
+                    "reason": "灯籠流しの受付は16時までなので、先に済ませておく",
+                    "move": {
+                      "means": "walk",
+                      "minutes": [10, 15],
+                      "estimate": true
+                    },
+                    "hours": null,
+                    "cost": "灯籠1つ 500円",
+                    "festivalId": "suzunari-toro",
+                    "sources": [
+                      {
+                        "url": "https://example.com/suzunari/etiquette",
+                        "checkedAt": "2026-07-20",
+                        "confidence": "official"
+                      }
+                    ],
+                    "changedInVersion": 2
+                  },
+                  {
+                    "id": "rest",
+                    "start": "15:30",
+                    "end": "17:45",
+                    "type": "rest",
+                    "name": "川べりの茶屋",
+                    "location": {
+                      "lat": 35.1197,
+                      "lng": 136.0798
+                    },
+                    "reason": "日差しの強い時間を屋内で休み、夜に備える",
+                    "move": {
+                      "means": "walk",
+                      "minutes": [5, 8],
+                      "estimate": true
+                    },
+                    "hours": {
+                      "open": "10:00",
+                      "close": "18:00"
+                    },
+                    "cost": "飲み物 400円から",
+                    "spotId": "suzunari-chaya",
+                    "sources": [
+                      {
+                        "url": "https://example.com/chaya",
+                        "checkedAt": "2026-07-20",
+                        "confidence": "single"
+                      }
+                    ],
+                    "changedInVersion": 1
+                  },
+                  {
+                    "id": "prep",
+                    "start": "18:00",
+                    "end": "18:30",
+                    "type": "festival_prep",
+                    "name": "屋台をのぞいて河原へ",
+                    "location": {
+                      "lat": 35.1204,
+                      "lng": 136.0812
+                    },
+                    "reason": "小さな祭りなので15分前に着けば見やすい場所が取れる。屋台を見る時間を足した",
+                    "move": {
+                      "means": "walk",
+                      "minutes": [5, 8],
+                      "estimate": true
+                    },
+                    "hours": null,
+                    "cost": null,
+                    "festivalId": "suzunari-toro",
+                    "sources": [
+                      {
+                        "url": "https://example.com/suzunari/2026",
+                        "checkedAt": "2026-07-20",
+                        "confidence": "official"
+                      }
+                    ],
+                    "changedInVersion": 1
+                  },
+                  {
+                    "id": "festival",
+                    "start": "18:30",
+                    "end": "21:00",
+                    "type": "festival",
+                    "name": "鈴鳴灯籠まつり",
+                    "location": {
+                      "lat": 35.1204,
+                      "lng": 136.0812
+                    },
+                    "reason": "主役の祭り。20時ごろから灯籠流しが始まる",
+                    "move": null,
+                    "hours": null,
+                    "cost": "無料",
+                    "festivalId": "suzunari-toro",
+                    "sources": [
+                      {
+                        "url": "https://example.com/suzunari/2026",
+                        "checkedAt": "2026-07-20",
+                        "confidence": "official"
+                      }
+                    ],
+                    "changedInVersion": 1
+                  },
+                  {
+                    "id": "back",
+                    "start": "21:20",
+                    "end": "22:20",
+                    "type": "move",
+                    "name": "鈴鳴駅からみなと中央駅へ",
+                    "location": null,
+                    "reason": "終わってすぐの電車は混むので、20分ほどずらして乗る",
+                    "move": {
+                      "means": "train",
+                      "minutes": [50, 60],
+                      "estimate": true,
+                      "note": "会場から鈴鳴駅まで歩いて8〜12分。そこから鈴鳴線"
+                    },
+                    "hours": null,
+                    "cost": null,
+                    "sources": [
+                      {
+                        "url": "https://example.com/suzunari/access",
+                        "checkedAt": "2026-07-20",
+                        "confidence": "official"
+                      }
+                    ],
+                    "changedInVersion": 1
+                  }
+                ],
+                "notes": [
+                  "夜の河原は足元が暗いので、懐中電灯を持っていく",
+                  "会場の近くに駐車場はない。電車と徒歩で",
+                  "灯籠流しの受付は当日16時まで",
+                  "神事の間はフラッシュを使わない"
+                ],
+                "alternatives": [
+                  {
+                    "kind": "rain",
+                    "summary": "雨が強いときは、屋内の鈴鳴和紙の館と川べりの茶屋を中心に過ごし、開催の判断を公式サイトで確かめる"
+                  },
+                  {
+                    "kind": "cancelled",
+                    "summary": "荒天の場合は翌日に順延になる。日を変えられないときは、町の散策と鈴鳴そばだけでも楽しめる"
+                  }
+                ]
+              },
+              "diff": {
+                "fromVersion": 1,
+                "toVersion": 2,
+                "added": ["craft-hall"],
+                "changed": ["riverside", "apply"],
+                "removed": []
+              }
+            }
+          }
+        },
+        {
+          "atMs": 2200,
+          "event": {
+            "type": "message.delta",
+            "data": {
+              "messageId": "m-3",
+              "text": "川沿いの散歩を短くして、鈴鳴和紙の館で和紙すきを体験する時間を入れました。灯籠に使う和紙と同じ作り方だそうです。"
+            }
+          }
+        },
+        {
+          "atMs": 2400,
+          "event": {
+            "type": "done",
+            "data": {
+              "stage": "itinerary",
+              "conditions": {
+                "when": {
+                  "kind": "date",
+                  "date": "2026-08-16"
+                },
+                "origin": "みなと中央駅",
+                "stay": "day_trip",
+                "party": {
+                  "adults": 2,
+                  "children": 0
+                }
+              },
+              "preferences": {
+                "party": "adults",
+                "spot": "hidden",
+                "food": "local",
+                "move": "train"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "request": {
+        "message": "これで決定します。",
+        "preferences": {
+          "party": "adults",
+          "spot": "hidden",
+          "food": "local",
+          "move": "train"
+        }
+      },
+      "events": [
+        {
+          "atMs": 0,
+          "event": {
+            "type": "tool.start",
+            "data": {
+              "toolCallId": "call-7",
+              "tool": "verify_festival",
+              "staff": "concierge",
+              "bubble": "開催予定を公式情報で確かめています"
+            }
+          }
+        },
+        {
+          "atMs": 3500,
+          "event": {
+            "type": "tool.end",
+            "data": {
+              "toolCallId": "call-7",
+              "tool": "verify_festival",
+              "staff": "concierge",
+              "ok": true,
+              "bubble": "開催予定を公式情報で確認しました",
+              "count": null
+            }
+          }
+        },
+        {
+          "atMs": 3600,
+          "event": {
+            "type": "festival.verified",
+            "data": {
+              "festivalId": "suzunari-toro",
+              "result": "as_planned",
+              "checkedAt": "2026-08-03T10:15:00+09:00",
+              "sources": [
+                {
+                  "url": "https://example.com/suzunari/2026",
+                  "checkedAt": "2026-08-03",
+                  "confidence": "official"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "atMs": 3800,
+          "event": {
+            "type": "message.delta",
+            "data": {
+              "messageId": "m-4",
+              "text": "公式情報で、8月16日の開催予定を確認しました。旅のしおりをお渡しします。当日の朝も、公式サイトで最終確認をしてください。"
+            }
+          }
+        },
+        {
+          "atMs": 3900,
+          "event": {
+            "type": "done",
+            "data": {
+              "stage": "shiori",
+              "conditions": {
+                "when": {
+                  "kind": "date",
+                  "date": "2026-08-16"
+                },
+                "origin": "みなと中央駅",
+                "stay": "day_trip",
+                "party": {
+                  "adults": 2,
+                  "children": 0
+                }
+              },
+              "preferences": {
+                "party": "adults",
+                "spot": "hidden",
+                "food": "local",
+                "move": "train"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

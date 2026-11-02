@@ -1,0 +1,105 @@
+{
+  "id": "kazami-bon-odori",
+  "name": {
+    "ja": "風見町 盆おどり",
+    "en": "Kazami Bon Dance"
+  },
+  "category": "dance",
+  "municipalities": [
+    {
+      "prefecture": "滋賀県",
+      "name": "風見町"
+    }
+  ],
+  "venue": {
+    "name": "風見町民広場",
+    "lat": 35.0817,
+    "lng": 136.1243
+  },
+  "scaleTier": "XS",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": ["やぐらを囲む町の人の輪", "生演奏の風見音頭"],
+  "trivia": [
+    {
+      "text": "風見音頭の歌詞は、町の人が一節ずつ書き足してきた",
+      "source": {
+        "url": "https://example.com/kazami/history",
+        "checkedAt": "2026-07-20",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "輪に入れば、だれでも踊れる。踊り方は会場で教えてもらえる",
+    "rules": ["やぐらの上には上がらない"],
+    "dress": "unknown",
+    "bring": ["うちわ"],
+    "risk": {
+      "level": "low",
+      "reason": "広場での盆踊りだけ"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://example.com/kazami/about",
+        "checkedAt": "2026-07-20",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-15",
+      "start": "19:00",
+      "end": "21:30",
+      "status": "expected",
+      "rainPolicy": null,
+      "sources": [
+        {
+          "url": "https://example.com/kazami/2025",
+          "checkedAt": "2026-07-20",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "風見駅",
+        "walkMinutes": [5, 10]
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "みなと中央駅",
+        "minutes": [50, 60],
+        "route": "風見線"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://example.com/kazami/access",
+        "checkedAt": "2026-07-20",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://example.com/kazami/about",
+      "checkedAt": "2026-07-20",
+      "confidence": "single"
+    }
+  ],
+  "gaps": ["今年の開催日の発表", "雨天時の扱い", "服装の決まり", "写真の可否"]
+}
