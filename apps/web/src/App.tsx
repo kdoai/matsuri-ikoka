@@ -1,10 +1,26 @@
-export function App() {
+import { useEffect } from "react";
+import { useApp } from "./state/react";
+import { ShioriPage } from "./ui/ShioriPage";
+import { Shop } from "./ui/Shop";
+import { Storefront } from "./ui/Storefront";
+import { useSoundEffects } from "./ui/sound";
+import { Celebration } from "./ui/Waiting";
+
+export function App({ mockEnabled }: { mockEnabled: boolean }) {
+  const view = useApp((state) => state.ui.view);
+  const locale = useApp((state) => state.ui.locale);
+  useSoundEffects();
+
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
+
   return (
-    <main className="mx-auto flex min-h-dvh max-w-2xl flex-col justify-center gap-4 px-6 py-16">
-      <h1 className="font-bold text-4xl tracking-wide">MATSURI IKOKA</h1>
-      <p className="text-lg text-stone-700 leading-relaxed">
-        地元の外にまだ届いていない祭りを見つけ、作法まで分かる旅程と旅のしおりにする旅行代理店です。
-      </p>
-    </main>
+    <>
+      {view === "storefront" ? <Storefront mockEnabled={mockEnabled} /> : null}
+      {view === "shop" ? <Shop /> : null}
+      {view === "shiori" ? <ShioriPage /> : null}
+      <Celebration />
+    </>
   );
 }

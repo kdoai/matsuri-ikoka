@@ -1,8 +1,185 @@
+/* biome-ignore-all lint/complexity/noImportantStyles: 動きを減らす設定と印刷では、部品ごとの指定より必ず優先させる */
 @import "tailwindcss";
 
+/* 色：生成りの紙、藍の布、木の店内、朱のはんこ、山吹の「変わった予定」 */
+@theme {
+  --color-ink: #1d1712;
+  --color-ink-soft: #3d342b;
+
+  --color-kinari-50: #fdfaf3;
+  --color-kinari-100: #f7f0e1;
+  --color-kinari-200: #eee2c7;
+  --color-kinari-300: #e0cca4;
+
+  --color-ai-50: #eef2f8;
+  --color-ai-100: #dbe4f1;
+  --color-ai-200: #b9c9e2;
+  --color-ai-500: #3a5a8c;
+  --color-ai-600: #2c4a78;
+  --color-ai-700: #213c63;
+  --color-ai-800: #1a2f4e;
+  --color-ai-900: #13223a;
+
+  --color-wood-100: #f3e3cf;
+  --color-wood-200: #e6c9a5;
+  --color-wood-300: #d4a877;
+  --color-wood-400: #bb8551;
+  --color-wood-500: #9c6939;
+  --color-wood-600: #7d522b;
+  --color-wood-700: #5f3e21;
+  --color-wood-800: #432c18;
+  --color-wood-900: #2e1e10;
+
+  --color-shu-500: #c2462c;
+  --color-shu-600: #a33a24;
+  --color-shu-700: #82301e;
+
+  --color-yamabuki-100: #fcefc7;
+  --color-yamabuki-200: #f8df92;
+  --color-yamabuki-400: #e9b528;
+  --color-yamabuki-700: #7a5807;
+
+  --font-sans:
+    "Noto Sans JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic",
+    "Meiryo", system-ui, sans-serif;
+
+  --animate-stamp: stamp 0.7s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+  --animate-pop: pop 0.45s cubic-bezier(0.2, 1.2, 0.4, 1) both;
+  --animate-fade: fade 0.3s ease-out both;
+
+  @keyframes stamp {
+    0% {
+      opacity: 0;
+      transform: scale(1.8) rotate(-18deg);
+    }
+    70% {
+      opacity: 1;
+      transform: scale(0.94) rotate(-8deg);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) rotate(-8deg);
+    }
+  }
+  @keyframes pop {
+    0% {
+      opacity: 0;
+      transform: translateY(16px) scale(0.96);
+    }
+    100% {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes fade {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}
+
 :root {
-  font-family:
-    "Noto Sans JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
-  color: var(--color-stone-900);
-  background-color: var(--color-amber-50);
+  /* 屋外のスマートフォンでも読めるよう、本文は少し大きく、濃くする */
+  font-size: 106.25%;
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background-color: var(--color-kinari-100);
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  line-height: 1.65;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-ai-500);
+  outline-offset: 2px;
+}
+
+/* 木の床（2D の店内） */
+.wood-floor {
+  background-color: var(--color-wood-200);
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 63px,
+      color-mix(in srgb, var(--color-wood-400) 45%, transparent) 63px 65px
+    ),
+    linear-gradient(180deg, var(--color-wood-100), var(--color-wood-200));
+}
+
+/* Leaflet の帰属表示を読みやすく */
+.leaflet-container {
+  font-family: var(--font-sans);
+}
+.leaflet-control-attribution {
+  font-size: 12px;
+  color: var(--color-ink);
+}
+
+/* 地図のピン（番号は数字だけを入れる） */
+.map-pin {
+  display: grid;
+  place-items: center;
+  border-radius: 9999px;
+  border: 2px solid #fff;
+  background: var(--color-ai-700);
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.35);
+}
+.map-pin--venue {
+  background: var(--color-shu-600);
+  font-size: 15px;
+}
+.map-pin--spot {
+  background: #fff;
+  border-color: var(--color-wood-600);
+  color: var(--color-wood-700);
+}
+
+/* 動きを減らす設定のときは、演出を止める */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 旅のしおりの印刷（A4 縦） */
+@page {
+  size: A4 portrait;
+  margin: 11mm 12mm;
+}
+
+@media print {
+  :root {
+    font-size: 9pt;
+    background: #fff;
+  }
+  body {
+    background: #fff;
+    line-height: 1.5;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-avoid-break {
+    break-inside: avoid;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 }
