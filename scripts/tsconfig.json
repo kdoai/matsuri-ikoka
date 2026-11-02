@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    // scripts/ はワークスペースのパッケージではないので、Node の型はスキーマのパッケージから借りる
+    "typeRoots": ["../packages/schema/node_modules/@types"],
+    "types": ["node"]
+  },
+  "include": ["."]
+}
