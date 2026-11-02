@@ -43,7 +43,7 @@ test("done の前に接続が切れたら「もう一度送る」を出し、送
     await route.fulfill({ status: 200, headers: { "content-type": "text/event-stream" }, body });
   });
 
-  await page.goto("/?transport=server");
+  await page.goto("/?transport=server&scene=2d");
   await page.getByRole("button", { name: "入店する" }).click();
   const input = page.getByRole("textbox", { name: "相談の発言" });
   await input.fill("みなと中央駅から行ける祭りはありますか");
@@ -86,7 +86,7 @@ test("サーバーのエラーは一文だけを出し、HTML として埋め込
       ]),
     }),
   );
-  await page.goto("/?transport=server");
+  await page.goto("/?transport=server&scene=2d");
   await page.getByRole("button", { name: "入店する" }).click();
   const input = page.getByRole("textbox", { name: "相談の発言" });
   await input.fill("こんにちは");
@@ -113,7 +113,7 @@ test("英語の画面では、サーバーの日本語の一文ではなく辞�
       ]),
     }),
   );
-  await page.goto("/?transport=server");
+  await page.goto("/?transport=server&scene=2d");
   await page.getByRole("button", { name: /English/ }).click();
   await page.getByRole("button", { name: "Come in" }).click();
   const input = page.getByRole("textbox", { name: "Your message" });

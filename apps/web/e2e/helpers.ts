@@ -24,7 +24,7 @@ export async function snap(page: Page, info: TestInfo, name: string, fullPage = 
 }
 
 /** 店に入り、相談を始められる状態にする */
-export async function enterShop(page: Page, query = "?speed=4"): Promise<void> {
+export async function enterShop(page: Page, query = "?speed=4&scene=2d"): Promise<void> {
   await page.goto(`/${query}`);
   await page.getByRole("button", { name: "入店する" }).click();
   await expect(page.getByRole("textbox", { name: "相談の発言" })).toBeEnabled();

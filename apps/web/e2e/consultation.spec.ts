@@ -15,7 +15,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("相談からしおりまで、画面で通せる", async ({ page }, info) => {
-  await page.goto("/?speed=4");
+  await page.goto("/?speed=4&scene=2d");
   await expect(page.getByRole("heading", { name: "MATSURI IKOKA" })).toBeVisible();
   await snap(page, info, "00-storefront");
   await page.getByRole("button", { name: "入店する" }).click();
@@ -101,7 +101,10 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   await openPanel(page);
   await expect(page.getByTestId("verification")).toContainText("予定どおり開催されます");
 
-  await page.getByRole("button", { name: "旅のしおりを開く" }).first().click();
+  await page
+    .getByTestId("itinerary-panel")
+    .getByRole("button", { name: "旅のしおりを開く" })
+    .click();
   const shiori = page.getByTestId("shiori");
   await expect(shiori.getByRole("heading", { level: 1 })).toHaveText("鈴鳴の灯籠と川べりさんぽ");
   for (const section of ["main", "flow", "map", "food", "first-time", "rain", "sources"]) {
@@ -130,7 +133,7 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
 
 test("待ち時間には小話とクイズが出て、答えると結果が出る", async ({ page }, info) => {
   test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
-  await enterShop(page, "?speed=1");
+  await enterShop(page, "?speed=1&scene=2d");
   await sendSampleMessage(page);
   await expect(page.getByTestId("trivia-card")).toBeVisible();
   await expect(page.getByTestId("trivia-card")).toContainText("知ってた？");
@@ -188,7 +191,7 @@ test("動きを減らす設定では、2D の店内とスタッフの文字の�
 
 test("英語に切り替えられる", async ({ page }, info) => {
   test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
-  await page.goto("/");
+  await page.goto("/?scene=2d");
   await page.getByRole("button", { name: /English/ }).click();
   await expect(page.getByRole("button", { name: "Come in" })).toBeVisible();
   await page.getByRole("button", { name: "Come in" }).click();

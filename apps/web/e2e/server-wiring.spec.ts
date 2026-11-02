@@ -100,7 +100,7 @@ test("合言葉の要る店では、入口で聞き、すべての /api の呼�
   page,
 }) => {
   const server = await fakeServer(page, { passcode: PASSCODE });
-  await page.goto("/?transport=server&sample=suzunari-day-trip");
+  await page.goto("/?transport=server&sample=suzunari-day-trip&scene=2d");
   await page.getByRole("button", { name: "入店する" }).click();
 
   const form = page.getByTestId("passcode-form");
@@ -148,7 +148,7 @@ test("相談の途中で合言葉を求められたら聞き直し、入れ直�
       body: sse(sample.turns[0]?.events.map((recorded) => recorded.event) ?? []),
     });
   });
-  await page.goto("/?transport=server");
+  await page.goto("/?transport=server&scene=2d");
   await page.getByRole("button", { name: "入店する" }).click();
   await send(page, "8月16日に行ける祭り");
 
@@ -167,7 +167,7 @@ test("相談が見つからない（404）ときは、新しい相談を自動�
   page,
 }) => {
   const server = await fakeServer(page, { loseFirstSession: true });
-  await page.goto("/?transport=server");
+  await page.goto("/?transport=server&scene=2d");
   await page.getByRole("button", { name: "入店する" }).click();
   await send(page, firstMessage);
 
@@ -182,7 +182,7 @@ test("接客サーバーとしおりまで進むと、しおりの URL を出し
   page,
 }) => {
   await fakeServer(page);
-  await page.goto("/?transport=server");
+  await page.goto("/?transport=server&scene=2d");
   await page.getByRole("button", { name: "入店する" }).click();
   for (const turn of sample.turns) {
     if (await page.getByTestId("candidates").isVisible()) {
