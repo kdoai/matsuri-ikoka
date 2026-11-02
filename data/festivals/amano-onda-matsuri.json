@@ -1,0 +1,323 @@
+{
+  "id": "amano-onda-matsuri",
+  "name": {
+    "ja": "天野の御田祭",
+    "en": "Amano Onda Matsuri"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "和歌山県",
+      "name": "かつらぎ町"
+    }
+  ],
+  "venue": {
+    "name": "丹生都比売神社 楼門",
+    "lat": 34.2632,
+    "lng": 135.5221
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "重要文化財の楼門の下で、面をつけた田人と牛飼が稲作の一年をこっけいに演じる",
+    "最後に「一粒万倍」と唱えて、苗と稲穂を神々に供える",
+    "この日だけ刷られる天野宮生土宝印や福の種を、参拝した人だけが受けられる",
+    "高野山のふもと、標高約450mの天野盆地にある世界遺産の社で行われる"
+  ],
+  "trivia": [
+    {
+      "text": "起源は平安時代にさかのぼり、室町時代に神事と神賑が一体になって狂言の形になったとされる",
+      "source": {
+        "url": "https://niutsuhime.or.jp/information/ondamatsuri/",
+        "title": "丹生都比売神社 御田祭（おんだまつり）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "初めは夜更けの暗闇の中で、神職と八乙女（童女）が行う農耕の祭りだった",
+      "source": {
+        "url": "https://niutsuhime.or.jp/information/ondamatsuri/",
+        "title": "丹生都比売神社 御田祭（おんだまつり）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "昭和56年（1981）7月13日に、和歌山県の無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.pref.wakayama.lg.jp/prefg/500700/mokuroku/d00155461.html",
+        "title": "和歌山県教育委員会 県指定文化財・民俗文化財",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "舞台になる楼門は明応8年（1499）の建立で、本殿とともに国の重要文化財",
+      "source": {
+        "url": "https://online.bunka.go.jp/index.php/heritages/detail/173885",
+        "title": "文化遺産オンライン 丹生都比売神社境内",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "楼門で演じる芸能を見学する行事で、主催者による混雑や危険の注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://niutsuhime.or.jp/information/ondamatsuri/",
+        "title": "丹生都比売神社 御田祭（おんだまつり）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://niutsuhime.or.jp/all/news/p-%E4%BB%A4%E5%92%8C5%E5%B9%B4%E5%8E%84%E9%99%A4%E7%A5%AD%E3%83%BB%E5%BE%A1%E7%94%B0%E7%A5%AD%E3%81%AE%E3%81%94%E6%A1%88%E5%86%85/",
+        "title": "丹生都比売神社 令和5年厄除祭・御田祭のご案内（2022年12月19日掲載）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-01-17",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "例年1月の第3日曜日（2027年の発表はまだない）。例年は同じ日の11:00に厄除祭、そのあと正午ごろから授与所で御田祭のお札・天野宮生土宝印・福の種を授与し、14:00から楼門で御田祭、終了後に福引（2023年の案内）。神社の御田祭の紹介ページだけは「1月19日 午後2時」と書いている",
+      "sources": [
+        {
+          "url": "https://niutsuhime.or.jp/event/annual/",
+          "title": "丹生都比売神社 年間祭典行事（御田祭は1月の第三日曜日）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.katsuragi-kanko.jp/heritage/niutsume/",
+          "title": "かつらぎ観光協会 丹生都比売神社（御田祭は毎年1月第3日曜日）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.pref.wakayama.lg.jp/prefg/500700/d00155498.html",
+          "title": "和歌山県 無形民俗文化財カレンダー（天野の御田祭は1月・第3日曜）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://niutsuhime.or.jp/all/news/p-%E4%BB%A4%E5%92%8C5%E5%B9%B4%E5%8E%84%E9%99%A4%E7%A5%AD%E3%83%BB%E5%BE%A1%E7%94%B0%E7%A5%AD%E3%81%AE%E3%81%94%E6%A1%88%E5%86%85/",
+          "title": "丹生都比売神社 令和5年厄除祭・御田祭のご案内（2023年1月15日 14:00）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://niutsuhime.or.jp/information/yakuyokesai/",
+          "title": "丹生都比売神社 厄除祭特別祈祷（令和8年は1月18日 11:00）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "かつらぎ町コミュニティバス 丹生都比売神社前バス停",
+        "walkMinutes": [2, 7],
+        "note": "JR和歌山線 笠田駅前から天野コースで終点まで。笠田駅前発は9:20・11:30・13:00・15:30・17:40、神社前発は7:00・9:50・12:00・13:30・16:00（令和4年8月21日改定の時刻表）。運賃200円、現金のみ。12月31日〜1月3日は運休"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "JR 笠田駅（笠田駅前バス停）",
+        "minutes": [29, 29],
+        "route": "かつらぎ町コミュニティバス天野コース（丹生都比売神社前ゆき）、乗り換えなし。1日5便"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.town.katsuragi.wakayama.jp/010/070/files/komibasujikoku.pdf",
+        "title": "かつらぎ町コミュニティバス時刻表（令和4年8月21日改定）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.town.katsuragi.wakayama.jp/010/070/2023-0816-0925-18.html",
+        "title": "かつらぎ町 公共交通（コミュニティバスの運賃・運休日）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://niutsuhime.or.jp/access",
+        "title": "丹生都比売神社 アクセス",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.wakayama-kanko.or.jp/spots/detail_440.html",
+        "title": "和歌山県公式観光サイト 丹生都比売神社",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.katsuragi-kanko.jp/access/",
+        "title": "かつらぎ観光協会 アクセス",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "katsuragi-town-history-folk-museum",
+      "name": "かつらぎ町歴史民俗資料館",
+      "kind": "sightseeing",
+      "summary": "2025年11月に天野の里に開館した町の資料館。町が持つ文化財を、信仰と世界遺産をテーマに実物・パネル・映像で紹介する。天野地域交流センター前バス停の向かい。年末年始（12/28〜1/4）は休館",
+      "location": {
+        "lat": 34.2592,
+        "lng": 135.5155
+      },
+      "walkMinutesFromVenue": [12, 17],
+      "hours": {
+        "open": "09:00",
+        "close": "16:30",
+        "lastEntry": "16:00"
+      },
+      "closedDays": ["mon", "tue"],
+      "price": "無料",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.town.katsuragi.wakayama.jp/020/090/2025-1016-1257-44.html",
+          "title": "かつらぎ町 かつらぎ町歴史民俗資料館",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://niutsuhime.or.jp/all/news/p-%e3%81%8b%e3%81%a4%e3%82%89%e3%81%8e%e7%94%ba%e6%ad%b4%e5%8f%b2%e6%b0%91%e4%bf%97%e8%b3%87%e6%96%99%e9%a4%a8%e3%80%80%e9%96%8b%e9%a4%a8%e3%81%ae%e3%81%8a%e7%9f%a5%e3%82%89%e3%81%9b/",
+          "title": "丹生都比売神社 かつらぎ町歴史民俗資料館 開館のお知らせ",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "amano-bongu",
+      "name": "あまの凡愚",
+      "kind": "food",
+      "summary": "上天野にある蕎麦の店。石臼で自家製粉した手打ちの蕎麦を、食べ方を変えながらコースで出す。要予約",
+      "location": {
+        "lat": 34.2599,
+        "lng": 135.5195
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:30",
+        "close": "15:00"
+      },
+      "closedDays": ["mon", "tue", "wed"],
+      "price": "コース 3,300円・5,300円",
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.katsuragi-kanko.jp/eat/63/",
+          "title": "かつらぎ観光協会 あまの凡愚",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "shiki-urara",
+      "name": "パンとCafe 思季うらら",
+      "kind": "food",
+      "summary": "下天野にある手作りの建物の店で、天然酵母のパンや焼きたてのピザとお茶を楽しめる。日曜・祝日だけ営業",
+      "location": {
+        "lat": 34.2591,
+        "lng": 135.507
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "17:00",
+        "lastEntry": "16:00"
+      },
+      "closedDays": ["mon", "tue", "wed", "thu", "fri", "sat"],
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.katsuragi-kanko.jp/eat/61/",
+          "title": "かつらぎ観光協会 パンとCafe 思季うらら",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://niutsuhime.or.jp/information/ondamatsuri/",
+      "title": "丹生都比売神社 御田祭（おんだまつり）",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://niutsuhime.or.jp/event/annual/",
+      "title": "丹生都比売神社 年間祭典行事",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.pref.wakayama.lg.jp/prefg/500700/mokuroku/d00155461.html",
+      "title": "和歌山県教育委員会 県指定文化財・民俗文化財",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.katsuragi-kanko.jp/heritage/niutsume/",
+      "title": "かつらぎ観光協会 丹生都比売神社",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.katsuragi-kanko.jp/search/rekishi_cate/amano/",
+      "title": "かつらぎ観光協会 天野の里（標高約450mの天野盆地）",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表（日付は例年の決まりの1月第3日曜日から見込んだ）",
+    "2027年の始まる時刻（例年は14:00）と、終わる時刻・所要時間（帰りのバスは神社前16:00発が最終）",
+    "雨天のときの扱い",
+    "見学の場所・決まり・服装・持ち物・撮影の可否（公式の案内に書かれていない）",
+    "2027年の授与品と初穂料、福引の有無（2023年は福の種1,000円で福引券つき。授与は当日参拝した人だけ）",
+    "大阪（難波）・和歌山駅から笠田駅までの公式の所要時間（観光協会の案内は、なんば〜橋本が約50分、天王寺〜和歌山が約48分までで、JR和歌山線の区間の時間がない）",
+    "規模の根拠になる見学者数や出演者の人数",
+    "露店が出るか",
+    "当日の駐車場の混み具合と臨時駐車場（ふだんは無料で約60台）",
+    "あまの凡愚の営業日（観光協会は月・火・水が定休、ほかのサイトに月〜金休みとする掲載もある）と予約の方法"
+  ]
+}
