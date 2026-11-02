@@ -43,6 +43,7 @@ const DISALLOWED_SOURCES: readonly { pattern: RegExp; reason: string }[] = [
     pattern: /^https?:\/\/(www\.)?ekitan\.com\/transit\/route\/[^?#]+\?/,
     reason: "駅探のクエリつきの経路検索",
   },
+  { pattern: /^https?:\/\/(www\.)?sakigake\.jp\//, reason: "秋田魁新報" },
 ];
 
 export interface ValidateOptions {
