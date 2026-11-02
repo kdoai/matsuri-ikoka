@@ -34,7 +34,7 @@ function main(): number {
     options: { today: { type: "string" }, dir: { type: "string" } },
   });
   const today = IsoDateSchema.parse(values.today ?? todayInJapan());
-  // pnpm から呼ぶと作業フォルダが変わるので、--dir は呼んだ場所（INIT_CWD）から読む
+  // pnpm から呼ぶと作業フォルダがリポジトリのルートになるので、--dir は呼んだ場所（INIT_CWD）から読む
   const dir =
     values.dir === undefined
       ? DEFAULT_DIR
