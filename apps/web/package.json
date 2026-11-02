@@ -12,10 +12,12 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@fontsource/zen-maru-gothic": "5.3.1",
     "@matsuri-ikoka/schema": "workspace:*",
     "@microsoft/fetch-event-source": "2.0.1",
     "@react-three/fiber": "9.8.2",
     "leaflet": "1.9.4",
+    "lucide-react": "1.56.0",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "three": "0.186.1",
