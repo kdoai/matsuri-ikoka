@@ -353,7 +353,7 @@ function dayWarnings(
     const beforeFestival = festivalIndex < 0 ? timeline : timeline.slice(0, festivalIndex);
     let lastBreak = beforeFestival[0]?.start ?? 0;
     for (const { item, end } of beforeFestival) {
-      if (item.type === "rest" || item.type === "meal") {
+      if (item.type === "rest" || item.type === "meal" || item.type === "free") {
         lastBreak = end;
       } else if (end - lastBreak > effects.restIntervalMinutes) {
         warnings.push({

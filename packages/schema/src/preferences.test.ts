@@ -71,6 +71,40 @@ describe("TripConditionsSchema", () => {
     expect(TripConditionsSchema.safeParse({ ...conditions, party }).success).toBe(false);
   });
 
+  it("泊まりの旅の項目（旅のかたち・終わりの場所・ペースなど）は任意で、おまかせも選べる", () => {
+    const longTrip = {
+      ...conditions,
+      nights: 5,
+      returnTo: "やまびこ駅",
+      route: { shape: "loop", areas: ["鈴鳴町", "かざみ温泉"] },
+      stayNear: "town",
+      festivalDays: "several",
+      pace: "relaxed",
+      interests: ["onsen", "food"],
+    };
+    expect(TripConditionsSchema.safeParse(longTrip).success).toBe(true);
+    const leftToUs = {
+      ...conditions,
+      nights: 3,
+      route: { shape: "auto", areas: [] },
+      stayNear: "auto",
+      festivalDays: "auto",
+      pace: "auto",
+      interests: [],
+    };
+    expect(TripConditionsSchema.safeParse(leftToUs).success).toBe(true);
+  });
+
+  it("回りたい地域は5つまで、楽しみたいことは決まった選択肢から", () => {
+    const areas = ["一", "二", "三", "四", "五", "六"];
+    expect(
+      TripConditionsSchema.safeParse({ ...conditions, route: { shape: "loop", areas } }).success,
+    ).toBe(false);
+    expect(TripConditionsSchema.safeParse({ ...conditions, interests: ["skiing"] }).success).toBe(
+      false,
+    );
+  });
+
   it("聞き取りの途中は、どの条件も空でよい", () => {
     expect(PartialTripConditionsSchema.safeParse({}).success).toBe(true);
     expect(PartialTripConditionsSchema.safeParse({ origin: "みなと中央駅" }).success).toBe(true);

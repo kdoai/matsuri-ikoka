@@ -21,7 +21,8 @@ const VersionSchema = z.number().int().min(1);
 /**
  * 予定の種類。
  * move 移動 / sightseeing 観光 / meal 食事 / rest 休憩 /
- * festival_prep 祭りの前の準備（到着の余裕・場所取り・申し込み）/ festival 祭り
+ * festival_prep 祭りの前の準備（到着の余裕・場所取り・申し込み）/ festival 祭り /
+ * free 自由に過ごす時間（データとツールの結果に行き先がないとき。場所は作らない）
  */
 export const ITINERARY_ITEM_TYPES = [
   "move",
@@ -30,6 +31,7 @@ export const ITINERARY_ITEM_TYPES = [
   "rest",
   "festival_prep",
   "festival",
+  "free",
 ] as const;
 
 export const MOVE_MEANS = ["walk", "train", "bus", "car", "taxi"] as const;
@@ -72,6 +74,13 @@ export const ItineraryItemSchema = z
         code: "custom",
         path: ["festivalId"],
         message: "祭りの予定には festivalId が必要です",
+      });
+    }
+    if (item.type === "free" && (item.location !== null || item.spotId !== undefined)) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["location"],
+        message: "自由に過ごす時間には、場所（location・spotId）を付けません",
       });
     }
     if ((item.type === "festival" || item.spotId !== undefined) && item.sources.length === 0) {

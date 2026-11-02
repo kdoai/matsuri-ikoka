@@ -173,6 +173,34 @@ describe("日ごとの旅程（日帰りのお出かけから6泊7日まで）",
     expect(ItinerarySchema.safeParse(twoDays()).success).toBe(true);
   });
 
+  it("祭りのない日（観光・自由に過ごす時間だけの日）があってよい", () => {
+    const itinerary = twoDays();
+    itinerary.days[0]!.items = [
+      {
+        id: "day1-free",
+        start: "13:00",
+        end: "17:00",
+        type: "free",
+        name: "宿の近くで自由に過ごす",
+        location: null,
+        reason: "この日に寄れる場所がデータにないため、自由に過ごす時間にする",
+        move: null,
+        hours: null,
+        cost: null,
+        sources: [],
+        changedInVersion: 1,
+      },
+    ];
+    expect(ItinerarySchema.safeParse(itinerary).success).toBe(true);
+  });
+
+  it("自由に過ごす時間には場所を付けない", () => {
+    const itinerary = fictionalItinerary();
+    const hall = itinerary.days[0]!.items[1]!;
+    itinerary.days[0]!.items[1] = { ...hall, type: "free" };
+    expect(ItinerarySchema.safeParse(itinerary).success).toBe(false);
+  });
+
   it("祭りの予定だけの短いお出かけでもよい", () => {
     const itinerary = fictionalItinerary();
     itinerary.days[0]!.items = itinerary.days[0]!.items.filter((item) => item.type === "festival");

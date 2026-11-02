@@ -342,6 +342,19 @@ describe("checkPlan の日をまたぐ予定", () => {
 });
 
 describe("checkPlan のこだわりの確認（warnings）", () => {
+  it("自由に過ごす時間は、子連れの休憩として数える", () => {
+    const items = [
+      item({ id: "walk1", start: "13:00", end: "14:30" }),
+      item({ id: "free", type: "free", start: "14:40", end: "15:30" }),
+      item({ id: "walk2", start: "15:40", end: "16:30" }),
+      fest,
+    ];
+
+    const kids = checkPlan(plan(items, { party: "kids" }), find);
+
+    expect(kids.warnings.filter((w) => w.code === "rest_interval")).toEqual([]);
+  });
+
   it("子連れで休憩が2時間を超えてあかなければ知らせる", () => {
     const items = [
       item({ id: "walk1", start: "13:00", end: "14:30" }),

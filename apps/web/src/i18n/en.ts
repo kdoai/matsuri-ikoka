@@ -273,6 +273,7 @@ export const en: Messages = {
       rest: "Rest",
       festival_prep: "Before the festival",
       festival: "Festival",
+      free: "Free time",
     },
     weather: {
       title: "Weather",

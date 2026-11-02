@@ -255,6 +255,7 @@ export const ja = {
       rest: "休憩",
       festival_prep: "祭りの前の準備",
       festival: "祭り",
+      free: "自由に過ごす時間",
     },
     weather: {
       title: "天気",
