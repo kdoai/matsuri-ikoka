@@ -1,3 +1,5 @@
+// いちばん先に読み込む（スキーマのモジュールより前に zod を設定する）
+import "./zod-setup";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App";
