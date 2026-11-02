@@ -280,6 +280,40 @@
           "confidence": "official"
         }
       ]
+    },
+    {
+      "id": "tsuruya-yoshinobu-honten",
+      "name": "鶴屋吉信 京都本店",
+      "kind": "food",
+      "summary": "西陣にある京菓子の老舗の本店。2階の茶寮で甘味、菓遊茶屋で職人が目の前で作る生菓子を味わえる（予約優先）。店頭は9:00〜18:00。年末年始に数日休む",
+      "location": {
+        "lat": 35.0299,
+        "lng": 135.7513
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "17:30",
+        "lastEntry": "17:00"
+      },
+      "closedDays": ["wed"],
+      "price": null,
+      "tags": ["indoor", "seating", "local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.tsuruyayoshinobu.jp/news/information/eigyo_info",
+          "title": "鶴屋吉信 直営店舗の営業日時のお知らせ",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.tsuruyayoshinobu.jp/shop/head",
+          "title": "鶴屋吉信 京都本店",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
     }
   ],
   "sources": [
@@ -314,6 +348,8 @@
     "露店が出るか",
     "規模の根拠になる授与の数や参拝者数の公表値",
     "老松 北野店が12月7日・8日に営業するか（定休日が不定休）",
-    "京都駅からの所要時間の出典が2013年発行の京都市の冊子で、今のダイヤでの時間"
+    "京都駅からの所要時間の出典が2013年発行の京都市の冊子で、今のダイヤでの時間",
+    "鶴屋吉信 京都本店の茶寮・菓遊茶屋の値段（公式はメニューの PDF だけで確かめていない）",
+    "鶴屋吉信 京都本店の緯度・経度は、公式でない掲載の番地（西船橋町340-1）を国土地理院の住所検索にかけたもの"
   ]
 }
