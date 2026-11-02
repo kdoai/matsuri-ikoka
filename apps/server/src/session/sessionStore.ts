@@ -46,9 +46,17 @@ export function randomId(prefix: string): string {
 export class SessionStore {
   readonly #sessions = new Map<string, Session>();
   readonly #now: () => number;
+  readonly #onRemove: (session: Session) => void;
 
-  constructor(now: () => number = Date.now) {
-    this.#now = now;
+  /** onRemove は相談を消したときに呼ぶ（エージェントの会話の記録を消すのに使う） */
+  constructor(options: { now?: () => number; onRemove?: (session: Session) => void } = {}) {
+    this.#now = options.now ?? Date.now;
+    this.#onRemove = options.onRemove ?? (() => {});
+  }
+
+  #remove(session: Session): void {
+    this.#sessions.delete(session.id);
+    this.#onRemove(session);
   }
 
   create(init: Partial<Pick<Session, "preferences" | "replay">> = {}): Session {
@@ -76,8 +84,8 @@ export class SessionStore {
   get(id: string): Session | undefined {
     const session = this.#sessions.get(id);
     if (session === undefined) return undefined;
-    if (this.#now() - session.lastActiveAt > SESSION_IDLE_MS) {
-      this.#sessions.delete(id);
+    if (!session.busy && this.#now() - session.lastActiveAt > SESSION_IDLE_MS) {
+      this.#remove(session);
       return undefined;
     }
     session.lastActiveAt = this.#now();
@@ -87,10 +95,8 @@ export class SessionStore {
   /** 使われなくなった相談を消す */
   sweep(): void {
     const now = this.#now();
-    for (const [id, session] of this.#sessions) {
-      if (!session.busy && now - session.lastActiveAt > SESSION_IDLE_MS) {
-        this.#sessions.delete(id);
-      }
+    for (const session of [...this.#sessions.values()]) {
+      if (!session.busy && now - session.lastActiveAt > SESSION_IDLE_MS) this.#remove(session);
     }
   }
 }

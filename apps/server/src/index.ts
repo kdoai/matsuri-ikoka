@@ -1,11 +1,12 @@
 import path from "node:path";
-import { query } from "@anthropic-ai/claude-agent-sdk";
+import { deleteSession, query } from "@anthropic-ai/claude-agent-sdk";
 import { serve } from "@hono/node-server";
 import { ClaudeAgentRunner } from "./agent/claudeRunner";
 import { agentEnv, createAgentWorkdir } from "./agent/options";
 import { loadPrompts } from "./agent/prompts";
 import { loadSampleConversations, ReplayAgentRunner } from "./agent/replayRunner";
 import type { AgentRunner } from "./agent/runner";
+import { agentConfigDir, forgetTranscripts } from "./agent/transcripts";
 import { createWebVerifier } from "./agent/webVerifier";
 import { createApp } from "./app";
 import { readConfig } from "./config";
@@ -40,9 +41,23 @@ for (const issue of festivals.issues) {
 
 const itineraries = new ItineraryStore();
 let runner: AgentRunner;
+let sessions = new SessionStore();
 if (config.mode === "live") {
   const prompts = await loadPrompts();
   const cwd = createAgentWorkdir();
+  // API キーで動かすときは、会話の記録の置き場所を一時ディレクトリにし、終了時に消す
+  const configDir = agentConfigDir(process.env);
+  if (configDir.dir !== null) {
+    process.env.CLAUDE_CONFIG_DIR = configDir.dir;
+    for (const signal of ["SIGINT", "SIGTERM"] as const) {
+      process.once(signal, () => {
+        configDir.cleanup();
+        process.exit(0);
+      });
+    }
+  }
+  // 相談が消えたら、その相談の会話の記録を消す
+  sessions = new SessionStore({ onRemove: forgetTranscripts(deleteSession, cwd) });
   const env = agentEnv(process.env);
   runner = new ClaudeAgentRunner({
     festivals: festivals.store,
@@ -73,12 +88,15 @@ if (config.mode === "live") {
 
 const app = createApp({
   runner,
-  sessions: new SessionStore(),
+  sessions,
   itineraries,
   festivals: festivals.store,
   limiter: new DailyLimiter(config.dailyChatLimit, today),
   accessPasscode: config.accessPasscode,
 });
+
+// 使われなくなった相談を、10分ごとに片付ける
+setInterval(() => sessions.sweep(), 10 * 60 * 1000).unref();
 
 serve({ fetch: app.fetch, port: config.port }, (info) => {
   console.info(`server listening on http://localhost:${info.port} (${config.mode})`);

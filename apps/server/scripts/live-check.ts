@@ -8,7 +8,7 @@
 import { mkdtemp, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { query } from "@anthropic-ai/claude-agent-sdk";
+import { deleteSession, query } from "@anthropic-ai/claude-agent-sdk";
 import {
   DEFAULT_PREFERENCES,
   decodeSseEvent,
@@ -116,6 +116,7 @@ function describe(event: SseEvent): string {
 async function main() {
   const festivalsDir = await mkdtemp(path.join(tmpdir(), "matsuri-live-check-"));
   const cwd = createAgentWorkdir();
+  let agentSessionId: string | null = null;
   try {
     await shiftedFictionalFestivals(festivalsDir);
     const festivals = (await loadFestivals([festivalsDir])).store;
@@ -164,6 +165,7 @@ async function main() {
         events.push(event);
         console.log(`  +${((Date.now() - started) / 1000).toFixed(1)}s ${describe(event)}`);
       });
+      agentSessionId = sessions.get(sessionId)?.agentSessionId ?? agentSessionId;
       return events;
     };
 
@@ -223,6 +225,8 @@ async function main() {
       console.log("\nすべて確認できました");
     }
   } finally {
+    // 確かめ終えたら、この相談の会話の記録を消す
+    if (agentSessionId !== null) await deleteSession(agentSessionId, { dir: cwd }).catch(() => {});
     await rm(festivalsDir, { recursive: true, force: true });
     await rm(cwd, { recursive: true, force: true });
   }
