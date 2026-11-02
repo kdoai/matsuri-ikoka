@@ -1,0 +1,149 @@
+import { ChatRequestSchema, PreferencesSchema, SlugSchema } from "@matsuri-ikoka/schema";
+import type { Context, Hono } from "hono";
+import { z } from "zod";
+import { preferencesLabel } from "../agent/briefing";
+import type { AgentRunner } from "../agent/runner";
+import type { Session, SessionStore } from "../session/sessionStore";
+import { apiError } from "./errors";
+import type { DailyLimiter } from "./guard";
+import { streamTurn } from "./turnStream";
+
+// 相談の API。返答は SSE（routes/turnStream.ts）で返す。
+// SSE を始める前に断るとき（形の誤り・相談が見つからない・返答の途中・回数の上限）は、
+// HTTP の状態コードと error イベントの data と同じ形の JSON で返す。
+
+export interface ChatDeps {
+  runner: AgentRunner & { sampleFor?(requested?: string): string | null };
+  sessions: SessionStore;
+  limiter: DailyLimiter;
+  turnTimeoutMs?: number;
+  heartbeatMs?: number;
+}
+
+const SessionRequestSchema = z.strictObject({ sample: SlugSchema.optional() }).optional();
+
+/** PATCH /api/preferences の本文 */
+const PreferencesRequestSchema = z.strictObject({
+  sessionId: ChatRequestSchema.shape.sessionId,
+  preferences: PreferencesSchema,
+});
+
+async function readJson(c: Context): Promise<unknown> {
+  const text = await c.req.text();
+  if (text.trim() === "") return undefined;
+  return JSON.parse(text);
+}
+
+function badRequest(c: Context, message = "送った内容の形が正しくありません。") {
+  return c.json(apiError("bad_request", message, false), 400);
+}
+
+/** 相談を引き、返答を作れる状態か確かめる。だめならエラーの Response を返す */
+function openSession(c: Context, deps: ChatDeps, sessionId: string): Session | Response {
+  const session = deps.sessions.get(sessionId);
+  if (session === undefined) {
+    return c.json(
+      apiError("bad_request", "相談が見つかりません。新しく始めてください。", false),
+      404,
+    );
+  }
+  if (session.busy) {
+    return c.json(
+      apiError("bad_request", "前の返事を作っています。終わってから送ってください。", true),
+      409,
+    );
+  }
+  if (!deps.limiter.consume()) {
+    return c.json(
+      apiError("rate_limited", "今日の相談の受付は終わりました。また明日お越しください。", false),
+      429,
+    );
+  }
+  return session;
+}
+
+export function registerChatRoutes(app: Hono, deps: ChatDeps) {
+  const timing = {
+    ...(deps.turnTimeoutMs === undefined ? {} : { timeoutMs: deps.turnTimeoutMs }),
+    ...(deps.heartbeatMs === undefined ? {} : { heartbeatMs: deps.heartbeatMs }),
+  };
+
+  app.post("/api/session", async (c) => {
+    let body: z.infer<typeof SessionRequestSchema>;
+    try {
+      body = SessionRequestSchema.parse(await readJson(c));
+    } catch {
+      return badRequest(c);
+    }
+    let replay: Session["replay"] = null;
+    if (deps.runner.mode === "mock") {
+      const sampleId = deps.runner.sampleFor?.(body?.sample) ?? null;
+      if (sampleId === null) return badRequest(c, "そのサンプルの相談はありません。");
+      replay = { sampleId, nextTurn: 0 };
+    }
+    const session = deps.sessions.create({ replay });
+    return c.json({ sessionId: session.id }, 201);
+  });
+
+  app.post("/api/chat", async (c) => {
+    let request: z.infer<typeof ChatRequestSchema>;
+    try {
+      request = ChatRequestSchema.parse(await readJson(c));
+    } catch {
+      return badRequest(c);
+    }
+    const session = openSession(c, deps, request.sessionId);
+    if (session instanceof Response) return session;
+    // 画面で選んでいるこだわりを正とする。会話で切り替わったら、ツールが相談の状態を書き換える
+    session.preferences = request.preferences;
+    return streamTurn(
+      c,
+      session,
+      (signal, emit) =>
+        deps.runner.runTurn(
+          { session, message: request.message, preferences: request.preferences, signal },
+          emit,
+        ),
+      timing,
+    );
+  });
+
+  app.patch("/api/preferences", async (c) => {
+    let request: z.infer<typeof PreferencesRequestSchema>;
+    try {
+      request = PreferencesRequestSchema.parse(await readJson(c));
+    } catch {
+      return badRequest(c);
+    }
+    const existing = deps.sessions.get(request.sessionId);
+    // 旅程があるときだけ旅程係を動かす。記録の再生（mock）では、こだわりを変えるだけにする
+    const replan = existing?.itineraryId != null && deps.runner.mode === "live";
+    if (!replan) {
+      if (existing === undefined) {
+        return c.json(
+          apiError("bad_request", "相談が見つかりません。新しく始めてください。", false),
+          404,
+        );
+      }
+      if (existing.busy) {
+        return c.json(
+          apiError("bad_request", "前の返事を作っています。終わってから送ってください。", true),
+          409,
+        );
+      }
+      existing.preferences = request.preferences;
+      return streamTurn(c, existing, async () => {}, timing);
+    }
+    const session = openSession(c, deps, request.sessionId);
+    if (session instanceof Response) return session;
+    session.preferences = request.preferences;
+    const message = `画面でこだわりを「${preferencesLabel(request.preferences)}」に切り替えました。旅程係にだけ頼んで、この切り替えに合わせて旅程を組み直してください。`;
+    return streamTurn(
+      c,
+      session,
+      (signal, emit) =>
+        deps.runner.runTurn({ session, message, preferences: request.preferences, signal }, emit),
+      timing,
+    );
+  });
+}
