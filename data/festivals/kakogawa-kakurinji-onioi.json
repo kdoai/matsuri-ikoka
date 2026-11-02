@@ -1,0 +1,355 @@
+{
+  "id": "kakogawa-kakurinji-onioi",
+  "name": {
+    "ja": "修正会（鬼追い）",
+    "en": "Kakurinji Shushoe Oni-oi"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "兵庫県",
+      "name": "加古川市"
+    }
+  ],
+  "venue": {
+    "name": "鶴林寺 本堂",
+    "lat": 34.7522,
+    "lng": 134.8326
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "県下で一番古いとされる鬼面の赤鬼・青鬼が、本堂の須弥壇を回る",
+    "小鬼が柳の杖で床を打ち鳴らす音を合図に、親鬼が現れる",
+    "行事のあと、額に牛王印を押してもらえ、餅撒きもある",
+    "鬼追いの由来を語る謡曲「安田吉道」の奉納から始まる"
+  ],
+  "trivia": [
+    {
+      "text": "鬼追いで使う鬼面は、兵庫県内でいちばん古いものとされる",
+      "source": {
+        "url": "https://www.kakurinji.or.jp/post-1841/",
+        "title": "鶴林寺 1月8日は鬼追い(修正会)です",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "親鬼は赤鬼と青鬼。小鬼は4人で、2人1組になって柳の杖で床を打ち鳴らす",
+      "source": {
+        "url": "https://www.kakurinji.or.jp/post-1594/",
+        "title": "鶴林寺 鬼追い(修正会・しゅしょうえ)開催",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "赤鬼と青鬼は四股を踏みながら、須弥壇のまわりを7周半まわる",
+      "source": {
+        "url": "https://www.kakurinji.or.jp/post-1469/",
+        "title": "鶴林寺 鬼追い(修正会)について",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "暴れた鬼は最後に仏の力で改心し、良い鬼として人々の厄をはらうとされる",
+      "source": {
+        "url": "https://www.kakurinji.or.jp/event/shuseikai/",
+        "title": "鶴林寺 修正会(鬼追い)",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "行事のあと、参拝者は額に牛王印を押してもらう授与を受けられ、餅撒きもある（費用の記載なし。牛王札は別に頒布）",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "本堂での法要と鬼の舞の見学が中心で、寺の案内に混雑や危険についての注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.kakurinji.or.jp/post-1841/",
+        "title": "鶴林寺 1月8日は鬼追い(修正会)です",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kakurinji.or.jp/post-1594/",
+        "title": "鶴林寺 鬼追い(修正会・しゅしょうえ)開催",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-08",
+      "start": "13:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "13:00 謡曲「安田吉道」の奉納、14:00 悔過法要、15:00前ごろ赤鬼・青鬼と小鬼が登場。終了後に牛王印の授与、餅撒き、牛王札の頒布",
+      "sources": [
+        {
+          "url": "https://www.kakurinji.or.jp/post-1841/",
+          "title": "鶴林寺 1月8日は鬼追い(修正会)です（2026年1月6日掲載）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000952",
+          "title": "るるぶ&more. 修正会鬼追い",
+          "checkedAt": "2026-11-02",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-08",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "寺の行事日程で修正会（鬼追い）は1月8日。2027年の時刻は未発表。例年（2024年・2026年の案内）は13:00 謡曲の奉納、14:00 悔過法要、15:00前ごろ鬼の登場、終了後に牛王印の授与と餅撒き。2023年の案内では終わりは16:30ごろ",
+      "sources": [
+        {
+          "url": "https://www.kakurinji.or.jp/event/",
+          "title": "鶴林寺 行事日程",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kakurinji.or.jp/post-1841/",
+          "title": "鶴林寺 1月8日は鬼追い(修正会)です（2026年1月6日掲載）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 加古川駅",
+        "walkMinutes": [25, 30],
+        "note": "かこバス（別府海洋センター行き）で約8分、鶴林寺BTで降りて門前まで徒歩1分。寺の案内には徒歩15分の記載もある"
+      },
+      {
+        "name": "山陽電鉄 尾上の松駅",
+        "walkMinutes": [15, 20]
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "三ノ宮駅",
+        "minutes": [31, 31],
+        "route": "JR神戸線の新快速で加古川駅まで、乗り換えなし"
+      },
+      {
+        "hub": "大阪駅",
+        "minutes": [54, 54],
+        "route": "JR神戸線の新快速で加古川駅まで、乗り換えなし"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.kakurinji.or.jp/access/",
+        "title": "鶴林寺 アクセス",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ekitan.com/transit/route/sf-5347/st-5057",
+        "title": "駅探 三ノ宮(JR)から加古川（2026年11月2日 19時44分出発で検索）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      },
+      {
+        "url": "https://ekitan.com/transit/route/sf-5006/st-5057",
+        "title": "駅探 大阪から加古川（2026年11月2日 19時44分出発で検索）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "かつめし",
+        "note": "ご飯に平たいビフカツをのせ、デミグラス系のたれをかけて洋皿に盛り、箸で食べる加古川の名物。戦後まもなく加古川駅前の食堂で考案されたといわれ、市内と周辺の100店以上で食べられる",
+        "sources": [
+          {
+            "url": "https://kako-navi.jp/katsumeshi.html",
+            "title": "加古川観光協会 名物「かつめし」",
+            "checkedAt": "2026-11-02",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "tomari-jinja-kakogawa",
+      "name": "泊神社",
+      "kind": "sightseeing",
+      "summary": "伊勢神宮の御神体の御鏡がここに泊まり着いたことが起こりと伝わる神社。宮本武蔵の養子・伊織が寄進した絵馬や棟札、石灯籠が残る",
+      "location": {
+        "lat": 34.7641,
+        "lng": 134.8243
+      },
+      "walkMinutesFromVenue": [15, 20],
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://kako-navi.jp/spot/18919.html",
+          "title": "加古川観光協会 泊神社",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://kako-navi.jp/course/18637.html",
+          "title": "加古川観光協会 鶴林寺・歴史さんぽ",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "onoe-jinja",
+      "name": "尾上神社・尾上の松",
+      "kind": "sightseeing",
+      "summary": "住吉大明神をまつる神社。境内の尾上の松は謡曲「高砂」に出てくる相生の松で、国の重要文化財の朝鮮鐘「尾上の鐘」もある。山陽電車の尾上の松駅から徒歩約10分",
+      "location": {
+        "lat": 34.7431,
+        "lng": 134.8235
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://kako-navi.jp/spot/18910.html",
+          "title": "加古川観光協会 尾上神社・尾上の松",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "katsumeshitei-kakogawa-ekimae",
+      "name": "かつめし亭 加古川駅前店",
+      "kind": "food",
+      "summary": "加古川名物のかつめしの店。JR加古川駅の南、リトハ加古川A棟の1階にある。昼だけの営業",
+      "location": {
+        "lat": 34.7662,
+        "lng": 134.8373
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "15:00"
+      },
+      "closedDays": ["sun"],
+      "price": "特選 上かつめし［並］1,280円",
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://katumesitei.com/",
+          "title": "本家かつめし亭 店舗一覧",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kakogawa-sogo-bunka-center",
+      "name": "SHOWAグループ総合文化センター（加古川総合文化センター）",
+      "kind": "sightseeing",
+      "summary": "博物館・宇宙科学館・プラネタリウム館が集まる市の文化施設。博物館と宇宙科学館は入館無料。JR東加古川駅から北へ徒歩約10分。第2・4月曜（祝日なら翌日）と12/29〜1/3は休館",
+      "location": {
+        "lat": 34.7486,
+        "lng": 134.872
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": null,
+      "price": "博物館・宇宙科学館は無料、プラネタリウムは大人400円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.kakogawa-sougoubunka.jp/general_information/",
+          "title": "SHOWAグループ総合文化センター 開館時間・入館料",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://kako-navi.jp/spot/19090.html",
+          "title": "加古川観光協会 SHOWAグループ総合文化センター",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.kakurinji.or.jp/event/shuseikai/",
+      "title": "鶴林寺 修正会(鬼追い)",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.kakurinji.or.jp/",
+      "title": "鶴林寺 公式ホームページ",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://kako-navi.jp/spot/18950.html",
+      "title": "加古川観光協会 鶴林寺",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と時刻（例年は直前の1月6日ごろに寺の公式サイトで告知）",
+    "当日の入山料（2020年の寺の案内では当日は無料、2026年はるるぶ&more.の掲載だけで確かめた。普段は大人500円）",
+    "見学の場所（本堂の中で見られる範囲）と、混雑・入場の決まり",
+    "撮影の可否",
+    "雨天のときの扱い",
+    "参拝の決まり・服装・持ち物（出典が見つからない）",
+    "行事の終わりの時刻（2023年の案内では16:30ごろ。2024年・2026年の案内には書いていない）",
+    "牛王印の授与の費用と、餅撒きの場所",
+    "当日の駐車場の扱い（普段は鶴林寺公園駐車場、乗用車約30台）",
+    "露店が出るか",
+    "規模の根拠になる参拝者数の公表値（るるぶ&more.に「昨年500人」とあるだけ）",
+    "大阪駅・三ノ宮駅からの所要時間は、平日夜の検索結果1件だけで、昼の便の幅",
+    "泊神社・尾上神社の参拝できる時間",
+    "かつめし亭 加古川駅前店の年始の営業（1月8日に営業するか）"
+  ]
+}
