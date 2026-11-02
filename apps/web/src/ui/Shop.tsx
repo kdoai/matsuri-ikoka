@@ -175,7 +175,7 @@ export function Shop() {
       <main className="flex flex-col gap-3 p-2 pb-20 sm:p-3 sm:pb-20 lg:grid lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,1fr)_minmax(380px,34%)] lg:grid-rows-[minmax(0,1fr)] lg:pb-3">
         {/* 左：店内と会話 */}
         <div className="relative flex flex-col gap-2 lg:min-h-0">
-          <div className="h-[19rem] shrink-0 lg:h-[43%] lg:min-h-64">
+          <div className="h-[19rem] shrink-0 lg:h-[47%] lg:min-h-64">
             <SceneSlot
               overlay={
                 <>

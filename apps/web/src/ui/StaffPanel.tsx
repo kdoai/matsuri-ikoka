@@ -163,7 +163,13 @@ export function StaffList({ showBubbles }: { showBubbles: boolean }) {
                   <span className="text-ink-soft">{summarize(id, state)}</span>
                 </p>
                 {showBubbles && showsBubble(state) ? (
-                  <p className="mt-0.5 font-medium text-ink">「{state.bubble}」</p>
+                  // 一覧の高さをそろえるため2行までにする（同じ文は会話欄の作業の記録にも出る）
+                  <p
+                    className="mt-0.5 line-clamp-2 font-medium text-ink"
+                    title={state.bubble ?? ""}
+                  >
+                    「{state.bubble}」
+                  </p>
                 ) : null}
               </div>
             </li>
