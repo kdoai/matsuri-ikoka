@@ -433,6 +433,80 @@
           "confidence": "official"
         }
       ]
+    },
+    {
+      "id": "nara-prefectural-museum-of-art",
+      "name": "奈良県立美術館",
+      "kind": "sightseeing",
+      "summary": "奈良県の美術館。2026年12月12日〜20日は奈良県美術展覧会の会場になり、観覧は無料（14日は休館）",
+      "location": {
+        "lat": 34.686,
+        "lng": 135.8324
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "17:00",
+        "lastEntry": "16:45"
+      },
+      "closedDays": ["mon"],
+      "price": "奈良県美術展覧会（2026年12月12日〜20日）は観覧無料",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.pref.nara.lg.jp/n034/69257.html",
+          "title": "奈良県 第77回奈良県美術展覧会",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.pref.nara.lg.jp/n044/68711.html",
+          "title": "奈良県立美術館 展覧会の予定 2026年4月〜2027年3月",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.pref.nara.lg.jp/n044/11842.html",
+          "title": "奈良県立美術館",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "shizuka-kamameshi-koen",
+      "name": "志津香 公園店",
+      "kind": "food",
+      "summary": "奈良で60年余り続く、直火で炊く釜めしの店。近鉄奈良駅から東へ約15分。平日のラストオーダーは15:00（土日祝は16:00）。火曜定休（祝日は営業）、月1回の不定休あり",
+      "location": {
+        "lat": 34.6848,
+        "lng": 135.8366
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "15:00",
+        "lastEntry": "15:00"
+      },
+      "closedDays": ["tue"],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://kamameshi-shizuka.jp/free/kouen",
+          "title": "志津香 公園店 営業時間・MAP",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://kamameshi-shizuka.jp/",
+          "title": "奈良 釜めし 志津香",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
     }
   ],
   "sources": [
@@ -474,6 +548,7 @@
     "春日荷茶屋の12月の休み（休みは月ごとに案内される）",
     "平宗 奈良店の食事の営業時間（本館とはなれで分かれ、本館の食事の時間が書かれていない）",
     "2026年ののっぺい付粥の提供の告知（荷茶屋のお品書きに年が書かれていない）",
-    "2026年のお渡り式の行列の規模（例年は馬約50頭・奉仕者約1,000人）"
+    "2026年のお渡り式の行列の規模（例年は馬約50頭・奉仕者約1,000人）",
+    "志津香 公園店の閉店の時刻（案内はラストオーダーの時刻だけ）と、12月の不定休の日、釜めしの値段"
   ]
 }
