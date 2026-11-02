@@ -1,0 +1,13 @@
+# 改行は LF にそろえる
+* text=auto eol=lf
+
+# バイナリ
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.glb binary
+*.woff2 binary
+*.blend binary

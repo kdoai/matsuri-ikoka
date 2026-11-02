@@ -1,0 +1,36 @@
+# 依存関係
+node_modules/
+.pnpm-store/
+
+# ビルドとテストの出力
+dist/
+build/
+coverage/
+*.tsbuildinfo
+.vite/
+playwright-report/
+test-results/
+blob-report/
+.cache/
+
+# 環境変数（例のファイルだけを共有する）
+.env*
+!.env.example
+
+# 手元だけの設定とメモ
+CLAUDE.local.md
+.local/
+.claude/settings.local.json
+
+# Blender の作業ファイル
+*.blend
+*.blend1
+__pycache__/
+*.pyc
+
+# ログとエディタ、OS のファイル
+*.log
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
