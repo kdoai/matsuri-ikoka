@@ -1,8 +1,8 @@
 import {
+  ApiErrorSchema,
   type ChatRequest,
-  ErrorEventSchema,
   type Festival,
-  type Preferences,
+  type PreferencesRequest,
   type SseMessage,
 } from "@matsuri-ikoka/schema";
 import { clientError, retryableByDefault } from "../state/errors";
@@ -12,12 +12,6 @@ import type { ClientError, ClientErrorCode, TransportKind } from "../state/types
 // どちらも SSE の1件（event と data の文字列）を渡すだけで、検証はストアの側で1か所で行う。
 
 export type OnSseMessage = (message: SseMessage) => void;
-
-/** PATCH /api/preferences の本文 */
-export interface PreferencesRequest {
-  sessionId: string;
-  preferences: Preferences;
-}
 
 export interface ChatTransport {
   readonly kind: TransportKind;
@@ -101,7 +95,7 @@ export async function errorFromResponse(
   } catch {
     body = undefined;
   }
-  const parsed = ErrorEventSchema.shape.data.safeParse(body);
+  const parsed = ApiErrorSchema.safeParse(body);
   const status = response.status;
   if (sessionBound && status === 404) {
     return new TransportError("session_lost", { status, retryable: true });

@@ -1,4 +1,4 @@
-import { FestivalSchema } from "@matsuri-ikoka/schema";
+import { FestivalSchema, type SessionRequest, SessionResponseSchema } from "@matsuri-ikoka/schema";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import type { ChatTransport, FestivalSource, OnSseMessage } from "./types";
 import { errorFromResponse, TransportError } from "./types";
@@ -89,28 +89,25 @@ export function createServerTransport(options: ServerTransportOptions = {}): Cha
     });
   };
 
+  const sessionRequest: SessionRequest = options.sample ? { sample: options.sample } : {};
+
   return {
     kind: "server",
     async startSession(signal) {
       const response = await fetchImpl("/api/session", {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeaders(passcode) },
-        body: JSON.stringify(options.sample ? { sample: options.sample } : {}),
+        body: JSON.stringify(sessionRequest),
         ...(signal === undefined ? {} : { signal }),
       });
       if (!response.ok) {
         throw await errorFromResponse(response, false);
       }
-      const body: unknown = await response.json().catch(() => undefined);
-      if (
-        typeof body !== "object" ||
-        body === null ||
-        !("sessionId" in body) ||
-        typeof body.sessionId !== "string"
-      ) {
+      const parsed = SessionResponseSchema.safeParse(await response.json().catch(() => undefined));
+      if (!parsed.success) {
         throw new TransportError("invalid_event", { status: response.status });
       }
-      return body.sessionId;
+      return parsed.data.sessionId;
     },
     chat(request, onMessage, signal) {
       return postStream("/api/chat", "POST", request, onMessage, signal);
