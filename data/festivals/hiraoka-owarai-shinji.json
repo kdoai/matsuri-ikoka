@@ -282,6 +282,100 @@
           "confidence": "official"
         }
       ]
+    },
+    {
+      "id": "shiba-ryotaro-memorial-museum",
+      "name": "司馬遼太郎記念館",
+      "kind": "sightseeing",
+      "summary": "司馬遼太郎の自宅と、安藤忠雄の設計の建物からなる記念館。高さ11mの大書架に約2万冊の蔵書が並び、庭から書斎が見える。近鉄 八戸ノ里駅から徒歩約8分。休みは月曜（祝日なら翌日）と12月28日〜1月4日",
+      "location": {
+        "lat": 34.6602,
+        "lng": 135.5864
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["mon"],
+      "price": "大人800円、高・中学生400円、小学生300円",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.shibazaidan.or.jp/about/guide/",
+          "title": "司馬遼太郎記念館 ご利用案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.shibazaidan.or.jp/about/",
+          "title": "司馬遼太郎記念館について",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.shibazaidan.or.jp/access/",
+          "title": "司馬遼太郎記念館 アクセス",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "ikutaya-ishikiri",
+      "name": "生田屋",
+      "kind": "food",
+      "summary": "石切劔箭神社の参道にある食事処。店頭で焼くよもぎ団子と、よもぎうどんが名物。金曜休みのほか、9の付く日と最終週の土日も休み",
+      "location": {
+        "lat": 34.6819,
+        "lng": 135.6468
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "16:00"
+      },
+      "closedDays": ["fri"],
+      "price": null,
+      "tags": ["indoor", "seating", "local_food"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://pikahiga.jp/eat/36249/",
+          "title": "ピカッと東大阪 生田屋",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "nunoichiya-ishikiri",
+      "name": "布一屋",
+      "kind": "food",
+      "summary": "石切参道の、石切名物「かた焼せんべい」の老舗。ゴマと青のりの2種で、かなり硬いので割って口の中で柔らかくして食べる。持ち帰りの店。休みは毎月9・19・29日",
+      "location": {
+        "lat": 34.6815,
+        "lng": 135.6479
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "15:30"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://pikahiga.jp/eat/31180/",
+          "title": "ピカッと東大阪 布一屋",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
     }
   ],
   "sources": [
