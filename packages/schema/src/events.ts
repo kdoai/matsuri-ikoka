@@ -1,0 +1,251 @@
+import { z } from "zod";
+import {
+  ConfidenceSchema,
+  IsoDateSchema,
+  IsoDateTimeSchema,
+  LatLngSchema,
+  LocalTimeSchema,
+  SlugSchema,
+  SourceSchema,
+} from "./common";
+import { NEARBY_KINDS } from "./festival";
+import { ItineraryDiffSchema, ItinerarySchema, VerificationResultSchema } from "./itinerary";
+import { PartialTripConditionsSchema, PreferencesSchema } from "./preferences";
+
+// 画面へ送る SSE のイベント。1つの発言に1本の接続で返し、最後に必ず done を送る。
+// 画面はこのイベントだけを見て、ストアを更新する（どのエージェントが動いているかは知らない）。
+
+const TextSchema = z.string().min(1);
+
+/** スタッフ：コンシェルジュ / 祭り調査係 / 周辺係 / 旅程係 */
+export const STAFF_IDS = ["concierge", "researcher", "scout", "planner"] as const;
+export const StaffIdSchema = z.enum(STAFF_IDS);
+
+/** スタッフの作業の種類：祭りを探す / 寄り道を探す / 道のりを調べる */
+export const STAFF_TASKS = ["find_festivals", "find_nearby", "plan_route"] as const;
+
+export const TOOL_NAMES = [
+  "search_festivals",
+  "search_nearby",
+  "get_access",
+  "get_weather",
+  "update_itinerary",
+  "verify_festival",
+] as const;
+export const ToolNameSchema = z.enum(TOOL_NAMES);
+
+/**
+ * 会話の状態。サーバーが持ち、画面はこれに合わせて切り替わる。
+ * hearing 聞き取り / candidates 祭り候補 / itinerary 旅程案 / revising 修正 /
+ * verifying 確定前の確認 / shiori 旅のしおり
+ */
+export const CONVERSATION_STAGES = [
+  "hearing",
+  "candidates",
+  "itinerary",
+  "revising",
+  "verifying",
+  "shiori",
+] as const;
+export const ConversationStageSchema = z.enum(CONVERSATION_STAGES);
+
+/** 候補カードに出す祭り（search_festivals の結果） */
+export const FestivalCandidateSchema = z.strictObject({
+  festivalId: SlugSchema,
+  name: TextSchema,
+  date: IsoDateSchema,
+  start: LocalTimeSchema.nullable(),
+  end: LocalTimeSchema.nullable(),
+  venueName: TextSchema,
+  /** 表示用の開催地（例：滋賀県鈴鳴町） */
+  place: TextSchema,
+  /** 希望日からのずれ（日）。0 は希望日、負は前、正は後 */
+  daysFromWish: z.number().int(),
+  confidence: ConfidenceSchema,
+  /** 開催が確認できているか。false なら「未確認」と表示し、確定した旅程には入れない */
+  confirmed: z.boolean(),
+  highlight: TextSchema,
+  source: SourceSchema,
+});
+
+/** 地図に打つ周辺の場所（search_nearby の結果） */
+export const SpotPinSchema = z.strictObject({
+  spotId: SlugSchema,
+  name: TextSchema,
+  kind: z.enum(NEARBY_KINDS),
+  location: LatLngSchema,
+});
+
+export const MAX_CANDIDATES = 3;
+
+/** 利用者に見せるエラーの種類 */
+export const ERROR_CODES = [
+  "bad_request",
+  "unauthorized",
+  "rate_limited",
+  "timeout",
+  "tool_failed",
+  "upstream_unavailable",
+  "internal",
+] as const;
+
+function event<const T extends string, S extends z.ZodType>(type: T, data: S) {
+  return z.strictObject({ type: z.literal(type), data });
+}
+
+/** サブエージェント（スタッフ）が作業を始めた */
+export const StaffStartEventSchema = event(
+  "staff.start",
+  z.strictObject({
+    staff: StaffIdSchema,
+    task: z.enum(STAFF_TASKS),
+    /** 吹き出しの文章。サーバーが決まった型から作る */
+    bubble: TextSchema,
+  }),
+);
+
+/** ツールを呼ぶ前 */
+export const ToolStartEventSchema = event(
+  "tool.start",
+  z.strictObject({
+    toolCallId: TextSchema,
+    tool: ToolNameSchema,
+    staff: StaffIdSchema,
+    bubble: TextSchema,
+  }),
+);
+
+/** ツールが終わった。候補や場所は、そのツールのときだけ付く */
+export const ToolEndEventSchema = event(
+  "tool.end",
+  z
+    .strictObject({
+      toolCallId: TextSchema,
+      tool: ToolNameSchema,
+      staff: StaffIdSchema,
+      ok: z.boolean(),
+      bubble: TextSchema,
+      /** 見つかった件数。件数のないツールでは null */
+      count: z.number().int().nonnegative().nullable(),
+      candidates: z.array(FestivalCandidateSchema).max(MAX_CANDIDATES).optional(),
+      spots: z.array(SpotPinSchema).optional(),
+    })
+    .superRefine((data, ctx) => {
+      if (data.candidates !== undefined && data.tool !== "search_festivals") {
+        ctx.addIssue({
+          code: "custom",
+          path: ["candidates"],
+          message: "candidates は search_festivals の結果にだけ付けます",
+        });
+      }
+      if (data.spots !== undefined && data.tool !== "search_nearby") {
+        ctx.addIssue({
+          code: "custom",
+          path: ["spots"],
+          message: "spots は search_nearby の結果にだけ付けます",
+        });
+      }
+    }),
+);
+
+/** 旅程が保存された。画面は旅程全体を置き換え、差分で変わった予定に色を付ける */
+export const ItineraryUpdatedEventSchema = event(
+  "itinerary.updated",
+  z
+    .strictObject({ itinerary: ItinerarySchema, diff: ItineraryDiffSchema })
+    .refine((data) => data.diff.toVersion === data.itinerary.version, {
+      path: ["diff", "toVersion"],
+      message: "差分の toVersion は旅程の版と同じにしてください",
+    }),
+);
+
+/** 確定前に、公式情報で開催を再確認した */
+export const FestivalVerifiedEventSchema = event(
+  "festival.verified",
+  z
+    .strictObject({
+      festivalId: SlugSchema,
+      result: VerificationResultSchema,
+      checkedAt: IsoDateTimeSchema,
+      sources: z.array(SourceSchema),
+      note: TextSchema.optional(),
+    })
+    .refine((data) => data.result !== "as_planned" || data.sources.length > 0, {
+      path: ["sources"],
+      message: "予定どおりと確認するには出典が必要です",
+    }),
+);
+
+/** コンシェルジュの返答の続き。同じ messageId の text をつなげると1つの返答になる */
+export const MessageDeltaEventSchema = event(
+  "message.delta",
+  z.strictObject({ messageId: TextSchema, text: TextSchema }),
+);
+
+/** エラー。message は利用者に見せる短い一文で、詳細はサーバーのログに残す */
+export const ErrorEventSchema = event(
+  "error",
+  z.strictObject({
+    code: z.enum(ERROR_CODES),
+    message: TextSchema,
+    retryable: z.boolean(),
+  }),
+);
+
+/** 1つの発言への返答の終わり。会話の状態と、読み取れた条件・こだわりを返す */
+export const DoneEventSchema = event(
+  "done",
+  z.strictObject({
+    stage: ConversationStageSchema,
+    conditions: PartialTripConditionsSchema,
+    preferences: PreferencesSchema,
+  }),
+);
+
+export const SseEventSchema = z.discriminatedUnion("type", [
+  StaffStartEventSchema,
+  ToolStartEventSchema,
+  ToolEndEventSchema,
+  ItineraryUpdatedEventSchema,
+  FestivalVerifiedEventSchema,
+  MessageDeltaEventSchema,
+  ErrorEventSchema,
+  DoneEventSchema,
+]);
+
+export type StaffId = z.infer<typeof StaffIdSchema>;
+export type ToolName = z.infer<typeof ToolNameSchema>;
+export type ConversationStage = z.infer<typeof ConversationStageSchema>;
+export type FestivalCandidate = z.infer<typeof FestivalCandidateSchema>;
+export type SpotPin = z.infer<typeof SpotPinSchema>;
+export type SseEvent = z.infer<typeof SseEventSchema>;
+export type SseEventType = SseEvent["type"];
+export type SseEventOf<T extends SseEventType> = Extract<SseEvent, { type: T }>;
+
+export const SSE_EVENT_TYPES = [
+  "staff.start",
+  "tool.start",
+  "tool.end",
+  "itinerary.updated",
+  "festival.verified",
+  "message.delta",
+  "error",
+  "done",
+] as const satisfies readonly SseEventType[];
+
+/** SSE の1件（`event:` と `data:` の行）。Hono の streamSSE や fetch-event-source の形に合わせる */
+export interface SseMessage {
+  event: string;
+  data: string;
+}
+
+/** イベントを SSE の1件に変換する。送る前に検証し、不正なイベントは送らない */
+export function encodeSseEvent(event: SseEvent): SseMessage {
+  const valid = SseEventSchema.parse(event);
+  return { event: valid.type, data: JSON.stringify(valid.data) };
+}
+
+/** 受け取った SSE の1件を検証してイベントに戻す。形が違えば例外を投げる */
+export function decodeSseEvent(message: SseMessage): SseEvent {
+  return SseEventSchema.parse({ type: message.event, data: JSON.parse(message.data) });
+}
