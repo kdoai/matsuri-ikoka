@@ -1,6 +1,6 @@
 import type {
   ConversationStage,
-  ERROR_CODES,
+  ErrorCode,
   Festival,
   FestivalCandidate,
   Itinerary,
@@ -18,7 +18,6 @@ import type {
 // 画面の正しい状態の形。3D・会話・しおりは、どれもこの形を読むだけにする。
 
 export type StaffTask = (typeof STAFF_TASKS)[number];
-export type ErrorCode = (typeof ERROR_CODES)[number];
 /** サーバーのエラーに、画面の側で気づくエラー（接続が切れた・形が違う）を足したもの */
 export type ClientErrorCode = ErrorCode | "connection_lost" | "invalid_event";
 
