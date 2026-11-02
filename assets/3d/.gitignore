@@ -1,0 +1,5 @@
+# Build output: previews, .blend working files, unoptimized GLBs
+out/
+__pycache__/
+*.blend
+*.blend1
