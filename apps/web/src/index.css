@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+:root {
+  font-family:
+    "Noto Sans JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+  color: var(--color-stone-900);
+  background-color: var(--color-amber-50);
+}
