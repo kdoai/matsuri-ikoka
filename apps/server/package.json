@@ -7,7 +7,8 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsx build.ts",
     "start": "node dist/index.js",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check:live": "tsx scripts/live-check.ts"
   },
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "0.3.316",
