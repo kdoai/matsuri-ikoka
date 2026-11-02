@@ -71,12 +71,17 @@ function normalizePlace(name: string): string {
   return name.replace(/[\s　]/g, "").replace(/駅$/, "");
 }
 
+/** 出発地に当たる主要駅。名前の「駅」と空白の有無は問わない */
+export function matchHub(access: Access, origin: string): Access["fromHubs"][number] | undefined {
+  return access.fromHubs.find((h) => normalizePlace(h.hub) === normalizePlace(origin));
+}
+
 /**
  * 出発地から会場までの移動時間の目安（分の幅）。
  * 保存してある主要駅からの所要時間に、最寄り駅から会場までの徒歩を足す。出発地が主要駅にないときは null
  */
 export function travelMinutesFrom(access: Access, origin: string): MinuteRange | null {
-  const hub = access.fromHubs.find((h) => normalizePlace(h.hub) === normalizePlace(origin));
+  const hub = matchHub(access, origin);
   if (hub === undefined) return null;
   const walk = access.stations[0]?.walkMinutes ?? [0, 0];
   return [hub.minutes[0] + walk[0], hub.minutes[1] + walk[1]];
