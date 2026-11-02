@@ -77,15 +77,18 @@ main ブランチには直接 push しません。人の変更も自動の更新
 
 ## 環境変数
 
-| 変数                             | 内容                                      |
-| -------------------------------- | ----------------------------------------- |
-| `PORT`                           | サーバーのポート                          |
-| `MATSURI_AGENT_MODE`             | `mock`（記録の再生）/ `live`（Agent SDK） |
-| `ANTHROPIC_API_KEY`              | Claude の API キー（live のとき）         |
-| `MODEL_CONCIERGE`・`MODEL_STAFF` | コンシェルジュとスタッフのモデル名        |
-| `ACCESS_PASSCODE`                | 公開している URL の合言葉（未実装）       |
-| `DAILY_CHAT_LIMIT`               | 1日の相談の回数の上限（未実装）           |
-| `GCS_BUCKET`                     | 旅程を保存するバケット（未実装）          |
+| 変数                             | 内容                                                                                  |
+| -------------------------------- | ------------------------------------------------------------------------------------- |
+| `PORT`                           | サーバーのポート                                                                      |
+| `MATSURI_AGENT_MODE`             | `mock`（記録の再生）/ `live`（Agent SDK）                                             |
+| `ANTHROPIC_API_KEY`              | Claude の API キー（live のとき）                                                     |
+| `MODEL_CONCIERGE`・`MODEL_STAFF` | コンシェルジュとスタッフのモデル名                                                    |
+| `ACCESS_PASSCODE`                | 公開している URL の合言葉。画面からはヘッダー `x-access-passcode` で送る              |
+| `DAILY_CHAT_LIMIT`               | 1日（日本の日付）の相談の回数の上限。空か 0 なら上限なし                              |
+| `AGENT_MAX_BUDGET_USD`           | live の1回の発言の費用の上限（米ドル、Agent SDK の推定で判定）                        |
+| `MATSURI_FESTIVALS_DIR`          | 祭りのデータを読む場所。省略時は `data/festivals`（空なら、本番でなければ架空の祭り） |
+| `MATSURI_REPLAY_SPEED`           | mock の再生の速さの倍率（1 で記録どおり、2 で2倍速、0 で待たない）                    |
+| `GCS_BUCKET`                     | 旅程を保存するバケット（未実装）                                                      |
 
 値は `.env`（Git の対象外）か、クラウドの秘密情報の管理に置きます。[`.env.example`](../../.env.example) には変数名と説明だけを書きます。
 

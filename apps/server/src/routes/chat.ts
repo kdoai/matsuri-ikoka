@@ -1,6 +1,11 @@
-import { ChatRequestSchema, PreferencesSchema, SlugSchema } from "@matsuri-ikoka/schema";
+import {
+  ChatRequestSchema,
+  PreferencesRequestSchema,
+  SessionRequestSchema,
+  type SessionResponse,
+} from "@matsuri-ikoka/schema";
 import type { Context, Hono } from "hono";
-import { z } from "zod";
+import type { z } from "zod";
 import { preferencesLabel } from "../agent/briefing";
 import type { AgentRunner } from "../agent/runner";
 import type { Session, SessionStore } from "../session/sessionStore";
@@ -19,14 +24,6 @@ export interface ChatDeps {
   turnTimeoutMs?: number;
   heartbeatMs?: number;
 }
-
-const SessionRequestSchema = z.strictObject({ sample: SlugSchema.optional() }).optional();
-
-/** PATCH /api/preferences の本文 */
-const PreferencesRequestSchema = z.strictObject({
-  sessionId: ChatRequestSchema.shape.sessionId,
-  preferences: PreferencesSchema,
-});
 
 async function readJson(c: Context): Promise<unknown> {
   const text = await c.req.text();
@@ -71,18 +68,19 @@ export function registerChatRoutes(app: Hono, deps: ChatDeps) {
   app.post("/api/session", async (c) => {
     let body: z.infer<typeof SessionRequestSchema>;
     try {
-      body = SessionRequestSchema.parse(await readJson(c));
+      // 本文は省略できる
+      body = SessionRequestSchema.parse((await readJson(c)) ?? {});
     } catch {
       return badRequest(c);
     }
     let replay: Session["replay"] = null;
     if (deps.runner.mode === "mock") {
-      const sampleId = deps.runner.sampleFor?.(body?.sample) ?? null;
+      const sampleId = deps.runner.sampleFor?.(body.sample) ?? null;
       if (sampleId === null) return badRequest(c, "そのサンプルの相談はありません。");
       replay = { sampleId, nextTurn: 0 };
     }
     const session = deps.sessions.create({ replay });
-    return c.json({ sessionId: session.id }, 201);
+    return c.json({ sessionId: session.id } satisfies SessionResponse, 201);
   });
 
   app.post("/api/chat", async (c) => {

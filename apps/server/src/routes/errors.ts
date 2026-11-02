@@ -1,11 +1,11 @@
-import { type ErrorCode, ErrorEventSchema, type SseEventOf } from "@matsuri-ikoka/schema";
+import { type ApiError, ApiErrorSchema, type ErrorCode } from "@matsuri-ikoka/schema";
 
-export type ErrorBody = SseEventOf<"error">["data"];
+export type ErrorBody = ApiError;
 
 /**
- * SSE を始める前に断るときの本文。error イベントの data と同じ形（code・message・retryable）。
- * message は利用者に見せる短い一文
+ * SSE を始める前に断るときや、JSON を返す API が失敗したときの本文（ApiErrorSchema）。
+ * error イベントの data と同じ形で、message は利用者に見せる短い一文
  */
 export function apiError(code: ErrorCode, message: string, retryable: boolean): ErrorBody {
-  return ErrorEventSchema.shape.data.parse({ code, message, retryable });
+  return ApiErrorSchema.parse({ code, message, retryable });
 }

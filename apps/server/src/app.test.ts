@@ -2,7 +2,9 @@ import { fileURLToPath } from "node:url";
 import {
   DEFAULT_PREFERENCES,
   decodeSseEvent,
+  FestivalSchema,
   type SampleConversation,
+  SessionResponseSchema,
   type SseEvent,
 } from "@matsuri-ikoka/schema";
 import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
@@ -11,6 +13,7 @@ import { loadSampleConversations, ReplayAgentRunner } from "./agent/replayRunner
 import { AgentError, type AgentRunner } from "./agent/runner";
 import { type AppDeps, createApp } from "./app";
 import { createFestivalStore, type FestivalStore, loadFestivals } from "./data/festivalStore";
+import { testFestival } from "./domain/testFestivals";
 import { DailyLimiter } from "./routes/guard";
 import { ItineraryStore, SessionStore } from "./session/sessionStore";
 
@@ -276,6 +279,40 @@ describe("PATCH /api/preferences", () => {
     expect(messages).toHaveLength(1);
     expect(messages[0]).toContain("子連れ");
     expect(messages[0]).toContain("旅程係にだけ頼んで");
+  });
+});
+
+describe("POST /api/session", () => {
+  it("本文なしで相談を始め、セッション ID を返す", async () => {
+    const { app } = setup();
+
+    const res = await app.request("/api/session", { method: "POST" });
+
+    expect(res.status).toBe(201);
+    expect(SessionResponseSchema.safeParse(await res.json()).success).toBe(true);
+  });
+});
+
+describe("GET /api/festivals/:id", () => {
+  it("祭りのデータを FestivalSchema の形で返す", async () => {
+    const res = await setup().app.request("/api/festivals/suzunari-toro");
+
+    expect(res.status).toBe(200);
+    const festival = FestivalSchema.parse(await res.json());
+    expect(festival.id).toBe("suzunari-toro");
+    expect(festival.etiquette.participation).toBe("join_by_application");
+  });
+
+  it("ない祭り・ID の形が違う祭り・掲載停止の祭りは 404", async () => {
+    const { app } = setup({
+      festivals: createFestivalStore([testFestival({ id: "opted-out", optOut: true })]),
+    });
+
+    for (const id of ["no-such", "Not%20A%20Slug", "opted-out"]) {
+      const res = await app.request(`/api/festivals/${id}`);
+      expect(res.status).toBe(404);
+      expect(await res.json()).toMatchObject({ code: "bad_request" });
+    }
   });
 });
 

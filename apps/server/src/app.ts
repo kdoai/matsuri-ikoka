@@ -3,6 +3,7 @@ import { bodyLimit } from "hono/body-limit";
 import type { FestivalStore } from "./data/festivalStore";
 import { type ChatDeps, registerChatRoutes } from "./routes/chat";
 import { apiError } from "./routes/errors";
+import { registerFestivalRoutes } from "./routes/festivals";
 import { passcodeGuard } from "./routes/guard";
 import { registerItineraryRoutes } from "./routes/itinerary";
 import type { ItineraryStore } from "./session/sessionStore";
@@ -36,6 +37,7 @@ export function createApp(deps: AppDeps) {
   );
   app.use("/api/*", passcodeGuard(deps.accessPasscode));
   registerChatRoutes(app, deps);
+  registerFestivalRoutes(app, deps);
   registerItineraryRoutes(app, deps);
 
   app.onError((error, c) => {
