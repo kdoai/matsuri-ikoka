@@ -1,5 +1,5 @@
 // サーバーを1つの ESM ファイルにまとめる。
-// ワークスペース内のパッケージ（@matsuri-quest/*）は TypeScript のまま公開しているので一緒にまとめ、
+// ワークスペース内のパッケージ（@matsuri-ikoka/*）は TypeScript のまま公開しているので一緒にまとめ、
 // それ以外の依存は node_modules から読み込む。
 import { readFile } from "node:fs/promises";
 import { build } from "esbuild";
@@ -9,7 +9,7 @@ const pkg = JSON.parse(await readFile(new URL("./package.json", import.meta.url)
 };
 
 const external = Object.keys(pkg.dependencies ?? {}).filter(
-  (name) => !name.startsWith("@matsuri-quest/"),
+  (name) => !name.startsWith("@matsuri-ikoka/"),
 );
 
 await build({

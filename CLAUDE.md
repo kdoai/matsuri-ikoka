@@ -1,4 +1,4 @@
-# MATSURI QUEST 開発ガイド
+# MATSURI IKOKA 開発ガイド
 
 ## このプロダクト
 
@@ -29,7 +29,7 @@ pnpm test             # Vitest（ルートから全パッケージ）
 pnpm build            # 画面と接客サーバーのビルド
 ```
 
-依存を足すときは、パッケージを指定して入れる（例：`pnpm --filter @matsuri-quest/server add <name>`）。
+依存を足すときは、パッケージを指定して入れる（例：`pnpm --filter @matsuri-ikoka/server add <name>`）。
 
 ## 守ること
 
@@ -62,7 +62,7 @@ pnpm build            # 画面と接客サーバーのビルド
 
 ### テスト
 
-- テストは架空の祭りで書く。`@matsuri-quest/schema/testing` の `fictionalFestival()`・`fictionalItinerary()`・`fictionalSource()` を使い、URL は `example.com` にする
+- テストは架空の祭りで書く。`@matsuri-ikoka/schema/testing` の `fictionalFestival()`・`fictionalItinerary()`・`fictionalSource()` を使い、URL は `example.com` にする
 - 実在の祭りのデータをテストのフィクスチャにしない
 
 ### 安全

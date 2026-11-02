@@ -10,7 +10,7 @@
 | 画面の通し     | Playwright | モックモードで、サンプルの相談を相談からしおりまで画面で通す                      |
 | データ         | スクリプト | `data/festivals/` のすべてのファイルをスキーマで検証する                          |
 
-テストは**架空の祭り**で書きます。テスト用の祭り・旅程・出典は `@matsuri-quest/schema/testing` にあり、URL は例示用のドメイン（`example.com`）です。
+テストは**架空の祭り**で書きます。テスト用の祭り・旅程・出典は `@matsuri-ikoka/schema/testing` にあり、URL は例示用のドメイン（`example.com`）です。
 
 ## 壁を守るテスト
 

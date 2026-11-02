@@ -1,4 +1,4 @@
-# MATSURI QUEST への参加
+# MATSURI IKOKA への参加
 
 ## 開発を始める
 
@@ -43,7 +43,7 @@ PR を出す前に、`pnpm lint`・`pnpm typecheck`・`pnpm test`・`pnpm build`
 - TypeScript は strict。lint と format は Biome に任せます
 - 型はスキーマ（`packages/schema`）から取り、ほかの場所で同じ型を書きません。スキーマを変えたら [仕様](docs/spec/README.md) も直します
 - 日程や所要時間などの決まった計算は、Agent SDK に依存しない関数にして、テストを付けます
-- テストは架空の祭りで書きます（`@matsuri-quest/schema/testing`）
+- テストは架空の祭りで書きます（`@matsuri-ikoka/schema/testing`）
 
 ## コミット
 
