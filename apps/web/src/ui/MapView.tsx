@@ -104,6 +104,10 @@ export default function MapView({ interactive = true, heightClass = "h-80" }: Ma
     });
   }, [points, interactive]);
 
+  // 動かせる地図はマーカーやズームを操作できるので、画像（img）としては扱わない
+  const mapRole = interactive
+    ? ({ role: "region", "aria-label": t.map.label } as const)
+    : ({ role: "img", "aria-label": t.map.label } as const);
   const ordered = points.filter((point) => point.order !== null);
   const extra = points.filter((point) => point.order === null);
 
@@ -112,8 +116,7 @@ export default function MapView({ interactive = true, heightClass = "h-80" }: Ma
       <div
         ref={containerRef}
         className={`${heightClass} w-full overflow-hidden rounded-xl ring-1 ring-wood-300`}
-        role="img"
-        aria-label={t.map.label}
+        {...mapRole}
       />
       {/* 地図の内容は、文字でも読めるようにする */}
       {points.length === 0 ? (
