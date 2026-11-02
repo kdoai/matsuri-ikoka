@@ -4,7 +4,15 @@ import { fileURLToPath } from "node:url";
 // エージェントの指示は prompts/ に Markdown で置き、Git で版を管理する。
 // ビルドでは dist/prompts/ にコピーする（build.ts）。
 
-export const PROMPT_NAMES = ["concierge", "researcher", "scout", "planner", "verifier"] as const;
+/** common は3人のスタッフに共通の前置き。一字一句同じ文字列にして、プロンプトキャッシュに乗せる */
+export const PROMPT_NAMES = [
+  "concierge",
+  "common",
+  "researcher",
+  "scout",
+  "planner",
+  "verifier",
+] as const;
 export type PromptName = (typeof PROMPT_NAMES)[number];
 export type AgentPrompts = Record<PromptName, string>;
 

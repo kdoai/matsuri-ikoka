@@ -7,13 +7,21 @@ import type { WeatherService } from "./weather";
 /** 1回の発言の間に起きたこと。会話の状態（done の stage）を決めるのに使う */
 export interface TurnState {
   startedStaff: Set<StaffId>;
+  /** 呼んだツール（呼んだ順）。ログに残す */
+  toolCalls: ToolName[];
   searched: boolean;
   savedItinerary: boolean;
   verification: VerificationResult | null;
 }
 
 export function newTurnState(): TurnState {
-  return { startedStaff: new Set(), searched: false, savedItinerary: false, verification: null };
+  return {
+    startedStaff: new Set(),
+    toolCalls: [],
+    searched: false,
+    savedItinerary: false,
+    verification: null,
+  };
 }
 
 /** ツールが使うもの。相談ごと・発言ごとに作る */

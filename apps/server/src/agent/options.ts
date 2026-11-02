@@ -101,6 +101,8 @@ const STAFF_MAX_TURNS: Record<Staff, number> = { researcher: 4, scout: 4, planne
 export interface AgentOptionsInput {
   prompts: AgentPrompts;
   models: { concierge?: string | undefined; staff?: string | undefined };
+  /** 1回の発言の費用の上限（米ドル）。超えると結果が error_max_budget_usd で止まる */
+  maxBudgetUsd?: number | undefined;
   mcpServer: McpSdkServerConfigWithInstance;
   hooks: Options["hooks"];
   cwd: string;
@@ -113,10 +115,13 @@ export interface AgentOptionsInput {
 function staffAgent(staff: Staff, input: AgentOptionsInput): AgentDefinition {
   return {
     description: STAFF_DESCRIPTIONS[staff],
-    prompt: input.prompts[staff],
+    // 共通の前置きを先に置き、3人で同じ文字列にする（プロンプトキャッシュを共有する）
+    prompt: `${input.prompts.common}\n\n${input.prompts[staff]}`,
     tools: TOOLS_BY_STAFF[staff].map((tool) => `${MCP_TOOL_PREFIX}${tool}`),
     model: input.models.staff ?? "inherit",
     maxTurns: STAFF_MAX_TURNS[staff],
+    // スタッフの仕事は決まった道具を呼んで報告するだけなので、浅く速く考えさせる
+    effort: "low",
     background: false,
   };
 }
@@ -144,7 +149,10 @@ export function buildAgentOptions(input: AgentOptionsInput): Options {
     env: input.env,
     hooks: input.hooks,
     includePartialMessages: true,
+    thinking: { type: "adaptive" },
+    effort: "medium",
     maxTurns: 12,
+    ...(input.maxBudgetUsd ? { maxBudgetUsd: input.maxBudgetUsd } : {}),
     abortController: input.abortController,
     ...(input.resume ? { resume: input.resume } : {}),
     ...(input.stderr ? { stderr: input.stderr } : {}),

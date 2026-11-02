@@ -143,6 +143,7 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
       return deny(`${STAFF_NAMES[staff]}は ${tool} を使えません`);
     }
     const toolCallId = input.tool_use_id || toolUseId || "";
+    turn.toolCalls.push(tool);
     if (toolCallId !== "") {
       started.set(toolCallId, { tool, staff });
       emit({

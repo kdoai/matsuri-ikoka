@@ -22,6 +22,7 @@ import { AgentError, type QueryFn } from "./runner";
 
 const prompts: AgentPrompts = {
   concierge: "c",
+  common: "共通",
   researcher: "r",
   scout: "s",
   planner: "p",

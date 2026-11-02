@@ -11,6 +11,7 @@ import { buildVerifierOptions } from "./webVerifier";
 
 const prompts: AgentPrompts = {
   concierge: "コンシェルジュ",
+  common: "共通の前置き",
   researcher: "祭り調査係",
   scout: "周辺係",
   planner: "旅程係",
@@ -106,6 +107,33 @@ describe("接客エージェントを開発環境から切り離す", () => {
     expect(withModels.agents?.planner?.model).toBe("model-b");
     expect(withoutModels.model).toBeUndefined();
     expect(withoutModels.agents?.planner?.model).toBe("inherit");
+  });
+
+  it("考える深さはコンシェルジュ medium・スタッフ low。スタッフの指示は共通の前置きから始める", () => {
+    const opts = options();
+
+    expect(opts.thinking).toEqual({ type: "adaptive" });
+    expect(opts.effort).toBe("medium");
+    for (const staff of ["researcher", "scout", "planner"] as const) {
+      expect(opts.agents?.[staff]?.effort).toBe("low");
+      expect(opts.agents?.[staff]?.prompt.startsWith("共通の前置き\n\n")).toBe(true);
+    }
+  });
+
+  it("費用の上限は、指定したときだけ付ける", () => {
+    expect(options().maxBudgetUsd).toBeUndefined();
+    expect(
+      buildAgentOptions({
+        prompts,
+        models: {},
+        maxBudgetUsd: 0.5,
+        mcpServer: createMatsuriMcpServer(testToolContext([])),
+        hooks: {},
+        cwd: "/tmp/matsuri-agent-test",
+        env: {},
+        abortController: new AbortController(),
+      }).maxBudgetUsd,
+    ).toBe(0.5);
   });
 
   it("会話の続きは resume で渡す", () => {

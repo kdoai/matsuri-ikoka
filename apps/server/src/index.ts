@@ -57,6 +57,7 @@ if (config.mode === "live") {
     }),
     prompts,
     models: config.models,
+    maxBudgetUsd: config.maxBudgetUsd,
     cwd,
     env,
     today,

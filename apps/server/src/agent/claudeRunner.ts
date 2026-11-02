@@ -38,6 +38,8 @@ export interface ClaudeRunnerDeps {
   verifier: FestivalVerifier;
   prompts: AgentPrompts;
   models: { concierge?: string | undefined; staff?: string | undefined };
+  /** 1回の発言の費用の上限（米ドル） */
+  maxBudgetUsd?: number | undefined;
   /** エージェントの作業ディレクトリ（空の一時ディレクトリ） */
   cwd: string;
   /** エージェントのプロセスに渡す環境変数（agentEnv で絞ったもの） */
@@ -66,6 +68,25 @@ export class ReplyStream {
 
   constructor(emit: EmitEvent) {
     this.#emit = emit;
+  }
+
+  /** 費用と使用量（ログ用）。費用は SDK の推定で、トークンはサブエージェントの分を含む */
+  usage(): Record<string, number> | null {
+    const result = this.#result;
+    if (result === null) return null;
+    const models = Object.values(result.modelUsage ?? {});
+    const sum = (
+      key: "inputTokens" | "outputTokens" | "cacheReadInputTokens" | "cacheCreationInputTokens",
+    ) => models.reduce((total, usage) => total + (usage[key] ?? 0), 0);
+    return {
+      totalCostUsd: result.total_cost_usd,
+      durationMs: result.duration_ms,
+      numTurns: result.num_turns,
+      inputTokens: sum("inputTokens"),
+      outputTokens: sum("outputTokens"),
+      cacheReadInputTokens: sum("cacheReadInputTokens"),
+      cacheCreationInputTokens: sum("cacheCreationInputTokens"),
+    };
   }
 
   handle(message: SDKMessage): void {
@@ -167,6 +188,8 @@ export class ClaudeAgentRunner implements AgentRunner {
     const prompt = turnPrompt(ctx, message);
     /** 直前の試みで、Agent SDK がセッションを名乗ったか（続きの会話を読めたか） */
     let initSeen = false;
+    let usage: Record<string, number> | null = null;
+    const started = Date.now();
 
     const attempt = async (resume: string | undefined) => {
       const controller = new AbortController();
@@ -186,6 +209,7 @@ export class ClaudeAgentRunner implements AgentRunner {
           }),
           cwd: deps.cwd,
           env: deps.env,
+          maxBudgetUsd: deps.maxBudgetUsd,
           abortController: controller,
           resume,
           ...(deps.stderr ? { stderr: deps.stderr } : {}),
@@ -197,6 +221,7 @@ export class ClaudeAgentRunner implements AgentRunner {
             session.agentSessionId = reply.sessionId;
           }
         }
+        usage = reply.usage();
         reply.finish();
       } finally {
         signal.removeEventListener("abort", abort);
@@ -223,6 +248,17 @@ export class ClaudeAgentRunner implements AgentRunner {
       await run();
     } finally {
       session.stage = nextStage(session.stage, turn, session.itineraryId !== null);
+      // 相談ごとの費用・トークン・所要時間・呼んだ道具を残す。会話の文は残さない
+      console.info(
+        JSON.stringify({
+          kind: "turn",
+          stage: session.stage,
+          elapsedMs: Date.now() - started,
+          staff: [...turn.startedStaff],
+          tools: turn.toolCalls,
+          ...(usage ?? {}),
+        }),
+      );
     }
   }
 }

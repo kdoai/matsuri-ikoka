@@ -19,6 +19,7 @@ describe("readConfig", () => {
       accessPasscode: null,
       dailyChatLimit: null,
       replaySpeed: 1,
+      maxBudgetUsd: undefined,
     });
     expect(config.repoRoot).toBe(path.resolve(here, "../../.."));
   });
@@ -32,6 +33,7 @@ describe("readConfig", () => {
         MODEL_STAFF: " model-b ",
         ACCESS_PASSCODE: "fictional",
         DAILY_CHAT_LIMIT: "0",
+        AGENT_MAX_BUDGET_USD: "0.5",
         NODE_ENV: "production",
       },
       here,
@@ -44,6 +46,7 @@ describe("readConfig", () => {
       models: { concierge: "model-a", staff: "model-b" },
       accessPasscode: "fictional",
       dailyChatLimit: null,
+      maxBudgetUsd: 0.5,
     });
   });
 

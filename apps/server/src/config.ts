@@ -19,6 +19,8 @@ export interface ServerConfig {
   dailyChatLimit: number | null;
   /** mock の再生の速さ（1 で記録どおり） */
   replaySpeed: number;
+  /** live の1回の発言の費用の上限（米ドル）。なければ上限なし */
+  maxBudgetUsd: number | undefined;
 }
 
 /** pnpm-workspace.yaml のあるディレクトリを、start から上にたどって探す */
@@ -61,5 +63,6 @@ export function readConfig(env: NodeJS.ProcessEnv, cwd: string = process.cwd()):
     accessPasscode: nonEmpty(env.ACCESS_PASSCODE) ?? null,
     dailyChatLimit: limit === null || limit === 0 ? null : Math.floor(limit),
     replaySpeed: positiveNumber("MATSURI_REPLAY_SPEED", env.MATSURI_REPLAY_SPEED) ?? 1,
+    maxBudgetUsd: positiveNumber("AGENT_MAX_BUDGET_USD", env.AGENT_MAX_BUDGET_USD) || undefined,
   };
 }

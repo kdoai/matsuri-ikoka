@@ -129,6 +129,7 @@ async function main() {
       verifier: unavailableVerifier,
       prompts: await loadPrompts(),
       models: config.models,
+      maxBudgetUsd: config.maxBudgetUsd,
       cwd,
       env,
       today: () => today,
