@@ -29,7 +29,7 @@
 必要なもの：Node.js 22.12 以上（24 を推奨）、pnpm 10
 
 ```bash
-git clone https://github.com/<owner>/matsuri-ikoka.git
+git clone https://github.com/kdoai/matsuri-ikoka.git
 cd matsuri-ikoka
 pnpm install
 pnpm dev
