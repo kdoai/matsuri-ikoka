@@ -1,0 +1,384 @@
+{
+  "id": "omi-jingu-karuta-matsuri",
+  "name": {
+    "ja": "かるた祭",
+    "en": "Omi Jingu Karuta Festival"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "滋賀県",
+      "name": "大津市"
+    }
+  ],
+  "venue": {
+    "name": "近江神宮 神座殿",
+    "lat": 35.0319,
+    "lng": 135.8523
+  },
+  "scaleTier": "XS",
+  "popularity": "regional",
+  "listedIn": ["jalan", "rurubu", "walkerplus"],
+  "highlights": [
+    "采女装束の取姫4人が、神前で儀式としてかるたを取る",
+    "読師が天智天皇の「秋の田の」の歌を神前で朗誦する",
+    "百人一首の巻頭歌の作者をまつる、かるたの聖地の新年の神事",
+    "儀式のあと、近江勧学館で高松宮記念杯の全国大会が始まる"
+  ],
+  "trivia": [
+    {
+      "text": "儀式で朗誦する「秋の田の」は、天智天皇の作と伝わる小倉百人一首の巻頭歌",
+      "source": {
+        "url": "https://oumijingu.org/pages/127/",
+        "title": "近江神宮 かるた祭",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "近江神宮のかるた大会は、昭和20年代に高松宮杯を受けて以来の歴史を持つ",
+      "source": {
+        "url": "https://oumijingu.org/pages/132/",
+        "title": "近江神宮 年間祭典行事一覧",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "境内の時計館宝物館は、昭和38年に日本で最初の時計博物館として開かれた",
+      "source": {
+        "url": "https://oumijingu.org/pages/98/",
+        "title": "近江神宮 時計館宝物館",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "夏には高校生のかるたの全国大会も近江神宮で開かれ、近年は50校を超える",
+      "source": {
+        "url": "https://oumijingu.org/pages/128/",
+        "title": "近江神宮 全国高等学校かるた選手権大会",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": ["かるた開きの儀は参列・観覧自由"],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "社殿での神事の参列・観覧が中心で、主催者による混雑や危険の注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://oumijingu.org/pages/127/",
+        "title": "近江神宮 かるた祭",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.karuta.or.jp/meijin-queen/",
+        "title": "全日本かるた協会 名人位・クイーン位決定戦",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://otsu.or.jp/events/karuta_meijin_queen/",
+        "title": "びわ湖大津トラベルガイド 第72期名人位・第70期クイーン位決定戦",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-12",
+      "start": "09:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "9:00から神座殿でかるた開きの儀。続いて近江勧学館で高松宮記念杯の全国大会。前日の1月11日に名人位・クイーン位決定戦",
+      "sources": [
+        {
+          "url": "https://oumijingu.org/pages/127/",
+          "title": "近江神宮 かるた祭（令和8年1月12日）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://oumijingu.org/pages/126/",
+          "title": "近江神宮 競技かるた名人位・クイーン位決定戦（令和8年1月11日）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-10",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2027年の発表はまだない。神宮の行事一覧にある従来の決まり（成人の日の前日の日曜日）を当てはめると1月10日（日）。ただし2026年は成人の日の当日（1/12）で、その並びなら2027年1月11日（月・祝）になる。例年は9:00から神座殿でかるた開きの儀、続いて近江勧学館で全国大会",
+      "sources": [
+        {
+          "url": "https://oumijingu.org/pages/132/",
+          "title": "近江神宮 年間祭典行事一覧（従来の日取りの決まり）",
+          "checkedAt": "2026-11-02",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "京阪 近江神宮前駅",
+        "walkMinutes": [9, 14],
+        "note": "京阪石山坂本線。近江神宮前駅にタクシーはない"
+      },
+      {
+        "name": "JR 大津京駅",
+        "walkMinutes": [20, 25],
+        "note": "JR湖西線。びわ湖大津観光協会の案内で徒歩約20分。京阪大津京駅へ150mほど歩いて乗り換え、1駅で近江神宮前駅にも行ける"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "京都駅",
+        "minutes": [11, 21],
+        "route": "JR湖西線で大津京駅まで、乗り換えなし"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://oumijingu.org/pages/85/",
+        "title": "近江神宮 交通アクセス",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://otsu.or.jp/thingstodo/spot76",
+        "title": "びわ湖大津トラベルガイド 近江神宮",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "三井寺力餅",
+        "note": "大津の名物の、きな粉と抹茶をまぶした求肥餅。びわ湖浜大津駅前の三井寺力餅本家の本店で買える",
+        "sources": [
+          {
+            "url": "https://otsu.or.jp/karuta/tanoshimu/",
+            "title": "かるたの聖地 大津 たのしむ",
+            "checkedAt": "2026-11-02",
+            "confidence": "official"
+          },
+          {
+            "url": "https://www.tikaramoti.jp/",
+            "title": "三井寺力餅本家 公式サイト",
+            "checkedAt": "2026-11-02",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "omi-jingu-tokeikan-homotsukan",
+      "name": "近江神宮 時計館宝物館",
+      "kind": "sightseeing",
+      "summary": "近江神宮の境内にある時計の博物館。1階に高松宮家から下賜された国内最古級の懐中時計や和時計、2階に奉納の宝物を並べる。月曜休館（祝日は開館）",
+      "location": {
+        "lat": 35.0319,
+        "lng": 135.8523
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "16:30",
+        "lastEntry": "16:00"
+      },
+      "closedDays": ["mon"],
+      "price": "大人300円、小中学生150円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://oumijingu.org/pages/98/",
+          "title": "近江神宮 時計館宝物館",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "otsu-city-museum-of-history",
+      "name": "大津市歴史博物館",
+      "kind": "sightseeing",
+      "summary": "大津の歴史と文化を紹介する市立の博物館。京阪大津市役所前駅から徒歩5分。月曜休館（祝日は開館し翌平日休館）、年末年始は12月27日から1月5日まで休館",
+      "location": {
+        "lat": 35.017,
+        "lng": 135.8543
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["mon"],
+      "price": "常設展 一般330円、高校・大学生240円、小中学生160円",
+      "tags": ["indoor"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.rekihaku.otsu.shiga.jp/guide/index.html",
+          "title": "大津市歴史博物館 利用案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.rekihaku.otsu.shiga.jp/guide/access.html",
+          "title": "大津市歴史博物館 交通案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "miidera",
+      "name": "三井寺（園城寺）",
+      "kind": "sightseeing",
+      "summary": "大津の古刹。京阪三井寺駅から徒歩7分、大津市役所前駅から徒歩12分。年中無休で、境内の文化財収蔵庫は9:30から。2026年3月から拝観料を改定",
+      "location": {
+        "lat": 35.0097,
+        "lng": 135.8469
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "16:30",
+        "lastEntry": "16:00"
+      },
+      "closedDays": [],
+      "price": "大人800円、中高生500円、小学生300円",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://miidera1200.jp/information",
+          "title": "三井寺 参拝案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://miidera1200.jp/info/%e4%bb%a4%e5%92%8c8%e5%b9%b43%e6%9c%881%e6%97%a5%e3%82%88%e3%82%8a%e3%80%81%e6%8b%9d%e8%a6%b3%e6%96%99%e9%87%91%e3%81%a8%e9%a7%90%e8%bb%8a%e5%a0%b4%e6%96%99%e9%87%91%e3%81%ae%e6%94%b9%e5%ae%9a/",
+          "title": "三井寺 料金改定のお知らせ（令和8年3月1日より）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "miidera-chikaramochi-honke",
+      "name": "三井寺力餅本家 本店",
+      "kind": "food",
+      "summary": "大津名物・三井寺力餅の本店。びわ湖浜大津駅から徒歩1分で、力餅とコーヒーで一息つける。年中無休で、店の駐車場はない",
+      "location": {
+        "lat": 35.0111,
+        "lng": 135.863
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "07:00",
+        "close": "19:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.tikaramoti.jp/",
+          "title": "三井寺力餅本家 公式サイト",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kyu-chikurinin",
+      "name": "旧竹林院",
+      "kind": "sightseeing",
+      "summary": "延暦寺の門前町・坂本に残る里坊（高僧の隠居所）の一つで、庭と茶室を公開する。京阪坂本比叡山口駅から徒歩約10分。月曜（祝休日は開園）と祝休日の翌日、12月26日〜31日は休館",
+      "location": {
+        "lat": 35.0714,
+        "lng": 135.8663
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["mon"],
+      "price": "大人330円、小学生160円",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.city.otsu.lg.jp/soshiki/025/1604/g/shisetsu/1389882394004.html",
+          "title": "大津市 旧竹林院",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://oumijingu.org/pages/127/",
+      "title": "近江神宮 かるた祭",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://oumijingu.org/pages/132/",
+      "title": "近江神宮 年間祭典行事一覧",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://oumijingu.org/",
+      "title": "近江神宮 公式サイト",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の日程と開始時刻（まだ発表がない。2027年1月10日は従来の決まりからの見込みで、2026年は決まりと違う日だった）",
+    "かるた開きの儀の終わる時刻と所要時間",
+    "雨天のときの扱い",
+    "見学の場所・席の決まりと、混雑の目安",
+    "服装・持ち物・撮影の可否（出典が見つからない）",
+    "別の催しの名人位・クイーン位決定戦の2027年の日程と観戦チケット（2026年は事前の有料チケット制で、競技会場に未就学児は入れなかった）",
+    "露店が出るか",
+    "規模の根拠になる参列者数の公表値",
+    "大阪方面から最寄り駅までの所要時間の公式の出典",
+    "周辺の場所の年始の臨時休業（祭りの日は1月上旬の見込み）",
+    "三井寺力餅本家 本店の値段（公式で確かめられない）"
+  ]
+}
