@@ -1,0 +1,270 @@
+{
+  "id": "takemizuwake-daitosai",
+  "name": {
+    "ja": "大頭祭",
+    "en": "Daitosai Festival of Takemizuwake Shrine"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "長野県",
+      "name": "千曲市"
+    }
+  ],
+  "venue": {
+    "name": "武水別神社",
+    "lat": 36.5181,
+    "lng": 138.1031
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "宝船を伴う頭人の練り行列が、斎ノ森神社から本殿まで約1kmを進む",
+    "行列の宝船から、沿道の見物人へ御供（みかんや日用品）が撒かれる",
+    "5人の頭人が1日に1人ずつ練る、400年以上続く新嘗祭"
+  ],
+  "trivia": [
+    {
+      "text": "御頭帳には文禄2年（1593）から今までの頭人の名が記され、四百数十年続いてきたと分かる",
+      "source": {
+        "url": "https://www.city.chikuma.lg.jp/material/files/group/28/02_2syou.pdf",
+        "title": "千曲市 歴史的風致維持向上計画 第2章 千曲市の維持向上すべき歴史的風致",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "頭人は5人で、最も位の高い三番頭を「大頭」と呼ぶことが祭りの名の由来",
+      "source": {
+        "url": "https://takemizuwake.jp/event/",
+        "title": "武水別神社 年中行事 大頭祭（新嘗祭）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "宝船から撒かれる御供は、みかんのほか、たわしや軍手、靴下などの日用品のこともある",
+      "source": {
+        "url": "https://www.city.chikuma.lg.jp/material/files/group/28/02_2syou.pdf",
+        "title": "千曲市 歴史的風致維持向上計画 第2章 千曲市の維持向上すべき歴史的風致",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "昭和30年代までは境内にサーカスや見世物小屋も立ち、連日数万人の見物人が来た",
+      "source": {
+        "url": "https://www.city.chikuma.lg.jp/material/files/group/28/02_2syou.pdf",
+        "title": "千曲市 歴史的風致維持向上計画 第2章 千曲市の維持向上すべき歴史的風致",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://takemizuwake.jp/event/",
+        "title": "武水別神社 年中行事 大頭祭（新嘗祭）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.chikuma.lg.jp/material/files/group/28/02_2syou.pdf",
+        "title": "千曲市 歴史的風致維持向上計画 第2章（頭人の行事と見物人の御供拾い）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-10",
+      "endDate": "2026-12-14",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "例年12月10日〜14日（神社の年中行事。2026年の神社の発表はまだない）。例年、練り行列は各日15:00ごろ斎ノ森神社を出発し、1番頭から順に1日1人ずつの頭人が神饌を本殿へ運び、翌晩の御供積みで神前に供える",
+      "sources": [
+        {
+          "url": "https://takemizuwake.jp/event/",
+          "title": "武水別神社 年中行事 大頭祭（毎年12月10日〜14日、各日15時ごろ出発）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.chikuma.lg.jp/material/files/group/28/02_2syou.pdf",
+          "title": "千曲市 歴史的風致維持向上計画 第2章（大門行列と御供積み）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000759",
+          "title": "るるぶ&more. 大頭祭（2026年12月10日〜14日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [
+      {
+        "hub": "長野駅",
+        "minutes": [19, 19],
+        "route": "しなの鉄道線（小諸方面）で屋代駅まで、乗り換えなし（時刻表の普通列車の例）。屋代駅から神社までは車で約10分"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://takemizuwake.jp/guide",
+        "title": "武水別神社 参拝のご案内（しなの鉄道屋代駅・JR稲荷山駅から車で約10分、市内循環バスあり）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.shinanorailway.co.jp/rail-info/time-table/train_time.php?no=622M&station=yashiro",
+        "title": "しなの鉄道 時刻表（長野7:21発小諸行、屋代7:40着）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000759",
+        "title": "るるぶ&more. 大頭祭（駐車場50台・無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "obasute-tanada",
+      "name": "姨捨の棚田",
+      "kind": "sightseeing",
+      "summary": "千曲川を見下ろす斜面の棚田で、月の名所として知られる。棚田の中の道は農作業の車が優先のため、日本遺産センターなどの駐車場に停めて歩く。JR姨捨駅から徒歩約10分",
+      "location": {
+        "lat": 36.5041,
+        "lng": 138.0947
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.city.chikuma.lg.jp/soshiki/norin/kanko/3/2147.html",
+          "title": "千曲市 姨捨の棚田へのアクセス",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "inariyama-kurashikan",
+      "name": "稲荷山宿・蔵し館",
+      "kind": "sightseeing",
+      "summary": "生糸の輸出で栄えた松林家の邸宅を直した施設。主屋で町屋の暮らしを再現し、土蔵で稲荷山の生業の資料を見せる。月〜水曜と祝日の翌日、12月29日〜1月3日は休館",
+      "location": {
+        "lat": 36.5388,
+        "lng": 138.1046
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["mon", "tue", "wed"],
+      "price": "一般300円、高校生150円、中学生以下無料",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.chikuma.lg.jp/soshiki/rekishibunkazaicenter/kurashikan/8066.html",
+          "title": "千曲市 稲荷山宿・蔵し館 ご利用案内",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "issyotei-chikuma",
+      "name": "信州そば処 一松亭",
+      "kind": "food",
+      "summary": "国道沿いの大きな水車が目印のそば店。天ざるそばのほか、市内では数少ない更科そばを出す。水曜定休（祝日などの水曜は営業）。駐車場60台",
+      "location": {
+        "lat": 36.553,
+        "lng": 138.1371
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "20:00",
+        "lastEntry": "19:30"
+      },
+      "closedDays": ["wed"],
+      "price": null,
+      "tags": ["seating"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://chikuma-kanko.com/facilities/post-493/",
+          "title": "信州千曲観光局 信州そば処 一松亭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://takemizuwake.jp/event/",
+      "title": "武水別神社 年中行事 大頭祭（新嘗祭）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.chikuma.lg.jp/material/files/group/28/02_2syou.pdf",
+      "title": "千曲市 歴史的風致維持向上計画 第2章 武水別神社にみる歴史的風致",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.chikuma.lg.jp/material/files/group/4/3101all_1.pdf",
+      "title": "市報ちくま 2019年1月号（2018年の大頭祭、5人の頭人が約1kmを練り歩いた）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2026年の開催の発表と、日ごとの頭人・夜練り・御供積みの時刻（神社の告知はまだ見つからない）",
+    "最後の御供積みの日（神社は12月10日〜14日とするが、市の資料は12月10日〜15日とし、5番頭の神饌は翌晩に供える）",
+    "屋代駅・稲荷山駅から神社までの徒歩の時間とバスの時刻（神社は車で約10分と案内し、徒歩の時間がない）",
+    "見学の決まり、御供を拾うときの注意、服装・持ち物、撮影の決まり",
+    "危険度（主催者による、混雑や火のそばでの注意が見つからない）",
+    "雨や雪のときの扱い",
+    "交通規制の有無と、祭りの日の駐車場の扱い（駐車場50台はるるぶの記載のみ）",
+    "見物人の数の公表値と行列の人数（規模は、1日に1本の練り行列として決めた）",
+    "地元の味・祭りの日だけの食べ物（境内に露天商が並ぶとだけ分かっている）",
+    "祭りの日の夕食に使える神社の近くの店（営業時間を公式で確かめられた店がない）",
+    "金沢駅・名古屋駅など、長野駅のほかの玄関口の駅からの所要時間"
+  ]
+}

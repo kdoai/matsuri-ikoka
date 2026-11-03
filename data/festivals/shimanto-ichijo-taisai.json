@@ -1,0 +1,334 @@
+{
+  "id": "shimanto-ichijo-taisai",
+  "name": {
+    "ja": "一條大祭",
+    "en": "Ichijo Taisai Festival"
+  },
+  "category": "lantern",
+  "municipalities": [
+    {
+      "prefecture": "高知県",
+      "name": "四万十市"
+    }
+  ],
+  "venue": {
+    "name": "一條神社",
+    "lat": 32.9936,
+    "lng": 132.9341
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "京都・下鴨神社から授かった御神火を灯し、町を巡って神社へ向かう提灯行列",
+    "神楽殿で幡多神楽と津野山神楽の2つの神楽が続けて奉納される",
+    "祇園神社から一條神社まで歩く稚児行列と、土佐中村一條太鼓",
+    "3日間、神社の階段と境内に御神火灯篭が並び、町なかに露店が出る"
+  ],
+  "trivia": [
+    {
+      "text": "一條神社は文久2年（1862年）、中村御所跡の一條家の御廟所跡に有志が建てた",
+      "source": {
+        "url": "https://www.shimanto-kankou.com/kanko/history/itijou.html",
+        "title": "四万十市観光協会 一條神社",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "祀られる土佐一條氏は、応仁の乱を避けて京から下った前関白・一條教房ゆかりの家",
+      "source": {
+        "url": "https://www.shimanto-kankou.com/kanko/history/itijou.html",
+        "title": "四万十市観光協会 一條神社",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "一條神社は市民に「いちじょこさん」と呼ばれ親しまれている",
+      "source": {
+        "url": "https://www.shimanto-kankou.com/kanko/history/itijou.html",
+        "title": "四万十市観光協会 一條神社",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "今の一條神社の社殿は、昭和19年（1944年）に建てられたもの",
+      "source": {
+        "url": "https://www.shimanto-kankou.com/kanko/history/itijou.html",
+        "title": "四万十市観光協会 一條神社",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "臨時駐車場（中村小学校グラウンド）は11月22日・23日の9:00〜16:00だけ。時間を守り、24日は使えない",
+      "ごみは持ち帰る",
+      "臨時駐車場は学校の施設なので、グラウンドや周りを汚したり傷つけたりしない"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "例年数万人の人出があり、露店の出る道路は車両通行止めになる"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.shimanto-kankou.com/kanko/culture/ichijyotaisai.html",
+        "title": "四万十市観光協会（一條大祭奉賛会事務局） 一條大祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.walkerplus.com/event/ar0939e568606/",
+        "title": "ウォーカープラス 一條大祭（数万人の人出）",
+        "checkedAt": "2026-11-04",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://www.nta.co.jp/kokunai/special/eventinfo/10642052.htm",
+        "title": "日本旅行 一條大祭（数万人の人出）",
+        "checkedAt": "2026-11-04",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-22",
+      "start": "17:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "17:00から御神火奉納提灯行列・宵宮祭（市内を巡り一條神社へ）。露店はこの日の昼ごろから。はた☆マルシェ（四国銀行跡地駐車場）は10:30〜16:00、雨天中止。御神火灯篭は22〜24日、神社の階段と境内に展示。日程は予定で、変わることがある",
+      "sources": [
+        {
+          "url": "https://www.shimanto-kankou.com/kanko/culture/ichijyotaisai.html",
+          "title": "四万十市観光協会（一條大祭奉賛会事務局） 令和8年 一條大祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-23",
+      "start": "12:00",
+      "end": "17:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "一條神社で12:00から随時 土佐中村一條太鼓、13:00〜14:30 奉納神楽（幡多神楽、神楽殿）、14:30 稚児行列（祇園神社〜一條神社）、15:30〜17:00 奉納神楽（津野山神楽、神楽殿）。はた☆マルシェは10:00〜15:30（雨天中止）",
+      "sources": [
+        {
+          "url": "https://www.shimanto-kankou.com/kanko/culture/ichijyotaisai.html",
+          "title": "四万十市観光協会（一條大祭奉賛会事務局） 令和8年 一條大祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-24",
+      "start": "10:00",
+      "end": "16:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "最終日。神社の御神火灯篭の展示と、町なかの露店（16:00ごろまで）。はた☆マルシェは10:00〜14:00（雨天中止）。臨時駐車場はこの日は使えない",
+      "sources": [
+        {
+          "url": "https://www.shimanto-kankou.com/kanko/culture/ichijyotaisai.html",
+          "title": "四万十市観光協会（一條大祭奉賛会事務局） 令和8年 一條大祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "土佐くろしお鉄道 中村駅",
+        "walkMinutes": [20, 25],
+        "note": "観光協会は中村駅から車で約5分と案内。徒歩約20分は旅行会社の案内の数字"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [
+      "11月22日の昼ごろから24日の16時ごろまで、露店の出る道路は車両通行止め（場所は観光協会のポスターに掲載）"
+    ],
+    "sources": [
+      {
+        "url": "https://www.shimanto-kankou.com/kanko/culture/ichijyotaisai.html",
+        "title": "四万十市観光協会 令和8年 一條大祭（臨時駐車場、車両通行止め）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.shimanto-kankou.com/kanko/history/itijou.html",
+        "title": "四万十市観光協会 一條神社（中村駅から車で約5分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.nta.co.jp/kokunai/special/eventinfo/10642052.htm",
+        "title": "日本旅行 一條大祭（中村駅から徒歩約20分、駐車場の用意なし）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "中村の塩たたき",
+        "note": "中村ならではのカツオの塩たたき。店ごとに工夫したタレと合わせて食べる。町なかの料理店や居酒屋で出す",
+        "sources": [
+          {
+            "url": "https://www.shimanto-kankou.com/kanko/eat/shio-tataki.html",
+            "title": "四万十市観光協会 中村の塩たたき",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "shimanto-kyodo-museum",
+      "name": "四万十市郷土博物館（しろっと）",
+      "kind": "sightseeing",
+      "summary": "中村城跡の為松公園にある城の形の博物館。四万十川と暮らし、土佐一條家や中村山内家などの資料を展示し、最上階の展望台から川と市街を見渡せる。水曜休館、臨時休館あり",
+      "location": {
+        "lat": 32.9972,
+        "lng": 132.9305
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["wed"],
+      "price": "大人440円、高校生170円、中学生以下無料",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.shimanto-kankou.com/kanko/history/kyoudo.html",
+          "title": "四万十市観光協会 四万十市郷土博物館しろっと",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "shimanto-izakaya-inaka",
+      "name": "居酒屋 いなか",
+      "kind": "food",
+      "summary": "中村の町なかの居酒屋で、観光協会が中村の塩たたきを食べられる店に挙げる。日曜定休のため、祭りの初日（22日）は休み",
+      "location": {
+        "lat": 32.9917,
+        "lng": 132.9319
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "17:00",
+        "close": "22:30"
+      },
+      "closedDays": ["sun"],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.shimanto-kankou.com/kanko/eat/shio-tataki.html",
+          "title": "四万十市観光協会 中村の塩たたき（塩たたきが食べられるお店）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "shimanto-sumiya-ippu",
+      "name": "炭や 一風",
+      "kind": "food",
+      "summary": "市役所の近くの料理店で、観光協会が中村の塩たたきや養殖うなぎを食べられる店に挙げる。休みは観光協会の案内で木曜、ほかのサイトでは不定休とあり、確かめてから行く",
+      "location": {
+        "lat": 32.9913,
+        "lng": 132.9359
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.shimanto-kankou.com/kanko/eat/shio-tataki.html",
+          "title": "四万十市観光協会 中村の塩たたき（炭や 一風 11:00〜22:00、木曜定休）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.shimanto-kankou.com/kanko/eat/tennenunagi.html",
+          "title": "四万十市観光協会 養殖うなぎ（炭や 一風 11:00〜15:00・17:00〜22:00、木曜定休）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.shimanto-kankou.com/kanko/culture/ichijyotaisai.html",
+      "title": "四万十市観光協会（一條大祭奉賛会事務局） 一條大祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.shimanto-kankou.com/kanko/history/itijou.html",
+      "title": "四万十市観光協会 一條神社（毎年11月22日〜24日に一條大祭）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.walkerplus.com/event/ar0939e568606/",
+      "title": "ウォーカープラス 一條大祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_349303/",
+      "title": "じゃらんnet 一条大祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20000309",
+      "title": "るるぶ&more. 一條大祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "高知駅・松山駅からの所要時間（公式の案内の数字が見つからない）",
+    "雨の日の扱い（はた☆マルシェの雨天中止のほかは案内がない）",
+    "車両通行止めになる道路の場所と時間の細部（観光協会のポスター画像にあり、本文にない）",
+    "提灯行列の道順と、神社に着く時刻",
+    "中村駅から会場までの徒歩時間の公式の数字",
+    "提灯行列や稚児行列に加われるか（加わり方の案内が見つからない）",
+    "服装・持ち物・撮影の決まり",
+    "行列の参加人数・提灯の数（規模の根拠の数）",
+    "見学者数の公表値（大手の観光サイトは「数万人」）",
+    "炭や 一風の営業時間（観光協会の2つのページで違う）と休みの日"
+  ]
+}
