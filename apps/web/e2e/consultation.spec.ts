@@ -10,6 +10,7 @@ import {
   SAMPLE,
   seenTexts,
   sendSampleMessage,
+  sessionReady,
   snap,
   tabTo,
   talkToConcierge,
@@ -251,7 +252,8 @@ test("キーボードだけで、入店から相談・候補選び・しおり�
   // 会話の窓は、E で話しかけると出る
   await page.keyboard.press("e");
   const input = page.getByRole("textbox", { name: "相談の発言" });
-  await expect(input).toBeEnabled();
+  await expect(input).toBeFocused();
+  await sessionReady(page);
 
   // E で会話の窓の入力欄へ移り、打って Enter で送る
   const say = async (index: number) => {

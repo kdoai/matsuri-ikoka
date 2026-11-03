@@ -151,6 +151,27 @@ test("旅人を歩かせ、仕掛けを使い、柵で止まり、話しかけ�
   await expect(page.getByTestId("greeting-bar")).toBeVisible({ timeout: 60_000 });
 });
 
+test("会話の窓を出したら、窓のどこをクリックしても入力欄に入り、打った文字で旅人は動かない", async ({
+  page,
+}) => {
+  test.setTimeout(180_000);
+  await page.goto("/");
+  await page.getByRole("button", { name: "入店する" }).click();
+  // 入店の直後（相談を始める途中でも）に話しかける
+  await talkToConcierge(page);
+  const scene = page.getByTestId("shop-scene");
+  const start = await playerAt(page);
+  // 会話の窓の、入力欄でないところ（話し手の一言のあたり）をクリックしてから打つ
+  await page.getByTestId("dialogue-line").click();
+  const input = page.getByRole("textbox", { name: "相談の発言" });
+  await expect(input).toBeFocused();
+  await page.keyboard.type("wasd sawd");
+  await expect(input).toHaveValue("wasd sawd");
+  await page.waitForTimeout(800);
+  expect(await playerAt(page)).toEqual(start);
+  await expect(scene).toHaveAttribute("data-player", `${start.x.toFixed(2)},${start.z.toFixed(2)}`);
+});
+
 test("WebGL が使えないときは、店の外観も店内も 2D で出す", async ({ page }) => {
   await page.addInitScript(() => {
     const original = HTMLCanvasElement.prototype.getContext;
