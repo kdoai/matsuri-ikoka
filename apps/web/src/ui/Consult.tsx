@@ -21,6 +21,7 @@ import {
   type ConsultQuestion,
   type ConsultStep,
   canReach,
+  DIETARY_OPTIONS,
   effectiveAnswers,
   FAMILY_MEMBERS,
   hasAnyAnswer,
@@ -46,6 +47,7 @@ import {
   stepCount,
   TRAVEL_LIMITS,
   todayInJapan,
+  toggleDietary,
 } from "../state/consult";
 import { useActions, useApp, useT } from "../state/react";
 import {
@@ -169,6 +171,7 @@ function ChoiceStep({ question }: { question: ChoiceQuestion & ConsultQuestion }
       {question === "party" ? <PartyCounts /> : null}
       {question === "destination" ? <TravelPicks /> : null}
       {question === "destination" ? <PrefecturePicks /> : null}
+      {question === "food" ? <DietaryPicks /> : null}
       {showOther ? (
         <OtherField
           id={otherId}
@@ -242,6 +245,28 @@ function TravelPicks() {
             onClick={() => actions.editConsult((answers) => setTravel(answers, minutes))}
           >
             {t.consult.travelOption(minutes)}
+          </Choice>
+        ))}
+      </ChoiceGroup>
+    </div>
+  );
+}
+
+/** 食べたいものの段階で、あわせて食事で気をつけたいことも伝えられる（選ばなくてもよい） */
+function DietaryPicks() {
+  const t = useT();
+  const { actions } = useConsult();
+  const dietary = useApp((state) => state.consult.answers.food?.dietary ?? []);
+  return (
+    <div className="mt-2" data-testid="consult-dietary">
+      <ChoiceGroup label={t.consult.dietaryLabel}>
+        {DIETARY_OPTIONS.map((need) => (
+          <Choice
+            key={need}
+            pressed={dietary.includes(need)}
+            onClick={() => actions.editConsult((answers) => toggleDietary(answers, need))}
+          >
+            {t.consult.dietary[need]}
           </Choice>
         ))}
       </ChoiceGroup>

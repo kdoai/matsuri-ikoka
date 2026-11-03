@@ -47,9 +47,27 @@ const consultOptions = {
     history: "歴史",
     shopping: "買い物",
   },
-  food: { seafood: "海鮮", localDish: "郷土料理", sweets: "甘味", stalls: "屋台", sake: "地酒" },
+  food: {
+    seafood: "海鮮",
+    meat: "肉料理",
+    vegetables: "野菜中心",
+    noodles: "麺類（そば・うどん・ラーメン）",
+    local_dish: "郷土料理",
+    local_gourmet: "ご当地・B級グルメ",
+    washoku: "和食",
+    sweets: "甘味・カフェ",
+    stalls: "屋台",
+    local_drinks: "地酒・地ビール",
+  },
   pace: { relaxed: "ゆっくり", normal: "ふつう", packed: "たっぷり" },
   budget: { under10k: "〜1万円", under30k: "〜3万円", under50k: "〜5万円", more: "それ以上" },
+};
+const consultDietary = {
+  vegetarian: "ベジタリアン",
+  vegan: "ヴィーガン",
+  halal: "ハラール",
+  allergy: "食物アレルギー",
+  no_raw: "生ものが苦手",
 };
 const consultStay = { dayTrip: "日帰り", oneNight: "1泊", twoNights: "2泊", longer: "3泊以上" };
 const consultMembers = {
@@ -186,6 +204,8 @@ export const ja = {
     prefectures,
     travelLabel: "出発の駅から（片道・日帰りのとき）",
     travelOption: (minutes: number) => `${minutes / 60}時間以内`,
+    dietaryLabel: "食事で気をつけたいこと（あれば・いくつでも）",
+    dietary: consultDietary,
     prefecturesLabel: (region: string) => `${region}の中でしぼる（選ばなくてもよい）`,
     auto: "おまかせ",
     other: "その他",
@@ -247,6 +267,8 @@ export const ja = {
       nights: (nights: number) => (nights === 0 ? "日帰り" : `${nights}泊${nights + 1}日`),
       amount: (yen: number) => `${yen.toLocaleString("ja-JP")}円`,
       travel: (minutes: number) => `出発の駅から片道${minutes / 60}時間以内`,
+      dietary: (needs: string[]) => `気をつけたいこと：${needs.join("・")}`,
+      dietaryOptions: consultDietary,
       line: (label: string, text: string) => `・${label}：${text}`,
     },
   },

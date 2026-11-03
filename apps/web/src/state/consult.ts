@@ -1,4 +1,10 @@
-import { DAY_TRIP_TRAVEL_LIMITS, MAX_MESSAGE_LENGTH } from "@matsuri-ikoka/schema";
+import {
+  DAY_TRIP_TRAVEL_LIMITS,
+  DIETARY_NEEDS,
+  type DietaryNeed,
+  FOOD_WISHES,
+  MAX_MESSAGE_LENGTH,
+} from "@matsuri-ikoka/schema";
 
 // 選んで進める相談（聞き取り）。文章を書かなくても、選択肢を選ぶだけで旅の好みを伝えられる。
 // 段階は上から順に答える一本道で、答えると次の段階へ進む。選んだ内容は1つの発言にまとめ、
@@ -50,7 +56,7 @@ export const CONSULT_OPTIONS = {
   schedule: ["thisWeekend", "nextWeekend", "thisMonth", "nextMonth", "dates", "undecided"],
   destination: Object.keys(REGIONS) as Region[],
   activities: ["onsen", "sightseeing", "photo", "experience", "nature", "history", "shopping"],
-  food: ["seafood", "localDish", "sweets", "stalls", "sake"],
+  food: FOOD_WISHES,
   pace: ["relaxed", "normal", "packed"],
   budget: ["under10k", "under30k", "under50k", "more"],
 } as const;
@@ -59,6 +65,9 @@ export type ChoiceQuestion = keyof typeof CONSULT_OPTIONS;
 /** 日帰りのとき、行き先の段階で選べる、出発の駅からの片道の所要時間の上限（分） */
 export const TRAVEL_LIMITS = DAY_TRIP_TRAVEL_LIMITS;
 export type TravelLimit = (typeof TRAVEL_LIMITS)[number];
+
+/** 食べたいものの段階で、あわせて選べる食事で気をつけたいこと（いくつでも） */
+export const DIETARY_OPTIONS = DIETARY_NEEDS;
 
 /** 日程で、期間の決まった範囲（今週末など）や未定を選んだあとに聞く、日帰り・泊まり */
 export const STAY_OPTIONS = ["dayTrip", "oneNight", "twoNights", "longer"] as const;
@@ -124,7 +133,7 @@ export interface DateRange {
  * 1つの項目の答え。picks は選んだ選択肢（auto・other を含む）。
  * text は「その他」の自由記述、origin では出発の駅、note ではひとこと。
  * counts は人数（party）、range は指定した期間と stay は日帰り・泊まり（schedule）、amount は予算の金額、
- * travel は日帰りの片道の所要時間の上限（destination。分）
+ * travel は日帰りの片道の所要時間の上限（destination。分）、dietary は食事で気をつけたいこと（food）
  */
 export interface ConsultAnswer {
   picks: string[];
@@ -134,6 +143,7 @@ export interface ConsultAnswer {
   stay?: StayOption;
   amount?: number;
   travel?: TravelLimit;
+  dietary?: DietaryNeed[];
 }
 
 export type ConsultAnswers = Partial<Record<ConsultQuestion, ConsultAnswer>>;
@@ -291,6 +301,20 @@ export function setTravel(answers: ConsultAnswers, travel: TravelLimit): Consult
   return { ...answers, destination: { ...current, travel } };
 }
 
+/** 食事で気をつけたいことを付け外しする。すべて外したら項目ごと消す */
+export function toggleDietary(answers: ConsultAnswers, need: DietaryNeed): ConsultAnswers {
+  const current = answers.food ?? EMPTY;
+  const selected = current.dietary ?? [];
+  const dietary = selected.includes(need)
+    ? selected.filter((value) => value !== need)
+    : DIETARY_OPTIONS.filter((value) => value === need || selected.includes(value));
+  if (dietary.length === 0) {
+    const { dietary: _removed, ...rest } = current;
+    return { ...answers, food: rest };
+  }
+  return { ...answers, food: { ...current, dietary } };
+}
+
 /**
  * 送る・確かめるときの答え。日帰りでなくなったら、所要時間の上限は使わない
  * （泊まりの旅は遠くても行けるので、所要時間で絞らない）
@@ -328,6 +352,11 @@ export function isAnswered(answer: ConsultAnswer | undefined, question: ConsultQ
       return answer.picks[0] === "dates" ? answer.range !== undefined : answer.stay !== undefined;
     case "budget":
       return answer.picks.length > 0 || (answer.amount ?? 0) > 0;
+    case "food":
+      return (
+        (answer.dietary?.length ?? 0) > 0 ||
+        answer.picks.some((pick) => pick !== OTHER || answer.text.trim().length > 0)
+      );
     case "destination":
       return (
         answer.travel !== undefined ||
@@ -499,6 +528,9 @@ export interface ConsultWording {
   amount: (yen: number) => string;
   /** 日帰りの片道の所要時間の上限（例：「出発の駅から片道1時間以内」） */
   travel: (minutes: number) => string;
+  /** 食事で気をつけたいこと（例：「気をつけたいこと：ベジタリアン・食物アレルギー」） */
+  dietary: (needs: string[]) => string;
+  dietaryOptions: Record<DietaryNeed, string>;
   /** 1項目の行（例：「・だれと：家族で」） */
   line: (label: string, text: string) => string;
 }
@@ -593,6 +625,10 @@ export function answerText(
         if (pick === OTHER) return answer.text.trim() === "" ? [] : [answer.text.trim()];
         return [options[pick] ?? pick];
       });
+      const dietary = question === "food" ? (answer.dietary ?? []) : [];
+      if (dietary.length > 0) {
+        parts.push(wording.dietary(dietary.map((need) => wording.dietaryOptions[need])));
+      }
     }
   }
   const filtered = parts.filter((part) => part.length > 0);

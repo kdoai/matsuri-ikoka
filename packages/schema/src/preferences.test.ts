@@ -159,6 +159,23 @@ describe("TripConditionsSchema", () => {
     );
   });
 
+  it("食べたいものと、食事で気をつけたいことは決まった選択肢から", () => {
+    expect(
+      TripConditionsSchema.safeParse({
+        ...conditions,
+        foodWishes: ["meat", "noodles", "local_drinks"],
+        dietary: ["vegetarian", "allergy"],
+      }).success,
+    ).toBe(true);
+    expect(TripConditionsSchema.safeParse({ ...conditions, foodWishes: [] }).success).toBe(true);
+    expect(TripConditionsSchema.safeParse({ ...conditions, foodWishes: ["pizza"] }).success).toBe(
+      false,
+    );
+    expect(TripConditionsSchema.safeParse({ ...conditions, dietary: ["peanut"] }).success).toBe(
+      false,
+    );
+  });
+
   it("聞き取りの途中は、どの条件も空でよい", () => {
     expect(PartialTripConditionsSchema.safeParse({}).success).toBe(true);
     expect(PartialTripConditionsSchema.safeParse({ origin: "みなと中央駅" }).success).toBe(true);

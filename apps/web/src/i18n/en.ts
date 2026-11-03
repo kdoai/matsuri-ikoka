@@ -57,10 +57,15 @@ const consultOptions = {
   },
   food: {
     seafood: "Seafood",
-    localDish: "Local dishes",
-    sweets: "Sweets",
+    meat: "Meat dishes",
+    vegetables: "Mostly vegetables",
+    noodles: "Noodles (soba, udon, ramen)",
+    local_dish: "Local dishes",
+    local_gourmet: "Local comfort food",
+    washoku: "Japanese cuisine",
+    sweets: "Sweets & cafés",
     stalls: "Street stalls",
-    sake: "Local sake",
+    local_drinks: "Local sake & craft beer",
   },
   pace: { relaxed: "Relaxed", normal: "Normal", packed: "Packed" },
   budget: {
@@ -69,6 +74,13 @@ const consultOptions = {
     under50k: "Up to ¥50,000",
     more: "More",
   },
+};
+const consultDietary = {
+  vegetarian: "Vegetarian",
+  vegan: "Vegan",
+  halal: "Halal",
+  allergy: "Food allergies",
+  no_raw: "No raw food",
 };
 const consultStay = {
   dayTrip: "Day trip",
@@ -211,6 +223,8 @@ export const en: Messages = {
     prefectures,
     travelLabel: "From your station (one way, for a day trip)",
     travelOption: (minutes: number) => `Within ${minutes / 60} h`,
+    dietaryLabel: "Dietary needs (if any, choose any)",
+    dietary: consultDietary,
     prefecturesLabel: (region: string) => `Narrow down within ${region} (optional)`,
     auto: "Up to you",
     other: "Other",
@@ -281,6 +295,8 @@ export const en: Messages = {
       amount: (yen: number) => `¥${yen.toLocaleString("en-US")}`,
       travel: (minutes: number) =>
         `Within ${minutes / 60} hour${minutes === 60 ? "" : "s"} one way from your station`,
+      dietary: (needs: string[]) => `dietary needs: ${needs.join(", ")}`,
+      dietaryOptions: consultDietary,
       line: (label: string, text: string) => `- ${label}: ${text}`,
     },
   },

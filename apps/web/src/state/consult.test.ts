@@ -28,6 +28,7 @@ import {
   stepAfterAnswer,
   stepCount,
   todayInJapan,
+  toggleDietary,
 } from "./consult";
 
 const wording = MESSAGES.ja.consult.wording;
@@ -301,7 +302,40 @@ describe("日帰りの所要時間の上限", () => {
   });
 });
 
+describe("toggleDietary", () => {
+  it("食事で気をつけたいことを選択肢の順で付け外しし、すべて外したら消す", () => {
+    let answers = toggleDietary({}, "allergy");
+    answers = toggleDietary(answers, "vegetarian");
+    expect(answers.food?.dietary).toEqual(["vegetarian", "allergy"]);
+    expect(isAnswered(answers.food, "food")).toBe(true);
+
+    answers = toggleDietary(answers, "vegetarian");
+    answers = toggleDietary(answers, "allergy");
+    expect(answers.food?.dietary).toBeUndefined();
+    expect(isAnswered(answers.food, "food")).toBe(false);
+  });
+
+  it("食べたいものの選択とは別に持つ", () => {
+    let answers = pickAnswer({}, "food", "noodles");
+    answers = toggleDietary(answers, "halal");
+    answers = pickAnswer(answers, "food", "auto");
+    expect(answers.food).toEqual({ picks: ["auto"], text: "", dietary: ["halal"] });
+  });
+});
+
 describe("composeConsultMessage", () => {
+  it("食べたいものに、食事で気をつけたいことを添える", () => {
+    let answers = pickAnswer({}, "food", "meat");
+    answers = pickAnswer(answers, "food", "local_drinks");
+    answers = toggleDietary(answers, "no_raw");
+    expect(composeConsultMessage(answers, wording, "2030-06-05")).toContain(
+      "・食べたいもの：肉料理、地酒・地ビール、気をつけたいこと：生ものが苦手",
+    );
+    expect(composeConsultMessage(toggleDietary({}, "vegan"), wording, "2030-06-05")).toContain(
+      "・食べたいもの：気をつけたいこと：ヴィーガン",
+    );
+  });
+
   it("答えた項目だけを、段階の順に1つの発言にまとめる", () => {
     let answers = pickAnswer({}, "food", "seafood");
     answers = pickAnswer(answers, "food", "other");
