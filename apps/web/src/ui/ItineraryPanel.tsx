@@ -1,4 +1,9 @@
-import type { Itinerary, ItineraryItem } from "@matsuri-ikoka/schema";
+import {
+  type ItineraryDay,
+  type ItineraryItem,
+  mainFestivalDay,
+  type Weather,
+} from "@matsuri-ikoka/schema";
 import {
   ChevronRight,
   ClipboardCheck,
@@ -8,7 +13,7 @@ import {
   Route,
   X,
 } from "lucide-react";
-import { type KeyboardEvent, lazy, Suspense, useRef } from "react";
+import { Fragment, type KeyboardEvent, lazy, Suspense, useRef } from "react";
 import { formatDate, formatDateTime, type Messages } from "../i18n";
 import { useActions, useApp, useT } from "../state/react";
 import { itemChange, shioriReady, usedSources } from "../state/selectors";
@@ -16,7 +21,7 @@ import { PANEL_TABS, type PanelTab, type VerifyState } from "../state/types";
 import { buttonPrimary, Pill, SourceLink } from "./common";
 import { itemIcon } from "./icons";
 
-// 右のパネル：旅程・地図・出典のタブ。旅程は「1日目」のカードに予定のアイコンを矢印でつないで見せ、
+// 右のパネル：旅程・地図・出典のタブ。旅程は日ごとのカード（「1日目」など）に予定のアイコンを矢印でつないで見せ、
 // その下にくわしい予定と道のりの地図を置く。変わった予定は山吹色で示し、組み直したら「更新！」の札を貼る。
 
 const TAB_ICON: Record<PanelTab, LucideIcon> = {
@@ -27,8 +32,7 @@ const TAB_ICON: Record<PanelTab, LucideIcon> = {
 
 const MapView = lazy(() => import("./MapView"));
 
-export function weatherText(t: Messages, itinerary: Itinerary): string {
-  const weather = itinerary.weather;
+export function weatherText(t: Messages, weather: Weather): string {
   switch (weather.status) {
     case "forecast":
       return t.itinerary.weather.forecast(
@@ -159,25 +163,33 @@ function FlowStep({ item, main, first }: { item: ItineraryItem; main: boolean; f
   );
 }
 
-/** 「1日目」のカード。くわしい予定は下の一覧で文字で読めるので、流れの絵は読み上げから外す */
-function DayCard({ itinerary }: { itinerary: Itinerary }) {
+/** 「n日目」のカード。くわしい予定は下の一覧で文字で読めるので、流れの絵は読み上げから外す */
+function DayCard({
+  day,
+  dayNumber,
+  mainFestivalId,
+}: {
+  day: ItineraryDay;
+  dayNumber: number;
+  mainFestivalId: string;
+}) {
   const t = useT();
   const updated = useApp(
     (state) => state.itinerary.diff !== null && state.itinerary.diff.fromVersion > 0,
   );
   return (
     <section
-      aria-labelledby="day-card-title"
+      aria-labelledby={`day-card-title-${dayNumber}`}
       className="relative rounded-2xl border-2 border-wood-300 bg-white px-3 pt-3 pb-2 shadow-sm"
       data-testid="day-card"
     >
       <h3
-        id="day-card-title"
+        id={`day-card-title-${dayNumber}`}
         className="inline-flex rounded-full bg-ai-800 px-3 py-0.5 font-bold text-kinari-50 text-sm"
       >
-        {t.panel.day(1)}
+        {t.panel.day(dayNumber)}
       </h3>
-      {updated ? (
+      {updated && dayNumber === 1 ? (
         <p
           className="-top-3 absolute right-3 rotate-6 rounded-md bg-yamabuki-400 px-2.5 py-1 font-black text-ink shadow-md ring-2 ring-white"
           data-testid="updated-sticker"
@@ -186,12 +198,12 @@ function DayCard({ itinerary }: { itinerary: Itinerary }) {
         </p>
       ) : null}
       <ol aria-hidden="true" className="mt-3 flex flex-wrap items-start gap-y-3">
-        {itinerary.items.map((item, index) => (
+        {day.items.map((item, index) => (
           <FlowStep
             key={item.id}
             item={item}
             first={index === 0}
-            main={item.type === "festival" && item.festivalId === itinerary.mainFestivalId}
+            main={item.type === "festival" && item.festivalId === mainFestivalId}
           />
         ))}
       </ol>
@@ -228,6 +240,7 @@ function RouteMapCard() {
 
 function ItineraryTab() {
   const t = useT();
+  const locale = useApp((state) => state.ui.locale);
   const itinerary = useApp((state) => state.itinerary.current);
   const removed = useApp((state) =>
     state.itinerary.diff !== null && state.itinerary.diff.fromVersion > 0
@@ -239,15 +252,37 @@ function ItineraryTab() {
   }
   return (
     <div className="space-y-4 p-3">
-      <DayCard itinerary={itinerary} />
+      {itinerary.days.map((day, index) => (
+        <DayCard
+          key={day.date}
+          day={day}
+          dayNumber={index + 1}
+          mainFestivalId={itinerary.mainFestivalId}
+        />
+      ))}
       <h3 className="font-bold text-ai-700 text-sm">{t.panel.detail}</h3>
       <ol className="space-y-2">
-        {itinerary.items.map((item) => (
-          <ItemRow
-            key={item.id}
-            item={item}
-            main={item.type === "festival" && item.festivalId === itinerary.mainFestivalId}
-          />
+        {itinerary.days.map((day, index) => (
+          <Fragment key={day.date}>
+            {itinerary.days.length > 1 ? (
+              <li className="pt-1 font-bold text-ink text-sm">
+                {t.itinerary.day(index + 1, formatDate(day.date, locale))}
+                <span className="ml-2 font-normal text-ink-soft">
+                  {t.itinerary.weather.title}：{weatherText(t, day.weather)}
+                </span>
+              </li>
+            ) : null}
+            {day.items.map((item) => (
+              <ItemRow
+                key={item.id}
+                item={item}
+                main={item.type === "festival" && item.festivalId === itinerary.mainFestivalId}
+              />
+            ))}
+            {day.stay === null ? null : (
+              <li className="text-ink-soft text-sm">{t.itinerary.stay(day.stay.area)}</li>
+            )}
+          </Fragment>
         ))}
       </ol>
       {removed.length > 0 ? (
@@ -390,9 +425,9 @@ export function ItineraryPanel() {
             <Pill tone="ai">{t.itinerary.version(itinerary.version)}</Pill>
           </div>
           <p className="text-ink text-sm">
-            {formatDate(itinerary.date, locale)}・{itinerary.origin}
+            {formatDate(mainFestivalDay(itinerary).date, locale)}・{itinerary.origin}
             <span className="ml-2 text-ink-soft">
-              {t.itinerary.weather.title}：{weatherText(t, itinerary)}
+              {t.itinerary.weather.title}：{weatherText(t, mainFestivalDay(itinerary).weather)}
             </span>
           </p>
           <VerificationLine verify={verify} />
