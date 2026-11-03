@@ -18,6 +18,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "validate:data": "tsx scripts/validate-festivals.ts",
+    "build:stations": "tsx scripts/build-stations.ts",
     "refresh:targets": "tsx scripts/refresh-targets.ts"
   },
   "devDependencies": {

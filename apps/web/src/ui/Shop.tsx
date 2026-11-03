@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  type CSSProperties,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { otherLocale } from "../i18n";
 import { playStore } from "../state/play";
 import { useActions, useApp, useAppStore, useT } from "../state/react";
@@ -266,6 +273,8 @@ export function Shop() {
       <div
         ref={dialogueRef}
         hidden={!dialogueOpen}
+        // 会話の窓は、上の段（丸いボタンと操作の案内）の下までに収める
+        style={{ "--frame-top": `${frame.top}px` } as CSSProperties}
         className={`absolute inset-x-2 bottom-2 z-20 sm:inset-x-3 sm:bottom-3 ${
           beside
             ? "lg:right-[calc(min(44rem,48vw)+1.5rem)] lg:left-3"

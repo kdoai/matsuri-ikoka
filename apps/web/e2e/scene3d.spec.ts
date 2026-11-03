@@ -160,7 +160,7 @@ test("入口で通りへ向かって進むと、のれんをくぐって店の�
   await expect(page.getByTestId("greeting-bar")).toBeVisible({ timeout: 90_000 });
 });
 
-test("会話の窓を出したら、窓のどこをクリックしても入力欄に入り、打った文字で旅人は動かない", async ({
+test("聞き取りの入力欄の段階で窓のどこをクリックしても入力欄に入り、打った文字で旅人は動かない", async ({
   page,
 }) => {
   test.setTimeout(180_000);
@@ -170,9 +170,13 @@ test("会話の窓を出したら、窓のどこをクリックしても入力�
   await talkToConcierge(page);
   const scene = page.getByTestId("shop-scene");
   const start = await playerAt(page);
-  // 会話の窓の、入力欄でないところ（話し手の一言のあたり）をクリックしてから打つ
+  // 出発の駅の段階まで答え、会話の窓の、入力欄でないところ（話し手の一言のあたり）をクリックしてから打つ
+  const consult = page.getByTestId("consult");
+  for (const name of ["ひとりで", "今週末", "日帰り"]) {
+    await consult.getByRole("button", { name, exact: true }).click();
+  }
   await page.getByTestId("dialogue-line").click();
-  const input = page.getByRole("textbox", { name: "相談の発言" });
+  const input = consult.getByRole("textbox", { name: "最寄りの駅" });
   await expect(input).toBeFocused();
   await page.keyboard.type("wasd sawd");
   await expect(input).toHaveValue("wasd sawd");

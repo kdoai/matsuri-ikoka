@@ -39,7 +39,8 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   // 1. 相談 → 候補
   await sendSampleMessage(page, 0);
   const cards = page.getByTestId("candidate-card");
-  await expect(cards).toHaveCount(2);
+  // 聞き取りに答えて送るので、返答の再生を待つ
+  await expect(cards).toHaveCount(2, { timeout: 20_000 });
   await expect(cards.nth(0)).toContainText("鈴鳴灯籠まつり");
   await expect(cards.nth(0)).toContainText("公式で確認");
   await expect(cards.nth(0)).toContainText("ご希望の日");
@@ -259,17 +260,49 @@ test("キーボードだけで、入店から相談・候補選び・しおり�
   // 会話の窓は、E で話しかけると出る。焦点は選んで進める相談の最初の選択肢へ移る
   await page.keyboard.press("e");
   await expect(page.getByTestId("consult-choice").first()).toBeFocused();
-  const input = page.getByRole("textbox", { name: "相談の発言" });
   await sessionReady(page);
 
-  // 会話の窓が出ているときは、E で自分の言葉で書く欄へ移り、打って Enter で送る
+  // 聞き取りは、Tab と Enter、カレンダーは矢印キーで最後まで答えられる
+  const consult = page.getByTestId("consult");
+  const press = async (name: string) => {
+    await tabTo(page, consult.getByRole("button", { name, exact: true }));
+    await page.keyboard.press("Enter");
+  };
+  const decide = async () => {
+    await tabTo(page, consult.getByTestId("consult-decide"));
+    await page.keyboard.press("Enter");
+  };
+  await page.keyboard.press("Enter");
+  await press("日付を指定");
+  await expect(page.getByTestId("consult-calendar")).toBeVisible();
+  await page.keyboard.press("Enter");
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("Enter");
+  await expect(page.getByTestId("consult-nights")).toContainText("1泊2日");
+  await decide();
+  await expect(consult.getByRole("textbox", { name: "最寄りの駅" })).toBeFocused();
+  await page.keyboard.insertText("みなと中央駅");
+  await page.keyboard.press("Enter");
+  for (let i = 0; i < 3; i++) {
+    await press("おまかせ");
+    await decide();
+  }
+  await press("おまかせ");
+  await press("おまかせ");
+  await expect(consult.getByRole("textbox", { name: "ひとこと" })).toBeFocused();
+  await page.keyboard.insertText(SAMPLE.turns[0]?.request.message ?? "");
+  await decide();
+  await tabTo(page, page.getByTestId("consult-submit"));
+  await page.keyboard.press("Enter");
+
+  // 聞き取りのあとは、E で自分の言葉で書く欄へ移り、打って Enter で送る
+  const input = page.getByRole("textbox", { name: "相談の発言" });
   const say = async (index: number) => {
     await page.keyboard.press("e");
     await expect(input).toBeFocused();
     await page.keyboard.insertText(SAMPLE.turns[index]?.request.message ?? "");
     await page.keyboard.press("Enter");
   };
-  await say(0);
   await expect(page.getByRole("heading", { name: "祭りの候補" })).toBeFocused();
   await waitForReply(page);
   await tabTo(page, page.getByRole("button", { name: "この祭りにする" }).first());
@@ -325,25 +358,90 @@ test("文章を書かずに、選択肢を選ぶだけで相談を始められ�
   test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
   await enterShop(page);
   const consult = page.getByTestId("consult");
-  await expect(page.getByTestId("dialogue")).toContainText("誰と行きますか");
+  const progress = page.getByTestId("consult-progress");
+  const decide = () => consult.getByTestId("consult-decide").click();
+  // 聞き取りの窓が高くなっても、上の段（丸いボタンと操作の案内）とは重ならない
+  const noOverlap = async () => {
+    for (const top of ["icon-buttons", "button-hints"]) {
+      await expectNoOverlap(page, top, ["dialogue"]);
+    }
+  };
+  await expect(page.getByTestId("dialogue")).toContainText("だれと行きますか");
+  await noOverlap();
+  // 聞き取りの間は、自分の言葉で書く欄を出さない。答えるまで先へは進めない
+  await expect(page.getByTestId("composer")).toHaveCount(0);
+  await expect(progress).toHaveText("1 / 10");
+  await expect(page.getByTestId("consult-forward")).toBeDisabled();
+
+  // 家族を選ぶと、その場で人数を入れられる
   await consult.getByRole("button", { name: "家族で", exact: true }).click();
-  await expect(consult.getByRole("button", { name: "家族で", exact: true })).toHaveAttribute(
-    "aria-pressed",
-    "true",
+  await consult.getByRole("button", { name: "子ども（小学生）を1人増やす" }).click();
+  await expect(page.getByTestId("consult-counts")).toContainText("合計 3人");
+  await noOverlap();
+  await decide();
+
+  // 日付を指定を選ぶと、すぐ期間のカレンダーが開き、今日に焦点が移る。行きと帰りで泊数を出す
+  await expect(progress).toHaveText("2 / 10");
+  await consult.getByRole("button", { name: "日付を指定", exact: true }).click();
+  await expect(page.getByTestId("consult-calendar")).toBeVisible();
+  await noOverlap();
+  await page.keyboard.press("Enter");
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("Enter");
+  await expect(page.getByTestId("consult-nights")).toContainText("2泊3日");
+  await decide();
+
+  // ＜ で戻り、＞ で答えたところまで進める
+  await expect(progress).toHaveText("3 / 10");
+  await page.getByTestId("consult-back").click();
+  await expect(progress).toHaveText("2 / 10");
+  await page.getByTestId("consult-forward").click();
+  await expect(page.getByTestId("consult-forward")).toBeDisabled();
+
+  // 駅の候補の出典を、公式のページへのリンクで出す
+  await expect(page.getByTestId("consult-station-source").getByRole("link")).toHaveAttribute(
+    "href",
+    /^https:\/\/nlftp\.mlit\.go\.jp\/ksj\//,
   );
-  await page.getByTestId("consult-next").click();
-  await consult.getByRole("button", { name: "来週末", exact: true }).click();
-  await page.getByTestId("consult-next").click();
-  await consult.getByRole("textbox", { name: "出発する駅" }).fill("みなと中央駅");
-  await page.getByTestId("consult-next").click();
-  await consult.getByRole("button", { name: "日帰り", exact: true }).click();
-  // 「その他」を選ぶと、自由に書く欄が開く
-  await consult.getByRole("button", { name: "食べたいもの", exact: true }).click();
+  const station = consult.getByRole("textbox", { name: "最寄りの駅" });
+  await station.fill("みなと中央駅");
+  await station.press("Enter");
+
+  // 行き先は地方と都道府県、「その他」で自由に書ける
+  await consult.getByRole("button", { name: "関東", exact: true }).click();
+  await consult.getByRole("button", { name: "東京都", exact: true }).click();
+  await consult.getByRole("button", { name: "その他", exact: true }).click();
+  await consult.getByRole("textbox", { name: "行き先（自由に書く）" }).fill("川沿いの町");
+  await noOverlap();
+  await decide();
+  await consult.getByRole("button", { name: "温泉", exact: true }).click();
+  await decide();
   await consult.getByRole("button", { name: "その他", exact: true }).click();
   await consult.getByRole("textbox", { name: "食べたいもの（自由に書く）" }).fill("川魚");
-  await consult.getByRole("button", { name: "確認", exact: true }).click();
-  await expect(page.getByTestId("consult-summary")).toContainText("みなと中央駅");
-  await expect(page.getByTestId("consult-summary")).toContainText("川魚");
+  await decide();
+  await consult.getByRole("button", { name: "ゆっくり", exact: true }).click();
+  // 予算は金額でも伝えられる
+  const amount = consult.getByRole("textbox", { name: "金額で伝える（1人あたり）" });
+  await amount.fill("25000");
+  await noOverlap();
+  await amount.press("Enter");
+  await consult.getByRole("textbox", { name: "ひとこと" }).fill("子どもが歩き疲れないように");
+  await decide();
+
+  const summary = page.getByTestId("consult-summary");
+  await expect(progress).toHaveText("10 / 10");
+  await expect(summary).toContainText("家族で（大人2人、子ども1人、計3人）");
+  await expect(summary).toContainText("2泊3日");
+  await expect(summary).toContainText("みなと中央駅");
+  await expect(summary).toContainText("関東（東京都）、川沿いの町");
+  await noOverlap();
+  await expect(summary).toContainText("25,000円");
+  // 一覧から段階へ戻って直すと、確認へ戻る
+  await consult.getByRole("button", { name: "旅のペース：直す" }).click();
+  await consult.getByRole("button", { name: "たっぷり", exact: true }).click();
+  await expect(progress).toHaveText("10 / 10");
+  await expect(summary).toContainText("たっぷり");
   await snap(page, info, "06-consult-confirm");
   await page.getByTestId("consult-submit").click();
 
@@ -353,9 +451,15 @@ test("文章を書かずに、選択肢を選ぶだけで相談を始められ�
   await waitForReply(page);
   await page.keyboard.press("Escape");
   await expect(page.getByTestId("consult")).toHaveCount(0);
+  await expect(page.getByTestId("composer")).toBeVisible();
   await expect(page.getByTestId("reply-choices")).toContainText("条件を選び直す");
   await openLog(page);
-  await expect(page.getByTestId("chat-user").first()).toContainText("・誰と：家族で");
+  await expect(page.getByTestId("chat-user").first()).toContainText(
+    "・だれと：家族で（大人2人、子ども1人、計3人）",
+  );
+  await expect(page.getByTestId("chat-user").first()).toContainText(
+    "・予算（1人あたり）：25,000円",
+  );
   await closeLog(page);
 });
 

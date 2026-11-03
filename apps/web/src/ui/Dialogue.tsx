@@ -277,7 +277,7 @@ export function DialogueBox() {
   return (
     <section
       aria-label={t.chat.title}
-      className="washi relative rounded-panel border-2 border-line-strong px-4 pt-5 pb-3 shadow-lift sm:px-6"
+      className="washi relative flex max-h-[calc(100dvh-var(--frame-top,0px)-2.5rem)] flex-col rounded-panel border-2 border-line-strong px-4 pt-5 pb-3 shadow-lift sm:px-6"
       data-testid="dialogue"
       data-thinking={thinking}
       // 選択肢や入力欄でないところをクリックしたら、自由に書く欄へ移る（打った文字が旅人の操作に渡らない）
@@ -339,10 +339,11 @@ export function DialogueBox() {
           ) : null}
         </div>
       </div>
-      <div className="mt-3">
+      {/* 窓が高くなりすぎたら、選択肢と聞き取りの部分だけを中でスクロールする */}
+      <div className="mt-3 min-h-0 overflow-y-auto">
         {consultOpen ? <ConsultPanel /> : thinking ? null : <ReplyChoices retry={retry} />}
       </div>
-      <div className="mt-2 border-line border-t border-dashed pt-2">
+      <div className="mt-2 shrink-0 border-line border-t border-dashed pt-2">
         <Composer />
       </div>
     </section>

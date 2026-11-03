@@ -1,61 +1,133 @@
 import { MAX_MESSAGE_LENGTH } from "@matsuri-ikoka/schema";
 
 // 選んで進める相談（聞き取り）。文章を書かなくても、選択肢を選ぶだけで旅の好みを伝えられる。
-// 選んだ内容は1つの発言にまとめ、いつもの発言と同じ口（POST /api/chat）で送る。
-// 日付の範囲（今週末・来月など）は、ここでコードで計算して、具体的な日付を添える。
+// 段階は上から順に答える一本道で、答えると次の段階へ進む。選んだ内容は1つの発言にまとめ、
+// いつもの発言と同じ口（POST /api/chat）で送る。
+// 日付の範囲（今週末・来月など）と泊数・人数の合計は、ここでコードで計算して添える。
 
-/** 聞き取りの段階（画面の上のタブ）。最後の confirm で、まとめて送る */
+/** 聞き取りの段階。1つの段階で1つの項目を聞く。最後の confirm で、まとめて送る */
 export const CONSULT_STEPS = [
   "party",
-  "when",
-  "place",
-  "stay",
+  "schedule",
+  "origin",
+  "destination",
   "activities",
   "food",
-  "style",
+  "pace",
+  "budget",
+  "note",
   "confirm",
 ] as const;
 export type ConsultStep = (typeof CONSULT_STEPS)[number];
+export type ConsultQuestion = Exclude<ConsultStep, "confirm">;
 
-/** 聞く項目と、その選択肢。どの項目も「おまかせ」（auto）と「その他」（other。自由記述）を選べる */
+export const CONSULT_QUESTIONS = CONSULT_STEPS.filter(
+  (step): step is ConsultQuestion => step !== "confirm",
+);
+
+/** 地方と、その中の都道府県（全国地方公共団体コードの上2桁） */
+export const REGIONS = {
+  hokkaido: ["01"],
+  tohoku: ["02", "03", "04", "05", "06", "07"],
+  kanto: ["08", "09", "10", "11", "12", "13", "14"],
+  chubu: ["15", "16", "17", "18", "19", "20", "21", "22", "23"],
+  kinki: ["24", "25", "26", "27", "28", "29", "30"],
+  chugoku: ["31", "32", "33", "34", "35"],
+  shikoku: ["36", "37", "38", "39"],
+  kyushu: ["40", "41", "42", "43", "44", "45", "46", "47"],
+} as const;
+export type Region = keyof typeof REGIONS;
+export type Prefecture = (typeof REGIONS)[Region][number];
+
+/** 都道府県の選択肢の値（地方の値と区別するため、前に p を付ける） */
+export function prefecturePick(code: Prefecture): string {
+  return `p${code}`;
+}
+
+/** 選ぶ項目と、その選択肢 */
 export const CONSULT_OPTIONS = {
   party: ["solo", "family", "friends", "partner"],
-  when: ["thisWeekend", "nextWeekend", "thisMonth", "nextMonth", "date"],
-  origin: [],
-  area: ["near", "far"],
-  stay: ["dayTrip", "oneNight", "twoNights", "longer"],
+  schedule: ["thisWeekend", "nextWeekend", "thisMonth", "nextMonth", "dates", "undecided"],
+  destination: Object.keys(REGIONS) as Region[],
   activities: ["onsen", "sightseeing", "photo", "experience", "nature", "history", "shopping"],
   food: ["seafood", "localDish", "sweets", "stalls", "sake"],
   pace: ["relaxed", "normal", "packed"],
-  budget: ["thrifty", "standard", "treat"],
+  budget: ["under10k", "under30k", "under50k", "more"],
 } as const;
-export type ConsultQuestion = keyof typeof CONSULT_OPTIONS;
+export type ChoiceQuestion = keyof typeof CONSULT_OPTIONS;
+
+/** 日程で、期間の決まった範囲（今週末など）や未定を選んだあとに聞く、日帰り・泊まり */
+export const STAY_OPTIONS = ["dayTrip", "oneNight", "twoNights", "longer"] as const;
+export type StayOption = (typeof STAY_OPTIONS)[number];
 
 /** いくつでも選べる項目。ほかは1つだけ選ぶ */
-export const MULTI_QUESTIONS: readonly ConsultQuestion[] = ["activities", "food"];
+export const MULTI_QUESTIONS: readonly ConsultQuestion[] = ["destination", "activities", "food"];
 
-/** 段階ごとに聞く項目 */
-export const STEP_QUESTIONS: Record<ConsultStep, readonly ConsultQuestion[]> = {
-  party: ["party"],
-  when: ["when"],
-  place: ["origin", "area"],
-  stay: ["stay"],
-  activities: ["activities"],
-  food: ["food"],
-  style: ["pace", "budget"],
-  confirm: [],
-};
+/** 「おまかせ」と「その他」（自由記述）を選べる項目 */
+export const AUTO_QUESTIONS: readonly ConsultQuestion[] = [
+  "party",
+  "destination",
+  "activities",
+  "food",
+  "pace",
+  "budget",
+];
+export const OTHER_QUESTIONS: readonly ConsultQuestion[] = [
+  "party",
+  "destination",
+  "activities",
+  "food",
+  "pace",
+];
 
 export const AUTO = "auto";
 export const OTHER = "other";
 
+/** 一緒に行く人の内訳。家族は大人・子ども（小学生）・幼児・シニア、友人は人数だけ */
+export const FAMILY_MEMBERS = ["adults", "children", "infants", "seniors"] as const;
+export type PartyMember = (typeof FAMILY_MEMBERS)[number] | "friends";
+export type PartyCounts = Record<PartyMember, number>;
+
+export const DEFAULT_COUNTS: PartyCounts = Object.freeze({
+  adults: 2,
+  children: 0,
+  infants: 0,
+  seniors: 0,
+  friends: 2,
+}) as PartyCounts;
+
+/** 人数の ＋/− の下限と上限。友人は自分を入れて2人から */
+export const COUNT_LIMITS: Record<PartyMember, { min: number; max: number }> = {
+  adults: { min: 0, max: 9 },
+  children: { min: 0, max: 9 },
+  infants: { min: 0, max: 9 },
+  seniors: { min: 0, max: 9 },
+  friends: { min: 2, max: 20 },
+};
+
+/** 日付を指定するときの、泊数の上限（旅程は6泊まで組める） */
+export const MAX_NIGHTS = 6;
+
+/** 予算に直接入れられる金額の上限（1人あたり、円） */
+export const MAX_AMOUNT = 10_000_000;
+
+export interface DateRange {
+  from: string;
+  to: string;
+}
+
 /**
  * 1つの項目の答え。picks は選んだ選択肢（auto・other を含む）。
- * text は「その他」の自由記述、when で「日付を選ぶ」のときは日付（YYYY-MM-DD）、origin では出発の駅
+ * text は「その他」の自由記述、origin では出発の駅、note ではひとこと。
+ * counts は人数（party）、range は指定した期間と stay は日帰り・泊まり（schedule）、amount は予算の金額
  */
 export interface ConsultAnswer {
   picks: string[];
   text: string;
+  counts?: PartyCounts;
+  range?: DateRange;
+  stay?: StayOption;
+  amount?: number;
 }
 
 export type ConsultAnswers = Partial<Record<ConsultQuestion, ConsultAnswer>>;
@@ -64,20 +136,30 @@ export interface ConsultState {
   /** 選んで進める聞き取りを出しているか。まとめて送ったら閉じ、「選び直す」でまた開く */
   active: boolean;
   step: ConsultStep;
+  /** 確認の画面から直しに来たか。答えたら、確認の画面へ戻る */
+  editing: boolean;
   answers: ConsultAnswers;
 }
 
 export const INITIAL_CONSULT: ConsultState = Object.freeze({
   active: true,
   step: "party",
+  editing: false,
   answers: {},
 }) as ConsultState;
 
 const EMPTY: ConsultAnswer = { picks: [], text: "" };
 
+function regionOf(prefecture: string): Region | undefined {
+  return (Object.keys(REGIONS) as Region[]).find((region) =>
+    REGIONS[region].some((code) => prefecturePick(code) === prefecture),
+  );
+}
+
 /**
  * 選択肢を選ぶ。1つだけの項目は入れ替え、いくつでも選べる項目は付け外しする。
- * 「おまかせ」は、ほかの選択肢と同時には選ばない（選ぶとほかを外し、ほかを選ぶと外す）
+ * 「おまかせ」は、ほかの選択肢と同時には選ばない（選ぶとほかを外し、ほかを選ぶと外す）。
+ * 行き先で地方を外すと、その中の都道府県も外す
  */
 export function pickAnswer(
   answers: ConsultAnswers,
@@ -89,13 +171,19 @@ export function pickAnswer(
   if (!MULTI_QUESTIONS.includes(question)) {
     picks = current.picks.includes(pick) ? [] : [pick];
   } else if (current.picks.includes(pick)) {
-    picks = current.picks.filter((value) => value !== pick);
+    const region = pick in REGIONS ? (pick as Region) : undefined;
+    picks = current.picks.filter(
+      (value) => value !== pick && (region === undefined || regionOf(value) !== region),
+    );
   } else if (pick === AUTO) {
     picks = [AUTO];
   } else {
     picks = [...current.picks.filter((value) => value !== AUTO), pick];
   }
-  return { ...answers, [question]: { ...current, picks } };
+  const next: ConsultAnswer = { ...current, picks };
+  // 予算は、選択肢と金額のどちらか一方
+  if (question === "budget" && picks.length > 0) delete next.amount;
+  return { ...answers, [question]: next };
 }
 
 export function setAnswerText(
@@ -107,20 +195,126 @@ export function setAnswerText(
   return { ...answers, [question]: { ...current, text } };
 }
 
-/** 答えたことになるか。「その他」と「日付を選ぶ」は、文字が入ってはじめて答えになる */
+/** いまの人数（まだ ＋/− を押していなければ、初めの値） */
+export function partyCounts(answer: ConsultAnswer | undefined): PartyCounts {
+  return answer?.counts ?? DEFAULT_COUNTS;
+}
+
+/** 人数を1つ増やす・減らす。下限と上限で止め、家族は大人かシニアを1人は残す */
+export function stepCount(
+  answers: ConsultAnswers,
+  member: PartyMember,
+  delta: 1 | -1,
+): ConsultAnswers {
+  const current = answers.party ?? EMPTY;
+  const counts = partyCounts(current);
+  const { min, max } = COUNT_LIMITS[member];
+  const value = Math.min(max, Math.max(min, counts[member] + delta));
+  const next = { ...counts, [member]: value };
+  if ((member === "adults" || member === "seniors") && next.adults + next.seniors === 0) {
+    return answers;
+  }
+  return { ...answers, party: { ...current, counts: next } };
+}
+
+/**
+ * 家族の人数を、条件の形（大人・子どもと、その内数のシニア・幼児）にする。
+ * 画面では大人（シニア以外）・子ども（小学生）・幼児・シニアを別々に数え、ここで足し合わせる
+ */
+export function familyParty(counts: PartyCounts): {
+  adults: number;
+  children: number;
+  seniors: number;
+  infants: number;
+} {
+  return {
+    adults: counts.adults + counts.seniors,
+    children: counts.children + counts.infants,
+    seniors: counts.seniors,
+    infants: counts.infants,
+  };
+}
+
+/** 人数の合計。ひとりは1人、恋人は2人、家族と友人は入れた人数。人数の分からない答えは null */
+export function partySize(answer: ConsultAnswer | undefined): number | null {
+  const pick = answer?.picks[0];
+  const counts = partyCounts(answer);
+  switch (pick) {
+    case "solo":
+      return 1;
+    case "partner":
+      return 2;
+    case "family":
+      return FAMILY_MEMBERS.reduce((sum, member) => sum + counts[member], 0);
+    case "friends":
+      return counts.friends;
+    default:
+      return null;
+  }
+}
+
+/** 日程の期間を決める。逆の順に選んでも、早い日を行きにする */
+export function setRange(answers: ConsultAnswers, a: string, b: string): ConsultAnswers {
+  const current = answers.schedule ?? EMPTY;
+  const range = a <= b ? { from: a, to: b } : { from: b, to: a };
+  return { ...answers, schedule: { ...current, picks: ["dates"], range } };
+}
+
+export function setStay(answers: ConsultAnswers, stay: StayOption): ConsultAnswers {
+  const current = answers.schedule ?? EMPTY;
+  return { ...answers, schedule: { ...current, stay } };
+}
+
+/** 予算の金額（1人あたり、円）。入れると選択肢を外し、空にすると金額を消す */
+export function setAmount(answers: ConsultAnswers, amount: number | null): ConsultAnswers {
+  const current = answers.budget ?? EMPTY;
+  if (amount === null || !Number.isFinite(amount) || amount <= 0) {
+    const { amount: _removed, ...rest } = current;
+    return { ...answers, budget: rest };
+  }
+  const value = Math.min(MAX_AMOUNT, Math.round(amount));
+  return { ...answers, budget: { ...current, picks: [], amount: value } };
+}
+
+/**
+ * 答えたことになるか。「その他」は文字が入って、「日付を指定」は期間を選んで、はじめて答えになる。
+ * 今週末などの範囲や「日にちは未定」は、日帰りか泊まりかまで選んで答えになる（泊数を伝えるため）
+ */
 export function isAnswered(answer: ConsultAnswer | undefined, question: ConsultQuestion): boolean {
   if (answer === undefined) return false;
-  if (question === "origin") return answer.text.trim().length > 0;
-  return answer.picks.some(
-    (pick) => (pick !== OTHER && pick !== "date") || answer.text.trim().length > 0,
-  );
+  switch (question) {
+    case "origin":
+    case "note":
+      return answer.text.trim().length > 0;
+    case "schedule":
+      if (answer.picks[0] === undefined) return false;
+      return answer.picks[0] === "dates" ? answer.range !== undefined : answer.stay !== undefined;
+    case "budget":
+      return answer.picks.length > 0 || (answer.amount ?? 0) > 0;
+    default:
+      return answer.picks.some((pick) => pick !== OTHER || answer.text.trim().length > 0);
+  }
 }
 
 /** 何か1つでも答えたか（まとめて送れるか） */
 export function hasAnyAnswer(answers: ConsultAnswers): boolean {
-  return (Object.keys(answers) as ConsultQuestion[]).some((question) =>
-    isAnswered(answers[question], question),
-  );
+  return CONSULT_QUESTIONS.some((question) => isAnswered(answers[question], question));
+}
+
+/** その段階を終えたか。「ひとこと」は書かなくても先へ進める */
+function stepDone(step: ConsultStep, answers: ConsultAnswers): boolean {
+  if (step === "confirm") return false;
+  if (step === "note") return true;
+  return isAnswered(answers[step], step);
+}
+
+/** 進める段階の終わり（最初のまだ答えていない段階）。そこまでは ＜＞ で行き来できる */
+export function furthestStep(answers: ConsultAnswers): ConsultStep {
+  return CONSULT_STEPS.find((step) => !stepDone(step, answers)) ?? "confirm";
+}
+
+export function canReach(step: ConsultStep, answers: ConsultAnswers): boolean {
+  return CONSULT_STEPS.indexOf(step) <= CONSULT_STEPS.indexOf(furthestStep(answers));
 }
 
 export function nextStep(step: ConsultStep): ConsultStep {
@@ -133,8 +327,13 @@ export function previousStep(step: ConsultStep): ConsultStep {
   return CONSULT_STEPS[Math.max(index - 1, 0)] ?? "party";
 }
 
+/** 答えたあとに移る段階。確認の画面から直しに来たときは確認へ戻る */
+export function stepAfterAnswer(state: Pick<ConsultState, "step" | "editing">): ConsultStep {
+  return state.editing ? "confirm" : nextStep(state.step);
+}
+
 // ---------------------------------------------------------------------------
-// 日付の範囲
+// 日付
 
 const DAY_MS = 86_400_000;
 
@@ -146,18 +345,18 @@ function format(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
-function addDays(iso: string, days: number): string {
+export function addDays(iso: string, days: number): string {
   return format(new Date(parse(iso).getTime() + days * DAY_MS));
+}
+
+/** 2つの日の間の泊数（同じ日なら0泊の日帰り） */
+export function nightsBetween(from: string, to: string): number {
+  return Math.round((parse(to).getTime() - parse(from).getTime()) / DAY_MS);
 }
 
 /** 日本の今日（YYYY-MM-DD）。祭りの日付は現地の日付で数える */
 export function todayInJapan(now: Date = new Date()): string {
   return format(new Date(now.getTime() + 9 * 3_600_000));
-}
-
-export interface DateRange {
-  from: string;
-  to: string;
 }
 
 /**
@@ -192,6 +391,47 @@ export function resolveWhen(pick: string, today: string): DateRange | null {
   }
 }
 
+export interface CalendarDay {
+  date: string;
+  /** その月の日か（前後の月の日は、週をそろえるために空けておく） */
+  inMonth: boolean;
+}
+
+/** カレンダーの1か月分の週（日曜はじまり）。month は YYYY-MM */
+export function monthWeeks(month: string): CalendarDay[][] {
+  const first = parse(`${month}-01`);
+  const start = addDays(format(first), -first.getUTCDay());
+  const weeks: CalendarDay[][] = [];
+  for (let week = 0; week < 6; week += 1) {
+    const days = Array.from({ length: 7 }, (_, day) => {
+      const date = addDays(start, week * 7 + day);
+      return { date, inMonth: date.startsWith(month) };
+    });
+    if (week > 0 && !days.some((day) => day.inMonth)) break;
+    weeks.push(days);
+  }
+  return weeks;
+}
+
+/** 月を前後に動かす（YYYY-MM） */
+export function shiftMonth(month: string, delta: number): string {
+  const date = parse(`${month}-01`);
+  return format(new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + delta, 1))).slice(
+    0,
+    7,
+  );
+}
+
+/**
+ * カレンダーで選べる日か。今日より前は選べない。行きを選んだあとは、行きから
+ * 泊数の上限までの日だけを帰りにできる（行きより前を押すと、行きの選び直しになる）
+ */
+export function selectableDay(date: string, today: string, start: string | null): boolean {
+  if (date < today) return false;
+  if (start === null || date < start) return true;
+  return nightsBetween(start, date) <= MAX_NIGHTS;
+}
+
 // ---------------------------------------------------------------------------
 // まとめて送る一文
 
@@ -202,10 +442,68 @@ export interface ConsultWording {
   auto: string;
   separator: string;
   questions: Record<ConsultQuestion, string>;
-  options: { [Q in ConsultQuestion]: Record<(typeof CONSULT_OPTIONS)[Q][number], string> };
+  options: { [Q in ChoiceQuestion]: Record<(typeof CONSULT_OPTIONS)[Q][number], string> };
+  stay: Record<StayOption, string>;
+  prefectures: Record<Prefecture, string>;
+  /** 大人と子どもの人数（例：「大人3人（うちシニア1人）」「子ども2人（うち幼児1人）」） */
+  adults: (count: number, seniors: number) => string;
+  children: (count: number, infants: number) => string;
+  total: (count: number) => string;
   range: (from: string, to: string) => string;
-  /** 1項目の行（例：「・誰と：家族で」） */
+  /** 補いを添える（例：「家族で（計3人）」） */
+  paren: (main: string, note: string) => string;
+  /** 指定した期間の泊数（例：「2泊3日」「日帰り」） */
+  nights: (nights: number) => string;
+  amount: (yen: number) => string;
+  /** 1項目の行（例：「・だれと：家族で」） */
   line: (label: string, text: string) => string;
+}
+
+function partyText(answer: ConsultAnswer, wording: ConsultWording): string[] {
+  const pick = answer.picks[0];
+  if (pick === undefined) return [];
+  if (pick === AUTO) return [wording.auto];
+  if (pick === OTHER) return [answer.text.trim()];
+  const label = wording.options.party[pick as keyof ConsultWording["options"]["party"]] ?? pick;
+  const size = partySize(answer) ?? 0;
+  if (pick === "family") {
+    const party = familyParty(partyCounts(answer));
+    const parts = [
+      ...(party.adults > 0 ? [wording.adults(party.adults, party.seniors)] : []),
+      ...(party.children > 0 ? [wording.children(party.children, party.infants)] : []),
+      wording.total(size),
+    ];
+    return [wording.paren(label, parts.join(wording.separator))];
+  }
+  return [wording.paren(label, wording.total(size))];
+}
+
+function scheduleText(answer: ConsultAnswer, wording: ConsultWording, today: string): string[] {
+  const pick = answer.picks[0];
+  if (pick === undefined) return [];
+  if (pick === "dates") {
+    if (answer.range === undefined) return [];
+    const { from, to } = answer.range;
+    return [wording.paren(wording.range(from, to), wording.nights(nightsBetween(from, to)))];
+  }
+  const label = wording.options.schedule[pick as keyof ConsultWording["options"]["schedule"]];
+  const range = resolveWhen(pick, today);
+  const when = range === null ? label : wording.paren(label, wording.range(range.from, range.to));
+  return [when, ...(answer.stay === undefined ? [] : [wording.stay[answer.stay]])];
+}
+
+function destinationText(answer: ConsultAnswer, wording: ConsultWording): string[] {
+  return answer.picks.flatMap((pick) => {
+    if (pick === AUTO) return [wording.auto];
+    if (pick === OTHER) return [answer.text.trim()];
+    if (!(pick in REGIONS)) return [];
+    const region = pick as Region;
+    const prefectures = REGIONS[region]
+      .filter((code) => answer.picks.includes(prefecturePick(code)))
+      .map((code) => wording.prefectures[code]);
+    const label = wording.options.destination[region];
+    return [prefectures.length === 0 ? label : wording.paren(label, prefectures.join("・"))];
+  });
 }
 
 /** 1つの項目の答えを言葉にする。答えていなければ null */
@@ -215,18 +513,44 @@ export function answerText(
   wording: ConsultWording,
   today: string,
 ): string | null {
-  if (!isAnswered(answer, question) || answer === undefined) return null;
-  if (question === "origin") return answer.text.trim();
-  const options = wording.options[question] as Record<string, string>;
-  const parts = answer.picks.flatMap((pick) => {
-    if (pick === AUTO) return [wording.auto];
-    if (pick === OTHER) return answer.text.trim() === "" ? [] : [answer.text.trim()];
-    if (pick === "date") return answer.text.trim() === "" ? [] : [answer.text.trim()];
-    const label = options[pick] ?? pick;
-    const range = question === "when" ? resolveWhen(pick, today) : null;
-    return [range === null ? label : `${label}（${wording.range(range.from, range.to)}）`];
-  });
-  return parts.length === 0 ? null : parts.join(wording.separator);
+  if (answer === undefined || !isAnswered(answer, question)) return null;
+  let parts: string[];
+  switch (question) {
+    case "origin":
+    case "note":
+      parts = [answer.text.trim()];
+      break;
+    case "party":
+      parts = partyText(answer, wording);
+      break;
+    case "schedule":
+      parts = scheduleText(answer, wording, today);
+      break;
+    case "destination":
+      parts = destinationText(answer, wording);
+      break;
+    case "budget":
+      if (answer.amount !== undefined && answer.picks.length === 0) {
+        parts = [wording.amount(answer.amount)];
+        break;
+      }
+      parts = answer.picks.map((pick) =>
+        pick === AUTO
+          ? wording.auto
+          : (wording.options.budget[pick as keyof ConsultWording["options"]["budget"]] ?? pick),
+      );
+      break;
+    default: {
+      const options = wording.options[question] as Record<string, string>;
+      parts = answer.picks.flatMap((pick) => {
+        if (pick === AUTO) return [wording.auto];
+        if (pick === OTHER) return answer.text.trim() === "" ? [] : [answer.text.trim()];
+        return [options[pick] ?? pick];
+      });
+    }
+  }
+  const filtered = parts.filter((part) => part.length > 0);
+  return filtered.length === 0 ? null : filtered.join(wording.separator);
 }
 
 /**
@@ -239,7 +563,7 @@ export function composeConsultMessage(
   today: string,
 ): string | null {
   const lines: string[] = [];
-  for (const question of Object.keys(CONSULT_OPTIONS) as ConsultQuestion[]) {
+  for (const question of CONSULT_QUESTIONS) {
     const text = answerText(question, answers[question], wording, today);
     if (text !== null) lines.push(wording.line(wording.questions[question], text));
   }
