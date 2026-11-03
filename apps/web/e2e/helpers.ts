@@ -99,3 +99,40 @@ export async function tabTo(page: Page, target: Locator, limit = 80): Promise<vo
   }
   throw new Error("Tab で焦点を移せませんでした");
 }
+
+/**
+ * 返答を待つ間だけ出る文（スタッフの吹き出し・豆知識係など）を、出たときに書き留める。
+ * 記録の再生が速い・描画が遅い環境でも、出たかどうかをあとから確かめられる。
+ * 発言を送る前に呼び、返答のあとで seenTexts で読む。
+ */
+export async function recordTexts(page: Page, selectors: readonly string[]): Promise<void> {
+  await page.evaluate((list) => {
+    const seen: Record<string, string[]> = {};
+    for (const selector of list) seen[selector] = [];
+    const read = () => {
+      for (const selector of list) {
+        for (const element of document.querySelectorAll(selector)) {
+          const text = element.textContent ?? "";
+          const bucket = seen[selector];
+          if (text !== "" && bucket !== undefined && !bucket.includes(text)) bucket.push(text);
+        }
+      }
+    };
+    read();
+    new MutationObserver(read).observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+    (window as unknown as { __seenTexts: Record<string, string[]> }).__seenTexts = seen;
+  }, selectors);
+}
+
+/** recordTexts で書き留めた文（出た順） */
+export async function seenTexts(page: Page, selector: string): Promise<string[]> {
+  return page.evaluate(
+    (key) =>
+      (window as unknown as { __seenTexts?: Record<string, string[]> }).__seenTexts?.[key] ?? [],
+    selector,
+  );
+}

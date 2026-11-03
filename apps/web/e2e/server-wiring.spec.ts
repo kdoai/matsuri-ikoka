@@ -77,7 +77,8 @@ async function fakeServer(
     });
   });
 
-  // 祭りのデータは、まだない（掲載停止や見つからないときと同じ 404）
+  // 祭りのデータは、まだない（一覧は空、1件は掲載停止や見つからないときと同じ 404）
+  await page.route("**/api/festivals", (route) => route.fulfill({ json: { festivals: [] } }));
   await page.route("**/api/festivals/**", (route) =>
     route.fulfill({ status: 404, json: apiError("bad_request", "祭りが見つかりません。", false) }),
   );
