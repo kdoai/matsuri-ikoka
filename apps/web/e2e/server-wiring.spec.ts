@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { expect, type Page, test } from "@playwright/test";
-import { blockMapTiles, openLog, waitForReply } from "./helpers";
+import { blockMapTiles, openLog, talkToConcierge, waitForReply } from "./helpers";
 
 // 接客サーバーとのつなぎ：合言葉、SSE の前の断り、相談の作り直し、記録の名前、祭りのデータ、しおりの共有。
 // サーバーの代わりに、記録した架空の相談のイベントをテストの中で SSE として返す。
@@ -118,7 +118,7 @@ test("合言葉の要る店では、入口で聞き、すべての /api の呼�
 
   await form.getByLabel("合言葉").fill(PASSCODE);
   await form.getByRole("button", { name: "入る" }).click();
-  await expect(page.getByRole("textbox", { name: "相談の発言" })).toBeEnabled();
+  await talkToConcierge(page);
   // 合言葉は URL に入れない。記録の名前は、相談を始める本文で渡す
   expect(page.url()).not.toContain(PASSCODE);
   expect(server.sessionBodies).toEqual([{ sample: "suzunari-day-trip" }]);
@@ -151,6 +151,7 @@ test("相談の途中で合言葉を求められたら聞き直し、入れ直�
   });
   await page.goto("/?scene=2d");
   await page.getByRole("button", { name: "入店する" }).click();
+  await talkToConcierge(page);
   await send(page, "8月16日に行ける祭り");
 
   const dialog = page.getByRole("dialog", { name: "合言葉" });
@@ -171,6 +172,7 @@ test("相談が見つからない（404）ときは、新しい相談を自動�
   const server = await fakeServer(page, { loseFirstSession: true });
   await page.goto("/?scene=2d");
   await page.getByRole("button", { name: "入店する" }).click();
+  await talkToConcierge(page);
   await send(page, firstMessage);
 
   await expect(page.getByTestId("dialogue-error")).toContainText("新しい相談を始めました");
@@ -186,6 +188,7 @@ test("接客サーバーとしおりまで進むと、しおりの URL を出し
   await fakeServer(page);
   await page.goto("/?scene=2d");
   await page.getByRole("button", { name: "入店する" }).click();
+  await talkToConcierge(page);
   for (const turn of sample.turns) {
     if (await page.getByTestId("candidates").isVisible()) {
       await page.getByRole("button", { name: "この祭りにする" }).first().click();

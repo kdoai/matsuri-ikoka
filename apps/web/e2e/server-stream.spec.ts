@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { blockMapTiles, openLog } from "./helpers";
+import { blockMapTiles, openLog, talkToConcierge } from "./helpers";
 
 // 接客サーバーにつなぐときの受け取り方。サーバーの代わりに、SSE の返答をテストの中で返す。
 
@@ -45,6 +45,7 @@ test("done の前に接続が切れたら「もう一度送る」を出し、送
 
   await page.goto("/?scene=2d");
   await page.getByRole("button", { name: "入店する" }).click();
+  await talkToConcierge(page);
   const input = page.getByRole("textbox", { name: "相談の発言" });
   await input.fill("みなと中央駅から行ける祭りはありますか");
   await input.press("Enter");
@@ -90,6 +91,7 @@ test("サーバーのエラーは一文だけを出し、HTML として埋め込
   );
   await page.goto("/?scene=2d");
   await page.getByRole("button", { name: "入店する" }).click();
+  await talkToConcierge(page);
   const input = page.getByRole("textbox", { name: "相談の発言" });
   await input.fill("こんにちは");
   await input.press("Enter");
@@ -119,6 +121,7 @@ test("英語の画面では、サーバーの日本語の一文ではなく辞�
   await page.goto("/?scene=2d");
   await page.getByRole("button", { name: /English/ }).click();
   await page.getByRole("button", { name: "Come in" }).click();
+  await talkToConcierge(page, "Talk to the concierge");
   const input = page.getByRole("textbox", { name: "Your message" });
   await input.fill("Hello");
   await input.press("Enter");

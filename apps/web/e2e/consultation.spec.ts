@@ -12,6 +12,7 @@ import {
   sendSampleMessage,
   snap,
   tabTo,
+  talkToConcierge,
   waitForReply,
 } from "./helpers";
 
@@ -28,6 +29,10 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   await expect(page.getByRole("heading", { name: "MATSURI IKOKA" })).toBeVisible();
   await snap(page, info, "00-storefront");
   await page.getByRole("button", { name: "入店する" }).click();
+  // 会話の窓は最初は出さず、コンシェルジュが「話しかけてね」と案内する
+  await expect(page.getByTestId("greeting-bar")).toContainText("いらっしゃいませ");
+  await expect(page.getByTestId("dialogue")).toBeHidden();
+  await talkToConcierge(page);
   await expect(page.getByTestId("dialogue")).toContainText("いらっしゃいませ");
 
   // 1. 相談 → 候補
@@ -243,6 +248,8 @@ test("キーボードだけで、入店から相談・候補選び・しおり�
   await page.goto("/?scene=2d");
   await tabTo(page, page.getByRole("button", { name: "入店する" }));
   await page.keyboard.press("Enter");
+  // 会話の窓は、E で話しかけると出る
+  await page.keyboard.press("e");
   const input = page.getByRole("textbox", { name: "相談の発言" });
   await expect(input).toBeEnabled();
 
@@ -296,6 +303,8 @@ test("英語に切り替えられる", async ({ page }, info) => {
   await page.getByRole("button", { name: /English/ }).click();
   await expect(page.getByRole("button", { name: "Come in" })).toBeVisible();
   await page.getByRole("button", { name: "Come in" }).click();
+  await expect(page.getByTestId("greeting-bar")).toContainText("Welcome!");
+  await talkToConcierge(page, "Talk to the concierge");
   await expect(page.getByTestId("dialogue")).toContainText("Welcome!");
   await page.getByRole("button", { name: "Plan details" }).click();
   await expect(page.getByRole("tab", { name: "Plan" })).toBeVisible();
