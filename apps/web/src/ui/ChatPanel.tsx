@@ -3,7 +3,7 @@ import { SendHorizontal } from "lucide-react";
 import { type FormEvent, type KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
 import { formatDate } from "../i18n";
 import { useActions, useApp, useT } from "../state/react";
-import { conditionChips, shioriReady } from "../state/selectors";
+import { conditionChips, currentLine, shioriReady } from "../state/selectors";
 import type { ChatEntry } from "../state/types";
 import { buttonPrimary, buttonSecondary } from "./common";
 import { STAFF_LOOK } from "./StaffPanel";
@@ -265,9 +265,12 @@ export function PreferenceBar() {
 
 const COMPOSER_ID = "chat-input";
 
-/** 入力欄にフォーカスを移す（下書きを入れたあと、すぐに送れるように） */
+/** 入力欄にフォーカスを移す（下書きを入れたあと、すぐに送れるように）。聞き取りの間は、聞き取りの最初の場所へ */
 export function focusComposer(): void {
-  document.getElementById(COMPOSER_ID)?.focus();
+  const target =
+    document.getElementById(COMPOSER_ID) ??
+    document.querySelector<HTMLElement>("[data-testid='consult'] [data-dialogue-focus]");
+  target?.focus();
 }
 
 /** 発言の入力欄。ふだんは1行の小さな欄で、書いている間（焦点があるか下書きがあるとき）だけ広げる */
@@ -282,6 +285,11 @@ export function Composer() {
   const canSend = ready && !streaming && draft.trim().length > 0 && !tooLong;
   const [focused, setFocused] = useState(false);
   const wide = focused || draft.length > 0;
+  // 選んで進める聞き取りの間は出さない（自由に書くのは「その他」と「ひとこと」の欄で）
+  const hearing = useApp(
+    (state) =>
+      state.consult.active && !state.session.streaming && currentLine(state).kind !== "error",
+  );
 
   const submit = (event?: FormEvent) => {
     event?.preventDefault();
@@ -301,6 +309,7 @@ export function Composer() {
     }
   };
 
+  if (hearing) return null;
   return (
     <form onSubmit={submit} className="space-y-1" data-testid="composer" data-ready={ready}>
       <div className="flex items-end gap-2">

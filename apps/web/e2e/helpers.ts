@@ -54,17 +54,83 @@ export async function talkToConcierge(
 
 /** 相談が始まり、発言を送れるようになるまで待つ */
 export async function sessionReady(page: Page): Promise<void> {
-  await expect(page.locator('[data-testid="composer"][data-ready="true"]')).toBeVisible();
+  // 聞き取りの間は自分の言葉で書く欄を出さないので、聞き取りの窓の印で待つ
+  await expect(
+    page
+      .locator(
+        '[data-testid="composer"][data-ready="true"], [data-testid="consult"][data-ready="true"]',
+      )
+      .first(),
+  ).toBeVisible();
+}
+
+/** 聞き取りの選択肢の名前（日本語と英語） */
+export const HEARING_WORDS = {
+  ja: {
+    solo: "ひとりで",
+    weekend: "今週末",
+    dayTrip: "日帰り",
+    station: "最寄りの駅",
+    auto: "おまかせ",
+    note: "ひとこと",
+  },
+  en: {
+    solo: "Just me",
+    weekend: "This weekend",
+    dayTrip: "Day trip",
+    station: "Nearest station",
+    auto: "Up to you",
+    note: "Anything else",
+  },
+};
+
+/**
+ * 選んで進める聞き取りに、いちばん短い道で答えて送る。note は最後の「ひとこと」に書く
+ * （聞き取りの間は自分の言葉で書く欄を出さないので、最初の発言はここで送る）
+ */
+export async function answerHearing(
+  page: Page,
+  note: string,
+  words = HEARING_WORDS.ja,
+): Promise<void> {
+  const consult = page.getByTestId("consult");
+  const choose = (name: string) => consult.getByRole("button", { name, exact: true }).click();
+  const decide = () => consult.getByTestId("consult-decide").click();
+  await choose(words.solo);
+  await choose(words.weekend);
+  await choose(words.dayTrip);
+  const station = consult.getByRole("textbox", { name: words.station });
+  await station.fill("みなと中央駅");
+  await station.press("Enter");
+  // 行き先・楽しみ・食べたいもの（いくつでも選べる）は決定で、ペース・予算は選ぶとすぐ進む
+  for (let i = 0; i < 3; i++) {
+    await choose(words.auto);
+    await decide();
+  }
+  await choose(words.auto);
+  await choose(words.auto);
+  await consult.getByRole("textbox", { name: words.note }).fill(note);
+  await decide();
+  await consult.getByTestId("consult-submit").click();
+}
+
+/** 発言を送る。聞き取りの途中なら、聞き取りに答えて「ひとこと」に書いて送る */
+export async function say(page: Page, message: string): Promise<void> {
+  await sessionReady(page);
+  if (await page.getByTestId("consult").isVisible()) {
+    await answerHearing(page, message);
+    return;
+  }
+  const input = page.getByRole("textbox", { name: "相談の発言" });
+  await input.fill(message);
+  await input.press("Enter");
 }
 
 /** 記録の index 番目の発言を入れて送る */
 export async function sendSampleMessage(page: Page, index: number): Promise<void> {
   const message = SAMPLE.turns[index]?.request.message;
   if (message === undefined) throw new Error(`記録に ${index} 番目の発言がありません`);
-  const input = page.getByRole("textbox", { name: "相談の発言" });
-  await sessionReady(page);
-  await input.fill(message);
-  await input.press("Enter");
+  await say(page, message);
 }
 
 /** 返答が終わるまで待つ（送るボタンが「返答を待っています」から戻る） */

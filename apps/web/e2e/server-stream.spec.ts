@@ -1,5 +1,12 @@
 import { expect, test } from "@playwright/test";
-import { blockMapTiles, openLog, talkToConcierge } from "./helpers";
+import {
+  answerHearing,
+  blockMapTiles,
+  HEARING_WORDS,
+  openLog,
+  say,
+  talkToConcierge,
+} from "./helpers";
 
 // 接客サーバーにつなぐときの受け取り方。サーバーの代わりに、SSE の返答をテストの中で返す。
 
@@ -46,9 +53,7 @@ test("done の前に接続が切れたら「もう一度送る」を出し、送
   await page.goto("/?scene=2d");
   await page.getByRole("button", { name: "入店する" }).click();
   await talkToConcierge(page);
-  const input = page.getByRole("textbox", { name: "相談の発言" });
-  await input.fill("みなと中央駅から行ける祭りはありますか");
-  await input.press("Enter");
+  await say(page, "みなと中央駅から行ける祭りはありますか");
 
   const retry = page.getByRole("button", { name: "もう一度送る" });
   await expect(retry).toBeVisible();
@@ -61,7 +66,7 @@ test("done の前に接続が切れたら「もう一度送る」を出し、送
   expect(calls).toBe(2);
   expect(bodies[1]).toMatchObject({
     sessionId: "s-test",
-    message: "みなと中央駅から行ける祭りはありますか",
+    message: expect.stringContaining("・ひとこと：みなと中央駅から行ける祭りはありますか"),
     preferences: PREFERENCES,
   });
   await openLog(page);
@@ -92,9 +97,7 @@ test("サーバーのエラーは一文だけを出し、HTML として埋め込
   await page.goto("/?scene=2d");
   await page.getByRole("button", { name: "入店する" }).click();
   await talkToConcierge(page);
-  const input = page.getByRole("textbox", { name: "相談の発言" });
-  await input.fill("こんにちは");
-  await input.press("Enter");
+  await say(page, "こんにちは");
 
   await expect(page.getByTestId("dialogue-error")).toHaveText("今日の相談はここまでです");
   await expect(page.getByRole("button", { name: "もう一度送る" })).toHaveCount(0);
@@ -122,9 +125,7 @@ test("英語の画面では、サーバーの日本語の一文ではなく辞�
   await page.getByRole("button", { name: /English/ }).click();
   await page.getByRole("button", { name: "Come in" }).click();
   await talkToConcierge(page, "Talk to the concierge");
-  const input = page.getByRole("textbox", { name: "Your message" });
-  await input.fill("Hello");
-  await input.press("Enter");
+  await answerHearing(page, "Hello", HEARING_WORDS.en);
   await expect(page.getByTestId("dialogue-error")).toHaveText(
     "Today's conversation limit has been reached.",
   );

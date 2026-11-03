@@ -11,6 +11,7 @@ import suzunariJson from "../../../../data/samples/festivals/suzunari-toro.json"
 import { createReplayTransport } from "../testing/replayTransport";
 import type { ChatTransport, FestivalSource } from "../transport/types";
 import { TransportError } from "../transport/types";
+import { setStay } from "./consult";
 import { createAppStore, type StoreDeps } from "./store";
 
 const sample: SampleConversation = SampleConversationSchema.parse(sampleJson);
@@ -374,14 +375,15 @@ describe("ストア：選んで進める相談", () => {
 
     actions.pickConsult("party", "family");
     actions.setConsultText("origin", "みなと中央駅");
-    actions.pickConsult("when", "nextWeekend");
+    actions.pickConsult("schedule", "nextWeekend");
+    actions.editConsult((answers) => setStay(answers, "oneNight"));
     actions.setConsultStep("confirm");
     await actions.submitConsult();
 
     expect(chat).toHaveBeenCalledTimes(1);
     const message = chat.mock.calls[0]?.[0].message ?? "";
-    expect(message).toContain("・誰と：家族で");
-    expect(message).toContain("・いつ：来週末（2030-06-15〜2030-06-16）");
+    expect(message).toContain("・だれと：家族で（大人2人、計2人）");
+    expect(message).toContain("・日程：来週末（2030-06-15〜2030-06-16）、1泊");
     expect(message).toContain("・出発する駅：みなと中央駅");
     expect(store.getState().consult.active).toBe(false);
     expect(store.getState().ui.dialogueOpen).toBe(true);

@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { expect, type Page, test } from "@playwright/test";
-import { blockMapTiles, openLog, talkToConcierge, waitForReply } from "./helpers";
+import { blockMapTiles, openLog, say, talkToConcierge, waitForReply } from "./helpers";
 
 // 接客サーバーとのつなぎ：合言葉、SSE の前の断り、相談の作り直し、記録の名前、祭りのデータ、しおりの共有。
 // サーバーの代わりに、記録した架空の相談のイベントをテストの中で SSE として返す。
@@ -86,9 +86,7 @@ async function fakeServer(
 }
 
 async function send(page: Page, message: string) {
-  const input = page.getByRole("textbox", { name: "相談の発言" });
-  await input.fill(message);
-  await input.press("Enter");
+  await say(page, message);
   await waitForReply(page);
 }
 

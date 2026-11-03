@@ -12,6 +12,7 @@ import { isSendablePasscode } from "../transport/server";
 import type { ChatTransport, FestivalSource, OnSseMessage } from "../transport/types";
 import { toClientError } from "../transport/types";
 import {
+  type ConsultAnswers,
   type ConsultQuestion,
   type ConsultStep,
   composeConsultMessage,
@@ -72,12 +73,14 @@ export interface AppActions {
   closeShiori(): void;
   /** 会話の窓を出す・しまう */
   setDialogue(open: boolean): void;
-  /** 選んで進める聞き取りの段階を移る */
-  setConsultStep(step: ConsultStep): void;
+  /** 選んで進める聞き取りの段階を移る。editing は確認の画面から直しに行くとき */
+  setConsultStep(step: ConsultStep, editing?: boolean): void;
   /** 聞き取りの選択肢を選ぶ（いくつでも選べる項目では付け外し） */
   pickConsult(question: ConsultQuestion, pick: string): void;
-  /** 聞き取りの「その他」の自由記述・日付・出発の駅を書く */
+  /** 聞き取りの「その他」の自由記述・出発の駅・ひとことを書く */
   setConsultText(question: ConsultQuestion, text: string): void;
+  /** 聞き取りの答えを、consult.ts の関数で変える（人数・期間・金額など） */
+  editConsult(edit: (answers: ConsultAnswers) => ConsultAnswers): void;
   /** 選んだ内容を1つの発言にまとめて送る */
   submitConsult(): Promise<void>;
   /** 聞き取りを選び直す */
@@ -418,8 +421,8 @@ export function createAppStore(deps: StoreDeps): AppStore {
       setDialogue(open) {
         setUi(open ? { dialogueOpen: true, tutorialSeen: true } : { dialogueOpen: false });
       },
-      setConsultStep(step) {
-        update((state) => ({ ...state, consult: { ...state.consult, step } }));
+      setConsultStep(step, editing = false) {
+        update((state) => ({ ...state, consult: { ...state.consult, step, editing } }));
       },
       pickConsult(question, pick) {
         update((state) => ({
@@ -434,6 +437,12 @@ export function createAppStore(deps: StoreDeps): AppStore {
             ...state.consult,
             answers: setAnswerText(state.consult.answers, question, text),
           },
+        }));
+      },
+      editConsult(edit) {
+        update((state) => ({
+          ...state,
+          consult: { ...state.consult, answers: edit(state.consult.answers) },
         }));
       },
       async submitConsult() {
@@ -455,7 +464,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
       reopenConsult() {
         update((state) => ({
           ...state,
-          consult: { ...state.consult, active: true, step: "party" },
+          consult: { ...state.consult, active: true, step: "party", editing: false },
         }));
       },
       dismissTutorial() {
