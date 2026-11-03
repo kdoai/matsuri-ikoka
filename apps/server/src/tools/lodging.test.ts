@@ -73,6 +73,19 @@ describe("readVacantHotels", () => {
     expect(offers[0]?.checkedAt).toBe(now());
   });
 
+  it("料金と予約のページは、同じプランの中のものを組にする（並びの順では組にしない）", () => {
+    const json = hotel(108, "鈴鳴の宿", [
+      { total: 30000, reserveUrl: "https://hotel.travel.rakuten.co.jp/e" },
+      { total: 20000, reserveUrl: "https://hotel.travel.rakuten.co.jp/f" },
+    ]);
+    // 1つ目のプランの部屋の情報が欠けている
+    const first = json.hotel[1] as { roomInfo: unknown[] };
+    first.roomInfo = first.roomInfo.slice(1);
+    const [offer] = readVacantHotels({ hotels: [json] }, checked);
+    expect(offer?.nightlyTotalYen).toBe(20000);
+    expect(offer?.bookingUrl).toBe("https://hotel.travel.rakuten.co.jp/f");
+  });
+
   it("プランの料金がなければ、宿の最安値の目安を使う", () => {
     const json = { hotels: [hotel(103, "鈴鳴の宿", [])] };
     expect(readVacantHotels(json, checked)[0]?.nightlyTotalYen).toBe(5000);

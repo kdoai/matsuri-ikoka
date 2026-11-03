@@ -83,6 +83,26 @@ function collect(node: unknown, key: string, out: unknown[] = []): unknown[] {
   return out;
 }
 
+/** 木の中に key がいくつあるか */
+function countKey(node: unknown, key: string): number {
+  return collect(node, key).length;
+}
+
+/**
+ * プランの単位を取り出す。roomBasicInfo と dailyCharge をちょうど1つずつ含む、いちばん小さい入れ子を1プランとする。
+ * 並びの順で組にしないので、片方が欠けたプランの料金を別のプランの予約のページと取り違えない
+ */
+function planUnits(node: unknown): unknown[] {
+  if (node === null || typeof node !== "object") return [];
+  const rooms = countKey(node, "roomBasicInfo");
+  const charges = countKey(node, "dailyCharge");
+  if (rooms === 0 || charges === 0) return [];
+  const children = Array.isArray(node) ? node : Object.values(node);
+  const inner = children.flatMap(planUnits);
+  if (inner.length > 0) return inner;
+  return rooms === 1 && charges === 1 ? [node] : [];
+}
+
 /** 名前に使う文字列。空白（改行を含む）を1つに詰め、制御文字を除き、長さを切る */
 function cleanText(text: string, max: number): string | null {
   const cleaned = Array.from(text.replace(/[\s　]+/g, " "))
@@ -133,10 +153,11 @@ export function readVacantHotels(
     if (name === null || pageUrl === null) return [];
 
     // プランごとの1泊目の合計。いちばん安いプランの予約のページを使う
-    const rooms = collect(hotel, "roomBasicInfo");
-    const plans = collect(hotel, "dailyCharge").map((charge, index) => ({
-      total: yen(DailyChargeSchema.safeParse(charge).data?.total),
-      reserveUrl: rakutenUrl(RoomBasicInfoSchema.safeParse(rooms[index]).data?.reserveUrl),
+    const plans = planUnits(hotel).map((unit) => ({
+      total: yen(DailyChargeSchema.safeParse(collect(unit, "dailyCharge")[0]).data?.total),
+      reserveUrl: rakutenUrl(
+        RoomBasicInfoSchema.safeParse(collect(unit, "roomBasicInfo")[0]).data?.reserveUrl,
+      ),
     }));
     const cheapest = plans
       .filter((plan): plan is { total: number; reserveUrl: string | null } => plan.total !== null)
