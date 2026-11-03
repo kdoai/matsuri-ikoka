@@ -174,7 +174,7 @@ export function createWebVerifier(deps: {
         `データの出典：${[...festival.sources, ...(occurrence?.sources ?? [])].map((s) => s.url).join(" ")}`,
       ].join("\n");
 
-      // 時間の上限（20秒）は、ツールの包みが signal で知らせる。差し戻しも同じ予算の中で行う
+      // 時間の上限（30秒）は、ツールの包みが signal で知らせる。差し戻しも同じ予算の中で行う
       const controller = new AbortController();
       const abort = () => controller.abort(signal.reason);
       if (signal.aborted) abort();

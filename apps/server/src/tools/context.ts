@@ -49,5 +49,5 @@ export const TOOL_TIMEOUT_MS: Readonly<Record<ToolName, number>> = {
   get_access: 10_000,
   get_weather: 10_000,
   update_itinerary: 10_000,
-  verify_festival: 20_000,
+  verify_festival: 30_000,
 };

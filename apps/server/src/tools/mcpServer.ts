@@ -77,7 +77,7 @@ export function createMatsuriMcpServer(ctx: ToolContext) {
       }),
     ),
     alwaysLoad: true,
-    // ツールごとの上限（最大20秒）は runTool で守る。これはその外側の安全網
+    // ツールごとの上限（最大30秒）は runTool で守る。これはその外側の安全網
     timeout: 30_000,
   });
 }

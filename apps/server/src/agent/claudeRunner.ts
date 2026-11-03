@@ -168,7 +168,7 @@ export class ClaudeAgentRunner implements AgentRunner {
     this.#query = deps.query ?? ((params) => sdkQuery(params));
   }
 
-  async runTurn({ session, message, signal }: TurnInput, emit: EmitEvent): Promise<void> {
+  async runTurn({ session, message, signal, progress }: TurnInput, emit: EmitEvent): Promise<void> {
     const deps = this.#deps;
     const turn = newTurnState();
     const ctx: ToolContext = {
@@ -219,6 +219,8 @@ export class ClaudeAgentRunner implements AgentRunner {
           ...(deps.stderr ? { stderr: deps.stderr } : {}),
         });
         for await (const msg of this.#query({ prompt, options })) {
+          // スタッフが考えている間も、Agent SDK の知らせが届いていれば進みがある
+          progress?.();
           reply.handle(msg);
           if (reply.sessionId !== null) {
             initMs ??= Date.now() - started;
