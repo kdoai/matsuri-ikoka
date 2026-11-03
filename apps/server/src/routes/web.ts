@@ -15,6 +15,7 @@ const SERVER_PATHS = /^\/(?:api|shiori)(?:\/|$)|^\/healthz?$/;
  * - img-src・connect-src blob:：3D のモデルに埋め込まれたテクスチャを読む
  *   （Chrome などは fetch、Safari 16 以前などは img で読む）
  * - img-src https://tile.openstreetmap.org：地図のタイル
+ * - font-src data:：3D の文字の描画が埋め込んで読むフォント
  * インラインのスクリプト・スタイルと eval は許さない
  */
 const PAGE_CSP = [
@@ -23,7 +24,7 @@ const PAGE_CSP = [
   "style-src 'self'",
   "img-src 'self' data: blob: https://tile.openstreetmap.org",
   "connect-src 'self' blob:",
-  "font-src 'self'",
+  "font-src 'self' data:",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
