@@ -68,6 +68,7 @@ pnpm build            # 画面と接客サーバーのビルド
 
 - テストは架空の祭りで書く。`@matsuri-ikoka/schema/testing` の `fictionalFestival()`・`fictionalItinerary()`・`fictionalSource()` を使い、URL は `example.com` にする
 - 実在の祭りのデータをテストのフィクスチャにしない
+- ブラウザで画面を実際に操作して確かめる通しの確認（入店して相談し、しおりまで進めるなど）は Claude では行わず、人が行う。Claude は自動のテスト（Vitest と、CI でも走る Playwright の通しテスト）を通し、画面を操作して確かめていないことを報告に書く
 
 ### 安全
 
