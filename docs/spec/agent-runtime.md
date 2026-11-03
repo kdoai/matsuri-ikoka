@@ -58,21 +58,31 @@ systemPrompt: [
 
 7つのツールは `tool()` と `createSdkMcpServer()` で定義し、入力の形は `packages/schema` の Zod から組み立てます。ハンドラーは、どれも共通の包みに通します。
 
-1. **時間の上限で打ち切る。** 1回10秒、`verify_festival` は30秒（[API の仕様](api.md#時間の上限)）
+1. **時間の上限で打ち切る。** `note_conditions` は5秒、`search_nearby`・`get_access`・`get_weather`・`update_itinerary` は10秒、`search_festivals` は候補の確かめを含めて45秒、`verify_festival` は30秒（[API の仕様](api.md#時間の上限)）
 2. **例外を投げない。** 失敗は `{ content: [{ type: "text", text: 理由 }], isError: true }` で返す。Claude は理由を読んで、代わりの案を出す
 3. **結果はデータとして返す。** JSON の文字列にし、指示の文章を混ぜない
 4. **サーバーの値を使う。** 今日の日付やセッションは、モデルの入力を信じず、サーバーが持つ値を使う。モデルに書かせた ID で、別の相談のデータを読ませない
 
 ## フック
 
-フックは SSE のイベントを出す場所であり、安全のための関所でもあります。
+フックは SSE のイベントを出す場所であり、安全のための関所でもあります。接客のエージェントと、開催を確かめる1回きりの `query()` とで、別のフックを渡します。
 
-| 契機            | すること                                                                                                          |
-| --------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `SubagentStart` | `staff.start` を出す                                                                                              |
-| `PreToolUse`    | `tool.start` を出す（吹き出しは決まった型から作る）。`WebFetch` なら `checkPublicWebUrl` を通し、通らなければ断る |
-| `PostToolUse`   | `tool.end`・`itinerary.updated` を出す。`WebSearch`・`WebFetch` は `createWebActivityLog` に控える                |
-| `Stop`          | 再確認で、検索だけして本文を読んでいなければ、1回だけ続けさせる                                                   |
+接客のエージェント（`apps/server/src/agent/hooks.ts`）：
+
+| 契機                 | すること                                                                                                                                              |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SubagentStart`      | `staff.start` を出し、スタッフに相談の要点を渡す                                                                                                      |
+| `PreToolUse`         | `tool.start` を出す（吹き出しは決まった型から作る）。スタッフとツールの組み合わせ、スタッフを呼ぶ回数、`verify_festival` の回数を確かめ、外れたら断る |
+| `PostToolUse`        | `tool.end` を出し、続けて `itinerary.updated`・`festival.verified` を出す                                                                             |
+| `PostToolUseFailure` | 失敗した `tool.end` を出す                                                                                                                            |
+
+開催を確かめる `query()`（`apps/server/src/agent/webVerifier.ts`。確定前の再確認と、候補を出す前の確かめ）：
+
+| 契機                     | すること                                                                         |
+| ------------------------ | -------------------------------------------------------------------------------- |
+| `PreToolUse`（WebFetch） | `checkPublicWebUrl` と、名前を解決した先のアドレスの確認を通し、通らなければ断る |
+| `PostToolUse`            | `WebSearch`・`WebFetch` を `createWebActivityLog` に控える                       |
+| `Stop`                   | 検索だけして本文を読んでいなければ、1回だけ続けさせる                            |
 
 - 断るときは `{ hookSpecificOutput: { hookEventName: "PreToolUse", permissionDecision: "deny", permissionDecisionReason: 理由 } }` を返す。続けさせるときは `{ decision: "block", reason: 理由 }` を返す。形は SDK の型（`HookJSONOutput`）に合わせ、テストで確かめる
 - 続けさせる回数には上限を置く。`stop_hook_active` は一度続けさせたあと立ちっぱなしになるので、上限の代わりにならない
@@ -102,7 +112,7 @@ systemPrompt: [
 ## 失敗と再試行
 
 - 例外は `classifyFailure`、結果のメッセージは subtype を `classifyResultSubtype` で分ける
-- `retryable` のものだけ、`backoffMs` の間隔で試し直す。相談1回は、進みのない時間（イベントも Agent SDK の知らせもない時間）が90秒を超えたら打ち切る。動き続けている相談は止めないが、試し直しも含めた全体の上限（6分）は別に持つ。待ち時間は画面の豆知識で埋めるので、遅くなっても止めないことを優先する
+- `retryable` のものだけ、`backoffMs` の間隔で試し直す。試し直すのは、まだ画面にイベントを1つも送っていないときの1回だけ。相談1回は、進みのない時間（イベントも Agent SDK の知らせもない時間）が90秒を超えたら打ち切る。動き続けている相談は止めないが、試し直しも含めた全体の上限（6分）は別に持つ。待ち時間は画面の豆知識で埋めるので、遅くなっても止めないことを優先する
 - 試し直すときは、謝ったり振り返ったりさせず、止まったところから続けさせる
 - 直らなければ、`error` イベント（分類で決まった `code` と、利用者向けの短い一文）を送り、`done` で閉じる。詳しいことはログに残す
 

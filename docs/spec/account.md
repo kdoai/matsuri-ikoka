@@ -10,7 +10,7 @@
 | いつ要るか     | 旅を残す・あとで開く・一覧する・共有する・消すとき。相談はログインなしで始められる                                                                                     |
 | 利用者の決め方 | 画面が `Authorization: Bearer <ID トークン>` で送る Firebase の ID トークンを、サーバーが Admin SDK で確かめる。画面が送る利用者の ID は使わない                       |
 | 画面の設定     | `GET /api/auth/config` が Firebase の公開の設定（`apiKey`・`authDomain`・`projectId`）を返す。用意していなければ `{ "enabled": false }` で、ログインのボタンを出さない |
-| 部品の読み込み | Firebase の部品は、ログインを用意しているときだけ読み込む。画面だけのモックでは出さない                                                                                |
+| 部品の読み込み | Firebase の部品は、ログインを用意しているときだけ読み込む。`{ "enabled": false }` のときは読み込まない                                                                 |
 
 ## 残すもの
 
@@ -46,7 +46,7 @@
 | `/shiori/{旅程の ID}` | その旅程の最新の版   | 最後の保存から30日 |
 | `/shiori/{共有の ID}` | 共有を作ったときの版 | 作ってから30日     |
 
-残した旅を、最後の保存から30日を過ぎて開くときは、一覧の「しおりを開く」で新しい共有を作ります。
+自分の旅の一覧の「しおりを開く」は、押すたびに新しい共有（作ってから30日）を作って開きます。残した旅は、最後の保存から30日を過ぎても、ここから開けます。
 
 ## API
 
@@ -82,7 +82,7 @@ Firestore と Auth のエミュレーター（Firebase CLI と Java が要る）
 firebase emulators:start --only firestore,auth --project demo-matsuri-ikoka
 ```
 
-接客サーバーには、次の環境変数を渡します（`.env` に書いてもよい）。
+接客サーバーには、次の環境変数をシェルで渡します（接客サーバーは `.env` を自動では読みません）。
 
 ```bash
 MATSURI_STORAGE=firestore
