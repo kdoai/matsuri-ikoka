@@ -71,11 +71,10 @@ test("旅人を歩かせ、仕掛けを使い、柵で止まり、カウンタ�
   await page.getByRole("button", { name: "入店する" }).click();
   const scene = page.getByTestId("shop-scene");
   await expect(scene).toHaveAttribute("data-ready", "true", { timeout: 60_000 });
-  await page.waitForTimeout(6_000);
-  // 操作の案内と、近くにあるもの（入口ののれん）が文字で読める
-  await expect(page.getByTestId("play-guide")).toContainText("WASD");
+  // 操作の案内と、近くにあるもの（入口ののれん）が文字で読める。描画の遅い環境でも待てるよう長めに待つ
+  await expect(page.getByTestId("play-guide")).toContainText("WASD", { timeout: 30_000 });
   const prompt = page.getByTestId("play-prompt");
-  await expect(prompt).toContainText("のれん");
+  await expect(prompt).toContainText("のれん", { timeout: 30_000 });
   await expect(page.getByTestId("play-status")).toContainText("のれん");
   await page.keyboard.press("e");
   await expect(page.getByTestId("play-notice")).toContainText("のれん");
