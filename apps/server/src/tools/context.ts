@@ -79,5 +79,6 @@ export const TOOL_TIMEOUT_MS: Readonly<Record<AgentToolName, number>> = {
   // 空室検索は1本ずつ間隔を空けて呼ぶので、待ちを含める
   search_lodging: 20_000,
   update_itinerary: 10_000,
-  verify_festival: 30_000,
+  // 公式のページを検索して読むので、確定前の再確認のモデル（MODEL_VERIFIER）でも収まる長さにする
+  verify_festival: 45_000,
 };

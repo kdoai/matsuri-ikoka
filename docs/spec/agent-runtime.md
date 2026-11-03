@@ -58,7 +58,7 @@ systemPrompt: [
 
 8つのツールは `tool()` と `createSdkMcpServer()` で定義し、入力の形は `packages/schema` の Zod から組み立てます。ハンドラーは、どれも共通の包みに通します。
 
-1. **時間の上限で打ち切る。** `note_conditions` は5秒、`search_nearby`・`get_access`・`get_weather`・`update_itinerary` は10秒、`search_lodging` は呼び出しの間隔の待ちを含めて20秒、`search_festivals` は候補の確かめを含めて45秒、`verify_festival` は30秒（[API の仕様](api.md#時間の上限)）。`createSdkMcpServer()` の `timeout`（SDK が呼び出しを打ち切る外側の上限）は、いちばん長いツールの上限より15秒長くし、ツールの上限で止めたときの理由がエージェントに届くようにする
+1. **時間の上限で打ち切る。** `note_conditions` は5秒、`search_nearby`・`get_access`・`get_weather`・`update_itinerary` は10秒、`search_lodging` は呼び出しの間隔の待ちを含めて20秒、`search_festivals` は候補の確かめを含めて45秒、`verify_festival` は45秒（[API の仕様](api.md#時間の上限)）。`createSdkMcpServer()` の `timeout`（SDK が呼び出しを打ち切る外側の上限）は、いちばん長いツールの上限より15秒長くし、ツールの上限で止めたときの理由がエージェントに届くようにする
 2. **例外を投げない。** 失敗は `{ content: [{ type: "text", text: 理由 }], isError: true }` で返す。Claude は理由を読んで、代わりの案を出す
 3. **結果はデータとして返す。** JSON の文字列にし、指示の文章を混ぜない
 4. **サーバーの値を使う。** 今日の日付やセッションは、モデルの入力を信じず、サーバーが持つ値を使う。モデルに書かせた ID で、別の相談のデータを読ませない
@@ -94,7 +94,7 @@ systemPrompt: [
 「公式情報で確認しました」と言うには、その出典のページを実際に読んでいる必要があります（情報の壁）。
 
 1. ツールの中で、Web の検索と取得だけを許した1回きりの `query()` を動かす（`tools: ["WebSearch", "WebFetch"]`、MCP サーバーなし、記録を残さない）。読んだページの中の指示には従わないよう、プロンプトに書く
-2. 結果は JSON で返させ、`parseJsonWithSchema` で取り出す。取り出せなければ、`buildJsonRetryPrompt` で1回だけ差し戻す（差し戻しではツールを使わせない）。時間の上限（30秒）は、差し戻しも含めた全体の予算として扱う
+2. 結果は JSON で返させ、`parseJsonWithSchema` で取り出す。取り出せなければ、`buildJsonRetryPrompt` で1回だけ差し戻す（差し戻しではツールを使わせない）。時間の上限（45秒）は、差し戻しも含めた全体の予算として扱う
 3. 返ってきた出典が、実際に読んだページかを `ungroundedSources` で確かめる。読んでいない出典は捨てる
 4. 公式の出典が残らなければ、「予定どおり」にせず「確認できず」（`not_found`）にする
 

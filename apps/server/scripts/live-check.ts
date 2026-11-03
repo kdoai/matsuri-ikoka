@@ -416,8 +416,14 @@ async function main() {
   } finally {
     // 確かめ終えたら、この相談の会話の記録を消す
     if (agentSessionId !== null) await deleteSession(agentSessionId, { dir: cwd }).catch(() => {});
-    await rm(festivalsDir, { recursive: true, force: true });
-    await rm(cwd, { recursive: true, force: true });
+    // Windows では、終わったばかりの Agent SDK がまだフォルダをつかんでいて消せない（EBUSY）ことがあるので、
+    // 少し待って試し直し、それでも消せなければ場所だけ知らせる（確認の結果は変えない）
+    for (const dir of [festivalsDir, cwd]) {
+      await rm(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 500 }).catch(
+        (error: unknown) =>
+          console.warn(`一時フォルダを消せませんでした（${dir}）：${String(error).slice(0, 120)}`),
+      );
+    }
   }
 }
 
