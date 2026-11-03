@@ -65,7 +65,14 @@ export function registerWebRoutes(
   deps: { webDist: string; authDomain?: string | null },
 ) {
   const authDomain = deps.authDomain ?? null;
-  app.use("*", withHeaders(serveStatic({ root: deps.webDist }), authDomain));
+  // ビルドで作った圧縮済みのファイル（.br・.gz）があれば、ブラウザが受け取れる方を返す
+  app.use("*", withHeaders(serveStatic({ root: deps.webDist, precompressed: true }), authDomain));
   // 画面の中の経路（例：/trip/…）は index.html を返す
-  app.get("*", withHeaders(serveStatic({ root: deps.webDist, path: "index.html" }), authDomain));
+  app.get(
+    "*",
+    withHeaders(
+      serveStatic({ root: deps.webDist, path: "index.html", precompressed: true }),
+      authDomain,
+    ),
+  );
 }
