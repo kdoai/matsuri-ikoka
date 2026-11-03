@@ -1,7 +1,7 @@
 name: 祭り情報の訂正
 description: 掲載している祭りの日時・場所・作法などの誤りを知らせる
 title: "[訂正] "
-labels: ["data-correction"]
+labels: ["data-correction", "type:data", "area:data", "status:triage"]
 body:
   - type: markdown
     attributes:

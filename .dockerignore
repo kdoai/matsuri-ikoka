@@ -7,10 +7,13 @@
 .pnpm-store
 .git
 .github
-.claude
 .env*
-CLAUDE.local.md
 .local
+# 開発用のもの（Claude Code のスキル・エージェント・フック・指示）はアプリに入れない
+**/.claude
+**/CLAUDE.md
+**/CLAUDE.local.md
+**/.mcp.json
 # 3D は画面が読む GLB（assets/3d/models）だけを渡す
 assets/3d/out
 assets/3d/scripts

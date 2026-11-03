@@ -1,0 +1,48 @@
+name: 作業
+description: 開発する人向け。設定・整理・依存の更新・文書など、機能でも不具合でもない作業
+title: "[作業] "
+labels: ["type:task", "status:triage"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: やること
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: 理由
+      description: 使う人や開発する人にとって、何がよくなるか
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: 場所
+      description: 選んだものは、見た人が area:* のラベルにします
+      multiple: true
+      options:
+        - schema
+        - server
+        - agent-kit
+        - web
+        - 3d
+        - shiori
+        - data
+        - infra
+        - docs
+    validations:
+      required: true
+
+  - type: textarea
+    id: done
+    attributes:
+      label: 終わりの条件
+      placeholder: |
+        - [ ] …
+        - [ ] pnpm lint・typecheck・test・build が通る
+    validations:
+      required: true

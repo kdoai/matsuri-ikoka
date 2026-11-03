@@ -1,0 +1,82 @@
+name: 前の版に戻す
+
+# Cloud Run の通信を、指定した版（リビジョン）にすべて向け直す。イメージは作り直さない。
+# 戻す先の版の名前は、Cloud Run のコンソールの「リビジョン」か
+# `gcloud run revisions list --service <サービス> --region <リージョン>` で調べる。
+# 手順は docs/spec/operations.md の「前の版に戻す」にある。
+
+on:
+  workflow_dispatch:
+    inputs:
+      revision:
+        description: 戻す先の版の名前（例：matsuri-ikoka-00042-abc）
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+# デプロイと同じ group にして、デプロイと同時に動かさない
+concurrency:
+  group: deploy-cloud-run
+  cancel-in-progress: false
+
+jobs:
+  rollback:
+    name: 通信を前の版に向ける
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+      REGION: ${{ vars.GCP_REGION }}
+      SERVICE: ${{ vars.CLOUD_RUN_SERVICE }}
+      REVISION: ${{ inputs.revision }}
+    steps:
+      - name: 版の名前の形を確かめる
+        run: |
+          if [[ ! "$REVISION" =~ ^[a-z0-9][a-z0-9-]{0,62}$ ]]; then
+            echo "版の名前の形が違います：$REVISION" >&2
+            exit 1
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+
+      - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+
+      - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
+
+      - name: 版がこのサービスのものかを確かめる
+        run: |
+          service="$(gcloud run revisions describe "$REVISION" \
+            --project "$PROJECT_ID" --region "$REGION" \
+            --format='value(metadata.labels."serving.knative.dev/service")')"
+          if [[ "$service" != "$SERVICE" ]]; then
+            echo "$REVISION は $SERVICE の版ではありません" >&2
+            exit 1
+          fi
+
+      - name: 通信をその版に向ける
+        run: |
+          gcloud run services update-traffic "$SERVICE" \
+            --project "$PROJECT_ID" --region "$REGION" \
+            --to-revisions "${REVISION}=100" --quiet
+
+      - name: 公開の URL を外から確かめる
+        run: |
+          url="$(gcloud run services describe "$SERVICE" \
+            --project "$PROJECT_ID" --region "$REGION" --format='value(status.url)')"
+          ./scripts/check-health.sh "${url}/health"
+          node scripts/check-deployed.mjs "$url"

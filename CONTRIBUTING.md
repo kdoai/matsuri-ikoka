@@ -1,5 +1,7 @@
 # MATSURI IKOKA への参加
 
+変更は Issue → ブランチ → コミット → PR → CI → マージ → デプロイ の順に進みます。全体の流れ、CI のジョブ、ラベル、Claude Code のスキルは [開発の流れ](docs/development.md) にあります。
+
 ## 開発を始める
 
 必要なもの：
@@ -16,16 +18,18 @@ pnpm dev
 
 ## コマンド
 
-| コマンド         | 中身                                                          |
-| ---------------- | ------------------------------------------------------------- |
-| `pnpm dev`       | 画面と接客サーバーを開発モードで起動する                      |
-| `pnpm lint`      | Biome で lint と format を確かめる                            |
-| `pnpm format`    | Biome で直せるものを直す                                      |
-| `pnpm typecheck` | すべてのパッケージの型を確かめる                              |
-| `pnpm test`      | Vitest ですべてのテストを走らせる（`pnpm test:watch` で監視） |
-| `pnpm build`     | 画面と接客サーバーをビルドする                                |
+| コマンド                                    | 中身                                                          |
+| ------------------------------------------- | ------------------------------------------------------------- |
+| `pnpm dev`                                  | 画面と接客サーバーを開発モードで起動する                      |
+| `pnpm lint`                                 | Biome で lint と format を確かめる                            |
+| `pnpm format`                               | Biome で直せるものを直す                                      |
+| `pnpm typecheck`                            | すべてのパッケージの型を確かめる                              |
+| `pnpm test`                                 | Vitest ですべてのテストを走らせる（`pnpm test:watch` で監視） |
+| `pnpm build`                                | 画面と接客サーバーをビルドする                                |
+| `pnpm validate:data`                        | 祭りのデータを検証する                                        |
+| `pnpm --filter @matsuri-ikoka/web test:e2e` | 画面の通しテスト（Playwright）                                |
 
-PR を出す前に、`pnpm lint`・`pnpm typecheck`・`pnpm test`・`pnpm build` がすべて通ることを確かめてください。CI でも同じ順に走ります。
+PR を出す前に、`pnpm lint`・`pnpm typecheck`・`pnpm test`・`pnpm build` がすべて通ることを確かめてください。CI では、これらと e2e・コンテナの確かめ・秘密情報の検査が別々のジョブで走ります（[CI のジョブ](docs/development.md#5-ci)）。
 
 ## ディレクトリ
 
@@ -63,14 +67,23 @@ docs: 旅程の仕様に差分の形を書き足す
 | `test`     | テストだけを変える     |
 | `refactor` | 動きを変えずに書き直す |
 | `chore`    | 設定や依存の更新       |
-| `ci`       | CI の変更              |
+| `ci`       | CI/CD の変更           |
 
-1つのコミットには1つの目的だけを入れます。
+スコープは変えた場所で、Issue の `area:*` のラベルと同じ名前です：`schema`・`server`・`agent-kit`・`web`・`3d`・`shiori`・`data`・`infra`・`docs`。
+
+- 1つのコミットには1つの目的だけを入れます
+- ファイルはパスを指定して足します（`git add -A`・`git add .` は使いません）
+- 作者の設定は変えず、GitHub の noreply のアドレスを使います
+
+## Issue
+
+テンプレート（不具合の報告・機能の提案・作業・祭り情報の訂正・掲載の依頼・掲載停止の依頼）から起票します。種類・場所・優先度・状態はラベル（`type:*`・`area:*`・`priority:*`・`status:*`）で表します。
 
 ## PR
 
-- main には PR を通して入れます。CI が通ることが必要で、マージは squash merge です
-- PR のテンプレートのチェックの項目を確かめてください
+- main には PR を通して入れます。CI のすべてのジョブが通ることが必要で、マージは squash merge です
+- PR のタイトルは、そのまま main のコミットになるので、Conventional Commits の形にします
+- PR のテンプレート（変更の内容・関連する Issue・確かめたこと・チェック）を埋めてください
 
 ## 祭りの情報を寄せる・直す
 

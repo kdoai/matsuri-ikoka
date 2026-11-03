@@ -1,7 +1,7 @@
 name: 祭りの掲載・情報提供の依頼
 description: 祭りを運営する方から、「うちの祭りも載せてほしい」と伝える窓口
 title: "[掲載の依頼] "
-labels: ["listing-request"]
+labels: ["listing-request", "type:data", "area:data", "status:triage"]
 body:
   - type: markdown
     attributes:
