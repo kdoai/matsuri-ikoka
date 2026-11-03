@@ -1,8 +1,8 @@
 import { Canvas, useThree } from "@react-three/fiber";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import type { PerspectiveCamera } from "three";
-import { SCENE_MOTIONS } from "./choreography";
-import { type ModelName, preloadModels, useSetModels } from "./models";
+import { SHOP_MODELS } from "./modelFiles";
+import { preloadModels, useSetModels } from "./models";
 import {
   applyPose,
   cameraPose,
@@ -15,16 +15,6 @@ import {
 
 // 店の外観。入店する前の画面の背景に、入店のカメラの最初の姿勢で、通りから店を見上げる。
 // 動かない絵なので、描くのは読み込んだときと画面の大きさが変わったときだけにする。
-
-/** 店内で使うモデル（スタッフ・旅人・モーション）。外観を見ている間に読んでおく */
-const SHOP_MODELS: ModelName[] = [
-  "staff_hiyoko",
-  "staff_owl",
-  "staff_hen",
-  "staff_sparrow",
-  "player_penguin",
-  ...SCENE_MOTIONS.map((name) => `motion_${name}` as ModelName),
-];
 
 function Street({ onReady }: { onReady: () => void }) {
   useRenderer();
@@ -67,8 +57,20 @@ function Street({ onReady }: { onReady: () => void }) {
   );
 }
 
-export default function StorefrontScene({ testId = "storefront-scene" }: { testId?: string }) {
+export interface StorefrontSceneProps {
+  testId?: string;
+  /** 外観を描けたとき（読み込み中の表示を消す） */
+  onReady?: () => void;
+}
+
+export default function StorefrontScene({
+  testId = "storefront-scene",
+  onReady,
+}: StorefrontSceneProps) {
   const [ready, setReady] = useState(false);
+  useEffect(() => {
+    if (ready) onReady?.();
+  }, [ready, onReady]);
   return (
     <div className="absolute inset-0" data-testid={testId} data-ready={ready}>
       <Canvas
