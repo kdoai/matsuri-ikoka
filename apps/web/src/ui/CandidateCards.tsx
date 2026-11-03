@@ -1,16 +1,28 @@
 import type { Festival, FestivalCandidate } from "@matsuri-ikoka/schema";
-import { Check, MapPin, Star, Users, UtensilsCrossed } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { Check, ChevronDown, MapPin, Star, Users, UtensilsCrossed } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Messages } from "../i18n";
 import { formatDate } from "../i18n";
+import {
+  candidateArea,
+  candidateMonth,
+  candidateTags,
+  candidateTheme,
+  filterCandidates,
+  filterOptions,
+  NO_FILTERS,
+  type PostcardFilters,
+} from "../state/postcards";
 import { useActions, useApp, useT } from "../state/react";
 import { type FitReason, fitReasons } from "../state/reasons";
 import { ConfidenceBadge, Pill, SourceLink, timeRange } from "./common";
 import { CATEGORY_ICON, CATEGORY_TONE, LanternIcon } from "./icons";
 import { issueUrl } from "./links";
+import { Portrait } from "./Portraits";
 
-// 祭りの候補（最大3枚）。祭りのカードとして並べ、種類の紋章、おすすめポイント、
-// 「ここでしか」、祭りの特徴（規模・穴場度・加われるか・屋台・地元の味）を一目で見せる。
+// 祭りの候補（最大3枚）を、絵葉書のようなカードで並べる。表は、祭りの種類の色と紋の図柄・名前・場所・日時・
+// ひとこと・目印のタグ。「詳細を見る」で、おすすめポイント・合う理由・「ここでしか」・祭りの特徴を開く。
+// 出典と訂正の窓口はいつも見せる。写真は使わず、色と図柄で絵葉書らしくする。
 // どれも祭りのデータと候補の項目から出し、その場で文章を作らない。選ぶと旅程を組み始める。
 
 function reasonText(t: Messages, reason: FitReason): string {
@@ -113,10 +125,13 @@ function Card({
   const conditions = useApp((state) => state.session.conditions);
   const preferences = useApp((state) => state.preferences);
   const streaming = useApp((state) => state.session.streaming);
+  const [open, setOpen] = useState(false);
   const reasons = fitReasons(candidate, festival, conditions, preferences);
+  const tags = candidateTags(candidate, festival);
   const onlyHere = festival?.trivia[0] ?? null;
   const time = timeRange(candidate.start, candidate.end);
   const headingId = `candidate-${candidate.festivalId}`;
+  const detailsId = `candidate-details-${candidate.festivalId}`;
   const issueName = `${candidate.name}（${candidate.festivalId}）`;
   const category = festival?.category ?? "other";
   const Emblem = festival === null ? LanternIcon : (CATEGORY_ICON[category] ?? LanternIcon);
@@ -126,96 +141,131 @@ function Card({
   return (
     <article
       aria-labelledby={headingId}
-      className="flex w-full animate-pop flex-col overflow-hidden rounded-[1.6rem] md:w-[23rem] border-[3px] border-wood-700 bg-gradient-to-b from-[#fffaf0] to-[#f4e6c8] shadow-[0_14px_36px_rgb(0_0_0/0.45)]"
+      className="washi flex w-full animate-pop flex-col overflow-hidden rounded-card border border-line-strong p-2 shadow-lift md:w-[22rem]"
       style={{ animationDelay: `${index * 120}ms` }}
       data-testid="candidate-card"
     >
-      {/* 紋章の帯 */}
-      <div className={`relative bg-gradient-to-br ${tone} px-4 pt-3 pb-4 text-kinari-50`}>
-        <div className="flex items-center gap-3 pr-24">
-          <span className="grid size-14 shrink-0 place-items-center rounded-full border-[3px] border-kinari-50/90 bg-black/15 shadow-inner">
-            <Emblem className="size-8" />
-          </span>
-          <div className="min-w-0">
-            {festival === null ? null : (
-              <p className="font-bold text-kinari-100 text-xs">{t.categories[category]}</p>
-            )}
-            <h3 id={headingId} className="font-bold text-xl leading-tight">
-              {candidate.name}
-            </h3>
-          </div>
-        </div>
+      {/* 絵葉書の絵の面：種類の色と紋の図柄 */}
+      <div
+        className={`relative overflow-hidden rounded-[0.7rem] bg-gradient-to-br ${tone} px-4 pt-4 pb-3 text-kinari-50`}
+      >
         <span
-          className={`-rotate-3 absolute top-3 right-3 rounded-md px-2 py-0.5 font-black text-xs shadow ${
-            candidate.daysFromWish === 0 ? "bg-yamabuki-400 text-ink" : "bg-kinari-50 text-ink"
+          aria-hidden="true"
+          className="absolute inset-0 bg-[length:24px_14px] bg-[radial-gradient(circle_at_50%_100%,transparent_9px,rgb(255_255_255/0.12)_10px,transparent_12px)] opacity-80"
+        />
+        <span aria-hidden="true" className="-right-4 -bottom-6 absolute text-kinari-50/20">
+          <Emblem className="size-32" />
+        </span>
+        {/* 切手のような札：希望日からのずれ */}
+        <span
+          className={`absolute top-2.5 right-2.5 rotate-3 rounded-sm border-2 border-dashed px-1.5 py-0.5 font-black text-xs ${
+            candidate.daysFromWish === 0
+              ? "border-ink/40 bg-yamabuki-400 text-ink"
+              : "border-ink/30 bg-kinari-50 text-ink"
           }`}
         >
           {t.candidates.daysFromWish(candidate.daysFromWish)}
         </span>
+        <div className="relative pr-20">
+          {festival === null ? null : (
+            <p className="font-bold text-kinari-100 text-xs">{t.categories[category]}</p>
+          )}
+          <h3 id={headingId} className="font-bold text-2xl leading-tight drop-shadow">
+            {candidate.name}
+          </h3>
+          <p className="mt-1 flex items-center gap-1 text-kinari-100 text-sm">
+            <MapPin aria-hidden="true" className="size-3.5 shrink-0" />
+            {candidate.venueName}・{candidate.place}
+          </p>
+        </div>
       </div>
 
-      <div className="flex flex-1 flex-col gap-3 px-4 pt-3 pb-4">
-        <div>
+      <div className="flex flex-1 flex-col gap-2 px-2 pt-2.5 pb-1">
+        <div className="flex flex-wrap items-center justify-between gap-1.5">
           <p className="font-bold text-ink text-lg">
             {formatDate(candidate.date, locale)}
             <span className="ml-2">{time ?? t.candidates.timeUnknown}</span>
           </p>
-          <p className="flex items-center gap-1 text-ink-soft text-sm">
-            <MapPin aria-hidden="true" className="size-3.5" />
-            {candidate.venueName}・{candidate.place}
-          </p>
-          <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+          <span className="flex flex-wrap gap-1">
             <ConfidenceBadge confidence={candidate.confidence} />
             {candidate.confirmed ? null : <Pill tone="shu">{t.candidates.unconfirmed}</Pill>}
-          </div>
-          {candidate.confirmed ? null : (
-            <p className="mt-1.5 rounded-lg bg-shu-500/10 px-2 py-1 font-medium text-shu-700 text-sm">
-              {t.candidates.unconfirmedNote}
-            </p>
-          )}
+          </span>
         </div>
-
-        <section aria-label={t.festivalCard.recommend}>
-          <h4 className="mb-1 font-bold text-ai-700 text-xs">{t.festivalCard.recommend}</h4>
-          <ul className="space-y-1">
-            {highlights.map((highlight) => (
-              <li key={highlight} className="flex items-start gap-1.5 font-bold text-ink text-sm">
-                <Star
-                  aria-hidden="true"
-                  className="mt-0.5 size-4 shrink-0 fill-yamabuki-400 text-yamabuki-400"
-                />
-                {highlight}
+        <p className="font-medium text-ink text-sm">{candidate.highlight}</p>
+        {tags.length > 0 ? (
+          <ul className="flex flex-wrap gap-1" aria-label={t.festivalCard.features}>
+            {tags.map((tag) => (
+              <li
+                key={tag}
+                className="rounded-full border border-line-strong bg-white/80 px-2 py-0.5 font-bold text-ink-soft text-xs"
+              >
+                {t.candidates.tags[tag]}
               </li>
             ))}
           </ul>
-          {reasons.length > 0 ? (
-            <ul className="mt-1.5 space-y-0.5" aria-label={t.candidates.whyFits}>
-              {reasons.map((reason) => (
-                <li key={reason.kind} className="flex items-start gap-1.5 text-ink text-sm">
-                  <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-emerald-700" />
-                  {reasonText(t, reason)}
+        ) : null}
+        {candidate.confirmed ? null : (
+          <p className="rounded-lg bg-shu-500/10 px-2 py-1 font-medium text-shu-700 text-sm">
+            {t.candidates.unconfirmedNote}
+          </p>
+        )}
+
+        <button
+          type="button"
+          className="flex items-center gap-1 self-start rounded-full px-1 font-bold text-ai-700 text-sm underline-offset-2 hover:underline"
+          aria-expanded={open}
+          aria-controls={detailsId}
+          onClick={() => setOpen(!open)}
+        >
+          {open ? t.candidates.hideDetails : t.candidates.details}
+          <ChevronDown
+            aria-hidden="true"
+            className={`size-4 transition ${open ? "rotate-180" : ""}`}
+          />
+        </button>
+        <div id={detailsId} hidden={!open} className="space-y-3">
+          <section aria-label={t.festivalCard.recommend}>
+            <h4 className="mb-1 font-bold text-ai-700 text-xs">{t.festivalCard.recommend}</h4>
+            <ul className="space-y-1">
+              {highlights.map((highlight) => (
+                <li key={highlight} className="flex items-start gap-1.5 font-bold text-ink text-sm">
+                  <Star
+                    aria-hidden="true"
+                    className="mt-0.5 size-4 shrink-0 fill-yamabuki-400 text-yamabuki-400"
+                  />
+                  {highlight}
                 </li>
               ))}
             </ul>
-          ) : null}
-        </section>
-
-        {onlyHere === null ? null : (
-          <section
-            aria-label={t.candidates.onlyHere}
-            className="rounded-xl border-2 border-wood-400/70 border-dashed bg-white/60 px-3 py-2"
-          >
-            <h4 className="font-bold text-shu-700 text-xs">{t.candidates.onlyHere}</h4>
-            <p className="font-medium text-ink text-sm">{onlyHere.text}</p>
-            <SourceLink source={onlyHere.source} compact />
+            {reasons.length > 0 ? (
+              <ul className="mt-1.5 space-y-0.5" aria-label={t.candidates.whyFits}>
+                {reasons.map((reason) => (
+                  <li key={reason.kind} className="flex items-start gap-1.5 text-ink text-sm">
+                    <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-emerald-700" />
+                    {reasonText(t, reason)}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
           </section>
-        )}
 
-        {festival === null ? (
-          <p className="text-ink-soft text-xs">{t.festivalCard.loading}</p>
-        ) : (
-          <Features festival={festival} />
-        )}
+          {onlyHere === null ? null : (
+            <section
+              aria-label={t.candidates.onlyHere}
+              className="rounded-card border border-line-strong border-dashed bg-white/60 px-3 py-2"
+            >
+              <h4 className="font-bold text-shu-700 text-xs">{t.candidates.onlyHere}</h4>
+              <p className="font-medium text-ink text-sm">{onlyHere.text}</p>
+              <SourceLink source={onlyHere.source} compact />
+            </section>
+          )}
+
+          {festival === null ? (
+            <p className="text-ink-soft text-xs">{t.festivalCard.loading}</p>
+          ) : (
+            <Features festival={festival} />
+          )}
+        </div>
 
         <div className="text-xs">
           <span className="mr-1 font-bold text-ai-700">{t.candidates.source}</span>
@@ -225,7 +275,7 @@ function Card({
         <div className="mt-auto">
           <button
             type="button"
-            className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border-2 border-wood-700/40 bg-yamabuki-400 px-4 font-black text-ink text-lg shadow-[inset_0_-4px_0_rgb(0_0_0/0.15)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:bg-stone-300"
+            className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border-2 border-wood-700/30 bg-yamabuki-400 px-4 font-black text-ink text-lg shadow-soft transition hover:brightness-105 disabled:cursor-not-allowed disabled:bg-stone-300"
             disabled={streaming}
             onClick={() => void actions.chooseCandidate(candidate)}
           >
@@ -263,6 +313,123 @@ function Card({
   );
 }
 
+const filterChip =
+  "inline-flex min-h-8 items-center gap-1 whitespace-nowrap rounded-full border px-3 font-bold text-xs transition sm:text-sm";
+
+function FilterGroup<T extends string | number>({
+  label,
+  options,
+  value,
+  text,
+  onChange,
+}: {
+  label: string;
+  options: { value: T; count: number }[];
+  value: T | null;
+  text: (value: T) => string;
+  onChange: (value: T | null) => void;
+}) {
+  const t = useT();
+  const chip = (selected: boolean) =>
+    `${filterChip} ${
+      selected
+        ? "border-yamabuki-400 bg-yamabuki-400 text-ink"
+        : "border-line-strong bg-white/80 text-ink-soft hover:bg-white"
+    }`;
+  return (
+    <fieldset className="flex flex-wrap items-center gap-1.5">
+      <legend className="sr-only">{label}</legend>
+      <span aria-hidden="true" className="mr-1 font-bold text-ink text-xs">
+        {label}
+      </span>
+      <button
+        type="button"
+        aria-pressed={value === null}
+        className={chip(value === null)}
+        onClick={() => onChange(null)}
+      >
+        {t.candidates.filters.all}
+      </button>
+      {options.map((option) => (
+        <button
+          key={String(option.value)}
+          type="button"
+          aria-pressed={value === option.value}
+          className={chip(value === option.value)}
+          onClick={() => onChange(value === option.value ? null : option.value)}
+        >
+          {text(option.value)}
+          <span className="font-normal opacity-70">{option.count}</span>
+        </button>
+      ))}
+    </fieldset>
+  );
+}
+
+/** エリア・時期・テーマの絞り込み。候補が2つ以上あるときだけ出す */
+function Filters({
+  filters,
+  onChange,
+}: {
+  filters: PostcardFilters;
+  onChange: (filters: PostcardFilters) => void;
+}) {
+  const t = useT();
+  const candidates = useApp((state) => state.candidates);
+  const festivals = useApp((state) => state.festivals);
+  const areas = useMemo(
+    () => filterOptions(candidates, (candidate) => candidateArea(candidate.place)),
+    [candidates],
+  );
+  const months = useMemo(
+    () => filterOptions(candidates, (candidate) => candidateMonth(candidate.date)),
+    [candidates],
+  );
+  const themes = useMemo(
+    () =>
+      filterOptions(candidates, (candidate) =>
+        candidateTheme(festivals[candidate.festivalId] ?? null),
+      ),
+    [candidates, festivals],
+  );
+  return (
+    <section
+      aria-label={t.candidates.filters.label}
+      className="washi flex flex-wrap items-center gap-x-4 gap-y-2 rounded-card border border-line-strong px-3 py-2 shadow-soft"
+      data-testid="candidate-filters"
+    >
+      <FilterGroup
+        label={t.candidates.filters.area}
+        options={areas}
+        value={filters.area}
+        text={(value) => value}
+        onChange={(area) => onChange({ ...filters, area })}
+      />
+      <FilterGroup
+        label={t.candidates.filters.month}
+        options={months}
+        value={filters.month}
+        text={(value) => t.candidates.filters.monthName(value)}
+        onChange={(month) => onChange({ ...filters, month })}
+      />
+      <FilterGroup
+        label={t.candidates.filters.theme}
+        options={themes}
+        value={filters.theme}
+        text={(value) => (t.categories as Record<string, string>)[value] ?? value}
+        onChange={(theme) => onChange({ ...filters, theme })}
+      />
+      <button
+        type="button"
+        className="ml-auto text-ink-soft text-xs underline underline-offset-2"
+        onClick={() => onChange(NO_FILTERS)}
+      >
+        {t.candidates.filters.reset}
+      </button>
+    </section>
+  );
+}
+
 export function CandidateCards() {
   const t = useT();
   const actions = useActions();
@@ -270,20 +437,31 @@ export function CandidateCards() {
   const candidates = useApp((state) => state.candidates);
   const festivals = useApp((state) => state.festivals);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const [filters, setFilters] = useState<PostcardFilters>(NO_FILTERS);
 
   useEffect(() => {
     if (open) {
       headingRef.current?.focus();
     }
   }, [open]);
+  // 候補が入れ替わったら、絞り込みを戻す
+  // biome-ignore lint/correctness/useExhaustiveDependencies: 候補が変わったときだけ戻す
+  useEffect(() => setFilters(NO_FILTERS), [candidates]);
 
   if (!open || candidates.length === 0) {
     return null;
   }
+  const shown = filterCandidates(candidates, festivals, filters);
+  const first = candidates[0];
+  // コンシェルジュのひとこと（1行）。くわしいことはカードに書く
+  const line =
+    candidates.length === 1 && first !== undefined
+      ? t.candidates.found(candidateArea(first.place))
+      : t.candidates.foundMany(candidates.length);
   return (
     <section
       aria-labelledby="candidates-title"
-      className="fixed inset-0 z-40 overflow-y-auto bg-ai-900/60 p-3 backdrop-blur-[3px] sm:p-6"
+      className="fixed inset-0 z-40 overflow-y-auto bg-wood-900/55 p-3 backdrop-blur-[3px] sm:p-6"
       data-testid="candidates"
       onKeyDown={(event) => {
         if (event.key === "Escape") {
@@ -291,33 +469,55 @@ export function CandidateCards() {
         }
       }}
     >
-      <div className="mx-auto mb-4 flex max-w-6xl items-center justify-between gap-2">
-        <h2
-          id="candidates-title"
-          ref={headingRef}
-          tabIndex={-1}
-          className="flex items-center gap-2 rounded-full bg-yamabuki-400 px-5 py-1.5 font-black text-ink text-xl shadow-lg"
-        >
-          <LanternIcon className="size-6" />
-          {t.candidates.title}
-        </h2>
+      <div className="mx-auto mb-3 flex max-w-6xl flex-wrap items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-3">
+          <Portrait speaker="concierge" className="size-14" />
+          <div className="min-w-0">
+            <h2
+              id="candidates-title"
+              ref={headingRef}
+              tabIndex={-1}
+              className="flex items-center gap-2 font-black text-kinari-50 text-xl drop-shadow"
+            >
+              <LanternIcon className="size-6 text-yamabuki-400" />
+              {t.candidates.title}
+              <span className="rounded-full bg-kinari-50/90 px-2 py-0.5 font-bold text-ink text-xs">
+                {t.candidates.filters.count(shown.length)}
+              </span>
+            </h2>
+            <p className="font-bold text-kinari-100 text-sm" data-testid="candidates-line">
+              {line}
+            </p>
+          </div>
+        </div>
         <button
           type="button"
-          className="min-h-10 rounded-full border-2 border-kinari-50/80 bg-ink/60 px-4 font-bold text-kinari-50 shadow hover:bg-ink/80"
+          className="hud-chip min-h-10 rounded-full px-4 font-bold"
           onClick={() => actions.setCandidatesOpen(false)}
         >
           {t.candidates.close}
         </button>
       </div>
+      {candidates.length > 1 ? (
+        <div className="mx-auto mb-4 max-w-6xl">
+          <Filters filters={filters} onChange={setFilters} />
+        </div>
+      ) : null}
       <div className="mx-auto flex max-w-6xl flex-wrap items-stretch justify-center gap-4">
-        {candidates.map((candidate, index) => (
-          <Card
-            key={candidate.festivalId}
-            candidate={candidate}
-            festival={festivals[candidate.festivalId] ?? null}
-            index={index}
-          />
-        ))}
+        {shown.length === 0 ? (
+          <p className="washi rounded-card px-4 py-3 font-bold text-ink">
+            {t.candidates.filters.none}
+          </p>
+        ) : (
+          shown.map((candidate, index) => (
+            <Card
+              key={candidate.festivalId}
+              candidate={candidate}
+              festival={festivals[candidate.festivalId] ?? null}
+              index={index}
+            />
+          ))
+        )}
       </div>
     </section>
   );
