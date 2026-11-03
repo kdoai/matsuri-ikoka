@@ -2,7 +2,7 @@ import type { StaffId } from "@matsuri-ikoka/schema";
 import { MessageCircle, X } from "lucide-react";
 import { useActions, useApp, useT } from "../state/react";
 import { currentLine, shioriReady } from "../state/selectors";
-import { Composer } from "./ChatPanel";
+import { Composer, focusComposer } from "./ChatPanel";
 import { Portrait, type Speaker } from "./Portraits";
 import { errorText } from "./text";
 
@@ -62,6 +62,13 @@ export function DialogueBox() {
       aria-label={t.chat.title}
       className="relative rounded-[2rem] border-[3px] border-wood-700/70 bg-gradient-to-b from-[#fffaf0] to-[#f6ead2] px-4 pt-5 pb-3 shadow-[0_12px_32px_rgb(0_0_0/0.4)] sm:px-6"
       data-testid="dialogue"
+      // 会話の窓のどこをクリックしても、入力欄に焦点を移す（打った文字が旅人の操作に渡らない）
+      onPointerUp={(event) => {
+        const target = event.target as Element;
+        if (target.closest("button, a, input, textarea, select, [role='tab']") === null) {
+          focusComposer();
+        }
+      }}
     >
       {/* 波の模様の飾り */}
       <span
