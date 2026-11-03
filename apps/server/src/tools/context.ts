@@ -1,14 +1,32 @@
-import type { IsoDate, StaffId, ToolName, VerificationResult } from "@matsuri-ikoka/schema";
+import {
+  type IsoDate,
+  type StaffId,
+  TOOL_NAMES,
+  type ToolName,
+  type VerificationResult,
+} from "@matsuri-ikoka/schema";
 import type { FestivalStore } from "../data/festivalStore";
 import type { ItineraryStore, Session } from "../session/sessionStore";
 import type { FestivalVerifier } from "./verifier";
 import type { WeatherService } from "./weather";
 
+/**
+ * 接客エージェントの道具の名前。画面に動きを見せる道具（ToolName）に、
+ * 画面にイベントを出さない道具（聞き取った条件の書き留め）を足したもの
+ */
+export const ALL_TOOL_NAMES = [...TOOL_NAMES, "note_conditions"] as const;
+export type AgentToolName = (typeof ALL_TOOL_NAMES)[number];
+
+/** 画面にイベント（tool.start・tool.end）を出す道具か */
+export function isVisibleTool(name: AgentToolName): name is ToolName {
+  return (TOOL_NAMES as readonly string[]).includes(name);
+}
+
 /** 1回の発言の間に起きたこと。会話の状態（done の stage）を決めるのに使う */
 export interface TurnState {
   startedStaff: Set<StaffId>;
   /** 呼んだツール（呼んだ順）。ログに残す */
-  toolCalls: ToolName[];
+  toolCalls: AgentToolName[];
   searched: boolean;
   savedItinerary: boolean;
   verification: VerificationResult | null;
@@ -43,7 +61,8 @@ export interface ToolContext {
 }
 
 /** ツールごとの時間の上限（ミリ秒） */
-export const TOOL_TIMEOUT_MS: Readonly<Record<ToolName, number>> = {
+export const TOOL_TIMEOUT_MS: Readonly<Record<AgentToolName, number>> = {
+  note_conditions: 5_000,
   search_festivals: 10_000,
   search_nearby: 10_000,
   get_access: 10_000,

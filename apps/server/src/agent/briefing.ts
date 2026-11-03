@@ -1,4 +1,9 @@
-import type { ConversationStage, DateWish, Preferences } from "@matsuri-ikoka/schema";
+import type {
+  ConversationStage,
+  DateWish,
+  PartialTripConditions,
+  Preferences,
+} from "@matsuri-ikoka/schema";
 import { arrivalBufferMinutes } from "../domain/arrivalBuffer";
 import {
   formatMonthDay,
@@ -8,6 +13,7 @@ import {
 } from "../domain/calendar";
 import { preferenceEffects } from "../domain/preferences";
 import type { ToolContext } from "../tools/context";
+import { hearingReport } from "../tools/matsuriTools";
 import type { Staff } from "./bubbles";
 
 // エージェントに渡す「店の記録」。会話の状態・条件・こだわり・候補・旅程は、サーバーが持つものを正とする。
@@ -39,6 +45,47 @@ export function preferencesLabel(p: Preferences): string {
   return `${labels}（ツールに渡す値：${JSON.stringify(p)}）`;
 }
 
+const ROUTE_LABELS = {
+  stay: "ずっと一か所を拠点にする",
+  loop: "いくつかの地域を巡る",
+  via: "目的地へ向かう途中で祭りに寄る",
+  auto: "おまかせ",
+} as const;
+const STAY_NEAR_LABELS = { festival: "祭りの近く", town: "街", auto: "おまかせ" } as const;
+const FESTIVAL_DAYS_LABELS = { one: "1日だけ", several: "何日か", auto: "おまかせ" } as const;
+const PACE_LABELS = {
+  relaxed: "ゆっくり",
+  normal: "ふつう",
+  packed: "たっぷり",
+  auto: "おまかせ",
+} as const;
+const INTEREST_LABELS = {
+  onsen: "温泉",
+  food: "食",
+  nature: "自然",
+  town_walk: "街歩き",
+  history: "歴史",
+  shopping: "買い物",
+} as const;
+
+/** 泊まりの旅で聞き取った好み（旅のかたち・終わりの場所など） */
+function tripStyleLabels(conditions: PartialTripConditions): string[] {
+  const { route } = conditions;
+  return [
+    route
+      ? `旅のかたち ${ROUTE_LABELS[route.shape]}${route.areas.length > 0 ? `（${route.areas.join("→")}）` : ""}`
+      : null,
+    conditions.returnTo ? `終わりの場所 ${conditions.returnTo}` : null,
+    conditions.stayNear ? `泊まる場所 ${STAY_NEAR_LABELS[conditions.stayNear]}` : null,
+    conditions.festivalDays ? `祭りの日数 ${FESTIVAL_DAYS_LABELS[conditions.festivalDays]}` : null,
+    conditions.pace ? `ペース ${PACE_LABELS[conditions.pace]}` : null,
+    conditions.interests
+      ? `楽しみ ${conditions.interests.length === 0 ? "特になし" : conditions.interests.map((i) => INTEREST_LABELS[i]).join("・")}`
+      : null,
+    conditions.leaveToStaff ? "あとはおまかせ" : null,
+  ].filter((v): v is string => v !== null);
+}
+
 function wishLabel(wish: DateWish): string {
   return wish.kind === "date"
     ? formatMonthDayWithWeekday(wish.date)
@@ -64,8 +111,16 @@ export function shopRecord(ctx: ToolContext): string {
         ? "日帰り・お出かけ（0泊）"
         : `${conditions.nights}泊${conditions.nights + 1}日`,
     conditions.party ? `大人${conditions.party.adults}・子ども${conditions.party.children}` : null,
+    ...tripStyleLabels(conditions),
   ].filter((v): v is string => v !== null);
   lines.push(`聞き取れた条件：${known.length === 0 ? "まだありません" : known.join(" / ")}`);
+  // 聞く項目と順番はコードで決める（泊数に応じて深さを変える）
+  const hearing = hearingReport(ctx);
+  lines.push(
+    `聞き取り：${hearing.readyToSearch ? "祭りを探してよい" : "まだ探さない"}・${
+      hearing.askNext.length === 0 ? "聞くことはない" : `次に聞くこと ${hearing.askNext.join("、")}`
+    }`,
+  );
   lines.push(`こだわり：${preferencesLabel(session.preferences)}`);
 
   if (session.candidates.length > 0) {

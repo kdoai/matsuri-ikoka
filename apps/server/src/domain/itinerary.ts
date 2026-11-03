@@ -6,10 +6,13 @@ import {
   type ItineraryDiff,
   type ItineraryItem,
   ItinerarySchema,
+  MAX_TRIP_DAYS,
   mainFestivalDay,
   type Source,
+  type Stay,
   type Weather,
 } from "@matsuri-ikoka/schema";
+import { addDays } from "./calendar";
 import { checkPlan, occurrenceOn, type PlanIssue } from "./planCheck";
 
 // 旅程係が書いた下書きから、保存する旅程を作る。
@@ -256,4 +259,73 @@ function isSameItinerary(previous: Itinerary, next: Itinerary, diff: ItineraryDi
     days: days.map(({ items: _items, ...day }) => day),
   });
   return stableStringify(overview(previous)) === stableStringify(overview(next));
+}
+
+// ---------------------------------------------------------------------------
+// 1日ずつ書く
+
+/** 保存した旅程を、旅程係の下書きの形に戻す */
+export function draftFromItinerary(itinerary: Itinerary): ItineraryDraft {
+  const { id: _id, version: _version, verification: _verification, days, ...rest } = itinerary;
+  return {
+    ...rest,
+    days: days.map(({ weather: _weather, items, ...day }) => ({
+      ...day,
+      items: items.map(({ changedInVersion: _changed, ...item }) => item),
+    })),
+  };
+}
+
+export type MergeDayResult = { ok: true; draft: ItineraryDraft } | { ok: false; message: string };
+
+/**
+ * 保存した下書きに1日を書き足す。同じ日付の日は置き換え、最後の日の次の日は後ろに、最初の日の前の日は前に足す。
+ * 後ろに足すときは、それまでの最後の日の夜に泊まる地域（stayBefore）が要る（最後の日は泊まるところを持たないため）
+ */
+export function mergeDay(
+  draft: ItineraryDraft,
+  day: ItineraryDayDraft,
+  stayBefore?: Stay,
+): MergeDayResult {
+  const { days } = draft;
+  const first = days[0];
+  const last = days.at(-1);
+  if (first === undefined || last === undefined)
+    return { ok: true, draft: { ...draft, days: [day] } };
+
+  const index = days.findIndex((d) => d.date === day.date);
+  if (index >= 0) {
+    if (index === days.length - 1 && day.stay !== null) {
+      return { ok: false, message: "最後の日は帰る日なので、stay を null にしてください" };
+    }
+    return { ok: true, draft: { ...draft, days: days.with(index, day) } };
+  }
+  if (days.length >= MAX_TRIP_DAYS) {
+    return { ok: false, message: `旅程は${MAX_TRIP_DAYS}日（6泊）までです` };
+  }
+  if (day.date === addDays(last.date, 1)) {
+    if (stayBefore === undefined) {
+      return {
+        ok: false,
+        message: `後ろに日を足すときは、${last.date} の夜に泊まる地域を stayBefore に書いてください`,
+      };
+    }
+    if (day.stay !== null) {
+      return { ok: false, message: "最後の日は帰る日なので、stay を null にしてください" };
+    }
+    return {
+      ok: true,
+      draft: { ...draft, days: [...days.slice(0, -1), { ...last, stay: stayBefore }, day] },
+    };
+  }
+  if (day.date === addDays(first.date, -1)) {
+    if (day.stay === null) {
+      return { ok: false, message: "前に足す日は、その夜に泊まる地域を stay に書いてください" };
+    }
+    return { ok: true, draft: { ...draft, days: [day, ...days] } };
+  }
+  return {
+    ok: false,
+    message: `日付は続けてください（いまの旅程は ${first.date}〜${last.date}）`,
+  };
 }

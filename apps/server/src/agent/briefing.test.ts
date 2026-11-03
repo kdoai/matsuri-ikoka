@@ -25,6 +25,36 @@ describe("店の記録", () => {
     expect(record).toContain("旅程：まだありません");
   });
 
+  it("日帰りは、そろえばすぐ探してよく、それ以上は聞かない", () => {
+    const context = ctx();
+    context.session.conditions = {
+      when: { kind: "date", date: "2026-08-16" },
+      origin: "みなと中央駅",
+      nights: 0,
+    };
+    expect(shopRecord(context)).toContain("聞き取り：祭りを探してよい・聞くことはない");
+  });
+
+  it("泊まりの旅は、聞き取った好みと、コードで決めた次に聞くことを載せる", () => {
+    const context = ctx();
+    context.session.conditions = {
+      when: { kind: "range", from: "2026-08-14", to: "2026-08-19" },
+      origin: "みなと中央駅",
+      nights: 5,
+      route: { shape: "loop", areas: ["鈴鳴町", "かざみ温泉"] },
+      interests: ["onsen"],
+    };
+
+    const record = shopRecord(context);
+
+    expect(record).toContain("5泊6日");
+    expect(record).toContain("旅のかたち いくつかの地域を巡る（鈴鳴町→かざみ温泉）");
+    expect(record).toContain("楽しみ 温泉");
+    expect(record).toMatch(
+      /聞き取り：祭りを探してよい・次に聞くこと 旅の終わりの場所.*、旅のペース/,
+    );
+  });
+
   it("旅程係には、今の旅程の全体と到着の余裕を渡す。調査係には渡さない", () => {
     const context = ctx();
     const itinerary = fictionalItinerary();

@@ -1,6 +1,6 @@
 import { DEFAULT_PREFERENCES, type NearbySpot, type Preferences } from "@matsuri-ikoka/schema";
 import { describe, expect, it } from "vitest";
-import { fitsOpeningHours, selectNearbySpots } from "./nearby";
+import { festivalInArea, fitsOpeningHours, selectNearbySpots } from "./nearby";
 
 function spot(overrides: Partial<NearbySpot> & Pick<NearbySpot, "id">): NearbySpot {
   return {
@@ -114,5 +114,21 @@ describe("fitsOpeningHours", () => {
     expect(
       fitsOpeningHours({ open: "18:00", close: "01:00" }, { from: "21:00", to: "23:30" }),
     ).toBe(true);
+  });
+});
+
+describe("festivalInArea", () => {
+  const festival = { municipalities: [{ prefecture: "滋賀県" as const, name: "鈴鳴町" }] };
+
+  it("都道府県・市町村・その組み合わせの名前で当たる", () => {
+    expect(festivalInArea(festival, "滋賀県")).toBe(true);
+    expect(festivalInArea(festival, "鈴鳴町")).toBe(true);
+    expect(festivalInArea(festival, "滋賀県 鈴鳴町")).toBe(true);
+    expect(festivalInArea(festival, "鈴鳴町のあたり")).toBe(true);
+  });
+
+  it("ほかの地域や空の名前では当たらない", () => {
+    expect(festivalInArea(festival, "京都府")).toBe(false);
+    expect(festivalInArea(festival, " ")).toBe(false);
   });
 });
