@@ -66,6 +66,16 @@ export const FestivalCandidateSchema = z.strictObject({
   confirmed: z.boolean(),
   highlight: TextSchema,
   source: SourceSchema,
+  /**
+   * 候補を出す前の、公式の情報での確かめの結果（とってある結果があるときだけ）。
+   * まだ確かめていなければ付けず、確かめ終わったら festival.verified（scope: candidate）で届く
+   */
+  check: z
+    .strictObject({
+      result: VerificationResultSchema,
+      checkedAt: IsoDateTimeSchema,
+    })
+    .optional(),
 });
 
 /** 地図に打つ周辺の場所（search_nearby の結果） */
@@ -159,12 +169,24 @@ export const ItineraryUpdatedEventSchema = event(
     }),
 );
 
-/** 確定前に、公式情報で開催を再確認した */
+/**
+ * 確かめる場面：candidate 候補を出す前の確かめ（候補の祭りと日付ごと）/
+ * itinerary 確定前の、旅程の主役の祭りの再確認
+ */
+export const VERIFICATION_SCOPES = ["candidate", "itinerary"] as const;
+
+/**
+ * 公式情報で開催を確かめた。scope がないときは itinerary（確定前の再確認）。
+ * candidate の結果は候補カードにだけ付け、旅程の再確認の結果にはしない
+ */
 export const FestivalVerifiedEventSchema = event(
   "festival.verified",
   z
     .strictObject({
       festivalId: SlugSchema,
+      /** 確かめた開催日 */
+      date: IsoDateSchema.optional(),
+      scope: z.enum(VERIFICATION_SCOPES).optional(),
       result: VerificationResultSchema,
       checkedAt: IsoDateTimeSchema,
       sources: z.array(SourceSchema),

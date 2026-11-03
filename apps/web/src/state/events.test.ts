@@ -226,6 +226,22 @@ describe("スタッフの動き", () => {
     });
     expect(state.staff.concierge.motion).toBe("stamp");
   });
+
+  it("候補を出す前の確かめは、旅程の再確認の状態を変えない", () => {
+    const before = fresh();
+    const state = applyEvent(before, {
+      type: "festival.verified",
+      data: {
+        festivalId: "suzunari-toro",
+        date: "2026-08-16",
+        scope: "candidate",
+        result: "as_planned",
+        checkedAt: "2026-08-03T10:00:00+09:00",
+        sources: [fictionalSource("2026")],
+      },
+    });
+    expect(state).toBe(before);
+  });
 });
 
 describe("旅程", () => {
