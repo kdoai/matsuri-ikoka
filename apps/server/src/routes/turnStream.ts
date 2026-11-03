@@ -11,6 +11,7 @@ import type { ErrorBody } from "./errors";
 // - 進みのない時間（イベントもエージェントの動きもない時間）が上限を超えたら止め、途中までの結果のあとに timeout を送る。
 //   動き続けている相談は止めないが、全体の上限は別に持つ
 // - 最後に必ず done を1回送って閉じる
+// - 閉じたら、どう終わったか（done・error・timeout・利用者が切った）をログに1行残す。会話の本文は残さない
 
 /** 進みのない時間の上限 */
 export const TURN_IDLE_MS = 90_000;
@@ -20,6 +21,16 @@ export const HEARTBEAT_MS = 15_000;
 
 export class TurnTimeoutError extends Error {}
 class ClientClosedError extends Error {}
+
+/** 返答の終わり方。client_closed は、done を送る前に利用者の側から接続が切れた */
+export type TurnEnding = "done" | "error" | "timeout" | "client_closed";
+
+/** 返答の終わり方を決める（ログに残す） */
+export function turnEnding(signal: AbortSignal, errorBody: ErrorBody | null): TurnEnding {
+  if (signal.aborted && signal.reason instanceof ClientClosedError) return "client_closed";
+  if (errorBody?.code === "timeout") return "timeout";
+  return errorBody === null ? "done" : "error";
+}
 
 /** 失敗を、利用者に見せる error イベントの中身にする。利用者が接続を切ったときは null */
 export function toErrorBody(error: unknown, signal: AbortSignal): ErrorBody | null {
@@ -61,6 +72,8 @@ export function streamTurn(
 ): Response {
   session.busy = true;
   return streamSSE(c, async (stream) => {
+    const started = Date.now();
+    let events = 0;
     const controller = new AbortController();
     const timeout = () => controller.abort(new TurnTimeoutError());
     const idleMs = options.idleMs ?? TURN_IDLE_MS;
@@ -84,31 +97,45 @@ export function streamTurn(
       () => write(() => stream.write(": keep-alive\n\n")),
       options.heartbeatMs ?? HEARTBEAT_MS,
     );
-    const emit: EmitEvent = (event) => {
+    const emit = (event: SseEvent): boolean => {
       let message: ReturnType<typeof encodeSseEvent>;
       try {
         message = encodeSseEvent(event);
       } catch (error) {
         // 形の違うイベントは送らない（画面のストアを壊さない）
         console.error(`[sse] invalid ${event.type} event`, error);
-        return;
+        return false;
       }
       progress();
+      events += 1;
       write(() => stream.writeSSE(message));
+      return true;
     };
 
+    let errorBody: ErrorBody | null = null;
     try {
       await run(controller.signal, emit, progress);
     } catch (error) {
-      const body = toErrorBody(error, controller.signal);
-      if (body !== null) emit({ type: "error", data: body });
+      errorBody = toErrorBody(error, controller.signal);
+      if (errorBody !== null) emit({ type: "error", data: errorBody });
     } finally {
       clearTimeout(idle);
       clearTimeout(overall);
       clearInterval(heartbeat);
-      emit(doneEvent(session));
+      // done を送れないと、画面は「接続が切れた」と受け取る。送れなかったこともログに残す
+      const doneSent = emit(doneEvent(session));
       await writes;
       session.busy = false;
+      console.info(
+        JSON.stringify({
+          kind: "turn_end",
+          ending: turnEnding(controller.signal, errorBody),
+          ...(errorBody === null ? {} : { code: errorBody.code }),
+          doneSent,
+          events,
+          durationMs: Date.now() - started,
+        }),
+      );
     }
   });
 }

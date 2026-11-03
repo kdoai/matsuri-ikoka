@@ -35,6 +35,7 @@ import type { QueryFn } from "./runner";
 const ReportSchema = z.object({
   result: VerificationResultSchema,
   sources: z.array(z.object({ url: z.string(), title: z.string().optional() })).max(5),
+  yearStated: z.boolean(),
   note: z.string().max(200).optional(),
 });
 
@@ -47,7 +48,7 @@ const ANSWER_FORMAT = [
   "",
   "最後に、次の形の JSON を1つだけ返す。",
   "",
-  '{"result":"as_planned か changed か cancelled か not_found","sources":[{"url":"読んだページの URL","title":"ページの題名"}],"note":"分かったことを1文で"}',
+  '{"result":"as_planned か changed か cancelled か not_found","sources":[{"url":"読んだページの URL","title":"ページの題名"}],"yearStated":true か false,"note":"分かったことを1文で"}',
   "",
   "- sources には、WebFetch で実際に読んだページだけを入れる（検索結果に出ただけのページは入れない）",
   STRICT_JSON_RULES,
@@ -216,13 +217,14 @@ export function createWebVerifier(deps: {
           parsed = parseJsonWithSchema(retry, ReportSchema, "object");
           if (!parsed.ok) return NOT_CONFIRMED;
         }
-        const { result, sources, note } = parsed.value;
+        const { result, sources, yearStated, note } = parsed.value;
         outcome = result;
         // 実際に読んでいないページは、出典にしない
         const unread = new Set(ungroundedSources(sources, log.fetchedUrls));
         return {
           result,
           sources: sources.filter((s) => !unread.has(s.url)),
+          yearStated,
           ...(note ? { note } : {}),
         };
       } finally {

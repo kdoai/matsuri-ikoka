@@ -2,6 +2,7 @@ import type { Itinerary, SseEvent } from "@matsuri-ikoka/schema";
 import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
 import { testFestival } from "../domain/testFestivals";
+import { YEAR_NOT_STATED_NOTE } from "../domain/verification";
 import { createCandidateChecker } from "./candidateCheck";
 import { createUnavailableLodging } from "./lodging";
 import {
@@ -120,7 +121,11 @@ describe("search_festivals の、候補を出す前の確かめ", () => {
   it("見込みの祭りも公式の情報で確かめ、結果を候補に付けて festival.verified で送る", async () => {
     const expected = testFestival({ id: "suzunari-toro", status: "expected" });
     const ctx = testToolContext([expected], {
-      report: { result: "as_planned", sources: [{ url: "https://example.com/suzunari/2026" }] },
+      report: {
+        result: "as_planned",
+        sources: [{ url: "https://example.com/suzunari/2026" }],
+        yearStated: true,
+      },
     });
     const events: SseEvent[] = [];
     ctx.emit = (event) => events.push(event);
@@ -466,7 +471,11 @@ describe("update_itinerary", () => {
 describe("verify_festival", () => {
   it("公式の出典で確かめられたら予定どおりにし、旅程の再確認の結果を書き換える", async () => {
     const ctx = testToolContext([suzunari()], {
-      report: { result: "as_planned", sources: [{ url: "https://example.com/suzunari/2026" }] },
+      report: {
+        result: "as_planned",
+        sources: [{ url: "https://example.com/suzunari/2026" }],
+        yearStated: true,
+      },
     });
     const saved = await updateItinerary.run(
       { itinerary: draftOf(fictionalItinerary()) },
@@ -500,6 +509,31 @@ describe("verify_festival", () => {
     );
 
     expect(output.result).toBe("not_found");
+  });
+
+  it("公式のページに今年の開催と書かれていなければ確定させず、その理由を返す", async () => {
+    const ctx = testToolContext([suzunari()], {
+      report: {
+        result: "as_planned",
+        sources: [{ url: "https://example.com/suzunari/" }],
+        yearStated: false,
+        note: "例年8月16日に開催",
+      },
+    });
+    const saved = await updateItinerary.run(
+      { itinerary: draftOf(fictionalItinerary()) },
+      ctx,
+      signal,
+    );
+
+    const output = await verifyFestival.run({ festivalId: "suzunari-toro" }, ctx, signal);
+
+    expect(output).toMatchObject({ result: "not_found", note: YEAR_NOT_STATED_NOTE });
+    expect(ctx.itineraries.get(saved.itineraryId as string)?.verification).toMatchObject({
+      status: "not_found",
+      note: YEAR_NOT_STATED_NOTE,
+    });
+    expect(ctx.turn.verification).toBe("not_found");
   });
 });
 

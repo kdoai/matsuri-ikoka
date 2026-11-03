@@ -5,6 +5,10 @@ import type { Messages } from "./ja";
 const range = (min: number, max: number) => (min === max ? `${min}` : `${min}–${max}`);
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 
+// Weekdays for the calendar (Sunday first). A date's weekday is counted from the calendar date
+const EN_WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+const weekdayOf = (date: string) => new Date(`${date}T00:00:00Z`).getUTCDay();
+
 // Choices for the guided consultation (used for the buttons and for the summary we send)
 const consultLabels = {
   party: "Who",
@@ -218,14 +222,16 @@ export const en: Messages = {
     calendar: {
       label: "Going and coming back",
       hint: "Pick the day you go and the day you come back (same day for a day trip)",
-      hintEnd: "Now pick the day you come back",
       previous: "Previous month",
       next: "Next month",
       month: (month: string) =>
         `${MONTHS[Number(month.slice(5, 7)) - 1] ?? ""} ${Number(month.slice(0, 4))}`,
-      weekdays: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+      weekdays: EN_WEEKDAYS,
       day: (date: string) =>
         `${MONTHS[Number(date.slice(5, 7)) - 1] ?? ""} ${Number(date.slice(8, 10))}`,
+      short: (date: string) =>
+        `${EN_WEEKDAYS[weekdayOf(date)] ?? ""}, ${MONTHS[Number(date.slice(5, 7)) - 1] ?? ""} ${Number(date.slice(8, 10))}`,
+      going: (day: string) => `Going ${day}. Now pick the day you come back`,
     },
     stationLabel: "Nearest station",
     stationPlaceholder: "Type a station name (in Japanese)",
@@ -413,7 +419,8 @@ export const en: Messages = {
       tool_failed: "A lookup did not work.",
       upstream_unavailable: "We could not reach an outside service.",
       internal: "Something went wrong on the server.",
-      connection_lost: "The connection was lost.",
+      connection_lost:
+        "The connection dropped before the reply finished. Use “Send again” to resend your message.",
       invalid_event: "We received information in an unexpected form.",
       session_lost:
         "We couldn't find your earlier conversation, so we started a new one. Please send your message again.",
@@ -486,6 +493,17 @@ export const en: Messages = {
         new Intl.DateTimeFormat("en-US", { month: "short", timeZone: "UTC" }).format(
           new Date(Date.UTC(2000, month - 1, 1)),
         ),
+      option: (text: string, count: number) => `${text} (${count})`,
+    },
+    view: {
+      label: "Switch the view",
+      cards: "Cards",
+      list: "List",
+    },
+    columns: {
+      date: "Date and time",
+      place: "Place",
+      confidence: "Confidence",
     },
     tags: {
       family: "Kid-friendly stops nearby",
@@ -599,6 +617,9 @@ export const en: Messages = {
     correct: "Correct! One more stamp for your booklet",
     wrong: (answer: string) => `Close! The answer is "${answer}"`,
     note: "The conversation goes on even if you don't answer",
+    close: "Close the quiz",
+    question: "Question",
+    stamps: (count: number) => `Stamps collected: ${count}`,
   },
   categories: {
     fireworks: "Fireworks",
