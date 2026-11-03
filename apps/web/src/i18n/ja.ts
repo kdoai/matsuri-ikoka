@@ -14,10 +14,6 @@ export const ja = {
     soundOn: "音：オン",
     soundOff: "音：オフ",
     soundHint: "太鼓・拍子木・はんこの音を鳴らします",
-    mockBadge: "画面だけのモック",
-    mockNote: "記録した架空の相談を再生しています。祭り・店・駅はすべて架空です。",
-    useServer: "接客サーバーにつなぐ",
-    useMock: "画面だけのモックで見る",
   },
   dialogue: {
     thinking: "少々お待ちください",
@@ -147,7 +143,6 @@ export const ja = {
     send: "送る",
     waiting: "返答を待っています",
     retry: "もう一度送る",
-    fillSample: "記録の発言を入れる",
     you: "あなた",
     concierge: "コンシェルジュ",
     work: { running: "作業中", ok: "完了", failed: "うまくいきませんでした" },

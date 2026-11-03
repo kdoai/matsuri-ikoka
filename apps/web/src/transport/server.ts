@@ -92,7 +92,6 @@ export function createServerTransport(options: ServerTransportOptions = {}): Cha
   const sessionRequest: SessionRequest = options.sample ? { sample: options.sample } : {};
 
   return {
-    kind: "server",
     async startSession(signal) {
       const response = await fetchImpl("/api/session", {
         method: "POST",

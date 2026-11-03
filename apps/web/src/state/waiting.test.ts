@@ -35,7 +35,7 @@ function otherFestival(): Festival {
 }
 
 function streaming(): AppData {
-  const state = initialData({ transport: "mock" });
+  const state = initialData();
   return beginTurn(state, {
     kind: "chat",
     message: "鈴鳴にします",

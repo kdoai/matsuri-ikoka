@@ -106,12 +106,10 @@ function useUnread(logOpen: boolean): boolean {
 }
 
 export function Shop() {
-  const t = useT();
   const actions = useActions();
   const panelOpen = useApp((state) => state.ui.drawerOpen);
   const tab = useApp((state) => state.ui.tab);
   const hasItinerary = useApp((state) => state.itinerary.current !== null);
-  const isMock = useApp((state) => state.transport === "mock");
   const wide = useMediaQuery("(min-width: 1024px)");
   const [logOpen, setLogOpen] = useState(false);
   const [menu, setMenu] = useState<HudPanel>(null);
@@ -164,15 +162,6 @@ export function Shop() {
       >
         <div className="flex items-center gap-2 justify-self-start">
           <Logo />
-          {isMock ? (
-            <span
-              className="whitespace-nowrap rounded-full bg-yamabuki-400 px-2 py-0.5 font-bold text-[0.7rem] text-ink shadow sm:text-xs"
-              title={t.app.mockNote}
-              data-testid="mock-note"
-            >
-              {t.app.mockBadge}
-            </span>
-          ) : null}
         </div>
         <SectionTabs className="hidden lg:block" />
         <div className="justify-self-end">

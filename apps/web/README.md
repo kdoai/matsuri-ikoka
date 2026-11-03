@@ -5,7 +5,7 @@
 ```text
 src/state/      ストア。SSE のイベントをストアの更新に変える（events.ts）
 src/transport/  接客サーバーとの通信（POST で送りながら SSE で受け取る）
-src/mock/       画面だけのモック（記録した相談をブラウザの中で再生する）
+src/testing/    テストだけで使う通信の口の代わり（記録した相談を再生する。ビルドには入らない）
 src/ui/         2D の部品としおり
 src/i18n/       日本語と英語の辞書
 src/scenes/     3D の店（店内・スタッフ・外観と入店のカメラ）
@@ -18,24 +18,20 @@ e2e/            Playwright の通しテスト
 pnpm dev
 ```
 
-開発のときは、**画面だけのモック**が既定です。`data/samples/conversations/` の記録した相談を、記録した間隔のとおりに再生するので、接客サーバーや API キーがなくても、相談から旅のしおりまでを画面で見られます。何を送っても、記録の次の発言への返答が流れます。入力欄の下の「記録の発言を入れる」で、記録の発言を入れられます。
+画面（:5173）と接客サーバー（:8787）が一緒に立ち上がります。画面はいつも接客サーバーと話し、Vite が `/api` と `/shiori` を接客サーバーへ中継します（中継先は `MATSURI_SERVER_ORIGIN` で変えられます）。
 
-| URL の引数          | 意味                                                |
-| ------------------- | --------------------------------------------------- |
-| `?transport=server` | 接客サーバー（`/api/*`）につなぐ                    |
-| `?sample=<id>`      | 再生する記録（`data/samples/conversations` の名前） |
-| `?speed=<倍率>`     | モックの再生の速さ（例：`?speed=4`）                |
+接客サーバーは、既定で**モックモード**（`MATSURI_AGENT_MODE=mock`）です。AI の返答だけが `data/samples/conversations/` の記録した相談の再生になり、画面・通信・旅程・しおりは本物のまま動きます。何を送っても、記録の次の発言への返答が流れます。
 
-| 環境変数                | 意味                                       |
-| ----------------------- | ------------------------------------------ |
-| `VITE_TRANSPORT=server` | 開発のときも、既定で接客サーバーにつなぐ   |
-| `VITE_ENABLE_MOCK=true` | 本番のビルドにも、画面だけのモックを含める |
+| URL の引数     | 意味                                                                                |
+| -------------- | ----------------------------------------------------------------------------------- |
+| `?sample=<id>` | 接客サーバーが再生する記録（`data/samples/conversations` の名前）。モックモードだけ |
+| `?scene=2d`    | 3D を使わない軽い表示                                                               |
 
-本番のビルドには、モックも記録した相談も含めません。
+記録の再生の速さは、接客サーバーの `MATSURI_REPLAY_SPEED` で変えます。
 
-### 接客サーバーにつなぐとき
+### 接客サーバーとのつなぎ
 
-- `?sample=<id>` は、接客サーバーが記録の再生（`MATSURI_AGENT_MODE=mock`）で動いているときも、`POST /api/session` の本文 `{ "sample": "<id>" }` で渡します
+- `?sample=<id>` は、`POST /api/session` の本文 `{ "sample": "<id>" }` で接客サーバーに渡します
 - 合言葉（`ACCESS_PASSCODE`）を設定したサーバーでは、`/api` のすべての呼び出しに `x-access-passcode` ヘッダーを付けます。断られたら入口（相談の途中なら小さな窓）で聞き直します。合言葉はメモリにだけ持ち、URL にも保存にも入れません
 - SSE を始める前に断られたら、サーバーが本文で送る一文（`code`・`message`・`retryable`）を会話欄に出します。「相談が見つからない」（404）のときは、新しい相談を自動で始めます
 - しおりを開けるようになったら、共有の URL（`/shiori/<旅程の ID>`）を出します
@@ -45,7 +41,7 @@ pnpm dev
 ```bash
 pnpm test                                        # ストアとイベントの変換（Vitest）
 pnpm --filter @matsuri-ikoka/web exec playwright install chromium
-pnpm --filter @matsuri-ikoka/web test:e2e        # 画面の通しテスト（Playwright）
+pnpm --filter @matsuri-ikoka/web test:e2e        # 画面の通しテスト（Playwright。接客サーバーをモックモードで立ち上げる）
 ```
 
 - 手元の Chrome で走らせるときは `PLAYWRIGHT_CHANNEL=chrome` を付けます

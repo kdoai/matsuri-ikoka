@@ -20,17 +20,11 @@ class BackdropBoundary extends Component<{ children: ReactNode }> {
   }
 }
 
-export function Storefront({ mockEnabled }: { mockEnabled: boolean }) {
+export function Storefront() {
   const t = useT();
   const actions = useActions();
-  const isMock = useApp((state) => state.transport === "mock");
   const passcodeNeeded = useApp((state) => state.auth.needed);
   const use3d = useScene3d() && StorefrontScene !== null;
-  const switchHref = (() => {
-    const params = new URLSearchParams(window.location.search);
-    params.set("transport", isMock ? "server" : "mock");
-    return `?${params.toString()}`;
-  })();
 
   return (
     <main
@@ -80,18 +74,6 @@ export function Storefront({ mockEnabled }: { mockEnabled: boolean }) {
             {t.app.enter}
           </button>
         )}
-        {mockEnabled ? (
-          <p className="mt-5 text-ink-soft text-sm">
-            {isMock ? (
-              <span className="mr-2 rounded bg-yamabuki-200 px-1.5 py-0.5 font-semibold text-ink">
-                {t.app.mockBadge}
-              </span>
-            ) : null}
-            <a className="font-semibold text-ai-700 underline underline-offset-2" href={switchHref}>
-              {isMock ? t.app.useServer : t.app.useMock}
-            </a>
-          </p>
-        ) : null}
       </div>
       {/* 提灯の明かり */}
       <div aria-hidden="true" className={`mt-8 flex gap-10 ${use3d ? "hidden" : ""}`}>

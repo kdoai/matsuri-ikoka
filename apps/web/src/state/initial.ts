@@ -1,5 +1,5 @@
 import { DEFAULT_PREFERENCES, STAFF_IDS, type StaffId } from "@matsuri-ikoka/schema";
-import type { AppData, Locale, StaffState, TransportKind } from "./types";
+import type { AppData, Locale, StaffState } from "./types";
 
 export const IDLE_STAFF: StaffState = Object.freeze({
   phase: "idle",
@@ -15,14 +15,12 @@ function byStaff<T>(value: T): Record<StaffId, T> {
 }
 
 export interface InitialOptions {
-  transport: TransportKind;
   locale?: Locale;
 }
 
 /** 相談を始める前の状態。新しい相談を始めるときも、ここから作り直す */
-export function initialData({ transport, locale = "ja" }: InitialOptions): AppData {
+export function initialData({ locale = "ja" }: InitialOptions = {}): AppData {
   return {
-    transport,
     session: {
       id: null,
       status: "closed",

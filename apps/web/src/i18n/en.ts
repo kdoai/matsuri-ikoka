@@ -17,11 +17,6 @@ export const en: Messages = {
     soundOn: "Sound: on",
     soundOff: "Sound: off",
     soundHint: "Plays taiko, wooden clapper and stamp sounds",
-    mockBadge: "Screen-only mock",
-    mockNote:
-      "Replaying a recorded sample conversation. All festivals, shops and stations are fictional.",
-    useServer: "Connect to the server",
-    useMock: "Use the screen-only mock",
   },
   dialogue: {
     thinking: "One moment, please",
@@ -157,7 +152,6 @@ export const en: Messages = {
     send: "Send",
     waiting: "Waiting for the reply",
     retry: "Send again",
-    fillSample: "Insert the recorded message",
     you: "You",
     concierge: "Concierge",
     work: { running: "Working", ok: "Done", failed: "Did not work" },

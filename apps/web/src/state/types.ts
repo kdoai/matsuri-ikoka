@@ -98,8 +98,6 @@ export type ChatEntry =
 // ---------------------------------------------------------------------------
 // 相談
 
-export type TransportKind = "mock" | "server";
-
 export interface ChatRequestDraft {
   message: string;
   preferences: Preferences;
@@ -199,7 +197,6 @@ export interface UiState {
 
 /** ストアのデータの部分。イベントの変換はこの形からこの形への純粋な関数にする */
 export interface AppData {
-  transport: TransportKind;
   session: SessionState;
   preferences: Preferences;
   messages: ChatEntry[];

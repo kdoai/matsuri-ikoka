@@ -43,7 +43,7 @@ export function passcodeAccepted(state: AppData): AppData {
  * 会話の記録・こだわり・送り直す発言は残す。新しい相談はストアが始める。
  */
 export function resetForNewSession(state: AppData): AppData {
-  const fresh = initialData({ transport: state.transport, locale: state.ui.locale });
+  const fresh = initialData({ locale: state.ui.locale });
   const next: AppData = {
     ...fresh,
     session: {
