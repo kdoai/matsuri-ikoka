@@ -1,9 +1,10 @@
 // デプロイした版（Cloud Run のタグの URL か公開の URL）を、外から確かめる。費用のかかる相談は送らない。
 // - /health が ok を返す
 // - 画面が配られ、3D のモデル（GLB）が届く
-// - 相談の API が合言葉で守られている（合言葉なしで 401）
+// - 相談の API が合言葉で守られている（合言葉なしで 401）。サービスに合言葉を設定していないこと
+//   （ACCESS_PASSCODE_SET=false。モックで公開しているとき）が分かっているときは、守られていないことを知らせるだけにする
 // - しおりの経路が動いている（ない旅程は 404。PDF を作れることは、同じイメージをデプロイの前にモックで確かめる）
-// 使い方：node scripts/check-deployed.mjs <URL>
+// 使い方：[ACCESS_PASSCODE_SET=true|false] node scripts/check-deployed.mjs <URL>（省くと合言葉を求める）
 import { checkGlb } from "./lib/served-files.mjs";
 
 const base = process.argv[2];
@@ -30,7 +31,11 @@ const count = await checkGlb(base);
 check(count > 0, `3D のモデルが配られている（${count} 件）`);
 
 const api = await fetch(new URL("/api/festivals", base));
-check(api.status === 401, `相談の API が合言葉で守られている（${api.status}）`);
+if (process.env.ACCESS_PASSCODE_SET === "false") {
+  check(api.ok, `相談の API が動いている（${api.status}。合言葉は設定されていない）`);
+} else {
+  check(api.status === 401, `相談の API が合言葉で守られている（${api.status}）`);
+}
 
 const shiori = await fetch(new URL("/shiori/deploy-check-missing.pdf", base));
 check(shiori.status === 404, `しおりの経路が動いている（${shiori.status}）`);
