@@ -1,10 +1,12 @@
-import type { Itinerary } from "@matsuri-ikoka/schema";
+import type { Itinerary, SseEvent } from "@matsuri-ikoka/schema";
 import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
 import { testFestival } from "../domain/testFestivals";
+import { createCandidateChecker } from "./candidateCheck";
 import {
   getAccess,
   getWeather,
+  noteConditions,
   searchFestivals,
   searchNearby,
   updateItinerary,
@@ -25,6 +27,152 @@ function draftOf(itinerary: Itinerary) {
     })),
   };
 }
+
+describe("note_conditions", () => {
+  it("言われた項目だけを書き足し、次に聞くことをコードで決めて返す", async () => {
+    const ctx = testToolContext([suzunari()]);
+    const first = await noteConditions.run({ origin: "みなと中央駅", nights: 4 }, ctx, signal);
+    // 日付がそろうまでは、日付だけを聞く
+    expect(first).toMatchObject({ readyToSearch: false, askNext: ["日付（または期間）"] });
+
+    const second = await noteConditions.run(
+      {
+        when: { kind: "range", from: "2026-08-14", to: "2026-08-18" },
+        route: { shape: "stay", areas: [] },
+      },
+      ctx,
+      signal,
+    );
+    // 4泊の旅なので、探しながら、組む前に要ることを2つずつ聞く
+    expect(second).toMatchObject({ readyToSearch: true });
+    expect((second.askNext as string[]).length).toBe(2);
+    expect(ctx.session.conditions).toMatchObject({ origin: "みなと中央駅", nights: 4 });
+  });
+
+  it("日帰りは、日付と出発地がそろえば探し始めてよく、それ以上は聞かない", async () => {
+    const ctx = testToolContext([suzunari()]);
+    const result = await noteConditions.run(
+      { when: { kind: "date", date: "2026-08-16" }, origin: "みなと中央駅", nights: 0 },
+      ctx,
+      signal,
+    );
+    expect(result).toMatchObject({ readyToSearch: true, askNext: [] });
+  });
+
+  it("祭りを探しても、聞き取りで書き留めた条件は残る", async () => {
+    const ctx = testToolContext([suzunari()]);
+    await noteConditions.run({ pace: "relaxed", interests: ["onsen"] }, ctx, signal);
+    await searchFestivals.run(
+      { when: { kind: "date", date: "2026-08-16" }, origin: "みなと中央駅", nights: 3 },
+      ctx,
+      signal,
+    );
+    expect(ctx.session.conditions).toMatchObject({
+      nights: 3,
+      pace: "relaxed",
+      interests: ["onsen"],
+    });
+  });
+});
+
+describe("search_nearby を地域で探す", () => {
+  it("祭りのない日のために、その地域のほかの祭りの周辺の場所と、その日の祭りを返す", async () => {
+    const other = testFestival({ id: "kazami-bon", date: "2026-08-17", start: "19:00" });
+    const away = testFestival({
+      id: "far-away",
+      edit: (f) => {
+        f.municipalities = [{ prefecture: "京都府", name: "はるか村" }];
+      },
+    });
+    const ctx = testToolContext([suzunari(), other, away]);
+
+    const result = (await searchNearby.run(
+      // 2026-08-17 は月曜（鈴鳴和紙の館は火曜休み）
+      { area: "滋賀県", date: "2026-08-17" },
+      ctx,
+      signal,
+    )) as { spots: { festivalId: string }[]; festivalsOnDate: { festivalId: string }[] };
+
+    expect(result.festivalsOnDate.map((f) => f.festivalId)).toEqual(["kazami-bon"]);
+    expect(new Set(result.spots.map((s) => s.festivalId))).toEqual(
+      new Set(["suzunari-toro", "kazami-bon"]),
+    );
+    expect(ctx.session.selectedFestivalId).toBeNull();
+  });
+
+  it("データにない地域では場所を返さず、自由に過ごす時間にするよう伝える", async () => {
+    const ctx = testToolContext([suzunari()]);
+    const result = await searchNearby.run({ area: "北海道", date: "2026-08-18" }, ctx, signal);
+    expect(result).toMatchObject({ spots: [], festivalsOnDate: [] });
+    expect((result.notes as string[]).join("")).toContain("自由に過ごす時間");
+  });
+
+  it("祭りの ID も地域もなければ断る", async () => {
+    const ctx = testToolContext([suzunari()]);
+    await expect(searchNearby.run({ date: "2026-08-18" }, ctx, signal)).rejects.toThrow();
+  });
+});
+
+describe("search_festivals の、候補を出す前の確かめ", () => {
+  it("見込みの祭りも公式の情報で確かめ、結果を候補に付けて festival.verified で送る", async () => {
+    const expected = testFestival({ id: "suzunari-toro", status: "expected" });
+    const ctx = testToolContext([expected], {
+      report: { result: "as_planned", sources: [{ url: "https://example.com/suzunari/2026" }] },
+    });
+    const events: SseEvent[] = [];
+    ctx.emit = (event) => events.push(event);
+    ctx.candidateChecks = createCandidateChecker({
+      verifier: ctx.verifier,
+      today: ctx.today,
+      now: ctx.now,
+    });
+
+    const result = await searchFestivals.run(
+      { when: { kind: "date", date: "2026-08-16" }, origin: "みなと中央駅", nights: 0 },
+      ctx,
+      signal,
+    );
+
+    expect(result.candidates).toEqual([
+      expect.objectContaining({
+        festivalId: "suzunari-toro",
+        confirmed: true,
+        check: { result: "as_planned", checkedAt: "2026-08-03T10:15:00+09:00" },
+      }),
+    ]);
+    expect(events).toEqual([
+      expect.objectContaining({
+        type: "festival.verified",
+        data: expect.objectContaining({
+          festivalId: "suzunari-toro",
+          date: "2026-08-16",
+          scope: "candidate",
+          result: "as_planned",
+        }),
+      }),
+    ]);
+  });
+
+  it("確かめられなかった見込みの祭りは、未確認のまま結果を付ける", async () => {
+    const ctx = testToolContext([testFestival({ id: "suzunari-toro", status: "expected" })]);
+    ctx.candidateChecks = createCandidateChecker({
+      verifier: ctx.verifier,
+      today: ctx.today,
+      now: ctx.now,
+    });
+    const result = await searchFestivals.run(
+      { when: { kind: "date", date: "2026-08-16" }, origin: "みなと中央駅", nights: 0 },
+      ctx,
+      signal,
+    );
+    expect(result.candidates).toEqual([
+      expect.objectContaining({
+        confirmed: false,
+        check: expect.objectContaining({ result: "not_found" }),
+      }),
+    ]);
+  });
+});
 
 describe("search_festivals の日ごとの開催", () => {
   it("複数の日に開かれる祭りは、探す範囲の中の日ごとの時刻と補足を渡す", async () => {
@@ -239,6 +387,50 @@ describe("update_itinerary", () => {
       diff: { fromVersion: 1, toVersion: 2, removed: [{ id: "craft-hall", name: "鈴鳴和紙の館" }] },
     });
     expect(ctx.itineraries.get(first.itineraryId as string)?.version).toBe(2);
+  });
+
+  it("何日かの旅は1日ずつ足して保存し、日ごとに版を上げて天気を調べる", async () => {
+    const ctx = testToolContext([suzunari()]);
+    await updateItinerary.run({ itinerary: draftOf(fictionalItinerary()) }, ctx, signal);
+    const hall = draftOf(fictionalItinerary()).days[0]!.items[1]!;
+
+    const noStay = await updateItinerary.run(
+      { addDay: { day: { date: "2026-08-17", stay: null, items: [{ ...hall, id: "d2-hall" }] } } },
+      ctx,
+      signal,
+    );
+    expect(noStay).toMatchObject({ saved: false });
+
+    const second = await updateItinerary.run(
+      {
+        addDay: {
+          day: { date: "2026-08-17", stay: null, items: [{ ...hall, id: "d2-hall" }] },
+          stayBefore: { area: "鈴鳴の町" },
+        },
+      },
+      ctx,
+      signal,
+    );
+    expect(second).toMatchObject({
+      saved: true,
+      version: 2,
+      diff: { fromVersion: 1, toVersion: 2, added: ["d2-hall"] },
+    });
+    const saved = second.itinerary as Itinerary;
+    expect(saved.days.map((d) => d.stay?.area ?? null)).toEqual(["鈴鳴の町", null]);
+    expect(ctx.weatherCalls).toEqual(["滋賀県@2026-08-16", "滋賀県@2026-08-17"]);
+  });
+
+  it("旅程がないうちは、1日を足せない", async () => {
+    const ctx = testToolContext([suzunari()]);
+    const hall = draftOf(fictionalItinerary()).days[0]!.items[1]!;
+    await expect(
+      updateItinerary.run(
+        { addDay: { day: { date: "2026-08-17", stay: null, items: [hall] } } },
+        ctx,
+        signal,
+      ),
+    ).rejects.toThrow();
   });
 
   it("検証で誤りがあれば保存せず、誤りを返す", async () => {

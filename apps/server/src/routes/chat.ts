@@ -28,7 +28,10 @@ export interface ChatDeps {
   concurrency?: ConcurrencyLimiter;
   /** 利用者の IP を決める関数（前に置いたプロキシの数で変わる） */
   clientIp?: (c: Context) => string;
-  turnTimeoutMs?: number;
+  /** 進みのない時間の上限（ミリ秒） */
+  turnIdleMs?: number;
+  /** 相談1回の全体の上限（ミリ秒） */
+  turnMaxMs?: number;
   heartbeatMs?: number;
 }
 
@@ -96,9 +99,9 @@ function releasing(
   release: () => void,
   run: Parameters<typeof streamTurn>[2],
 ): Parameters<typeof streamTurn>[2] {
-  return async (signal, emit) => {
+  return async (signal, emit, progress) => {
     try {
-      await run(signal, emit);
+      await run(signal, emit, progress);
     } finally {
       release();
     }
@@ -107,7 +110,8 @@ function releasing(
 
 export function registerChatRoutes(app: Hono, deps: ChatDeps) {
   const timing = {
-    ...(deps.turnTimeoutMs === undefined ? {} : { timeoutMs: deps.turnTimeoutMs }),
+    ...(deps.turnIdleMs === undefined ? {} : { idleMs: deps.turnIdleMs }),
+    ...(deps.turnMaxMs === undefined ? {} : { maxMs: deps.turnMaxMs }),
     ...(deps.heartbeatMs === undefined ? {} : { heartbeatMs: deps.heartbeatMs }),
   };
 
@@ -144,9 +148,9 @@ export function registerChatRoutes(app: Hono, deps: ChatDeps) {
     return streamTurn(
       c,
       session,
-      releasing(release, (signal, emit) =>
+      releasing(release, (signal, emit, progress) =>
         deps.runner.runTurn(
-          { session, message: request.message, preferences: request.preferences, signal },
+          { session, message: request.message, preferences: request.preferences, signal, progress },
           emit,
         ),
       ),
@@ -188,8 +192,11 @@ export function registerChatRoutes(app: Hono, deps: ChatDeps) {
     return streamTurn(
       c,
       session,
-      releasing(release, (signal, emit) =>
-        deps.runner.runTurn({ session, message, preferences: request.preferences, signal }, emit),
+      releasing(release, (signal, emit, progress) =>
+        deps.runner.runTurn(
+          { session, message, preferences: request.preferences, signal, progress },
+          emit,
+        ),
       ),
       timing,
     );

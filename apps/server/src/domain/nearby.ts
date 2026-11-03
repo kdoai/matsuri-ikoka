@@ -1,4 +1,5 @@
 import type {
+  Festival,
   IsoDate,
   LocalTime,
   NearbySpot,
@@ -96,4 +97,24 @@ export function selectNearbySpots(
   });
 
   return { spots: selected, excluded };
+}
+
+/** 地域の名前を比べる形にする（空白を除く） */
+function normalizeArea(text: string): string {
+  return text.replace(/\s+/g, "").trim();
+}
+
+/**
+ * 地域の名前（例：「滋賀県」「鈴鳴町」「滋賀県鈴鳴町」）が、祭りの開催地に当たるか。
+ * 都道府県か市町村の名前が含まれていれば当たる
+ */
+export function festivalInArea(festival: Pick<Festival, "municipalities">, area: string): boolean {
+  const wanted = normalizeArea(area);
+  if (wanted === "") return false;
+  return festival.municipalities.some(
+    (m) =>
+      wanted.includes(m.name) ||
+      wanted.includes(m.prefecture) ||
+      `${m.prefecture}${m.name}`.includes(wanted),
+  );
 }

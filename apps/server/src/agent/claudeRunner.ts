@@ -9,6 +9,7 @@ import { backoffMs, classifyFailure } from "@matsuri-ikoka/agent-kit";
 import type { IsoDate } from "@matsuri-ikoka/schema";
 import type { FestivalStore } from "../data/festivalStore";
 import type { ItineraryStore } from "../session/sessionStore";
+import type { CandidateChecker } from "../tools/candidateCheck";
 import { newTurnState, type ToolContext } from "../tools/context";
 import { createMatsuriMcpServer } from "../tools/mcpServer";
 import type { FestivalVerifier } from "../tools/verifier";
@@ -36,6 +37,8 @@ export interface ClaudeRunnerDeps {
   itineraries: ItineraryStore;
   weather: WeatherService;
   verifier: FestivalVerifier;
+  /** 候補を出す前の開催の確かめ */
+  candidateChecks?: CandidateChecker;
   prompts: AgentPrompts;
   models: AgentModels;
   /** 1回の発言の費用の上限（米ドル） */
@@ -168,7 +171,7 @@ export class ClaudeAgentRunner implements AgentRunner {
     this.#query = deps.query ?? ((params) => sdkQuery(params));
   }
 
-  async runTurn({ session, message, signal }: TurnInput, emit: EmitEvent): Promise<void> {
+  async runTurn({ session, message, signal, progress }: TurnInput, emit: EmitEvent): Promise<void> {
     const deps = this.#deps;
     const turn = newTurnState();
     const ctx: ToolContext = {
@@ -179,6 +182,7 @@ export class ClaudeAgentRunner implements AgentRunner {
       itineraries: deps.itineraries,
       weather: deps.weather,
       verifier: deps.verifier,
+      ...(deps.candidateChecks ? { candidateChecks: deps.candidateChecks } : {}),
       today: deps.today,
       now: deps.now,
     };
@@ -187,6 +191,7 @@ export class ClaudeAgentRunner implements AgentRunner {
       emitted += 1;
       emit(event);
     };
+    ctx.emit = counted;
     const prompt = turnPrompt(ctx, message);
     /** 直前の試みで、Agent SDK がセッションを名乗ったか（続きの会話を読めたか） */
     let initSeen = false;
@@ -219,6 +224,8 @@ export class ClaudeAgentRunner implements AgentRunner {
           ...(deps.stderr ? { stderr: deps.stderr } : {}),
         });
         for await (const msg of this.#query({ prompt, options })) {
+          // スタッフが考えている間も、Agent SDK の知らせが届いていれば進みがある
+          progress?.();
           reply.handle(msg);
           if (reply.sessionId !== null) {
             initMs ??= Date.now() - started;

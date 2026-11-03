@@ -16,6 +16,7 @@ import { festivalDirs, loadFestivals } from "./data/festivalStore";
 import { nowInJapan, todayInJapan } from "./domain/calendar";
 import { ConcurrencyLimiter, clientIp, DailyLimiter } from "./routes/guard";
 import { ItineraryStore, SessionStore } from "./session/sessionStore";
+import { createCandidateChecker } from "./tools/candidateCheck";
 import { createJmaWeather } from "./tools/weather";
 
 const config = readConfig(process.env);
@@ -72,6 +73,19 @@ if (config.mode === "live") {
       env,
       query,
       maxBudgetUsd: config.maxBudgetUsd,
+    }),
+    // 候補を出す前の確かめは3件ずつ動くので、スタッフのモデルで行う
+    candidateChecks: createCandidateChecker({
+      verifier: createWebVerifier({
+        prompt: prompts.verifier,
+        model: config.models.staff,
+        cwd,
+        env,
+        query,
+        maxBudgetUsd: config.maxBudgetUsd,
+      }),
+      today,
+      now: () => nowInJapan(),
     }),
     prompts,
     models: config.models,

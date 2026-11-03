@@ -97,10 +97,11 @@ const STAFF_DESCRIPTIONS: Record<Staff, string> = {
   scout:
     "周辺係。利用者が選んだ祭りの前後に寄れる観光・食・休憩の場所を search_nearby で探して報告する。",
   planner:
-    "旅程係。移動の目安と天気を確かめ、時刻つきの旅程を組んで update_itinerary で保存する。旅程の修正とこだわりの切り替えも受け持つ。",
+    "旅程係。移動の目安と天気を確かめ、時刻つきの旅程を組んで update_itinerary で保存する（何日かの旅は1日ずつ）。祭りのない日の行き先は search_nearby で地域から探す。旅程の修正とこだわりの切り替えも受け持つ。",
 };
 
-const STAFF_MAX_TURNS: Record<Staff, number> = { researcher: 4, scout: 4, planner: 10 };
+// 旅程係は、何日かの旅を1日ずつ保存し、祭りのない日の行き先を地域で探すので、回数を多めにとる
+const STAFF_MAX_TURNS: Record<Staff, number> = { researcher: 4, scout: 4, planner: 30 };
 
 /**
  * 役割ごとのモデル名（環境変数から。コードに書き込まない）。

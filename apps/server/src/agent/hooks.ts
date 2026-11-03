@@ -10,11 +10,15 @@ import {
   ItineraryDiffSchema,
   type SseEvent,
   type StaffId,
-  TOOL_NAMES,
   type ToolName,
 } from "@matsuri-ikoka/schema";
 import { z } from "zod";
-import type { ToolContext } from "../tools/context";
+import {
+  type AgentToolName,
+  ALL_TOOL_NAMES,
+  isVisibleTool,
+  type ToolContext,
+} from "../tools/context";
 import { spotPins } from "../tools/matsuriTools";
 import { MCP_TOOL_PREFIX } from "../tools/mcpServer";
 import {
@@ -33,11 +37,11 @@ import {
 // - PostToolUse / PostToolUseFailure → tool.end、続けて itinerary.updated・festival.verified
 
 /** スタッフが使える道具。仕様の表（docs/spec/agents.md）と同じ */
-export const TOOLS_BY_STAFF: Readonly<Record<StaffId, readonly ToolName[]>> = {
-  concierge: ["update_itinerary", "verify_festival"],
+export const TOOLS_BY_STAFF: Readonly<Record<StaffId, readonly AgentToolName[]>> = {
+  concierge: ["note_conditions", "update_itinerary", "verify_festival"],
   researcher: ["search_festivals"],
   scout: ["search_nearby"],
-  planner: ["get_access", "get_weather", "update_itinerary"],
+  planner: ["get_access", "get_weather", "search_nearby", "update_itinerary"],
 };
 
 const STAFF_NAMES: Record<StaffId, string> = {
@@ -48,15 +52,15 @@ const STAFF_NAMES: Record<StaffId, string> = {
 };
 
 /** 1回の発言で1回までの道具。再確認は Web を調べるので、費用と時間がかかる */
-const ONCE_PER_TURN: readonly ToolName[] = ["verify_festival"];
+const ONCE_PER_TURN: readonly AgentToolName[] = ["verify_festival"];
 
 /** サブエージェントを呼ぶ組み込みの道具の名前（古い版では Task） */
 const AGENT_TOOL_NAMES = new Set(["Agent", "Task"]);
 
-export function toolNameOf(fullName: string): ToolName | null {
+export function toolNameOf(fullName: string): AgentToolName | null {
   if (!fullName.startsWith(MCP_TOOL_PREFIX)) return null;
   const name = fullName.slice(MCP_TOOL_PREFIX.length);
-  return (TOOL_NAMES as readonly string[]).includes(name) ? (name as ToolName) : null;
+  return (ALL_TOOL_NAMES as readonly string[]).includes(name) ? (name as AgentToolName) : null;
 }
 
 export function deny(reason: string): HookJSONOutput {
@@ -118,7 +122,7 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
   /** この発言で呼ぶと決めたスタッフ（同じスタッフは1回まで） */
   const requested = new Set<Staff>();
   /** この発言ですでに呼んだ、1回までの道具 */
-  const usedOnce = new Set<ToolName>();
+  const usedOnce = new Set<AgentToolName>();
   const hasItinerary = () => ctx.session.itineraryId !== null;
 
   const preToolUse: HookCallback = async (input, toolUseId) => {
@@ -155,7 +159,8 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
     }
     const toolCallId = input.tool_use_id || toolUseId || "";
     turn.toolCalls.push(tool);
-    if (toolCallId !== "") {
+    // 条件の書き留めは店の裏の作業なので、画面には動きを出さない
+    if (toolCallId !== "" && isVisibleTool(tool)) {
       started.set(toolCallId, { tool, staff });
       emit({
         type: "tool.start",
