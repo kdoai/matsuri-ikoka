@@ -486,6 +486,18 @@ test("使い方は見出しで区切られ、窓の中でスクロールでき�
     page.getByTestId("icon-buttons").getByRole("button", { name: "会話の記録", exact: true }),
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "旅のこだわり" })).toHaveCount(0);
+  // 操作の案内（旅程詳細・地図・メニュー）は、丸いボタンの左に同じ段で並び、画面の幅からはみ出さない
+  const hints = await page.getByTestId("button-hints").boundingBox();
+  const icons = await page.getByTestId("icon-buttons").boundingBox();
+  const width = page.viewportSize()?.width ?? 0;
+  expect(hints).not.toBeNull();
+  expect(icons).not.toBeNull();
+  if (hints !== null && icons !== null) {
+    expect(hints.x + hints.width).toBeLessThanOrEqual(icons.x);
+    expect(Math.abs(hints.y + hints.height / 2 - (icons.y + icons.height / 2))).toBeLessThan(4);
+    expect(hints.x).toBeGreaterThanOrEqual(0);
+    expect(icons.x + icons.width).toBeLessThanOrEqual(width);
+  }
   const help = page.getByTestId("icon-buttons").getByRole("button", { name: "使い方" });
   if (await help.isVisible()) {
     await help.click();
