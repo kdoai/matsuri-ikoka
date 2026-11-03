@@ -1,0 +1,276 @@
+{
+  "id": "okumakabuto-matsuri",
+  "name": {
+    "ja": "お熊甲祭",
+    "en": "Okumakabuto Festival"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "石川県",
+      "name": "七尾市"
+    }
+  ],
+  "venue": {
+    "name": "久麻加夫都阿良加志比古神社（熊甲神社）",
+    "lat": 37.1296,
+    "lng": 136.8358
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["jalan", "rurubu"],
+  "highlights": [
+    "高さ20mほどの深紅の枠旗を、地面すれすれまで傾ける「島田くずし」",
+    "19の末社の神輿と枠旗が、到着順に本社の境内へ走り込む",
+    "猿田彦が鉦・太鼓に合わせて境内いっぱいに舞う奉幣式",
+    "瀬嵐の集落は、神輿と枠旗を船に乗せて海から本社へ向かう"
+  ],
+  "trivia": [
+    {
+      "text": "毎年9月20日に行うので「二十日祭り」とも呼ばれる",
+      "source": {
+        "url": "https://www.city.nanao.lg.jp/koryu-s/event/9gatsu/okumakabuto-.html",
+        "title": "七尾市 お熊甲祭＜国指定重要無形民俗文化財＞",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "「島田くずし」の名は、枠旗の先が見物の娘の島田髷に当たり、髪が崩れたことによるといわれる",
+      "source": {
+        "url": "https://www.city.nanao.lg.jp/koryu-s/event/9gatsu/documents/okumakabuto2026.pdf",
+        "title": "七尾市・お熊甲祭奉賛会 お熊甲祭 パンフレット（令和8年版）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "末社ごとの行列は金幣・猿田彦・鉦太鼓・神輿・枠旗などで組み、70人近くが要る",
+      "source": {
+        "url": "https://www.city.nanao.lg.jp/koryu-s/event/9gatsu/documents/okumakabuto2026.pdf",
+        "title": "七尾市・お熊甲祭奉賛会 お熊甲祭 パンフレット（令和8年版）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "奉幣式では、19末社がそろうと38組の鉦と太鼓がいっせいに打ち鳴らされる",
+      "source": {
+        "url": "https://www.city.nanao.lg.jp/koryu-s/event/9gatsu/okumakabuto-.html",
+        "title": "七尾市 お熊甲祭＜国指定重要無形民俗文化財＞",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": ["当日は臨時の交通規制があるので、係員や表示板の指示に従う"],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": {
+      "policy": "allowed",
+      "note": "主催者の地図に、境内（神輿・枠旗の走り込み、奉幣式）とお旅所（島田くずし）の観覧・撮影ポイントが示されている"
+    },
+    "sources": [
+      {
+        "url": "https://www.city.nanao.lg.jp/koryu-s/event/9gatsu/documents/okumakabuto2026.pdf",
+        "title": "七尾市・お熊甲祭奉賛会 お熊甲祭 パンフレット（令和8年版）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-09-20",
+      "start": "07:00",
+      "end": "17:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。7:00ごろ 各末社から道中、8:00ごろ 境内参入（約2時間）、10:30ごろ 奉幣式、12:00ごろ 渡御（約700m先の加茂原のお旅所へ）、14:00ごろ〜17:00ごろ お旅所で島田くずし。天候などで時刻が遅れることがある",
+      "sources": [
+        {
+          "url": "https://www.city.nanao.lg.jp/koryu-s/event/9gatsu/okumakabuto-.html",
+          "title": "七尾市 お熊甲祭＜国指定重要無形民俗文化財＞（2026年8月19日更新、ポスター2026）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.nanao.lg.jp/koryu-s/event/9gatsu/documents/okumakabuto2026.pdf",
+          "title": "七尾市・お熊甲祭奉賛会 お熊甲祭 パンフレット（令和8年版）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-09-20",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年9月20日（2027年の発表はまだない）。例年、朝7時ごろの道中に始まり、午前に境内参入と奉幣式、午後にお旅所で島田くずしを行い、夕方5時ごろに終わる",
+      "sources": [
+        {
+          "url": "https://www.city.nanao.lg.jp/koryu-s/event/9gatsu/okumakabuto-.html",
+          "title": "七尾市 お熊甲祭＜国指定重要無形民俗文化財＞（毎年9月20日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.ishikawatravel.jp/spots/okuma-kabuto-festival",
+          "title": "Ishikawa Travel Okuma Kabuto Festival（held yearly on September 20）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [
+      {
+        "hub": "金沢駅",
+        "minutes": [80, 90],
+        "route": "JR七尾線の特急「能登かがり火」で七尾駅、のと鉄道に乗り換えて能登中島駅"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [
+      "9月20日 8:00〜17:00、祭りの道筋（熊甲神社前から加茂原のお旅所まで）の一部が車両通行止め（2026年の運行図による）"
+    ],
+    "sources": [
+      {
+        "url": "https://www.city.nanao.lg.jp/koryu-s/event/9gatsu/documents/okumakabuto2026.pdf",
+        "title": "七尾市・お熊甲祭奉賛会 お熊甲祭 パンフレット（令和8年版。能登中島駅から祭り会館前まで無料シャトルバス 8:00〜17:00、無料臨時駐車場、金沢から約1時間20分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "nakajima-omatsuri-shiryokan",
+      "name": "中島お祭り資料館・お祭り伝承館（祭り会館）",
+      "kind": "sightseeing",
+      "summary": "中島地区に伝わる祭りの上映や資料の展示があり、祭りの臨場感を体験できる。月曜休館（祝日なら翌平日）、12月11日〜3月10日は冬季休館",
+      "location": {
+        "lat": 37.1291,
+        "lng": 136.8324
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": ["mon"],
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.nanao.lg.jp/koryu-s/event/9gatsu/documents/okumakabuto2026.pdf",
+          "title": "七尾市・お熊甲祭奉賛会 お熊甲祭 パンフレット（令和8年版。中島お祭り資料館・お祭り伝承館）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "michinoeki-nakajima-roman-toge",
+      "name": "道の駅 なかじまロマン峠",
+      "kind": "food",
+      "summary": "国道249号沿いの道の駅。地元のカキや中島菜を使った加工品を売り、和風レストランと休憩所がある。お熊甲祭の枠旗をかたどった照明灯が目印。休みは1月1日だけ",
+      "location": {
+        "lat": 37.1305,
+        "lng": 136.8632
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": [],
+      "price": null,
+      "tags": ["indoor", "local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.hot-ishikawa.jp/spot/detail_1953.html",
+          "title": "ほっと石川旅ねっと 道の駅 なかじまロマン峠",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "wakura-onsen-omatsuri-kaikan",
+      "name": "和倉温泉お祭り会館",
+      "kind": "sightseeing",
+      "summary": "七尾を代表する祭りを一堂に紹介する施設。お熊甲祭の展示もあり、お祭りシアターでは枠旗の綱を引いて「島田くずし」を体験できる。毎月第2・第4水曜と年末年始は休館",
+      "location": {
+        "lat": 37.0866,
+        "lng": 136.9186
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.nanao.lg.jp/koryu-s/event/9gatsu/documents/okumakabuto2026.pdf",
+          "title": "七尾市・お熊甲祭奉賛会 お熊甲祭 パンフレット（令和8年版。施設案内 和倉温泉お祭り会館）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://wakura-omatsuri.com/",
+          "title": "和倉温泉お祭り会館（2026年3月16日に完全再開）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.nanao.lg.jp/koryu-s/event/9gatsu/okumakabuto-.html",
+      "title": "七尾市 お熊甲祭＜国指定重要無形民俗文化財＞",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.nanao.lg.jp/koryu-s/event/9gatsu/documents/okumakabuto2026.pdf",
+      "title": "七尾市・お熊甲祭奉賛会 お熊甲祭 パンフレット（令和8年版）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.ishikawatravel.jp/spots/okuma-kabuto-festival",
+      "title": "Ishikawa Travel Okuma Kabuto Festival（所在地 七尾市中島町宮前ホ部68-1-1）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と時刻、交通規制、シャトルバス（2026年は能登中島駅から祭り会館前まで無料で8:00〜17:00に運行）",
+    "能登中島駅から会場まで歩いたときの時間（公式の案内はシャトルバスだけ）",
+    "雨のときの扱い",
+    "見学の決まり、服装・持ち物・危険度についての主催者の注意",
+    "一般の人が加われるかどうか",
+    "屋台や振る舞いの有無",
+    "臨時駐車場の台数",
+    "会場の緯度・経度は住所の字（中島町宮前）の代表点で、社殿の位置ではない",
+    "祭り会館と和倉温泉お祭り会館の入館料",
+    "道の駅 なかじまロマン峠の和風レストランと売店の営業時間（出典の07:00〜20:00は同じ建物のすし店の時間）"
+  ]
+}

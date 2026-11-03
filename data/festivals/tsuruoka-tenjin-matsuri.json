@@ -1,0 +1,338 @@
+{
+  "id": "tsuruoka-tenjin-matsuri",
+  "name": {
+    "ja": "鶴岡天神祭",
+    "en": "Tsuruoka Tenjin Festival"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "山形県",
+      "name": "鶴岡市"
+    }
+  ],
+  "venue": {
+    "name": "鶴岡天満宮・鶴岡公園周辺",
+    "lat": 38.7235,
+    "lng": 139.8355
+  },
+  "scaleTier": "L",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "顔を隠した「化けもの」たちが、ひと言も話さずに沿道の人へ酒やジュースをついで回る",
+    "天満宮の神輿や菅原道真公行列が中心市街地を進むパレード",
+    "鶴岡天満宮での天狗舞・獅子舞の奉納",
+    "天神祭の時期だけ売られる弁当「化け弁」"
+  ],
+  "trivia": [
+    {
+      "text": "化けもの姿で3年続けて誰にも知られずに参ると、願いがかなうと伝わる",
+      "source": {
+        "url": "https://www.tsuruokakanko.com/spot/2066",
+        "title": "つるおか観光ナビ 鶴岡天神祭（化けものまつり）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "流される道真公との別れを、人々が姿を隠して惜しんだという故事が化けものの起こり",
+      "source": {
+        "url": "https://tenzihan.com/",
+        "title": "鶴岡天満宮",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "天満宮に奉納される天狗舞は、約300年の歴史をもつ",
+      "source": {
+        "url": "https://www.tsuruokakanko.com/spot/2066",
+        "title": "つるおか観光ナビ 鶴岡天神祭（化けものまつり）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2024年は、化けものによる酒などの振る舞いが5年ぶりに戻った",
+      "source": {
+        "url": "https://www.city.tsuruoka.lg.jp/shisei/kohojigyou/koho/kohor6/koho202407.files/202407P10-11.pdf",
+        "title": "広報つるおか 2024年7月号",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "沿道で化けものの振る舞いを受けるのに申し込みは要らない。化けもの姿で歩くなら、鶴岡市の衣装の貸出しを事前に申し込み、本祭の前に受け取る（2026年は4月7日〜5月15日受付、先着500着、当日の貸出しなし、着付けは自分で）",
+    "rules": "unknown",
+    "dress": ["化けものとして歩くなら、派手な花模様の長襦袢に帯を締め、手ぬぐいと編み笠で顔を隠す"],
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "2019年は過去最高の22万人が訪れたと市の広報にあり、中心市街地で交通規制もある"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.tsuruokakanko.com/spot/2066",
+        "title": "つるおか観光ナビ 鶴岡天神祭（化けものまつり）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.tsuruoka.lg.jp/shisei/kohojigyou/koho/kohor1/soumu0120190628.files/20190701-12-13.pdf",
+        "title": "広報つるおか 2019年7月号",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-05-25",
+      "start": "14:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の本祭（実績の記録）。14:00 鶴岡市役所前交差点を出て中央児童館方面へパレード。天狗舞・獅子舞の奉納は11:00・13:00・15:00・17:00。沿道で化けものが振る舞う。前日5月24日は鶴岡駅前でミニ天神祭（11:00〜16:00）",
+      "sources": [
+        {
+          "url": "https://www.tsuruokakanko.com/spot/2066",
+          "title": "つるおか観光ナビ 鶴岡天神祭（化けものまつり）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.tsuruoka.lg.jp/shisei/shicho/interview/R8kisyakaiken.files/202605_kisyakaiken.pdf",
+          "title": "鶴岡市 定例記者会見資料（令和8年4月28日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-05-25",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "本祭は毎年5月25日。例年は午後にパレードがあり、前日に宵祭の催しがある。2027年の行事と時刻は未発表",
+      "sources": [
+        {
+          "url": "https://tenzihan.com/",
+          "title": "鶴岡天満宮",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.tohokukanko.jp/sozaishu/detail_1003201.html",
+          "title": "旅東北 鶴岡天神祭「化けものまつり」",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [
+      {
+        "hub": "東京駅",
+        "minutes": [240, 250],
+        "route": "上越新幹線で新潟駅、羽越本線に乗り換えて鶴岡駅。鶴岡駅から天満宮へはバスで約12分"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [
+      "2026年は鶴岡公園周辺の中心市街地で交通規制があった（2027年の規制は未発表）"
+    ],
+    "sources": [
+      {
+        "url": "https://www.tsuruokakanko.com/access",
+        "title": "つるおか観光ナビ 交通アクセス",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.tohokukanko.jp/sozaishu/detail_1003201.html",
+        "title": "旅東北 鶴岡天神祭「化けものまつり」",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.tsuruokakanko.com/spot/2066",
+        "title": "つるおか観光ナビ 鶴岡天神祭（化けものまつり）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "化け弁",
+        "note": "天神祭の時期だけ売られる弁当。郷土料理の胡麻豆腐のあんかけと孟宗ごはんが共通の品で、ほかは店ごとに違う。2026年は5月24日・25日の販売で、事前の予約が要った",
+        "sources": [
+          {
+            "url": "https://www.tsuruokakanko.com/spot/2066",
+            "title": "つるおか観光ナビ 鶴岡天神祭（化けものまつり）",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "chido-museum",
+      "name": "致道博物館",
+      "kind": "sightseeing",
+      "summary": "博物館・御隠殿のほか、旧鶴岡警察署庁舎や旧西田川郡役所の建物がある。年末年始（12月28日〜1月4日）も休館。",
+      "location": {
+        "lat": 38.7279,
+        "lng": 139.8212
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["wed"],
+      "price": "一般1,000円",
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.tsuruokakanko.com/spot/92",
+          "title": "つるおか観光ナビ 致道博物館",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "shonai-hanko-chidokan",
+      "name": "庄内藩校 致道館",
+      "kind": "sightseeing",
+      "summary": "庄内藩の藩校の建物を見学できる。入館は無料。水曜が祝日などのときは次の平日が休み。",
+      "location": {
+        "lat": 38.7264,
+        "lng": 139.8257
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "16:30"
+      },
+      "closedDays": ["wed"],
+      "price": "無料",
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.tsuruokakanko.com/spot/306",
+          "title": "つるおか観光ナビ 荘内藩校 致道館",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kyu-kazama-ke-heishindo",
+      "name": "旧風間家住宅 丙申堂",
+      "kind": "sightseeing",
+      "summary": "馬場町にある旧家の住宅。7月13日と冬季（12月1日〜4月9日）は休館（3月の鶴岡雛物語の間は一部を開く）。",
+      "location": {
+        "lat": 38.7282,
+        "lng": 139.8295
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "16:30",
+        "lastEntry": "16:00"
+      },
+      "closedDays": [],
+      "price": "丙申堂・釈迦堂の共通券 一般500円",
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.tsuruokakanko.com/spot/386",
+          "title": "つるおか観光ナビ 旧風間家住宅 丙申堂",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "shonai-kanko-bussankan",
+      "name": "庄内観光物産館 ふるさと本舗",
+      "kind": "food",
+      "summary": "鶴岡IC近くの物産館。さかな市場、名産品の売り場、食堂や軽食の店がある。鶴岡駅からバス10分。GWと夏は営業を延ばすことがある。",
+      "location": {
+        "lat": 38.7386,
+        "lng": 139.7976
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "18:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.tsuruokakanko.com/spot/800",
+          "title": "つるおか観光ナビ 庄内観光物産館 ふるさと本舗",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.shoko-corpo.jp/bussan/",
+          "title": "庄内観光物産館",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://tenzihan.com/",
+      "title": "鶴岡天満宮",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.tsuruokakanko.com/spot/2066",
+      "title": "つるおか観光ナビ 鶴岡天神祭（化けものまつり）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.tohokukanko.jp/sozaishu/detail_1003201.html",
+      "title": "旅東北 鶴岡天神祭「化けものまつり」",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の行事と時刻、パレードのコース（まだ発表がない）",
+    "雨のときの扱い",
+    "鶴岡駅から会場までの徒歩の時間（公式の案内はバス約12分のみ）",
+    "2027年の化けもの衣装の貸出しの受付期間",
+    "見物のときの決まり（場所取り・ごみなど）、持ち物、撮影の決まり",
+    "2027年の交通規制と、祭りの日に使える駐車場",
+    "2026年のパレードの参加者数（2024年は約2,000人と市の広報にある）",
+    "庄内観光物産館の定休日",
+    "周辺の場所の大手の観光サイトへの掲載（確かめられたページがなく、知名度は local にしてある）"
+  ]
+}
