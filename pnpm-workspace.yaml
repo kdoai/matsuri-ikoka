@@ -5,3 +5,9 @@ packages:
 # インストール時のスクリプトは、ここに挙げたものだけ実行する
 onlyBuiltDependencies:
   - esbuild
+
+# 推移的な依存で既知の脆弱性がある版を、直った版に置き換える
+overrides:
+  "@grpc/grpc-js@<1.13.6": ^1.14.7
+  "glob@>=9.0.0 <14.0.2": ^14.0.2
+  "minimatch@<11.0.1": ^11.0.1
