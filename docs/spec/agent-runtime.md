@@ -56,7 +56,7 @@ systemPrompt: [
 
 ## ツール（プロセス内の MCP サーバー）
 
-6つのツールは `tool()` と `createSdkMcpServer()` で定義し、入力の形は `packages/schema` の Zod から組み立てます。ハンドラーは、どれも共通の包みに通します。
+7つのツールは `tool()` と `createSdkMcpServer()` で定義し、入力の形は `packages/schema` の Zod から組み立てます。ハンドラーは、どれも共通の包みに通します。
 
 1. **時間の上限で打ち切る。** 1回10秒、`verify_festival` は30秒（[API の仕様](api.md#時間の上限)）
 2. **例外を投げない。** 失敗は `{ content: [{ type: "text", text: 理由 }], isError: true }` で返す。Claude は理由を読んで、代わりの案を出す

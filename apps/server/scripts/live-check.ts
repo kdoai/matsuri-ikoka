@@ -32,6 +32,7 @@ import {
 } from "../src/domain/calendar";
 import { DailyLimiter } from "../src/routes/guard";
 import { ItineraryStore, SessionStore } from "../src/session/sessionStore";
+import { createCandidateChecker } from "../src/tools/candidateCheck";
 import { unavailableVerifier } from "../src/tools/verifier";
 import { createJmaWeather } from "../src/tools/weather";
 
@@ -121,7 +122,7 @@ function describe(event: SseEvent): string {
           : ""
       }`;
     case "festival.verified":
-      return `festival.verified ${event.data.festivalId} ${event.data.result} 出典=${event.data.sources.map((s) => `${s.url}(${s.confidence})`).join(",")}${event.data.note ? `「${event.data.note}」` : ""}`;
+      return `festival.verified ${event.data.scope ?? "itinerary"} ${event.data.festivalId} ${event.data.date ?? ""} ${event.data.result} 出典=${event.data.sources.map((s) => `${s.url}(${s.confidence})`).join(",")}${event.data.note ? `「${event.data.note}」` : ""}`;
     case "itinerary.updated":
       return `itinerary.updated 第${event.data.itinerary.version}版 ${event.data.itinerary.days.length}日 予定${event.data.itinerary.days.reduce((n, d) => n + d.items.length, 0)}件 追加=${event.data.diff.added.length}`;
     case "message.delta":
@@ -143,22 +144,32 @@ async function main() {
     const itineraries = new ItineraryStore();
     const env = agentEnv(process.env);
     const prompts = await loadPrompts();
+    // 架空の祭りは Web で確かめられないので、再確認と候補の確かめは使わない
+    const verifier =
+      realFestivalsDir === undefined
+        ? unavailableVerifier
+        : createWebVerifier({
+            prompt: prompts.verifier,
+            model: config.models.staff,
+            cwd,
+            env,
+            query,
+            maxBudgetUsd: config.maxBudgetUsd,
+          });
     const runner = new ClaudeAgentRunner({
       festivals,
       itineraries,
       weather: createJmaWeather(),
-      // 架空の祭りは Web で確かめられないので、再確認は使わない
-      verifier:
-        realFestivalsDir === undefined
-          ? unavailableVerifier
-          : createWebVerifier({
-              prompt: prompts.verifier,
-              model: config.models.staff,
-              cwd,
-              env,
-              query,
-              maxBudgetUsd: config.maxBudgetUsd,
+      verifier,
+      ...(realFestivalsDir === undefined
+        ? {}
+        : {
+            candidateChecks: createCandidateChecker({
+              verifier,
+              today: () => today,
+              now: () => nowInJapan(),
             }),
+          }),
       prompts,
       models: config.models,
       maxBudgetUsd: config.maxBudgetUsd,

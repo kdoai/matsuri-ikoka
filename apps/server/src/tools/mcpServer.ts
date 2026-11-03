@@ -66,7 +66,7 @@ function log(name: string, started: number, ok: boolean) {
   console.info(JSON.stringify({ kind: "tool", tool: name, ok, durationMs: Date.now() - started }));
 }
 
-/** 6つのツールを、相談ごとの文脈を閉じ込めたプロセス内の MCP サーバーにする */
+/** 7つのツールを、相談ごとの文脈を閉じ込めたプロセス内の MCP サーバーにする */
 export function createMatsuriMcpServer(ctx: ToolContext) {
   return createSdkMcpServer({
     name: MCP_SERVER_NAME,
