@@ -24,7 +24,7 @@ import {
 import { useMediaQuery } from "./hooks";
 import { ItineraryPanel } from "./ItineraryPanel";
 import { PasscodeDialog } from "./Passcode";
-import { PlayGuide, PlayNoticeToast } from "./Play";
+import { GreetingBar, PlayGuide, PlayNoticeToast } from "./Play";
 import { GameStage } from "./SceneSlot";
 import { StaffActivity } from "./StaffPanel";
 import { WaitingCard } from "./Waiting";
@@ -68,7 +68,8 @@ function useFrameInsets(
       const side = panel.current?.getBoundingClientRect();
       const next: FrameInsets = {
         top: topBar === undefined ? 0 : Math.round(topBar.bottom),
-        bottom: box === undefined ? 0 : Math.round(height - box.top),
+        // しまっている会話の窓（大きさ 0）は、重ならないものとして数える
+        bottom: box === undefined || box.height === 0 ? 0 : Math.round(height - box.top),
         right: panelBeside && side !== undefined ? Math.round(width - side.left) : 0,
         left: 0,
       };
@@ -106,6 +107,22 @@ function useUnread(logOpen: boolean): boolean {
     if (logOpen) setSeen(records);
   }, [logOpen, records]);
   return !logOpen && records > seen;
+}
+
+/** 返答・エラー・合言葉の問いが届いたら、会話の窓をしまっていても出す */
+function useAutoOpenDialogue(): void {
+  const actions = useActions();
+  const count = useApp(
+    (state) =>
+      state.messages.filter(
+        (entry) => entry.kind === "concierge" || entry.kind === "error" || entry.kind === "user",
+      ).length,
+  );
+  const seen = useRef(count);
+  useEffect(() => {
+    if (count > seen.current) actions.setDialogue(true);
+    seen.current = count;
+  }, [count, actions]);
 }
 
 export function Shop() {
@@ -147,6 +164,15 @@ export function Shop() {
   }, []);
   const toggleMenu = useCallback(() => setMenu((open) => (open === "menu" ? null : "menu")), []);
 
+  const dialogueOpen = useApp((state) => state.ui.dialogueOpen);
+  /** コンシェルジュに話しかける：会話の窓を出して、入力欄へ移る */
+  const talk = useCallback(() => {
+    actions.setDialogue(true);
+    // 窓が出てから焦点を移す
+    window.requestAnimationFrame(() => focusComposer());
+  }, [actions]);
+  useAutoOpenDialogue();
+
   const onPad = useCallback(
     (command: "details" | "map" | "menu") => {
       if (command === "menu") toggleMenu();
@@ -160,7 +186,7 @@ export function Shop() {
     talk: () => {
       const play = playStore.getState();
       if (play.active) play.requestInteract();
-      else focusComposer();
+      else talk();
     },
     details: () => togglePanel("itinerary"),
     map: () => togglePanel("map"),
@@ -169,7 +195,7 @@ export function Shop() {
 
   return (
     <div className="relative h-dvh w-full overflow-hidden bg-wood-900 text-ink">
-      <GameStage frame={frame} onTalk={focusComposer} onPad={onPad} />
+      <GameStage frame={frame} onTalk={talk} onPad={onPad} onExit={actions.leaveShop} />
 
       {/* 上の段：ロゴ・場面のタブ・丸いボタン */}
       <div
@@ -239,9 +265,15 @@ export function Shop() {
         </div>
       ) : null}
 
-      {/* 会話の窓。待ち時間のカードは、その上に出す */}
+      {/* 会話の窓。最初は出さず、コンシェルジュに話しかけたら出す。待ち時間のカードは、その上に出す */}
+      {dialogueOpen ? null : (
+        <div className="absolute inset-x-2 bottom-3 z-20 sm:bottom-4">
+          <GreetingBar onTalk={talk} />
+        </div>
+      )}
       <div
         ref={dialogueRef}
+        hidden={!dialogueOpen}
         className={`absolute inset-x-2 bottom-2 z-20 sm:inset-x-3 sm:bottom-3 ${
           beside
             ? "lg:right-[calc(min(30rem,38vw)+1.5rem)] lg:left-3"

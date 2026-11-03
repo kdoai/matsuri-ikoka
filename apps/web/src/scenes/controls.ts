@@ -60,7 +60,9 @@ export type Interaction =
   | { kind: "talk"; staff: StaffId }
   | { kind: "gimmick"; gimmick: Gimmick }
   | { kind: "sit"; seat: string }
-  | { kind: "chick"; chick: Chick };
+  | { kind: "chick"; chick: Chick }
+  /** のれんをくぐって店の外へ出る */
+  | { kind: "exit" };
 
 export interface Target {
   /** 見分けるための名前（同じものが近くに居続けるかを比べる） */
@@ -83,7 +85,7 @@ const TALK_PRIORITY = 1.6;
  * 同じ距離なら、話す・仕掛け・座る・ひよこの順に先にする。
  */
 export function nearestTarget(targets: readonly Target[], at: FlatPoint): Target | null {
-  const order: Interaction["kind"][] = ["talk", "gimmick", "sit", "chick"];
+  const order: Interaction["kind"][] = ["talk", "exit", "gimmick", "sit", "chick"];
   let best: Target | null = null;
   let bestScore = Number.POSITIVE_INFINITY;
   for (const target of targets) {
@@ -188,4 +190,68 @@ export function followOffset(
   const z = (player.z - base.z) * depth;
   const length = Math.hypot(x, z);
   return length > max ? { x: (x / length) * max, z: (z / length) * max } : { x, z };
+}
+
+// ---------------------------------------------------------------------------
+// カメラの操作（マウスのドラッグ・ホイール、2本指、ゲームパッドの右スティック、キーボード）
+
+/** 旅人のまわりを回す角度（ラジアン）と、寄る割合。0・0・1 がいつもの見え方 */
+export interface Orbit {
+  yaw: number;
+  pitch: number;
+  zoom: number;
+}
+
+export const DEFAULT_ORBIT: Orbit = Object.freeze({ yaw: 0, pitch: 0, zoom: 1 });
+
+/**
+ * 回せる範囲。店は手前（+Z）が開いた箱なので、横は手前の側から見える範囲だけ、
+ * 縦は床に潜らず真上にもならない範囲、寄りは旅人を見失わない範囲に限る
+ */
+export const ORBIT_LIMITS = {
+  yaw: 0.75,
+  pitchMin: -0.3,
+  pitchMax: 0.35,
+  zoomMin: 0.5,
+  zoomMax: 1.35,
+} as const;
+
+export function clampOrbit(orbit: Orbit): Orbit {
+  return {
+    yaw: Math.min(ORBIT_LIMITS.yaw, Math.max(-ORBIT_LIMITS.yaw, orbit.yaw)),
+    pitch: Math.min(ORBIT_LIMITS.pitchMax, Math.max(ORBIT_LIMITS.pitchMin, orbit.pitch)),
+    zoom: Math.min(ORBIT_LIMITS.zoomMax, Math.max(ORBIT_LIMITS.zoomMin, orbit.zoom)),
+  };
+}
+
+/** カメラを回すキー（KeyboardEvent.code）と、そのときの向き */
+export const CAMERA_KEYS: Record<string, Partial<Orbit>> = {
+  KeyQ: { yaw: 1 },
+  KeyR: { yaw: -1 },
+  KeyZ: { zoom: -1 },
+  KeyC: { zoom: 1 },
+};
+
+/** カメラをいつもの見え方に戻すキー */
+export const CAMERA_RESET_KEY = "KeyV";
+
+/** 店の箱（m）。壁の高さより低いところでは、カメラをこの内側に収める */
+export const ROOM = { minX: -3.7, maxX: 3.7, minZ: -2.6, wallTop: 3.2, minY: 1.6 } as const;
+
+/**
+ * カメラの位置が壁や床の中に入らないように抑える。壁より高いところは、店の箱の上から
+ * のぞくので抑えない。手前（+Z）は開いているので抑えない
+ */
+export function keepCameraInside(position: { x: number; y: number; z: number }): {
+  x: number;
+  y: number;
+  z: number;
+} {
+  const y = Math.max(ROOM.minY, position.y);
+  if (y >= ROOM.wallTop) return { x: position.x, y, z: position.z };
+  return {
+    x: Math.min(ROOM.maxX, Math.max(ROOM.minX, position.x)),
+    y,
+    z: Math.max(ROOM.minZ, position.z),
+  };
 }

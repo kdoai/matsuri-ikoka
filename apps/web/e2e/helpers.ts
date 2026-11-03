@@ -35,7 +35,26 @@ export const SAMPLE = SampleConversationSchema.parse(
 export async function enterShop(page: Page, query = "?scene=2d"): Promise<void> {
   await page.goto(`/${query}`);
   await page.getByRole("button", { name: "入店する" }).click();
-  await expect(page.getByRole("textbox", { name: "相談の発言" })).toBeEnabled();
+  await talkToConcierge(page);
+}
+
+/**
+ * 会話の窓は最初は出ていない。コンシェルジュに話しかけて、会話の窓を出し、入力欄へ移る
+ * （3D の店では、入店のカメラが終わってから「話しかける」が出る）
+ */
+export async function talkToConcierge(
+  page: Page,
+  name = "コンシェルジュに話しかける",
+): Promise<void> {
+  await page.getByTestId("greeting-bar").getByRole("button", { name }).click({ timeout: 60_000 });
+  await expect(page.getByTestId("dialogue")).toBeVisible();
+  await expect(page.locator("#chat-input")).toBeFocused();
+  await sessionReady(page);
+}
+
+/** 相談が始まり、発言を送れるようになるまで待つ */
+export async function sessionReady(page: Page): Promise<void> {
+  await expect(page.locator('[data-testid="composer"][data-ready="true"]')).toBeVisible();
 }
 
 /** 記録の index 番目の発言を入れて送る */
@@ -43,7 +62,7 @@ export async function sendSampleMessage(page: Page, index: number): Promise<void
   const message = SAMPLE.turns[index]?.request.message;
   if (message === undefined) throw new Error(`記録に ${index} 番目の発言がありません`);
   const input = page.getByRole("textbox", { name: "相談の発言" });
-  await expect(input).toBeEnabled();
+  await sessionReady(page);
   await input.fill(message);
   await input.press("Enter");
 }

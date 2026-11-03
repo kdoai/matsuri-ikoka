@@ -3,7 +3,9 @@ import {
   createNavGrid,
   createNavMesh,
   findPath,
+  gridWalkable,
   lineOfSight,
+  meshWalkable,
   nearestOnNavMesh,
   onNavMesh,
   slideMove,
@@ -36,17 +38,40 @@ describe("歩ける床", () => {
   });
 
   it("床の中ではそのまま進む", () => {
-    expect(slideMove(square, { x: 1, z: 1 }, 0.3, -0.2)).toEqual({ x: 1.3, z: 0.8 });
+    const moved = slideMove(meshWalkable(square), { x: 1, z: 1 }, 0.3, -0.2);
+    expect(moved.x).toBeCloseTo(1.3);
+    expect(moved.z).toBeCloseTo(0.8);
   });
 
-  it("床の外へ斜めに進むと、壁に沿って滑る", () => {
-    const moved = slideMove(square, { x: 1.9, z: 1 }, 0.3, 0.2);
-    expect(moved.x).toBe(1.9);
+  it("床の外へ斜めに進むと、縁まで進んでから壁に沿って滑る", () => {
+    const moved = slideMove(meshWalkable(square), { x: 1.9, z: 1 }, 0.3, 0.2);
+    expect(moved.x).toBeGreaterThan(1.9);
+    expect(moved.x).toBeLessThanOrEqual(2);
     expect(moved.z).toBeCloseTo(1.2);
   });
 
-  it("角に向かって進むと、その場に止まる", () => {
-    expect(slideMove(square, { x: 1.95, z: 1.95 }, 0.2, 0.2)).toEqual({ x: 1.95, z: 1.95 });
+  it("角に向かって進むと、角で止まり、床から出ない", () => {
+    const moved = slideMove(meshWalkable(square), { x: 1.95, z: 1.95 }, 0.2, 0.2);
+    expect(onNavMesh(square, moved.x, moved.z)).toBe(true);
+    expect(moved.x).toBeLessThanOrEqual(2);
+    expect(moved.z).toBeLessThanOrEqual(2);
+  });
+
+  it("縁から体の太さぶん削った升目で動くと、体が縁に重ならない", () => {
+    const body = gridWalkable(createNavGrid(square, 0.02, 0.12));
+    const moved = slideMove(body, { x: 1, z: 1 }, 2, 0);
+    expect(moved.x).toBeLessThanOrEqual(2 - 0.12 + 0.02);
+    expect(moved.x).toBeGreaterThan(1.8);
+  });
+
+  it("一度に長く進んでも、細い隙間（床のない帯）を飛び越えない", () => {
+    // x 0〜1 と x 1.1〜2 の2枚の床。間の 0.1 m は床がない
+    const split = createNavMesh([
+      0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1.1, 0, 0, 2, 0, 0, 2, 0, 1, 1.1, 0, 0,
+      2, 0, 1, 1.1, 0, 1,
+    ]);
+    const moved = slideMove(meshWalkable(split), { x: 0.9, z: 0.5 }, 0.5, 0);
+    expect(moved.x).toBeLessThanOrEqual(1);
   });
 
   it("床の外の点は、床の縁のいちばん近い点に寄せる", () => {
@@ -99,5 +124,38 @@ describe("道を探す", () => {
     const last = path.at(-1);
     expect(last).toBeDefined();
     expect(onNavMesh(u, last?.x ?? -1, last?.z ?? -1)).toBe(true);
+  });
+});
+
+describe("体の太さと角", () => {
+  // L 字の床：下の帯（x 0〜2、z 0〜1）と、左の帯（x 0〜1、z 1〜2）。内側の角は (1, 1)
+  const l = rectangles([0, 0, 2, 1], [0, 1, 1, 2]);
+  const body = gridWalkable(createNavGrid(l, 0.02, 0.12));
+  // 段のある床：x 0〜1 は z 0.2〜1、x 1〜2 は z 0〜1（左の下が少し狭い）
+  const step = rectangles([0, 0.2, 1, 1], [1, 0, 2, 1]);
+  const stepBody = gridWalkable(createNavGrid(step, 0.02, 0.12));
+
+  it("内側の角のそばでも、引っかからずに進める", () => {
+    let at = { x: 1.5, z: 0.5 };
+    for (let i = 0; i < 40; i++) at = slideMove(body, at, -0.03, 0.03);
+    expect(at.x).toBeLessThan(0.9);
+    expect(at.z).toBeGreaterThan(1.1);
+  });
+
+  it("壁にまっすぐ押し付けても、体は床の縁にめり込まない", () => {
+    let at = { x: 1.5, z: 0.5 };
+    for (let i = 0; i < 40; i++) at = slideMove(body, at, 0, 0.03);
+    expect(at.z).toBeLessThanOrEqual(1 - 0.12 + 0.02);
+  });
+
+  it("縁に段があっても、斜めに押しながら壁に沿って進める", () => {
+    let at = { x: 1.8, z: 0.2 };
+    for (let i = 0; i < 80; i++) at = slideMove(stepBody, at, -0.03, -0.008);
+    expect(at.x).toBeLessThan(0.5);
+  });
+
+  it("いまの位置が升目の外でも、床の上なら抜け出せる", () => {
+    const moved = slideMove(body, { x: 1.99, z: 0.5 }, -0.2, 0, meshWalkable(l));
+    expect(moved.x).toBeLessThan(1.9);
   });
 });

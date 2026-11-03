@@ -206,6 +206,8 @@ export interface UiState {
   celebrating: boolean;
   /** 入力欄の下書き */
   draft: string;
+  /** 会話の窓を出しているか。最初は出さず、コンシェルジュに話しかけたら出す */
+  dialogueOpen: boolean;
 }
 
 /** ストアのデータの部分。イベントの変換はこの形からこの形への純粋な関数にする */

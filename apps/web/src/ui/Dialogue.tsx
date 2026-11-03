@@ -1,8 +1,8 @@
 import type { StaffId } from "@matsuri-ikoka/schema";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, X } from "lucide-react";
 import { useActions, useApp, useT } from "../state/react";
 import { currentLine, shioriReady } from "../state/selectors";
-import { Composer } from "./ChatPanel";
+import { Composer, focusComposer } from "./ChatPanel";
 import { Portrait, type Speaker } from "./Portraits";
 import { errorText } from "./text";
 
@@ -62,6 +62,13 @@ export function DialogueBox() {
       aria-label={t.chat.title}
       className="relative rounded-[2rem] border-[3px] border-wood-700/70 bg-gradient-to-b from-[#fffaf0] to-[#f6ead2] px-4 pt-5 pb-3 shadow-[0_12px_32px_rgb(0_0_0/0.4)] sm:px-6"
       data-testid="dialogue"
+      // 会話の窓のどこをクリックしても、入力欄に焦点を移す（打った文字が旅人の操作に渡らない）
+      onPointerUp={(event) => {
+        const target = event.target as Element;
+        if (target.closest("button, a, input, textarea, select, [role='tab']") === null) {
+          focusComposer();
+        }
+      }}
     >
       {/* 波の模様の飾り */}
       <span
@@ -69,6 +76,16 @@ export function DialogueBox() {
         className="pointer-events-none absolute inset-x-6 bottom-1.5 h-3 bg-[radial-gradient(circle_at_50%_100%,transparent_5px,rgb(156_105_57/0.18)_6px,transparent_7px)] bg-[length:16px_12px]"
       />
       <NamePlate name={name} />
+      {/* 会話の窓をしまう（店の中を歩くとき）。コンシェルジュに話しかけると、また出る */}
+      <button
+        type="button"
+        onClick={() => actions.setDialogue(false)}
+        className="-top-3 absolute right-4 grid size-9 place-items-center rounded-full border-2 border-wood-700/60 bg-kinari-50 text-ink shadow-md transition hover:bg-white"
+        aria-label={t.dialogue.close}
+        data-testid="dialogue-close"
+      >
+        <X aria-hidden="true" className="size-4" />
+      </button>
       <div className="flex gap-3 sm:gap-5">
         <Portrait speaker={speaker as Speaker} className="-mt-9 size-20 sm:size-28" />
         <div

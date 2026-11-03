@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
+  clampOrbit,
   clockHands,
   followOffset,
   intentToWorld,
   isMoveKey,
+  keepCameraInside,
   moveIntent,
   nearestTarget,
   type Target,
@@ -77,5 +79,30 @@ describe("時計とカメラ", () => {
     expect(followOffset({ x: 1, z: 1 }, { x: 0, z: 0 })).toEqual({ x: 0.7, z: 0.5 });
     const far = followOffset({ x: 100, z: 0 }, { x: 0, z: 0 }, { max: 2 });
     expect(far.x).toBeCloseTo(2);
+  });
+});
+
+describe("カメラの操作", () => {
+  it("回す・寄るのは、旅人を見失わない範囲に限る", () => {
+    expect(clampOrbit({ yaw: 5, pitch: -5, zoom: 0.1 })).toEqual({
+      yaw: 0.75,
+      pitch: -0.3,
+      zoom: 0.5,
+    });
+    expect(clampOrbit({ yaw: 0.2, pitch: 0.1, zoom: 1 })).toEqual({
+      yaw: 0.2,
+      pitch: 0.1,
+      zoom: 1,
+    });
+  });
+
+  it("壁より低いところでは、カメラを店の箱の内側に収め、床に潜らせない", () => {
+    expect(keepCameraInside({ x: 6, y: 2, z: -5 })).toEqual({ x: 3.7, y: 2, z: -2.6 });
+    expect(keepCameraInside({ x: 0, y: -1, z: 0 }).y).toBe(1.6);
+  });
+
+  it("壁より高いところと、開いている手前は抑えない", () => {
+    expect(keepCameraInside({ x: 6, y: 6, z: -5 })).toEqual({ x: 6, y: 6, z: -5 });
+    expect(keepCameraInside({ x: 0, y: 2, z: 9 })).toEqual({ x: 0, y: 2, z: 9 });
   });
 });

@@ -5,6 +5,7 @@ import { type PlayNotice, playStore, usePlay } from "../state/play";
 import { useApp, useT } from "../state/react";
 import { KeyCap } from "./Hud";
 import { useMediaQuery } from "./hooks";
+import { Portrait } from "./Portraits";
 
 // 店の中で遊ぶための 2D の部品：旅人の頭の横の「話す・使う」、操作の案内、仕掛けの結果の知らせ。
 // 3D に出ることは、ここでもすべて文字で読める（近くにあるもの・見つけたひよこ・時計の時刻）。
@@ -21,6 +22,8 @@ function interactionLabel(t: Messages, near: Interaction): string {
       return t.play.chick;
     case "gimmick":
       return t.play.gimmicks[near.gimmick];
+    case "exit":
+      return t.play.exit;
   }
 }
 
@@ -34,6 +37,8 @@ function noticeText(t: Messages, notice: PlayNotice): string {
       return t.play.chickFound(notice.found);
     case "allChicks":
       return t.play.allChicks;
+    case "staffOnly":
+      return t.play.staffOnly;
     case "gimmick":
       return notice.interaction.kind === "gimmick"
         ? t.play.results[notice.interaction.gimmick]
@@ -53,7 +58,8 @@ function usePromptLabel(): string | null {
 /** 旅人の頭の横に出す「話す・使う」。位置は 3D の中から毎フレーム書き込む（data-bubble） */
 export function PlayPrompt() {
   const label = usePromptLabel();
-  if (label === null) return null;
+  const entering = usePlay((state) => state.entering);
+  if (label === null || entering) return null;
   return (
     <div className="pointer-events-none absolute inset-0">
       <button
@@ -91,13 +97,14 @@ export function PlayGuide() {
   const t = useT();
   const locale = useApp((state) => state.ui.locale);
   const active = usePlay((state) => state.active);
+  const entering = usePlay((state) => state.entering);
   const chicks = usePlay((state) => state.chicks.length);
   const sitting = usePlay((state) => state.sitting);
   const label = usePromptLabel();
   const wide = useMediaQuery("(min-width: 1024px)");
   const [open, setOpen] = useState<boolean | null>(null);
   const clock = useClockText(locale);
-  if (!active) return null;
+  if (!active || entering) return null;
   const expanded = open ?? wide;
   return (
     <section
@@ -172,6 +179,65 @@ export function PlayNoticeToast() {
           {noticeText(t, notice.value)}
         </p>
       ) : null}
+    </div>
+  );
+}
+
+/**
+ * 会話の窓をしまっている間の案内。3D の店では、コンシェルジュの頭の上に「話しかけてね」の吹き出しを出す
+ * （位置は 3D の中から書き込む）。同じ文は下の案内の帯でも読める
+ */
+export function GreetingBubble() {
+  const t = useT();
+  const open = useApp((state) => state.ui.dialogueOpen);
+  const streaming = useApp((state) => state.session.streaming);
+  const entering = usePlay((state) => state.entering);
+  if (open || streaming || entering) return null;
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+      <p
+        data-bubble="concierge"
+        className="absolute top-0 left-0 max-w-60 rounded-2xl border-2 border-yamabuki-400 bg-kinari-50 px-3 py-1.5 text-center font-bold text-ink text-sm leading-snug shadow-lg"
+        data-testid="greeting-bubble"
+      >
+        {t.dialogue.greeting}
+      </p>
+    </div>
+  );
+}
+
+/**
+ * 会話の窓をしまっている間、窓の場所に出す帯。コンシェルジュの案内の文と「話しかける」のボタン。
+ * キーボード（Tab と Enter、または E）だけでも相談を始められる
+ */
+export function GreetingBar({ onTalk }: { onTalk: () => void }) {
+  const t = useT();
+  const entering = usePlay((state) => state.entering);
+  if (entering) return null;
+  return (
+    <div
+      className="mx-auto flex w-full max-w-xl items-center gap-2 rounded-3xl border-2 border-wood-700/60 bg-kinari-50/95 py-1.5 pr-1.5 pl-2 shadow-xl sm:gap-3"
+      data-testid="greeting-bar"
+    >
+      <Portrait speaker="concierge" className="size-10 border-2" />
+      <p className="min-w-0 flex-1 font-bold text-ink text-xs leading-snug sm:text-sm">
+        {t.dialogue.greeting}
+      </p>
+      <button
+        type="button"
+        onClick={onTalk}
+        aria-label={t.dialogue.talkToConcierge}
+        className="flex shrink-0 items-center gap-2 rounded-full border-2 border-yamabuki-400 bg-ink/85 py-1 pr-3 pl-1 font-bold text-kinari-50 text-sm shadow transition hover:bg-ink sm:pr-4"
+      >
+        <KeyCap>E</KeyCap>
+        {/* 狭い画面では短くする（読み上げは aria-label の全文） */}
+        <span aria-hidden="true" className="sm:hidden">
+          {t.hud.hints.talk}
+        </span>
+        <span aria-hidden="true" className="hidden sm:inline">
+          {t.dialogue.talkToConcierge}
+        </span>
+      </button>
     </div>
   );
 }
