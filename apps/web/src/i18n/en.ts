@@ -491,6 +491,7 @@ export const en: Messages = {
   shiori: {
     title: "Travel booklet",
     print: "Print",
+    savePdf: "Save as PDF",
     close: "Back to the shop",
     party: "Party",
     date: "Date",

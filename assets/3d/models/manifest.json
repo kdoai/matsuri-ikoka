@@ -2,7 +2,7 @@
   "files": [
     {
       "file": "exterior.glb",
-      "kilobytes": 997.3,
+      "kilobytes": 997.1,
       "triangles": 93742,
       "animations": [
         "entry"
@@ -11,8 +11,8 @@
     },
     {
       "file": "interior.glb",
-      "kilobytes": 2260.2,
-      "triangles": 104908,
+      "kilobytes": 2251.9,
+      "triangles": 105096,
       "animations": [
         "gimmick.bell.ring",
         "gimmick.cat.sleep",
@@ -182,5 +182,5 @@
       "textures": 5
     }
   ],
-  "total_kilobytes": 4239.2
+  "total_kilobytes": 4230.7
 }

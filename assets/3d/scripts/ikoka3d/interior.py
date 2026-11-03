@@ -194,6 +194,14 @@ def _entrance(c, lights):
                     colors=("#E9A6C4", "#C9A6E4", "#F3C6D8"))
     props.leafy_plant("plant_street", c, loc=(L.X0 - 0.45, L.Y0 - 0.5, L.STREET_Z), size=1.5, seed=5)
 
+    # The cat sleeps outside the noren on its own cushion, beside the door, so it never hangs off a seat
+    # and does not block the way in. The player pets it from just inside the door, by the left jamb.
+    kx, ky, kyaw = L.CAT
+    U.box("cat_cushion", (L.CAT_CUSHION, L.CAT_CUSHION, 0.07), c, base=(kx, ky, L.STREET_Z), rot=(0, 0, kyaw),
+          mat=M.fabric("cushion_cat", "#B0473C", 0.6), bev=0.03, seg=3)
+    G.cat(c, (kx - 0.05, ky + 0.02, L.STREET_Z + 0.07), yaw=kyaw)
+    _INTERACT.append(("cat", (L.DOOR_X[0] + 0.25, L.Y0 + 0.25, 0), 0.0))
+
 
 # --------------------------------------------------------------------------
 # Concierge counter
@@ -507,13 +515,11 @@ def _zones(c):
 
 
 def _front(c):
-    """Customer side in front of the counter: bench with the cat, stamp table, omikuji."""
+    """Customer side in front of the counter: bench, stamp table, omikuji."""
     bx, by = L.BENCH
     props.bench("bench", c, loc=(bx, by, 0), yaw=math.pi)
     for k, x in enumerate((bx + 0.35, bx - 0.1)):
         _SEATS.append((f"customer.bench.{k + 1}", (x, by, 0.42), math.pi))
-    G.cat(c, (bx - 0.45, by + 0.02, 0.42), yaw=0.25)
-    _INTERACT.append(("cat", (bx - 0.45, by + 0.5, 0), 0.0))
     sx, sy = L.STAMP_TABLE
     G.stamp_table(c, (sx, sy, 0))
     _INTERACT.append(("stamp", (sx, sy + 0.5, 0), math.pi))

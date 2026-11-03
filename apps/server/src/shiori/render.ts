@@ -15,7 +15,8 @@ import type {
 
 // しおりの HTML。画面（GET /shiori/:id）と PDF で同じものを使う。
 // 旅程・祭りのデータ・モデルの文章はすべて html`` の差し込みでエスケープし、raw() は自前の CSS と SVG だけに使う。
-// スクリプトは使わない。
+// スクリプトは使わない。店「たびや」ののれんと紋、スタッフの顔の絵の吹き出しで、店でもらう冊子の見た目にする。
+// 動き（のれんが揺れる・手を振る・ページをめくる・スタンプを押す・道のりを描く）は CSS だけで付ける（style.ts）。
 
 type Html = HtmlEscapedString | Promise<HtmlEscapedString>;
 
@@ -27,6 +28,17 @@ const STAFF_NAMES: Record<StaffStill, string> = {
   sparrow_binder: "旅程係のスズメ",
   penguin_cheer: "旅人のペンギン",
   penguin_stampbook: "旅人のペンギン",
+};
+
+/** 吹き出しの顔の絵（assets/shiori/staff/face_*.webp。画面の会話の窓と同じ絵） */
+const FACES: Record<StaffStill, string> = {
+  hiyoko_wave: "face_hiyoko",
+  hiyoko_stamp: "face_hiyoko",
+  owl_book: "face_owl",
+  hen_point: "face_hen",
+  sparrow_binder: "face_sparrow",
+  penguin_cheer: "face_penguin",
+  penguin_stampbook: "face_penguin",
 };
 
 /** ページごとのスタッフのひとこと（決まった文） */
@@ -53,6 +65,16 @@ function staffImg(still: StaffStill, cls = "staff"): Html {
   return html`<img class="${cls}" src="assets/staff/${still}.webp" alt="${STAFF_NAMES[still]}" />`;
 }
 
+/** スタッフの顔の絵つきの吹き出し */
+function bubble(still: StaffStill, line: Html | string): Html {
+  return html`<p class="bubble"><img class="face" src="assets/staff/${FACES[still]}.webp" alt="" /><span class="say"><span class="who">${STAFF_NAMES[still]}</span>${line}</span></p>`;
+}
+
+/** 店の紋と名前（見出しの上の小さな札） */
+function shopTag(): Html {
+  return html`<span class="shop-tag">${symbol("deco-shop-mark", "mark-mini")}たびや</span>`;
+}
+
 function list(items: readonly string[], cls = "dots"): Html {
   return html`<ul class="${cls}">${items.map((item) => html`<li>${item}</li>`)}</ul>`;
 }
@@ -76,10 +98,10 @@ function head(
   const line = override?.line ?? PAGE_LINES[kind];
   return html`<header class="head">
     <div class="title">
-      <span class="kicker">${kicker}</span>
+      <p class="kick">${shopTag()}<span class="kicker">${kicker}</span></p>
       <h2>${title}${en ? html`<span class="en">${en}</span>` : ""}</h2>
       ${symbol("deco-wave", "wave")}
-      ${line && still ? html`<p class="bubble"><span class="who">${STAFF_NAMES[still]}</span>${line}</p>` : ""}
+      ${line && still ? bubble(still, line) : ""}
     </div>
     ${still ? staffImg(still) : ""}
   </header>`;
@@ -92,7 +114,9 @@ function cover(view: ShioriView): Html {
   const { design } = view;
   const main = view.festivals[0];
   return html`<section class="sheet cover" aria-label="表紙">
-    ${symbol("deco-bunting", "bunting")}
+    <div class="noren" aria-hidden="true">
+      <span>旅の相談所</span><span class="mid">${symbol("deco-shop-mark", "")}</span><span>たびや</span>
+    </div>
     ${symbol(`season-${design.season}`, "season a")}
     <div class="motif-bg"></div>
     ${symbol(`motif-${design.category}`, "motif")}
@@ -118,8 +142,8 @@ function cover(view: ShioriView): Html {
     </dl>
     <div class="crew">
       ${staffImg("penguin_cheer", "main")}
-      ${staffImg("hiyoko_wave", "")}
-      <p class="bubble"><span class="who">コンシェルジュのひよこ</span>${c.greeting}</p>
+      ${staffImg("hiyoko_wave", "waver")}
+      ${bubble("hiyoko_wave", c.greeting)}
     </div>
   </section>`;
 }
@@ -175,7 +199,8 @@ function routeMap(route: RouteView, notes: readonly string[]): Html {
       ${route.stops.map(
         (
           s,
-        ) => html`<div class="stop ${s.kind}${s.festival ? " fest" : ""}" style="left:${s.x / 2}%;top:${s.y}%">
+          i,
+        ) => html`<div class="stop ${s.kind}${s.festival ? " fest" : ""}" style="left:${s.x / 2}%;top:${s.y}%;--i:${i}">
           <span class="pin">${s.number !== null ? html`<b>${s.number}</b>` : icon(STOP_ICONS[s.kind])}</span>
           <span class="name">${s.label}</span>
           <span class="sub">${s.festival ? html`${icon("festival")}祭り・` : ""}${s.sub}</span>
@@ -286,7 +311,7 @@ function guidePage(g: GuideView): Html {
 function stampGrid(view: ShioriView, small: boolean): Html {
   return html`<div class="stamps${small ? " small" : ""}">
     ${view.stamps.map(
-      (s) => html`<div class="stamp keep">
+      (s, i) => html`<div class="stamp keep" style="--i:${i}">
         <div class="ring">${symbol("deco-stamp-ring", "")}</div>
         <p class="lbl">${s.label}</p>
         ${s.sub ? html`<p class="sub">${s.sub}</p>` : ""}
@@ -338,7 +363,7 @@ function stampsPage(view: ShioriView): Html {
         : ""
     }
     ${view.memoPrompts.length > 0 ? html`<div class="memo">${view.memoPrompts.map((p) => memoBox(p, 3))}</div>` : ""}
-    ${symbol("deco-crest", "crest")}
+    <div class="shop-stamp">${symbol("deco-shop-mark", "")}<span>たびや</span><span class="sub">旅の相談所</span></div>
   </section>`;
 }
 
