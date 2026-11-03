@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+<g fill="none" stroke-linecap="round">
+<g stroke="var(--c2, #F2B33D)" stroke-width="5" transform="translate(100 78)"><path d="M0-18V-58M0 18V58M-18 0H-58M18 0H58M13-13L41-41M-13 13L-41 41M13 13L41 41M-13-13L-41-41"/></g>
+<g stroke="var(--c1, #E4572E)" stroke-width="4" transform="translate(100 78) rotate(22.5)"><path d="M0-24V-48M0 24V48M-24 0H-48M24 0H48M17-17L34-34M-17 17L-34 34M17 17L34 34M-17-17L-34-34"/></g>
+<g stroke="var(--c3, #8FD3F4)" stroke-width="3.5" transform="translate(42 136)"><path d="M0-8V-24M0 8V24M-8 0H-24M8 0H24M6-6L17-17M-6 6L-17 17M6 6L17 17M-6-6L-17-17"/></g>
+<g stroke="var(--c1, #E4572E)" stroke-width="3.5" transform="translate(160 142)"><path d="M0-7V-20M0 7V20M-7 0H-20M7 0H20M5-5L14-14M-5 5L-14 14M5 5L14 14M-5-5L-14-14"/></g>
+<path d="M100 196C100 170 98 150 100 140" stroke="var(--c2, #F2B33D)" stroke-width="3" stroke-dasharray="2 7"/>
+</g>
+<circle cx="100" cy="78" r="9" fill="var(--c2, #F2B33D)"/>
+<circle cx="42" cy="136" r="5" fill="var(--c3, #8FD3F4)"/>
+<circle cx="160" cy="142" r="4.5" fill="var(--c1, #E4572E)"/>
+</svg>

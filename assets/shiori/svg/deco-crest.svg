@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+<circle cx="50" cy="50" r="44" fill="none" stroke="var(--crest, #B8302A)" stroke-width="5"/>
+<circle cx="50" cy="50" r="36" fill="none" stroke="var(--crest, #B8302A)" stroke-width="2"/>
+<path d="M50 22l7 14 15 2-11 10 3 15-14-7-14 7 3-15-11-10 15-2z" fill="var(--crest, #B8302A)"/>
+<path d="M24 74q26 12 52 0" fill="none" stroke="var(--crest, #B8302A)" stroke-width="3" stroke-linecap="round"/>
+</svg>

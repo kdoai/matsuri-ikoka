@@ -9,7 +9,9 @@
 | PATCH    | `/api/preferences`    | `PreferencesRequestSchema`           | SSE。旅程があれば旅程係だけを動かして組み直し、なければこだわりを変えて `done` だけを返す                          |
 | GET      | `/api/festivals/:id`  | —                                    | 祭りのデータ（`FestivalSchema`）。しおりの作法・地元の味・アクセス、待ち時間の小話に使う                           |
 | GET      | `/api/itinerary/:id`  | —                                    | 旅程（`ItinerarySchema`）                                                                                          |
-| GET      | `/shiori/:id`         | —                                    | 旅のしおり（印刷できる HTML）。公式の情報で開催予定を確かめた旅程だけ                                              |
+| GET      | `/shiori/:id`         | —                                    | 旅のしおり（画面で見る HTML）。公式の情報で開催予定を確かめた旅程だけ（[しおり](shiori.md)）                       |
+| GET      | `/shiori/:id.pdf`     | —                                    | 同じしおりの A4 の PDF。混み合っていたら 503（`upstream_unavailable`）と `Retry-After`                             |
+| GET      | `/shiori/assets/*`    | —                                    | しおりのフォントとスタッフの静止画                                                                                 |
 | GET      | `/healthz`・`/health` | —                                    | 死活監視。`{ "status": "ok" }`。Cloud Run の既定の URL では `/healthz` が外に出ないので、外からは `/health` を使う |
 
 - 型はどれも `packages/schema`（`api.ts`）にある
