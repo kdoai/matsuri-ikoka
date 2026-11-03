@@ -599,6 +599,9 @@ export const en: Messages = {
     correct: "Correct! One more stamp for your booklet",
     wrong: (answer: string) => `Close! The answer is "${answer}"`,
     note: "The conversation goes on even if you don't answer",
+    close: "Close the quiz",
+    question: "Question",
+    stamps: (count: number) => `Stamps collected: ${count}`,
   },
   categories: {
     fireworks: "Fireworks",
