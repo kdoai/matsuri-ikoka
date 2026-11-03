@@ -522,7 +522,10 @@ function BubbleProjector({
       const x = ((projected.x + 1) / 2) * size.width;
       const y = ((1 - projected.y) / 2) * size.height;
       for (const element of document.querySelectorAll<HTMLElement>(`[data-bubble="${id}"]`)) {
-        element.style.transform = `translate(-50%, -100%) translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
+        // 画面の端で切れないよう、吹き出しを画面の内側に収める
+        const half = element.offsetWidth / 2;
+        const left = Math.min(Math.max(x, half + 8), Math.max(half + 8, size.width - half - 8));
+        element.style.transform = `translate(-50%, -100%) translate(${left.toFixed(1)}px, ${y.toFixed(1)}px)`;
       }
     }
   });

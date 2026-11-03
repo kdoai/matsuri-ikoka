@@ -66,10 +66,14 @@ export interface PlayerProps {
   onPad?(command: PadCommand): void;
 }
 
-/** 文字を入力している・ボタンを押しているときは、キーを旅人の操作にしない */
+/** 文字を入力しているときや、矢印キーで選ぶ部品（タブ・ラジオ）の上では、キーを旅人の操作にしない */
 function typing(target: EventTarget | null): boolean {
-  const element = target as HTMLElement | null;
-  return element?.closest?.("input, textarea, select, [contenteditable='true']") != null;
+  if (!(target instanceof Element)) return false;
+  return (
+    target.closest(
+      "input, textarea, select, [contenteditable='true'], [role='tablist'], [role='radiogroup'], [role='listbox'], [role='menu'], [role='dialog']",
+    ) !== null
+  );
 }
 
 const PAD_BUTTONS: Partial<Record<number, "use" | PadCommand>> = {
