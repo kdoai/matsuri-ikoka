@@ -62,6 +62,20 @@ describe("店の記録", () => {
     );
   });
 
+  it("食べたいものと、食事で気をつけたいことを載せる", () => {
+    const context = ctx();
+    context.session.conditions = {
+      origin: "みなと中央駅",
+      foodWishes: ["noodles", "local_drinks"],
+      dietary: ["vegetarian"],
+    };
+
+    const record = shopRecord(context);
+
+    expect(record).toContain("食べたいもの 麺類・地酒・地ビール");
+    expect(record).toContain("食事で気をつけたいこと ベジタリアン");
+  });
+
   it("旅程係には、今の旅程の全体と到着の余裕を渡す。調査係には渡さない", () => {
     const context = ctx();
     const itinerary = fictionalItinerary();

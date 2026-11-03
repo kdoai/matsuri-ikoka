@@ -346,6 +346,21 @@ describe("search_nearby", () => {
     expect(ctx.session.selectedFestivalId).toBe("suzunari-toro");
   });
 
+  it("聞き取りの食べたいもの・食事で気をつけたいことを、組み方の決まりに入れる", async () => {
+    const ctx = testToolContext([suzunari()]);
+    ctx.session.conditions = { foodWishes: ["noodles"], dietary: ["allergy"] };
+
+    const output = await searchNearby.run(
+      { festivalId: "suzunari-toro", date: "2026-08-16" },
+      ctx,
+      signal,
+    );
+
+    const rules = (output.rules as string[]).join("\n");
+    expect(rules).toContain("食べたいもの（麺類）");
+    expect(rules).toContain("食事で気をつけたいこと（食物アレルギー）");
+  });
+
   it("データにない祭りは失敗にする", async () => {
     await expect(
       searchNearby.run({ festivalId: "no-such" }, testToolContext([]), signal),
