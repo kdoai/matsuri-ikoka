@@ -110,6 +110,7 @@ main に入ると [`deploy.yml`](../.github/workflows/deploy.yml) が Cloud Run 
 | `create-issue`      | テンプレートとラベルを選んで Issue を起票する                              |
 | `create-pr`         | PR のテンプレートに沿って PR を作る                                        |
 | `review-pr`         | このリポジトリの決まり（`CLAUDE.md` の「守ること」）に照らして差分を見直す |
+| `resolve-issue`     | Issue を1件選び、worktree で直して PR にし、CI が通ったらマージする        |
 | `release-notes`     | main に入った変更から、使う人に向けた変更の一覧を作る                      |
 | `setup-github-repo` | GitHub のリポジトリの設定（保護・必須の検査・ラベル）を入れる・確かめる    |
 | `festival-research` | 公開の情報から祭りを調べ、出典と確度つきの祭りのデータにする               |
