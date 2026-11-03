@@ -9,6 +9,8 @@ export const ja = {
     lead: "地元の外にまだ届いていない祭りを見つけ、作法まで分かる旅程と旅のしおりにします。",
     enter: "入店する",
     entering: "店に入っています……",
+    loadingScene: (percent: number) => `店の明かりを灯しています　${percent}%`,
+    preparingScene: "店を整えています……",
     restart: "最初から",
     language: "言語",
     switchTo: "English",

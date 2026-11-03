@@ -12,6 +12,8 @@ export const en: Messages = {
     lead: "We find festivals that rarely reach visitors from outside, and turn them into a plan and a travel booklet that explains the local customs.",
     enter: "Come in",
     entering: "Stepping inside…",
+    loadingScene: (percent: number) => `Lighting up the shop  ${percent}%`,
+    preparingScene: "Getting the shop ready…",
     restart: "Start over",
     language: "Language",
     switchTo: "日本語",

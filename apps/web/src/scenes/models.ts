@@ -1,45 +1,53 @@
 import { useLoader } from "@react-three/fiber";
-import type { AnimationClip, Object3D } from "three";
+import { type AnimationClip, LoaderUtils, type Object3D } from "three";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { type GLTF, GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { fetchModelFile, type ModelName, modelUrl, releaseModelFile } from "./modelFiles";
 
-// 3D のモデル。GLB は assets/3d/models だけに置き、複製しない。
-// Vite が ?url で配る（開発ではそのまま、ビルドでは dist/assets に名前にハッシュを付けて出す）。
+export type { ModelName } from "./modelFiles";
+export { modelUrl } from "./modelFiles";
 
-const urls = import.meta.glob<string>("../../../../assets/3d/models/*.glb", {
-  query: "?url",
-  import: "default",
-  eager: true,
-});
+// 3D のモデルを three.js のオブジェクトにする。ファイルは modelFiles.ts が取ってくる
+// （three.js のコードより先に取り始めておけるように、取る処理と読み込む処理を分けてある）。
 
-export type ModelName =
-  | "interior"
-  | "exterior"
-  | "staff_hiyoko"
-  | "staff_owl"
-  | "staff_hen"
-  | "staff_sparrow"
-  | "player_penguin"
-  | `motion_${string}`;
+const parsed = new Map<string, Promise<GLTF>>();
 
-export function modelUrl(name: ModelName): string {
-  const key = Object.keys(urls).find((path) => path.endsWith(`/${name}.glb`));
-  const url = key === undefined ? undefined : urls[key];
-  if (url === undefined) {
-    throw new Error(`3D のモデルが見つかりません：${name}.glb`);
+/**
+ * 先に取ってある GLB を使う GLTFLoader。同じ URL は1回だけ読む
+ * （店の外観で先に読んだモデルを、店内でもう一度読み直さない）
+ */
+class PrefetchedGLTFLoader extends GLTFLoader {
+  override load(
+    url: string,
+    onLoad: (gltf: GLTF) => void,
+    _onProgress?: (event: ProgressEvent) => void,
+    onError?: (error: unknown) => void,
+  ): void {
+    let request = parsed.get(url);
+    if (request === undefined) {
+      request = fetchModelFile(url).then(
+        (buffer) =>
+          new Promise<GLTF>((resolve, reject) => {
+            releaseModelFile(url);
+            this.parse(buffer, LoaderUtils.extractUrlBase(url), resolve, reject);
+          }),
+      );
+      request.catch(() => parsed.delete(url));
+      parsed.set(url, request);
+    }
+    request.then(onLoad, (error: unknown) => onError?.(error));
   }
-  return url;
 }
 
 /** meshopt で圧縮した GLB を読めるようにする（テクスチャの WebP はそのまま読める） */
-function withMeshopt(loader: GLTFLoader): void {
+function withMeshopt(loader: PrefetchedGLTFLoader): void {
   loader.setMeshoptDecoder(MeshoptDecoder);
 }
 
 /** GLB を読み込む（読み終わるまで Suspense で待つ。同じ URL は1回だけ読む） */
 export function useModels(names: readonly ModelName[]): GLTF[] {
   return useLoader(
-    GLTFLoader,
+    PrefetchedGLTFLoader,
     names.map((name) => modelUrl(name)),
     withMeshopt,
   );
@@ -48,7 +56,7 @@ export function useModels(names: readonly ModelName[]): GLTF[] {
 /** 先に読み込み始めておく（店の外観を見ている間に、店内で使うモデルを読んでおく） */
 export function preloadModels(names: readonly ModelName[]): void {
   useLoader.preload(
-    GLTFLoader,
+    PrefetchedGLTFLoader,
     names.map((name) => modelUrl(name)),
     withMeshopt,
   );
