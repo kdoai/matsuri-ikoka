@@ -1,10 +1,5 @@
 import type { Itinerary } from "@matsuri-ikoka/schema";
-import {
-  type DocumentData,
-  type DocumentSnapshot,
-  type Firestore,
-  Timestamp,
-} from "firebase-admin/firestore";
+import type { DocumentData, DocumentSnapshot, Firestore } from "firebase-admin/firestore";
 import { newShareId } from "./memory";
 import {
   type ClaimResult,
@@ -42,8 +37,15 @@ function versionDocId(version: number): string {
   return String(version).padStart(6, "0");
 }
 
+/** 時刻は Date で書く（Firestore のタイムスタンプになり、TTL ポリシーが読める） */
+function at(ms: number): Date {
+  return new Date(ms);
+}
+
+/** 読んだタイムスタンプをミリ秒にする */
 function millis(value: unknown): number {
-  return value instanceof Timestamp ? value.toMillis() : 0;
+  const toMillis = (value as { toMillis?: unknown } | null)?.toMillis;
+  return typeof toMillis === "function" ? Number(toMillis.call(value)) : 0;
 }
 
 function tripOf(snapshot: DocumentSnapshot): StoredTrip | null {
@@ -98,21 +100,21 @@ export class FirestoreTripStorage implements TripStorage {
       const now = this.#now();
       const existing = this.#alive(tripOf(await tx.get(head)));
       const ownerUid = existing?.ownerUid ?? null;
-      const expiresAt = ownerUid === null ? Timestamp.fromMillis(now + SHARE_TTL_MS) : null;
+      const expiresAt = ownerUid === null ? at(now + SHARE_TTL_MS) : null;
       const newest = existing === null || itinerary.version >= existing.version;
       tx.set(head, {
         ownerUid,
         ...(newest
           ? { ...summarize(itinerary), version: itinerary.version }
           : { title: existing.title, date: existing.date, version: existing.version }),
-        createdAt: Timestamp.fromMillis(existing?.createdAt ?? now),
-        updatedAt: Timestamp.fromMillis(now),
+        createdAt: at(existing?.createdAt ?? now),
+        updatedAt: at(now),
         expiresAt,
       });
       tx.set(head.collection(VERSIONS).doc(versionDocId(itinerary.version)), {
         version: itinerary.version,
         itinerary: json,
-        savedAt: Timestamp.fromMillis(now),
+        savedAt: at(now),
         expiresAt,
       });
     });
@@ -246,8 +248,8 @@ export class FirestoreTripStorage implements TripStorage {
         ownerUid: uid,
         version: trip.version,
         itinerary: data.itinerary,
-        createdAt: Timestamp.fromMillis(now),
-        expiresAt: Timestamp.fromMillis(expiresAt),
+        createdAt: at(now),
+        expiresAt: at(expiresAt),
       });
     return { shareId, expiresAt };
   }
@@ -258,8 +260,8 @@ export class FirestoreTripStorage implements TripStorage {
       .doc(snapshot.id)
       .set({
         state: JSON.stringify(snapshot),
-        updatedAt: Timestamp.fromMillis(snapshot.updatedAt),
-        expiresAt: Timestamp.fromMillis(snapshot.updatedAt + SESSION_STATE_TTL_MS),
+        updatedAt: at(snapshot.updatedAt),
+        expiresAt: at(snapshot.updatedAt + SESSION_STATE_TTL_MS),
       });
   }
 

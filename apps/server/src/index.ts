@@ -22,7 +22,7 @@ import { createCandidateChecker } from "./tools/candidateCheck";
 import { createJmaWeather } from "./tools/weather";
 
 const config = readConfig(process.env);
-const account = createAccount(readAccountConfig(process.env));
+const account = await createAccount(readAccountConfig(process.env));
 console.info(
   JSON.stringify({ kind: "account", storage: account.storage.kind, login: account.web.enabled }),
 );

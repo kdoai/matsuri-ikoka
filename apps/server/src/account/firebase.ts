@@ -1,8 +1,4 @@
 import type { AuthConfig } from "@matsuri-ikoka/schema";
-import { type App, initializeApp } from "firebase-admin/app";
-import { getAuth } from "firebase-admin/auth";
-import { getFirestore } from "firebase-admin/firestore";
-import { FirestoreTripStorage } from "../storage/firestore";
 import { MemoryTripStorage } from "../storage/memory";
 import type { TripStorage } from "../storage/types";
 import type { IdTokenVerifier } from "./idToken";
@@ -10,6 +6,7 @@ import type { IdTokenVerifier } from "./idToken";
 // Firebase（ログインと Firestore）の設定。値は環境変数から読む（docs/spec/account.md）。
 // 鍵のファイルは使わない。Cloud Run では実行用のサービスアカウントの権限で、手元ではエミュレーターで動かす
 // （Admin SDK は FIRESTORE_EMULATOR_HOST と FIREBASE_AUTH_EMULATOR_HOST があれば、エミュレーターにつなぐ）。
+// Admin SDK は読み込みに時間がかかるので、Firestore かログインを使うときだけ読み込む（起動を遅くしない）。
 
 export interface AccountConfig {
   /** 保存先。memory はインスタンスのメモリ（再起動で消える） */
@@ -59,25 +56,30 @@ export interface Account {
   web: AuthConfig;
 }
 
-export function createAccount(config: AccountConfig): Account {
-  let app: App | null = null;
-  const firebase = () => {
-    app ??= initializeApp(config.projectId === null ? {} : { projectId: config.projectId });
-    return app;
-  };
+export async function createAccount(config: AccountConfig): Promise<Account> {
+  if (config.storage === "memory" && !config.web.enabled) {
+    return { storage: new MemoryTripStorage(), verifier: null, web: config.web };
+  }
+  const [{ initializeApp }, { getAuth }, { getFirestore }, { FirestoreTripStorage }] =
+    await Promise.all([
+      import("firebase-admin/app"),
+      import("firebase-admin/auth"),
+      import("firebase-admin/firestore"),
+      import("../storage/firestore"),
+    ]);
+  const app = initializeApp(config.projectId === null ? {} : { projectId: config.projectId });
   const storage =
     config.storage === "firestore"
       ? new FirestoreTripStorage(
-          config.databaseId === null
-            ? getFirestore(firebase())
-            : getFirestore(firebase(), config.databaseId),
+          config.databaseId === null ? getFirestore(app) : getFirestore(app, config.databaseId),
         )
       : new MemoryTripStorage();
+  const auth = getAuth(app);
   const verifier: IdTokenVerifier | null = config.web.enabled
     ? {
         async verify(token) {
           try {
-            return (await getAuth(firebase()).verifyIdToken(token)).uid;
+            return (await auth.verifyIdToken(token)).uid;
           } catch {
             return null;
           }
