@@ -5,8 +5,8 @@ import { defineConfig, devices } from "@playwright/test";
 // ブラウザは Playwright の Chromium を使う（pnpm exec playwright install chromium）。
 // 手元の Chrome で走らせるときは PLAYWRIGHT_CHANNEL=chrome を付ける。
 
-const port = Number(process.env.E2E_PORT ?? 5179);
-const serverPort = Number(process.env.E2E_SERVER_PORT ?? 8797);
+const port = Number(process.env.E2E_PORT ?? 35179);
+const serverPort = Number(process.env.E2E_SERVER_PORT ?? 38787);
 const channel = process.env.PLAYWRIGHT_CHANNEL || undefined;
 
 export default defineConfig({
@@ -35,23 +35,24 @@ export default defineConfig({
   ],
   webServer: [
     {
-      // 接客サーバー（mock）。記録の間隔を半分にして流す
+      // 接客サーバー（mock）。記録の間隔のとおりに流す（待ち時間の表示を確かめる）
       command: "pnpm --filter @matsuri-ikoka/server exec tsx src/index.ts",
       url: `http://localhost:${serverPort}/healthz`,
       env: {
         PORT: String(serverPort),
         MATSURI_AGENT_MODE: "mock",
-        MATSURI_REPLAY_SPEED: "2",
+        MATSURI_REPLAY_SPEED: "1",
       },
       stdout: "pipe",
-      reuseExistingServer: !process.env.CI,
+      // 同じポートで別のサーバーが動いていても使わない（別の版の画面やサーバーで確かめてしまうため）
+      reuseExistingServer: false,
       timeout: 60_000,
     },
     {
       command: `pnpm exec vite --port ${port} --strictPort`,
       url: `http://localhost:${port}`,
       env: { MATSURI_SERVER_ORIGIN: `http://localhost:${serverPort}` },
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: false,
       timeout: 60_000,
     },
   ],
