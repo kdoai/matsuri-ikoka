@@ -1,3 +1,4 @@
+import type { StaffId } from "@matsuri-ikoka/schema";
 import { useStore } from "zustand";
 import { createStore } from "zustand/vanilla";
 import type { Chick, Interaction } from "../scenes/controls";
@@ -16,6 +17,24 @@ export type PlayNotice =
   /** 従業員の区域の椅子をタップした */
   | { kind: "staffOnly" };
 
+/** おしゃべりの相手（コンシェルジュ以外のスタッフ） */
+export type ChatterStaff = Exclude<StaffId, "concierge">;
+
+/**
+ * 話しかけた相手が相談の窓口か。相談はコンシェルジュだけが受け、
+ * ほかのスタッフに話しかけたときは、相談ではなく短いおしゃべりをする
+ */
+export function isConsultDesk(staff: StaffId): staff is "concierge" {
+  return staff === "concierge";
+}
+
+/** スタッフのおしゃべり。line は、そのスタッフに話しかけた回数（0 から。文言は画面の辞書で選ぶ） */
+export interface Chatter {
+  seq: number;
+  staff: ChatterStaff;
+  line: number;
+}
+
 export interface PlayState {
   /** 3D の旅人がいるか（いなければ「話す」は入力欄へ） */
   active: boolean;
@@ -29,6 +48,10 @@ export interface PlayState {
   notice: { seq: number; value: PlayNotice } | null;
   /** 「使う」の頼みの通し番号 */
   interactSeq: number;
+  /** いちばん新しいおしゃべり */
+  chatter: Chatter | null;
+  /** スタッフごとの、話しかけた回数 */
+  chats: Partial<Record<ChatterStaff, number>>;
 }
 
 export interface PlayActions {
@@ -41,6 +64,8 @@ export interface PlayActions {
   findChick(chick: Chick): boolean;
   notify(value: PlayNotice): void;
   requestInteract(): void;
+  /** コンシェルジュ以外のスタッフに話しかけた。話しかけるたびに次のセリフにする */
+  chat(staff: ChatterStaff): void;
 }
 
 export type PlayStore = PlayState & PlayActions;
@@ -59,6 +84,8 @@ export function createPlayStore() {
     chicks: [],
     notice: null,
     interactSeq: 0,
+    chatter: null,
+    chats: {},
     setActive(active) {
       set({ active, ...(active ? {} : { near: null, sitting: false }) });
     },
@@ -85,6 +112,15 @@ export function createPlayStore() {
     },
     requestInteract() {
       set((state) => ({ interactSeq: state.interactSeq + 1 }));
+    },
+    chat(staff) {
+      set((state) => {
+        const line = state.chats[staff] ?? 0;
+        return {
+          chatter: { seq: (state.chatter?.seq ?? 0) + 1, staff, line },
+          chats: { ...state.chats, [staff]: line + 1 },
+        };
+      });
     },
   }));
 }
