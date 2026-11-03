@@ -1,4 +1,4 @@
-import { encodeSseEvent, type SseEvent } from "@matsuri-ikoka/schema";
+import { DoneEventSchema, encodeSseEvent, type SseEvent } from "@matsuri-ikoka/schema";
 import type { Context } from "hono";
 import { streamSSE } from "hono/streaming";
 import { AgentError, type EmitEvent } from "../agent/runner";
@@ -10,7 +10,8 @@ import type { ErrorBody } from "./errors";
 // - 15秒ごとに空のコメント行を送り、途中で接続が切られないようにする
 // - 進みのない時間（イベントもエージェントの動きもない時間）が上限を超えたら止め、途中までの結果のあとに timeout を送る。
 //   動き続けている相談は止めないが、全体の上限は別に持つ
-// - 最後に必ず done を1回送って閉じる
+// - 最後に必ず done を1回送って閉じる。相談の状態が形に合わなくても、done は落とさない
+// - 閉じた理由（done・利用者の切断・時間切れ・失敗）と時間を、1行のログに残す
 
 /** 進みのない時間の上限 */
 export const TURN_IDLE_MS = 90_000;
@@ -43,7 +44,7 @@ export function toErrorBody(error: unknown, signal: AbortSignal): ErrorBody | nu
 }
 
 export function doneEvent(session: Session): SseEvent {
-  return {
+  const event: SseEvent = {
     type: "done",
     data: {
       stage: session.stage,
@@ -51,6 +52,28 @@ export function doneEvent(session: Session): SseEvent {
       preferences: session.preferences,
     },
   };
+  if (DoneEventSchema.safeParse(event).success) return event;
+  // done が届かないと、画面は接続が切れたと受け取る。読み取れた条件は送らず、会話の状態だけを返す
+  console.error("[sse] done の形が正しくないので、条件を空にして送ります", {
+    stage: session.stage,
+  });
+  return {
+    type: "done",
+    data: { stage: session.stage, conditions: {}, preferences: session.preferences },
+  };
+}
+
+/** 返答の接続を閉じた理由 */
+export type TurnCloseReason = "done" | "client_closed" | "timeout" | "error";
+
+function closeReason(
+  body: ErrorBody | null,
+  signal: AbortSignal,
+  failed: boolean,
+): TurnCloseReason {
+  if (signal.aborted && signal.reason instanceof ClientClosedError) return "client_closed";
+  if (signal.aborted && signal.reason instanceof TurnTimeoutError) return "timeout";
+  return failed || body !== null ? "error" : "done";
 }
 
 export function streamTurn(
@@ -60,6 +83,7 @@ export function streamTurn(
   options: { idleMs?: number; maxMs?: number; heartbeatMs?: number } = {},
 ): Response {
   session.busy = true;
+  const startedAt = Date.now();
   return streamSSE(c, async (stream) => {
     const controller = new AbortController();
     const timeout = () => controller.abort(new TurnTimeoutError());
@@ -94,13 +118,18 @@ export function streamTurn(
         return;
       }
       progress();
+      sent += 1;
       write(() => stream.writeSSE(message));
     };
+    let sent = 0;
+    let body: ErrorBody | null = null;
+    let failed = false;
 
     try {
       await run(controller.signal, emit, progress);
     } catch (error) {
-      const body = toErrorBody(error, controller.signal);
+      failed = true;
+      body = toErrorBody(error, controller.signal);
       if (body !== null) emit({ type: "error", data: body });
     } finally {
       clearTimeout(idle);
@@ -109,6 +138,15 @@ export function streamTurn(
       emit(doneEvent(session));
       await writes;
       session.busy = false;
+      console.info(
+        JSON.stringify({
+          kind: "turn_stream",
+          reason: closeReason(body, controller.signal, failed),
+          ...(body === null ? {} : { code: body.code }),
+          events: sent,
+          elapsedMs: Date.now() - startedAt,
+        }),
+      );
     }
   });
 }

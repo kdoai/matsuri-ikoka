@@ -22,6 +22,11 @@ import { createCandidateChecker } from "./tools/candidateCheck";
 import { createLodgingService } from "./tools/lodging";
 import { createJmaWeather } from "./tools/weather";
 
+// 待たれていない Promise の失敗で、サーバーごと止めない。止まると、返答の途中の接続がすべて切れる
+process.on("unhandledRejection", (reason) => {
+  console.error("[process] 待たれていない Promise が失敗しました", reason);
+});
+
 const config = readConfig(process.env);
 const account = await createAccount(readAccountConfig(process.env));
 console.info(

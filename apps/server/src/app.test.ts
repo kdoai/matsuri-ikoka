@@ -9,7 +9,7 @@ import {
   type SseEvent,
 } from "@matsuri-ikoka/schema";
 import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { loadSampleConversations, ReplayAgentRunner } from "./agent/replayRunner";
 import { AgentError, type AgentRunner } from "./agent/runner";
 import { type AppDeps, createApp } from "./app";
@@ -337,6 +337,52 @@ describe("時間の上限と失敗", () => {
     const { events } = await readSse(await post("/api/chat", chat(session.id)));
 
     expect(events.map((e) => e.type)).toEqual(["done"]);
+  });
+  it("相談の状態が done の形に合わなくても、done を落とさずに送る", async () => {
+    const odd: AgentRunner = {
+      mode: "live",
+      async runTurn({ session }) {
+        // 形に合わない条件（日付ではない文字列）を持ってしまった
+        session.conditions = { origin: "" } as never;
+      },
+    };
+    const { post, session } = sessionWith(odd);
+
+    const { events } = await readSse(await post("/api/chat", chat(session.id)));
+
+    expect(events).toEqual([
+      {
+        type: "done",
+        data: { stage: "hearing", conditions: {}, preferences: DEFAULT_PREFERENCES },
+      },
+    ]);
+    expect(session.busy).toBe(false);
+  });
+
+  it("接続を閉じた理由をログに残す", async () => {
+    const logs: string[] = [];
+    const spy = vi.spyOn(console, "info").mockImplementation((line: unknown) => {
+      logs.push(String(line));
+    });
+    try {
+      const failing: AgentRunner = {
+        mode: "live",
+        async runTurn() {
+          throw new AgentError("upstream_unavailable", "いま混み合っています。", true);
+        },
+      };
+      const { post, session } = sessionWith(failing);
+      await readSse(await post("/api/chat", chat(session.id)));
+    } finally {
+      spy.mockRestore();
+    }
+    const closed = logs.map((line) => JSON.parse(line)).find((l) => l.kind === "turn_stream");
+    expect(closed).toMatchObject({
+      reason: "error",
+      code: "upstream_unavailable",
+      events: 2,
+    });
+    expect(closed.elapsedMs).toBeGreaterThanOrEqual(0);
   });
 });
 

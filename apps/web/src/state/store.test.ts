@@ -153,6 +153,85 @@ describe("ストア：通信のエラー", () => {
     ]);
   });
 
+  const doneMessage = {
+    event: "done",
+    data: JSON.stringify({
+      stage: "hearing",
+      conditions: {},
+      preferences: { party: "adults", spot: "auto", food: "stalls", move: "train" },
+    }),
+  };
+
+  it("画面の側の処理が失敗しても、接続が切れたことにせず、最後まで受け取る", async () => {
+    const store = makeStore(
+      failing(async (_request, onMessage) => {
+        onMessage({ event: "message.delta", data: JSON.stringify({ messageId: "m", text: "は" }) });
+        onMessage(doneMessage);
+      }),
+    );
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    let thrown = 0;
+    // 効果音のように、ストアの変化を受けて動く処理が投げる
+    const unsubscribe = store.subscribe((state, previous) => {
+      const replied = (messages: typeof state.messages) =>
+        messages.some((entry) => entry.kind === "concierge");
+      if (replied(state.messages) && !replied(previous.messages) && thrown === 0) {
+        thrown += 1;
+        throw new Error("boom");
+      }
+    });
+    try {
+      await store.getState().actions.enterShop();
+      await store.getState().actions.send("こんにちは");
+    } finally {
+      unsubscribe();
+      error.mockRestore();
+    }
+    expect(thrown).toBe(1);
+    expect(store.getState().session).toMatchObject({ streaming: false, sawDone: true });
+    expect(store.getState().messages.some((entry) => entry.kind === "error")).toBe(false);
+  });
+
+  it("done が届かないまま閉じたら、サーバーが応答するかで伝え方を変える", async () => {
+    const dropped = (reachable: boolean): ChatTransport => ({
+      ...failing(async (_request, onMessage) => {
+        onMessage({ event: "message.delta", data: JSON.stringify({ messageId: "m", text: "は" }) });
+      }),
+      checkServer: async () => reachable,
+    });
+
+    const alive = makeStore(dropped(true));
+    await alive.getState().actions.enterShop();
+    await alive.getState().actions.send("こんにちは");
+    expect(alive.getState().messages.at(-1)).toMatchObject({
+      kind: "error",
+      code: "connection_lost",
+      retryable: true,
+    });
+
+    const down = makeStore(dropped(false));
+    await down.getState().actions.enterShop();
+    await down.getState().actions.send("こんにちは");
+    expect(down.getState().messages.at(-1)).toMatchObject({
+      kind: "error",
+      code: "server_unreachable",
+      retryable: true,
+    });
+    expect(down.getState().session.streaming).toBe(false);
+  });
+
+  it("通信のエラーで切れたときも、サーバーが止まっていればそう伝える", async () => {
+    const store = makeStore({
+      ...failing(async () => {
+        throw new TransportError("connection_lost");
+      }),
+      checkServer: async () => false,
+    });
+    await store.getState().actions.enterShop();
+    await store.getState().actions.send("こんにちは");
+    expect(store.getState().messages.at(-1)).toMatchObject({ code: "server_unreachable" });
+  });
+
   it("接続が切れたら「もう一度送る」で同じ発言を送り直す", async () => {
     const chat = vi
       .fn<ChatTransport["chat"]>()

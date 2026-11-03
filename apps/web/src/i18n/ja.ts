@@ -375,7 +375,9 @@ export const ja = {
       tool_failed: "調べものがうまくいきませんでした。",
       upstream_unavailable: "外のサービスにつながりませんでした。",
       internal: "サーバーでうまくいかないことがありました。",
-      connection_lost: "接続が切れました。",
+      connection_lost: "返事の途中で通信が切れました。「もう一度送る」で送り直せます。",
+      server_unreachable:
+        "お店のサーバーにつながりません。少し待ってから「もう一度送る」を押してください。",
       invalid_event: "受け取った情報の形が正しくありませんでした。",
       session_lost:
         "前の相談が見つからなかったので、新しい相談を始めました。もう一度送ってください。",
