@@ -461,7 +461,7 @@ describe("旅程としおり", () => {
   });
 
   it("公式の出典のない「予定どおり」の旅程は、しおりにしない", async () => {
-    const itineraries = new ItineraryStore();
+    const { app, itineraries } = setup();
     const itinerary = fictionalItinerary();
     itinerary.verification = {
       status: "as_planned",
@@ -469,13 +469,12 @@ describe("旅程としおり", () => {
       sources: [{ url: "https://example.net/blog", checkedAt: "2026-08-03", confidence: "single" }],
     };
     itineraries.save(itinerary);
-    const { app } = setup({ itineraries });
 
     expect((await app.request(`/shiori/${itinerary.id}`)).status).toBe(409);
   });
 
   it("しおりは文字列をエスケープして埋め込む", async () => {
-    const itineraries = new ItineraryStore();
+    const { app, itineraries } = setup({ festivals: createFestivalStore([]) });
     const itinerary = fictionalItinerary();
     itinerary.title = "<script>alert(1)</script>";
     itinerary.verification = {
@@ -490,7 +489,6 @@ describe("旅程としおり", () => {
       ],
     };
     itineraries.save(itinerary);
-    const { app } = setup({ itineraries, festivals: createFestivalStore([]) });
 
     const page = await (await app.request(`/shiori/${itinerary.id}`)).text();
 

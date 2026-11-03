@@ -1,13 +1,19 @@
+import type { AuthConfig } from "@matsuri-ikoka/schema";
 import { Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
+import type { IdTokenVerifier } from "./account/idToken";
 import type { FestivalStore } from "./data/festivalStore";
 import { type ChatDeps, registerChatRoutes } from "./routes/chat";
 import { apiError } from "./routes/errors";
 import { registerFestivalRoutes } from "./routes/festivals";
 import { passcodeGuard } from "./routes/guard";
 import { registerItineraryRoutes } from "./routes/itinerary";
+import { registerTripRoutes } from "./routes/trips";
 import { registerWebRoutes } from "./routes/web";
+import { StoragePersistence } from "./session/persistence";
 import type { ItineraryStore } from "./session/sessionStore";
+import { MemoryTripStorage } from "./storage/memory";
+import type { TripStorage } from "./storage/types";
 
 export interface AppDeps extends ChatDeps {
   itineraries: ItineraryStore;
@@ -16,13 +22,26 @@ export interface AppDeps extends ChatDeps {
   accessPasscode: string | null;
   /** 画面のビルドの場所。あれば同じオリジンから配る */
   webDist?: string | null;
+  /** 旅程・共有・相談の途中の状態の保存先。省略するとメモリ */
+  storage?: TripStorage;
+  /** ログイン（Firebase の ID トークンの確認）。省略するとログインなし */
+  verifier?: IdTokenVerifier | null;
+  authConfig?: AuthConfig;
 }
 
 /** API の本文の大きさの上限（発言は1000字まで） */
 const API_BODY_LIMIT = 32 * 1024;
 
-export function createApp(deps: AppDeps) {
+export function createApp(appDeps: AppDeps) {
   const app = new Hono();
+  const persistence =
+    appDeps.persistence ??
+    new StoragePersistence({
+      storage: appDeps.storage ?? new MemoryTripStorage(),
+      itineraries: appDeps.itineraries,
+      sessions: appDeps.sessions,
+    });
+  const deps = { ...appDeps, persistence };
 
   app.use("*", async (c, next) => {
     await next();
@@ -43,7 +62,17 @@ export function createApp(deps: AppDeps) {
   registerChatRoutes(app, deps);
   registerFestivalRoutes(app, deps);
   registerItineraryRoutes(app, deps);
-  if (deps.webDist) registerWebRoutes(app, { webDist: deps.webDist });
+  registerTripRoutes(app, {
+    persistence,
+    verifier: deps.verifier ?? null,
+    authConfig: deps.authConfig ?? { enabled: false },
+  });
+  if (deps.webDist) {
+    registerWebRoutes(app, {
+      webDist: deps.webDist,
+      authDomain: deps.authConfig?.enabled ? deps.authConfig.authDomain : null,
+    });
+  }
 
   app.onError((error, c) => {
     console.error("[app] unhandled", error);

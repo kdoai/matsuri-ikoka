@@ -10,10 +10,11 @@ import {
 } from "@matsuri-ikoka/schema";
 
 // 相談の状態。会話の状態・聞き取れた条件・こだわり・候補・旅程は、サーバーが持つ。
-// メモリだけに置き、しばらく使われなかった相談は消す。
+// 返事を作る間はメモリに置き、しばらく使われなかった相談は消す。
+// 別のインスタンスでも相談を続けられるよう、途中の状態は保存の口にも残す（session/persistence.ts）。
 
 /** 使われなくなった相談を消すまでの時間 */
-const SESSION_IDLE_MS = 6 * 60 * 60 * 1000;
+export const SESSION_IDLE_MS = 6 * 60 * 60 * 1000;
 
 export interface Session {
   id: string;
@@ -78,13 +79,17 @@ export class SessionStore {
     this.#onRemove(session);
   }
 
-  create(init: Partial<Pick<Session, "preferences" | "replay">> = {}): Session {
+  /** 上限なら、返事を作っている途中ではない、いちばん長く使われていない相談から消す */
+  #makeRoom(): void {
     this.sweep();
-    // 上限なら、返事を作っている途中ではない、いちばん長く使われていない相談から消す
     for (const oldest of this.#sessions.values()) {
       if (this.#sessions.size < this.#max) break;
       if (!oldest.busy) this.#remove(oldest);
     }
+  }
+
+  create(init: Partial<Pick<Session, "preferences" | "replay">> = {}): Session {
+    this.#makeRoom();
     const now = this.#now();
     const session: Session = {
       id: randomId("s"),
@@ -99,6 +104,38 @@ export class SessionStore {
       weather: new Map(),
       agentSessionId: null,
       replay: init.replay ?? null,
+      busy: false,
+    };
+    this.#sessions.set(session.id, session);
+    return session;
+  }
+
+  /**
+   * 保存の口に残した途中の状態から、相談をメモリに戻す。メモリにもうあれば、それを返す。
+   * 天気と Agent SDK の会話は戻さない（エージェントは、相談の状態の要約から続ける）
+   */
+  restore(
+    saved: Pick<
+      Session,
+      | "id"
+      | "createdAt"
+      | "stage"
+      | "conditions"
+      | "preferences"
+      | "candidates"
+      | "selectedFestivalId"
+      | "itineraryId"
+      | "replay"
+    >,
+  ): Session {
+    const existing = this.get(saved.id);
+    if (existing !== undefined) return existing;
+    this.#makeRoom();
+    const session: Session = {
+      ...saved,
+      lastActiveAt: this.#now(),
+      weather: new Map(),
+      agentSessionId: null,
       busy: false,
     };
     this.#sessions.set(session.id, session);
@@ -129,7 +166,8 @@ export class SessionStore {
 }
 
 /**
- * 保存した旅程。しおりの URL から読む。版ごとではなく、最新の版だけを持つ。
+ * 相談で組んだ旅程の、このインスタンスの手元の写し。ツールとエージェントはここを読み書きする。
+ * 版ごとではなく、最新の版だけを持つ。保存したら購読しているもの（保存の口に残す処理）に知らせる。
  * 最後に保存してから30日で消し、数の上限を超えたら古いものから消す
  */
 export class ItineraryStore {
@@ -138,6 +176,7 @@ export class ItineraryStore {
   readonly #now: () => number;
   readonly #ttlMs: number;
   readonly #max: number;
+  readonly #listeners: ((itinerary: Itinerary) => void)[] = [];
 
   constructor(options: { now?: () => number; ttlMs?: number; max?: number } = {}) {
     this.#now = options.now ?? Date.now;
@@ -149,7 +188,18 @@ export class ItineraryStore {
     return this.#itineraries.size;
   }
 
+  /** 旅程を保存するたびに呼ぶ関数を足す */
+  onSave(listener: (itinerary: Itinerary) => void): void {
+    this.#listeners.push(listener);
+  }
+
   save(itinerary: Itinerary): void {
+    this.remember(itinerary);
+    for (const listener of this.#listeners) listener(itinerary);
+  }
+
+  /** 保存の口から読んだ旅程を、手元の写しに置く（購読しているものには知らせない） */
+  remember(itinerary: Itinerary): void {
     this.#itineraries.delete(itinerary.id);
     this.#itineraries.set(itinerary.id, { itinerary, savedAt: this.#now() });
     this.sweep();

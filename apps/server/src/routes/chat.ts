@@ -8,6 +8,7 @@ import type { Context, Hono } from "hono";
 import type { z } from "zod";
 import { preferencesLabel } from "../agent/briefing";
 import type { AgentRunner } from "../agent/runner";
+import type { StoragePersistence } from "../session/persistence";
 import type { Session, SessionStore } from "../session/sessionStore";
 import { apiError } from "./errors";
 import type { ConcurrencyLimiter, DailyLimiter } from "./guard";
@@ -20,6 +21,8 @@ import { streamTurn } from "./turnStream";
 export interface ChatDeps {
   runner: AgentRunner & { sampleFor?(requested?: string): string | null };
   sessions: SessionStore;
+  /** 相談の途中の状態を保存の口に残し、別のインスタンスでも続けられるようにする */
+  persistence?: StoragePersistence;
   /** 1日の相談の回数の上限（全体） */
   limiter: DailyLimiter;
   /** 1日の相談の回数の上限（IP ごと） */
@@ -94,17 +97,27 @@ function openSession(
   return { session, release };
 }
 
-/** 返事を作り終えたら（失敗・時間切れでも）、同時に返事を作る枠を返す */
+/**
+ * 返事を作り終えたら（失敗・時間切れでも）、同時に返事を作る枠を返し、相談の途中の状態を残す
+ */
 function releasing(
   release: () => void,
   run: Parameters<typeof streamTurn>[2],
+  persist: () => Promise<void> = async () => {},
 ): Parameters<typeof streamTurn>[2] {
   return async (signal, emit, progress) => {
     try {
       await run(signal, emit, progress);
     } finally {
       release();
+      await persist();
     }
+  };
+}
+
+function persistOf(deps: ChatDeps, session: Session): () => Promise<void> {
+  return async () => {
+    await deps.persistence?.saveSession(session);
   };
 }
 
@@ -130,6 +143,7 @@ export function registerChatRoutes(app: Hono, deps: ChatDeps) {
       replay = { sampleId, nextTurn: 0 };
     }
     const session = deps.sessions.create({ replay });
+    await deps.persistence?.saveSession(session);
     return c.json({ sessionId: session.id } satisfies SessionResponse, 201);
   });
 
@@ -140,6 +154,8 @@ export function registerChatRoutes(app: Hono, deps: ChatDeps) {
     } catch {
       return badRequest(c);
     }
+    // 別のインスタンスで始めた相談なら、保存の口から戻す
+    await deps.persistence?.load(request.sessionId);
     const opened = openSession(c, deps, request.sessionId);
     if (opened instanceof Response) return opened;
     const { session, release } = opened;
@@ -148,11 +164,20 @@ export function registerChatRoutes(app: Hono, deps: ChatDeps) {
     return streamTurn(
       c,
       session,
-      releasing(release, (signal, emit, progress) =>
-        deps.runner.runTurn(
-          { session, message: request.message, preferences: request.preferences, signal, progress },
-          emit,
-        ),
+      releasing(
+        release,
+        (signal, emit, progress) =>
+          deps.runner.runTurn(
+            {
+              session,
+              message: request.message,
+              preferences: request.preferences,
+              signal,
+              progress,
+            },
+            emit,
+          ),
+        persistOf(deps, session),
       ),
       timing,
     );
@@ -165,6 +190,7 @@ export function registerChatRoutes(app: Hono, deps: ChatDeps) {
     } catch {
       return badRequest(c);
     }
+    await deps.persistence?.load(request.sessionId);
     const existing = deps.sessions.get(request.sessionId);
     // 旅程があるときだけ旅程係を動かす。記録の再生（mock）では、こだわりを変えるだけにする
     const replan = existing?.itineraryId != null && deps.runner.mode === "live";
@@ -182,6 +208,7 @@ export function registerChatRoutes(app: Hono, deps: ChatDeps) {
         );
       }
       existing.preferences = request.preferences;
+      await deps.persistence?.saveSession(existing);
       return streamTurn(c, existing, async () => {}, timing);
     }
     const opened = openSession(c, deps, request.sessionId);
@@ -192,11 +219,14 @@ export function registerChatRoutes(app: Hono, deps: ChatDeps) {
     return streamTurn(
       c,
       session,
-      releasing(release, (signal, emit, progress) =>
-        deps.runner.runTurn(
-          { session, message, preferences: request.preferences, signal, progress },
-          emit,
-        ),
+      releasing(
+        release,
+        (signal, emit, progress) =>
+          deps.runner.runTurn(
+            { session, message, preferences: request.preferences, signal, progress },
+            emit,
+          ),
+        persistOf(deps, session),
       ),
       timing,
     );
