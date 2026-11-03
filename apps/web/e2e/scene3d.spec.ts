@@ -1,5 +1,13 @@
 import { expect, type Page, test } from "@playwright/test";
-import { blockMapTiles, enterShop, sendSampleMessage, snap, waitForReply } from "./helpers";
+import {
+  blockMapTiles,
+  enterShop,
+  recordTexts,
+  seenTexts,
+  sendSampleMessage,
+  snap,
+  waitForReply,
+} from "./helpers";
 
 // 3D の店：外観から入店し、店内でスタッフがストアの状態どおりに動く。
 // WebGL が使えないとき・動きを減らす設定のときは、2D の見取り図に落ちる。
@@ -27,15 +35,18 @@ test("店の外観を見せてから入店し、店内のスタッフが持ち�
   await page.waitForTimeout(5_000);
   await snap(page, info, "41-shop-3d");
 
+  // 吹き出しは作業の間だけ出るので、出たときに書き留めて、返答のあとで確かめる
+  const bubble = 'p[data-bubble="researcher"]';
+  const dialogue = '[data-testid="dialogue"]';
+  const activity = '[data-testid="staff-activity"]';
+  await recordTexts(page, [bubble, dialogue, activity]);
   await sendSampleMessage(page, 0);
-  // 3D の吹き出しと同じ文は、会話の窓と店内のようすでも文字で読める（作業の間だけ出るので、同時に待つ）
-  await Promise.all([
-    expect(page.locator('p[data-bubble="researcher"]')).toContainText("祭りを探しています"),
-    expect(page.getByTestId("dialogue")).toContainText("祭りを探しています"),
-    expect(page.getByTestId("staff-activity")).toContainText("祭りを探しています"),
-  ]);
   await snap(page, info, "42-shop-3d-working");
   await waitForReply(page);
+  // 3D の吹き出しと同じ文は、会話の窓と店内のようすでも文字で読める
+  for (const selector of [bubble, dialogue, activity]) {
+    expect((await seenTexts(page, selector)).join()).toContain("祭りを探しています");
+  }
 });
 
 /** 旅人の床の上の位置（店の要素の data-player） */

@@ -6,7 +6,9 @@ import {
   openLog,
   openPanel,
   openPreferences,
+  recordTexts,
   SAMPLE,
+  seenTexts,
   sendSampleMessage,
   snap,
   tabTo,
@@ -20,6 +22,8 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("相談からしおりまで、画面で通せる", async ({ page }, info) => {
+  // 記録を記録の間隔のとおりに再生するので、相談の4回の返答だけで20秒ほどかかる
+  test.setTimeout(150_000);
   await page.goto("/?scene=2d");
   await expect(page.getByRole("heading", { name: "MATSURI IKOKA" })).toBeVisible();
   await snap(page, info, "00-storefront");
@@ -157,39 +161,50 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   await closeLog(page);
 });
 
-test("待ち時間には豆知識係が祭りの話と出典を出し、クイズに答えられる", async ({ page }, info) => {
+test("待ち時間には豆知識係が祭りの話と出典を出し、送る・止めるができ、クイズに答えられる", async ({
+  page,
+}, info) => {
   test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
   await enterShop(page);
+  const staffLine = '[data-testid="waiting-staff"]';
+  const elapsedLine = '[data-testid="waiting-elapsed"]';
+  const talkCard = '[data-testid="trivia-card"]';
+  await recordTexts(page, [staffLine, elapsedLine, talkCard]);
   await sendSampleMessage(page, 0);
-  // 祭り調査係が探している間も、だれが何をしているかと経過時間を出す
-  const guide = page.getByTestId("waiting-guide");
-  await expect(guide).toBeVisible();
-  await expect(page.getByTestId("waiting-staff")).toContainText("祭り調査係");
-  await expect(page.getByTestId("waiting-elapsed")).toContainText("経過");
-  await waitForReply(page);
 
-  await page
-    .getByTestId("candidate-card")
-    .first()
-    .getByRole("button", { name: "この祭りにする" })
-    .click();
-  // 候補が出たあとは、候補の祭りのデータの話を、出典つきで話す
-  const talk = page.getByTestId("trivia-card");
+  // 最初の返答（クイズは出ない）の間に、次の話へ送り、止める
+  const guide = page.getByTestId("waiting-guide");
+  const talk = page.getByTestId("waiting-talk");
   await expect(talk).toBeVisible();
-  await expect(talk).toContainText("鈴鳴灯籠まつりより");
-  await expect(talk.getByRole("link")).toHaveAttribute("href", /example\.com/);
-  const first = await page.getByTestId("waiting-talk").textContent();
+  const first = await talk.textContent();
   await guide.getByRole("button", { name: "次の話" }).click();
-  await expect(page.getByTestId("waiting-talk")).not.toHaveText(first ?? "");
   await guide.getByRole("button", { name: "止める" }).click();
   await expect(guide.getByRole("button", { name: "続ける" })).toHaveAttribute(
     "aria-pressed",
     "true",
   );
   await snap(page, info, "10-waiting-guide");
+  await waitForReply(page);
+  const talks = await seenTexts(page, talkCard);
+  // 送ると、別の話に移る
+  expect(talks.length).toBeGreaterThanOrEqual(2);
+  expect(talks.some((text) => !text.includes(first ?? ""))).toBe(true);
+  // 祭り調査係が探している間も、だれが何をしているかと経過時間を出す
+  expect((await seenTexts(page, staffLine)).join()).toContain("祭り調査係");
+  expect((await seenTexts(page, elapsedLine)).join()).toContain("経過");
+  // 候補が出る前は、読み込んである祭りの全体から、出典つきで話す
+  expect(talks.join()).toMatch(/(鈴鳴灯籠まつり|風見町 盆おどり)より/);
+  expect(talks.join()).toContain("example.com");
 
+  await page
+    .getByTestId("candidate-card")
+    .first()
+    .getByRole("button", { name: "この祭りにする" })
+    .click();
+  // 長い返答ではクイズが出る。クイズが出ている間も、だれが何をしているかは出し続ける
   const quiz = page.getByTestId("quiz-card");
   await expect(quiz).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByTestId("waiting-staff")).toBeVisible();
   await quiz.getByRole("button").first().click();
   await expect(quiz.getByRole("status")).toHaveText(/正解|おしい/);
   await snap(page, info, "11-quiz");
@@ -223,6 +238,7 @@ test("キーボードだけで、候補を閉じ、タブを移れる", async ({
 });
 
 test("キーボードだけで、入店から相談・候補選び・しおりまで進める", async ({ page }, info) => {
+  test.setTimeout(150_000);
   test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
   await page.goto("/?scene=2d");
   await tabTo(page, page.getByRole("button", { name: "入店する" }));
