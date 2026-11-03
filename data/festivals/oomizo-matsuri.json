@@ -1,0 +1,284 @@
+{
+  "id": "oomizo-matsuri",
+  "name": { "ja": "大溝祭", "en": "Oomizo Matsuri" },
+  "category": "float",
+  "municipalities": [{ "prefecture": "滋賀県", "name": "高島市" }],
+  "venue": { "name": "日吉神社（勝野）と大溝の旧城下町", "lat": 35.2923, "lng": 136.0047 },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan"],
+  "highlights": [
+    "宵山の夜、提灯をともした5基が大溝港にそろい、灯りが琵琶湖に映る",
+    "巴組の曳山は、柱を上下させて屋根ごと上げ下げできる",
+    "本祭の神輿の「馬場三回返し」と、花山からの紅白の餅まき",
+    "夕方、神輿かきが石段を担ぎ上げて神社へ戻す還御"
+  ],
+  "trivia": [
+    {
+      "text": "大溝藩に入った分部光信が、前の領地の伊勢上野の曳山祭を移したと伝わる",
+      "source": {
+        "url": "https://oomizomatsuri.jp/about.html",
+        "title": "大溝祭オフィシャルサイト 大溝祭とは",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "宝永元年（1704）からの祭りの帳簿が残り、遅くとも江戸中期には行われていた",
+      "source": {
+        "url": "https://oomizomatsuri.jp/about.html",
+        "title": "大溝祭オフィシャルサイト 大溝祭とは",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "享保5年（1720）の記録では、すすきを飾って担ぎ回す素朴な山だった",
+      "source": {
+        "url": "https://oomizomatsuri.jp/about.html",
+        "title": "大溝祭オフィシャルサイト 大溝祭とは",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "白木造りだった5基の曳山は、明治39年ごろに金箔や漆で飾られた",
+      "source": {
+        "url": "https://oomizomatsuri.jp/about.html",
+        "title": "大溝祭オフィシャルサイト 大溝祭とは",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": ["本祭の日は気温が上がるので、熱中症に十分気をつける"],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://oomizomatsuri.jp/root.html",
+        "title": "大溝祭オフィシャルサイト 曳山巡行図（令和8年 例大祭）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-05-03",
+      "start": "18:30",
+      "end": "21:30",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績（宵山）。18:30 勇組山蔵付近に集合、18:45 花山を先頭に5基が出発、20:40 近江高島駅前、21:30ごろ 寶組山蔵前で解散。例年、18:00ごろから日吉神社で宵宮の神事",
+      "sources": [
+        {
+          "url": "https://oomizomatsuri.jp/root.html",
+          "title": "大溝祭オフィシャルサイト 曳山巡行図（令和8年5月3日 宵山 巡行予定時刻）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://oomizomatsuri.jp/midokoro.html",
+          "title": "大溝祭オフィシャルサイト 見どころ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-05-04",
+      "start": "09:40",
+      "end": "15:10",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績（本祭）。9:40 総門前に集合、10:30〜13:00 日吉神社に曳山が並ぶ。例年、正午ごろ神輿渡御と餅まき。13:00 神社を出て町内を巡行し、15:10ごろ 三矢デンキ前で解散。例年、16:30ごろ神輿の還御",
+      "sources": [
+        {
+          "url": "https://oomizomatsuri.jp/root.html",
+          "title": "大溝祭オフィシャルサイト 曳山巡行図（令和8年5月4日 例大祭 巡行予定時刻）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://oomizomatsuri.jp/midokoro.html",
+          "title": "大溝祭オフィシャルサイト 見どころ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-05-03",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年5月3日の宵宮（2027年の発表はまだない）。2026年は18:30〜21:30に宵山の曳山が巡行した",
+      "sources": [
+        {
+          "url": "https://oomizomatsuri.jp/about.html",
+          "title": "大溝祭オフィシャルサイト 大溝祭とは（現在は5月3日 宵宮、4日 本祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://takashima-kanko.jp/spot/2018/06/post_137.html",
+          "title": "びわ湖高島観光ガイド 大溝祭（5月3日 宵宮祭、4日 本祭、5日 後宴祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-05-04",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年5月4日の本祭（2027年の発表はまだない）。例年、10:00ごろ総門前に曳山がそろい、日吉神社へ向かう",
+      "sources": [
+        {
+          "url": "https://oomizomatsuri.jp/about.html",
+          "title": "大溝祭オフィシャルサイト 大溝祭とは（現在は5月3日 宵宮、4日 本祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://takashima-kanko.jp/spot/2018/06/post_137.html",
+          "title": "びわ湖高島観光ガイド 大溝祭（5月3日 宵宮祭、4日 本祭、5日 後宴祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 近江高島駅",
+        "walkMinutes": [10, 15],
+        "note": "日吉神社まで徒歩約10分。曳山が巡る旧城下町へは公式サイトで徒歩約4分"
+      }
+    ],
+    "fromHubs": [
+      { "hub": "京都駅", "minutes": [35, 45], "route": "JR湖西線の新快速、乗り換えなし" }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://oomizomatsuri.jp/access.html",
+        "title": "大溝祭オフィシャルサイト 交通アクセスと駐車場（京都駅から新快速で約35分、無料の勝野市営駐車場と有料の駐車場）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://takashima-kanko.jp/spot/2018/06/post_91.html",
+        "title": "びわ湖高島観光ガイド 日吉神社（勝野）（JR近江高島駅から徒歩約10分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": { "stalls": "unknown", "local": [] },
+  "nearby": [
+    {
+      "id": "oomizo-jinya-somon",
+      "name": "大溝陣屋総門（大溝まち並み案内処）",
+      "kind": "sightseeing",
+      "summary": "大溝陣屋の正門で、陣屋の建物でただ1つ残る。中は町並みの案内所で、地域の文化財の展示や大溝城をCGで再現した約15分の映像がある。祭りの日は無料休憩所になる（2026年の巡行図）",
+      "location": { "lat": 35.2947, "lng": 136.0113 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "10:00", "close": "17:00" },
+      "closedDays": ["wed"],
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://takashima-kanko.jp/spot/2024/04/post_327.html",
+          "title": "びわ湖高島観光ガイド 重要文化的景観拠点施設「大溝陣屋総門」（水曜定休）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://oomizo.shiga.jp/",
+          "title": "大溝の水辺景観まちづくり協議会（総門 10:00-17:00、水曜休館）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "takashima-village",
+      "name": "高島びれっじ",
+      "kind": "food",
+      "summary": "旧城下町の築150年の商家を直した建物群で、食事処・パン・スイーツ・カフェ・体験工房が入る。休みは店ごとに違う",
+      "location": { "lat": 35.2965, "lng": 136.0122 },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://takashima-kanko.jp/spot/2018/06/post_211.html",
+          "title": "びわ湖高島観光ガイド 高島びれっじ（JR近江高島駅から徒歩約5分）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://oomizomatsuri.jp/",
+      "title": "大溝祭オフィシャルサイト（大溝祭保存会）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://oomizomatsuri.jp/about.html",
+      "title": "大溝祭オフィシャルサイト 大溝祭とは（1983年に滋賀県の選択無形民俗文化財）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://oomizomatsuri.jp/hikiyama.html",
+      "title": "大溝祭オフィシャルサイト 曳山紹介（五基の曳山）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://takashima-kanko.jp/spot/2018/06/post_137.html",
+      "title": "びわ湖高島観光ガイド 大溝祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.pref.shiga.lg.jp/sa00/24229.html",
+      "title": "滋賀県 令和8年5月広報レポート 湖西地域唯一の曳山祭り「大溝祭」",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、宵山・本祭の巡行の時刻",
+    "雨の日の扱い",
+    "宵宮の神事の時刻（公式サイトは18:00ごろ、観光協会は19:00に二百灯を奉納と書き、食い違う）",
+    "5月5日の後宴祭の内容と、外から来た人が見られるか",
+    "交通規制",
+    "服装・持ち物・危険度・撮影の決まり",
+    "一般の人が曳山を曳くなど加われるか",
+    "屋台や振る舞いの有無",
+    "高島びれっじの各店の営業時間と定休日（店ごとに違う）。位置は近くの駐車場の地図上の位置で代用",
+    "大阪方面からの所要時間"
+  ]
+}

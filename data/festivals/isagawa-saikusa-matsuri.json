@@ -1,0 +1,284 @@
+{
+  "id": "isagawa-saikusa-matsuri",
+  "name": {
+    "ja": "三枝祭",
+    "en": "Saikusa Festival (Lily Festival)"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "奈良県",
+      "name": "奈良市"
+    }
+  ],
+  "venue": {
+    "name": "率川神社",
+    "lat": 34.6813,
+    "lng": 135.8257
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu"],
+  "highlights": [
+    "三輪山の笹ゆりで飾った酒樽を神前に供える、ゆりまつりと呼ばれる祭典",
+    "巫女4人が笹ゆりを手に神楽「うま酒みわの舞」を舞う",
+    "七媛女・ゆり姫・稚児の行列が奈良の町を約2時間めぐる",
+    "神饌を柏の葉のふたの折櫃に納める、古い形の供え方"
+  ],
+  "trivia": [
+    {
+      "text": "701年の大宝令で国の祭りと定められ、大神神社の鎮花祭とともに疫病を鎮めることを祈ってきた",
+      "source": {
+        "url": "https://isagawa-jinja.jp/omatsuri/saikusa/",
+        "title": "率川神社 三枝祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "祭神が三輪山のふもとの狭井川のほとりに住み、笹ゆりが咲いていたことから、酒樽を笹ゆりで飾る",
+      "source": {
+        "url": "https://isagawa-jinja.jp/omatsuri/saikusa/",
+        "title": "率川神社 三枝祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "平安時代には宮中から使いが来たが、いつしか途絶え、1881年に古い形で復活した",
+      "source": {
+        "url": "https://isagawa-jinja.jp/omatsuri/saikusa/",
+        "title": "率川神社 三枝祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "黒酒と白酒を「罇」「缶」と呼ぶ酒樽に盛り、まわりを三輪山の百合で飾って供える",
+      "source": {
+        "url": "https://isagawa-jinja.jp/omatsuri/saikusa/",
+        "title": "率川神社 三枝祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": []
+  },
+  "occurrences": [
+    {
+      "date": "2026-06-17",
+      "start": "10:30",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績（神社のお知らせ、6月5日掲載）。10:30 三枝祭の祭典、13:15 七媛女・ゆり姫・稚児行列の安全祈願祭、続いて市内を約2時間巡行。前日16日は午前にささゆり奉献神事、15:00 宵宮祭。翌18日10:00 後宴祭",
+      "sources": [
+        {
+          "url": "https://isagawa-jinja.jp/info/matsuri/saikusanomatsuri-2026/",
+          "title": "率川神社 三枝祭（2026年6月16日〜18日の日程）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar0729e595315/data.html",
+          "title": "ウォーカープラス 率川神社 三枝祭（2026年6月16日〜18日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-06-17",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "例祭日は6月17日（2027年の発表はまだない）。神社の案内では、例年6月16日15:00 宵宮祭、17日10:30 例祭、18日10:00 後宴祭。行列の時刻は年ごとの発表を待つ",
+      "sources": [
+        {
+          "url": "https://isagawa-jinja.jp/omatsuri/saikusa/",
+          "title": "率川神社 三枝祭（宵宮祭6月16日、例祭日6月17日、後宴祭6月18日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "近鉄 近鉄奈良駅",
+        "walkMinutes": [7, 12],
+        "note": "地下の4番出口から"
+      },
+      {
+        "name": "JR 奈良駅",
+        "walkMinutes": [7, 12]
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "京都駅",
+        "minutes": [35, 45],
+        "route": "近鉄の特急で近鉄奈良駅まで"
+      }
+    ],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://isagawa-jinja.jp/access/",
+        "title": "率川神社 アクセス（近鉄奈良駅4番出口・JR奈良駅から徒歩約7分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kintetsu.co.jp/nara/naraha/",
+        "title": "近畿日本鉄道 わたしは、奈良派。（京都駅から近鉄奈良まで特急で約35分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "gangoji",
+      "name": "元興寺",
+      "kind": "sightseeing",
+      "summary": "南都七大寺の1つで、世界遺産。極楽堂と禅室が国宝で、法輪館に奈良時代の国宝の小さな五重塔がある。近鉄奈良駅から徒歩約15分。休みはない",
+      "location": {
+        "lat": 34.678,
+        "lng": 135.8312
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": [],
+      "price": "大人700円（秋の特別展の期間は800円）",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://narashikanko.or.jp/spot/detail_10027.html",
+          "title": "奈良市観光協会 世界遺産 元興寺",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "naramachi-koshi-no-ie",
+      "name": "ならまち格子の家",
+      "kind": "rest",
+      "summary": "江戸末期から明治の町家の暮らしを再現した無料の施設で、ならまちの案内所と休憩所を兼ねる。月曜休み（祝日なら翌日休み）、祝日の翌日も休み（土日祝は開く）、年末年始も休み",
+      "location": {
+        "lat": 34.6752,
+        "lng": 135.8308
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": ["mon"],
+      "price": "無料",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://narashikanko.or.jp/spot/detail_10101.html",
+          "title": "奈良市観光協会 ならまち格子の家",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "nakatanidou",
+      "name": "中谷堂",
+      "kind": "food",
+      "summary": "店先の高速餅つきで作る、できたてのよもぎ餅の店。上北山村に伝わる、もち米が熱いうちに手早くつく作り方を受け継ぐ。売り切れしだい早く閉めることがある",
+      "location": {
+        "lat": 34.6817,
+        "lng": 135.8286
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "19:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.nakatanidou.jp/shop/",
+          "title": "中谷堂 店舗情報（10:00〜19:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.nakatanidou.jp/",
+          "title": "中谷堂",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://isagawa-jinja.jp/omatsuri/saikusa/",
+      "title": "率川神社 三枝祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://isagawa-jinja.jp/info/matsuri/saikusanomatsuri-2026/",
+      "title": "率川神社 三枝祭（2026年）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20002222",
+      "title": "るるぶ&more. 三枝祭（ゆりまつり）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    },
+    {
+      "url": "https://summer.walkerplus.com/odekake/detail_e/ar0729e595315/data.html",
+      "title": "ウォーカープラス 率川神社 三枝祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、行列の出発の時刻",
+    "行列の巡行コース（市内を約2時間めぐることだけが分かっている）",
+    "雨の日の扱い",
+    "見学の場所と、境内に入れる人数などの見学の決まり",
+    "撮影・服装・持ち物についての案内",
+    "七媛女・ゆり姫・稚児に一般の人が加われるか、申し込みの方法",
+    "駐車場の有無（旅行情報サイトに駐車場なしとあるが、神社の案内で確かめられない）",
+    "大阪方面からの所要時間（公式の数字が見つからない）",
+    "行列の人数",
+    "中谷堂の定休日とよもぎ餅の値段"
+  ]
+}

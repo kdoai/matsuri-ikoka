@@ -1,0 +1,257 @@
+{
+  "id": "seiryoji-otaimatsu",
+  "name": { "ja": "涅槃会及びお松明式", "en": "Seiryoji Otaimatsu Torch Ceremony" },
+  "category": "fire",
+  "municipalities": [{ "prefecture": "京都府", "name": "京都市右京区" }],
+  "venue": { "name": "清凉寺（嵯峨釈迦堂）", "lat": 35.023, "lng": 135.6739 },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "3基の大松明に火が入り、夜の境内に炎が立ちのぼる",
+    "夕方、境内の狂言堂で嵯峨大念仏狂言のお松明公演が見られる",
+    "狂言が終わると、お松明のおねりを経て点火へ進む",
+    "国宝の釈迦如来を本尊とする嵯峨釈迦堂の涅槃会の行事"
+  ],
+  "trivia": [
+    {
+      "text": "釈迦が亡くなった陰暦2月15日にちなみ、毎年3月15日の涅槃会にあわせて行う",
+      "source": {
+        "url": "http://www.sagakyogen.info/event.html",
+        "title": "嵯峨大念佛狂言保存会 定期公演のご案内（清凉寺お松明式）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "大松明3基をともすのは、釈迦を荼毘に付したときの様子を表すとされる",
+      "source": {
+        "url": "https://ja.kyoto.travel/event/single.php?event_id=7500",
+        "title": "京都観光Navi 2026年 涅槃会・涅槃図公開一覧",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "嵯峨大念仏狂言は、鎌倉時代の末に円覚十万上人が始めたと伝わる仮面の無言劇",
+      "source": {
+        "url": "https://online.bunka.go.jp/heritages/detail/203783",
+        "title": "文化遺産オンライン 嵯峨大念仏狂言",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "狂言は後を継ぐ人が育たず1964年に途絶えたが、1975年に復活した",
+      "source": {
+        "url": "https://online.bunka.go.jp/heritages/detail/203783",
+        "title": "文化遺産オンライン 嵯峨大念仏狂言",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": []
+  },
+  "occurrences": [
+    {
+      "date": "2026-03-15",
+      "start": "20:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績（京都市観光協会の案内）。15:30 嵯峨大念仏狂言のお松明公演（演目は土蜘蛛ほか）、20:00ごろ お松明式（予定と案内）",
+      "sources": [
+        {
+          "url": "https://ja.kyoto.travel/event/single.php?event_id=7500",
+          "title": "京都観光Navi 2026年 涅槃会・涅槃図公開一覧（清凉寺 3月15日、お松明式 20:00頃〜）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-03-15",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年3月15日（2027年の発表はまだない）。寺の年中行事では、涅槃会及びお松明式は午後8時。例年、夕方に狂言のお松明公演があり、その後におねりと点火がある",
+      "sources": [
+        {
+          "url": "http://www.seiryoji.or.jp/event.html",
+          "title": "清凉寺 年中行事（3月15日 涅槃会及びお松明式 午後8時）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "http://www.sagakyogen.info/event.html",
+          "title": "嵯峨大念佛狂言保存会 定期公演のご案内（毎年3月15日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 嵯峨嵐山駅",
+        "walkMinutes": [15, 20],
+        "note": "嵯峨野線。狂言保存会の案内で西北西へ徒歩15分（寺の案内では北西へ約0.5km）"
+      },
+      { "name": "嵐電 嵐山駅", "walkMinutes": [15, 20], "note": "北西へ徒歩15分" },
+      {
+        "name": "京都市バス・京都バス 嵯峨釈迦堂前バス停",
+        "walkMinutes": [2, 7],
+        "note": "市バス28・91系統、京都バス61・62・71・72系統。西へ徒歩2分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "京都駅",
+        "minutes": [11, 21],
+        "route": "JR嵯峨野線（山陰本線）の快速で嵯峨嵐山駅へ、乗り換えなし"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "http://www.sagakyogen.info/access.html",
+        "title": "嵯峨大念佛狂言保存会 清凉寺へのアクセス",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "http://www.seiryoji.or.jp/access.html",
+        "title": "清凉寺 交通案内（駐車場は寺の東側）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ja.kyoto.travel/event/single.php?event_id=9514",
+        "title": "京都観光Navi 嵯峨大念仏狂言【清凉寺】（嵯峨釈迦堂前から徒歩約2分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ja.kyoto.travel/feature/traffic/access.php?id=4",
+        "title": "京都観光Navi 主要観光地への快適なアクセス 嵯峨・嵐山（京都駅から快速で約11分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": { "stalls": "unknown", "local": [] },
+  "nearby": [
+    {
+      "id": "sagatofu-morika",
+      "name": "嵯峨豆腐 森嘉",
+      "kind": "food",
+      "summary": "清凉寺のすぐ近くの豆腐店で、嵯峨豆腐や飛龍頭を持ち帰りで買える。水曜定休で、火曜も休む日がある（水曜が祝日なら翌木曜が休み）",
+      "location": { "lat": 35.0235, "lng": 135.6745 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "09:00", "close": "17:00" },
+      "closedDays": ["wed"],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.sagatofu-morika.co.jp/businesshours.html",
+          "title": "嵯峨豆腐 森嘉 営業時間",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "daikakuji",
+      "name": "旧嵯峨御所 大本山大覚寺",
+      "kind": "sightseeing",
+      "summary": "嵯峨天皇の離宮を寺に改めた門跡寺院で、宸殿や名勝の大沢池がある。定休日はないが、行事で拝観を止める日がある",
+      "location": { "lat": 35.0287, "lng": 135.6795 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "09:00", "close": "17:00", "lastEntry": "16:30" },
+      "closedDays": [],
+      "price": "お堂エリア 大人800円、大沢池エリア 大人500円",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://ja.kyoto.travel/tourism/single01.php?category_id=7&tourism_id=402",
+          "title": "京都観光Navi 旧嵯峨御所 大本山大覚寺",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "tenryuji",
+      "name": "天龍寺",
+      "kind": "sightseeing",
+      "summary": "嵐山を借景にした曹源池庭園で知られる世界遺産の禅寺。法堂の雲龍図は土日祝の公開で、別に500円。行事の日は諸堂を閉めることがある",
+      "location": { "lat": 35.0157, "lng": 135.6738 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "08:30", "close": "17:00", "lastEntry": "16:50" },
+      "closedDays": [],
+      "price": "庭園 500円（高校生以上）、諸堂は300円を追加",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.tenryuji.com/visit/",
+          "title": "天龍寺 参拝・交通案内",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "http://www.seiryoji.or.jp/event.html",
+      "title": "清凉寺 年中行事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "http://www.sagakyogen.info/event.html",
+      "title": "嵯峨大念佛狂言保存会 定期公演のご案内",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://ja.kyoto.travel/event/single.php?event_id=7500",
+      "title": "京都観光Navi 2026年 涅槃会・涅槃図公開一覧",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://ja.kyoto.travel/tourism/single01.php?category_id=7&tourism_id=391",
+      "title": "京都観光Navi 清凉寺",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、狂言のお松明公演・点火の時刻",
+    "雨や風の強い日の扱い",
+    "松明のまわりで見られる範囲と、火の粉など見学の注意",
+    "服装・持ち物・撮影についての案内",
+    "一般の人がおねりや法要に加われるか",
+    "当日の拝観料の扱いと、駐車場が使えるか",
+    "屋台や振る舞いの有無",
+    "大松明の高さ（旅行の記事に7mとあるが、公式の数字が見つからない）",
+    "大手の観光サイトへの掲載（じゃらんnetに行事のページがあると検索で出たが、開いて確かめていない）"
+  ]
+}

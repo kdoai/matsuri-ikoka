@@ -1,0 +1,179 @@
+{
+  "id": "anori-ningyo-shibai",
+  "name": {
+    "ja": "安乗の人形芝居",
+    "en": "Anori Puppet Theater"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "三重県",
+      "name": "志摩市"
+    }
+  ],
+  "venue": {
+    "name": "安乗人形芝居舞台（安乗神社境内）",
+    "lat": 34.3625,
+    "lng": 136.9046
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["jalan", "rurubu"],
+  "highlights": [
+    "漁村の神社の境内の舞台で、地元の人が演じる三人遣いの人形芝居",
+    "安乗神社の秋の例大祭に奉納する、国の重要無形民俗文化財",
+    "夕方の三番叟から始まり、日が暮れてから本公演",
+    "地元の中学生の郷土芸能クラブも演目を受け持つ"
+  ],
+  "trivia": [
+    {
+      "text": "安土桃山時代に始まり、400年以上続くとされる",
+      "source": {
+        "url": "https://www.kankomie.or.jp/event/43765",
+        "title": "観光三重 安乗の人形芝居",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "朝鮮出兵のころ、九鬼嘉隆をもてなすために村人が見せた手踊りが始まりと伝わる",
+      "source": {
+        "url": "https://www.kankomie.or.jp/event/42304",
+        "title": "観光三重 安乗の人形芝居（2025年）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1980年に国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.kankomie.or.jp/event/43765",
+        "title": "観光三重 安乗の人形芝居",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2025年は地元の中学校の郷土芸能クラブ18人が「鎌倉三代記」を演じた",
+      "source": {
+        "url": "https://www.city.shima.mie.jp/material/files/group/3/20250827teireisiryou11.pdf",
+        "title": "志摩市 報道資料「安乗の人形芝居」を安乗神社秋季例大祭で奉納します（2025年8月27日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "神社の境内の舞台を見る行事で、混雑や危険についての特別な注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.kankomie.or.jp/event/43765",
+        "title": "観光三重 安乗の人形芝居（神社の祭礼で上演）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-09-12",
+      "endDate": "2026-09-13",
+      "start": "17:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の告知（両日とも17:00 三番叟、18:30 開演）。日ごとの演目は確かめていない",
+      "sources": [
+        {
+          "url": "https://www.kankomie.or.jp/event/43765",
+          "title": "観光三重 安乗の人形芝居（2026年9月12日〜13日、2026年7月時点）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.kankomie.or.jp/event/43765",
+        "title": "観光三重 安乗の人形芝居（近鉄志摩線 鵜方駅から三重交通バス安乗行きで約20分、「安乗」下車）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "anorisaki-lighthouse",
+      "name": "安乗埼灯台",
+      "kind": "sightseeing",
+      "summary": "岬の先に立つ、全国でも珍しい四角い白い灯台で、海の難所を見下ろせる。国の有形文化財。荒天や業務の都合で参観を止めることがある",
+      "location": {
+        "lat": 34.3651,
+        "lng": 136.9085
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "16:30"
+      },
+      "closedDays": [],
+      "price": "中学生以上300円、小学生以下は無料",
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.kankomie.or.jp/spot/2241",
+          "title": "観光三重 安乗埼灯台（3〜10月の土日は9:00〜16:30、年中無休）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.kankomie.or.jp/event/43765",
+      "title": "観光三重 安乗の人形芝居",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.shima.mie.jp/material/files/group/3/20250827teireisiryou11.pdf",
+      "title": "志摩市 報道資料 安乗の人形芝居を安乗神社秋季例大祭で奉納（主催 安乗神社・安乗人形芝居保存会）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催日（2025年・2026年は9月の第2土曜・日曜だったが、主催者の日付の決まりが見つからない）",
+    "主催者（神社・保存会）による2026年の発表（観光三重の掲載だけで確かめた）",
+    "終わる時刻",
+    "雨の日の扱い",
+    "観覧の料金（旅行情報サイトに無料とあるが、公式で確かめられない）",
+    "駐車場の有無",
+    "バス停「安乗」から会場までの徒歩の時間と、主要駅からの所要時間",
+    "作法（見学だけか加われるか、ルール・服装・持ち物・撮影の決まり）",
+    "屋台の有無",
+    "会場の緯度・経度（OpenStreetMap の安乗神社の位置を使った）",
+    "周辺の食事処（公式の営業時間を確かめられた店が見つからなかった）"
+  ]
+}
