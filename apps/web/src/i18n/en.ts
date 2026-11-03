@@ -493,6 +493,17 @@ export const en: Messages = {
         new Intl.DateTimeFormat("en-US", { month: "short", timeZone: "UTC" }).format(
           new Date(Date.UTC(2000, month - 1, 1)),
         ),
+      option: (text: string, count: number) => `${text} (${count})`,
+    },
+    view: {
+      label: "Switch the view",
+      cards: "Cards",
+      list: "List",
+    },
+    columns: {
+      date: "Date and time",
+      place: "Place",
+      confidence: "Confidence",
     },
     tags: {
       family: "Kid-friendly stops nearby",

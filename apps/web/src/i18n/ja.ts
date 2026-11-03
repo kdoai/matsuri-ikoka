@@ -445,6 +445,17 @@ export const ja = {
       count: (count: number) => `${count}件`,
       none: "この条件に合う候補はありません",
       monthName: (month: number) => `${month}月`,
+      option: (text: string, count: number) => `${text}（${count}）`,
+    },
+    view: {
+      label: "表示の切り替え",
+      cards: "カード表示",
+      list: "リスト表示",
+    },
+    columns: {
+      date: "日時",
+      place: "場所",
+      confidence: "確度",
     },
     tags: {
       family: "子連れで寄れる場所あり",

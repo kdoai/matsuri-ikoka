@@ -51,8 +51,21 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
     "href",
     /issues\/new\?template=festival-correction\.yml/,
   );
+  // 開催が確認できていない祭りは選べず、理由を文字で出す
+  await expect(cards.nth(1).getByRole("button", { name: "この祭りにする" })).toBeDisabled();
+  await expect(cards.nth(1)).toContainText("今年の開催がまだ確認できていません");
   await waitForReply(page);
   await snap(page, info, "01-candidates");
+  // リスト表示に切り替えると、1行ずつ見比べられる。選んだ表示は覚えておく
+  await page.getByRole("button", { name: "リスト表示" }).click();
+  await expect(page.getByTestId("candidate-row")).toHaveCount(2);
+  await expect(cards).toHaveCount(0);
+  await snap(page, info, "01-candidates-list");
+  await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: "祭りの候補を見る" }).click();
+  await expect(page.getByTestId("candidate-row")).toHaveCount(2);
+  await page.getByRole("button", { name: "カード表示" }).click();
+  await expect(cards).toHaveCount(2);
   // 候補を閉じても、店に戻って選び直せる
   await page.keyboard.press("Escape");
   await expect(page.getByTestId("candidates")).toHaveCount(0);
