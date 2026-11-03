@@ -1,0 +1,223 @@
+{
+  "id": "kubono-yatsushika-odori",
+  "name": {
+    "ja": "窪野の八つ鹿踊り",
+    "en": "Kubono Yatsushika Deer Dance"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "愛媛県",
+      "name": "西予市"
+    }
+  ],
+  "venue": {
+    "name": "三滝神社",
+    "lat": 33.4115,
+    "lng": 132.8027
+  },
+  "scaleTier": "XS",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "鹿の姿の踊り手8人が、哀調のある唄と太鼓に合わせて社前で舞う",
+    "道行・庭入り・長唄・音頭の舞・むすびと続く、約1時間の舞",
+    "三滝神社の大祭の日に奉納される、国の選択無形民俗文化財"
+  ],
+  "trivia": [
+    {
+      "text": "踊り手は雌鹿1頭、雄鹿2頭、小鹿5頭の計8頭",
+      "source": {
+        "url": "https://www.city.oita.oita.jp/o029/shisejoho/kohokocho/koho/shihooita/documents/20220301_part9_1.pdf",
+        "title": "市報おおいた 令和4年3月1日号 愛媛・大分交流 市町村コラボ企画",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1頭の雌鹿をめぐって雄鹿が争うさまを描いた踊り",
+      "source": {
+        "url": "https://www.iyokannet.jp/event/6828",
+        "title": "いよ観ネット 三滝祭り 窪野の八つ鹿踊り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "伊達秀宗の宇和島入りで伝わったとされるが、窪野ではそれより前とする説もある",
+      "source": {
+        "url": "https://www.iyokannet.jp/event/6828",
+        "title": "いよ観ネット 三滝祭り 窪野の八つ鹿踊り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "地元の庄屋が仙台から師匠を招き、半年ほど習って今の形にしたと伝わる",
+      "source": {
+        "url": "https://www.iyokannet.jp/event/6828",
+        "title": "いよ観ネット 三滝祭り 窪野の八つ鹿踊り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": []
+  },
+  "occurrences": [
+    {
+      "date": "2027-04-18",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "例年4月の第3日曜日（三滝神社の大祭の日）に奉納するという案内から見込んだ日（2027年の発表はまだない）。会場へは西予宇和IC・内子五十崎ICから車で約1時間",
+      "sources": [
+        {
+          "url": "https://www.iyokannet.jp/event/6828",
+          "title": "いよ観ネット 三滝祭り 窪野の八つ鹿踊り（例年4月第3日曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.city.oita.oita.jp/o029/shisejoho/kohokocho/koho/shihooita/documents/20220301_part9_1.pdf",
+          "title": "市報おおいた 令和4年3月1日号（毎年4月の第3日曜日、三滝神社の大祭の日に奉納）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.iyokannet.jp/event/6828",
+        "title": "いよ観ネット 三滝祭り 窪野の八つ鹿踊り（西予宇和IC・内子五十崎ICから車で約1時間）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "mitaki-keikoku-shizen-koen",
+      "name": "三滝渓谷自然公園",
+      "kind": "sightseeing",
+      "summary": "大小の滝が続く渓谷の自然公園。遊歩道が整い、散策や森林浴ができる。約4億年前の黒瀬川帯の岩の境目が削られて滝ができた",
+      "location": {
+        "lat": 33.4115,
+        "lng": 132.8027
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://seiyojikan.jp/spot/%e4%b8%89%e6%bb%9d%e6%b8%93%e8%b0%b7%e8%87%aa%e7%84%b6%e5%85%ac%e5%9c%92/",
+          "title": "せいよじかん（西予市観光物産協会） 三滝渓谷自然公園",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kuatherme-hosenbo",
+      "name": "クアテルメ宝泉坊",
+      "kind": "rest",
+      "summary": "城川町高野子の日帰り温泉。弱アルカリ性の冷鉱泉を沸かした湯と、温泉水のプールがある。受付は20:00まで。メンテナンスで臨時休館あり",
+      "location": {
+        "lat": 33.3657,
+        "lng": 132.802
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "21:00",
+        "lastEntry": "20:00"
+      },
+      "closedDays": ["tue"],
+      "price": "温泉 大人700円・小人500円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://seiyojikan.jp/stay/%e3%82%af%e3%82%a2%e3%83%86%e3%83%ab%e3%83%a1%e5%ae%9d%e6%b3%89%e5%9d%8a/",
+          "title": "せいよじかん（西予市観光物産協会） クアテルメ宝泉坊",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "michinoeki-kinahaiya-shirokawa",
+      "name": "道の駅 きなはい屋しろかわ",
+      "kind": "food",
+      "summary": "城川町下相の道の駅。手作りのハム・ソーセージ、城川ベーコンの豚ベーコン丼、城川産の和栗を使った和栗氷などがある。元日も休み",
+      "location": {
+        "lat": 33.3656,
+        "lng": 132.7407
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "18:00"
+      },
+      "closedDays": ["tue"],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://seiyojikan.jp/shop/kinahaiya-shirokawa/",
+          "title": "せいよじかん（西予市観光物産協会） きなはい屋しろかわ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.iyokannet.jp/event/6828",
+      "title": "いよ観ネット 三滝祭り 窪野の八つ鹿踊り（西予市城川町窪野2816 三滝神社）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.oita.oita.jp/o029/shisejoho/kohokocho/koho/shihooita/documents/20220301_part9_1.pdf",
+      "title": "市報おおいた 令和4年3月1日号 愛媛・大分交流 市町村コラボ企画（窪野の八つ鹿踊り）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、踊りの始まる時刻（いよ観ネットの告知は2021年のものが最新で、2022年より後に奉納されたかも確かめられない）",
+    "見学の仕方、決まり、服装・持ち物・撮影の扱い、危険度",
+    "雨のときの扱い",
+    "公共交通での行き方（最寄りの駅・バス停と所要時間）と、祭りの日の駐車場",
+    "三滝神社の大祭のほかの行事と当日の流れ",
+    "会場の正確な位置（緯度・経度は国土地理院の住所検索の大字窪野の代表点で、神社そのものではない）。周辺の場所の緯度・経度も大字の代表点",
+    "三滝渓谷自然公園の利用時間・休みと、会場からの距離",
+    "屋台の有無と、祭りならではの食べもの",
+    "見物客の数（規模は、1つの社寺での約1時間の奉納として XS にした）"
+  ]
+}

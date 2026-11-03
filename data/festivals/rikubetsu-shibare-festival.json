@@ -1,0 +1,331 @@
+{
+  "id": "rikubetsu-shibare-festival",
+  "name": { "ja": "しばれフェスティバル", "en": "Rikubetsu Shibare Festival" },
+  "category": "other",
+  "municipalities": [{ "prefecture": "北海道", "name": "足寄郡陸別町" }],
+  "venue": { "name": "陸別町 ウエンベツ イベント広場", "lat": 43.464, "lng": 143.7585 },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu"],
+  "highlights": [
+    "暖房のない氷のかまくら「バルーンマンション」で一夜を明かす人間耐寒テスト",
+    "会場の真ん中で燃える大きなキャンプファイヤー「命の火」",
+    "凍てつく夜空に上がる「しばれ花火」",
+    "しばれ縁日で鹿肉の料理など地元の店の味"
+  ],
+  "trivia": [
+    {
+      "text": "1982年に始まった冬の祭りで、2026年が42回目。町は日本でいちばん寒い祭りとうたう",
+      "source": {
+        "url": "https://www.rikubetsu.jp/kanko/event/shibare/",
+        "title": "陸別町 しばれフェスティバル",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "耐寒テストの夜は例年おおむね−25〜−5℃。過去には−30℃の夜もあった",
+      "source": {
+        "url": "https://www.rikubetsu.jp/kanko/event/shibare/taikantest/",
+        "title": "陸別町 しばれフェスティバル 人間耐寒テスト",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "耐寒テストをやり通すと、翌朝7時に認定証がもらえる",
+      "source": {
+        "url": "https://www.rikubetsu.jp/kanko/event/shibare/taikantest/",
+        "title": "陸別町 しばれフェスティバル 人間耐寒テスト",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "「しばれ」は、凍りつくような寒さを表す北海道の言葉",
+      "source": {
+        "url": "https://rurubu.jp/andmore/spot/20001073",
+        "title": "るるぶ&more. しばれフェスティバル（北海道／陸別町）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_by_application",
+    "howToJoin": "人間耐寒テストは前年12月に町のサイトから事前に申し込む（受付の期間は年ごとに町のサイトで案内される。多ければ抽選、当日の申し込みは不可）。参加費はバルーンマンション9,000円、テント持参7,000円で、朝食・朝風呂・保険を含む。一般の来場は申し込み不要",
+    "rules": [
+      "耐寒テスト：バルーンマンションと持参のテントの中では火気を一切使わない（一酸化炭素中毒の危険）。火を使えるのは宿泊エリア中央のセントラルスペースだけ",
+      "耐寒テスト：炭火コンロは各自で持参し、火の始末とごみは各自で片付ける",
+      "耐寒テスト：お酒は飲めるが、飲み過ぎて人に迷惑をかけると失格",
+      "耐寒テスト：途中で配られるチェックシールを受け取らないと認定証がもらえない"
+    ],
+    "dress": [
+      "耐寒テスト：防寒着・防寒靴の貸し出しはない。冬山登山のつもりの装備",
+      "耐寒テスト：足もとから冷えるので、防寒靴をはき、靴下やタイツを重ねる"
+    ],
+    "bring": [
+      "耐寒テスト：寝袋（必須）",
+      "耐寒テスト：多めの敷物",
+      "耐寒テスト：炭火コンロ（使う場合。貸し出しはない）",
+      "耐寒テスト：夕食（会場の売店で買うか、持ち込む）"
+    ],
+    "risk": {
+      "level": "medium",
+      "reason": "夜の屋外で例年−25〜−5℃まで冷え込み、耐寒テストは一晩外で過ごす。主催者は室内での火気による一酸化炭素中毒を注意している"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.rikubetsu.jp/kanko/event/shibare/taikantest/",
+        "title": "陸別町 しばれフェスティバル 人間耐寒テスト",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.rikubetsu.jp/kanko/event/shibare/",
+        "title": "陸別町 しばれフェスティバル",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-02-07",
+      "start": "16:30",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年（第42回）の実績。15:00 耐寒テストの受付、16:30 一般の開場、17:00 しばれ縁日・滑り台など、18:00 オープニング（命の火の点火）、ステージ、20:30 しばれ花火、21:00 一般は退場。耐寒テストの参加者は会場に残り、翌朝7:00 に認定証",
+      "sources": [
+        {
+          "url": "https://www.rikubetsu.jp/kanko/event/shibare/schedule/",
+          "title": "陸別町 しばれフェスティバル イベントスケジュール",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.visit-hokkaido.jp/event/detail_11035.html",
+          "title": "北海道観光振興機構 HOKKAIDO LOVE! 陸別しばれフェスティバル",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-08",
+      "start": "09:30",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年（第42回）の実績。9:30 一般の開場（しばれ縁日・乗馬体験など）、11:15 こども抽選会、13:00 抽選会、13:30 閉会式・もちまき",
+      "sources": [
+        {
+          "url": "https://www.rikubetsu.jp/kanko/event/shibare/schedule/",
+          "title": "陸別町 しばれフェスティバル イベントスケジュール",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.visit-hokkaido.jp/event/detail_11035.html",
+          "title": "北海道観光振興機構 HOKKAIDO LOVE! 陸別しばれフェスティバル",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-02-06",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年2月の第1土・日曜日に開く決まりから見込んだ1日目（2027年の発表はまだない）。2026年は16:30 開場、20:30 花火、夜から耐寒テスト",
+      "sources": [
+        {
+          "url": "https://www.rikubetsu.jp/kanko/event/shibare/",
+          "title": "陸別町 しばれフェスティバル（毎年2月第1土・日曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-02-07",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年2月の第1土・日曜日に開く決まりから見込んだ2日目（2027年の発表はまだない）。2026年は9:30 開場、13:30 閉会式",
+      "sources": [
+        {
+          "url": "https://www.rikubetsu.jp/kanko/event/shibare/",
+          "title": "陸別町 しばれフェスティバル（毎年2月第1土・日曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [
+      {
+        "hub": "北見",
+        "minutes": [102, 112],
+        "route": "路線バスで1時間42分（陸別町の案内）。陸別の道の駅にバスの案内所がある"
+      },
+      {
+        "hub": "池田",
+        "minutes": [110, 120],
+        "route": "路線バスで1時間50分（陸別町の案内）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.rikubetsu.jp/shokai/profile/accessmap/",
+        "title": "陸別町 アクセス",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.rikubetsu.jp/kanko/event/shibare/access/",
+        "title": "陸別町 しばれフェスティバル アクセス・会場マップ（市街地循環バス・天文台循環バス）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.visit-hokkaido.jp/event/detail_11035.html",
+        "title": "北海道観光振興機構 HOKKAIDO LOVE! 陸別しばれフェスティバル（駐車場1,000台・無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "鹿肉の料理",
+        "note": "町のしばれ縁日の出店の案内（年の記載なし）では、町内の旅館や観光物産館などが鹿肉のステーキ・シチュー・カレーなどを出した。出店と品は年ごとに変わる",
+        "sources": [
+          {
+            "url": "https://www.rikubetsu.jp/kanko/event/shibare/ennichi/",
+            "title": "陸別町 しばれフェスティバル しばれ縁日",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "rikubetsu-ginga-no-mori-observatory",
+      "name": "銀河の森天文台（りくべつ宇宙地球科学館）",
+      "kind": "sightseeing",
+      "summary": "口径115cmの反射望遠鏡がある公開天文台。オーロラや宇宙の展示もある。月・火曜と年末年始は休み、イベントで振替の休館もある",
+      "location": { "lat": 43.4568, "lng": 143.7661 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "13:00", "close": "21:30" },
+      "closedDays": ["mon", "tue"],
+      "price": "大人500円、小・中学生300円（現金のみ）",
+      "tags": ["indoor"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.rikubetsu.jp/tenmon/riyouannai/",
+          "title": "銀河の森天文台 利用案内（10月〜3月は13:00〜21:30）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.rikubetsu.jp/kanko/ginganomori/",
+          "title": "陸別町 銀河の森天文台",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "rikubetsu-sekikansai-museum",
+      "name": "関寛斎資料館",
+      "kind": "sightseeing",
+      "summary": "道の駅オーロラタウン93りくべつの中にある資料館。月曜休館",
+      "location": { "lat": 43.468, "lng": 143.7424 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "09:30", "close": "16:30" },
+      "closedDays": ["mon"],
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.rikubetsu.jp/kanko/michinoeki/",
+          "title": "陸別町 道の駅「オーロラタウン93りくべつ」",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "michi-no-eki-aurora-town-93-rikubetsu",
+      "name": "道の駅 オーロラタウン93りくべつ（陸別町観光・物産館）",
+      "kind": "rest",
+      "summary": "国道242号沿いの道の駅。観光・物産館のほか、十勝バス・北見バスの案内所がある。祭りの期間は会場への循環バスがここに停まる",
+      "location": { "lat": 43.468, "lng": 143.7424 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "09:00", "close": "17:00" },
+      "closedDays": null,
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.rikubetsu.jp/kanko/michinoeki/",
+          "title": "陸別町 道の駅「オーロラタウン93りくべつ」（冬季は9:00〜17:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.rikubetsu.jp/kanko/event/shibare/access/",
+          "title": "陸別町 しばれフェスティバル アクセス・会場マップ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.rikubetsu.jp/kanko/event/shibare/",
+      "title": "陸別町 しばれフェスティバル",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.visit-hokkaido.jp/event/detail_11035.html",
+      "title": "北海道観光振興機構 HOKKAIDO LOVE! 陸別しばれフェスティバル",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と各日の時刻（2月6〜7日は毎年2月第1土・日曜日の決まりからの見込み）",
+    "2027年の耐寒テストの申込期間・参加費・定員（2026年の回は12月に受け付け、多ければ抽選）",
+    "一般の来場者向けの服装・持ち物・禁止事項（公式の案内は耐寒テストの参加者向けだけ）",
+    "撮影やドローンの決まり",
+    "猛吹雪など荒天のときの扱い",
+    "2日目の終わりの時刻（13:30 から閉会式・もちまき）",
+    "しばれ花火の打ち上げ数と、来場者数の公表値（規模の根拠になる数が公式に見つからない）",
+    "入場料（公式のページに記載がない）",
+    "帯広・札幌・女満別空港から公共交通で来る場合の経路と所要時間",
+    "道の駅から会場までの歩く時間（期間中は道の駅と会場を結ぶ循環バスがある）",
+    "交通規制の有無",
+    "祭りの日に開いている町内の食事の店（確かめられなかった）",
+    "道の駅の観光・物産館の定休日"
+  ]
+}
