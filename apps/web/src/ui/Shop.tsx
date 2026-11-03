@@ -281,7 +281,8 @@ export function Shop() {
             : "lg:inset-x-0 lg:mx-auto lg:w-[min(50rem,calc(100vw-30rem))]"
         }`}
       >
-        <div className="pointer-events-none absolute bottom-full left-0 mb-8 w-full max-w-xs [&>*]:pointer-events-auto">
+        {/* 待ち時間の窓は、会話の窓の真上の中ほどに置き、左上の店内のようすや店内の人物に重ねない */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-full mx-auto mb-6 w-full max-w-md sm:max-w-xl [&>*]:pointer-events-auto">
           <WaitingCard />
         </div>
         <DialogueBox />

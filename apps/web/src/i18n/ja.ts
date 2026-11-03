@@ -567,6 +567,9 @@ export const ja = {
     correct: "正解！ しおりのスタンプが1つ増えました",
     wrong: (answer: string) => `おしい！ 正解は「${answer}」`,
     note: "答えなくても相談は進みます",
+    close: "クイズを閉じる",
+    question: "問い",
+    stamps: (count: number) => `集めたスタンプ ${count}個`,
   },
   categories: {
     fireworks: "花火",
