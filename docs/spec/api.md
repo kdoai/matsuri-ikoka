@@ -7,6 +7,7 @@
 | POST     | `/api/session`        | `SessionRequestSchema`（省略できる） | 201 `SessionResponseSchema`（`{ "sessionId": "…" }`）                                                              |
 | POST     | `/api/chat`           | `ChatRequestSchema`                  | 返答を SSE のイベントで返す                                                                                        |
 | PATCH    | `/api/preferences`    | `PreferencesRequestSchema`           | SSE。旅程があれば旅程係だけを動かして組み直し、なければこだわりを変えて `done` だけを返す                          |
+| GET      | `/api/festivals`      | —                                    | 祭りのデータの一覧（`FestivalsResponseSchema`、`{ "festivals": [...] }`）。候補が出る前の豆知識に使う              |
 | GET      | `/api/festivals/:id`  | —                                    | 祭りのデータ（`FestivalSchema`）。しおりの作法・地元の味・アクセス、待ち時間の小話に使う                           |
 | GET      | `/api/itinerary/:id`  | —                                    | 旅程（`ItinerarySchema`）                                                                                          |
 | GET      | `/shiori/:id`         | —                                    | 旅のしおり（画面で見る HTML）。公式の情報で開催予定を確かめた旅程だけ（[しおり](shiori.md)）                       |
@@ -16,7 +17,7 @@
 
 - 型はどれも `packages/schema`（`api.ts`）にある
 - 合言葉（`ACCESS_PASSCODE`）を設定しているときは、`/api/*` にヘッダー `x-access-passcode` が要る。しおりと死活監視には要らない
-- 掲載停止の祭りは、`/api/festivals/:id` でも 404 にする
+- 掲載停止の祭りは、`/api/festivals` の一覧に含めず、`/api/festivals/:id` でも 404 にする
 - 本番では、同じオリジンから画面（`apps/web` のビルド）も配る
 
 ### 断るときの応答

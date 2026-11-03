@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { SlugSchema } from "./common";
 import { ErrorEventSchema } from "./events";
+import { FestivalSchema } from "./festival";
 import { PreferencesSchema } from "./preferences";
 
 // 接客サーバーの API の本文と応答（docs/spec/api.md）。
@@ -18,6 +19,10 @@ export type SessionRequest = z.infer<typeof SessionRequestSchema>;
 /** POST /api/session の応答 */
 export const SessionResponseSchema = z.strictObject({ sessionId: SessionIdSchema });
 export type SessionResponse = z.infer<typeof SessionResponseSchema>;
+
+/** GET /api/festivals の応答。掲載停止の祭りは含めない */
+export const FestivalsResponseSchema = z.strictObject({ festivals: z.array(FestivalSchema) });
+export type FestivalsResponse = z.infer<typeof FestivalsResponseSchema>;
 
 /** POST /api/chat の本文。返答は SSE のイベント（events.ts）で返す */
 export const ChatRequestSchema = z.strictObject({

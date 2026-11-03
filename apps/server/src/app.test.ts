@@ -3,6 +3,7 @@ import {
   DEFAULT_PREFERENCES,
   decodeSseEvent,
   FestivalSchema,
+  FestivalsResponseSchema,
   type SampleConversation,
   SessionResponseSchema,
   type SseEvent,
@@ -363,6 +364,23 @@ describe("POST /api/session", () => {
 
     expect(res.status).toBe(201);
     expect(SessionResponseSchema.safeParse(await res.json()).success).toBe(true);
+  });
+});
+
+describe("GET /api/festivals", () => {
+  it("祭りのデータの一覧を返し、掲載停止の祭りは含めない", async () => {
+    const { app } = setup({
+      festivals: createFestivalStore([
+        testFestival({ id: "suzunari-toro" }),
+        testFestival({ id: "opted-out", optOut: true }),
+      ]),
+    });
+
+    const res = await app.request("/api/festivals");
+
+    expect(res.status).toBe(200);
+    const body = FestivalsResponseSchema.parse(await res.json());
+    expect(body.festivals.map((f) => f.id)).toEqual(["suzunari-toro"]);
   });
 });
 
