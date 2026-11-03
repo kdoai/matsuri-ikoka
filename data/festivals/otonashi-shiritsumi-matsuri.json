@@ -1,0 +1,295 @@
+{
+  "id": "otonashi-shiritsumi-matsuri",
+  "name": {
+    "ja": "尻つみ祭り",
+    "en": "Shiritsumi Festival of Otonashi Shrine"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "静岡県",
+      "name": "伊東市"
+    }
+  ],
+  "venue": {
+    "name": "音無神社",
+    "lat": 34.9668,
+    "lng": 139.0959
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["jalan", "rurubu"],
+  "highlights": [
+    "お囃子に合わせてお尻をぶつけ合う、名物の尻相撲大会",
+    "暗闇の社殿で神酒を回すときの合図が名の由来という奇祭",
+    "源頼朝と八重姫の逢瀬の言い伝えが残る、松川沿いの古社の例祭",
+    "神事のあとに奉納太鼓が響く、11月10日の夜だけの祭り"
+  ],
+  "trivia": [
+    {
+      "text": "暗い社殿で神酒を回すとき、隣の人のお尻をつねって合図したことが名の始まりとされる",
+      "source": {
+        "url": "https://itospa.com/event/detail_10023.html",
+        "title": "伊東観光協会 伊豆・伊東観光ガイド 尻つみ祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "音無神社は、若き日の源頼朝と八重姫がひそかに会っていた地と伝わる",
+      "source": {
+        "url": "https://hellonavi.jp/detail/page/detail/1303",
+        "title": "ハローナビしずおか 静岡県観光情報 音無神社",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "祭神は豊玉姫命で、音無神社は安産の神として知られる",
+      "source": {
+        "url": "https://hellonavi.jp/detail/page/detail/1303",
+        "title": "ハローナビしずおか 静岡県観光情報 音無神社",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_by_application",
+    "howToJoin": "尻相撲大会に出るには事前の予約が要る。2026年は10月1日から参加者を募集した（申し込み先と費用は案内に書かれていない）。見るだけなら申し込みは要らない",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "境内での神事と尻相撲の見学が中心で、主催者の案内に危険や混雑の注意が見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://b-izu.com/event/post-27266/",
+        "title": "美しい伊豆創造センター 音無神社「尻つみ祭り」（2026年11月10日、参加者は10月1日から募集）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://itospa.com/event/detail_10023.html",
+        "title": "伊東観光協会 伊豆・伊東観光ガイド 尻つみ祭り（事前予約が必要）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-10",
+      "start": "18:00",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "18:00 式典神事、18:30 奉納太鼓、18:50 尻相撲大会の説明と予選会（観光協会の案内。状況により前後する）。天候などで中止・延期になることがある",
+      "sources": [
+        {
+          "url": "https://b-izu.com/event/post-27266/",
+          "title": "美しい伊豆創造センター 音無神社「尻つみ祭り」（2026年11月10日（火）18:00〜21:00予定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://itospa.com/event/detail_10023.html",
+          "title": "伊東観光協会 伊豆・伊東観光ガイド 尻つみ祭り（毎年11月10日、当日の流れ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000504",
+          "title": "るるぶ&more. 尻つみ祭り（2026年11月10日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 伊東駅",
+        "walkMinutes": [15, 20],
+        "note": "観光協会の案内で徒歩15分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "東京駅",
+        "minutes": [103, 103],
+        "route": "JR特急「踊り子」、乗り換えなし（JR東日本の記事の所要時間の例）"
+      }
+    ],
+    "parking": "none",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://itospa.com/event/detail_10023.html",
+        "title": "伊東観光協会 伊豆・伊東観光ガイド 尻つみ祭り（JR伊東駅から徒歩15分、駐車場なし）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://b-izu.com/event/post-27266/",
+        "title": "美しい伊豆創造センター 音無神社「尻つみ祭り」（駐車場なし）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://media.jreast.co.jp/articles/5175",
+        "title": "JR東日本 首都圏から日帰り温泉旅！伊東温泉（東京駅から特急踊り子で伊東駅まで1時間43分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "ito-tokaikan",
+      "name": "伊東温泉観光・文化施設 東海館",
+      "kind": "sightseeing",
+      "summary": "昭和3年に開業した木造の温泉旅館を公開する施設。変木や職人の細工が館内に残る。第3火曜（祝日なら翌日）と1月1日は休館。車椅子では観覧できない",
+      "location": {
+        "lat": 34.9718,
+        "lng": 139.0971
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "21:00",
+        "lastEntry": "20:00"
+      },
+      "closedDays": null,
+      "price": "入館料 一般300円、小人150円（2026年度から）",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://itospa.com/spot/detail_52002.html",
+          "title": "伊東観光協会 伊東温泉観光・文化施設 東海館",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kinoshita-mokutaro-kinenkan",
+      "name": "木下杢太郎記念館",
+      "kind": "sightseeing",
+      "summary": "伊東出身の医学者で詩人の木下杢太郎の作品や愛用品を展示する。隣の生家は1835年築で、市内でいちばん古い木造の民家。月曜休館（祝日なら翌日）",
+      "location": {
+        "lat": 34.9736,
+        "lng": 139.0959
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "16:00"
+      },
+      "closedDays": ["mon"],
+      "price": "大人100円、中学生以下50円",
+      "tags": ["indoor"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://itospa.com/spot/detail_54016.html",
+          "title": "伊東観光協会 木下杢太郎記念館（10月〜3月は9:00〜16:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kuidokoro-umehara",
+      "name": "食処うめはら",
+      "kind": "food",
+      "summary": "伊東駅前の湯の花通りにある和食の居酒屋。伊東港に揚がる地魚と、日本酒の飲み比べが売り。座敷や個室もある。祭りのあとの夕食に。17:30開店、ラストオーダー22:00",
+      "location": {
+        "lat": 34.9725,
+        "lng": 139.0942
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": ["thu"],
+      "price": null,
+      "tags": ["seating", "local_food"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://itospa.com/gourmet/detail_54524.html",
+          "title": "伊東観光協会 食処うめはら",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "takamaru-shokudo",
+      "name": "たか丸食堂",
+      "kind": "food",
+      "summary": "漁船「たか丸」で釣った魚などを出す、伊東駅近くの小さな食堂。朝から昼過ぎまでの営業で、祭りの前の昼食に。木曜と隔週の金曜が休み。駐車場はない",
+      "location": {
+        "lat": 34.9738,
+        "lng": 139.093
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "07:00",
+        "close": "15:00"
+      },
+      "closedDays": ["thu"],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://itospa.com/gourmet/detail_54618.html",
+          "title": "伊東観光協会 たか丸食堂",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://itospa.com/event/detail_10023.html",
+      "title": "伊東観光協会 伊豆・伊東観光ガイド 尻つみ祭り",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://b-izu.com/event/post-27266/",
+      "title": "美しい伊豆創造センター 音無神社「尻つみ祭り」",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://hellonavi.jp/detail/page/detail/1303",
+      "title": "ハローナビしずおか 静岡県観光情報 音無神社",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "尻相撲大会の申し込み先・締め切り・参加費と、部門の分け方（観光協会の案内に書かれていない）",
+    "見学の決まり（立ち位置・場所取り）、服装・持ち物、撮影の決まり",
+    "雨のときの扱い（天候などで中止・延期になることがあるとだけ案内がある）",
+    "屋台・露店の有無",
+    "交通規制の有無",
+    "見学者数の公表値（規模は境内で夜の3時間ほどの行事として決めた）",
+    "神社の駐車場の扱い（観光協会は駐車場なし、県の観光情報は3台と案内していて食い違う）",
+    "名古屋駅など中部の玄関口の駅から伊東駅までの所要時間（公式の案内が見つからない）",
+    "熱海駅から伊東駅までのJR伊東線の所要時間（公式の数字を取得できなかった）",
+    "食処うめはらの閉店の時刻（出典にあるのは開店とラストオーダーの時刻だけ）"
+  ]
+}
