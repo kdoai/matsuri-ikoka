@@ -375,6 +375,23 @@ export function DateBadge() {
   );
 }
 
+/** 接客サーバーが見本の相談を再生しているとき（mock）だけ出す、小さな札 */
+export function ModeBadge() {
+  const t = useT();
+  const mode = useApp((state) => state.session.mode);
+  if (mode !== "mock") return null;
+  return (
+    <p
+      className="hud-chip w-fit rounded-full px-3 py-1 text-xs leading-tight"
+      data-testid="mode-badge"
+      title={t.hud.replayingNote}
+    >
+      {t.hud.replaying}
+      <span className="sr-only">。{t.hud.replayingNote}</span>
+    </p>
+  );
+}
+
 export function KeyCap({ children, small = false }: { children: ReactNode; small?: boolean }) {
   return (
     <span

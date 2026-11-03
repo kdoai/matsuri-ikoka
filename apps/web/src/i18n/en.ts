@@ -311,6 +311,8 @@ export const en: Messages = {
       "Walk with WASD, the arrow keys, a gamepad or a tap. Get close to the staff to talk, and press E to use things in the shop.",
     ],
     dateUnset: "Date not set",
+    replaying: "Playing a sample conversation",
+    replayingNote: "Replies come from a prepared sample, whatever you send.",
     from: (origin: string) => `From ${origin}`,
     hints: { talk: "Talk", details: "Plan details", map: "Map", menu: "Menu" },
     menuTitle: "Menu",

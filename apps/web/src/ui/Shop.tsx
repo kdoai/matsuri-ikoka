@@ -22,6 +22,7 @@ import {
   type HudPanel,
   IconButtons,
   Logo,
+  ModeBadge,
   openTripPanel,
   useHudKeys,
 } from "./Hud";
@@ -227,6 +228,7 @@ export function Shop() {
         <div className="flex flex-col items-start gap-1.5 justify-self-start">
           <Logo />
           {beside ? null : <DateBadge />}
+          <ModeBadge />
         </div>
         <div className="flex flex-col items-end gap-1.5 justify-self-end">
           <div className="flex items-center gap-1.5 sm:gap-2">

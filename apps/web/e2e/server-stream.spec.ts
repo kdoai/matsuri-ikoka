@@ -96,6 +96,25 @@ test("done の前に切れて、サーバーも応答しなければ、つなが
   await expect(page.getByTestId("dialogue-error")).toContainText("お店のサーバーにつながりません");
 });
 
+test("見本の相談を再生しているサーバー（mock）のときだけ、それと分かる札を出す", async ({
+  page,
+}) => {
+  let mode = "mock";
+  await page.route("**/api/session", (route) =>
+    route.fulfill({ status: 201, json: { sessionId: "s-test", mode } }),
+  );
+
+  await page.goto("/?scene=2d");
+  await page.getByRole("button", { name: "入店する" }).click();
+  await expect(page.getByTestId("mode-badge")).toContainText("見本の相談を再生しています");
+
+  mode = "live";
+  await page.goto("/?scene=2d");
+  await page.getByRole("button", { name: "入店する" }).click();
+  await talkToConcierge(page);
+  await expect(page.getByTestId("mode-badge")).toHaveCount(0);
+});
+
 test("サーバーのエラーは一文だけを出し、HTML として埋め込まない", async ({ page }) => {
   await page.route("**/api/chat", (route) =>
     route.fulfill({

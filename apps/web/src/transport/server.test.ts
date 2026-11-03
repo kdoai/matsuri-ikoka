@@ -100,6 +100,24 @@ describe("接客サーバーとの通信", () => {
     expect(String(fetchMock.mock.calls[1]?.[0])).toBe("/api/session");
   });
 
+  it("サーバーが知らせた動き方（mock・live）を覚える", async () => {
+    const replies = [
+      json({ sessionId: "s-1", mode: "mock" }, 201),
+      json({ sessionId: "s-2", mode: "live" }, 201),
+      json({ sessionId: "s-3" }, 201),
+    ];
+    const transport = createServerTransport({ fetch: async () => replies.shift() as Response });
+
+    expect(transport.agentMode?.()).toBeNull();
+    await transport.startSession();
+    expect(transport.agentMode?.()).toBe("mock");
+    await transport.startSession();
+    expect(transport.agentMode?.()).toBe("live");
+    // 知らせのない古いサーバーでは分からないまま
+    await transport.startSession();
+    expect(transport.agentMode?.()).toBeNull();
+  });
+
   it("記録の名前がなければ、空の本文で始める", async () => {
     const fetchMock = vi.fn<typeof fetch>(async () => json({ sessionId: "s-1" }, 201));
     await createServerTransport({ fetch: fetchMock }).startSession();

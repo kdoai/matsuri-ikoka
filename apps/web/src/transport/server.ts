@@ -1,4 +1,9 @@
-import { FestivalSchema, type SessionRequest, SessionResponseSchema } from "@matsuri-ikoka/schema";
+import {
+  type AgentMode,
+  FestivalSchema,
+  type SessionRequest,
+  SessionResponseSchema,
+} from "@matsuri-ikoka/schema";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import type { ChatTransport, FestivalSource, OnSseMessage } from "./types";
 import { errorFromResponse, TransportError } from "./types";
@@ -93,6 +98,7 @@ export function createServerTransport(options: ServerTransportOptions = {}): Cha
   };
 
   const sessionRequest: SessionRequest = options.sample ? { sample: options.sample } : {};
+  let mode: AgentMode | null = null;
 
   return {
     async startSession(signal) {
@@ -109,7 +115,11 @@ export function createServerTransport(options: ServerTransportOptions = {}): Cha
       if (!parsed.success) {
         throw new TransportError("invalid_event", { status: response.status });
       }
+      mode = parsed.data.mode ?? null;
       return parsed.data.sessionId;
+    },
+    agentMode() {
+      return mode;
     },
     chat(request, onMessage, signal) {
       return postStream("/api/chat", "POST", request, onMessage, signal);

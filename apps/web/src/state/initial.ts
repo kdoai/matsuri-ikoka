@@ -26,6 +26,7 @@ export function initialData({ locale = "ja", tutorialSeen = false }: InitialOpti
   return {
     session: {
       id: null,
+      mode: null,
       status: "closed",
       stage: "hearing",
       conditions: {},
