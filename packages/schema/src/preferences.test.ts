@@ -46,11 +46,20 @@ describe("TripConditionsSchema", () => {
   const conditions = {
     when: { kind: "date", date: "2026-08-16" },
     origin: "みなと中央駅",
-    stay: "day_trip",
+    nights: 0,
   };
 
-  it("日付・出発地・日帰りか宿泊かがそろえばよい（同行者は任意）", () => {
+  it("日付・出発地・泊数がそろえばよい（同行者は任意）", () => {
     expect(TripConditionsSchema.safeParse(conditions).success).toBe(true);
+  });
+
+  it("泊数は 0（日帰り・お出かけ）から 6（6泊7日）まで", () => {
+    for (const nights of [0, 1, 6]) {
+      expect(TripConditionsSchema.safeParse({ ...conditions, nights }).success).toBe(true);
+    }
+    for (const nights of [-1, 7, 1.5]) {
+      expect(TripConditionsSchema.safeParse({ ...conditions, nights }).success).toBe(false);
+    }
   });
 
   it("出発地が空なら不正", () => {
@@ -60,6 +69,43 @@ describe("TripConditionsSchema", () => {
   it("大人が0人の同行者は不正", () => {
     const party = { adults: 0, children: 1 };
     expect(TripConditionsSchema.safeParse({ ...conditions, party }).success).toBe(false);
+  });
+
+  it("泊まりの旅の項目（旅のかたち・終わりの場所・ペースなど）は任意で、おまかせも選べる", () => {
+    const longTrip = {
+      ...conditions,
+      nights: 5,
+      returnTo: "やまびこ駅",
+      route: { shape: "loop", areas: ["鈴鳴町", "かざみ温泉"] },
+      stayNear: "town",
+      festivalDays: "several",
+      pace: "relaxed",
+      interests: ["onsen", "food"],
+    };
+    expect(TripConditionsSchema.safeParse(longTrip).success).toBe(true);
+    const leftToUs = {
+      ...conditions,
+      nights: 3,
+      route: { shape: "auto", areas: [] },
+      stayNear: "auto",
+      festivalDays: "auto",
+      pace: "auto",
+      interests: [],
+    };
+    expect(TripConditionsSchema.safeParse(leftToUs).success).toBe(true);
+    expect(
+      TripConditionsSchema.safeParse({ ...conditions, nights: 6, leaveToStaff: true }).success,
+    ).toBe(true);
+  });
+
+  it("回りたい地域は5つまで、楽しみたいことは決まった選択肢から", () => {
+    const areas = ["一", "二", "三", "四", "五", "六"];
+    expect(
+      TripConditionsSchema.safeParse({ ...conditions, route: { shape: "loop", areas } }).success,
+    ).toBe(false);
+    expect(TripConditionsSchema.safeParse({ ...conditions, interests: ["skiing"] }).success).toBe(
+      false,
+    );
   });
 
   it("聞き取りの途中は、どの条件も空でよい", () => {

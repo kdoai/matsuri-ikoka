@@ -102,7 +102,8 @@ export interface FestivalSearchOptions {
   wish: DateWish;
   today: IsoDate;
   origin: string;
-  stay: TripConditions["stay"];
+  /** 泊数。0（日帰り・お出かけ）は、片道の移動の上限を超える祭りを除く */
+  nights: TripConditions["nights"];
   preferences: Preferences;
   /** 日帰りの片道の上限（分）。省略すると DAY_TRIP_MAX_TRAVEL_MINUTES */
   maxTravelMinutes?: number;
@@ -172,11 +173,7 @@ export function searchFestivalDates(
     }
     if (best === null) continue;
 
-    if (
-      options.stay === "day_trip" &&
-      best.travelMinutes !== null &&
-      best.travelMinutes[1] > maxTravel
-    ) {
+    if (options.nights === 0 && best.travelMinutes !== null && best.travelMinutes[1] > maxTravel) {
       tooFar.push({ festivalId: festival.id, travelMinutes: best.travelMinutes });
       continue;
     }

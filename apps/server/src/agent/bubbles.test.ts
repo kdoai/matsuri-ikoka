@@ -15,7 +15,7 @@ describe("吹き出し（docs/spec/api.md の例）", () => {
     expect(
       toolStartBubble(
         "search_festivals",
-        { when: { kind: "date", date: "2026-08-16" }, origin: "みなと中央駅", stay: "day_trip" },
+        { when: { kind: "date", date: "2026-08-16" }, origin: "みなと中央駅", nights: 0 },
         state,
       ),
     ).toBe("8月16日に、みなと中央駅から日帰りで行ける祭りを探しています");
@@ -25,11 +25,11 @@ describe("吹き出し（docs/spec/api.md の例）", () => {
         {
           when: { kind: "range", from: "2026-08-15", to: "2026-08-16" },
           origin: "みなと中央駅",
-          stay: "overnight",
+          nights: 2,
         },
         state,
       ),
-    ).toBe("8月15日から8月16日に、みなと中央駅から行ける祭りを探しています");
+    ).toBe("8月15日から8月16日に、みなと中央駅から2泊で行ける祭りを探しています");
   });
 
   it("入力の形が崩れていても、決まった文に戻す", () => {

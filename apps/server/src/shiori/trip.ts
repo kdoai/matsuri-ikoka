@@ -62,7 +62,7 @@ export interface ShioriTrip {
   style: TripStyle;
 }
 
-/** 旅程を、しおりが読む形にする。いまの旅程は1日分なので、その日のうちに帰る1日にする */
+/** 旅程を、しおりが読む形にする */
 export function toShioriTrip(itinerary: Itinerary, style: TripStyle = {}): ShioriTrip {
   return {
     id: itinerary.id,
@@ -74,9 +74,7 @@ export function toShioriTrip(itinerary: Itinerary, style: TripStyle = {}): Shior
     preferences: itinerary.preferences,
     mainFestivalId: itinerary.mainFestivalId,
     verification: itinerary.verification,
-    days: [
-      { date: itinerary.date, weather: itinerary.weather, items: itinerary.items, stay: null },
-    ],
+    days: itinerary.days,
     notes: itinerary.notes,
     alternatives: itinerary.alternatives,
     style,

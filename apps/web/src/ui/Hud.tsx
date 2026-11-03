@@ -1,3 +1,4 @@
+import { mainFestivalDay } from "@matsuri-ikoka/schema";
 import {
   Bell,
   BookOpen,
@@ -419,7 +420,8 @@ export function GuideCard() {
   const ready = useApp(shioriReady);
 
   const date =
-    itinerary?.date ?? (conditions.when?.kind === "date" ? conditions.when.date : undefined);
+    (itinerary ? mainFestivalDay(itinerary).date : undefined) ??
+    (conditions.when?.kind === "date" ? conditions.when.date : undefined);
   const origin = itinerary?.origin ?? conditions.origin;
   const highlight = festival?.highlights[0] ?? null;
 
@@ -523,7 +525,8 @@ export function DateBadge() {
   const itinerary = useApp((state) => state.itinerary.current);
   const conditions = useApp((state) => state.session.conditions);
   const date =
-    itinerary?.date ?? (conditions.when?.kind === "date" ? conditions.when.date : undefined);
+    (itinerary ? mainFestivalDay(itinerary).date : undefined) ??
+    (conditions.when?.kind === "date" ? conditions.when.date : undefined);
   const origin = itinerary?.origin ?? conditions.origin;
   return (
     <section

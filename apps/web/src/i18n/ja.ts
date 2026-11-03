@@ -183,7 +183,7 @@ export const ja = {
   conditions: {
     title: "読み取れた条件",
     origin: (station: string) => `${station}から`,
-    stay: { day_trip: "日帰り", overnight: "泊まり" },
+    nights: (nights: number) => (nights === 0 ? "日帰り" : `${nights}泊${nights + 1}日`),
     party: (adults: number, children: number) =>
       children > 0 ? `大人${adults}・子ども${children}` : `大人${adults}`,
     move: { train: "電車", car: "車" },
@@ -231,6 +231,8 @@ export const ja = {
     },
   },
   itinerary: {
+    day: (n: number, date: string) => `${n}日目・${date}`,
+    stay: (area: string) => `この夜は${area}に泊まる`,
     tabs: { itinerary: "旅程", map: "地図", sources: "出典" },
     panelLabel: "旅程・地図・出典",
     openPanel: "旅程・地図・出典を開く",
@@ -253,6 +255,7 @@ export const ja = {
       rest: "休憩",
       festival_prep: "祭りの前の準備",
       festival: "祭り",
+      free: "自由に過ごす時間",
     },
     weather: {
       title: "天気",

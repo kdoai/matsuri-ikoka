@@ -62,7 +62,11 @@ export function applyRecordedEvent(session: Session, itineraries: ItineraryStore
       break;
     case "festival.verified": {
       const itinerary = session.itineraryId ? itineraries.get(session.itineraryId) : undefined;
-      if (itinerary !== undefined && itinerary.mainFestivalId === event.data.festivalId) {
+      if (
+        event.data.scope !== "candidate" &&
+        itinerary !== undefined &&
+        itinerary.mainFestivalId === event.data.festivalId
+      ) {
         const { result, checkedAt, sources, note } = event.data;
         itineraries.save({
           ...itinerary,

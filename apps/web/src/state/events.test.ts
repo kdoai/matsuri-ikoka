@@ -1,5 +1,6 @@
 import {
   type FestivalCandidate,
+  itineraryItems,
   type SampleConversation,
   SampleConversationSchema,
   type SseEvent,
@@ -101,8 +102,8 @@ describe("記録した相談を通す", () => {
     const state = playTurns(2);
     const itinerary = state.itinerary.current!;
     expect(itinerary.version).toBe(1);
-    expect(itinerary.items.map((item) => itemChange(state, item))).toEqual(
-      itinerary.items.map(() => null),
+    expect(itineraryItems(itinerary).map((item) => itemChange(state, item))).toEqual(
+      itineraryItems(itinerary).map(() => null),
     );
     expect(state.spots).toHaveLength(4);
     expect(state.ui.candidatesOpen).toBe(false);
@@ -114,7 +115,7 @@ describe("記録した相談を通す", () => {
     expect(itinerary.version).toBe(2);
     expect(state.itinerary.previous?.version).toBe(1);
     const changes = Object.fromEntries(
-      itinerary.items.map((item) => [item.id, itemChange(state, item)]),
+      itineraryItems(itinerary).map((item) => [item.id, itemChange(state, item)]),
     );
     expect(changes).toMatchObject({
       "craft-hall": "added",
@@ -224,6 +225,22 @@ describe("スタッフの動き", () => {
       },
     });
     expect(state.staff.concierge.motion).toBe("stamp");
+  });
+
+  it("候補を出す前の確かめは、旅程の再確認の状態を変えない", () => {
+    const before = fresh();
+    const state = applyEvent(before, {
+      type: "festival.verified",
+      data: {
+        festivalId: "suzunari-toro",
+        date: "2026-08-16",
+        scope: "candidate",
+        result: "as_planned",
+        checkedAt: "2026-08-03T10:00:00+09:00",
+        sources: [fictionalSource("2026")],
+      },
+    });
+    expect(state).toBe(before);
   });
 });
 

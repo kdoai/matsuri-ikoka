@@ -3,6 +3,9 @@ import {
   collectItinerarySources,
   ItineraryDiffSchema,
   ItinerarySchema,
+  itineraryItems,
+  itineraryNights,
+  mainFestivalDay,
   VerificationSchema,
   WeatherSchema,
 } from "./itinerary";
@@ -16,7 +19,9 @@ describe("ItinerarySchema", () => {
   describe("計画の壁：祭りの時間を動かせない予定として持つ", () => {
     it("主役の祭りの予定がない旅程は不正", () => {
       const itinerary = fictionalItinerary();
-      itinerary.items = itinerary.items.filter((item) => item.type !== "festival");
+      itinerary.days[0]!.items = itinerary.days[0]!.items.filter(
+        (item) => item.type !== "festival",
+      );
       expect(ItinerarySchema.safeParse(itinerary).success).toBe(false);
     });
 
@@ -28,7 +33,7 @@ describe("ItinerarySchema", () => {
 
     it("祭りの予定には festivalId が必要", () => {
       const itinerary = fictionalItinerary();
-      const festival = itinerary.items[2]!;
+      const festival = itinerary.days[0]!.items[2]!;
       delete festival.festivalId;
       expect(ItinerarySchema.safeParse(itinerary).success).toBe(false);
     });
@@ -37,19 +42,23 @@ describe("ItinerarySchema", () => {
   describe("情報の壁：予定にも出典を持つ", () => {
     it("出典のない祭りの予定は不正", () => {
       const itinerary = fictionalItinerary();
-      itinerary.items[2]!.sources = [];
+      itinerary.days[0]!.items[2]!.sources = [];
       expect(ItinerarySchema.safeParse(itinerary).success).toBe(false);
     });
 
     it("出典のない周辺の場所の予定は不正", () => {
       const itinerary = fictionalItinerary();
-      itinerary.items[1]!.sources = [];
+      itinerary.days[0]!.items[1]!.sources = [];
       expect(ItinerarySchema.safeParse(itinerary).success).toBe(false);
     });
 
     it("移動時間は必ず目安として持つ", () => {
       const itinerary = fictionalItinerary();
-      itinerary.items[0]!.move = { means: "train", minutes: [40, 50], estimate: false as true };
+      itinerary.days[0]!.items[0]!.move = {
+        means: "train",
+        minutes: [40, 50],
+        estimate: false as true,
+      };
       expect(ItinerarySchema.safeParse(itinerary).success).toBe(false);
     });
   });
@@ -57,13 +66,13 @@ describe("ItinerarySchema", () => {
   describe("版と差分", () => {
     it("予定の id が重複していれば不正", () => {
       const itinerary = fictionalItinerary();
-      itinerary.items[1]!.id = itinerary.items[0]!.id;
+      itinerary.days[0]!.items[1]!.id = itinerary.days[0]!.items[0]!.id;
       expect(ItinerarySchema.safeParse(itinerary).success).toBe(false);
     });
 
     it("旅程の版より新しい changedInVersion は不正", () => {
       const itinerary = fictionalItinerary();
-      itinerary.items[0]!.changedInVersion = 2;
+      itinerary.days[0]!.items[0]!.changedInVersion = 2;
       expect(ItinerarySchema.safeParse(itinerary).success).toBe(false);
     });
 
@@ -126,7 +135,7 @@ describe("WeatherSchema", () => {
 describe("collectItinerarySources", () => {
   it("予定と再確認の出典を、URL の重複を除いて集める", () => {
     const itinerary = fictionalItinerary();
-    itinerary.items[0]!.sources.push(fictionalSource("2026"));
+    itinerary.days[0]!.items[0]!.sources.push(fictionalSource("2026"));
     itinerary.verification = {
       status: "as_planned",
       checkedAt: "2026-08-15T09:00:00+09:00",
@@ -139,5 +148,124 @@ describe("collectItinerarySources", () => {
       "https://example.com/suzunari/craft-hall",
       "https://example.com/suzunari/2026-final",
     ]);
+  });
+});
+
+describe("日ごとの旅程（日帰りのお出かけから6泊7日まで）", () => {
+  /** 架空の旅程を、主役の祭りの前に1泊する2日の旅程にする */
+  function twoDays() {
+    const itinerary = fictionalItinerary();
+    const day = itinerary.days[0]!;
+    itinerary.days = [
+      {
+        date: "2026-08-15",
+        weather: { status: "not_yet" },
+        stay: { area: "鈴鳴町の駅の近く" },
+        items: [{ ...day.items[1]!, id: "day1-hall" }],
+      },
+      { ...day, date: "2026-08-16" },
+    ];
+    return itinerary;
+  }
+
+  it("1日（日帰り・お出かけ）でも、泊まりの旅でもよい", () => {
+    expect(ItinerarySchema.safeParse(fictionalItinerary()).success).toBe(true);
+    expect(ItinerarySchema.safeParse(twoDays()).success).toBe(true);
+  });
+
+  it("祭りのない日（観光・自由に過ごす時間だけの日）があってよい", () => {
+    const itinerary = twoDays();
+    itinerary.days[0]!.items = [
+      {
+        id: "day1-free",
+        start: "13:00",
+        end: "17:00",
+        type: "free",
+        name: "宿の近くで自由に過ごす",
+        location: null,
+        reason: "この日に寄れる場所がデータにないため、自由に過ごす時間にする",
+        move: null,
+        hours: null,
+        cost: null,
+        sources: [],
+        changedInVersion: 1,
+      },
+    ];
+    expect(ItinerarySchema.safeParse(itinerary).success).toBe(true);
+  });
+
+  it("自由に過ごす時間には場所を付けない", () => {
+    const itinerary = fictionalItinerary();
+    const hall = itinerary.days[0]!.items[1]!;
+    itinerary.days[0]!.items[1] = { ...hall, type: "free" };
+    expect(ItinerarySchema.safeParse(itinerary).success).toBe(false);
+  });
+
+  it("祭りの予定だけの短いお出かけでもよい", () => {
+    const itinerary = fictionalItinerary();
+    itinerary.days[0]!.items = itinerary.days[0]!.items.filter((item) => item.type === "festival");
+    expect(ItinerarySchema.safeParse(itinerary).success).toBe(true);
+  });
+
+  it("日付は1日ずつ続ける", () => {
+    const itinerary = twoDays();
+    itinerary.days[1]!.date = "2026-08-17";
+    expect(ItinerarySchema.safeParse(itinerary).success).toBe(false);
+  });
+
+  it("最後の日は帰る日なので、泊まるところを持たない", () => {
+    const itinerary = twoDays();
+    itinerary.days[1]!.stay = { area: "鈴鳴町" };
+    expect(ItinerarySchema.safeParse(itinerary).success).toBe(false);
+  });
+
+  it("予定の id は日をまたいでも重ならない", () => {
+    const itinerary = twoDays();
+    itinerary.days[0]!.items[0]!.id = "go";
+    expect(ItinerarySchema.safeParse(itinerary).success).toBe(false);
+  });
+
+  it("7日（6泊）まで。予定のない日は持てない", () => {
+    const itinerary = fictionalItinerary();
+    const base = itinerary.days[0]!;
+    const make = (count: number) =>
+      Array.from({ length: count }, (_, i) => ({
+        ...base,
+        date: `2026-08-${String(10 + i).padStart(2, "0")}`,
+        stay: i === count - 1 ? null : { area: "鈴鳴町" },
+        items: base.items.map((item) => ({ ...item, id: `${item.id}-${i}` })),
+      }));
+    expect(ItinerarySchema.safeParse({ ...itinerary, days: make(7) }).success).toBe(true);
+    expect(ItinerarySchema.safeParse({ ...itinerary, days: make(8) }).success).toBe(false);
+    expect(
+      ItinerarySchema.safeParse({ ...itinerary, days: [{ ...base, items: [] }] }).success,
+    ).toBe(false);
+  });
+
+  it("主役の祭りは、どの日にあってもよい", () => {
+    const itinerary = twoDays();
+    expect(mainFestivalDay(itinerary).date).toBe("2026-08-16");
+    expect(itineraryNights(itinerary)).toBe(1);
+    expect(itineraryItems(itinerary).map((item) => item.id)).toEqual([
+      "day1-hall",
+      "go",
+      "craft-hall",
+      "festival",
+    ]);
+  });
+
+  it("日ごとの天気の出典も集める", () => {
+    const itinerary = twoDays();
+    itinerary.days[0]!.weather = {
+      status: "forecast",
+      summary: "晴れ",
+      precipitationPercent: 10,
+      highC: 30,
+      lowC: 24,
+      source: fictionalSource("weather"),
+    };
+    expect(collectItinerarySources(itinerary).map((s) => s.url)).toContain(
+      "https://example.com/suzunari/weather",
+    );
   });
 });

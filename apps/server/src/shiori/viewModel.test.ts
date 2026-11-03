@@ -15,13 +15,11 @@ import { buildShioriView, UNKNOWN_JA } from "./viewModel";
 const lookup = lookupOf(fictionalFestivals());
 
 describe("旅程からしおりの形へ", () => {
-  it("いまの旅程は、その日のうちに帰る1日の旅になる", () => {
+  it("旅程の日ごとの予定をそのまま持つ", () => {
     const itinerary = fictionalItinerary();
     const trip = toShioriTrip(itinerary);
 
-    expect(trip.days).toHaveLength(1);
-    expect(trip.days[0]).toMatchObject({ date: itinerary.date, stay: null });
-    expect(trip.days[0]?.items).toBe(itinerary.items);
+    expect(trip.days).toBe(itinerary.days);
   });
 });
 

@@ -192,7 +192,8 @@ export const en: Messages = {
   conditions: {
     title: "What we understood",
     origin: (station: string) => `From ${station}`,
-    stay: { day_trip: "Day trip", overnight: "Overnight" },
+    nights: (nights: number) =>
+      nights === 0 ? "Day trip" : `${plural(nights, "night", "nights")}, ${nights + 1} days`,
     party: (adults: number, children: number) =>
       children > 0
         ? `${plural(adults, "adult", "adults")}, ${plural(children, "child", "children")}`
@@ -247,6 +248,8 @@ export const en: Messages = {
     },
   },
   itinerary: {
+    day: (n: number, date: string) => `Day ${n} · ${date}`,
+    stay: (area: string) => `Overnight around ${area}`,
     tabs: { itinerary: "Plan", map: "Map", sources: "Sources" },
     panelLabel: "Plan, map and sources",
     openPanel: "Open the plan, map and sources",
@@ -270,6 +273,7 @@ export const en: Messages = {
       rest: "Rest",
       festival_prep: "Before the festival",
       festival: "Festival",
+      free: "Free time",
     },
     weather: {
       title: "Weather",

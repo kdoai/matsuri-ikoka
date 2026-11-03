@@ -4,15 +4,18 @@ import {
   type FestivalCandidate,
   type IsoDate,
   IsoDateSchema,
+  ItineraryDaySchema,
   ItineraryItemSchema,
   ItinerarySchema,
   LocalTimeSchema,
+  MAX_TRIP_DAYS,
   MOVE_MODES,
+  mainFestivalDay,
+  NightsSchema,
   PartySchema,
   PreferencesSchema,
   SlugSchema,
   type SpotPin,
-  STAY_TYPES,
   type ToolName,
   type Weather,
 } from "@matsuri-ikoka/schema";
@@ -74,7 +77,7 @@ function visitDate(ctx: ToolContext, festival: Festival, given?: IsoDate): IsoDa
   const itinerary = ctx.session.itineraryId
     ? ctx.itineraries.get(ctx.session.itineraryId)
     : undefined;
-  if (itinerary?.mainFestivalId === festival.id) return itinerary.date;
+  if (itinerary?.mainFestivalId === festival.id) return mainFestivalDay(itinerary).date;
   const candidate = ctx.session.candidates.find((c) => c.festivalId === festival.id);
   if (candidate !== undefined) return candidate.date;
   const today = ctx.today();
@@ -92,25 +95,33 @@ const ItineraryItemDraftSchema = z
   .strictObject({ ...ItineraryItemSchema.shape })
   .omit({ changedInVersion: true });
 
+/** 下書きの1日。天気はサーバーが付ける */
+const ItineraryDayDraftSchema = z
+  .strictObject({ ...ItineraryDaySchema.shape, items: z.array(ItineraryItemDraftSchema).min(1) })
+  .omit({ weather: true });
+
 /** 旅程係が書く下書き。ID・版・再確認・天気はサーバーが付ける */
 export const ItineraryDraftSchema = z
-  .strictObject({ ...ItinerarySchema.shape, items: z.array(ItineraryItemDraftSchema).min(1) })
-  .omit({ id: true, version: true, verification: true, weather: true });
+  .strictObject({
+    ...ItinerarySchema.shape,
+    days: z.array(ItineraryDayDraftSchema).min(1).max(MAX_TRIP_DAYS),
+  })
+  .omit({ id: true, version: true, verification: true });
 
 // ---------------------------------------------------------------------------
 
 export const searchFestivals = defineTool({
   name: "search_festivals",
   description:
-    "希望日（または期間）・出発地・日帰りか宿泊かに合う祭りを、祭りのデータから最大3件探す。" +
+    "希望日（または期間）・出発地・泊数に合う祭りを、祭りのデータから最大3件探す。" +
     "希望日の祭りを先に並べ、足りなければ前後2週間で補い、希望日からのずれ（日）を付ける。" +
-    "今日より前の日・中止・掲載停止の祭りは出ない。日帰りは移動の上限を超える祭りを除く。",
+    "今日より前の日・中止・掲載停止の祭りは出ない。日帰り（0泊）は移動の上限を超える祭りを除く。",
   input: {
     when: DateWishSchema.describe(
       "希望日。1日なら {kind:'date',date}、期間なら {kind:'range',from,to}",
     ),
     origin: z.string().trim().min(1).max(50).describe("出発地（駅名まで）"),
-    stay: z.enum(STAY_TYPES).describe("day_trip 日帰り / overnight 宿泊"),
+    nights: NightsSchema.describe("泊数。0 は日帰り・週末のお出かけ、1〜6 は泊まりの旅"),
     party: PartySchema.optional().describe("大人と子どもの人数（分かれば）"),
     preferences: PreferencesSchema.optional().describe(
       "会話で読み取れたこだわり。省略すると画面で選んでいるこだわりを使う",
@@ -130,7 +141,7 @@ export const searchFestivals = defineTool({
     session.conditions = {
       when: args.when,
       origin: args.origin,
-      stay: args.stay,
+      nights: args.nights,
       ...(party === undefined ? {} : { party }),
     };
 
@@ -143,7 +154,7 @@ export const searchFestivals = defineTool({
       wish: args.when,
       today,
       origin: args.origin,
-      stay: args.stay,
+      nights: args.nights,
       preferences: session.preferences,
       ...(args.maxTravelMinutes === undefined ? {} : { maxTravelMinutes: args.maxTravelMinutes }),
     });
@@ -327,12 +338,13 @@ export const getWeather = defineTool({
 export const updateItinerary = defineTool({
   name: "update_itinerary",
   description:
-    "旅程の全体を保存する。祭りの時間を先に固定し、前後の予定を時刻順に並べて渡す。" +
+    "旅程の全体を保存する。旅程は日ごとの予定（days、日帰り・お出かけは1日、泊まりの旅は続いた日付で最大7日）。" +
+    "祭りの時間を先に固定し、前後の予定を時刻順に並べて渡す。泊まる日は stay に泊まる地域を書き、最後の日は stay を null にする。" +
     "場所・営業時間・出典は祭りのデータで入れ直す。予定の重なり、営業時間の外、休業日、祭りの時間とのぶつかり、" +
     "到着の余裕の不足があれば保存せず errors を返すので、直してもう一度呼ぶ。修正のときも全体を渡す（予定の id は版をまたいで同じにする）。",
   input: {
     itinerary: ItineraryDraftSchema.describe(
-      "旅程の全体（id・version・verification・weather はサーバーが付ける）",
+      "旅程の全体（id・version・verification・日ごとの weather はサーバーが付ける）",
     ),
   },
   async run(args, ctx, signal) {
@@ -345,21 +357,27 @@ export const updateItinerary = defineTool({
       // こだわりは相談の状態を正とする
       preferences: session.preferences,
     };
-    const main = ctx.festivals.get(draft.mainFestivalId);
-    let weather = session.weather.get(weatherKey(draft.mainFestivalId, draft.date));
-    if (weather === undefined && main !== undefined) {
-      const prefecture = main.municipalities[0]?.prefecture;
-      weather =
-        prefecture === undefined
-          ? { status: "unavailable" }
-          : (await ctx.weather.forecast(prefecture, draft.date, ctx.today())).weather;
-      session.weather.set(weatherKey(draft.mainFestivalId, draft.date), weather);
+    // 天気は日ごとに、その日の祭りの開催地（祭りのない日は主役の祭りの開催地）で調べる。
+    // 調べた天気は相談に残し、気象庁の予報も地域ごとにキャッシュしているので、何日分でも軽い
+    const weatherByDate = new Map<IsoDate, Weather>();
+    for (const day of draft.days) {
+      const festivalId =
+        day.items.find((item) => item.type === "festival" && item.festivalId)?.festivalId ??
+        draft.mainFestivalId;
+      const key = weatherKey(festivalId, day.date);
+      let weather = session.weather.get(key);
+      const prefecture = ctx.festivals.get(festivalId)?.municipalities[0]?.prefecture;
+      if (weather === undefined && prefecture !== undefined) {
+        weather = (await ctx.weather.forecast(prefecture, day.date, ctx.today())).weather;
+        session.weather.set(key, weather);
+      }
+      weatherByDate.set(day.date, weather ?? { status: "unavailable" });
     }
 
     const result = buildItinerary(draft, {
       id: previous?.id ?? randomId("trip"),
       previous,
-      weather: weather ?? { status: "unavailable" },
+      weatherFor: (date) => weatherByDate.get(date) ?? { status: "unavailable" },
       findFestival: (id) => ctx.festivals.get(id),
     });
     if (!result.ok) {
@@ -421,7 +439,7 @@ export const verifyFestival = defineTool({
     const applied =
       itinerary !== undefined &&
       itinerary.mainFestivalId === festival.id &&
-      itinerary.date === date;
+      mainFestivalDay(itinerary).date === date;
     if (applied) {
       ctx.itineraries.save({ ...itinerary, verification });
       // 会話の状態（しおりへ進むか）は、旅程の再確認の結果を実際に書き換えたときだけ変える

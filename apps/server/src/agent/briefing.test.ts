@@ -12,7 +12,7 @@ describe("店の記録", () => {
     context.session.conditions = {
       when: { kind: "date", date: "2026-08-16" },
       origin: "みなと中央駅",
-      stay: "day_trip",
+      nights: 0,
     };
 
     const record = shopRecord(context);

@@ -68,7 +68,7 @@ describe("createAgentHooks", () => {
     const input = {
       when: { kind: "date", date: "2026-08-16" },
       origin: "みなと中央駅",
-      stay: "day_trip",
+      nights: 0,
     };
 
     await call("PreToolUse", {
@@ -108,16 +108,15 @@ describe("createAgentHooks", () => {
 
   it("update_itinerary の保存のあとに itinerary.updated を出す", async () => {
     const { ctx, events, call } = setup();
-    const {
-      id: _i,
-      version: _v,
-      verification: _r,
-      weather: _w,
-      items,
-      ...rest
-    } = fictionalItinerary();
+    const { id: _i, version: _v, verification: _r, days, ...rest } = fictionalItinerary();
     const input = {
-      itinerary: { ...rest, items: items.map(({ changedInVersion: _c, ...item }) => item) },
+      itinerary: {
+        ...rest,
+        days: days.map(({ weather: _w, items, ...day }) => ({
+          ...day,
+          items: items.map(({ changedInVersion: _c, ...item }) => item),
+        })),
+      },
     };
 
     await call("PreToolUse", {
