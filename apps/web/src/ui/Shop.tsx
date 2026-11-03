@@ -219,7 +219,7 @@ export function Shop() {
     <div className="relative h-dvh w-full overflow-hidden bg-wood-900 text-ink">
       <GameStage frame={frame} onTalk={talk} onPad={onPad} onExit={actions.leaveShop} />
 
-      {/* 上の段：ロゴ・丸いボタン・操作の案内 */}
+      {/* 上の段：ロゴと、1段に並べた操作の案内・丸いボタン */}
       <div
         ref={topRef}
         className="no-print pointer-events-none absolute inset-x-0 top-0 z-40 grid grid-cols-[1fr_auto] items-start gap-2 p-2 sm:p-3 [&>*]:pointer-events-auto"
@@ -228,16 +228,15 @@ export function Shop() {
           <Logo />
           {beside ? null : <DateBadge />}
         </div>
-        <div className="flex flex-col items-end gap-1.5 justify-self-end">
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            <AccountMenu />
-            <IconButtons onOpenLog={openLog} unread={unread} menu={menu} onMenu={setMenu} />
-          </div>
+        <div className="flex items-center gap-1.5 justify-self-end sm:gap-2">
+          <AccountMenu />
           <ButtonHints
             onDetails={() => togglePanel("itinerary")}
             onMap={() => togglePanel("map")}
             onMenu={toggleMenu}
+            menuOpen={menu === "menu"}
           />
+          <IconButtons onOpenLog={openLog} unread={unread} menu={menu} onMenu={setMenu} />
         </div>
       </div>
 
