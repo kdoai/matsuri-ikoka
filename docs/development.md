@@ -92,6 +92,15 @@ e2e は、Playwright が接客サーバーをモックで起動し、画面の�
 pnpm --filter @matsuri-ikoka/web test:e2e
 ```
 
+### live で相談からしおりまで確かめる
+
+CI はキーなしのモックで走るので、Claude を実際に呼ぶ確認は手元で行います。エージェントやプロンプト、ツールを変えたときは、`check:live -- --shiori` で、候補 → 祭りを選ぶ → 旅程 → 決定 → 確定前の再確認 → しおり（HTML と PDF）までを流し、段階ごとの OK / NG と、かかった時間・費用の合計を PR の「確かめたこと」に書きます。実在の祭りのデータで流す使い方（`--festivals` と `--say`）は [README の「Claude と話す（live）」](../README.md#claude-と話すlive) にあります。
+
+```bash
+MATSURI_AGENT_MODE=live MODEL_CONCIERGE=<モデル名> MODEL_STAFF=<モデル名> \
+  pnpm --filter @matsuri-ikoka/server check:live -- --shiori
+```
+
 ## 6. マージ
 
 CI がすべて通ると、squash merge でマージできます。承認の数は求めていません。マージしたブランチは自動で消えます。
