@@ -93,6 +93,15 @@ export const MAX_NIGHTS = 6;
 /** 泊数。0 は日帰り・週末のちょっとしたお出かけ、1〜6 は泊まりの旅 */
 export const NightsSchema = z.number().int().min(0).max(MAX_NIGHTS);
 
+/** 日帰りで選べる、出発の駅からの片道の所要時間の上限（分）：1時間・2時間・3時間 */
+export const DAY_TRIP_TRAVEL_LIMITS = [60, 120, 180] as const;
+
+/**
+ * 出発の駅から会場までの片道の所要時間の上限（分）。日帰り（0泊）の旅だけで祭りを絞り込み、
+ * 泊まりの旅では使わない（泊まるなら遠くても行けるため）。所要時間の判定はコードで計算する
+ */
+export const MaxTravelMinutesSchema = z.number().int().min(30).max(600);
+
 // 泊まりの旅で聞く項目。どれも任意で、分からないときは推測で埋めない。
 // 「おまかせ」（auto）を選べる項目は、選んだことと、まだ聞いていないこと（項目がない）を分けて持つ。
 
@@ -120,6 +129,28 @@ export const PACES = ["relaxed", "normal", "packed", "auto"] as const;
 export const INTERESTS = ["onsen", "food", "nature", "town_walk", "history", "shopping"] as const;
 
 /**
+ * 旅先で食べたいもの：海鮮 / 肉料理 / 野菜中心 / 麺類（そば・うどん・ラーメン）/ 郷土料理 /
+ * ご当地・B級グルメ / 和食 / 甘味・カフェ / 屋台 / 地酒・地ビール
+ */
+export const FOOD_WISHES = [
+  "seafood",
+  "meat",
+  "vegetables",
+  "noodles",
+  "local_dish",
+  "local_gourmet",
+  "washoku",
+  "sweets",
+  "stalls",
+  "local_drinks",
+] as const;
+export type FoodWish = (typeof FOOD_WISHES)[number];
+
+/** 食事で気をつけたいこと：ベジタリアン / ヴィーガン / ハラール / 食物アレルギー / 生ものが苦手 */
+export const DIETARY_NEEDS = ["vegetarian", "vegan", "halal", "allergy", "no_raw"] as const;
+export type DietaryNeed = (typeof DIETARY_NEEDS)[number];
+
+/**
  * 旅の条件。日付・出発地・泊数がそろうと、祭りを探し始める。同行者は任意。
  * 近場のお出かけと分かる相談では、泊まるかを聞き直さず 0 泊にしてよい。
  * 出発地は駅名までにとどめ、住所は聞かない。
@@ -129,6 +160,8 @@ export const TripConditionsSchema = z.strictObject({
   when: DateWishSchema,
   origin: PlaceNameSchema,
   nights: NightsSchema,
+  /** 日帰りの片道の所要時間の上限（分）。利用者が言ったときだけ。泊まりの旅では使わない */
+  maxTravelMinutes: MaxTravelMinutesSchema.optional(),
   party: PartySchema.optional(),
   /** 宿の予算の上限（1人あたり）。泊まりの旅で、利用者が言ったときだけ */
   lodgingBudget: LodgingBudgetSchema.optional(),
@@ -140,6 +173,10 @@ export const TripConditionsSchema = z.strictObject({
   pace: z.enum(PACES).optional(),
   /** 楽しみたいこと。空の並びは「特にない・おまかせ」 */
   interests: z.array(z.enum(INTERESTS)).max(INTERESTS.length).optional(),
+  /** 食べたいもの。空の並びは「こだわらない・おまかせ」 */
+  foodWishes: z.array(z.enum(FOOD_WISHES)).max(FOOD_WISHES.length).optional(),
+  /** 食事で気をつけたいこと。利用者が言ったときだけ。アレルギーの中身などは持たない */
+  dietary: z.array(z.enum(DIETARY_NEEDS)).max(DIETARY_NEEDS.length).optional(),
   /** 「あとはおまかせ」。true のとき、まだ聞いていない項目は聞かずに組む */
   leaveToStaff: z.boolean().optional(),
 });

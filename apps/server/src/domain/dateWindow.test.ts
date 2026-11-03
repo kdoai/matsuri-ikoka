@@ -1,7 +1,9 @@
 import { DEFAULT_PREFERENCES, type Preferences } from "@matsuri-ikoka/schema";
 import { describe, expect, it } from "vitest";
 import {
+  DAY_TRIP_MAX_TRAVEL_MINUTES,
   daysFromWish,
+  dayTripTravelLimit,
   placeLabel,
   searchFestivalDates,
   searchRanges,
@@ -142,6 +144,53 @@ describe("日程のルール", () => {
 
     expect(ids(result)).toEqual([["nearby", 4]]);
     expect(result.tooFar).toEqual([{ festivalId: "far-away", travelMinutes: [128, 152] }]);
+  });
+});
+
+describe("日帰りの所要時間の上限", () => {
+  // 徒歩（8〜12分）を足すので、主要駅からの分に 8〜12 分が加わる
+  const festivals = [
+    testFestival({ id: "within-hour", date: "2026-08-16", fromHubMinutes: [40, 45] }),
+    testFestival({ id: "within-two", date: "2026-08-16", fromHubMinutes: [90, 100] }),
+    testFestival({ id: "unknown", date: "2026-08-16", fromHubMinutes: null }),
+  ];
+  const search = (nights: number, maxTravelMinutes?: number) =>
+    searchFestivalDates(festivals, {
+      ...base,
+      nights,
+      wish: day("2026-08-16"),
+      today: "2026-08-03",
+      ...(maxTravelMinutes === undefined ? {} : { maxTravelMinutes }),
+    });
+
+  it("泊まりの旅は絞り込まず、日帰りは言われた上限か初期値を使う", () => {
+    expect(dayTripTravelLimit(1, 60)).toBeNull();
+    expect(dayTripTravelLimit(0, 60)).toBe(60);
+    expect(dayTripTravelLimit(0, undefined)).toBe(DAY_TRIP_MAX_TRAVEL_MINUTES);
+  });
+
+  it("1時間以内なら、片道の上側の目安が60分を超える祭りを除く", () => {
+    const result = search(0, 60);
+    expect(result.matches.map((m) => m.festival.id)).toEqual(["within-hour", "unknown"]);
+    expect(result.tooFar).toEqual([{ festivalId: "within-two", travelMinutes: [98, 112] }]);
+  });
+
+  it("2時間以内なら、どちらも残し、分かっている祭りを分からない祭りより先に並べる", () => {
+    const result = search(0, 120);
+    expect(result.matches.map((m) => m.festival.id)).toEqual([
+      "within-hour",
+      "within-two",
+      "unknown",
+    ]);
+    expect(result.tooFar).toEqual([]);
+    expect(result.travelUnknown).toEqual(["unknown"]);
+  });
+
+  it("泊まりの旅では、上限を言われても絞り込まない", () => {
+    const result = search(1, 60);
+    expect(result.matches).toHaveLength(3);
+    expect(result.tooFar).toEqual([]);
+    expect(result.travelUnknown).toEqual([]);
   });
 });
 

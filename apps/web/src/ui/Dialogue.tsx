@@ -302,7 +302,7 @@ export function DialogueBox() {
       <div className="flex gap-3 sm:gap-5">
         <Portrait
           speaker={speaker as Speaker}
-          className={`-mt-10 size-20 shrink-0 sm:size-32 ${thinking ? "animate-pulse" : ""}`}
+          className={`-mt-8 size-14 shrink-0 sm:size-20 ${thinking ? "animate-pulse" : ""}`}
         />
         <div
           className="min-h-[3.5rem] min-w-0 flex-1"

@@ -1,0 +1,301 @@
+{
+  "id": "daiho-sunauchi",
+  "name": {
+    "ja": "大宝郷の砂打ち",
+    "en": "Daiho Sunauchi"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "長崎県",
+      "name": "五島市"
+    }
+  ],
+  "venue": {
+    "name": "言代主神社（大宝寺内）・大宝地区一帯",
+    "lat": 32.6022,
+    "lng": 128.654
+  },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "藁の桟俵をかぶった砂鬼「サンドーラ」が見物人を追い、家々の戸や障子に砂を打つ",
+    "猿田彦を先頭に獅子・稲かけ・杵などの諸役が郷内を一巡し、農作業をまねて見せる",
+    "前の晩は、大宝寺の中にある言代主神社で3時間ほどの夜神楽"
+  ],
+  "trivia": [
+    {
+      "text": "砂を打ちつけるのは、災いを払い、疫病を追い出すためと伝わる",
+      "source": {
+        "url": "https://www.pref.nagasaki.jp/bunkadb/index.php/view/453",
+        "title": "長崎県の文化財 下五島大宝郷の砂打ち",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1979年に国の選択無形民俗文化財、1982年に県の無形民俗文化財になった",
+      "source": {
+        "url": "https://www.pref.nagasaki.jp/bunkadb/index.php/view/453",
+        "title": "長崎県の文化財 下五島大宝郷の砂打ち",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "旧暦9月29日の秋祭なので、新暦の日付は年ごとに10月下旬〜11月中旬で動く",
+      "source": {
+        "url": "https://goto.nagasaki-tabinet.com/event/61796",
+        "title": "五島の島たび 大宝郷の砂打ち（国選択無形民俗文化財）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "会場の大宝寺は701年創建と伝わる五島最古の寺で、「西の高野山」とも呼ばれる",
+      "source": {
+        "url": "https://goto.nagasaki-tabinet.com/spot/672",
+        "title": "五島の島たび 大宝寺（日本遺産）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.pref.nagasaki.jp/bunkadb/index.php/view/453",
+        "title": "長崎県の文化財 下五島大宝郷の砂打ち（諸役と所作。サンドーラは見物人を追いかけて砂を打つ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://goto.nagasaki-tabinet.com/event/61796",
+        "title": "五島の島たび 大宝郷の砂打ち（砂鬼が見物客や家々に砂を打ちまきながら回る）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-07",
+      "start": "18:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "1日目（旧暦9月28日）。言代主神社（大宝寺内）で夜神楽、18:00ごろから3時間ほど。開始は五島市の島たびで18:00ごろ、五島市観光協会で18:30ごろと、案内が分かれている",
+      "sources": [
+        {
+          "url": "https://goto.nagasaki-tabinet.com/event/61796",
+          "title": "五島の島たび 大宝郷の砂打ち（2026年11月7日〜8日、神楽は18:00ごろから3時間程度）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.gotokanko.jp/event/%E5%A4%A7%E5%AE%9D%E9%83%B7%E3%81%AE%E7%A0%82%E6%89%93%E3%81%A1/",
+          "title": "五島市観光協会 大宝郷の砂打ち（2026年11月7日 18:30ごろから夜神楽）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-08",
+      "start": "09:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2日目（旧暦9月29日）。9:00ごろ大宝寺前を出て村回り。サンドーラが砂を打ちながら地区を回り、午前中に終わる",
+      "sources": [
+        {
+          "url": "https://goto.nagasaki-tabinet.com/event/61796",
+          "title": "五島の島たび 大宝郷の砂打ち（砂打ちは9:00ごろから、午前中に終了。大宝寺前から出発）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.gotokanko.jp/event/%E5%A4%A7%E5%AE%9D%E9%83%B7%E3%81%AE%E7%A0%82%E6%89%93%E3%81%A1/",
+          "title": "五島市観光協会 大宝郷の砂打ち（2026年11月8日 9:00ごろから村回り）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://goto.nagasaki-tabinet.com/event/61796",
+        "title": "五島の島たび 大宝郷の砂打ち（駐車場は大宝漁港）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000220",
+        "title": "るるぶ&more. 大宝郷の砂打ち（駐車場は漁港の空き地に20台。福江港から車で約45分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "daihoji-goto",
+      "name": "大宝寺",
+      "kind": "sightseeing",
+      "summary": "701年創建と伝わる五島最古の寺。空海が密教を講じたとされ「西の高野山」と呼ばれる。五島八十八ヶ所の第88番札所で、県指定の梵鐘がある。休みの日は案内がない",
+      "location": {
+        "lat": 32.6014,
+        "lng": 128.6546
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "08:00",
+        "close": "18:00"
+      },
+      "closedDays": null,
+      "price": "無料",
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://goto.nagasaki-tabinet.com/spot/672",
+          "title": "五島の島たび 大宝寺（日本遺産）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "osezaki-lighthouse",
+      "name": "大瀬埼灯台",
+      "kind": "sightseeing",
+      "summary": "福江島の西の端、断崖に建つ白い灯台。九州本土でいちばん遅く夕日が沈む場所とされる。駐車場から遊歩道を下りで約20分、上りで約40分歩く。灯台と遊歩道にトイレはない",
+      "location": {
+        "lat": 32.6127,
+        "lng": 128.6
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": "無料",
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://goto.nagasaki-tabinet.com/spot/674",
+          "title": "五島の島たび 大瀬埼灯台",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "new-pandora-tamanoura",
+      "name": "NEWパンドラ",
+      "kind": "food",
+      "summary": "玉之浦の海沿いの食事処。名物のうつぼ料理、ちゃんぽん、定食、旬の魚料理を出す。県の「地産地消こだわりの店」。昼はラストオーダー14:30、夜は前日までの予約のみ。混むので昼も予約を勧めている",
+      "location": {
+        "lat": 32.624,
+        "lng": 128.6113
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": ["tue"],
+      "price": null,
+      "tags": ["indoor", "seating", "local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://goto.nagasaki-tabinet.com/restaurant/61439",
+          "title": "五島の島たび NEWパンドラ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "tsuruta-shoten-tamanoura",
+      "name": "鶴田商店",
+      "kind": "food",
+      "summary": "玉之浦港のそばのバーガーとカフェの店。巫女の姿にちなむ「市舞バーガー」が名物。営業は水・土・日曜だけ。駐車場はない。最新の営業は店のInstagramで確かめるよう案内している",
+      "location": {
+        "lat": 32.6355,
+        "lng": 128.6153
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "15:00"
+      },
+      "closedDays": ["mon", "tue", "thu", "fri"],
+      "price": null,
+      "tags": ["indoor", "seating"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://goto.nagasaki-tabinet.com/restaurant/80081",
+          "title": "五島の島たび 鶴田商店",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.pref.nagasaki.jp/bunkadb/index.php/view/453",
+      "title": "長崎県の文化財 下五島大宝郷の砂打ち",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://goto.nagasaki-tabinet.com/event/61796",
+      "title": "五島の島たび 大宝郷の砂打ち（国選択無形民俗文化財）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.gotokanko.jp/event/%E5%A4%A7%E5%AE%9D%E9%83%B7%E3%81%AE%E7%A0%82%E6%89%93%E3%81%A1/",
+      "title": "五島市観光協会 大宝郷の砂打ち",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www8.cao.go.jp/ocean/kokkyouritou/ritou_kankou/event/event_8.html",
+      "title": "内閣府 国境離島の祭・イベント 大宝郷の砂打ち",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "夜神楽の開始時刻（五島市の島たびは18:00ごろ、五島市観光協会は18:30ごろで、案内が分かれている）",
+    "会場までの交通。鉄道はなく、公式の案内に福江港・福江空港からのバスの経路と所要時間が見つからない（るるぶ&more.では福江港から車で約45分、五島の島たびでは大宝寺まで福江港から車で約40分）",
+    "見学のときの決まり（立ち位置、砂をかけられることへの注意、私有地への立ち入り）",
+    "危険度（主催者による、けがのおそれの注意が見つからない）",
+    "服装・持ち物・撮影の決まり",
+    "雨のときの扱い",
+    "村回りの順路と、終わる時刻",
+    "屋台の有無",
+    "行列の人数と見学者数の公表値",
+    "大宝寺の休みの日と、大瀬埼灯台の開いている時間",
+    "NEWパンドラの料金"
+  ]
+}

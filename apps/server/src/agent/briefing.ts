@@ -13,6 +13,7 @@ import {
   fromMinutes,
   toMinutes,
 } from "../domain/calendar";
+import { DIETARY_LABELS, FOOD_WISH_LABELS } from "../domain/food";
 import { preferenceEffects } from "../domain/preferences";
 import type { ToolContext } from "../tools/context";
 import { hearingReport } from "../tools/matsuriTools";
@@ -95,6 +96,12 @@ function tripStyleLabels(conditions: PartialTripConditions): string[] {
     conditions.pace ? `ペース ${PACE_LABELS[conditions.pace]}` : null,
     conditions.interests
       ? `楽しみ ${conditions.interests.length === 0 ? "特になし" : conditions.interests.map((i) => INTEREST_LABELS[i]).join("・")}`
+      : null,
+    conditions.foodWishes
+      ? `食べたいもの ${conditions.foodWishes.length === 0 ? "こだわらない" : conditions.foodWishes.map((w) => FOOD_WISH_LABELS[w]).join("・")}`
+      : null,
+    conditions.dietary && conditions.dietary.length > 0
+      ? `食事で気をつけたいこと ${conditions.dietary.map((d) => DIETARY_LABELS[d]).join("・")}`
       : null,
     conditions.leaveToStaff ? "あとはおまかせ" : null,
   ].filter((v): v is string => v !== null);

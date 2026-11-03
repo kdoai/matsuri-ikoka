@@ -57,10 +57,15 @@ const consultOptions = {
   },
   food: {
     seafood: "Seafood",
-    localDish: "Local dishes",
-    sweets: "Sweets",
+    meat: "Meat dishes",
+    vegetables: "Mostly vegetables",
+    noodles: "Noodles (soba, udon, ramen)",
+    local_dish: "Local dishes",
+    local_gourmet: "Local comfort food",
+    washoku: "Japanese cuisine",
+    sweets: "Sweets & cafés",
     stalls: "Street stalls",
-    sake: "Local sake",
+    local_drinks: "Local sake & craft beer",
   },
   pace: { relaxed: "Relaxed", normal: "Normal", packed: "Packed" },
   budget: {
@@ -69,6 +74,13 @@ const consultOptions = {
     under50k: "Up to ¥50,000",
     more: "More",
   },
+};
+const consultDietary = {
+  vegetarian: "Vegetarian",
+  vegan: "Vegan",
+  halal: "Halal",
+  allergy: "Food allergies",
+  no_raw: "No raw food",
 };
 const consultStay = {
   dayTrip: "Day trip",
@@ -209,6 +221,10 @@ export const en: Messages = {
     stayLabel: "Day trip or overnight",
     members: consultMembers,
     prefectures,
+    travelLabel: "From your station (one way, for a day trip)",
+    travelOption: (minutes: number) => `Within ${minutes / 60} h`,
+    dietaryLabel: "Dietary needs (if any, choose any)",
+    dietary: consultDietary,
     prefecturesLabel: (region: string) => `Narrow down within ${region} (optional)`,
     auto: "Up to you",
     other: "Other",
@@ -277,6 +293,10 @@ export const en: Messages = {
       nights: (nights: number) =>
         nights === 0 ? "day trip" : `${plural(nights, "night", "nights")}`,
       amount: (yen: number) => `¥${yen.toLocaleString("en-US")}`,
+      travel: (minutes: number) =>
+        `Within ${minutes / 60} hour${minutes === 60 ? "" : "s"} one way from your station`,
+      dietary: (needs: string[]) => `dietary needs: ${needs.join(", ")}`,
+      dietaryOptions: consultDietary,
       line: (label: string, text: string) => `- ${label}: ${text}`,
     },
   },
@@ -497,6 +517,17 @@ export const en: Messages = {
         new Intl.DateTimeFormat("en-US", { month: "short", timeZone: "UTC" }).format(
           new Date(Date.UTC(2000, month - 1, 1)),
         ),
+      option: (text: string, count: number) => `${text} (${count})`,
+    },
+    view: {
+      label: "Switch the view",
+      cards: "Cards",
+      list: "List",
+    },
+    columns: {
+      date: "Date and time",
+      place: "Place",
+      confidence: "Confidence",
     },
     tags: {
       family: "Kid-friendly stops nearby",
@@ -610,6 +641,9 @@ export const en: Messages = {
     correct: "Correct! One more stamp for your booklet",
     wrong: (answer: string) => `Close! The answer is "${answer}"`,
     note: "The conversation goes on even if you don't answer",
+    close: "Close the quiz",
+    question: "Question",
+    stamps: (count: number) => `Stamps collected: ${count}`,
   },
   categories: {
     fireworks: "Fireworks",

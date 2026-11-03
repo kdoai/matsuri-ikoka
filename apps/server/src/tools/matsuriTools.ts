@@ -11,6 +11,7 @@ import {
   LodgingBudgetSchema,
   MAX_NIGHTS,
   MAX_TRIP_DAYS,
+  MaxTravelMinutesSchema,
   MOVE_MODES,
   mainFestivalDay,
   NightsSchema,
@@ -33,6 +34,7 @@ import {
   toCandidate,
   travelMinutesFrom,
 } from "../domain/dateWindow";
+import { foodEffects } from "../domain/food";
 import {
   festivalOpenDaysAround,
   type HearingSituation,
@@ -231,8 +233,17 @@ const NoteConditionsInputSchema = PartialTripConditionsSchema.extend({
   interests: PartialTripConditionsSchema.shape.interests.describe(
     "祭りのほかに楽しみたいこと。特にない・おまかせなら空の並び",
   ),
+  foodWishes: PartialTripConditionsSchema.shape.foodWishes.describe(
+    "旅先で食べたいもの。こだわらない・おまかせなら空の並び",
+  ),
+  dietary: PartialTripConditionsSchema.shape.dietary.describe(
+    "食事で気をつけたいこと（ベジタリアン・アレルギーなど）。言われたときだけ。アレルギーの中身は書き留めない",
+  ),
   leaveToStaff: PartialTripConditionsSchema.shape.leaveToStaff.describe(
     "「あとはおまかせ」と言われたら true",
+  ),
+  maxTravelMinutes: PartialTripConditionsSchema.shape.maxTravelMinutes.describe(
+    "日帰りの片道の所要時間の上限（分）。「出発の駅から1時間以内」なら 60。言われたときだけ",
   ),
 });
 
@@ -270,17 +281,14 @@ export const searchFestivals = defineTool({
     preferences: PreferencesSchema.optional().describe(
       "会話で読み取れたこだわり。省略すると画面で選んでいるこだわりを使う",
     ),
-    maxTravelMinutes: z
-      .number()
-      .int()
-      .min(30)
-      .max(600)
-      .optional()
-      .describe("日帰りの片道の上限（分）。利用者が言ったときだけ"),
+    maxTravelMinutes: MaxTravelMinutesSchema.optional().describe(
+      "日帰りの片道の所要時間の上限（分）。利用者が言ったときだけ。省略すると相談で書き留めた上限。泊まりの旅では使わない",
+    ),
   },
   async run(args, ctx) {
     const { session } = ctx;
     if (args.preferences !== undefined) session.preferences = args.preferences;
+    const maxTravelMinutes = args.maxTravelMinutes ?? session.conditions.maxTravelMinutes;
     // 聞き取りで書き留めたほかの条件（旅のかたち・ペースなど）は残す
     session.conditions = {
       ...session.conditions,
@@ -288,6 +296,7 @@ export const searchFestivals = defineTool({
       origin: args.origin,
       nights: args.nights,
       ...(args.party === undefined ? {} : { party: args.party }),
+      ...(maxTravelMinutes === undefined ? {} : { maxTravelMinutes }),
     };
 
     const today = ctx.today();
@@ -301,7 +310,7 @@ export const searchFestivals = defineTool({
       origin: args.origin,
       nights: args.nights,
       preferences: session.preferences,
-      ...(args.maxTravelMinutes === undefined ? {} : { maxTravelMinutes: args.maxTravelMinutes }),
+      ...(maxTravelMinutes === undefined ? {} : { maxTravelMinutes }),
     });
 
     // 候補を出す前に、開催日・時刻・状態を公式の情報で確かめる（3件を並べて動かす）
@@ -316,6 +325,11 @@ export const searchFestivals = defineTool({
     if (ranges.wish === null) notes.push("希望の日はすでに過ぎています。別の日を聞いてください");
     if (result.tooFar.length > 0) {
       notes.push(`日帰りの移動の上限を超える祭りを${result.tooFar.length}件除きました`);
+    }
+    if (maxTravelMinutes !== undefined && result.travelUnknown.length > 0) {
+      notes.push(
+        `出発地からの所要時間がデータにない祭りが${result.travelUnknown.length}件あります。上限に収まるかは分からないと伝えてください`,
+      );
     }
     if (candidates.length === 0) notes.push("条件に合う祭りはデータにありませんでした");
 
@@ -390,11 +404,13 @@ function searchArea(
   window: { from: string; to: string } | undefined,
 ) {
   const festivals = ctx.festivals.list().filter((f) => festivalInArea(f, area));
+  const food = foodEffects(ctx.session.conditions);
   const spots = festivals
     .flatMap((festival) =>
       selectNearbySpots(festival.nearby, {
         date,
         preferences: ctx.session.preferences,
+        wantsShopMeals: food.wantsShopMeals,
         ...(window === undefined ? {} : { window }),
       }).spots.map((spot) => ({ ...spotOutput(spot), festivalId: festival.id })),
     )
@@ -424,7 +440,7 @@ function searchArea(
     date,
     spots,
     festivalsOnDate,
-    rules: preferenceEffects(ctx.session.preferences).rules,
+    rules: [...preferenceEffects(ctx.session.preferences).rules, ...food.rules],
     notes,
   };
 }
@@ -434,6 +450,7 @@ export const searchNearby = defineTool({
   description:
     "祭りの前後に寄れる観光・食・休憩の場所を、祭りのデータの周辺の場所から探す。" +
     "当日が休業の場所、使える時間帯に営業時間が合わない場所、「屋台で十分」のときの店は除き、こだわりに合う順に返す。" +
+    "聞き取りで屋台のほかに食べたいものを言われていれば店も残し、食べたいもの・食事で気をつけたいことを rules に入れる。" +
     "祭りのない日の行き先は、festivalId の代わりに area（都道府県や市町村の名前）と date で探す。" +
     "その地域のほかの祭りの周辺の場所と、その日にその地域で開かれる祭りを返す（場所には持ち主の祭りの festivalId が付く）。",
   input: {
@@ -465,9 +482,11 @@ export const searchNearby = defineTool({
     const festival = festivalOf(ctx, args.festivalId);
     const date = visitDate(ctx, festival, args.date);
     ctx.session.selectedFestivalId = festival.id;
+    const food = foodEffects(ctx.session.conditions);
     const selection = selectNearbySpots(festival.nearby, {
       date,
       preferences: ctx.session.preferences,
+      wantsShopMeals: food.wantsShopMeals,
       ...(args.window === undefined ? {} : { window: args.window }),
     });
     return {
@@ -477,7 +496,7 @@ export const searchNearby = defineTool({
       excluded: selection.excluded,
       localFood: festival.food.local.map((f) => ({ name: f.name, note: f.note ?? null })),
       stalls: festival.food.stalls,
-      rules: preferenceEffects(ctx.session.preferences).rules,
+      rules: [...preferenceEffects(ctx.session.preferences).rules, ...food.rules],
     };
   },
 });

@@ -1,11 +1,11 @@
 // モック（MATSURI_AGENT_MODE=mock）で動いているサーバーに、サンプルの相談を最後まで流して確かめる。
 // 死活監視（/health。Cloud Run の既定の URL にも向けられるように）、相談の作成、各発言の SSE が done で終わること、旅程としおりが開けることを見る。
 // --pdf を付けると、しおりの PDF が作れることも見る（Chromium の入ったコンテナで使う）。
-// --glb を付けると、画面が読む 3D のモデルが配られていることも見る（画面のビルドを配るサーバーで使う）。
+// --glb を付けると、画面が読む 3D のモデルと会話の窓の顔の絵が配られていることも見る（画面のビルドを配るサーバーで使う）。
 // 使い方：node scripts/smoke-mock.mjs [--pdf] [--glb] <サーバーの URL> [サンプルの相談の JSON ...]
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
-import { checkGlb, checkPdf } from "./lib/served-files.mjs";
+import { checkFaces, checkGlb, checkPdf } from "./lib/served-files.mjs";
 
 const args = process.argv.slice(2);
 const flags = new Set(args.filter((a) => a.startsWith("--")));
@@ -79,4 +79,6 @@ for (const file of samples) {
 if (flags.has("--glb")) {
   const count = await checkGlb(base);
   check(count > 0, `3D のモデルが配られている（${count} 件）`);
+  const faces = await checkFaces(base);
+  check(faces > 0, `顔の絵が配られている（${faces} 件）`);
 }

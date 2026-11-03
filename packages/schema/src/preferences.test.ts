@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  DAY_TRIP_TRAVEL_LIMITS,
   DateWishSchema,
   DEFAULT_PREFERENCES,
   LodgingBudgetSchema,
@@ -92,6 +93,19 @@ describe("TripConditionsSchema", () => {
     }
   });
 
+  it("日帰りの片道の所要時間の上限は任意で、30分から600分までの分", () => {
+    for (const maxTravelMinutes of DAY_TRIP_TRAVEL_LIMITS) {
+      expect(TripConditionsSchema.safeParse({ ...conditions, maxTravelMinutes }).success).toBe(
+        true,
+      );
+    }
+    for (const maxTravelMinutes of [0, 29, 601, 90.5]) {
+      expect(TripConditionsSchema.safeParse({ ...conditions, maxTravelMinutes }).success).toBe(
+        false,
+      );
+    }
+  });
+
   it("出発地が空なら不正", () => {
     expect(TripConditionsSchema.safeParse({ ...conditions, origin: "  " }).success).toBe(false);
   });
@@ -141,6 +155,23 @@ describe("TripConditionsSchema", () => {
       TripConditionsSchema.safeParse({ ...conditions, route: { shape: "loop", areas } }).success,
     ).toBe(false);
     expect(TripConditionsSchema.safeParse({ ...conditions, interests: ["skiing"] }).success).toBe(
+      false,
+    );
+  });
+
+  it("食べたいものと、食事で気をつけたいことは決まった選択肢から", () => {
+    expect(
+      TripConditionsSchema.safeParse({
+        ...conditions,
+        foodWishes: ["meat", "noodles", "local_drinks"],
+        dietary: ["vegetarian", "allergy"],
+      }).success,
+    ).toBe(true);
+    expect(TripConditionsSchema.safeParse({ ...conditions, foodWishes: [] }).success).toBe(true);
+    expect(TripConditionsSchema.safeParse({ ...conditions, foodWishes: ["pizza"] }).success).toBe(
+      false,
+    );
+    expect(TripConditionsSchema.safeParse({ ...conditions, dietary: ["peanut"] }).success).toBe(
       false,
     );
   });

@@ -1,0 +1,282 @@
+{
+  "id": "kou-jinja-torinoichi",
+  "name": {
+    "ja": "鴻神社の酉の市",
+    "en": "Tori-no-Ichi Fair at Kō Shrine"
+  },
+  "category": "market",
+  "municipalities": [
+    {
+      "prefecture": "埼玉県",
+      "name": "鴻巣市"
+    }
+  ],
+  "venue": {
+    "name": "鴻神社",
+    "lat": 36.0626,
+    "lng": 139.5102
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "社殿の脇の大イチョウの下で、縁起物の熊手が掛け声とともに売られる",
+    "夕方からはもちつきや富くじなどの催しが境内で開かれる",
+    "鴻巣の地名の由来とされる「こうのとり伝説」の神社で開く冬の市"
+  ],
+  "trivia": [
+    {
+      "text": "大蛇から卵を守ったコウノトリに感謝して祀った祠が「鴻の宮」と呼ばれ、地名の鴻巣になったと伝わる",
+      "source": {
+        "url": "https://www.city.kounosu.saitama.jp/page/2979.html",
+        "title": "鴻巣市 こうのとり伝説",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "明治6年に近くの氷川社・熊野社・雷電社を合わせて祀り、明治40年に鴻神社と名を改めた",
+      "source": {
+        "url": "http://www.koujinja.or.jp/guide/index.html",
+        "title": "鴻神社 境内のご案内",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "社殿脇の夫婦銀杏は樹齢500年を超える雄木と雌木で、子授けや夫婦円満のご神木とされる",
+      "source": {
+        "url": "http://www.koujinja.or.jp/guide/index.html",
+        "title": "鴻神社 境内のご案内",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "当日、境内に並ぶ店で縁起物の熊手を求め、参拝できる（受付や費用の案内はない）",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "境内での参拝と買い物が中心で、混雑や危険についての特別な注意は案内されていない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "http://www.koujinja.or.jp/festival/index.html",
+        "title": "鴻神社 年間祭事一覧（酉の市）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://konosu-kanko.jp/event/torinoichi/",
+        "title": "鴻巣市観光協会 酉の市",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-04",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年は12月4日（金）。神社の案内では毎年12月4日で、熊手が売られ、夕方からもちつきや富くじなどの催しがある。当日は神社の駐車場が使えない",
+      "sources": [
+        {
+          "url": "https://konosu-kanko.jp/event/torinoichi/",
+          "title": "鴻巣市観光協会 酉の市（2026年12月4日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "http://www.koujinja.or.jp/festival/index.html",
+          "title": "鴻神社 年間祭事一覧（酉の市は12月4日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR高崎線 鴻巣駅",
+        "walkMinutes": [8, 13],
+        "note": "東口から徒歩8分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "東京駅",
+        "minutes": [54, 64],
+        "route": "JR上野東京ライン（高崎線直通）、乗り換えなし"
+      },
+      {
+        "hub": "新宿駅",
+        "minutes": [53, 63],
+        "route": "JR湘南新宿ラインの快速、乗り換えなし"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://konosu-kanko.jp/event/torinoichi/",
+        "title": "鴻巣市観光協会 酉の市（鴻巣駅東口から徒歩8分。当日は神社の駐車場が使えず、エルミこうのす内の市営駐車場を案内）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "http://www.koujinja.or.jp/access/index.html",
+        "title": "鴻神社 交通案内",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://konosu-kanko.jp/access/",
+        "title": "鴻巣市観光協会 交通アクセス（東京から54分、新宿から53分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "川幅うどん",
+        "note": "「川幅日本一」にちなむ幅の広いうどん。ひなの里では、川幅うどんなどを詰め合わせた川幅グルメセットを勧めている",
+        "sources": [
+          {
+            "url": "https://konosu-kanko.jp/hinanosato/",
+            "title": "鴻巣市観光協会 鴻巣市産業観光館「ひなの里」（川幅グルメ）",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "kounosu-hinanosato",
+      "name": "鴻巣市産業観光館 ひなの里",
+      "kind": "sightseeing",
+      "summary": "明治期の蔵を含む建物で、鴻巣の人形や赤物、花の産業を紹介する観光館。特産品の売場がある。祝日の水曜は開館し翌日休み、12月28日〜1月3日は休館",
+      "location": {
+        "lat": 36.0531,
+        "lng": 139.5185
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["wed"],
+      "price": "入館無料",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://konosu-kanko.jp/hinanosato/",
+          "title": "鴻巣市観光協会 鴻巣市産業観光館「ひなの里」",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kounosu-shoganji",
+      "name": "勝願寺",
+      "kind": "sightseeing",
+      "summary": "16世紀末に中興された浄土宗の寺で、徳川将軍家ゆかりの寺として本堂などに葵の紋が見られる。境内に文化財が多い。鴻巣駅から徒歩10分。拝観の時間と休みの案内はない",
+      "location": {
+        "lat": 36.0558,
+        "lng": 139.5155
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://chocotabi-saitama.jp/spot/40835/",
+          "title": "ちょこたび埼玉 勝願寺",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://konosu-kanko.jp/spot/view/",
+          "title": "鴻巣市観光協会 観る（勝願寺）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kounosu-menkobo-kuraichi",
+      "name": "めん工房 久良一",
+      "kind": "food",
+      "summary": "手打ちのそばとうどんの店で、こうのす川幅うどんの発祥の店と名乗る。川幅みそ煮込みうどんが勧めの品。昼と夕方からの営業で、木曜と日曜の夜が休み",
+      "location": {
+        "lat": 36.0508,
+        "lng": 139.5198
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": ["thu"],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.pref.saitama.lg.jp/a0902/3579.html",
+          "title": "埼玉県 S-BOOK めん工房 久良一（2019年掲載。11:30〜14:30、17:30ごろから品切れまで）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "http://www.koujinja.or.jp/festival/index.html",
+      "title": "鴻神社 年間祭事一覧",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://konosu-kanko.jp/event/torinoichi/",
+      "title": "鴻巣市観光協会 酉の市",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://chocotabi-saitama.jp/spot/40836/",
+      "title": "ちょこたび埼玉 鴻神社",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2026年の始まりと終わりの時刻、もちつき・富くじの時刻",
+    "雨のときの扱い",
+    "熊手の値段の目安と、店の数",
+    "屋台・露店の有無",
+    "来場者数の公表値",
+    "境内でのルール、服装・持ち物・撮影の決まり",
+    "交通規制の有無",
+    "勝願寺の拝観の時間・休み・料金",
+    "めん工房 久良一の営業時間の最新の案内（確かめたのは2019年掲載の県のページ）",
+    "会場の緯度・経度は住所からの検索で、境内の中心かは確かめていない"
+  ]
+}

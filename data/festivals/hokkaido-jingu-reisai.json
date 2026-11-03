@@ -1,0 +1,335 @@
+{
+  "id": "hokkaido-jingu-reisai",
+  "name": {
+    "ja": "北海道神宮例祭",
+    "en": "Hokkaido Jingu Reisai"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "北海道",
+      "name": "札幌市"
+    }
+  ],
+  "venue": {
+    "name": "北海道神宮",
+    "lat": 43.0561,
+    "lng": 141.3082
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "平安の絵巻のような装束の市民1,000人以上が、神輿4基・山車9基と札幌の街を練る渡御",
+    "渡御の午後、南1条西4丁目の交差点で神輿と山車がそろって披露される",
+    "円山の北海道神宮を出て、市の中心部へ下りていく行列",
+    "神宮の境内では伝統の奉納行事が行われる"
+  ],
+  "trivia": [
+    {
+      "text": "「札幌まつり」の名で親しまれ、100年を超える歴史がある",
+      "source": {
+        "url": "https://www.sapporo.travel/event/summer/hokkaido_shrine_festival/",
+        "title": "ようこそさっぽろ（札幌観光協会） 北海道神宮例祭（札幌まつり）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "北海道神宮は1869年、明治天皇の詔によって建てられた",
+      "source": {
+        "url": "https://www.visit-hokkaido.jp/spot/detail_10001.html",
+        "title": "HOKKAIDO LOVE!（北海道観光振興機構） 北海道神宮",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "祭りの始まりは明治5年（1872年）とされる",
+      "source": {
+        "url": "https://www.jalan.net/event/evt_341861/",
+        "title": "じゃらんnet 北海道神宮例祭 札幌まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.sapporo.travel/event/summer/hokkaido_shrine_festival/",
+        "title": "ようこそさっぽろ（札幌観光協会） 北海道神宮例祭（札幌まつり）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.gutabi.jp/event/detail/1536",
+        "title": "ぐうたび北海道 北海道神宮例祭（札幌まつり）（見学無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-06-14",
+      "start": "18:00",
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2026年の回（主催者の発表は確かめられず、大手の観光サイト2つの一致による）。宵宮祭（18:00から）",
+      "sources": [
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar0101e598340/data.html",
+          "title": "ウォーカープラス 札幌まつりの詳細データ（2026年6月14日〜16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://ekitan.com/event/evid-c5bb36beeae1f5b3c0fa8ca0e35dbb09",
+          "title": "駅探 札幌まつり（2026年6月14日〜16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20002252",
+          "title": "るるぶ&more. 北海道神宮例祭（2026年6月14日〜16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        }
+      ]
+    },
+    {
+      "date": "2026-06-15",
+      "start": "10:00",
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2026年の回（主催者の発表は確かめられず、大手の観光サイト2つの一致による）。例祭（10:00から）",
+      "sources": [
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar0101e598340/data.html",
+          "title": "ウォーカープラス 札幌まつりの詳細データ（2026年6月14日〜16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://ekitan.com/event/evid-c5bb36beeae1f5b3c0fa8ca0e35dbb09",
+          "title": "駅探 札幌まつり（2026年6月14日〜16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        }
+      ]
+    },
+    {
+      "date": "2026-06-16",
+      "start": "08:30",
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2026年の回（主催者の発表は確かめられず、大手の観光サイト2つの一致による）。神輿渡御（8:30から）。神輿4基と山車9基を中心に1,000人以上の行列が北海道神宮を出て市内を練り、午後に南1条西4丁目の交差点で神輿と山車の披露がある（行列の規模と披露は札幌観光協会の毎年の案内）",
+      "sources": [
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar0101e598340/data.html",
+          "title": "ウォーカープラス 札幌まつりの詳細データ（渡御 6月16日 8:30）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://ekitan.com/event/evid-c5bb36beeae1f5b3c0fa8ca0e35dbb09",
+          "title": "駅探 札幌まつり（渡御 6月16日 8:30）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://www.sapporo.travel/event/summer/hokkaido_shrine_festival/",
+          "title": "ようこそさっぽろ（札幌観光協会） 北海道神宮例祭（神輿4基・山車9基、1,000人以上）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-06-14",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年6月14日〜16日に行う決まりから見込んだ日（2027年の時刻の発表はまだない）。例年はこの日に宵宮祭（2025年・2026年は18:00から）",
+      "sources": [
+        {
+          "url": "https://www.sapporo.travel/event/summer/hokkaido_shrine_festival/",
+          "title": "ようこそさっぽろ（札幌観光協会） 北海道神宮例祭（毎年6月14日〜16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-06-15",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年6月14日〜16日に行う決まりから見込んだ日（2027年の時刻の発表はまだない）。例年はこの日に例祭（2025年・2026年は10:00から）",
+      "sources": [
+        {
+          "url": "https://www.sapporo.travel/event/summer/hokkaido_shrine_festival/",
+          "title": "ようこそさっぽろ（札幌観光協会） 北海道神宮例祭（毎年6月14日〜16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-06-16",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年6月14日〜16日に行う決まりから見込んだ日（2027年の時刻の発表はまだない）。例年はこの日に神輿渡御（出発は2025年が9:00、2026年が8:30）",
+      "sources": [
+        {
+          "url": "https://www.sapporo.travel/event/summer/hokkaido_shrine_festival/",
+          "title": "ようこそさっぽろ（札幌観光協会） 北海道神宮例祭（毎年6月14日〜16日、16日に神輿渡御）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.sapporo.travel/news/hokkaidojingu-festival2025/",
+          "title": "ようこそさっぽろ（札幌観光協会） 北海道神宮例祭（札幌まつり）開催のお知らせ（2025年、渡御 9:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "札幌市営地下鉄 円山公園駅",
+        "walkMinutes": [15, 20],
+        "note": "東西線。北海道神宮まで徒歩約15分"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.visit-hokkaido.jp/spot/detail_10001.html",
+        "title": "HOKKAIDO LOVE!（北海道観光振興機構） 北海道神宮（円山公園駅から徒歩約15分、駐車場230台・無料、札幌まつりの期間は公共交通機関を勧める）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "sapporo-maruyama-zoo",
+      "name": "札幌市円山動物園",
+      "kind": "sightseeing",
+      "summary": "北海道神宮のとなり、円山にある札幌市の動物園。休園は毎月第2・第4水曜日（8月は第1・第4、祝日なら翌日）",
+      "location": {
+        "lat": 43.058,
+        "lng": 141.3095
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "16:30",
+        "lastEntry": "16:00"
+      },
+      "closedDays": null,
+      "price": "大人800円、高校生400円、中学生以下無料",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.city.sapporo.jp/zoo/info/kaienzikan-kyuenbi/20210311.html",
+          "title": "札幌市円山動物園 開園時間・休園日（3月〜10月は9:30〜16:30）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.sapporo.jp/zoo/info/riyo/kaienjikan.html",
+          "title": "札幌市円山動物園 入園料",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "rokkatei-jingu-chaya",
+      "name": "六花亭 神宮茶屋店",
+      "kind": "food",
+      "summary": "北海道神宮の境内にある六花亭の店。喫茶もある",
+      "location": {
+        "lat": 43.0561,
+        "lng": 141.3082
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "16:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.rokkatei.co.jp/shop/sapporo/",
+          "title": "六花亭 札幌・札幌近郊地区の店舗（神宮茶屋店 9:00〜16:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.sapporo.travel/event/summer/hokkaido_shrine_festival/",
+      "title": "ようこそさっぽろ（札幌観光協会） 北海道神宮例祭（札幌まつり）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.sapporo.travel/news/hokkaidojingu-festival2025/",
+      "title": "ようこそさっぽろ（札幌観光協会） 北海道神宮例祭（札幌まつり）開催のお知らせ（2025年）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.visit-hokkaido.jp/spot/detail_10001.html",
+      "title": "HOKKAIDO LOVE!（北海道観光振興機構） 北海道神宮（札幌市中央区宮ケ丘474）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の宵宮祭・例祭・神輿渡御の時刻と、渡御の順路（北海道神宮の公式サイトを開けず、確かめられなかった）",
+    "2026年の開催を主催者が発表したページ（公式サイトを開けず、2026年の日程と時刻は大手の観光サイト2つの一致で入れた）",
+    "神輿渡御が神宮に戻る時刻と、各地点を通る時刻",
+    "雨のときの扱い",
+    "渡御の日の交通規制の区間と時間",
+    "見学の決まり、服装・持ち物・撮影の扱い、危険度",
+    "例祭の期間の神宮の駐車場の扱い（公式は公共交通機関を勧めている）",
+    "主要駅（札幌駅など）から円山公園駅までの所要時間",
+    "会場と周辺の場所の緯度・経度は国土地理院の住所検索の番地の代表点で、六花亭 神宮茶屋店は神宮と同じ番地の点。円山動物園の点は宮ケ丘3丁目1番の代表点",
+    "祭りならではの食べもの（境内と中島公園に屋台が出るが、中身の案内はない）",
+    "周辺の観光・食の場所が2件しか確かめられなかった。六花亭 神宮茶屋店の定休日と喫茶の時間",
+    "一般の人が神輿渡御の行列に加われるか（市民1,000人以上が装束で加わると札幌観光協会が案内しているが、受付の方法が見つからない）"
+  ]
+}

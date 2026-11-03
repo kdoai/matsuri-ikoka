@@ -1,0 +1,298 @@
+{
+  "id": "minakuchi-hikiyama-matsuri",
+  "name": { "ja": "水口曳山まつり", "en": "Minakuchi Hikiyama Festival" },
+  "category": "float",
+  "municipalities": [{ "prefecture": "滋賀県", "name": "甲賀市" }],
+  "venue": { "name": "水口神社", "lat": 34.9673, "lng": 136.1683 },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "曳山の上に「ダシ」と呼ばれる作り物を飾る",
+    "曳山の中で奏でる、多彩で独特な水口囃子",
+    "20日の夜、提灯をともして町内へ帰る「帰り山」",
+    "曳山とともに纏田楽が神社へ渡行し、境内に奉納される"
+  ],
+  "trivia": [
+    {
+      "text": "曳山が初めて曳き出されたのは享保20年（1735）と、石王日記に記録がある",
+      "source": {
+        "url": "https://minakuchi-jinja.com/%E6%B0%B4%E5%8F%A3%E6%9B%B3%E5%B1%B1%E3%81%BE%E3%81%A4%E3%82%8A",
+        "title": "水口神社 水口曳山まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "町に残る曳山は16基で、滋賀県でいちばん多い",
+      "source": {
+        "url": "https://minakuchi-jinja.com/%E6%B0%B4%E5%8F%A3%E6%9B%B3%E5%B1%B1%E3%81%BE%E3%81%A4%E3%82%8A",
+        "title": "水口神社 水口曳山まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "4月8日のくじ取り式で、纏田楽と曳山が神社に入る順番を決める",
+      "source": {
+        "url": "https://minakuchi-jinja.com/%E5%B9%B4%E4%B8%AD%E8%A1%8C%E4%BA%8B",
+        "title": "水口神社 年中行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "曳山は江戸時代の中ごろ、町の人たちの力で作られた",
+      "source": {
+        "url": "https://www.biwako-visitors.jp/event/detail/5582/",
+        "title": "滋賀・びわ湖観光情報 水口曳山まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": [
+      "曳山には車のようなブレーキがなく、上から物が落ちることもあるので、十分に離れて見る",
+      "曳山の進む先の道をふさがない"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "high",
+      "reason": "曳山の曳き回しで、主催者がブレーキがないことと落下物への注意を呼びかけている"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://minakuchi-jinja.com/%E6%B0%B4%E5%8F%A3%E6%9B%B3%E5%B1%B1%E3%81%BE%E3%81%A4%E3%82%8A",
+        "title": "水口神社 水口曳山まつり（曳山に近づかないお願い）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-04-19",
+      "start": "19:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。19:00 宵宮祭。例年、境内に神輿を飾り、各町内では曳山に提灯をつけて水口囃子を奏でる",
+      "sources": [
+        {
+          "url": "https://minakuchi-jinja.com/post-1009",
+          "title": "水口神社 令和8年度 水口まつり スケジュール（例大祭次第の画像）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.biwako-visitors.jp/event/detail/5582/",
+          "title": "滋賀・びわ湖観光情報 水口曳山まつり（毎年4月19日・20日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-20",
+      "start": "09:30",
+      "end": "19:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。9:00 例大祭、9:30 曳山が弟殿に集合、10:05 曳山が神社へ渡行、14:00 神輿渡御、18:30 大神輿還御、19:00 曳山と纏田楽が還行（帰り山）",
+      "sources": [
+        {
+          "url": "https://minakuchi-jinja.com/post-1009",
+          "title": "水口神社 令和8年度 水口まつり スケジュール（例大祭次第の画像）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://minakuchi-jinja.com/post-1005",
+          "title": "水口神社 令和8年度 水口まつり 曳山当日渡行路（4月20日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-04-19",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年4月19日の宵宮祭（2027年の発表はまだない）。2026年は19:00から",
+      "sources": [
+        {
+          "url": "https://minakuchi-jinja.com/%E5%B9%B4%E4%B8%AD%E8%A1%8C%E4%BA%8B",
+          "title": "水口神社 年中行事（4月19日 宵宮祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.biwako-visitors.jp/event/detail/5582/",
+          "title": "滋賀・びわ湖観光情報 水口曳山まつり（毎年4月19日・20日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-04-20",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年4月20日の例大祭（2027年の発表はまだない）。例年、朝に曳山が弟殿に集まって神社へ巡行し、午後に神輿渡御、夜に提灯をともした帰り山",
+      "sources": [
+        {
+          "url": "https://minakuchi-jinja.com/%E5%B9%B4%E4%B8%AD%E8%A1%8C%E4%BA%8B",
+          "title": "水口神社 年中行事（4月20日 例大祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.biwako-visitors.jp/event/detail/5582/",
+          "title": "滋賀・びわ湖観光情報 水口曳山まつり（毎年4月19日・20日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [{ "name": "近江鉄道 水口城南駅", "walkMinutes": [5, 10] }],
+    "fromHubs": [
+      {
+        "hub": "京都駅",
+        "minutes": [69, 69],
+        "route": "JR琵琶湖線で草津、草津線で貴生川、近江鉄道に乗り換えて水口城南駅へ（乗り換え2回）"
+      }
+    ],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://koka-kanko.org/see/minakuchijinjya/",
+        "title": "甲賀市観光ガイド 水口神社（水口城南駅から徒歩約5分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.biwako-visitors.jp/event/detail/5582/",
+        "title": "滋賀・びわ湖観光情報 水口曳山まつり（水口城南駅から徒歩約5分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ekitan.com/transit/route/sf-5198/st-8532",
+        "title": "駅探 乗換案内 京都→水口城南（2026年11月4日 早朝の出発の検索結果）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "kissa-hekisui-minakuchi",
+      "name": "喫茶 碧水",
+      "kind": "rest",
+      "summary": "甲賀市役所のすぐそばにある古くからの喫茶店。水口神社にも近く、ひと休みに使える",
+      "location": { "lat": 34.9664, "lng": 136.1684 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "08:00", "close": "19:00" },
+      "closedDays": ["sun"],
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://koka-kanko.org/eat/hekisui/",
+          "title": "甲賀市観光ガイド 喫茶 碧水",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "nishida-saketen-minakuchi",
+      "name": "西田酒店",
+      "kind": "food",
+      "summary": "東海道の水口宿にある造り酒屋で、銘柄は「酔小町」。土日は休み",
+      "location": { "lat": 34.9689, "lng": 136.174 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "09:00", "close": "19:00" },
+      "closedDays": ["sat", "sun"],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://koka-kanko.org/buy/nishidasake/",
+          "title": "甲賀市観光ガイド 西田酒店",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://minakuchi-jinja.com/",
+      "title": "水口神社 公式サイト",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://minakuchi-jinja.com/%E6%B0%B4%E5%8F%A3%E6%9B%B3%E5%B1%B1%E3%81%BE%E3%81%A4%E3%82%8A",
+      "title": "水口神社 水口曳山まつり",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://minakuchi-jinja.com/%E5%B9%B4%E4%B8%AD%E8%A1%8C%E4%BA%8B",
+      "title": "水口神社 年中行事（19日・20日に曳山と約200の露店）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://koka-kanko.org/see/minakuchijinjya/",
+      "title": "甲賀市観光ガイド 水口神社（水口曳山祭は滋賀県指定無形民俗文化財）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.biwako-visitors.jp/event/detail/5582/",
+      "title": "滋賀・びわ湖観光情報 水口曳山まつり",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.pref.shiga.lg.jp/miryoku/20014.html",
+      "title": "滋賀県 水口曳山祭（曳山の上のダシ、2025年は8基）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、宵宮祭・例大祭の時刻",
+    "2026年に巡行した曳山の数（町に残るのは16基。滋賀県の案内では2025年に集まったのは8基）",
+    "雨の日の扱い（曳山と帰り山）",
+    "交通規制と、見物の人が使える駐車場",
+    "服装・持ち物・撮影の決まり",
+    "一般の人が曳山や纏田楽に加われるか",
+    "曳山を間近で見られる場所（弟殿・神社境内での見学の決まり）",
+    "祭りの日に開いている観光の場所（水口城資料館・水口歴史民俗資料館は月・火が休館で、2027年の祭りの2日に当たる）",
+    "京都駅からの所要時間は早朝の1本の検索結果だけで、昼間の所要時間を確かめていない",
+    "大阪方面からの所要時間",
+    "喫茶 碧水・西田酒店の祝日の営業"
+  ]
+}

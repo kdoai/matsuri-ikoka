@@ -1,0 +1,353 @@
+{
+  "id": "kamaishi-matsuri",
+  "name": {
+    "ja": "釜石まつり",
+    "en": "Kamaishi Festival"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "岩手県",
+      "name": "釜石市"
+    }
+  ],
+  "venue": {
+    "name": "シープラザ釜石西側駐車場（合同祭）ほか、釜石市中心部と釜石港内",
+    "lat": 39.2735,
+    "lng": 141.872
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "尾崎神社の神輿を乗せたお召船が、虎舞や神楽の船を従えて釜石港内を渡る曳船まつり",
+    "大漁旗を掲げた十数隻の船団が港内をパレードする",
+    "最終日は両神社の神輿とともに、虎舞・神楽・手踊りが市内の目抜き通りを練り歩く",
+    "2026年は中日の夜に、港町の岸壁沿いで花火が上がった"
+  ],
+  "trivia": [
+    {
+      "text": "古くからの尾崎神社の祭典と、製鉄所の守護神社である山神社の祭典を、合同で行う祭り",
+      "source": {
+        "url": "https://kamaishi-kankou.jp/enjoy/annually/",
+        "title": "釜石観光物産協会 年間イベント（釜石まつり）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "虎は一日に千里行って千里帰るという言い伝えから、漁師の無事の帰りを祈って虎舞が舞われるようになった",
+      "source": {
+        "url": "https://kamaishi-kankou.jp/about/local-performing-arts/",
+        "title": "釜石観光物産協会 郷土芸能",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "合同の「釜石まつり」は、昭和42年（1967年）の市制施行30周年の記念行事として始まった",
+      "source": {
+        "url": "https://www.jalan.net/event/evt_346773/",
+        "title": "じゃらんnet 釜石まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": [
+      "花火は指定の観覧場所（港町岸壁沿い、グリーンベルト）で見る",
+      "ドローンでの撮影は禁止",
+      "花火会場での無許可の出店は禁止"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": {
+      "policy": "restricted",
+      "note": "ドローンによる撮影は禁止"
+    },
+    "sources": [
+      {
+        "url": "https://kamaishi-kankou.jp/event/8101/",
+        "title": "釜石観光物産協会 令和8年釜石まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-10-16",
+      "start": "18:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。18:00 尾崎神社宵宮祭（尾崎神社）",
+      "sources": [
+        {
+          "url": "https://kamaishi-kankou.jp/event/8101/",
+          "title": "釜石観光物産協会 令和8年釜石まつり（2026年10月16日〜18日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-17",
+      "start": "09:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。9:00 曳船まつりの船団が釜石市魚市場を出港、11:30 尾崎神社神輿の海上渡御（釜石港内）、15:00 尾崎神社例大祭、17:30 日本製鉄山神社宵宮祭、18:00 から30分ほど花火（港町岸壁沿い・グリーンベルトで観覧。仮設トイレ・露店はなし）",
+      "sources": [
+        {
+          "url": "https://kamaishi-kankou.jp/event/8101/",
+          "title": "釜石観光物産協会 令和8年釜石まつり（2026年10月16日〜18日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-18",
+      "start": "07:50",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。7:50 尾崎神社出御祭・日本製鉄山神社例大祭、11:20 両神社合同祭（シープラザ釜石西側駐車場）、12:10 両神社の神輿が市内渡御に出発（魚市場まで）、14:05 神輿還御式（釜石市魚市場）、15:30 魚市場を出港",
+      "sources": [
+        {
+          "url": "https://kamaishi-kankou.jp/event/8101/",
+          "title": "釜石観光物産協会 令和8年釜石まつり（2026年10月16日〜18日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-10-15",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "10月第3日曜日を起点とする金曜日〜日曜日の初日（2027年の発表はまだない）。例年、初日の夜に尾崎神社の宵宮祭がある",
+      "sources": [
+        {
+          "url": "https://kamaishi-kankou.jp/enjoy/annually/",
+          "title": "釜石観光物産協会 年間イベント（10月第3日曜日を起点とする金曜日〜日曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-10-16",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2027年の発表はまだない。例年、土曜日に曳船まつり（尾崎神社神輿の海上渡御）があり、2026年は夜に花火も上がった",
+      "sources": [
+        {
+          "url": "https://kamaishi-kankou.jp/enjoy/annually/",
+          "title": "釜石観光物産協会 年間イベント（土曜日に曳き船まつり）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-10-17",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2027年の発表はまだない。例年、日曜日に両神社の神輿と虎舞・神楽・山車・手踊りが市内の目抜き通りを練り歩く",
+      "sources": [
+        {
+          "url": "https://kamaishi-kankou.jp/enjoy/annually/",
+          "title": "釜石観光物産協会 年間イベント（日曜日に神輿と郷土芸能の市内渡御）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 釜石駅",
+        "walkMinutes": [5, 15],
+        "note": "合同祭の会場のシープラザ釜石は駅の隣。るるぶ&more.の案内で、会場まで徒歩5〜15分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "盛岡駅",
+        "minutes": [139, 146],
+        "route": "JR釜石線の快速はまゆり、乗り換えなし"
+      },
+      {
+        "hub": "新花巻駅",
+        "minutes": [95, 103],
+        "route": "JR釜石線の快速はまゆり、乗り換えなし（東北新幹線からの乗り継ぎ）"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [
+      "2026年の例：10月18日 10:30〜15:00 大渡町大渡橋交差点〜只越町ツルハドラッグ釜石前交差点が通行止め",
+      "2026年の例：10月18日 8:30〜11:00 鈴子町北日本製鉄所正門前〜魚市場前の片側交通規制と、小川町親和橋付近から鈴子町北日本製鉄所正門前までの1車線規制"
+    ],
+    "sources": [
+      {
+        "url": "https://kamaishi-kankou.jp/event/8101/",
+        "title": "釜石観光物産協会 令和8年釜石まつり（交通規制）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000013",
+        "title": "るるぶ&more. 釜石まつり（釜石駅から徒歩5〜15分、専用駐車場なし・近隣に有料駐車場）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      },
+      {
+        "url": "https://timetables.jreast.co.jp/2611/train/150/154651.html",
+        "title": "JR東日本 時刻表 快速はまゆり 3657D（盛岡 9:22 発、新花巻 10:06 発、釜石 11:41 着）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://timetables.jreast.co.jp/2611/train/150/154671.html",
+        "title": "JR東日本 時刻表 快速はまゆり 3665D（盛岡 17:15 発、新花巻 17:58 発、釜石 19:41 着）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "kamaishi-tetsu-no-rekishikan",
+      "name": "釜石市立鉄の歴史館",
+      "kind": "sightseeing",
+      "summary": "鉄づくりの始まりから洋式高炉の完成までをたどる博物館。橋野鉄鉱山の三番高炉を原寸大で再現したシアターがあり、館内から釜石湾を望める。12月29日〜1月3日は休館",
+      "location": {
+        "lat": 39.2554,
+        "lng": 141.895
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:00"
+      },
+      "closedDays": ["tue"],
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://kamaishi-kankou.jp/learn/tetsunorekishikan/",
+          "title": "釜石観光物産協会 鉄の歴史館",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kamaishi-daikannon",
+      "name": "釜石大観音",
+      "kind": "sightseeing",
+      "summary": "魚を抱いた全高48.5mの白い観音像。胎内に三十三観音や七福神がまつられ、海抜120mの魚籃展望台まで上れる。拝観時間は季節により変わる",
+      "location": {
+        "lat": 39.2567,
+        "lng": 141.8986
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": [],
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://kamaishi-kankou.jp/learn/daikannon/",
+          "title": "釜石観光物産協会 釜石大観音",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "sea-plaza-kamaishi",
+      "name": "シープラザ釜石",
+      "kind": "food",
+      "summary": "釜石駅の隣にある施設。地元の特産品やお土産を選べ、お食事処もある。休みは火曜日で、不定期",
+      "location": {
+        "lat": 39.2735,
+        "lng": 141.872
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "19:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://kamaishi-kankou.jp/gourmet/seaplaza/",
+          "title": "釜石観光物産協会 シープラザ釜石",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://kamaishi-kankou.jp/event/8101/",
+      "title": "釜石観光物産協会 令和8年釜石まつり",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://kamaishi-kankou.jp/enjoy/annually/",
+      "title": "釜石観光物産協会 年間イベント（釜石まつり）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.walkerplus.com/event/ar0203e567570/",
+      "title": "ウォーカープラス 釜石まつり",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、各日の行事の時刻",
+    "雨や荒天のときの扱い（曳船まつりは天候で内容が変わることがあるとだけ案内がある）",
+    "曳船まつりを陸から見やすい場所",
+    "見学のほかに加われる行事があるか",
+    "危険度（主催者による、混雑やけがの注意が見つからない）",
+    "服装・持ち物",
+    "曳船まつりや神輿渡御の会場に屋台・露店が出るか（2026年は花火会場に露店がなかった）",
+    "2027年の交通規制と、臨時駐車場の有無",
+    "見学者数の公表値（るるぶ&more.では前年の来場者1万2000人）",
+    "鉄の歴史館の入館料、釜石大観音の拝観料",
+    "鉄の歴史館・釜石大観音への、釜石駅や会場からの所要時間",
+    "シープラザ釜石のお食事処の店名と料理",
+    "釜石大観音の10月の拝観時間（季節で変わる）",
+    "釜石駅から会場までの徒歩（るるぶは5〜15分、じゃらんは約20分）",
+    "規模を決める数（M は、3日にわたり船団・虎舞・神楽・山車と日ごとに見せ場が違うことから決めた）"
+  ]
+}

@@ -1,0 +1,297 @@
+{
+  "id": "motsuji-hatsukayasai",
+  "name": {
+    "ja": "毛越寺二十日夜祭",
+    "en": "Motsuji Hatsukayasai"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "岩手県",
+      "name": "平泉町"
+    }
+  ],
+  "venue": {
+    "name": "毛越寺 常行堂",
+    "lat": 38.9873,
+    "lng": 141.1071
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "延年の舞が、常行堂の中で夜半まで奉納される",
+    "厄年の人々が松明を先頭に常行堂へ練り歩く献膳上り行列",
+    "大根や白菜など、冬の野菜を宝前に供えて無病息災を祈る",
+    "新春の祈祷が7日間続いた、結願の夜だけの行事"
+  ],
+  "trivia": [
+    {
+      "text": "正月14日から20日まで常行堂で摩多羅神の祭りが続き、結願の20日の夜を二十日夜祭と呼ぶ",
+      "source": {
+        "url": "https://hiraizumi.or.jp/event/hatsuka.html",
+        "title": "平泉観光協会 ひらいずみナビ 毛越寺二十日夜祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "献膳上り行列では厄年の老若男女が、大根や白菜などの供物を常行堂に納める",
+      "source": {
+        "url": "https://hiraizumi.or.jp/event/hatsuka.html",
+        "title": "平泉観光協会 ひらいずみナビ 毛越寺二十日夜祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "真冬の夜の行事で、松明を先頭にした行列が町なかから境内へ進み、蘇民袋の争奪もある（主催者によるけがの注意は見当たらない）"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://hiraizumi.or.jp/event/hatsuka.html",
+        "title": "平泉観光協会 ひらいずみナビ 毛越寺二十日夜祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.walkerplus.com/event/ar0203e576093/",
+        "title": "ウォーカープラス 毛越寺二十日夜祭（2026年の進行）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-20",
+      "start": "15:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績（ウォーカープラスの案内）。15:00 献膳式、16:00 御祈祷、19:20ごろ平泉駅から常行堂へお上り行列が出発、20:10ごろ蘇民袋の争奪、21:00 延年の舞の奉納。観覧は無料と案内されていた",
+      "sources": [
+        {
+          "url": "https://www.walkerplus.com/event/ar0203e576093/",
+          "title": "ウォーカープラス 毛越寺二十日夜祭（2026年1月20日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000850",
+          "title": "るるぶ&more. 二十日夜祭（延年の舞）（2026年1月20日、無料）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        },
+        {
+          "url": "https://hiraizumi.or.jp/event/hatsuka.html",
+          "title": "平泉観光協会 ひらいずみナビ 毛越寺二十日夜祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-20",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年1月20日（2027年は水曜日。寺の発表はまだない）。例年、献膳式と常行三昧供のあと、夜に献膳上り行列が常行堂へ向かい、最後に延年の舞が夜半まで奉納される",
+      "sources": [
+        {
+          "url": "https://hiraizumi.or.jp/event/hatsuka.html",
+          "title": "平泉観光協会 ひらいずみナビ 毛越寺二十日夜祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 平泉駅",
+        "walkMinutes": [7, 12],
+        "note": "毛越寺の案内で、平泉駅から0.7km・徒歩7分。行列は平泉駅前から出発する"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "盛岡駅",
+        "minutes": [87, 97],
+        "route": "JR東北本線で平泉駅まで約1時間27分"
+      },
+      {
+        "hub": "一ノ関駅",
+        "minutes": [8, 18],
+        "route": "JR東北本線で平泉駅まで約8分。東北新幹線の一ノ関駅で乗り換える（仙台から一ノ関まで新幹線で約32分）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.motsuji.or.jp/seeing/index.html",
+        "title": "毛越寺 拝観・交通（平泉駅から徒歩7分、町営毛越寺駐車場330台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://hiraizumi.or.jp/info/access.html",
+        "title": "平泉観光協会 アクセス（各交通手段と所要時間・令和6年1月現在）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "chusonji",
+      "name": "中尊寺",
+      "kind": "sightseeing",
+      "summary": "850年に円仁が開き、奥州藤原氏の初代清衡が大きな堂塔を建てた寺。金色堂をはじめ国宝・重要文化財を多く伝える。年中無休",
+      "location": {
+        "lat": 39.002,
+        "lng": 141.1045
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "08:30",
+        "close": "16:30"
+      },
+      "closedDays": [],
+      "price": "大人1,000円、高校生700円、中学生500円、小学生300円",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://hiraizumi.or.jp/archive/sightseeing/chusonji.html",
+          "title": "平泉観光協会 中尊寺（11月4日〜2月末日は8:30〜16:30）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kanjizaiouin-ato",
+      "name": "観自在王院跡",
+      "kind": "sightseeing",
+      "summary": "藤原氏2代基衡の妻が建てたと伝わる寺の跡。平安時代の庭園書『作庭記』に沿うとされる浄土庭園の遺構が、ほぼそのまま残る。毛越寺の隣",
+      "location": {
+        "lat": 38.9876,
+        "lng": 141.1105
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://hiraizumi.or.jp/archive/sightseeing/kanji.html",
+          "title": "平泉観光協会 観自在王院跡",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "hiraizumi-cultural-heritage-center",
+      "name": "平泉文化遺産センター",
+      "kind": "sightseeing",
+      "summary": "世界遺産「平泉の文化遺産」をわかりやすく紹介するガイダンス施設で、発掘で出た考古資料も多く展示する。入館は16:30まで、無料。12月29日〜1月3日は休館",
+      "location": {
+        "lat": 38.9929,
+        "lng": 141.1108
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": [],
+      "price": "無料",
+      "tags": ["indoor"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://hiraizumi.or.jp/archive/sightseeing/bunka.html",
+          "title": "平泉観光協会 平泉文化遺産センター",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "hiraizumi-bashokan",
+      "name": "芭蕉館",
+      "kind": "food",
+      "summary": "自家製の更科そばで出す、元祖盛り出し式の平泉わんこそばの店。そばがなくなりしだい終わる。木曜定休で、臨時休業もある",
+      "location": {
+        "lat": 38.9902,
+        "lng": 141.1158
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "15:00",
+        "lastEntry": "14:30"
+      },
+      "closedDays": ["thu"],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "http://www.bashokan.co.jp/",
+          "title": "芭蕉館 元祖盛り出し式平泉わんこそばのお店",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://hiraizumi.or.jp/archive/food/",
+          "title": "平泉観光協会 平泉で食べる（芭蕉館 12月〜3月は木曜休み）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://hiraizumi.or.jp/event/hatsuka.html",
+      "title": "平泉観光協会 ひらいずみナビ 毛越寺二十日夜祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の進行と時刻（寺・観光協会の発表はまだない）",
+    "行列と延年の舞を見られる場所、常行堂の中に入って見られるか",
+    "服装・持ち物・撮影の決まり",
+    "松明や行列のまわりでの注意（主催者の案内が見つからない）",
+    "雪や荒天のときの扱い",
+    "行列の道すじの交通規制",
+    "夜の駐車場の使い方（町営毛越寺駐車場の案内は8:30〜17:00）",
+    "行列の人数と見物の人数の公式の数（観光サイトの案内では行列約200人、見物約300人）",
+    "屋台の有無",
+    "祭りの夜に開いている近くの食事の店（公式で夜の営業を確かめられた店がない）",
+    "観自在王院跡の見学の時間と休み"
+  ]
+}

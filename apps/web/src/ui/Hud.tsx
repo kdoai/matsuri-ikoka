@@ -205,7 +205,7 @@ function GameMenu({
   );
 }
 
-/** 右上の丸いボタン：会話の記録・設定・使い方（狭い画面ではメニューも） */
+/** 右上の丸いボタン：会話の記録・設定・使い方（メニューは、左に並ぶ操作の案内の M から開く） */
 export function IconButtons({
   onOpenLog,
   unread,
@@ -226,17 +226,6 @@ export function IconButtons({
 
   return (
     <div className="relative flex items-center gap-1.5 sm:gap-2" data-testid="icon-buttons">
-      <button
-        type="button"
-        className={`${roundIcon} lg:hidden`}
-        aria-label={t.hud.hints.menu}
-        title={t.hud.hints.menu}
-        aria-expanded={menu === "menu"}
-        aria-controls="hud-menu"
-        onClick={() => toggle("menu")}
-      >
-        <Menu className="size-5" />
-      </button>
       <button
         type="button"
         className={roundIcon}
@@ -406,21 +395,23 @@ export function KeyCap({ children, small = false }: { children: ReactNode; small
 }
 
 /**
- * 操作の案内（上の段の、丸いボタンの下の札）。キーボードの X・Y・M、ゲームパッドの X・Y・スタートでも同じことができる。
- * 上の段の中に置くので、会話の窓や旅のしおりと重ならない。狭い画面ではキーの印とアイコンだけにする
+ * 操作の案内（上の段の、丸いボタンの左に同じ段で並ぶ札）。キーボードの X・Y・M、ゲームパッドの X・Y・スタートでも同じことができる。
+ * 上の段の中に置くので、店内の絵や会話の窓・旅のしおりと重ならない。狭い画面ではキーの印とアイコンだけにする
  */
 export function ButtonHints({
   onDetails,
   onMap,
   onMenu,
+  menuOpen,
 }: {
   onDetails: () => void;
   onMap: () => void;
   onMenu: () => void;
+  menuOpen: boolean;
 }) {
   const t = useT();
   const hint =
-    "flex min-h-9 items-center gap-1.5 rounded-full py-0.5 pr-2.5 pl-0.5 font-bold text-sm transition hover:bg-kinari-50/15 sm:text-base";
+    "flex min-h-9 items-center gap-1 rounded-full py-0.5 pr-1.5 pl-0.5 font-bold text-sm transition hover:bg-kinari-50/15 sm:gap-1.5 sm:pr-2.5 sm:text-base";
   return (
     <nav
       aria-label={t.hud.opsGuide}
@@ -441,7 +432,14 @@ export function ButtonHints({
           {t.hud.hints.map}
         </span>
       </button>
-      <button type="button" className={hint} onClick={onMenu} aria-label={t.hud.hints.menu}>
+      <button
+        type="button"
+        className={hint}
+        onClick={onMenu}
+        aria-label={t.hud.hints.menu}
+        aria-expanded={menuOpen}
+        aria-controls="hud-menu"
+      >
         <KeyCap>M</KeyCap>
         <Menu aria-hidden="true" className="size-4" />
         <span aria-hidden="true" className="max-sm:hidden">

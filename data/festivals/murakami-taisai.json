@@ -1,0 +1,308 @@
+{
+  "id": "murakami-taisai",
+  "name": { "ja": "村上大祭", "en": "Murakami Taisai" },
+  "category": "float",
+  "municipalities": [{ "prefecture": "新潟県", "name": "村上市" }],
+  "venue": { "name": "西奈彌羽黒神社と旧城下町", "lat": 38.2188, "lng": 139.4789 },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["jalan", "rurubu", "walkerplus"],
+  "highlights": [
+    "彫刻や漆塗り、金銀の飾りを施した屋台山車「おしゃぎり」19台が、早朝から夕方まで旧城下をめぐる",
+    "荒馬14騎と稚児行列が神輿の行列を先導し、庄内町の子どもが掛け声を上げ轡を鳴らして進む",
+    "夕方に神輿が神社へ戻ると、各町の屋台は提灯をともして自分の町へ帰る",
+    "国の重要無形民俗文化財で、ユネスコ無形文化遺産「山・鉾・屋台行事」にも加わった"
+  ],
+  "trivia": [
+    {
+      "text": "1633年、藩主の堀直竒が西奈彌羽黒神社を今の地に移した遷宮祭が始まりとされる",
+      "source": {
+        "url": "https://www.sake3.com/event/7681",
+        "title": "村上市観光協会 令和8年 村上大祭（村上祭の屋台行事）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "祭りの日はもと旧暦6月7日で、明治6年に新暦になってから7月7日に行うようになった",
+      "source": {
+        "url": "https://murakamitaisai.jp/",
+        "title": "村上大祭 公式サイト（村上まつり保存会）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "荒馬は、1588年に本庄繁長が羽黒山の分霊を奉じて凱旋した姿を模したものとされる",
+      "source": {
+        "url": "https://murakamitaisai.jp/attractions",
+        "title": "村上大祭 公式サイト 村上大祭の魅力",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "おしゃぎりは二階建てで、一階で子どもが囃子を奏で、二階に人形などを飾る。車輪は直径約2m",
+      "source": {
+        "url": "https://murakamitaisai.jp/attractions",
+        "title": "村上大祭 公式サイト 村上大祭の魅力",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": [
+      "本祭の日は屋台の巡行路で区間ごとに時間を決めて車両の進入が禁止され、露店の区域は終日駐車禁止になる",
+      "車は市内の観光駐車場・臨時駐車場を使う"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.sake3.com/wp-content/uploads/2026/06/1e59686597e79b29871f21ade65e8118.pdf",
+        "title": "村上市観光協会 令和8年7月7日 屋台巡行経路図（村上大祭交通規制図）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.sake3.com/event/7681",
+        "title": "村上市観光協会 令和8年 村上大祭（村上祭の屋台行事）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-07-07",
+      "start": "05:30",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の本祭りの実績（前日7月6日は宵祭り）。5:30から各町の屋台が羽黒町に集まり8:20ごろから順に出発。神輿は7:00 発輿祭、7:30 神社出幸、17:00 還御。屋台は18:30〜19:20ごろ肴町から帰り屋台として出発。露店は7月5日〜8日",
+      "sources": [
+        {
+          "url": "https://www.sake3.com/wp-content/uploads/2026/06/7b29d6d2a8aacef26d713f82776254e5.pdf",
+          "title": "村上大祭屋台運営委員会 令和8年7月7日 村上大祭 屋台巡行時刻表",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.sake3.com/event/7681",
+          "title": "村上市観光協会 令和8年 村上大祭（7月6日 宵祭り、7月7日 本祭り）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-06",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "宵祭り。毎年7月6日（2027年の発表はまだない）。例年、各町が屋台や笠鉾を組み立てて、自分の町内をめぐる",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/db/heritages/detail/436599",
+          "title": "文化遺産オンライン 村上祭の屋台行事（毎年7月6日・7日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-07",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "本祭り。毎年7月7日（2027年の発表はまだない）。例年、早朝に屋台・荒馬・笠鉾が神社前に集まり、夕方まで旧城下をめぐる。神輿が戻ると屋台は提灯をともして町へ帰る",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/db/heritages/detail/436599",
+          "title": "文化遺産オンライン 村上祭の屋台行事（毎年7月6日・7日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://murakamitaisai.jp/",
+          "title": "村上大祭 公式サイト（明治6年の新暦採用後、7月7日に）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 村上駅",
+        "walkMinutes": [20, 25],
+        "note": "西奈彌羽黒神社まで徒歩約20分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "新潟駅",
+        "minutes": [50, 60],
+        "route": "JR羽越本線の特急「いなほ」、乗り換えなし"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [
+      "本祭の日（2026年は7月7日）、屋台の巡行路で区間ごとに車両進入禁止（例：羽黒神社前 5:00〜9:30、片町 9:00〜15:00と20:30〜23:00）。露店区域は終日駐車禁止"
+    ],
+    "sources": [
+      {
+        "url": "https://murakamitaisai.jp/El5m_kdc/KZBxVKG7",
+        "title": "村上大祭 公式サイト 駐車場のご案内（村上駅前ジャスコ跡地、イヨボヤ会館など6か所）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.sake3.com/event/7681",
+        "title": "村上市観光協会 令和8年 村上大祭（村上駅から西奈彌羽黒神社まで徒歩約20分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.sake3.com/wp-content/uploads/2026/06/1e59686597e79b29871f21ade65e8118.pdf",
+        "title": "村上市観光協会 令和8年7月7日 屋台巡行経路図（村上大祭交通規制図）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.murakami.lg.jp/uploaded/attachment/18465.pdf",
+        "title": "村上市 村上市民ふれあいセンター 案内（新潟駅〜村上駅 特急いなほ 約50分。作成の年は不明）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "村上茶（冷茶）の振る舞い",
+        "note": "2026年は本祭の屋台巡行の時間（9:00ごろ）に、村上地域コミュニティ空間「土間ん中」の前で振る舞われた（なくなり次第終了）。2027年に行うかは未発表",
+        "sources": [
+          {
+            "url": "https://www.city.murakami.lg.jp/uploaded/attachment/76486.pdf",
+            "title": "村上地域まちづくり協議会 “パートナー”（2026年 祝 村上大祭）",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "murakami-castle-ruins",
+      "name": "村上城跡",
+      "kind": "sightseeing",
+      "summary": "標高135mの臥牛山に築かれた城の跡で、国の史跡。戦国時代の竪堀や虎口、江戸時代の石垣が残る。山麓から山頂まで徒歩約20分",
+      "location": { "lat": 38.2222, "lng": 139.4847 },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://niigata-kankou.or.jp/spot/detail_7173.html",
+          "title": "にいがた観光ナビ 村上城跡",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "sennen-zake-kikkawa",
+      "name": "千年鮭 きっかわ",
+      "kind": "food",
+      "summary": "村上の鮭料理を加工して売る店。築130年ほどの町屋で、天井から下がる約1,000尾の鮭を見学できる（見学は予約制・無料）。休みは元日だけ",
+      "location": { "lat": 38.2243, "lng": 139.4786 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "09:00", "close": "18:00" },
+      "closedDays": [],
+      "price": "見学無料",
+      "tags": ["indoor", "local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://niigata-kankou.or.jp/spot/detail_10001.html",
+          "title": "にいがた観光ナビ 千年鮭 きっかわ／株式会社きっかわ（見学可能時間 9時〜18時）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "saryo-kaneei",
+      "name": "茶寮カネエイ",
+      "kind": "rest",
+      "summary": "明治元年創業の村上茶の老舗「冨士美園」の工場の一部を改めた日本茶の店。スタッフが淹れる「提供」と、淹れ方を教わる「体験」を選べる。木・金・祝日休み",
+      "location": { "lat": 38.22, "lng": 139.4778 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "11:00", "close": "17:00", "lastEntry": "16:30" },
+      "closedDays": ["thu", "fri"],
+      "price": null,
+      "tags": ["indoor", "seating", "local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://niigata-kankou.or.jp/spot/detail_42871.html",
+          "title": "にいがた観光ナビ 茶寮カネエイ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://online.bunka.go.jp/db/heritages/detail/436599",
+      "title": "文化遺産オンライン 村上祭の屋台行事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.sake3.com/event/7681",
+      "title": "村上市観光協会 令和8年 村上大祭（村上祭の屋台行事）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://murakamitaisai.jp/",
+      "title": "村上大祭 公式サイト（村上まつり保存会）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://niigata-kankou.or.jp/event/detail_13027.html",
+      "title": "にいがた観光ナビ 村上大祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、宵祭り・本祭りの時刻、交通規制",
+    "2026年の宵祭り（7月6日）の時刻",
+    "雨のときの扱い",
+    "見物の決まり（場所取り・撮影・立ち入り）、服装・持ち物・危険度についての主催者の注意",
+    "一般の人が加われるかどうか",
+    "臨時駐車場の台数と料金、シャトルバスの運行（公式サイトに見出しはあるが本文を確かめられなかった）",
+    "本祭りの終わる時刻（屋台が町内に戻り終える時刻）",
+    "主要駅からの所要時間の出典が、作成年の分からない市の資料だけ",
+    "おしゃぎり会館・イヨボヤ会館は水曜休館で本祭りの2027年7月7日（水）にかかるため、周辺の場所に入れていない",
+    "村上城跡と茶寮カネエイの料金"
+  ]
+}

@@ -1,0 +1,298 @@
+{
+  "id": "todoroki-aki-matsuri",
+  "name": {
+    "ja": "轟秋祭り",
+    "en": "Todoroki Autumn Festival"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "徳島県",
+      "name": "海陽町"
+    }
+  ],
+  "venue": {
+    "name": "轟神社・轟本滝",
+    "lat": 33.6978,
+    "lng": 134.2543
+  },
+  "scaleTier": "XS",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "白装束の担ぎ手が神輿ごと落差58mの轟本滝の滝壺に入る滝渡御",
+    "神輿が神社前の140段の急な石段を駆け下りる「暴れ神輿」",
+    "担ぎ手は前日から神社に泊まり、夜通し滝で禊ぎをして臨む",
+    "健康・安全・平和を祈る、400年以上続く山あいの祭り"
+  ],
+  "trivia": [
+    {
+      "text": "轟神社は1591年の創建で、初代の阿波藩主が朝鮮出兵の前に海上の安全を祈ったと伝わる",
+      "source": {
+        "url": "https://todorokijinja.jp/history/",
+        "title": "轟神社 歴史",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "轟の滝は落差58mで県内一。上流の滝と合わせて轟九十九滝と呼ばれ、日本の滝百選に入る",
+      "source": {
+        "url": "https://todorokijinja.jp/todoroki-falls/",
+        "title": "轟神社 轟の滝",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "禊ぎの合間の担ぎ手の食事には、地元の漁協から毎年奉納される海の幸が使われる",
+      "source": {
+        "url": "https://todorokijinja.jp/reitaisai/",
+        "title": "轟神社 秋季例大祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://todorokijinja.jp/reitaisai/",
+        "title": "轟神社 秋季例大祭（担ぎ手は前日から泊まり込み、滝で禊ぎをする）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-08",
+      "start": "14:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "観光協会の2026年の案内では、午前〜14:00ごろご祈祷、13:00から神事、14:00から神輿が神社を出発し、15:00ごろから滝壺へのお滝入り。神事のため時間は前後することがある。神社の案内では、餅投げのあとに神輿が出発する",
+      "sources": [
+        {
+          "url": "https://www.kaiyo-kankou.jp/event/event-1055/",
+          "title": "海陽町観光協会 轟秋祭り（2026年11月8日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kaiyo-kankou.jp/topics/topics-3323/",
+          "title": "海陽町観光協会 11/8(日) 轟秋祭り",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://todorokijinja.jp/reitaisai/",
+          "title": "轟神社 秋季例大祭（毎年11月第2日曜）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-11-14",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "神社の案内で毎年11月の第2日曜（2027年の発表はまだない）。例年、午後に神輿が神社を出て、15:00ごろ滝壺に入る",
+      "sources": [
+        {
+          "url": "https://todorokijinja.jp/reitaisai/",
+          "title": "轟神社 秋季例大祭（毎年11月第2日曜）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [
+      {
+        "hub": "徳島駅",
+        "minutes": [120, 130],
+        "route": "JR牟岐線で阿波海南駅まで（町の案内で約2時間）。会場まではここからさらにバスに乗る"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.town.kaiyo.lg.jp/bunkamura/access.html",
+        "title": "海陽町 アクセス（徳島駅から阿波海南駅まで約2時間）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kaiyo-kankou.jp/spots/spots-856/",
+        "title": "海陽町観光協会 轟の滝（阿波海南駅から町営バス平井線で「轟神社」まで55分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kaiyo-kankou.jp/event/event-1055/",
+        "title": "海陽町観光協会 轟秋祭り（轟の滝駐車場ととどろきの館の間をシャトルバスが9:00〜17:00に運行）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://todorokijinja.jp/access/",
+        "title": "轟神社 アクセス（阿波海南駅から町営バスで約50分、車で約40分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://todorokijinja.jp/reitaisai/",
+        "title": "轟神社 秋季例大祭（当日は会場手前に臨時駐車場を設ける予定）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "todoroki-kujukutaki",
+      "name": "轟の滝（轟九十九滝）",
+      "kind": "sightseeing",
+      "summary": "祭りの舞台になる落差58mの本滝から、上流の鍋割の滝まで約1,500mの遊歩道が続き、往復2時間ほどで滝めぐりができる。道路工事で時間帯により通行止めがある",
+      "location": {
+        "lat": 33.6978,
+        "lng": 134.2543
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.kaiyo-kankou.jp/spots/spots-856/",
+          "title": "海陽町観光協会 轟の滝",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://todorokijinja.jp/todoroki-falls/",
+          "title": "轟神社 轟の滝",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "awa-kainan-bunkamura",
+      "name": "阿波海南文化村",
+      "kind": "sightseeing",
+      "summary": "町の文化遺産を紹介する博物館で、阿波海南駅から歩いて約15分。月曜（祝日なら翌日）と12月29日〜1月3日のうち案内の日が休館",
+      "location": {
+        "lat": 33.6137,
+        "lng": 134.3568
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["mon"],
+      "price": "大人300円、小・中・高校生無料",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.kaiyo-kankou.jp/spots/spots-877/",
+          "title": "海陽町観光協会 阿波海南文化村",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.town.kaiyo.lg.jp/bunkamura/access.html",
+          "title": "海陽町 阿波海南文化村 アクセス（阿波海南駅より徒歩約15分）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "le-perle-kaiyo",
+      "name": "ル・ペルル",
+      "kind": "food",
+      "summary": "阿波海南駅から室戸方面へ700mほどの、焼きたてのパンとケーキの店。カフェとして使え、食事はハンバーグ定食がある。水曜定休",
+      "location": {
+        "lat": 33.5997,
+        "lng": 134.3516
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "08:15",
+        "close": "20:00"
+      },
+      "closedDays": ["wed"],
+      "price": "ハンバーグ定食950円",
+      "tags": ["seating"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.kaiyo-kankou.jp/spots/spots-1611/",
+          "title": "海陽町観光協会 ル・ペルル",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://todorokijinja.jp/reitaisai/",
+      "title": "轟神社 秋季例大祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.kaiyo-kankou.jp/event/event-1055/",
+      "title": "海陽町観光協会 轟秋祭り",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20006071",
+      "title": "るるぶ&more. 轟秋祭り",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "阿波海南駅から会場までのバスを含めた通しの所要時間（町営バス平井線で「轟神社」まで、観光協会は約55分、神社は約50分と案内）",
+    "見学できる場所と、石段や滝壺の近くでの立ち入りの決まり（公式の案内が見つからない）",
+    "危険度（主催者による、けがのおそれの注意が見つからない）",
+    "服装・持ち物・撮影の決まり",
+    "雨のときの扱い",
+    "終わる時刻",
+    "祭りの日の町営バス平井線の時刻と、「轟神社」のバス停から会場までの徒歩の時間",
+    "最寄り駅から歩いて行けない（阿波海南駅からバスで約55分）ため、駅からの徒歩の時間は入れていない",
+    "臨時駐車場の場所と台数（るるぶでは130台・臨時駐車場ありと案内）",
+    "国道193号・県道の工事による通行止めの、祭りの日の扱い",
+    "屋台や、見物の人が食べられる振る舞いの有無",
+    "見学者数の公表値",
+    "会場の近くの食事の場所（営業時間を公式で確かめられた店は阿波海南駅の近くだけ）",
+    "会場の緯度・経度は轟本滝の位置で、神社の正確な位置は確かめていない",
+    "開始の時刻の食い違い（観光協会の2026年の案内は13:00 神事・14:00 神輿の出発、神社の案内は14:00 祭儀・15:00ごろお滝入り）"
+  ]
+}

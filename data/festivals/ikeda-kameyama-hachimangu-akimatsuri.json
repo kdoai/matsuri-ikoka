@@ -1,0 +1,271 @@
+{
+  "id": "ikeda-kameyama-hachimangu-akimatsuri",
+  "name": {
+    "ja": "亀山八幡宮の秋祭",
+    "en": "Kameyama Hachimangu Autumn Festival (Ikeda, Shodoshima)"
+  },
+  "category": "float",
+  "municipalities": [
+    {
+      "prefecture": "香川県",
+      "name": "小豆島町"
+    }
+  ],
+  "venue": {
+    "name": "亀山八幡宮・池田の桟敷",
+    "lat": 34.4771,
+    "lng": 134.2341
+  },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "神浦地区の太鼓台を船に載せて浜へ漕ぎ寄せ、陸へ揚げる「オシコミ」",
+    "お旅所の桟敷の前で、太鼓台がカキアゲ・ホリアゲ・カエシ・カヤセの技を見せる",
+    "国の重要有形民俗文化財「池田の桟敷」（高さ18m・長さ80mの石垣の野天桟敷）",
+    "拍子木の先導に薙刀12人などが唄に合わせて練る「オオネリ」"
+  ],
+  "trivia": [
+    {
+      "text": "1812年の奉納絵額に太鼓台やだんじりが描かれ、19世紀前半には今に近い祭りだったと分かる",
+      "source": {
+        "url": "https://www.pref.kagawa.lg.jp/kmuseum/setorekishi/maturi-gyouji-minnzokugeinou/kameyamahatimannguunoakimaturi.html",
+        "title": "香川県立瀬戸内海歴史民俗資料館 亀山八幡宮の秋祭（小豆島町）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "池田の桟敷は1976年に国の重要有形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.pref.kagawa.lg.jp/kenkyoui/bunka/culturalassets_10.html",
+        "title": "香川県 国指定文化財一覧（池田の桟敷 昭51・8・23）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "桟敷の広場は、1970年の大阪万博「お祭り広場」の着想の元になった",
+      "source": {
+        "url": "https://www.town.shodoshima.lg.jp/gyousei/kakuka/shogaigakushuka/2/1/2700.html",
+        "title": "小豆島町 池田の桟敷【国指定重要有形民俗文化財】",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "オオネリは池田本町の5つの組が年ごとに交代で受け持つ",
+      "source": {
+        "url": "https://www.pref.kagawa.lg.jp/kmuseum/setorekishi/maturi-gyouji-minnzokugeinou/kameyamahatimannguunoakimaturi.html",
+        "title": "香川県立瀬戸内海歴史民俗資料館 亀山八幡宮の秋祭（小豆島町）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": []
+  },
+  "occurrences": [
+    {
+      "date": "2027-10-16",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年10月16日（2027年の発表はまだない）。地区内から15台の太鼓台が奉納される",
+      "sources": [
+        {
+          "url": "https://www.pref.kagawa.lg.jp/kmuseum/setorekishi/maturi-gyouji-minnzokugeinou/kameyamahatimannguunoakimaturi.html",
+          "title": "香川県立瀬戸内海歴史民俗資料館 亀山八幡宮の秋祭（10月16日、太鼓台15台）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.town.shodoshima.lg.jp/gyousei/kakuka/shogaigakushuka/2/1/2700.html",
+          "title": "小豆島町 池田の桟敷（大祭は10月16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.my-kagawa.jp/feature/autumnfestival/list",
+          "title": "香川県観光協会 うどん県の秋まつり一覧（池田亀山八幡宮 10月16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000190",
+        "title": "るるぶ&more. 池田の太鼓祭り（高松港からフェリー約1時間の池田港から徒歩約15分。駐車場50台・無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "shodoshima-olive-park",
+      "name": "道の駅 小豆島オリーブ公園",
+      "kind": "sightseeing",
+      "summary": "小豆島町西村の道の駅。園内にカフェOLIVAZとサン・オリーブレストランがある。年中無休",
+      "location": {
+        "lat": 34.4729,
+        "lng": 134.2738
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "08:30",
+        "close": "17:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.olive-pk.jp/",
+          "title": "道の駅 小豆島オリーブ公園 公式サイト（8:30〜17:00、年中無休）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "olivaz-shodoshima-olive-park",
+      "name": "カフェOLIVAZ（小豆島オリーブ公園）",
+      "kind": "food",
+      "summary": "オリーブ公園の中のカフェで、料理はすべて小豆島産のオリーブオイルで作る。スペイン・イタリア風の料理。40席で、中2階の入口へは階段だけ。休みの日は案内がない",
+      "location": {
+        "lat": 34.4729,
+        "lng": 134.2738
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "15:00",
+        "lastEntry": "14:00"
+      },
+      "closedDays": null,
+      "price": "料理980〜1,480円",
+      "tags": ["indoor", "seating"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.olive-pk.jp/eat/olivaz.html",
+          "title": "道の駅 小豆島オリーブ公園 カフェOLIVAZ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "nakayama-senmaida",
+      "name": "中山千枚田",
+      "kind": "sightseeing",
+      "summary": "小豆島町中山の標高150〜250mの斜面に約800枚の田が連なる棚田で、日本の棚田百選に選ばれている",
+      "location": {
+        "lat": 34.5042,
+        "lng": 134.2394
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.my-kagawa.jp/course/2421/",
+          "title": "香川県観光協会 うどん県旅ネット モデルコース（中山千枚田）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.env.go.jp/nature/satoyama/37_kagawa/no37-3.html",
+          "title": "環境省 重要里地里山 中山千枚田",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "komame-shokudo",
+      "name": "こまめ食堂",
+      "kind": "food",
+      "summary": "中山農村歌舞伎舞台の隣の食堂。棚田の米のおにぎりの定食や、小豆島の素麺がある。火曜定休のほか不定休がある",
+      "location": {
+        "lat": 34.5032,
+        "lng": 134.2393
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "15:30",
+        "lastEntry": "14:30"
+      },
+      "closedDays": ["tue"],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.my-kagawa.jp/course/2421/",
+          "title": "香川県観光協会 うどん県旅ネット モデルコース（こまめ食堂 11:00〜15:30、L.O.14:30、火曜定休）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.pref.kagawa.lg.jp/kmuseum/setorekishi/maturi-gyouji-minnzokugeinou/kameyamahatimannguunoakimaturi.html",
+      "title": "香川県立瀬戸内海歴史民俗資料館 亀山八幡宮の秋祭（小豆島町）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.town.shodoshima.lg.jp/gyousei/kakuka/shogaigakushuka/2/1/2700.html",
+      "title": "小豆島町 池田の桟敷【国指定重要有形民俗文化財】",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20000190",
+      "title": "るるぶ&more. 池田の太鼓祭り",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、オシコミ・宮入り・桟敷前の練りの時刻",
+    "見学の決まり、見学に向いた場所（桟敷の見物の権利は神社が管理している）、太鼓台に近づくときの注意",
+    "参加のしかた（大手の観光サイトには、太鼓台を担ぐには各地区へ事前の申し込みが要るとあるが、地区外の人が加われるかは分からない）",
+    "危険度・服装・持ち物・撮影の決まり",
+    "雨のときの扱い",
+    "交通の公式の案内（高松港から池田港へのフェリーの所要時間と、池田港から会場までの徒歩の時間は大手の観光サイトの掲載だけ。鉄道はない）",
+    "交通規制と、祭りの日の駐車場の扱い",
+    "屋台が出るか",
+    "会場から歩いて行ける食事の店（営業時間を公式で確かめられた店がない）",
+    "2026年の開催の主催者の発表（大手の観光サイトの掲載だけ）"
+  ]
+}

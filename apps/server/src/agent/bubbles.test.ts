@@ -23,6 +23,18 @@ describe("吹き出し（docs/spec/api.md の例）", () => {
       toolStartBubble(
         "search_festivals",
         {
+          when: { kind: "date", date: "2026-08-16" },
+          origin: "みなと中央駅",
+          nights: 0,
+          maxTravelMinutes: 120,
+        },
+        state,
+      ),
+    ).toBe("8月16日に、みなと中央駅から片道2時間以内の日帰りで行ける祭りを探しています");
+    expect(
+      toolStartBubble(
+        "search_festivals",
+        {
           when: { kind: "range", from: "2026-08-15", to: "2026-08-16" },
           origin: "みなと中央駅",
           nights: 2,

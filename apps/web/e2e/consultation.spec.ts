@@ -51,8 +51,21 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
     "href",
     /issues\/new\?template=festival-correction\.yml/,
   );
+  // 開催が確認できていない祭りは選べず、理由を文字で出す
+  await expect(cards.nth(1).getByRole("button", { name: "この祭りにする" })).toBeDisabled();
+  await expect(cards.nth(1)).toContainText("今年の開催がまだ確認できていません");
   await waitForReply(page);
   await snap(page, info, "01-candidates");
+  // リスト表示に切り替えると、1行ずつ見比べられる。選んだ表示は覚えておく
+  await page.getByRole("button", { name: "リスト表示" }).click();
+  await expect(page.getByTestId("candidate-row")).toHaveCount(2);
+  await expect(cards).toHaveCount(0);
+  await snap(page, info, "01-candidates-list");
+  await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: "祭りの候補を見る" }).click();
+  await expect(page.getByTestId("candidate-row")).toHaveCount(2);
+  await page.getByRole("button", { name: "カード表示" }).click();
+  await expect(cards).toHaveCount(2);
   // 候補を閉じても、店に戻って選び直せる
   await page.keyboard.press("Escape");
   await expect(page.getByTestId("candidates")).toHaveCount(0);
@@ -218,6 +231,9 @@ test("待ち時間には豆知識係が祭りの話と出典を出し、送る�
   await expect(page.getByTestId("waiting-staff")).toBeVisible();
   await quiz.getByRole("button").first().click();
   await expect(quiz.getByRole("status")).toHaveText(/正解|おしい/);
+  // クイズは閉じられる（返答が終わるまで待たない）
+  await quiz.getByRole("button", { name: "クイズを閉じる" }).click();
+  await expect(quiz).toHaveCount(0);
   await snap(page, info, "11-quiz");
   await waitForReply(page);
   await expect(quiz).toHaveCount(0);
@@ -408,7 +424,9 @@ test("文章を書かずに、選択肢を選ぶだけで相談を始められ�
   await station.fill("みなと中央駅");
   await station.press("Enter");
 
-  // 行き先は地方と都道府県、「その他」で自由に書ける
+  // 行き先は地方と都道府県、「その他」で自由に書ける。泊まりの旅なので、所要時間の上限は出さない
+  await expect(consult.getByRole("button", { name: "関東", exact: true })).toBeVisible();
+  await expect(page.getByTestId("consult-travel")).toHaveCount(0);
   await consult.getByRole("button", { name: "関東", exact: true }).click();
   await consult.getByRole("button", { name: "東京都", exact: true }).click();
   await consult.getByRole("button", { name: "その他", exact: true }).click();
@@ -470,6 +488,18 @@ test("使い方は見出しで区切られ、窓の中でスクロールでき�
     page.getByTestId("icon-buttons").getByRole("button", { name: "会話の記録", exact: true }),
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "旅のこだわり" })).toHaveCount(0);
+  // 操作の案内（旅程詳細・地図・メニュー）は、丸いボタンの左に同じ段で並び、画面の幅からはみ出さない
+  const hints = await page.getByTestId("button-hints").boundingBox();
+  const icons = await page.getByTestId("icon-buttons").boundingBox();
+  const width = page.viewportSize()?.width ?? 0;
+  expect(hints).not.toBeNull();
+  expect(icons).not.toBeNull();
+  if (hints !== null && icons !== null) {
+    expect(hints.x + hints.width).toBeLessThanOrEqual(icons.x);
+    expect(Math.abs(hints.y + hints.height / 2 - (icons.y + icons.height / 2))).toBeLessThan(4);
+    expect(hints.x).toBeGreaterThanOrEqual(0);
+    expect(icons.x + icons.width).toBeLessThanOrEqual(width);
+  }
   const help = page.getByTestId("icon-buttons").getByRole("button", { name: "使い方" });
   if (await help.isVisible()) {
     await help.click();
