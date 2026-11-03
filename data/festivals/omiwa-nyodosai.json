@@ -1,0 +1,444 @@
+{
+  "id": "omiwa-nyodosai",
+  "name": {
+    "ja": "繞道祭",
+    "en": "Omiwa Shrine Nyodosai"
+  },
+  "category": "fire",
+  "municipalities": [
+    {
+      "prefecture": "奈良県",
+      "name": "桜井市"
+    }
+  ],
+  "venue": {
+    "name": "大神神社",
+    "lat": 34.5288,
+    "lng": 135.8526
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan"],
+  "highlights": [
+    "禁足地で切り出したご神火を、火縄やカイロに移して持ち帰れる",
+    "長さ約3mの大松明2本が、三輪山の麓の摂社・末社19社を巡る",
+    "奈良県内で最初の年中行事で「ご神火まつり」とも呼ばれる",
+    "本殿を持たず、三輪山そのものを拝む社で迎える元日の未明"
+  ],
+  "trivia": [
+    {
+      "text": "ご神火は新年の午前0時、拝殿の東にある禁足地の中で宮司が切り出す",
+      "source": {
+        "url": "https://oomiwa.or.jp/saiten/01-nyoudousai/",
+        "title": "大神神社 【1月】繞道祭",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "大松明は先入道・後入道と呼ばれる長さ約3mの2本。ほかにやや小さい神饌松明が1本ある",
+      "source": {
+        "url": "https://oomiwa.or.jp/saiten/01-nyoudousai/",
+        "title": "大神神社 【1月】繞道祭",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "三輪山を御神体とするため本殿がなく、拝殿から山を拝む。拝殿は1664年に徳川家綱が再建",
+      "source": {
+        "url": "https://oomiwa.or.jp/keidaimap/01-haiden/",
+        "title": "大神神社 境内マップ 拝殿",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "毎年2月5日、大神神社でその年の三輪素麺の相場を神前で占う卜定祭がある",
+      "source": {
+        "url": "https://www.city.sakurai.lg.jp/material/files/group/32/miwanyumenmap_vol4.pdf",
+        "title": "桜井市 三輪にゅうめんマップ vol.4",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "祭典のあと、持参した火縄やカイロにご神火を移し取って持ち帰る",
+    "rules": [
+      "拝殿・祈祷殿など社殿の中（摂社・末社を含む）では、写真・動画の撮影や録音をしない",
+      "三輪山の山中は撮影禁止",
+      "薬井戸の御神水は、夜間（18:00〜6:00）の拝戴と、容器での大量の拝戴が中止されている",
+      "車は、JR踏切より西側の参拝者用の駐車場に止める"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "大松明の火を担いで境内と山麓の摂社・末社を巡る深夜の行事で、参拝者は先を争ってご神火を移し取る。見学の場所や火の粉についての主催者の注意は見当たらない"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "拝殿など社殿の中（摂社・末社を含む）は撮影・録音をしない。三輪山の山中は撮影禁止。境内での個人の撮影は、周りの人に配慮すれば認められている"
+    },
+    "sources": [
+      {
+        "url": "https://oomiwa.or.jp/saiten/01-nyoudousai/",
+        "title": "大神神社 【1月】繞道祭",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://oomiwa.or.jp/request/",
+        "title": "大神神社 境内・殿内での撮影記録について",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://oomiwa.or.jp/news/%e8%96%ac%e4%ba%95%e6%88%b8%e3%81%a7%e3%81%ae%e3%80%8c%e5%be%a1%e7%a5%9e%e6%b0%b4%e3%80%8d%e6%8b%9d%e6%88%b4%e5%86%8d%e9%96%8b%e3%81%a8-%e5%a4%9c%e9%96%93%e6%8b%9d%e6%88%b4%e4%b8%ad%e6%ad%a2%e7%b6%99/",
+        "title": "大神神社 薬井戸での「御神水」拝戴に関するお知らせ（2025年12月）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://oomiwa.or.jp/access/parking/",
+        "title": "大神神社 駐車場のご案内",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-01-01",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "例年は、0:00 禁足地でご神火を切り出し、1:00 拝殿で祭典。小松明から先入道・後入道（約3m）と神饌松明の3本に火を継ぎ、氏子の若者が担いで山麓の摂社・末社19社を巡拝する。参拝者は持参した火縄やカイロにご神火を移し取れる",
+      "sources": [
+        {
+          "url": "https://oomiwa.or.jp/saiten/01-nyoudousai/",
+          "title": "大神神社 【1月】繞道祭",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://oomiwa.or.jp/omatsuri/1gatsu/",
+          "title": "大神神社 1月のおまつり（令和8年）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://oomiwa.or.jp/info/%EF%BC%91%E6%9C%88%E3%81%AE%E3%81%8A%E7%A5%AD%E3%82%8A%E3%81%AE%E3%81%94%E6%A1%88%E5%86%85-5/",
+          "title": "大神神社 1月のお祭りのご案内（令和7年）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://prtimes.jp/main/html/rd/p/000002437.000095753.html",
+          "title": "JR西日本 大晦日 イベント臨時列車運転のお知らせ（2026年10月30日）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-01",
+      "start": "01:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "1:00 拝殿で繞道祭、5:00 四方拝（2026年の行事表）",
+      "sources": [
+        {
+          "url": "https://oomiwa.or.jp/omatsuri/nenkan/",
+          "title": "大神神社 年間の祭事表（令和8年）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://oomiwa.or.jp/omatsuri/1gatsu/",
+          "title": "大神神社 1月のおまつり（令和8年）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.walkerplus.com/event/ar0729e577416/",
+          "title": "ウォーカープラス 繞道祭（2026年）",
+          "checkedAt": "2026-11-02",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 三輪駅",
+        "walkMinutes": [5, 10],
+        "note": "JR万葉まほろば線（桜井線）。大神神社〜桜井駅の路線バスは2026年3月末で運行を終えた（臨時バスを除く）"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "大阪駅",
+        "minutes": [53, 83],
+        "route": "JR大阪環状線で鶴橋（約15分）、近鉄大阪線の急行で桜井（約35分）、JR万葉まほろば線で三輪（約3分）。乗り換え2回"
+      },
+      {
+        "hub": "京都駅",
+        "minutes": [63, 93],
+        "route": "近鉄の特急で大和八木（約50分）、近鉄大阪線の急行で桜井（約10分）、JR万葉まほろば線で三輪（約3分）。乗り換え2回"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://oomiwa.or.jp/access/train/",
+        "title": "大神神社 電車をご利用の方",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://oomiwa.or.jp/access/bus/",
+        "title": "大神神社 路線バスのご案内",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://oomiwa.or.jp/news/%e8%b7%af%e7%b7%9a%e3%83%90%e3%82%b9%e9%81%8b%e8%a1%8c%e7%b5%82%e4%ba%86%e3%81%ae%e3%81%8a%e7%9f%a5%e3%82%89%e3%81%9b/",
+        "title": "大神神社 路線バス運行終了のお知らせ（2026年2月）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://oomiwa.or.jp/access/parking/",
+        "title": "大神神社 駐車場のご案内",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://yamatoji.nara-kankou.or.jp/01shaji/01jinja/03east_area/omiwajinja/access/",
+        "title": "あをによし なら旅ネット 大神神社（アクセス・駐車場）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://prtimes.jp/main/html/rd/p/000002437.000095753.html",
+        "title": "JR西日本 大晦日 イベント臨時列車運転のお知らせ（2026年10月30日）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "三輪にゅうめん（三輪素麺）",
+        "note": "三輪はそうめん発祥の地とされ、三輪素麺を温かいだしで食べるにゅうめんは奈良県の郷土料理。三輪の門前のそうめん店などで食べられる",
+        "sources": [
+          {
+            "url": "https://www.city.sakurai.lg.jp/material/files/group/32/miwanyumenmap_vol4.pdf",
+            "title": "桜井市 三輪にゅうめんマップ vol.4",
+            "checkedAt": "2026-11-02",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "sai-jinja",
+      "name": "狭井神社",
+      "kind": "sightseeing",
+      "summary": "大神神社の摂社で、三輪の神の荒魂をまつり病気平癒の神として信仰される。参拝は自由で無料。三輪山の登拝口があり、2026年は1月1日〜8日が入山禁止だった",
+      "location": {
+        "lat": 34.531,
+        "lng": 135.854
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": [],
+      "price": "無料",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "http://yamatoji.nara-kankou.or.jp/01shaji/01jinja/03east_area/saijinja/",
+          "title": "あをによし なら旅ネット 狭井神社",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://oomiwa.or.jp/keidaimap/17-saijinja",
+          "title": "大神神社 境内マップ 狭井神社",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://oomiwa.or.jp/jinja/miwayama/tohai/",
+          "title": "大神神社 三輪山登拝について（令和8年）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "miwa-ebisu-jinja",
+      "name": "三輪坐恵比須神社",
+      "kind": "sightseeing",
+      "summary": "日本最初の市場の守護神とされ、商売繁盛の「えべっさん」として親しまれる社。JR三輪駅から歩いて約3分。参拝の時間に制限はなく、拝観料は志納",
+      "location": {
+        "lat": 34.5265,
+        "lng": 135.8474
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": [],
+      "price": "志納",
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "http://yamatoji.nara-kankou.or.jp/01shaji/01jinja/03east_area/ebisujinja-sakurai/",
+          "title": "あをによし なら旅ネット 三輪坐恵比須神社",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "http://miwaebisu.jp/",
+          "title": "三輪坐恵比須神社 公式サイト",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "fukushindo",
+      "name": "福神堂",
+      "kind": "food",
+      "summary": "大神神社に近い桜井市三輪の、三輪素麺のにゅうめんを出す店。90席。定休日は木曜。元日の営業の告知は確かめられない",
+      "location": {
+        "lat": 34.5283,
+        "lng": 135.8499
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "16:00"
+      },
+      "closedDays": ["thu"],
+      "price": null,
+      "tags": ["seating", "local_food"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.city.sakurai.lg.jp/material/files/group/32/miwanyumenmap_vol4.pdf",
+          "title": "桜井市 三輪にゅうめんマップ vol.4",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "omiwa-jinja-homotsu-shuzoko",
+      "name": "大神神社 宝物収蔵庫",
+      "kind": "sightseeing",
+      "summary": "三輪山のふもとから出た祭祀の遺物や、神社に伝わる神宝・奉納品を収めて見せる施設。開くのは毎月1日と土曜・日曜・祝日だけ",
+      "location": {
+        "lat": 34.5288,
+        "lng": 135.8526
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "15:30",
+        "lastEntry": "15:00"
+      },
+      "closedDays": ["mon", "tue", "wed", "thu", "fri"],
+      "price": "大人300円、高校生以下100円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://oomiwa.or.jp/keidaimap/houmotsu/",
+          "title": "大神神社 宝物収蔵庫 展示のご案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://oomiwa.or.jp/keidaimap/11-houmotsu",
+          "title": "大神神社 境内マップ 宝物収蔵庫",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "somendokoro-morisho",
+      "name": "そうめん處 森正",
+      "kind": "food",
+      "summary": "三輪素麺のにゅうめんなどを出す店。火曜定休・月曜は不定休だが、毎月1日と祝日は営業し、1日は8:00から開く",
+      "location": {
+        "lat": 34.5266,
+        "lng": 135.8466
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": ["tue"],
+      "price": "花巻にゅうめん 1,000円",
+      "tags": ["seating", "local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.city.sakurai.lg.jp/material/files/group/32/miwanyumenmap_vol4.pdf",
+          "title": "桜井市 三輪にゅうめんマップ vol.4",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://oomiwa.or.jp/saiten/01-nyoudousai/",
+      "title": "大神神社 【1月】繞道祭",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://oomiwa.or.jp/omatsuri/1gatsu/",
+      "title": "大神神社 1月のおまつり（令和8年）",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://yamatoji.nara-kankou.or.jp/01shaji/01jinja/03east_area/omiwajinja/",
+      "title": "あをによし なら旅ネット 大神神社",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年1月1日の祭典の時刻（例年は1:00）",
+    "2027年1月1日の開催と時刻の発表（2026年11月2日の時点で、神社の行事表は2026年のまま。2025年の回の案内は2024年12月19日に出ていた）",
+    "元日未明の行き帰りの手段（三輪駅の終電と元日の始発の時刻、大晦日の臨時列車の有無、桜井駅からの臨時バス・シャトルバスの有無）",
+    "巡拝にかかる時間と終わりの時刻、松明の通る道筋",
+    "見学できる場所と、火の粉や混雑についての注意（公式の案内が見つからない）",
+    "雨天のときの扱い",
+    "服装と持ち物（公式の案内がない）",
+    "2027年の正月の交通規制と、駐車場の正月の料金（なら旅ネットでは1月1日〜5日は有料とあるが、金額が分からない）",
+    "ドローンの扱い",
+    "規模の根拠になる担ぎ手の人数や参拝者数の公表値",
+    "屋台・露店が出るか",
+    "福神堂の元日の営業（桜井市のマップでは木曜定休。正月の営業の告知は確かめられない）と、料理の値段",
+    "大阪駅・京都駅からの所要時間は、神社の案内図の区間ごとの目安から出したもので、乗り換えの待ち時間を含まない",
+    "そうめん處 森正の毎月1日の閉店の時刻（8:00から開くとだけある）",
+    "宝物収蔵庫の正確な位置（境内の地図から引けず、拝殿の位置で置いた）"
+  ]
+}

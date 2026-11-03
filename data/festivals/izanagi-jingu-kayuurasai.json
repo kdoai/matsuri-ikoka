@@ -1,0 +1,364 @@
+{
+  "id": "izanagi-jingu-kayuurasai",
+  "name": {
+    "ja": "粥占祭",
+    "en": "Izanagi Jingu Kayuura-sai (Rice Gruel Divination)"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "兵庫県",
+      "name": "淡路市"
+    }
+  ],
+  "venue": {
+    "name": "伊弉諾神宮",
+    "lat": 34.4602,
+    "lng": 134.8526
+  },
+  "scaleTier": "XS",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "竹筒から流れ出た粥の形を自分の目で見て、その年の作柄を読む",
+    "早稲・中稲・晩稲の3本の竹筒で米を炊いて占う、小正月の神事",
+    "国生み神話のイザナギ・イザナミを祀る淡路国一宮で行われる",
+    "境内に、樹齢約900年とされる御神木の夫婦大楠がある"
+  ],
+  "trivia": [
+    {
+      "text": "竹筒は早稲・中稲・晩稲の収穫時期ごとに1本ずつ、計3本を用意して釜で炊く",
+      "source": {
+        "url": "https://www.kobe-np.co.jp/news/awaji/202201/0014995054.shtml",
+        "title": "神戸新聞NEXT おかゆの流れ具合でコメの豊凶占う 淡路島で粥占祭（2022年1月）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "粥の出方が豊作か凶作かの判断は、見た人それぞれに任される習わし",
+      "source": {
+        "url": "https://www.kobe-np.co.jp/news/awaji/202201/0014995054.shtml",
+        "title": "神戸新聞NEXT おかゆの流れ具合でコメの豊凶占う 淡路島で粥占祭（2022年1月）",
+        "checkedAt": "2026-11-02",
+        "confidence": "corroborated"
+      }
+    },
+    {
+      "text": "平安時代から続くとされ、1年の五穀豊穣を願って毎年1月15日に行われる",
+      "source": {
+        "url": "https://www.sun-tv.co.jp/suntvnews/news/2026/01/15/91980/",
+        "title": "サンテレビ 淡路・伊弉諾神宮で平安時代から続く「粥占祭」（2026年1月15日）",
+        "checkedAt": "2026-11-02",
+        "confidence": "corroborated"
+      }
+    },
+    {
+      "text": "伊弉諾神宮は、古事記・日本書紀に記される中で全国でもっとも古い神社とされる",
+      "source": {
+        "url": "https://www.awajishima-kanko.jp/manual/detail.html?bid=448",
+        "title": "淡路島観光ガイド 伊弉諾神宮",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "竹筒の粥を見て参拝することが中心で、混雑や危険についての注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.kobe-np.co.jp/news/awaji/202201/0014995054.shtml",
+        "title": "神戸新聞NEXT おかゆの流れ具合でコメの豊凶占う 淡路島で粥占祭（2022年1月）",
+        "checkedAt": "2026-11-02",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://www.sun-tv.co.jp/suntvnews/news/2026/01/15/91980/",
+        "title": "サンテレビ 淡路・伊弉諾神宮で平安時代から続く「粥占祭」（2026年1月15日）",
+        "checkedAt": "2026-11-02",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-15",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績（報道）。午前2時から2時間おきに3本の竹筒で米を炊き、流れ出た粥の状態で作柄を占った。地元の人が粥を見に集まった",
+      "sources": [
+        {
+          "url": "https://www.sun-tv.co.jp/suntvnews/news/2026/01/15/91980/",
+          "title": "サンテレビ 淡路・伊弉諾神宮で平安時代から続く「粥占祭」（2026年1月15日）",
+          "checkedAt": "2026-11-02",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-15",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "例年1月15日（伊弉諾神宮の年中行事）。2027年の時刻はまだ発表がない",
+      "sources": [
+        {
+          "url": "https://www.awajishima-kanko.jp/manual/detail.html?bid=448",
+          "title": "淡路島観光ガイド 伊弉諾神宮（年中行事：1月15日 粥占祭）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rekihaku.pref.hyogo.lg.jp/digital_museum/trip/road_awaji/izanagijingu/",
+          "title": "兵庫県立歴史博物館 名所めぐり：伊弉諾神宮（1月15日の粥占神事）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [
+      {
+        "hub": "神戸三宮（神姫バス 三宮バスターミナル）",
+        "minutes": [67, 70],
+        "route": "高速バス 三ノ宮・西浦線（淡路交通・神姫バスの共同運行。五色バスセンター・高田屋嘉兵衛公園ゆき）で伊弉諾神宮前下車、乗り換えなし・予約不要。伊弉諾神宮前を通過する便があり、平日に停まる下り便は8:05〜13:35発の1時間に1本ほど（2026年4月1日改正の平日の時刻表）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.awaji-kotsu.co.jp/express/",
+        "title": "淡路交通 高速バス 各路線のご案内（三ノ宮・西浦線）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.awaji-kotsu.co.jp/express/pdftools/",
+        "title": "淡路交通 高速バス 時刻表（西浦・北淡路エリア統合時刻表、令和8年4月1日改正）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.awajishima-kanko.jp/manual/detail.html?bid=481",
+        "title": "淡路島観光ガイド せきれいの里（伊弉諾神宮内。駐車場 普通車50台）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "sekirei-no-sato",
+      "name": "せきれいの里",
+      "kind": "sightseeing",
+      "summary": "伊弉諾神宮の境内にある御土産処。夫婦神にちなむオリジナルの品や淡路島の特産を扱い、国生み神話の史跡を語り部が案内する特別参拝（予約制）もある",
+      "location": {
+        "lat": 34.459,
+        "lng": 134.853
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "16:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.awajishima-kanko.jp/manual/detail.html?bid=481",
+          "title": "淡路島観光ガイド せきれいの里",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://kuniuminoshima.jp/",
+          "title": "せきれいの里 公式サイト（営業時間・無休）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "cafe-restaurant-izana",
+      "name": "cafe＆restaurant izana",
+      "kind": "food",
+      "summary": "伊弉諾神宮の目の前のカフェレストラン。淡路島産の牛骨ブイヨンのカレーや淡路麺業の生パスタ、島の卵と牛乳のバウムクーヘンなど。定休日は公式に記載がない",
+      "location": {
+        "lat": 34.4582,
+        "lng": 134.8516
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": ["indoor", "seating"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.izana.jp/access/",
+          "title": "cafe＆restaurant izana お店の場所・営業時間",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.awajishima-kanko.jp/manual/detail.html?bid=543",
+          "title": "淡路島観光ガイド カフェ&レストラン izana",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "shimashokudo-umaiumi",
+      "name": "島食堂 旨い海",
+      "kind": "food",
+      "summary": "郡家の海辺の複合施設 FrogsFARM にある食堂。淡路玉ねぎや淡路牛を焼いた定食を昼に出す（1,100〜1,780円）。昼と夜で営業が分かれ、定休日は記載がない",
+      "location": {
+        "lat": 34.4887,
+        "lng": 134.8528
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": "昼の定食 1,100〜1,780円",
+      "tags": ["indoor", "seating", "local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://frogsfarm.jp/eat/umai-umi/",
+          "title": "FrogsFARM 島食堂 旨い海",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "nojima-fault-preservation-museum",
+      "name": "北淡震災記念公園 野島断層保存館",
+      "kind": "sightseeing",
+      "summary": "阪神・淡路大震災で地表に現れた野島断層を、建物の中に保存して見せる施設。震災の経験と教訓を伝える。淡路市小倉。1〜11月は無休で、12月下旬に臨時休館がある",
+      "location": {
+        "lat": 34.5498,
+        "lng": 134.9376
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": [],
+      "price": "大人730円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.nojima-danso.co.jp/nojima/",
+          "title": "北淡震災記念公園 野島断層保存館",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.nojima-danso.co.jp/company/",
+          "title": "北淡震災記念公園 会社概要（所在地）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kaisen-kitora-tsuna",
+      "name": "海鮮料理 きとら 津名店",
+      "kind": "food",
+      "summary": "淡路市中田の産直市場「産直淡路島 赤い屋根」の中の食事処。淡路近郊の海の幸や淡路牛を使う。平日は昼と夜の二部営業、土日祝は通しで営業。無休",
+      "location": {
+        "lat": 34.4395,
+        "lng": 134.878
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": [],
+      "price": null,
+      "tags": ["indoor", "local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://kaisenkitora.com/",
+          "title": "海鮮料理 きとら 店舗案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.akaiyane.co.jp/",
+          "title": "産直淡路島 赤い屋根 公式サイト",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.awajishima-kanko.jp/manual/detail.html?bid=448",
+      "title": "淡路島観光ガイド 伊弉諾神宮",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rekihaku.pref.hyogo.lg.jp/digital_museum/trip/road_awaji/izanagijingu/",
+      "title": "兵庫県立歴史博物館 名所めぐり：伊弉諾神宮",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.kobe-np.co.jp/news/awaji/202201/0014995054.shtml",
+      "title": "神戸新聞NEXT おかゆの流れ具合でコメの豊凶占う 淡路島で粥占祭（2022年1月）",
+      "checkedAt": "2026-11-02",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://www.sun-tv.co.jp/suntvnews/news/2026/01/15/91980/",
+      "title": "サンテレビ 淡路・伊弉諾神宮で平安時代から続く「粥占祭」（2026年1月15日）",
+      "checkedAt": "2026-11-02",
+      "confidence": "corroborated"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、竹筒を炊く時刻・粥を公開する時刻（伊弉諾神宮の公式サイトが見当たらず、観光協会の年中行事は日付だけ）",
+    "粥を見られる場所と時間、見学の決まり・服装・持ち物・撮影の可否（主催者の案内が見つからない）",
+    "占いの結果を神社が掲示・発表するか（報道では判断は見た人に任されるとだけある）",
+    "高速バスの伊弉諾神宮前バス停から本殿までの徒歩の時間（公式の案内が見つからない）",
+    "2027年1月15日の高速バスのダイヤ（2026年4月1日改正の時刻表で確かめた。改正があれば変わる）",
+    "粥占祭の日の駐車場の扱い（観光協会の案内では普通車50台）",
+    "2022年に境内で同時に開かれた淡路農林水産祭が2027年にもあるか、露店や振る舞いが出るか",
+    "雨天のときの扱い",
+    "規模の根拠になる参拝者数",
+    "大阪・京都からの経路と所要時間（三ノ宮以外のターミナルからの直通の高速バスは確かめていない）",
+    "cafe＆restaurant izana と島食堂 旨い海の定休日と、1月15日の営業",
+    "島食堂 旨い海の冬の営業時間（昼11:00〜15:30・夜18:00〜22:00と分かれる）",
+    "cafe＆restaurant izanaの閉店時刻（公式はラストオーダー17:00だけを案内）",
+    "海鮮料理 きとら 津名店の平日の営業時間（昼11:00〜15:00・夜17:00〜22:00と分かれる）と年始の営業",
+    "野島断層保存館の最終入館の時刻",
+    "足した周辺の場所（野島断層保存館・きとら）の知名度（大手の観光サイトの掲載を確かめきれなかった）"
+  ]
+}

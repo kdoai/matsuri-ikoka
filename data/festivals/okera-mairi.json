@@ -1,0 +1,364 @@
+{
+  "id": "okera-mairi",
+  "name": {
+    "ja": "をけら詣り",
+    "en": "Okera Mairi"
+  },
+  "category": "fire",
+  "municipalities": [
+    {
+      "prefecture": "京都府",
+      "name": "京都市"
+    }
+  ],
+  "venue": {
+    "name": "八坂神社",
+    "lat": 35.004,
+    "lng": 135.7787
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "jnto"],
+  "highlights": [
+    "境内3か所のをけら灯籠の御神火を、火縄に移して持ち帰る",
+    "白朮を焚く御神火が、大晦日の夜から元日の早朝まで燃え続ける",
+    "名前を書いたをけら木を御神火に投じ、無病息災を祈る（大晦日だけ）",
+    "をけら火を一度灯した掛火縄（1,000円）を、期間限定で授かれる"
+  ],
+  "trivia": [
+    {
+      "text": "12月28日午前4時、非公開の鑽火式で桧の火鑽杵と火鑽臼から浄火をきり出し、をけら灯籠に移す",
+      "source": {
+        "url": "https://www.yasaka-jinja.or.jp/event/",
+        "title": "八坂神社 主な神事・行事",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "白朮はキク科の植物。干した根を焚くと強い匂いが立ち、邪気を払うとされる",
+      "source": {
+        "url": "https://www.yasaka-jinja.or.jp/event/shougatsu/",
+        "title": "八坂神社 正月祭事（をけら詣り）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "江戸時代までは、年の暮れにをけらを焚くことが一般の家庭でも行われていた",
+      "source": {
+        "url": "https://www.yasaka-jinja.or.jp/event/shougatsu/",
+        "title": "八坂神社 正月祭事（をけら詣り）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "持ち帰った火は灯明や雑煮の火種にし、燃え残った火縄は台所に祀って火伏せの守りにする",
+      "source": {
+        "url": "https://ja.kyoto.travel/event/single.php?event_id=5148",
+        "title": "京都観光Navi をけら詣り【八坂神社】",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "12月31日19:30頃〜1月1日5:00頃に参拝し、境内3か所のをけら灯籠の火を火縄に移して、消えないよう縄を回しながら持ち帰る。願いを書いて火に投じるをけら木は200円（大晦日だけ）",
+    "rules": ["をけら火のついた火縄は、電車の中に持ち込めない（京阪電車の案内）"],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "夜通し焚く灯籠の火を火縄に移し、火のついた縄を回しながら持ち帰る夜の行事。主催者によるけがや混雑の注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.yasaka-jinja.or.jp/event/shougatsu/",
+        "title": "八坂神社 正月祭事（をけら詣り）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.yasaka-jinja.or.jp/prize_all/",
+        "title": "八坂神社 全授与品一覧",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ja.kyoto.travel/event/single.php?event_id=5148",
+        "title": "京都観光Navi をけら詣り【八坂神社】",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.keihan.co.jp/navi/kyoto_tsu/tsu201212.html",
+        "title": "京阪電車 京都ツウのススメ 京の年末（2012年11月制作）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-31",
+      "start": "19:30",
+      "end": "05:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "15:00 大祓式、19:00 本殿で除夜祭。祭典の後、境内3か所のをけら灯籠に御神火を移し、19:30頃から翌1日5:00頃までをけら詣り。1日5:00から白朮祭",
+      "sources": [
+        {
+          "url": "https://ja.kyoto.travel/event/single.php?event_id=5148",
+          "title": "京都観光Navi をけら詣り【八坂神社】（2026年12月31日）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.yasaka-jinja.or.jp/event/shougatsu/",
+          "title": "八坂神社 正月祭事（をけら詣り）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.yasaka-jinja.or.jp/event/",
+          "title": "八坂神社 主な神事・行事",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "京阪 祇園四条駅",
+        "walkMinutes": [5, 10]
+      },
+      {
+        "name": "阪急 京都河原町駅",
+        "walkMinutes": [8, 13]
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "京都駅",
+        "minutes": [15, 22],
+        "route": "JR奈良線で東福寺へ、京阪本線に乗り換えて祇園四条で下車"
+      },
+      {
+        "hub": "大阪梅田駅",
+        "minutes": [43, 53],
+        "route": "阪急京都線の特急、乗り換えなし（京都河原町で下車）"
+      }
+    ],
+    "parking": "none",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.yasaka-jinja.or.jp/access/",
+        "title": "八坂神社 境内マップ・アクセス",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.jr-odekake.net/navi/kyotomap/smarttravel/yasaka.html",
+        "title": "JRおでかけネット 八坂神社へのアクセス",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ekitan.com/transit/route/sf-5198/st-5378",
+        "title": "駅探 京都駅から祇園四条駅の乗換案内（2026年11月2日 19:25出発で検索）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      },
+      {
+        "url": "https://www.hankyu.co.jp/timetable/?SF=4958&TX=1950100-564-KY14020&DW=2&DT=&TM=1450",
+        "title": "阪急電鉄 一列車時刻表 特急 大阪梅田発京都河原町行き",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "maruyama-park",
+      "name": "円山公園",
+      "kind": "sightseeing",
+      "summary": "明治19年（1886）に開かれた京都市内で最も古い公園。八坂神社の東隣にあり、回遊式の日本庭園を中心に料亭や茶店が点在する。春はシダレザクラ「祇園の夜桜」で知られる",
+      "location": {
+        "lat": 35.0028,
+        "lng": 135.7838
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": [],
+      "price": null,
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://ja.kyoto.travel/tourism/single01.php?category_id=2&tourism_id=1169",
+          "title": "京都観光Navi 円山公園",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.kyoto.lg.jp/kensetu/page/0000257049.html",
+          "title": "京都市 円山公園",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "chion-in",
+      "name": "知恩院",
+      "kind": "sightseeing",
+      "summary": "浄土宗の総本山で、国宝の御影堂がある。門は6:00〜16:00に開き、元日は5:30に開門。大晦日の夜の除夜の鐘は事前の申し込みが要り（2025年は1名3,000円）、火気を持ち込めない",
+      "location": {
+        "lat": 35.0059,
+        "lng": 135.7827
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "06:00",
+        "close": "16:00"
+      },
+      "closedDays": [],
+      "price": "友禅苑300円、方丈庭園400円（共通券500円）",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.chion-in.or.jp/guide/",
+          "title": "知恩院 拝観情報",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.chion-in.or.jp/faq/",
+          "title": "知恩院 よくあるご質問",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.chion-in.or.jp/special/joya/",
+          "title": "知恩院 除夜の鐘（2025年の案内）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kodaiji",
+      "name": "高台寺",
+      "kind": "sightseeing",
+      "summary": "慶長11年（1606）、豊臣秀吉の正室ねね（北政所）が秀吉の菩提を弔うために建てた寺。小堀遠州の作庭による庭園は国の史跡・名勝。受付は閉門の30分前まで",
+      "location": {
+        "lat": 35.0004,
+        "lng": 135.7812
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:30",
+        "lastEntry": "17:00"
+      },
+      "closedDays": [],
+      "price": "大人800円",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.kodaiji.com/haikan.html",
+          "title": "高台寺 拝観",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://ja.kyoto.travel/tourism/single01.php?category_id=7&tourism_id=281",
+          "title": "京都観光Navi 高台寺",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "issen-yoshoku-honten",
+      "name": "壹錢洋食 本店",
+      "kind": "food",
+      "summary": "京都祇園の名物「壹錢洋食」の本店で、年中無休。土曜と祝日の前日は深夜3時まで、平日は深夜1時まで。年末年始の営業時間の案内はない",
+      "location": {
+        "lat": 35.004,
+        "lng": 135.7738
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "03:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.issen-yosyoku.co.jp/",
+          "title": "京都祗園名物「壹錢洋食」 公式サイト",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.yasaka-jinja.or.jp/event/shougatsu/",
+      "title": "八坂神社 正月祭事（をけら詣り）",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.yasaka-jinja.or.jp/event/",
+      "title": "八坂神社 主な神事・行事",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.yasaka-jinja.or.jp/access/",
+      "title": "八坂神社 境内マップ・アクセス",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://ja.kyoto.travel/event/single.php?event_id=5148",
+      "title": "京都観光Navi をけら詣り【八坂神社】",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "八坂神社の公式サイトでの2026年の告知（日付は京都市の観光サイトの2026年の掲載で、をけら詣りの時刻は神社の例年の案内で確かめた）",
+    "混雑の目安と、入場の規制・境内の一方通行の有無（公式の案内が見つからない）",
+    "2026年の大晦日の夜から元日にかけての交通規制（四条通・東大路通など）",
+    "大晦日の夜の電車・市バスの終夜運転や臨時便（2026年の発表はまだない）",
+    "火を移して持ち帰る火縄（吉兆縄）の授与の場所と初穂料（神社の授与品一覧にあるのは、一度火を灯した掛火縄1,000円と、をけら木200円）",
+    "火のついた火縄の持ち帰り方の注意（電車に持ち込めないとする京阪の案内は2012年のもの。市バス・タクシーでの扱いは見つからない）",
+    "雨や雪のときの扱い",
+    "服装・持ち物・撮影の決まり（出典が見つからない）",
+    "露店が出るか",
+    "規模の根拠になる参拝者数の公表値",
+    "1月1日5:00の白朮祭に、一般の参拝者が参列できるか",
+    "周辺の場所の大晦日・元日の特別の営業時間（壹錢洋食・高台寺は年末年始の案内が見当たらない。円山公園は開園時間の記載がない）",
+    "知恩院の拝観時間が、公式サイトの拝観情報（6:00〜16:00）とよくある質問（9:00〜16:30）で食い違う",
+    "京都駅からの所要時間は平日の夕方の乗換案内の結果で、大晦日のダイヤでの時間ではない"
+  ]
+}

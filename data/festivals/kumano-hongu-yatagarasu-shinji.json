@@ -1,0 +1,404 @@
+{
+  "id": "kumano-hongu-yatagarasu-shinji",
+  "name": {
+    "ja": "八咫烏神事",
+    "en": "Yatagarasu Shinji"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "和歌山県",
+      "name": "田辺市"
+    }
+  ],
+  "venue": {
+    "name": "熊野本宮大社",
+    "lat": 33.8404,
+    "lng": 135.7736
+  },
+  "scaleTier": "XS",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "参列した人だけが授かる宝印紙「白玉牛王（白紙午王）」",
+    "門松の松で作った宝印を、火と水で祓い清めて押し初める",
+    "88羽の烏で描かれた、熊野三山だけの御神符・熊野牛王神符",
+    "全国4,700社以上ある熊野神社の総本宮での年頭の神事"
+  ],
+  "trivia": [
+    {
+      "text": "本宮の熊野牛王神符は、88羽の烏を組み合わせて文字の形にした図柄",
+      "source": {
+        "url": "https://www.hongutaisha.jp/熊野牛王神符/",
+        "title": "熊野本宮大社 熊野牛王神符",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "牛王神符は誓約の紙にも使われ、関ヶ原の誓紙や赤穂浪士の連判状にも用いられた",
+      "source": {
+        "url": "https://www.hongutaisha.jp/熊野牛王神符/",
+        "title": "熊野本宮大社 熊野牛王神符",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "八咫烏神事は、昭和40年（1965）に和歌山県の無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.pref.wakayama.lg.jp/prefg/500700/mokuroku/d00155461.html",
+        "title": "和歌山県 県指定文化財（民俗文化財）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "明治22年（1889）の大水害まで、社殿は今の場所でなく中洲の大斎原にあった",
+      "source": {
+        "url": "https://www.hongutaisha.jp/about",
+        "title": "熊野本宮大社について",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": null,
+    "rules": [
+      "鳥居をくぐる前に一礼する",
+      "参道の中央は神様の通り道なので、右端を上り、左端を下る",
+      "手水で清め、社殿では二礼二拍手一礼で拝む"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "社殿での神事の見学と参拝が中心で、主催者による混雑や危険の注意は見当たらない（社殿までは158段の石段がある）"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.hongutaisha.jp/worship",
+        "title": "熊野本宮大社 参拝のご案内",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.hongutaisha.jp/event",
+        "title": "熊野本宮大社 祭典行事",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-01-07",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "例年1月7日の夕刻（熊野本宮観光協会の案内では例年午後5時から）。2027年の時刻はまだ発表がない。正月三が日に神門前に飾った門松の松で作った熊野牛王宝印を火と水で祓い清め、その年の押し初めをする。参列した人だけに白玉牛王（白紙午王）を授与",
+      "sources": [
+        {
+          "url": "https://www.hongutaisha.jp/event",
+          "title": "熊野本宮大社 祭典行事",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.hongu.jp/event/yatagarasu/",
+          "title": "熊野本宮観光協会 八咫烏神事",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.hongutaisha.jp/熊野牛王神符/",
+          "title": "熊野本宮大社 熊野牛王神符",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "龍神バス・明光バス・熊野御坊南海バス 本宮大社前バス停",
+        "walkMinutes": [0, 5],
+        "note": "出典は「徒歩すぐ」。バス停から社殿までは158段の石段を上る"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "紀伊田辺駅",
+        "minutes": [100, 130],
+        "route": "龍神バス・明光バスの路線バスで約120分（明光バスの快速熊野古道号は約100分）。新大阪駅から紀伊田辺駅へはJR特急くろしおで約130分"
+      },
+      {
+        "hub": "新宮駅",
+        "minutes": [82, 92],
+        "route": "熊野御坊南海バスの本宮大社ゆきで1時間22分"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.hongu.jp/access/osaka-hongu/",
+        "title": "熊野本宮観光協会 京阪神から熊野本宮へ",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.hongutaisha.jp/parking",
+        "title": "熊野本宮大社 駐車場案内",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/80032129",
+        "title": "るるぶ&more. 熊野本宮大社",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      },
+      {
+        "url": "https://www.hongutaisha.jp/worship",
+        "title": "熊野本宮大社 参拝のご案内",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "めはり寿し",
+        "note": "熊野の郷土の味。本宮大社の近くの茶房 珍重庵 本宮店や喫茶きっちんで、そば・うどんと一緒に食べられる",
+        "sources": [
+          {
+            "url": "https://www.hongu.jp/eat/",
+            "title": "熊野本宮観光協会 食べる",
+            "checkedAt": "2026-11-02",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "oyunohara",
+      "name": "大斎原",
+      "kind": "sightseeing",
+      "summary": "明治22年の大水害まで熊野本宮大社の社殿があった、川の合流点の中洲の旧社地。高さ約34m・幅約42mの大鳥居が立ち、流された社の神々を石の祠にまつる",
+      "location": {
+        "lat": 33.8347,
+        "lng": 135.7744
+      },
+      "walkMinutesFromVenue": [10, 15],
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.hongu.jp/kumanokodo/hongu-taisya/ooyunohara/",
+          "title": "熊野本宮観光協会 大斎原",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.hongutaisha.jp/about",
+          "title": "熊野本宮大社について",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "yunomine-tsuboyu",
+      "name": "湯の峰温泉 つぼ湯",
+      "kind": "rest",
+      "summary": "湯の峰温泉の川べりにある、岩をくり抜いた小さな湯船の共同湯。30分ごとの交代制で、番台で番号札を取って待つ。入ると公衆浴場の一般湯かくすり湯にも1回入れる。不定休",
+      "location": {
+        "lat": 33.8292,
+        "lng": 135.7577
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "06:00",
+        "close": "21:00",
+        "lastEntry": "20:30"
+      },
+      "closedDays": null,
+      "price": "大人800円、12歳未満400円",
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.hongu.jp/onsen/yunomine/tuboyu/",
+          "title": "熊野本宮観光協会 つぼ湯・公衆浴場",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "chinchoan-hongu",
+      "name": "茶房 珍重庵 本宮店",
+      "kind": "food",
+      "summary": "本宮大社の境内の住所にある茶房。そば・うどんが中心で、温かいめはり寿しや葛湯、季節の甘味もある。品書きは季節で変わる。30席",
+      "location": {
+        "lat": 33.8386,
+        "lng": 135.7744
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "16:00"
+      },
+      "closedDays": ["wed"],
+      "price": null,
+      "tags": ["indoor", "seating", "local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.hongu.jp/eat/",
+          "title": "熊野本宮観光協会 食べる",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "sabo-sei-hongu",
+      "name": "茶房 靖",
+      "kind": "rest",
+      "summary": "大斎原の大鳥居を眺められる喫茶店。サイフォンで淹れるコーヒー、熊野牛のドライカレー、ケーキのセットなど。テーブル8席・カウンター8席。水曜定休のほか不定休あり",
+      "location": {
+        "lat": 33.837,
+        "lng": 135.7742
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:30",
+        "lastEntry": "17:00"
+      },
+      "closedDays": ["wed"],
+      "price": null,
+      "tags": ["indoor", "seating"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.hongu.jp/eat/",
+          "title": "熊野本宮観光協会 食べる",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kissa-kitchen-hongu",
+      "name": "喫茶きっちん",
+      "kind": "food",
+      "summary": "本宮大社から歩いて2分ほどの、量の多さで知られる食堂。からあげ定食や、めはりの付くうどん定食が人気で、持ち帰りもできる。30席。毎月第4日曜日が定休",
+      "location": {
+        "lat": 33.8379,
+        "lng": 135.7746
+      },
+      "walkMinutesFromVenue": [2, 7],
+      "hours": {
+        "open": "09:30",
+        "close": "15:30"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["indoor", "seating", "local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.hongu.jp/eat/",
+          "title": "熊野本宮観光協会 食べる",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kumano-hongu-heritage-center",
+      "name": "世界遺産熊野本宮館",
+      "kind": "sightseeing",
+      "summary": "本宮大社の入口のそばにある展示施設。本宮と熊野信仰、熊野参詣の移り変わりの展示と世界遺産の展示、図書の閲覧コーナーがある。入館無料。年中無休だが、機器の点検で休むことがある",
+      "location": {
+        "lat": 33.8386,
+        "lng": 135.7756
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": [],
+      "price": "無料",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.tanabe.lg.jp/soshiki/shokokanko/3/2286.html",
+          "title": "田辺市 世界遺産熊野本宮館 施設案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://visitwakayama.jp/en/attractions/detail_675.html",
+          "title": "Visit Wakayama Kumano Hongu Heritage Center",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.hongutaisha.jp/event",
+      "title": "熊野本宮大社 祭典行事",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.hongu.jp/event/yatagarasu/",
+      "title": "熊野本宮観光協会 八咫烏神事",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.pref.wakayama.lg.jp/prefg/500700/mokuroku/d00155461.html",
+      "title": "和歌山県 県指定文化財（民俗文化財）",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開始時刻と終わる時刻（まだ発表がない。観光協会の案内は例年の午後5時、ページの更新は2021年）",
+    "神事のあとに本宮大社前から紀伊田辺駅・新宮駅へ戻る路線バスの最終便（2027年1月の時刻表を確かめられていない。龍神バスの今の時刻表は2026年12月10日までの実証運行の分）",
+    "一般の参拝者が参列できるか、参列に受付や申し込みが要るか、参列できる人数",
+    "白玉牛王（白紙午王）の初穂料と授与の数",
+    "撮影の可否",
+    "服装・持ち物（山あいの1月の夕方だが、出典に防寒の案内はない）",
+    "雨天のときの扱い",
+    "神事の行われる社殿の中の場所と、見学できる位置",
+    "本宮大社の参拝時間（8:00〜17:00）と、夕方の神事のときの境内の出入り",
+    "規模の根拠になる参列者数の公表値",
+    "露店が出るか",
+    "駐車場の台数（本宮大社の案内に台数がない）",
+    "周辺の店が1月7日（木）に年始の休みを取るか（観光協会の一覧に年末年始の休みの記載がない）",
+    "大斎原を見学できる時間",
+    "世界遺産熊野本宮館の知名度（大手の観光サイトの掲載を確かめきれなかった）"
+  ]
+}

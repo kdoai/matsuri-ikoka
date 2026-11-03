@@ -1,0 +1,442 @@
+{
+  "id": "nishinomiya-tokaebisu",
+  "name": {
+    "ja": "十日えびす",
+    "en": "Nishinomiya Shrine Toka Ebisu"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "兵庫県",
+      "name": "西宮市"
+    }
+  ],
+  "venue": {
+    "name": "西宮神社",
+    "lat": 34.7343,
+    "lng": 135.3359
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "10日6時の開門と同時に、本殿まで約200mを走る開門神事福男選び",
+    "拝殿に供えられた大まぐろに、硬貨を貼って福を願う",
+    "9日に有馬温泉の金泉が奉納され、芸妓が湯もみを奉納する",
+    "9日夜から門を閉ざす忌籠と、早暁4時の十日戎大祭"
+  ],
+  "trivia": [
+    {
+      "text": "本殿に早く着いた上位3人を福男と認める決まりは、昭和15年（1940）に始まった",
+      "source": {
+        "url": "https://nishinomiya-ebisu.com/event/kaimonshinji-history/",
+        "title": "西宮神社 開門神事の歴史",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "開門は、9日夜から門を閉ざして慎む忌籠が明ける合図で、大太鼓とともに表大門が開く",
+      "source": {
+        "url": "https://nishinomiya-ebisu.com/event/igomori/",
+        "title": "西宮神社 忌籠について",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "奉納される大まぐろは例年、全長約3m・重さ約300kg。毎年数万枚の硬貨が貼られる",
+      "source": {
+        "url": "https://nishinomiya-ebisu.com/event/mutsuki/",
+        "title": "西宮神社 1月の祭典・行事案内",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "昭和41年（1966）には、事故を防ぐため警察の指導で走り参りが2年間中止された",
+      "source": {
+        "url": "https://nishinomiya-ebisu.com/event/kaimonshinji-history/",
+        "title": "西宮神社 開門神事の歴史",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "参拝は自由。開門神事で走るには10日6時の開門前に表大門の外で待つ。門に近い前列は、9日夜に並んだ人から抽選で決める（2024年は10日0時までに並んだ1,325人から216人。2027年の要項は未発表）",
+    "rules": [
+      "9日夜12時（10日0時）から10日6時の開門まで、境内のすべての門が閉ざされ、参拝できない",
+      "期間中はとても混み合うため、公共交通機関で来て、譲り合って参拝する",
+      "警察と神社は、車で来ず公共交通機関を使うよう呼びかけている（2023年の報道）"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "high",
+      "reason": "開門神事では、開門と同時に参加者が本殿まで約200mを全力で走る。事故を防ぐために取りやめた年もある（日中の参拝はこの限りではない）"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://nishinomiya-ebisu.com/event/igomori/",
+        "title": "西宮神社 忌籠について",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://nishinomiya-ebisu.com/event/kaimonshinji-history/",
+        "title": "西宮神社 開門神事の歴史",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://nishinomiya-kanko.jp/event/1226/",
+        "title": "にしのみや観光協会 西宮神社の十日えびす",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kobe-np.co.jp/news/hanshin/202401/0017208778.shtml",
+        "title": "神戸新聞 2024年の開門神事福男選び",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      },
+      {
+        "url": "https://www.kobe-np.co.jp/news/sougou/202301/0015943553.shtml",
+        "title": "神戸新聞 十日えびすの交通規制（2023年）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      },
+      {
+        "url": "https://www.walkerplus.com/article/54056/",
+        "title": "ウォーカープラス 西宮神社の十日えびす・福男選びの参加方法（2015年の記事）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-10",
+      "start": "06:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "本えびす。6時に表大門が開き、約5,000人が本殿へ走り参りした（報道）",
+      "sources": [
+        {
+          "url": "https://nishinomiya-kanko.jp/event/1226/",
+          "title": "にしのみや観光協会 西宮神社の十日えびす（2026年1月9日〜11日）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kobe-np.co.jp/news/society/202601/0019897494.shtml",
+          "title": "神戸新聞 西宮神社 本えびす、5000人が走り参り（2026年1月）",
+          "checkedAt": "2026-11-02",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-09",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "宵えびす（例年の決まり。2027年の発表はまだない）。例年、14時ごろ有馬温泉献湯式、16時に十日戎宵宮祭。前日の8日9時半ごろに大まぐろ奉納式があり、大まぐろは3日間拝殿に供えられる。夜12時に境内のすべての門が閉ざされる",
+      "sources": [
+        {
+          "url": "https://nishinomiya-ebisu.com/event/mutsuki/",
+          "title": "西宮神社 1月の祭典・行事案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.walkerplus.com/spot/ar0728s30573/",
+          "title": "ウォーカープラス えびす宮総本社 西宮神社",
+          "checkedAt": "2026-11-02",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-10",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "本えびす（例年の決まり。2027年の発表はまだない）。例年、0時から門を閉ざし、4時に十日戎大祭、6時に大太鼓を合図に表大門が開き、開門神事福男選び。本殿に早く着いた1〜3番が福男。0時〜6時は参拝できない",
+      "sources": [
+        {
+          "url": "https://nishinomiya-ebisu.com/event/mutsuki/",
+          "title": "西宮神社 1月の祭典・行事案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://nishinomiya-ebisu.com/event/igomori/",
+          "title": "西宮神社 忌籠について",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.walkerplus.com/spot/ar0728s30573/",
+          "title": "ウォーカープラス えびす宮総本社 西宮神社",
+          "checkedAt": "2026-11-02",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-11",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "残り福（例年の決まり。2027年の発表はまだない）。当日の行事の時刻は公式の案内に見当たらない",
+      "sources": [
+        {
+          "url": "https://nishinomiya-ebisu.com/event/mutsuki/",
+          "title": "西宮神社 1月の祭典・行事案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.walkerplus.com/spot/ar0728s30573/",
+          "title": "ウォーカープラス えびす宮総本社 西宮神社",
+          "checkedAt": "2026-11-02",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "阪神 西宮駅",
+        "walkMinutes": [5, 10],
+        "note": "えびす口から南西へ"
+      },
+      {
+        "name": "JR さくら夙川駅",
+        "walkMinutes": [10, 15],
+        "note": "南東へ"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "大阪駅",
+        "minutes": [19, 19],
+        "route": "JR神戸線の普通でさくら夙川駅まで、乗り換えなし"
+      },
+      {
+        "hub": "三ノ宮駅",
+        "minutes": [16, 16],
+        "route": "JR神戸線の快速で芦屋駅へ、普通に乗り換えてさくら夙川駅まで"
+      }
+    ],
+    "parking": "none",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://nishinomiya-ebisu.com/access/",
+        "title": "西宮神社 交通アクセス",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kobe-np.co.jp/news/sougou/202301/0015943553.shtml",
+        "title": "神戸新聞 十日えびすの交通規制（2023年）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000953",
+        "title": "るるぶ&more. 十日えびす（駐車場は正月と十日えびすの期間は使えない）",
+        "checkedAt": "2026-11-02",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://www.walkerplus.com/article/54056/",
+        "title": "ウォーカープラス 西宮神社の十日えびす（駐車場は十日戎の期間は使えない）",
+        "checkedAt": "2026-11-02",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://ekitan.com/transit/route/sf-5006/st-9547",
+        "title": "駅探 乗換案内 大阪→さくら夙川（2026年11月2日 19時台の出発の検索結果）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      },
+      {
+        "url": "https://ekitan.com/transit/route/sf-5347/st-9547",
+        "title": "駅探 乗換案内 三ノ宮(ＪＲ)→さくら夙川（2026年11月2日 19時台の出発の検索結果）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "miyamizu-hasshonochi",
+      "name": "宮水発祥之地の碑",
+      "kind": "sightseeing",
+      "summary": "灘の酒を支えた名水「宮水」が見つかった地を示す碑。昭和41年（1966）、もとの梅ノ木井戸の場所に建てられた。宮水は西宮神社の南東一帯から湧く、鉄分が少なくミネラルの多い地下水",
+      "location": {
+        "lat": 34.7322,
+        "lng": 135.3406
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": [],
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.nishi.or.jp/bunka/rekishitobunkazai/mukashiphoto/shinshubansen.html",
+          "title": "西宮市 むかしの写真（宮水発祥の碑の解説）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.nishi.or.jp/bunka/kanko/jyourei/miyamizuhozen.html",
+          "title": "西宮市 宮水の保全",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "hakutaka-rokusuien",
+      "name": "白鷹禄水苑",
+      "kind": "food",
+      "summary": "酒蔵・白鷹の施設。季節限定の酒を売る店、白鷹を味わえる蔵BAR（土日祝の12:00〜17:00）、無料の展示室がある。阪神西宮駅の南口から徒歩約7分。定休は第1・第3水曜",
+      "location": {
+        "lat": 34.7306,
+        "lng": 135.3389
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "19:00"
+      },
+      "closedDays": null,
+      "price": "展示室は無料",
+      "tags": ["indoor", "local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.hakutaka.jp/shop.html",
+          "title": "白鷹 白鷹禄水苑のご案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "hakushika-sake-museum",
+      "name": "酒ミュージアム（白鹿記念酒造博物館）",
+      "kind": "sightseeing",
+      "summary": "記念館と酒蔵館の2棟で、酒造りの道具や歴史を見られる博物館。阪神西宮駅から南へ徒歩約15分。火曜休館（祝日なら翌日）、年末年始と夏期も休館し、展示替えで記念館を閉じる時期がある",
+      "location": {
+        "lat": 34.7278,
+        "lng": 135.3378
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["tue"],
+      "price": "一般500円（記念館と酒蔵館）",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://sake-museum.jp/visit",
+          "title": "酒ミュージアム 来館案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "ozeki-sekijuan",
+      "name": "甘辛の関寿庵（大関）",
+      "kind": "food",
+      "summary": "日本酒・大関のアンテナショップ。蔵の酒のほか、菓子や食品も扱う。阪神久寿川駅から徒歩約8分、今津駅から約9分。水曜定休",
+      "location": {
+        "lat": 34.7267,
+        "lng": 135.3516
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": ["wed"],
+      "price": null,
+      "tags": ["indoor", "local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://sekijuan.ozeki.co.jp/access/",
+          "title": "甘辛の関寿庵 アクセス",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.ozeki.co.jp/shop/",
+          "title": "大関 ショップ",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://nishinomiya-ebisu.com/event/mutsuki/",
+      "title": "西宮神社 1月の祭典・行事案内",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://nishinomiya-ebisu.com/access/",
+      "title": "西宮神社 交通アクセス",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://nishinomiya-kanko.jp/event/1226/",
+      "title": "にしのみや観光協会 西宮神社の十日えびす",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表（日程・時刻。神社の特設ページはまだ公開されていない）",
+    "2027年の開門神事の前列の抽選の要項（受付の時刻と場所、人数、参加の条件）",
+    "開門神事で走る人・見る人の服装・持ち物・禁止事項（公式の案内が見当たらない）",
+    "見学の場所と、開門神事を見るときの注意",
+    "撮影の決まり（三脚・ドローン・フラッシュなど）",
+    "雨天のときの扱い",
+    "2027年の交通規制（2023年の報道の内容を例年として書いた）",
+    "露店の数と場所（数は2015年の記事に600軒を超えるとあるだけ）",
+    "期間中だけの食べ物や名物（公式の出典が見つからない）",
+    "参拝者数の公表値（約100万人は観光サイトの掲載だけで、神社の公式で確かめられない）",
+    "残り福（11日）の行事と時刻",
+    "授与所の開く時間（期間中の延長の有無）",
+    "阪神の大阪梅田駅・神戸三宮駅から西宮駅までの所要時間（乗換案内で阪神の西宮駅を指定できなかった）",
+    "酒ミュージアムの2027年の年始の休館と、1月の展示替えの日程",
+    "周辺の場所の知名度（大手の観光サイトの掲載を確かめきれなかった）",
+    "2027年の交通規制（まだ発表がない。2023年の報道では、9〜11日に神社の周辺一帯が歩行者用道路になった）",
+    "甘辛の関寿庵の営業時間（公式は「受付時間 10:00〜18:00」とだけ書く）と、年始の休みの期間（公式の表記が読み取りにくい）"
+  ]
+}

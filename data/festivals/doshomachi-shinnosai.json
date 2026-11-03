@@ -1,0 +1,438 @@
+{
+  "id": "doshomachi-shinnosai",
+  "name": {
+    "ja": "神農祭",
+    "en": "Shinno Festival"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "大阪府",
+      "name": "大阪市"
+    }
+  ],
+  "venue": {
+    "name": "少彦名神社",
+    "lat": 34.6885,
+    "lng": 135.506
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["jalan", "rurubu"],
+  "highlights": [
+    "五葉笹に張子の虎と御札を付けた病除けの御守を授かれる",
+    "製薬会社が集まる「くすりの町」道修町に伝わる、薬の神の例大祭",
+    "例年、道修町の沿道に露店が並ぶ",
+    "大阪市の無形民俗文化財「少彦名神社の薬祖講行事」の中心の祭り"
+  ],
+  "trivia": [
+    {
+      "text": "1822年にコレラがはやった折、薬種仲間が丸薬と張子の虎の御守を神前で祈って配ったのが由来とされる",
+      "source": {
+        "url": "https://www.sinnosan.jp/shinnousai/",
+        "title": "少彦名神社 神農祭",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "薬祖講の行事として大阪市の無形文化財（民俗行事）に指定され、「とめの祭」とも呼ばれる",
+      "source": {
+        "url": "https://www.sinnosan.jp/shinnousai/",
+        "title": "少彦名神社 神農祭",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "祭りを支える薬祖講は、薬業に関わるおよそ400社でつくる講",
+      "source": {
+        "url": "https://www.city.osaka.lg.jp/kyoiku/cmsfiles/contents/0000673/673968/13.pdf",
+        "title": "大阪市 無形民俗文化財 少彦名神社の薬祖講行事",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2025年の神農祭は、2日間で推定約5万人が参拝した",
+      "source": {
+        "url": "https://www.yakuji.co.jp/entry126814.html",
+        "title": "薬事日報 神農祭、約5万人が参拝（2025年12月4日）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "11月22日・23日の10:00〜20:00に参拝し、境内で張子の虎と御札を五葉笹に付けた御守を受ける（初穂料は公式の案内に書かれていない）",
+    "rules": [
+      "11月22日の9:45前後は、役員の写真撮影のため境内への入場が規制される",
+      "14:00〜15:00前後は特に混み、入場を規制することがある。16時以降は比較的すいている"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "主催者が14〜15時前後の混雑と入場規制を案内しており、2025年は2日間で推定約5万人が参拝した"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.sinnosan.jp/schedule/1418",
+        "title": "少彦名神社 例大祭「神農祭」（2026年11月22日〜23日）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.sinnosan.jp/shinnousai/",
+        "title": "少彦名神社 神農祭",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.yakuji.co.jp/entry126814.html",
+        "title": "薬事日報 神農祭、約5万人が参拝（2025年12月4日）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-22",
+      "endDate": "2026-11-23",
+      "start": "10:00",
+      "end": "20:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "両日とも10:00〜20:00に参拝と御守（張子の虎の笹）の授与。22日の9:45前後は役員の写真撮影で境内に入れない。14〜15時前後が特に混み、入場規制のことがある。16時以降は比較的すく",
+      "sources": [
+        {
+          "url": "https://www.sinnosan.jp/schedule/1418",
+          "title": "少彦名神社 例大祭「神農祭」（2026年11月22日〜23日）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.sinnosan.jp/shinnousai/",
+          "title": "少彦名神社 神農祭",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000550",
+          "title": "るるぶ&more. 神農祭（2026年11月22日〜23日）",
+          "checkedAt": "2026-11-02",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "Osaka Metro 淀屋橋駅",
+        "walkMinutes": [10, 15],
+        "note": "御堂筋線。11番出口から。梅田・なんば・新大阪から乗り換えなしで来られる"
+      },
+      {
+        "name": "Osaka Metro 北浜駅",
+        "walkMinutes": [5, 10],
+        "note": "堺筋線。6番出口から。神社にいちばん近い"
+      },
+      {
+        "name": "京阪 北浜駅",
+        "walkMinutes": [8, 13],
+        "note": "京阪本線。27番出口から"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "梅田駅",
+        "minutes": [3, 3],
+        "route": "Osaka Metro御堂筋線（梅田駅から淀屋橋駅まで、乗り換えなし）"
+      },
+      {
+        "hub": "なんば駅",
+        "minutes": [6, 6],
+        "route": "Osaka Metro御堂筋線（なんば駅から淀屋橋駅まで、乗り換えなし）"
+      },
+      {
+        "hub": "新大阪駅",
+        "minutes": [10, 10],
+        "route": "Osaka Metro御堂筋線（新大阪駅から淀屋橋駅まで、乗り換えなし）"
+      }
+    ],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.sinnosan.jp/access/",
+        "title": "少彦名神社 アクセス",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://osaka-info.jp/spot/sukunahikonajinja/",
+        "title": "大阪観光局 少彦名神社（神農さん）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ekitan.com/transit/route/sf-4960/st-6143",
+        "title": "駅探 梅田→淀屋橋（2026年11月2日 19時27分出発）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      },
+      {
+        "url": "https://ekitan.com/transit/route/sf-5727/st-6143",
+        "title": "駅探 なんば（大阪メトロ）→淀屋橋（2026年11月2日 19時27分出発）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      },
+      {
+        "url": "https://ekitan.com/transit/route/sf-5429/st-6143",
+        "title": "駅探 新大阪→淀屋橋（2026年11月2日 19時27分出発）",
+        "checkedAt": "2026-11-02",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "tekijuku",
+      "name": "適塾",
+      "kind": "sightseeing",
+      "summary": "緒方洪庵が1838年に開いた蘭学塾の建物で、国の重要文化財。大阪大学が管理し、内部を公開している。月曜休みだが祝日の月曜は開き、祝日の翌日は休み（土日祝なら開く）",
+      "location": {
+        "lat": 34.6914,
+        "lng": 135.5032
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "16:00"
+      },
+      "closedDays": ["mon"],
+      "price": "一般400円、高校・大学生等200円、中学生以下無料",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.tekijuku.osaka-u.ac.jp/ja/access",
+          "title": "大阪大学 適塾記念センター 適塾のご利用案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://osaka-info.jp/spot/tekijuku/",
+          "title": "大阪観光局 適塾",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "osaka-central-public-hall",
+      "name": "大阪市中央公会堂",
+      "kind": "sightseeing",
+      "summary": "1918年に建った中之島の公会堂で、国の重要文化財。館内は貸会場が中心で、自由に見学できるのは地下1階の展示室（無料）。休館は毎月第4火曜（祝日なら直後の平日）",
+      "location": {
+        "lat": 34.6935,
+        "lng": 135.5045
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "21:30"
+      },
+      "closedDays": [],
+      "price": "地下1階の展示室は無料",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://osaka-chuokokaido.com/",
+          "title": "大阪市中央公会堂 公式サイト（開館時間・休館日）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://osaka-chuokokaido.com/ja/floor-map",
+          "title": "大阪市中央公会堂 フロアマップ",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://osaka-info.jp/spot/osaka-central-public-hall/",
+          "title": "大阪観光局 大阪市中央公会堂",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "gokan-kitahama-honkan",
+      "name": "五感 北浜本館",
+      "kind": "food",
+      "summary": "1922年に銀行として建った新井ビル（国の登録有形文化財）にある洋菓子店の本館。1階が売り場、2階がサロンで、サロンは予約なしの来店順。休みは1月1〜3日と年1回の不定休",
+      "location": {
+        "lat": 34.6907,
+        "lng": 135.5065
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "19:00",
+        "lastEntry": "18:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["indoor", "seating"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://patisserie-gokan.co.jp/shop/kitahama/",
+          "title": "五感 北浜本館 店舗のご案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://patisserie-gokan.co.jp/info/arai/",
+          "title": "五感 新井ビルについて",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://patisserie-gokan.co.jp/shop_name/kitahama/",
+          "title": "五感 北浜本館のお知らせ（2026年の臨時休業は10月13日）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kitahama-retro",
+      "name": "北浜レトロ",
+      "kind": "rest",
+      "summary": "1912年に証券仲買の社屋として建った洋館（国の登録有形文化財）で、英国式のアフタヌーンティーを出す店。土日祝は10:30から。休みはお盆と年末年始",
+      "location": {
+        "lat": 34.6917,
+        "lng": 135.5074
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:30",
+        "close": "19:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["indoor", "seating"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://osaka-info.jp/spot/kitahama-retro-building/",
+          "title": "大阪観光局 北浜レトロビルヂング",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "tsuruya-hachiman-osaka-honten",
+      "name": "鶴屋八幡 大阪本店",
+      "kind": "food",
+      "summary": "文久3年（1863）に高麗橋で始まった大阪の和菓子の老舗の本店。土日祝も8:30〜17:00に開くが、店内の茶房は土日祝は休み",
+      "location": {
+        "lat": 34.6908,
+        "lng": 135.4992
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "08:30",
+        "close": "17:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.tsuruyahachiman.co.jp/shop/",
+          "title": "鶴屋八幡 店舗情報（大阪本店・茶房）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.tsuruyahachiman.co.jp/",
+          "title": "鶴屋八幡 公式サイト（沿革）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.sinnosan.jp/",
+      "title": "少彦名神社 公式サイト（所在地）",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.sinnosan.jp/shinnousai/",
+      "title": "少彦名神社 神農祭",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.osaka.lg.jp/kyoiku/cmsfiles/contents/0000673/673968/13.pdf",
+      "title": "大阪市 無形民俗文化財 少彦名神社の薬祖講行事",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://osaka-info.jp/spot/sukunahikonajinja/",
+      "title": "大阪観光局 少彦名神社（神農さん）",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.yakuji.co.jp/entry114305.html",
+      "title": "薬事日報 神農祭 御社殿修繕記念対談（2024年11月19日。例年、沿道に露店が並ぶ）",
+      "checkedAt": "2026-11-02",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://en.japantravel.com/osaka/shinno-sai-festival/439",
+      "title": "Japan Travel Shinno-sai Festival 2026（神社の前の通りに露店が並ぶ）",
+      "checkedAt": "2026-11-02",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_348489/",
+      "title": "じゃらんnet 神農祭（2025年の掲載）",
+      "checkedAt": "2026-11-02",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "張子の虎の笹（神虎笹）の2026年の初穂料（公式の案内に金額がない）",
+    "雨天のときの扱い",
+    "神事・祭典の時刻と当日の細かな流れ（2025年は22日に薬祖講の祭典があったと報じられたが、時刻は分からない）",
+    "2026年の露店の数と出る時間、道修町通りの交通規制や歩行者天国の有無（個人の投稿にしか見当たらない）",
+    "服装・持ち物・撮影の決まり（出典が見つからない）",
+    "参拝者が使える駐車場の有無（神社の案内に書かれていない。るるぶ&more.には駐車場なしとある）",
+    "2026年の参拝者数の見込み（規模は2025年の推定約5万人を参考に決めた）",
+    "大阪市中央公会堂の地下1階の展示室の公開時間（館の開館時間は9:30〜21:30）",
+    "北浜レトロのラストオーダーの時刻（店の公式サイトは取得できず、大阪観光局の案内で確かめた）",
+    "適塾の最終入館の時刻",
+    "梅田・なんば・新大阪からの所要時間は、平日の夜の乗換案内の1件の結果（休日の昼の時間は確かめていない）",
+    "鶴屋八幡 大阪本店の休業日（店の案内に曜日ごとの営業時間はあるが、休業日の記載がない）"
+  ]
+}

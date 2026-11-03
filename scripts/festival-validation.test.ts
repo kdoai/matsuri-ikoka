@@ -61,6 +61,19 @@ describe("validateFestivalFiles", () => {
       expect(messages(findings, "error")[0]).toContain("例示用のドメイン");
     });
 
+    it("robots.txt で取得が禁じられたページを出典にできない", () => {
+      const festival = fictionalFestival();
+      festival.access.sources = [
+        { ...fictionalSource("access"), url: "https://transit.yahoo.co.jp/search/result?from=a" },
+        { ...fictionalSource("access"), url: "https://ekitan.com/transit/route/sf-1/st-2?dt=1" },
+        { ...fictionalSource("access"), url: "https://ekitan.com/transit/route/sf-1/st-2" },
+      ];
+      const errors = messages(validateFestivalFiles([fileOf(festival)], FRESH), "error");
+      expect(errors).toHaveLength(2);
+      expect(errors[0]).toMatch(/^access\.sources\.0：Yahoo!乗換案内/);
+      expect(errors[1]).toMatch(/^access\.sources\.1：駅探/);
+    });
+
     it("確認した日が今日より後", () => {
       const festival = fictionalFestival();
       festival.sources = [{ ...fictionalSource("about"), checkedAt: "2026-04-03" }];

@@ -1,0 +1,393 @@
+{
+  "id": "fushimi-inari-hitakisai",
+  "name": {
+    "ja": "火焚祭",
+    "en": "Hitaki-sai"
+  },
+  "category": "fire",
+  "municipalities": [
+    {
+      "prefecture": "京都府",
+      "name": "京都市"
+    }
+  ],
+  "venue": {
+    "name": "伏見稲荷大社（本殿・神苑祭場）",
+    "lat": 34.967,
+    "lng": 135.7735
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["jalan"],
+  "highlights": [
+    "全国から奉納された十数万本の火焚串を、3基の火床で焚き上げる炎",
+    "宮司以下の神職と参列者が声をそろえて大祓詞を奉唱する",
+    "夕刻、庭燎の薄明かりのなかで雅楽と人長舞を奉納する御神楽",
+    "約1万基の鳥居が続く稲荷山のお山めぐり"
+  ],
+  "trivia": [
+    {
+      "text": "夕刻の御神楽は、孝明天皇の代の文久3年（1863）、御所の思召しによって再び始められた",
+      "source": {
+        "url": "https://inari.jp/rite/?month=11%E6%9C%88",
+        "title": "伏見稲荷大社 祭礼と行事（11月）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "火床は杉を井桁に組んで檜葉をのせ、神田の稲わらを燃やしてから火焚串を投じる",
+      "source": {
+        "url": "https://www.keihan.co.jp/navi/kyoto_tsu/tsu202111.html",
+        "title": "京阪電車 京都ツウのススメ 第160回 御火焚祭（2021年11月）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "伏見稲荷大社は、全国に約3万社ある稲荷神社の総本宮",
+      "source": {
+        "url": "https://inari.jp/about/faq/",
+        "title": "伏見稲荷大社 よくあるご質問",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "稲荷山に並ぶ鳥居は約1万基。願いがかなったお礼に奉納する習わしが江戸時代に広まった",
+      "source": {
+        "url": "https://inari.jp/about/faq/",
+        "title": "伏見稲荷大社 よくあるご質問",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "本殿などの建物や柵の中など、立入禁止の場所に入らない",
+      "境内では無料休憩所のほかで飲食しない（食べ歩き・立ち食いをしない）",
+      "境内で喫煙や火気の使用をしない",
+      "ごみ・ペットボトル・空き缶を捨てない",
+      "ドローンなどを飛ばさない",
+      "犬やペットを連れて参拝しない（介助犬など参拝に必要な場合は除く）",
+      "狭い参道での撮影やダンスなどで、ほかの参拝者の通行を妨げない。大声で騒いだり座り込んだりしない",
+      "ウェディングドレス姿など、参拝にふさわしくない姿で境内を歩かない",
+      "大社の駐車場の周りの道路は大変混雑するので、公共交通機関で行く"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "3基の火床で大きな炎を上げて火焚串を焚く神事を見学する。観覧の場所や火床からの距離についての主催者の案内は見当たらない"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "境内では、禁止の場所での撮影、営業目的の撮影、狭い参道で通行を妨げる撮影、ドローンの飛行が禁止。祭典中の撮影についての案内は見当たらない"
+    },
+    "sources": [
+      {
+        "url": "https://inari.jp/request/",
+        "title": "伏見稲荷大社 ご参拝の皆様へ",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://inari.jp/news/topics/",
+        "title": "伏見稲荷大社 境内での参拝マナーについてのおねがい（2026年9月7日）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://inari.jp/access/",
+        "title": "伏見稲荷大社 交通アクセス",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://inari.jp/rite/?month=11%E6%9C%88",
+        "title": "伏見稲荷大社 祭礼と行事（11月）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-08",
+      "start": "13:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "毎年11月8日。13:00 本殿で祭典、続いて神苑祭場の3基の火床で、全国から奉納された十数万本の火焚串を焚き上げ、大祓詞を奉唱。18:00 本殿の前で御神楽（庭燎の明かりのなかで人長舞）",
+      "sources": [
+        {
+          "url": "https://inari.jp/rite/?month=11%E6%9C%88",
+          "title": "伏見稲荷大社 祭礼と行事（11月）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://inari.jp/en/rite/?month=11",
+          "title": "Fushimi Inari Taisha Rites and Festivals (November)",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://ja.kyoto.travel/event/single.php?event_id=6988",
+          "title": "京都観光Navi 2026年京都市内のお火焚き祭 一覧",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 稲荷駅",
+        "walkMinutes": [0, 5],
+        "note": "大社の案内では「徒歩すぐ」。JR奈良線"
+      },
+      {
+        "name": "京阪 伏見稲荷駅",
+        "walkMinutes": [5, 10],
+        "note": "駅から東へ"
+      },
+      {
+        "name": "京都市バス 稲荷大社前バス停",
+        "walkMinutes": [7, 12],
+        "note": "南5系統。バス停から東へ"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "京都駅",
+        "minutes": [5, 15],
+        "route": "JR奈良線、乗り換えなし（稲荷駅で下車）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://inari.jp/access/",
+        "title": "伏見稲荷大社 交通アクセス",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ja.kyoto.travel/tourism/single01.php?category_id=7&tourism_id=448",
+        "title": "京都観光Navi 伏見稲荷大社",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "いなり寿し",
+        "note": "伏見稲荷大社の参道の祢ざめ家の名物。秘伝のだしで炊いたもので、7個1,050円",
+        "sources": [
+          {
+            "url": "https://www.keihan.co.jp/toyotomi/fushimi/",
+            "title": "京阪電車 豊臣ゆかりのまちを訪ねて［京都］伏見・醍醐エリア（2026年6月現在）",
+            "checkedAt": "2026-11-02",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "tofukuji",
+      "name": "東福寺",
+      "kind": "sightseeing",
+      "summary": "臨済宗東福寺派の本山。九條道家の発願で1255年に七堂伽藍が完成した。紅葉の名所の通天橋と、室町時代の国宝の三門で知られる。2026年は11月7日から国宝三門と龍吟庵を特別公開。境内は無料",
+      "location": {
+        "lat": 34.9774,
+        "lng": 135.7735
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "16:30",
+        "lastEntry": "16:00"
+      },
+      "closedDays": [],
+      "price": "通天橋・開山堂 600円、本坊庭園 600円（大人。11月14日からの秋期は通天橋・開山堂 1,000円）",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://tofukuji.jp/guide/",
+          "title": "東福寺 拝観案内",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://tofukuji.jp/",
+          "title": "東福寺 公式サイト（国宝三門・龍吟庵 特別公開 11/7〜12/6）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://ja.kyoto.travel/tourism/single01.php?category_id=7&tourism_id=484",
+          "title": "京都観光Navi 東福寺",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "sekihoji",
+      "name": "石峰寺",
+      "kind": "sightseeing",
+      "summary": "宝永年間に黄檗6世の千呆禅師が創建した寺。伊藤若冲が10余年かけて裏山に造った五百羅漢の石仏が残り、若冲の墓もある。五百羅漢の撮影とスケッチは禁止。JR稲荷駅から徒歩約10分",
+      "location": {
+        "lat": 34.9646,
+        "lng": 135.7754
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://ja.kyoto.travel/tourism/single01.php?category_id=7&tourism_id=393",
+          "title": "京都観光Navi 石峰寺",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "inari-saryo",
+      "name": "稲荷茶寮",
+      "kind": "rest",
+      "summary": "伏見稲荷大社の境内の休憩所・啼鳥菴の中にある日本茶のカフェ。数寄屋造りの店内から稲荷山や庭、八島ヶ池を眺めながら、宇治抹茶と甘味を頂ける。席は来店順に案内。水曜が祝日なら営業",
+      "location": {
+        "lat": 34.967,
+        "lng": 135.7735
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:30",
+        "close": "16:30",
+        "lastEntry": "16:00"
+      },
+      "closedDays": ["wed"],
+      "price": null,
+      "tags": ["indoor", "seating"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://tsubakido.kyoto/inarisaryo/",
+          "title": "椿堂 稲荷茶寮",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "nezameya",
+      "name": "祢ざめ家",
+      "kind": "food",
+      "summary": "伏見稲荷大社の参道にある老舗の食事処。参詣した豊臣秀吉が休み、妻ねねの「祢」の字を与えたと伝わる。秘伝のだしのいなり寿しと鰻が名物。売り切れ次第終わり。定休日は不定休",
+      "location": {
+        "lat": 34.9671,
+        "lng": 135.7708
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": "いなり寿し7個 1,050円",
+      "tags": ["local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.keihan.co.jp/toyotomi/fushimi/",
+          "title": "京阪電車 豊臣ゆかりのまちを訪ねて［京都］伏見・醍醐エリア（2026年6月現在）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kyoto-national-museum",
+      "name": "京都国立博物館",
+      "kind": "sightseeing",
+      "summary": "七条にある国立の博物館。2026/11/8は特別展「源氏物語 王朝のかがやき」（10/6〜11/29）の会期中で、平常展示はこの間休止。月曜が祝休日なら翌火曜が休館",
+      "location": {
+        "lat": 34.9907,
+        "lng": 135.7724
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:30",
+        "lastEntry": "17:00"
+      },
+      "closedDays": ["mon"],
+      "price": "特別展 一般2,200円、大学生1,200円、高校生700円、中学生以下無料",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.kyohaku.go.jp/jp/visit/info/",
+          "title": "京都国立博物館 休館日・開館時間・観覧料",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kyohaku.go.jp/jp/visit/",
+          "title": "京都国立博物館 ご来館の皆様へ",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://inari.jp/rite/?month=11%E6%9C%88",
+      "title": "伏見稲荷大社 祭礼と行事（11月）",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://inari.jp/en/rite/?month=11",
+      "title": "Fushimi Inari Taisha Rites and Festivals (November)",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://ja.kyoto.travel/tourism/single01.php?category_id=7&tourism_id=448",
+      "title": "京都観光Navi 伏見稲荷大社",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "伏見稲荷大社の公式サイトでの2026年の開催の告知（公式の「祭礼と行事」は年の入らない毎年の案内。2026年11月8日（日）13:00〜の掲載は京都市の観光サイトの一覧で確かめた）",
+    "参拝者が火焚串を納められるか、その方法・初穂料・受付の期間（大社の公式サイトに案内が見つからない）",
+    "神苑祭場で焚き上げが始まる時刻と、火焚祭・御神楽の終わる時刻",
+    "見学できる場所と見学の決まり（神苑祭場の火床にどこまで近づけるか、御神楽をどこから見られるか）",
+    "祭典中の撮影の決まり（境内全体の決まりだけを確かめた）",
+    "雨天のときの扱い",
+    "服装・持ち物の案内",
+    "当日の混雑の目安と交通規制、駐車場の扱い（台数・料金）",
+    "露店が出るか",
+    "規模の根拠になる参列者数・来場者数の公表値（火焚串は公式で「十数万本」、公式の英語の案内では10万本以上）",
+    "祢ざめ家の営業時間と11月8日に営業するか（店の公式サイトも自治体のページも見つからない。京阪の案内では10:00〜16:00、不定休）",
+    "石峰寺の拝観時間・拝観料・休み（京都市の観光サイトに記載がない）",
+    "京都駅から稲荷駅までの所要時間は大社の案内の「5分」だけで、乗換案内では確かめていない"
+  ]
+}

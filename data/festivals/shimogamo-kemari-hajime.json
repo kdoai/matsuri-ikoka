@@ -1,0 +1,327 @@
+{
+  "id": "shimogamo-kemari-hajime",
+  "name": {
+    "ja": "蹴鞠はじめ",
+    "en": "Kemari Hajime"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "京都府",
+      "name": "京都市"
+    }
+  ],
+  "venue": {
+    "name": "下鴨神社（賀茂御祖神社）",
+    "lat": 35.0387,
+    "lng": 135.773
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "水干に烏帽子姿の鞠人が、鹿皮の鞠を革の沓で高く蹴り上げる",
+    "「アリ」「ヤー」「オウ」の掛け声と、鞠を蹴る乾いた音",
+    "世界遺産・下鴨神社で、新年の神事に続いて保存会が奉納する",
+    "境内の茶店で、140年以上ぶりに復元された申餅を味わえる"
+  ],
+  "trivia": [
+    {
+      "text": "蹴鞠は勝ち負けを競わず、相手が蹴りやすい鞠を返して長く続けることを楽しむ",
+      "source": {
+        "url": "https://www.keihan.co.jp/navi/kyoto_tsu/tsu201901.html",
+        "title": "京阪電車 京都通（蹴鞠、2019年1月）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "鞠は裏返した鹿皮を馬の背の皮で縫い合わせて作り、直径は20cmほど",
+      "source": {
+        "url": "https://www.keihan.co.jp/navi/kyoto_tsu/tsu201901.html",
+        "title": "京阪電車 京都通（蹴鞠、2019年1月）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "明治に一度すたれた蹴鞠は、明治天皇の勅命で作られた保存会が受け継いでいる",
+      "source": {
+        "url": "https://www.keihan.co.jp/navi/kyoto_tsu/tsu201901.html",
+        "title": "京阪電車 京都通（蹴鞠、2019年1月）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "蹴鞠は6〜8人で一座になって蹴り続ける遊びで、飛鳥井流・難波流などの流派がある",
+      "source": {
+        "url": "https://www.shimogamo-jinja.or.jp/saiji/kemari",
+        "title": "下鴨神社 蹴鞠",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "奉納される蹴鞠の見学が中心で、主催者による混雑や危険の注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.shimogamo-jinja.or.jp/saiji/kemari",
+        "title": "下鴨神社 蹴鞠",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ja.kyoto.travel/event/single.php?event_id=4360",
+        "title": "京都観光Navi 蹴鞠はじめ【下鴨神社】",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-04",
+      "start": "13:30",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "神事のあと、京都蹴鞠保存会が蹴鞠を奉納。13:30から。有料の特別拝観席は正午から受付",
+      "sources": [
+        {
+          "url": "https://ja.kyoto.travel/event/single.php?event_id=4360",
+          "title": "京都観光Navi 蹴鞠はじめ【下鴨神社】（2026年1月4日）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.shimogamo-jinja.or.jp/saiji/kemari",
+          "title": "下鴨神社 蹴鞠",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-04",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "例年1月4日（下鴨神社の年間祭典一覧）。神事のあと保存会が奉納する。2027年の時刻と有料拝観席はまだ発表がない（2026年は13:30開始、席の受付は正午から）",
+      "sources": [
+        {
+          "url": "https://www.shimogamo-jinja.or.jp/saiji",
+          "title": "下鴨神社 祭典行事（年間祭典一覧表）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.shimogamo-jinja.or.jp/saiji/kemari",
+          "title": "下鴨神社 蹴鞠",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://ja.kyoto.travel/event/season/january/",
+          "title": "京都観光Navi 1月の京都",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "京阪 出町柳駅",
+        "walkMinutes": [12, 17],
+        "note": "地上に出て河合橋を渡り、糺の森を北へ"
+      },
+      {
+        "name": "京都市バス 下鴨神社前バス停",
+        "walkMinutes": [5, 10],
+        "note": "京都駅から市バス4・205系統"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.shimogamo-jinja.or.jp/access",
+        "title": "下鴨神社 アクセス",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ja.kyoto.travel/tourism/single01.php?category_id=7&tourism_id=498",
+        "title": "京都観光Navi 賀茂御祖神社（下鴨神社）",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ja.kyoto.travel/feature/traffic/access.php?id=13",
+        "title": "京都観光Navi 主要観光地への快適なアクセス 京都御所・下鴨",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "申餅（さるもち）",
+        "note": "境内の茶店「さるや」で。140年以上ぶりに復元された、下鴨神社にちなむ餅",
+        "sources": [
+          {
+            "url": "https://housendo.com/shop/",
+            "title": "宝泉堂 店舗のご案内（下鴨神社 さるや）",
+            "checkedAt": "2026-11-02",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "kawai-jinja",
+      "name": "河合神社",
+      "kind": "sightseeing",
+      "summary": "糺の森の南にある下鴨神社の摂社。女性の守護神・玉依姫命をまつり、手鏡形の鏡絵馬に化粧をして奉納する美麗祈願で知られる。鴨長明ゆかりの社で、方丈の庵の復元もある",
+      "location": {
+        "lat": 35.0348,
+        "lng": 135.7719
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "06:30",
+        "close": "16:30"
+      },
+      "closedDays": [],
+      "price": "参拝は無料",
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.shimogamo-jinja.or.jp/bireikigan",
+          "title": "下鴨神社 美麗祈願（河合神社）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://ja.kyoto.travel/tourism/single01.php?category_id=7&tourism_id=2471",
+          "title": "京都観光Navi 河合神社",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kyu-mitsuike-shimogamo-villa",
+      "name": "旧三井家下鴨別邸",
+      "kind": "sightseeing",
+      "summary": "下鴨神社の南にある三井家の旧別邸。大正14年（1925）に祖霊社参拝の休憩所として建てられ、重要文化財。12/29〜12/31は休館。水曜が祝休日ならその翌日が休み",
+      "location": {
+        "lat": 35.0324,
+        "lng": 135.7715
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["wed"],
+      "price": "一般 平日500円、土日祝600円",
+      "tags": ["indoor"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://ja.kyoto.travel/tourism/article/mitsuike/access.php",
+          "title": "京都観光Navi 旧三井家下鴨別邸 見学・アクセス",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://ja.kyoto.travel/tourism/article/mitsuike/about.php",
+          "title": "京都観光Navi 旧三井家下鴨別邸について",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "shimogamo-saruya",
+      "name": "下鴨神社 さるや",
+      "kind": "food",
+      "summary": "下鴨神社の境内、糺の森の中にある宝泉堂の茶店。140年以上ぶりに復元した申餅や黒豆茶、おぜんざいなど、神社にちなんだ甘味を出す。年中無休だが変更の場合あり",
+      "location": {
+        "lat": 35.0387,
+        "lng": 135.773
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "16:30"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://housendo.com/shop/",
+          "title": "宝泉堂 店舗のご案内（下鴨神社 さるや）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.shimogamo-jinja.or.jp/saiji/kemari",
+      "title": "下鴨神社 蹴鞠",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.shimogamo-jinja.or.jp/saiji",
+      "title": "下鴨神社 祭典行事（年間祭典一覧表）",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    },
+    {
+      "url": "https://ja.kyoto.travel/event/single.php?event_id=4360",
+      "title": "京都観光Navi 蹴鞠はじめ【下鴨神社】",
+      "checkedAt": "2026-11-02",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開始時刻（まだ発表がない。2026年は13:30開始）",
+    "2027年の有料の特別拝観席の有無・料金・席数・買い方（2026年は正午から受付とだけ分かる。料金は公式で確かめられない）",
+    "境内のどこで行うか（見学の場所）と、行事の終わる時刻・所要時間",
+    "雨天のときの扱い",
+    "見学の決まり・服装・持ち物・撮影の可否（主催者の案内が見つからない）",
+    "主要駅からの所要時間（公式の案内は区間ごとだけ：地下鉄烏丸線で京都駅から北大路駅まで約13分、北大路バスターミナルから市バス1・205系統で下鴨神社前まで約8分）",
+    "1月4日の西駐車場の扱い（祭典により変更の可能性がある）",
+    "露店が出るか",
+    "規模の根拠になる見学者数の公表値（公式の数がない）",
+    "さるやの席の有無と申餅の値段、1月4日の営業（年中無休だが変更の場合あり）",
+    "さるやの境内での正確な位置（緯度・経度は神社の所在地で代用）"
+  ]
+}
