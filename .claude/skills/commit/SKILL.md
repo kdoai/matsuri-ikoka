@@ -44,7 +44,7 @@ description: このリポジトリの決まり（Conventional Commits・スコ�
 
 1. `git status` と `git diff`（足してあるものは `git diff --staged`）で、変更をすべて読む
 2. 目的ごとに分ける。分けられないほど絡んでいれば、1つにまとめて本文で説明する
-3. 変更に合わせて確かめる：`pnpm lint`・`pnpm typecheck`・`pnpm test`（スキーマやビルドに関わるなら `pnpm build`。画面の通しテストは走らせず、人に任せる）
+3. 変更に合わせて確かめる：`pnpm lint`・`pnpm typecheck`・`pnpm test`（スキーマやビルドに関わるなら `pnpm build`、画面なら e2e も）
 4. パスを指定して足す：`git add path/to/a.ts path/to/b.ts`
 5. `git diff --staged` を読み直し、意図しないファイル（`.env`、ビルドの成果物、`.blend`、手元のメモ）が入っていないことを確かめる
 6. コミットする。本文は、なぜ変えたかを使う人にとっての理由で書く。最後に、会話の中で指示された署名の行（`Co-Authored-By: …`）を付ける

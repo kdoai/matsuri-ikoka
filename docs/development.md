@@ -60,7 +60,7 @@ GitHub の Issue Types は、組織のアカウントのリポジトリでしか
 
 ## 5. CI
 
-[`ci.yml`](../.github/workflows/ci.yml) が、PR と main への push で次のジョブを並べて走らせます。同じ PR に新しい push があると、古い実行は止まります。pnpm のストアと Docker のビルドの層はキャッシュします。
+[`ci.yml`](../.github/workflows/ci.yml) が、PR と main への push で次のジョブを並べて走らせます。同じ PR に新しい push があると、古い実行は止まります。pnpm のストア、Playwright のブラウザ、Docker のビルドの層はキャッシュします。
 
 | ジョブ              | 中身                                                                                                  |
 | ------------------- | ----------------------------------------------------------------------------------------------------- |
@@ -69,6 +69,7 @@ GitHub の Issue Types は、組織のアカウントのリポジトリでしか
 | `test`              | Vitest                                                                                                |
 | `validate-data`     | 祭りのデータの検証（`pnpm validate:data`）                                                            |
 | `build`             | 画面と接客サーバーのビルド                                                                            |
+| `e2e`               | 接客サーバーをモック（`MATSURI_AGENT_MODE=mock`）で起動し、Playwright で画面の通しテスト              |
 | `docker`            | デプロイと同じイメージを作り、モックで動かして、相談・しおりの PDF・3D のモデルが配られるかを確かめる |
 | `secrets`           | gitleaks で、履歴全体に秘密情報が混ざっていないかを見る                                               |
 | `actionlint`        | ワークフローの書き方（`run` の中のシェルも shellcheck で）                                            |
@@ -85,7 +86,7 @@ main のルールセットは、上のすべてのジョブを必須の検査に
 pnpm lint && pnpm typecheck && pnpm test && pnpm validate:data && pnpm build
 ```
 
-画面の通しテスト（e2e）は CI では走らせず、人が手元で走らせます。Playwright が接客サーバーをモックで起動し、画面の開発サーバーからつなぎます（`apps/web/playwright.config.ts`。ポートは 35179 と 38787）。
+e2e は、Playwright が接客サーバーをモックで起動し、画面の開発サーバーからつなぎます（`apps/web/playwright.config.ts`。ポートは 35179 と 38787）。
 
 ```bash
 pnpm --filter @matsuri-ikoka/web test:e2e
@@ -109,6 +110,7 @@ main に入ると [`deploy.yml`](../.github/workflows/deploy.yml) が Cloud Run 
 | `create-issue`      | テンプレートとラベルを選んで Issue を起票する                              |
 | `create-pr`         | PR のテンプレートに沿って PR を作る                                        |
 | `review-pr`         | このリポジトリの決まり（`CLAUDE.md` の「守ること」）に照らして差分を見直す |
+| `resolve-issue`     | Issue を1件選び、worktree で直して PR にし、CI が通ったらマージする        |
 | `release-notes`     | main に入った変更から、使う人に向けた変更の一覧を作る                      |
 | `setup-github-repo` | GitHub のリポジトリの設定（保護・必須の検査・ラベル）を入れる・確かめる    |
 | `festival-research` | 公開の情報から祭りを調べ、出典と確度つきの祭りのデータにする               |

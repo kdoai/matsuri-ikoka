@@ -12,7 +12,7 @@ set -euo pipefail
 # main に必須にする検査。.github/workflows/ci.yml のジョブの name と同じにする。
 # 「検査とビルド」はすべてのジョブの結果をまとめたもの
 # （scripts/github-config.test.ts で突き合わせる）
-REQUIRED_CHECKS=(lint typecheck test validate-data build docker secrets actionlint dependency-review 検査とビルド)
+REQUIRED_CHECKS=(lint typecheck test validate-data build e2e docker secrets actionlint dependency-review 検査とビルド)
 RULESET_NAME="protect-main"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LABELS_FILE="$ROOT_DIR/.github/labels.json"

@@ -29,7 +29,7 @@ pnpm dev
 | `pnpm validate:data`                        | 祭りのデータを検証する                                        |
 | `pnpm --filter @matsuri-ikoka/web test:e2e` | 画面の通しテスト（Playwright）                                |
 
-PR を出す前に、`pnpm lint`・`pnpm typecheck`・`pnpm test`・`pnpm build` がすべて通ることを確かめてください。CI では、これらとコンテナの確かめ・秘密情報の検査が別々のジョブで走ります。画面の通しテスト（e2e）は CI では走らないので、画面に触れたら手元で走らせてください（[CI のジョブ](docs/development.md#5-ci)）。
+PR を出す前に、`pnpm lint`・`pnpm typecheck`・`pnpm test`・`pnpm build` がすべて通ることを確かめてください。CI では、これらと e2e・コンテナの確かめ・秘密情報の検査が別々のジョブで走ります（[CI のジョブ](docs/development.md#5-ci)）。
 
 ## ディレクトリ
 
