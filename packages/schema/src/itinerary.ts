@@ -138,14 +138,59 @@ export const AlternativeSchema = z.strictObject({
 /** 旅程の日数の上限（6泊7日） */
 export const MAX_TRIP_DAYS = 7;
 
+// ---------------------------------------------------------------------------
+// 宿の空き（宿泊予約の API で調べた結果）
+
 /**
- * その夜に泊まるところ。宿の名前は持たず、泊まる地域と注意だけを案内する
- * （データにない宿の名前を作らないため）
+ * 空きのあった宿の1件。名前と料金は API の結果だけから入れ、モデルに作らせない。
+ * 料金は予約の時点で変わることがあるので、調べた時刻（checkedAt）と必ず一緒に出す。
  */
-export const StaySchema = z.strictObject({
+export const LodgingOfferSchema = z.strictObject({
+  /** 予約サイトでの宿の ID（同じ宿を版をまたいで指すため） */
+  id: TextSchema.max(100),
+  name: TextSchema.max(100),
+  /** 1泊の料金（全員分・円）。調べた時点の最安のプランの目安 */
+  nightlyTotalYen: z.number().int().min(0),
+  /** 予約のページ */
+  bookingUrl: z.url({ protocol: /^https?$/ }),
+  /** 地図に打つ場所。API に位置がなければ null */
+  location: LatLngSchema.nullable(),
+  /** 調べた時刻 */
+  checkedAt: IsoDateTimeSchema,
+  /** 出典（予約サイト。表示が求められるクレジットは title に書く） */
+  source: SourceSchema,
+});
+
+/** 宿の空きを調べた結果。offers が空なら、条件に合う空きがなかった */
+export const LodgingSearchSchema = z
+  .strictObject({
+    checkIn: IsoDateSchema,
+    checkOut: IsoDateSchema,
+    /** 調べた時刻 */
+    searchedAt: IsoDateTimeSchema,
+    offers: z.array(LodgingOfferSchema).max(5),
+  })
+  .refine((search) => search.checkIn < search.checkOut, {
+    path: ["checkOut"],
+    message: "チェックアウトはチェックインより後の日にしてください",
+  });
+
+/**
+ * その夜に泊まるところのうち、接客で書く部分。泊まる地域と注意だけで、宿の名前は持たない
+ * （ツールの結果にない宿の名前を作らないため）
+ */
+export const StayPlanSchema = z.strictObject({
   /** 泊まる地域（例：奈良市の中心部） */
   area: TextSchema,
   note: TextSchema.optional(),
+});
+
+/**
+ * その夜に泊まるところ。宿の候補（lodging）は、宿の空きを調べたツールの結果をサーバーが付ける。
+ * 候補がないときは、泊まる地域と注意だけを案内する
+ */
+export const StaySchema = StayPlanSchema.extend({
+  lodging: LodgingSearchSchema.optional(),
 });
 
 /** 旅程の1日。stay が null の日は、その日のうちに帰る（旅の最後の日は必ず null） */
@@ -194,6 +239,13 @@ export const ItinerarySchema = z
           code: "custom",
           path: ["days", index, "date"],
           message: "日付は1日ずつ続けてください",
+        });
+      }
+      if (day.stay?.lodging !== undefined && day.stay.lodging.checkIn !== day.date) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["days", index, "stay", "lodging", "checkIn"],
+          message: "宿の候補のチェックインは、その日の日付にしてください",
         });
       }
       if (index === days.length - 1 && day.stay !== null) {
@@ -255,12 +307,15 @@ export type VerificationResult = z.infer<typeof VerificationResultSchema>;
 export type Verification = z.infer<typeof VerificationSchema>;
 export type Weather = z.infer<typeof WeatherSchema>;
 export type Alternative = z.infer<typeof AlternativeSchema>;
+export type LodgingOffer = z.infer<typeof LodgingOfferSchema>;
+export type LodgingSearch = z.infer<typeof LodgingSearchSchema>;
+export type StayPlan = z.infer<typeof StayPlanSchema>;
 export type Stay = z.infer<typeof StaySchema>;
 export type ItineraryDay = z.infer<typeof ItineraryDaySchema>;
 export type Itinerary = z.infer<typeof ItinerarySchema>;
 export type ItineraryDiff = z.infer<typeof ItineraryDiffSchema>;
 
-/** 旅程で使った出典を、URL の重複を除いて集める（しおりの「出典」に出す） */
+/** 旅程で使った出典（予定・天気・再確認・宿の候補）を、URL の重複を除いて集める（しおりの「出典」に出す） */
 export function collectItinerarySources(itinerary: Itinerary): Source[] {
   const all = [
     ...itineraryItems(itinerary).flatMap((item) => item.sources),
@@ -268,6 +323,9 @@ export function collectItinerarySources(itinerary: Itinerary): Source[] {
       day.weather.status === "forecast" ? [day.weather.source] : [],
     ),
     ...(itinerary.verification.status === "pending" ? [] : itinerary.verification.sources),
+    ...itinerary.days.flatMap(
+      (day) => day.stay?.lodging?.offers.map((offer) => offer.source) ?? [],
+    ),
   ];
   const byUrl = new Map<string, Source>();
   for (const source of all) {
