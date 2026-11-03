@@ -92,7 +92,6 @@ export function createServerTransport(options: ServerTransportOptions = {}): Cha
   const sessionRequest: SessionRequest = options.sample ? { sample: options.sample } : {};
 
   return {
-    kind: "server",
     async startSession(signal) {
       const response = await fetchImpl("/api/session", {
         method: "POST",
@@ -146,7 +145,28 @@ export function createServerFestivalSource(
       }
     },
     async initial() {
-      return [];
+      // 待ち時間の豆知識に使う祭り。一覧の経路（GET /api/festivals）がないサーバーでは空のまま
+      try {
+        const response = await fetchImpl("/api/festivals", { headers: authHeaders(passcode) });
+        if (!response.ok) {
+          return [];
+        }
+        const body: unknown = await response.json();
+        const list = Array.isArray(body)
+          ? body
+          : typeof body === "object" && body !== null && "festivals" in body
+            ? (body as { festivals: unknown }).festivals
+            : [];
+        if (!Array.isArray(list)) {
+          return [];
+        }
+        return list.flatMap((item) => {
+          const parsed = FestivalSchema.safeParse(item);
+          return parsed.success && !parsed.data.optOut ? [parsed.data] : [];
+        });
+      } catch {
+        return [];
+      }
     },
   };
 }

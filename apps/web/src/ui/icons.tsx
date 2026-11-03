@@ -4,6 +4,7 @@ import {
   Car,
   ClipboardList,
   Coffee,
+  Compass,
   Drama,
   Flame,
   Footprints,
@@ -138,5 +139,7 @@ export function itemIcon(item: ItineraryItem): IconComponent {
       return ClipboardList;
     case "festival":
       return LanternIcon;
+    case "free":
+      return Compass;
   }
 }

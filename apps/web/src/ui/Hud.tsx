@@ -1,3 +1,4 @@
+import { mainFestivalDay } from "@matsuri-ikoka/schema";
 import {
   Bell,
   BookOpen,
@@ -419,7 +420,8 @@ export function GuideCard() {
   const ready = useApp(shioriReady);
 
   const date =
-    itinerary?.date ?? (conditions.when?.kind === "date" ? conditions.when.date : undefined);
+    (itinerary ? mainFestivalDay(itinerary).date : undefined) ??
+    (conditions.when?.kind === "date" ? conditions.when.date : undefined);
   const origin = itinerary?.origin ?? conditions.origin;
   const highlight = festival?.highlights[0] ?? null;
 
@@ -523,7 +525,8 @@ export function DateBadge() {
   const itinerary = useApp((state) => state.itinerary.current);
   const conditions = useApp((state) => state.session.conditions);
   const date =
-    itinerary?.date ?? (conditions.when?.kind === "date" ? conditions.when.date : undefined);
+    (itinerary ? mainFestivalDay(itinerary).date : undefined) ??
+    (conditions.when?.kind === "date" ? conditions.when.date : undefined);
   const origin = itinerary?.origin ?? conditions.origin;
   return (
     <section
@@ -544,7 +547,7 @@ export function DateBadge() {
   );
 }
 
-function KeyCap({ children }: { children: ReactNode }) {
+export function KeyCap({ children }: { children: ReactNode }) {
   return (
     <span
       aria-hidden="true"
@@ -601,14 +604,15 @@ export function TalkButton({ onTalk }: { onTalk: () => void }) {
       onClick={onTalk}
       className="flex items-center gap-2 rounded-full border-2 border-yamabuki-400 bg-ink/75 py-1 pr-4 pl-1 font-bold text-kinari-50 shadow-lg backdrop-blur-sm transition hover:bg-ink/90"
     >
-      <KeyCap>A</KeyCap>
+      <KeyCap>E</KeyCap>
       {t.hud.hints.talk}
     </button>
   );
 }
 
 /**
- * キーボードでの操作：A で話す、X で旅程、Y で地図、M でメニュー。
+ * キーボードでの操作：E（ほかに焦点がなければ Enter・Space も）で話す・使う、X で旅程、Y で地図、M でメニュー。
+ * 旅人を歩かせる WASD・矢印は、3D の旅人が受ける。
  * 文字を入力しているときは何もしない。
  */
 export function useHudKeys(handlers: {
@@ -621,18 +625,20 @@ export function useHudKeys(handlers: {
   ref.current = handlers;
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null;
+      const target = event.target instanceof HTMLElement ? event.target : null;
       if (
         event.altKey ||
         event.ctrlKey ||
         event.metaKey ||
-        target?.closest("input, textarea, select, [contenteditable='true']") !== null
+        (target?.closest("input, textarea, select, [contenteditable='true']") ?? null) !== null
       ) {
         return;
       }
       const key = event.key.toLowerCase();
+      // Enter と Space は、ボタンなどに焦点がないときだけ（ボタンの上では押したことになる）
+      const onPage = target === null || target === document.body || target.tagName === "CANVAS";
       const action =
-        key === "a"
+        key === "e" || ((key === "enter" || key === " ") && onPage)
           ? ref.current.talk
           : key === "x"
             ? ref.current.details

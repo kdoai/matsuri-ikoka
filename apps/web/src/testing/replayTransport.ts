@@ -6,8 +6,8 @@ import {
 } from "@matsuri-ikoka/schema";
 import type { ChatTransport, OnSseMessage } from "../transport/types";
 
-// 画面だけのモック。記録した相談（data/samples/conversations）を、記録した間隔のとおりに
-// ブラウザの中で再生する。接客サーバーのモックとは別に、画面の開発と通しテストに使う。
+// テストで使う通信の口の代わり。記録した相談（data/samples/conversations）を、記録した間隔のとおりに
+// 再生する。ストアのテストだけが使い、画面のビルドには含めない（画面はいつも接客サーバーと話す）。
 
 export type Sleep = (ms: number, signal: AbortSignal) => Promise<void>;
 
@@ -68,7 +68,7 @@ type DoneData = SseEventOf<"done">["data"];
  * 記録した相談を再生する通信の口。何を送っても、記録の次の発言への返答を流す。
  * 記録が終わったあとは、その旨のエラーを返す。
  */
-export function createMockTransport(
+export function createReplayTransport(
   sample: SampleConversation,
   options: ReplayOptions = {},
 ): ChatTransport {
@@ -83,11 +83,10 @@ export function createMockTransport(
   };
 
   return {
-    kind: "mock",
     async startSession() {
       next = 0;
       lastDone = null;
-      return `mock-${sample.id}`;
+      return `replay-${sample.id}`;
     },
     async chat(_request, onMessage, signal) {
       const turn = sample.turns[next];
@@ -132,9 +131,6 @@ export function createMockTransport(
         signal,
         options,
       );
-    },
-    nextSampleMessage() {
-      return sample.turns[next]?.request.message ?? null;
     },
   };
 }

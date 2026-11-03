@@ -179,8 +179,8 @@ export function ConditionChips() {
       }
       case "origin":
         return t.conditions.origin(value);
-      case "stay":
-        return t.conditions.stay[value as "day_trip" | "overnight"];
+      case "nights":
+        return t.conditions.nights(Number(value));
       case "party": {
         const [adults, children] = value.split("/").map(Number);
         return t.conditions.party(adults ?? 1, children ?? 0);
@@ -277,7 +277,6 @@ export function Composer() {
   const draft = useApp((state) => state.ui.draft);
   const streaming = useApp((state) => state.session.streaming);
   const status = useApp((state) => state.session.status);
-  const isMock = useApp((state) => state.transport === "mock");
   const ready = status === "ready";
   const tooLong = draft.trim().length > MAX_MESSAGE_LENGTH;
   const canSend = ready && !streaming && draft.trim().length > 0 && !tooLong;
@@ -294,8 +293,11 @@ export function Composer() {
       event.preventDefault();
       submit();
     }
+    // Esc で入力欄を離れ、旅人の操作に戻る
+    if (event.key === "Escape" && !event.nativeEvent.isComposing) {
+      event.currentTarget.blur();
+    }
   };
-  const sample = isMock && !streaming ? actions.sampleMessage() : null;
 
   return (
     <form onSubmit={submit} className="space-y-1" data-testid="composer">
@@ -337,18 +339,6 @@ export function Composer() {
         </p>
       ) : null}
       {status === "opening" ? <p className="text-ink-soft text-sm">{t.chat.starting}</p> : null}
-      {sample !== null ? (
-        <button
-          type="button"
-          className="font-semibold text-ai-700 text-xs underline underline-offset-2"
-          onClick={() => {
-            actions.setDraft(sample);
-            focusComposer();
-          }}
-        >
-          {t.chat.fillSample}
-        </button>
-      ) : null}
     </form>
   );
 }

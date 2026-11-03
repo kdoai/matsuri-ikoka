@@ -11,7 +11,7 @@ import { conditionChips, mapPoints } from "./selectors";
 import { soundCues } from "./sound-cues";
 import { answerQuiz, beginTurn, expectedWaitMs, offerQuiz, shouldOfferQuiz } from "./transitions";
 import type { AppData } from "./types";
-import { buildQuiz, triviaCards } from "./waiting";
+import { buildQuiz, waitingTalks } from "./waiting";
 
 function festival(): Festival {
   return FestivalSchema.parse(fictionalFestival());
@@ -35,7 +35,7 @@ function otherFestival(): Festival {
 }
 
 function streaming(): AppData {
-  const state = initialData({ transport: "mock" });
+  const state = initialData();
   return beginTurn(state, {
     kind: "chat",
     message: "鈴鳴にします",
@@ -49,38 +49,134 @@ function sequence(...values: number[]): () => number {
   return () => values[index++ % values.length] ?? 0;
 }
 
-describe("小話", () => {
-  it("候補が出る前は、読み込んである祭りの小話を出す", () => {
+function candidate(festivalId: string, name: string) {
+  return {
+    festivalId,
+    name,
+    date: "2026-08-16",
+    start: null,
+    end: null,
+    venueName: "広場",
+    place: "架空の町",
+    daysFromWish: 0,
+    confidence: "single" as const,
+    confirmed: false,
+    highlight: "夜通しの輪踊り",
+    source: fictionalSource("kaede"),
+  };
+}
+
+describe("待ち時間の豆知識", () => {
+  const empty = { current: null, previous: null, diff: null };
+
+  it("候補が出る前は、読み込んである祭りのすべてから、祭りを交互に話す", () => {
     const a = festival();
     const b = otherFestival();
-    const cards = triviaCards({ festivals: { [a.id]: a, [b.id]: b }, candidates: [] });
-    expect(cards.map((card) => card.festivalId)).toEqual([a.id, b.id]);
-    expect(cards[0]).toMatchObject({ festivalName: "鈴鳴灯籠まつり", source: a.trivia[0]?.source });
+    const talks = waitingTalks({
+      festivals: { [a.id]: a, [b.id]: b },
+      candidates: [],
+      itinerary: empty,
+    });
+    expect(talks.slice(0, 2).map((talk) => talk.festivalId)).toEqual([a.id, b.id]);
+    expect(talks[0]).toMatchObject({
+      kind: "trivia",
+      festivalName: "鈴鳴灯籠まつり",
+      text: a.trivia[0]?.text,
+      source: a.trivia[0]?.source,
+    });
   });
 
-  it("候補が出たら、候補の祭りの小話に切り替える", () => {
+  it("小話・見どころ・作法を、データの文字列と出典のまま、種類が続かないように並べる", () => {
+    const a = festival();
+    const talks = waitingTalks({ festivals: { [a.id]: a }, candidates: [], itinerary: empty });
+    expect(talks.slice(0, 3).map((talk) => talk.kind)).toEqual([
+      "trivia",
+      "highlight",
+      "etiquette",
+    ]);
+    const highlight = talks.find((talk) => talk.kind === "highlight");
+    expect(highlight).toMatchObject({ text: a.highlights[0], source: a.sources[0] });
+    const etiquette = talks.filter((talk) => talk.kind === "etiquette");
+    // 決まった値は code に、データの文はそのまま text に入れる
+    expect(etiquette).toContainEqual(
+      expect.objectContaining({ item: "participation", code: "join_by_application", text: "" }),
+    );
+    expect(etiquette).toContainEqual(
+      expect.objectContaining({
+        item: "photo",
+        code: "restricted",
+        text: "神事の間はフラッシュを使わない",
+      }),
+    );
+    for (const talk of etiquette) expect(talk.source).toEqual(a.etiquette.sources[0]);
+    // データにない話は作らない
+    const texts = new Set([
+      ...a.trivia.map((item) => item.text),
+      ...a.highlights,
+      "",
+      "当日16時までに河原の受付で申し込む（灯籠1つ500円）",
+      "灯籠は係の合図のあとに流す",
+      "立入禁止の縄の内側に入らない",
+      "歩きやすい靴",
+      "懐中電灯",
+      "神事の間はフラッシュを使わない",
+      "見学と灯籠流しだけ。夜の河原は足元が暗い",
+    ]);
+    for (const talk of talks) expect(texts.has(talk.text)).toBe(true);
+  });
+
+  it("分からない作法（unknown）は話さない", () => {
+    const base = fictionalFestival();
+    const unknownEtiquette = FestivalSchema.parse({
+      ...base,
+      etiquette: {
+        participation: "unknown",
+        howToJoin: "unknown",
+        rules: "unknown",
+        dress: "unknown",
+        bring: "unknown",
+        risk: "unknown",
+        photo: "unknown",
+        sources: [],
+      },
+    });
+    const talks = waitingTalks({
+      festivals: { [unknownEtiquette.id]: unknownEtiquette },
+      candidates: [],
+      itinerary: empty,
+    });
+    expect(talks.some((talk) => talk.kind === "etiquette")).toBe(false);
+  });
+
+  it("候補が出たら、候補と主役の祭りから話す", () => {
     const a = festival();
     const b = otherFestival();
-    const cards = triviaCards({
-      festivals: { [a.id]: a, [b.id]: b },
-      candidates: [
-        {
-          festivalId: b.id,
-          name: "楓の夜踊り",
-          date: "2026-08-16",
-          start: null,
-          end: null,
-          venueName: "広場",
-          place: "架空の町",
-          daysFromWish: 0,
-          confidence: "single",
-          confirmed: false,
-          highlight: "夜通しの輪踊り",
-          source: fictionalSource("kaede"),
-        },
-      ],
+    const festivals = { [a.id]: a, [b.id]: b };
+    const withCandidate = waitingTalks({
+      festivals,
+      candidates: [candidate(b.id, "楓の夜踊り")],
+      itinerary: empty,
     });
-    expect(cards.map((card) => card.festivalId)).toEqual([b.id]);
+    expect(new Set(withCandidate.map((talk) => talk.festivalId))).toEqual(new Set([b.id]));
+
+    const itinerary = { ...fictionalItinerary(), mainFestivalId: a.id };
+    const withMain = waitingTalks({
+      festivals,
+      candidates: [candidate(b.id, "楓の夜踊り")],
+      itinerary: { current: itinerary, previous: null, diff: null },
+    });
+    expect(withMain[0]?.festivalId).toBe(a.id);
+    expect(new Set(withMain.map((talk) => talk.festivalId))).toEqual(new Set([a.id, b.id]));
+  });
+
+  it("候補の祭りのデータがまだ届いていなければ、全体から話す", () => {
+    const a = festival();
+    const talks = waitingTalks({
+      festivals: { [a.id]: a },
+      candidates: [candidate("not-loaded", "まだの祭り")],
+      itinerary: empty,
+    });
+    expect(talks.length).toBeGreaterThan(0);
   });
 });
 

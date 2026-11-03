@@ -7,7 +7,7 @@ import { beginTurn, endTurn } from "./transitions";
 import type { AppData } from "./types";
 
 function fresh(): AppData {
-  return initialData({ transport: "mock" });
+  return initialData();
 }
 
 function sent(message = "8月16日に行ける祭り"): AppData {

@@ -203,6 +203,8 @@ function onFestivalVerified(
   state: AppData,
   data: SseEventOf<"festival.verified">["data"],
 ): AppData {
+  // 候補を出す前の確かめは、旅程の再確認の結果にしない
+  if (data.scope === "candidate") return state;
   const next = patchStaff(state, "concierge", { phase: "working", motion: "stamp" });
   return {
     ...next,

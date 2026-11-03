@@ -143,6 +143,20 @@ describe("SseEventSchema", () => {
     expect(SseEventSchema.safeParse(event).success).toBe(false);
   });
 
+  it("候補を出す前の確かめは、祭りと日付を添えて送れる。候補にも結果を付けられる", () => {
+    const event = exampleEvents()[4] as Extract<SseEvent, { type: "festival.verified" }>;
+    event.data = { ...event.data, scope: "candidate", date: "2026-08-16" };
+    expect(SseEventSchema.safeParse(event).success).toBe(true);
+    event.data = { ...event.data, scope: "draft" as never };
+    expect(SseEventSchema.safeParse(event).success).toBe(false);
+
+    const withCheck = exampleEvents()[2] as Extract<SseEvent, { type: "tool.end" }>;
+    withCheck.data.candidates = [
+      { ...candidate(), check: { result: "not_found", checkedAt: "2026-08-03T10:00:00+09:00" } },
+    ];
+    expect(SseEventSchema.safeParse(withCheck).success).toBe(true);
+  });
+
   it("旅程の更新では、差分の版と旅程の版がそろう", () => {
     const event = exampleEvents()[3] as Extract<SseEvent, { type: "itinerary.updated" }>;
     event.data.diff = { ...event.data.diff, fromVersion: 1, toVersion: 2 };

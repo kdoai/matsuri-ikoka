@@ -64,11 +64,13 @@ export function toolStartBubble(
     case "search_festivals": {
       const wish = DateWishSchema.safeParse(field(input, "when"));
       const origin = field(input, "origin");
-      const dayTrip = field(input, "stay") === "day_trip" ? "日帰りで" : "";
+      const nights = field(input, "nights");
+      const stay =
+        nights === 0 ? "日帰りで" : typeof nights === "number" && nights > 0 ? `${nights}泊で` : "";
       if (!wish.success || typeof origin !== "string" || origin.trim() === "") {
         return "条件に合う祭りを探しています";
       }
-      return `${wishLabel(wish.data)}に、${origin.trim().slice(0, 20)}から${dayTrip}行ける祭りを探しています`;
+      return `${wishLabel(wish.data)}に、${origin.trim().slice(0, 20)}から${stay}行ける祭りを探しています`;
     }
     case "search_nearby": {
       const given = PreferencesSchema.safeParse(field(input, "preferences"));

@@ -6,56 +6,37 @@ import { App } from "./App";
 import { detectLocale } from "./i18n";
 import { StoreProvider } from "./state/react";
 import { createAppStore } from "./state/store";
-import { resolveTransport } from "./transport/mode";
 import {
   createPasscodeHolder,
   createServerFestivalSource,
   createServerTransport,
 } from "./transport/server";
-import type { ChatTransport, FestivalSource } from "./transport/types";
 // 丸ゴシックの字体（OFL）。使う文字の分だけ、必要になったときに読み込まれる
 import "@fontsource/zen-maru-gothic/400.css";
 import "@fontsource/zen-maru-gothic/700.css";
 import "./index.css";
 
-// 開発のとき（または VITE_ENABLE_MOCK=true でビルドしたとき）だけ、画面だけのモックを含める
-const mockEnabled = import.meta.env.DEV || import.meta.env.VITE_ENABLE_MOCK === "true";
+// 画面はいつも接客サーバーと話す。AI の部分を記録の再生にするときは、サーバーを
+// MATSURI_AGENT_MODE=mock で動かし、?sample=<id> で再生する記録を選ぶ。
+const sample = new URLSearchParams(window.location.search).get("sample");
 
-async function connect(): Promise<{ transport: ChatTransport; festivals: FestivalSource }> {
-  const choice = resolveTransport(window.location.search, {
-    mockEnabled,
-    defaultTransport: import.meta.env.VITE_TRANSPORT,
-  });
-  if (mockEnabled && choice.kind === "mock") {
-    const [{ createMockTransport }, { createSampleFestivalSource, loadSample }] = await Promise.all(
-      [import("./mock/replay"), import("./mock/samples")],
-    );
-    const sample = await loadSample(choice.sampleId);
-    return {
-      transport: createMockTransport(sample, { speed: choice.speed }),
-      festivals: createSampleFestivalSource(),
-    };
-  }
-  // 合言葉は、相談の通信と祭りのデータの読み込みで共有する（メモリにだけ持つ）
-  const passcode = createPasscodeHolder();
-  return {
-    transport: createServerTransport({ passcode, sample: choice.sampleId }),
-    festivals: createServerFestivalSource({ passcode }),
-  };
-}
+// 合言葉は、相談の通信と祭りのデータの読み込みで共有する（メモリにだけ持つ）
+const passcode = createPasscodeHolder();
+const store = createAppStore({
+  transport: createServerTransport({ passcode, sample }),
+  festivals: createServerFestivalSource({ passcode }),
+  locale: detectLocale(navigator.languages),
+});
 
 const root = document.getElementById("root");
 if (!root) {
   throw new Error("#root が見つかりません");
 }
 
-void connect().then(({ transport, festivals }) => {
-  const store = createAppStore({ transport, festivals, locale: detectLocale(navigator.languages) });
-  createRoot(root).render(
-    <StrictMode>
-      <StoreProvider store={store}>
-        <App mockEnabled={mockEnabled} />
-      </StoreProvider>
-    </StrictMode>,
-  );
-});
+createRoot(root).render(
+  <StrictMode>
+    <StoreProvider store={store}>
+      <App />
+    </StoreProvider>
+  </StrictMode>,
+);

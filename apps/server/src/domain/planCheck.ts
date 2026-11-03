@@ -48,11 +48,16 @@ export type PlanItem = Pick<
   "id" | "start" | "end" | "type" | "name" | "move" | "festivalId" | "spotId"
 >;
 
-export interface PlanToCheck {
+export interface PlanDayToCheck {
   date: IsoDate;
+  items: readonly PlanItem[];
+}
+
+/** 検証する旅程。日帰り・お出かけは1日、泊まりの旅は続いた日ごと */
+export interface PlanToCheck {
   mainFestivalId: string;
   preferences: Preferences;
-  items: readonly PlanItem[];
+  days: readonly PlanDayToCheck[];
 }
 
 /** 深夜の予定（日をまたいだとみなす）の境目 */
@@ -157,7 +162,8 @@ function checkSpot(timed: TimedItem, spot: NearbySpot, date: IsoDate, errors: Pl
 }
 
 /**
- * 旅程を検証する。findFestival は祭りのデータから祭りを引く関数（掲載停止の祭りは返さない）。
+ * 旅程を検証する。日帰り・お出かけは1日、泊まりの旅は日ごとに確かめ、旅全体のこだわりを1回確かめる。
+ * findFestival は祭りのデータから祭りを引く関数（掲載停止の祭りは返さない）。
  */
 export function checkPlan(
   plan: PlanToCheck,
@@ -165,7 +171,53 @@ export function checkPlan(
 ): PlanCheckResult {
   const errors: PlanIssue[] = [];
   const warnings: PlanIssue[] = [];
-  const timeline = toTimeline(plan.items, errors);
+  const allItems = plan.days.flatMap((day) => day.items);
+
+  // 旅程に出てくる祭り（主役と、ほかの日の祭り）
+  const festivals = new Map<string, Festival>();
+  const festivalIds = [
+    plan.mainFestivalId,
+    ...allItems.flatMap((item) => (item.festivalId === undefined ? [] : [item.festivalId])),
+  ];
+  for (const id of new Set(festivalIds)) {
+    const festival = findFestival(id);
+    if (festival === undefined) {
+      errors.push({
+        code: "unknown_festival",
+        itemId: null,
+        message: `祭り「${id}」は祭りのデータにありません`,
+      });
+    } else {
+      festivals.set(festival.id, festival);
+    }
+  }
+  const spots = new Map<string, NearbySpot>();
+  for (const festival of festivals.values()) {
+    for (const spot of festival.nearby) spots.set(spot.id, spot);
+  }
+
+  plan.days.forEach((day, index) => {
+    const result = checkDay(day, plan.preferences, festivals, spots);
+    // 何日かの旅では、どの日の問題かを書き添える
+    const label = plan.days.length > 1 ? `${index + 1}日目（${formatMonthDay(day.date)}）：` : "";
+    const withDay = (issue: PlanIssue) => ({ ...issue, message: `${label}${issue.message}` });
+    errors.push(...result.errors.map(withDay));
+    warnings.push(...result.warnings.map(withDay));
+  });
+
+  warnings.push(...tripWarnings(plan.preferences, allItems, spots));
+  return { errors, warnings };
+}
+
+/** 1日の予定の検証（重なり・移動・休業日・営業時間・祭りの時間・到着の余裕）と、1日ごとのこだわりの確認 */
+function checkDay(
+  day: PlanDayToCheck,
+  preferences: Preferences,
+  festivals: ReadonlyMap<string, Festival>,
+  spots: ReadonlyMap<string, NearbySpot>,
+): PlanCheckResult {
+  const errors: PlanIssue[] = [];
+  const timeline = toTimeline(day.items, errors);
 
   // 重なりと移動の時間
   timeline.forEach((current, index) => {
@@ -202,37 +254,7 @@ export function checkPlan(
     }
   });
 
-  // 主役の祭り
-  const main = findFestival(plan.mainFestivalId);
-  const festivals = new Map<string, Festival>();
-  if (main === undefined) {
-    errors.push({
-      code: "unknown_festival",
-      itemId: null,
-      message: `祭り「${plan.mainFestivalId}」は祭りのデータにありません`,
-    });
-  } else {
-    festivals.set(main.id, main);
-  }
-  for (const { festivalId } of plan.items) {
-    if (festivalId === undefined || festivals.has(festivalId)) continue;
-    const festival = findFestival(festivalId);
-    if (festival === undefined) {
-      errors.push({
-        code: "unknown_festival",
-        itemId: null,
-        message: `祭り「${festivalId}」は祭りのデータにありません`,
-      });
-    } else {
-      festivals.set(festival.id, festival);
-    }
-  }
-
   // 周辺の場所：定休日と営業時間
-  const spots = new Map<string, NearbySpot>();
-  for (const festival of festivals.values()) {
-    for (const spot of festival.nearby) spots.set(spot.id, spot);
-  }
   for (const timed of timeline) {
     const { item } = timed;
     if (item.spotId === undefined) continue;
@@ -244,26 +266,31 @@ export function checkPlan(
         message: `「${item.name}」（${item.spotId}）は、祭りの周辺の場所のデータにありません`,
       });
     } else {
-      checkSpot(timed, spot, plan.date, errors);
+      checkSpot(timed, spot, day.date, errors);
     }
   }
 
-  // 祭りの時間：開催日、開催時間とのぶつかり、到着の余裕
-  if (main !== undefined) {
-    const occurrence = occurrenceOn(main, plan.date);
+  // 祭りの時間：その日の開催、開催時間とのぶつかり、到着の余裕（その日のどの祭りも）
+  const checked = new Set<string>();
+  for (const { item } of timeline) {
+    const { festivalId } = item;
+    if (item.type !== "festival" || festivalId === undefined || checked.has(festivalId)) continue;
+    checked.add(festivalId);
+    const festival = festivals.get(festivalId);
+    if (festival === undefined) continue;
+    const occurrence = occurrenceOn(festival, day.date);
     if (occurrence === null) {
       errors.push({
         code: "festival_not_on_date",
-        itemId: null,
-        message: `「${main.name.ja}」は${formatMonthDay(plan.date)}に開かれません`,
+        itemId: item.id,
+        message: `「${festival.name.ja}」は${formatMonthDay(day.date)}に開かれません`,
       });
     } else {
-      checkFestivalTime(main, occurrence, timeline, errors);
+      checkFestivalTime(festival, occurrence, timeline, errors);
     }
   }
 
-  warnings.push(...preferenceWarnings(plan, timeline, spots));
-  return { errors, warnings };
+  return { errors, warnings: dayWarnings(preferences, day, timeline) };
 }
 
 function checkFestivalTime(
@@ -312,22 +339,21 @@ function checkFestivalTime(
   }
 }
 
-function preferenceWarnings(
-  plan: PlanToCheck,
+/** 1日ごとのこだわりの確認（子連れの休憩、シニアの歩く時間） */
+function dayWarnings(
+  preferences: Preferences,
+  day: PlanDayToCheck,
   timeline: readonly TimedItem[],
-  spots: ReadonlyMap<string, NearbySpot>,
 ): PlanIssue[] {
   const warnings: PlanIssue[] = [];
-  const effects = preferenceEffects(plan.preferences);
-  const spotOf = (item: PlanItem) =>
-    item.spotId === undefined ? undefined : spots.get(item.spotId);
+  const effects = preferenceEffects(preferences);
 
   if (effects.restIntervalMinutes !== null) {
     const festivalIndex = timeline.findIndex(({ item }) => item.type === "festival");
     const beforeFestival = festivalIndex < 0 ? timeline : timeline.slice(0, festivalIndex);
     let lastBreak = beforeFestival[0]?.start ?? 0;
     for (const { item, end } of beforeFestival) {
-      if (item.type === "rest" || item.type === "meal") {
+      if (item.type === "rest" || item.type === "meal" || item.type === "free") {
         lastBreak = end;
       } else if (end - lastBreak > effects.restIntervalMinutes) {
         warnings.push({
@@ -340,11 +366,33 @@ function preferenceWarnings(
     }
   }
 
-  const shopMeals = plan.items.filter(
-    (item) => item.type === "meal" && spotOf(item)?.kind === "food",
-  );
+  if (effects.maxWalkMinutes !== null) {
+    for (const item of day.items) {
+      if (item.move?.means === "walk" && item.move.minutes[1] > effects.maxWalkMinutes) {
+        warnings.push({
+          code: "long_walk",
+          itemId: item.id,
+          message: `シニアと一緒なので、1回に歩く時間を${effects.maxWalkMinutes}分ほどまでにしてください（「${item.name}」へは最長${item.move.minutes[1]}分）`,
+        });
+      }
+    }
+  }
+  return warnings;
+}
+
+/** 旅全体のこだわりの確認（ごはんの選び方）。何日かの旅でも1回だけ確かめる */
+function tripWarnings(
+  preferences: Preferences,
+  items: readonly PlanItem[],
+  spots: ReadonlyMap<string, NearbySpot>,
+): PlanIssue[] {
+  const warnings: PlanIssue[] = [];
+  const effects = preferenceEffects(preferences);
+  const spotOf = (item: PlanItem) =>
+    item.spotId === undefined ? undefined : spots.get(item.spotId);
+  const shopMeals = items.filter((item) => item.type === "meal" && spotOf(item)?.kind === "food");
   if (effects.requireLocalMeal) {
-    const hasLocalMeal = plan.items.some((item) => {
+    const hasLocalMeal = items.some((item) => {
       const spot = spotOf(item);
       return item.type === "meal" && (spot?.kind === "food" || spot?.tags.includes("local_food"));
     });
@@ -362,18 +410,6 @@ function preferenceWarnings(
         itemId: item.id,
         message: `「屋台で十分」なので、店の予定（「${item.name}」）は入れず、屋台を食事の時間にしてください`,
       });
-    }
-  }
-
-  if (effects.maxWalkMinutes !== null) {
-    for (const item of plan.items) {
-      if (item.move?.means === "walk" && item.move.minutes[1] > effects.maxWalkMinutes) {
-        warnings.push({
-          code: "long_walk",
-          itemId: item.id,
-          message: `シニアと一緒なので、1回に歩く時間を${effects.maxWalkMinutes}分ほどまでにしてください（「${item.name}」へは最長${item.move.minutes[1]}分）`,
-        });
-      }
     }
   }
 

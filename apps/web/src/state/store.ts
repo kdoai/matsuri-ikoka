@@ -66,8 +66,6 @@ export interface AppActions {
   answerQuiz(choice: 0 | 1): void;
   /** 祭りのデータを読み込む（読み込み済みのものは読まない） */
   ensureFestivals(ids: readonly string[]): Promise<void>;
-  /** 画面だけのモックのときだけ：次に再生する記録の発言（なければ null） */
-  sampleMessage(): string | null;
 }
 
 export type AppState = AppData & { actions: AppActions };
@@ -351,8 +349,8 @@ export function createAppStore(deps: StoreDeps): AppStore {
         controller?.abort();
         controller = null;
         clearTimers();
-        const { ui, transport: kind } = get();
-        const fresh = initialData({ transport: kind, locale: ui.locale });
+        const { ui } = get();
+        const fresh = initialData({ locale: ui.locale });
         update(() => ({ ...fresh, ui: { ...fresh.ui, soundOn: ui.soundOn, view: "shop" } }));
         await startSession();
       },
@@ -389,9 +387,6 @@ export function createAppStore(deps: StoreDeps): AppStore {
       answerQuiz(choice) {
         update((state) => answerQuiz(state, choice));
       },
-      sampleMessage() {
-        return transport.nextSampleMessage?.() ?? null;
-      },
 
       async ensureFestivals(ids) {
         const pending = [...new Set(ids)].filter((id) => get().festivalLoad[id] === undefined);
@@ -424,7 +419,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
     };
 
     return {
-      ...initialData({ transport: transport.kind, locale: deps.locale ?? "ja" }),
+      ...initialData({ locale: deps.locale ?? "ja" }),
       actions,
     };
   });

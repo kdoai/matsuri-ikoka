@@ -123,7 +123,7 @@ function describe(event: SseEvent): string {
     case "festival.verified":
       return `festival.verified ${event.data.festivalId} ${event.data.result} 出典=${event.data.sources.map((s) => `${s.url}(${s.confidence})`).join(",")}${event.data.note ? `「${event.data.note}」` : ""}`;
     case "itinerary.updated":
-      return `itinerary.updated 第${event.data.itinerary.version}版 予定${event.data.itinerary.items.length}件 追加=${event.data.diff.added.length}`;
+      return `itinerary.updated 第${event.data.itinerary.version}版 ${event.data.itinerary.days.length}日 予定${event.data.itinerary.days.reduce((n, d) => n + d.items.length, 0)}件 追加=${event.data.diff.added.length}`;
     case "message.delta":
       return `message.delta 「${event.data.text}」`;
     case "error":
@@ -206,10 +206,13 @@ async function main() {
       const itinerary = session?.itineraryId ? itineraries.get(session.itineraryId) : undefined;
       if (itinerary !== undefined) {
         console.log(
-          `\n旅程 第${itinerary.version}版 ${itinerary.date} 再確認=${itinerary.verification.status}`,
+          `\n旅程 第${itinerary.version}版 ${itinerary.days.length}日 再確認=${itinerary.verification.status}`,
         );
-        for (const item of itinerary.items) {
-          console.log(`  ${item.start}-${item.end} ${item.type} ${item.name}`);
+        for (const day of itinerary.days) {
+          console.log(` ${day.date} 泊=${day.stay?.area ?? "帰宅"}`);
+          for (const item of day.items) {
+            console.log(`  ${item.start}-${item.end} ${item.type} ${item.name}`);
+          }
         }
         const shiori = await app.request(`/shiori/${itinerary.id}`);
         console.log(`しおり：${shiori.status}`);

@@ -3,6 +3,7 @@ import {
   type Festival,
   type Itinerary,
   type ItineraryItem,
+  itineraryItems,
   type PartialTripConditions,
   type Preferences,
   type Source,
@@ -67,7 +68,7 @@ export function shioriReady(state: Pick<AppData, "session" | "verify" | "itinera
 }
 
 export interface ConditionChip {
-  key: "date" | "origin" | "stay" | "party" | "move";
+  key: "date" | "origin" | "nights" | "party" | "move";
   /** 表示の材料。文言は部品の側で辞書から組み立てる */
   value: string;
 }
@@ -93,8 +94,8 @@ export function conditionChips(
   if (conditions.origin !== undefined) {
     chips.push({ key: "origin", value: conditions.origin });
   }
-  if (conditions.stay !== undefined) {
-    chips.push({ key: "stay", value: conditions.stay });
+  if (conditions.nights !== undefined) {
+    chips.push({ key: "nights", value: String(conditions.nights) });
   }
   if (conditions.party !== undefined) {
     chips.push({
@@ -128,7 +129,7 @@ export function mapPoints(itinerary: Itinerary | null, spots: readonly SpotPin[]
   const points: MapPoint[] = [];
   const usedSpots = new Set<string>();
   let order = 0;
-  for (const item of itinerary?.items ?? []) {
+  for (const item of itinerary === null ? [] : itineraryItems(itinerary)) {
     if (item.spotId !== undefined) {
       usedSpots.add(item.spotId);
     }

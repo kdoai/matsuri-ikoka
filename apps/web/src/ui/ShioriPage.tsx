@@ -2,10 +2,21 @@ import {
   type Etiquette,
   type Festival,
   type Itinerary,
+  itineraryItems,
+  mainFestivalDay,
   type Source,
   UNKNOWN,
 } from "@matsuri-ikoka/schema";
-import { lazy, type ReactNode, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Fragment,
+  lazy,
+  type ReactNode,
+  Suspense,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { formatDate, formatDateTime, MESSAGES, type Messages } from "../i18n";
 import { useActions, useApp, useT } from "../state/react";
 import { mainFestival, shioriReady, usedSources } from "../state/selectors";
@@ -148,11 +159,13 @@ function FirstTime({ festival, itinerary }: { festival: Festival; itinerary: Iti
   const en = MESSAGES.en;
   const { etiquette, access } = festival;
   const occurrence =
-    festival.occurrences.find((o) => o.date === itinerary.date) ?? festival.occurrences[0];
-  const mainIndex = itinerary.items.findIndex(
+    festival.occurrences.find((o) => o.date === mainFestivalDay(itinerary).date) ??
+    festival.occurrences[0];
+  const items = itineraryItems(itinerary);
+  const mainIndex = items.findIndex(
     (item) => item.type === "festival" && item.festivalId === itinerary.mainFestivalId,
   );
-  const homeward = itinerary.items.slice(mainIndex + 1).find((item) => item.type === "move");
+  const homeward = items.slice(mainIndex + 1).find((item) => item.type === "move");
   const asks = [
     ...(etiquette.rules === UNKNOWN ? [] : etiquette.rules),
     ...(etiquette.photo !== UNKNOWN && etiquette.photo.note ? [etiquette.photo.note] : []),
@@ -312,7 +325,6 @@ export function ShioriPage() {
   const baseSources = useApp(usedSources);
   const sources = useMemo(() => shioriSources(baseSources, festival), [baseSources, festival]);
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const transport = useApp((state) => state.transport);
   const ready = useApp(shioriReady);
 
   useEffect(() => {
@@ -322,15 +334,16 @@ export function ShioriPage() {
   if (itinerary === null) {
     return null;
   }
-  const mainItem = itinerary.items.find(
+  const festivalDay = mainFestivalDay(itinerary);
+  const mainItem = festivalDay.items.find(
     (item) => item.type === "festival" && item.festivalId === itinerary.mainFestivalId,
   );
   const occurrence =
-    festival?.occurrences.find((o) => o.date === itinerary.date) ?? festival?.occurrences[0];
-  const meals = itinerary.items.filter((item) => item.type === "meal");
+    festival?.occurrences.find((o) => o.date === festivalDay.date) ?? festival?.occurrences[0];
+  const meals = itineraryItems(itinerary).filter((item) => item.type === "meal");
   const verified = verify.result === "as_planned";
   const party = t.conditions.party(itinerary.party.adults, itinerary.party.children);
-  const shareUrl = ready ? shioriShareUrl(transport, itinerary.id, window.location.origin) : null;
+  const shareUrl = ready ? shioriShareUrl(itinerary.id, window.location.origin) : null;
 
   return (
     <div className="min-h-dvh bg-wood-800 py-4 print:bg-white print:py-0" data-testid="shiori">
@@ -369,11 +382,11 @@ export function ShioriPage() {
             </h1>
             <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 text-sm">
               <dt className="font-bold">{t.shiori.date}</dt>
-              <dd>{formatDate(itinerary.date, locale)}</dd>
+              <dd>{formatDate(festivalDay.date, locale)}</dd>
               <dt className="font-bold">{t.shiori.party}</dt>
               <dd>{party}</dd>
               <dt className="font-bold">{t.shiori.weather}</dt>
-              <dd>{weatherText(t, itinerary)}</dd>
+              <dd>{weatherText(t, festivalDay.weather)}</dd>
             </dl>
           </div>
           <div className="shrink-0 text-center">
@@ -408,7 +421,7 @@ export function ShioriPage() {
                 <dl className="mt-1 grid grid-cols-[auto_1fr] gap-x-3 text-sm">
                   <dt className="font-bold">{t.shiori.when}</dt>
                   <dd>
-                    {formatDate(itinerary.date, locale)}{" "}
+                    {formatDate(festivalDay.date, locale)}{" "}
                     {mainItem ? timeRange(mainItem.start, mainItem.end) : null}
                   </dd>
                   <dt className="font-bold">{t.shiori.where}</dt>
@@ -453,28 +466,43 @@ export function ShioriPage() {
         {/* 3. 1日の流れ */}
         <Section id="flow" title={t.shiori.sections.flow}>
           <ol className="space-y-1.5 text-sm">
-            {itinerary.items.map((item) => (
-              <li
-                key={item.id}
-                className="grid grid-cols-[6.5rem_1fr] gap-x-2 print:grid-cols-[7rem_1fr]"
-              >
-                <span className="font-bold font-mono tabular-nums">
-                  {item.start}〜{item.end}
-                </span>
-                <span>
-                  <span className="font-bold">{item.name}</span>
-                  <span className="ml-1 text-ink-soft text-xs">
-                    {item.move === null
-                      ? null
-                      : t.itinerary.move(
-                          t.itinerary.means[item.move.means],
-                          item.move.minutes[0],
-                          item.move.minutes[1],
-                        )}
-                  </span>
-                  <span className="block text-ink">{item.reason}</span>
-                </span>
-              </li>
+            {itinerary.days.map((day, index) => (
+              <Fragment key={day.date}>
+                {itinerary.days.length > 1 ? (
+                  <li className="pt-1 font-bold">
+                    {t.itinerary.day(index + 1, formatDate(day.date, locale))}
+                    <span className="ml-2 font-normal text-ink-soft">
+                      {t.shiori.weather}：{weatherText(t, day.weather)}
+                    </span>
+                  </li>
+                ) : null}
+                {day.items.map((item) => (
+                  <li
+                    key={item.id}
+                    className="grid grid-cols-[6.5rem_1fr] gap-x-2 print:grid-cols-[7rem_1fr]"
+                  >
+                    <span className="font-bold font-mono tabular-nums">
+                      {item.start}〜{item.end}
+                    </span>
+                    <span>
+                      <span className="font-bold">{item.name}</span>
+                      <span className="ml-1 text-ink-soft text-xs">
+                        {item.move === null
+                          ? null
+                          : t.itinerary.move(
+                              t.itinerary.means[item.move.means],
+                              item.move.minutes[0],
+                              item.move.minutes[1],
+                            )}
+                      </span>
+                      <span className="block text-ink">{item.reason}</span>
+                    </span>
+                  </li>
+                ))}
+                {day.stay === null ? null : (
+                  <li className="text-ink-soft">{t.itinerary.stay(day.stay.area)}</li>
+                )}
+              </Fragment>
             ))}
           </ol>
         </Section>

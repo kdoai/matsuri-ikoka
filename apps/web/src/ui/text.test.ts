@@ -39,10 +39,9 @@ describe("印刷したときの出典", () => {
 });
 
 describe("しおりの共有の URL", () => {
-  it("接客サーバーにつないでいるときだけ作る", () => {
-    expect(shioriShareUrl("server", "trip-1", "https://example.com")).toBe(
-      "https://example.com/shiori/trip-1",
+  it("接客サーバーのしおりの経路を指す", () => {
+    expect(shioriShareUrl("trip 1", "https://example.com")).toBe(
+      "https://example.com/shiori/trip%201",
     );
-    expect(shioriShareUrl("mock", "trip-1", "https://example.com")).toBeNull();
   });
 });

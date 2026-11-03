@@ -6,27 +6,28 @@ import {
   openLog,
   openPanel,
   openPreferences,
+  SAMPLE,
   sendSampleMessage,
   snap,
+  tabTo,
   waitForReply,
 } from "./helpers";
 
-// 画面だけのモックで、記録した架空の相談を、相談 → 候補 → 旅程と地図 → 修正 → 確認 → しおり まで通す
+// 接客サーバー（mock）が再生する記録した架空の相談を、相談 → 候補 → 旅程と地図 → 修正 → 確認 → しおり まで通す
 
 test.beforeEach(async ({ page }) => {
   await blockMapTiles(page);
 });
 
 test("相談からしおりまで、画面で通せる", async ({ page }, info) => {
-  await page.goto("/?speed=4&scene=2d");
+  await page.goto("/?scene=2d");
   await expect(page.getByRole("heading", { name: "MATSURI IKOKA" })).toBeVisible();
   await snap(page, info, "00-storefront");
   await page.getByRole("button", { name: "入店する" }).click();
-  await expect(page.getByTestId("mock-note")).toBeVisible();
   await expect(page.getByTestId("dialogue")).toContainText("いらっしゃいませ");
 
   // 1. 相談 → 候補
-  await sendSampleMessage(page);
+  await sendSampleMessage(page, 0);
   const cards = page.getByTestId("candidate-card");
   await expect(cards).toHaveCount(2);
   await expect(cards.nth(0)).toContainText("鈴鳴灯籠まつり");
@@ -85,7 +86,7 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   if (info.project.name === "mobile") {
     await page.getByRole("button", { name: "パネルを閉じる" }).click();
   }
-  await sendSampleMessage(page);
+  await sendSampleMessage(page, 2);
   await waitForReply(page);
   await openPanel(page);
   await expect(page.getByTestId("itinerary-panel")).toContainText("第2版");
@@ -107,7 +108,7 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   if (info.project.name === "mobile") {
     await page.getByRole("button", { name: "パネルを閉じる" }).click();
   }
-  await sendSampleMessage(page);
+  await sendSampleMessage(page, 3);
   await expect(page.getByTestId("celebration")).toBeVisible({ timeout: 10_000 });
   await expect(page.getByTestId("celebration")).toContainText("旅のしおり完成");
   await snap(page, info, "05-celebration");
@@ -156,13 +157,15 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   await closeLog(page);
 });
 
-test("待ち時間には小話とクイズが出て、答えると結果が出る", async ({ page }, info) => {
+test("待ち時間には豆知識係が祭りの話と出典を出し、クイズに答えられる", async ({ page }, info) => {
   test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
-  await enterShop(page, "?speed=1&scene=2d");
-  await sendSampleMessage(page);
-  await expect(page.getByTestId("trivia-card")).toBeVisible();
-  await expect(page.getByTestId("trivia-card")).toContainText("知ってた？");
-  await snap(page, info, "10-trivia");
+  await enterShop(page);
+  await sendSampleMessage(page, 0);
+  // 祭り調査係が探している間も、だれが何をしているかと経過時間を出す
+  const guide = page.getByTestId("waiting-guide");
+  await expect(guide).toBeVisible();
+  await expect(page.getByTestId("waiting-staff")).toContainText("祭り調査係");
+  await expect(page.getByTestId("waiting-elapsed")).toContainText("経過");
   await waitForReply(page);
 
   await page
@@ -170,6 +173,21 @@ test("待ち時間には小話とクイズが出て、答えると結果が出�
     .first()
     .getByRole("button", { name: "この祭りにする" })
     .click();
+  // 候補が出たあとは、候補の祭りのデータの話を、出典つきで話す
+  const talk = page.getByTestId("trivia-card");
+  await expect(talk).toBeVisible();
+  await expect(talk).toContainText("鈴鳴灯籠まつりより");
+  await expect(talk.getByRole("link")).toHaveAttribute("href", /example\.com/);
+  const first = await page.getByTestId("waiting-talk").textContent();
+  await guide.getByRole("button", { name: "次の話" }).click();
+  await expect(page.getByTestId("waiting-talk")).not.toHaveText(first ?? "");
+  await guide.getByRole("button", { name: "止める" }).click();
+  await expect(guide.getByRole("button", { name: "続ける" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await snap(page, info, "10-waiting-guide");
+
   const quiz = page.getByTestId("quiz-card");
   await expect(quiz).toBeVisible({ timeout: 10_000 });
   await quiz.getByRole("button").first().click();
@@ -177,12 +195,13 @@ test("待ち時間には小話とクイズが出て、答えると結果が出�
   await snap(page, info, "11-quiz");
   await waitForReply(page);
   await expect(quiz).toHaveCount(0);
+  await expect(guide).toHaveCount(0);
 });
 
 test("キーボードだけで、候補を閉じ、タブを移れる", async ({ page }, info) => {
   test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
   await enterShop(page);
-  await sendSampleMessage(page);
+  await sendSampleMessage(page, 0);
   await expect(page.getByTestId("candidates")).toBeVisible();
   await expect(page.getByRole("heading", { name: "祭りの候補" })).toBeFocused();
   await page.keyboard.press("Escape");
@@ -203,12 +222,49 @@ test("キーボードだけで、候補を閉じ、タブを移れる", async ({
   await expect(page.getByRole("tab", { name: "旅程" })).toHaveAttribute("aria-selected", "true");
 });
 
+test("キーボードだけで、入店から相談・候補選び・しおりまで進める", async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
+  await page.goto("/?scene=2d");
+  await tabTo(page, page.getByRole("button", { name: "入店する" }));
+  await page.keyboard.press("Enter");
+  const input = page.getByRole("textbox", { name: "相談の発言" });
+  await expect(input).toBeEnabled();
+
+  // E で会話の窓の入力欄へ移り、打って Enter で送る
+  const say = async (index: number) => {
+    await page.keyboard.press("e");
+    await expect(input).toBeFocused();
+    await page.keyboard.insertText(SAMPLE.turns[index]?.request.message ?? "");
+    await page.keyboard.press("Enter");
+  };
+  await say(0);
+  await expect(page.getByRole("heading", { name: "祭りの候補" })).toBeFocused();
+  await waitForReply(page);
+  await tabTo(page, page.getByRole("button", { name: "この祭りにする" }).first());
+  await page.keyboard.press("Enter");
+  await waitForReply(page);
+  // Esc で入力欄を離れても、E でまた戻れる
+  await page.keyboard.press("e");
+  await page.keyboard.press("Escape");
+  await expect(input).not.toBeFocused();
+  await say(2);
+  await waitForReply(page);
+  await say(3);
+  await expect(page.getByTestId("celebration")).toBeVisible({ timeout: 10_000 });
+  await waitForReply(page);
+
+  await page.keyboard.press("x");
+  await tabTo(page, page.getByRole("button", { name: "旅のしおりを開く" }).first());
+  await page.keyboard.press("Enter");
+  await expect(page.getByTestId("shiori").getByRole("heading", { level: 1 })).toBeVisible();
+});
+
 test("動きを減らす設定では、2D の店内とスタッフの文字の一覧を出す", async ({ page }, info) => {
   test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
   await page.emulateMedia({ reducedMotion: "reduce" });
   await enterShop(page);
   await expect(page.getByTestId("staff-floor")).toBeVisible();
-  await sendSampleMessage(page);
+  await sendSampleMessage(page, 0);
   await expect(page.getByTestId("staff-activity")).toContainText("祭り調査係");
   await expect(page.getByTestId("staff-researcher")).toHaveAttribute(
     "data-phase",

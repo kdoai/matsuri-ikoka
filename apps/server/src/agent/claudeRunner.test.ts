@@ -126,7 +126,7 @@ describe("ClaudeAgentRunner", () => {
     const searchInput = {
       when: { kind: "date", date: "2026-08-16" },
       origin: "みなと中央駅",
-      stay: "day_trip",
+      nights: 0,
     };
     const { calls, session, run } = setup([
       async function* ({ ctx, hook }) {
