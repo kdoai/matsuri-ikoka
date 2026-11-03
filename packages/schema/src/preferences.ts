@@ -101,6 +101,8 @@ export const TripConditionsSchema = z.strictObject({
   pace: z.enum(PACES).optional(),
   /** 楽しみたいこと。空の並びは「特にない・おまかせ」 */
   interests: z.array(z.enum(INTERESTS)).max(INTERESTS.length).optional(),
+  /** 「あとはおまかせ」。true のとき、まだ聞いていない項目は聞かずに組む */
+  leaveToStaff: z.boolean().optional(),
 });
 export type TripConditions = z.infer<typeof TripConditionsSchema>;
 

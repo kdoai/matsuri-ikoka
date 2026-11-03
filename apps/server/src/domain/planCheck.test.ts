@@ -48,6 +48,15 @@ describe("checkPlan", () => {
     expect(result.errors).toEqual([]);
   });
 
+  it("予定の少ない短いお出かけ（祭りだけ・祭りと食事だけ）も通る", () => {
+    expect(checkPlan(plan([fest]), find)).toEqual({ errors: [], warnings: [] });
+    const meal = item({ id: "meal", start: "17:30", end: "18:10", type: "meal" });
+    expect(checkPlan(plan([meal, fest], { party: "kids" }), find)).toEqual({
+      errors: [],
+      warnings: [],
+    });
+  });
+
   it("予定の重なりを見つける", () => {
     const result = checkPlan(
       plan([

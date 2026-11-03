@@ -69,6 +69,7 @@ stateDiagram-v2
 | `festivalDays` | 祭りに行く日の数（`one` 1日だけ・`several` 何日か）                                                                         |
 | `pace`         | 旅のペース（`relaxed` ゆっくり・`normal` ふつう・`packed` たっぷり）                                                        |
 | `interests`    | 祭りのほかに楽しみたいこと（温泉・食・自然・街歩き・歴史・買い物）。空の並びは「特にない」                                  |
+| `leaveToStaff` | 「あとはおまかせ」。`true` のとき、まだ聞いていない項目は聞かずに組む                                                       |
 
 ## ツール
 

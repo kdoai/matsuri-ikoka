@@ -93,6 +93,9 @@ describe("TripConditionsSchema", () => {
       interests: [],
     };
     expect(TripConditionsSchema.safeParse(leftToUs).success).toBe(true);
+    expect(
+      TripConditionsSchema.safeParse({ ...conditions, nights: 6, leaveToStaff: true }).success,
+    ).toBe(true);
   });
 
   it("回りたい地域は5つまで、楽しみたいことは決まった選択肢から", () => {
