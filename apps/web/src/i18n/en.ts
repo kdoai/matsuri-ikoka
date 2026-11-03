@@ -414,7 +414,7 @@ export const en: Messages = {
       upstream_unavailable: "We could not reach an outside service.",
       internal: "Something went wrong on the server.",
       connection_lost:
-        "The connection dropped while we were replying. Press “Send again” to retry.",
+        "The connection dropped before the reply finished. Use “Send again” to resend your message.",
       server_unreachable:
         "We can't reach the shop's server. Please wait a moment, then press “Send again”.",
       invalid_event: "We received information in an unexpected form.",
