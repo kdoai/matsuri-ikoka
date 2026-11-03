@@ -325,7 +325,6 @@ export function ShioriPage() {
   const baseSources = useApp(usedSources);
   const sources = useMemo(() => shioriSources(baseSources, festival), [baseSources, festival]);
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const transport = useApp((state) => state.transport);
   const ready = useApp(shioriReady);
 
   useEffect(() => {
@@ -344,7 +343,7 @@ export function ShioriPage() {
   const meals = itineraryItems(itinerary).filter((item) => item.type === "meal");
   const verified = verify.result === "as_planned";
   const party = t.conditions.party(itinerary.party.adults, itinerary.party.children);
-  const shareUrl = ready ? shioriShareUrl(transport, itinerary.id, window.location.origin) : null;
+  const shareUrl = ready ? shioriShareUrl(itinerary.id, window.location.origin) : null;
 
   return (
     <div className="min-h-dvh bg-wood-800 py-4 print:bg-white print:py-0" data-testid="shiori">

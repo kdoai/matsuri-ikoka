@@ -8,7 +8,7 @@ import { describe, expect, it, vi } from "vitest";
 import sampleJson from "../../../../data/samples/conversations/suzunari-day-trip.json";
 import kazamiJson from "../../../../data/samples/festivals/kazami-bon-odori.json";
 import suzunariJson from "../../../../data/samples/festivals/suzunari-toro.json";
-import { createMockTransport } from "../mock/replay";
+import { createReplayTransport } from "../testing/replayTransport";
 import type { ChatTransport, FestivalSource } from "../transport/types";
 import { TransportError } from "../transport/types";
 import { createAppStore, type StoreDeps } from "./store";
@@ -28,9 +28,9 @@ const festivalSource: FestivalSource = {
   },
 };
 
-/** 時間を待たずに再生するモック */
-function instantMock(): ChatTransport {
-  return createMockTransport(sample, { sleep: async () => {} });
+/** 時間を待たずに、記録した相談を再生する通信の口 */
+function instantReplay(): ChatTransport {
+  return createReplayTransport(sample, { sleep: async () => {} });
 }
 
 function makeStore(transport: ChatTransport, extra: Partial<StoreDeps> = {}) {
@@ -48,14 +48,14 @@ async function flush() {
   await new Promise((resolve) => setTimeout(resolve, 0));
 }
 
-describe("ストア：画面だけのモックで、相談からしおりまで", () => {
+describe("ストア：記録した相談で、相談からしおりまで", () => {
   it("記録の発言を順に送ると、しおりが開けるところまで進む", async () => {
-    const store = makeStore(instantMock());
+    const store = makeStore(instantReplay());
     const { actions } = store.getState();
     await actions.enterShop();
     await flush();
     expect(store.getState().session).toMatchObject({
-      id: "mock-suzunari-day-trip",
+      id: "replay-suzunari-day-trip",
       status: "ready",
     });
     expect(Object.keys(store.getState().festivals).sort()).toEqual([
@@ -87,7 +87,7 @@ describe("ストア：画面だけのモックで、相談からしおりまで"
   });
 
   it("待ち時間の長い発言では、祭りのデータからクイズを1問出す", async () => {
-    const store = makeStore(instantMock());
+    const store = makeStore(instantReplay());
     const { actions } = store.getState();
     await actions.enterShop();
     await flush();
@@ -105,7 +105,7 @@ describe("ストア：画面だけのモックで、相談からしおりまで"
   });
 
   it("記録の終わりまで再生したら、その旨のエラーを出す", async () => {
-    const store = makeStore(instantMock());
+    const store = makeStore(instantReplay());
     const { actions } = store.getState();
     await actions.enterShop();
     for (const turn of sample.turns) {
@@ -117,7 +117,7 @@ describe("ストア：画面だけのモックで、相談からしおりまで"
   });
 
   it("最初からやり直すと、記録の最初から再生し直す", async () => {
-    const store = makeStore(instantMock());
+    const store = makeStore(instantReplay());
     const { actions } = store.getState();
     await actions.enterShop();
     await actions.send(sample.turns[0]!.request.message);
@@ -131,7 +131,6 @@ describe("ストア：画面だけのモックで、相談からしおりまで"
 describe("ストア：通信のエラー", () => {
   function failing(chat: ChatTransport["chat"]): ChatTransport {
     return {
-      kind: "server",
       startSession: async () => "s-1",
       chat,
       updatePreferences: async () => {},
@@ -193,7 +192,6 @@ describe("ストア：通信のエラー", () => {
       .mockRejectedValueOnce(new TransportError("upstream_unavailable", { status: 503 }))
       .mockResolvedValueOnce("s-2");
     const store = makeStore({
-      kind: "server",
       startSession,
       chat: async () => {},
       updatePreferences: async () => {},
@@ -205,7 +203,7 @@ describe("ストア：通信のエラー", () => {
   });
 
   it("旅程があるときにこだわりを切り替えると、組み直しを頼む", async () => {
-    const store = makeStore(instantMock());
+    const store = makeStore(instantReplay());
     const { actions } = store.getState();
     await actions.enterShop();
     await actions.send(sample.turns[0]!.request.message);
@@ -261,7 +259,6 @@ describe("ストア：通信のエラー", () => {
         });
       });
     const store = makeStore({
-      kind: "server",
       startSession,
       chat,
       updatePreferences: async () => {},
@@ -292,7 +289,6 @@ describe("ストア：合言葉", () => {
       passcode = value;
     });
     const transport: ChatTransport = {
-      kind: "server",
       async startSession() {
         if (passcode !== "matsuri") {
           throw new TransportError("unauthorized", {

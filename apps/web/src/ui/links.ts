@@ -24,13 +24,9 @@ export function sourceLabel(source: { url: string; title?: string }): string {
 }
 
 /**
- * しおりを共有する URL。接客サーバーが旅程を保存しているときだけ作れる（画面だけのモックでは null）。
+ * しおりを共有する URL。接客サーバーが保存した旅程を指す。
  * サーバーは、公式の情報で開催予定を確かめた旅程だけを、しおりとして出す。
  */
-export function shioriShareUrl(
-  transport: "mock" | "server",
-  itineraryId: string,
-  origin: string,
-): string | null {
-  return transport === "server" ? `${origin}/shiori/${encodeURIComponent(itineraryId)}` : null;
+export function shioriShareUrl(itineraryId: string, origin: string): string {
+  return `${origin}/shiori/${encodeURIComponent(itineraryId)}`;
 }

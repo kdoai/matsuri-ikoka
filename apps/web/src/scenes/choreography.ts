@@ -18,6 +18,7 @@ export const SCENE_MOTIONS = [
   "carry",
   "wave",
   "sit",
+  "reach",
   "cheer",
 ] as const;
 export type SceneMotion = (typeof SCENE_MOTIONS)[number];

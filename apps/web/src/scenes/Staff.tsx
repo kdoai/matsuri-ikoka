@@ -39,7 +39,7 @@ const FADE_SECONDS = 0.25;
 const BLINK_EVERY = [2.5, 5] as const;
 const BLINK_LENGTH = 0.12;
 
-function faceTexture(root: Object3D, kind: string): Texture | null {
+export function faceTexture(root: Object3D, kind: string): Texture | null {
   const face = findNode(root, `${kind}.face`);
   let texture: Texture | null = null;
   face?.traverse((object) => {
@@ -53,11 +53,13 @@ function faceTexture(root: Object3D, kind: string): Texture | null {
   return texture;
 }
 
-function setFace(texture: Texture | null, cell: readonly [number, number]): void {
+export function setFace(texture: Texture | null, cell: readonly [number, number]): void {
   texture?.offset.set(cell[0] * 0.25, cell[1] * 0.5);
 }
 
 export interface StaffProps {
+  /** 3D の中で、タップされたスタッフを見分ける（group の userData.staffId） */
+  id?: string;
   kind: string;
   model: GLTF;
   clips: Record<SceneMotion, AnimationClip | undefined>;
@@ -69,7 +71,7 @@ export interface StaffProps {
   onHead?: (x: number, y: number, z: number) => void;
 }
 
-export function Staff({ kind, model, clips, marks, plan, seq, onHead }: StaffProps) {
+export function Staff({ id, kind, model, clips, marks, plan, seq, onHead }: StaffProps) {
   const group = useRef<Group>(null);
   const root = model.scene;
   const mixer = useMemo(() => new AnimationMixer(root), [root]);
@@ -185,7 +187,7 @@ export function Staff({ kind, model, clips, marks, plan, seq, onHead }: StaffPro
   });
 
   return (
-    <group ref={group}>
+    <group ref={group} userData={id === undefined ? {} : { staffId: id }}>
       <primitive object={root} dispose={null} />
     </group>
   );
