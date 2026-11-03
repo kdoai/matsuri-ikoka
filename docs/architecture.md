@@ -9,7 +9,7 @@ MATSURI IKOKA は「データの保守」と「相談」の2つに分かれま�
 ```mermaid
 flowchart LR
   subgraph Data["データ（Git で管理）"]
-    SK["調査スキル（未実装）"]
+    SK["調査スキル<br/>.claude/skills/festival-research"]
     FJ["data/festivals/*.json"]
   end
   subgraph Collect["収集と更新"]
@@ -19,14 +19,16 @@ flowchart LR
   subgraph Server["apps/server（Hono）"]
     ST["festivalStore<br/>起動時に読み込み、掲載停止を除く"]
     DM["domain/<br/>日程のルール・到着の余裕・旅程の検証"]
-    TL["tools/（MCP）×6"]
+    TL["tools/（MCP）×7<br/>候補を出す前の開催の確かめを含む"]
     AR["AgentRunner<br/>live：Agent SDK / mock：記録の再生"]
     HK["hooks → SSE イベント"]
+    SH["shiori/<br/>しおりの HTML と A4 の PDF"]
+    SV["storage/<br/>memory / Firestore"]
   end
   subgraph Web["apps/web（Vite + React）"]
     SE["state/：イベント → ストア"]
-    UI["ui/：2D のパネルとしおり"]
-    TD["scenes/：3D の店内"]
+    UI["ui/：会話の窓・旅程・地図・しおり"]
+    TD["scenes/：遊べる 3D の店"]
   end
   SK --> CC --> FJ
   SK --> MA --> FJ
@@ -34,21 +36,22 @@ flowchart LR
   DM --> TL --> AR --> HK -->|SSE| SE
   SE --> UI
   SE --> TD
+  AR --> SV --> SH -->|/shiori| UI
 ```
 
 ## 構成要素
 
-| 構成要素         | 役割                                                                                                            | 技術                                            |
-| ---------------- | --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| ブラウザ         | 3D の店内、こだわり、会話、旅程・地図・出典、しおり                                                             | React、React Three Fiber、Leaflet、Tailwind CSS |
-| 接客サーバー     | 画面の配信、相談の API、SSE、合言葉と回数の上限                                                                 | Node、Hono                                      |
-| 接客エージェント | コンシェルジュと、裏で調べる3人のスタッフ（サブエージェント）                                                   | Claude Agent SDK（TypeScript）                  |
-| カスタムツール   | 7つのツール。日程のルールや検証はここでコードとして実行する                                                     | プロセス内の MCP サーバー、Zod                  |
-| 祭りのデータ     | 1件1ファイルの JSON。コンテナに同梱し、起動時にメモリへ読み込む                                                 | JSON、Zod                                       |
-| 旅程の保存       | 旅程の版・しおりの共有・相談の途中の状態を残す。サーバーだけが読み書きする（[ログインと保存](spec/account.md)） | Firestore（Admin SDK）                          |
-| ログイン         | 旅を残す・あとで開く・消すときだけ。相談はログインなしで始められる                                              | Firebase Authentication（Google）               |
-| データの更新     | 祭りの新規の収集と、開催情報の定期の更新（未実装）                                                              | Claude Managed Agents、GitHub Actions           |
-| スキーマ         | データ・旅程・SSE イベントの型の唯一の定義                                                                      | `packages/schema`（Zod）                        |
+| 構成要素         | 役割                                                                                                               | 技術                                                                |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| ブラウザ         | 3D の店内、こだわり、会話、旅程・地図・出典、しおり                                                                | React、React Three Fiber、Leaflet、Tailwind CSS                     |
+| 接客サーバー     | 画面の配信、相談の API、SSE、合言葉と回数の上限、しおりの HTML と A4 の PDF                                        | Node、Hono、Playwright（Chromium）                                  |
+| 接客エージェント | コンシェルジュと、裏で調べる3人のスタッフ（サブエージェント）                                                      | Claude Agent SDK（TypeScript）                                      |
+| カスタムツール   | 7つのツール。日程のルールや検証はここでコードとして実行する                                                        | プロセス内の MCP サーバー、Zod                                      |
+| 祭りのデータ     | 1件1ファイルの JSON。コンテナに同梱し、起動時にメモリへ読み込む                                                    | JSON、Zod                                                           |
+| 旅程の保存       | 旅程の版・しおりの共有・相談の途中の状態を残す。サーバーだけが読み書きする（[ログインと保存](spec/account.md)）    | 既定はメモリ、`MATSURI_STORAGE=firestore` で Firestore（Admin SDK） |
+| ログイン         | 旅を残す・あとで開く・消すときだけ。相談はログインなしで始められる                                                 | Firebase Authentication（Google）                                   |
+| データの更新     | 祭りの調査と追加は、調査スキルを使って手元の Claude Code で行い、PR で取り込む。開催情報の定期の確かめ直しは未実装 | Claude Code、GitHub Actions（データの検証）                         |
+| スキーマ         | データ・旅程・SSE イベントの型の唯一の定義                                                                         | `packages/schema`（Zod）                                            |
 
 ## 相談1回の流れ
 
@@ -67,8 +70,10 @@ sequenceDiagram
   S-->>B: staff.start
   St->>T: search_festivals など
   S-->>B: tool.start（吹き出しの文章）
+  T->>T: 候補ごとに公式の情報で開催を確かめる
+  S-->>B: festival.verified（scope: candidate）
   T-->>St: 結果（コードで絞り込み済み）
-  S-->>B: tool.end（件数・候補）
+  S-->>B: tool.end（件数・候補と確かめた結果）
   St-->>C: 結果をまとめて返す
   C-->>S: 返答の文章
   S-->>B: message.delta …
@@ -91,14 +96,14 @@ sequenceDiagram
 - **live**：Agent SDK でコンシェルジュとスタッフを動かし、フックで SSE イベントを出す
 - **mock**：[`data/samples/`](../data/samples) に記録したイベントの列を、記録した間隔で再生する。画面の開発、画面の通しテスト、キーを持たない人の動作確認に使う
 
-画面は SSE イベントだけを見ていて、どちらが動いているかを知りません。
+画面は SSE イベントだけを見ていて、どちらが動いているかを知りません。mock では、祭りのデータを指定しなければ、架空の祭り（`data/samples/festivals`）を読み込みます。
 
 ## 接客エージェントを開発環境から切り離す
 
 Agent SDK は、何も指定しないと Claude Code と同じように、ホームとプロジェクトの設定・`CLAUDE.md`・スキルを読み込みます。そのままでは、開発用の指示や手元の設定が、利用者と話すエージェントに混ざります。そこで、次のように切り離します。
 
 - ファイルの設定を読み込まない（`settingSources: []`）
-- 組み込みのツールは、スタッフを呼ぶ `Agent` のほかはモデルの前から消し（`tools: ["Agent"]`）、自作の MCP ツールだけを許可する。事前に許していないものは聞かずに断る（`permissionMode: "dontAsk"`）。Web の検索と取得は確定前の再確認（`verify_festival`）に限る
+- 組み込みのツールは、スタッフを呼ぶ `Agent` のほかはモデルの前から消し（`tools: ["Agent"]`）、自作の MCP ツールだけを許可する。事前に許していないものは聞かずに断る（`permissionMode: "dontAsk"`）。Web の検索と取得は、候補を出す前の開催の確かめ（`search_festivals` の中）と確定前の再確認（`verify_festival`）に限り、どちらもツールの中の別の `query()` で行う
 - 渡した MCP サーバー以外を使わせない（`strictMcpConfig: true`）
 - 自動のメモリを無効にし、子プロセスには必要な環境変数だけを渡す
 - 作業ディレクトリは空の一時ディレクトリにする
@@ -123,20 +128,20 @@ Agent SDK は、何も指定しないと Claude Code と同じように、ホー
 
 ## Claude の機能の使いどころ
 
-| 機能                     | 使いどころ                                                               |
-| ------------------------ | ------------------------------------------------------------------------ |
-| Claude Agent SDK         | 接客エージェント。コンシェルジュが会話を受け持つ                         |
-| サブエージェント         | 祭り調査係・周辺係・旅程係。必要なときだけ呼び、修正では旅程係だけを呼ぶ |
-| MCP ツール（プロセス内） | 7つのツール。絞り込みと検証をコードで行い、結果だけを Claude に返す      |
-| フック                   | ツールの前後で SSE イベントを出し、画面のスタッフと吹き出しを動かす      |
-| スキル                   | 祭りの調査の手順（情報源の優先順位、照合のルール、守ること）（未実装）   |
-| Claude Managed Agents    | 祭りの新規の収集と、開催情報の定期の更新。結果は PR で届く（未実装）     |
+| 機能                     | 使いどころ                                                                              |
+| ------------------------ | --------------------------------------------------------------------------------------- |
+| Claude Agent SDK         | 接客エージェント。コンシェルジュが会話を受け持つ                                        |
+| サブエージェント         | 祭り調査係・周辺係・旅程係。必要なときだけ呼び、修正では旅程係だけを呼ぶ                |
+| MCP ツール（プロセス内） | 7つのツール。絞り込みと検証をコードで行い、結果だけを Claude に返す                     |
+| フック                   | ツールの前後で SSE イベントを出し、画面のスタッフと吹き出しを動かす                     |
+| スキル                   | 祭りの調査の手順（情報源の優先順位、照合のルール、守ること）。手元の Claude Code で使う |
+| Claude Managed Agents    | 開催情報の定期の確かめ直し。結果は PR で届く（未実装）                                  |
 
 ## リポジトリの構成
 
 ```text
 apps/
-  server/          接客サーバー（Hono）。domain・tools・agent・routes・mock
+  server/          接客サーバー（Hono）。domain・data・tools・agent・routes・session・storage・account・shiori
   web/             画面（Vite + React + Tailwind CSS）。state・ui・scenes・i18n
 packages/
   schema/          Zod のスキーマ（唯一の定義）とテスト
@@ -145,7 +150,19 @@ data/
   festivals/       祭りのデータ（1件1ファイル）
   samples/         モックで再生するサンプルの相談（架空）
 assets/3d/         3D の店内とスタッフのモデルを作るスクリプト
+scripts/           開発と運用のスクリプト（データの検証、モックの通し確認、GitHub と Firestore の設定）
 docs/              課題・アーキテクチャ・仕様・設計判断の記録
+.claude/           共有の権限設定、スキル（祭りの調査、GitHub の設定）
 ```
 
 ワークスペースのパッケージ（`@matsuri-ikoka/schema`）は TypeScript のまま公開しています。画面は Vite が、サーバーは esbuild がビルドのときに取り込むので、別にビルドする手順はいりません。
+
+## デプロイ
+
+main に入った変更は、GitHub Actions（`.github/workflows/deploy.yml`）が Cloud Run に出します。
+
+1. イメージを作り、Artifact Registry に置く（Workload Identity 連携で入り、鍵のファイルは使わない）
+2. イメージをモックで動かし、`/healthz` とサンプルの相談を確かめる
+3. 新しい版を通信なしで置き、`/health` を確かめてから通信を切り替える。失敗したら前の版のまま
+
+環境変数とシークレットは Cloud Run の側に置き、デプロイではイメージだけを差し替えます。CI（`.github/workflows/ci.yml`）では、lint・型・テスト・祭りのデータの検証・ビルド・秘密情報の検出を行います。詳しくは [運用と安全](spec/operations.md) にあります。
