@@ -251,7 +251,7 @@ Cloud Run の既定の URL（前にロードバランサーを置かない）で
 
 しおりの PDF の変数（`MATSURI_SHIORI_PDF_*`・`MATSURI_SHIORI_CHROMIUM_PATH`・`MATSURI_SHIORI_ASSETS_DIR`）は [旅のしおりの仕様](shiori.md) にあります。
 
-値は、手元ではシェルの環境変数で渡し（接客サーバーは `.env` を自動では読みません）、本番ではクラウドの秘密情報の管理に置きます。[`.env.example`](../../.env.example) には変数名と説明だけを書きます。
+値は、手元ではリポジトリのルートの `.env` に書くかシェルの環境変数で渡し（`pnpm dev` と `check:live` は `.env` があれば読み、シェルの値を優先します）、本番ではクラウドの秘密情報の管理に置きます。本番のイメージは `.env` を読みません。[`.env.example`](../../.env.example) には変数名と説明だけを書きます。
 
 本番（`NODE_ENV=production`）の live では、`ACCESS_PASSCODE`・`DAILY_CHAT_LIMIT`・`AGENT_MAX_BUDGET_USD`・`ANTHROPIC_API_KEY` のどれかが欠けていると、サーバーは起動しません。
 

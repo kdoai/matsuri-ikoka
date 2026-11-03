@@ -79,7 +79,10 @@ export function agentEnv(source: NodeJS.ProcessEnv): Record<string, string> {
   const env: Record<string, string> = {};
   for (const [key, value] of Object.entries(source)) {
     if (value === undefined || !allowed.has(key.toUpperCase())) continue;
-    env[key] = TRIMMED_ENV.has(key.toUpperCase()) ? value.trim() : value;
+    const passed = TRIMMED_ENV.has(key.toUpperCase()) ? value.trim() : value;
+    // 空の値は、設定していないのと同じに扱う（.env に空のまま書いた API キーなど）
+    if (passed === "") continue;
+    env[key] = passed;
   }
   return { ...env, ...ISOLATION_ENV };
 }

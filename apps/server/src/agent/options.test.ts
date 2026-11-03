@@ -193,6 +193,12 @@ describe("agentEnv", () => {
   it("API キーの前後の改行と空白を落とす", () => {
     expect(agentEnv({ ANTHROPIC_API_KEY: " test-key\r\n" }).ANTHROPIC_API_KEY).toBe("test-key");
   });
+
+  it("空の認証の変数は渡さない（.env に空のまま書いても、ログイン済みの資格情報で動く）", () => {
+    const env = agentEnv({ ANTHROPIC_API_KEY: "", CLAUDE_CODE_OAUTH_TOKEN: " \n" });
+    expect(env).not.toHaveProperty("ANTHROPIC_API_KEY");
+    expect(env).not.toHaveProperty("CLAUDE_CODE_OAUTH_TOKEN");
+  });
 });
 
 describe("createAgentWorkdir", () => {
