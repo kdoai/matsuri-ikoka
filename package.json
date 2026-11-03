@@ -19,9 +19,11 @@
     "test:watch": "vitest",
     "validate:data": "tsx scripts/validate-festivals.ts",
     "build:stations": "tsx scripts/build-stations.ts",
-    "refresh:targets": "tsx scripts/refresh-targets.ts"
+    "refresh:targets": "tsx scripts/refresh-targets.ts",
+    "refresh:run": "tsx scripts/run-managed-agent.ts"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "1.3.0",
     "@biomejs/biome": "2.6.4",
     "@types/node": "^22.20.5",
     "tsx": "4.23.15",
