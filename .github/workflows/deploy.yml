@@ -1,8 +1,10 @@
 name: デプロイ
 
 # main に入った変更を Cloud Run に出す。
-# イメージをモックで動かして /healthz とサンプルの相談を確かめ、新しい版を通信なしで置いて /health を確かめてから、
-# 通信を切り替える。失敗したら、通信は前の版のまま。
+# イメージをモックで動かして /healthz・サンプルの相談・しおりの PDF・3D のモデルを確かめ、
+# 新しい版を通信なしで置いて外から確かめてから（scripts/check-deployed.mjs）、通信を切り替える。
+# 切り替える前に失敗したら、通信は前の版のまま。切り替えたあとの確かめに失敗したら、通信を前の版に戻す。
+# 手で前の版に戻すときは rollback.yml を使う（docs/spec/operations.md の「前の版に戻す」）。
 # サービスの設定（環境変数・シークレット・インスタンスの数）は Cloud Run の側にあり、ここではイメージだけを差し替える。
 # 使う GitHub Actions の変数は docs/spec/operations.md の「デプロイ」にある。
 
@@ -80,7 +82,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: イメージをモックで動かし、/healthz とサンプルの相談を確かめる
+      - name: イメージをモックで動かし、/healthz・サンプルの相談・しおりの PDF・3D のモデルを確かめる
         env:
           DIGEST: ${{ steps.image.outputs.digest }}
         run: |
@@ -88,7 +90,7 @@ jobs:
             -e MATSURI_AGENT_MODE=mock -e MATSURI_REPLAY_SPEED=0 \
             -p 127.0.0.1:8080:8080 "${IMAGE}@${DIGEST}"
           if ! ./scripts/check-health.sh http://127.0.0.1:8080/healthz \
-            || ! node scripts/smoke-mock.mjs http://127.0.0.1:8080; then
+            || ! node scripts/smoke-mock.mjs --pdf --glb http://127.0.0.1:8080; then
             docker logs mock
             exit 1
           fi
@@ -104,20 +106,43 @@ jobs:
             --no-traffic --tag candidate --quiet
 
       # Cloud Run の既定の URL では /healthz が外から届かないので、/health で確かめる
-      - name: 新しい版の /health を確かめる
+      - name: 新しい版を外から確かめる（/health・画面・3D のモデル・合言葉・しおりの経路）
         run: |
           url="$(gcloud run services describe "$SERVICE" \
             --project "$PROJECT_ID" --region "$REGION" --format=json \
             | jq -r '.status.traffic[] | select(.tag == "candidate") | .url')"
           ./scripts/check-health.sh "${url}/health"
+          node scripts/check-deployed.mjs "$url"
+
+      # 戻す先：いま通信をすべて受けている版
+      - name: いまの版を控える
+        id: previous
+        run: |
+          revision="$(gcloud run services describe "$SERVICE" \
+            --project "$PROJECT_ID" --region "$REGION" --format=json \
+            | jq -r '[.status.traffic[] | select(.percent == 100) | .revisionName] | first // ""')"
+          echo "revision=${revision}" >> "$GITHUB_OUTPUT"
+          echo "前の版：${revision:-なし}"
 
       - name: 通信を新しい版に切り替える
+        id: switch
         run: |
           gcloud run services update-traffic "$SERVICE" \
             --project "$PROJECT_ID" --region "$REGION" --to-latest --quiet
 
-      - name: 公開の URL の /health を確かめる
+      - name: 公開の URL を外から確かめる
         run: |
           url="$(gcloud run services describe "$SERVICE" \
             --project "$PROJECT_ID" --region "$REGION" --format='value(status.url)')"
           ./scripts/check-health.sh "${url}/health"
+          node scripts/check-deployed.mjs "$url"
+
+      - name: 確かめに失敗したので、通信を前の版に戻す
+        if: failure() && steps.switch.outcome == 'success' && steps.previous.outputs.revision != ''
+        env:
+          PREVIOUS: ${{ steps.previous.outputs.revision }}
+        run: |
+          gcloud run services update-traffic "$SERVICE" \
+            --project "$PROJECT_ID" --region "$REGION" \
+            --to-revisions "${PREVIOUS}=100" --quiet
+          echo "::error::公開の URL の確かめに失敗したため、通信を ${PREVIOUS} に戻しました"
