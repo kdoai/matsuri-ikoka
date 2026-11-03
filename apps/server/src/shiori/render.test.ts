@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { loadShioriAssets, svgToSymbol } from "./assets";
+import { chooseDesign } from "./design";
 import { renderShioriHtml } from "./render";
+import { shioriStyle } from "./style";
 import {
   fictionalFestivals,
   fictionalOuting,
@@ -36,6 +38,10 @@ describe("素材", () => {
     ]) {
       expect(assets.files.get(`staff/${still}.webp`)?.contentType).toBe("image/webp");
     }
+    for (const kind of ["hiyoko", "owl", "hen", "sparrow", "penguin"]) {
+      expect(assets.files.get(`staff/face_${kind}.webp`)?.contentType).toBe("image/webp");
+    }
+    expect(assets.symbols.has("deco-shop-mark")).toBe(true);
     for (const category of ["fireworks", "float", "mikoshi", "dance", "fire", "lantern"]) {
       expect(assets.symbols.has(`motif-${category}`)).toBe(true);
     }
@@ -143,9 +149,52 @@ describe("しおりの HTML", () => {
     expect(page.match(/day-page calm-day/g)).toHaveLength(5);
   });
 
+  it("スタッフのひとことは、顔の絵つきの吹き出しにし、絵はすべて素材にある", async () => {
+    const page = await render(fictionalWeek());
+
+    expect(page).toMatch(
+      /<p class="bubble"><img class="face" src="assets\/staff\/face_[a-z]+\.webp" alt="" \/>/,
+    );
+    const files = [...page.matchAll(/src="assets\/(staff\/[a-z_]+\.webp)"/g)].map(
+      (m) => m[1] as string,
+    );
+    expect(files).toContain("staff/face_hiyoko.webp");
+    for (const file of files) expect(assets.files.has(file), file).toBe(true);
+  });
+
+  it("店ののれんと紋を表紙に、店のスタンプをスタンプ帳に出す", async () => {
+    const page = await render(fictionalWeekend());
+
+    expect(page).toContain('<div class="noren" aria-hidden="true">');
+    expect(page).toContain('<div class="shop-stamp">');
+  });
+
   it("シニアと一緒の旅は文字を大きくする", async () => {
     const trip = fictionalOuting();
     trip.preferences.party = "seniors";
     expect(await render(trip)).toContain('<body class="large"');
+  });
+});
+
+describe("しおりの動き", () => {
+  const design = chooseDesign(fictionalOuting(), festivals[0], "2026-08-16");
+  const css = shioriStyle(design.palette);
+  const gate = "@media screen and (prefers-reduced-motion: no-preference)";
+
+  it("動きは、画面で動きを減らさない設定のときだけ付け、印刷と PDF では最後の状態で止まる", () => {
+    const at = css.indexOf(gate);
+    expect(at).toBeGreaterThan(0);
+    // 動きの前の CSS（印刷と PDF・動きを減らす設定で使う姿）には、animation を書かない
+    expect(css.slice(0, at)).not.toMatch(/animation/);
+    expect(css.slice(at)).toMatch(/animation:/);
+    // 動きのあとに、ふつうの CSS を足さない（@keyframes だけ）
+    const tail = css.slice(css.indexOf("@keyframes"));
+    expect(tail.replace(/@keyframes [a-z-]+ \{[^\n]*\}\n?/g, "").trim()).toBe("");
+  });
+
+  it("動きはスクリプトを使わない", async () => {
+    const page = await render(fictionalWeek());
+    expect(page).not.toMatch(/<script|\son[a-z]+="/i);
+    expect(page).toContain(gate);
   });
 });
