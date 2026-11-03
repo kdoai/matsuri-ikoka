@@ -185,10 +185,8 @@ export const en: Messages = {
     dateUnset: "Date not set",
     from: (origin: string) => `From ${origin}`,
     hints: { talk: "Talk", details: "Plan details", map: "Map", menu: "Menu" },
-    expandMap: "Open the large map",
     menuTitle: "Menu",
     bookletTitle: "Travel booklet",
-    progress: "Where you are",
     opsGuide: "Controls",
     close: "Close",
   },
@@ -215,10 +213,7 @@ export const en: Messages = {
     loading: "Loading the festival details",
   },
   panel: {
-    day: (n: number) => `Day ${n}`,
     updated: "Updated!",
-    detail: "Plan details",
-    routeMap: "Route map",
   },
   staff: {
     title: "Inside the shop",

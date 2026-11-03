@@ -171,10 +171,8 @@ export const ja = {
     dateUnset: "旅の日はまだ",
     from: (origin: string) => `${origin}から`,
     hints: { talk: "話す", details: "旅程詳細", map: "地図", menu: "メニュー" },
-    expandMap: "地図を大きく見る",
     menuTitle: "メニュー",
     bookletTitle: "旅のしおり",
-    progress: "いまの進み具合",
     opsGuide: "操作の案内",
     close: "閉じる",
   },
@@ -195,10 +193,7 @@ export const ja = {
     loading: "祭りのくわしい情報を読み込んでいます",
   },
   panel: {
-    day: (n: number) => `${n}日目`,
     updated: "更新！",
-    detail: "くわしい予定",
-    routeMap: "道のりの地図",
   },
   staff: {
     title: "店内のようす",
