@@ -3,11 +3,14 @@ import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
 import { testFestival } from "../domain/testFestivals";
 import { createCandidateChecker } from "./candidateCheck";
+import { createUnavailableLodging } from "./lodging";
 import {
   getAccess,
   getWeather,
+  LODGING_NOTICE,
   noteConditions,
   searchFestivals,
+  searchLodging,
   searchNearby,
   updateItinerary,
   verifyFestival,
@@ -549,5 +552,73 @@ describe("止められた発言と、会話の状態", () => {
       updateItinerary.run({ itinerary: draftOf(fictionalItinerary()) }, ctx, controller.signal),
     ).rejects.toThrow("保存しません");
     expect(ctx.session.itineraryId).toBeNull();
+  });
+});
+
+describe("search_lodging", () => {
+  const args = { festivalId: "suzunari-toro", checkIn: "2026-08-16", nights: 1 };
+
+  it("聞き取った人数と予算で調べ、予算の計算・距離・調べた時刻・注意を添えて返す", async () => {
+    const ctx = testToolContext([suzunari()]);
+    ctx.session.conditions = {
+      party: { adults: 2, children: 0 },
+      lodgingBudget: { perPersonYen: 9000, per: "night" },
+    };
+    const result = await searchLodging.run(args, ctx, signal);
+    expect(result).toMatchObject({
+      status: "ok",
+      provider: "fictional",
+      checkIn: "2026-08-16",
+      checkOut: "2026-08-17",
+      searchedAt: "2026-08-03T10:15:00+09:00",
+      notice: LODGING_NOTICE,
+    });
+    const offers = result.offers as {
+      name: string;
+      distanceKmFromVenue: number | null;
+      budget: { overBudget: boolean | null };
+    }[];
+    expect(offers.length).toBeGreaterThan(0);
+    expect(offers.map((o) => o.budget.overBudget)).toContain(true);
+    expect(offers.map((o) => o.budget.overBudget)).toContain(false);
+    expect(offers.every((o) => typeof o.distanceKmFromVenue === "number")).toBe(true);
+    expect(ctx.session.lodging.get("2026-08-16")?.offers).toHaveLength(offers.length);
+  });
+
+  it("人数が分からなければ調べない", async () => {
+    const ctx = testToolContext([suzunari()]);
+    await expect(searchLodging.run(args, ctx, signal)).rejects.toThrow("人数");
+  });
+
+  it("調べられないときは宿の名前を返さず、相談にも残さない", async () => {
+    const ctx = testToolContext([suzunari()], { lodging: createUnavailableLodging() });
+    const result = await searchLodging.run(
+      { ...args, party: { adults: 2, children: 0 } },
+      ctx,
+      signal,
+    );
+    expect(result).toMatchObject({ status: "unavailable" });
+    expect(result).not.toHaveProperty("offers");
+    expect(ctx.session.lodging.size).toBe(0);
+  });
+
+  it("旅程を保存すると、チェックインの日の泊まりに調べた宿の候補が付く", async () => {
+    const ctx = testToolContext([suzunari()]);
+    await updateItinerary.run({ itinerary: draftOf(fictionalItinerary()) }, ctx, signal);
+    await searchLodging.run({ ...args, party: { adults: 2, children: 0 } }, ctx, signal);
+    const hall = draftOf(fictionalItinerary()).days[0]!.items[1]!;
+    const saved = await updateItinerary.run(
+      {
+        addDay: {
+          day: { date: "2026-08-17", stay: null, items: [{ ...hall, id: "d2-hall" }] },
+          stayBefore: { area: "鈴鳴の町" },
+        },
+      },
+      ctx,
+      signal,
+    );
+    const stay = (saved.itinerary as Itinerary).days[0]!.stay;
+    expect(stay?.area).toBe("鈴鳴の町");
+    expect(stay?.lodging?.offers[0]?.name).toMatch(/^（架空）/);
   });
 });

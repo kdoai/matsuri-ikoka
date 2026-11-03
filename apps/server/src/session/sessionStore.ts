@@ -3,7 +3,9 @@ import {
   type ConversationStage,
   DEFAULT_PREFERENCES,
   type FestivalCandidate,
+  type IsoDate,
   type Itinerary,
+  type LodgingSearch,
   type PartialTripConditions,
   type Preferences,
   type Weather,
@@ -31,6 +33,8 @@ export interface Session {
   itineraryId: string | null;
   /** 調べた天気。キーは「祭りの ID@日付」 */
   weather: Map<string, Weather>;
+  /** 調べた宿の空き。キーはチェックインの日。旅程を保存するとき、その日の泊まりに付ける */
+  lodging: Map<IsoDate, LodgingSearch>;
   /** live：Agent SDK のセッション ID（resume に使う） */
   agentSessionId: string | null;
   /**
@@ -102,6 +106,7 @@ export class SessionStore {
       selectedFestivalId: null,
       itineraryId: null,
       weather: new Map(),
+      lodging: new Map(),
       agentSessionId: null,
       replay: init.replay ?? null,
       busy: false,
@@ -112,7 +117,7 @@ export class SessionStore {
 
   /**
    * 保存の口に残した途中の状態から、相談をメモリに戻す。メモリにもうあれば、それを返す。
-   * 天気と Agent SDK の会話は戻さない（エージェントは、相談の状態の要約から続ける）
+   * 天気・宿の空きと Agent SDK の会話は戻さない（エージェントは、相談の状態の要約から続ける）
    */
   restore(
     saved: Pick<
@@ -135,6 +140,7 @@ export class SessionStore {
       ...saved,
       lastActiveAt: this.#now(),
       weather: new Map(),
+      lodging: new Map(),
       agentSessionId: null,
       busy: false,
     };

@@ -87,6 +87,7 @@ describe("接客エージェントを開発環境から切り離す", () => {
       "mcp__matsuri__get_access",
       "mcp__matsuri__get_weather",
       "mcp__matsuri__search_nearby",
+      "mcp__matsuri__search_lodging",
       "mcp__matsuri__update_itinerary",
     ]);
     expect(Object.keys(agents ?? {})).toEqual(["researcher", "scout", "planner"]);

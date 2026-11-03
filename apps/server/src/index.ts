@@ -19,6 +19,7 @@ import { ConcurrencyLimiter, clientIp, DailyLimiter } from "./routes/guard";
 import { StoragePersistence } from "./session/persistence";
 import { ItineraryStore, SessionStore } from "./session/sessionStore";
 import { createCandidateChecker } from "./tools/candidateCheck";
+import { createLodgingService } from "./tools/lodging";
 import { createJmaWeather } from "./tools/weather";
 
 const config = readConfig(process.env);
@@ -75,6 +76,10 @@ if (config.mode === "live") {
     festivals: festivals.store,
     itineraries,
     weather: createJmaWeather(),
+    lodging: createLodgingService(process.env, {
+      production: config.production,
+      now: () => nowInJapan(),
+    }),
     verifier: createWebVerifier({
       prompt: prompts.verifier,
       model: config.models.verifier,

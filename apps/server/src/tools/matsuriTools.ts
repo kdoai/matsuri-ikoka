@@ -8,6 +8,8 @@ import {
   ItineraryItemSchema,
   ItinerarySchema,
   LocalTimeSchema,
+  LodgingBudgetSchema,
+  MAX_NIGHTS,
   MAX_TRIP_DAYS,
   MOVE_MODES,
   mainFestivalDay,
@@ -44,6 +46,7 @@ import {
   type ItineraryDraft,
   mergeDay,
 } from "../domain/itinerary";
+import { attachLodging, checkLodgingBudget, distanceKm } from "../domain/lodging";
 import { festivalInArea, selectNearbySpots } from "../domain/nearby";
 import { occurrenceOn } from "../domain/planCheck";
 import { preferenceEffects } from "../domain/preferences";
@@ -51,8 +54,9 @@ import { decideVerification } from "../domain/verification";
 import { randomId } from "../session/sessionStore";
 import type { CandidateCheck } from "./candidateCheck";
 import { type AgentToolName, TOOL_TIMEOUT_MS, type ToolContext } from "./context";
+import { MAX_SEARCH_RADIUS_KM, RAKUTEN_CREDIT } from "./lodging";
 
-// 接客エージェントに渡す7つのツール。入出力は Zod で決め、計算と絞り込みは domain の関数で行う。
+// 接客エージェントに渡す8つのツール。入出力は Zod で決め、計算と絞り込みは domain の関数で行う。
 // 祭りの日時・場所・営業時間・出典は、祭りのデータとツールの結果だけから返す。
 
 /** ツールの失敗。message はエージェントに返す（利用者にそのまま見せる文ではない） */
@@ -561,7 +565,8 @@ export const updateItinerary = defineTool({
     "場所・営業時間・出典は祭りのデータで入れ直す。予定の重なり、営業時間の外、休業日、祭りの時間とのぶつかり、" +
     "到着の余裕の不足があれば保存せず errors を返すので、直してもう一度呼ぶ。修正のときも全体を渡す（予定の id は版をまたいで同じにする）。" +
     "何日かの旅は1日ずつ書く：はじめに主役の祭りの日だけの旅程を itinerary で保存し、そのあと addDay で1日ずつ足す（同じ日付なら置き換える）。" +
-    "後ろに足すときは、それまでの最後の日の夜に泊まる地域を stayBefore に書く。保存のたびに画面の旅程が更新される。",
+    "後ろに足すときは、それまでの最後の日の夜に泊まる地域を stayBefore に書く。保存のたびに画面の旅程が更新される。" +
+    "stay に宿の名前は書かない。search_lodging で調べた宿の候補は、チェックインの日の stay にサーバーが付ける。",
   input: {
     itinerary: ItineraryDraftSchema.optional().describe(
       "旅程の全体（id・version・verification・日ごとの weather はサーバーが付ける）",
@@ -606,11 +611,11 @@ export const updateItinerary = defineTool({
     } else {
       throw new ToolError("itinerary か addDay のどちらかを渡してください");
     }
-    const draft: ItineraryDraft = {
-      ...written,
-      // こだわりは相談の状態を正とする
-      preferences: session.preferences,
-    };
+    // こだわりは相談の状態を正とする。泊まりの宿の候補は、調べた結果だけをサーバーが付ける
+    const draft: ItineraryDraft = attachLodging(
+      { ...written, preferences: session.preferences },
+      { searches: session.lodging, previous },
+    );
     // 天気は日ごとに、その日の祭りの開催地（祭りのない日は主役の祭りの開催地）で調べる。
     // 調べた天気は相談に残し、気象庁の予報も地域ごとにキャッシュしているので、何日分でも軽い
     const weatherByDate = new Map<IsoDate, Weather>();
@@ -658,6 +663,80 @@ export const updateItinerary = defineTool({
       errors: [],
       warnings: result.warnings,
       itinerary: result.itinerary,
+    };
+  },
+});
+
+/** 宿の候補を出すときに必ず添える一文 */
+export const LODGING_NOTICE = "料金と空きは、予約の時点で変わることがあります";
+
+export const searchLodging = defineTool({
+  name: "search_lodging",
+  description:
+    "泊まりの旅で、祭りの会場の近くの宿の空きと1泊の料金を、宿泊予約の API で調べる（安い順に5件まで）。" +
+    "人数と宿の予算は聞き取った条件を使う（渡せば上書き）。予算の合計と上限を超えるかは budget に計算して返す。" +
+    "宿の名前・料金・予約のページは結果にあるものだけを使い、調べた時刻（searchedAt）と notice を必ず添えて伝える。" +
+    "status が unavailable のときは宿の名前を出さず、泊まる地域だけを案内する。" +
+    "結果は相談に残り、旅程を保存するとき、チェックインの日の泊まりに候補として付く。",
+  input: {
+    festivalId: SlugSchema.describe("祭りの ID（会場の近くを調べる）"),
+    checkIn: IsoDateSchema.describe("チェックインの日"),
+    nights: z.number().int().min(1).max(MAX_NIGHTS).describe("同じ宿に泊まる泊数"),
+    radiusKm: z
+      .number()
+      .min(0.5)
+      .max(MAX_SEARCH_RADIUS_KM)
+      .optional()
+      .describe(`会場からの半径（km）。省略すると ${MAX_SEARCH_RADIUS_KM}`),
+    party: PartySchema.optional().describe("人数。省略すると聞き取った条件の人数"),
+    budget: LodgingBudgetSchema.optional().describe(
+      "宿の予算の上限（1人あたり）。省略すると聞き取った条件の予算",
+    ),
+  },
+  async run(args, ctx, signal) {
+    const festival = festivalOf(ctx, args.festivalId);
+    const party = args.party ?? ctx.session.conditions.party;
+    if (party === undefined) {
+      throw new ToolError("人数が分かりません。大人と子どもの人数を聞いてから調べてください");
+    }
+    const budget = args.budget ?? ctx.session.conditions.lodgingBudget;
+    if (args.checkIn < ctx.today()) throw new ToolError("今日より前の日の宿は調べられません");
+    const venue = { lat: festival.venue.lat, lng: festival.venue.lng };
+    const outcome = await ctx.lodging.search(
+      {
+        checkIn: args.checkIn,
+        nights: args.nights,
+        party,
+        near: venue,
+        radiusKm: args.radiusKm ?? MAX_SEARCH_RADIUS_KM,
+      },
+      signal,
+    );
+    if (outcome.status === "unavailable") {
+      return { status: "unavailable", reason: outcome.reason, checkIn: args.checkIn };
+    }
+    // 時間切れや接続の切断のあとに、相談の状態を書き換えない
+    if (signal.aborted) throw new ToolError("止められたので、宿の空きは使いません");
+    const { search } = outcome;
+    ctx.session.lodging.set(search.checkIn, search);
+    return {
+      status: "ok",
+      provider: ctx.lodging.provider,
+      checkIn: search.checkIn,
+      checkOut: search.checkOut,
+      searchedAt: search.searchedAt,
+      notice: LODGING_NOTICE,
+      credit: ctx.lodging.provider === "rakuten" ? RAKUTEN_CREDIT : null,
+      party,
+      budget: budget ?? null,
+      offers: search.offers.map((offer) => ({
+        id: offer.id,
+        name: offer.name,
+        nightlyTotalYen: offer.nightlyTotalYen,
+        bookingUrl: offer.bookingUrl,
+        distanceKmFromVenue: offer.location === null ? null : distanceKm(venue, offer.location),
+        budget: checkLodgingBudget(offer.nightlyTotalYen, { party, nights: args.nights, budget }),
+      })),
     };
   },
 });
@@ -733,6 +812,7 @@ export const MATSURI_TOOLS: readonly MatsuriTool[] = [
   searchNearby,
   getAccess,
   getWeather,
+  searchLodging,
   updateItinerary,
   verifyFestival,
 ];

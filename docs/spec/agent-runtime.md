@@ -56,9 +56,9 @@ systemPrompt: [
 
 ## ツール（プロセス内の MCP サーバー）
 
-7つのツールは `tool()` と `createSdkMcpServer()` で定義し、入力の形は `packages/schema` の Zod から組み立てます。ハンドラーは、どれも共通の包みに通します。
+8つのツールは `tool()` と `createSdkMcpServer()` で定義し、入力の形は `packages/schema` の Zod から組み立てます。ハンドラーは、どれも共通の包みに通します。
 
-1. **時間の上限で打ち切る。** `note_conditions` は5秒、`search_nearby`・`get_access`・`get_weather`・`update_itinerary` は10秒、`search_festivals` は候補の確かめを含めて45秒、`verify_festival` は30秒（[API の仕様](api.md#時間の上限)）。`createSdkMcpServer()` の `timeout`（SDK が呼び出しを打ち切る外側の上限）は、いちばん長いツールの上限より15秒長くし、ツールの上限で止めたときの理由がエージェントに届くようにする
+1. **時間の上限で打ち切る。** `note_conditions` は5秒、`search_nearby`・`get_access`・`get_weather`・`update_itinerary` は10秒、`search_lodging` は呼び出しの間隔の待ちを含めて20秒、`search_festivals` は候補の確かめを含めて45秒、`verify_festival` は30秒（[API の仕様](api.md#時間の上限)）。`createSdkMcpServer()` の `timeout`（SDK が呼び出しを打ち切る外側の上限）は、いちばん長いツールの上限より15秒長くし、ツールの上限で止めたときの理由がエージェントに届くようにする
 2. **例外を投げない。** 失敗は `{ content: [{ type: "text", text: 理由 }], isError: true }` で返す。Claude は理由を読んで、代わりの案を出す
 3. **結果はデータとして返す。** JSON の文字列にし、指示の文章を混ぜない
 4. **サーバーの値を使う。** 今日の日付やセッションは、モデルの入力を信じず、サーバーが持つ値を使う。モデルに書かせた ID で、別の相談のデータを読ませない
