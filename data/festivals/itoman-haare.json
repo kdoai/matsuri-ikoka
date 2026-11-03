@@ -1,0 +1,308 @@
+{
+  "id": "itoman-haare",
+  "name": {
+    "ja": "糸満ハーレー",
+    "en": "Itoman Haare Boat Race"
+  },
+  "category": "other",
+  "municipalities": [
+    {
+      "prefecture": "沖縄県",
+      "name": "糸満市"
+    }
+  ],
+  "venue": {
+    "name": "糸満漁港中地区",
+    "lat": 26.1302,
+    "lng": 127.6671
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu"],
+  "highlights": [
+    "旧暦5月4日に、糸満の3つの村の海人がハーレー舟で競う",
+    "わざと舟をひっくり返して起こす、転覆競漕のクンヌカセー",
+    "山巓毛の丘から旗を振って始まる、幕開けの御願バーレー",
+    "各村の選りすぐりの漕ぎ手が競う、締めくくりのアガイスーブ"
+  ],
+  "trivia": [
+    {
+      "text": "ハーレー鉦が鳴ると梅雨が明ける、と糸満では言い伝えられている",
+      "source": {
+        "url": "https://www.itoman-okinawa.jp/facility03-detail.php?cms_item_group_id=31611",
+        "title": "糸満市観光協会 糸満ハーレー",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "糸満のハーレーは、2012年に糸満市の無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.city.itoman.lg.jp/site/kankou-navi/15706.html",
+        "title": "糸満市 糸満のハーリー・ハーレー",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "競うのは、西村・中村・新島という糸満の3つの古い村",
+      "source": {
+        "url": "https://www.city.itoman.lg.jp/site/kankou-navi/15706.html",
+        "title": "糸満市 糸満のハーリー・ハーレー",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "最後の競漕アガイスーブは、約2,150mを漕ぎ切る長い勝負",
+      "source": {
+        "url": "https://ryukyushimpo.jp/region/entry-5319630.html",
+        "title": "琉球新報 糸満ハーレー勇壮に 「御願バーレー」で幕開け（2026年6月18日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.itoman.lg.jp/site/kankou-navi/15706.html",
+        "title": "糸満市 糸満のハーリー・ハーレー（観光の案内として紹介）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002276",
+        "title": "るるぶ&more. 糸満ハーレー（料金無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-06-18",
+      "start": "09:15",
+      "end": "15:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績（旧暦5月4日）。9:15 開会式、10:00 山巓毛からの旗の合図で御願バーレー、職域ハーレーやクンヌカセーと続き、15時ごろのアガイスーブで終わる。周辺の道路は8:30〜16:30に交通規制",
+      "sources": [
+        {
+          "url": "https://www.itoman-okinawa.jp/facility01.php",
+          "title": "糸満市観光協会 年間イベント予定（糸満ハーレー 6月18日・旧暦5月4日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://ryukyushimpo.jp/national/entry-5316801.html",
+          "title": "琉球新報 あす豊漁願う 糸満ハーレー 周辺道路交通規制（2026年6月17日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar1047e596007/data.html",
+          "title": "ウォーカープラス 糸満ハーレーの詳細データ（2026年6月18日 9:15）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://ryukyushimpo.jp/region/entry-5319630.html",
+          "title": "琉球新報 糸満ハーレー勇壮に 「御願バーレー」で幕開け（2026年6月18日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-06-08",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2027年の発表はまだない。糸満市は毎年旧暦5月4日に行うとしている。国立天文台の2027年の朔（6月5日）から、旧暦5月4日を2027年6月8日（火）と見込んだ（月の割り当ては夏至を含む月を5月とした）。2026年は朝の開会式から15時ごろまで競漕が続いた",
+      "sources": [
+        {
+          "url": "https://www.city.itoman.lg.jp/site/kankou-navi/15706.html",
+          "title": "糸満市 糸満のハーリー・ハーレー（旧暦5月4日に開催）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2027/rekiyou273.html",
+          "title": "国立天文台 令和9年（2027）暦要項 朔弦望",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [
+      "2026年は、会場の周辺の道路で8:30〜16:30に交通規制があった（2027年の規制は未発表）"
+    ],
+    "sources": [
+      {
+        "url": "https://ryukyushimpo.jp/national/entry-5316801.html",
+        "title": "琉球新報 あす豊漁願う 糸満ハーレー 周辺道路交通規制（糸満漁港の北地区・南地区に臨時の駐車場、北地区からシャトルバス）",
+        "checkedAt": "2026-11-04",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002276",
+        "title": "るるぶ&more. 糸満ハーレー（糸満漁港北地区に無料の駐車場約400台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://www.itoman-okinawa.jp/facility03-detail.php?cms_item_group_id=31611",
+        "title": "糸満市観光協会 糸満ハーレー（アクセス：那覇空港・那覇バスターミナルからバス）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "itoman-santinmo",
+      "name": "山巓毛（さんてぃんもう）",
+      "kind": "sightseeing",
+      "summary": "糸満の町並みを見渡す丘の上の展望所。晴れた日は慶良間の島々まで見える。ハーレーの日はここで祈願があり、競漕の始まりの旗が振られる。階段と坂があり、無料の駐車場がある",
+      "location": {
+        "lat": 26.1299,
+        "lng": 127.6702
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.itoman-okinawa.jp/facility01-detail.php?cms_item_group_id=27027",
+          "title": "糸満市観光協会 山巓毛",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "itoman-hakugindo",
+      "name": "白銀堂",
+      "kind": "sightseeing",
+      "summary": "糸満の海人が氏神として敬う拝所。ハーレーや大綱引きにまつわる旧暦の祭祀が行われ、堂の中には自然の石筍をまつる。怒りを鎮める教えの言い伝えでも知られる。無料の駐車場がある",
+      "location": {
+        "lat": 26.1335,
+        "lng": 127.671
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.itoman-okinawa.jp/facility01-detail.php?cms_item_group_id=27030",
+          "title": "糸満市観光協会 白銀堂",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "itoman-osakana-center",
+      "name": "糸満漁業協同組合 お魚センター",
+      "kind": "food",
+      "summary": "道の駅いとまんにある、沖縄の近海でとれた魚介を売る店の集まり。その場で調理してくれる店もある。土日は19時まで。休みは1月2〜4日で、ほかは店ごとに違う",
+      "location": {
+        "lat": 26.139,
+        "lng": 127.6609
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "18:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.itoman-okinawa.jp/facility01-detail.php?cms_item_group_id=26945",
+          "title": "糸満市観光協会 糸満漁業共同組合 お魚センター（平日9:00〜18:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "itoman-ichimaru",
+      "name": "糸満市場いとま～る",
+      "kind": "food",
+      "summary": "古い公設市場を建て替えた、町の人が集まる市場。魚や肉の店と食堂があり、糸満かまぼこや海鮮丼をテラスで食べられる。営業時間と休みは店ごとに違う",
+      "location": {
+        "lat": 26.129,
+        "lng": 127.667
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "19:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": ["local_food", "seating"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.itoman-okinawa.jp/facility01-detail.php?cms_item_group_id=27123",
+          "title": "糸満市観光協会 糸満市場いとま～る（9:00〜19:00、店舗により異なる）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.itoman.lg.jp/site/kankou-navi/15706.html",
+      "title": "糸満市 糸満のハーリー・ハーレー",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.itoman-okinawa.jp/facility03-detail.php?cms_item_group_id=31611",
+      "title": "糸満市観光協会 糸満ハーレー（主催：糸満ハーレー行事委員会）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と時刻（旧暦5月4日の決まりから日付を見込んだだけ）",
+    "雨や荒天のときの扱い",
+    "見学者向けの決まり（観覧の場所、立入禁止の範囲、ドローン・撮影の決まり）、服装・持ち物、危険度",
+    "2027年の有料の観覧席の有無と申し込み方法（過去に糸満市観光協会が販売したと報じられたが、公式の案内は確かめられなかった）",
+    "一般の人が加われるアヒル取りが2027年に行われるか（2025年に実施と報じられたが、公式の案内は確かめられなかった）",
+    "屋台・食べ物の販売の有無",
+    "鉄道はなく、那覇からの所要時間の公式の数字がない。観光協会は那覇空港・那覇バスターミナルから東京バス TK01・TK02（道の駅いとまん）や琉球バス89番（西崎二丁目、下車後徒歩5分）を案内している",
+    "出る舟と参加する組の数（規模の根拠の数）、見学者数",
+    "周辺の場所の知名度（大手の観光サイトの掲載数を数えていない）と、会場からの徒歩の時間"
+  ]
+}

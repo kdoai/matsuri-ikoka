@@ -1,0 +1,261 @@
+{
+  "id": "hofu-warai-ko",
+  "name": {
+    "ja": "笑い講",
+    "en": "Warai-ko Laughing Ritual (Omata Hachiman Shrine)"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "山口県",
+      "name": "防府市"
+    }
+  ],
+  "venue": {
+    "name": "小俣八幡宮",
+    "lat": 34.0703,
+    "lng": 131.4825
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["jalan", "walkerplus"],
+  "highlights": [
+    "紋付袴の講員が榊を手に、声をそろえて3度大笑いする全国でも珍しい神事",
+    "3度の笑いに、今年の豊作の感謝・来年の豊作の祈り・1年の苦労を忘れる願いを込める",
+    "鎌倉時代から大道小俣の地区で受け継がれてきたとされる、年の瀬の「年忘れの神事」"
+  ],
+  "trivia": [
+    {
+      "text": "神社の記録では、1199年（正治元年）に始まった神事とされる",
+      "source": {
+        "url": "https://www.walkerplus.com/article/170211/",
+        "title": "ウォーカープラス 山口県・小俣八幡宮で笑いの神事「笑い講」が開催（2018年11月29日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "もとは地元の農家21戸で営んできた行事だという",
+      "source": {
+        "url": "https://www.walkerplus.com/article/170211/",
+        "title": "ウォーカープラス 山口県・小俣八幡宮で笑いの神事「笑い講」が開催（2018年11月29日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "防府市の無形民俗文化財に指定されている",
+      "source": {
+        "url": "https://visit-hofu.jp/event/%e7%ac%91%e3%81%84%e8%ac%9b/",
+        "title": "防府市観光情報ポータルサイト たびたびほうふ 笑い講",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "笑い講と、笑いを広める活動は、日本ユネスコ協会連盟の「プロジェクト未来遺産」に登録された",
+      "source": {
+        "url": "https://visit-hofu.jp/warai/",
+        "title": "防府市観光情報ポータルサイト たびたびほうふ 世界お笑い協会",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "講員による神事の見物が中心で、主催者による危険や混雑の注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://yamaguchi-tourism.jp/event/detail_14766.html",
+        "title": "おいでませ山口へ 笑い講（神事）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://visit-hofu.jp/event/%e7%ac%91%e3%81%84%e8%ac%9b/",
+        "title": "防府市観光情報ポータルサイト たびたびほうふ 笑い講",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-06",
+      "start": "13:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "11:00から始まり、笑いの神事は13:00ごろから。紋付袴の講員が榊を持ち、3度笑い合う。毎年12月の第1日曜日",
+      "sources": [
+        {
+          "url": "https://visit-hofu.jp/event/%e7%ac%91%e3%81%84%e8%ac%9b/",
+          "title": "防府市観光情報ポータルサイト たびたびほうふ 笑い講（2026年12月6日（日）11:00〜、笑いの神事は13:00頃〜）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://yamaguchi-tourism.jp/event/detail_14766.html",
+          "title": "おいでませ山口へ 笑い講（神事）（2026年12月6日（日）11:00〜、笑いの神事は13:00頃〜）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://visit-hofu.jp/yamaguchidc-owaraikou-1/",
+          "title": "防府市観光情報ポータルサイト お笑い講選手権大会（模擬体験）（笑い講は毎年12月第1日曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://yamaguchi-tourism.jp/event/detail_14766.html",
+        "title": "おいでませ山口へ 笑い講（神事）（JR大道駅から車で約5分、一般の駐車場あり）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "hofu-tenmangu",
+      "name": "防府天満宮",
+      "kind": "sightseeing",
+      "summary": "904年に菅原道真を祀ったのが始まりと伝わり、日本で最初の天満宮とされる。境内は6:00〜20:00。歴史館は9:00〜16:30で、月曜・火曜が休み（大人800円）",
+      "location": {
+        "lat": 34.0631,
+        "lng": 131.5743
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "06:00",
+        "close": "20:00"
+      },
+      "closedDays": null,
+      "price": "境内の拝観料の案内はない。歴史館は大人800円、高校生以下無料",
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://visit-hofu.jp/spot/%e9%98%b2%e5%ba%9c%e5%a4%a9%e6%ba%80%e5%ae%ae/",
+          "title": "防府市観光情報ポータルサイト たびたびほうふ 防府天満宮",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "mohri-museum-garden",
+      "name": "毛利博物館・毛利氏庭園",
+      "kind": "sightseeing",
+      "summary": "旧長州藩主の毛利家の本邸と庭園。2026年10月30日〜12月7日は博物館で特別展「国宝」を開く。休館は12月22日〜31日で、庭園は年中無休",
+      "location": {
+        "lat": 34.0631,
+        "lng": 131.5871
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": [],
+      "price": "特別展「国宝」の会期中は博物館が大人1,300円、庭園との共通券が大人1,500円（小中学生はどちらも250円）",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://yamaguchi-tourism.jp/event/detail_17418.html",
+          "title": "おいでませ山口へ 毛利博物館 特別展「国宝」（2026年10月30日〜12月7日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "shiosai-ichiba-hofu-anshin-shokudo",
+      "name": "安心食堂 潮彩（道の駅 潮彩市場防府）",
+      "kind": "food",
+      "summary": "魚市場の隣の道の駅の2階にある食堂で、地元の漁港に揚がった魚の料理を出す。水曜（祝日なら翌日）と毎月第3火曜、1月1日〜4日は休み",
+      "location": {
+        "lat": 34.0378,
+        "lng": 131.5973
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "15:00",
+        "lastEntry": "14:45"
+      },
+      "closedDays": ["wed"],
+      "price": null,
+      "tags": ["indoor", "local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://shiosai-hofu.com/cms/page114.html",
+          "title": "道の駅 潮彩市場防府 各店舗の営業時間",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://visit-hofu.jp/spot/%e9%81%93%e3%81%ae%e9%a7%85-%e6%bd%ae%e5%bd%a9%e5%b8%82%e5%a0%b4-%e9%98%b2%e5%ba%9c/",
+          "title": "防府市観光情報ポータルサイト たびたびほうふ 道の駅 潮彩市場 防府",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://visit-hofu.jp/event/%e7%ac%91%e3%81%84%e8%ac%9b/",
+      "title": "防府市観光情報ポータルサイト たびたびほうふ 笑い講",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://yamaguchi-tourism.jp/event/detail_14766.html",
+      "title": "おいでませ山口へ 笑い講（神事）（主催：防府観光コンベンション協会）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://visit-hofu.jp/warai/",
+      "title": "防府市観光情報ポータルサイト たびたびほうふ 世界お笑い協会（鎌倉時代から800年以上伝わる）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "見学者が笑いに加われるか、見学できる場所と決まり（公式の案内が見つからない）",
+    "服装・持ち物・撮影の決まり",
+    "雨のときの扱い",
+    "終わる時刻と、11:00から13:00までの流れ",
+    "最寄り駅からの徒歩の時間（公式はJR大道駅から車で約5分とだけ案内）と、主要駅からの所要時間",
+    "駐車場の台数と交通規制",
+    "屋台・振る舞いの有無",
+    "講員の人数と見学者数",
+    "会場の近くの店（周辺の場所は防府市の中心部で、会場からの移動の時間は公式の案内がない）"
+  ]
+}
