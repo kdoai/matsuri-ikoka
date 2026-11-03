@@ -1,8 +1,10 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 import { testFestival } from "../domain/testFestivals";
-import { type MatsuriTool, searchNearby, ToolError } from "./matsuriTools";
-import { createMatsuriMcpServer, runTool } from "./mcpServer";
+import { CANDIDATE_CHECK_TIMEOUT_MS, createCandidateChecker } from "./candidateCheck";
+import { TOOL_TIMEOUT_MS } from "./context";
+import { type MatsuriTool, searchFestivals, searchNearby, ToolError } from "./matsuriTools";
+import { createMatsuriMcpServer, MCP_TOOL_CALL_TIMEOUT_MS, runTool } from "./mcpServer";
 import { testToolContext } from "./testContext";
 
 const ctx = () => testToolContext([testFestival({ id: "suzunari-toro" })]);
@@ -121,5 +123,57 @@ describe("createMatsuriMcpServer", () => {
     const server = createMatsuriMcpServer(ctx());
 
     expect(server).toMatchObject({ type: "sdk", name: "matsuri" });
+  });
+
+  it("外側の時間の上限は、どのツールの上限よりも長い", () => {
+    const server = createMatsuriMcpServer(ctx());
+
+    expect(server.timeout).toBe(MCP_TOOL_CALL_TIMEOUT_MS);
+    for (const limit of Object.values(TOOL_TIMEOUT_MS)) {
+      expect(MCP_TOOL_CALL_TIMEOUT_MS).toBeGreaterThan(limit);
+    }
+  });
+});
+
+describe("search_festivals の候補の確かめに時間がかかるとき", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("確かめが30秒近くかかっても、確かめた結果を付けた候補を返す", async () => {
+    vi.useFakeTimers();
+    const toolCtx = testToolContext([testFestival({ id: "suzunari-toro", status: "expected" })]);
+    const delayMs = CANDIDATE_CHECK_TIMEOUT_MS - 1;
+    toolCtx.candidateChecks = createCandidateChecker({
+      verifier: {
+        verify: () =>
+          new Promise((resolve) =>
+            setTimeout(
+              () =>
+                resolve({
+                  result: "as_planned",
+                  sources: [{ url: "https://example.com/suzunari/2026" }],
+                }),
+              delayMs,
+            ),
+          ),
+      },
+      today: toolCtx.today,
+      now: toolCtx.now,
+    });
+
+    const pending = runTool(
+      searchFestivals,
+      { when: { kind: "date", date: "2026-08-16" }, origin: "みなと中央駅", nights: 0 },
+      toolCtx,
+    );
+    await vi.advanceTimersByTimeAsync(delayMs);
+    const result = await pending;
+
+    expect(delayMs).toBeLessThan(MCP_TOOL_CALL_TIMEOUT_MS);
+    expect(result.isError).toBeUndefined();
+    expect(result.structuredContent?.candidates).toEqual([
+      expect.objectContaining({ festivalId: "suzunari-toro", confirmed: true }),
+    ]);
   });
 });
