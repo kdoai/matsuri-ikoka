@@ -1,0 +1,340 @@
+{
+  "id": "warei-taisai",
+  "name": { "ja": "和霊大祭", "en": "Warei Taisai Festival" },
+  "category": "mikoshi",
+  "municipalities": [{ "prefecture": "愛媛県", "name": "宇和島市" }],
+  "venue": { "name": "和霊神社・須賀川", "lat": 33.2314, "lng": 132.5647 },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "かがり火に照らされた須賀川を、3基の神輿が駆け上がる夜の走り込み",
+    "川の中の御神竹の先に付けた御幣を、輿丁が競って奪い合う",
+    "6隻の御座船を連ねて、神輿が海を渡る海上渡御",
+    "山家清兵衛を祀る和霊神社で、いちばん大きな祭事"
+  ],
+  "trivia": [
+    {
+      "text": "祭神の山家清兵衛は宇和島藩の家臣で、1620年に藩士の一味に襲われて亡くなった",
+      "source": {
+        "url": "https://wareijinja.fc2.net/blog-entry-2.html",
+        "title": "和霊神社 ご由緒",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1653年、朝廷の許しを経て、清兵衛の霊が正式に祀られた",
+      "source": {
+        "url": "https://wareijinja.fc2.net/blog-entry-2.html",
+        "title": "和霊神社 ご由緒",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "「走り込み」の名は、海を渡った神輿が神社へ勢いよく駆け込む様子から付いた",
+      "source": {
+        "url": "https://www.uwajima.org/event/index5.html",
+        "title": "宇和島市観光物産協会 和霊大祭 走り込み",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "境内の石の鳥居は、日本一の大きさといわれる",
+      "source": {
+        "url": "https://www.iyokannet.jp/spot/666",
+        "title": "いよ観ネット 和霊神社",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": [
+      "まつり期間中は、ドローンを飛ばしての撮影が禁止されている",
+      "まつり期間中は宇和島市内が全面駐車禁止。路上駐車や無断駐車をせず、無料駐車場か有料駐車場を使う"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": {
+      "policy": "restricted",
+      "note": "まつり期間中、ドローンでの空撮は禁止"
+    },
+    "sources": [
+      {
+        "url": "https://ushioni.gaina.ne.jp/traffic-regulation/",
+        "title": "うわじま牛鬼まつり実行委員会 交通規制について（ドローン撮影の禁止、市内全面駐車禁止）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ushioni.gaina.ne.jp/free-parking/",
+        "title": "うわじま牛鬼まつり実行委員会 まつり無料駐車場（路上駐車・無断駐車の禁止）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-07-23",
+      "start": "10:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "10:00 例祭、19:00 宵宮祭（どちらも和霊神社）",
+      "sources": [
+        {
+          "url": "https://ushioni.gaina.ne.jp/event-schedule/",
+          "title": "うわじま牛鬼まつり実行委員会 行事表＆イベント（2026年7月23日の和霊大祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://wareijinja.fc2.net/blog-entry-3.html",
+          "title": "和霊神社 年間行事（和霊大祭 7月23日・24日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-07-24",
+      "start": "17:30",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "13:00〜15:00 子ども行列（約100名、和霊神社から街へ）、17:30 神輿出御（3基、担ぎ手約200名）、19:00 御旅所祭（丸之内和霊神社）、20:15 海上渡御（新内港〜樺崎、御座船6隻）、20:50ごろ 走り込み（須賀川）",
+      "sources": [
+        {
+          "url": "https://ushioni.gaina.ne.jp/event-schedule/",
+          "title": "うわじま牛鬼まつり実行委員会 行事表＆イベント（2026年7月24日の和霊大祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://ushioni.gaina.ne.jp/wareitaisai",
+          "title": "うわじま牛鬼まつり実行委員会 和霊大祭とは（神輿3基・御座船6隻）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-23",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年7月23日・24日に行う決まりから見込んだ日（2027年の発表はまだない）。例年は10:00 例祭、19:00 宵宮祭",
+      "sources": [
+        {
+          "url": "https://wareijinja.fc2.net/blog-entry-3.html",
+          "title": "和霊神社 年間行事（和霊大祭 7月23日・24日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-24",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年7月24日に行う決まりから見込んだ日（2027年の発表はまだない）。神社の年間行事では例年、13:00 子供行列、17:30 神輿出御、19:00 御旅所祭、20:00 海上渡御、21:00 走り込み",
+      "sources": [
+        {
+          "url": "https://wareijinja.fc2.net/blog-entry-3.html",
+          "title": "和霊神社 年間行事（和霊大祭 7月23日・24日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.uwajima.org/event/index5.html",
+          "title": "宇和島市観光物産協会 和霊大祭 走り込み（毎年7月24日21時ごろ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 宇和島駅",
+        "walkMinutes": [10, 15],
+        "note": "和霊神社まで（るるぶ&more.の案内で徒歩10分。公式の案内は見つからない）"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "松山駅",
+        "minutes": [80, 90],
+        "route": "JR予讃線の特急（愛媛県の観光サイトの案内で約1時間20分）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [
+      "2026年は7月23日・24日、まつり行事の巡路と商店街の周りで車両通行禁止などの規制があった（範囲は実行委員会の図による）",
+      "2026年7月24日は、走り込みのあとの打上花火の前後に、丸山球場から闘牛場の付近まで通行止め",
+      "まつり期間中、宇和島市内は全面駐車禁止"
+    ],
+    "sources": [
+      {
+        "url": "https://ushioni.gaina.ne.jp/traffic-regulation/",
+        "title": "うわじま牛鬼まつり実行委員会 交通規制について",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ushioni.gaina.ne.jp/event-schedule/",
+        "title": "うわじま牛鬼まつり実行委員会 行事表＆イベント（7月24日の打上花火の前後の通行止め）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ushioni.gaina.ne.jp/free-parking/",
+        "title": "うわじま牛鬼まつり実行委員会 まつり無料駐車場（7月23日・24日は市役所・フジグラン北宇和島ほか4か所）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.iyokannet.jp/spot/666",
+        "title": "いよ観ネット 和霊神社（駐車場 普通車15台・無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.iyokannet.jp/access/kengai/osaka/uwajima",
+        "title": "いよ観ネット 大阪から宇和島駅へ（松山駅から特急で約1時間20分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/80036664",
+        "title": "るるぶ&more. 和霊神社（JR宇和島駅から徒歩10分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "宇和島鯛めし",
+        "note": "宇和島の郷土料理。市内の郷土料理店や、きさいや広場のフードコートで食べられる",
+        "sources": [
+          {
+            "url": "https://www.uwajima.org/restaurant/uwajimataimeshi.html",
+            "title": "宇和島市観光物産協会 宇和島の鯛めし",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "uwajima-castle",
+      "name": "宇和島城",
+      "kind": "sightseeing",
+      "summary": "藤堂高虎の築城術が生きる城で、全国に12ある現存天守の一つ。JR宇和島駅から徒歩約15分。11〜2月の天守は16:00まで",
+      "location": { "lat": 33.2207, "lng": 132.5644 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "09:00", "close": "17:00" },
+      "closedDays": [],
+      "price": "天守 大人200円",
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.iyokannet.jp/spot/663",
+          "title": "いよ観ネット 宇和島城（天守は3〜10月 9:00〜17:00、無休）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kisaiya-hiroba",
+      "name": "道の駅 みなとオアシスうわじま きさいや広場",
+      "kind": "food",
+      "summary": "宇和海の魚や柑橘、じゃこ天などの特産品を扱う道の駅。フードコートで宇和島鯛めしを出す。1月1日は休み",
+      "location": { "lat": 33.2223, "lng": 132.5583 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "09:00", "close": "18:00" },
+      "closedDays": [],
+      "price": null,
+      "tags": ["indoor", "local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.uwajima.org/shop/kisaiya.html",
+          "title": "宇和島市観光物産協会 道の駅 みなとオアシスうわじま きさいや広場",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "warei-park",
+      "name": "和霊公園",
+      "kind": "rest",
+      "summary": "和霊神社の隣にある市民の憩いの公園。かつて宇和島線を走ったC12形の蒸気機関車を展示している。入園は無料",
+      "location": { "lat": 33.2284, "lng": 132.5657 },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": [],
+      "price": "無料",
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.iyokannet.jp/spot/1883",
+          "title": "いよ観ネット 和霊公園（無休・無料、駐車場なし）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://wareijinja.fc2.net/blog-entry-3.html",
+      "title": "和霊神社 年間行事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://ushioni.gaina.ne.jp/wareitaisai",
+      "title": "うわじま牛鬼まつり実行委員会 和霊大祭とは",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.uwajima.org/spot/index3.html",
+      "title": "宇和島市観光物産協会 和霊神社（宇和島市和霊町1451）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、例祭・宵宮祭・神輿出御・海上渡御・走り込みそれぞれの時刻",
+    "一般の人が加われるか（過去の年の広報誌に走り込みのタイマツ隊の募集があったが、2026年・2027年の募集は確かめられない）",
+    "走り込みを見る場所、見学の決まり、危険についての注意、服装・持ち物",
+    "雨や荒天のときの扱い",
+    "和霊神社・須賀川の周りの交通規制の範囲と時間（実行委員会の案内は図で、文字では確かめられない）",
+    "JR宇和島駅から和霊神社までの徒歩の時間の公式の案内（宇和島自動車の和霊神社前バス停は和霊公園から徒歩1分）",
+    "屋台の有無と、祭りの日だけの食べもの",
+    "見物客の数（規模は、神輿3基・担ぎ手約200名・子ども行列約100名で、日ごとに行事が違うことから M にした）",
+    "周辺の場所の緯度・経度は、国土地理院の地名・住所検索の位置"
+  ]
+}
