@@ -266,6 +266,7 @@ function sourceChanges(before: Festival, after: Festival): ChangeKind[] {
 }
 
 interface IndexedSource {
+  url: string;
   confidence: Confidence;
   checkedAt: IsoDate;
   title: string | undefined;
@@ -279,7 +280,7 @@ function indexSources(festival: Festival): Map<string, IndexedSource> {
   const index = new Map<string, IndexedSource>();
   const add = (place: string, sources: readonly Festival["sources"][number][]) => {
     for (const { url, confidence, checkedAt, title } of sources) {
-      index.set(`${place} ${url}`, { confidence, checkedAt, title });
+      index.set(`${place} ${url}`, { url, confidence, checkedAt, title });
     }
   };
   add("sources", festival.sources);
@@ -427,4 +428,148 @@ function matchFestivals(field: string, festivals: readonly Festival[]): string[]
 /** 全角・半角と大文字・小文字の違いをならす */
 function normalize(text: string): string {
   return text.normalize("NFKC").toLowerCase();
+}
+
+// ---------------------------------------------------------------------------
+// 調べ直した結果を PR の本文にする
+
+/** 調べ直す前（新しい祭りなら null）と後の祭りの組 */
+export interface RefreshResult {
+  before: Festival | null;
+  after: Festival;
+}
+
+/** 調べ直しで取り込まなかった祭りと、その理由（スキーマや検証に落ちたなど） */
+export interface RejectedRefresh {
+  id: string;
+  reason: string;
+}
+
+export interface SourceChange {
+  status: "added" | "removed" | "updated";
+  url: string;
+  confidence: Confidence;
+  checkedAt: IsoDate;
+}
+
+/**
+ * 変わった出典を一覧にする。付いている場所が違っても同じ URL なら1つにまとめる。
+ * 追加 → 更新（確度・確認日・題名が変わった）→ 消えた、の順
+ */
+export function changedSources(before: Festival | null, after: Festival): SourceChange[] {
+  const previous = before === null ? new Map<string, IndexedSource>() : indexSources(before);
+  const next = indexSources(after);
+  const found = new Map<string, SourceChange>();
+  const add = (change: SourceChange) => {
+    const key = `${change.status} ${change.url}`;
+    if (!found.has(key)) found.set(key, change);
+  };
+  for (const [key, source] of next) {
+    const old = previous.get(key);
+    if (old === undefined) {
+      add({ status: "added", ...pick(source) });
+    } else if (
+      old.confidence !== source.confidence ||
+      old.checkedAt !== source.checkedAt ||
+      old.title !== source.title
+    ) {
+      add({ status: "updated", ...pick(source) });
+    }
+  }
+  for (const [key, source] of previous) {
+    if (!next.has(key)) add({ status: "removed", ...pick(source) });
+  }
+  const order = { added: 0, updated: 1, removed: 2 } as const;
+  return [...found.values()].sort((a, b) => order[a.status] - order[b.status]);
+}
+
+function pick({ url, confidence, checkedAt }: IndexedSource) {
+  return { url, confidence, checkedAt };
+}
+
+/** 結果の全体を人が確かめるか。1件でも人が確かめるもの、取り込まなかったものがあれば human */
+export function refreshReview(
+  changes: readonly FestivalChange[],
+  rejected: readonly RejectedRefresh[] = [],
+): "auto" | "human" {
+  return rejected.length === 0 && changes.every((change) => change.review === "auto")
+    ? "auto"
+    : "human";
+}
+
+const SOURCE_STATUS_LABELS: Record<SourceChange["status"], string> = {
+  added: "追加",
+  updated: "更新",
+  removed: "消えた",
+};
+
+/**
+ * 調べ直した結果を、PR の本文（Markdown）にする。
+ * 変わらなかった祭りは数だけを書く。中止・延期は先頭に、人が確かめるもの、自動でよいものの順に並べ、
+ * 祭りごとに変更の種類と変わった出典を書く。
+ * 祭りの名前や理由は調査で集めた信用しない文字列なので、Markdown の記号を打ち消して1行にする
+ */
+export function refreshPullRequestBody(
+  results: readonly RefreshResult[],
+  rejected: readonly RejectedRefresh[] = [],
+): string {
+  const entries = results.map((result) => ({
+    ...result,
+    change: classifyFestivalChange(result.before, result.after),
+  }));
+  const changed = entries.filter((entry) => entry.change.kinds.length > 0);
+  const urgent = changed.filter((entry) => entry.change.urgent);
+  const human = changed.filter((entry) => !entry.change.urgent && entry.change.review === "human");
+  const auto = changed.filter((entry) => entry.change.review === "auto");
+  const review = refreshReview(
+    changed.map((entry) => entry.change),
+    rejected,
+  );
+
+  const lines = [
+    "## 確かめ直した結果",
+    "",
+    `- マージ：${review === "auto" ? "CI が通れば自動でよい" : "人が確かめる"}`,
+    `- 変わった祭り：${changed.length} 件（人が確かめる ${urgent.length + human.length} 件、自動でよい ${auto.length} 件）`,
+    `- 変わらなかった祭り：${entries.length - changed.length} 件`,
+    `- 取り込まなかった祭り：${rejected.length} 件`,
+  ];
+  const section = (title: string, list: typeof changed) => {
+    if (list.length === 0) return;
+    lines.push("", `### ${title}`, "");
+    for (const { before, after, change } of list) {
+      const kinds = change.kinds.map((kind) => CHANGE_LABELS[kind]).join("、");
+      lines.push(`- \`${after.id}\` ${escapeMarkdown(after.name.ja)}：${kinds}`);
+      for (const source of changedSources(before, after)) {
+        lines.push(
+          `  - 出典の${SOURCE_STATUS_LABELS[source.status]}：${linkOf(source.url)}（${source.confidence}、${source.checkedAt} に確認）`,
+        );
+      }
+    }
+  };
+  section("優先して知らせる（中止・延期）", urgent);
+  section("人が確かめる", human);
+  section("自動でよい", auto);
+  if (rejected.length > 0) {
+    lines.push("", "### 取り込まなかった祭り", "");
+    for (const { id, reason } of rejected) {
+      lines.push(`- ${inlineCode(id)}：${escapeMarkdown(reason)}`);
+    }
+  }
+  return `${lines.join("\n")}\n`;
+}
+
+/** URL を自動のリンクにする。山かっこ・空白を含むものはリンクにせず、文字として書く */
+function linkOf(url: string): string {
+  return /^https?:\/\/[^\s<>]+$/.test(url) ? `<${url}>` : escapeMarkdown(url);
+}
+
+/** 取り込まなかった祭りの ID は検証の前の値なので、そのまま書かない */
+function inlineCode(text: string): string {
+  return /^[a-z0-9-]+$/.test(text) ? `\`${text}\`` : escapeMarkdown(text);
+}
+
+/** Markdown・HTML の記号と、人への通知になる @ を打ち消し、改行を空白にして1行にする */
+function escapeMarkdown(text: string): string {
+  return text.replace(/\s+/g, " ").replace(/[\\`*_{}[\]()#+\-.!|<>~@&]/g, (mark) => `\\${mark}`);
 }

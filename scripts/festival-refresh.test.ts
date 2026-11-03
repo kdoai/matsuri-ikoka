@@ -2,7 +2,11 @@ import { describe, expect, it } from "vitest";
 import { type Festival, type FestivalInput, FestivalSchema } from "../packages/schema/src";
 import { fictionalFestival, fictionalSource } from "../packages/schema/src/testing";
 import {
+  changedSources,
   classifyFestivalChange,
+  type FestivalChange,
+  refreshPullRequestBody,
+  refreshReview,
   requestsFromIssues,
   selectRefreshTargets,
 } from "./festival-refresh";
@@ -308,5 +312,120 @@ describe("requestsFromIssues", () => {
     const { requests } = requestsFromIssues(issues, festivals);
     const [first] = selectRefreshTargets(festivals, { today: "2026-05-15", requests });
     expect(first).toMatchObject({ id: "kazane-odori", reasons: ["request", "stale"] });
+  });
+});
+
+describe("changedSources", () => {
+  const before = festivalOf();
+
+  it("追加・更新・消えた出典を、その順に URL ごとに1つずつ出す", () => {
+    const after = festivalOf((f) => {
+      f.access.sources = [fictionalSource("access-new", "single")];
+      f.sources[0] = { ...f.sources[0]!, checkedAt: "2026-05-01" };
+    });
+    const changes = changedSources(before, after);
+    expect(changes[0]).toEqual({
+      status: "added",
+      url: "https://example.com/suzunari/access-new",
+      confidence: "single",
+      checkedAt: "2026-04-01",
+    });
+    expect(changes.map((c) => c.status)).toEqual(["added", "updated", "removed"]);
+    expect(changes[1]).toMatchObject({ url: before.sources[0]!.url, checkedAt: "2026-05-01" });
+    expect(changes[2]).toMatchObject({ url: before.access.sources[0]!.url });
+  });
+
+  it("新しい祭りは、すべての出典を追加として出す", () => {
+    const changes = changedSources(null, before);
+    expect(changes.length).toBeGreaterThan(0);
+    expect(changes.every((c) => c.status === "added")).toBe(true);
+    expect(new Set(changes.map((c) => c.url)).size).toBe(changes.length);
+  });
+
+  it("変わっていなければ空", () => {
+    expect(changedSources(before, festivalOf())).toEqual([]);
+  });
+});
+
+describe("refreshReview", () => {
+  const auto: FestivalChange = { id: "a", kinds: [], review: "auto", urgent: false };
+  const human: FestivalChange = { ...auto, review: "human" };
+
+  it("すべて自動でよく、取り込まなかったものがなければ自動", () => {
+    expect(refreshReview([auto, auto])).toBe("auto");
+  });
+
+  it("人が確かめるものか、取り込まなかったものが1つでもあれば人", () => {
+    expect(refreshReview([auto, human])).toBe("human");
+    expect(refreshReview([auto], [{ id: "b", reason: "スキーマに合わない" }])).toBe("human");
+  });
+});
+
+describe("refreshPullRequestBody", () => {
+  const before = festivalOf();
+  const other = (edit: (festival: FestivalInput) => void = () => {}) =>
+    festivalOf((f) => {
+      f.id = "kazane-odori";
+      f.name = { ja: "風音踊り" };
+      edit(f);
+    });
+
+  it("中止・延期、人が確かめる、自動でよい、の順に、種類と変わった出典を書く", () => {
+    const cancelled = festivalOf((f) => {
+      f.occurrences[0] = { ...f.occurrences[0]!, status: "cancelled" };
+    });
+    const checked = other((f) => {
+      f.sources.push(fictionalSource("press", "single"));
+    });
+    const unchanged = festivalOf((f) => {
+      f.id = "hoshizora-taiko";
+    });
+    const body = refreshPullRequestBody([
+      { before: other(), after: checked },
+      { before, after: cancelled },
+      { before: unchanged, after: unchanged },
+    ]);
+    expect(body).toContain("- マージ：人が確かめる");
+    expect(body).toContain("- 変わった祭り：2 件（人が確かめる 1 件、自動でよい 1 件）");
+    expect(body).toContain("- 変わらなかった祭り：1 件");
+    expect(body.indexOf("### 優先して知らせる")).toBeLessThan(body.indexOf("### 自動でよい"));
+    expect(body).not.toContain("### 人が確かめる");
+    expect(body).toContain("- `suzunari-toro` 鈴鳴灯籠まつり：中止・延期");
+    expect(body).toContain(
+      "  - 出典の追加：<https://example.com/suzunari/press>（single、2026-04-01 に確認）",
+    );
+    expect(body).not.toContain("hoshizora-taiko");
+  });
+
+  it("すべて自動でよければ、そう書く", () => {
+    const after = festivalOf((f) => {
+      f.popularity = "regional";
+    });
+    expect(refreshPullRequestBody([{ before, after }])).toContain(
+      "- マージ：CI が通れば自動でよい",
+    );
+  });
+
+  it("取り込まなかった祭りを理由とともに書き、人が確かめる側にする", () => {
+    const body = refreshPullRequestBody(
+      [],
+      [{ id: "kazane-odori", reason: "開催回の日付が読めない" }],
+    );
+    expect(body).toContain("- マージ：人が確かめる");
+    expect(body).toContain("### 取り込まなかった祭り");
+    expect(body).toContain("- `kazane-odori`：開催回の日付が読めない");
+  });
+
+  it("集めた文字列の Markdown の記号・通知・改行を打ち消す", () => {
+    const after = other((f) => {
+      f.name = { ja: "風音[踊り](https://example.com) @someone\n## 見出し" };
+    });
+    const body = refreshPullRequestBody(
+      [{ before: other(), after }],
+      [{ id: "`x`", reason: "<b>読めない</b>\n- 項目" }],
+    );
+    expect(body).toContain(String.raw`風音\[踊り\]\(https://example\.com\) \@someone \#\# 見出し`);
+    expect(body).toContain(String.raw`- \`x\`：\<b\>読めない\</b\> \- 項目`);
+    expect(body).not.toMatch(/^## 見出し/m);
   });
 });
