@@ -17,7 +17,8 @@
     "typecheck": "pnpm --recursive run typecheck && tsc -p scripts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "validate:data": "tsx scripts/validate-festivals.ts"
+    "validate:data": "tsx scripts/validate-festivals.ts",
+    "refresh:targets": "tsx scripts/refresh-targets.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.4",
