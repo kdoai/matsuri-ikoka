@@ -2,6 +2,10 @@
 
 const range = (min: number, max: number) => (min === max ? `${min}` : `${min}〜${max}`);
 
+// カレンダーの曜日（日曜はじまり）。日付の曜日は、暦の日付から数える
+const JA_WEEKDAYS = ["日", "月", "火", "水", "木", "金", "土"];
+const weekdayOf = (date: string) => new Date(`${date}T00:00:00Z`).getUTCDay();
+
 // 選んで進める相談の選択肢（画面のボタンと、まとめて送る一文の両方で使う）
 const consultLabels = {
   party: "だれと",
@@ -193,12 +197,14 @@ export const ja = {
     calendar: {
       label: "行きと帰りの日",
       hint: "行きの日と帰りの日を選んでください（同じ日なら日帰り）",
-      hintEnd: "帰りの日を選んでください",
       previous: "前の月",
       next: "次の月",
       month: (month: string) => `${Number(month.slice(0, 4))}年${Number(month.slice(5, 7))}月`,
-      weekdays: ["日", "月", "火", "水", "木", "金", "土"],
+      weekdays: JA_WEEKDAYS,
       day: (date: string) => `${Number(date.slice(5, 7))}月${Number(date.slice(8, 10))}日`,
+      short: (date: string) =>
+        `${Number(date.slice(5, 7))}/${Number(date.slice(8, 10))}(${JA_WEEKDAYS[weekdayOf(date)] ?? ""})`,
+      going: (day: string) => `行き ${day}。帰りの日を選んでください`,
     },
     stationLabel: "最寄りの駅",
     stationPlaceholder: "駅名を入れてください（例：みなと中央）",
@@ -377,7 +383,8 @@ export const ja = {
       tool_failed: "調べものがうまくいきませんでした。",
       upstream_unavailable: "外のサービスにつながりませんでした。",
       internal: "サーバーでうまくいかないことがありました。",
-      connection_lost: "返事の途中で通信が切れました。「もう一度送る」で送り直せます。",
+      connection_lost:
+        "通信が途中で切れて、返事が最後まで届きませんでした。「もう一度送る」で送り直せます。",
       server_unreachable:
         "お店のサーバーにつながりません。少し待ってから「もう一度送る」を押してください。",
       invalid_event: "受け取った情報の形が正しくありませんでした。",

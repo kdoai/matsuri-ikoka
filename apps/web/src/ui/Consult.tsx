@@ -26,7 +26,6 @@ import {
   isAnswered,
   MULTI_QUESTIONS,
   nextStep,
-  nightsBetween,
   OTHER,
   OTHER_QUESTIONS,
   type PartyMember,
@@ -331,37 +330,13 @@ function ScheduleStep() {
         ))}
       </ChoiceGroup>
       {pick === "dates" ? (
-        <>
-          <RangeCalendar
-            today={today}
-            range={answer?.range}
-            autoFocus={justOpened}
-            onRange={(from, to) => actions.editConsult((answers) => setRange(answers, from, to))}
-          />
-          <div className="mt-2 flex items-center justify-between gap-2">
-            <p className="font-bold text-ink" aria-live="polite" data-testid="consult-nights">
-              {answer?.range === undefined
-                ? null
-                : t.consult.wording.paren(
-                    t.consult.wording.range(
-                      t.consult.calendar.day(answer.range.from),
-                      t.consult.calendar.day(answer.range.to),
-                    ),
-                    t.consult.wording.nights(nightsBetween(answer.range.from, answer.range.to)),
-                  )}
-            </p>
-            <button
-              type="button"
-              className={decideButton}
-              disabled={answer?.range === undefined}
-              onClick={advance}
-              data-testid="consult-decide"
-            >
-              {t.consult.decide}
-              <ChevronRight aria-hidden="true" className="size-4" />
-            </button>
-          </div>
-        </>
+        <RangeCalendar
+          today={today}
+          range={answer?.range}
+          autoFocus={justOpened}
+          onRange={(from, to) => actions.editConsult((answers) => setRange(answers, from, to))}
+          onDecide={advance}
+        />
       ) : pick !== undefined ? (
         <div className="mt-2 animate-fade">
           <ChoiceGroup label={t.consult.stayLabel}>
