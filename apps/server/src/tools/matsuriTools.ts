@@ -49,6 +49,7 @@ import { occurrenceOn } from "../domain/planCheck";
 import { preferenceEffects } from "../domain/preferences";
 import { decideVerification } from "../domain/verification";
 import { randomId } from "../session/sessionStore";
+import type { CandidateCheck } from "./candidateCheck";
 import { type AgentToolName, TOOL_TIMEOUT_MS, type ToolContext } from "./context";
 
 // 接客エージェントに渡す7つのツール。入出力は Zod で決め、計算と絞り込みは domain の関数で行う。
@@ -150,6 +151,63 @@ export function hearingReport(ctx: ToolContext) {
   };
 }
 
+/** 候補の祭りと日付ごとに、開催を確かめる。終わったものから festival.verified で画面に送る */
+async function checkCandidates(
+  ctx: ToolContext,
+  matches: readonly { festival: Festival; date: IsoDate }[],
+): Promise<(CandidateCheck | null)[]> {
+  const checker = ctx.candidateChecks;
+  if (checker === undefined) return matches.map(() => null);
+  return Promise.all(
+    matches.map(async ({ festival, date }) => {
+      const check = await checker.check({
+        festival,
+        date,
+        session: ctx.session,
+        signal: ctx.signal,
+      });
+      if (check !== null && !ctx.signal.aborted) {
+        ctx.emit?.({
+          type: "festival.verified",
+          data: {
+            festivalId: check.festivalId,
+            date: check.date,
+            scope: "candidate",
+            result: check.result,
+            checkedAt: check.checkedAt,
+            sources: check.sources,
+            ...(check.note ? { note: check.note } : {}),
+          },
+        });
+      }
+      return check;
+    }),
+  );
+}
+
+/** エージェントに返す確かめの結果 */
+function factCheckOf(check: CandidateCheck | null) {
+  return check === null
+    ? null
+    : { result: check.result, note: check.note ?? null, sources: check.sources };
+}
+
+/** 候補に確かめの結果を付ける。公式で確かめられたら確認済み、変更・中止なら未確認にする */
+function withCheck(candidate: FestivalCandidate, check: CandidateCheck | null): FestivalCandidate {
+  if (check === null) return candidate;
+  const confirmed =
+    check.result === "as_planned"
+      ? true
+      : check.result === "changed" || check.result === "cancelled"
+        ? false
+        : candidate.confirmed;
+  return {
+    ...candidate,
+    confirmed,
+    check: { result: check.result, checkedAt: check.checkedAt },
+  };
+}
+
 // ---------------------------------------------------------------------------
 
 const NoteConditionsInputSchema = PartialTripConditionsSchema.extend({
@@ -238,7 +296,11 @@ export const searchFestivals = defineTool({
       ...(args.maxTravelMinutes === undefined ? {} : { maxTravelMinutes: args.maxTravelMinutes }),
     });
 
-    const candidates: FestivalCandidate[] = result.matches.map(toCandidate);
+    // 候補を出す前に、開催日・時刻・状態を公式の情報で確かめる（3件を並べて動かす）
+    const checks = await checkCandidates(ctx, result.matches);
+    const candidates: FestivalCandidate[] = result.matches.map((match, index) =>
+      withCheck(toCandidate(match), checks[index] ?? null),
+    );
     session.candidates = candidates;
     ctx.turn.searched = true;
 
@@ -253,7 +315,7 @@ export const searchFestivals = defineTool({
       today,
       searchedRange: ranges,
       candidates,
-      details: result.matches.map((m) => ({
+      details: result.matches.map((m, index) => ({
         festivalId: m.festival.id,
         category: m.festival.category,
         scaleTier: m.festival.scaleTier,
@@ -282,6 +344,8 @@ export const searchFestivals = defineTool({
             note: o.note ?? null,
           })),
         travelMinutesEstimate: m.travelMinutes,
+        // 候補を出す前の確かめ。null は確かめていない（上限や、確かめる手段がない）
+        factCheck: factCheckOf(checks[index] ?? null),
         arrivalBufferMinutes: arrivalBufferMinutes(m.festival),
         participation: m.festival.etiquette.participation,
       })),

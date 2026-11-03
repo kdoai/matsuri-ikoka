@@ -1,5 +1,6 @@
 import {
   type IsoDate,
+  type SseEvent,
   type StaffId,
   TOOL_NAMES,
   type ToolName,
@@ -7,6 +8,7 @@ import {
 } from "@matsuri-ikoka/schema";
 import type { FestivalStore } from "../data/festivalStore";
 import type { ItineraryStore, Session } from "../session/sessionStore";
+import type { CandidateChecker } from "./candidateCheck";
 import type { FestivalVerifier } from "./verifier";
 import type { WeatherService } from "./weather";
 
@@ -55,6 +57,10 @@ export interface ToolContext {
   itineraries: ItineraryStore;
   weather: WeatherService;
   verifier: FestivalVerifier;
+  /** 候補を出す前の開催の確かめ。ないとき（mock やテスト）は確かめない */
+  candidateChecks?: CandidateChecker;
+  /** ツールの途中で画面に送るイベント（候補の確かめの結果など） */
+  emit?: (event: SseEvent) => void;
   today: () => IsoDate;
   /** 日本の今の日時（ISO 8601） */
   now: () => string;
@@ -63,7 +69,8 @@ export interface ToolContext {
 /** ツールごとの時間の上限（ミリ秒） */
 export const TOOL_TIMEOUT_MS: Readonly<Record<AgentToolName, number>> = {
   note_conditions: 5_000,
-  search_festivals: 10_000,
+  // 候補の確かめ（1件30秒、3件を並べて動かす）を含む
+  search_festivals: 45_000,
   search_nearby: 10_000,
   get_access: 10_000,
   get_weather: 10_000,

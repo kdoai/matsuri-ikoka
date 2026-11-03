@@ -1,7 +1,8 @@
-import type { Itinerary } from "@matsuri-ikoka/schema";
+import type { Itinerary, SseEvent } from "@matsuri-ikoka/schema";
 import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
 import { testFestival } from "../domain/testFestivals";
+import { createCandidateChecker } from "./candidateCheck";
 import {
   getAccess,
   getWeather,
@@ -109,6 +110,67 @@ describe("search_nearby を地域で探す", () => {
   it("祭りの ID も地域もなければ断る", async () => {
     const ctx = testToolContext([suzunari()]);
     await expect(searchNearby.run({ date: "2026-08-18" }, ctx, signal)).rejects.toThrow();
+  });
+});
+
+describe("search_festivals の、候補を出す前の確かめ", () => {
+  it("見込みの祭りも公式の情報で確かめ、結果を候補に付けて festival.verified で送る", async () => {
+    const expected = testFestival({ id: "suzunari-toro", status: "expected" });
+    const ctx = testToolContext([expected], {
+      report: { result: "as_planned", sources: [{ url: "https://example.com/suzunari/2026" }] },
+    });
+    const events: SseEvent[] = [];
+    ctx.emit = (event) => events.push(event);
+    ctx.candidateChecks = createCandidateChecker({
+      verifier: ctx.verifier,
+      today: ctx.today,
+      now: ctx.now,
+    });
+
+    const result = await searchFestivals.run(
+      { when: { kind: "date", date: "2026-08-16" }, origin: "みなと中央駅", nights: 0 },
+      ctx,
+      signal,
+    );
+
+    expect(result.candidates).toEqual([
+      expect.objectContaining({
+        festivalId: "suzunari-toro",
+        confirmed: true,
+        check: { result: "as_planned", checkedAt: "2026-08-03T10:15:00+09:00" },
+      }),
+    ]);
+    expect(events).toEqual([
+      expect.objectContaining({
+        type: "festival.verified",
+        data: expect.objectContaining({
+          festivalId: "suzunari-toro",
+          date: "2026-08-16",
+          scope: "candidate",
+          result: "as_planned",
+        }),
+      }),
+    ]);
+  });
+
+  it("確かめられなかった見込みの祭りは、未確認のまま結果を付ける", async () => {
+    const ctx = testToolContext([testFestival({ id: "suzunari-toro", status: "expected" })]);
+    ctx.candidateChecks = createCandidateChecker({
+      verifier: ctx.verifier,
+      today: ctx.today,
+      now: ctx.now,
+    });
+    const result = await searchFestivals.run(
+      { when: { kind: "date", date: "2026-08-16" }, origin: "みなと中央駅", nights: 0 },
+      ctx,
+      signal,
+    );
+    expect(result.candidates).toEqual([
+      expect.objectContaining({
+        confirmed: false,
+        check: expect.objectContaining({ result: "not_found" }),
+      }),
+    ]);
   });
 });
 
