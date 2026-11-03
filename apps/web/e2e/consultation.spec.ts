@@ -155,13 +155,15 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   await closeLog(page);
 });
 
-test("待ち時間には小話とクイズが出て、答えると結果が出る", async ({ page }, info) => {
+test("待ち時間には豆知識係が祭りの話と出典を出し、クイズに答えられる", async ({ page }, info) => {
   test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
   await enterShop(page);
   await sendSampleMessage(page, 0);
-  await expect(page.getByTestId("trivia-card")).toBeVisible();
-  await expect(page.getByTestId("trivia-card")).toContainText("知ってた？");
-  await snap(page, info, "10-trivia");
+  // 祭り調査係が探している間も、だれが何をしているかと経過時間を出す
+  const guide = page.getByTestId("waiting-guide");
+  await expect(guide).toBeVisible();
+  await expect(page.getByTestId("waiting-staff")).toContainText("祭り調査係");
+  await expect(page.getByTestId("waiting-elapsed")).toContainText("経過");
   await waitForReply(page);
 
   await page
@@ -169,6 +171,21 @@ test("待ち時間には小話とクイズが出て、答えると結果が出�
     .first()
     .getByRole("button", { name: "この祭りにする" })
     .click();
+  // 候補が出たあとは、候補の祭りのデータの話を、出典つきで話す
+  const talk = page.getByTestId("trivia-card");
+  await expect(talk).toBeVisible();
+  await expect(talk).toContainText("鈴鳴灯籠まつりより");
+  await expect(talk.getByRole("link")).toHaveAttribute("href", /example\.com/);
+  const first = await page.getByTestId("waiting-talk").textContent();
+  await guide.getByRole("button", { name: "次の話" }).click();
+  await expect(page.getByTestId("waiting-talk")).not.toHaveText(first ?? "");
+  await guide.getByRole("button", { name: "止める" }).click();
+  await expect(guide.getByRole("button", { name: "続ける" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await snap(page, info, "10-waiting-guide");
+
   const quiz = page.getByTestId("quiz-card");
   await expect(quiz).toBeVisible({ timeout: 10_000 });
   await quiz.getByRole("button").first().click();
@@ -176,6 +193,7 @@ test("待ち時間には小話とクイズが出て、答えると結果が出�
   await snap(page, info, "11-quiz");
   await waitForReply(page);
   await expect(quiz).toHaveCount(0);
+  await expect(guide).toHaveCount(0);
 });
 
 test("キーボードだけで、候補を閉じ、タブを移れる", async ({ page }, info) => {

@@ -297,11 +297,8 @@ export const ja = {
     finalCheck: "当日は、公式サイトで最終確認をしてください。",
   },
   trivia: {
-    title: "知ってた？",
-    next: "次の小話",
     addCandidate: "この祭りも候補に",
     addMessage: (name: string) => `「${name}」も候補に入れてください。`,
-    source: "出典",
   },
   quiz: {
     title: "祭りクイズ",

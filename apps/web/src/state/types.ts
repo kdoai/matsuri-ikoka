@@ -141,9 +141,22 @@ export interface VerifyState {
 // ---------------------------------------------------------------------------
 // 待ち時間：祭りの小話・クイズ
 
-export interface TriviaCard {
+/** 豆知識の話の種類：小話 / 見どころ / 作法 */
+export type WaitingTalkKind = "trivia" | "highlight" | "etiquette";
+
+/**
+ * 待ち時間の豆知識の1話。中身は祭りのデータの文字列だけで、その場で文章を作らない。
+ * 作法のうち、決まった値（見学か加われるか・危険度・写真）は code に入れ、画面の辞書で言葉にする。
+ */
+export interface WaitingTalk {
+  kind: WaitingTalkKind;
   festivalId: string;
   festivalName: string;
+  /** 作法のときの項目 */
+  item?: "participation" | "howToJoin" | "rules" | "dress" | "bring" | "risk" | "photo";
+  /** 作法の決まった値（participation・risk の level・photo の policy） */
+  code?: string;
+  /** データの文字列（作法で決まった値だけのときは空） */
   text: string;
   source: Source;
 }

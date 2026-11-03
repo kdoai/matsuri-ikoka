@@ -6,6 +6,7 @@ import { useReducedMotion } from "./hooks";
 import { PlayPrompt } from "./Play";
 import { StaffFloor } from "./StaffPanel";
 import { ShopScene, useScene3d } from "./scene3d";
+import { HostBubble } from "./Waiting";
 
 // ゲームの画面の背景になる店。3D の部品（src/scenes/ShopScene.tsx）は ShopSceneProps を受け取り、
 // ストアの状態だけを読む。読み込むまでは 2D の見取り図を出しておき、3D が描けたら上に重ねる。
@@ -80,6 +81,7 @@ export function GameStage({
             <div className="absolute inset-0">
               <ShopScene {...props} onTalk={onTalk} onPad={onPad} />
             </div>
+            <HostBubble />
             <PlayPrompt />
           </Suspense>
         </SceneBoundary>

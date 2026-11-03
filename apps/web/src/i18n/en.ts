@@ -314,11 +314,8 @@ export const en: Messages = {
     finalCheck: "On the day, please check the official website one last time.",
   },
   trivia: {
-    title: "Did you know?",
-    next: "Next fact",
     addCandidate: "Add this festival",
     addMessage: (name: string) => `Please add "${name}" to the picks too.`,
-    source: "Source",
   },
   quiz: {
     title: "Festival quiz",
