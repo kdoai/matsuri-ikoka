@@ -413,7 +413,8 @@ export const en: Messages = {
       tool_failed: "A lookup did not work.",
       upstream_unavailable: "We could not reach an outside service.",
       internal: "Something went wrong on the server.",
-      connection_lost: "The connection was lost.",
+      connection_lost:
+        "The connection dropped before the reply finished. Use “Send again” to resend your message.",
       invalid_event: "We received information in an unexpected form.",
       session_lost:
         "We couldn't find your earlier conversation, so we started a new one. Please send your message again.",
