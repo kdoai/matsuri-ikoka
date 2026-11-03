@@ -210,6 +210,7 @@ b, strong, h1, h2, h3, h4 { font-weight: 900; }
   .toolbar a { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: var(--on-accent); font-weight: 900; text-decoration: none; padding: 10px 20px; border-radius: 99px; font-size: 16px; }
   .sheet { width: 210mm; max-width: calc(100% - 24px); margin: 0 auto 10mm; background: var(--paper); padding: 12mm; border-radius: 4mm; box-shadow: 0 2px 10px rgba(60, 40, 20, 0.18); }
   .cover { min-height: 283mm; height: auto; padding-bottom: 0; }
+  .sheet.cover { background: var(--cover-bg); }
 }
 @media screen and (max-width: 820px) {
   body { font-size: 16px; }
