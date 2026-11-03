@@ -7,7 +7,10 @@ import type { Festival, IsoDate, Source, VerificationResult } from "@matsuri-iko
 export interface VerificationReport {
   result: VerificationResult;
   sources: { url: string; title?: string }[];
-  /** 読んだ公式のページに、確かめる日の年（今年の開催）が書かれていたか。例年の日付だけなら false */
+  /**
+   * 読んだ公式のページに、確かめる日の年（今年の開催）が書かれていたか。例年の日付だけなら false。
+   * 調べた側の自己申告ではなく、ページの日付の文からコードで決める（yearStatedOnPage）
+   */
   yearStated?: boolean;
   note?: string;
 }
@@ -23,6 +26,51 @@ const NOTE_MAX_LENGTH = 200;
 /** 公式のページに例年の日付はあるが、今年の開催と書かれていないときの説明 */
 export const YEAR_NOT_STATED_NOTE =
   "公式のページに例年の日程はありますが、今年の開催とは書かれていないため、今年の予定は確かめられませんでした";
+
+/** 照合のために、全角と半角・空白の違いをならす */
+function normalizeForMatch(text: string): string {
+  return text.normalize("NFKC").replace(/\s+/g, "");
+}
+
+const KANJI_DIGITS = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
+
+/** 1〜99 を漢数字にする（八・十一・二十・三十五） */
+function kanjiNumber(n: number): string {
+  const tens = Math.floor(n / 10);
+  const ones = n % 10;
+  const tensPart = tens === 0 ? "" : `${tens === 1 ? "" : KANJI_DIGITS[tens]}十`;
+  return `${tensPart}${KANJI_DIGITS[ones]}`;
+}
+
+/**
+ * 文に、その年が書かれているか。西暦（2026・２０２６）と令和（令和8年・令和八年・令和元年）を読む。
+ * 「毎年」「例年」のように年のない書き方や、2桁の年（26年）は、書かれていないとみなす
+ */
+export function statesYear(text: string, year: number): boolean {
+  const normalized = normalizeForMatch(text);
+  if (new RegExp(`(?<!\\d)${year}(?!\\d)`).test(normalized)) return true;
+  const reiwa = year - 2018;
+  if (reiwa < 1 || reiwa > 99) return false;
+  const names = [String(reiwa), kanjiNumber(reiwa), ...(reiwa === 1 ? ["元"] : [])];
+  return new RegExp(`令和(?:${names.join("|")})年`).test(normalized);
+}
+
+/**
+ * 調べた側が写したページの日付の文（dateText）から、確かめる日の年がページに書かれていたかを決める。
+ * - 写した文が、実際に読んだページの本文（WebFetch の結果）の中にあるときだけ使う。ないなら、書き換えたか補ったとみなす
+ * - その文に、確かめる日の年が書かれているか（statesYear）
+ */
+export function yearStatedOnPage(input: {
+  dateText: string | undefined;
+  /** 実際に読んだページの本文 */
+  pages: readonly string[];
+  date: IsoDate;
+}): boolean {
+  const quote = normalizeForMatch(input.dateText ?? "");
+  if (quote === "") return false;
+  if (!input.pages.some((page) => normalizeForMatch(page).includes(quote))) return false;
+  return statesYear(quote, Number(input.date.slice(0, 4)));
+}
 
 function hostOf(url: string): string | null {
   try {
