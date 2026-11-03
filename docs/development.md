@@ -86,15 +86,10 @@ main のルールセットは、上のすべてのジョブを必須の検査に
 pnpm lint && pnpm typecheck && pnpm test && pnpm validate:data && pnpm build
 ```
 
-e2e を接客サーバーのモックにつないで走らせるときは、サーバーを別に起動しておきます。
+e2e は、Playwright が接客サーバーをモックで起動し、画面の開発サーバーからつなぎます（`apps/web/playwright.config.ts`。ポートは 35179 と 38787）。
 
 ```bash
-pnpm --filter @matsuri-ikoka/server build
-MATSURI_AGENT_MODE=mock MATSURI_REPLAY_SPEED=0 PORT=8787 node apps/server/dist/index.js
-```
-
-```bash
-E2E_MOCK_SERVER=1 pnpm --filter @matsuri-ikoka/web test:e2e
+pnpm --filter @matsuri-ikoka/web test:e2e
 ```
 
 ## 6. マージ
