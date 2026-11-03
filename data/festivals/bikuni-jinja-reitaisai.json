@@ -1,0 +1,306 @@
+{
+  "id": "bikuni-jinja-reitaisai",
+  "name": { "ja": "美國神社例大祭", "en": "Bikuni Shrine Annual Festival" },
+  "category": "fire",
+  "municipalities": [{ "prefecture": "北海道", "name": "積丹町" }],
+  "venue": { "name": "美國神社", "lat": 43.2932, "lng": 140.5945 },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": ["walkerplus"],
+  "highlights": [
+    "猿田彦の面の天狗が一本歯の下駄で燃える柴の上を渡る火渡り",
+    "天狗に続いて神輿も炎の中を進む",
+    "大漁旗を掲げた船が海を進む海上渡御",
+    "神輿や山車が町を巡る渡行"
+  ],
+  "trivia": [
+    {
+      "text": "享保10年（1725）に伏見稲荷大社の分霊をまつり、稲荷神社と称したのが始まり",
+      "source": {
+        "url": "https://sites.google.com/view/bikuni-shrine/%E7%94%B1%E7%B7%92",
+        "title": "美國神社 由緒",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "明治26年に「美国神社」へ名を改めることが許された",
+      "source": {
+        "url": "https://sites.google.com/view/bikuni-shrine/%E7%94%B1%E7%B7%92",
+        "title": "美國神社 由緒",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "天狗の火渡りは100年以上続く伝統だと神社が紹介している",
+      "source": {
+        "url": "https://sites.google.com/view/bikuni-shrine",
+        "title": "美國神社",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "例年の人出は約1,000人とされる",
+      "source": {
+        "url": "https://summer.walkerplus.com/odekake/detail_e/ar0101e107566/data.html",
+        "title": "美國神社例大祭の詳細データ（ウォーカープラス）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": ["例大祭の期間（7月4日〜6日）は、神社の駐車場を含む境内に車を止められない"],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://sites.google.com/view/bikuni-shrine",
+        "title": "美國神社",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://sites.google.com/view/bikuni-shrine/%E5%B9%B4%E4%B8%AD%E8%A1%8C%E4%BA%8B",
+        "title": "美國神社 年中行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-07-04",
+      "endDate": "2026-07-06",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。7月4日から6日まで行われたと神社が報告している",
+      "sources": [
+        {
+          "url": "https://sites.google.com/view/bikuni-shrine/%E4%BE%8B%E5%A4%A7%E7%A5%AD",
+          "title": "美國神社 例大祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.visit-hokkaido.jp/event/detail_12186.html",
+          "title": "天狗の火渡り｜美国神社例大祭（HOKKAIDO LOVE!）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-04",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "宵宮。神社の年中行事で例大祭は毎年7月4日〜6日。2027年の行事と時刻は未発表。鉄道の駅はなく、中央バス「美国船澗」停留所から徒歩約10分",
+      "sources": [
+        {
+          "url": "https://sites.google.com/view/bikuni-shrine/%E5%B9%B4%E4%B8%AD%E8%A1%8C%E4%BA%8B",
+          "title": "美國神社 年中行事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kanko-shakotan.jp/event/",
+          "title": "積丹観光協会 イベント",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-05",
+      "endDate": "2027-07-06",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "本神輿と猿田彦（天狗）の行列、お供の神輿、山車が町を巡り、神社に戻った夜に火渡り神事（火くぐり）。火渡りは例年20時ごろからで、渡行の進み方や天候で前後する。日中には海上渡御もある",
+      "sources": [
+        {
+          "url": "https://sites.google.com/view/bikuni-shrine/%E5%B9%B4%E4%B8%AD%E8%A1%8C%E4%BA%8B",
+          "title": "美國神社 年中行事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.visit-hokkaido.jp/event/detail_12186.html",
+          "title": "天狗の火渡り｜美国神社例大祭（HOKKAIDO LOVE!）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kanko-shakotan.jp/event/",
+          "title": "積丹観光協会 イベント",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "none",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://sites.google.com/view/bikuni-shrine",
+        "title": "美國神社",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.visit-hokkaido.jp/event/detail_12186.html",
+        "title": "天狗の火渡り｜美国神社例大祭（HOKKAIDO LOVE!）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "積丹のうに",
+        "note": "うに漁の時期（例大祭のころを含む夏）に、町内の食堂で漁師から仕入れた生うにを出す店がある",
+        "sources": [
+          {
+            "url": "https://www.kanko-shakotan.jp/food/%E9%A3%9F%E5%A0%82%E3%81%86%E3%81%97%E3%81%8A/",
+            "title": "積丹観光協会 食堂うしお",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "shakotan-ogon-misaki",
+      "name": "黄金岬",
+      "kind": "sightseeing",
+      "summary": "美国港の先から海へ突き出た岬。長さ410mの遊歩道が整い、3か所の入口から展望台へ上れる。",
+      "location": { "lat": 43.3032, "lng": 140.6014 },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.kanko-shakotan.jp/spot/%E9%BB%84%E9%87%91%E5%B2%AC/",
+          "title": "積丹観光協会 黄金岬",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kamui-misaki",
+      "name": "神威岬",
+      "kind": "sightseeing",
+      "summary": "積丹半島の先にある岬。入口ゲートと女人禁制の門の開閉時間は雨や風で変わることがある。7月は8時開園、入園は17時まで。",
+      "location": { "lat": 43.3336, "lng": 140.3478 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "08:00", "close": "18:00", "lastEntry": "17:00" },
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.kanko-shakotan.jp/spot/%E7%A5%9E%E5%A8%81%E5%B2%AC/",
+          "title": "積丹観光協会 神威岬",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "shakotan-fukuzushi",
+      "name": "冨久寿し",
+      "kind": "food",
+      "summary": "美国町船澗の、創業60年以上の寿司店。寿司にホッキ貝柱の吸い物が付く。通年営業で、休みは不定休。",
+      "location": { "lat": 43.2967, "lng": 140.5994 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "11:00", "close": "20:00" },
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.kanko-shakotan.jp/food/%E5%86%A8%E4%B9%85%E5%AF%BF%E5%8F%B8%E3%81%B5%E3%81%8F%E3%81%9A%E3%81%97/",
+          "title": "積丹観光協会 冨久寿し",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "shakotan-shokudo-ushio",
+      "name": "食堂うしお",
+      "kind": "food",
+      "summary": "神岬町の食堂。うに漁の時期は漁師から直接仕入れた無添加のうにを出す。イカ・エビ・ツブなども。営業は4月〜11月上旬。",
+      "location": { "lat": 43.3299, "lng": 140.3658 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "08:30", "close": "17:00", "lastEntry": "16:30" },
+      "closedDays": [],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.kanko-shakotan.jp/food/%E9%A3%9F%E5%A0%82%E3%81%86%E3%81%97%E3%81%8A/",
+          "title": "積丹観光協会 食堂うしお",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://sites.google.com/view/bikuni-shrine",
+      "title": "美國神社",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://sites.google.com/view/bikuni-shrine/%E5%B9%B4%E4%B8%AD%E8%A1%8C%E4%BA%8B",
+      "title": "美國神社 年中行事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.visit-hokkaido.jp/event/detail_12186.html",
+      "title": "天狗の火渡り｜美国神社例大祭（HOKKAIDO LOVE!）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の各日の行事の時刻（火渡りは例年20時ごろとだけ分かる）",
+    "雨や荒天のときの扱い（公式の案内が見つからない）",
+    "見学の場所、火渡りの近くで見るときの注意、服装・持ち物・撮影の決まり",
+    "鉄道の駅がない。小樽駅などから「美国船澗」停留所までのバスの所要時間（公式の数字が見つからない）",
+    "祭りの期間の交通規制",
+    "神輿・山車の数と行列の人数",
+    "黄金岬の利用できる時間と休み",
+    "周辺の場所の大手の観光サイトへの掲載（確かめられたページがなく、知名度は local にしてある）"
+  ]
+}
