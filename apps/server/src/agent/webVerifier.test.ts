@@ -75,12 +75,16 @@ function setup(scripts: Script[]) {
   return { calls, verify };
 }
 
-const read = (hook: Parameters<Script>[0], url: string) =>
+/** WebFetch で読んだことにする。text はエージェントが受け取る本文（SDK の WebFetchOutput の result） */
+const read = (hook: Parameters<Script>[0], url: string, text = "") =>
   hook("PostToolUse", {
     tool_name: "WebFetch",
     tool_input: { url, prompt: "開催日" },
-    tool_response: "",
+    tool_response: { bytes: text.length, code: 200, codeText: "OK", result: text, url },
   });
+
+/** 架空の祭りの、年の書かれた開催の知らせ */
+const NOTICE_2026 = "鈴鳴灯籠まつり　２０２６年８月１６日（日）18時30分から。雨天決行。";
 
 describe("createWebVerifier", () => {
   it("返答の JSON を取り出し、実際に読んだページだけを出典に残す", async () => {
@@ -91,7 +95,7 @@ describe("createWebVerifier", () => {
           tool_input: { query: "鈴鳴灯籠まつり 2026" },
           tool_response: "",
         });
-        await read(hook, "https://example.com/suzunari/2026/");
+        await read(hook, "https://example.com/suzunari/2026/", NOTICE_2026);
         return [
           "確認しました。",
           "```json",
@@ -101,7 +105,7 @@ describe("createWebVerifier", () => {
               { url: "http://example.com/suzunari/2026", title: "開催のお知らせ" },
               { url: "https://example.net/not-read" },
             ],
-            yearStated: true,
+            dateText: "2026年8月16日（日）",
             note: "8月16日18時30分から開催",
           }),
           "```",
@@ -126,7 +130,7 @@ describe("createWebVerifier", () => {
           tool_input: { url: "http://localhost:8787/api" },
           tool_use_id: "f1",
         });
-        return JSON.stringify({ result: "not_found", sources: [], yearStated: false });
+        return JSON.stringify({ result: "not_found", sources: [] });
       },
     ]);
 
@@ -151,7 +155,7 @@ describe("createWebVerifier", () => {
             }),
           );
         }
-        return JSON.stringify({ result: "not_found", sources: [], yearStated: false });
+        return JSON.stringify({ result: "not_found", sources: [] });
       },
     ]);
 
@@ -177,7 +181,7 @@ describe("createWebVerifier", () => {
         });
         stops.push(await hook("Stop", { stop_hook_active: false }));
         stops.push(await hook("Stop", { stop_hook_active: true }));
-        return JSON.stringify({ result: "not_found", sources: [], yearStated: false });
+        return JSON.stringify({ result: "not_found", sources: [] });
       },
     ]);
 
@@ -190,14 +194,14 @@ describe("createWebVerifier", () => {
   it("JSON が崩れていれば、道具なしで1回だけ差し戻す", async () => {
     const { calls, verify } = setup([
       async (hook) => {
-        await read(hook, "https://example.com/suzunari/2026");
+        await read(hook, "https://example.com/suzunari/2026", NOTICE_2026);
         return "結果は予定どおりです（JSON を書き忘れた）";
       },
       async () =>
         JSON.stringify({
           result: "as_planned",
           sources: [{ url: "https://example.com/suzunari/2026" }],
-          yearStated: true,
+          dateText: "2026年8月16日",
         }),
     ]);
 
@@ -209,6 +213,74 @@ describe("createWebVerifier", () => {
     expect(report).toMatchObject({
       result: "as_planned",
       sources: [{ url: "https://example.com/suzunari/2026" }],
+      yearStated: true,
+    });
+  });
+
+  describe("今年の開催と書かれていたかは、写した日付の文と読んだページの本文からコードで決める", () => {
+    const answer = (dateText: string | undefined, url = "https://example.com/suzunari/") =>
+      JSON.stringify({
+        result: "as_planned",
+        sources: [{ url }],
+        ...(dateText === undefined ? {} : { dateText }),
+        yearStated: true, // 自己申告は読まない
+      });
+
+    it("ページに年がなく、例年の日付だけなら false", async () => {
+      const { verify } = setup([
+        async (hook) => {
+          await read(
+            hook,
+            "https://example.com/suzunari/",
+            "鈴鳴灯籠まつりは毎年8月16日に開かれます。",
+          );
+          return answer("毎年8月16日");
+        },
+      ]);
+
+      expect((await verify()).yearStated).toBe(false);
+    });
+
+    it("写した文がページの本文にない（年を補った）なら false", async () => {
+      const { verify } = setup([
+        async (hook) => {
+          await read(
+            hook,
+            "https://example.com/suzunari/",
+            "鈴鳴灯籠まつりは毎年8月16日に開かれます。",
+          );
+          return answer("2026年8月16日");
+        },
+      ]);
+
+      expect((await verify()).yearStated).toBe(false);
+    });
+
+    it("年の書かれた文が、出典に残していないページにしかないなら false", async () => {
+      const { verify } = setup([
+        async (hook) => {
+          await read(
+            hook,
+            "https://example.com/suzunari/",
+            "鈴鳴灯籠まつりは毎年8月16日に開かれます。",
+          );
+          await read(hook, "https://example.net/blog", NOTICE_2026);
+          return answer("2026年8月16日（日）");
+        },
+      ]);
+
+      expect((await verify()).yearStated).toBe(false);
+    });
+
+    it("日付の文を返さなければ false", async () => {
+      const { verify } = setup([
+        async (hook) => {
+          await read(hook, "https://example.com/suzunari/2026", NOTICE_2026);
+          return answer(undefined, "https://example.com/suzunari/2026");
+        },
+      ]);
+
+      expect((await verify()).yearStated).toBe(false);
     });
   });
 
