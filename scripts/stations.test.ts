@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildStations, linesLabel, stationsFile } from "./stations";
+import { buildStations, isStationFile, linesLabel, stationsFile } from "./stations";
 
 // 架空の駅と路線で確かめる
 const feature = (name: string, operator: string, line: string, group: string) => ({
@@ -62,6 +62,16 @@ describe("buildStations：位置", () => {
       ["川辺", "みなと鉄道 山線"],
       ["川辺", "みなと鉄道 支線、みなと鉄道 本線"],
     ]);
+  });
+});
+
+describe("isStationFile", () => {
+  it("zip の根元でもフォルダの中でも、UTF-8 の駅の GeoJSON だけを見つける", () => {
+    expect(isStationFile("UTF-8/N02-25_Station.geojson")).toBe(true);
+    expect(isStationFile("N02-25_GML/UTF-8/N02-25_Station.geojson")).toBe(true);
+    expect(isStationFile("N02-25_GML/Shift-JIS/N02-25_Station.geojson")).toBe(false);
+    expect(isStationFile("N02-25_GML/UTF-8/N02-25_RailroadSection.geojson")).toBe(false);
+    expect(isStationFile("NOT-UTF-8/N02-25_Station.geojson")).toBe(false);
   });
 });
 

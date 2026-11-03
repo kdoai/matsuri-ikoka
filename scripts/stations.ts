@@ -42,6 +42,13 @@ function distanceKm(a: [number, number], b: [number, number]): number {
   return Math.hypot(dx, dy);
 }
 
+/** zip の中の駅の GeoJSON（UTF-8 の版）。zip の根元に UTF-8/ があっても、フォルダの中にあっても見つける */
+const STATION_FILE = /(^|\/)UTF-8\/N02-\d+_Station\.geojson$/;
+
+export function isStationFile(name: string): boolean {
+  return STATION_FILE.test(name);
+}
+
 /** 1つの駅：[駅名, 路線の説明] */
 export type StationEntry = [name: string, lines: string];
 

@@ -11,15 +11,12 @@ import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import { IsoDateSchema } from "../packages/schema/src";
 import { readZipEntry, zipEntries } from "./lib/zip";
-import { buildStations, type StationFeature, stationsFile } from "./stations";
+import { buildStations, isStationFile, type StationFeature, stationsFile } from "./stations";
 
 const OUTPUT = fileURLToPath(new URL("../data/stations/stations.json", import.meta.url));
 
 /** 使っている版のページ（出典に書く） */
 const SOURCE_URL = "https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N02-2025.html";
-
-/** zip の中の駅の GeoJSON（UTF-8 の版） */
-const STATION_FILE = /\/UTF-8\/N02-\d+_Station\.geojson$/;
 
 function main(): number {
   const { values } = parseArgs({
@@ -33,7 +30,7 @@ function main(): number {
   // pnpm から呼ぶと作業フォルダがリポジトリのルートになるので、呼んだ場所（INIT_CWD）から読む
   const path = resolve(process.env.INIT_CWD ?? process.cwd(), values.zip);
   const zip = readFileSync(path);
-  const entry = zipEntries(zip).find((candidate) => STATION_FILE.test(candidate.name));
+  const entry = zipEntries(zip).find((candidate) => isStationFile(candidate.name));
   if (entry === undefined) {
     console.error(`${path} に駅の GeoJSON（UTF-8/N02-xx_Station.geojson）がありません`);
     return 1;
