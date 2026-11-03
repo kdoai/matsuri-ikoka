@@ -10,14 +10,17 @@ import {
 } from "./controls";
 import { findNode, originalName } from "./models";
 import {
+  clearWalkable,
   createNavGrid,
   createNavMesh,
+  createObstacles,
   type FlatPoint,
   gridWalkable,
-  meshWalkable,
   type NavGrid,
   type NavMesh,
+  nearestClear,
   nearestOnNavMesh,
+  type Obstacles,
   type Walkable,
 } from "./navmesh";
 import type { Mark } from "./Staff";
@@ -31,6 +34,19 @@ const BODY_RADIUS = 0.12;
 /** 入口の床の縁から、この距離のうちに立つと「外に出る」を出す（入店して立つ位置よりは外側） */
 const EXIT_RADIUS = 0.35;
 
+/**
+ * 体の高さ（m）。この高さにかかる家具は、脚の間も通れないようにする（ベンチの座面・台の天板）。
+ * 天板の高い机（0.5 m より上）の下には、旅人の体が入るので含めない
+ */
+const BODY_LOW = 0.08;
+const BODY_HIGH = 0.45;
+
+/** 家具から離れて歩く距離（m）。歩ける床を作るときに家具の脚から離した距離と同じ */
+const FURNITURE_MARGIN = 0.2;
+
+/** 家具の形を読まないもの：床と外の通り、旅人が入口の近くにいる間に透かす入口の壁 */
+const NOT_FURNITURE = ["baked.floor", "baked.street", "baked.entrance_wall"];
+
 /** 仕掛けの本体からこの距離より遠い床にしか立てないときは、タップでだけ動かす（従業員の区域） */
 const REACH_LIMIT = 1.6;
 
@@ -40,7 +56,7 @@ export interface ShopWorld {
   grid: NavGrid;
   /** 旅人が立てるところ（3 cm の升目を、体の太さぶん縁から削ったもの） */
   walk: Walkable;
-  /** 歩ける床の三角形の上（縁に近すぎる位置から抜け出すときに使う） */
+  /** 歩ける床の三角形の上で、家具にかからないところ（縁に近すぎる位置から抜け出すときに使う） */
   onFloor: Walkable;
   /** 入店して立つ位置（入口） */
   start: Mark;
@@ -104,6 +120,27 @@ function navMeshOf(root: Object3D, name: string): NavMesh {
   return createNavMesh(positions);
 }
 
+/** 焼き込んだ家具（baked.*）の三角形のうち、体の高さにかかるもの */
+function obstaclesOf(root: Object3D): Obstacles {
+  const positions: number[] = [];
+  const point = new Vector3();
+  for (const group of root.children) {
+    const name = originalName(group);
+    if (!name.startsWith("baked.") || NOT_FURNITURE.includes(name)) continue;
+    group.traverse((object) => {
+      if (!(object instanceof Mesh) || !(object.geometry instanceof BufferGeometry)) return;
+      const geometry =
+        object.geometry.index === null ? object.geometry : object.geometry.toNonIndexed();
+      const attribute = geometry.getAttribute("position");
+      for (let i = 0; i < attribute.count; i++) {
+        point.fromBufferAttribute(attribute, i).applyMatrix4(object.matrixWorld);
+        positions.push(point.x, point.y, point.z);
+      }
+    });
+  }
+  return createObstacles(positions, BODY_LOW, BODY_HIGH, FURNITURE_MARGIN);
+}
+
 function flat(mark: Mark): FlatPoint {
   return { x: mark.x, z: mark.z };
 }
@@ -111,6 +148,7 @@ function flat(mark: Mark): FlatPoint {
 export function readShopWorld(interior: Object3D): ShopWorld {
   interior.updateMatrixWorld(true);
   const nav = navMeshOf(interior, "nav.customer");
+  const obstacles = obstaclesOf(interior);
   const fallback: Mark = { x: 0, y: 0, z: 0, yaw: Math.PI };
   const counter = markOf(interior, "anchor.player.counter") ?? fallback;
   const start = markOf(interior, "anchor.player.start") ?? counter;
@@ -152,7 +190,8 @@ export function readShopWorld(interior: Object3D): ShopWorld {
     targets.push({
       id: name,
       interaction: { kind: "sit", seat: name },
-      stand: nearestOnNavMesh(nav, seat.x, seat.z),
+      // ベンチの座面は床の上にかかるので、家具の外の、座面にいちばん近いところに立って座る
+      stand: nearestClear(nav, obstacles, seat.x, seat.z),
       radius: 0.8,
       face: flat(seat),
     });
@@ -205,11 +244,11 @@ export function readShopWorld(interior: Object3D): ShopWorld {
   return {
     nav,
     // 道は体の太さ（0.1 m）ぶん縁から離して探す
-    grid: createNavGrid(nav, 0.1, 0.1),
+    grid: createNavGrid(nav, 0.1, 0.1, obstacles),
     // 歩ける床は家具から 0.2 m 離してあるが、ペンギンの体（帽子とリュック）はそれより太いので、
     // さらに体の太さぶん縁から離れたところだけを歩く
-    walk: gridWalkable(createNavGrid(nav, 0.03, BODY_RADIUS)),
-    onFloor: meshWalkable(nav),
+    walk: gridWalkable(createNavGrid(nav, 0.03, BODY_RADIUS, obstacles)),
+    onFloor: clearWalkable(nav, obstacles),
     start,
     counter,
     targets,
