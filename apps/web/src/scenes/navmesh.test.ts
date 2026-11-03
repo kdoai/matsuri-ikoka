@@ -1,13 +1,17 @@
 import { describe, expect, it } from "vitest";
 import {
+  clearWalkable,
   createNavGrid,
   createNavMesh,
+  createObstacles,
   findPath,
   gridWalkable,
   lineOfSight,
   meshWalkable,
+  nearestClear,
   nearestOnNavMesh,
   onNavMesh,
+  onObstacle,
   slideMove,
 } from "./navmesh";
 
@@ -157,5 +161,84 @@ describe("体の太さと角", () => {
   it("いまの位置が升目の外でも、床の上なら抜け出せる", () => {
     const moved = slideMove(body, { x: 1.99, z: 0.5 }, -0.2, 0, meshWalkable(l));
     expect(moved.x).toBeLessThan(1.9);
+  });
+});
+
+/** 水平な長方形（高さ y）を、2つの三角形の頂点の並び（x, y, z）にする */
+function slab(x0: number, z0: number, x1: number, z1: number, y: number): number[] {
+  // biome-ignore format: 頂点の並び
+  return [
+    x0, y, z0, x1, y, z0, x1, y, z1,
+    x0, y, z0, x1, y, z1, x0, y, z1,
+  ];
+}
+
+describe("床に穴の開いていない家具", () => {
+  // 2m × 2m の床の真ん中に、脚の間が空いたベンチ（座面は高さ 0.4 m、x: 0.6〜1.4、z: 0.9〜1.1）。
+  // 床は脚だけをよけて作ってあり、座面の下は床のまま
+  const bench = createObstacles(slab(0.6, 0.9, 1.4, 1.1, 0.4), 0.08, 0.45, 0.2);
+
+  it("体の高さにかかる三角形だけを家具とする（じゅうたんや棚の上の物は含めない）", () => {
+    const obstacles = createObstacles(
+      [...slab(0, 0, 2, 2, 0.006), ...slab(0.6, 0.9, 1.4, 1.1, 0.4), ...slab(0, 0, 2, 0.3, 1.5)],
+      0.08,
+      0.45,
+      0,
+    );
+    expect(onObstacle(obstacles, 1, 1)).toBe(true);
+    expect(onObstacle(obstacles, 1, 0.5)).toBe(false);
+    expect(onObstacle(obstacles, 1, 0.1)).toBe(false);
+  });
+
+  it("家具から margin のうちは家具にかかるとする", () => {
+    expect(onObstacle(bench, 1, 1)).toBe(true);
+    expect(onObstacle(bench, 1, 0.75)).toBe(true);
+    expect(onObstacle(bench, 1, 0.65)).toBe(false);
+    expect(onObstacle(bench, 0.45, 1)).toBe(true);
+    expect(onObstacle(bench, 0.35, 1)).toBe(false);
+  });
+
+  it("家具がなければ、どこも家具にかからない", () => {
+    const none = createObstacles(slab(0, 0, 2, 2, 0.006), 0.08, 0.45, 0.2);
+    expect(onObstacle(none, 1, 1)).toBe(false);
+    expect(onNavMesh(none.shape, 1, 1)).toBe(false);
+  });
+
+  it("升目から家具の下を除くので、座面の下を通り抜けられない", () => {
+    const before = gridWalkable(createNavGrid(square, 0.03, 0.12));
+    const after = gridWalkable(createNavGrid(square, 0.03, 0.12, bench));
+    expect(before(1, 1)).toBe(true);
+    expect(after(1, 1)).toBe(false);
+    // ベンチの手前からまっすぐ押しても、座面の手前で止まる
+    const moved = slideMove(after, { x: 1, z: 0.4 }, 0, 1.2);
+    expect(moved.z).toBeLessThan(0.9 - 0.2);
+  });
+
+  it("道は家具を回り込む", () => {
+    const grid = createNavGrid(square, 0.1, 0.1, bench);
+    expect(lineOfSight(grid, { x: 1, z: 0.4 }, { x: 1, z: 1.6 })).toBe(false);
+    const path = findPath(grid, { x: 1, z: 0.4 }, { x: 1, z: 1.6 });
+    expect(path.length).toBeGreaterThan(1);
+    expect(path.at(-1)).toEqual({ x: 1, z: 1.6 });
+  });
+
+  it("抜け出すときの床からも、家具の下を除く", () => {
+    const floor = clearWalkable(square, bench);
+    expect(floor(1, 1)).toBe(false);
+    expect(floor(1, 0.5)).toBe(true);
+    expect(floor(2.5, 1)).toBe(false);
+  });
+
+  it("座面の上の目印には、家具の外のいちばん近いところに立つ", () => {
+    const stand = nearestClear(square, bench, 1.2, 1);
+    expect(onObstacle(bench, stand.x, stand.z)).toBe(false);
+    expect(onNavMesh(square, stand.x, stand.z)).toBe(true);
+    // 座面の手前（z が小さいほう）か奥の、真正面に立つ
+    expect(stand.x).toBeCloseTo(1.2, 1);
+    expect(Math.abs(stand.z - 1)).toBeLessThan(0.35);
+  });
+
+  it("家具にかからない点は、床の上のいちばん近い点のまま", () => {
+    expect(nearestClear(square, bench, 1, 0.3)).toEqual(nearestOnNavMesh(square, 1, 0.3));
   });
 });
