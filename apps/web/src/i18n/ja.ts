@@ -460,6 +460,7 @@ export const ja = {
   shiori: {
     title: "旅のしおり",
     print: "印刷する",
+    savePdf: "PDF で保存",
     close: "店内に戻る",
     party: "同行者",
     date: "日付",
