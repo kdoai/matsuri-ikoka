@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { type Festival, type FestivalInput, FestivalSchema } from "../packages/schema/src";
 import { fictionalFestival, fictionalSource } from "../packages/schema/src/testing";
-import { classifyFestivalChange, selectRefreshTargets } from "./festival-refresh";
+import {
+  classifyFestivalChange,
+  requestsFromIssues,
+  selectRefreshTargets,
+} from "./festival-refresh";
 
 // 架空の祭りの出典は 2026-04-01 に確認、開催は 2026-08-16（announced）
 function festivalOf(edit: (festival: FestivalInput) => void = () => {}): Festival {
@@ -232,5 +236,77 @@ describe("classifyFestivalChange", () => {
       f.nearby = [{ ...f.nearby[0]!, id: "suzunari-tea-house", name: "鈴鳴茶屋" }, f.nearby[0]!];
     });
     expect(classifyFestivalChange(twoSpots, swapped).kinds).toEqual(["nearby"]);
+  });
+});
+
+describe("requestsFromIssues", () => {
+  // Issue のフォームが本文に書く形
+  const bodyOf = (festival: string) =>
+    `### 祭りの名前\n\n${festival}\n\n### 正しい内容\n\n開催日が違います\n`;
+  const other = () =>
+    festivalOf((f) => {
+      f.id = "kazane-odori";
+      f.name = { ja: "風音踊り" };
+    });
+
+  it("欄に書かれた ID で祭りを決め、ラベルから依頼の種類を決める", () => {
+    const issues = [
+      { number: 1, body: bodyOf("鈴鳴の灯籠（suzunari-toro）"), labels: ["data-correction"] },
+      { number: 2, body: bodyOf("kazane-odori"), labels: ["opt-out", "priority:high"] },
+    ];
+    expect(requestsFromIssues(issues, [festivalOf(), other()])).toEqual({
+      requests: [
+        { festivalId: "suzunari-toro", kind: "correction" },
+        { festivalId: "kazane-odori", kind: "opt_out" },
+      ],
+      unresolved: [],
+    });
+  });
+
+  it("ID がなければ名前で探す（全角・半角や大文字・小文字の違いはならす）", () => {
+    const issues = [
+      { number: 1, body: bodyOf("鈴鳴灯籠まつり"), labels: ["listing-request"] },
+      { number: 2, body: bodyOf("ＳＵＺＵＮＡＲＩ Lantern Festival"), labels: ["data-correction"] },
+    ];
+    expect(requestsFromIssues(issues, [festivalOf(), other()]).requests).toEqual([
+      { festivalId: "suzunari-toro", kind: "listing" },
+      { festivalId: "suzunari-toro", kind: "correction" },
+    ]);
+  });
+
+  it("決められない依頼は、理由をつけて人に回す", () => {
+    const issues = [
+      { number: 1, body: bodyOf("どこかの知らない祭り"), labels: ["data-correction"] },
+      { number: 2, body: bodyOf("鈴鳴灯籠まつりと風音踊り"), labels: ["data-correction"] },
+      { number: 3, body: "### 祭りの名前\n\n_No response_\n", labels: ["data-correction"] },
+    ];
+    expect(requestsFromIssues(issues, [festivalOf(), other()])).toEqual({
+      requests: [],
+      unresolved: [
+        { number: 1, reason: "not_found" },
+        { number: 2, reason: "ambiguous" },
+        { number: 3, reason: "no_field" },
+      ],
+    });
+  });
+
+  it("ID の一部だけが一致しても、その祭りとはみなさない", () => {
+    const issues = [{ number: 1, body: bodyOf("suzunari-toro-2"), labels: ["data-correction"] }];
+    expect(requestsFromIssues(issues, [festivalOf()]).unresolved).toEqual([
+      { number: 1, reason: "not_found" },
+    ]);
+  });
+
+  it("依頼のラベルのない Issue は見ない", () => {
+    const issues = [{ number: 1, body: bodyOf("suzunari-toro"), labels: ["bug"] }];
+    expect(requestsFromIssues(issues, [festivalOf()])).toEqual({ requests: [], unresolved: [] });
+  });
+
+  it("決めた依頼は、調べ直す対象の先頭に並ぶ", () => {
+    const issues = [{ number: 1, body: bodyOf("kazane-odori"), labels: ["data-correction"] }];
+    const festivals = [festivalOf(), other()];
+    const { requests } = requestsFromIssues(issues, festivals);
+    const [first] = selectRefreshTargets(festivals, { today: "2026-05-15", requests });
+    expect(first).toMatchObject({ id: "kazane-odori", reasons: ["request", "stale"] });
   });
 });
