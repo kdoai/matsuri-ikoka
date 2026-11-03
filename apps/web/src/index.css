@@ -146,6 +146,19 @@ body {
   backdrop-filter: blur(4px);
 }
 
+/* 頭の上の吹き出しのしっぽ：板の下の真ん中から、話している人を指す */
+.speech-bubble::after {
+  content: "";
+  position: absolute;
+  top: calc(100% - 1px);
+  left: 50%;
+  width: 22px;
+  height: 14px;
+  translate: -50% 0;
+  background: #fff;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
 /* Leaflet の帰属表示を読みやすく */
 .leaflet-container {
   font-family: var(--font-sans);

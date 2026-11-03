@@ -355,9 +355,22 @@ export function ShioriPage() {
         >
           {t.shiori.close}
         </button>
-        <button type="button" className={buttonPrimary} onClick={() => window.print()}>
-          {t.shiori.print}
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button type="button" className={buttonPrimary} onClick={() => window.print()}>
+            {t.shiori.print}
+          </button>
+          {/* 確定したしおりは、サーバーで A4 の PDF にして渡す（店のしおりと同じ見た目） */}
+          {shareUrl === null ? null : (
+            <a
+              href={`${shareUrl}.pdf`}
+              download
+              className={`${buttonPrimary} inline-flex items-center`}
+              data-testid="shiori-pdf"
+            >
+              {t.shiori.savePdf}
+            </a>
+          )}
+        </div>
         {shareUrl === null ? null : <ShareBox url={shareUrl} />}
       </div>
 

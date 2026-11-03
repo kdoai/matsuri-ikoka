@@ -24,6 +24,10 @@ blender -b --factory-startup --python-exit-code 1 -P assets/3d/scripts/build.py 
 
 ポーズ・表情・持たせる小物は `assets/3d/scripts/ikoka3d/stills.py` の `STILLS` で決めています。
 
+`face_<種類>.webp`（ひよこ・フクロウ・にわとり・スズメ・ペンギン）は、顔に寄せた正面の正方形の静止画です。
+しおりの吹き出しと、画面の会話の窓の顔の絵（`apps/web/src/ui/Portraits.tsx`）が同じ絵を使います。
+顔だけを作り直すときは `--target faces` にします。表情は `stills.py` の `FACES` で決めています。
+
 ## フォント
 
 - Zen Maru Gothic（Copyright 2021 The Zen Maru Gothic Project Authors）。SIL Open Font License 1.1 で、`OFL.txt` が全文

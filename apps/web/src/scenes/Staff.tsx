@@ -38,6 +38,8 @@ const FADE_SECONDS = 0.25;
 /** まばたきの間隔（秒）と長さ */
 const BLINK_EVERY = [2.5, 5] as const;
 const BLINK_LENGTH = 0.12;
+/** 吹き出しのしっぽの先を置く高さ（足もとから）。頭に少しすき間をあけ、しっぽが頭に重ならないようにする */
+const BUBBLE_HEIGHT = 1.4;
 
 export function faceTexture(root: Object3D, kind: string): Texture | null {
   const face = findNode(root, `${kind}.face`);
@@ -183,7 +185,7 @@ export function Staff({ id, kind, model, clips, marks, plan, seq, onHead }: Staf
       }
     }
 
-    onHead?.(object.position.x, object.position.y + 1.25, object.position.z);
+    onHead?.(object.position.x, object.position.y + BUBBLE_HEIGHT, object.position.z);
   });
 
   return (

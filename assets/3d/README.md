@@ -23,7 +23,8 @@ blender -b --factory-startup --python-exit-code 1 -P assets/3d/scripts/build.py 
 | `interior` | 店内と仕掛け。固定カメラのプレビュー、Cycles で焼き込み、GLB | `out/preview/interior.png`, `interior_baked.png`, `out/glb/interior.glb` |
 | `exterior` | 店の外観と入店カメラ。プレビュー、焼き込み、GLB | `out/preview/exterior*.png`, `out/glb/exterior.glb` |
 | `optimize` | meshopt 圧縮と WebP（1辺1024px以下）、サイズと三角形数の一覧 | `models/*.glb`, `models/manifest.json` |
-| `stills` | しおり用のスタッフと旅人の静止画（透過の WebP）。`all` には含まない | `../shiori/staff/*.webp` |
+| `stills` | しおり用のスタッフと旅人の静止画と、顔の静止画（透過の WebP）。`all` には含まない | `../shiori/staff/*.webp` |
+| `faces` | 顔の静止画だけ（正面に寄せた正方形。会話の窓と、しおりの吹き出しの顔の絵）。`all` には含まない | `../shiori/staff/face_*.webp` |
 
 よく使うオプション：
 
@@ -109,8 +110,8 @@ Blender は Z が上、glTF は Y が上です。書き出しで Blender の `(x
 | `gimmick.omikuji.shake` | 土産の一角 | おみくじの箱を振り、棒が出てくる（運勢の文字は画面側で） |
 | `gimmick.gacha.turn` | 土産の一角 | ハンドルが回り、カプセルが転がり出る（中身は画面側で、スタッフの小さなぬいぐるみなど） |
 | `gimmick.daruma.wobble` | 土産の棚の上 | だるまが揺れて起き上がる |
-| `gimmick.cat.sleep` | ベンチの上 | 三毛猫が寝息を立て、しっぽを揺らす（常に繰り返す） |
-| `gimmick.cat.pet` | ベンチの上 | なでると顔を上げ、耳がぴくっと動き、しっぽを立てる |
+| `gimmick.cat.sleep` | のれんの外（入口の左の座布団の上） | 三毛猫が寝息を立て、しっぽを揺らす（常に繰り返す） |
+| `gimmick.cat.pet` | のれんの外 | なでると顔を上げ、耳がぴくっと動き、しっぽを立てる。店内では入口の左の柱のそば（`interact.cat`）から、外観ではクリックでなでる |
 | `gimmick.globe.spin` | 読書机 | 地球儀が回る |
 | `gimmick.secret.open` | 資料棚 | 赤い本が手前に倒れ、隣の棚の下の引き出しが開いて「金の切符」が出てくる |
 | `gimmick.gate.swing` | 柵の扉 | 従業員が通るときに扉が開いて閉まる |
@@ -214,7 +215,7 @@ Blender は Z が上、glTF は Y が上です。書き出しで Blender の `(x
 | ファイル | 三角形 | サイズ |
 | --- | ---: | ---: |
 | `exterior.glb` | 93,742 | 997 KB |
-| `interior.glb` | 104,908 | 2,260 KB |
+| `interior.glb` | 105,096 | 2,252 KB |
 | `motion_carry.glb` | 0 | 12 KB |
 | `motion_cheer.glb` | 0 | 10 KB |
 | `motion_flip.glb` | 0 | 10 KB |
@@ -233,7 +234,7 @@ Blender は Z が上、glTF は Y が上です。書き出しで Blender の `(x
 | `staff_hiyoko.glb` | 9,830 | 156 KB |
 | `staff_owl.glb` | 10,342 | 189 KB |
 | `staff_sparrow.glb` | 10,362 | 154 KB |
-| 合計 | | 4.14 MB |
+| 合計 | | 4.13 MB |
 
 <!-- /stats -->
 

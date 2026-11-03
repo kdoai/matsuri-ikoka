@@ -1,14 +1,11 @@
 import { mainFestivalDay } from "@matsuri-ikoka/schema";
 import {
-  Bell,
   BookOpen,
-  Briefcase,
-  ChevronRight,
   CircleHelp,
   ClipboardCheck,
-  Landmark,
   Map as MapIcon,
   Menu,
+  MessageCircleMore,
   Route,
   Settings,
   Sparkles,
@@ -19,14 +16,13 @@ import {
 import { type ReactNode, useEffect, useRef } from "react";
 import { formatDate, otherLocale } from "../i18n";
 import { useActions, useApp, useT } from "../state/react";
-import { currentSection, type Section, shioriReady } from "../state/selectors";
+import { shioriReady } from "../state/selectors";
 import type { PanelTab } from "../state/types";
-import { ConditionChips, PreferenceBar } from "./ChatPanel";
 import { YaguraIcon } from "./icons";
 import { ControlsList, PlayStatus } from "./Play";
 import { playSound } from "./sound";
 
-// ゲームの画面に重ねる表示（HUD）：ロゴ、丸いボタン、日付の札、操作の案内。旅のしおりの段階の表示もここに置く。
+// ゲームの画面に重ねる表示（HUD）：ロゴ、丸いボタン、日付の札、操作の案内。
 // 探索の間は小さな札だけを出し、3D の店内を隠さない。どれもストアを読むだけで、操作はストアの actions を呼ぶ。
 
 /** HUD の紙の板の見た目 */
@@ -49,80 +45,21 @@ export function Logo() {
   );
 }
 
-const SECTION_ICON: Record<Section, (props: { className?: string }) => ReactNode> = {
-  guide: (props) => <Landmark {...props} />,
-  candidates: (props) => <Sparkles {...props} />,
-  shiori: (props) => <BookOpen {...props} />,
-  confirm: (props) => <ClipboardCheck {...props} />,
-};
-
-/** 旅の進み具合：祭りの候補 › 旅程の案内 › 確認 › 旅のしおり。旅のしおりを開いたときに見せる */
-export function TripSteps({ className = "" }: { className?: string }) {
-  const t = useT();
-  const actions = useActions();
-  const active = useApp(currentSection);
-  const hasCandidates = useApp((state) => state.candidates.length > 0);
-  const hasItinerary = useApp((state) => state.itinerary.current !== null);
-  const ready = useApp(shioriReady);
-
-  // 相談の流れの順に並べる
-  const open: Record<Section, (() => void) | null> = {
-    candidates: hasCandidates ? () => actions.setCandidatesOpen(true) : null,
-    guide: hasItinerary ? () => openTripPanel(actions, "itinerary") : null,
-    confirm: hasItinerary ? () => openTripPanel(actions, "sources") : null,
-    shiori: ready ? () => actions.openShiori() : null,
-  };
-
-  return (
-    <nav aria-label={t.hud.progress} className={className} data-testid="trip-steps">
-      <ol className="flex flex-wrap items-center gap-1">
-        {(Object.keys(open) as Section[]).map((section, index) => {
-          const Icon = SECTION_ICON[section];
-          const onClick = open[section];
-          const current = active === section;
-          return (
-            <li key={section} className="flex items-center gap-1">
-              {index === 0 ? null : (
-                <ChevronRight aria-hidden="true" className="size-3.5 text-wood-500" />
-              )}
-              <button
-                type="button"
-                aria-current={current ? "step" : undefined}
-                aria-disabled={onClick === null}
-                title={onClick === null ? t.hud.notYet : undefined}
-                onClick={onClick ?? undefined}
-                className={`flex min-h-8 items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1 font-bold text-xs transition ${
-                  current
-                    ? "border-yamabuki-400 bg-yamabuki-400 text-ink shadow-soft"
-                    : onClick === null
-                      ? "cursor-not-allowed border-line text-ink-soft/60"
-                      : "border-line-strong bg-white/70 text-ink hover:bg-white"
-                }`}
-              >
-                <Icon className="size-4" />
-                {t.hud.sections[section]}
-              </button>
-            </li>
-          );
-        })}
-      </ol>
-    </nav>
-  );
-}
-
 const roundIcon =
   "relative grid size-10 shrink-0 place-items-center sm:size-11 rounded-full border-2 border-kinari-50/85 bg-ai-900/70 text-kinari-50 shadow-lg backdrop-blur-sm transition hover:bg-ai-700";
 
-/** 丸いボタンから開く小さな板。外を押すか Esc で閉じる */
+/** 丸いボタンから開く小さな板。外を押すか Esc で閉じる。中身が長ければ、板の中でスクロールする */
 function Popover({
   id,
   title,
   onClose,
+  wide = false,
   children,
 }: {
   id: string;
   title: string;
   onClose: () => void;
+  wide?: boolean;
   children: ReactNode;
 }) {
   const t = useT();
@@ -147,24 +84,26 @@ function Popover({
       id={id}
       role="dialog"
       aria-label={title}
-      className={`${hudCard} absolute top-full right-0 z-50 mt-2 w-[min(22rem,calc(100vw-1.5rem))] p-4 text-ink`}
+      className={`${hudCard} absolute top-full right-0 z-50 mt-2 flex max-h-[calc(100dvh-6rem)] flex-col p-4 text-ink ${
+        wide ? "w-[min(32rem,calc(100vw-1.5rem))]" : "w-[min(22rem,calc(100vw-1.5rem))]"
+      }`}
     >
-      <div className="mb-2 flex items-center justify-between gap-2">
-        <p className="font-bold">{title}</p>
+      <div className="mb-2 flex shrink-0 items-center justify-between gap-2">
+        <p className="font-bold text-lg">{title}</p>
         <button
           type="button"
-          className="rounded-full px-2 py-0.5 text-ink-soft text-sm hover:bg-kinari-200"
+          className="min-h-10 rounded-full px-3 text-base text-ink-soft hover:bg-kinari-200"
           onClick={onClose}
         >
           {t.hud.close}
         </button>
       </div>
-      {children}
+      <div className="-mr-2 min-h-0 flex-1 overflow-y-auto overscroll-contain pr-2">{children}</div>
     </div>
   );
 }
 
-type Panel = "menu" | "preferences" | "settings" | "help" | null;
+type Panel = "menu" | "settings" | "help" | null;
 
 type Actions = ReturnType<typeof useActions>;
 
@@ -174,6 +113,9 @@ export function openTripPanel(actions: Actions, tab: PanelTab): void {
   actions.setTab(tab);
   actions.setDrawer(true);
 }
+
+const helpHeading =
+  "mb-1.5 border-wood-300 border-b-2 pb-1 font-bold text-ai-800 text-lg leading-snug";
 
 const menuItem =
   "flex min-h-12 w-full items-center gap-3 rounded-xl border-2 border-wood-300/70 bg-white px-3 font-bold text-ink transition hover:border-ai-500 hover:bg-ai-50 aria-disabled:cursor-not-allowed aria-disabled:opacity-45 aria-disabled:hover:border-wood-300/70 aria-disabled:hover:bg-white";
@@ -227,7 +169,7 @@ function GameMenu({
     {
       key: "log",
       label: t.hud.notifications,
-      icon: <Bell className="size-5 text-wood-700" />,
+      icon: <MessageCircleMore className="size-5 text-wood-700" />,
       run: onOpenLog,
     },
     {
@@ -254,7 +196,7 @@ function GameMenu({
               }}
             >
               <span aria-hidden="true">{item.icon}</span>
-              <span className="text-left text-sm leading-tight">{item.label}</span>
+              <span className="text-left text-base leading-tight">{item.label}</span>
             </button>
           </li>
         ))}
@@ -263,7 +205,7 @@ function GameMenu({
   );
 }
 
-/** 右上の丸いボタン：お知らせ（会話の記録）・旅のこだわり・設定・使い方（狭い画面ではメニューも） */
+/** 右上の丸いボタン：会話の記録・設定・使い方（狭い画面ではメニューも） */
 export function IconButtons({
   onOpenLog,
   unread,
@@ -302,23 +244,12 @@ export function IconButtons({
         title={t.hud.notifications}
         onClick={onOpenLog}
       >
-        <Bell className="size-5" />
+        <MessageCircleMore className="size-5" />
         {unread ? (
           <span className="absolute top-0.5 right-0.5 size-3 rounded-full bg-shu-500 ring-2 ring-kinari-50">
             <span className="sr-only">{t.hud.newNotice}</span>
           </span>
         ) : null}
-      </button>
-      <button
-        type="button"
-        className={roundIcon}
-        aria-label={t.hud.preferences}
-        title={t.hud.preferences}
-        aria-expanded={menu === "preferences"}
-        aria-controls="hud-preferences"
-        onClick={() => toggle("preferences")}
-      >
-        <Briefcase className="size-5" />
       </button>
       <button
         type="button"
@@ -345,14 +276,6 @@ export function IconButtons({
 
       {menu === "menu" ? (
         <GameMenu onOpenLog={onOpenLog} onHelp={() => onMenu("help")} onClose={close} />
-      ) : null}
-      {menu === "preferences" ? (
-        <Popover id="hud-preferences" title={t.hud.preferences} onClose={close}>
-          <div className="space-y-3">
-            <ConditionChips />
-            <PreferenceBar />
-          </div>
-        </Popover>
       ) : null}
       {menu === "settings" ? (
         <Popover id="hud-settings" title={t.hud.settings} onClose={close}>
@@ -393,15 +316,31 @@ export function IconButtons({
         </Popover>
       ) : null}
       {menu === "help" ? (
-        <Popover id="hud-help" title={t.hud.helpTitle} onClose={close}>
-          <ol className="list-decimal space-y-1.5 pl-5 text-sm leading-relaxed">
-            {t.hud.helpLines.map((line) => (
-              <li key={line}>{line}</li>
-            ))}
-          </ol>
-          <h3 className="mt-3 mb-1 font-bold text-sm">{t.play.controlsTitle}</h3>
-          <ControlsList />
-          <PlayStatus className="mt-2 border-line border-t pt-2 text-ink-soft text-sm" />
+        <Popover id="hud-help" title={t.hud.helpTitle} onClose={close} wide>
+          <div className="space-y-4 text-base leading-relaxed" data-testid="help">
+            <section aria-labelledby="help-steps">
+              <h3 id="help-steps" className={helpHeading}>
+                {t.hud.helpSections.steps}
+              </h3>
+              <ol className="list-decimal space-y-2 pl-6">
+                {t.hud.helpLines.map((line) => (
+                  <li key={line}>{line}</li>
+                ))}
+              </ol>
+            </section>
+            <section aria-labelledby="help-controls">
+              <h3 id="help-controls" className={helpHeading}>
+                {t.play.controlsTitle}
+              </h3>
+              <ControlsList large />
+            </section>
+            <section aria-labelledby="help-status">
+              <h3 id="help-status" className={helpHeading}>
+                {t.hud.helpSections.status}
+              </h3>
+              <PlayStatus className="text-ink-soft" />
+            </section>
+          </div>
         </Popover>
       ) : null}
     </div>
@@ -449,7 +388,10 @@ export function KeyCap({ children, small = false }: { children: ReactNode; small
   );
 }
 
-/** 操作の案内（右下の小さな札）。キーボードの X・Y・M、ゲームパッドの X・Y・スタートでも同じことができる */
+/**
+ * 操作の案内（上の段の、丸いボタンの下の札）。キーボードの X・Y・M、ゲームパッドの X・Y・スタートでも同じことができる。
+ * 上の段の中に置くので、会話の窓や旅のしおりと重ならない。狭い画面ではキーの印とアイコンだけにする
+ */
 export function ButtonHints({
   onDetails,
   onMap,
@@ -461,7 +403,7 @@ export function ButtonHints({
 }) {
   const t = useT();
   const hint =
-    "flex items-center gap-1 rounded-full py-0.5 pr-2 pl-0.5 font-bold text-xs transition hover:bg-kinari-50/15";
+    "flex min-h-9 items-center gap-1.5 rounded-full py-0.5 pr-2.5 pl-0.5 font-bold text-sm transition hover:bg-kinari-50/15 sm:text-base";
   return (
     <nav
       aria-label={t.hud.opsGuide}
@@ -469,22 +411,22 @@ export function ButtonHints({
       data-testid="button-hints"
     >
       <button type="button" className={hint} onClick={onDetails} aria-label={t.hud.hints.details}>
-        <KeyCap small>X</KeyCap>
-        <Route aria-hidden="true" className="size-3.5" />
+        <KeyCap>X</KeyCap>
+        <Route aria-hidden="true" className="size-4" />
         <span aria-hidden="true" className="max-sm:hidden">
           {t.hud.hints.details}
         </span>
       </button>
       <button type="button" className={hint} onClick={onMap} aria-label={t.hud.hints.map}>
-        <KeyCap small>Y</KeyCap>
-        <MapIcon aria-hidden="true" className="size-3.5" />
+        <KeyCap>Y</KeyCap>
+        <MapIcon aria-hidden="true" className="size-4" />
         <span aria-hidden="true" className="max-sm:hidden">
           {t.hud.hints.map}
         </span>
       </button>
       <button type="button" className={hint} onClick={onMenu} aria-label={t.hud.hints.menu}>
-        <KeyCap small>M</KeyCap>
-        <Menu aria-hidden="true" className="size-3.5" />
+        <KeyCap>M</KeyCap>
+        <Menu aria-hidden="true" className="size-4" />
         <span aria-hidden="true" className="max-sm:hidden">
           {t.hud.hints.menu}
         </span>

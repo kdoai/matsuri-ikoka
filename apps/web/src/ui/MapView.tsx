@@ -35,6 +35,8 @@ interface MapViewProps {
   showPlaces?: boolean;
   /** 地図の枠の飾り（小さな地図では外側の余白と枠を付けない） */
   framed?: boolean;
+  /** 地点の一覧の文字の大きさ（旅のしおりの窓では 16px にそろえる） */
+  textClass?: string;
 }
 
 export default function MapView({
@@ -42,6 +44,7 @@ export default function MapView({
   heightClass = "h-80",
   showPlaces = true,
   framed = true,
+  textClass = "text-sm",
 }: MapViewProps) {
   const t = useT();
   const itinerary = useApp((state) => state.itinerary.current);
@@ -132,18 +135,18 @@ export default function MapView({
         <p className="text-ink-soft">{t.map.noLocations}</p>
       ) : (
         <section aria-label={t.map.places}>
-          <h3 className="font-bold text-ai-700 text-sm">{t.map.places}</h3>
+          <h3 className={`font-bold text-ai-700 ${textClass}`}>{t.map.places}</h3>
           <ol
-            className="mt-1 space-y-0.5 text-sm print:columns-2 print:gap-x-3"
+            className={`mt-1 space-y-0.5 ${textClass} print:columns-2 print:gap-x-3`}
             data-testid="map-places"
           >
             {ordered.map((point) => (
               <li key={point.key} className="flex gap-2">
                 <span
                   aria-hidden="true"
-                  className={`grid size-5 shrink-0 place-items-center rounded-full font-bold text-[11px] text-white ${
-                    point.kind === "venue" ? "bg-shu-600" : "bg-ai-700"
-                  }`}
+                  className={`grid shrink-0 place-items-center rounded-full font-bold text-white ${
+                    textClass === "text-sm" ? "size-5 text-[11px]" : "size-7 text-base"
+                  } ${point.kind === "venue" ? "bg-shu-600" : "bg-ai-700"}`}
                 >
                   {point.order}
                 </span>
@@ -155,7 +158,7 @@ export default function MapView({
             ))}
           </ol>
           {extra.length > 0 ? (
-            <p className="mt-1 text-ink-soft text-sm">
+            <p className={`mt-1 text-ink-soft ${textClass}`}>
               {t.map.spot}：{extra.map((point) => point.name).join("、")}
             </p>
           ) : null}

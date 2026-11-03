@@ -29,10 +29,12 @@ import { WaitingCard } from "./Waiting";
 
 // ゲームの画面。いつも店（3D、使えないときは 2D の見取り図）を画面いっぱいに出し、
 // 表示を3つの場面に分けて、そのとき要るものだけを重ねる。
-// - 探索：ロゴと日付の小さな札、右上の丸いボタン、右下の小さな操作の案内、下の「話しかける」だけ。
+// - 探索：ロゴと日付の小さな札、右上の丸いボタンとその下の小さな操作の案内、下の「話しかける」だけ。
 //   はじめてのときだけ、操作の案内を出す
 // - 会話：画面の下に会話の窓（セリフ・選択肢・自由に書く欄）
-// - 計画：旅のしおり（旅程・地図・出典）を右から開き、祭りの候補は絵葉書のカードで重ねる
+// - 計画：旅のしおり（旅程・旅の案内・持ち物と確認）を右に大きく開き、会話の窓は左下に寄せる。
+//   祭りの候補は絵葉書のカードで重ねる
+// 操作の案内は上の段の中に置き、ほかの窓は上の段の下から始めるので、どの幅でも重ならない
 
 export function LanguageButton({ className = "" }: { className?: string }) {
   const t = useT();
@@ -210,7 +212,7 @@ export function Shop() {
     <div className="relative h-dvh w-full overflow-hidden bg-wood-900 text-ink">
       <GameStage frame={frame} onTalk={talk} onPad={onPad} onExit={actions.leaveShop} />
 
-      {/* 上の段：ロゴ・場面のタブ・丸いボタン */}
+      {/* 上の段：ロゴ・丸いボタン・操作の案内 */}
       <div
         ref={topRef}
         className="no-print pointer-events-none absolute inset-x-0 top-0 z-40 grid grid-cols-[1fr_auto] items-start gap-2 p-2 sm:p-3 [&>*]:pointer-events-auto"
@@ -219,9 +221,16 @@ export function Shop() {
           <Logo />
           {beside ? null : <DateBadge />}
         </div>
-        <div className="flex items-center gap-1.5 justify-self-end sm:gap-2">
-          <AccountMenu />
-          <IconButtons onOpenLog={openLog} unread={unread} menu={menu} onMenu={setMenu} />
+        <div className="flex flex-col items-end gap-1.5 justify-self-end">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <AccountMenu />
+            <IconButtons onOpenLog={openLog} unread={unread} menu={menu} onMenu={setMenu} />
+          </div>
+          <ButtonHints
+            onDetails={() => togglePanel("itinerary")}
+            onMap={() => togglePanel("map")}
+            onMenu={toggleMenu}
+          />
         </div>
       </div>
 
@@ -235,27 +244,16 @@ export function Shop() {
         <PlayStatus hidden />
       </div>
 
-      {/* 旅のしおり：旅程・地図・出典（広い画面は右に重ね、狭い画面は上に重ねる） */}
+      {/* 旅のしおり：旅程・旅の案内・持ち物と確認（広い画面は右に大きく重ね、狭い画面は上に重ねる） */}
       {panelOpen ? (
         <div
           ref={panelRef}
           id="trip-panel"
-          className="absolute inset-x-2 bottom-2 z-30 lg:right-3 lg:bottom-16 lg:left-auto lg:w-[min(30rem,38vw)]"
+          className="absolute inset-x-2 bottom-2 z-30 lg:right-3 lg:bottom-3 lg:left-auto lg:w-[min(44rem,48vw)]"
           style={{ top: frame.top + 6 }}
           data-testid="panel-drawer"
         >
           <ItineraryPanel />
-        </div>
-      ) : null}
-
-      {/* 右下：小さな操作の案内 */}
-      {wide ? (
-        <div className="no-print absolute right-3 bottom-3 z-30">
-          <ButtonHints
-            onDetails={() => togglePanel("itinerary")}
-            onMap={() => togglePanel("map")}
-            onMenu={toggleMenu}
-          />
         </div>
       ) : null}
 
@@ -270,7 +268,7 @@ export function Shop() {
         hidden={!dialogueOpen}
         className={`absolute inset-x-2 bottom-2 z-20 sm:inset-x-3 sm:bottom-3 ${
           beside
-            ? "lg:right-[calc(min(30rem,38vw)+1.5rem)] lg:left-3"
+            ? "lg:right-[calc(min(44rem,48vw)+1.5rem)] lg:left-3"
             : "lg:inset-x-0 lg:mx-auto lg:w-[min(50rem,calc(100vw-30rem))]"
         }`}
       >
