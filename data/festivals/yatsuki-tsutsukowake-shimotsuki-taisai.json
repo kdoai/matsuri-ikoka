@@ -1,0 +1,242 @@
+{
+  "id": "yatsuki-tsutsukowake-shimotsuki-taisai",
+  "name": {
+    "ja": "霜月大祭",
+    "en": "Shimotsuki Grand Festival at Yatsuki Tsutsukowake Shrine"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "福島県",
+      "name": "棚倉町"
+    }
+  ],
+  "venue": {
+    "name": "八槻都々古別神社",
+    "lat": 36.9922,
+    "lng": 140.3909
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "県の重要無形民俗文化財の御神楽を、拝殿で五穀豊穣を祈って奉納する",
+    "名物のゆずやしょうがを売る市が、祭りに合わせて立つ",
+    "奥州一宮とされる古社で、国の重要文化財の銅鉢を伝える"
+  ],
+  "trivia": [
+    {
+      "text": "この社の太々神楽は36座あり、八岐大蛇退治のような神話の場面を舞う",
+      "source": {
+        "url": "https://www.pref.fukushima.lg.jp/site/movie-now/ch-furusato2020-yatuki.html",
+        "title": "福島県 ふるさとの祭り2020 八槻都々古別神社の御神楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "日本武尊の伝説で、山から放った矢が着いた所に社を建てたことが「八槻」の名の由来という",
+      "source": {
+        "url": "https://www.town.tanagura.fukushima.jp/kasseika-kannkoubussann/kankospot/page000327.html",
+        "title": "棚倉町活性化・観光物産協会 八槻都々古別神社（奥州一宮）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "同じ社で毎年旧暦1月6日に行う御田植は、国の重要無形民俗文化財",
+      "source": {
+        "url": "https://online.bunka.go.jp/heritages/detail/159988",
+        "title": "文化遺産オンライン 都々古別神社の御田植",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.town.tanagura.fukushima.jp/kasseika-kannkoubussann/event/page000338.html",
+        "title": "棚倉町活性化・観光物産協会 霜月大祭（八槻都々古別神社）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-12",
+      "endDate": "2026-12-13",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "毎年12月の第2土・日曜日。2日間とも拝殿で御神楽を奉納し、ゆずやしょうがの市が立つ。2026年の行事ごとの時刻はまだ見つからない",
+      "sources": [
+        {
+          "url": "https://www.town.tanagura.fukushima.jp/kasseika-kannkoubussann/event/page000338.html",
+          "title": "棚倉町活性化・観光物産協会 霜月大祭（令和8年12月12日・13日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.town.tanagura.fukushima.jp/kasseika-kannkoubussann/kankospot/page000327.html",
+          "title": "棚倉町活性化・観光物産協会 八槻都々古別神社（霜月大祭は12月の第2土・日曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 近津駅",
+        "walkMinutes": [13, 18],
+        "note": "水郡線。町の案内で徒歩約13分（約900m）、タクシーで約3分"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.town.tanagura.fukushima.jp/kasseika-kannkoubussann/kankospot/page000327.html",
+        "title": "棚倉町活性化・観光物産協会 八槻都々古別神社（近津駅から徒歩13分、駐車場約20台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "名物のゆずとしょうが",
+        "note": "霜月大祭に合わせて神社の周りに立つ八槻市で売られる",
+        "sources": [
+          {
+            "url": "https://www.town.tanagura.fukushima.jp/kasseika-kannkoubussann/kankospot/page000327.html",
+            "title": "棚倉町活性化・観光物産協会 八槻都々古別神社（霜月大祭に地元のゆず・しょうがの市）",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "tanagura-castle-site-kamegajo-park",
+      "name": "棚倉城跡（亀ケ城公園）",
+      "kind": "sightseeing",
+      "summary": "1625年から築かれた棚倉藩の城跡。大きな土塁が残り、戊辰戦争で落城するまで8家16代が治めた。2019年に国の史跡に指定。磐城棚倉駅から徒歩15分",
+      "location": {
+        "lat": 37.0311,
+        "lng": 140.3837
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.town.tanagura.fukushima.jp/kasseika-kannkoubussann/kankospot/page000344.html",
+          "title": "棚倉町活性化・観光物産協会 棚倉城跡（亀ケ城公園）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "baba-tsutsukowake-jinja",
+      "name": "馬場都々古別神社（陸奥一宮）",
+      "kind": "sightseeing",
+      "summary": "都々古別三社の一つで、江戸時代は近津三社の上宮。社宝の太刀二口と鎧の残欠は国の重要文化財。専用の駐車場はなく、町役場の北側の駐車場を使う",
+      "location": {
+        "lat": 37.0296,
+        "lng": 140.3778
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.town.tanagura.fukushima.jp/kasseika-kannkoubussann/kankospot/page000339.html",
+          "title": "棚倉町活性化・観光物産協会 馬場都々古別神社（陸奥一宮）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "tanagura-inaka-sudachi",
+      "name": "農産物直売所 田舎すだち",
+      "kind": "food",
+      "summary": "棚倉の町なかにある農産物の直売所。休みは元日だけ",
+      "location": {
+        "lat": 37.0275,
+        "lng": 140.3764
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "18:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.town.tanagura.fukushima.jp/kasseika-kannkoubussann/gurume-omiyage/page000355.html",
+          "title": "棚倉町活性化・観光物産協会 食べる・買う",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.town.tanagura.fukushima.jp/kasseika-kannkoubussann/event/page000338.html",
+      "title": "棚倉町活性化・観光物産協会 霜月大祭（八槻都々古別神社）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.town.tanagura.fukushima.jp/kasseika-kannkoubussann/kankospot/page000327.html",
+      "title": "棚倉町活性化・観光物産協会 八槻都々古別神社（奥州一宮）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://tenki.jp/leisure/2/10/44/59804/",
+      "title": "tenki.jp 八槻都々古別神社（霜月大祭に投げ餅・ひょっとこ踊り・露店）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2026年の御神楽などの行事ごとの時刻（町の案内に時刻がない）",
+    "投げ餅・三春ひょっとこ踊りがあるかと、その時刻（公式の案内では確かめられず、1つの情報源だけ）",
+    "雨や雪のときの扱い",
+    "見学の決まり（拝殿での見学の場所、撮影、服装、持ち物）",
+    "主要駅（郡山駅・仙台駅など）から近津駅までの所要時間（町の案内は郡山駅から磐城棚倉駅までの数字だけ）",
+    "周辺の観光地の開園時間と休み、会場からの徒歩の時間",
+    "会場の座標は神社の字（大宮）の代表点で、建物の位置ではない",
+    "神楽の奉納の回数など、規模を決める数（拝殿での奉納と市から S とした）"
+  ]
+}
