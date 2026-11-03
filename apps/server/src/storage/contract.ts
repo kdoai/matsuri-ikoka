@@ -153,7 +153,7 @@ export function tripStorageContract(make: (clock: Clock) => TripStorage): void {
     const trips = await storage.listTrips(uid);
 
     expect(trips.map((trip) => trip.title)).toEqual(["新しい旅", "古い旅"]);
-    expect(trips[0]?.date).toBe(b.date);
+    expect(trips[0]?.date).toBe(b.days[0]?.date);
   });
 
   it(`版は新しいものから ${MAX_VERSIONS} まで残す`, async () => {
