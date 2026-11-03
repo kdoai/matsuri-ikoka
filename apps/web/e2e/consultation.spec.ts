@@ -383,6 +383,11 @@ test("文章を書かずに、選択肢を選ぶだけで相談を始められ�
   await page.getByTestId("consult-forward").click();
   await expect(page.getByTestId("consult-forward")).toBeDisabled();
 
+  // 駅の候補の出典を、公式のページへのリンクで出す
+  await expect(page.getByTestId("consult-station-source").getByRole("link")).toHaveAttribute(
+    "href",
+    /^https:\/\/nlftp\.mlit\.go\.jp\/ksj\//,
+  );
   const station = consult.getByRole("textbox", { name: "最寄りの駅" });
   await station.fill("みなと中央駅");
   await station.press("Enter");

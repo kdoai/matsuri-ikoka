@@ -8,6 +8,9 @@ import { type Station, type StationList, searchStations } from "./stations";
 // 出発の駅の入力。打ちはじめたら、駅の一覧から候補を出す（↑↓で選び、Enter で決める。選んでいる候補は読み上げる）。
 // 一覧にない駅名も、そのまま決められる。駅の一覧は、この段階を開いたときに初めて読む。
 
+/** 駅の一覧の出典（公式のページ。作り方は docs/stations.md） */
+const STATIONS_SOURCE_URL = "https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N02-2025.html";
+
 let loading: Promise<readonly Station[]> | null = null;
 
 /** 駅の一覧を読む（1回だけ）。読めなければ空にして、書いた駅名をそのまま使う */
@@ -173,6 +176,17 @@ export function StationInput({
       ) : value.trim() !== "" && stations !== null && matches.length === 0 ? (
         <p className="mt-1 text-ink-soft text-xs">{t.consult.stationNone}</p>
       ) : null}
+      <p className="mt-1 text-[0.7rem] text-ink-soft" data-testid="consult-station-source">
+        <a
+          href={STATIONS_SOURCE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={t.consult.stationSourceLink}
+          className="underline decoration-dotted underline-offset-2 hover:text-ink"
+        >
+          {t.consult.stationSource}
+        </a>
+      </p>
     </div>
   );
 }

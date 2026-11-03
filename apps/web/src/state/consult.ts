@@ -276,7 +276,10 @@ export function setAmount(answers: ConsultAnswers, amount: number | null): Consu
   return { ...answers, budget: { ...current, picks: [], amount: value } };
 }
 
-/** 答えたことになるか。「その他」は文字が入って、「日付を指定」は期間を選んで、はじめて答えになる */
+/**
+ * 答えたことになるか。「その他」は文字が入って、「日付を指定」は期間を選んで、はじめて答えになる。
+ * 今週末などの範囲や「日にちは未定」は、日帰りか泊まりかまで選んで答えになる（泊数を伝えるため）
+ */
 export function isAnswered(answer: ConsultAnswer | undefined, question: ConsultQuestion): boolean {
   if (answer === undefined) return false;
   switch (question) {
@@ -284,7 +287,8 @@ export function isAnswered(answer: ConsultAnswer | undefined, question: ConsultQ
     case "note":
       return answer.text.trim().length > 0;
     case "schedule":
-      return answer.picks[0] === "dates" ? answer.range !== undefined : answer.picks.length > 0;
+      if (answer.picks[0] === undefined) return false;
+      return answer.picks[0] === "dates" ? answer.range !== undefined : answer.stay !== undefined;
     case "budget":
       return answer.picks.length > 0 || (answer.amount ?? 0) > 0;
     default:

@@ -229,6 +229,9 @@ export const en: Messages = {
     stationLoading: "Loading stations",
     stationNone: "No matches. You can still use what you typed",
     stationCount: (count: number) => `${plural(count, "match", "matches")}`,
+    stationSource:
+      "Station list: adapted from National Land Numerical Information (Railway Data), MLIT",
+    stationSourceLink: "Open the source page (new tab)",
     station: (name: string) => `${name} Station`,
     amountLabel: "Or enter an amount (per person)",
     amountUnit: "yen",

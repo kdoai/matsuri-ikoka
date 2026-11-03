@@ -202,6 +202,8 @@ export const ja = {
     stationLoading: "駅の一覧を読み込んでいます",
     stationNone: "候補が見つかりません。そのまま決定もできます",
     stationCount: (count: number) => `候補が${count}件あります`,
+    stationSource: "駅の候補：「国土数値情報（鉄道データ）」（国土交通省）を加工して作成",
+    stationSourceLink: "出典のページを開く（新しいタブ）",
     station: (name: string) => `${name}駅`,
     amountLabel: "金額で伝える（1人あたり）",
     amountUnit: "円",

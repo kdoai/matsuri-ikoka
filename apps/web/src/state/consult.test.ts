@@ -124,7 +124,19 @@ describe("isAnswered", () => {
       picks: ["dates"],
       range: { from: "2030-06-10", to: "2030-06-12" },
     });
-    expect(isAnswered({ picks: ["undecided"], text: "" }, "schedule")).toBe(true);
+  });
+
+  it("今週末などの範囲と日にちは未定は、日帰りか泊まりかまで選んで答えになる", () => {
+    for (const pick of ["thisWeekend", "nextMonth", "undecided"]) {
+      const answers = pickAnswer({}, "schedule", pick);
+      expect(isAnswered(answers.schedule, "schedule")).toBe(false);
+      expect(canReach("origin", { ...pickAnswer({}, "party", "solo"), ...answers })).toBe(false);
+      expect(isAnswered(setStay(answers, "oneNight").schedule, "schedule")).toBe(true);
+    }
+    // 範囲を選び直しても、選んだ日帰り・泊まりは残る
+    let answers = setStay(pickAnswer({}, "schedule", "thisWeekend"), "dayTrip");
+    answers = pickAnswer(answers, "schedule", "nextWeekend");
+    expect(isAnswered(answers.schedule, "schedule")).toBe(true);
   });
 
   it("出発の駅とひとことは、書いた文字で答えになる", () => {
@@ -169,6 +181,9 @@ describe("段階の行き来", () => {
     ] as const) {
       answers = pickAnswer(answers, question, pick);
     }
+    // 日にちは未定のままでは、日程で止まる
+    expect(furthestStep(answers)).toBe("schedule");
+    answers = setStay(answers, "dayTrip");
     expect(furthestStep(answers)).toBe("origin");
     answers = setAnswerText(answers, "origin", "みなと中央駅");
     expect(furthestStep(answers)).toBe("confirm");
