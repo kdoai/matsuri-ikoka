@@ -26,10 +26,10 @@ export interface ShopSceneProps {
   frame: FrameInsets;
   /** 返答を待っているか（旅人の表情に使う） */
   talking: boolean;
-  /** 旅人の「話す」を押したとき（会話の窓の入力欄へ） */
-  onTalk?: () => void;
-  /** 「話す」のボタンの文言（画面の言葉に合わせる） */
-  talkLabel?: string;
+  /** 旅人がスタッフに話しかけたとき（会話の窓の入力欄へ。窓口はコンシェルジュ） */
+  onTalk?: (staff: StaffId) => void;
+  /** ゲームパッドの X・Y・＋（スタート）を押したとき */
+  onPad?: (command: "details" | "map" | "menu") => void;
 }
 
 export function selectSceneProps(

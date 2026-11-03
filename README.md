@@ -35,9 +35,9 @@ pnpm install
 pnpm dev
 ```
 
-画面は http://localhost:5173 、接客サーバーは http://localhost:8787 で開きます。
+画面は http://localhost:5173 、接客サーバーは http://localhost:8787 で開きます。画面はいつも接客サーバーと話します（Vite が `/api` と `/shiori` を中継します）。
 
-- キーがなくても、記録したサンプルの相談を再生する**モックモード**（`MATSURI_AGENT_MODE=mock`）で動かせます（準備中）
+- キーがなくても、接客サーバーの**モックモード**（`MATSURI_AGENT_MODE=mock`、既定）で動かせます。AI の返答だけが、記録したサンプルの相談の再生になります
 - Claude と実際に話す **live モード**は、API キー、または Claude Code にログイン済みの環境で動きます（準備中）。設定は [`.env.example`](.env.example) を `.env` にコピーして書きます
 
 ## できること

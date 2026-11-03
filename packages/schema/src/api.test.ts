@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   ApiErrorSchema,
+  FestivalsResponseSchema,
   PreferencesRequestSchema,
   SessionRequestSchema,
   SessionResponseSchema,
@@ -41,5 +42,12 @@ describe("API の本文と応答", () => {
     expect(
       ApiErrorSchema.safeParse({ code: "teapot", message: "x", retryable: false }).success,
     ).toBe(false);
+  });
+});
+
+describe("FestivalsResponseSchema", () => {
+  it("祭りのデータの並びを持つ", () => {
+    expect(FestivalsResponseSchema.safeParse({ festivals: [] }).success).toBe(true);
+    expect(FestivalsResponseSchema.safeParse({}).success).toBe(false);
   });
 });

@@ -1,7 +1,8 @@
-import { mkdirSync } from "node:fs";
+import { mkdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { expect, type Page, type TestInfo } from "@playwright/test";
+import { SampleConversationSchema } from "@matsuri-ikoka/schema";
+import { expect, type Locator, type Page, type TestInfo } from "@playwright/test";
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -23,18 +24,27 @@ export async function snap(page: Page, info: TestInfo, name: string, fullPage = 
   await page.screenshot({ path: join(dir, `${name}.png`), fullPage });
 }
 
+/** 接客サーバー（mock）が再生する記録した相談。発言は記録のとおりに送る */
+export const SAMPLE = SampleConversationSchema.parse(
+  JSON.parse(
+    readFileSync(join(here, "../../../data/samples/conversations/suzunari-day-trip.json"), "utf8"),
+  ),
+);
+
 /** 店に入り、相談を始められる状態にする */
-export async function enterShop(page: Page, query = "?speed=4&scene=2d"): Promise<void> {
+export async function enterShop(page: Page, query = "?scene=2d"): Promise<void> {
   await page.goto(`/${query}`);
   await page.getByRole("button", { name: "入店する" }).click();
   await expect(page.getByRole("textbox", { name: "相談の発言" })).toBeEnabled();
 }
 
-/** 記録の次の発言を入れて送る */
-export async function sendSampleMessage(page: Page): Promise<void> {
-  await page.getByRole("button", { name: "記録の発言を入れる" }).click();
+/** 記録の index 番目の発言を入れて送る */
+export async function sendSampleMessage(page: Page, index: number): Promise<void> {
+  const message = SAMPLE.turns[index]?.request.message;
+  if (message === undefined) throw new Error(`記録に ${index} 番目の発言がありません`);
   const input = page.getByRole("textbox", { name: "相談の発言" });
-  await expect(input).not.toHaveValue("");
+  await expect(input).toBeEnabled();
+  await input.fill(message);
   await input.press("Enter");
 }
 
@@ -79,4 +89,13 @@ export async function openLog(page: Page): Promise<void> {
 export async function closeLog(page: Page): Promise<void> {
   await page.getByTestId("backlog").getByRole("button", { name: "閉じる" }).click();
   await expect(page.getByTestId("backlog")).toHaveCount(0);
+}
+
+/** Tab だけで、その部品に焦点を移す（キーボードだけで操作できるかを確かめる） */
+export async function tabTo(page: Page, target: Locator, limit = 80): Promise<void> {
+  for (let i = 0; i < limit; i++) {
+    if (await target.evaluate((element) => element === document.activeElement)) return;
+    await page.keyboard.press("Tab");
+  }
+  throw new Error("Tab で焦点を移せませんでした");
 }

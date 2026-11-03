@@ -1,10 +1,12 @@
 import { defineConfig, devices } from "@playwright/test";
 
-// 画面の通しテスト。画面だけのモックで、記録した相談を最初からしおりまで通す。
+// 画面の通しテスト。接客サーバーを mock（記録した相談の再生）で立ち上げ、画面をそこにつないで、
+// 記録した架空の相談を最初からしおりまで通す。AI の部分だけが記録で、画面と通信は本物。
 // ブラウザは Playwright の Chromium を使う（pnpm exec playwright install chromium）。
 // 手元の Chrome で走らせるときは PLAYWRIGHT_CHANNEL=chrome を付ける。
 
-const port = Number(process.env.E2E_PORT ?? 5179);
+const port = Number(process.env.E2E_PORT ?? 35179);
+const serverPort = Number(process.env.E2E_SERVER_PORT ?? 38787);
 const channel = process.env.PLAYWRIGHT_CHANNEL || undefined;
 
 export default defineConfig({
@@ -31,10 +33,27 @@ export default defineConfig({
       use: { ...devices["Pixel 7"], channel },
     },
   ],
-  webServer: {
-    command: `pnpm exec vite --port ${port} --strictPort`,
-    url: `http://localhost:${port}`,
-    reuseExistingServer: !process.env.CI,
-    timeout: 60_000,
-  },
+  webServer: [
+    {
+      // 接客サーバー（mock）。記録の間隔のとおりに流す（待ち時間の表示を確かめる）
+      command: "pnpm --filter @matsuri-ikoka/server exec tsx src/index.ts",
+      url: `http://localhost:${serverPort}/healthz`,
+      env: {
+        PORT: String(serverPort),
+        MATSURI_AGENT_MODE: "mock",
+        MATSURI_REPLAY_SPEED: "1",
+      },
+      stdout: "pipe",
+      // 同じポートで別のサーバーが動いていても使わない（別の版の画面やサーバーで確かめてしまうため）
+      reuseExistingServer: false,
+      timeout: 60_000,
+    },
+    {
+      command: `pnpm exec vite --port ${port} --strictPort`,
+      url: `http://localhost:${port}`,
+      env: { MATSURI_SERVER_ORIGIN: `http://localhost:${serverPort}` },
+      reuseExistingServer: false,
+      timeout: 60_000,
+    },
+  ],
 });

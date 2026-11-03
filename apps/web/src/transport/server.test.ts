@@ -130,4 +130,22 @@ describe("接客サーバーとの通信", () => {
     expect(headerOf(fetchMock.mock.calls[0]?.[1], PASSCODE_HEADER)).toBe("matsuri");
     expect(await source.load("opted-out")).toBeNull();
   });
+
+  it("豆知識に使う祭りは一覧の経路から読み、形の違うものと掲載停止の祭りは捨てる", async () => {
+    const festival = fictionalFestival();
+    const fetchMock = vi.fn<typeof fetch>(async () =>
+      json(
+        { festivals: [festival, { id: "broken" }, { ...festival, id: "opted-out", optOut: true }] },
+        200,
+      ),
+    );
+    const list = await createServerFestivalSource({ fetch: fetchMock }).initial();
+    expect(list.map((item) => item.id)).toEqual([festival.id]);
+    expect(String(fetchMock.mock.calls[0]?.[0])).toBe("/api/festivals");
+  });
+
+  it("一覧の経路がないサーバーでは、豆知識に使う祭りは空のまま", async () => {
+    const fetchMock = vi.fn<typeof fetch>(async () => json({ code: "not_found" }, 404));
+    expect(await createServerFestivalSource({ fetch: fetchMock }).initial()).toEqual([]);
+  });
 });

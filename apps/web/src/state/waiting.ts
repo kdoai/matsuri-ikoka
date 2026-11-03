@@ -1,25 +1,92 @@
-import { FESTIVAL_CATEGORIES, type Festival } from "@matsuri-ikoka/schema";
-import type { AppData, QuizQuestion, TriviaCard } from "./types";
+import { FESTIVAL_CATEGORIES, type Festival, UNKNOWN } from "@matsuri-ikoka/schema";
+import type { AppData, QuizQuestion, WaitingTalk } from "./types";
 
-// 待ち時間に出す小話とクイズ。どちらも祭りのデータの項目だけから作り、その場で文章を作らない。
+// 待ち時間に出す豆知識とクイズ。どちらも祭りのデータの項目だけから作り、その場で文章を作らない。
 
 /**
- * 小話のカード。候補が出たあとは候補の祭りの小話、それまでは読み込んである祭りの小話を出す。
- * 候補の祭りのデータがまだ届いていなければ、読み込んである祭りの小話で待つ。
+ * 豆知識で話す祭り。候補が出る前は読み込んである祭りのすべて、候補が出たあとは
+ * 候補の祭りと旅程の主役の祭り（データが届いているものだけ。まだなら全体から）。
  */
-export function triviaCards(state: Pick<AppData, "festivals" | "candidates">): TriviaCard[] {
-  const all = Object.values(state.festivals);
+export function waitingFestivals(
+  state: Pick<AppData, "festivals" | "candidates" | "itinerary">,
+): Festival[] {
+  const all = Object.values(state.festivals).filter((festival) => !festival.optOut);
   const focusIds = new Set(state.candidates.map((candidate) => candidate.festivalId));
+  const main = state.itinerary.current?.mainFestivalId;
+  if (main !== undefined) focusIds.add(main);
   const focused = all.filter((festival) => focusIds.has(festival.id));
-  const pool = focused.some((festival) => festival.trivia.length > 0) ? focused : all;
-  return pool.flatMap((festival) =>
-    festival.trivia.map((trivia) => ({
-      festivalId: festival.id,
-      festivalName: festival.name.ja,
-      text: trivia.text,
-      source: trivia.source,
-    })),
-  );
+  // 主役の祭りを先頭にする
+  focused.sort((a, b) => Number(b.id === main) - Number(a.id === main));
+  return focused.length > 0 ? focused : all;
+}
+
+/** 1つの祭りの話。小話・見どころ・作法を、種類が続かないよう交互に並べる */
+function talksOf(festival: Festival): WaitingTalk[] {
+  const base = { festivalId: festival.id, festivalName: festival.name.ja };
+  const festivalSource = festival.sources[0];
+  const trivia: WaitingTalk[] = festival.trivia.map((item) => ({
+    ...base,
+    kind: "trivia",
+    text: item.text,
+    source: item.source,
+  }));
+  const highlights: WaitingTalk[] =
+    festivalSource === undefined
+      ? []
+      : festival.highlights.map((text) => ({
+          ...base,
+          kind: "highlight",
+          text,
+          source: festivalSource,
+        }));
+  const etiquette: WaitingTalk[] = [];
+  const { etiquette: e } = festival;
+  const etiquetteSource = e.sources[0];
+  if (etiquetteSource !== undefined) {
+    const add = (item: NonNullable<WaitingTalk["item"]>, text: string, code?: string) =>
+      etiquette.push({
+        ...base,
+        kind: "etiquette",
+        item,
+        text,
+        ...(code === undefined ? {} : { code }),
+        source: etiquetteSource,
+      });
+    if (e.participation !== UNKNOWN) add("participation", "", e.participation);
+    if (e.howToJoin !== null && e.howToJoin !== UNKNOWN) add("howToJoin", e.howToJoin);
+    if (e.rules !== UNKNOWN) for (const rule of e.rules) add("rules", rule);
+    if (e.dress !== UNKNOWN) add("dress", e.dress.join("、"));
+    if (e.bring !== UNKNOWN) add("bring", e.bring.join("、"));
+    if (e.photo !== UNKNOWN) add("photo", e.photo.note ?? "", e.photo.policy);
+    if (e.risk !== UNKNOWN) add("risk", e.risk.reason, e.risk.level);
+  }
+  const lists = [trivia, highlights, etiquette];
+  const talks: WaitingTalk[] = [];
+  for (let i = 0; lists.some((list) => i < list.length); i++) {
+    for (const list of lists) {
+      const talk = list[i];
+      if (talk !== undefined) talks.push(talk);
+    }
+  }
+  return talks;
+}
+
+/**
+ * 待ち時間の豆知識。祭りのデータの小話・見どころ・作法だけから作り、出典を添える。
+ * 祭りが続かないよう、祭りごとの話を1つずつ交互に並べる。
+ */
+export function waitingTalks(
+  state: Pick<AppData, "festivals" | "candidates" | "itinerary">,
+): WaitingTalk[] {
+  const lists = waitingFestivals(state).map(talksOf);
+  const talks: WaitingTalk[] = [];
+  for (let i = 0; lists.some((list) => i < list.length); i++) {
+    for (const list of lists) {
+      const talk = list[i];
+      if (talk !== undefined) talks.push(talk);
+    }
+  }
+  return talks;
 }
 
 /** クイズで問う祭り。旅程の主役、候補の先頭、読み込んである祭りの順に選ぶ */

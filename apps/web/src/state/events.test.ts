@@ -18,7 +18,7 @@ import type { AppData } from "./types";
 const sample: SampleConversation = SampleConversationSchema.parse(sampleJson);
 
 function fresh(): AppData {
-  const state = initialData({ transport: "mock" });
+  const state = initialData();
   return { ...state, session: { ...state.session, id: "s-1", status: "ready" } };
 }
 

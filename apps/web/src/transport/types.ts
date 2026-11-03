@@ -6,15 +6,14 @@ import {
   type SseMessage,
 } from "@matsuri-ikoka/schema";
 import { clientError, retryableByDefault } from "../state/errors";
-import type { ClientError, ClientErrorCode, TransportKind } from "../state/types";
+import type { ClientError, ClientErrorCode } from "../state/types";
 
-// 相談の通信の口。接客サーバーへの通信と、画面だけのモックの再生を同じ形で扱う。
-// どちらも SSE の1件（event と data の文字列）を渡すだけで、検証はストアの側で1か所で行う。
+// 相談の通信の口（接客サーバーへの通信）。テストでは同じ形の代わりを渡す。
+// SSE の1件（event と data の文字列）を渡すだけで、検証はストアの側で1か所で行う。
 
 export type OnSseMessage = (message: SseMessage) => void;
 
 export interface ChatTransport {
-  readonly kind: TransportKind;
   /** 相談を始めて、セッション ID を受け取る */
   startSession(signal?: AbortSignal): Promise<string>;
   /** 発言を送り、返答のイベントを受け取る。接続が閉じたら終わる */
@@ -29,8 +28,6 @@ export interface ChatTransport {
   setPasscode?(passcode: string): void;
   /** 接客サーバーのときだけ：合言葉を覚えているか */
   hasPasscode?(): boolean;
-  /** モックのときだけ：次に再生する記録の発言 */
-  nextSampleMessage?(): string | null;
 }
 
 /** 祭りのデータの読み込み口。小話・クイズ・しおりに使う */
