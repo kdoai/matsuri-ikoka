@@ -28,12 +28,21 @@ function tooltip(text: string): HTMLElement {
 }
 
 interface MapViewProps {
-  /** しおりの紙面では、地図を動かせないようにする */
+  /** しおりの紙面や小さな地図では、地図を動かせないようにする */
   interactive?: boolean;
   heightClass?: string;
+  /** 地点の文字の一覧を出すか（小さな地図では、旅程のパネルで読めるので出さない） */
+  showPlaces?: boolean;
+  /** 地図の枠の飾り（小さな地図では外側の余白と枠を付けない） */
+  framed?: boolean;
 }
 
-export default function MapView({ interactive = true, heightClass = "h-80" }: MapViewProps) {
+export default function MapView({
+  interactive = true,
+  heightClass = "h-80",
+  showPlaces = true,
+  framed = true,
+}: MapViewProps) {
   const t = useT();
   const itinerary = useApp((state) => state.itinerary.current);
   const spots = useApp((state) => state.spots);
@@ -112,14 +121,14 @@ export default function MapView({ interactive = true, heightClass = "h-80" }: Ma
   const extra = points.filter((point) => point.order === null);
 
   return (
-    <div className="space-y-2 p-3 print:space-y-1 print:p-0" data-testid="map-view">
+    <div className={framed ? "space-y-2 p-3 print:space-y-1 print:p-0" : ""} data-testid="map-view">
       <div
         ref={containerRef}
-        className={`${heightClass} w-full overflow-hidden rounded-xl ring-1 ring-wood-300`}
+        className={`${heightClass} w-full overflow-hidden ${framed ? "rounded-xl ring-1 ring-wood-300" : ""}`}
         {...mapRole}
       />
       {/* 地図の内容は、文字でも読めるようにする */}
-      {points.length === 0 ? (
+      {!showPlaces ? null : points.length === 0 ? (
         <p className="text-ink-soft">{t.map.noLocations}</p>
       ) : (
         <section aria-label={t.map.places}>

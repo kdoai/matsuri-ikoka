@@ -1,3 +1,5 @@
+// いちばん先に読み込む（スキーマのモジュールより前に zod を設定する）
+import "./zod-setup";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App";
@@ -11,6 +13,9 @@ import {
   createServerTransport,
 } from "./transport/server";
 import type { ChatTransport, FestivalSource } from "./transport/types";
+// 丸ゴシックの字体（OFL）。使う文字の分だけ、必要になったときに読み込まれる
+import "@fontsource/zen-maru-gothic/400.css";
+import "@fontsource/zen-maru-gothic/700.css";
 import "./index.css";
 
 // 開発のとき（または VITE_ENABLE_MOCK=true でビルドしたとき）だけ、画面だけのモックを含める

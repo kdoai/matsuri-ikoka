@@ -1,5 +1,4 @@
 import {
-  type ConversationStage,
   collectItinerarySources,
   type Festival,
   type Itinerary,
@@ -8,9 +7,9 @@ import {
   type Preferences,
   type Source,
   type SpotPin,
+  type StaffId,
 } from "@matsuri-ikoka/schema";
-import type { AppData } from "./types";
-import { QUEST_IDS } from "./types";
+import type { AppData, ChatEntry } from "./types";
 
 // ストアから画面に出す形を取り出す。部品はここを通して読む。
 
@@ -65,25 +64,6 @@ export function shioriReady(state: Pick<AppData, "session" | "verify" | "itinera
     state.session.stage === "shiori" &&
     state.verify.result === "as_planned"
   );
-}
-
-/** 3つのクエストがそろったか */
-export function allQuestsDone(state: Pick<AppData, "quests">): boolean {
-  return QUEST_IDS.every((id) => state.quests[id].status === "done");
-}
-
-/** 相談の進み具合の段（ヘッダーに出す）。修正は旅程の段に、確認はしおりの前の段に含める */
-export const PROGRESS_STEPS = [
-  "hearing",
-  "candidates",
-  "itinerary",
-  "verifying",
-  "shiori",
-] as const;
-export type ProgressStep = (typeof PROGRESS_STEPS)[number];
-
-export function progressStep(stage: ConversationStage): ProgressStep {
-  return stage === "revising" ? "itinerary" : stage;
 }
 
 export interface ConditionChip {
@@ -177,4 +157,83 @@ export function mapPoints(itinerary: Itinerary | null, spots: readonly SpotPin[]
     }
   }
   return points;
+}
+
+// ---------------------------------------------------------------------------
+// 会話の窓
+
+export type DialogueLine =
+  /** 店に入ったときのあいさつ */
+  | { kind: "greeting" }
+  /** 送ったあと、何か届くまで */
+  | { kind: "waiting"; userText: string }
+  /** スタッフが調べている間の吹き出し（コンシェルジュが話し始める前） */
+  | { kind: "work"; staff: StaffId; text: string }
+  | { kind: "concierge"; id: string; text: string; streaming: boolean }
+  | { kind: "error"; entry: Extract<ChatEntry, { kind: "error" }> };
+
+/**
+ * 会話の窓に出す、いまの一言。いちばん新しい発言のあとに届いたものから選ぶ。
+ * 返答の途中は、コンシェルジュが話し始めたらその文を、それまではスタッフの作業の吹き出しを出す。
+ * 返答のあとは、片付いていないエラーか、コンシェルジュの最後の返答を出す。
+ */
+export function currentLine(state: Pick<AppData, "messages" | "session">): DialogueLine {
+  const { messages } = state;
+  const lastUser = messages.findLastIndex((entry) => entry.kind === "user");
+  const since = messages.slice(lastUser + 1);
+  const error = since.findLast((entry) => entry.kind === "error" && !entry.resolved);
+  if (error?.kind === "error" && !state.session.streaming) {
+    return { kind: "error", entry: error };
+  }
+  const reply = since.findLast((entry) => entry.kind === "concierge");
+  if (reply?.kind === "concierge") {
+    return { kind: "concierge", id: reply.id, text: reply.text, streaming: reply.streaming };
+  }
+  if (state.session.streaming) {
+    const work = since.findLast((entry) => entry.kind === "work");
+    if (work?.kind === "work") {
+      return { kind: "work", staff: work.staff, text: work.result ?? work.bubble };
+    }
+    const user = messages[lastUser];
+    return { kind: "waiting", userText: user?.kind === "user" ? user.text : "" };
+  }
+  if (error?.kind === "error") {
+    return { kind: "error", entry: error };
+  }
+  const earlier = messages.findLast((entry) => entry.kind === "concierge");
+  return earlier?.kind === "concierge"
+    ? { kind: "concierge", id: earlier.id, text: earlier.text, streaming: false }
+    : { kind: "greeting" };
+}
+
+/** いま動いているスタッフ（待機していない人）。画面の上の「店内のようす」に出す */
+export function busyStaff(state: Pick<AppData, "staff">): StaffId[] {
+  return (Object.keys(state.staff) as StaffId[]).filter((id) => state.staff[id].phase !== "idle");
+}
+
+// ---------------------------------------------------------------------------
+// ゲームの画面の上のタブ
+
+export const SECTIONS = ["guide", "candidates", "shiori", "confirm"] as const;
+export type Section = (typeof SECTIONS)[number];
+
+/**
+ * いま光らせるタブ。開いているもの（候補・パネル）を先に見て、なければ相談の進み具合で決める。
+ * 聞き取りと候補は「祭りの候補」、旅程と修正は「旅程の案内」、確定前の確認は「確認」、しおりは「旅のしおり」
+ */
+export function currentSection(state: Pick<AppData, "ui" | "session">): Section {
+  if (state.ui.candidatesOpen) return "candidates";
+  if (state.ui.drawerOpen) return state.ui.tab === "sources" ? "confirm" : "guide";
+  switch (state.session.stage) {
+    case "hearing":
+    case "candidates":
+      return "candidates";
+    case "itinerary":
+    case "revising":
+      return "guide";
+    case "verifying":
+      return "confirm";
+    case "shiori":
+      return "shiori";
+  }
 }

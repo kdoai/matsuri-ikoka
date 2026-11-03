@@ -140,19 +140,8 @@ export interface VerifyState {
 }
 
 // ---------------------------------------------------------------------------
-// 待ち時間：クエスト・小話・クイズ
-
-/** 3つのクエスト：祭りを探せ / 寄り道を探せ / 道のりを調べよ */
-export const QUEST_IDS = ["festivals", "nearby", "route"] as const;
-export type QuestId = (typeof QUEST_IDS)[number];
-
-export interface QuestState {
-  status: "todo" | "active" | "done";
-  /** 終わったツール（道のりのクエストは3つのツールで進む） */
-  finished: ToolName[];
-  /** 完了した回数。旅程を直すたびに完了の演出を出し直す */
-  completions: number;
-}
+// ---------------------------------------------------------------------------
+// 待ち時間：祭りの小話・クイズ
 
 export interface TriviaCard {
   festivalId: string;
@@ -219,7 +208,6 @@ export interface AppData {
   spots: SpotPin[];
   itinerary: ItineraryState;
   verify: VerifyState;
-  quests: Record<QuestId, QuestState>;
   quiz: QuizState;
   /** クイズに正解して集めたスタンプの数。しおりの表紙に押す */
   stamps: number;

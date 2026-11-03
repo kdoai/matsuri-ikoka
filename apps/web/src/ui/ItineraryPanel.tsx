@@ -1,12 +1,29 @@
 import type { Itinerary, ItineraryItem } from "@matsuri-ikoka/schema";
+import {
+  ChevronRight,
+  ClipboardCheck,
+  type LucideIcon,
+  Map as MapIcon,
+  Maximize2,
+  Route,
+  X,
+} from "lucide-react";
 import { type KeyboardEvent, lazy, Suspense, useRef } from "react";
 import { formatDate, formatDateTime, type Messages } from "../i18n";
 import { useActions, useApp, useT } from "../state/react";
 import { itemChange, shioriReady, usedSources } from "../state/selectors";
 import { PANEL_TABS, type PanelTab, type VerifyState } from "../state/types";
 import { buttonPrimary, Pill, SourceLink } from "./common";
+import { itemIcon } from "./icons";
 
-// 右のパネル：旅程・地図・出典のタブ。変わった予定は山吹色で示す。
+// 右のパネル：旅程・地図・出典のタブ。旅程は「1日目」のカードに予定のアイコンを矢印でつないで見せ、
+// その下にくわしい予定と道のりの地図を置く。変わった予定は山吹色で示し、組み直したら「更新！」の札を貼る。
+
+const TAB_ICON: Record<PanelTab, LucideIcon> = {
+  itinerary: Route,
+  map: MapIcon,
+  sources: ClipboardCheck,
+};
 
 const MapView = lazy(() => import("./MapView"));
 
@@ -119,6 +136,96 @@ function ItemRow({ item, main }: { item: ItineraryItem; main: boolean }) {
   );
 }
 
+/** 1日の流れの1こま：予定の種類のアイコンと、始まる時刻 */
+function FlowStep({ item, main, first }: { item: ItineraryItem; main: boolean; first: boolean }) {
+  const change = useApp((state) => itemChange(state, item));
+  const Icon = itemIcon(item);
+  const tone = main
+    ? "border-shu-700 bg-shu-600 text-white"
+    : change !== null
+      ? "border-yamabuki-500 bg-yamabuki-100 text-ink"
+      : "border-ai-200 bg-ai-50 text-ai-800";
+  return (
+    <li className="flex items-start">
+      {first ? null : <ChevronRight className="mt-3 size-4 shrink-0 text-wood-400" />}
+      <div className="flex w-14 flex-col items-center text-center">
+        <span className={`grid size-11 place-items-center rounded-full border-2 shadow-sm ${tone}`}>
+          <Icon className="size-5" />
+        </span>
+        <span className="mt-1 font-bold font-mono text-ink text-xs tabular-nums">{item.start}</span>
+        <span className="line-clamp-2 text-[0.68rem] text-ink-soft leading-tight">{item.name}</span>
+      </div>
+    </li>
+  );
+}
+
+/** 「1日目」のカード。くわしい予定は下の一覧で文字で読めるので、流れの絵は読み上げから外す */
+function DayCard({ itinerary }: { itinerary: Itinerary }) {
+  const t = useT();
+  const updated = useApp(
+    (state) => state.itinerary.diff !== null && state.itinerary.diff.fromVersion > 0,
+  );
+  return (
+    <section
+      aria-labelledby="day-card-title"
+      className="relative rounded-2xl border-2 border-wood-300 bg-white px-3 pt-3 pb-2 shadow-sm"
+      data-testid="day-card"
+    >
+      <h3
+        id="day-card-title"
+        className="inline-flex rounded-full bg-ai-800 px-3 py-0.5 font-bold text-kinari-50 text-sm"
+      >
+        {t.panel.day(1)}
+      </h3>
+      {updated ? (
+        <p
+          className="-top-3 absolute right-3 rotate-6 rounded-md bg-yamabuki-400 px-2.5 py-1 font-black text-ink shadow-md ring-2 ring-white"
+          data-testid="updated-sticker"
+        >
+          {t.panel.updated}
+        </p>
+      ) : null}
+      <ol aria-hidden="true" className="mt-3 flex flex-wrap items-start gap-y-3">
+        {itinerary.items.map((item, index) => (
+          <FlowStep
+            key={item.id}
+            item={item}
+            first={index === 0}
+            main={item.type === "festival" && item.festivalId === itinerary.mainFestivalId}
+          />
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+/** 道のりの小さな地図。押すと地図のタブを開く */
+function RouteMapCard() {
+  const t = useT();
+  const actions = useActions();
+  return (
+    <section aria-labelledby="route-map-title" className="relative">
+      <h3 id="route-map-title" className="mb-1 font-bold text-ai-700 text-sm">
+        {t.panel.routeMap}
+      </h3>
+      <div className="overflow-hidden rounded-xl ring-2 ring-wood-300">
+        <Suspense fallback={<div className="h-40" />}>
+          <MapView interactive={false} heightClass="h-40" showPlaces={false} framed={false} />
+        </Suspense>
+      </div>
+      <button
+        type="button"
+        className="absolute right-2 bottom-2 z-[500] grid size-8 place-items-center rounded-full bg-kinari-50 text-ink shadow hover:bg-kinari-200"
+        aria-label={t.hud.expandMap}
+        title={t.hud.expandMap}
+        onClick={() => actions.setTab("map")}
+      >
+        <Maximize2 className="size-4" />
+      </button>
+    </section>
+  );
+}
+
 function ItineraryTab() {
   const t = useT();
   const itinerary = useApp((state) => state.itinerary.current);
@@ -132,6 +239,8 @@ function ItineraryTab() {
   }
   return (
     <div className="space-y-4 p-3">
+      <DayCard itinerary={itinerary} />
+      <h3 className="font-bold text-ai-700 text-sm">{t.panel.detail}</h3>
       <ol className="space-y-2">
         {itinerary.items.map((item) => (
           <ItemRow
@@ -174,6 +283,7 @@ function ItineraryTab() {
           </ul>
         </section>
       ) : null}
+      <RouteMapCard />
     </div>
   );
 }
@@ -226,38 +336,51 @@ export function ItineraryPanel() {
   return (
     <section
       aria-label={t.itinerary.panelLabel}
-      className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border-2 border-wood-700 bg-kinari-50 shadow-lg"
+      className="flex h-full min-h-0 flex-col overflow-hidden rounded-[1.6rem] border-[3px] border-wood-700 bg-gradient-to-b from-[#fffaf0] to-[#f6ead2] shadow-[0_14px_36px_rgb(0_0_0/0.45)]"
       data-testid="itinerary-panel"
     >
-      <div
-        role="tablist"
-        aria-label={t.itinerary.panelLabel}
-        className="flex shrink-0 gap-1 bg-wood-700 px-2 pt-2"
-        onKeyDown={onKeyDown}
-      >
-        {PANEL_TABS.map((id) => {
-          const selected = tab === id;
-          return (
-            <button
-              key={id}
-              ref={(element) => {
-                tabRefs.current[id] = element;
-              }}
-              type="button"
-              role="tab"
-              id={`tab-${id}`}
-              aria-selected={selected}
-              aria-controls={`panel-${id}`}
-              tabIndex={selected ? 0 : -1}
-              onClick={() => actions.setTab(id)}
-              className={`min-h-11 flex-1 rounded-t-xl px-3 py-2 font-bold transition ${
-                selected ? "bg-kinari-50 text-ai-800" : "bg-ai-700 text-white hover:bg-ai-600"
-              }`}
-            >
-              {t.itinerary.tabs[id]}
-            </button>
-          );
-        })}
+      <div className="flex shrink-0 items-center gap-2 bg-wood-700 px-2 pt-2">
+        <div
+          role="tablist"
+          aria-label={t.itinerary.panelLabel}
+          className="flex min-w-0 flex-1 gap-1"
+          onKeyDown={onKeyDown}
+        >
+          {PANEL_TABS.map((id) => {
+            const selected = tab === id;
+            const Icon = TAB_ICON[id];
+            return (
+              <button
+                key={id}
+                ref={(element) => {
+                  tabRefs.current[id] = element;
+                }}
+                type="button"
+                role="tab"
+                id={`tab-${id}`}
+                aria-selected={selected}
+                aria-controls={`panel-${id}`}
+                tabIndex={selected ? 0 : -1}
+                onClick={() => actions.setTab(id)}
+                className={`flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-t-xl px-3 py-2 font-bold transition ${
+                  selected ? "bg-[#fffaf0] text-ai-800" : "bg-ai-700 text-white hover:bg-ai-600"
+                }`}
+              >
+                <Icon aria-hidden="true" className="size-4" />
+                {t.itinerary.tabs[id]}
+              </button>
+            );
+          })}
+        </div>
+        <button
+          type="button"
+          className="mb-2 grid size-9 shrink-0 place-items-center rounded-full bg-kinari-50/90 text-ink shadow hover:bg-white"
+          aria-label={t.itinerary.closePanel}
+          title={t.itinerary.closePanel}
+          onClick={() => actions.setDrawer(false)}
+        >
+          <X className="size-5" />
+        </button>
       </div>
 
       {itinerary === null ? null : (

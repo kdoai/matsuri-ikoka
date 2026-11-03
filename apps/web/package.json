@@ -12,11 +12,16 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@fontsource/zen-maru-gothic": "5.3.1",
     "@matsuri-ikoka/schema": "workspace:*",
     "@microsoft/fetch-event-source": "2.0.1",
+    "@react-three/fiber": "9.8.2",
     "leaflet": "1.9.4",
+    "lucide-react": "1.56.0",
     "react": "19.3.1",
     "react-dom": "19.3.1",
+    "three": "0.186.1",
+    "zod": "4.6.7",
     "zustand": "5.0.16"
   },
   "devDependencies": {
@@ -26,6 +31,7 @@
     "@types/node": "^22.20.5",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "@types/three": "0.186.0",
     "@vitejs/plugin-react": "6.1.2",
     "tailwindcss": "4.3.3",
     "vite": "8.3.5"

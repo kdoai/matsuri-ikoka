@@ -1,86 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useActions, useApp, useT } from "../state/react";
-import { allQuestsDone } from "../state/selectors";
-import { QUEST_IDS, type QuestId } from "../state/types";
 import { triviaCards } from "../state/waiting";
 import { focusComposer } from "./ChatPanel";
 import { buttonQuiet, SourceLink } from "./common";
 import { useReducedMotion } from "./hooks";
-import { STAFF_LOOK } from "./StaffPanel";
 
-// 待ち時間を楽しめる時間にする部品：クエストの掲示板、祭りの小話、クイズ、しおり完成の演出。
-
-const QUEST_OWNER: Record<QuestId, "researcher" | "scout" | "planner"> = {
-  festivals: "researcher",
-  nearby: "scout",
-  route: "planner",
-};
-
-const QUEST_STATUS_STYLE = {
-  todo: "bg-kinari-200 text-ink-soft",
-  active: "bg-yamabuki-200 text-yamabuki-700 ring-1 ring-yamabuki-400",
-  done: "bg-shu-600 text-white",
-} as const;
-
-/**
- * 3つのクエストの掲示板。進み具合はイベントから決まる。
- * compact のときは、待ち時間のカードに場所を譲って、担当と進み具合だけを1行で出す。
- */
-export function QuestBoard({ compact = false }: { compact?: boolean }) {
-  const t = useT();
-  const quests = useApp((state) => state.quests);
-  const stamps = useApp((state) => state.stamps);
-  const complete = useApp(allQuestsDone);
-  return (
-    <section
-      aria-labelledby="quest-board-title"
-      className="rounded-lg border-2 border-wood-800 bg-kinari-50 px-2 py-1.5 shadow-md"
-      data-testid="quest-board"
-    >
-      <h2 id="quest-board-title" className="font-bold text-ink text-xs tracking-wide">
-        {t.quests.title}
-      </h2>
-      <ol className={compact ? "mt-0.5 flex flex-wrap gap-1.5" : "mt-0.5 space-y-0.5"}>
-        {QUEST_IDS.map((id) => {
-          const quest = quests[id];
-          return (
-            <li
-              key={id}
-              className="flex items-center justify-between gap-2 text-xs"
-              data-testid={`quest-${id}`}
-              data-status={quest.status}
-            >
-              <span className="flex items-center gap-1 font-semibold text-ink">
-                <span
-                  aria-hidden="true"
-                  className={`grid size-5 place-items-center rounded-full font-bold text-[10px] ${STAFF_LOOK[QUEST_OWNER[id]].badge}`}
-                >
-                  {STAFF_LOOK[QUEST_OWNER[id]].initial}
-                </span>
-                <span className={compact ? "sr-only" : undefined}>{t.quests.names[id]}</span>
-              </span>
-              <span
-                key={`${quest.status}-${quest.completions}`}
-                className={`rounded px-1.5 py-0.5 font-bold ${QUEST_STATUS_STYLE[quest.status]} ${
-                  quest.status === "done" ? "animate-stamp" : ""
-                }`}
-              >
-                {t.quests.status[quest.status]}
-              </span>
-            </li>
-          );
-        })}
-      </ol>
-      {!compact && (complete || stamps > 0) ? (
-        <p className="mt-1 border-wood-300 border-t pt-1 font-semibold text-shu-700 text-xs">
-          {complete ? t.quests.allDone : null}
-          {complete && stamps > 0 ? "・" : null}
-          {stamps > 0 ? t.quests.stamps(stamps) : null}
-        </p>
-      ) : null}
-    </section>
-  );
-}
+// 待ち時間を楽しめる時間にする部品：祭りの小話、クイズ、しおり完成の演出。
 
 /** 小話を切り替える間隔 */
 const TRIVIA_INTERVAL_MS = 6_000;
@@ -113,7 +38,7 @@ export function TriviaCard() {
   return (
     <aside
       aria-label={t.trivia.title}
-      className="w-full animate-pop rounded-xl border-2 border-ai-700 bg-white/95 px-3 py-2 shadow-lg sm:max-w-xs"
+      className="w-full max-w-[17rem] animate-pop rounded-xl border-2 border-ai-700 bg-white/95 px-3 py-2 text-sm shadow-lg sm:max-w-xs sm:text-base"
       data-testid="trivia-card"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
@@ -169,7 +94,7 @@ export function QuizCard() {
   return (
     <aside
       aria-labelledby="quiz-title"
-      className="w-full animate-pop rounded-xl border-2 border-shu-600 bg-white/95 px-3 py-2 shadow-lg sm:max-w-xs"
+      className="w-full max-w-[17rem] animate-pop rounded-xl border-2 border-shu-600 bg-white/95 px-3 py-2 shadow-lg sm:max-w-xs"
       data-testid="quiz-card"
     >
       <p id="quiz-title" className="font-bold text-shu-700 text-xs">

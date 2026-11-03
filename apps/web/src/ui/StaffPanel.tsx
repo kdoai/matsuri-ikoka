@@ -5,15 +5,12 @@ import type { StaffState } from "../state/types";
 // スタッフの状態（待機・移動・作業・戻る）と吹き出しを 2D で出す。
 // 3D がないとき・動きを減らす設定のときは、これが店内の見た目の主になる。
 
-/**
- * 見取り図の上の位置（%）。持ち場は固定、待機の位置はカウンターの近く。
- * 右の3割は、クエストの掲示板と小話のカードを置くために空けておく。
- */
+/** 見取り図の上の位置（%）。持ち場は固定、待機の位置はカウンターの近く */
 const POSITIONS: Record<StaffId, { home: [number, number]; post: [number, number] }> = {
-  concierge: { home: [41, 76], post: [41, 76] },
-  researcher: { home: [13, 64], post: [15, 36] },
-  scout: { home: [27, 55], post: [38, 36] },
-  planner: { home: [58, 60], post: [58, 36] },
+  concierge: { home: [52, 76], post: [52, 76] },
+  researcher: { home: [24, 62], post: [18, 36] },
+  scout: { home: [38, 56], post: [50, 36] },
+  planner: { home: [72, 62], post: [82, 36] },
 };
 
 /** スタッフの見分け：法被の色と頭文字 */
@@ -85,9 +82,9 @@ export function StaffFloor() {
   const staff = useApp((state) => state.staff);
   const summarize = useStaffSummary(true);
   const furniture: [StaffId, string][] = [
-    ["researcher", "left-[5%] w-[20%]"],
-    ["scout", "left-[28%] w-[20%]"],
-    ["planner", "left-[48%] w-[20%]"],
+    ["researcher", "left-[6%] w-[24%]"],
+    ["scout", "left-[38%] w-[24%]"],
+    ["planner", "left-[70%] w-[24%]"],
   ];
   return (
     <section
@@ -105,7 +102,7 @@ export function StaffFloor() {
           {t.staff.posts[id]}
         </div>
       ))}
-      <div className="absolute bottom-[3%] left-[19%] w-[44%] rounded-md border-2 border-wood-900/40 bg-wood-500 px-2 py-1 text-center font-bold text-white text-xs shadow">
+      <div className="absolute bottom-[3%] left-[30%] w-[44%] rounded-md border-2 border-wood-900/40 bg-wood-500 px-2 py-1 text-center font-bold text-white text-xs shadow">
         {t.staff.posts.concierge}
       </div>
 
@@ -163,9 +160,58 @@ export function StaffList({ showBubbles }: { showBubbles: boolean }) {
                   <span className="text-ink-soft">{summarize(id, state)}</span>
                 </p>
                 {showBubbles && showsBubble(state) ? (
-                  <p className="mt-0.5 font-medium text-ink">「{state.bubble}」</p>
+                  // 一覧の高さをそろえるため2行までにする（同じ文は会話欄の作業の記録にも出る）
+                  <p
+                    className="mt-0.5 line-clamp-2 font-medium text-ink"
+                    title={state.bubble ?? ""}
+                  >
+                    「{state.bubble}」
+                  </p>
                 ) : null}
               </div>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
+
+/**
+ * 店内のようす：いま動いているスタッフだけを、短い文で出す（ゲームの画面の左上）。
+ * 3D の動きと吹き出しと同じ情報を、文字でも読めるようにする。全員のようすは会話の記録で読める。
+ */
+export function StaffActivity() {
+  const t = useT();
+  const staff = useApp((state) => state.staff);
+  const summarize = useStaffSummary(false);
+  const busy = STAFF_IDS.filter((id) => staff[id].phase !== "idle");
+  if (busy.length === 0) {
+    return null;
+  }
+  return (
+    <section
+      aria-label={t.activity.title}
+      className="rounded-2xl bg-kinari-50/92 px-2.5 py-2 shadow-lg ring-1 ring-wood-700/30 backdrop-blur-sm"
+      data-testid="staff-activity"
+    >
+      <h2 className="font-bold text-ink-soft text-xs">{t.activity.title}</h2>
+      <ul className="mt-1 space-y-1">
+        {busy.map((id) => {
+          const state = staff[id];
+          return (
+            <li key={id} className="flex items-start gap-1.5 text-xs leading-snug">
+              <Badge id={id} size="sm" />
+              <p className="min-w-0">
+                <span className="mr-1 font-bold text-ink">{t.staff.names[id]}</span>
+                <span className="text-ink-soft">{summarize(id, state)}</span>
+                {showsBubble(state) ? (
+                  // 狭い画面では、吹き出しは 3D の上と会話の窓で読めるので省く
+                  <span className="mt-0.5 line-clamp-2 hidden font-medium text-ink sm:block">
+                    「{state.bubble}」
+                  </span>
+                ) : null}
+              </p>
             </li>
           );
         })}

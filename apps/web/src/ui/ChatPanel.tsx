@@ -1,4 +1,5 @@
 import { MAX_MESSAGE_LENGTH, type Preferences } from "@matsuri-ikoka/schema";
+import { SendHorizontal } from "lucide-react";
 import { type FormEvent, type KeyboardEvent, useEffect, useMemo, useRef } from "react";
 import { formatDate } from "../i18n";
 import { useActions, useApp, useT } from "../state/react";
@@ -297,7 +298,7 @@ export function Composer() {
   const sample = isMock && !streaming ? actions.sampleMessage() : null;
 
   return (
-    <form onSubmit={submit} className="space-y-1.5" data-testid="composer">
+    <form onSubmit={submit} className="space-y-1" data-testid="composer">
       <div className="flex items-end gap-2">
         <label className="sr-only" htmlFor={COMPOSER_ID}>
           {t.chat.label}
@@ -310,12 +311,24 @@ export function Composer() {
           onKeyDown={onKeyDown}
           placeholder={t.chat.placeholder}
           disabled={!ready}
-          className="field-sizing-content max-h-32 min-h-11 flex-1 resize-none rounded-xl border-2 border-wood-400 bg-white px-3 py-2 text-base text-ink placeholder:text-stone-500 focus:border-ai-600 focus:outline-none disabled:bg-kinari-200"
+          className="field-sizing-content max-h-28 min-h-11 min-w-0 flex-1 resize-none rounded-2xl border-2 border-wood-300 bg-white/95 px-4 py-2 text-base text-ink shadow-inner placeholder:text-stone-500 focus:border-ai-500 focus:outline-none disabled:bg-kinari-200"
           aria-invalid={tooLong}
           aria-describedby={tooLong ? "chat-too-long" : undefined}
         />
-        <button type="submit" className={buttonPrimary} disabled={!canSend}>
-          {streaming ? t.chat.waiting : t.chat.send}
+        <button
+          type="submit"
+          className="inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full border-2 border-wood-700/40 bg-yamabuki-400 px-4 font-bold text-ink shadow-[inset_0_-3px_0_rgb(0_0_0/0.15)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:border-transparent disabled:bg-stone-300 disabled:text-stone-600"
+          disabled={!canSend}
+          aria-label={streaming ? t.chat.waiting : t.chat.send}
+        >
+          <SendHorizontal aria-hidden="true" className="size-4" />
+          {/* 狭い画面では、待っている間の文を短くする（読み上げは aria-label の全文） */}
+          <span aria-hidden="true" className="sm:hidden">
+            {streaming ? "…" : t.chat.send}
+          </span>
+          <span aria-hidden="true" className="hidden sm:inline">
+            {streaming ? t.chat.waiting : t.chat.send}
+          </span>
         </button>
       </div>
       {tooLong ? (
@@ -327,7 +340,7 @@ export function Composer() {
       {sample !== null ? (
         <button
           type="button"
-          className="font-semibold text-ai-700 text-sm underline underline-offset-2"
+          className="font-semibold text-ai-700 text-xs underline underline-offset-2"
           onClick={() => {
             actions.setDraft(sample);
             focusComposer();
