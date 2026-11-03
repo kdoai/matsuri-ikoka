@@ -136,9 +136,8 @@ test("旅人を歩かせ、仕掛けを使い、カメラを回し、柵で止�
   await expect(prompt).toContainText("コンシェルジュと話す");
   await page.keyboard.press("e");
   await expect(page.getByTestId("dialogue")).toBeVisible();
-  await expect(page.getByRole("textbox", { name: "相談の発言" })).toBeFocused();
-  // Esc で入力欄を離れ、会話の窓をしまうと、また歩ける
-  await page.keyboard.press("Escape");
+  await expect(page.getByTestId("consult-choice").first()).toBeFocused();
+  // 会話の窓をしまうと、また歩ける
   await page.getByTestId("dialogue-close").click();
   await expect(page.getByTestId("dialogue")).toBeHidden();
   const atCounter = await playerAt(page);

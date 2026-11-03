@@ -13,6 +13,7 @@ import {
   createServerFestivalSource,
   createServerTransport,
 } from "./transport/server";
+import { loadTutorialSeen } from "./ui/storage";
 // 丸ゴシックの字体（OFL）。使う文字の分だけ、必要になったときに読み込まれる
 import "@fontsource/zen-maru-gothic/400.css";
 import "@fontsource/zen-maru-gothic/700.css";
@@ -28,6 +29,7 @@ const store = createAppStore({
   transport: createServerTransport({ passcode, sample }),
   festivals: createServerFestivalSource({ passcode }),
   locale: detectLocale(navigator.languages),
+  tutorialSeen: loadTutorialSeen(),
 });
 const account = createAccountClient({ passcode });
 

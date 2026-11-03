@@ -1,10 +1,8 @@
-import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { Interaction } from "../scenes/controls";
 import { type PlayNotice, playStore, usePlay } from "../state/play";
-import { useApp, useT } from "../state/react";
+import { useActions, useApp, useT } from "../state/react";
 import { KeyCap } from "./Hud";
-import { useMediaQuery } from "./hooks";
 import { Portrait } from "./Portraits";
 
 // 店の中で遊ぶための 2D の部品：旅人の頭の横の「話す・使う」、操作の案内、仕掛けの結果の知らせ。
@@ -92,62 +90,81 @@ function useClockText(locale: string): string {
   return text;
 }
 
-/** 操作の案内と、店の中のようす（近くにあるもの・ひよこ・時計）。3D の旅人がいるときだけ出す */
-export function PlayGuide() {
+/** 操作の一覧。「使い方」とはじめての案内で出す */
+export function ControlsList({ rows }: { rows?: readonly { keys: string; action: string }[] }) {
+  const t = useT();
+  return (
+    <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-sm">
+      {(rows ?? t.play.controls).map((row) => (
+        <div key={row.keys} className="contents">
+          <dt className="whitespace-nowrap font-bold text-wood-700">{row.keys}</dt>
+          <dd>{row.action}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+/**
+ * 店の中のようす（近くにあるもの・見つけたひよこ・店の時計）。3D に出ることを文字で読めるようにする。
+ * ふだんは読み上げにだけ伝え（画面には旅人の頭の横の「E ○○」が出る）、「使い方」の中では見える文字で出す
+ */
+export function PlayStatus({
+  className,
+  hidden = false,
+}: {
+  className?: string;
+  hidden?: boolean;
+}) {
   const t = useT();
   const locale = useApp((state) => state.ui.locale);
-  const active = usePlay((state) => state.active);
-  const entering = usePlay((state) => state.entering);
   const chicks = usePlay((state) => state.chicks.length);
   const sitting = usePlay((state) => state.sitting);
   const label = usePromptLabel();
-  const wide = useMediaQuery("(min-width: 1024px)");
-  const [open, setOpen] = useState<boolean | null>(null);
   const clock = useClockText(locale);
-  if (!active || entering) return null;
-  const expanded = open ?? wide;
+  return (
+    <div className={hidden ? "sr-only" : className} data-testid="play-status">
+      <p>
+        <span className="font-bold">{t.play.near}：</span>
+        {sitting ? t.play.sitting : (label ?? t.play.nothingNear)}
+      </p>
+      <p>
+        {t.play.chicks(chicks)}・{t.play.clock(clock)}
+      </p>
+    </div>
+  );
+}
+
+/**
+ * はじめての操作の案内。最初に店に入ったときだけ出し、閉じるか、コンシェルジュに話しかけたら消える。
+ * そのあとは右上の「使い方」から開ける
+ */
+export function Tutorial() {
+  const t = useT();
+  const actions = useActions();
+  const seen = useApp((state) => state.ui.tutorialSeen);
+  const entering = usePlay((state) => state.entering);
+  if (seen || entering) return null;
   return (
     <section
-      aria-label={t.play.controlsTitle}
-      className="rounded-2xl border-2 border-kinari-50/70 bg-ink/70 px-3 py-2 text-kinari-50 text-xs shadow-lg backdrop-blur-sm sm:text-sm"
+      aria-labelledby="tutorial-title"
+      className="washi w-72 animate-pop rounded-panel border border-line-strong p-3 text-ink shadow-lift"
       data-testid="play-guide"
     >
-      <button
-        type="button"
-        className="flex w-full items-center justify-between gap-2 font-bold"
-        aria-expanded={expanded}
-        aria-controls="play-controls"
-        onClick={() => setOpen(!expanded)}
-      >
-        <span>{t.play.controlsTitle}</span>
-        {expanded ? (
-          <ChevronUp aria-hidden="true" className="size-4" />
-        ) : (
-          <ChevronDown aria-hidden="true" className="size-4" />
-        )}
-        <span className="sr-only">{expanded ? t.play.controlsHide : t.play.controlsShow}</span>
-      </button>
-      {expanded ? (
-        <dl id="play-controls" className="mt-1.5 grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5">
-          {t.play.controls.map((row) => (
-            <div key={row.keys} className="contents">
-              <dt className="whitespace-nowrap font-bold text-yamabuki-200">{row.keys}</dt>
-              <dd>{row.action}</dd>
-            </div>
-          ))}
-        </dl>
-      ) : null}
-      <div
-        className="mt-1.5 space-y-0.5 border-kinari-50/30 border-t pt-1.5"
-        data-testid="play-status"
-      >
-        <p>
-          <span className="font-bold">{t.play.near}：</span>
-          {sitting ? t.play.sitting : (label ?? t.play.nothingNear)}
-        </p>
-        <p>
-          {t.play.chicks(chicks)}・{t.play.clock(clock)}
-        </p>
+      <h2 id="tutorial-title" className="mb-1.5 font-bold">
+        {t.tutorial.title}
+      </h2>
+      <ControlsList rows={t.tutorial.lines} />
+      <p className="mt-2 font-bold text-ai-800 text-sm">{t.tutorial.talk}</p>
+      <p className="mt-1 text-ink-soft text-xs">{t.tutorial.later}</p>
+      <div className="mt-2 text-right">
+        <button
+          type="button"
+          className="min-h-9 rounded-full border-2 border-wood-700/30 bg-yamabuki-400 px-4 font-bold text-ink text-sm shadow-soft"
+          onClick={actions.dismissTutorial}
+        >
+          {t.tutorial.ok}
+        </button>
       </div>
     </section>
   );
@@ -184,8 +201,8 @@ export function PlayNoticeToast() {
 }
 
 /**
- * 会話の窓をしまっている間の案内。3D の店では、コンシェルジュの頭の上に「話しかけてね」の吹き出しを出す
- * （位置は 3D の中から書き込む）。同じ文は下の案内の帯でも読める
+ * 会話の窓をしまっている間の目印。3D の店では、コンシェルジュの頭の上に小さな「！」の札を出す
+ * （位置は 3D の中から書き込む）。同じことは下の「話しかける」のボタンでも読める
  */
 export function GreetingBubble() {
   const t = useT();
@@ -197,17 +214,21 @@ export function GreetingBubble() {
     <div aria-hidden="true" className="pointer-events-none absolute inset-0">
       <p
         data-bubble="concierge"
-        className="absolute top-0 left-0 max-w-60 rounded-2xl border-2 border-yamabuki-400 bg-kinari-50 px-3 py-1.5 text-center font-bold text-ink text-sm leading-snug shadow-lg"
+        className="absolute top-0 left-0 flex items-center gap-1 rounded-full border-2 border-yamabuki-400 bg-kinari-50 py-0.5 pr-2.5 pl-1 font-bold text-ink text-xs shadow-soft"
         data-testid="greeting-bubble"
       >
-        {t.dialogue.greeting}
+        {/* 位置は 3D の中から transform で書き込むので、跳ねる動きは中の印だけに付ける */}
+        <span className="grid size-5 animate-bounce place-items-center rounded-full bg-yamabuki-400 font-black">
+          ！
+        </span>
+        {t.tutorial.marker}
       </p>
     </div>
   );
 }
 
 /**
- * 会話の窓をしまっている間、窓の場所に出す帯。コンシェルジュの案内の文と「話しかける」のボタン。
+ * 会話の窓をしまっている間、画面の下に出す小さな「話しかける」のボタン。
  * キーボード（Tab と Enter、または E）だけでも相談を始められる
  */
 export function GreetingBar({ onTalk }: { onTalk: () => void }) {
@@ -215,21 +236,15 @@ export function GreetingBar({ onTalk }: { onTalk: () => void }) {
   const entering = usePlay((state) => state.entering);
   if (entering) return null;
   return (
-    <div
-      className="mx-auto flex w-full max-w-xl items-center gap-2 rounded-3xl border-2 border-wood-700/60 bg-kinari-50/95 py-1.5 pr-1.5 pl-2 shadow-xl sm:gap-3"
-      data-testid="greeting-bar"
-    >
-      <Portrait speaker="concierge" className="size-10 border-2" />
-      <p className="min-w-0 flex-1 font-bold text-ink text-xs leading-snug sm:text-sm">
-        {t.dialogue.greeting}
-      </p>
+    <div className="mx-auto flex w-fit items-center" data-testid="greeting-bar">
       <button
         type="button"
         onClick={onTalk}
         aria-label={t.dialogue.talkToConcierge}
-        className="flex shrink-0 items-center gap-2 rounded-full border-2 border-yamabuki-400 bg-ink/85 py-1 pr-3 pl-1 font-bold text-kinari-50 text-sm shadow transition hover:bg-ink sm:pr-4"
+        className="hud-chip flex shrink-0 items-center gap-2 rounded-full py-1 pr-4 pl-1 font-bold text-sm transition hover:bg-ink/80"
       >
-        <KeyCap>E</KeyCap>
+        <Portrait speaker="concierge" className="size-8 border" />
+        <KeyCap small>E</KeyCap>
         {/* 狭い画面では短くする（読み上げは aria-label の全文） */}
         <span aria-hidden="true" className="sm:hidden">
           {t.hud.hints.talk}
