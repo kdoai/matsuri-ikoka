@@ -82,7 +82,7 @@ Firestore と Auth のエミュレーター（Firebase CLI と Java が要る）
 firebase emulators:start --only firestore,auth --project demo-matsuri-ikoka
 ```
 
-接客サーバーには、次の環境変数をシェルで渡します（接客サーバーは `.env` を自動では読みません）。
+接客サーバーには、次の環境変数を、リポジトリのルートの `.env` に書くか、シェルで渡します（`pnpm dev` はルートの `.env` があれば読みます）。
 
 ```bash
 MATSURI_STORAGE=firestore

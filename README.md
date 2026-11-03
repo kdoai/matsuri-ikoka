@@ -45,7 +45,7 @@ pnpm dev
 
 #### Claude と話す（live）
 
-接客サーバーに環境変数を渡して起動します。接客サーバーは `.env` を自動では読まないので、シェルで渡してください（変数の一覧と説明は [`.env.example`](.env.example)）。
+[`.env.example`](.env.example) をリポジトリのルートに `.env` としてコピーし、値を入れて起動します。`pnpm dev` と `check:live` は、ルートの `.env` があれば読みます（`.env` は Git の対象外）。シェルで渡した環境変数は `.env` より優先します。
 
 ```bash
 MATSURI_AGENT_MODE=live MODEL_CONCIERGE=<モデル名> MODEL_STAFF=<モデル名> pnpm dev
