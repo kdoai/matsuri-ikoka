@@ -14,7 +14,8 @@ import {
   Vector2,
   Vector3,
 } from "three";
-import { playStore, usePlay } from "../state/play";
+import { type Chatter, isConsultDesk, playStore, usePlay } from "../state/play";
+import { useT } from "../state/react";
 import { NO_INSETS, type ShopSceneProps } from "../state/scene";
 import type { StaffState } from "../state/types";
 import {
@@ -387,7 +388,11 @@ function Shop({
           position={player}
           api={playerApi}
           onHead={(x, y, z) => heads.current?.player.set(x, y, z)}
-          onTalk={(staff) => callbacks.current.onTalk?.(staff)}
+          onTalk={(staff) => {
+            // 相談はコンシェルジュだけが受ける。ほかのスタッフとは、その場で短いおしゃべりをする
+            if (isConsultDesk(staff)) callbacks.current.onTalk?.(staff);
+            else playStore.getState().chat(staff);
+          }}
           onGimmick={onGimmick}
           onPad={(command) => callbacks.current.onPad?.(command)}
           onExit={() => {
@@ -763,8 +768,31 @@ function BubbleProjector({
   return null;
 }
 
+/** おしゃべりの吹き出しを出しておく時間（ms） */
+const CHATTER_MS = 4_500;
+
+/** いま出しているおしゃべり。話しかけてから数秒で消える */
+function useChatter(): Chatter | null {
+  const chatter = usePlay((state) => state.chatter);
+  const [shown, setShown] = useState<number | null>(null);
+  // 店に入り直したときは、前に話したおしゃべりを出し直さない
+  const before = useRef(playStore.getState().chatter?.seq ?? 0);
+  useEffect(() => {
+    if (chatter === null || chatter.seq <= before.current) return;
+    setShown(chatter.seq);
+    const timer = setTimeout(() => setShown(null), CHATTER_MS);
+    return () => clearTimeout(timer);
+  }, [chatter]);
+  return chatter !== null && shown === chatter.seq ? chatter : null;
+}
+
 export default function ShopScene(props: ShopSceneProps) {
+  const t = useT();
   const [ready, setReady] = useState(false);
+  const chatter = useChatter();
+  const chatterLines = chatter === null ? [] : t.play.chatter[chatter.staff];
+  const chatterText =
+    chatter === null ? null : (chatterLines[chatter.line % chatterLines.length] ?? null);
   const heads = useRef<HeadPositions>(
     Object.fromEntries([...STAFF_IDS, "player"].map((id) => [id, new Vector3()])) as HeadPositions,
   );
@@ -800,13 +828,21 @@ export default function ShopScene(props: ShopSceneProps) {
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         {STAFF_IDS.map((id) => {
           const staff = props.staff[id];
-          return ready && showsBubble(staff) ? (
+          // 話しかけたスタッフは、作業の吹き出しの代わりに、おしゃべりを出す
+          const text =
+            chatter?.staff === id && chatterText !== null
+              ? chatterText
+              : showsBubble(staff)
+                ? staff.bubble
+                : null;
+          return ready && text !== null ? (
             <p
               key={id}
               data-bubble={id}
+              data-chatter={chatter?.staff === id ? chatter.line : undefined}
               className="absolute top-0 left-0 max-w-52 rounded-2xl border-2 border-wood-700 bg-kinari-50 px-2.5 py-1 text-center font-bold text-ink text-xs leading-snug shadow-lg"
             >
-              {staff.bubble}
+              {text}
             </p>
           ) : null;
         })}
@@ -819,6 +855,12 @@ export default function ShopScene(props: ShopSceneProps) {
           </span>
         ) : null}
       </div>
+      {/* おしゃべりは、吹き出しと同じ文を読み上げにも伝える */}
+      <p role="status" className="sr-only">
+        {chatter === null || chatterText === null
+          ? ""
+          : t.play.chatterSaid(t.staff.names[chatter.staff], chatterText)}
+      </p>
     </div>
   );
 }

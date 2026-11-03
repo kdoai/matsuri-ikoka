@@ -506,6 +506,27 @@ export const en: Messages = {
     staffOnly: "That seat is behind the staff-only fence. Try the sofa or the bench out front",
     chicks: (found: number) => `Hidden chicks ${found}/3`,
     clock: (time: string) => `Shop clock ${time}`,
+    chatterSaid: (name: string, line: string) => `${name}: "${line}"`,
+    chatter: {
+      researcher: [
+        "I love reading old festival records. Every page takes me to a town I have never seen",
+        "For trip planning, please see the concierge at the counter. I'll be digging up records",
+        "Customs differ a little from town to town, so I always check the sources",
+        "Half the books on this shelf are handwritten notes. Don't tell anyone",
+      ],
+      scout: [
+        "I study the map wall every day, tracing roads I have never walked",
+        "The concierge handles trip planning. I look into the area around each festival",
+        "Finding a cozy place to rest near the festival grounds is my favorite job",
+        "The pins on the map keep growing with every place I want to visit",
+      ],
+      planner: [
+        "Just looking at a timetable makes me feel like I'm already traveling",
+        "Talk to the concierge to plan your trip. Once it's set, leave the connections to me",
+        "The last train home is always the first thing I check",
+        "A layover is part of the trip, too. I'll look for sights near the station",
+      ],
+    },
   },
   waiting: {
     title: "Festival notes while you wait",
