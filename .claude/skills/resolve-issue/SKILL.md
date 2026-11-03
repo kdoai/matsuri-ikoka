@@ -27,7 +27,7 @@ gh auth status
 git fetch origin --prune
 ```
 
-`status:in-progress`・`status:needs-info`・`status:blocked` のラベルがリポジトリになければ、[`.github/labels.json`](../../../.github/labels.json) の色と説明で作る（`gh label create <名前> --color <色> --description <説明> -R kdoai/matsuri-ikoka`）。
+`status:in-progress`・`status:needs-info`・`status:blocked`・`status:manual` のラベルがリポジトリになければ、[`.github/labels.json`](../../../.github/labels.json) の色と説明で作る（`gh label create <名前> --color <色> --description <説明> -R kdoai/matsuri-ikoka`）。
 
 ### 2. Issue を選ぶ
 
@@ -40,6 +40,7 @@ gh pr list -R kdoai/matsuri-ikoka --state open --json number,title,body,headRefN
 次のものは除く：
 
 - 作者が `kdoai` でなく、`status:ready` も付いていない
+- `status:manual`（人が行うと決めた作業。秘密の値や本番の設定など）。この Issue には、コメントもラベルの変更もしない
 - `status:in-progress`・`status:needs-info`・`status:blocked`・`wontfix`・`duplicate`・`invalid`・`question` が付いている
 - `opt-out`・`listing-request`（祭りを運営する方との確かめが要る）
 - 開いている PR の本文がその Issue を `Closes #番号`・`Refs #番号` で指している、またはブランチ名に番号が入っている

@@ -44,6 +44,11 @@
   { "name": "status:ready", "color": "c2e0c6", "description": "状態：取りかかれる" },
   { "name": "status:in-progress", "color": "1d76db", "description": "状態：作業中" },
   { "name": "status:blocked", "color": "e99695", "description": "状態：ほかのことを待っている" },
+  {
+    "name": "status:manual",
+    "color": "5319e7",
+    "description": "状態：人が行う。自動の実行では扱わない"
+  },
 
   { "name": "bug", "color": "d73a4a", "description": "不具合の報告" },
   { "name": "data-correction", "color": "fbca04", "description": "祭り情報の訂正" },
