@@ -57,7 +57,7 @@ test("done の前に接続が切れたら「もう一度送る」を出し、送
 
   const retry = page.getByRole("button", { name: "もう一度送る" });
   await expect(retry).toBeVisible();
-  await expect(page.getByTestId("dialogue-error")).toContainText("接続が切れました");
+  await expect(page.getByTestId("dialogue-error")).toContainText("通信が途中で切れて");
   await retry.click();
 
   // 読み取れた条件は、左下の旅の日と出発の駅に出る
