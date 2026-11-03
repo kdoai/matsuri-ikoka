@@ -154,7 +154,8 @@ function crossFileFindings(festivals: readonly { file: string; festival: Festiva
   return findings;
 }
 
-function staleMessages(festival: Festival, today: IsoDate): string[] {
+/** 確認日が期限を過ぎた項目と、これから先の開催回がないことを、1件ずつの文で返す */
+export function staleMessages(festival: Festival, today: IsoDate): string[] {
   const messages: string[] = [];
   const check = (path: string, sources: readonly Source[], limitDays: number) => {
     const latest = latestCheckedAt(sources);
