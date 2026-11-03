@@ -276,6 +276,31 @@ describe("search_festivals", () => {
     expect(ctx.turn.searched).toBe(true);
   });
 
+  it("日帰りの所要時間の上限は、聞き取りで書き留めたものを使い、分からない祭りを知らせる", async () => {
+    const ctx = testToolContext([
+      testFestival({ id: "near", date: "2026-08-16", fromHubMinutes: [40, 45] }),
+      testFestival({ id: "far", date: "2026-08-16", fromHubMinutes: [90, 100] }),
+      testFestival({ id: "unknown", date: "2026-08-16", fromHubMinutes: null }),
+    ]);
+    ctx.session.conditions = { maxTravelMinutes: 60 };
+
+    const output = await searchFestivals.run(
+      { when: { kind: "date", date: "2026-08-16" }, origin: "みなと中央駅", nights: 0 },
+      ctx,
+      signal,
+    );
+
+    expect((output.candidates as { festivalId: string }[]).map((c) => c.festivalId)).toEqual([
+      "near",
+      "unknown",
+    ]);
+    expect(output.notes).toContain("日帰りの移動の上限を超える祭りを1件除きました");
+    expect(output.notes).toContain(
+      "出発地からの所要時間がデータにない祭りが1件あります。上限に収まるかは分からないと伝えてください",
+    );
+    expect(ctx.session.conditions.maxTravelMinutes).toBe(60);
+  });
+
   it("希望日が過ぎていれば、そのことを返す", async () => {
     const ctx = testToolContext([suzunari()], { today: "2026-09-01" });
 

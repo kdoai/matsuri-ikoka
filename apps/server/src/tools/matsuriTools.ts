@@ -11,6 +11,7 @@ import {
   LodgingBudgetSchema,
   MAX_NIGHTS,
   MAX_TRIP_DAYS,
+  MaxTravelMinutesSchema,
   MOVE_MODES,
   mainFestivalDay,
   NightsSchema,
@@ -234,6 +235,9 @@ const NoteConditionsInputSchema = PartialTripConditionsSchema.extend({
   leaveToStaff: PartialTripConditionsSchema.shape.leaveToStaff.describe(
     "「あとはおまかせ」と言われたら true",
   ),
+  maxTravelMinutes: PartialTripConditionsSchema.shape.maxTravelMinutes.describe(
+    "日帰りの片道の所要時間の上限（分）。「出発の駅から1時間以内」なら 60。言われたときだけ",
+  ),
 });
 
 export const noteConditions = defineTool({
@@ -270,17 +274,14 @@ export const searchFestivals = defineTool({
     preferences: PreferencesSchema.optional().describe(
       "会話で読み取れたこだわり。省略すると画面で選んでいるこだわりを使う",
     ),
-    maxTravelMinutes: z
-      .number()
-      .int()
-      .min(30)
-      .max(600)
-      .optional()
-      .describe("日帰りの片道の上限（分）。利用者が言ったときだけ"),
+    maxTravelMinutes: MaxTravelMinutesSchema.optional().describe(
+      "日帰りの片道の所要時間の上限（分）。利用者が言ったときだけ。省略すると相談で書き留めた上限。泊まりの旅では使わない",
+    ),
   },
   async run(args, ctx) {
     const { session } = ctx;
     if (args.preferences !== undefined) session.preferences = args.preferences;
+    const maxTravelMinutes = args.maxTravelMinutes ?? session.conditions.maxTravelMinutes;
     // 聞き取りで書き留めたほかの条件（旅のかたち・ペースなど）は残す
     session.conditions = {
       ...session.conditions,
@@ -288,6 +289,7 @@ export const searchFestivals = defineTool({
       origin: args.origin,
       nights: args.nights,
       ...(args.party === undefined ? {} : { party: args.party }),
+      ...(maxTravelMinutes === undefined ? {} : { maxTravelMinutes }),
     };
 
     const today = ctx.today();
@@ -301,7 +303,7 @@ export const searchFestivals = defineTool({
       origin: args.origin,
       nights: args.nights,
       preferences: session.preferences,
-      ...(args.maxTravelMinutes === undefined ? {} : { maxTravelMinutes: args.maxTravelMinutes }),
+      ...(maxTravelMinutes === undefined ? {} : { maxTravelMinutes }),
     });
 
     // 候補を出す前に、開催日・時刻・状態を公式の情報で確かめる（3件を並べて動かす）
@@ -316,6 +318,11 @@ export const searchFestivals = defineTool({
     if (ranges.wish === null) notes.push("希望の日はすでに過ぎています。別の日を聞いてください");
     if (result.tooFar.length > 0) {
       notes.push(`日帰りの移動の上限を超える祭りを${result.tooFar.length}件除きました`);
+    }
+    if (maxTravelMinutes !== undefined && result.travelUnknown.length > 0) {
+      notes.push(
+        `出発地からの所要時間がデータにない祭りが${result.travelUnknown.length}件あります。上限に収まるかは分からないと伝えてください`,
+      );
     }
     if (candidates.length === 0) notes.push("条件に合う祭りはデータにありませんでした");
 

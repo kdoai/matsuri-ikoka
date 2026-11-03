@@ -209,6 +209,8 @@ export const en: Messages = {
     stayLabel: "Day trip or overnight",
     members: consultMembers,
     prefectures,
+    travelLabel: "From your station (one way, for a day trip)",
+    travelOption: (minutes: number) => `Within ${minutes / 60} h`,
     prefecturesLabel: (region: string) => `Narrow down within ${region} (optional)`,
     auto: "Up to you",
     other: "Other",
@@ -277,6 +279,8 @@ export const en: Messages = {
       nights: (nights: number) =>
         nights === 0 ? "day trip" : `${plural(nights, "night", "nights")}`,
       amount: (yen: number) => `¥${yen.toLocaleString("en-US")}`,
+      travel: (minutes: number) =>
+        `Within ${minutes / 60} hour${minutes === 60 ? "" : "s"} one way from your station`,
       line: (label: string, text: string) => `- ${label}: ${text}`,
     },
   },

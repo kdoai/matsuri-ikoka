@@ -21,9 +21,11 @@ import {
   type ConsultQuestion,
   type ConsultStep,
   canReach,
+  effectiveAnswers,
   FAMILY_MEMBERS,
   hasAnyAnswer,
   isAnswered,
+  isDayTrip,
   MULTI_QUESTIONS,
   nextStep,
   OTHER,
@@ -39,8 +41,10 @@ import {
   setAmount,
   setRange,
   setStay,
+  setTravel,
   stepAfterAnswer,
   stepCount,
+  TRAVEL_LIMITS,
   todayInJapan,
 } from "../state/consult";
 import { useActions, useApp, useT } from "../state/react";
@@ -163,6 +167,7 @@ function ChoiceStep({ question }: { question: ChoiceQuestion & ConsultQuestion }
         ))}
       </ChoiceGroup>
       {question === "party" ? <PartyCounts /> : null}
+      {question === "destination" ? <TravelPicks /> : null}
       {question === "destination" ? <PrefecturePicks /> : null}
       {showOther ? (
         <OtherField
@@ -216,6 +221,30 @@ function PartyCounts() {
       <p className="text-right font-bold text-ink-soft text-sm">
         {t.consult.total(partySize(answer) ?? 0)}
       </p>
+    </div>
+  );
+}
+
+/** 日帰りのときは、出発の駅からの片道の所要時間でも行き先をしぼれる（泊まりの旅では出さない） */
+function TravelPicks() {
+  const t = useT();
+  const { actions } = useConsult();
+  const dayTrip = useApp((state) => isDayTrip(state.consult.answers));
+  const travel = useApp((state) => state.consult.answers.destination?.travel);
+  if (!dayTrip) return null;
+  return (
+    <div className="mt-2 animate-fade" data-testid="consult-travel">
+      <ChoiceGroup label={t.consult.travelLabel}>
+        {TRAVEL_LIMITS.map((minutes) => (
+          <Choice
+            key={minutes}
+            pressed={travel === minutes}
+            onClick={() => actions.editConsult((answers) => setTravel(answers, minutes))}
+          >
+            {t.consult.travelOption(minutes)}
+          </Choice>
+        ))}
+      </ChoiceGroup>
     </div>
   );
 }
@@ -414,7 +443,7 @@ function NoteStep() {
 function Summary() {
   const t = useT();
   const actions = useActions();
-  const answers = useApp((state) => state.consult.answers);
+  const answers = effectiveAnswers(useApp((state) => state.consult.answers));
   const today = todayInJapan();
   return (
     <dl className="grid gap-1 sm:grid-cols-2" data-testid="consult-summary">

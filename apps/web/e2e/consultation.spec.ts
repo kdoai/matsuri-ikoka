@@ -424,7 +424,9 @@ test("文章を書かずに、選択肢を選ぶだけで相談を始められ�
   await station.fill("みなと中央駅");
   await station.press("Enter");
 
-  // 行き先は地方と都道府県、「その他」で自由に書ける
+  // 行き先は地方と都道府県、「その他」で自由に書ける。泊まりの旅なので、所要時間の上限は出さない
+  await expect(consult.getByRole("button", { name: "関東", exact: true })).toBeVisible();
+  await expect(page.getByTestId("consult-travel")).toHaveCount(0);
   await consult.getByRole("button", { name: "関東", exact: true }).click();
   await consult.getByRole("button", { name: "東京都", exact: true }).click();
   await consult.getByRole("button", { name: "その他", exact: true }).click();

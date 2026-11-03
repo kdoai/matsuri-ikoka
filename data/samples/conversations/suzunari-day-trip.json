@@ -6,7 +6,7 @@
   "turns": [
     {
       "request": {
-        "message": "8月16日に、友だちと2人で、みなと中央駅から日帰りで行ける祭りはありますか。人の少ないところで、地元のごはんも食べたいです。",
+        "message": "8月16日に、友だちと2人で、みなと中央駅から片道2時間以内の日帰りで行ける祭りはありますか。人の少ないところで、地元のごはんも食べたいです。",
         "preferences": {
           "party": "adults",
           "spot": "auto",
@@ -34,7 +34,7 @@
               "toolCallId": "call-1",
               "tool": "search_festivals",
               "staff": "researcher",
-              "bubble": "8月16日に、みなと中央駅から日帰りで行ける祭りを探しています"
+              "bubble": "8月16日に、みなと中央駅から片道2時間以内の日帰りで行ける祭りを探しています"
             }
           }
         },
@@ -133,6 +133,7 @@
                 },
                 "origin": "みなと中央駅",
                 "nights": 0,
+                "maxTravelMinutes": 120,
                 "party": {
                   "adults": 2,
                   "children": 0
@@ -640,6 +641,7 @@
                 },
                 "origin": "みなと中央駅",
                 "nights": 0,
+                "maxTravelMinutes": 120,
                 "party": {
                   "adults": 2,
                   "children": 0
@@ -1042,6 +1044,7 @@
                 },
                 "origin": "みなと中央駅",
                 "nights": 0,
+                "maxTravelMinutes": 120,
                 "party": {
                   "adults": 2,
                   "children": 0
@@ -1136,6 +1139,7 @@
                 },
                 "origin": "みなと中央駅",
                 "nights": 0,
+                "maxTravelMinutes": 120,
                 "party": {
                   "adults": 2,
                   "children": 0

@@ -65,8 +65,13 @@ export function toolStartBubble(
       const wish = DateWishSchema.safeParse(field(input, "when"));
       const origin = field(input, "origin");
       const nights = field(input, "nights");
+      const limit = field(input, "maxTravelMinutes");
+      const dayTrip =
+        typeof limit === "number" && Number.isInteger(limit) && limit > 0
+          ? `片道${limit % 60 === 0 ? `${limit / 60}時間` : `${limit}分`}以内の日帰りで`
+          : "日帰りで";
       const stay =
-        nights === 0 ? "日帰りで" : typeof nights === "number" && nights > 0 ? `${nights}泊で` : "";
+        nights === 0 ? dayTrip : typeof nights === "number" && nights > 0 ? `${nights}泊で` : "";
       if (!wish.success || typeof origin !== "string" || origin.trim() === "") {
         return "条件に合う祭りを探しています";
       }

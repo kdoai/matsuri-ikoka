@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  DAY_TRIP_TRAVEL_LIMITS,
   DateWishSchema,
   DEFAULT_PREFERENCES,
   LodgingBudgetSchema,
@@ -89,6 +90,19 @@ describe("TripConditionsSchema", () => {
     }
     for (const nights of [-1, 7, 1.5]) {
       expect(TripConditionsSchema.safeParse({ ...conditions, nights }).success).toBe(false);
+    }
+  });
+
+  it("日帰りの片道の所要時間の上限は任意で、30分から600分までの分", () => {
+    for (const maxTravelMinutes of DAY_TRIP_TRAVEL_LIMITS) {
+      expect(TripConditionsSchema.safeParse({ ...conditions, maxTravelMinutes }).success).toBe(
+        true,
+      );
+    }
+    for (const maxTravelMinutes of [0, 29, 601, 90.5]) {
+      expect(TripConditionsSchema.safeParse({ ...conditions, maxTravelMinutes }).success).toBe(
+        false,
+      );
     }
   });
 

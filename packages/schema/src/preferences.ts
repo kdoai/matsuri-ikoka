@@ -93,6 +93,15 @@ export const MAX_NIGHTS = 6;
 /** 泊数。0 は日帰り・週末のちょっとしたお出かけ、1〜6 は泊まりの旅 */
 export const NightsSchema = z.number().int().min(0).max(MAX_NIGHTS);
 
+/** 日帰りで選べる、出発の駅からの片道の所要時間の上限（分）：1時間・2時間・3時間 */
+export const DAY_TRIP_TRAVEL_LIMITS = [60, 120, 180] as const;
+
+/**
+ * 出発の駅から会場までの片道の所要時間の上限（分）。日帰り（0泊）の旅だけで祭りを絞り込み、
+ * 泊まりの旅では使わない（泊まるなら遠くても行けるため）。所要時間の判定はコードで計算する
+ */
+export const MaxTravelMinutesSchema = z.number().int().min(30).max(600);
+
 // 泊まりの旅で聞く項目。どれも任意で、分からないときは推測で埋めない。
 // 「おまかせ」（auto）を選べる項目は、選んだことと、まだ聞いていないこと（項目がない）を分けて持つ。
 
@@ -129,6 +138,8 @@ export const TripConditionsSchema = z.strictObject({
   when: DateWishSchema,
   origin: PlaceNameSchema,
   nights: NightsSchema,
+  /** 日帰りの片道の所要時間の上限（分）。利用者が言ったときだけ。泊まりの旅では使わない */
+  maxTravelMinutes: MaxTravelMinutesSchema.optional(),
   party: PartySchema.optional(),
   /** 宿の予算の上限（1人あたり）。泊まりの旅で、利用者が言ったときだけ */
   lodgingBudget: LodgingBudgetSchema.optional(),

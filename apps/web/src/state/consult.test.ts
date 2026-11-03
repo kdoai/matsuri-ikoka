@@ -4,10 +4,12 @@ import {
   type ConsultAnswers,
   canReach,
   composeConsultMessage,
+  effectiveAnswers,
   familyParty,
   furthestStep,
   hasAnyAnswer,
   isAnswered,
+  isDayTrip,
   monthWeeks,
   nextStep,
   nightsBetween,
@@ -21,6 +23,7 @@ import {
   setAnswerText,
   setRange,
   setStay,
+  setTravel,
   shiftMonth,
   stepAfterAnswer,
   stepCount,
@@ -278,6 +281,26 @@ describe("日付", () => {
   });
 });
 
+describe("日帰りの所要時間の上限", () => {
+  it("日帰りか：日帰りを選んだか、行きと帰りが同じ日", () => {
+    expect(isDayTrip({})).toBe(false);
+    expect(isDayTrip(setStay(pickAnswer({}, "schedule", "nextWeekend"), "dayTrip"))).toBe(true);
+    expect(isDayTrip(setStay(pickAnswer({}, "schedule", "nextWeekend"), "oneNight"))).toBe(false);
+    expect(isDayTrip(setRange({}, "2030-08-14", "2030-08-14"))).toBe(true);
+    expect(isDayTrip(setRange({}, "2030-08-14", "2030-08-15"))).toBe(false);
+  });
+
+  it("選ぶと行き先の答えになり、押し直すと外す", () => {
+    const answers = setTravel({}, 60);
+    expect(answers.destination?.travel).toBe(60);
+    expect(isAnswered(answers.destination, "destination")).toBe(true);
+    expect(setTravel(answers, 120).destination?.travel).toBe(120);
+    const cleared = setTravel(answers, 60);
+    expect(cleared.destination?.travel).toBeUndefined();
+    expect(isAnswered(cleared.destination, "destination")).toBe(false);
+  });
+});
+
 describe("composeConsultMessage", () => {
   it("答えた項目だけを、段階の順に1つの発言にまとめる", () => {
     let answers = pickAnswer({}, "food", "seafood");
@@ -318,6 +341,26 @@ describe("composeConsultMessage", () => {
     expect(
       composeConsultMessage(setRange({}, "2030-08-14", "2030-08-14"), wording, "2030-06-05"),
     ).toContain("・日程：2030-08-14（日帰り）");
+  });
+
+  it("日帰りのときは、出発の駅からの所要時間の上限を行き先に書く", () => {
+    let answers = setRange({}, "2030-08-14", "2030-08-14");
+    answers = setTravel(answers, 120);
+    answers = pickAnswer(answers, "destination", "kanto");
+    expect(composeConsultMessage(answers, wording, "2030-06-05")).toContain(
+      "・行き先：出発の駅から片道2時間以内、関東",
+    );
+    expect(composeConsultMessage(answers, MESSAGES.en.consult.wording, "2030-06-05")).toContain(
+      "Within 2 hours one way from your station",
+    );
+  });
+
+  it("泊まりの旅に変えたら、所要時間の上限は送らない", () => {
+    let answers = setRange({}, "2030-08-14", "2030-08-14");
+    answers = setTravel(answers, 60);
+    answers = setRange(answers, "2030-08-14", "2030-08-15");
+    expect(composeConsultMessage(answers, wording, "2030-06-05")).not.toContain("時間以内");
+    expect(effectiveAnswers(answers).destination?.travel).toBeUndefined();
   });
 
   it("何も答えていなければ送らない", () => {
