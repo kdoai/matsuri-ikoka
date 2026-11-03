@@ -68,6 +68,7 @@ pnpm build            # 画面と接客サーバーのビルド
 
 - テストは架空の祭りで書く。`@matsuri-ikoka/schema/testing` の `fictionalFestival()`・`fictionalItinerary()`・`fictionalSource()` を使い、URL は `example.com` にする
 - 実在の祭りのデータをテストのフィクスチャにしない
+- 画面の通しテスト（Playwright、`test:e2e`）は Claude では走らせない。人が手元で走らせる。画面を変えたら `apps/web/e2e/` のテストは合わせて直してよいが、実行と結果の確かめは人に任せ、確かめていないことを報告に書く。CI にも e2e のジョブは置かない
 
 ### 安全
 

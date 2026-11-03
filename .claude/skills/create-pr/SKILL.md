@@ -14,7 +14,7 @@ description: このリポジトリの PR テンプレートに沿って PR を�
 ## 手順
 
 1. **差分を読む**：`git fetch origin` のあと、`git log --oneline origin/main..HEAD` と `git diff origin/main...HEAD` で、PR に入るものをすべて読む。関係のない変更が混ざっていたら、別のブランチに分ける
-2. **確かめる**：`pnpm lint`・`pnpm typecheck`・`pnpm test`・`pnpm build`。画面に触れたら e2e（`pnpm --filter @matsuri-ikoka/web test:e2e`）、祭りのデータに触れたら `pnpm validate:data`。通らなければ直してから進む
+2. **確かめる**：`pnpm lint`・`pnpm typecheck`・`pnpm test`・`pnpm build`。画面の通しテスト（e2e）は走らせず、画面に触れたら PR の本文に「e2e は未実行」と書く。祭りのデータに触れたら `pnpm validate:data`。通らなければ直してから進む
 3. **公開してよい中身かを確かめる**：差分・コミットの文・ブランチ名に、秘密の値、個人の情報、実在の祭りでの相談の例がないこと。文は変更の中身と使う人にとっての理由だけにする
 4. **本文を書く**：[`.github/pull_request_template.md`](../../../.github/pull_request_template.md) の見出しをそのまま使う
    - **変更の内容**：何を、なぜ変えたか。使う人にとって何が変わるか
