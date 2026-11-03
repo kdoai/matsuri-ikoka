@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!assets", "!pnpm-lock.yaml", "!**/SKILL.md"]
+    "includes": ["**", "!assets", "!pnpm-lock.yaml", "!data/stations", "!**/SKILL.md"]
   },
   "formatter": {
     "enabled": true,
