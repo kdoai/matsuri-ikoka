@@ -1,0 +1,188 @@
+name: 祭りのデータの確かめ直し
+
+# 確かめ直す祭りを選び、祭りごとに Claude Managed Agents の調査のセッションを起動して、
+# 取り込める結果を PR にする（scripts/run-managed-agent.ts）。データは直接書き換えず、必ず PR を通す。
+# 調査のジョブ（API キーを読む）と PR のジョブ（GitHub に書き込む）を分け、調査する側に GitHub の書き込みの権限を渡さない。
+# 変数 MATSURI_REFRESH_ENABLED が true でないあいだは、対象を一覧にする空実行だけを行う。
+# 使う GitHub Actions の変数は docs/spec/operations.md の「祭りのデータの更新」にある。
+
+on:
+  schedule:
+    # 毎週月曜の 6:00（日本時間）
+    - cron: "0 21 * * 0"
+  workflow_dispatch:
+    inputs:
+      run:
+        description: 調査する（オフなら空実行）
+        type: boolean
+        default: false
+      limit:
+        description: 調べる祭りの数の上限
+        type: string
+        default: "5"
+      max_cost:
+        description: 1つのセッションの費用の上限（米ドル）
+        type: string
+        default: "2.00"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: update-festivals
+  cancel-in-progress: false
+
+jobs:
+  research:
+    name: 調査
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    # セッションごとの時間の上限（30分）× 既定の件数の上限に、準備の時間を足す
+    timeout-minutes: 180
+    permissions:
+      contents: read
+      # 依頼の Issue（訂正・掲載・掲載停止）を読む
+      issues: read
+      # Workload Identity 連携で、鍵のファイルなしに Secret Manager から API キーを読む
+      id-token: write
+    outputs:
+      changed: ${{ steps.collect.outputs.changed }}
+    env:
+      LIMIT: ${{ inputs.limit || '5' }}
+      MAX_COST: ${{ inputs.max_cost || '2.00' }}
+      # 定期の実行と、手で「調査する」を選んだ実行だけを調査にする。変数が true でなければ空実行
+      RUN: ${{ vars.MATSURI_REFRESH_ENABLED == 'true' && (github.event_name == 'schedule' || inputs.run) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/setup
+
+      - name: 依頼の Issue を集める
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue list -R "$GITHUB_REPOSITORY" --state open --limit 200 \
+            --json number,body,labels > "$RUNNER_TEMP/issues.json"
+
+      - name: 確かめ直す祭りを一覧にする（空実行）
+        run: pnpm refresh:run --issues "$RUNNER_TEMP/issues.json" --limit "$LIMIT"
+
+      - name: 変数がそろっているか確かめる
+        if: env.RUN == 'true'
+        env:
+          PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          REFRESH_SERVICE_ACCOUNT: ${{ vars.GCP_REFRESH_SERVICE_ACCOUNT }}
+          REFRESH_API_KEY_SECRET: ${{ vars.MATSURI_REFRESH_API_KEY_SECRET }}
+          MATSURI_REFRESH_AGENT_ID: ${{ vars.MATSURI_REFRESH_AGENT_ID }}
+          MATSURI_REFRESH_ENVIRONMENT_ID: ${{ vars.MATSURI_REFRESH_ENVIRONMENT_ID }}
+        run: |
+          missing=()
+          for name in PROJECT_ID WORKLOAD_IDENTITY_PROVIDER REFRESH_SERVICE_ACCOUNT REFRESH_API_KEY_SECRET \
+            MATSURI_REFRESH_AGENT_ID MATSURI_REFRESH_ENVIRONMENT_ID; do
+            [[ -n "${!name}" ]] || missing+=("$name")
+          done
+          if (( ${#missing[@]} > 0 )); then
+            echo "GitHub Actions の変数が足りません：${missing[*]}" >&2
+            exit 1
+          fi
+
+      # 確かめ直し専用のサービスアカウントで入る。デプロイ用のアカウントは使わない
+      - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        if: env.RUN == 'true'
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_REFRESH_SERVICE_ACCOUNT }}
+
+      - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
+        if: env.RUN == 'true'
+
+      # API キーはこのステップの中だけで読み、ほかのステップやファイルに残さない
+      - name: 調査する
+        if: env.RUN == 'true'
+        env:
+          PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          REFRESH_API_KEY_SECRET: ${{ vars.MATSURI_REFRESH_API_KEY_SECRET }}
+          MATSURI_REFRESH_AGENT_ID: ${{ vars.MATSURI_REFRESH_AGENT_ID }}
+          MATSURI_REFRESH_ENVIRONMENT_ID: ${{ vars.MATSURI_REFRESH_ENVIRONMENT_ID }}
+        run: |
+          ANTHROPIC_API_KEY="$(gcloud secrets versions access latest \
+            --secret "$REFRESH_API_KEY_SECRET" --project "$PROJECT_ID")"
+          echo "::add-mask::${ANTHROPIC_API_KEY}"
+          export ANTHROPIC_API_KEY
+          mkdir -p "$RUNNER_TEMP/refresh"
+          pnpm refresh:run --run --write \
+            --issues "$RUNNER_TEMP/issues.json" \
+            --limit "$LIMIT" --max-cost "$MAX_COST" \
+            --body "$RUNNER_TEMP/refresh/body.md"
+
+      - name: 変わった祭りのデータを集める
+        id: collect
+        if: env.RUN == 'true'
+        run: |
+          # 本文の祭りの名前や理由は、記号を打ち消してから書かれている（refreshPullRequestBody）
+          cat "$RUNNER_TEMP/refresh/body.md" >> "$GITHUB_STEP_SUMMARY"
+          mkdir -p "$RUNNER_TEMP/refresh/festivals"
+          changed="$(git status --porcelain -- data/festivals | awk '{ print $2 }')"
+          if [[ -z "$changed" ]]; then
+            echo "変わった祭りはありません"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          while IFS= read -r file; do
+            cp "$file" "$RUNNER_TEMP/refresh/festivals/"
+          done <<< "$changed"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: steps.collect.outputs.changed == 'true'
+        with:
+          name: refresh
+          path: ${{ runner.temp }}/refresh
+          retention-days: 7
+
+  pull-request:
+    name: PR を開く
+    needs: research
+    if: needs.research.outputs.changed == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      # ブランチを push する
+      contents: write
+      pull-requests: write
+      # PR のブランチで CI を起動する（GITHUB_TOKEN で開いた PR では、CI は自動では始まらない）
+      actions: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: refresh
+          path: ${{ runner.temp }}/refresh
+
+      - name: ブランチにコミットして PR を開く
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: chore/refresh-festivals-${{ github.run_id }}
+        run: |
+          today="$(TZ=Asia/Tokyo date +%F)"
+          # 取り込めると確かめた祭りのファイルだけを置く（ファイル名はデータの ID）
+          for file in "$RUNNER_TEMP"/refresh/festivals/*.json; do
+            name="$(basename "$file")"
+            [[ "$name" =~ ^[a-z0-9-]+\.json$ ]] || { echo "想定しないファイル名：$name" >&2; exit 1; }
+            cp "$file" "data/festivals/$name"
+          done
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git add data/festivals
+          git commit -m "chore(data): 祭りのデータを確かめ直す（${today}）"
+          git push origin "$BRANCH"
+          gh pr create -R "$GITHUB_REPOSITORY" --base main --head "$BRANCH" \
+            --title "chore(data): 祭りのデータを確かめ直す（${today}）" \
+            --body-file "$RUNNER_TEMP/refresh/body.md" \
+            --label type:data --label area:data
+          gh workflow run ci.yml -R "$GITHUB_REPOSITORY" --ref "$BRANCH"
