@@ -1,7 +1,7 @@
 name: 掲載停止の依頼
 description: 祭りを運営する方から、MATSURI IKOKA への掲載を止める依頼
 title: "[掲載停止] "
-labels: ["opt-out"]
+labels: ["opt-out", "type:data", "area:data", "priority:high", "status:triage"]
 body:
   - type: markdown
     attributes:

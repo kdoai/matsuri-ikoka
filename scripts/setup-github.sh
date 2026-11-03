@@ -9,10 +9,13 @@
 # 必要なもの：GitHub CLI（gh）に、リポジトリの管理者でログインしていること。
 set -euo pipefail
 
-# main に必須にする検査。.github/workflows/ci.yml のジョブ名と同じにする
-REQUIRED_CHECK="検査とビルド"
+# main に必須にする検査。.github/workflows/ci.yml のジョブの name と同じにする。
+# 「検査とビルド」はすべてのジョブの結果をまとめたもの
+# （scripts/github-config.test.ts で突き合わせる）
+REQUIRED_CHECKS=(lint typecheck test validate-data build e2e docker secrets actionlint dependency-review 検査とビルド)
 RULESET_NAME="protect-main"
-TEMPLATES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/.github/ISSUE_TEMPLATE"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+LABELS_FILE="$ROOT_DIR/.github/labels.json"
 
 mode="${1:-}"
 if [[ "$mode" != "check" && "$mode" != "apply" ]]; then
@@ -21,25 +24,25 @@ if [[ "$mode" != "check" && "$mode" != "apply" ]]; then
 fi
 repo="${2:-$(gh repo view --json nameWithOwner --jq .nameWithOwner)}"
 
-# Issue テンプレートが付けるラベル（名前|説明）。説明はテンプレートの name を使う
+# ラベルの一覧（名前|色|説明）。.github/labels.json から読む。
+# Issue テンプレートが付けるラベルは、すべてこの一覧にある（scripts/github-config.test.ts で確かめる）
 labels() {
-  local file label description
-  for file in "$TEMPLATES_DIR"/*.yml; do
-    label="$(sed -n 's/^labels: \["\([^"]*\)"\]$/\1/p' "$file")"
-    [[ -z "$label" ]] && continue
-    description="$(sed -n 's/^name: //p' "$file")"
-    echo "$label|$description"
-  done
+  node -e '
+    for (const l of JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"))) {
+      console.log([l.name, l.color, l.description].join("|"));
+    }
+  ' "$LABELS_FILE"
 }
 
-label_color() {
-  case "$1" in
-    bug) echo "d73a4a" ;;
-    data-correction) echo "fbca04" ;;
-    opt-out) echo "5319e7" ;;
-    listing-request) echo "0e8a16" ;;
-    *) echo "ededed" ;;
-  esac
+required_checks_json() {
+  local first=1 name
+  printf '['
+  for name in "${REQUIRED_CHECKS[@]}"; do
+    ((first)) || printf ', '
+    printf '{ "context": "%s" }' "$name"
+    first=0
+  done
+  printf ']'
 }
 
 ruleset_id() {
@@ -72,7 +75,7 @@ ruleset_json() {
       "type": "required_status_checks",
       "parameters": {
         "strict_required_status_checks_policy": false,
-        "required_status_checks": [{ "context": "$REQUIRED_CHECK" }]
+        "required_status_checks": $(required_checks_json)
       }
     }
   ]
@@ -108,10 +111,10 @@ JSON
     ruleset_json | gh api -X POST "repos/$repo/rulesets" --silent --input -
   fi
 
-  echo "== Issue テンプレートのラベル"
-  local name description
-  while IFS='|' read -r name description; do
-    gh label create "$name" --repo "$repo" --color "$(label_color "$name")" \
+  echo "== ラベル（.github/labels.json）。同じ名前があれば色と説明を合わせる"
+  local name color description
+  while IFS='|' read -r name color description; do
+    gh label create "$name" --repo "$repo" --color "$color" \
       --description "$description" --force >/dev/null
     echo "   $name"
   done < <(labels)
@@ -159,20 +162,27 @@ check() {
   else
     report "main の保護（$RULESET_NAME）" \
       "$(gh api "repos/$repo/rulesets/$id" --jq .enforcement)" "active"
-    report "main に必須の検査（$REQUIRED_CHECK）" \
+    report "main に必須の検査" \
       "$(gh api "repos/$repo/rulesets/$id" --jq '[.rules[] | select(.type == "required_status_checks") | .parameters.required_status_checks[].context] | join(",")')" \
-      "$REQUIRED_CHECK"
+      "$(IFS=,; echo "${REQUIRED_CHECKS[*]}")"
   fi
 
-  local existing name description
-  existing="$(gh label list --repo "$repo" --limit 200 --json name --jq '.[].name')"
-  while IFS='|' read -r name description; do
-    if grep -qxF "$name" <<<"$existing"; then
-      report "ラベル $name" "$name" "$name"
-    else
-      report "ラベル $name" "" "$name"
-    fi
+  # ラベルは、名前・色・説明がすべて一覧と同じなら OK
+  local existing name color description
+  existing="$(gh label list --repo "$repo" --limit 200 --json name,color,description \
+    --jq '.[] | [.name, (.color | ascii_downcase), .description] | join("|")')"
+  while IFS='|' read -r name color description; do
+    report "ラベル $name" \
+      "$(awk -F'|' -v n="$name" '$1 == n' <<<"$existing")" \
+      "$name|$color|$description"
   done < <(labels)
+
+  # Issue Types は組織のリポジトリでしか使えない。使えないときは type:* のラベルで種類を分ける
+  local types
+  types="$(gh api graphql -F owner="${repo%%/*}" -F name="${repo##*/}" \
+    -f query='query($owner: String!, $name: String!) { repository(owner: $owner, name: $name) { issueTypes(first: 20) { nodes { name } } } }' \
+    --jq '.data.repository.issueTypes.nodes // [] | map(.name) | join(",")' 2>/dev/null || true)"
+  printf '  --  Issue Types：%s\n' "${types:-使えない（type:* のラベルを使う）}"
 
   return "$failed"
 }
