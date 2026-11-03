@@ -293,6 +293,10 @@ export function Composer() {
       event.preventDefault();
       submit();
     }
+    // Esc で入力欄を離れ、旅人の操作に戻る
+    if (event.key === "Escape" && !event.nativeEvent.isComposing) {
+      event.currentTarget.blur();
+    }
   };
 
   return (

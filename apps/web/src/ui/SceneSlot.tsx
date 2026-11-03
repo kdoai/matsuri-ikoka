@@ -1,8 +1,9 @@
 import { Component, type ReactNode, Suspense } from "react";
-import { useApp, useT } from "../state/react";
+import { useApp } from "../state/react";
 import { type FrameInsets, selectSceneProps } from "../state/scene";
 import { TalkButton } from "./Hud";
 import { useReducedMotion } from "./hooks";
+import { PlayPrompt } from "./Play";
 import { StaffFloor } from "./StaffPanel";
 import { ShopScene, useScene3d } from "./scene3d";
 
@@ -57,8 +58,15 @@ function FloorBox({
   );
 }
 
-export function GameStage({ frame, onTalk }: { frame: FrameInsets; onTalk: () => void }) {
-  const t = useT();
+export function GameStage({
+  frame,
+  onTalk,
+  onPad,
+}: {
+  frame: FrameInsets;
+  onTalk: () => void;
+  onPad: (command: "details" | "map" | "menu") => void;
+}) {
   const reducedMotion = useReducedMotion();
   const props = useApp((state) => selectSceneProps(state, reducedMotion, frame));
   const use3d = useScene3d() && ShopScene !== null;
@@ -70,8 +78,9 @@ export function GameStage({ frame, onTalk }: { frame: FrameInsets; onTalk: () =>
           <FloorBox frame={frame} hidden />
           <Suspense fallback={null}>
             <div className="absolute inset-0">
-              <ShopScene {...props} onTalk={onTalk} talkLabel={t.hud.hints.talk} />
+              <ShopScene {...props} onTalk={onTalk} onPad={onPad} />
             </div>
+            <PlayPrompt />
           </Suspense>
         </SceneBoundary>
       ) : (

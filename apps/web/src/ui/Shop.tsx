@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { otherLocale } from "../i18n";
+import { playStore } from "../state/play";
 import { useActions, useApp, useT } from "../state/react";
 import { type FrameInsets, NO_INSETS } from "../state/scene";
 import type { PanelTab } from "../state/types";
@@ -22,6 +23,7 @@ import {
 import { useMediaQuery } from "./hooks";
 import { ItineraryPanel } from "./ItineraryPanel";
 import { PasscodeDialog } from "./Passcode";
+import { PlayGuide, PlayNoticeToast } from "./Play";
 import { GameStage } from "./SceneSlot";
 import { StaffActivity } from "./StaffPanel";
 import { WaitingCard } from "./Waiting";
@@ -144,8 +146,21 @@ export function Shop() {
   }, []);
   const toggleMenu = useCallback(() => setMenu((open) => (open === "menu" ? null : "menu")), []);
 
+  const onPad = useCallback(
+    (command: "details" | "map" | "menu") => {
+      if (command === "menu") toggleMenu();
+      else togglePanel(command === "details" ? "itinerary" : "map");
+    },
+    [toggleMenu, togglePanel],
+  );
+
   useHudKeys({
-    talk: focusComposer,
+    // 3D の旅人がいれば、近くの人と話す・ものを使う。いなければ会話の窓の入力欄へ
+    talk: () => {
+      const play = playStore.getState();
+      if (play.active) play.requestInteract();
+      else focusComposer();
+    },
     details: () => togglePanel("itinerary"),
     map: () => togglePanel("map"),
     menu: toggleMenu,
@@ -153,7 +168,7 @@ export function Shop() {
 
   return (
     <div className="relative h-dvh w-full overflow-hidden bg-wood-900 text-ink">
-      <GameStage frame={frame} onTalk={focusComposer} />
+      <GameStage frame={frame} onTalk={focusComposer} onPad={onPad} />
 
       {/* 上の段：ロゴ・場面のタブ・丸いボタン */}
       <div
@@ -171,10 +186,11 @@ export function Shop() {
 
       {/* 左：いま動いているスタッフ */}
       <div
-        className="pointer-events-none absolute left-2 z-10 w-56 sm:left-3 sm:w-64 [&>*]:pointer-events-auto"
+        className="pointer-events-none absolute left-2 z-10 flex w-56 flex-col gap-2 sm:left-3 sm:w-64 [&>*]:pointer-events-auto"
         style={{ top: frame.top + 8 }}
       >
         <StaffActivity />
+        <PlayGuide />
       </div>
 
       {/* 右上：旅の案内と小さな地図（広い画面で、旅程のパネルを開いていないとき） */}
@@ -236,6 +252,7 @@ export function Shop() {
         <DialogueBox />
       </div>
 
+      <PlayNoticeToast />
       <CandidateCards />
       <PasscodeDialog />
       {logOpen ? <Backlog onClose={() => setLogOpen(false)} /> : null}
