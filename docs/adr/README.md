@@ -9,3 +9,4 @@
 | [0003](0003-3d-as-a-view-layer.md)           | 3D の店内を、状態の見た目の層にとどめる                       | 採用 |
 | [0004](0004-authentication.md)               | 場面ごとに Claude への認証を分ける                            | 採用 |
 | [0005](0005-login-and-storage.md)            | ログインに Firebase Authentication、保存先に Firestore を使う | 採用 |
+| [0006](0006-lodging-search.md)               | 宿の空きと料金を、楽天トラベルの空室検索 API から取る         | 採用 |
