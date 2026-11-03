@@ -24,6 +24,8 @@ COPY packages packages
 COPY apps apps
 # 画面のビルドが読む 3D のモデル（Vite が dist/assets に出す）
 COPY assets/3d/models assets/3d/models
+# 会話の窓の顔の絵（Vite が dist/assets に出す。旅のしおりと同じ絵）
+COPY assets/shiori/staff assets/shiori/staff
 # 出発の駅の候補の一覧（画面のビルドが dist/assets に出す）
 COPY data/stations data/stations
 RUN pnpm --filter @matsuri-ikoka/server --filter @matsuri-ikoka/web run build
