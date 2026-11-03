@@ -22,7 +22,7 @@ description: このリポジトリに Issue を起票する。テンプレート
 
 - `area:*`：変える場所。複数付けてよい（`schema`・`server`・`agent-kit`・`web`・`3d`・`shiori`・`data`・`infra`・`docs`）
 - `priority:*`：`high`（使う人が困っている・データが誤っている）・`medium`・`low`。分からなければ付けない
-- `status:*`：起票のときは `status:triage`。取りかかるときに `status:in-progress`、待ちは `status:blocked` か `status:needs-info`
+- `status:*`：起票のときは `status:triage`。取りかかるときに `status:in-progress`、待ちは `status:blocked` か `status:needs-info`。秘密の値や本番の設定など、人が行うと決めた作業には `status:manual` を付ける（自動の実行では扱わない）
 
 ## 手順
 
