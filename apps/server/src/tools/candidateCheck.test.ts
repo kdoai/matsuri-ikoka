@@ -8,6 +8,7 @@ import type { FestivalVerifier } from "./verifier";
 const official: VerificationReport = {
   result: "as_planned",
   sources: [{ url: "https://example.com/suzunari-toro/2026" }],
+  yearStated: true,
 };
 
 function verifierOf(

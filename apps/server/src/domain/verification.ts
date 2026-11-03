@@ -7,6 +7,8 @@ import type { Festival, IsoDate, Source, VerificationResult } from "@matsuri-iko
 export interface VerificationReport {
   result: VerificationResult;
   sources: { url: string; title?: string }[];
+  /** 読んだ公式のページに、確かめる日の年（今年の開催）が書かれていたか。例年の日付だけなら false */
+  yearStated?: boolean;
   note?: string;
 }
 
@@ -17,6 +19,10 @@ export interface VerificationDecision {
 }
 
 const NOTE_MAX_LENGTH = 200;
+
+/** 公式のページに例年の日付はあるが、今年の開催と書かれていないときの説明 */
+export const YEAR_NOT_STATED_NOTE =
+  "公式のページに例年の日程はありますが、今年の開催とは書かれていないため、今年の予定は確かめられませんでした";
 
 function hostOf(url: string): string | null {
   try {
@@ -50,6 +56,8 @@ export function officialHosts(festival: Festival): Set<string> {
  * - 予定どおり（as_planned）と言えるのは、公式のホストの出典があるときだけ。
  *   公式でない情報源がいくつ一致しても、「確認できず」にして確定させない
  *   （画面としおりの「公式情報で確認」の文言と、実際の確度をそろえる）
+ * - 公式の出典があっても、確かめる日の年が書かれていなければ（例年の日付だけなら）、
+ *   今年の開催と言えないので「確認できず」にする。報告に年の明記がなければ、書かれていないとみなす
  * - 変更・中止は、出典が1つ以上あるときだけ認める
  */
 export function decideVerification(
@@ -74,14 +82,17 @@ export function decideVerification(
   const note = report.note?.trim().slice(0, NOTE_MAX_LENGTH) || undefined;
 
   if (report.result === "as_planned") {
-    if (hasOfficialSource(sources)) {
-      return { result: "as_planned", sources, ...(note ? { note } : {}) };
+    if (!hasOfficialSource(sources)) {
+      return {
+        result: "not_found",
+        sources,
+        note: "公式の情報で開催予定を確かめられませんでした",
+      };
     }
-    return {
-      result: "not_found",
-      sources,
-      note: "公式の情報で開催予定を確かめられませんでした",
-    };
+    if (report.yearStated !== true) {
+      return { result: "not_found", sources, note: YEAR_NOT_STATED_NOTE };
+    }
+    return { result: "as_planned", sources, ...(note ? { note } : {}) };
   }
 
   if ((report.result === "changed" || report.result === "cancelled") && sources.length === 0) {

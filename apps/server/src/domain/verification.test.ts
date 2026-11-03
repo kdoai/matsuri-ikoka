@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { testFestival } from "./testFestivals";
-import { decideVerification, officialHosts } from "./verification";
+import { decideVerification, officialHosts, YEAR_NOT_STATED_NOTE } from "./verification";
 
 // 架空の祭り。公式の出典は example.com にある
 const festival = testFestival({ id: "suzunari-toro" });
@@ -13,6 +13,7 @@ describe("decideVerification", () => {
       {
         result: "as_planned",
         sources: [{ url: "https://example.com/suzunari/2026", title: "開催のお知らせ" }],
+        yearStated: true,
       },
       today,
     );
@@ -28,6 +29,22 @@ describe("decideVerification", () => {
         },
       ],
     });
+  });
+
+  it("公式の出典でも、今年の開催と書かれていなければ予定どおりと認めず、確認できずにする", () => {
+    const report = {
+      result: "as_planned" as const,
+      sources: [{ url: "https://example.com/suzunari/" }],
+      note: "例年8月16日に開催",
+    };
+    const notStated = decideVerification(festival, { ...report, yearStated: false }, today);
+    const unknown = decideVerification(festival, report, today);
+
+    for (const decision of [notStated, unknown]) {
+      expect(decision.result).toBe("not_found");
+      expect(decision.note).toBe(YEAR_NOT_STATED_NOTE);
+      expect(decision.sources[0]?.confidence).toBe("official");
+    }
   });
 
   it("公式でない出典1つだけでは予定どおりと認めず、確認できずにする", () => {
