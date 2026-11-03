@@ -1,0 +1,287 @@
+{
+  "id": "akan-marimo-matsuri",
+  "name": {
+    "ja": "まりも祭り",
+    "en": "Marimo Festival"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "北海道",
+      "name": "釧路市"
+    }
+  ],
+  "venue": {
+    "name": "阿寒湖（阿寒湖温泉）",
+    "lat": 43.4336,
+    "lng": 144.0899
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["jalan", "rurubu", "jnto"],
+  "highlights": [
+    "アイヌの男性が丸木舟で阿寒湖に出て、マリモを湖に還す「まりもを送る儀式」",
+    "アイヌの祈り「カムイノミ」が捧げられる",
+    "夜のタイマツ行進とアイヌ古式舞踊",
+    "国の特別天然記念物マリモを守るために始まった祭り"
+  ],
+  "trivia": [
+    {
+      "text": "絶滅が心配された阿寒湖のマリモを守るため、1950年に始まった",
+      "source": {
+        "url": "https://en.kushiro-lakeakan.com/overview/20780",
+        "title": "Kushiro-Lake Akan Tourism（釧路・阿寒湖観光公式サイト）Autumn in Kushiro & Lake Akan",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2026年の祭りは第77回を数えた",
+      "source": {
+        "url": "https://ja.kushiro-lakeakan.com/things_to_do/2591/",
+        "title": "釧路・阿寒湖観光公式サイト 第77回まりも祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "儀式は「迎える」「護る」「送る」の3つで、阿寒湖に丸木舟を浮かべて行う",
+      "source": {
+        "url": "https://ja.kushiro-lakeakan.com/things_to_do/2591/",
+        "title": "釧路・阿寒湖観光公式サイト 第77回まりも祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": []
+  },
+  "occurrences": [
+    {
+      "date": "2027-10-08",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年10月8日〜10日の初日（2027年の発表はまだない）。じゃらんnetの2025年の案内では、1日目はマリモの生育地についての講演や見学",
+      "sources": [
+        {
+          "url": "https://www.visit-hokkaido.jp/event/detail_11017.html",
+          "title": "北海道公式観光サイト HOKKAIDO LOVE! まりも祭り（10月8日〜10日、毎年固定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://en.kushiro-lakeakan.com/overview/20780",
+          "title": "Kushiro-Lake Akan Tourism（毎年10月8日〜10日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.jalan.net/event/evt_346618/",
+          "title": "じゃらんnet まりも祭り（2025年の日ごとの内容）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-10-09",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2027年の発表はまだない。じゃらんnetの2025年の案内では、2日目に「まりも踊り行進」と「タイマツ行進」がある",
+      "sources": [
+        {
+          "url": "https://www.visit-hokkaido.jp/event/detail_11017.html",
+          "title": "北海道公式観光サイト HOKKAIDO LOVE! まりも祭り（10月8日〜10日、毎年固定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.jalan.net/event/evt_346618/",
+          "title": "じゃらんnet まりも祭り（2025年の日ごとの内容）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-10-10",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2027年の発表はまだない。じゃらんnetの2025年の案内では、3日目に湖岸で、丸木舟に乗った長老がマリモを湖に送る儀式がある",
+      "sources": [
+        {
+          "url": "https://www.visit-hokkaido.jp/event/detail_11017.html",
+          "title": "北海道公式観光サイト HOKKAIDO LOVE! まりも祭り（10月8日〜10日、毎年固定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.jalan.net/event/evt_346618/",
+          "title": "じゃらんnet まりも祭り（2025年の日ごとの内容）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.visit-hokkaido.jp/event/detail_11017.html",
+        "title": "北海道公式観光サイト HOKKAIDO LOVE! まりも祭り（駐車場 約500台・有料、釧路空港からバスで約60分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ja.kushiro-lakeakan.com/things_to_do/2591/",
+        "title": "釧路・阿寒湖観光公式サイト 第77回まりも祭り（JR釧路駅から車で約80分、釧路空港から車で約60分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "akanko-ainu-theater-ikor",
+      "name": "阿寒湖アイヌシアター イコロ",
+      "kind": "sightseeing",
+      "summary": "阿寒湖アイヌコタンにある、アイヌ古式舞踊を見られる屋内劇場。5月1日〜10月31日は古式舞踊・満月のリムセ・ロストカムイを1日5回上演。祭りの日は一部の公演が休演になることがある",
+      "location": {
+        "lat": 43.4336,
+        "lng": 144.0899
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": ["indoor", "seating"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.akanainu.jp/schedule/",
+          "title": "阿寒湖アイヌコタン 公演スケジュール",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.akanainu.jp/facilities/",
+          "title": "阿寒湖アイヌコタン 施設紹介",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "akan-kanko-kisen",
+      "name": "阿寒観光汽船（阿寒湖遊覧船）",
+      "kind": "sightseeing",
+      "summary": "阿寒湖を約85分で一周する遊覧船。チュウルイ島に上陸し、マリモ展示観察センターでマリモを見られる。10月1日〜20日は8:00〜16:00、21日からは8:00〜15:00の運航。12月1日から湖の氷が消えるまでは運休",
+      "location": {
+        "lat": 43.4343,
+        "lng": 144.0992
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": [],
+      "price": "大人2,700円、子供1,390円（マリモ展示観察センターの入館料を含む）",
+      "tags": ["kid_friendly"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.akankisen.com/exBoat1.html",
+          "title": "阿寒観光汽船 遊覧船のご案内（運航時刻・料金）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://ja.kushiro-lakeakan.com/things_to_do/3399/",
+          "title": "釧路・阿寒湖観光公式サイト 阿寒観光汽船株式会社（観光遊覧船）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "akanko-poronno",
+      "name": "民芸喫茶ポロンノ",
+      "kind": "food",
+      "summary": "阿寒湖アイヌコタンの中の飲食店で、コタンではアイヌの伝統料理や創作料理を味わえる。昼（12:00〜15:00）と夜（18:30〜21:00）の営業で、休みは不定休。冬は事前の確認と予約を勧めている",
+      "location": {
+        "lat": 43.4336,
+        "lng": 144.0902
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": ["indoor", "local_food"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.akanainu.jp/shops/food.html",
+          "title": "阿寒湖アイヌコタン 飲食店",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://ja.kushiro-lakeakan.com/things_to_do/2591/",
+      "title": "釧路・阿寒湖観光公式サイト 第77回まりも祭り",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.visit-hokkaido.jp/event/detail_11017.html",
+      "title": "北海道公式観光サイト HOKKAIDO LOVE! まりも祭り",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.japan.travel/spot/538/",
+      "title": "日本政府観光局 Japan Travel Marimo Festival",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、各日の行事の時刻（2026年も公式の時刻表が見つからない）",
+    "日ごとの行事の内容（公式の案内がなく、じゃらんnetの2025年の案内だけ）",
+    "見学のほかに、タイマツ行進などに一般の人が加われるか",
+    "見学の場所、撮影の決まり、立ち入りの決まり",
+    "危険度、服装・持ち物（10月の夜の湖畔での防寒の案内も見つからない）",
+    "雨や荒天のときの扱い",
+    "屋台が出るか、祭りに合わせた食べ物",
+    "最寄りの鉄道駅はない。公式の案内は JR釧路駅から車で約80分、釧路空港からバスで約60分（釧路駅からのバスで約2時間はじゃらんの記載）。バスの時刻と本数は確かめていない",
+    "駐車場の場所（北海道の観光サイトでは約500台・有料。るるぶ&more.ではフォレストガーデン駐車場120台）",
+    "交通規制の有無",
+    "見学者数の公表値（るるぶ&more.では前年の来場者200人）",
+    "アイヌシアター イコロの観覧料と開館時間",
+    "民芸喫茶ポロンノの料理と値段",
+    "阿寒観光汽船の営業の終わりの時刻（最終の出航は16:00、一周85分）"
+  ]
+}
