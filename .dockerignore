@@ -11,7 +11,9 @@
 .env*
 CLAUDE.local.md
 .local
-assets/3d
+# 3D は画面が読む GLB（assets/3d/models）だけを渡す
+assets/3d/out
+assets/3d/scripts
 docs
 scripts
 *.blend
