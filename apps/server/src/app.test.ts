@@ -435,7 +435,18 @@ describe("POST /api/session", () => {
     const res = await app.request("/api/session", { method: "POST" });
 
     expect(res.status).toBe(201);
-    expect(SessionResponseSchema.safeParse(await res.json()).success).toBe(true);
+    const body = SessionResponseSchema.parse(await res.json());
+    // 記録の再生で動いていることを、画面に知らせる
+    expect(body.mode).toBe("mock");
+  });
+
+  it("live で動いているときは live と返す", async () => {
+    const live: AgentRunner = { mode: "live", async runTurn() {} };
+    const { app } = setup({ runner: live });
+
+    const res = await app.request("/api/session", { method: "POST" });
+
+    expect(SessionResponseSchema.parse(await res.json()).mode).toBe("live");
   });
 });
 
