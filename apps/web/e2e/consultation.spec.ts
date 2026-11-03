@@ -6,8 +6,10 @@ import {
   openLog,
   openPanel,
   openPreferences,
+  SAMPLE,
   sendSampleMessage,
   snap,
+  tabTo,
   waitForReply,
 } from "./helpers";
 
@@ -218,6 +220,43 @@ test("キーボードだけで、候補を閉じ、タブを移れる", async ({
   await expect(page.getByRole("tab", { name: "地図" })).toHaveAttribute("aria-selected", "true");
   await page.keyboard.press("ArrowLeft");
   await expect(page.getByRole("tab", { name: "旅程" })).toHaveAttribute("aria-selected", "true");
+});
+
+test("キーボードだけで、入店から相談・候補選び・しおりまで進める", async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
+  await page.goto("/?scene=2d");
+  await tabTo(page, page.getByRole("button", { name: "入店する" }));
+  await page.keyboard.press("Enter");
+  const input = page.getByRole("textbox", { name: "相談の発言" });
+  await expect(input).toBeEnabled();
+
+  // E で会話の窓の入力欄へ移り、打って Enter で送る
+  const say = async (index: number) => {
+    await page.keyboard.press("e");
+    await expect(input).toBeFocused();
+    await page.keyboard.insertText(SAMPLE.turns[index]?.request.message ?? "");
+    await page.keyboard.press("Enter");
+  };
+  await say(0);
+  await expect(page.getByRole("heading", { name: "祭りの候補" })).toBeFocused();
+  await waitForReply(page);
+  await tabTo(page, page.getByRole("button", { name: "この祭りにする" }).first());
+  await page.keyboard.press("Enter");
+  await waitForReply(page);
+  // Esc で入力欄を離れても、E でまた戻れる
+  await page.keyboard.press("e");
+  await page.keyboard.press("Escape");
+  await expect(input).not.toBeFocused();
+  await say(2);
+  await waitForReply(page);
+  await say(3);
+  await expect(page.getByTestId("celebration")).toBeVisible({ timeout: 10_000 });
+  await waitForReply(page);
+
+  await page.keyboard.press("x");
+  await tabTo(page, page.getByRole("button", { name: "旅のしおりを開く" }).first());
+  await page.keyboard.press("Enter");
+  await expect(page.getByTestId("shiori").getByRole("heading", { level: 1 })).toBeVisible();
 });
 
 test("動きを減らす設定では、2D の店内とスタッフの文字の一覧を出す", async ({ page }, info) => {

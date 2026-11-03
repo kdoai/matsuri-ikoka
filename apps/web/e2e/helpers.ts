@@ -2,7 +2,7 @@ import { mkdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { SampleConversationSchema } from "@matsuri-ikoka/schema";
-import { expect, type Page, type TestInfo } from "@playwright/test";
+import { expect, type Locator, type Page, type TestInfo } from "@playwright/test";
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -89,4 +89,13 @@ export async function openLog(page: Page): Promise<void> {
 export async function closeLog(page: Page): Promise<void> {
   await page.getByTestId("backlog").getByRole("button", { name: "閉じる" }).click();
   await expect(page.getByTestId("backlog")).toHaveCount(0);
+}
+
+/** Tab だけで、その部品に焦点を移す（キーボードだけで操作できるかを確かめる） */
+export async function tabTo(page: Page, target: Locator, limit = 80): Promise<void> {
+  for (let i = 0; i < limit; i++) {
+    if (await target.evaluate((element) => element === document.activeElement)) return;
+    await page.keyboard.press("Tab");
+  }
+  throw new Error("Tab で焦点を移せませんでした");
 }
