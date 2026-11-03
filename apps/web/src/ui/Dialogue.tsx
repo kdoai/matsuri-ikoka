@@ -18,8 +18,12 @@ function NamePlate({ name }: { name: string }) {
   );
 }
 
-const actionChip =
-  "inline-flex min-h-9 items-center gap-1 rounded-full border-2 border-ai-700 bg-white px-3.5 font-bold text-ai-800 text-sm shadow-sm transition hover:bg-ai-50 disabled:cursor-not-allowed disabled:opacity-60";
+// 色のクラスは形のクラスと分けて持つ。同じ種類のクラスを重ねると、どちらが効くかは
+// Tailwind が出力する CSS の順で決まり、書いた順にならない
+const chipShape =
+  "inline-flex min-h-9 items-center gap-1 rounded-full border-2 px-3.5 font-bold text-sm shadow-sm transition disabled:cursor-not-allowed disabled:opacity-60";
+const actionChip = `${chipShape} border-ai-700 bg-white text-ai-800 hover:bg-ai-50`;
+const primaryChip = `${chipShape} border-shu-600 bg-shu-600 text-white hover:bg-shu-700`;
 
 export function DialogueBox() {
   const t = useT();
@@ -132,11 +136,7 @@ export function DialogueBox() {
                 </button>
               ) : null}
               {ready ? (
-                <button
-                  type="button"
-                  className={`${actionChip} border-shu-600 bg-shu-600 text-white hover:bg-shu-700`}
-                  onClick={() => actions.openShiori()}
-                >
+                <button type="button" className={primaryChip} onClick={() => actions.openShiori()}>
                   {t.itinerary.openShiori}
                 </button>
               ) : null}

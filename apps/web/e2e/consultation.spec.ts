@@ -124,6 +124,19 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   await snap(page, info, "05-celebration");
   await waitForReply(page);
   await expect(page.getByTestId("celebration")).toHaveCount(0, { timeout: 5_000 });
+
+  // 会話の窓の「旅のしおりを開く」は、文字の色が地の色と見分けられる
+  const dialogueShiori = page
+    .getByTestId("dialogue")
+    .getByRole("button", { name: "旅のしおりを開く" });
+  await expect(dialogueShiori).toBeVisible();
+  const chipColors = await dialogueShiori.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return { text: style.color, background: style.backgroundColor };
+  });
+  expect(chipColors.text).not.toBe(chipColors.background);
+  expect(chipColors.background).not.toBe("rgb(255, 255, 255)");
+
   await openPanel(page);
   await expect(page.getByTestId("verification")).toContainText("予定どおり開催されます");
 
