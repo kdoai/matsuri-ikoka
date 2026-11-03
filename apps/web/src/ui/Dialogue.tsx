@@ -1,5 +1,5 @@
 import type { StaffId } from "@matsuri-ikoka/schema";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, X } from "lucide-react";
 import { useActions, useApp, useT } from "../state/react";
 import { currentLine, shioriReady } from "../state/selectors";
 import { Composer } from "./ChatPanel";
@@ -69,6 +69,16 @@ export function DialogueBox() {
         className="pointer-events-none absolute inset-x-6 bottom-1.5 h-3 bg-[radial-gradient(circle_at_50%_100%,transparent_5px,rgb(156_105_57/0.18)_6px,transparent_7px)] bg-[length:16px_12px]"
       />
       <NamePlate name={name} />
+      {/* 会話の窓をしまう（店の中を歩くとき）。コンシェルジュに話しかけると、また出る */}
+      <button
+        type="button"
+        onClick={() => actions.setDialogue(false)}
+        className="-top-3 absolute right-4 grid size-9 place-items-center rounded-full border-2 border-wood-700/60 bg-kinari-50 text-ink shadow-md transition hover:bg-white"
+        aria-label={t.dialogue.close}
+        data-testid="dialogue-close"
+      >
+        <X aria-hidden="true" className="size-4" />
+      </button>
       <div className="flex gap-3 sm:gap-5">
         <Portrait speaker={speaker as Speaker} className="-mt-9 size-20 sm:size-28" />
         <div

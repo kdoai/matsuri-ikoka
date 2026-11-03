@@ -13,14 +13,23 @@ import {
   createNavGrid,
   createNavMesh,
   type FlatPoint,
+  gridWalkable,
+  meshWalkable,
   type NavGrid,
   type NavMesh,
   nearestOnNavMesh,
+  type Walkable,
 } from "./navmesh";
 import type { Mark } from "./Staff";
 
 // 店内（interior.glb）から、旅人が遊ぶのに要るものを読み出す：歩ける床、入口、
 // 仕掛け・座る場所・隠れひよこの位置、入口の壁、時計の針。
+
+/** 旅人の体の太さ（m）。歩ける床の縁から、さらにこれだけ離れたところを歩く */
+const BODY_RADIUS = 0.12;
+
+/** 入口の床の縁から、この距離のうちに立つと「外に出る」を出す（入店して立つ位置よりは外側） */
+const EXIT_RADIUS = 0.35;
 
 /** 仕掛けの本体からこの距離より遠い床にしか立てないときは、タップでだけ動かす（従業員の区域） */
 const REACH_LIMIT = 1.6;
@@ -29,6 +38,10 @@ export interface ShopWorld {
   nav: NavMesh;
   /** 道を探す升目（10 cm 四方） */
   grid: NavGrid;
+  /** 旅人が立てるところ（3 cm の升目を、体の太さぶん縁から削ったもの） */
+  walk: Walkable;
+  /** 歩ける床の三角形の上（縁に近すぎる位置から抜け出すときに使う） */
+  onFloor: Walkable;
   /** 入店して立つ位置（入口） */
   start: Mark;
   /** カウンターでコンシェルジュと話す位置（カメラの基準） */
@@ -36,12 +49,16 @@ export interface ShopWorld {
   /** 歩いて近づいて使うもの（スタッフと話すのは毎フレーム足す） */
   targets: Target[];
   seats: Record<string, Mark>;
+  /** 従業員の区域の椅子（地図の机・読書机・踏み台）。柵の向こうなので座れない */
+  staffSeats: FlatPoint[];
   /** 仕掛けの本体の位置（タップしたものを見分ける・向く） */
   gimmicks: Partial<Record<Gimmick, FlatPoint>>;
   chicks: Partial<Record<Chick, FlatPoint>>;
   /** 旅人が入口の近くにいる間、半透明にするもの */
   entrance: Object3D[];
   noren: FlatPoint | null;
+  /** のれんの内側で、ここに立つと店の外へ出られる（入口の床の縁） */
+  exit: FlatPoint | null;
   clock: { hour: Object3D | null; minute: Object3D | null };
 }
 
@@ -104,6 +121,8 @@ export function readShopWorld(interior: Object3D): ShopWorld {
     const body = centerOf(interior, gimmickNode(gimmick));
     if (body === null) continue;
     gimmicks[gimmick] = body;
+    // のれんは、くぐると揺れる。近づいたときは「外に出る」にする（下の exit）
+    if (gimmick === "noren") continue;
     const standName = GIMMICK_STANDS[gimmick];
     const stand = standName === undefined ? null : markOf(interior, standName);
     const spot = stand === null ? nearestOnNavMesh(nav, body.x, body.z) : flat(stand);
@@ -119,8 +138,13 @@ export function readShopWorld(interior: Object3D): ShopWorld {
   }
 
   const seats: Record<string, Mark> = {};
+  const staffSeats: FlatPoint[] = [];
   interior.traverse((object) => {
     const name = originalName(object);
+    if (name.startsWith("seat.staff.")) {
+      const seat = markOf(interior, name);
+      if (seat !== null) staffSeats.push(flat(seat));
+    }
     if (!name.startsWith("seat.customer.")) return;
     const seat = markOf(interior, name);
     if (seat === null) return;
@@ -167,17 +191,35 @@ export function readShopWorld(interior: Object3D): ShopWorld {
   }
 
   const noren = markOf(interior, "gimmick.noren");
+  const norenBody = gimmicks.noren ?? (noren === null ? null : flat(noren));
+  const exit = norenBody === null ? null : nearestOnNavMesh(nav, norenBody.x, norenBody.z);
+  if (exit !== null && norenBody !== null) {
+    targets.push({
+      id: "exit",
+      interaction: { kind: "exit" },
+      stand: exit,
+      radius: EXIT_RADIUS,
+      face: norenBody,
+    });
+  }
   return {
     nav,
-    grid: createNavGrid(nav, 0.1),
+    // 道は体の太さ（0.1 m）ぶん縁から離して探す
+    grid: createNavGrid(nav, 0.1, 0.1),
+    // 歩ける床は家具から 0.2 m 離してあるが、ペンギンの体（帽子とリュック）はそれより太いので、
+    // さらに体の太さぶん縁から離れたところだけを歩く
+    walk: gridWalkable(createNavGrid(nav, 0.03, BODY_RADIUS)),
+    onFloor: meshWalkable(nav),
     start,
     counter,
     targets,
     seats,
+    staffSeats,
     gimmicks,
     chicks,
     entrance,
     noren: noren === null ? null : flat(noren),
+    exit,
     clock: {
       hour: findNode(interior, "clock.hand.hour") ?? null,
       minute: findNode(interior, "clock.hand.minute") ?? null,

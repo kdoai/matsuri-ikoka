@@ -63,6 +63,7 @@ export function initialData({ locale = "ja" }: InitialOptions = {}): AppData {
       drawerOpen: false,
       celebrating: false,
       draft: "",
+      dialogueOpen: false,
     },
   };
 }

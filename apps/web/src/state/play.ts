@@ -12,11 +12,15 @@ export type PlayNotice =
   | { kind: "gacha"; prize: number }
   | { kind: "gimmick"; interaction: Interaction }
   | { kind: "chick"; found: number }
-  | { kind: "allChicks" };
+  | { kind: "allChicks" }
+  /** 従業員の区域の椅子をタップした */
+  | { kind: "staffOnly" };
 
 export interface PlayState {
   /** 3D の旅人がいるか（いなければ「話す」は入力欄へ） */
   active: boolean;
+  /** 入店のカメラが動いている間。案内や吹き出しを出さず、旅人も動かさない */
+  entering: boolean;
   /** 一度でも旅人を動かしたか（操作の案内をたたむのに使う） */
   moved: boolean;
   near: Interaction | null;
@@ -29,6 +33,7 @@ export interface PlayState {
 
 export interface PlayActions {
   setActive(active: boolean): void;
+  setEntering(entering: boolean): void;
   markMoved(): void;
   setNear(near: Interaction | null): void;
   setSitting(sitting: boolean): void;
@@ -47,6 +52,7 @@ function sameInteraction(a: Interaction | null, b: Interaction | null): boolean 
 export function createPlayStore() {
   return createStore<PlayStore>()((set, get) => ({
     active: false,
+    entering: false,
     moved: false,
     near: null,
     sitting: false,
@@ -55,6 +61,9 @@ export function createPlayStore() {
     interactSeq: 0,
     setActive(active) {
       set({ active, ...(active ? {} : { near: null, sitting: false }) });
+    },
+    setEntering(entering) {
+      if (get().entering !== entering) set({ entering });
     },
     markMoved() {
       if (!get().moved) set({ moved: true });

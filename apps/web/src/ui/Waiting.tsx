@@ -1,5 +1,6 @@
 import { STAFF_IDS, type StaffId } from "@matsuri-ikoka/schema";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { usePlay } from "../state/play";
 import { useActions, useApp, useT } from "../state/react";
 import type { WaitingTalk } from "../state/types";
 import { waitingTalks } from "../state/waiting";
@@ -91,7 +92,8 @@ function useCurrentTalk(): { talk: WaitingTalk; count: number } | null {
 export function HostBubble() {
   const current = useCurrentTalk();
   const talkText = useTalkText();
-  if (current === null) return null;
+  const entering = usePlay((state) => state.entering);
+  if (current === null || entering) return null;
   const { text } = talkText(current.talk);
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0">

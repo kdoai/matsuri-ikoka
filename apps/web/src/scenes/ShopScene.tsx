@@ -1,6 +1,6 @@
 import { STAFF_IDS, type StaffId } from "@matsuri-ikoka/schema";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   type AnimationAction,
   AnimationMixer,
@@ -9,11 +9,12 @@ import {
   Mesh,
   type Object3D,
   type PerspectiveCamera,
+  Quaternion,
   Raycaster,
   Vector2,
   Vector3,
 } from "three";
-import { playStore } from "../state/play";
+import { playStore, usePlay } from "../state/play";
 import { NO_INSETS, type ShopSceneProps } from "../state/scene";
 import type { StaffState } from "../state/types";
 import {
@@ -25,18 +26,25 @@ import {
   staffPlan,
 } from "./choreography";
 import {
+  CAMERA_KEYS,
+  CAMERA_RESET_KEY,
   CHICKS,
+  clampOrbit,
   clockHands,
+  DEFAULT_ORBIT,
   followOffset,
   GIMMICK_CLIPS,
   GIMMICKS,
   type Gimmick,
   gimmickNode,
   type Interaction,
+  keepCameraInside,
+  type Orbit,
+  STICK_DEADZONE,
   TALK_RADIUS,
   type Target,
 } from "./controls";
-import { markEntryPlayed, shouldPlayEntry } from "./entry";
+import { markEntryPlayed, resetEntry, shouldPlayEntry } from "./entry";
 import { clipNamed, type ModelName, originalName, useModels, useSetModels } from "./models";
 import { nearestOnNavMesh } from "./navmesh";
 import { Player, type PlayerApi } from "./Player";
@@ -201,11 +209,30 @@ function Shop({
     };
   }, [interior, exterior]);
 
+  // カメラを回す中心：いつもの見え方の視線が、床の少し上（カウンターの高さ）と交わる点
+  const pivot = useMemo(() => {
+    if (set.game === null) return null;
+    const forward = new Vector3(0, 0, -1).applyQuaternion(set.game.quaternion);
+    const t = (PIVOT_HEIGHT - set.game.position.y) / (forward.y || -1);
+    const point = set.game.position.clone().add(forward.multiplyScalar(t));
+    return { point, arm: set.game.position.clone().sub(point) };
+  }, [set]);
+  const orbit = useRef<{ target: Orbit; current: Orbit }>({
+    target: { ...DEFAULT_ORBIT },
+    current: { ...DEFAULT_ORBIT },
+  });
+  useCameraKeys(orbit);
+
   const gimmicks = useGimmicks(interior);
 
   // 入店のカメラ：外観から店内へ入り、cam.main と同じ姿勢で止まる。1回だけ流す
   const entry = useEntryRig(exterior);
   const entering = useRef(entry !== null && shouldPlayEntry());
+  // 入店のカメラが動いている間は、案内や吹き出しを出さず、旅人も動かさない
+  useEffect(() => {
+    playStore.getState().setEntering(entering.current);
+    return () => playStore.getState().setEntering(false);
+  }, []);
   const entryTime = useRef(entry?.start ?? 0);
   const pose = useRef<CameraPose | null>(null);
   const lift = useRef(entering.current ? 0 : props.frame.bottom * DIALOGUE_LIFT);
@@ -251,18 +278,31 @@ function Shop({
       setOpacity(exterior.scene, exteriorOpacity(entryTime.current));
       if (entryTime.current >= entry.clip.duration) {
         entering.current = false;
+        playStore.getState().setEntering(false);
         markEntryPlayed();
         setOpacity(exterior.scene, 0);
         // 入ると風鈴が鳴る
         gimmicks.play("furin");
       }
-    } else if (set.game !== null) {
-      // 旅人に合わせてカメラを動かす。しおりの完成の演出の間だけ、カウンターへ寄る
+    } else if (set.game !== null && pivot !== null) {
+      // 旅人に合わせてカメラを動かし、利用者が回した・寄せたぶんを足す。
+      // しおりの完成の演出の間だけ、カウンターへ寄る
       const celebrating = props.celebrating && set.shiori !== null;
-      const goal = celebrating && set.shiori !== null ? set.shiori : set.game;
-      const offset = celebrating
-        ? { x: 0, z: 0 }
-        : followOffset(at, { x: world.counter.x, z: world.counter.z - PULL_BACK }, FOLLOW);
+      const offset = followOffset(
+        at,
+        { x: world.counter.x, z: world.counter.z - PULL_BACK },
+        FOLLOW,
+      );
+      padOrbit(orbit.current.target, dt);
+      const o = orbit.current;
+      const ease = 1 - Math.exp(-dt * 8);
+      o.current.yaw += (o.target.yaw - o.current.yaw) * ease;
+      o.current.pitch += (o.target.pitch - o.current.pitch) * ease;
+      o.current.zoom += (o.target.zoom - o.current.zoom) * ease;
+      const goal =
+        celebrating && set.shiori !== null
+          ? set.shiori
+          : orbitPose(set.game, pivot, offset, o.current);
       if (pose.current === null) {
         pose.current = {
           position: goal.position.clone(),
@@ -270,9 +310,8 @@ function Shop({
           yfov: goal.yfov,
         };
       }
-      const target = goal.position.clone().add(new Vector3(offset.x, 0, offset.z));
       const t = 1 - Math.exp(-dt * 2.5);
-      pose.current.position.lerp(target, t);
+      pose.current.position.lerp(goal.position, t);
       pose.current.quaternion.slerp(goal.quaternion, t);
       lift.current += (props.frame.bottom * DIALOGUE_LIFT - lift.current) * t;
       const insets = { ...NO_INSETS, bottom: Math.round(lift.current) };
@@ -351,13 +390,133 @@ function Shop({
           onTalk={(staff) => callbacks.current.onTalk?.(staff)}
           onGimmick={onGimmick}
           onPad={(command) => callbacks.current.onPad?.(command)}
+          onExit={() => {
+            // 次に入るときは、また通りから入店のカメラを流す
+            resetEntry();
+            callbacks.current.onExit?.();
+          }}
         />
       )}
-      <TapControls world={set.world} interior={interior.scene} api={playerApi} heads={staffHeads} />
+      <TapControls
+        world={set.world}
+        interior={interior.scene}
+        api={playerApi}
+        heads={staffHeads}
+        orbit={orbit}
+      />
       <BubbleProjector heads={heads} player={player} />
     </>
   );
 }
+
+/** カメラを回す中心の高さ（m）と、ドラッグ・ホイールの効き */
+const PIVOT_HEIGHT = 0.6;
+const DRAG_YAW = 0.006;
+const DRAG_PITCH = 0.004;
+const WHEEL_ZOOM = 0.0012;
+/** キー・右スティックで回す速さ（ラジアン/秒）と、寄せる速さ（倍/秒） */
+const TURN_SPEED = 1.4;
+const ZOOM_SPEED = 0.9;
+
+const UP = new Vector3(0, 1, 0);
+
+/**
+ * いつもの見え方（base）を、回す中心（pivot）のまわりに回し、寄せ、旅人に合わせてずらした姿勢。
+ * 0・0・1 のときは base をずらしただけになる。壁や床の中には入れない
+ */
+function orbitPose(
+  base: CameraPose,
+  pivot: { point: Vector3; arm: Vector3 },
+  offset: { x: number; z: number },
+  orbit: Orbit,
+): CameraPose {
+  const yaw = new Quaternion().setFromAxisAngle(UP, orbit.yaw);
+  const right = new Vector3(1, 0, 0).applyQuaternion(base.quaternion).applyQuaternion(yaw);
+  const pitch = new Quaternion().setFromAxisAngle(right, -orbit.pitch);
+  const rotation = pitch.multiply(yaw);
+  const center = pivot.point.clone().add(new Vector3(offset.x, 0, offset.z));
+  const position = center.add(
+    pivot.arm.clone().applyQuaternion(rotation).multiplyScalar(orbit.zoom),
+  );
+  const inside = keepCameraInside(position);
+  return {
+    position: new Vector3(inside.x, inside.y, inside.z),
+    quaternion: rotation.multiply(base.quaternion),
+    yfov: base.yfov,
+  };
+}
+
+/** キーボード（Q・R で回す、Z・C で寄る・引く、V で戻す）。入力欄の中では使わない */
+function useCameraKeys(orbit: React.RefObject<{ target: Orbit; current: Orbit }>): void {
+  const keys = useRef(new Set<string>());
+  const reset = useCallback(() => Object.assign(orbit.current.target, DEFAULT_ORBIT), [orbit]);
+  useEffect(() => {
+    const held = keys.current;
+    const onDown = (event: KeyboardEvent) => {
+      if (event.altKey || event.ctrlKey || event.metaKey) return;
+      const target = event.target instanceof Element ? event.target : null;
+      if (target?.closest("input, textarea, select, [contenteditable='true']")) return;
+      if (event.code in CAMERA_KEYS) held.add(event.code);
+      // V でいつもの見え方に戻す
+      if (event.code === CAMERA_RESET_KEY) reset();
+    };
+    const onUp = (event: KeyboardEvent) => {
+      held.delete(event.code);
+    };
+    const clear = () => held.clear();
+    window.addEventListener("keydown", onDown);
+    window.addEventListener("keyup", onUp);
+    window.addEventListener("blur", clear);
+    return () => {
+      window.removeEventListener("keydown", onDown);
+      window.removeEventListener("keyup", onUp);
+      window.removeEventListener("blur", clear);
+    };
+  }, [reset]);
+  useFrame((_, delta) => {
+    const dt = Math.min(delta, 0.1);
+    const o = orbit.current.target;
+    let yaw = 0;
+    let zoom = 0;
+    for (const code of keys.current) {
+      yaw += CAMERA_KEYS[code]?.yaw ?? 0;
+      zoom += CAMERA_KEYS[code]?.zoom ?? 0;
+    }
+    if (yaw !== 0 || zoom !== 0) {
+      Object.assign(
+        o,
+        clampOrbit({
+          yaw: o.yaw + yaw * TURN_SPEED * dt,
+          pitch: o.pitch,
+          zoom: o.zoom * Math.exp(zoom * ZOOM_SPEED * dt),
+        }),
+      );
+    }
+  });
+}
+
+/** ゲームパッドの右スティックで回し、LB・RB で寄る・引く */
+function padOrbit(target: Orbit, dt: number): void {
+  const pad = typeof navigator.getGamepads === "function" ? navigator.getGamepads()[0] : null;
+  if (!pad) return;
+  const x = pad.axes[2] ?? 0;
+  const y = pad.axes[3] ?? 0;
+  const zoom = (pad.buttons[5]?.pressed ? 1 : 0) - (pad.buttons[4]?.pressed ? 1 : 0);
+  const sx = Math.abs(x) > STICK_DEADZONE ? x : 0;
+  const sy = Math.abs(y) > STICK_DEADZONE ? y : 0;
+  if (sx === 0 && sy === 0 && zoom === 0) return;
+  Object.assign(
+    target,
+    clampOrbit({
+      yaw: target.yaw - sx * TURN_SPEED * dt,
+      pitch: target.pitch + sy * TURN_SPEED * 0.6 * dt,
+      zoom: target.zoom * Math.exp(zoom * ZOOM_SPEED * dt),
+    }),
+  );
+}
+
+/** 座る場所をタップしたとみなす、座面の目印からの距離（m） */
+const SEAT_TAP = 0.8;
 
 /** 透かしているもの（入口の壁） */
 function faded(object: Object3D): boolean {
@@ -372,11 +531,13 @@ function TapControls({
   interior,
   api,
   heads,
+  orbit,
 }: {
   world: ShopWorld;
   interior: Object3D;
   api: React.RefObject<PlayerApi | null>;
   heads: React.RefObject<Record<StaffId, Vector3>>;
+  orbit: React.RefObject<{ target: Orbit; current: Orbit }>;
 }) {
   const { gl, camera, scene } = useThree();
   useEffect(() => {
@@ -384,18 +545,71 @@ function TapControls({
     const raycaster = new Raycaster();
     const pointer = new Vector2();
     let down: { x: number; y: number; time: number } | null = null;
+    /** 押している指・マウス（2本指で寄せる・回す） */
+    const pointers = new Map<number, { x: number; y: number }>();
+    let dragged = false;
+    let pinch: number | null = null;
+
+    const turn = (dx: number, dy: number) => {
+      const o = orbit.current.target;
+      Object.assign(
+        o,
+        clampOrbit({ yaw: o.yaw - dx * DRAG_YAW, pitch: o.pitch + dy * DRAG_PITCH, zoom: o.zoom }),
+      );
+    };
+    const onMove = (event: PointerEvent) => {
+      const last = pointers.get(event.pointerId);
+      if (last === undefined) return;
+      const dx = event.clientX - last.x;
+      const dy = event.clientY - last.y;
+      pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      if (down !== null && Math.hypot(event.clientX - down.x, event.clientY - down.y) > 10) {
+        dragged = true;
+      }
+      if (pointers.size >= 2) {
+        // 2本指：指の間の広さで寄せ、指の動きの平均で回す
+        const [a, b] = [...pointers.values()];
+        if (a === undefined || b === undefined) return;
+        const distance = Math.hypot(a.x - b.x, a.y - b.y);
+        if (pinch !== null && distance > 0) {
+          const o = orbit.current.target;
+          Object.assign(o, clampOrbit({ ...o, zoom: o.zoom * (pinch / distance) }));
+        }
+        pinch = distance;
+        turn(dx / 2, dy / 2);
+      } else if (dragged) {
+        turn(dx, dy);
+      }
+    };
+    const onWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      const o = orbit.current.target;
+      Object.assign(o, clampOrbit({ ...o, zoom: o.zoom * Math.exp(event.deltaY * WHEEL_ZOOM) }));
+    };
 
     const targetOf = (id: string): Target | undefined =>
       world.targets.find((target) => target.id === id);
 
     const onDown = (event: PointerEvent) => {
-      down = { x: event.clientX, y: event.clientY, time: performance.now() };
+      pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      if (pointers.size === 1) {
+        down = { x: event.clientX, y: event.clientY, time: performance.now() };
+        dragged = false;
+      } else {
+        // 2本目の指が触れたら、タップにはしない
+        dragged = true;
+        pinch = null;
+      }
     };
     const onUp = (event: PointerEvent) => {
+      pointers.delete(event.pointerId);
+      if (pointers.size < 2) pinch = null;
       const start = down;
-      down = null;
+      if (pointers.size === 0) down = null;
       if (
         start === null ||
+        dragged ||
+        pointers.size > 0 ||
         Math.hypot(event.clientX - start.x, event.clientY - start.y) > 10 ||
         performance.now() - start.time > 600
       ) {
@@ -470,31 +684,45 @@ function TapControls({
         }
         if (node === interior) break;
       }
-      // 座る場所の近くなら座る。ほかは、その場所（に近い床）へ歩く
-      const seat = world.targets.find(
-        (target) =>
-          target.interaction.kind === "sit" &&
-          Math.hypot(target.face.x - hit.point.x, target.face.z - hit.point.z) < 0.5,
-      );
+      // 座る場所（ソファ・ベンチ）なら座る。従業員の区域の椅子は、柵の向こうなので知らせるだけ。
+      // ほかは、その場所（に近い床）へ歩く
+      const near = (point: { x: number; z: number }) =>
+        Math.hypot(point.x - hit.point.x, point.z - hit.point.z) < SEAT_TAP;
+      const seat = world.targets
+        .filter((target) => target.interaction.kind === "sit" && near(target.face))
+        .sort(
+          (a, b) =>
+            Math.hypot(a.face.x - hit.point.x, a.face.z - hit.point.z) -
+            Math.hypot(b.face.x - hit.point.x, b.face.z - hit.point.z),
+        )[0];
       if (seat !== undefined) {
         player.walkTo(seat.stand, seat);
+      } else if (world.staffSeats.some(near)) {
+        playStore.getState().notify({ kind: "staffOnly" });
       } else {
         player.walkTo({ x: hit.point.x, z: hit.point.z });
       }
     };
     element.addEventListener("pointerdown", onDown);
+    element.addEventListener("pointermove", onMove);
     element.addEventListener("pointerup", onUp);
+    element.addEventListener("pointercancel", onUp);
+    element.addEventListener("wheel", onWheel, { passive: false });
     return () => {
       element.removeEventListener("pointerdown", onDown);
+      element.removeEventListener("pointermove", onMove);
       element.removeEventListener("pointerup", onUp);
+      element.removeEventListener("pointercancel", onUp);
+      element.removeEventListener("wheel", onWheel);
     };
-  }, [gl, camera, scene, world, interior, api, heads]);
+  }, [gl, camera, scene, world, interior, api, heads, orbit]);
   return null;
 }
 
 /**
  * 頭の上の位置を画面の座標に変えて、吹き出しの要素に書き込む（React の描き直しをしない）。
- * 旅人の床の上の位置も、店の要素の data-player に書く（通しテストで、歩けたかを確かめる）
+ * 旅人の床の上の位置とカメラの位置も、店の要素の data-player・data-camera に書く
+ * （通しテストで、歩けたか・カメラを回せたかを確かめる）
  */
 function BubbleProjector({
   heads,
@@ -511,9 +739,12 @@ function BubbleProjector({
     if (wrote.current <= 0) {
       wrote.current = 0.2;
       const at = player.current;
-      document
-        .querySelector('[data-testid="shop-scene"]')
-        ?.setAttribute("data-player", `${at.x.toFixed(2)},${at.z.toFixed(2)}`);
+      const element = document.querySelector('[data-testid="shop-scene"]');
+      element?.setAttribute("data-player", `${at.x.toFixed(2)},${at.z.toFixed(2)}`);
+      element?.setAttribute(
+        "data-camera",
+        `${camera.position.x.toFixed(2)},${camera.position.z.toFixed(2)}`,
+      );
     }
     for (const id of [...STAFF_IDS, "player"] as const) {
       const head = heads.current?.[id];
@@ -538,7 +769,9 @@ export default function ShopScene(props: ShopSceneProps) {
     Object.fromEntries([...STAFF_IDS, "player"].map((id) => [id, new Vector3()])) as HeadPositions,
   );
   // 返事を待っているときは、コンシェルジュの上に「!」を出す（話しかけられる合図）
-  const awaiting = !props.talking && props.staff.concierge.bubble === null;
+  const entering = usePlay((state) => state.entering);
+  const awaiting =
+    props.dialogueOpen && !props.talking && props.staff.concierge.bubble === null && !entering;
   return (
     <div
       className="relative h-full w-full touch-none overflow-hidden"
@@ -553,7 +786,14 @@ export default function ShopScene(props: ShopSceneProps) {
         style={{ opacity: ready ? 1 : 0, transition: "opacity 0.4s" }}
       >
         <Suspense fallback={null}>
-          <Shop props={props} heads={heads} onReady={() => setReady(true)} />
+          <Shop
+            props={props}
+            heads={heads}
+            onReady={() => {
+              setReady(true);
+              props.onReady?.();
+            }}
+          />
         </Suspense>
       </Canvas>
       {/* 吹き出し。位置は 3D の中から毎フレーム書き込む */}

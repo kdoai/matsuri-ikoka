@@ -45,6 +45,15 @@ export function useModels(names: readonly ModelName[]): GLTF[] {
   );
 }
 
+/** 先に読み込み始めておく（店の外観を見ている間に、店内で使うモデルを読んでおく） */
+export function preloadModels(names: readonly ModelName[]): void {
+  useLoader.preload(
+    GLTFLoader,
+    names.map((name) => modelUrl(name)),
+    withMeshopt,
+  );
+}
+
 /** 店内と外観（同じ座標で重ねる） */
 export function useSetModels(): { interior: GLTF; exterior: GLTF } {
   const [interior, exterior] = useModels(["interior", "exterior"]);

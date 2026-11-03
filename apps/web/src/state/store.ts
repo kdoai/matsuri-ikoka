@@ -62,6 +62,10 @@ export interface AppActions {
   setCandidatesOpen(open: boolean): void;
   openShiori(): void;
   closeShiori(): void;
+  /** 会話の窓を出す・しまう */
+  setDialogue(open: boolean): void;
+  /** のれんをくぐって店の外へ出る（相談はそのまま残す） */
+  leaveShop(): void;
   nextTrivia(): void;
   answerQuiz(choice: 0 | 1): void;
   /** 祭りのデータを読み込む（読み込み済みのものは読まない） */
@@ -257,6 +261,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
         return;
       }
       const { preferences } = state;
+      if (!state.ui.dialogueOpen) setUi({ dialogueOpen: true });
       await runStream({ kind: "chat", message, preferences, retry }, (onMessage, signal) =>
         transport.chat({ sessionId, message, preferences }, onMessage, signal),
       );
@@ -380,6 +385,17 @@ export function createAppStore(deps: StoreDeps): AppStore {
       },
       closeShiori() {
         setUi({ view: "shop" });
+      },
+      setDialogue(open) {
+        setUi({ dialogueOpen: open });
+      },
+      leaveShop() {
+        setUi({
+          view: "storefront",
+          dialogueOpen: false,
+          drawerOpen: false,
+          candidatesOpen: false,
+        });
       },
       nextTrivia() {
         update((state) => ({ ...state, trivia: { index: state.trivia.index + 1 } }));

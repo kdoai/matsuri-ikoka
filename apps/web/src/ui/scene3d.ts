@@ -8,7 +8,7 @@ import { useReducedMotion } from "./hooks";
 const shopModules = import.meta.glob<{ default: ComponentType<ShopSceneProps> }>(
   "../scenes/ShopScene.tsx",
 );
-const storefrontModules = import.meta.glob<{ default: ComponentType }>(
+const storefrontModules = import.meta.glob<{ default: ComponentType<{ testId?: string }> }>(
   "../scenes/StorefrontScene.tsx",
 );
 

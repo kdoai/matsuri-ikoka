@@ -1,4 +1,4 @@
-// 入店のカメラは、ページを開いてから1回だけ流す（しおりから店内に戻ったときは流さない）。
+// 入店のカメラは、店に入るたびに1回流す（しおりから店内に戻ったときは流さない）。
 
 let played = false;
 
@@ -8,4 +8,9 @@ export function shouldPlayEntry(): boolean {
 
 export function markEntryPlayed(): void {
   played = true;
+}
+
+/** 店の外へ出たら、次に入るときにまた入店のカメラを流す */
+export function resetEntry(): void {
+  played = false;
 }
