@@ -334,3 +334,97 @@ function sortKeys(value: unknown): unknown {
 function daysBetween(from: IsoDate, to: IsoDate): number {
   return Math.round((Date.parse(to) - Date.parse(from)) / 86_400_000);
 }
+
+// ---------------------------------------------------------------------------
+// 依頼の Issue から祭りの ID を決める
+
+/** 依頼の Issue のテンプレートが付けるラベルと、依頼の種類 */
+const REQUEST_KIND_BY_LABEL: Record<string, RefreshRequest["kind"]> = {
+  "data-correction": "correction",
+  "listing-request": "listing",
+  "opt-out": "opt_out",
+};
+
+/** Issue のテンプレートで、祭りの名前を書く欄の見出し */
+const FESTIVAL_FIELD_HEADING = "祭りの名前";
+
+export interface RefreshIssue {
+  number: number;
+  /** Issue の本文。誰でも書ける、信用しない入力 */
+  body: string;
+  labels: readonly string[];
+}
+
+export interface UnresolvedIssue {
+  number: number;
+  reason: "no_field" | "not_found" | "ambiguous";
+}
+
+export interface IssueRequests {
+  requests: RefreshRequest[];
+  /** 祭りの ID を決められなかった依頼。人が確かめる */
+  unresolved: UnresolvedIssue[];
+}
+
+/**
+ * 依頼の Issue（訂正・掲載・掲載停止）の「祭りの名前」の欄から、データにある祭りの ID を決める。
+ * 欄の中に祭りの ID がそのまま書かれていればそれを使い、なければ祭りの名前（日本語・英語）で探す。
+ * 決まるのはデータにある ID だけなので、本文に何が書かれていても、それ以外の値は出さない。
+ * 依頼のラベルのない Issue は無視する。
+ */
+export function requestsFromIssues(
+  issues: readonly RefreshIssue[],
+  festivals: readonly Festival[],
+): IssueRequests {
+  const requests: RefreshRequest[] = [];
+  const unresolved: UnresolvedIssue[] = [];
+  for (const issue of issues) {
+    const kind = issue.labels.map((label) => REQUEST_KIND_BY_LABEL[label]).find(Boolean);
+    if (kind === undefined) continue;
+    const field = formField(issue.body, FESTIVAL_FIELD_HEADING);
+    if (field === null) {
+      unresolved.push({ number: issue.number, reason: "no_field" });
+      continue;
+    }
+    const [festivalId, ...others] = matchFestivals(field, festivals);
+    if (festivalId === undefined) {
+      unresolved.push({ number: issue.number, reason: "not_found" });
+    } else if (others.length > 0) {
+      unresolved.push({ number: issue.number, reason: "ambiguous" });
+    } else {
+      requests.push({ festivalId, kind });
+    }
+  }
+  return { requests, unresolved };
+}
+
+/** Issue のフォームが本文に書く「### 見出し」の次から、次の見出しまでの文字。空なら null */
+function formField(body: string, heading: string): string | null {
+  const lines = body.split(/\r?\n/);
+  const start = lines.findIndex((line) => line.trim() === `### ${heading}`);
+  if (start < 0) return null;
+  const rest = lines.slice(start + 1);
+  const end = rest.findIndex((line) => line.startsWith("### "));
+  const value = (end < 0 ? rest : rest.slice(0, end)).join("\n").trim();
+  return value === "" || value === "_No response_" ? null : value;
+}
+
+function matchFestivals(field: string, festivals: readonly Festival[]): string[] {
+  const text = normalize(field);
+  const byId = festivals
+    .filter((festival) => new RegExp(`(^|[^a-z0-9-])${festival.id}($|[^a-z0-9-])`).test(text))
+    .map((festival) => festival.id);
+  if (byId.length > 0) return byId;
+  return festivals
+    .filter((festival) =>
+      [festival.name.ja, festival.name.en]
+        .filter((name): name is string => name !== undefined)
+        .some((name) => text.includes(normalize(name))),
+    )
+    .map((festival) => festival.id);
+}
+
+/** 全角・半角と大文字・小文字の違いをならす */
+function normalize(text: string): string {
+  return text.normalize("NFKC").toLowerCase();
+}
