@@ -24,6 +24,8 @@ export interface ChatTransport {
     onMessage: OnSseMessage,
     signal: AbortSignal,
   ): Promise<void>;
+  /** 接続が切れたあとに、サーバーが応答するかを確かめる（つながらなければ false） */
+  checkServer?(): Promise<boolean>;
   /** 接客サーバーのときだけ：合言葉を覚えて、これからの呼び出しに付ける */
   setPasscode?(passcode: string): void;
   /** 接客サーバーのときだけ：合言葉を覚えているか */

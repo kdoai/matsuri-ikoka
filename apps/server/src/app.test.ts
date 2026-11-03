@@ -375,7 +375,7 @@ describe("時間の上限と失敗", () => {
       ]);
     });
 
-    it("done の形が正しくなく送れなかったときは、doneSent を false にして残す", async () => {
+    it("相談の状態が done の形に合わなくても、条件を空にした done を送り、そうログに残す", async () => {
       const info = vi.spyOn(console, "info").mockImplementation(() => {});
       vi.spyOn(console, "error").mockImplementation(() => {});
       const quiet: AgentRunner = { mode: "live", async runTurn() {} };
@@ -384,8 +384,14 @@ describe("時間の上限と失敗", () => {
 
       const { events } = await readSse(await post("/api/chat", chat(session.id)));
 
-      expect(events).toEqual([]);
-      expect(turnEnds(info)).toMatchObject([{ ending: "done", doneSent: false, events: 0 }]);
+      // done が届かないと、画面は接続が切れたと受け取るので、落とさない
+      expect(events).toEqual([
+        {
+          type: "done",
+          data: { stage: "hearing", conditions: {}, preferences: DEFAULT_PREFERENCES },
+        },
+      ]);
+      expect(turnEnds(info)).toMatchObject([{ ending: "done", doneSent: true, events: 1 }]);
       expect(session.busy).toBe(false);
     });
   });

@@ -180,8 +180,13 @@ export function createAppStore(deps: StoreDeps): AppStore {
         return;
       }
       const before = get();
-      update((state) => applyEvent(state, event));
-      afterEvent(event, before);
+      try {
+        update((state) => applyEvent(state, event));
+        afterEvent(event, before);
+      } catch (caught) {
+        // 画面の側の処理の失敗を、通信の切断として扱わない（ここで投げると、受け取りが止まる）
+        console.error(`[sse] ${event.type} の反映に失敗しました`, caught);
+      }
     };
 
     const runStream = async (
@@ -199,6 +204,14 @@ export function createAppStore(deps: StoreDeps): AppStore {
       }
       if (current.signal.aborted) {
         return;
+      }
+      if (!get().session.sawDone && (error === null || error.code === "connection_lost")) {
+        // done が届かないまま閉じた。サーバーが止まっているのか、接続だけが切れたのかを確かめて伝える
+        const reachable = (await transport.checkServer?.()) ?? true;
+        if (current.signal.aborted) {
+          return;
+        }
+        error = clientError(reachable ? "connection_lost" : "server_unreachable");
       }
       controller = null;
       const sawDone = get().session.sawDone;

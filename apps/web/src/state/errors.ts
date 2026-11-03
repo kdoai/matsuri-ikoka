@@ -12,6 +12,7 @@ const RETRYABLE: Record<ClientErrorCode, boolean> = {
   upstream_unavailable: true,
   internal: true,
   connection_lost: true,
+  server_unreachable: true,
   invalid_event: false,
   session_lost: true,
 };

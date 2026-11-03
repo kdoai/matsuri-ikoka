@@ -21,9 +21,15 @@ import type { ConsultState } from "./consult";
 export type StaffTask = (typeof STAFF_TASKS)[number];
 /**
  * サーバーのエラーに、画面の側で気づくエラーを足したもの。
- * connection_lost 接続が切れた / invalid_event 形が違う / session_lost サーバーが相談を覚えていない
+ * connection_lost 返答の途中で接続が切れた（サーバーは動いている） / server_unreachable サーバーにつながらない /
+ * invalid_event 形が違う / session_lost サーバーが相談を覚えていない
  */
-export type ClientErrorCode = ErrorCode | "connection_lost" | "invalid_event" | "session_lost";
+export type ClientErrorCode =
+  | ErrorCode
+  | "connection_lost"
+  | "server_unreachable"
+  | "invalid_event"
+  | "session_lost";
 
 /** 画面に出すエラー。message はサーバーが送った一文（なければ null で、辞書の文言を出す） */
 export interface ClientError {

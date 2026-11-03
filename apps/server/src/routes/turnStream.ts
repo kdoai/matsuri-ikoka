@@ -1,4 +1,4 @@
-import { encodeSseEvent, type SseEvent } from "@matsuri-ikoka/schema";
+import { DoneEventSchema, encodeSseEvent, type SseEvent } from "@matsuri-ikoka/schema";
 import type { Context } from "hono";
 import { streamSSE } from "hono/streaming";
 import { AgentError, type EmitEvent } from "../agent/runner";
@@ -10,7 +10,7 @@ import type { ErrorBody } from "./errors";
 // - 15秒ごとに空のコメント行を送り、途中で接続が切られないようにする
 // - 進みのない時間（イベントもエージェントの動きもない時間）が上限を超えたら止め、途中までの結果のあとに timeout を送る。
 //   動き続けている相談は止めないが、全体の上限は別に持つ
-// - 最後に必ず done を1回送って閉じる
+// - 最後に必ず done を1回送って閉じる。相談の状態が done の形に合わなくても、done は落とさない
 // - 閉じたら、どう終わったか（done・error・timeout・利用者が切った）をログに1行残す。会話の本文は残さない
 
 /** 進みのない時間の上限 */
@@ -54,13 +54,22 @@ export function toErrorBody(error: unknown, signal: AbortSignal): ErrorBody | nu
 }
 
 export function doneEvent(session: Session): SseEvent {
-  return {
+  const event: SseEvent = {
     type: "done",
     data: {
       stage: session.stage,
       conditions: session.conditions,
       preferences: session.preferences,
     },
+  };
+  if (DoneEventSchema.safeParse(event).success) return event;
+  // done が届かないと、画面は接続が切れたと受け取る。読み取れた条件は送らず、会話の状態だけを返す
+  console.error("[sse] done の形が正しくないので、条件を空にして送ります", {
+    stage: session.stage,
+  });
+  return {
+    type: "done",
+    data: { stage: session.stage, conditions: {}, preferences: session.preferences },
   };
 }
 

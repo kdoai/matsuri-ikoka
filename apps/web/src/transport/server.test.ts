@@ -144,6 +144,21 @@ describe("接客サーバーとの通信", () => {
     expect(String(fetchMock.mock.calls[0]?.[0])).toBe("/api/festivals");
   });
 
+  it("接続が切れたあとは、合言葉の要らない死活監視の口でサーバーが応答するかを確かめる", async () => {
+    const up = vi.fn<typeof fetch>(async () => json({ status: "ok" }, 200));
+    expect(await createServerTransport({ fetch: up }).checkServer?.()).toBe(true);
+    expect(up.mock.calls[0]?.[0]).toBe("/healthz");
+
+    const refused = vi.fn<typeof fetch>(async () => {
+      throw new TypeError("Failed to fetch");
+    });
+    expect(await createServerTransport({ fetch: refused }).checkServer?.()).toBe(false);
+
+    // 開発の中継（Vite）は、サーバーが止まっていると 500 を返す
+    const proxyError = vi.fn<typeof fetch>(async () => new Response("", { status: 500 }));
+    expect(await createServerTransport({ fetch: proxyError }).checkServer?.()).toBe(false);
+  });
+
   it("一覧の経路がないサーバーでは、豆知識に使う祭りは空のまま", async () => {
     const fetchMock = vi.fn<typeof fetch>(async () => json({ code: "not_found" }, 404));
     expect(await createServerFestivalSource({ fetch: fetchMock }).initial()).toEqual([]);

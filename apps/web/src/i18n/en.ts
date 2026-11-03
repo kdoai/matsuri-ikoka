@@ -421,6 +421,8 @@ export const en: Messages = {
       internal: "Something went wrong on the server.",
       connection_lost:
         "The connection dropped before the reply finished. Use “Send again” to resend your message.",
+      server_unreachable:
+        "We can't reach the shop's server. Please wait a moment, then press “Send again”.",
       invalid_event: "We received information in an unexpected form.",
       session_lost:
         "We couldn't find your earlier conversation, so we started a new one. Please send your message again.",
