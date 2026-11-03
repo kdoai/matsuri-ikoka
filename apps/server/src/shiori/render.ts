@@ -2,6 +2,7 @@ import { html, raw } from "hono/html";
 import type { HtmlEscapedString } from "hono/utils/html";
 import type { ShioriAssets } from "./assets";
 import { PAGE_STAFF, type PageKind, type StaffStill } from "./design";
+import type { RouteView } from "./route";
 import { shioriStyle } from "./style";
 import type {
   DayView,
@@ -64,9 +65,15 @@ function weatherChip(weather: WeatherView): Html {
   return html`<span class="weather">${icon(weather.icon)}${weather.text}</span>`;
 }
 
-function head(kind: PageKind, kicker: string, title: Html, en: string | null = null): Html {
-  const still = PAGE_STAFF[kind];
-  const line = PAGE_LINES[kind];
+function head(
+  kind: PageKind,
+  kicker: string,
+  title: Html,
+  en: string | null = null,
+  override: { still: StaffStill; line: string } | null = null,
+): Html {
+  const still = override?.still ?? PAGE_STAFF[kind];
+  const line = override?.line ?? PAGE_LINES[kind];
   return html`<header class="head">
     <div class="title">
       <span class="kicker">${kicker}</span>
@@ -153,9 +160,35 @@ function festivalPage(f: FestivalView): Html {
   </section>`;
 }
 
+const STOP_ICONS = { start: "pin", end: "home", start_end: "home", area: "stay" } as const;
+
+/** 旅のかたちの図（自作の線と点。地図の画像は使わない） */
+function routeMap(route: RouteView, notes: readonly string[]): Html {
+  return html`<div class="route-box keep">
+    <p class="route-title">${icon("pin")}旅のかたち：<b>${route.shapeLabel}</b></p>
+    ${notes.length > 0 ? html`<div class="chips">${notes.map((n) => html`<span class="chip">${n}</span>`)}</div>` : ""}
+    <div class="route" role="img" aria-label="${route.shapeLabel}：${route.stops.map((s) => s.label).join("、")}">
+      <svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true">
+        <path d="${route.path}" class="road" />
+        <path d="${route.path}" class="trail" />
+      </svg>
+      ${route.stops.map(
+        (
+          s,
+        ) => html`<div class="stop ${s.kind}${s.festival ? " fest" : ""}" style="left:${s.x / 2}%;top:${s.y}%">
+          <span class="pin">${s.number !== null ? html`<b>${s.number}</b>` : icon(STOP_ICONS[s.kind])}</span>
+          <span class="name">${s.label}</span>
+          <span class="sub">${s.festival ? html`${icon("festival")}祭り・` : ""}${s.sub}</span>
+        </div>`,
+      )}
+    </div>
+  </div>`;
+}
+
 function overviewPage(view: ShioriView): Html {
   return html`<section class="sheet" aria-label="旅の全体">
     ${head("overview", view.cover.lengthLabel, html`旅の全体`)}
+    ${view.route ? routeMap(view.route, view.styleNotes) : ""}
     <ol class="overview">
       ${view.overview.map(
         (r) => html`<li class="keep">
@@ -166,13 +199,15 @@ function overviewPage(view: ShioriView): Html {
         </li>`,
       )}
     </ol>
-    ${
-      view.days.some((d) => d.rainPlan.length > 0)
-        ? html`<div class="box keep"><h3>${icon("umbrella")}雨の日・中止のとき</h3>${list(view.days.flatMap((d) => d.rainPlan))}</div>`
-        : ""
-    }
   </section>`;
 }
+
+const DAY_LINES: Record<DayView["kind"], string> = {
+  festival: "きょうは祭りの日！ 早めに会場へ",
+  explore: "まちを歩いて、寄り道を楽しんで",
+  travel: "移動の日。乗りかえの時刻に気をつけて",
+  relax: "きょうはのんびり。休むのも旅のうち",
+};
 
 function memoBox(title: string, lines: number): Html {
   return html`<div class="box line keep memo-box"><h3>${icon("calendar")}${title}</h3>${Array.from(
@@ -182,12 +217,18 @@ function memoBox(title: string, lines: number): Html {
 }
 
 function dayPage(view: ShioriView, day: DayView): Html {
-  const showRain = day.rainPlan.length > 0 && view.design.length !== "overnight";
-  return html`<section class="sheet" aria-label="${day.heading}">
+  const showRain = day.rainPlan.length > 0;
+  const festivalDay = day.kind === "festival";
+  return html`<section class="sheet day-page ${festivalDay ? "festival-day" : "calm-day"}" aria-label="${day.heading}">
+    ${festivalDay ? symbol("deco-bunting", "day-bunting") : ""}
     ${head(
       "day",
-      day.dateLabel,
-      html`<span class="day-head"><span class="day-no">${day.heading}</span></span>`,
+      `${day.dateLabel}・${day.kindLabel}`,
+      html`<span class="day-head"><span class="day-no">${day.heading}</span>${festivalDay ? symbol(`motif-${view.design.category}`, "day-motif") : ""}</span>`,
+      null,
+      festivalDay
+        ? { still: "penguin_cheer", line: DAY_LINES.festival }
+        : { still: "hen_point", line: DAY_LINES[day.kind] },
     )}
     ${weatherChip(day.weather)}
     <div class="timeline">
@@ -211,7 +252,7 @@ function dayPage(view: ShioriView, day: DayView): Html {
         : ""
     }
     ${showRain ? html`<div class="box keep"><h3>${icon("umbrella")}雨の日・中止のとき</h3>${list(day.rainPlan)}</div>` : ""}
-    ${view.design.length === "overnight" ? memoBox("この日のメモ", 4) : ""}
+    ${day.memoLines > 0 ? memoBox("この日のメモ", day.memoLines) : ""}
   </section>`;
 }
 

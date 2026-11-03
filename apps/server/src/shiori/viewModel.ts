@@ -12,7 +12,8 @@ import { placeLabel } from "../domain/dateWindow";
 import { occurrenceOn } from "../domain/planCheck";
 import { hasOfficialSource } from "../domain/verification";
 import { chooseDesign, type PageKind, pagePlan, type ShioriDesign } from "./design";
-import type { ShioriTrip, TripDay } from "./trip";
+import { type RouteView, routeOf } from "./route";
+import type { ShioriTrip, TripDay, TripInterest, TripPace } from "./trip";
 
 // しおりの見た目のためのデータ（view-model）。テンプレートに出す文字は、すべてここで決める。
 // 祭りや店の名前・時刻・作法は、旅程と祭りのデータにあるものだけを使い、分からない項目は「分からない」と出す。
@@ -66,8 +67,14 @@ export interface TimelineRow {
   festival: boolean;
 }
 
+/** 日の種類。祭りの日とそうでない日で、ページの見た目を変える */
+export type DayKind = "festival" | "explore" | "travel" | "relax";
+
 export interface DayView {
   number: number;
+  kind: DayKind;
+  /** 日の種類の見出し（祭りの日・めぐる日・移動の日・のんびりの日） */
+  kindLabel: string;
   heading: string;
   dateLabel: string;
   weather: WeatherView;
@@ -79,6 +86,8 @@ export interface DayView {
   returnLabel: string | null;
   /** 主役の祭りの日には、雨の日・中止のときの案を出す */
   rainPlan: string[];
+  /** 泊まりの旅で、この日のメモ欄の行数（予定が多くて紙面が残らない日は 0） */
+  memoLines: number;
 }
 
 export interface FestivalView {
@@ -174,6 +183,10 @@ export interface ShioriView {
   pages: PageKind[];
   cover: CoverView;
   overview: OverviewRow[];
+  /** 旅のかたちの図（日帰りでは null） */
+  route: RouteView | null;
+  /** 旅のペースと楽しみたいこと（聞いていなければ空） */
+  styleNotes: string[];
   festivals: FestivalView[];
   days: DayView[];
   guides: GuideView[];
@@ -197,7 +210,8 @@ const MOVE_LABELS = {
   car: "車",
   taxi: "タクシー",
 } as const;
-const ITEM_KIND_LABELS: Record<ItineraryItem["type"], string> = {
+const ITEM_KIND_LABELS: Record<string, string> = {
+  free: "自由な時間",
   move: "移動",
   sightseeing: "観光",
   meal: "食事",
@@ -205,7 +219,8 @@ const ITEM_KIND_LABELS: Record<ItineraryItem["type"], string> = {
   festival_prep: "祭りの前の準備",
   festival: "祭り",
 };
-const ITEM_ICONS: Record<Exclude<ItineraryItem["type"], "move">, IconName> = {
+const ITEM_ICONS: Record<string, IconName> = {
+  free: "sun",
   sightseeing: "sightseeing",
   meal: "meal",
   rest: "rest",
@@ -248,6 +263,25 @@ const PHOTO = {
 const PARKING_LABELS = { available: "あり", limited: "少ない", none: "なし" } as const;
 const STALL_LABELS = { yes: "屋台が出る", no: "屋台は出ない" } as const;
 const ALTERNATIVE_LABELS = { rain: "雨の日", cancelled: "中止のとき", other: "そのほか" } as const;
+const DAY_KIND_LABELS: Record<DayKind, string> = {
+  festival: "祭りの日",
+  explore: "めぐる日",
+  travel: "移動の日",
+  relax: "のんびりの日",
+};
+const PACE_LABELS: Record<TripPace, string> = {
+  relaxed: "ゆっくり",
+  normal: "ふつう",
+  packed: "たっぷり",
+};
+const INTEREST_LABELS: Record<TripInterest, string> = {
+  onsen: "温泉",
+  food: "食",
+  nature: "自然",
+  town_walk: "街歩き",
+  history: "歴史",
+  shopping: "買い物",
+};
 const CONFIDENCE_LABELS: Record<Confidence, string> = {
   official: "公式",
   corroborated: "複数の情報源で一致",
@@ -301,8 +335,8 @@ function rowFor(item: ItineraryItem): TimelineRow {
   ].filter((v): v is string => v !== null);
   return {
     time: `${item.start}〜${item.end}`,
-    icon: item.type === "move" ? (item.move?.means ?? "walk") : ITEM_ICONS[item.type],
-    kind: ITEM_KIND_LABELS[item.type],
+    icon: item.type === "move" ? (item.move?.means ?? "walk") : (ITEM_ICONS[item.type] ?? "pin"),
+    kind: ITEM_KIND_LABELS[item.type] ?? "予定",
     name: item.name,
     reason: item.reason,
     details,
@@ -555,6 +589,25 @@ function rainPlan(trip: ShioriTrip, mainFestival: Festival | undefined, day: Tri
   ];
 }
 
+/** 祭りがあれば祭りの日。なければ、観光があればめぐる日、移動だけなら移動の日、ほかはのんびりの日 */
+export function dayKindOf(day: Pick<TripDay, "items">): DayKind {
+  const types = new Set<string>(day.items.map((i) => i.type));
+  if (types.has("festival")) return "festival";
+  if (types.has("sightseeing")) return "explore";
+  if ([...types].every((t) => t === "move" || t === "meal")) return "travel";
+  return "relax";
+}
+
+function styleNotes(trip: ShioriTrip): string[] {
+  const { pace, interests } = trip.style;
+  return [
+    ...(pace ? [`ペース：${PACE_LABELS[pace]}`] : []),
+    ...(interests && interests.length > 0
+      ? [`祭りのほかの楽しみ：${interests.map((i) => INTEREST_LABELS[i]).join("・")}`]
+      : []),
+  ];
+}
+
 function dayViews(trip: ShioriTrip, mainFestival: Festival | undefined): DayView[] {
   const lastIndex = trip.days.length - 1;
   return trip.days.map((day, index) => {
@@ -562,8 +615,12 @@ function dayViews(trip: ShioriTrip, mainFestival: Festival | undefined): DayView
     const isMain = day.items.some(
       (i) => i.type === "festival" && i.festivalId === trip.mainFestivalId,
     );
+    const kind = dayKindOf(day);
+    const plan = isMain ? rainPlan(trip, mainFestival, day) : [];
     return {
       number: index + 1,
+      kind,
+      kindLabel: DAY_KIND_LABELS[kind],
       heading: trip.days.length === 1 ? "当日の流れ" : `${index + 1}日目`,
       dateLabel: formatMonthDayWithWeekday(day.date),
       weather: weatherView(day.weather),
@@ -576,7 +633,14 @@ function dayViews(trip: ShioriTrip, mainFestival: Festival | undefined): DayView
       rows: day.items.map(rowFor),
       stay: day.stay ? { area: day.stay.area, note: day.stay.note ?? null } : null,
       returnLabel: index === lastIndex ? `${trip.returnTo}に帰る` : null,
-      rainPlan: isMain ? rainPlan(trip, mainFestival, day) : [],
+      rainPlan: plan,
+      memoLines:
+        trip.days.length > 1
+          ? Math.max(
+              0,
+              Math.min(4, 4 - Math.max(0, day.items.length - 3) - (plan.length > 0 ? 2 : 0)),
+            )
+          : 0,
     };
   });
 }
@@ -734,6 +798,8 @@ export function buildShioriView(trip: ShioriTrip, lookup: FestivalLookup): Shior
           : "いってらっしゃい！ 気をつけて楽しんできてください",
     },
     overview: overviewRows(trip),
+    route: routeOf(trip),
+    styleNotes: styleNotes(trip),
     festivals,
     days: dayViews(trip, main),
     guides,

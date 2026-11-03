@@ -100,7 +100,7 @@ describe("しおりの HTML", () => {
       (await render(trip)).match(/<section class="sheet/g)?.length ?? 0;
 
     expect(await sections(fictionalOuting())).toBe(4);
-    expect(await sections(fictionalWeekend())).toBe(8);
+    expect(await sections(fictionalWeekend())).toBe(9);
     expect(await sections(fictionalWeek())).toBe(16);
   });
 
@@ -125,7 +125,22 @@ describe("しおりの HTML", () => {
 
     expect(page).toContain("今夜泊まる地域");
     expect(page).toContain("鈴鳴駅の周り");
-    expect(page.match(/この日のメモ/g)).toHaveLength(2);
+    // 1日目は予定が多く雨の日の案もあるので、メモ欄は2日目だけ
+    expect(page.match(/この日のメモ/g)).toHaveLength(1);
+  });
+
+  it("泊まりの旅には旅のかたちの図を入れ、日帰りには入れない", async () => {
+    const week = await render(fictionalWeek());
+    expect(week).toContain("旅のかたち：<b>地域を巡る旅</b>");
+    expect(week.match(/<div class="stop /g)).toHaveLength(5);
+    expect(week).not.toMatch(/<image|https?:\/\/[^"<]*\.(?:png|jpe?g)/);
+    expect(await render(fictionalOuting())).not.toContain('class="route"');
+  });
+
+  it("祭りの日とそうでない日で、ページの見た目を変える", async () => {
+    const page = await render(fictionalWeek());
+    expect(page.match(/day-page festival-day/g)).toHaveLength(2);
+    expect(page.match(/day-page calm-day/g)).toHaveLength(5);
   });
 
   it("シニアと一緒の旅は文字を大きくする", async () => {

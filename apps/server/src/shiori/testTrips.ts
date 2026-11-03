@@ -133,6 +133,7 @@ function baseTrip(days: TripDay[]): ShioriTrip {
     days,
     notes: [...it.notes],
     alternatives: [...it.alternatives],
+    style: {},
   };
 }
 
@@ -355,5 +356,6 @@ export function fictionalWeek(): ShioriTrip {
   });
   const trip = baseTrip(days);
   trip.title = "灯籠と花火をめぐる湖の一週間";
+  trip.style = { pace: "relaxed", interests: ["onsen", "food"] };
   return trip;
 }

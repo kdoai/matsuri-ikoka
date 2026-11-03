@@ -29,6 +29,23 @@ export interface TripDay {
   stay: TripStay | null;
 }
 
+/** 旅のかたち：ずっと一か所 / 地域を巡る / 目的地へ向かう途中で祭りに寄る */
+export type RouteShape = "stay" | "loop" | "via";
+/** 旅のペース */
+export type TripPace = "relaxed" | "normal" | "packed";
+/** 祭りのほかに楽しみたいこと */
+export type TripInterest = "onsen" | "food" | "nature" | "town_walk" | "history" | "shopping";
+
+/**
+ * 相談で聞いた旅の好み（どれも任意）。旅のかたちがなければ、泊まる地域と終わりの場所から決める。
+ * 「おまかせ」は持たない（ないのと同じに扱う）
+ */
+export interface TripStyle {
+  shape?: RouteShape;
+  pace?: TripPace;
+  interests?: TripInterest[];
+}
+
 export interface ShioriTrip {
   id: string;
   version: number;
@@ -42,10 +59,11 @@ export interface ShioriTrip {
   days: TripDay[];
   notes: string[];
   alternatives: Alternative[];
+  style: TripStyle;
 }
 
 /** 旅程を、しおりが読む形にする。いまの旅程は1日分なので、その日のうちに帰る1日にする */
-export function toShioriTrip(itinerary: Itinerary): ShioriTrip {
+export function toShioriTrip(itinerary: Itinerary, style: TripStyle = {}): ShioriTrip {
   return {
     id: itinerary.id,
     version: itinerary.version,
@@ -61,5 +79,6 @@ export function toShioriTrip(itinerary: Itinerary): ShioriTrip {
     ],
     notes: itinerary.notes,
     alternatives: itinerary.alternatives,
+    style,
   };
 }

@@ -129,6 +129,35 @@ b, strong, h1, h2, h3, h4 { font-weight: 900; }
 .overview .summary { font-weight: 900; display: flex; gap: 1.5mm; align-items: center; }
 .overview .night { display: flex; gap: 1.2mm; align-items: center; font-size: 9.5pt; }
 
+/* ---- 旅のかたちの図 ---- */
+.route-box { border: 0.6mm solid var(--line); border-radius: 4mm; padding: 3mm 4mm 2mm; margin-bottom: 4mm; background: #fff; }
+.route-title { display: flex; align-items: center; gap: 1.5mm; font-size: 11pt; }
+.route-title b { color: var(--accent); }
+.route { position: relative; width: 100%; aspect-ratio: 2 / 1; margin-top: 1mm; }
+.route > svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.route .road { fill: none; stroke: var(--soft); stroke-width: 9; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.route .trail { fill: none; stroke: var(--accent); stroke-width: 2.2; stroke-dasharray: 2 6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.stop { position: absolute; transform: translate(-50%, -6mm); width: 34mm; text-align: center; line-height: 1.3; }
+.stop .pin { display: flex; width: 12mm; height: 12mm; margin: 0 auto; border-radius: 50%; align-items: center; justify-content: center;
+  background: #fff; border: 0.8mm solid var(--accent); color: var(--accent); font-size: 13pt; }
+.stop .pin .ic { width: 6mm; height: 6mm; }
+.stop.fest .pin { background: var(--accent); color: var(--on-accent); border-color: var(--ink); }
+.stop.start .pin, .stop.end .pin, .stop.start_end .pin { border-style: dashed; }
+.stop .name { display: block; margin-top: 1mm; font-weight: 900; font-size: 9.5pt; overflow-wrap: anywhere; background: rgba(255, 255, 255, 0.85); border-radius: 2mm; }
+.stop .sub { display: inline-flex; align-items: center; gap: 0.6mm; font-size: 8.5pt; color: var(--sub); }
+.stop .sub .ic { width: 3.6mm; height: 3.6mm; }
+
+/* ---- 祭りの日とそうでない日 ---- */
+.festival-day .day-motif { width: 13mm; height: 13mm; color: var(--ink); }
+.festival-day .day-bunting { display: block; width: 100%; height: 11mm; margin: 0 0 2mm; color: var(--ink); }
+.festival-day .head .kicker { background: var(--accent); }
+.festival-day .day-no { color: var(--accent); }
+.calm-day .head .kicker { background: #fff; color: var(--ink); border: 0.5mm solid var(--ink); }
+.calm-day .day-no { color: var(--ink); }
+.calm-day .timeline::before { border-left-style: dashed; border-left-color: var(--sub); }
+.calm-day .step .dot { border-color: var(--sub); }
+.calm-day .step .dot .ic { color: var(--ink); }
+
 /* ---- はじめての方へ ---- */
 .guide { width: 100%; border-collapse: collapse; margin-top: 3mm; }
 .guide th, .guide td { border-bottom: 0.4mm solid var(--line); padding: 2mm 1.5mm; vertical-align: top; text-align: left; }

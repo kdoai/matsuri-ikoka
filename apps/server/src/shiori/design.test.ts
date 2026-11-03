@@ -106,10 +106,10 @@ describe("ページの並び", () => {
     ]);
   });
 
-  it("泊まりの旅は日ごとにページが増え、3日以上なら旅の全体のページを足す", () => {
+  it("泊まりの旅は日ごとにページが増え、表紙の次に旅の全体のページを置く", () => {
     const weekend = plan(fictionalWeekend());
     expect(count(weekend, "day")).toBe(2);
-    expect(weekend).not.toContain("overview");
+    expect(weekend.slice(0, 2)).toEqual(["cover", "overview"]);
 
     const week = plan(fictionalWeek(), 2);
     expect(count(week, "day")).toBe(7);

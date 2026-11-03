@@ -185,7 +185,8 @@ export function chooseDesign(
 
 /**
  * ページの並び。日帰りや半日は薄く、泊まりの旅は日ごとにページが増える。
- * 泊まりの旅では日ごとのページの下に「この日のメモ」を置き、3日以上なら「旅の全体」を足す
+ * 泊まりの旅では、表紙の次に旅のかたちの図と日ごとの一覧（旅の全体）を置き、
+ * 日ごとのページの下に「この日のメモ」を置く
  */
 export function pagePlan(design: ShioriDesign, days: number, festivals: number): PageKind[] {
   const repeat = (kind: PageKind, n: number): PageKind[] => Array.from({ length: n }, () => kind);
@@ -198,7 +199,7 @@ export function pagePlan(design: ShioriDesign, days: number, festivals: number):
   }
   return [
     "cover",
-    ...(days >= 3 ? (["overview"] as PageKind[]) : []),
+    ...(design.length === "overnight" ? (["overview"] as PageKind[]) : []),
     ...festivalPages,
     ...dayPages,
     ...guidePages,
