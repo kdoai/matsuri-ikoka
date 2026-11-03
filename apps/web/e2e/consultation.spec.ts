@@ -360,7 +360,14 @@ test("文章を書かずに、選択肢を選ぶだけで相談を始められ�
   const consult = page.getByTestId("consult");
   const progress = page.getByTestId("consult-progress");
   const decide = () => consult.getByTestId("consult-decide").click();
+  // 聞き取りの窓が高くなっても、上の段（丸いボタンと操作の案内）とは重ならない
+  const noOverlap = async () => {
+    for (const top of ["icon-buttons", "button-hints"]) {
+      await expectNoOverlap(page, top, ["dialogue"]);
+    }
+  };
   await expect(page.getByTestId("dialogue")).toContainText("だれと行きますか");
+  await noOverlap();
   // 聞き取りの間は、自分の言葉で書く欄を出さない。答えるまで先へは進めない
   await expect(page.getByTestId("composer")).toHaveCount(0);
   await expect(progress).toHaveText("1 / 10");
@@ -370,12 +377,14 @@ test("文章を書かずに、選択肢を選ぶだけで相談を始められ�
   await consult.getByRole("button", { name: "家族で", exact: true }).click();
   await consult.getByRole("button", { name: "子ども（小学生）を1人増やす" }).click();
   await expect(page.getByTestId("consult-counts")).toContainText("合計 3人");
+  await noOverlap();
   await decide();
 
   // 日付を指定を選ぶと、すぐ期間のカレンダーが開き、今日に焦点が移る。行きと帰りで泊数を出す
   await expect(progress).toHaveText("2 / 10");
   await consult.getByRole("button", { name: "日付を指定", exact: true }).click();
   await expect(page.getByTestId("consult-calendar")).toBeVisible();
+  await noOverlap();
   await page.keyboard.press("Enter");
   await page.keyboard.press("ArrowRight");
   await page.keyboard.press("ArrowRight");
@@ -404,6 +413,7 @@ test("文章を書かずに、選択肢を選ぶだけで相談を始められ�
   await consult.getByRole("button", { name: "東京都", exact: true }).click();
   await consult.getByRole("button", { name: "その他", exact: true }).click();
   await consult.getByRole("textbox", { name: "行き先（自由に書く）" }).fill("川沿いの町");
+  await noOverlap();
   await decide();
   await consult.getByRole("button", { name: "温泉", exact: true }).click();
   await decide();
@@ -414,6 +424,7 @@ test("文章を書かずに、選択肢を選ぶだけで相談を始められ�
   // 予算は金額でも伝えられる
   const amount = consult.getByRole("textbox", { name: "金額で伝える（1人あたり）" });
   await amount.fill("25000");
+  await noOverlap();
   await amount.press("Enter");
   await consult.getByRole("textbox", { name: "ひとこと" }).fill("子どもが歩き疲れないように");
   await decide();
@@ -424,6 +435,7 @@ test("文章を書かずに、選択肢を選ぶだけで相談を始められ�
   await expect(summary).toContainText("2泊3日");
   await expect(summary).toContainText("みなと中央駅");
   await expect(summary).toContainText("関東（東京都）、川沿いの町");
+  await noOverlap();
   await expect(summary).toContainText("25,000円");
   // 一覧から段階へ戻って直すと、確認へ戻る
   await consult.getByRole("button", { name: "旅のペース：直す" }).click();
