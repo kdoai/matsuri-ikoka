@@ -18,6 +18,7 @@ import { type Chatter, isConsultDesk, playStore, usePlay } from "../state/play";
 import { useT } from "../state/react";
 import { NO_INSETS, type ShopSceneProps } from "../state/scene";
 import type { StaffState } from "../state/types";
+import { SpeechBubble } from "../ui/SpeechBubble";
 import {
   exteriorOpacity,
   SCENE_MOTIONS,
@@ -836,14 +837,14 @@ export default function ShopScene(props: ShopSceneProps) {
                 ? staff.bubble
                 : null;
           return ready && text !== null ? (
-            <p
+            <SpeechBubble
               key={id}
-              data-bubble={id}
-              data-chatter={chatter?.staff === id ? chatter.line : undefined}
-              className="absolute top-0 left-0 max-w-52 rounded-2xl border-2 border-wood-700 bg-kinari-50 px-2.5 py-1 text-center font-bold text-ink text-xs leading-snug shadow-lg"
+              speaker={id}
+              name={t.staff.names[id]}
+              chatter={chatter?.staff === id ? chatter.line : undefined}
             >
               {text}
-            </p>
+            </SpeechBubble>
           ) : null;
         })}
         {ready && awaiting ? (

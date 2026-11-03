@@ -1,9 +1,8 @@
-import { MAX_MESSAGE_LENGTH, type Preferences } from "@matsuri-ikoka/schema";
+import { MAX_MESSAGE_LENGTH } from "@matsuri-ikoka/schema";
 import { SendHorizontal } from "lucide-react";
-import { type FormEvent, type KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
-import { formatDate } from "../i18n";
+import { type FormEvent, type KeyboardEvent, useEffect, useRef, useState } from "react";
 import { useActions, useApp, useT } from "../state/react";
-import { conditionChips, shioriReady } from "../state/selectors";
+import { shioriReady } from "../state/selectors";
 import type { ChatEntry } from "../state/types";
 import { buttonPrimary, buttonSecondary } from "./common";
 import { STAFF_LOOK } from "./StaffPanel";
@@ -155,110 +154,6 @@ export function ChatLog() {
           </li>
         ) : null}
       </ol>
-    </section>
-  );
-}
-
-/** 読み取れた条件のチップ */
-export function ConditionChips() {
-  const t = useT();
-  const locale = useApp((state) => state.ui.locale);
-  const conditions = useApp((state) => state.session.conditions);
-  const move = useApp((state) => state.preferences.move);
-  const chips = useMemo(() => conditionChips(conditions, move), [conditions, move]);
-  if (chips.length === 0) {
-    return null;
-  }
-  const text = (key: string, value: string): string => {
-    switch (key) {
-      case "date": {
-        const [from, to] = value.split("/");
-        return to === undefined
-          ? formatDate(value, locale)
-          : t.conditions.range(formatDate(from ?? "", locale), formatDate(to, locale));
-      }
-      case "origin":
-        return t.conditions.origin(value);
-      case "nights":
-        return t.conditions.nights(Number(value));
-      case "party": {
-        const [adults, children] = value.split("/").map(Number);
-        return t.conditions.party(adults ?? 1, children ?? 0);
-      }
-      default:
-        return t.conditions.move[value as Preferences["move"]];
-    }
-  };
-  return (
-    <section aria-label={t.conditions.title} data-testid="condition-chips">
-      <ul className="flex flex-wrap gap-1.5">
-        {chips.map((chip) => (
-          <li
-            key={chip.key}
-            className="animate-fade rounded-full border border-ai-200 bg-ai-50 px-2.5 py-0.5 font-semibold text-ai-800 text-sm"
-          >
-            {text(chip.key, chip.value)}
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-
-const PREFERENCE_KEYS = ["party", "spot", "food", "move"] as const satisfies (keyof Preferences)[];
-const PREFERENCE_OPTIONS: { [K in keyof Preferences]: readonly Preferences[K][] } = {
-  party: ["adults", "kids", "seniors"],
-  spot: ["classic", "auto", "hidden"],
-  food: ["stalls", "local"],
-  move: ["train", "car"],
-};
-
-/** 旅のこだわり（4項目）。会話欄のすぐ上の、小さな切り替え */
-export function PreferenceBar() {
-  const t = useT();
-  const actions = useActions();
-  const preferences = useApp((state) => state.preferences);
-  const streaming = useApp((state) => state.session.streaming);
-  const ready = useApp((state) => state.session.status === "ready");
-  return (
-    <section aria-label={t.preferences.title} data-testid="preference-bar">
-      <h2 className="sr-only">{t.preferences.title}</h2>
-      <div className="flex flex-wrap gap-x-2.5 gap-y-1">
-        {PREFERENCE_KEYS.map((key) => (
-          <fieldset key={key} className="flex items-center gap-1" disabled={streaming || !ready}>
-            <legend className="sr-only">{t.preferences.labels[key]}</legend>
-            <span aria-hidden="true" className="font-bold text-ink-soft text-xs">
-              {t.preferences.labels[key]}
-            </span>
-            <div className="flex rounded-lg bg-kinari-200 p-0.5">
-              {PREFERENCE_OPTIONS[key].map((value) => {
-                const label = (t.preferences[key] as Record<string, string>)[value] ?? value;
-                const checked = preferences[key] === value;
-                return (
-                  <label
-                    key={value}
-                    className={`cursor-pointer rounded-md px-1.5 py-1 font-semibold text-xs transition has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-ai-500 ${
-                      checked ? "bg-ai-700 text-white shadow-sm" : "text-ink hover:bg-kinari-50"
-                    } ${streaming || !ready ? "cursor-not-allowed opacity-70" : ""}`}
-                  >
-                    <input
-                      type="radio"
-                      className="sr-only"
-                      name={`preference-${key}`}
-                      value={value}
-                      checked={checked}
-                      onChange={() =>
-                        void actions.setPreference(key, value as Preferences[typeof key])
-                      }
-                    />
-                    {label}
-                  </label>
-                );
-              })}
-            </div>
-          </fieldset>
-        ))}
-      </div>
     </section>
   );
 }

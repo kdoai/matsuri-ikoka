@@ -43,7 +43,7 @@ test("店の外観を見せてから入店し、店内のスタッフが持ち�
   await talkToConcierge(page);
 
   // 吹き出しは作業の間だけ出るので、出たときに書き留めて、返答のあとで確かめる
-  const bubble = 'p[data-bubble="researcher"]';
+  const bubble = '[data-testid="speech-bubble"][data-bubble="researcher"]';
   const dialogue = '[data-testid="dialogue"]';
   const activity = '[data-testid="staff-activity"]';
   await recordTexts(page, [bubble, dialogue, activity]);

@@ -1,11 +1,16 @@
 import type { StaffId } from "@matsuri-ikoka/schema";
 import {
   BookOpen,
+  CalendarDays,
+  CircleCheck,
+  Ellipsis,
+  Footprints,
   Map as MapIcon,
   MessageCircle,
-  Pencil,
   RotateCcw,
+  SlidersHorizontal,
   Sparkles,
+  Undo2,
   X,
 } from "lucide-react";
 import { type ReactNode, useState } from "react";
@@ -19,12 +24,12 @@ import { errorText, shortLine } from "./text";
 
 // 会話の窓。話すときだけ画面の下に出す、クリーム色のセリフの枠。
 // 左に大きな表情の絵と名札、右にいまの一言（1〜2文。全文は「つづきを読む」と会話の記録で読める）。
-// その下に、選んで進める相談か、返事の選択肢を並べる。自分の言葉で書く欄は、いちばん下に小さく置き、
-// 書いている間だけ広げる。これまでのやりとりは、お知らせ（会話の記録）で開く。
+// その下に、選んで進める相談か、返事の選択肢（アイコンと文字のボタン）を並べる。自分の言葉で書く欄は、いちばん下に小さく置き、
+// 書いている間だけ広げる。これまでのやりとりは、右上の会話の記録で開く。
 
 function NamePlate({ name }: { name: string }) {
   return (
-    <p className="-top-4 absolute left-24 flex items-center gap-1.5 rounded-full border border-kinari-50/70 bg-ai-800 py-1 pr-4 pl-2.5 font-bold text-kinari-50 text-sm shadow-soft sm:left-36">
+    <p className="-top-4 absolute left-24 flex items-center gap-1.5 rounded-full border border-kinari-50/70 bg-ai-800 py-1 pr-4 pl-2.5 font-bold text-base text-kinari-50 shadow-soft sm:left-36">
       <MessageCircle aria-hidden="true" className="size-4 text-yamabuki-400" />
       {name}
     </p>
@@ -40,8 +45,14 @@ export function focusDialogue(): void {
   else focusComposer();
 }
 
-const replyButton =
-  "inline-flex min-h-11 items-center gap-1.5 rounded-full border-2 border-line-strong bg-white/90 px-4 font-bold text-ink text-sm shadow-soft transition hover:-translate-y-0.5 hover:border-yamabuki-400 disabled:cursor-not-allowed disabled:opacity-60";
+// 選択肢のボタンは、形（replyShape）と色（REPLY_TONE）を分けて重ねる。色のクラスはどちらか一方だけを付ける
+const replyShape =
+  "inline-flex min-h-16 min-w-[6.5rem] flex-col items-center justify-center gap-1 rounded-2xl border-2 px-3 py-2 text-center font-bold text-base leading-tight shadow-soft transition hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60";
+
+const REPLY_TONE = {
+  plain: "border-line-strong bg-white/90 text-ink hover:border-yamabuki-400",
+  primary: "border-wood-700/40 bg-yamabuki-400 text-ink hover:brightness-105",
+} as const;
 
 function Reply({
   onClick,
@@ -51,7 +62,7 @@ function Reply({
   children,
 }: {
   onClick: () => void;
-  icon?: ReactNode;
+  icon: ReactNode;
   primary?: boolean;
   disabled?: boolean;
   children: ReactNode;
@@ -60,7 +71,7 @@ function Reply({
     <li>
       <button
         type="button"
-        className={`${replyButton} ${primary ? "border-yamabuki-400 bg-yamabuki-400" : ""}`}
+        className={`${replyShape} ${REPLY_TONE[primary ? "primary" : "plain"]}`}
         disabled={disabled}
         onClick={onClick}
         data-dialogue-focus=""
@@ -87,6 +98,41 @@ function ReplyChoices({ retry }: { retry: boolean }) {
       (state.session.stage === "candidates" || state.itinerary.current === null),
   );
   const revising = hasItinerary && (stage === "itinerary" || stage === "revising");
+  // 「少し調整する」を押したら、調整の選択肢に入れ替える
+  const [adjusting, setAdjusting] = useState(false);
+  const other = (
+    <Reply icon={<Ellipsis aria-hidden="true" className="size-5" />} onClick={focusComposer}>
+      {t.dialogue.replies.other}
+    </Reply>
+  );
+  if (revising && adjusting) {
+    return (
+      <ul
+        aria-label={t.dialogue.replies.adjustLabel}
+        className="flex flex-wrap gap-2"
+        data-testid="reply-choices"
+      >
+        <Reply
+          primary
+          disabled={streaming}
+          icon={<Footprints aria-hidden="true" className="size-5" />}
+          onClick={() => {
+            setAdjusting(false);
+            void actions.send(t.dialogue.replies.slowerMessage);
+          }}
+        >
+          {t.dialogue.replies.slower}
+        </Reply>
+        {other}
+        <Reply
+          icon={<Undo2 aria-hidden="true" className="size-5" />}
+          onClick={() => setAdjusting(false)}
+        >
+          {t.dialogue.replies.back}
+        </Reply>
+      </ul>
+    );
+  }
   return (
     <ul
       aria-label={t.dialogue.replies.label}
@@ -94,14 +140,19 @@ function ReplyChoices({ retry }: { retry: boolean }) {
       data-testid="reply-choices"
     >
       {retry ? (
-        <Reply primary disabled={streaming} onClick={() => void actions.retry()}>
+        <Reply
+          primary
+          disabled={streaming}
+          icon={<RotateCcw aria-hidden="true" className="size-5" />}
+          onClick={() => void actions.retry()}
+        >
           {t.chat.retry}
         </Reply>
       ) : null}
       {ready ? (
         <Reply
           primary
-          icon={<BookOpen aria-hidden="true" className="size-4" />}
+          icon={<BookOpen aria-hidden="true" className="size-5" />}
           onClick={() => actions.openShiori()}
         >
           {t.itinerary.openShiori}
@@ -110,7 +161,7 @@ function ReplyChoices({ retry }: { retry: boolean }) {
       {canReopenCandidates ? (
         <Reply
           primary
-          icon={<Sparkles aria-hidden="true" className="size-4" />}
+          icon={<Sparkles aria-hidden="true" className="size-5" />}
           onClick={() => actions.setCandidatesOpen(true)}
         >
           {t.candidates.reopen}
@@ -119,13 +170,14 @@ function ReplyChoices({ retry }: { retry: boolean }) {
       {hasItinerary ? (
         <>
           <Reply
-            icon={<BookOpen aria-hidden="true" className="size-4" />}
+            primary={revising && !retry}
+            icon={<CalendarDays aria-hidden="true" className="size-5" />}
             onClick={() => openTripPanel(actions, "itinerary")}
           >
             {t.dialogue.replies.plan}
           </Reply>
           <Reply
-            icon={<MapIcon aria-hidden="true" className="size-4" />}
+            icon={<MapIcon aria-hidden="true" className="size-5" />}
             onClick={() => openTripPanel(actions, "map")}
           >
             {t.dialogue.replies.map}
@@ -136,22 +188,27 @@ function ReplyChoices({ retry }: { retry: boolean }) {
         <>
           <Reply
             disabled={streaming}
+            icon={<CircleCheck aria-hidden="true" className="size-5" />}
             onClick={() => void actions.send(t.dialogue.replies.decideMessage)}
           >
             {t.dialogue.replies.decide}
           </Reply>
           <Reply
             disabled={streaming}
-            onClick={() => void actions.send(t.dialogue.replies.slowerMessage)}
+            icon={<SlidersHorizontal aria-hidden="true" className="size-5" />}
+            onClick={() => {
+              setAdjusting(true);
+              window.requestAnimationFrame(focusDialogue);
+            }}
           >
-            {t.dialogue.replies.slower}
+            {t.dialogue.replies.adjust}
           </Reply>
         </>
       ) : null}
       {stage === "hearing" || stage === "candidates" ? (
         <Reply
           disabled={streaming}
-          icon={<RotateCcw aria-hidden="true" className="size-4" />}
+          icon={<RotateCcw aria-hidden="true" className="size-5" />}
           onClick={() => {
             actions.reopenConsult();
             window.requestAnimationFrame(focusDialogue);
@@ -160,9 +217,7 @@ function ReplyChoices({ retry }: { retry: boolean }) {
           {t.consult.reopen}
         </Reply>
       ) : null}
-      <Reply icon={<Pencil aria-hidden="true" className="size-4" />} onClick={focusComposer}>
-        {t.dialogue.replies.other}
-      </Reply>
+      {other}
     </ul>
   );
 }
@@ -256,7 +311,7 @@ export function DialogueBox() {
           data-testid={line.kind === "error" && !consultOpen ? "dialogue-error" : "dialogue-line"}
         >
           {line.kind === "waiting" && !consultOpen ? (
-            <p className="line-clamp-1 text-ink-soft text-sm">
+            <p className="line-clamp-1 text-base text-ink-soft">
               <span className="sr-only">{t.chat.you}：</span>「{line.userText}」
             </p>
           ) : null}
@@ -275,7 +330,7 @@ export function DialogueBox() {
           {rest !== null && line.kind === "concierge" ? (
             <button
               type="button"
-              className="mt-0.5 font-bold text-ai-700 text-sm underline underline-offset-2"
+              className="mt-0.5 font-bold text-ai-700 text-base underline underline-offset-2"
               aria-expanded={expanded === line.id}
               onClick={() => setExpanded(expanded === line.id ? null : line.id)}
             >

@@ -74,7 +74,7 @@ export async function waitForReply(page: Page): Promise<void> {
   });
 }
 
-/** 旅程・地図・出典のパネルが閉じていれば、旅程詳細から開く（狭い画面ではメニューから） */
+/** 旅のしおりの窓が閉じていれば、旅程詳細から開く（狭い画面ではメニューから） */
 export async function openPanel(page: Page): Promise<void> {
   if (await page.getByTestId("itinerary-panel").isVisible()) {
     return;
@@ -89,10 +89,26 @@ export async function openPanel(page: Page): Promise<void> {
   await expect(page.getByTestId("itinerary-panel")).toBeVisible();
 }
 
-/** 旅のこだわりの板を開く（条件と、こだわりの切り替え） */
-export async function openPreferences(page: Page): Promise<void> {
-  await page.getByRole("button", { name: "旅のこだわり" }).click();
-  await expect(page.locator("#hud-preferences")).toBeVisible();
+/** 2つの部品が画面の上で重なっていないことを確かめる（見えていない部品は数えない） */
+export async function expectNoOverlap(
+  page: Page,
+  testId: string,
+  others: readonly string[],
+): Promise<void> {
+  const box = await page.getByTestId(testId).boundingBox();
+  expect(box).not.toBeNull();
+  for (const other of others) {
+    const target = page.getByTestId(other);
+    if (box === null || !(await target.isVisible())) continue;
+    const rect = await target.boundingBox();
+    if (rect === null) continue;
+    const overlaps =
+      box.x < rect.x + rect.width &&
+      rect.x < box.x + box.width &&
+      box.y < rect.y + rect.height &&
+      rect.y < box.y + box.height;
+    expect(overlaps, `${testId} と ${other} が重なっている`).toBe(false);
+  }
 }
 
 /** 会話の記録を開く（これまでのやりとりと、スタッフ全員のようす） */
@@ -101,7 +117,10 @@ export async function openLog(page: Page): Promise<void> {
   if (await page.getByTestId("candidates").isVisible()) {
     await page.keyboard.press("Escape");
   }
-  await page.getByRole("button", { name: "お知らせ（会話の記録）" }).click();
+  await page
+    .getByTestId("icon-buttons")
+    .getByRole("button", { name: "会話の記録", exact: true })
+    .click();
   await expect(page.getByTestId("backlog")).toBeVisible();
 }
 

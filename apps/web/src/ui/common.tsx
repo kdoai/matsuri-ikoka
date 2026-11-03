@@ -19,11 +19,20 @@ const CONFIDENCE_DOT: Record<Confidence, string> = {
   inferred: "bg-stone-500",
 };
 
-export function ConfidenceBadge({ confidence }: { confidence: Confidence }) {
+/** 文字の大きさ。small はこれまでの大きさ、base は旅のしおりの窓など 16px 以上で読ませる場所 */
+type TextSize = "small" | "base";
+
+export function ConfidenceBadge({
+  confidence,
+  size = "small",
+}: {
+  confidence: Confidence;
+  size?: TextSize;
+}) {
   const t = useT();
   return (
     <span
-      className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 font-semibold text-xs ${CONFIDENCE_STYLE[confidence]}`}
+      className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 font-semibold ${size === "base" ? "text-base" : "text-xs"} ${CONFIDENCE_STYLE[confidence]}`}
       data-confidence={confidence}
     >
       <span aria-hidden="true" className={`size-2 rounded-full ${CONFIDENCE_DOT[confidence]}`} />
@@ -33,10 +42,20 @@ export function ConfidenceBadge({ confidence }: { confidence: Confidence }) {
 }
 
 /** 出典のリンク。URL・確認した日・確度をそろえて出す */
-export function SourceLink({ source, compact = false }: { source: Source; compact?: boolean }) {
+export function SourceLink({
+  source,
+  compact = false,
+  size = "small",
+}: {
+  source: Source;
+  compact?: boolean;
+  size?: TextSize;
+}) {
   const t = useT();
   return (
-    <span className="inline-flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+    <span
+      className={`inline-flex flex-wrap items-center gap-x-2 gap-y-1 ${size === "base" ? "text-base" : "text-sm"}`}
+    >
       <a
         href={source.url}
         target="_blank"
@@ -49,7 +68,7 @@ export function SourceLink({ source, compact = false }: { source: Source; compac
       {compact ? null : (
         <span className="text-ink-soft">{t.sources.checkedAt(source.checkedAt)}</span>
       )}
-      <ConfidenceBadge confidence={source.confidence} />
+      <ConfidenceBadge confidence={source.confidence} size={size} />
     </span>
   );
 }
