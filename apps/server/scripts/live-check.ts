@@ -33,6 +33,7 @@ import {
 import { DailyLimiter } from "../src/routes/guard";
 import { ItineraryStore, SessionStore } from "../src/session/sessionStore";
 import { createCandidateChecker } from "../src/tools/candidateCheck";
+import { createLodgingService } from "../src/tools/lodging";
 import { unavailableVerifier } from "../src/tools/verifier";
 import { createJmaWeather } from "../src/tools/weather";
 
@@ -160,6 +161,7 @@ async function main() {
       festivals,
       itineraries,
       weather: createJmaWeather(),
+      lodging: createLodgingService(process.env, { production: false, now: () => nowInJapan() }),
       verifier,
       ...(realFestivalsDir === undefined
         ? {}

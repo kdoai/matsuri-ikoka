@@ -9,14 +9,15 @@ import {
 import type { FestivalStore } from "../data/festivalStore";
 import type { ItineraryStore, Session } from "../session/sessionStore";
 import type { CandidateChecker } from "./candidateCheck";
+import type { LodgingService } from "./lodging";
 import type { FestivalVerifier } from "./verifier";
 import type { WeatherService } from "./weather";
 
 /**
  * 接客エージェントの道具の名前。画面に動きを見せる道具（ToolName）に、
- * 画面にイベントを出さない道具（聞き取った条件の書き留め）を足したもの
+ * 画面にイベントを出さない道具（聞き取った条件の書き留め・宿の空きを調べる）を足したもの
  */
-export const ALL_TOOL_NAMES = [...TOOL_NAMES, "note_conditions"] as const;
+export const ALL_TOOL_NAMES = [...TOOL_NAMES, "note_conditions", "search_lodging"] as const;
 export type AgentToolName = (typeof ALL_TOOL_NAMES)[number];
 
 /** 画面にイベント（tool.start・tool.end）を出す道具か */
@@ -56,6 +57,7 @@ export interface ToolContext {
   festivals: FestivalStore;
   itineraries: ItineraryStore;
   weather: WeatherService;
+  lodging: LodgingService;
   verifier: FestivalVerifier;
   /** 候補を出す前の開催の確かめ。ないとき（mock やテスト）は確かめない */
   candidateChecks?: CandidateChecker;
@@ -74,6 +76,8 @@ export const TOOL_TIMEOUT_MS: Readonly<Record<AgentToolName, number>> = {
   search_nearby: 10_000,
   get_access: 10_000,
   get_weather: 10_000,
+  // 空室検索は1本ずつ間隔を空けて呼ぶので、待ちを含める
+  search_lodging: 20_000,
   update_itinerary: 10_000,
   verify_festival: 30_000,
 };

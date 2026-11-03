@@ -4,6 +4,7 @@ import { createFestivalStore } from "../data/festivalStore";
 import type { VerificationReport } from "../domain/verification";
 import { ItineraryStore, SessionStore } from "../session/sessionStore";
 import { newTurnState, type ToolContext } from "./context";
+import { createFictionalLodging, type LodgingService } from "./lodging";
 import type { FestivalVerifier } from "./verifier";
 import type { WeatherService } from "./weather";
 
@@ -14,6 +15,7 @@ export function testToolContext(
     weather?: Weather;
     report?: VerificationReport;
     signal?: AbortSignal;
+    lodging?: LodgingService;
   } = {},
 ): ToolContext & { weatherCalls: string[] } {
   const weatherCalls: string[] = [];
@@ -35,6 +37,7 @@ export function testToolContext(
     festivals: createFestivalStore(festivals),
     itineraries: new ItineraryStore(),
     weather,
+    lodging: options.lodging ?? createFictionalLodging({ now: () => "2026-08-03T10:15:00+09:00" }),
     verifier,
     today: () => options.today ?? "2026-08-03",
     now: () => "2026-08-03T10:15:00+09:00",

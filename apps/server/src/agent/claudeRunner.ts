@@ -11,6 +11,7 @@ import type { FestivalStore } from "../data/festivalStore";
 import type { ItineraryStore } from "../session/sessionStore";
 import type { CandidateChecker } from "../tools/candidateCheck";
 import { newTurnState, type ToolContext } from "../tools/context";
+import type { LodgingService } from "../tools/lodging";
 import { createMatsuriMcpServer } from "../tools/mcpServer";
 import type { FestivalVerifier } from "../tools/verifier";
 import type { WeatherService } from "../tools/weather";
@@ -36,6 +37,7 @@ export interface ClaudeRunnerDeps {
   festivals: FestivalStore;
   itineraries: ItineraryStore;
   weather: WeatherService;
+  lodging: LodgingService;
   verifier: FestivalVerifier;
   /** 候補を出す前の開催の確かめ */
   candidateChecks?: CandidateChecker;
@@ -181,6 +183,7 @@ export class ClaudeAgentRunner implements AgentRunner {
       festivals: deps.festivals,
       itineraries: deps.itineraries,
       weather: deps.weather,
+      lodging: deps.lodging,
       verifier: deps.verifier,
       ...(deps.candidateChecks ? { candidateChecks: deps.candidateChecks } : {}),
       today: deps.today,
