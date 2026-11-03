@@ -2,7 +2,14 @@ import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
 import { testFestival } from "../domain/testFestivals";
 import { testToolContext } from "../tools/testContext";
-import { sanitizeMessage, shopRecord, staffBriefing, turnPrompt } from "./briefing";
+import {
+  lodgingBudgetLabel,
+  partyLabel,
+  sanitizeMessage,
+  shopRecord,
+  staffBriefing,
+  turnPrompt,
+} from "./briefing";
 
 const ctx = () => testToolContext([testFestival({ id: "suzunari-toro" })]);
 
@@ -69,6 +76,24 @@ describe("店の記録", () => {
     // 架空の祭りは 8月16日 18:30 開始、規模 S（15分）
     expect(planner).toContain("8月16日（日）：18:30 開始 → 18:15 までに会場に着く");
     expect(researcher).not.toContain(JSON.stringify(itinerary));
+  });
+});
+
+describe("人数と宿の予算の書き方", () => {
+  it("内訳があるときだけ、うち何人かを添える", () => {
+    expect(partyLabel({ adults: 2, children: 0 })).toBe("大人2・子ども0");
+    expect(partyLabel({ adults: 3, children: 1, seniors: 1, infants: 1 })).toBe(
+      "大人3（うちシニア1）・子ども1（うち幼児1）",
+    );
+  });
+
+  it("宿の予算は1泊あたりか泊まり全体かを書き分ける", () => {
+    expect(lodgingBudgetLabel({ perPersonYen: 12000, per: "night" })).toBe(
+      "宿の予算 1人1泊 12,000円まで",
+    );
+    expect(lodgingBudgetLabel({ perPersonYen: 30000, per: "trip" })).toBe(
+      "宿の予算 1人あたり泊まり全体で 30,000円まで",
+    );
   });
 });
 

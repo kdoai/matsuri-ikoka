@@ -1,7 +1,9 @@
 import type {
   ConversationStage,
   DateWish,
+  LodgingBudget,
   PartialTripConditions,
+  Party,
   Preferences,
 } from "@matsuri-ikoka/schema";
 import { arrivalBufferMinutes } from "../domain/arrivalBuffer";
@@ -34,6 +36,18 @@ const PREFERENCE_LABELS = {
   food: { stalls: "屋台で十分", local: "地元の店も楽しむ" },
   move: { train: "電車", car: "車" },
 } as const;
+
+/** 人数と内訳（例：大人3（うちシニア1）・子ども1（うち幼児1）） */
+export function partyLabel(party: Party): string {
+  const of = (label: string, n: number | undefined) => (n ? `（うち${label}${n}）` : "");
+  return `大人${party.adults}${of("シニア", party.seniors)}・子ども${party.children}${of("幼児", party.infants)}`;
+}
+
+/** 宿の予算（例：宿の予算 1人1泊 12,000円まで） */
+export function lodgingBudgetLabel(budget: LodgingBudget): string {
+  const yen = budget.perPersonYen.toLocaleString("ja-JP");
+  return `宿の予算 ${budget.per === "night" ? "1人1泊" : "1人あたり泊まり全体で"} ${yen}円まで`;
+}
 
 export function preferencesLabel(p: Preferences): string {
   const labels = [
@@ -110,7 +124,8 @@ export function shopRecord(ctx: ToolContext): string {
       : conditions.nights === 0
         ? "日帰り・お出かけ（0泊）"
         : `${conditions.nights}泊${conditions.nights + 1}日`,
-    conditions.party ? `大人${conditions.party.adults}・子ども${conditions.party.children}` : null,
+    conditions.party ? partyLabel(conditions.party) : null,
+    conditions.lodgingBudget ? lodgingBudgetLabel(conditions.lodgingBudget) : null,
     ...tripStyleLabels(conditions),
   ].filter((v): v is string => v !== null);
   lines.push(`聞き取れた条件：${known.length === 0 ? "まだありません" : known.join(" / ")}`);
