@@ -2,7 +2,7 @@
 // 呼ぶたびに新しいオブジェクトを返すので、テストの中で書き換えてよい。
 import type { Confidence, Source } from "../common";
 import type { FestivalInput } from "../festival";
-import type { Itinerary } from "../itinerary";
+import type { Itinerary, LodgingSearch } from "../itinerary";
 
 export const FICTIONAL_FESTIVAL_ID = "suzunari-toro";
 
@@ -150,5 +150,30 @@ export function fictionalItinerary(): Itinerary {
     ],
     notes: ["夜の河原は足元が暗いので、懐中電灯を持っていく"],
     alternatives: [{ kind: "rain", summary: "雨が強いときは、屋内の鈴鳴和紙の館を中心に過ごす" }],
+  };
+}
+
+/** 架空の宿の空き（鈴鳴町に1泊、大人2人）。宿も予約のページも架空で、URL は example.com にする */
+export function fictionalLodgingSearch(): LodgingSearch {
+  const checkedAt = "2026-08-01T10:00:00+09:00";
+  return {
+    checkIn: "2026-08-15",
+    checkOut: "2026-08-16",
+    searchedAt: checkedAt,
+    offers: [
+      {
+        id: "suzunari-kawabe-inn",
+        name: "川べりの宿 すずなり",
+        nightlyTotalYen: 24000,
+        bookingUrl: "https://example.com/lodging/suzunari-kawabe-inn",
+        location: { lat: 35.122, lng: 136.081 },
+        checkedAt,
+        source: {
+          url: "https://example.com/lodging",
+          checkedAt: "2026-08-01",
+          confidence: "single",
+        },
+      },
+    ],
   };
 }

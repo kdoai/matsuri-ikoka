@@ -31,12 +31,49 @@ export const DEFAULT_PREFERENCES: Readonly<Preferences> = Object.freeze({
 // ---------------------------------------------------------------------------
 // 旅の条件（会話で聞き取る）
 
-/** 同行者の人数 */
-export const PartySchema = z.strictObject({
-  adults: z.number().int().min(1).max(20),
-  children: z.number().int().min(0).max(20),
-});
+/**
+ * 同行者の人数。adults は中学生以上の全員、children は小学生以下の全員。
+ * seniors と infants は内訳で、seniors は adults のうちのシニア（65歳以上）、
+ * infants は children のうちの未就学の子ども。内訳がないときは 0 として扱う。
+ * 内訳を大人・子どもの内数にするのは、合計を出す計算と人数の表示が内訳を知らなくても正しくなるため。
+ */
+export const PartySchema = z
+  .strictObject({
+    adults: z.number().int().min(1).max(20),
+    children: z.number().int().min(0).max(20),
+    seniors: z.number().int().min(0).max(20).optional(),
+    infants: z.number().int().min(0).max(20).optional(),
+  })
+  .superRefine((party, ctx) => {
+    if ((party.seniors ?? 0) > party.adults) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["seniors"],
+        message: "シニアは大人の内数なので、大人の人数以下にしてください",
+      });
+    }
+    if ((party.infants ?? 0) > party.children) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["infants"],
+        message: "幼児は子どもの内数なので、子どもの人数以下にしてください",
+      });
+    }
+  });
 export type Party = z.infer<typeof PartySchema>;
+
+/** 宿の予算の単位：1泊あたり / 泊まり全体（全泊の合計） */
+export const BUDGET_PERIODS = ["night", "trip"] as const;
+
+/**
+ * 宿の予算の上限。1人あたりの円で持つ（幼児は人数に数えない）。
+ * 交通費や食事は含めない。合計と上限を超えるかの判断はコードで計算する。
+ */
+export const LodgingBudgetSchema = z.strictObject({
+  perPersonYen: z.number().int().min(1).max(1_000_000),
+  per: z.enum(BUDGET_PERIODS),
+});
+export type LodgingBudget = z.infer<typeof LodgingBudgetSchema>;
 
 /** 希望の日。1日か、期間（例：来週末） */
 export const DateWishSchema = z.discriminatedUnion("kind", [
@@ -93,6 +130,8 @@ export const TripConditionsSchema = z.strictObject({
   origin: PlaceNameSchema,
   nights: NightsSchema,
   party: PartySchema.optional(),
+  /** 宿の予算の上限（1人あたり）。泊まりの旅で、利用者が言ったときだけ */
+  lodgingBudget: LodgingBudgetSchema.optional(),
   /** 旅の終わりの場所（駅名まで）。出発地と違ってよい。ないときは出発地に戻る */
   returnTo: PlaceNameSchema.optional(),
   route: RouteSchema.optional(),

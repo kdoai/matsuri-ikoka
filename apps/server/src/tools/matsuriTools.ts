@@ -17,7 +17,7 @@ import {
   PreferencesSchema,
   SlugSchema,
   type SpotPin,
-  StaySchema,
+  StayPlanSchema,
   type Weather,
 } from "@matsuri-ikoka/schema";
 import { z } from "zod";
@@ -112,7 +112,11 @@ const ItineraryItemDraftSchema = z
 
 /** 下書きの1日。天気はサーバーが付ける */
 const ItineraryDayDraftSchema = z
-  .strictObject({ ...ItineraryDaySchema.shape, items: z.array(ItineraryItemDraftSchema).min(1) })
+  .strictObject({
+    ...ItineraryDaySchema.shape,
+    items: z.array(ItineraryItemDraftSchema).min(1),
+    stay: StayPlanSchema.nullable(),
+  })
   .omit({ weather: true });
 
 /** 旅程係が書く下書き。ID・版・再確認・天気はサーバーが付ける */
@@ -565,7 +569,7 @@ export const updateItinerary = defineTool({
     addDay: z
       .strictObject({
         day: ItineraryDayDraftSchema.describe("足す日（または置き換える日）"),
-        stayBefore: StaySchema.optional().describe(
+        stayBefore: StayPlanSchema.optional().describe(
           "後ろに足すとき、それまでの最後の日の夜に泊まる地域",
         ),
       })

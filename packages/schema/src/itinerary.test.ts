@@ -5,11 +5,12 @@ import {
   ItinerarySchema,
   itineraryItems,
   itineraryNights,
+  LodgingSearchSchema,
   mainFestivalDay,
   VerificationSchema,
   WeatherSchema,
 } from "./itinerary";
-import { fictionalItinerary, fictionalSource } from "./testing";
+import { fictionalItinerary, fictionalLodgingSearch, fictionalSource } from "./testing";
 
 describe("ItinerarySchema", () => {
   it("架空の祭りへの旅程を受け付ける", () => {
@@ -133,6 +134,23 @@ describe("WeatherSchema", () => {
 });
 
 describe("collectItinerarySources", () => {
+  it("宿の候補の出典も集める", () => {
+    const itinerary = fictionalItinerary();
+    const day = itinerary.days[0]!;
+    itinerary.days = [
+      {
+        ...day,
+        date: "2026-08-15",
+        stay: { area: "鈴鳴町", lodging: fictionalLodgingSearch() },
+        items: day.items.map((item) => ({ ...item, id: `d1-${item.id}` })),
+      },
+      { ...day, date: "2026-08-16" },
+    ];
+    expect(collectItinerarySources(itinerary).map((s) => s.url)).toContain(
+      "https://example.com/lodging",
+    );
+  });
+
   it("予定と再確認の出典を、URL の重複を除いて集める", () => {
     const itinerary = fictionalItinerary();
     itinerary.days[0]!.items[0]!.sources.push(fictionalSource("2026"));
@@ -148,6 +166,34 @@ describe("collectItinerarySources", () => {
       "https://example.com/suzunari/craft-hall",
       "https://example.com/suzunari/2026-final",
     ]);
+  });
+});
+
+describe("LodgingSearchSchema", () => {
+  it("架空の宿の空きを受け付ける。空きがなければ候補は空", () => {
+    expect(LodgingSearchSchema.safeParse(fictionalLodgingSearch()).success).toBe(true);
+    expect(LodgingSearchSchema.safeParse({ ...fictionalLodgingSearch(), offers: [] }).success).toBe(
+      true,
+    );
+  });
+
+  it("チェックアウトはチェックインより後", () => {
+    const search = { ...fictionalLodgingSearch(), checkOut: "2026-08-15" };
+    expect(LodgingSearchSchema.safeParse(search).success).toBe(false);
+  });
+
+  it("宿には予約のページ・調べた時刻・出典が要る", () => {
+    for (const key of ["bookingUrl", "checkedAt", "source"] as const) {
+      const search = fictionalLodgingSearch();
+      delete (search.offers[0] as Partial<(typeof search.offers)[number]>)[key];
+      expect(LodgingSearchSchema.safeParse(search).success).toBe(false);
+    }
+  });
+
+  it("予約のページは http(s) だけ", () => {
+    const search = fictionalLodgingSearch();
+    search.offers[0]!.bookingUrl = "javascript:alert(1)";
+    expect(LodgingSearchSchema.safeParse(search).success).toBe(false);
   });
 });
 
@@ -210,6 +256,14 @@ describe("日ごとの旅程（日帰りのお出かけから6泊7日まで）",
   it("日付は1日ずつ続ける", () => {
     const itinerary = twoDays();
     itinerary.days[1]!.date = "2026-08-17";
+    expect(ItinerarySchema.safeParse(itinerary).success).toBe(false);
+  });
+
+  it("泊まりには、調べた宿の候補を付けられる。チェックインはその日", () => {
+    const itinerary = twoDays();
+    itinerary.days[0]!.stay = { area: "鈴鳴町の駅の近く", lodging: fictionalLodgingSearch() };
+    expect(ItinerarySchema.safeParse(itinerary).success).toBe(true);
+    itinerary.days[0]!.stay.lodging!.checkIn = "2026-08-14";
     expect(ItinerarySchema.safeParse(itinerary).success).toBe(false);
   });
 

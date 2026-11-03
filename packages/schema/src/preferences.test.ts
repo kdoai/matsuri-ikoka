@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   DateWishSchema,
   DEFAULT_PREFERENCES,
+  LodgingBudgetSchema,
   PartialTripConditionsSchema,
+  PartySchema,
   PreferencesSchema,
   TripConditionsSchema,
 } from "./preferences";
@@ -42,6 +44,34 @@ describe("DateWishSchema", () => {
   });
 });
 
+describe("PartySchema", () => {
+  it("内訳（シニア・幼児）は任意", () => {
+    expect(PartySchema.safeParse({ adults: 2, children: 0 }).success).toBe(true);
+    expect(PartySchema.safeParse({ adults: 3, children: 2, seniors: 1, infants: 1 }).success).toBe(
+      true,
+    );
+  });
+
+  it("シニアは大人の、幼児は子どもの内数", () => {
+    expect(PartySchema.safeParse({ adults: 2, children: 0, seniors: 2 }).success).toBe(true);
+    expect(PartySchema.safeParse({ adults: 2, children: 0, seniors: 3 }).success).toBe(false);
+    expect(PartySchema.safeParse({ adults: 2, children: 1, infants: 2 }).success).toBe(false);
+  });
+});
+
+describe("LodgingBudgetSchema", () => {
+  it("1人あたりの円で、1泊あたりか泊まり全体かを持つ", () => {
+    expect(LodgingBudgetSchema.safeParse({ perPersonYen: 12000, per: "night" }).success).toBe(true);
+    expect(LodgingBudgetSchema.safeParse({ perPersonYen: 30000, per: "trip" }).success).toBe(true);
+  });
+
+  it("0円・端数・決まっていない単位は不正", () => {
+    expect(LodgingBudgetSchema.safeParse({ perPersonYen: 0, per: "night" }).success).toBe(false);
+    expect(LodgingBudgetSchema.safeParse({ perPersonYen: 1.5, per: "night" }).success).toBe(false);
+    expect(LodgingBudgetSchema.safeParse({ perPersonYen: 9000, per: "week" }).success).toBe(false);
+  });
+});
+
 describe("TripConditionsSchema", () => {
   const conditions = {
     when: { kind: "date", date: "2026-08-16" },
@@ -69,6 +99,13 @@ describe("TripConditionsSchema", () => {
   it("大人が0人の同行者は不正", () => {
     const party = { adults: 0, children: 1 };
     expect(TripConditionsSchema.safeParse({ ...conditions, party }).success).toBe(false);
+  });
+
+  it("宿の予算は任意", () => {
+    const lodgingBudget = { perPersonYen: 15000, per: "night" };
+    expect(
+      TripConditionsSchema.safeParse({ ...conditions, nights: 1, lodgingBudget }).success,
+    ).toBe(true);
   });
 
   it("泊まりの旅の項目（旅のかたち・終わりの場所・ペースなど）は任意で、おまかせも選べる", () => {
