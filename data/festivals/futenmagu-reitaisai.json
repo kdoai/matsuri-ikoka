@@ -1,0 +1,247 @@
+{
+  "id": "futenmagu-reitaisai",
+  "name": {
+    "ja": "普天満宮例大祭",
+    "en": "Futenmagu Shrine Annual Grand Festival"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "沖縄県",
+      "name": "宜野湾市"
+    }
+  ],
+  "venue": {
+    "name": "普天満宮",
+    "lat": 26.2925,
+    "lng": 127.7772
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "旧暦9月15日に行う、琉球八社の一つ普天満宮のいちばん大切な祭り",
+    "祭典のあとの清興で、神楽舞・琉球舞踊・地元の獅子舞などが奉納される",
+    "王から村人までが旧暦9月にお参りした「普天満参詣」の流れをくむ"
+  ],
+  "trivia": [
+    {
+      "text": "王の参詣はフティマ・ウサンチー、人々の参詣はフティマ・メーと呼んだ",
+      "source": {
+        "url": "https://futenmagu.or.jp/about/futenma-sankei/",
+        "title": "普天満宮 普天満宮参詣と普天満御参詣",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "境内の洞穴は全長約280m。1991年に宜野湾市の名勝に指定された",
+      "source": {
+        "url": "https://futenmagu.or.jp/guide/",
+        "title": "普天満宮 境内のご案内（普天満宮洞穴）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "洞窟に琉球古神道の神を祀ったのが始まりで、のちに熊野権現を合わせ祀った",
+      "source": {
+        "url": "https://futenmagu.or.jp/about/history/",
+        "title": "普天満宮 御由緒",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "戦時中は御神体を糸満へ移し、1949年2月に元の本殿へ戻した",
+      "source": {
+        "url": "https://futenmagu.or.jp/about/history/",
+        "title": "普天満宮 御由緒",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "例大祭の当日は、御祈願の受付と奥宮（洞窟）の拝観がない（2026年の案内）",
+      "ペットを連れての参拝は遠慮する"
+    ],
+    "dress": ["決まりはないが、神前に失礼にならない服装で"],
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://futenmagu.or.jp/info/%e3%80%8e%ef%bc%91%ef%bc%90%e6%9c%8824%e3%83%bb25%e6%97%a5%e3%81%ae%e5%be%a1%e7%a5%88%e9%a1%98%e5%8f%8a%e3%81%b3%e5%a5%a5%e5%ae%ae%e6%b4%9e%e7%aa%9f%e6%8b%9d%e8%a6%b3%e3%80%8f%e3%81%ae%e3%81%8a/",
+        "title": "普天満宮 『10月24・25日の御祈願及び奥宮(洞窟)拝観』のお知らせ",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://futenmagu.or.jp/faq/",
+        "title": "普天満宮 よくあるご質問（服装・ペット同伴）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-10-25",
+      "start": "13:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績（旧暦9月15日）。13:00 祭典、14:00 清興（神楽舞・琉球舞踊・五字自治会・字普天間郷友会の獅子舞ほか）。この日は御祈願の受付と奥宮（洞窟）の拝観がなく、前日の24日は10:00〜15:00に受け付けた",
+      "sources": [
+        {
+          "url": "https://futenmagu.or.jp/info/%e4%bb%a4%e5%92%8c%ef%bc%98%e5%b9%b4%e3%80%8c%e6%99%ae%e5%a4%a9%e6%ba%80%e5%ae%ae%e4%be%8b%e5%a4%a7%e7%a5%ad%e3%80%8d%e3%81%ae%e5%be%a1%e6%a1%88%e5%86%85/",
+          "title": "普天満宮 令和8年「普天満宮例大祭」の御案内（案内の画像：10月25日、祭典 午後1時・清興 午後2時）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://futenmagu.or.jp/info/%e3%80%8e%ef%bc%91%ef%bc%90%e6%9c%8824%e3%83%bb25%e6%97%a5%e3%81%ae%e5%be%a1%e7%a5%88%e9%a1%98%e5%8f%8a%e3%81%b3%e5%a5%a5%e5%ae%ae%e6%b4%9e%e7%aa%9f%e6%8b%9d%e8%a6%b3%e3%80%8f%e3%81%ae%e3%81%8a/",
+          "title": "普天満宮 『10月24・25日の御祈願及び奥宮(洞窟)拝観』のお知らせ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000245",
+          "title": "るるぶ&more. 普天満宮例大祭（2026年10月25日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-10-14",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2027年の発表はまだない。普天満宮は例大祭を旧暦9月15日としている。国立天文台の2027年の暦（9月30日が朔、霜降が10月24日）から、旧暦9月15日を2027年10月14日（木）と見込んだ。2024年（10月17日）・2025年（11月4日）・2026年（10月25日）も、曜日によらず旧暦9月15日に行い、どの年も13:00 祭典・14:00 清興だった",
+      "sources": [
+        {
+          "url": "https://futenmagu.or.jp/about/saiten/",
+          "title": "普天満宮 祭典（例大祭 旧暦9月15日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2027/rekiyou273.html",
+          "title": "国立天文台 令和9年（2027）暦要項 朔弦望",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2027/rekiyou272.html",
+          "title": "国立天文台 令和9年（2027）暦要項 二十四節気および雑節",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://futenmagu.or.jp/info/%e4%bb%a4%e5%92%8c%ef%bc%97%e5%b9%b4%e3%80%8c%e6%99%ae%e5%a4%a9%e6%ba%80%e5%ae%ae%e4%be%8b%e5%a4%a7%e7%a5%ad%e3%80%8d%e3%81%ae%e5%be%a1%e6%a1%88%e5%86%85/",
+          "title": "普天満宮 令和7年「普天満宮例大祭」の御案内（案内の画像：11月4日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://futenmagu.or.jp/info/%e4%bb%a4%e5%92%8c%ef%bc%96%e5%b9%b4%e3%80%8c%e6%99%ae%e5%a4%a9%e6%ba%80%e5%ae%ae%e4%be%8b%e5%a4%a7%e7%a5%ad%e3%80%8d/",
+          "title": "普天満宮 令和6年「普天満宮例大祭」（案内の画像：10月17日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://futenmagu.or.jp/faq/",
+        "title": "普天満宮 よくあるご質問（駐車場あり、入口は鳥居の右側）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000245",
+        "title": "るるぶ&more. 普天満宮例大祭（無料駐車場80台、当日の午後は満車。那覇空港から車で約40分、沖縄自動車道 北中城ICから約1.5km）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "ginowan-city-museum",
+      "name": "宜野湾市立博物館",
+      "kind": "sightseeing",
+      "summary": "宜野湾の考古・歴史・民俗・自然を紹介する市の博物館で、森川公園の隣にある。入館は無料。火曜・祝日（慰霊の日と文化の日は開館）・年末年始が休み",
+      "location": {
+        "lat": 26.2696,
+        "lng": 127.7409
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["tue"],
+      "price": "無料",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.ginowan.lg.jp/shisei/kokyoshisetsu/6321.html",
+          "title": "宜野湾市 宜野湾市立博物館",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://futenmagu.or.jp/about/saiten/",
+      "title": "普天満宮 祭典（例大祭 旧暦9月15日）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://futenmagu.or.jp/about/history/",
+      "title": "普天満宮 御由緒（琉球八社の一つ）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20000245",
+      "title": "るるぶ&more. 普天満宮例大祭（前年の来場者は3,000人）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の日程と時刻の発表（旧暦9月15日の決まりから10月14日と見込んだ。時刻は2024〜2026年の例を note に書いた）",
+    "雨や台風のときの扱い",
+    "清興の終わりの時刻と、奉納する芸能の順番",
+    "見学の決まり（境内で見てよい場所、座る場所）と撮影の決まり",
+    "持ち物・危険度（主催者の案内が見つからない）",
+    "屋台・食べ物の販売の有無",
+    "バスでの行き方と所要時間（鉄道はない。公式の交通の案内には住所だけ）",
+    "祭りの日の駐車場の扱いと交通規制（ふだんの台数は公式の案内にない。るるぶ&more. では80台・当日の午後は満車）",
+    "会場から歩いて行ける食事・休憩の店で、営業時間を公式の案内で確かめられたもの（見つからない）",
+    "会場から宜野湾市立博物館までの所要時間"
+  ]
+}

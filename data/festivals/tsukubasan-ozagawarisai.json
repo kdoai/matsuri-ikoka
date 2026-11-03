@@ -1,0 +1,154 @@
+{
+  "id": "tsukubasan-ozagawarisai",
+  "name": {
+    "ja": "筑波山神社の御座替祭",
+    "en": "Ozagawari-sai at Tsukubasan Shrine"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "茨城県",
+      "name": "つくば市"
+    }
+  ],
+  "venue": {
+    "name": "筑波山神社（中腹の拝殿と山頂の御本殿）",
+    "lat": 36.2207,
+    "lng": 140.1052
+  },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "山頂の御本殿で、神さまの衣を新しく替える神衣祭",
+    "下ろした古い神衣を神輿に納め、氏子の地区を巡る神幸祭",
+    "この日だけ、家光が奉納した御神橋を渡れる"
+  ],
+  "trivia": [
+    {
+      "text": "筑波山神社の例大祭で、春は4月1日、秋は11月1日の年2回行う",
+      "source": {
+        "url": "https://tsukubasanjinja.jp/event/",
+        "title": "筑波山神社 年中行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "夏と冬で、親子の神が座を入れ替えるとされる。もとは冬至と夏至に行う祭りだった",
+      "source": {
+        "url": "https://tsukubasanjinja.jp/event/",
+        "title": "筑波山神社 年中行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "御神橋は三代将軍の徳川家光が奉納した橋で、茨城県の指定文化財",
+      "source": {
+        "url": "https://tsukubasanjinja.jp/event/",
+        "title": "筑波山神社 年中行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://tsukubasanjinja.jp/event/",
+        "title": "筑波山神社 年中行事（御座替祭の神事の構成、当日に限り御神橋を渡れる）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-04-01",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年4月1日に行う決まりから見込んだ日（2027年の発表はまだない）。山頂の御本殿での神衣祭、中腹の拝殿での奉幣祭、神衣祭で下ろした神衣を神輿に納めて氏子の地区を渡御する神幸祭からなる",
+      "sources": [
+        {
+          "url": "https://tsukubasanjinja.jp/event/",
+          "title": "筑波山神社 年中行事（御座替祭は4月1日・11月1日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "関東鉄道バス 筑波山神社入口",
+        "walkMinutes": [10, 15],
+        "note": "つくばエクスプレスのつくば駅から筑波山シャトルバスで約40分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "秋葉原駅",
+        "minutes": [45, 55],
+        "route": "つくばエクスプレスでつくば駅まで約45分。つくば駅から筑波山シャトルバスに乗り換えて約40分（この時間は含まない）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://tsukubasanjinja.jp/access/",
+        "title": "筑波山神社 交通のご案内（秋葉原からつくば駅まで約45分、シャトルバス約40分、有料駐車場1日500円）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/80006150",
+        "title": "るるぶ&more. 筑波山神社（筑波神社入口バス停から徒歩10分、駐車場80台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://tsukubasanjinja.jp/event/",
+      "title": "筑波山神社 年中行事（御座替祭）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://tsukubasanjinja.jp/access/",
+      "title": "筑波山神社 交通のご案内（つくば市筑波1番地）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、神衣祭・奉幣祭・神幸祭それぞれの時刻（神社の案内に時刻が書かれていない）",
+    "御神橋を渡れる時間帯と渡り方",
+    "神輿が巡る道筋と、交通規制の有無",
+    "雨天のときの扱い",
+    "見学の決まり、撮影の扱い、服装・持ち物、危険についての注意",
+    "神輿の数と見物客の数（規模は、山頂と中腹の2か所で半日ほど続く行事として S にした）",
+    "屋台の有無と、この日だけの食べもの",
+    "周辺の観光と食の場所（祭りの日に合う営業時間と位置を確かめられた場所がまだない）",
+    "バス停から徒歩の時間は観光サイト1つだけの数字で、公式の案内では確かめていない",
+    "会場の緯度・経度は、国土地理院の住所検索で筑波1番地から取った位置で、拝殿の正確な位置ではない"
+  ]
+}

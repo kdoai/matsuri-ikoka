@@ -1,0 +1,222 @@
+{
+  "id": "naminoue-nanminsai",
+  "name": {
+    "ja": "なんみん祭",
+    "en": "Nanmin Festival (Naminoue Shrine)"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "沖縄県",
+      "name": "那覇市"
+    }
+  ],
+  "venue": {
+    "name": "波上宮",
+    "lat": 26.2202,
+    "lng": 127.671
+  },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "神輿の行列（神幸祭）が、波上宮からパレットくもじまで練り歩く",
+    "旭ヶ丘公園の伝統角力場で、沖縄角力の全島大会が開かれる",
+    "ブクブクー茶の奉納と、ふるまい茶・ふるまい鍋（無料）がある",
+    "波上宮の神前の舞台で、琉球舞踊が奉納される"
+  ],
+  "trivia": [
+    {
+      "text": "創始の年は分かっておらず、波の上の崖の拝所での祈りが始まりと伝える",
+      "source": {
+        "url": "https://naminouegu.jp/yuisyo.html",
+        "title": "波上宮 由緒",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "琉球八社の制で、波上宮はその第一に位置づけられた",
+      "source": {
+        "url": "https://naminouegu.jp/yuisyo.html",
+        "title": "波上宮 由緒",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "ものを言う霊石を得た里主に、熊野権現が社を建てよと告げたと伝わる",
+      "source": {
+        "url": "https://naminouegu.jp/yuisyo.html",
+        "title": "波上宮 由緒（御鎮座伝説）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "社殿は先の大戦で被災し、本殿以下は1993年の御造営で建て直された",
+      "source": {
+        "url": "https://naminouegu.jp/yuisyo.html",
+        "title": "波上宮 由緒",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://naminouegu.jp/R8nanminsai.pdf",
+        "title": "波上宮 令和8年「なんみん祭」催行事日程（行事の観覧と無料のふるまい）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-05-17",
+      "start": "10:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": "のど自慢大会は雨天のとき若狭公民館に移す。ほかの行事の雨天の扱いは書いていない",
+      "note": "2026年の実績（例大祭の日）。10:00 例大祭（初穂の舞・稚児神楽）、11:30〜 神幸祭（おみこし行列、波上宮〜パレットくもじ）、13:00〜 パレットくもじ前広場で奉納演舞（琉舞・空手・獅子舞・エイサー・旗頭・じゅり馬など）、正午ごろ〜 野点（ふるまい茶）、13:00 全島沖縄角力大会（第67回）、14:00 ふるまい鍋とビーチ綱引大会、16:30 琉球舞踊奉納、18:00 のど自慢大会。前々日の15日18:00に宵宮祭、前日の16日にブクブクー茶奉納・ちびっこ相撲大会・演舞大会などがあった",
+      "sources": [
+        {
+          "url": "https://naminouegu.jp/R8nanminsai.pdf",
+          "title": "波上宮 令和8年「なんみん祭」催行事日程（2026年5月15〜17日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-05-17",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2027年の発表はまだない。波上宮の年間行事では例大祭は毎年5月17日（例年の斎行は午前10時）。2027年5月17日は月曜で、神輿の行列（神幸祭）や角力大会などの催しは例大祭の前後の週末に開くことがあるため（2019年は例大祭が金曜、神幸祭が日曜）、催しの日はこの日と違うことがある",
+      "sources": [
+        {
+          "url": "https://naminouegu.jp/saiten.html",
+          "title": "波上宮 年間行事（5月17日 例大祭、午前10時斎行）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "ゆいレール 旭橋駅",
+        "walkMinutes": [15, 20]
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "ゆいレール 那覇空港駅",
+        "minutes": [10, 20],
+        "route": "沖縄都市モノレール（ゆいレール）、乗り換えなし"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://naminouegu.jp/map.html",
+        "title": "波上宮 地図・連絡先（那覇空港駅から旭橋駅まで約10分、旭橋駅から徒歩約15分。無料駐車場20台、混雑時は近隣の有料駐車場）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "ブクブクー茶",
+        "note": "2026年は16日に御本殿・参集殿で奉納があった。ブクブクー茶とふるまい茶・ふるまい鍋は無料で、なくなりしだい終わり",
+        "sources": [
+          {
+            "url": "https://naminouegu.jp/R8nanminsai.pdf",
+            "title": "波上宮 令和8年「なんみん祭」催行事日程",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "naha-fukushuen",
+      "name": "福州園",
+      "kind": "sightseeing",
+      "summary": "那覇市と中国・福州市の友好を記念して1992年に開いた中国式の庭園。昼は9:00〜18:00、夜は18:00〜21:00で入園料が変わる。水曜が祝日なら開園し、翌日が休み",
+      "location": {
+        "lat": 26.218,
+        "lng": 127.6747
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "21:00"
+      },
+      "closedDays": ["wed"],
+      "price": "昼は大人200円・子ども100円、夜は大人300円・子ども150円",
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.naha-navi.or.jp/sightseeing/fukushu-garden/",
+          "title": "那覇市観光協会 福州園",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://naminouegu.jp/",
+      "title": "波上宮（なんみん祭の案内）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://naminouegu.jp/R8nanminsai.pdf",
+      "title": "波上宮 令和8年「なんみん祭」催行事日程（主催 なんみん祭実行委員会、会場 波上宮・旭ヶ丘公園・波之上ビーチ・パレットくもじ広場）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://naminouegu.jp/saiten.html",
+      "title": "波上宮 年間行事（五月十七日の例大祭と、その前後の催し）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の日程（例大祭は5月17日の月曜。神幸祭・角力大会などの催しを何日に開くかは未発表）",
+    "2027年の各行事の時刻（2026年の時刻を note に書いた）",
+    "神輿の数と行列の人数、来場者数（規模は会場と日ごとの催しの数から M とした）",
+    "見学の決まり（神輿の行列の沿道で見てよい場所、角力大会の観覧席）と撮影の決まり",
+    "服装・持ち物・危険度（主催者の案内が見つからない）",
+    "雨や台風のときの扱い（のど自慢大会のほかは書いていない）",
+    "神幸祭のときの交通規制",
+    "屋台・露店が出るか",
+    "旭橋駅からの道順と、祭りの日の駐車場の扱い（ふだんは無料駐車場20台）",
+    "会場から歩いて行ける食事の店で、営業時間を公式の案内で確かめられたもの（見つからない）",
+    "周辺の観光の場所が1件だけ（波の上ビーチは会場の位置と営業時間を公式の案内で確かめられず、入れなかった）",
+    "大手の観光サイトへの掲載（ウォーカープラス・じゃらんnet などで、なんみん祭を主題にしたページは検索で見つからなかった）"
+  ]
+}

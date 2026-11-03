@@ -1,0 +1,264 @@
+{
+  "id": "toko-yasaka-jinja-saiten",
+  "name": { "ja": "東湖八坂神社祭典", "en": "Toko Yasaka Shrine Festival (Ushinori and Kumomai)" },
+  "category": "ritual",
+  "municipalities": [
+    { "prefecture": "秋田県", "name": "潟上市" },
+    { "prefecture": "秋田県", "name": "男鹿市" }
+  ],
+  "venue": { "name": "東湖八坂神社から船越水道（天王岸）まで", "lat": 39.8973, "lng": 139.9629 },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "御神牛にまたがったスサノオノミコト役の神人が、天王岸（船越水道）を目指して進む「牛乗り」",
+    "赤い装束で全身を覆ったヤマタノオロチ役が、船の上で舞う「くも舞」",
+    "潟上市天王と男鹿市船越の2つの地区が、大蛇退治の神話を再現する",
+    "祭りを仕切る両地区の統人が、1年をかけて祭事を務める"
+  ],
+  "trivia": [
+    {
+      "text": "1986年1月14日に、国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.city.oga.akita.jp/soshik/bunkasportska/bunkazai/2/1515.html",
+        "title": "男鹿市 東湖八坂神社祭のトウニン（統人）行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "祭りは7月8日の新統御竹受けに始まり、1年をかけていくつもの祭事が続く",
+      "source": {
+        "url": "https://www.city.katagami.lg.jp/soshiki/sangyoushinkoubu/shoukoukankoushinkouka/kankoukouryu/kankoevent/891.html",
+        "title": "潟上市 東湖八坂神社祭典",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "くも舞は「チョンマイ（蝶舞）」とも呼ばれ、船越の人が務める",
+      "source": {
+        "url": "https://www.city.oga.akita.jp/soshik/bunkasportska/bunkazai/2/1515.html",
+        "title": "男鹿市 東湖八坂神社祭のトウニン（統人）行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "大蛇退治の神話と、八郎潟のまわりの農漁民の水神信仰が結びついた祭礼とされる",
+      "source": {
+        "url": "https://www.city.oga.akita.jp/soshik/bunkasportska/bunkazai/2/1515.html",
+        "title": "男鹿市 東湖八坂神社祭のトウニン（統人）行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "神事と巡幸を見学する行事で、混雑や危険についての特別な注意は案内に見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.katagami.lg.jp/soshiki/sangyoushinkoubu/shoukoukankoushinkouka/kankoukouryu/kankoevent/891.html",
+        "title": "潟上市 東湖八坂神社祭典",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-07-06",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年7月6日・7日に行う決まりから見込んだ日（2027年の発表はまだない）。市の案内では2日間とも例年9:00〜21:00。この日の行事の内容と時刻は、公開の案内では確かめられなかった",
+      "sources": [
+        {
+          "url": "https://www.city.katagami.lg.jp/soshiki/sangyoushinkoubu/shoukoukankoushinkouka/kankoukouryu/kankoevent/891.html",
+          "title": "潟上市 東湖八坂神社祭典（毎年7月6日・7日、9:00〜21:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.katagami-kankou.com/%E3%81%BE%E3%81%A4%E3%82%8A-%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88/",
+          "title": "潟上市観光協会 まつり・イベント 東湖八坂神社統人行事（毎年7月6日・7日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-07",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年7月7日に行う祭りの山場から見込んだ日（2027年の発表はまだない）。両地区の統人の七度半詣と神輿の巡幸のあと、天王側の「牛乗り」が船越水道の天王岸へ向かい、船越側の「くも舞」が船の上で舞う。市の案内では例年9:00〜21:00で、牛乗りとくも舞の時刻は案内にない",
+      "sources": [
+        {
+          "url": "https://www.city.katagami.lg.jp/soshiki/sangyoushinkoubu/shoukoukankoushinkouka/kankoukouryu/kankoevent/891.html",
+          "title": "潟上市 東湖八坂神社祭典（牛乗りの巡幸は7日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.city.oga.akita.jp/soshik/bunkasportska/bunkazai/2/1515.html",
+          "title": "男鹿市 東湖八坂神社祭のトウニン（統人）行事（本祭りは7月7日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 天王駅",
+        "walkMinutes": [3, 8],
+        "note": "JR男鹿線。八竜橋付近の土手まで徒歩3分（るるぶ&more.）。別の旅行サイトは東湖八坂神社まで徒歩5分とする"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002488",
+        "title": "るるぶ&more. 牛乗りくも舞（東湖八坂神社の統人行事）（天王駅から徒歩3分、駐車場50台無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      },
+      {
+        "url": "https://tabi-mag.jp/tpukoyasaka-reitaisai/",
+        "title": "ニッポン旅マガジン 東湖八坂神社例大祭（JR天王駅から徒歩5分、臨時駐車場）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "tenno-sky-tower",
+      "name": "天王スカイタワー（道の駅てんのう）",
+      "kind": "sightseeing",
+      "summary": "道の駅てんのう（天王グリーンランド）にある展望塔。最上階から男鹿半島、八郎湖、秋田市内、日本海を見渡せる。展望台は無料。会場からは離れていて、車で向かう場所",
+      "location": { "lat": 39.8563, "lng": 140.0096 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "09:00", "close": "17:00" },
+      "closedDays": [],
+      "price": "展望台は無料",
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://michinoeki-tenno.jp",
+          "title": "道の駅てんのう 天王グリーンランド（天王スカイタワー 9:00〜17:00、休業日なし）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.katagami-kankou.com/%E8%A6%B3%E5%85%89%E3%82%B9%E3%83%9D%E3%83%83%E3%83%88/%E5%A4%A9%E7%8E%8B%E3%82%B0%E3%83%AA%E3%83%BC%E3%83%B3%E3%83%A9%E3%83%B3%E3%83%89/",
+          "title": "潟上市観光協会 天王グリーンランド",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "nappa-house-tenno",
+      "name": "なっぱ・はうす（道の駅てんのう）",
+      "kind": "food",
+      "summary": "道の駅てんのうの中のレストラン。テイクアウトの受付は平日10:00〜15:00、土日祝は10:00〜16:30（冬は15:00まで）",
+      "location": { "lat": 39.8567, "lng": 140.0095 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "11:00", "close": "15:00", "lastEntry": "14:30" },
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://michinoeki-tenno.jp",
+          "title": "道の駅てんのう 天王グリーンランド（なっぱ・はうす 11:00〜15:00、L.O 14:30）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "tenno-onsen-kurara",
+      "name": "天王温泉くらら（くららの湯）",
+      "kind": "rest",
+      "summary": "道の駅てんのうの中の日帰りの入浴施設。5種類の浴槽と、低温・高温の2つのサウナがある。毎月第2月曜が休み（祝日なら翌日）",
+      "location": { "lat": 39.8567, "lng": 140.0095 },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://michinoeki-tenno.jp",
+          "title": "道の駅てんのう 天王グリーンランド（くららの湯 休業日は毎月第2月曜）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.katagami-kankou.com/%E8%A6%B3%E5%85%89%E3%82%B9%E3%83%9D%E3%83%83%E3%83%88/%E5%A4%A9%E7%8E%8B%E3%82%B0%E3%83%AA%E3%83%BC%E3%83%B3%E3%83%A9%E3%83%B3%E3%83%89/",
+          "title": "潟上市観光協会 天王グリーンランド（くららの湯）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.katagami.lg.jp/soshiki/sangyoushinkoubu/shoukoukankoushinkouka/kankoukouryu/kankoevent/891.html",
+      "title": "潟上市 東湖八坂神社祭典（主催：東湖八坂神社・東湖八坂神社崇敬会・船越祭典委員会）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.oga.akita.jp/soshik/bunkasportska/bunkazai/2/1515.html",
+      "title": "男鹿市 東湖八坂神社祭のトウニン（統人）行事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.katagami-kankou.com/%E3%81%BE%E3%81%A4%E3%82%8A-%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88/",
+      "title": "潟上市観光協会 まつり・イベント 東湖八坂神社統人行事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、牛乗り・くも舞の時刻",
+    "7月6日の行事の内容と時刻",
+    "牛乗り・くも舞を見るのに向いた場所と、見学の決まり・撮影の扱い・服装・持ち物",
+    "雨天のときの扱い",
+    "主要駅（秋田駅）から天王駅までの所要時間（公式の案内で確かめられなかった）",
+    "駐車場（50台・無料）は旅行サイト1つだけの情報で、公式の案内では確かめていない",
+    "祭りの日の交通規制",
+    "屋台の有無と、祭りの日だけの食べもの・土地の名物（公式の案内で確かめられなかった）",
+    "会場の緯度・経度は OpenStreetMap の東湖八坂神社の位置で、牛乗りの道筋やくも舞の場所（天王岸）ではない",
+    "見物客の数（規模は、2つの地区で1日の神事として S にした。旅行サイトに前年の来場者8,000人とある）",
+    "周辺の場所はどれも道の駅てんのうの中で、会場から歩ける場所を確かめられなかった。くららの湯の営業時間（短縮営業の告知があり、今も続いているか分からない）",
+    "なっぱ・はうすの定休日"
+  ]
+}

@@ -1,0 +1,252 @@
+{
+  "id": "oitatsu-hachiman-jinja-yamakasa",
+  "name": {
+    "ja": "生立八幡神社山笠",
+    "en": "Oitatsu Hachiman Shrine Yamakasa"
+  },
+  "category": "float",
+  "municipalities": [
+    {
+      "prefecture": "福岡県",
+      "name": "みやこ町"
+    }
+  ],
+  "venue": {
+    "name": "生立八幡神社",
+    "lat": 33.6541,
+    "lng": 130.9365
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "重さ約3.5トンの山笠を百人近くで息を合わせて担ぎ上げる「力の奉納」",
+    "8基の山笠が神輿に付き従い、社前の馬場を往き来する",
+    "400年ほどの大木を輪切りにした車輪をもつ曳山もある",
+    "緋色の幟と五色の紙飾りで彩られた櫓造りの山笠"
+  ],
+  "trivia": [
+    {
+      "text": "「犀川神事」とも呼ばれ、江戸時代なかばごろに形ができたとされる",
+      "source": {
+        "url": "https://www.town.miyako.lg.jp/kyoutsuu/kankou/dentou/oitatsuhachiman_yamakasa.html",
+        "title": "みやこ町 生立八幡神社山笠",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "昭和30年代までは、各地区の山笠が川を渡りながら最大2km近くを集まってきた",
+      "source": {
+        "url": "https://www.town.miyako.lg.jp/kyoutsuu/kankou/dentou/oitatsuhachiman_yamakasa.html",
+        "title": "みやこ町 生立八幡神社山笠",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "福岡県の無形民俗文化財に指定されている",
+      "source": {
+        "url": "https://k-i-lin.jp/kanko/miyako/003.html",
+        "title": "北九州都市圏域 生立八幡神社山笠",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.town.miyako.lg.jp/kyoutsuu/kankou/dentou/oitatsuhachiman_yamakasa.html",
+        "title": "みやこ町 生立八幡神社山笠（保存会が奉納）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-05-07",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "初日のお潮井採り。神社前の今川の水で神輿や山笠を清める。例年、5月第2日曜日を最終日とする3日間で、2027年は5月7日（金）〜9日（日）の見込み（時刻はまだ発表がない）",
+      "sources": [
+        {
+          "url": "https://www.town.miyako.lg.jp/kyoutsuu/kankou/dentou/oitatsuhachiman_yamakasa.html",
+          "title": "みやこ町 生立八幡神社山笠（5月第2日曜日を最終日とする3日間）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.nippon-matsuri.net/report/oitatu/",
+          "title": "日本の祭りネットワーク 生立八幡宮神幸祭（お潮井採りの内容）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-05-08",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2日目のお下り。神輿が大村地区へ下り、8基の山笠が神輿に付き従って社前の馬場を移動する。犀川の夜市のにぎわいは、町の案内ではいまも続いているとされる（何日目かは書かれていない）",
+      "sources": [
+        {
+          "url": "https://www.town.miyako.lg.jp/kyoutsuu/kankou/dentou/oitatsuhachiman_yamakasa.html",
+          "title": "みやこ町 生立八幡神社山笠（5月第2日曜日を最終日とする3日間）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.nippon-matsuri.net/report/oitatu/",
+          "title": "日本の祭りネットワーク 生立八幡宮神幸祭（お下りの内容）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-05-09",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "最終日のお上り。神輿と山笠が神社へ戻る",
+      "sources": [
+        {
+          "url": "https://www.town.miyako.lg.jp/kyoutsuu/kankou/dentou/oitatsuhachiman_yamakasa.html",
+          "title": "みやこ町 生立八幡神社山笠（5月第2日曜日を最終日とする3日間）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "平成筑豊鉄道 犀川駅",
+        "walkMinutes": [15, 20]
+      }
+    ],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.town.miyako.lg.jp/kyoutsuu/kankou/dentou/oitatsuhachiman_yamakasa.html",
+        "title": "みやこ町 生立八幡神社山笠（犀川駅から徒歩約15分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://k-i-lin.jp/kanko/miyako/003.html",
+        "title": "北九州都市圏域 生立八幡神社山笠（駐車場あり、台数に限りあり）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "yotteko-shikisaikan",
+      "name": "農林産物直売所 よってこ四季犀館",
+      "kind": "food",
+      "summary": "犀川の農産物直売所。白くて短い柳瀬ごぼう（秋〜春）や、町内産のジビエのレトルトカレー、旬の味のソフトクリームがある。休みは1月1〜4日だけ",
+      "location": {
+        "lat": 33.6562,
+        "lng": 130.9391
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "08:00",
+        "close": "17:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.crossroadfukuoka.jp/spot/10039",
+          "title": "クロスロードふくおか 農林産物直売所 よってこ四季犀館",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "miyako-rekishi-minzoku-hakubutsukan",
+      "name": "みやこ町歴史民俗博物館",
+      "kind": "sightseeing",
+      "summary": "豊津にある町の歴史と民俗の博物館。低めの展示ケースや字幕つきの映像、4か国語の音声ガイドがある。月曜が祝日なら翌日休み。祝日の翌日・年末年始も休み",
+      "location": {
+        "lat": 33.6708,
+        "lng": 130.9709
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["mon"],
+      "price": "大人200円、小・中・高生100円",
+      "tags": ["indoor", "kid_friendly"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.town.miyako.lg.jp/rekisiminnzoku/kankou/spot/hakubutukan.html",
+          "title": "みやこ町 みやこ町歴史民俗博物館",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.town.miyako.lg.jp/kyoutsuu/kankou/dentou/oitatsuhachiman_yamakasa.html",
+      "title": "みやこ町 生立八幡神社山笠",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.crossroadfukuoka.jp/spot/14914",
+      "title": "クロスロードふくおか 生立八幡宮",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://k-i-lin.jp/kanko/miyako/003.html",
+      "title": "北九州都市圏域 生立八幡神社山笠",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の日程と、各日の行事の時刻（まだ発表がない）",
+    "雨のときの扱い",
+    "見学の決まり（見学の場所、撮影、服装、持ち物）と、山笠の近くでの危険の注意",
+    "交通規制と、祭りの日の臨時駐車場",
+    "小倉駅など主要駅から犀川駅までの所要時間（公式の数字が見つからない）",
+    "近年出ている山笠の数（町の案内は8基）",
+    "夜市に屋台が出るかと、祭りならではの食べ物",
+    "周辺の場所が2件しか確かめられなかった（観光1件・食1件）"
+  ]
+}

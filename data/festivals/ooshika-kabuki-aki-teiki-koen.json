@@ -1,0 +1,256 @@
+{
+  "id": "ooshika-kabuki-aki-teiki-koen",
+  "name": { "ja": "大鹿歌舞伎 秋の定期公演", "en": "Ooshika Kabuki Autumn Performance" },
+  "category": "performing_arts",
+  "municipalities": [{ "prefecture": "長野県", "name": "下伊那郡大鹿村" }],
+  "venue": { "name": "市場神社舞台", "lat": 35.5897, "lng": 138.0485 },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "村の人が演じ継いできた地芝居を、神社の境内に座って観る",
+    "大鹿村だけに伝わる演目を持つ、義太夫狂言が中心の歌舞伎",
+    "嘉永4年に建てられた市場神社の芝居舞台で上演される",
+    "鹿塩温泉の塩泉から煮詰めた山塩や、村のジビエ料理を味わえる"
+  ],
+  "trivia": [
+    {
+      "text": "明和4年の記録が残り、18世紀半ばには村で歌舞伎が演じられていたと分かる",
+      "source": {
+        "url": "https://online.bunka.go.jp/heritages/region/20/20417",
+        "title": "文化遺産オンライン 大鹿村の文化財（大鹿歌舞伎）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "伝わる演目は約30。「六千両後日文章 重忠館の段」は大鹿村独特の演目とされる",
+      "source": {
+        "url": "https://online.bunka.go.jp/heritages/region/20/20417",
+        "title": "文化遺産オンライン 大鹿村の文化財（大鹿歌舞伎）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "幕末から明治に村内13か所へ芝居の舞台が建てられ、今も7つが残っている",
+      "source": {
+        "url": "https://www.vill.ooshika.nagano.jp/what_ooshikakabuki/",
+        "title": "大鹿村 大鹿歌舞伎とは",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2025年、日本ユネスコ協会の「プロジェクト未来遺産」に選ばれた",
+      "source": {
+        "url": "https://www.vill.ooshika.nagano.jp/%EF%BC%8810%E6%9C%8818%E6%97%A5%EF%BC%89%E5%A4%A7%E9%B9%BF%E6%AD%8C%E8%88%9E%E4%BC%8E%E7%A7%8B%E3%81%AE%E5%AE%9A%E6%9C%9F%E5%85%AC%E6%BC%94%E3%81%AE%E4%BC%9A%E5%A0%B4%E3%81%AB%E3%81%A4%E3%81%84/9123/",
+        "title": "大鹿村 （10月18日）大鹿歌舞伎秋の定期公演の会場について",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "席は開場（10:00）のあと、市場神社舞台で先着順に取る",
+      "席取りには座布団を持っていく。取った席には開演まで必ずだれかが残る",
+      "ごみは持ち帰る",
+      "体調のすぐれない人は観覧を控える",
+      "報道の取材は事前に事務局への申し込みが要る"
+    ],
+    "dress": "unknown",
+    "bring": ["座布団（席取りに使う）"],
+    "risk": {
+      "level": "low",
+      "reason": "神社の境内に座って芝居を観る行事で、混雑で早めの来場を勧めるほかに、危険についての特別な注意は案内に見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.vill.ooshika.nagano.jp/%EF%BC%8810%E6%9C%8818%E6%97%A5%EF%BC%89%E5%A4%A7%E9%B9%BF%E6%AD%8C%E8%88%9E%E4%BC%8E%E7%A7%8B%E3%81%AE%E5%AE%9A%E6%9C%9F%E5%85%AC%E6%BC%94%E3%81%AE%E4%BC%9A%E5%A0%B4%E3%81%AB%E3%81%A4%E3%81%84/9123/",
+        "title": "大鹿村 （10月18日）大鹿歌舞伎秋の定期公演の会場について（席取り・注意事項）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ooshika-kanko.com/2025/09/10/%EF%BC%8810%E6%9C%8819%E6%97%A5%EF%BC%89%E4%BB%A4%E5%92%8C%EF%BC%97%E5%B9%B4%E5%BA%A6%E5%A4%A7%E9%B9%BF%E6%AD%8C%E8%88%9E%E4%BC%8E%E7%A7%8B%E3%81%AE%E5%AE%9A%E6%9C%9F%E5%85%AC%E6%BC%94/",
+        "title": "大鹿村観光協会 （10月19日）令和7年度大鹿歌舞伎秋の定期公演",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-10-18",
+      "start": "12:00",
+      "end": "16:00",
+      "status": "announced",
+      "rainPolicy": "雨天のときは大鹿中学校の体育館（鹿塩2952）で行う",
+      "note": "10:00 開場（席取りは先着順）、12:00 開演、16:00ごろ終演。演目は「絵本太功記 尼ケ崎の段」「神霊矢口渡 頓兵衛住家の段」。入場無料。伊那バスの臨時バスが伊那大島を9:15に出て、帰りは16:00ごろ鹿塩バス停から出る（片道500円）。解説の音声ガイドは有料で当日受付",
+      "sources": [
+        {
+          "url": "https://www.vill.ooshika.nagano.jp/%EF%BC%8810%E6%9C%8818%E6%97%A5%EF%BC%89%E5%A4%A7%E9%B9%BF%E6%AD%8C%E8%88%9E%E4%BC%8E%E7%A7%8B%E3%81%AE%E5%AE%9A%E6%9C%9F%E5%85%AC%E6%BC%94%E3%81%AE%E4%BC%9A%E5%A0%B4%E3%81%AB%E3%81%A4%E3%81%84/9123/",
+          "title": "大鹿村 （10月18日）大鹿歌舞伎秋の定期公演の会場について",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://news.yahoo.co.jp/articles/893d938667e928a8f36c405d6aa8ed96521a4364",
+          "title": "南信州新聞 舞台との一体感楽しむ 大鹿歌舞伎秋の定期公演（18日に市場神社舞台で開催）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-10-17",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "秋の定期公演は10月の第3日曜に行う決まりから見込んだ日（2027年の発表はまだない）。例年は10:00 開場、12:00 開演、16:00ごろ終演で、雨天のときは大鹿中学校の体育館で行う。演目は年ごとに替わる",
+      "sources": [
+        {
+          "url": "https://www.vill.ooshika.nagano.jp/what_ooshikakabuki/",
+          "title": "大鹿村 大鹿歌舞伎とは（秋は10月の第3日曜の正午、市場神社舞台）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.vill.ooshika.nagano.jp/%EF%BC%8810%E6%9C%8818%E6%97%A5%EF%BC%89%E5%A4%A7%E9%B9%BF%E6%AD%8C%E8%88%9E%E4%BC%8E%E7%A7%8B%E3%81%AE%E5%AE%9A%E6%9C%9F%E5%85%AC%E6%BC%94%E3%81%AE%E4%BC%9A%E5%A0%B4%E3%81%AB%E3%81%A4%E3%81%84/9123/",
+        "title": "大鹿村 （10月18日）大鹿歌舞伎秋の定期公演の会場について（会場周辺に臨時駐車場、係員が誘導）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ooshika-kanko.com/access/",
+        "title": "大鹿村観光協会 アクセス（最寄り駅はJR飯田線 伊那大島駅、伊那バスで村へ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "山塩",
+        "note": "鹿塩温泉の塩泉を平釜で薪を焚いて煮詰めた塩。鹿塩温泉 湯元 山塩館で買え、山塩を添えた鹿肉の料理も出す（予約制）",
+        "sources": [
+          {
+            "url": "https://www.go-nagano.net/tradition-and-culture/id20594",
+            "title": "Go! NAGANO 長野県公式観光サイト 秘境・大鹿村の時代をリードする新しいカルチャー",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      },
+      {
+        "name": "鹿肉のジビエ料理",
+        "note": "村の鹿肉を使った料理。道の駅 歌舞伎の里大鹿の食堂「おい菜」などで食べられる。公演の日は「おい菜」と「農家カフェBAU」が弁当の予約を受ける",
+        "sources": [
+          {
+            "url": "https://ooshika-kanko.com/03_kabukinosato/",
+            "title": "大鹿村観光協会 おい菜 道の駅店",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          },
+          {
+            "url": "https://www.vill.ooshika.nagano.jp/%EF%BC%8810%E6%9C%8818%E6%97%A5%EF%BC%89%E5%A4%A7%E9%B9%BF%E6%AD%8C%E8%88%9E%E4%BC%8E%E7%A7%8B%E3%81%AE%E5%AE%9A%E6%9C%9F%E5%85%AC%E6%BC%94%E3%81%AE%E4%BC%9A%E5%A0%B4%E3%81%AB%E3%81%A4%E3%81%84/9123/",
+            "title": "大鹿村 （10月18日）大鹿歌舞伎秋の定期公演の会場について（弁当の予約）",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "ooshika-median-tectonic-line-museum",
+      "name": "大鹿村中央構造線博物館",
+      "kind": "sightseeing",
+      "summary": "関東から九州へ延びる大断層・中央構造線と、大鹿村の岩石の標本を展示する博物館。岩石園や野外の観察地もある。年末年始は休館。4〜11月の祝日は火曜でも開く",
+      "location": { "lat": 35.5563, "lng": 138.0385 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "09:30", "close": "16:30" },
+      "closedDays": ["tue"],
+      "price": "大人500円（現金のみ）",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://mtl-muse.com/info/userguide/userguide/",
+          "title": "大鹿村中央構造線博物館 利用案内",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "oina-michinoeki-kabukinosato-ooshika",
+      "name": "おい菜 道の駅店",
+      "kind": "food",
+      "summary": "道の駅 歌舞伎の里大鹿の食堂。村の鹿肉のジビエ料理や小渋ダムカレー、季節の山菜そばを出す。月曜と火曜が休みで、祝日は開けて同じ週に振り替えることがある",
+      "location": { "lat": 35.5651, "lng": 138.0373 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "11:00", "close": "14:30", "lastEntry": "14:00" },
+      "closedDays": ["mon", "tue"],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://ooshika-kanko.com/03_kabukinosato/",
+          "title": "大鹿村観光協会 おい菜 道の駅店",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.vill.ooshika.nagano.jp/what_ooshikakabuki/",
+      "title": "大鹿村 大鹿歌舞伎とは",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.vill.ooshika.nagano.jp/%EF%BC%8810%E6%9C%8818%E6%97%A5%EF%BC%89%E5%A4%A7%E9%B9%BF%E6%AD%8C%E8%88%9E%E4%BC%8E%E7%A7%8B%E3%81%AE%E5%AE%9A%E6%9C%9F%E5%85%AC%E6%BC%94%E3%81%AE%E4%BC%9A%E5%A0%B4%E3%81%AB%E3%81%A4%E3%81%84/9123/",
+      "title": "大鹿村 （10月18日）大鹿歌舞伎秋の定期公演の会場について（市場神社舞台、大鹿村鹿塩436）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://online.bunka.go.jp/heritages/region/20/20417",
+      "title": "文化遺産オンライン 大鹿村の文化財（大鹿歌舞伎）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表、演目と時刻",
+    "主要駅から会場までの所要時間（伊那大島駅からの路線バスの所要時間と、ふだんのバスで会場に近い停留所）",
+    "撮影の扱いと服装",
+    "屋台や売店が出るか",
+    "席取りの「1人10人まで」の決まりの意味（案内の書き方があいまい）",
+    "観客の数（規模は、1つの会場で半日の公演として S にした）",
+    "会場の緯度・経度は OpenStreetMap の市場神社の位置で、主催者の地図では確かめていない",
+    "周辺の場所が2件だけ（休憩の場所や、会場から歩ける場所を確かめられなかった）",
+    "大鹿村中央構造線博物館の最終入館の時刻"
+  ]
+}

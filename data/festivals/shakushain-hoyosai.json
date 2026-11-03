@@ -1,0 +1,281 @@
+{
+  "id": "shakushain-hoyosai",
+  "name": {
+    "ja": "シャクシャイン法要祭",
+    "en": "Shakushain Memorial Ceremony"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "北海道",
+      "name": "新ひだか町"
+    }
+  ],
+  "venue": {
+    "name": "真歌公園",
+    "lat": 42.3325,
+    "lng": 142.3841
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "シャクシャイン像の前で捧げられる、アイヌの祈りの儀式カムイノミ",
+    "子どもたちも加わる餅まき（ハルランナ）",
+    "昼のアイヌ料理の試食会",
+    "先祖を供養する儀式イチャルパ"
+  ],
+  "trivia": [
+    {
+      "text": "2016年の秋分の日に開かれた法要祭が第70回にあたる",
+      "source": {
+        "url": "https://www.ainu-assn.or.jp/event/details/70.html",
+        "title": "北海道アイヌ協会 第70回シャクシャイン法要祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "シャクシャインは17世紀半ば、和人が押しつけた不利な交易に抗って立ち上がったアイヌの英雄",
+      "source": {
+        "url": "https://biz.jibtv.com/programs/preserving_ainu_culture_for_the_future",
+        "title": "JIBTV Preserving Ainu Culture for the Future",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "2024年の第78回には約1千人が集まり、午後には道内各地の保存会が舞踊と歌を披露した",
+      "source": {
+        "url": "https://www.rinya.maff.go.jp/hokkaido/square/kakutidayori/2024/240922.html",
+        "title": "北海道森林管理局 第78回シャクシャイン法要祭開催",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "見学が中心の儀式で、案内に混雑や危険についての特別な注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.hidaka.pref.hokkaido.lg.jp/hk/kks/ainuculture/shinhidaka/single_ainu_shinhidaka_shakushain.html",
+        "title": "日高振興局 シャクシャイン法要祭（誰でも見学可能）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-09-23",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "例年、秋分の日に開く（2016年は9月22日、2023年は9月23日、2024年は9月22日）。2027年の秋分の日は9月23日（木）。2016年の回は、10:00 シャクシャイン記念館でアペカムイノミ、10:30 像の前でカムイノミ、11:40 ハルランナ（餅まき）、12:00 アイヌ料理の試食、13:00 イチャルパの流れだった（2027年の時刻はまだ発表がない）",
+      "sources": [
+        {
+          "url": "https://www.hidaka.pref.hokkaido.lg.jp/hk/kks/ainuculture/shinhidaka/single_ainu_shinhidaka_shakushain.html",
+          "title": "日高振興局 シャクシャイン法要祭（開催時期は9月）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://biz.jibtv.com/programs/preserving_ainu_culture_for_the_future",
+          "title": "JIBTV Preserving Ainu Culture for the Future（9月の秋分の日に開く）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.ainu-assn.or.jp/event/details/70.html",
+          "title": "北海道アイヌ協会 第70回シャクシャイン法要祭（2016年9月22日、時程）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://hokkaido-hidaka-kankonavi.com/information/5299/",
+          "title": "北海道ひだか観光ナビ 第77回シャクシャイン法要祭（2023年9月23日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2027/rekiyou271.html",
+          "title": "国立天文台 令和9年 暦要項 国民の祝日（秋分の日は9月23日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [
+      {
+        "hub": "札幌駅前",
+        "minutes": [160, 170],
+        "route": "道南バスの高速ペガサス号で静内（静内バスターミナル、旧JR静内駅）へ。乗り換えなし"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.hidaka.pref.hokkaido.lg.jp/hk/kks/ainuculture/shinhidaka/single_ainu_shinhidaka_shakushain.html",
+        "title": "日高振興局 シャクシャイン法要祭（駐車場50台、うち大型5台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.rinya.maff.go.jp/hokkaido/hidakananbu/access.html",
+        "title": "日高南部森林管理署 アクセス（札幌駅前〜静内 高速ペガサス号 約2時間40分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "アイヌ料理の試食",
+        "note": "法要祭の昼に試食会がある。2024年の回ではシャクシャイン鍋とイナキビご飯が出された",
+        "sources": [
+          {
+            "url": "https://www.hidaka.pref.hokkaido.lg.jp/hk/kks/ainuculture/shinhidaka/single_ainu_shinhidaka_shakushain.html",
+            "title": "日高振興局 シャクシャイン法要祭（アイヌ料理試食会）",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          },
+          {
+            "url": "https://www.rinya.maff.go.jp/hokkaido/square/kakutidayori/2024/240922.html",
+            "title": "北海道森林管理局 第78回シャクシャイン法要祭開催",
+            "checkedAt": "2026-11-04",
+            "confidence": "single"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "shinhidaka-ainu-bunka-koryu-center",
+      "name": "新ひだか町アイヌ文化交流センター",
+      "kind": "sightseeing",
+      "summary": "法要祭の会場にある、シャクシャイン記念館・アイヌ民俗資料館・生活館をまとめた施設。アイヌの文化と歴史の資料を展示し、体験もできる。祝日の翌日・年末年始・資料整理日も休み",
+      "location": {
+        "lat": 42.3325,
+        "lng": 142.3841
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": ["mon"],
+      "price": "無料",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.shinhidaka-hokkaido.jp/hotnews/detail/00008943.html",
+          "title": "新ひだか町 新ひだか町アイヌ文化交流センター利用案内",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "shinhidaka-town-museum",
+      "name": "新ひだか町博物館",
+      "kind": "sightseeing",
+      "summary": "山手町公園の中にある博物館。御殿山墳墓群の出土品を中心に、歴史・自然・稲田家の資料を展示する。静内バスターミナルから歩いて15分ほど。祝日の翌日と年末年始も休み",
+      "location": {
+        "lat": 42.3433,
+        "lng": 142.3591
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "18:00"
+      },
+      "closedDays": ["mon"],
+      "price": "無料",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://hokkaido-hidaka-kankonavi.com/facility/%e6%96%b0%e3%81%b2%e3%81%a0%e3%81%8b%e7%94%ba%e5%8d%9a%e7%89%a9%e9%a4%a8/",
+          "title": "北海道ひだか観光ナビ 新ひだか町博物館",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "shizunai-yaki-curry-freesia",
+      "name": "焼きカレーDining フリージア",
+      "kind": "food",
+      "summary": "静内の市街にある、焼きカレーが看板の食事処。地元の山や海の食材を使う。町立静内病院の向かい",
+      "location": {
+        "lat": 42.3378,
+        "lng": 142.3743
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "21:00"
+      },
+      "closedDays": ["mon"],
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://hokkaido-hidaka-kankonavi.com/facility/%e7%84%bc%e3%81%8d%e3%82%ab%e3%83%ac%e3%83%bcdining%e3%80%80%e3%83%95%e3%83%aa%e3%83%bc%e3%82%b8%e3%82%a2/",
+          "title": "北海道ひだか観光ナビ 焼きカレーDining フリージア",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.hidaka.pref.hokkaido.lg.jp/hk/kks/ainuculture/shinhidaka/single_ainu_shinhidaka_shakushain.html",
+      "title": "日高振興局 シャクシャイン法要祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.ainu-assn.or.jp/event/details/70.html",
+      "title": "北海道アイヌ協会 第70回シャクシャイン法要祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.rinya.maff.go.jp/hokkaido/square/kakutidayori/2024/240922.html",
+      "title": "北海道森林管理局 第78回シャクシャイン法要祭開催（主催：新ひだかアイヌ協会）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催日と時刻（まだ発表がない。2025年と2026年の開催日はページを開いて確かめられなかった）",
+    "雨のときの扱い",
+    "見学の決まり（撮影、服装、持ち物、儀式の場での振る舞い）",
+    "餅まきとアイヌ料理の試食に、見学者が加われるか",
+    "静内バスターミナルから真歌公園までの行き方と所要時間",
+    "新千歳空港からの所要時間（乗り継ぎを含む公式の数字が見つからない）",
+    "屋台が出るか（2024年の回の報告だけで、主催の案内では確かめられない）",
+    "アイヌ文化交流センターの資料整理日の日付と、法要祭の日の見学の可否"
+  ]
+}
