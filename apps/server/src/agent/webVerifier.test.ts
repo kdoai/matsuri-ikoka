@@ -101,6 +101,7 @@ describe("createWebVerifier", () => {
               { url: "http://example.com/suzunari/2026", title: "開催のお知らせ" },
               { url: "https://example.net/not-read" },
             ],
+            yearStated: true,
             note: "8月16日18時30分から開催",
           }),
           "```",
@@ -111,6 +112,7 @@ describe("createWebVerifier", () => {
     expect(await verify()).toEqual({
       result: "as_planned",
       sources: [{ url: "http://example.com/suzunari/2026", title: "開催のお知らせ" }],
+      yearStated: true,
       note: "8月16日18時30分から開催",
     });
   });
@@ -124,7 +126,7 @@ describe("createWebVerifier", () => {
           tool_input: { url: "http://localhost:8787/api" },
           tool_use_id: "f1",
         });
-        return JSON.stringify({ result: "not_found", sources: [] });
+        return JSON.stringify({ result: "not_found", sources: [], yearStated: false });
       },
     ]);
 
@@ -149,7 +151,7 @@ describe("createWebVerifier", () => {
             }),
           );
         }
-        return JSON.stringify({ result: "not_found", sources: [] });
+        return JSON.stringify({ result: "not_found", sources: [], yearStated: false });
       },
     ]);
 
@@ -175,7 +177,7 @@ describe("createWebVerifier", () => {
         });
         stops.push(await hook("Stop", { stop_hook_active: false }));
         stops.push(await hook("Stop", { stop_hook_active: true }));
-        return JSON.stringify({ result: "not_found", sources: [] });
+        return JSON.stringify({ result: "not_found", sources: [], yearStated: false });
       },
     ]);
 
@@ -195,6 +197,7 @@ describe("createWebVerifier", () => {
         JSON.stringify({
           result: "as_planned",
           sources: [{ url: "https://example.com/suzunari/2026" }],
+          yearStated: true,
         }),
     ]);
 
