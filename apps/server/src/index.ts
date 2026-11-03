@@ -3,6 +3,7 @@ import path from "node:path";
 import { deleteSession, query } from "@anthropic-ai/claude-agent-sdk";
 import { serve } from "@hono/node-server";
 import { getConnInfo } from "@hono/node-server/conninfo";
+import { createAccount, readAccountConfig } from "./account/firebase";
 import { ClaudeAgentRunner } from "./agent/claudeRunner";
 import { agentEnv, createAgentWorkdir } from "./agent/options";
 import { loadPrompts } from "./agent/prompts";
@@ -15,11 +16,19 @@ import { readConfig } from "./config";
 import { festivalDirs, loadFestivals } from "./data/festivalStore";
 import { nowInJapan, todayInJapan } from "./domain/calendar";
 import { ConcurrencyLimiter, clientIp, DailyLimiter } from "./routes/guard";
+import { StoragePersistence } from "./session/persistence";
 import { ItineraryStore, SessionStore } from "./session/sessionStore";
 import { createCandidateChecker } from "./tools/candidateCheck";
 import { createJmaWeather } from "./tools/weather";
 
 const config = readConfig(process.env);
+const account = await createAccount(readAccountConfig(process.env));
+console.info(
+  JSON.stringify({ kind: "account", storage: account.storage.kind, login: account.web.enabled }),
+);
+if (config.production && account.storage.kind === "memory") {
+  console.warn("[storage] 保存先がメモリです。再起動で旅程と共有のしおりが消えます");
+}
 const today = () => todayInJapan();
 
 const dirs = await festivalDirs({
@@ -103,10 +112,16 @@ if (config.mode === "live") {
   runner = new ReplayAgentRunner(samples, itineraries, { speed: config.replaySpeed });
 }
 
+// 旅程の版と相談の途中の状態を、保存の口に残す
+const persistence = new StoragePersistence({ storage: account.storage, itineraries, sessions });
+
 const app = createApp({
   runner,
   sessions,
   itineraries,
+  persistence,
+  verifier: account.verifier,
+  authConfig: account.web,
   festivals: festivals.store,
   limiter: new DailyLimiter(config.dailyChatLimit, today),
   ipLimiter: new DailyLimiter(config.dailyChatLimitPerIp, today),

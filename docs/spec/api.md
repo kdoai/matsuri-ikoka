@@ -9,11 +9,13 @@
 | PATCH    | `/api/preferences`    | `PreferencesRequestSchema`           | SSE。旅程があれば旅程係だけを動かして組み直し、なければこだわりを変えて `done` だけを返す                          |
 | GET      | `/api/festivals`      | —                                    | 祭りのデータの一覧（`FestivalsResponseSchema`、`{ "festivals": [...] }`）。候補が出る前の豆知識に使う              |
 | GET      | `/api/festivals/:id`  | —                                    | 祭りのデータ（`FestivalSchema`）。しおりの作法・地元の味・アクセス、待ち時間の小話に使う                           |
-| GET      | `/api/itinerary/:id`  | —                                    | 旅程（`ItinerarySchema`）                                                                                          |
+| GET      | `/api/itinerary/:id`  | —                                    | 旅程（`ItinerarySchema`）。`:id` は旅程の ID（最後の保存から30日）か共有の ID（`sh-…`、作ってから30日）            |
 | GET      | `/shiori/:id`         | —                                    | 旅のしおり（画面で見る HTML）。公式の情報で開催予定を確かめた旅程だけ（[しおり](shiori.md)）                       |
 | GET      | `/shiori/:id.pdf`     | —                                    | 同じしおりの A4 の PDF。混み合っていたら 503（`upstream_unavailable`）と `Retry-After`                             |
 | GET      | `/shiori/assets/*`    | —                                    | しおりのフォントとスタッフの静止画                                                                                 |
 | GET      | `/healthz`・`/health` | —                                    | 死活監視。`{ "status": "ok" }`。Cloud Run の既定の URL では `/healthz` が外に出ないので、外からは `/health` を使う |
+
+ログインと自分の旅の API（`/api/auth/config`・`/api/trips`・`/api/me/trips`）は [ログインと保存の仕様](account.md#api) にあります。
 
 - 型はどれも `packages/schema`（`api.ts`）にある
 - 合言葉（`ACCESS_PASSCODE`）を設定しているときは、`/api/*` にヘッダー `x-access-passcode` が要る。しおりと死活監視には要らない
@@ -24,15 +26,16 @@
 
 SSE を始める前に断るときと、JSON を返す API が失敗したときは、HTTP の状態コードと `ApiErrorSchema` の本文（`error` イベントの data と同じ `{ code, message, retryable }`）で返します。
 
-| 状態 | `code`                 | いつ                                            |
-| ---- | ---------------------- | ----------------------------------------------- |
-| 400  | `bad_request`          | 本文の形が正しくない                            |
-| 401  | `unauthorized`         | 合言葉が違う                                    |
-| 404  | `bad_request`          | 相談・旅程・祭りが見つからない                  |
-| 409  | `bad_request`          | 同じ相談の前の返事を作っている途中（retryable） |
-| 413  | `bad_request`          | 本文が大きすぎる                                |
-| 429  | `rate_limited`         | 1日の相談の回数の上限（全体、または IP ごと）   |
-| 503  | `upstream_unavailable` | 同時に返事を作れる数を超えた（retryable）       |
+| 状態 | `code`                 | いつ                                                                   |
+| ---- | ---------------------- | ---------------------------------------------------------------------- |
+| 400  | `bad_request`          | 本文の形が正しくない                                                   |
+| 401  | `unauthorized`         | 合言葉が違う。ログインが要る API で、ID トークンがない・確かめられない |
+| 403  | `unauthorized`         | ほかの利用者が残した旅を残そうとした                                   |
+| 404  | `bad_request`          | 相談・旅程・祭りが見つからない                                         |
+| 409  | `bad_request`          | 同じ相談の前の返事を作っている途中（retryable）                        |
+| 413  | `bad_request`          | 本文が大きすぎる                                                       |
+| 429  | `rate_limited`         | 1日の相談の回数の上限（全体、または IP ごと）                          |
+| 503  | `upstream_unavailable` | 同時に返事を作れる数を超えた（retryable）                              |
 
 ### POST /api/chat
 
@@ -42,7 +45,12 @@ SSE を始める前に断るときと、JSON を返す API が失敗したとき
 {
   "sessionId": "…",
   "message": "8月16日に行ける祭りはありますか",
-  "preferences": { "party": "adults", "spot": "auto", "food": "stalls", "move": "train" }
+  "preferences": {
+    "party": "adults",
+    "spot": "auto",
+    "food": "stalls",
+    "move": "train"
+  }
 }
 ```
 

@@ -34,7 +34,7 @@ function setup(engine?: PdfEngine, verified = true) {
     close: async () => {},
   };
   registerShioriRoutes(app, {
-    itineraries,
+    readItinerary: async (id) => itineraries.get(id),
     festivals: createFestivalStore([FestivalSchema.parse(fictionalFestival())]),
     shiori: createShiori({
       engine: fake,

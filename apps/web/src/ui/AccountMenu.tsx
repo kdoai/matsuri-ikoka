@@ -1,0 +1,294 @@
+import type { TripSummary } from "@matsuri-ikoka/schema";
+import { BookOpen, LogIn, Trash2, UserRound } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { AccountUser } from "../account/client";
+import { useAccountClient } from "../account/context";
+import { formatDate } from "../i18n";
+import { useApp } from "../state/react";
+import type { Locale } from "../state/types";
+import { buttonPrimary, buttonQuiet, buttonSecondary } from "./common";
+
+// ログインのボタンと、自分の旅の一覧（docs/spec/account.md）。
+// 相談はログインなしで始められる。旅を残す・あとで開く・消すのは、ログインしてから。
+// ログインを用意していないとき（Firebase の設定のないサーバー）は何も出さない。
+
+const MESSAGES = {
+  ja: {
+    button: "ログインと自分の旅",
+    title: "自分の旅",
+    loginLead: "旅を残して、あとで開くにはログインします。相談はログインしなくても続けられます。",
+    login: "Google でログイン",
+    signedIn: (name: string | null) => (name ? `${name} さんでログイン中` : "ログイン中"),
+    save: "この旅を残す",
+    saved: "残しました",
+    empty: "まだ残した旅はありません。",
+    open: "しおりを開く",
+    delete: "消す",
+    confirmDelete: (title: string) =>
+      `「${title}」を消します。共有したしおりの URL も開けなくなります。`,
+    logout: "ログアウト",
+    deleteAll: "旅とログインの記録をすべて消す",
+    confirmDeleteAll:
+      "残した旅と共有したしおり、このアプリのログインの記録をすべて消して、ログアウトします。元に戻せません。",
+    failed: "うまくいきませんでした。少し待ってから、もう一度お試しください。",
+    keepNote: "残した旅は、消すまで残ります。しおりの共有の URL は30日で開けなくなります。",
+    close: "閉じる",
+    untitled: "名前のない旅",
+  },
+  en: {
+    button: "Sign in and my trips",
+    title: "My trips",
+    loginLead:
+      "Sign in to keep a trip and open it later. You can keep chatting without signing in.",
+    login: "Sign in with Google",
+    signedIn: (name: string | null) => (name ? `Signed in as ${name}` : "Signed in"),
+    save: "Keep this trip",
+    saved: "Kept",
+    empty: "No trips kept yet.",
+    open: "Open guide",
+    delete: "Delete",
+    confirmDelete: (title: string) =>
+      `Delete "${title}"? Shared guide links will stop working too.`,
+    logout: "Sign out",
+    deleteAll: "Delete all trips and my sign-in record",
+    confirmDeleteAll:
+      "This deletes your kept trips, shared guides, and this app's sign-in record, then signs you out. This cannot be undone.",
+    failed: "Something went wrong. Please try again in a moment.",
+    keepNote: "Kept trips stay until you delete them. Shared guide links expire after 30 days.",
+    close: "Close",
+    untitled: "Untitled trip",
+  },
+} satisfies Record<Locale, unknown>;
+
+const roundIcon =
+  "relative grid size-10 shrink-0 place-items-center sm:size-11 rounded-full border-2 border-kinari-50/85 bg-ai-900/70 text-kinari-50 shadow-lg backdrop-blur-sm transition hover:bg-ai-700";
+const card =
+  "rounded-2xl border-2 border-wood-700/50 bg-kinari-50/95 shadow-[0_8px_24px_rgb(0_0_0/0.3)] backdrop-blur-sm";
+
+/** ポップアップを止められないよう、押したときに空の窓を開いておき、あとから行き先を入れる */
+function openLater(): (path: string) => void {
+  const opened = window.open("about:blank", "_blank");
+  if (opened !== null) opened.opener = null;
+  return (path) => {
+    if (opened === null) window.location.assign(path);
+    else opened.location.href = path;
+  };
+}
+
+export function AccountMenu() {
+  const client = useAccountClient();
+  const locale = useApp((state) => state.ui.locale);
+  const sessionId = useApp((state) => state.session.id);
+  const itineraryId = useApp((state) => state.itinerary.current?.id ?? null);
+  const m = MESSAGES[locale];
+  const [enabled, setEnabled] = useState(false);
+  const [user, setUser] = useState<AccountUser | null>(null);
+  const [open, setOpen] = useState(false);
+  const [trips, setTrips] = useState<TripSummary[] | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (client === null) return;
+    let active = true;
+    void client.enabled().then((value) => {
+      if (active) setEnabled(value);
+    });
+    const stop = client.onUser((next) => {
+      if (!active) return;
+      setUser(next);
+      setTrips(null);
+    });
+    return () => {
+      active = false;
+      stop();
+    };
+  }, [client]);
+
+  const run = useCallback(async (task: () => Promise<void>) => {
+    setBusy(true);
+    setError(false);
+    try {
+      await task();
+    } catch {
+      setError(true);
+    } finally {
+      setBusy(false);
+    }
+  }, []);
+
+  const refresh = useCallback(async () => {
+    if (client !== null) setTrips(await client.listTrips());
+  }, [client]);
+
+  // 開いたときに一覧を読む
+  useEffect(() => {
+    if (open && user !== null && trips === null) void run(refresh);
+  }, [open, user, trips, run, refresh]);
+
+  // 外を押すか Esc で閉じる
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (event: PointerEvent) => {
+      if (ref.current !== null && !ref.current.contains(event.target as Node)) setOpen(false);
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("pointerdown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  if (client === null || !enabled) return null;
+  const savedHere = itineraryId !== null && trips?.some((t) => t.itineraryId === itineraryId);
+
+  return (
+    <div ref={ref} className="relative" data-testid="account-menu">
+      <button
+        type="button"
+        className={roundIcon}
+        aria-label={m.button}
+        title={m.button}
+        aria-expanded={open}
+        aria-controls="account-panel"
+        onClick={() => setOpen((value) => !value)}
+      >
+        <UserRound className="size-5" />
+        {user !== null ? (
+          <span className="absolute right-0.5 bottom-0.5 size-3 rounded-full bg-yamabuki-400 ring-2 ring-kinari-50" />
+        ) : null}
+      </button>
+      {open ? (
+        <div
+          id="account-panel"
+          role="dialog"
+          aria-label={m.title}
+          className={`${card} absolute top-full right-0 z-50 mt-2 w-[min(22rem,calc(100vw-1.5rem))] p-4 text-ink`}
+        >
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <p className="font-bold">{m.title}</p>
+            <button
+              type="button"
+              className="rounded-full px-2 py-0.5 text-ink-soft text-sm hover:bg-kinari-200"
+              onClick={() => setOpen(false)}
+            >
+              {m.close}
+            </button>
+          </div>
+
+          {user === null ? (
+            <div className="grid gap-3">
+              <p className="text-sm leading-relaxed">{m.loginLead}</p>
+              <button
+                type="button"
+                className={buttonPrimary}
+                disabled={busy}
+                onClick={() => void run(() => client.signIn())}
+              >
+                <LogIn className="size-4" />
+                {m.login}
+              </button>
+            </div>
+          ) : (
+            <div className="grid gap-3">
+              <p className="text-ink-soft text-sm">{m.signedIn(user.name)}</p>
+              {sessionId !== null && itineraryId !== null ? (
+                <button
+                  type="button"
+                  className={buttonPrimary}
+                  disabled={busy || savedHere}
+                  onClick={() =>
+                    void run(async () => {
+                      await client.saveTrip(sessionId);
+                      await refresh();
+                    })
+                  }
+                >
+                  {savedHere ? m.saved : m.save}
+                </button>
+              ) : null}
+
+              {trips !== null && trips.length === 0 ? <p className="text-sm">{m.empty}</p> : null}
+              {trips !== null && trips.length > 0 ? (
+                <ul className="grid max-h-64 gap-2 overflow-y-auto" aria-label={m.title}>
+                  {trips.map((trip) => (
+                    <li
+                      key={trip.itineraryId}
+                      className="rounded-xl border border-wood-300 bg-white px-3 py-2"
+                    >
+                      <p className="font-bold text-sm">{trip.title || m.untitled}</p>
+                      {trip.date !== null ? (
+                        <p className="text-ink-soft text-xs">{formatDate(trip.date, locale)}</p>
+                      ) : null}
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        <button
+                          type="button"
+                          className={buttonQuiet}
+                          disabled={busy}
+                          onClick={() => {
+                            const go = openLater();
+                            void run(async () => go(await client.shareTrip(trip.itineraryId)));
+                          }}
+                        >
+                          <BookOpen className="size-4" />
+                          {m.open}
+                        </button>
+                        <button
+                          type="button"
+                          className={`${buttonQuiet} text-shu-700`}
+                          disabled={busy}
+                          onClick={() => {
+                            if (!window.confirm(m.confirmDelete(trip.title || m.untitled))) return;
+                            void run(async () => {
+                              await client.deleteTrip(trip.itineraryId);
+                              await refresh();
+                            });
+                          }}
+                        >
+                          <Trash2 className="size-4" />
+                          {m.delete}
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+              <p className="text-ink-soft text-xs leading-relaxed">{m.keepNote}</p>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  className={buttonSecondary}
+                  disabled={busy}
+                  onClick={() => void run(() => client.signOut())}
+                >
+                  {m.logout}
+                </button>
+                <button
+                  type="button"
+                  className={`${buttonQuiet} text-shu-700`}
+                  disabled={busy}
+                  onClick={() => {
+                    if (!window.confirm(m.confirmDeleteAll)) return;
+                    void run(() => client.deleteEverything());
+                  }}
+                >
+                  {m.deleteAll}
+                </button>
+              </div>
+            </div>
+          )}
+          {error ? (
+            <p role="alert" className="mt-2 text-shu-700 text-sm">
+              {m.failed}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+    </div>
+  );
+}

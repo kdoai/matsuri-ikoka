@@ -1,9 +1,9 @@
+import type { Itinerary } from "@matsuri-ikoka/schema";
 import type { Hono } from "hono";
 import { html } from "hono/html";
 import type { HtmlEscapedString } from "hono/utils/html";
 import type { FestivalStore } from "../data/festivalStore";
 import { hasOfficialSource } from "../domain/verification";
-import type { ItineraryStore } from "../session/sessionStore";
 import {
   createShiori,
   type Shiori,
@@ -25,7 +25,8 @@ export const SHIORI_CSP =
 type Html = HtmlEscapedString | Promise<HtmlEscapedString>;
 
 export interface ShioriDeps {
-  itineraries: ItineraryStore;
+  /** 共有の URL の ID（旅程の ID か共有の ID）から旅程を読む。期限を過ぎた・消した旅程は undefined */
+  readItinerary: (id: string) => Promise<Itinerary | undefined>;
   festivals: FestivalStore;
   /** 省略すると、assets/shiori と Chromium を使うものを作る */
   shiori?: Shiori;
@@ -63,7 +64,7 @@ export function registerShioriRoutes(app: Hono, deps: ShioriDeps) {
   app.get("/shiori/:id{[^/]+\\.pdf}", async (c) => {
     c.header("Content-Security-Policy", SHIORI_CSP);
     c.header("Referrer-Policy", "no-referrer");
-    const found = confirmedTrip(deps, c.req.param("id").slice(0, -".pdf".length));
+    const found = await confirmedTrip(deps, c.req.param("id").slice(0, -".pdf".length));
     if (!found.ok) return c.html(found.notice, found.status);
     try {
       const pdf = await shiori.pdf(found.trip, lookup);
@@ -93,7 +94,7 @@ export function registerShioriRoutes(app: Hono, deps: ShioriDeps) {
     c.header("Content-Security-Policy", SHIORI_CSP);
     c.header("Referrer-Policy", "no-referrer");
     const id = c.req.param("id");
-    const found = confirmedTrip(deps, id);
+    const found = await confirmedTrip(deps, id);
     if (!found.ok) return c.html(found.notice, found.status);
     return c.html(
       await shiori.html(found.trip, lookup, { pdfHref: `${encodeURIComponent(id)}.pdf` }),
@@ -104,8 +105,8 @@ export function registerShioriRoutes(app: Hono, deps: ShioriDeps) {
 type Found = { ok: true; trip: ShioriTrip } | { ok: false; notice: Html; status: 404 | 409 };
 
 /** 公式の情報で開催予定を確かめられた旅程だけを、しおりとして出す */
-function confirmedTrip(deps: ShioriDeps, id: string): Found {
-  const itinerary = deps.itineraries.get(id);
+async function confirmedTrip(deps: ShioriDeps, id: string): Promise<Found> {
+  const itinerary = await deps.readItinerary(id);
   if (itinerary === undefined) {
     return {
       ok: false,
