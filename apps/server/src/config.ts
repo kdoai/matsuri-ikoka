@@ -1,5 +1,6 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
+import type { AgentModels } from "./agent/options";
 import type { AgentMode } from "./agent/runner";
 
 // 接客サーバーの設定。値は環境変数から読む（.env.example に名前と説明がある）。
@@ -12,7 +13,8 @@ export interface ServerConfig {
   repoRoot: string;
   /** 祭りのデータを読む場所（MATSURI_FESTIVALS_DIR）。なければ既定の場所 */
   festivalsDir: string | undefined;
-  models: { concierge: string | undefined; staff: string | undefined };
+  /** 役割ごとのモデル。旅程係と再確認は、指定がなければスタッフのモデルを使う */
+  models: AgentModels;
   /** 公開している URL の合言葉。なければ確かめない */
   accessPasscode: string | null;
   /** 1日の相談の回数の上限。なければ上限なし */
@@ -93,7 +95,12 @@ export function readConfig(env: NodeJS.ProcessEnv, cwd: string = process.cwd()):
     production,
     repoRoot,
     festivalsDir: nonEmpty(env.MATSURI_FESTIVALS_DIR),
-    models: { concierge: nonEmpty(env.MODEL_CONCIERGE), staff: nonEmpty(env.MODEL_STAFF) },
+    models: {
+      concierge: nonEmpty(env.MODEL_CONCIERGE),
+      staff: nonEmpty(env.MODEL_STAFF),
+      planner: nonEmpty(env.MODEL_PLANNER) ?? nonEmpty(env.MODEL_STAFF),
+      verifier: nonEmpty(env.MODEL_VERIFIER) ?? nonEmpty(env.MODEL_STAFF),
+    },
     accessPasscode: nonEmpty(env.ACCESS_PASSCODE) ?? null,
     dailyChatLimit: limitOf("DAILY_CHAT_LIMIT", env.DAILY_CHAT_LIMIT),
     dailyChatLimitPerIp: limitOf("DAILY_CHAT_LIMIT_PER_IP", env.DAILY_CHAT_LIMIT_PER_IP),

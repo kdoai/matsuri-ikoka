@@ -1,0 +1,123 @@
+name: デプロイ
+
+# main に入った変更を Cloud Run に出す。
+# イメージをモックで動かして /healthz とサンプルの相談を確かめ、新しい版を通信なしで置いて /health を確かめてから、
+# 通信を切り替える。失敗したら、通信は前の版のまま。
+# サービスの設定（環境変数・シークレット・インスタンスの数）は Cloud Run の側にあり、ここではイメージだけを差し替える。
+# 使う GitHub Actions の変数は docs/spec/operations.md の「デプロイ」にある。
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-cloud-run
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Cloud Run に出す
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      # Workload Identity 連携で、鍵のファイルなしに Google Cloud に入る
+      id-token: write
+    env:
+      PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+      REGION: ${{ vars.GCP_REGION }}
+      SERVICE: ${{ vars.CLOUD_RUN_SERVICE }}
+      REPOSITORY: ${{ vars.ARTIFACT_REGISTRY_REPOSITORY }}
+    steps:
+      - name: 変数がそろっているか確かめる
+        env:
+          WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          DEPLOY_SERVICE_ACCOUNT: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+        run: |
+          missing=()
+          for name in PROJECT_ID REGION SERVICE REPOSITORY WORKLOAD_IDENTITY_PROVIDER DEPLOY_SERVICE_ACCOUNT; do
+            [[ -n "${!name}" ]] || missing+=("$name")
+          done
+          if (( ${#missing[@]} > 0 )); then
+            echo "GitHub Actions の変数が足りません：${missing[*]}" >&2
+            exit 1
+          fi
+          echo "IMAGE=${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/server" >> "$GITHUB_ENV"
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+
+      - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+
+      - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
+
+      - name: Artifact Registry に入る
+        run: gcloud auth configure-docker "${REGION}-docker.pkg.dev" --quiet
+
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - name: イメージを作って置く
+        id: image
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: ${{ env.IMAGE }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: イメージをモックで動かし、/healthz とサンプルの相談を確かめる
+        env:
+          DIGEST: ${{ steps.image.outputs.digest }}
+        run: |
+          docker run -d --name mock --read-only --tmpfs /tmp \
+            -e MATSURI_AGENT_MODE=mock -e MATSURI_REPLAY_SPEED=0 \
+            -p 127.0.0.1:8080:8080 "${IMAGE}@${DIGEST}"
+          if ! ./scripts/check-health.sh http://127.0.0.1:8080/healthz \
+            || ! node scripts/smoke-mock.mjs http://127.0.0.1:8080; then
+            docker logs mock
+            exit 1
+          fi
+          docker rm -f mock
+
+      - name: 新しい版を通信なしで置く
+        env:
+          DIGEST: ${{ steps.image.outputs.digest }}
+        run: |
+          gcloud run deploy "$SERVICE" \
+            --project "$PROJECT_ID" --region "$REGION" \
+            --image "${IMAGE}@${DIGEST}" \
+            --no-traffic --tag candidate --quiet
+
+      # Cloud Run の既定の URL では /healthz が外から届かないので、/health で確かめる
+      - name: 新しい版の /health を確かめる
+        run: |
+          url="$(gcloud run services describe "$SERVICE" \
+            --project "$PROJECT_ID" --region "$REGION" --format=json \
+            | jq -r '.status.traffic[] | select(.tag == "candidate") | .url')"
+          ./scripts/check-health.sh "${url}/health"
+
+      - name: 通信を新しい版に切り替える
+        run: |
+          gcloud run services update-traffic "$SERVICE" \
+            --project "$PROJECT_ID" --region "$REGION" --to-latest --quiet
+
+      - name: 公開の URL の /health を確かめる
+        run: |
+          url="$(gcloud run services describe "$SERVICE" \
+            --project "$PROJECT_ID" --region "$REGION" --format='value(status.url)')"
+          ./scripts/check-health.sh "${url}/health"

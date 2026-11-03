@@ -1,0 +1,21 @@
+# コンテナのビルドに渡すものを絞る（秘密情報と手元のものを入れない）
+**/node_modules
+**/dist
+**/coverage
+**/*.tsbuildinfo
+**/.vite
+.pnpm-store
+.git
+.github
+.claude
+.env*
+CLAUDE.local.md
+.local
+assets/3d
+docs
+scripts
+*.blend
+*.blend1
+*.log
+**/*.test.ts
+**/*.test.tsx

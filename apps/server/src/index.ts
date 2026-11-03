@@ -67,7 +67,7 @@ if (config.mode === "live") {
     weather: createJmaWeather(),
     verifier: createWebVerifier({
       prompt: prompts.verifier,
-      model: config.models.staff,
+      model: config.models.verifier,
       cwd,
       env,
       query,

@@ -16,7 +16,7 @@ import type { WeatherService } from "../tools/weather";
 import { staffBriefing, turnPrompt } from "./briefing";
 import { failureFromResult, toAgentError } from "./failures";
 import { createAgentHooks } from "./hooks";
-import { buildAgentOptions } from "./options";
+import { type AgentModels, buildAgentOptions } from "./options";
 import type { AgentPrompts } from "./prompts";
 import {
   AgentError,
@@ -37,7 +37,7 @@ export interface ClaudeRunnerDeps {
   weather: WeatherService;
   verifier: FestivalVerifier;
   prompts: AgentPrompts;
-  models: { concierge?: string | undefined; staff?: string | undefined };
+  models: AgentModels;
   /** 1回の発言の費用の上限（米ドル） */
   maxBudgetUsd?: number | undefined;
   /** エージェントの作業ディレクトリ（空の一時ディレクトリ） */

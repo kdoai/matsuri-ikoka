@@ -56,12 +56,14 @@ describe("画面のビルドを同じオリジンから配る", () => {
     const api = await app(dist).request("/api/no-such");
     const shiori = await app(dist).request("/shiori/no-such");
     const health = await app(dist).request("/healthz");
+    const healthAlias = await app(dist).request("/health");
 
     expect(api.status).toBe(404);
     expect(await api.text()).not.toContain("<title>画面</title>");
     expect(shiori.status).toBe(404);
     expect(await shiori.text()).toContain("しおりが見つかりません");
     expect(await health.json()).toEqual({ status: "ok" });
+    expect(await healthAlias.json()).toEqual({ status: "ok" });
   });
 
   it("ディレクトリの外は読ませない", async () => {

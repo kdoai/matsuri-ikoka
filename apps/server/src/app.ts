@@ -29,7 +29,8 @@ export function createApp(deps: AppDeps) {
     c.header("X-Content-Type-Options", "nosniff");
   });
 
-  app.get("/healthz", (c) => c.json({ status: "ok" }));
+  // Cloud Run の既定の URL（run.app）では末尾が z のパスが外から届かないので、/health でも返す
+  for (const path of ["/healthz", "/health"]) app.get(path, (c) => c.json({ status: "ok" }));
 
   app.use(
     "/api/*",
