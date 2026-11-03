@@ -1,4 +1,5 @@
 import { DEFAULT_PREFERENCES, STAFF_IDS, type StaffId } from "@matsuri-ikoka/schema";
+import { INITIAL_CONSULT } from "./consult";
 import type { AppData, Locale, StaffState } from "./types";
 
 export const IDLE_STAFF: StaffState = Object.freeze({
@@ -16,10 +17,12 @@ function byStaff<T>(value: T): Record<StaffId, T> {
 
 export interface InitialOptions {
   locale?: Locale;
+  /** はじめての操作の案内を、前に見終えているか */
+  tutorialSeen?: boolean;
 }
 
 /** 相談を始める前の状態。新しい相談を始めるときも、ここから作り直す */
-export function initialData({ locale = "ja" }: InitialOptions = {}): AppData {
+export function initialData({ locale = "ja", tutorialSeen = false }: InitialOptions = {}): AppData {
   return {
     session: {
       id: null,
@@ -35,6 +38,7 @@ export function initialData({ locale = "ja" }: InitialOptions = {}): AppData {
       turnTools: [],
     },
     preferences: { ...DEFAULT_PREFERENCES },
+    consult: { ...INITIAL_CONSULT, answers: {} },
     messages: [],
     staff: byStaff(IDLE_STAFF),
     candidates: [],
@@ -64,6 +68,7 @@ export function initialData({ locale = "ja" }: InitialOptions = {}): AppData {
       celebrating: false,
       draft: "",
       dialogueOpen: false,
+      tutorialSeen,
     },
   };
 }

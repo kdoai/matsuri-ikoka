@@ -39,8 +39,8 @@ export async function enterShop(page: Page, query = "?scene=2d"): Promise<void> 
 }
 
 /**
- * 会話の窓は最初は出ていない。コンシェルジュに話しかけて、会話の窓を出し、入力欄へ移る
- * （3D の店では、入店のカメラが終わってから「話しかける」が出る）
+ * 会話の窓は最初は出ていない。コンシェルジュに話しかけて、会話の窓を出す。焦点は選んで進める相談の
+ * 最初の選択肢へ移る（3D の店では、入店のカメラが終わってから「話しかける」が出る）
  */
 export async function talkToConcierge(
   page: Page,
@@ -48,7 +48,7 @@ export async function talkToConcierge(
 ): Promise<void> {
   await page.getByTestId("greeting-bar").getByRole("button", { name }).click({ timeout: 60_000 });
   await expect(page.getByTestId("dialogue")).toBeVisible();
-  await expect(page.locator("#chat-input")).toBeFocused();
+  await expect(page.getByTestId("consult-choice").first()).toBeFocused();
   await sessionReady(page);
 }
 

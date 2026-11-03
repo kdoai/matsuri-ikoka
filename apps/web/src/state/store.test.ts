@@ -361,3 +361,61 @@ describe("ストア：合言葉", () => {
     expect(store.getState().session.sawDone).toBe(true);
   });
 });
+
+describe("ストア：選んで進める相談", () => {
+  it("選んだ内容を1つの発言にまとめて送り、聞き取りをしまう", async () => {
+    const chat = vi.fn<ChatTransport["chat"]>(async () => {});
+    const transport: ChatTransport = { ...instantReplay(), chat };
+    const store = makeStore(transport, { today: () => "2030-06-05" });
+    const { actions } = store.getState();
+    await actions.enterShop();
+    await flush();
+    expect(store.getState().consult.active).toBe(true);
+
+    actions.pickConsult("party", "family");
+    actions.setConsultText("origin", "みなと中央駅");
+    actions.pickConsult("when", "nextWeekend");
+    actions.setConsultStep("confirm");
+    await actions.submitConsult();
+
+    expect(chat).toHaveBeenCalledTimes(1);
+    const message = chat.mock.calls[0]?.[0].message ?? "";
+    expect(message).toContain("・誰と：家族で");
+    expect(message).toContain("・いつ：来週末（2030-06-15〜2030-06-16）");
+    expect(message).toContain("・出発する駅：みなと中央駅");
+    expect(store.getState().consult.active).toBe(false);
+    expect(store.getState().ui.dialogueOpen).toBe(true);
+
+    // 選び直すと、最初の段階から開き、選んだ内容は残る
+    actions.reopenConsult();
+    expect(store.getState().consult).toMatchObject({ active: true, step: "party" });
+    expect(store.getState().consult.answers.party?.picks).toEqual(["family"]);
+  });
+
+  it("何も選んでいなければ送らない。自分の言葉で送ったら聞き取りをしまう", async () => {
+    const chat = vi.fn<ChatTransport["chat"]>(async () => {});
+    const store = makeStore({ ...instantReplay(), chat });
+    const { actions } = store.getState();
+    await actions.enterShop();
+    await flush();
+    await actions.submitConsult();
+    expect(chat).not.toHaveBeenCalled();
+
+    await actions.send("来週末に、みなと中央駅から日帰りで");
+    expect(chat).toHaveBeenCalledTimes(1);
+    expect(store.getState().consult.active).toBe(false);
+  });
+
+  it("話しかけると、はじめての操作の案内を見終えたことにする。やり直しても戻さない", async () => {
+    const store = makeStore(instantReplay());
+    const { actions } = store.getState();
+    expect(store.getState().ui.tutorialSeen).toBe(false);
+    actions.setDialogue(true);
+    expect(store.getState().ui.tutorialSeen).toBe(true);
+    await actions.restart();
+    expect(store.getState().ui.tutorialSeen).toBe(true);
+    expect(makeStore(instantReplay(), { tutorialSeen: true }).getState().ui.tutorialSeen).toBe(
+      true,
+    );
+  });
+});
