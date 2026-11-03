@@ -81,10 +81,11 @@ async function holdUntil(
   return at;
 }
 
-test("旅人を歩かせ、仕掛けを使い、柵で止まり、話しかけ、カメラを回し、のれんから外へ出る", async ({
+test("旅人を歩かせ、仕掛けを使い、カメラを回し、柵で止まり、カウンターで話しかける", async ({
   page,
 }, info) => {
-  test.setTimeout(180_000);
+  // 描画の遅い環境（GPU のない CI）では歩くのにも時間がかかるので、長めにとる
+  test.setTimeout(300_000);
   await page.goto("/");
   await page.getByRole("button", { name: "入店する" }).click();
   const scene = page.getByTestId("shop-scene");
@@ -140,15 +141,24 @@ test("旅人を歩かせ、仕掛けを使い、柵で止まり、話しかけ�
   await page.keyboard.press("Escape");
   await page.getByTestId("dialogue-close").click();
   await expect(page.getByTestId("dialogue")).toBeHidden();
+  const atCounter = await playerAt(page);
+  const back = await holdUntil(page, "s", (at) => at.z > atCounter.z + 0.2, 10_000);
+  expect(back.z).toBeGreaterThan(atCounter.z);
+});
 
-  // 入口へ戻り、通りへ向かって進むと、のれんをくぐって店の外へ出る
-  await holdUntil(page, "a", (at) => at.x < -2.4, 20_000);
-  await page.keyboard.down("s");
-  await expect(page.getByRole("button", { name: "入店する" })).toBeVisible({ timeout: 20_000 });
-  await page.keyboard.up("s");
-  // また入ると、相談はそのまま続く
+test("入口で通りへ向かって進むと、のれんをくぐって店の外へ出て、また入れる", async ({ page }) => {
+  test.setTimeout(180_000);
+  await page.goto("/");
   await page.getByRole("button", { name: "入店する" }).click();
-  await expect(page.getByTestId("greeting-bar")).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByTestId("greeting-bar")).toBeVisible({ timeout: 90_000 });
+  // 入店して立つ位置は入口のすぐ内側。通り（画面の手前）へ向かって進む
+  await page.keyboard.down("s");
+  await expect(page.getByRole("button", { name: "入店する" })).toBeVisible({ timeout: 60_000 });
+  await page.keyboard.up("s");
+  await expect(page.getByTestId("shop-scene")).toHaveCount(0);
+  // また入ると、相談はそのまま続き、もう一度「話しかけてね」と案内する
+  await page.getByRole("button", { name: "入店する" }).click();
+  await expect(page.getByTestId("greeting-bar")).toBeVisible({ timeout: 90_000 });
 });
 
 test("会話の窓を出したら、窓のどこをクリックしても入力欄に入り、打った文字で旅人は動かない", async ({
