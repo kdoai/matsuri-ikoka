@@ -144,9 +144,9 @@ export default function MapView({
               <li key={point.key} className="flex gap-2">
                 <span
                   aria-hidden="true"
-                  className={`grid size-5 shrink-0 place-items-center rounded-full font-bold text-[11px] text-white ${
-                    point.kind === "venue" ? "bg-shu-600" : "bg-ai-700"
-                  }`}
+                  className={`grid shrink-0 place-items-center rounded-full font-bold text-white ${
+                    textClass === "text-sm" ? "size-5 text-[11px]" : "size-7 text-base"
+                  } ${point.kind === "venue" ? "bg-shu-600" : "bg-ai-700"}`}
                 >
                   {point.order}
                 </span>

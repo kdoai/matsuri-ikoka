@@ -206,7 +206,7 @@ function ItemRow({ item, main }: { item: ItineraryItem; main: boolean }) {
               <ul className="space-y-0.5">
                 {item.sources.map((source) => (
                   <li key={source.url}>
-                    <SourceLink source={source} compact />
+                    <SourceLink source={source} compact size="base" />
                   </li>
                 ))}
               </ul>
@@ -459,7 +459,7 @@ function ConfirmTab() {
           <ul className="space-y-2" data-testid="source-list">
             {sources.map((source) => (
               <li key={source.url} className="rounded-lg bg-white px-3 py-2 ring-1 ring-kinari-300">
-                <SourceLink source={source} />
+                <SourceLink source={source} size="base" />
               </li>
             ))}
           </ul>
