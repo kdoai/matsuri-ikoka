@@ -6,6 +6,7 @@ import {
   seenTexts,
   sendSampleMessage,
   snap,
+  talkToConcierge,
   waitForReply,
 } from "./helpers";
 
@@ -28,12 +29,18 @@ test("店の外観を見せてから入店し、店内のスタッフが持ち�
   });
   await snap(page, info, "40-storefront-3d");
 
+  // 店内を読み込む間も、2D の見取り図は出さず、店の外観のまま待つ
+  await recordTexts(page, ['[data-testid="staff-floor"]']);
   await page.getByRole("button", { name: "入店する" }).click();
+  await expect(page.getByTestId("shop-entering")).toBeVisible();
   const scene = page.locator('[data-testid="shop-scene"]');
   await expect(scene).toHaveAttribute("data-ready", "true", { timeout: 60_000 });
-  // 入店のカメラが cam.main に着くまで待つ
-  await page.waitForTimeout(5_000);
+  // 入店のカメラが終わると、コンシェルジュが「話しかけてね」と案内する。会話の窓はまだ出さない
+  await expect(page.getByTestId("greeting-bubble")).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByTestId("dialogue")).toBeHidden();
+  expect(await seenTexts(page, '[data-testid="staff-floor"]')).toEqual([]);
   await snap(page, info, "41-shop-3d");
+  await talkToConcierge(page);
 
   // 吹き出しは作業の間だけ出るので、出たときに書き留めて、返答のあとで確かめる
   const bubble = 'p[data-bubble="researcher"]';
@@ -74,21 +81,46 @@ async function holdUntil(
   return at;
 }
 
-test("旅人を歩かせ、仕掛けを使い、柵で止まり、カウンターでコンシェルジュに話しかける", async ({
+test("旅人を歩かせ、仕掛けを使い、カメラを回し、柵で止まり、カウンターで話しかける", async ({
   page,
 }, info) => {
-  test.setTimeout(180_000);
+  // 描画の遅い環境（GPU のない CI）では歩くのにも時間がかかるので、長めにとる
+  test.setTimeout(300_000);
   await page.goto("/");
   await page.getByRole("button", { name: "入店する" }).click();
   const scene = page.getByTestId("shop-scene");
   await expect(scene).toHaveAttribute("data-ready", "true", { timeout: 60_000 });
-  // 操作の案内と、近くにあるもの（入口ののれん）が文字で読める。描画の遅い環境でも待てるよう長めに待つ
-  await expect(page.getByTestId("play-guide")).toContainText("WASD", { timeout: 30_000 });
+  // 操作の案内と、近くにあるものが文字で読める。描画の遅い環境でも待てるよう長めに待つ
+  await expect(page.getByTestId("play-guide")).toContainText("WASD", { timeout: 60_000 });
   const prompt = page.getByTestId("play-prompt");
-  await expect(prompt).toContainText("のれん", { timeout: 30_000 });
-  await expect(page.getByTestId("play-status")).toContainText("のれん");
+  await expect(prompt).toBeVisible({ timeout: 30_000 });
+  const label = (await prompt.textContent())?.replace(/^E/, "") ?? "";
+  await expect(page.getByTestId("play-status")).toContainText(label);
   await page.keyboard.press("e");
-  await expect(page.getByTestId("play-notice")).toContainText("のれん");
+  await expect(page.getByTestId("play-notice")).toBeVisible();
+
+  // カメラ：Q で回すと、カメラの位置が変わる。旅人は動かない
+  const camera = async () => (await scene.getAttribute("data-camera")) ?? "";
+  const before = await camera();
+  const startAt = await playerAt(page);
+  await page.keyboard.down("q");
+  await page.waitForTimeout(800);
+  await page.keyboard.up("q");
+  await expect.poll(camera, { timeout: 10_000 }).not.toBe(before);
+  expect(await playerAt(page)).toEqual(startAt);
+  // ドラッグでも回り、タップにはならない（旅人は歩き出さない）
+  const box = await scene.boundingBox();
+  if (box !== null) {
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 3);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width / 2 - 120, box.y + box.height / 3, { steps: 8 });
+    await page.mouse.up();
+  }
+  await page.waitForTimeout(500);
+  expect(await playerAt(page)).toEqual(startAt);
+  // V でいつもの見え方に戻してから歩く（WASD は画面の向きに合わせて進む）
+  await page.keyboard.press("v");
+  await page.waitForTimeout(1_000);
 
   // 奥へ、それから右へ歩いてカウンターの前へ
   const start = await playerAt(page);
@@ -103,12 +135,50 @@ test("旅人を歩かせ、仕掛けを使い、柵で止まり、カウンタ�
 
   await expect(prompt).toContainText("コンシェルジュと話す");
   await page.keyboard.press("e");
-  await expect(page.getByRole("textbox", { name: "相談の発言" })).toBeFocused();
-  // Esc で入力欄を離れると、また歩ける
-  await page.keyboard.press("Escape");
-  const before = await playerAt(page);
-  const after = await holdUntil(page, "s", (at) => at.z > before.z + 0.2, 5_000);
-  expect(after.z).toBeGreaterThan(before.z);
+  await expect(page.getByTestId("dialogue")).toBeVisible();
+  await expect(page.getByTestId("consult-choice").first()).toBeFocused();
+  // 会話の窓をしまうと、また歩ける
+  await page.getByTestId("dialogue-close").click();
+  await expect(page.getByTestId("dialogue")).toBeHidden();
+  const atCounter = await playerAt(page);
+  const back = await holdUntil(page, "s", (at) => at.z > atCounter.z + 0.2, 10_000);
+  expect(back.z).toBeGreaterThan(atCounter.z);
+});
+
+test("入口で通りへ向かって進むと、のれんをくぐって店の外へ出て、また入れる", async ({ page }) => {
+  test.setTimeout(180_000);
+  await page.goto("/");
+  await page.getByRole("button", { name: "入店する" }).click();
+  await expect(page.getByTestId("greeting-bar")).toBeVisible({ timeout: 90_000 });
+  // 入店して立つ位置は入口のすぐ内側。通り（画面の手前）へ向かって進む
+  await page.keyboard.down("s");
+  await expect(page.getByRole("button", { name: "入店する" })).toBeVisible({ timeout: 60_000 });
+  await page.keyboard.up("s");
+  await expect(page.getByTestId("shop-scene")).toHaveCount(0);
+  // また入ると、相談はそのまま続き、もう一度「話しかけてね」と案内する
+  await page.getByRole("button", { name: "入店する" }).click();
+  await expect(page.getByTestId("greeting-bar")).toBeVisible({ timeout: 90_000 });
+});
+
+test("会話の窓を出したら、窓のどこをクリックしても入力欄に入り、打った文字で旅人は動かない", async ({
+  page,
+}) => {
+  test.setTimeout(180_000);
+  await page.goto("/");
+  await page.getByRole("button", { name: "入店する" }).click();
+  // 入店の直後（相談を始める途中でも）に話しかける
+  await talkToConcierge(page);
+  const scene = page.getByTestId("shop-scene");
+  const start = await playerAt(page);
+  // 会話の窓の、入力欄でないところ（話し手の一言のあたり）をクリックしてから打つ
+  await page.getByTestId("dialogue-line").click();
+  const input = page.getByRole("textbox", { name: "相談の発言" });
+  await expect(input).toBeFocused();
+  await page.keyboard.type("wasd sawd");
+  await expect(input).toHaveValue("wasd sawd");
+  await page.waitForTimeout(800);
+  expect(await playerAt(page)).toEqual(start);
+  await expect(scene).toHaveAttribute("data-player", `${start.x.toFixed(2)},${start.z.toFixed(2)}`);
 });
 
 test("WebGL が使えないときは、店の外観も店内も 2D で出す", async ({ page }) => {

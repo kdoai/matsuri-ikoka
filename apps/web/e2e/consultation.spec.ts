@@ -10,8 +10,10 @@ import {
   SAMPLE,
   seenTexts,
   sendSampleMessage,
+  sessionReady,
   snap,
   tabTo,
+  talkToConcierge,
   waitForReply,
 } from "./helpers";
 
@@ -28,6 +30,10 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   await expect(page.getByRole("heading", { name: "MATSURI IKOKA" })).toBeVisible();
   await snap(page, info, "00-storefront");
   await page.getByRole("button", { name: "入店する" }).click();
+  // 会話の窓は最初は出さず、「話しかける」のボタンだけを出す
+  await expect(page.getByTestId("greeting-bar")).toContainText("コンシェルジュに話しかける");
+  await expect(page.getByTestId("dialogue")).toBeHidden();
+  await talkToConcierge(page);
   await expect(page.getByTestId("dialogue")).toContainText("いらっしゃいませ");
 
   // 1. 相談 → 候補
@@ -243,10 +249,13 @@ test("キーボードだけで、入店から相談・候補選び・しおり�
   await page.goto("/?scene=2d");
   await tabTo(page, page.getByRole("button", { name: "入店する" }));
   await page.keyboard.press("Enter");
+  // 会話の窓は、E で話しかけると出る。焦点は選んで進める相談の最初の選択肢へ移る
+  await page.keyboard.press("e");
+  await expect(page.getByTestId("consult-choice").first()).toBeFocused();
   const input = page.getByRole("textbox", { name: "相談の発言" });
-  await expect(input).toBeEnabled();
+  await sessionReady(page);
 
-  // E で会話の窓の入力欄へ移り、打って Enter で送る
+  // 会話の窓が出ているときは、E で自分の言葉で書く欄へ移り、打って Enter で送る
   const say = async (index: number) => {
     await page.keyboard.press("e");
     await expect(input).toBeFocused();
@@ -296,9 +305,49 @@ test("英語に切り替えられる", async ({ page }, info) => {
   await page.getByRole("button", { name: /English/ }).click();
   await expect(page.getByRole("button", { name: "Come in" })).toBeVisible();
   await page.getByRole("button", { name: "Come in" }).click();
+  await expect(page.getByTestId("greeting-bar")).toContainText("Talk to the concierge");
+  await talkToConcierge(page, "Talk to the concierge");
   await expect(page.getByTestId("dialogue")).toContainText("Welcome!");
   await page.getByRole("button", { name: "Plan details" }).click();
   await expect(page.getByRole("tab", { name: "Plan" })).toBeVisible();
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   await snap(page, info, "30-english");
+});
+
+test("文章を書かずに、選択肢を選ぶだけで相談を始められる", async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
+  await enterShop(page);
+  const consult = page.getByTestId("consult");
+  await expect(page.getByTestId("dialogue")).toContainText("誰と行きますか");
+  await consult.getByRole("button", { name: "家族で", exact: true }).click();
+  await expect(consult.getByRole("button", { name: "家族で", exact: true })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await page.getByTestId("consult-next").click();
+  await consult.getByRole("button", { name: "来週末", exact: true }).click();
+  await page.getByTestId("consult-next").click();
+  await consult.getByRole("textbox", { name: "出発する駅" }).fill("みなと中央駅");
+  await page.getByTestId("consult-next").click();
+  await consult.getByRole("button", { name: "日帰り", exact: true }).click();
+  // 「その他」を選ぶと、自由に書く欄が開く
+  await consult.getByRole("button", { name: "食べたいもの", exact: true }).click();
+  await consult.getByRole("button", { name: "その他", exact: true }).click();
+  await consult.getByRole("textbox", { name: "食べたいもの（自由に書く）" }).fill("川魚");
+  await consult.getByRole("button", { name: "確認", exact: true }).click();
+  await expect(page.getByTestId("consult-summary")).toContainText("みなと中央駅");
+  await expect(page.getByTestId("consult-summary")).toContainText("川魚");
+  await snap(page, info, "06-consult-confirm");
+  await page.getByTestId("consult-submit").click();
+
+  // まとめた一文を送ると、聞き取りをしまい、候補が絵葉書のカードで出る
+  await expect(page.getByTestId("candidates")).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByTestId("candidate-card").first()).toContainText("詳細を見る");
+  await waitForReply(page);
+  await page.keyboard.press("Escape");
+  await expect(page.getByTestId("consult")).toHaveCount(0);
+  await expect(page.getByTestId("reply-choices")).toContainText("条件を選び直す");
+  await openLog(page);
+  await expect(page.getByTestId("chat-user").first()).toContainText("・誰と：家族で");
+  await closeLog(page);
 });

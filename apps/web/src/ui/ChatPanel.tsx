@@ -1,6 +1,6 @@
 import { MAX_MESSAGE_LENGTH, type Preferences } from "@matsuri-ikoka/schema";
 import { SendHorizontal } from "lucide-react";
-import { type FormEvent, type KeyboardEvent, useEffect, useMemo, useRef } from "react";
+import { type FormEvent, type KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
 import { formatDate } from "../i18n";
 import { useActions, useApp, useT } from "../state/react";
 import { conditionChips, shioriReady } from "../state/selectors";
@@ -270,7 +270,7 @@ export function focusComposer(): void {
   document.getElementById(COMPOSER_ID)?.focus();
 }
 
-/** 発言の入力欄 */
+/** 発言の入力欄。ふだんは1行の小さな欄で、書いている間（焦点があるか下書きがあるとき）だけ広げる */
 export function Composer() {
   const t = useT();
   const actions = useActions();
@@ -280,6 +280,8 @@ export function Composer() {
   const ready = status === "ready";
   const tooLong = draft.trim().length > MAX_MESSAGE_LENGTH;
   const canSend = ready && !streaming && draft.trim().length > 0 && !tooLong;
+  const [focused, setFocused] = useState(false);
+  const wide = focused || draft.length > 0;
 
   const submit = (event?: FormEvent) => {
     event?.preventDefault();
@@ -300,7 +302,7 @@ export function Composer() {
   };
 
   return (
-    <form onSubmit={submit} className="space-y-1" data-testid="composer">
+    <form onSubmit={submit} className="space-y-1" data-testid="composer" data-ready={ready}>
       <div className="flex items-end gap-2">
         <label className="sr-only" htmlFor={COMPOSER_ID}>
           {t.chat.label}
@@ -311,15 +313,22 @@ export function Composer() {
           value={draft}
           onChange={(event) => actions.setDraft(event.target.value)}
           onKeyDown={onKeyDown}
-          placeholder={t.chat.placeholder}
-          disabled={!ready}
-          className="field-sizing-content max-h-28 min-h-11 min-w-0 flex-1 resize-none rounded-2xl border-2 border-wood-300 bg-white/95 px-4 py-2 text-base text-ink shadow-inner placeholder:text-stone-500 focus:border-ai-500 focus:outline-none disabled:bg-kinari-200"
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          placeholder={wide ? t.chat.placeholder : t.dialogue.freeInput}
+          // 相談を始める途中でも打てるようにする（使えない入力欄は焦点を受けず、打った文字が
+          // 店の中の旅人の操作に渡ってしまう）。送れるのは相談が始まってから
+          className={`field-sizing-content min-w-0 flex-1 resize-none rounded-card border-2 border-line-strong bg-white/95 px-4 text-ink shadow-inner transition-[min-height] placeholder:text-stone-500 focus:border-ai-500 focus:outline-none disabled:bg-kinari-200 ${
+            wide ? "max-h-32 min-h-20 py-2 text-base" : "max-h-10 min-h-10 py-1.5 text-sm"
+          }`}
           aria-invalid={tooLong}
-          aria-describedby={tooLong ? "chat-too-long" : undefined}
+          aria-describedby={
+            tooLong ? "chat-too-long" : status === "opening" ? "chat-starting" : undefined
+          }
         />
         <button
           type="submit"
-          className="inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full border-2 border-wood-700/40 bg-yamabuki-400 px-4 font-bold text-ink shadow-[inset_0_-3px_0_rgb(0_0_0/0.15)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:border-transparent disabled:bg-stone-300 disabled:text-stone-600"
+          className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-full border-2 border-wood-700/40 bg-yamabuki-400 px-4 font-bold text-ink shadow-[inset_0_-3px_0_rgb(0_0_0/0.15)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:border-transparent disabled:bg-stone-300 disabled:text-stone-600"
           disabled={!canSend}
           aria-label={streaming ? t.chat.waiting : t.chat.send}
         >
@@ -338,7 +347,11 @@ export function Composer() {
           {t.chat.tooLong(MAX_MESSAGE_LENGTH)}
         </p>
       ) : null}
-      {status === "opening" ? <p className="text-ink-soft text-sm">{t.chat.starting}</p> : null}
+      {status === "opening" ? (
+        <p id="chat-starting" className="text-ink-soft text-sm">
+          {t.chat.starting}
+        </p>
+      ) : null}
     </form>
   );
 }

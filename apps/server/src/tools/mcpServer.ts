@@ -1,11 +1,17 @@
 import { createSdkMcpServer, tool } from "@anthropic-ai/claude-agent-sdk";
 import { z } from "zod";
-import type { ToolContext } from "./context";
+import { TOOL_TIMEOUT_MS, type ToolContext } from "./context";
 import { MATSURI_TOOLS, type MatsuriTool, ToolError } from "./matsuriTools";
 
 /** プロセス内の MCP サーバーの名前。ツールは mcp__matsuri__<ツール名> で呼ばれる */
 export const MCP_SERVER_NAME = "matsuri";
 export const MCP_TOOL_PREFIX = `mcp__${MCP_SERVER_NAME}__`;
+
+/**
+ * SDK がツールの呼び出しを打ち切る外側の安全網（ミリ秒）。ツールごとの上限は runTool で守り、
+ * 上限で止めたときの短い文がエージェントに届くよう、いちばん長いツールの上限より余裕を持たせる
+ */
+export const MCP_TOOL_CALL_TIMEOUT_MS = Math.max(...Object.values(TOOL_TIMEOUT_MS)) + 15_000;
 
 export type ToolCallResult = {
   content: { type: "text"; text: string }[];
@@ -77,7 +83,6 @@ export function createMatsuriMcpServer(ctx: ToolContext) {
       }),
     ),
     alwaysLoad: true,
-    // ツールごとの上限（最大30秒）は runTool で守る。これはその外側の安全網
-    timeout: 30_000,
+    timeout: MCP_TOOL_CALL_TIMEOUT_MS,
   });
 }

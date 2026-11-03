@@ -11,6 +11,14 @@ import { MESSAGES } from "../i18n";
 import { isSendablePasscode } from "../transport/server";
 import type { ChatTransport, FestivalSource, OnSseMessage } from "../transport/types";
 import { toClientError } from "../transport/types";
+import {
+  type ConsultQuestion,
+  type ConsultStep,
+  composeConsultMessage,
+  pickAnswer,
+  setAnswerText,
+  todayInJapan,
+} from "./consult";
 import { clientError } from "./errors";
 import { applyEvent } from "./events";
 import { initialData } from "./initial";
@@ -62,6 +70,22 @@ export interface AppActions {
   setCandidatesOpen(open: boolean): void;
   openShiori(): void;
   closeShiori(): void;
+  /** 会話の窓を出す・しまう */
+  setDialogue(open: boolean): void;
+  /** 選んで進める聞き取りの段階を移る */
+  setConsultStep(step: ConsultStep): void;
+  /** 聞き取りの選択肢を選ぶ（いくつでも選べる項目では付け外し） */
+  pickConsult(question: ConsultQuestion, pick: string): void;
+  /** 聞き取りの「その他」の自由記述・日付・出発の駅を書く */
+  setConsultText(question: ConsultQuestion, text: string): void;
+  /** 選んだ内容を1つの発言にまとめて送る */
+  submitConsult(): Promise<void>;
+  /** 聞き取りを選び直す */
+  reopenConsult(): void;
+  /** はじめての操作の案内を閉じる */
+  dismissTutorial(): void;
+  /** のれんをくぐって店の外へ出る（相談はそのまま残す） */
+  leaveShop(): void;
   nextTrivia(): void;
   answerQuiz(choice: 0 | 1): void;
   /** 祭りのデータを読み込む（読み込み済みのものは読まない） */
@@ -75,6 +99,10 @@ export interface StoreDeps {
   transport: ChatTransport;
   festivals: FestivalSource;
   locale?: Locale;
+  /** はじめての操作の案内を、前に見終えているか */
+  tutorialSeen?: boolean;
+  /** 日本の今日（YYYY-MM-DD）。「今週末」などの日付の計算に使う */
+  today?: () => string;
   random?: () => number;
   setTimer?: (callback: () => void, ms: number) => unknown;
   clearTimer?: (handle: unknown) => void;
@@ -83,6 +111,7 @@ export interface StoreDeps {
 export function createAppStore(deps: StoreDeps): AppStore {
   const { transport, festivals } = deps;
   const random = deps.random ?? Math.random;
+  const today = deps.today ?? (() => todayInJapan());
   const setTimer = deps.setTimer ?? ((callback, ms) => setTimeout(callback, ms));
   const clearTimer =
     deps.clearTimer ?? ((handle) => clearTimeout(handle as ReturnType<typeof setTimeout>));
@@ -257,6 +286,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
         return;
       }
       const { preferences } = state;
+      if (!state.ui.dialogueOpen) setUi({ dialogueOpen: true });
       await runStream({ kind: "chat", message, preferences, retry }, (onMessage, signal) =>
         transport.chat({ sessionId, message, preferences }, onMessage, signal),
       );
@@ -289,6 +319,10 @@ export function createAppStore(deps: StoreDeps): AppStore {
         const message = text.trim();
         if (message.length === 0 || message.length > MAX_MESSAGE_LENGTH) {
           return;
+        }
+        // 自分の言葉で書いて送ったら、選んで進める聞き取りはしまう（「選び直す」でまた開ける）
+        if (get().consult.active && !get().session.streaming) {
+          update((state) => ({ ...state, consult: { ...state.consult, active: false } }));
         }
         await sendChat(message, false);
       },
@@ -350,7 +384,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
         controller = null;
         clearTimers();
         const { ui } = get();
-        const fresh = initialData({ locale: ui.locale });
+        const fresh = initialData({ locale: ui.locale, tutorialSeen: ui.tutorialSeen });
         update(() => ({ ...fresh, ui: { ...fresh.ui, soundOn: ui.soundOn, view: "shop" } }));
         await startSession();
       },
@@ -380,6 +414,60 @@ export function createAppStore(deps: StoreDeps): AppStore {
       },
       closeShiori() {
         setUi({ view: "shop" });
+      },
+      setDialogue(open) {
+        setUi(open ? { dialogueOpen: true, tutorialSeen: true } : { dialogueOpen: false });
+      },
+      setConsultStep(step) {
+        update((state) => ({ ...state, consult: { ...state.consult, step } }));
+      },
+      pickConsult(question, pick) {
+        update((state) => ({
+          ...state,
+          consult: { ...state.consult, answers: pickAnswer(state.consult.answers, question, pick) },
+        }));
+      },
+      setConsultText(question, text) {
+        update((state) => ({
+          ...state,
+          consult: {
+            ...state.consult,
+            answers: setAnswerText(state.consult.answers, question, text),
+          },
+        }));
+      },
+      async submitConsult() {
+        const state = get();
+        if (state.session.streaming || state.session.status !== "ready") {
+          return;
+        }
+        const message = composeConsultMessage(
+          state.consult.answers,
+          MESSAGES[state.ui.locale].consult.wording,
+          today(),
+        );
+        if (message === null) {
+          return;
+        }
+        update((current) => ({ ...current, consult: { ...current.consult, active: false } }));
+        await sendChat(message, false);
+      },
+      reopenConsult() {
+        update((state) => ({
+          ...state,
+          consult: { ...state.consult, active: true, step: "party" },
+        }));
+      },
+      dismissTutorial() {
+        setUi({ tutorialSeen: true });
+      },
+      leaveShop() {
+        setUi({
+          view: "storefront",
+          dialogueOpen: false,
+          drawerOpen: false,
+          candidatesOpen: false,
+        });
       },
       nextTrivia() {
         update((state) => ({ ...state, trivia: { index: state.trivia.index + 1 } }));
@@ -419,7 +507,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
     };
 
     return {
-      ...initialData({ locale: deps.locale ?? "ja" }),
+      ...initialData({ locale: deps.locale ?? "ja", tutorialSeen: deps.tutorialSeen ?? false }),
       actions,
     };
   });

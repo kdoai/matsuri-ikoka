@@ -74,7 +74,17 @@ jobs:
             --project "$PROJECT_ID" --region "$REGION" \
             --to-revisions "${REVISION}=100" --quiet
 
+      # 合言葉（ACCESS_PASSCODE）をサービスに設定しているときだけ、相談の API が守られていることを求める
+      - name: サービスに合言葉が設定されているかを調べる
+        id: passcode
+        run: |
+          set="$(gcloud run services describe "$SERVICE"             --project "$PROJECT_ID" --region "$REGION" --format=json             | jq -r '[.spec.template.spec.containers[0].env[]?.name] | index("ACCESS_PASSCODE") != null')"
+          echo "set=${set}" >> "$GITHUB_OUTPUT"
+          echo "合言葉：${set}"
+
       - name: 公開の URL を外から確かめる
+        env:
+          ACCESS_PASSCODE_SET: ${{ steps.passcode.outputs.set }}
         run: |
           url="$(gcloud run services describe "$SERVICE" \
             --project "$PROJECT_ID" --region "$REGION" --format='value(status.url)')"

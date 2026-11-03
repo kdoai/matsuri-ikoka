@@ -1,7 +1,8 @@
 import { Canvas, useThree } from "@react-three/fiber";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import type { PerspectiveCamera } from "three";
-import { useSetModels } from "./models";
+import { SHOP_MODELS } from "./modelFiles";
+import { preloadModels, useSetModels } from "./models";
 import {
   applyPose,
   cameraPose,
@@ -17,9 +18,22 @@ import {
 
 function Street({ onReady }: { onReady: () => void }) {
   useRenderer();
-  const { interior, exterior } = useSetModels();
+  const models = useSetModels();
+  // 店内の画面と同じ物体を2つの描画の場に置くと取り合いになり、店内が映らないことがある。
+  // 外観の画面では複製を使う（形とマテリアルは共有する）
+  const { interior, exterior } = useMemo(
+    () => ({
+      interior: { ...models.interior, scene: models.interior.scene.clone(true) },
+      exterior: { ...models.exterior, scene: models.exterior.scene.clone(true) },
+    }),
+    [models],
+  );
   const entry = useEntryRig(exterior);
   const { camera, size, invalidate } = useThree();
+
+  useEffect(() => {
+    preloadModels(SHOP_MODELS);
+  }, []);
 
   useEffect(() => {
     prepareSet(interior.scene);
@@ -43,10 +57,22 @@ function Street({ onReady }: { onReady: () => void }) {
   );
 }
 
-export default function StorefrontScene() {
+export interface StorefrontSceneProps {
+  testId?: string;
+  /** 外観を描けたとき（読み込み中の表示を消す） */
+  onReady?: () => void;
+}
+
+export default function StorefrontScene({
+  testId = "storefront-scene",
+  onReady,
+}: StorefrontSceneProps) {
   const [ready, setReady] = useState(false);
+  useEffect(() => {
+    if (ready) onReady?.();
+  }, [ready, onReady]);
   return (
-    <div className="absolute inset-0" data-testid="storefront-scene" data-ready={ready}>
+    <div className="absolute inset-0" data-testid={testId} data-ready={ready}>
       <Canvas
         aria-hidden="true"
         frameloop="demand"

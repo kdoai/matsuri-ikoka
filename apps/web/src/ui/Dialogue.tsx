@@ -1,32 +1,84 @@
 import type { StaffId } from "@matsuri-ikoka/schema";
-import { MessageCircle } from "lucide-react";
+import {
+  BookOpen,
+  Map as MapIcon,
+  MessageCircle,
+  Pencil,
+  RotateCcw,
+  Sparkles,
+  X,
+} from "lucide-react";
+import { type ReactNode, useState } from "react";
 import { useActions, useApp, useT } from "../state/react";
 import { currentLine, shioriReady } from "../state/selectors";
-import { Composer } from "./ChatPanel";
+import { Composer, focusComposer } from "./ChatPanel";
+import { ConsultPanel } from "./Consult";
+import { openTripPanel } from "./Hud";
 import { Portrait, type Speaker } from "./Portraits";
-import { errorText } from "./text";
+import { errorText, shortLine } from "./text";
 
-// 会話の窓。店の画面の下に重ねて、話し手の顔の絵と名札、いまの一言（流れてくる返答）を大きく出し、
-// その下で返事を書く。これまでのやりとりは、お知らせ（会話の記録）で開く。
+// 会話の窓。話すときだけ画面の下に出す、クリーム色のセリフの枠。
+// 左に大きな表情の絵と名札、右にいまの一言（1〜2文。全文は「つづきを読む」と会話の記録で読める）。
+// その下に、選んで進める相談か、返事の選択肢を並べる。自分の言葉で書く欄は、いちばん下に小さく置き、
+// 書いている間だけ広げる。これまでのやりとりは、お知らせ（会話の記録）で開く。
 
 function NamePlate({ name }: { name: string }) {
   return (
-    <p className="-top-4 absolute left-24 flex items-center gap-1.5 rounded-full bg-ai-800 py-1 pr-4 pl-2.5 font-bold text-kinari-50 text-sm shadow-md ring-2 ring-kinari-50 sm:left-32">
+    <p className="-top-4 absolute left-24 flex items-center gap-1.5 rounded-full border border-kinari-50/70 bg-ai-800 py-1 pr-4 pl-2.5 font-bold text-kinari-50 text-sm shadow-soft sm:left-36">
       <MessageCircle aria-hidden="true" className="size-4 text-yamabuki-400" />
       {name}
     </p>
   );
 }
 
-const actionChip =
-  "inline-flex min-h-9 items-center gap-1 rounded-full border-2 border-ai-700 bg-white px-3.5 font-bold text-ai-800 text-sm shadow-sm transition hover:bg-ai-50 disabled:cursor-not-allowed disabled:opacity-60";
+/** 会話の窓の中で、最初に焦点を置く場所（選択肢、なければ入力欄）へ移る */
+export function focusDialogue(): void {
+  const first = document.querySelector<HTMLElement>(
+    "[data-testid='dialogue'] [data-dialogue-focus]",
+  );
+  if (first !== null) first.focus();
+  else focusComposer();
+}
 
-export function DialogueBox() {
+const replyButton =
+  "inline-flex min-h-11 items-center gap-1.5 rounded-full border-2 border-line-strong bg-white/90 px-4 font-bold text-ink text-sm shadow-soft transition hover:-translate-y-0.5 hover:border-yamabuki-400 disabled:cursor-not-allowed disabled:opacity-60";
+
+function Reply({
+  onClick,
+  icon,
+  primary = false,
+  disabled = false,
+  children,
+}: {
+  onClick: () => void;
+  icon?: ReactNode;
+  primary?: boolean;
+  disabled?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <li>
+      <button
+        type="button"
+        className={`${replyButton} ${primary ? "border-yamabuki-400 bg-yamabuki-400" : ""}`}
+        disabled={disabled}
+        onClick={onClick}
+        data-dialogue-focus=""
+      >
+        {icon}
+        {children}
+      </button>
+    </li>
+  );
+}
+
+/** 返事の選択肢。相談の進み具合から、次にしそうなことを出す。最後はいつも「その他（自由に書く）」 */
+function ReplyChoices({ retry }: { retry: boolean }) {
   const t = useT();
   const actions = useActions();
-  const locale = useApp((state) => state.ui.locale);
-  const line = useApp(currentLine);
   const streaming = useApp((state) => state.session.streaming);
+  const stage = useApp((state) => state.session.stage);
+  const hasItinerary = useApp((state) => state.itinerary.current !== null);
   const ready = useApp(shioriReady);
   const canReopenCandidates = useApp(
     (state) =>
@@ -34,57 +86,183 @@ export function DialogueBox() {
       state.candidates.length > 0 &&
       (state.session.stage === "candidates" || state.itinerary.current === null),
   );
+  const revising = hasItinerary && (stage === "itinerary" || stage === "revising");
+  return (
+    <ul
+      aria-label={t.dialogue.replies.label}
+      className="flex flex-wrap gap-2"
+      data-testid="reply-choices"
+    >
+      {retry ? (
+        <Reply primary disabled={streaming} onClick={() => void actions.retry()}>
+          {t.chat.retry}
+        </Reply>
+      ) : null}
+      {ready ? (
+        <Reply
+          primary
+          icon={<BookOpen aria-hidden="true" className="size-4" />}
+          onClick={() => actions.openShiori()}
+        >
+          {t.itinerary.openShiori}
+        </Reply>
+      ) : null}
+      {canReopenCandidates ? (
+        <Reply
+          primary
+          icon={<Sparkles aria-hidden="true" className="size-4" />}
+          onClick={() => actions.setCandidatesOpen(true)}
+        >
+          {t.candidates.reopen}
+        </Reply>
+      ) : null}
+      {hasItinerary ? (
+        <>
+          <Reply
+            icon={<BookOpen aria-hidden="true" className="size-4" />}
+            onClick={() => openTripPanel(actions, "itinerary")}
+          >
+            {t.dialogue.replies.plan}
+          </Reply>
+          <Reply
+            icon={<MapIcon aria-hidden="true" className="size-4" />}
+            onClick={() => openTripPanel(actions, "map")}
+          >
+            {t.dialogue.replies.map}
+          </Reply>
+        </>
+      ) : null}
+      {revising ? (
+        <>
+          <Reply
+            disabled={streaming}
+            onClick={() => void actions.send(t.dialogue.replies.decideMessage)}
+          >
+            {t.dialogue.replies.decide}
+          </Reply>
+          <Reply
+            disabled={streaming}
+            onClick={() => void actions.send(t.dialogue.replies.slowerMessage)}
+          >
+            {t.dialogue.replies.slower}
+          </Reply>
+        </>
+      ) : null}
+      {stage === "hearing" || stage === "candidates" ? (
+        <Reply
+          disabled={streaming}
+          icon={<RotateCcw aria-hidden="true" className="size-4" />}
+          onClick={() => {
+            actions.reopenConsult();
+            window.requestAnimationFrame(focusDialogue);
+          }}
+        >
+          {t.consult.reopen}
+        </Reply>
+      ) : null}
+      <Reply icon={<Pencil aria-hidden="true" className="size-4" />} onClick={focusComposer}>
+        {t.dialogue.replies.other}
+      </Reply>
+    </ul>
+  );
+}
+
+export function DialogueBox() {
+  const t = useT();
+  const actions = useActions();
+  const locale = useApp((state) => state.ui.locale);
+  const line = useApp(currentLine);
+  const turn = useApp((state) => state.session.turn);
+  const consultStep = useApp((state) => state.consult.step);
+  const consultOpen = useApp(
+    (state) =>
+      state.consult.active &&
+      !state.session.streaming &&
+      // 片付いていないエラーがあれば、先にそれを見せる
+      currentLine(state).kind !== "error",
+  );
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   const speaker: StaffId = line.kind === "work" ? line.staff : "concierge";
   const name = t.staff.names[speaker];
 
   let text: string;
-  switch (line.kind) {
-    case "greeting":
-      text = t.chat.greeting;
-      break;
-    case "waiting":
-      text = t.dialogue.thinking;
-      break;
-    case "work":
-    case "concierge":
-      text = line.text;
-      break;
-    case "error":
-      text = errorText(line.entry, locale, t);
-      break;
+  let rest: string | null = null;
+  if (consultOpen) {
+    text = t.consult.prompts[consultStep];
+  } else {
+    switch (line.kind) {
+      case "greeting":
+        text = t.chat.greeting;
+        break;
+      case "waiting":
+        // 考えている間は、短いひとことを入れ替えて出す
+        text = t.dialogue.thinking2[turn % t.dialogue.thinking2.length] ?? t.dialogue.thinking;
+        break;
+      case "work":
+        text = line.text;
+        break;
+      case "concierge": {
+        const short = shortLine(line.text);
+        text = expanded === line.id ? line.text : short.head;
+        rest = short.rest;
+        break;
+      }
+      case "error":
+        text = errorText(line.entry, locale, t);
+        break;
+    }
   }
-  const typing = line.kind === "waiting" || (line.kind === "concierge" && line.streaming);
-  const retry = line.kind === "error" && line.entry.retryable && !line.entry.resolved;
+  const typing =
+    !consultOpen && (line.kind === "waiting" || (line.kind === "concierge" && line.streaming));
+  const retry =
+    !consultOpen && line.kind === "error" && line.entry.retryable && !line.entry.resolved;
+  const thinking = !consultOpen && (line.kind === "waiting" || line.kind === "work");
 
   return (
     <section
       aria-label={t.chat.title}
-      className="relative rounded-[2rem] border-[3px] border-wood-700/70 bg-gradient-to-b from-[#fffaf0] to-[#f6ead2] px-4 pt-5 pb-3 shadow-[0_12px_32px_rgb(0_0_0/0.4)] sm:px-6"
+      className="washi relative rounded-panel border-2 border-line-strong px-4 pt-5 pb-3 shadow-lift sm:px-6"
       data-testid="dialogue"
+      data-thinking={thinking}
+      // 選択肢や入力欄でないところをクリックしたら、自由に書く欄へ移る（打った文字が旅人の操作に渡らない）
+      onPointerUp={(event) => {
+        const target = event.target as Element;
+        if (target.closest("button, a, input, textarea, select, label, [role='tab']") === null) {
+          focusComposer();
+        }
+      }}
     >
-      {/* 波の模様の飾り */}
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-6 bottom-1.5 h-3 bg-[radial-gradient(circle_at_50%_100%,transparent_5px,rgb(156_105_57/0.18)_6px,transparent_7px)] bg-[length:16px_12px]"
-      />
       <NamePlate name={name} />
+      {/* 会話の窓をしまう（店の中を歩くとき）。コンシェルジュに話しかけると、また出る */}
+      <button
+        type="button"
+        onClick={() => actions.setDialogue(false)}
+        className="-top-3 absolute right-4 grid size-9 place-items-center rounded-full border border-line-strong bg-kinari-50 text-ink shadow-soft transition hover:bg-white"
+        aria-label={t.dialogue.close}
+        data-testid="dialogue-close"
+      >
+        <X aria-hidden="true" className="size-4" />
+      </button>
       <div className="flex gap-3 sm:gap-5">
-        <Portrait speaker={speaker as Speaker} className="-mt-9 size-20 sm:size-28" />
+        <Portrait
+          speaker={speaker as Speaker}
+          className={`-mt-10 size-20 shrink-0 sm:size-32 ${thinking ? "animate-pulse" : ""}`}
+        />
         <div
-          className="min-h-[4.5rem] min-w-0 flex-1"
+          className="min-h-[3.5rem] min-w-0 flex-1"
           aria-live="polite"
           aria-busy={typing}
-          data-testid={line.kind === "error" ? "dialogue-error" : "dialogue-line"}
+          data-testid={line.kind === "error" && !consultOpen ? "dialogue-error" : "dialogue-line"}
         >
-          {line.kind === "waiting" ? (
-            <p className="text-ink-soft text-sm">
+          {line.kind === "waiting" && !consultOpen ? (
+            <p className="line-clamp-1 text-ink-soft text-sm">
               <span className="sr-only">{t.chat.you}：</span>「{line.userText}」
             </p>
           ) : null}
           <p
             className={`whitespace-pre-wrap font-bold text-[1.05rem] leading-relaxed sm:text-xl ${
-              line.kind === "error" ? "text-shu-700" : "text-ink"
+              line.kind === "error" && !consultOpen ? "text-shu-700" : "text-ink"
             }`}
           >
             {text}
@@ -93,50 +271,23 @@ export function DialogueBox() {
                 ●●●
               </span>
             ) : null}
-            {!typing && (line.kind === "concierge" || line.kind === "greeting") ? (
-              <span
-                aria-hidden="true"
-                className="ml-2 inline-block animate-bounce align-middle text-ai-700 text-sm"
-              >
-                ▼
-              </span>
-            ) : null}
           </p>
-          {retry || ready || canReopenCandidates ? (
-            <div className="mt-2 flex flex-wrap gap-2">
-              {retry ? (
-                <button
-                  type="button"
-                  className={actionChip}
-                  disabled={streaming}
-                  onClick={() => void actions.retry()}
-                >
-                  {t.chat.retry}
-                </button>
-              ) : null}
-              {ready ? (
-                <button
-                  type="button"
-                  className={`${actionChip} border-shu-600 bg-shu-600 text-white hover:bg-shu-700`}
-                  onClick={() => actions.openShiori()}
-                >
-                  {t.itinerary.openShiori}
-                </button>
-              ) : null}
-              {canReopenCandidates ? (
-                <button
-                  type="button"
-                  className={actionChip}
-                  onClick={() => actions.setCandidatesOpen(true)}
-                >
-                  {t.candidates.reopen}
-                </button>
-              ) : null}
-            </div>
+          {rest !== null && line.kind === "concierge" ? (
+            <button
+              type="button"
+              className="mt-0.5 font-bold text-ai-700 text-sm underline underline-offset-2"
+              aria-expanded={expanded === line.id}
+              onClick={() => setExpanded(expanded === line.id ? null : line.id)}
+            >
+              {expanded === line.id ? t.dialogue.less : t.dialogue.more}
+            </button>
           ) : null}
         </div>
       </div>
-      <div className="mt-2 border-wood-300/60 border-t border-dashed pt-2">
+      <div className="mt-3">
+        {consultOpen ? <ConsultPanel /> : thinking ? null : <ReplyChoices retry={retry} />}
+      </div>
+      <div className="mt-2 border-line border-t border-dashed pt-2">
         <Composer />
       </div>
     </section>

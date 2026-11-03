@@ -1,38 +1,38 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { otherLocale } from "../i18n";
 import { playStore } from "../state/play";
-import { useActions, useApp, useT } from "../state/react";
+import { useActions, useApp, useAppStore, useT } from "../state/react";
 import { type FrameInsets, NO_INSETS } from "../state/scene";
 import type { PanelTab } from "../state/types";
 import { AccountMenu } from "./AccountMenu";
 import { Backlog } from "./Backlog";
 import { CandidateCards } from "./CandidateCards";
 import { focusComposer } from "./ChatPanel";
-import { DialogueBox } from "./Dialogue";
+import { DialogueBox, focusDialogue } from "./Dialogue";
 import {
   ButtonHints,
   DateBadge,
-  GuideCard,
   type HudPanel,
   IconButtons,
   Logo,
-  MiniMapCard,
   openTripPanel,
-  SectionTabs,
   useHudKeys,
 } from "./Hud";
 import { useMediaQuery } from "./hooks";
 import { ItineraryPanel } from "./ItineraryPanel";
 import { PasscodeDialog } from "./Passcode";
-import { PlayGuide, PlayNoticeToast } from "./Play";
+import { GreetingBar, PlayNoticeToast, PlayStatus, Tutorial } from "./Play";
 import { GameStage } from "./SceneSlot";
 import { StaffActivity } from "./StaffPanel";
+import { saveTutorialSeen } from "./storage";
 import { WaitingCard } from "./Waiting";
 
 // ゲームの画面。いつも店（3D、使えないときは 2D の見取り図）を画面いっぱいに出し、
-// その上に HUD を重ねる：上にロゴ・場面のタブ・丸いボタン、右上に旅の案内と小さな地図、
-// 下に会話の窓、左下に日付、右下にボタンの案内。旅程のパネルは右に開く。
-// 狭い画面では、タブと案内をメニューにまとめ、会話の窓を主にする。
+// 表示を3つの場面に分けて、そのとき要るものだけを重ねる。
+// - 探索：ロゴと日付の小さな札、右上の丸いボタン、右下の小さな操作の案内、下の「話しかける」だけ。
+//   はじめてのときだけ、操作の案内を出す
+// - 会話：画面の下に会話の窓（セリフ・選択肢・自由に書く欄）
+// - 計画：旅のしおり（旅程・地図・出典）を右から開き、祭りの候補は絵葉書のカードで重ねる
 
 export function LanguageButton({ className = "" }: { className?: string }) {
   const t = useT();
@@ -68,7 +68,8 @@ function useFrameInsets(
       const side = panel.current?.getBoundingClientRect();
       const next: FrameInsets = {
         top: topBar === undefined ? 0 : Math.round(topBar.bottom),
-        bottom: box === undefined ? 0 : Math.round(height - box.top),
+        // しまっている会話の窓（大きさ 0）は、重ならないものとして数える
+        bottom: box === undefined || box.height === 0 ? 0 : Math.round(height - box.top),
         right: panelBeside && side !== undefined ? Math.round(width - side.left) : 0,
         left: 0,
       };
@@ -108,11 +109,29 @@ function useUnread(logOpen: boolean): boolean {
   return !logOpen && records > seen;
 }
 
+/** 返答・エラー・合言葉の問いが届いたら、会話の窓をしまっていても出す */
+function useAutoOpenDialogue(): void {
+  const actions = useActions();
+  const count = useApp(
+    (state) =>
+      state.messages.filter(
+        (entry) => entry.kind === "concierge" || entry.kind === "error" || entry.kind === "user",
+      ).length,
+  );
+  const seen = useRef(count);
+  useEffect(() => {
+    if (count > seen.current) actions.setDialogue(true);
+    seen.current = count;
+  }, [count, actions]);
+}
+
 export function Shop() {
   const actions = useActions();
+  const store = useAppStore();
   const panelOpen = useApp((state) => state.ui.drawerOpen);
   const tab = useApp((state) => state.ui.tab);
   const hasItinerary = useApp((state) => state.itinerary.current !== null);
+  const tutorialSeen = useApp((state) => state.ui.tutorialSeen);
   const wide = useMediaQuery("(min-width: 1024px)");
   const [logOpen, setLogOpen] = useState(false);
   const [menu, setMenu] = useState<HudPanel>(null);
@@ -122,6 +141,10 @@ export function Shop() {
   const panelRef = useRef<HTMLDivElement>(null);
   const beside = wide && panelOpen;
   const frame = useFrameInsets(topRef, dialogueRef, panelRef, beside);
+
+  useEffect(() => {
+    if (tutorialSeen) saveTutorialSeen();
+  }, [tutorialSeen]);
 
   // 旅程ができたら、旅程のパネルを開いて見せる
   useEffect(() => {
@@ -147,6 +170,22 @@ export function Shop() {
   }, []);
   const toggleMenu = useCallback(() => setMenu((open) => (open === "menu" ? null : "menu")), []);
 
+  const dialogueOpen = useApp((state) => state.ui.dialogueOpen);
+  /**
+   * コンシェルジュに話しかける：会話の窓を出して、最初の選択肢（なければ入力欄）へ移る。
+   * 会話の窓がもう出ていれば、自分の言葉で書く欄へ移る
+   */
+  const talk = useCallback(() => {
+    if (store.getState().ui.dialogueOpen) {
+      focusComposer();
+      return;
+    }
+    actions.setDialogue(true);
+    // 窓が出てから焦点を移す
+    window.requestAnimationFrame(() => focusDialogue());
+  }, [actions, store]);
+  useAutoOpenDialogue();
+
   const onPad = useCallback(
     (command: "details" | "map" | "menu") => {
       if (command === "menu") toggleMenu();
@@ -160,7 +199,7 @@ export function Shop() {
     talk: () => {
       const play = playStore.getState();
       if (play.active) play.requestInteract();
-      else focusComposer();
+      else talk();
     },
     details: () => togglePanel("itinerary"),
     map: () => togglePanel("map"),
@@ -169,45 +208,34 @@ export function Shop() {
 
   return (
     <div className="relative h-dvh w-full overflow-hidden bg-wood-900 text-ink">
-      <GameStage frame={frame} onTalk={focusComposer} onPad={onPad} />
+      <GameStage frame={frame} onTalk={talk} onPad={onPad} onExit={actions.leaveShop} />
 
       {/* 上の段：ロゴ・場面のタブ・丸いボタン */}
       <div
         ref={topRef}
-        className="no-print pointer-events-none absolute inset-x-0 top-0 z-40 grid grid-cols-[1fr_auto] items-start gap-2 p-2 sm:p-3 lg:grid-cols-[1fr_auto_1fr] [&>*]:pointer-events-auto"
+        className="no-print pointer-events-none absolute inset-x-0 top-0 z-40 grid grid-cols-[1fr_auto] items-start gap-2 p-2 sm:p-3 [&>*]:pointer-events-auto"
       >
-        <div className="flex items-center gap-2 justify-self-start">
+        <div className="flex flex-col items-start gap-1.5 justify-self-start">
           <Logo />
+          {beside ? null : <DateBadge />}
         </div>
-        <SectionTabs className="hidden lg:block" />
         <div className="flex items-center gap-1.5 justify-self-end sm:gap-2">
           <AccountMenu />
           <IconButtons onOpenLog={openLog} unread={unread} menu={menu} onMenu={setMenu} />
         </div>
       </div>
 
-      {/* 左：いま動いているスタッフ */}
+      {/* 左：いま動いているスタッフと、はじめての操作の案内。店の中のようすは読み上げにも伝える */}
       <div
         className="pointer-events-none absolute left-2 z-10 flex w-56 flex-col gap-2 sm:left-3 sm:w-64 [&>*]:pointer-events-auto"
         style={{ top: frame.top + 8 }}
       >
         <StaffActivity />
-        <PlayGuide />
+        {dialogueOpen || panelOpen ? null : <Tutorial />}
+        <PlayStatus hidden />
       </div>
 
-      {/* 右上：旅の案内と小さな地図（広い画面で、旅程のパネルを開いていないとき） */}
-      {wide && !panelOpen ? (
-        <div
-          className="pointer-events-none absolute right-3 z-10 flex w-80 flex-col gap-3 [&>*]:pointer-events-auto"
-          style={{ top: frame.top + 14 }}
-          data-testid="guide-column"
-        >
-          <GuideCard />
-          {hasItinerary ? <MiniMapCard /> : null}
-        </div>
-      ) : null}
-
-      {/* 旅程・地図・出典の紙のパネル（広い画面は右に重ね、狭い画面は上に重ねる） */}
+      {/* 旅のしおり：旅程・地図・出典（広い画面は右に重ね、狭い画面は上に重ねる） */}
       {panelOpen ? (
         <div
           ref={panelRef}
@@ -220,28 +248,26 @@ export function Shop() {
         </div>
       ) : null}
 
-      {/* 左下：旅の日と出発の駅 */}
-      {wide && !beside ? (
-        <div className="absolute bottom-3 left-3 z-10">
-          <DateBadge />
-        </div>
-      ) : null}
-
-      {/* 右下：ボタンの案内（旅程のパネルを開いているときは、パネルの下に横に並べる） */}
+      {/* 右下：小さな操作の案内 */}
       {wide ? (
         <div className="no-print absolute right-3 bottom-3 z-30">
           <ButtonHints
             onDetails={() => togglePanel("itinerary")}
             onMap={() => togglePanel("map")}
             onMenu={toggleMenu}
-            stacked={!beside}
           />
         </div>
       ) : null}
 
-      {/* 会話の窓。待ち時間のカードは、その上に出す */}
+      {/* 会話の窓。探索の間は出さず、話しかけたら出す。待ち時間のカードは、その上に出す */}
+      {dialogueOpen ? null : (
+        <div className="absolute inset-x-2 bottom-3 z-20 sm:bottom-4">
+          <GreetingBar onTalk={talk} />
+        </div>
+      )}
       <div
         ref={dialogueRef}
+        hidden={!dialogueOpen}
         className={`absolute inset-x-2 bottom-2 z-20 sm:inset-x-3 sm:bottom-3 ${
           beside
             ? "lg:right-[calc(min(30rem,38vw)+1.5rem)] lg:left-3"

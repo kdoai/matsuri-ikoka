@@ -26,8 +26,14 @@ export interface ShopSceneProps {
   frame: FrameInsets;
   /** 返答を待っているか（旅人の表情に使う） */
   talking: boolean;
-  /** 旅人がスタッフに話しかけたとき（会話の窓の入力欄へ。窓口はコンシェルジュ） */
+  /** 旅人がコンシェルジュに話しかけたとき（会話の窓の入力欄へ）。ほかのスタッフとは 3D の中でおしゃべりするだけ */
   onTalk?: (staff: StaffId) => void;
+  /** 会話の窓を出しているか（出していない間は、コンシェルジュが「話しかけてね」と案内する） */
+  dialogueOpen: boolean;
+  /** のれんをくぐって店の外へ出たとき */
+  onExit?: () => void;
+  /** 店内を描けたとき（それまでは画面が読み込みの表示を出す） */
+  onReady?: () => void;
   /** ゲームパッドの X・Y・＋（スタート）を押したとき */
   onPad?: (command: "details" | "map" | "menu") => void;
 }
@@ -40,6 +46,7 @@ export function selectSceneProps(
   return {
     frame,
     talking: state.session.streaming,
+    dialogueOpen: state.ui.dialogueOpen,
     staff: state.staff,
     stage: state.session.stage,
     celebrating: state.ui.celebrating,

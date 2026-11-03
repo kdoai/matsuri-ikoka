@@ -15,6 +15,9 @@ beforeAll(async () => {
   await mkdir(path.join(dist, "assets"));
   await writeFile(path.join(dist, "index.html"), "<!doctype html><title>画面</title>");
   await writeFile(path.join(dist, "assets", "app-abc123.js"), "console.log(1)");
+  await writeFile(path.join(dist, "assets", "big-abc123.js"), "console.log(2)");
+  await writeFile(path.join(dist, "assets", "big-abc123.js.br"), "br");
+  await writeFile(path.join(dist, "assets", "big-abc123.js.gz"), "gz");
 });
 
 afterAll(async () => {
@@ -44,6 +47,24 @@ describe("画面のビルドを同じオリジンから配る", () => {
     expect(top.headers.get("content-security-policy")).toContain("frame-ancestors 'none'");
     expect(asset.status).toBe(200);
     expect(asset.headers.get("cache-control")).toContain("immutable");
+  });
+
+  it("圧縮済みのファイルがあれば、ブラウザが受け取れる方を返す", async () => {
+    const br = await app(dist).request("/assets/big-abc123.js", {
+      headers: { "Accept-Encoding": "gzip, deflate, br" },
+    });
+    const gz = await app(dist).request("/assets/big-abc123.js", {
+      headers: { "Accept-Encoding": "gzip" },
+    });
+    const plain = await app(dist).request("/assets/big-abc123.js");
+
+    expect(br.headers.get("content-encoding")).toBe("br");
+    expect(br.headers.get("content-type")).toContain("javascript");
+    expect(br.headers.get("cache-control")).toContain("immutable");
+    expect(br.headers.get("vary")).toContain("Accept-Encoding");
+    expect(gz.headers.get("content-encoding")).toBe("gzip");
+    expect(plain.headers.get("content-encoding")).toBeNull();
+    expect(await plain.text()).toBe("console.log(2)");
   });
 
   it("画面の中の経路には index.html を返す", async () => {

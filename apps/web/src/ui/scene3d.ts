@@ -1,4 +1,10 @@
-import { type ComponentType, lazy, useMemo } from "react";
+import { type ComponentType, lazy, useMemo, useSyncExternalStore } from "react";
+import {
+  type ModelName,
+  modelProgress,
+  modelProgressVersion,
+  subscribeModelProgress,
+} from "../scenes/modelFiles";
 import type { ShopSceneProps } from "../state/scene";
 import { useReducedMotion } from "./hooks";
 
@@ -8,15 +14,26 @@ import { useReducedMotion } from "./hooks";
 const shopModules = import.meta.glob<{ default: ComponentType<ShopSceneProps> }>(
   "../scenes/ShopScene.tsx",
 );
-const storefrontModules = import.meta.glob<{ default: ComponentType }>(
-  "../scenes/StorefrontScene.tsx",
-);
+const storefrontModules = import.meta.glob<{
+  default: ComponentType<{ testId?: string; onReady?: () => void }>;
+}>("../scenes/StorefrontScene.tsx");
 
 const loadShop = shopModules["../scenes/ShopScene.tsx"];
 const loadStorefront = storefrontModules["../scenes/StorefrontScene.tsx"];
 
 export const ShopScene = loadShop === undefined ? null : lazy(loadShop);
 export const StorefrontScene = loadStorefront === undefined ? null : lazy(loadStorefront);
+
+/** 店内の 3D のコードを先に取っておく（店の外観が描けたあと、入店を押す前に） */
+export function preloadShopScene(): void {
+  void loadShop?.().catch(() => undefined);
+}
+
+/** モデルの取り込みの進み具合（0〜1）。取ったバイト数が変わるたびに描き直す */
+export function useModelProgress(names: readonly ModelName[]): number {
+  useSyncExternalStore(subscribeModelProgress, modelProgressVersion, modelProgressVersion);
+  return modelProgress(names);
+}
 
 let webgl: boolean | null = null;
 

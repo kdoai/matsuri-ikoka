@@ -25,7 +25,7 @@ import {
   type Target,
 } from "./controls";
 import { originalName } from "./models";
-import { type FlatPoint, findPath, slideMove } from "./navmesh";
+import { type FlatPoint, findPath, nearestOnNavMesh, slideMove } from "./navmesh";
 import { faceTexture, setFace } from "./Staff";
 import type { ShopWorld } from "./world";
 
@@ -39,6 +39,10 @@ const WALK_CLIP_SPEED = 0.45;
 const FADE_SECONDS = 0.2;
 /** 目的地に着いたとみなす距離（m） */
 const ARRIVE = 0.06;
+/** 入口の縁（のれんの幅の左右 PUSH_OUT_WIDTH・縁から奥へ PUSH_OUT_DEPTH の範囲）で、通りへ向かって押し続けると外へ出る（m・秒） */
+const PUSH_OUT_WIDTH = 0.8;
+const PUSH_OUT_DEPTH = 0.3;
+const PUSH_OUT_SECONDS = 0.35;
 
 export type PadCommand = "details" | "map" | "menu";
 
@@ -63,6 +67,8 @@ export interface PlayerProps {
   onHead(x: number, y: number, z: number): void;
   onTalk(staff: StaffId): void;
   onGimmick(interaction: Interaction): void;
+  /** のれんをくぐって店の外へ出る */
+  onExit(): void;
   onPad?(command: PadCommand): void;
 }
 
@@ -108,6 +114,8 @@ export function Player(props: PlayerProps) {
     keys: new Set<string>(),
     goal: null as { path: FlatPoint[]; then: Target | null; stuck: number } | null,
     seat: null as string | null,
+    /** 座る前に立っていた床の上の位置（立つときにここへ戻る） */
+    seatStand: null as FlatPoint | null,
     once: null as { name: SceneMotion; left: number } | null,
     face: "normal" as Face,
     current: null as AnimationAction | null,
@@ -117,6 +125,8 @@ export function Player(props: PlayerProps) {
     interactSeq: playStore.getState().interactSeq,
     padPressed: new Set<number>(),
     celebrated: false,
+    /** 入口で外へ向かって押している時間（秒） */
+    pushOut: 0,
     blinkIn: 3,
     blinkLeft: 0,
   });
@@ -188,6 +198,11 @@ export function Player(props: PlayerProps) {
     if (state.seat === null) return;
     state.seat = null;
     state.y = 0;
+    // 座面は歩ける床の外にあるので、座る前に立っていた床の上へ戻る
+    const stand = state.seatStand ?? nearestOnNavMesh(world.nav, state.x, state.z);
+    state.x = stand.x;
+    state.z = stand.z;
+    state.seatStand = null;
     playStore.getState().setSitting(false);
   };
 
@@ -205,6 +220,7 @@ export function Player(props: PlayerProps) {
         const seat = world.seats[interaction.seat];
         if (seat === undefined) break;
         state.seat = interaction.seat;
+        state.seatStand = { x: state.x, z: state.z };
         state.x = seat.x;
         state.z = seat.z;
         state.y = seat.y;
@@ -219,6 +235,9 @@ export function Player(props: PlayerProps) {
         doOnce("cheer", "sparkle");
         break;
       }
+      case "exit":
+        callbacks.current.onExit();
+        break;
       case "gimmick":
         callbacks.current.onGimmick(interaction);
         doOnce("reach", "happy");
@@ -289,8 +308,9 @@ export function Player(props: PlayerProps) {
       }
     }
 
-    // 動かす
-    const intent = moveIntent(state.keys, stick);
+    // 動かす。入店のカメラが動いている間は動かさない
+    const entering = store.entering;
+    const intent = entering ? { x: 0, y: 0 } : moveIntent(state.keys, stick);
     const magnitude = Math.hypot(intent.x, intent.y);
     let speed = 0;
     if (magnitude > 0.05) {
@@ -300,12 +320,35 @@ export function Player(props: PlayerProps) {
       camera.getWorldDirection(forward);
       const direction = intentToWorld(intent, { x: forward.x, z: forward.z });
       const step = SPEED * magnitude * dt;
-      const next = slideMove(world.nav, state, direction.x * step, direction.z * step);
-      speed = Math.hypot(next.x - state.x, next.z - state.z) / Math.max(dt, 1e-3);
+      const before = { x: state.x, z: state.z };
+      const next = slideMove(
+        world.walk,
+        state,
+        direction.x * step,
+        direction.z * step,
+        world.onFloor,
+      );
+      const moved = Math.hypot(next.x - state.x, next.z - state.z);
+      speed = moved / Math.max(dt, 1e-3);
       state.x = next.x;
       state.z = next.z;
       state.yaw = turnToward(state.yaw, Math.atan2(direction.x, direction.z), dt * 12);
       store.markMoved();
+      // 入口の縁で、通り（+Z）へ向かって押し続けると、のれんをくぐって外へ出る
+      // のれんの幅のうちで、入口の床の縁（通り側）にいる
+      const atExit =
+        world.exit !== null &&
+        Math.abs(state.x - world.exit.x) < PUSH_OUT_WIDTH &&
+        world.exit.z - state.z < PUSH_OUT_DEPTH;
+      const outward = direction.z / (Math.hypot(direction.x, direction.z) || 1) > 0.5;
+      // 通り（+Z）の向きにはもう進めない（壁沿いに滑るだけ）とき、押していることにする
+      const blocked = next.z - before.z < step * 0.3;
+      state.pushOut = atExit && outward && blocked ? state.pushOut + dt : 0;
+      if (state.pushOut > PUSH_OUT_SECONDS) {
+        state.pushOut = 0;
+        state.keys.clear();
+        callbacks.current.onExit();
+      }
     } else if (state.goal !== null) {
       const point = state.goal.path[0] ?? state;
       const dx = point.x - state.x;
@@ -320,7 +363,13 @@ export function Player(props: PlayerProps) {
         }
       } else {
         const step = Math.min(distance, SPEED * dt);
-        const next = slideMove(world.nav, state, (dx / distance) * step, (dz / distance) * step);
+        const next = slideMove(
+          world.walk,
+          state,
+          (dx / distance) * step,
+          (dz / distance) * step,
+          world.onFloor,
+        );
         const moved = Math.hypot(next.x - state.x, next.z - state.z);
         speed = moved / Math.max(dt, 1e-3);
         state.x = next.x;
@@ -336,13 +385,11 @@ export function Player(props: PlayerProps) {
       }
     }
 
-    // 近くで使えるもの
+    // 近くで使えるもの（座っている間と、入店のカメラの間はなし）
     const near =
-      state.seat === null && speed === 0
+      state.seat === null && !entering
         ? nearestTarget([...staffTargets(), ...world.targets], state)
-        : state.seat === null
-          ? state.near
-          : null;
+        : null;
     if ((near?.id ?? null) !== state.nearId) {
       state.nearId = near?.id ?? null;
       state.near = near;
@@ -352,10 +399,13 @@ export function Player(props: PlayerProps) {
     // 使う（キーボードの E・HUD の「使う」・ゲームパッドの A）
     if (store.interactSeq !== state.interactSeq || padUse) {
       state.interactSeq = store.interactSeq;
-      if (state.seat !== null) standUp();
-      else if (state.near !== null) use(state.near);
-      // 近くに何もなければ、窓口のコンシェルジュに話しかける（会話の窓の入力欄へ）
-      else callbacks.current.onTalk("concierge");
+      // 入店のカメラの間は使わない
+      if (!entering) {
+        if (state.seat !== null) standUp();
+        else if (state.near !== null) use(state.near);
+        // 近くに何もなければ、窓口のコンシェルジュに話しかける（会話の窓の入力欄へ）
+        else callbacks.current.onTalk("concierge");
+      }
     }
 
     // しおりができたら、両手を上げて喜ぶ（1回だけ）

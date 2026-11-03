@@ -5,6 +5,7 @@ import {
   type Weather,
 } from "@matsuri-ikoka/schema";
 import {
+  BookOpen,
   ChevronRight,
   ClipboardCheck,
   type LucideIcon,
@@ -19,6 +20,7 @@ import { useActions, useApp, useT } from "../state/react";
 import { itemChange, shioriReady, usedSources } from "../state/selectors";
 import { PANEL_TABS, type PanelTab, type VerifyState } from "../state/types";
 import { buttonPrimary, Pill, SourceLink } from "./common";
+import { TripSteps } from "./Hud";
 import { itemIcon } from "./icons";
 
 // 右のパネル：旅程・地図・出典のタブ。旅程は日ごとのカード（「1日目」など）に予定のアイコンを矢印でつないで見せ、
@@ -371,10 +373,30 @@ export function ItineraryPanel() {
   return (
     <section
       aria-label={t.itinerary.panelLabel}
-      className="flex h-full min-h-0 flex-col overflow-hidden rounded-[1.6rem] border-[3px] border-wood-700 bg-gradient-to-b from-[#fffaf0] to-[#f6ead2] shadow-[0_14px_36px_rgb(0_0_0/0.45)]"
+      className="washi relative flex h-full min-h-0 flex-col overflow-hidden rounded-panel border border-line-strong shadow-lift"
       data-testid="itinerary-panel"
     >
-      <div className="flex shrink-0 items-center gap-2 bg-wood-700 px-2 pt-2">
+      {/* 冊子の綴じ目（左の朱の帯） */}
+      <span aria-hidden="true" className="absolute inset-y-0 left-0 w-1.5 bg-shu-600/80" />
+      <div className="flex shrink-0 items-start gap-2 px-4 pt-3">
+        <div className="min-w-0 flex-1">
+          <p className="flex items-center gap-1.5 font-bold text-shu-700 text-sm tracking-widest">
+            <BookOpen aria-hidden="true" className="size-4" />
+            {t.hud.bookletTitle}
+          </p>
+          <TripSteps className="mt-1.5" />
+        </div>
+        <button
+          type="button"
+          className="grid size-9 shrink-0 place-items-center rounded-full border border-line-strong bg-white/80 text-ink shadow-soft hover:bg-white"
+          aria-label={t.itinerary.closePanel}
+          title={t.itinerary.closePanel}
+          onClick={() => actions.setDrawer(false)}
+        >
+          <X className="size-5" />
+        </button>
+      </div>
+      <div className="mt-2 flex shrink-0 items-center gap-2 border-line border-b px-3">
         <div
           role="tablist"
           aria-label={t.itinerary.panelLabel}
@@ -397,8 +419,10 @@ export function ItineraryPanel() {
                 aria-controls={`panel-${id}`}
                 tabIndex={selected ? 0 : -1}
                 onClick={() => actions.setTab(id)}
-                className={`flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-t-xl px-3 py-2 font-bold transition ${
-                  selected ? "bg-[#fffaf0] text-ai-800" : "bg-ai-700 text-white hover:bg-ai-600"
+                className={`-mb-px flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-t-xl border border-b-0 px-3 py-1.5 font-bold text-sm transition ${
+                  selected
+                    ? "border-line-strong bg-washi text-ai-800"
+                    : "border-transparent text-ink-soft hover:bg-white/60"
                 }`}
               >
                 <Icon aria-hidden="true" className="size-4" />
@@ -407,15 +431,6 @@ export function ItineraryPanel() {
             );
           })}
         </div>
-        <button
-          type="button"
-          className="mb-2 grid size-9 shrink-0 place-items-center rounded-full bg-kinari-50/90 text-ink shadow hover:bg-white"
-          aria-label={t.itinerary.closePanel}
-          title={t.itinerary.closePanel}
-          onClick={() => actions.setDrawer(false)}
-        >
-          <X className="size-5" />
-        </button>
       </div>
 
       {itinerary === null ? null : (

@@ -14,6 +14,7 @@ import type {
   ToolName,
   VerificationResult,
 } from "@matsuri-ikoka/schema";
+import type { ConsultState } from "./consult";
 
 // 画面の正しい状態の形。3D・会話・しおりは、どれもこの形を読むだけにする。
 
@@ -206,12 +207,18 @@ export interface UiState {
   celebrating: boolean;
   /** 入力欄の下書き */
   draft: string;
+  /** 会話の窓を出しているか。最初は出さず、コンシェルジュに話しかけたら出す */
+  dialogueOpen: boolean;
+  /** はじめての操作の案内を見終えたか。見終えたら、操作の案内は「使い方」から開く */
+  tutorialSeen: boolean;
 }
 
 /** ストアのデータの部分。イベントの変換はこの形からこの形への純粋な関数にする */
 export interface AppData {
   session: SessionState;
   preferences: Preferences;
+  /** 選んで進める聞き取り（誰と・いつ・どこ・泊まり・楽しみ・食・スタイル） */
+  consult: ConsultState;
   messages: ChatEntry[];
   staff: Record<StaffId, StaffState>;
   candidates: FestivalCandidate[];
