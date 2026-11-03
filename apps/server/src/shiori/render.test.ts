@@ -176,6 +176,28 @@ describe("しおりの HTML", () => {
   });
 });
 
+describe("見出しの札の色", () => {
+  const design = chooseDesign(fictionalWeek(), festivals[0], "2026-08-16");
+  const css = shioriStyle(design.palette);
+  const rules = (selector: string) =>
+    [...css.matchAll(/^([^{}\n]+)\{([^}]*)\}/gm)]
+      .filter((m) => m[1]?.trim() === selector)
+      .map((m) => m[2] ?? "");
+
+  it("祭りの日は色の地、そうでない日は白い地にし、ほかのページの札は変えない", async () => {
+    expect(rules(".festival-day .head .kicker").join("")).toMatch(/background:\s*var\(--accent\)/);
+    expect(rules(".calm-day .head .kicker").join("")).toMatch(/background:\s*#fff/);
+    // 範囲のない札の規則は、色の地の1つだけ
+    const plain = rules(".head .kicker");
+    expect(plain).toHaveLength(1);
+    expect(plain[0]).toMatch(/background:\s*var\(--accent\)/);
+
+    const page = await render(fictionalWeek());
+    expect(page).toMatch(/class="sheet day-page festival-day"/);
+    expect(page).toMatch(/class="sheet day-page calm-day"/);
+  });
+});
+
 describe("しおりの動き", () => {
   const design = chooseDesign(fictionalOuting(), festivals[0], "2026-08-16");
   const css = shioriStyle(design.palette);

@@ -165,15 +165,9 @@ b, strong, h1, h2, h3, h4 { font-weight: 900; }
 /* ---- 祭りの日とそうでない日 ---- */
 .festival-day .day-motif { width: 13mm; height: 13mm; color: var(--ink); }
 .festival-day .day-bunting { display: block; width: 100%; height: 11mm; margin: 0 0 2mm; color: var(--ink); }
-.festival-day .kick { display: flex; flex-wrap: wrap; align-items: center; gap: 1mm 2mm; }
-.shop-tag { display: inline-flex; white-space: nowrap; align-items: center; gap: 0.8mm; font-weight: 900; font-size: 9pt; color: var(--noren); letter-spacing: 0.08em; }
-.mark-mini { width: 5.2mm; height: 5.2mm; color: var(--noren); --mark-bg: #fff; }
-.head .kicker { background: var(--accent); }
+.festival-day .head .kicker { background: var(--accent); }
 .festival-day .day-no { color: var(--accent); }
-.calm-day .kick { display: flex; flex-wrap: wrap; align-items: center; gap: 1mm 2mm; }
-.shop-tag { display: inline-flex; white-space: nowrap; align-items: center; gap: 0.8mm; font-weight: 900; font-size: 9pt; color: var(--noren); letter-spacing: 0.08em; }
-.mark-mini { width: 5.2mm; height: 5.2mm; color: var(--noren); --mark-bg: #fff; }
-.head .kicker { background: #fff; color: var(--ink); border: 0.5mm solid var(--ink); }
+.calm-day .head .kicker { background: #fff; color: var(--ink); border: 0.5mm solid var(--ink); }
 .calm-day .day-no { color: var(--ink); }
 .calm-day .timeline::before { border-left-style: dashed; border-left-color: var(--sub); }
 .calm-day .step .dot { border-color: var(--sub); }
