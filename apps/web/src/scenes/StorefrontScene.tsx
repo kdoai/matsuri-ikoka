@@ -1,10 +1,10 @@
-import { Canvas, type ThreeEvent, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Suspense, useEffect, useMemo, useState } from "react";
-import { AnimationMixer, LoopOnce, type Object3D, type PerspectiveCamera } from "three";
+import { AnimationMixer, LoopOnce, type PerspectiveCamera, Raycaster, Vector2 } from "three";
 import type { GLTF } from "three/addons/loaders/GLTFLoader.js";
 import { GIMMICK_CLIPS, gimmickNode } from "./controls";
 import { SHOP_MODELS } from "./modelFiles";
-import { clipNamed, originalName, preloadModels, useSetModels } from "./models";
+import { clipNamed, findNode, preloadModels, useSetModels } from "./models";
 import {
   applyPose,
   cameraPose,
@@ -19,26 +19,27 @@ import {
 // 動かない絵なので、描くのは読み込んだときと画面の大きさが変わったときだけにする。
 // のれんの外で寝ているネコだけは、クリックするとなでられる（なでている間だけ描き続ける）。
 
-/** 当たったものが、のれんの外のネコ（gimmick.cat の下）か */
-function isCat(object: Object3D | null): boolean {
-  for (let node = object; node !== null; node = node.parent) {
-    if (originalName(node) === gimmickNode("cat")) return true;
-  }
-  return false;
-}
-
-/** ネコをなでる動き。終わったら寝ている姿に戻す */
+/** ネコ（gimmick.cat）と、なでる動き。終わったら寝ている姿に戻す。外したときに片付ける */
 function useCatPet(interior: GLTF) {
-  return useMemo(() => {
+  const pet = useMemo(() => {
+    const cat = findNode(interior.scene, gimmickNode("cat"));
     const name = GIMMICK_CLIPS.cat;
     const clip = name === null ? undefined : clipNamed(interior, name);
-    if (clip === undefined) return null;
+    if (cat === undefined || clip === undefined) return null;
     const mixer = new AnimationMixer(interior.scene);
     const action = mixer.clipAction(clip);
     action.setLoop(LoopOnce, 1);
     mixer.addEventListener("finished", () => action.stop());
-    return { mixer, action };
+    return { cat, mixer, action };
   }, [interior]);
+  useEffect(
+    () => () => {
+      pet?.mixer.stopAllAction();
+      pet?.mixer.uncacheRoot(pet.mixer.getRoot());
+    },
+    [pet],
+  );
+  return pet;
 }
 
 function Street({ onReady }: { onReady: () => void }) {
@@ -63,16 +64,44 @@ function Street({ onReady }: { onReady: () => void }) {
     invalidate();
   });
 
-  const onClick = (event: ThreeEvent<MouseEvent>) => {
-    if (pet === null || !isCat(event.object)) return;
-    event.stopPropagation();
-    if (pet.action.isRunning()) return;
-    pet.action.reset().play();
-    invalidate();
-  };
-  const onPointerMove = (event: ThreeEvent<PointerEvent>) => {
-    gl.domElement.style.cursor = isCat(event.object) ? "pointer" : "";
-  };
+  // 当たりを見るのはネコのノードだけ（店の全体には付けない）
+  useEffect(() => {
+    if (pet === null) return;
+    const element = gl.domElement;
+    const raycaster = new Raycaster();
+    const pointer = new Vector2();
+    const hitsCat = (event: MouseEvent) => {
+      const rect = element.getBoundingClientRect();
+      pointer.set(
+        ((event.clientX - rect.left) / rect.width) * 2 - 1,
+        -((event.clientY - rect.top) / rect.height) * 2 + 1,
+      );
+      raycaster.setFromCamera(pointer, camera);
+      return raycaster.intersectObject(pet.cat, true).length > 0;
+    };
+    const onClick = (event: MouseEvent) => {
+      if (!hitsCat(event)) return;
+      event.stopPropagation();
+      if (pet.action.isRunning()) return;
+      pet.action.reset().play();
+      invalidate();
+    };
+    const onMove = (event: PointerEvent) => {
+      element.style.cursor = hitsCat(event) ? "pointer" : "";
+    };
+    const onLeave = () => {
+      element.style.cursor = "";
+    };
+    element.addEventListener("click", onClick);
+    element.addEventListener("pointermove", onMove);
+    element.addEventListener("pointerleave", onLeave);
+    return () => {
+      element.removeEventListener("click", onClick);
+      element.removeEventListener("pointermove", onMove);
+      element.removeEventListener("pointerleave", onLeave);
+      element.style.cursor = "";
+    };
+  }, [pet, gl, camera, invalidate]);
 
   useEffect(() => {
     preloadModels(SHOP_MODELS);
@@ -94,16 +123,7 @@ function Street({ onReady }: { onReady: () => void }) {
   return (
     <>
       <Lights />
-      {/* biome-ignore lint/a11y/noStaticElementInteractions: three.js の物体で、DOM の要素ではない（キャンバスは読み上げない飾り） */}
-      <primitive
-        object={interior.scene}
-        dispose={null}
-        onClick={onClick}
-        onPointerMove={onPointerMove}
-        onPointerOut={() => {
-          gl.domElement.style.cursor = "";
-        }}
-      />
+      <primitive object={interior.scene} dispose={null} />
       <primitive object={exterior.scene} dispose={null} />
     </>
   );
