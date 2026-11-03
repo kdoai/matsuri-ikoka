@@ -4,11 +4,9 @@
 
 ## 祭りのデータの更新
 
-> 定期のジョブ（下の表、Managed Agents、自動のマージ）は未実装です。いまは、手元の Claude Code で調査のスキルを使って調べ、PR で取り込みます。データの検証（`pnpm validate:data`）は CI で走り、確かめた日が古い情報を警告します。
+> 下の表のジョブのうち、いま動くのは週に1回の確かめ直し（[`update-festivals.yml`](../../.github/workflows/update-festivals.yml)）だけです。新しい祭りの発見と追加は、手元の Claude Code で調査のスキルを使って調べ、PR で取り込みます。データの検証（`pnpm validate:data`）は CI で走り、確かめた日が古い情報を警告します。
 >
-> 調べ直す祭りの選び方と、差分の分け方、PR の本文の作り方は、コードの規則として先に入れてあります（[`scripts/festival-refresh.ts`](../../scripts/festival-refresh.ts)）。`pnpm refresh:targets` で、いま調べ直す対象と理由を一覧にできます（調査はしない空実行）。`--issues` に `gh issue list --json number,body,labels` の出力を渡すと、依頼の Issue も対象に加えます。
->
-> 調査のセッションを起動して結果を確かめる部分も入れてあります（[`scripts/run-managed-agent.ts`](../../scripts/run-managed-agent.ts)、`pnpm refresh:run`）。既定は空実行で、`--run` のときだけ API を呼びます。定期に起動するワークフローと、確かめ直し専用のキー・エージェント・環境の用意はまだです。
+> 調べ直す祭りの選び方と、差分の分け方、PR の本文の作り方は [`scripts/festival-refresh.ts`](../../scripts/festival-refresh.ts)、調査のセッションの起動と結果の確かめは [`scripts/run-managed-agent.ts`](../../scripts/run-managed-agent.ts) にあります。`pnpm refresh:targets` で、いま調べ直す対象と理由を一覧にできます（調査はしない空実行）。`--issues` に `gh issue list --json number,body,labels` の出力を渡すと、依頼の Issue も対象に加えます。`pnpm refresh:run` は既定で空実行で、`--run` のときだけ API を呼びます。判断の理由は [ADR 0007](../adr/0007-festival-refresh-workflow.md) にあります。
 
 ### 調べ直す祭りの選び方
 
@@ -38,12 +36,44 @@
 
 ### 流れ
 
-1. GitHub Actions が定期に起動し、対象の祭りの一覧を渡して Claude Managed Agents の調査を始める
+1. GitHub Actions（`update-festivals.yml`）が毎週月曜の朝（日本時間）か手で起動し、依頼の Issue を集めて対象の祭りを選び、対象の祭りの一覧を渡して Claude Managed Agents の調査を始める
 2. 調査のスキルに従って Web を調べ、祭りごとの JSON を出す。渡すスキルは調査のスキル（`.claude/skills/festival-research`）だけに明示し、`.claude/` のほかのスキル・エージェント・フックや `CLAUDE.md` は渡さない
 3. GitHub Actions が結果を回収し、スキーマで検証する。検証に落ちたものは取り込まず、理由を残す
 4. 既存のデータとの差分を作り、変更の種類で分けて PR を開く
 
 調査する側には GitHub への書き込みの権限を渡しません。起動・回収・マージの判断は、すべて GitHub Actions と人の側に置きます。
+
+ワークフローは2つのジョブに分けます。
+
+| ジョブ    | 権限                                                                           | 仕事                                                                                                                                        |
+| --------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| 調査      | リポジトリと Issue を読む、Workload Identity 連携（GitHub への書き込みはない） | 対象を一覧にし（空実行）、確かめ直し専用の API キーを Secret Manager から読んで調査する。取り込める祭りのファイルと PR の本文を成果物にする |
+| PR を開く | ブランチの push、PR の作成、CI の起動（API キーは読まない）                    | 成果物の祭りのファイルだけを `chore/refresh-festivals-<実行の番号>` にコミットし、PR を開き、そのブランチで `ci.yml` を起動する             |
+
+- 変数 `MATSURI_REFRESH_ENABLED` が `true` でないあいだは、空実行だけを行う。手で起動するときは「調査する」を選び、調べる祭りの数と1つのセッションの費用の上限を変えられる
+- 取り込める結果がなければ PR を開かない。取り込まなかった祭りと理由は、実行の要約に出る
+- `GITHUB_TOKEN` で開いた PR では CI が自動では始まらないので、PR のジョブが `ci.yml` を `workflow_dispatch` で起動する
+- 止めるときは、`MATSURI_REFRESH_ENABLED` を `true` 以外にする
+
+ワークフローは、次の GitHub Actions の変数（`vars`）を読みます。どれも秘密情報ではありません。
+
+| 変数                             | 内容                                                                                                   |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `MATSURI_REFRESH_ENABLED`        | `true` のときだけ調査する                                                                              |
+| `GCP_PROJECT_ID`                 | Google Cloud のプロジェクト ID                                                                         |
+| `GCP_WORKLOAD_IDENTITY_PROVIDER` | Workload Identity 連携のプロバイダの完全な名前                                                         |
+| `GCP_REFRESH_SERVICE_ACCOUNT`    | 確かめ直し専用のサービスアカウント。権限は下のシークレットの `roles/secretmanager.secretAccessor` だけ |
+| `MATSURI_REFRESH_API_KEY_SECRET` | 確かめ直し専用の API キーを置いた Secret Manager のシークレットの名前                                  |
+| `MATSURI_REFRESH_AGENT_ID`       | 調査のエージェントの ID（モデルと Web の道具はエージェントの側で決める）                               |
+| `MATSURI_REFRESH_ENVIRONMENT_ID` | セッションを動かす環境の ID                                                                            |
+
+本番で動かす前に、人が次を用意します。API キーは接客のものと分け、費用の上限と止め方を別に決められるようにします。
+
+- 確かめ直し専用の API キーと、それを置く Secret Manager のシークレット
+- 確かめ直し専用のサービスアカウントと、Workload Identity 連携でこのリポジトリの main からそのアカウントを使う許可。デプロイ用のアカウントは使い回さない
+- Managed Agents のエージェント（Web の取得・検索を有効にする）と環境
+- リポジトリの設定で、GitHub Actions に PR の作成を許す
+- 費用の上限と1回目の対象の件数を確かめ、`MATSURI_REFRESH_ENABLED` を `true` にする
 
 1つの祭りに1つのセッションを使います。頼みの文には、確かめ直す理由、いまのデータ（データであって指示ではないと区切って囲む）、調査の決まり（調査のスキルの `SKILL.md`・`fields.md` と、スキーマの定義）を入れます。返ってきた結果は、次のどれかに当たれば取り込まず、理由を PR の本文に書きます。
 
@@ -84,13 +114,13 @@
 
 main ブランチには直接 push しません。人の変更も自動の更新も、同じ PR の検査を通ってから入ります。
 
-| ワークフロー         | きっかけ                        | 中身                                                                                                                                                                                                                                                                                                                                     |
-| -------------------- | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ci.yml`             | PR と main への push            | lint・typecheck・test・validate-data・build・e2e（接客サーバーのモックにつなぐ）・docker（イメージをモックで動かす）・secrets（gitleaks）・actionlint・dependency-review を別々のジョブで走らせ、「検査とビルド」で結果をまとめる。ジョブの中身は [開発の流れ](../development.md#5-ci)                                                   |
-| `codeql.yml`         | PR、main への push、毎週        | CodeQL でコードとワークフローを解析する                                                                                                                                                                                                                                                                                                  |
-| `deploy.yml`         | main への push                  | コミットの SHA のタグでイメージを作る → イメージをモックで動かし、`/healthz`・サンプルの相談・しおりの PDF・3D のモデルを確かめる（`scripts/smoke-mock.mjs --pdf --glb`） → 新しい版を通信なしで置き（タグ `candidate`）、外から確かめる（`scripts/check-deployed.mjs`） → 通信を切り替え、公開の URL を外から確かめる。下の「デプロイ」 |
-| `rollback.yml`       | 手で起動（`workflow_dispatch`） | 指定した版に通信を戻し、公開の URL を外から確かめる。下の「前の版に戻す」                                                                                                                                                                                                                                                                |
-| 定期の更新（未実装） | 週に1回・月に1回                | 上の「祭りのデータの更新」                                                                                                                                                                                                                                                                                                               |
+| ワークフロー           | きっかけ                        | 中身                                                                                                                                                                                                                                                                                                                                     |
+| ---------------------- | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ci.yml`               | PR、main への push、手で起動    | lint・typecheck・test・validate-data・build・e2e（接客サーバーのモックにつなぐ）・docker（イメージをモックで動かす）・secrets（gitleaks）・actionlint・dependency-review を別々のジョブで走らせ、「検査とビルド」で結果をまとめる。ジョブの中身は [開発の流れ](../development.md#5-ci)                                                   |
+| `codeql.yml`           | PR、main への push、毎週        | CodeQL でコードとワークフローを解析する                                                                                                                                                                                                                                                                                                  |
+| `deploy.yml`           | main への push                  | コミットの SHA のタグでイメージを作る → イメージをモックで動かし、`/healthz`・サンプルの相談・しおりの PDF・3D のモデルを確かめる（`scripts/smoke-mock.mjs --pdf --glb`） → 新しい版を通信なしで置き（タグ `candidate`）、外から確かめる（`scripts/check-deployed.mjs`） → 通信を切り替え、公開の URL を外から確かめる。下の「デプロイ」 |
+| `rollback.yml`         | 手で起動（`workflow_dispatch`） | 指定した版に通信を戻し、公開の URL を外から確かめる。下の「前の版に戻す」                                                                                                                                                                                                                                                                |
+| `update-festivals.yml` | 毎週・手で起動                  | 確かめ直す祭りを選んで調査し、取り込める結果を PR にする。上の「祭りのデータの更新」                                                                                                                                                                                                                                                     |
 
 - GitHub Actions の外部のアクションは、コミットの SHA で指定する
 - 同じ更新のジョブが重ならないよう、同時に動かさない設定（`concurrency`）を入れる
