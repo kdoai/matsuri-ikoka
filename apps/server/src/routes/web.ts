@@ -16,29 +16,34 @@ const SERVER_PATHS = /^\/(?:api|shiori)(?:\/|$)|^\/healthz?$/;
  *   （Chrome などは fetch、Safari 16 以前などは img で読む）
  * - img-src https://tile.openstreetmap.org：地図のタイル
  * - font-src data:：3D の文字の描画が埋め込んで読むフォント
+ * - ログイン（Firebase Authentication）を用意しているときだけ：Google のログインの窓を開くスクリプト
+ *   （apis.google.com）、ID トークンの発行（identitytoolkit・securetoken）、ログインの受け渡しの枠（authDomain）
  * インラインのスクリプト・スタイルと eval は許さない
  */
-const PAGE_CSP = [
-  "default-src 'self'",
-  "script-src 'self' 'wasm-unsafe-eval'",
-  "style-src 'self'",
-  "img-src 'self' data: blob: https://tile.openstreetmap.org",
-  "connect-src 'self' blob:",
-  "font-src 'self' data:",
-  "object-src 'none'",
-  "base-uri 'self'",
-  "form-action 'self'",
-  "frame-ancestors 'none'",
-].join("; ");
-
-/** 画面のページに付ける見出し */
-const PAGE_HEADERS = {
-  "Content-Security-Policy": PAGE_CSP,
-  "Referrer-Policy": "strict-origin-when-cross-origin",
-};
+export function pageCsp(authDomain: string | null): string {
+  const login = authDomain !== null && /^[a-z0-9.-]+$/i.test(authDomain);
+  return [
+    "default-src 'self'",
+    `script-src 'self' 'wasm-unsafe-eval'${login ? " https://apis.google.com" : ""}`,
+    "style-src 'self'",
+    "img-src 'self' data: blob: https://tile.openstreetmap.org",
+    `connect-src 'self' blob:${login ? " https://identitytoolkit.googleapis.com https://securetoken.googleapis.com" : ""}`,
+    "font-src 'self' data:",
+    ...(login ? [`frame-src https://${authDomain}`] : []),
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+  ].join("; ");
+}
 
 /** ファイル名に中身のハッシュが入っている assets は長く置き、ページは毎回確かめさせる */
-function withHeaders(files: MiddlewareHandler): MiddlewareHandler {
+function withHeaders(files: MiddlewareHandler, authDomain: string | null): MiddlewareHandler {
+  /** 画面のページに付ける見出し */
+  const pageHeaders = {
+    "Content-Security-Policy": pageCsp(authDomain),
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+  };
   return async (c, next) => {
     if (SERVER_PATHS.test(c.req.path)) return next();
     const res = await files(c, next);
@@ -49,14 +54,18 @@ function withHeaders(files: MiddlewareHandler): MiddlewareHandler {
       immutable ? "public, max-age=31536000, immutable" : "no-cache",
     );
     if (res.headers.get("Content-Type")?.startsWith("text/html")) {
-      for (const [name, value] of Object.entries(PAGE_HEADERS)) res.headers.set(name, value);
+      for (const [name, value] of Object.entries(pageHeaders)) res.headers.set(name, value);
     }
     return res;
   };
 }
 
-export function registerWebRoutes(app: Hono, deps: { webDist: string }) {
-  app.use("*", withHeaders(serveStatic({ root: deps.webDist })));
+export function registerWebRoutes(
+  app: Hono,
+  deps: { webDist: string; authDomain?: string | null },
+) {
+  const authDomain = deps.authDomain ?? null;
+  app.use("*", withHeaders(serveStatic({ root: deps.webDist }), authDomain));
   // 画面の中の経路（例：/trip/…）は index.html を返す
-  app.get("*", withHeaders(serveStatic({ root: deps.webDist, path: "index.html" })));
+  app.get("*", withHeaders(serveStatic({ root: deps.webDist, path: "index.html" }), authDomain));
 }

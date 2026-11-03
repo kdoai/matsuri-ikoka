@@ -88,8 +88,14 @@ export function toolStartBubble(
         ? `${formatMonthDay(date)}の天気を確かめています`
         : "当日の天気を確かめています";
     }
-    case "update_itinerary":
+    case "update_itinerary": {
+      const day = field(field(input, "addDay"), "day");
+      const dayDate = field(day, "date");
+      if (typeof dayDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(dayDate)) {
+        return `${formatMonthDay(dayDate)}の予定を書き込んでいます`;
+      }
       return state.hasItinerary ? "旅程を書き直しています" : "旅程を書き込んでいます";
+    }
     case "verify_festival":
       return "開催予定を公式情報で確かめています";
   }

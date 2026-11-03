@@ -1,7 +1,13 @@
 import type { Itinerary } from "@matsuri-ikoka/schema";
 import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
-import { buildItinerary, diffDays, type ItineraryDraft } from "./itinerary";
+import {
+  buildItinerary,
+  diffDays,
+  draftFromItinerary,
+  type ItineraryDraft,
+  mergeDay,
+} from "./itinerary";
 import { lookup, testFestival } from "./testFestivals";
 
 const festival = testFestival({ id: "suzunari-toro" });
@@ -268,5 +274,56 @@ describe("buildItinerary", () => {
     if (!second.ok) return;
     expect(second.unchanged).toBe(false);
     expect(second.itinerary.version).toBe(2);
+  });
+});
+
+describe("mergeDay（1日ずつ書く）", () => {
+  const base = () => draftFromItinerary(fictionalItinerary());
+  const day = (date: string, stay: { area: string } | null) => ({
+    date,
+    stay,
+    items: [{ ...itemsOf(base())[1]!, id: `${date}-hall` }],
+  });
+
+  it("保存した旅程は、下書きの形に戻せる", () => {
+    expect(base()).toEqual(draftOf(fictionalItinerary()));
+  });
+
+  it("後ろに足すときは、それまでの最後の日の夜に泊まる地域を付ける", () => {
+    const merged = mergeDay(base(), day("2026-08-17", null), { area: "鈴鳴の町" });
+    expect(merged.ok).toBe(true);
+    if (!merged.ok) return;
+    expect(merged.draft.days.map((d) => [d.date, d.stay?.area ?? null])).toEqual([
+      ["2026-08-16", "鈴鳴の町"],
+      ["2026-08-17", null],
+    ]);
+    expect(mergeDay(base(), day("2026-08-17", null)).ok).toBe(false);
+  });
+
+  it("前に足す日は、その夜に泊まる地域を持つ", () => {
+    expect(mergeDay(base(), day("2026-08-15", { area: "鈴鳴の町" })).ok).toBe(true);
+    expect(mergeDay(base(), day("2026-08-15", null)).ok).toBe(false);
+  });
+
+  it("同じ日付の日は置き換え、続かない日付と7日を超える旅は断る", () => {
+    const replaced = mergeDay(base(), day("2026-08-16", null));
+    expect(replaced.ok && replaced.draft.days[0]?.items[0]?.id).toBe("2026-08-16-hall");
+    expect(mergeDay(base(), day("2026-08-19", null), { area: "鈴鳴の町" }).ok).toBe(false);
+
+    let draft = base();
+    for (const date of [
+      "2026-08-17",
+      "2026-08-18",
+      "2026-08-19",
+      "2026-08-20",
+      "2026-08-21",
+      "2026-08-22",
+    ]) {
+      const merged = mergeDay(draft, day(date, null), { area: "鈴鳴の町" });
+      if (!merged.ok) throw new Error(merged.message);
+      draft = merged.draft;
+    }
+    expect(draft.days).toHaveLength(7);
+    expect(mergeDay(draft, day("2026-08-23", null), { area: "鈴鳴の町" }).ok).toBe(false);
   });
 });

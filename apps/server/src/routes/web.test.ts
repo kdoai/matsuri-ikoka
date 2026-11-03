@@ -6,6 +6,7 @@ import { createApp } from "../app";
 import { createFestivalStore } from "../data/festivalStore";
 import { ItineraryStore, SessionStore } from "../session/sessionStore";
 import { DailyLimiter } from "./guard";
+import { pageCsp } from "./web";
 
 let dist: string;
 
@@ -70,6 +71,17 @@ describe("画面のビルドを同じオリジンから配る", () => {
     const res = await app(dist).request("/../package.json");
 
     expect(await res.text()).not.toContain('"name"');
+  });
+
+  it("ログインを用意しているときだけ、Google のログインに要る先を CSP で許す", () => {
+    expect(pageCsp(null)).not.toContain("googleapis");
+    expect(pageCsp(null)).not.toContain("frame-src");
+    const csp = pageCsp("demo-project.firebaseapp.com");
+    expect(csp).toContain("frame-src https://demo-project.firebaseapp.com");
+    expect(csp).toContain("https://identitytoolkit.googleapis.com");
+    expect(csp).toContain("script-src 'self' 'wasm-unsafe-eval' https://apis.google.com");
+    // 見出しに別の指示を入れられる値は使わない
+    expect(pageCsp("evil.example.com; script-src *")).not.toContain("evil");
   });
 
   it("画面のビルドを指定しなければ配らない", async () => {

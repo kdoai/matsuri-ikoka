@@ -244,7 +244,7 @@ describe("時間の上限と失敗", () => {
     return { ...setup({ runner, sessions, ...extra }), session };
   };
 
-  it("時間の上限を超えたら、途中までの結果のあとに timeout と done を送る", async () => {
+  it("進みのない時間が上限を超えたら、途中までの結果のあとに timeout と done を送る", async () => {
     const slow: AgentRunner = {
       mode: "live",
       async runTurn({ signal }, emit) {
@@ -254,13 +254,39 @@ describe("時間の上限と失敗", () => {
         );
       },
     };
-    const { post, session } = sessionWith(slow, { turnTimeoutMs: 30 });
+    const { post, session } = sessionWith(slow, { turnIdleMs: 30 });
 
     const { events } = await readSse(await post("/api/chat", chat(session.id)));
 
     expect(events.map((e) => e.type)).toEqual(["message.delta", "error", "done"]);
     expect(events[1]).toMatchObject({ data: { code: "timeout", retryable: true } });
     expect(session.busy).toBe(false);
+  });
+
+  it("進みがあるうちは止めず、全体の上限を超えたら止める", async () => {
+    let ticks = 0;
+    const busy: AgentRunner = {
+      mode: "live",
+      async runTurn({ signal, progress }) {
+        // 進みのない時間の上限（40ミリ秒）より長く動くが、10ミリ秒ごとに進みを知らせる
+        while (!signal.aborted && ticks < 12) {
+          await new Promise((resolve) => setTimeout(resolve, 10));
+          ticks += 1;
+          progress?.();
+        }
+        if (signal.aborted) throw signal.reason;
+      },
+    };
+    const kept = sessionWith(busy, { turnIdleMs: 40 });
+    const first = await readSse(await kept.post("/api/chat", chat(kept.session.id)));
+    expect(first.events.map((e) => e.type)).toEqual(["done"]);
+    expect(ticks).toBe(12);
+
+    ticks = -1000;
+    const capped = sessionWith(busy, { turnIdleMs: 40, turnMaxMs: 60 });
+    const second = await readSse(await capped.post("/api/chat", chat(capped.session.id)));
+    expect(second.events.map((e) => e.type)).toEqual(["error", "done"]);
+    expect(second.events[0]).toMatchObject({ data: { code: "timeout" } });
   });
 
   it("15秒ごとの空のコメント行で、接続を保つ", async () => {
@@ -435,7 +461,7 @@ describe("旅程としおり", () => {
   });
 
   it("公式の出典のない「予定どおり」の旅程は、しおりにしない", async () => {
-    const itineraries = new ItineraryStore();
+    const { app, itineraries } = setup();
     const itinerary = fictionalItinerary();
     itinerary.verification = {
       status: "as_planned",
@@ -443,13 +469,12 @@ describe("旅程としおり", () => {
       sources: [{ url: "https://example.net/blog", checkedAt: "2026-08-03", confidence: "single" }],
     };
     itineraries.save(itinerary);
-    const { app } = setup({ itineraries });
 
     expect((await app.request(`/shiori/${itinerary.id}`)).status).toBe(409);
   });
 
   it("しおりは文字列をエスケープして埋め込む", async () => {
-    const itineraries = new ItineraryStore();
+    const { app, itineraries } = setup({ festivals: createFestivalStore([]) });
     const itinerary = fictionalItinerary();
     itinerary.title = "<script>alert(1)</script>";
     itinerary.verification = {
@@ -464,7 +489,6 @@ describe("旅程としおり", () => {
       ],
     };
     itineraries.save(itinerary);
-    const { app } = setup({ itineraries, festivals: createFestivalStore([]) });
 
     const page = await (await app.request(`/shiori/${itinerary.id}`)).text();
 

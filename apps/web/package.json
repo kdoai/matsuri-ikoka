@@ -16,6 +16,7 @@
     "@matsuri-ikoka/schema": "workspace:*",
     "@microsoft/fetch-event-source": "2.0.1",
     "@react-three/fiber": "9.8.2",
+    "firebase": "13.1.0",
     "leaflet": "1.9.4",
     "lucide-react": "1.56.0",
     "react": "19.3.1",

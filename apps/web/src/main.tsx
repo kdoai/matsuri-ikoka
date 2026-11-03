@@ -3,6 +3,8 @@ import "./zod-setup";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App";
+import { createAccountClient } from "./account/client";
+import { AccountProvider } from "./account/context";
 import { detectLocale } from "./i18n";
 import { StoreProvider } from "./state/react";
 import { createAppStore } from "./state/store";
@@ -20,13 +22,14 @@ import "./index.css";
 // MATSURI_AGENT_MODE=mock で動かし、?sample=<id> で再生する記録を選ぶ。
 const sample = new URLSearchParams(window.location.search).get("sample");
 
-// 合言葉は、相談の通信と祭りのデータの読み込みで共有する（メモリにだけ持つ）
+// 合言葉は、相談の通信・祭りのデータの読み込み・ログインと自分の旅で共有する（メモリにだけ持つ）
 const passcode = createPasscodeHolder();
 const store = createAppStore({
   transport: createServerTransport({ passcode, sample }),
   festivals: createServerFestivalSource({ passcode }),
   locale: detectLocale(navigator.languages),
 });
+const account = createAccountClient({ passcode });
 
 const root = document.getElementById("root");
 if (!root) {
@@ -36,7 +39,9 @@ if (!root) {
 createRoot(root).render(
   <StrictMode>
     <StoreProvider store={store}>
-      <App />
+      <AccountProvider client={account}>
+        <App />
+      </AccountProvider>
     </StoreProvider>
   </StrictMode>,
 );

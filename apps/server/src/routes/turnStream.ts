@@ -8,10 +8,14 @@ import type { ErrorBody } from "./errors";
 // 1つの発言への返答を、1本の SSE で返す。
 // - 各イベントは送る前にスキーマで検証する（encodeSseEvent）
 // - 15秒ごとに空のコメント行を送り、途中で接続が切られないようにする
-// - 時間の上限（相談1回90秒）を超えたら止め、途中までの結果のあとに timeout を送る
+// - 進みのない時間（イベントもエージェントの動きもない時間）が上限を超えたら止め、途中までの結果のあとに timeout を送る。
+//   動き続けている相談は止めないが、全体の上限は別に持つ
 // - 最後に必ず done を1回送って閉じる
 
-export const TURN_TIMEOUT_MS = 90_000;
+/** 進みのない時間の上限 */
+export const TURN_IDLE_MS = 90_000;
+/** 相談1回の全体の上限。進みがあっても、これを超えたら止める */
+export const TURN_MAX_MS = 360_000;
 export const HEARTBEAT_MS = 15_000;
 
 export class TurnTimeoutError extends Error {}
@@ -52,16 +56,22 @@ export function doneEvent(session: Session): SseEvent {
 export function streamTurn(
   c: Context,
   session: Session,
-  run: (signal: AbortSignal, emit: EmitEvent) => Promise<void>,
-  options: { timeoutMs?: number; heartbeatMs?: number } = {},
+  run: (signal: AbortSignal, emit: EmitEvent, progress: () => void) => Promise<void>,
+  options: { idleMs?: number; maxMs?: number; heartbeatMs?: number } = {},
 ): Response {
   session.busy = true;
   return streamSSE(c, async (stream) => {
     const controller = new AbortController();
-    const timer = setTimeout(
-      () => controller.abort(new TurnTimeoutError()),
-      options.timeoutMs ?? TURN_TIMEOUT_MS,
-    );
+    const timeout = () => controller.abort(new TurnTimeoutError());
+    const idleMs = options.idleMs ?? TURN_IDLE_MS;
+    let idle = setTimeout(timeout, idleMs);
+    const overall = setTimeout(timeout, options.maxMs ?? TURN_MAX_MS);
+    /** 進みがあった。進みのない時間を数え直す */
+    const progress = () => {
+      if (controller.signal.aborted) return;
+      clearTimeout(idle);
+      idle = setTimeout(timeout, idleMs);
+    };
     stream.onAbort(() => controller.abort(new ClientClosedError()));
     let writes = Promise.resolve();
     const write = (task: () => Promise<unknown>) => {
@@ -83,16 +93,18 @@ export function streamTurn(
         console.error(`[sse] invalid ${event.type} event`, error);
         return;
       }
+      progress();
       write(() => stream.writeSSE(message));
     };
 
     try {
-      await run(controller.signal, emit);
+      await run(controller.signal, emit, progress);
     } catch (error) {
       const body = toErrorBody(error, controller.signal);
       if (body !== null) emit({ type: "error", data: body });
     } finally {
-      clearTimeout(timer);
+      clearTimeout(idle);
+      clearTimeout(overall);
       clearInterval(heartbeat);
       emit(doneEvent(session));
       await writes;

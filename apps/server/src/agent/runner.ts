@@ -16,6 +16,8 @@ export interface TurnInput {
   preferences: Preferences;
   /** 時間の上限や接続の切断で止めるための signal */
   signal: AbortSignal;
+  /** 進みがあったことを知らせる（イベントを出さない作業の途中。進みのない時間の上限を数え直す） */
+  progress?: () => void;
 }
 
 export type EmitEvent = (event: SseEvent) => void;

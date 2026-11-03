@@ -4,6 +4,7 @@ import { playStore } from "../state/play";
 import { useActions, useApp, useT } from "../state/react";
 import { type FrameInsets, NO_INSETS } from "../state/scene";
 import type { PanelTab } from "../state/types";
+import { AccountMenu } from "./AccountMenu";
 import { Backlog } from "./Backlog";
 import { CandidateCards } from "./CandidateCards";
 import { focusComposer } from "./ChatPanel";
@@ -179,7 +180,8 @@ export function Shop() {
           <Logo />
         </div>
         <SectionTabs className="hidden lg:block" />
-        <div className="justify-self-end">
+        <div className="flex items-center gap-1.5 justify-self-end sm:gap-2">
+          <AccountMenu />
           <IconButtons onOpenLog={openLog} unread={unread} menu={menu} onMenu={setMenu} />
         </div>
       </div>

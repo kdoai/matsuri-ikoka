@@ -34,3 +34,9 @@ __pycache__/
 .vscode/
 .DS_Store
 Thumbs.db
+
+# Firebase のエミュレーターの記録と、手元のプロジェクトの指定
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
+.firebaserc

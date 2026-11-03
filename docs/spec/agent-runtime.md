@@ -56,23 +56,33 @@ systemPrompt: [
 
 ## ツール（プロセス内の MCP サーバー）
 
-6つのツールは `tool()` と `createSdkMcpServer()` で定義し、入力の形は `packages/schema` の Zod から組み立てます。ハンドラーは、どれも共通の包みに通します。
+7つのツールは `tool()` と `createSdkMcpServer()` で定義し、入力の形は `packages/schema` の Zod から組み立てます。ハンドラーは、どれも共通の包みに通します。
 
-1. **時間の上限で打ち切る。** 1回10秒、`verify_festival` は20秒（[API の仕様](api.md#時間の上限)）
+1. **時間の上限で打ち切る。** `note_conditions` は5秒、`search_nearby`・`get_access`・`get_weather`・`update_itinerary` は10秒、`search_festivals` は候補の確かめを含めて45秒、`verify_festival` は30秒（[API の仕様](api.md#時間の上限)）
 2. **例外を投げない。** 失敗は `{ content: [{ type: "text", text: 理由 }], isError: true }` で返す。Claude は理由を読んで、代わりの案を出す
 3. **結果はデータとして返す。** JSON の文字列にし、指示の文章を混ぜない
 4. **サーバーの値を使う。** 今日の日付やセッションは、モデルの入力を信じず、サーバーが持つ値を使う。モデルに書かせた ID で、別の相談のデータを読ませない
 
 ## フック
 
-フックは SSE のイベントを出す場所であり、安全のための関所でもあります。
+フックは SSE のイベントを出す場所であり、安全のための関所でもあります。接客のエージェントと、開催を確かめる1回きりの `query()` とで、別のフックを渡します。
 
-| 契機            | すること                                                                                                          |
-| --------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `SubagentStart` | `staff.start` を出す                                                                                              |
-| `PreToolUse`    | `tool.start` を出す（吹き出しは決まった型から作る）。`WebFetch` なら `checkPublicWebUrl` を通し、通らなければ断る |
-| `PostToolUse`   | `tool.end`・`itinerary.updated` を出す。`WebSearch`・`WebFetch` は `createWebActivityLog` に控える                |
-| `Stop`          | 再確認で、検索だけして本文を読んでいなければ、1回だけ続けさせる                                                   |
+接客のエージェント（`apps/server/src/agent/hooks.ts`）：
+
+| 契機                 | すること                                                                                                                                              |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SubagentStart`      | `staff.start` を出し、スタッフに相談の要点を渡す                                                                                                      |
+| `PreToolUse`         | `tool.start` を出す（吹き出しは決まった型から作る）。スタッフとツールの組み合わせ、スタッフを呼ぶ回数、`verify_festival` の回数を確かめ、外れたら断る |
+| `PostToolUse`        | `tool.end` を出し、続けて `itinerary.updated`・`festival.verified` を出す                                                                             |
+| `PostToolUseFailure` | 失敗した `tool.end` を出す                                                                                                                            |
+
+開催を確かめる `query()`（`apps/server/src/agent/webVerifier.ts`。確定前の再確認と、候補を出す前の確かめ）：
+
+| 契機                     | すること                                                                         |
+| ------------------------ | -------------------------------------------------------------------------------- |
+| `PreToolUse`（WebFetch） | `checkPublicWebUrl` と、名前を解決した先のアドレスの確認を通し、通らなければ断る |
+| `PostToolUse`            | `WebSearch`・`WebFetch` を `createWebActivityLog` に控える                       |
+| `Stop`                   | 検索だけして本文を読んでいなければ、1回だけ続けさせる                            |
 
 - 断るときは `{ hookSpecificOutput: { hookEventName: "PreToolUse", permissionDecision: "deny", permissionDecisionReason: 理由 } }` を返す。続けさせるときは `{ decision: "block", reason: 理由 }` を返す。形は SDK の型（`HookJSONOutput`）に合わせ、テストで確かめる
 - 続けさせる回数には上限を置く。`stop_hook_active` は一度続けさせたあと立ちっぱなしになるので、上限の代わりにならない
@@ -84,14 +94,25 @@ systemPrompt: [
 「公式情報で確認しました」と言うには、その出典のページを実際に読んでいる必要があります（情報の壁）。
 
 1. ツールの中で、Web の検索と取得だけを許した1回きりの `query()` を動かす（`tools: ["WebSearch", "WebFetch"]`、MCP サーバーなし、記録を残さない）。読んだページの中の指示には従わないよう、プロンプトに書く
-2. 結果は JSON で返させ、`parseJsonWithSchema` で取り出す。取り出せなければ、`buildJsonRetryPrompt` で1回だけ差し戻す（差し戻しではツールを使わせない）。時間の上限（20秒）は、差し戻しも含めた全体の予算として扱う
+2. 結果は JSON で返させ、`parseJsonWithSchema` で取り出す。取り出せなければ、`buildJsonRetryPrompt` で1回だけ差し戻す（差し戻しではツールを使わせない）。時間の上限（30秒）は、差し戻しも含めた全体の予算として扱う
 3. 返ってきた出典が、実際に読んだページかを `ungroundedSources` で確かめる。読んでいない出典は捨てる
 4. 公式の出典が残らなければ、「予定どおり」にせず「確認できず」（`not_found`）にする
+
+## 候補を出す前の確かめ
+
+祭りの候補を利用者に見せる前に、候補の開催日・時刻・状態（予定どおり・変更・中止）を、公式の情報で確かめます。データの更新のあとに発表された変更や中止を、提案の時点で拾うためです（情報の壁）。
+
+1. `search_festivals` の中で、候補の祭りと日付ごとに、確定前の再確認と同じ1回きりの `query()` を動かす。結果は確定前の再確認と同じ手順（`parseJsonWithSchema`・`ungroundedSources`・`decideVerification`）で決め直す
+2. 候補の3件は並べて動かす。1件の時間の上限は30秒で、超えたら「確認できず」にする
+3. 結果は祭りと日付ごとに6時間とっておき、ほかの相談でも使う。失敗や時間切れの結果はとっておかない
+4. 1つの相談で新しく確かめるのは9件まで。費用は1件ごとに `AGENT_MAX_BUDGET_USD` を上限にする。モデルは `MODEL_STAFF`（確定前の再確認より件数が多いため）
+5. 終わったものから `festival.verified`（`scope: "candidate"`、確かめた日 `date` つき）で画面に送る。候補には `check`（結果と確かめた時刻）を付け、公式の情報で確かめられたら確認済み、変更・中止なら未確認にする
+6. 状態が「見込み」の祭りは、確かめた結果（確認済み・確認できず）を添えて出す。中止と分かった祭りはすすめない
 
 ## 失敗と再試行
 
 - 例外は `classifyFailure`、結果のメッセージは subtype を `classifyResultSubtype` で分ける
-- `retryable` のものだけ、`backoffMs` の間隔で試し直す。相談1回の時間の上限（90秒）は、試し直しも含めた全体の予算として扱い、残り時間がなければ打ち切る
+- `retryable` のものだけ、`backoffMs` の間隔で試し直す。試し直すのは、まだ画面にイベントを1つも送っていないときの1回だけ。相談1回は、進みのない時間（イベントも Agent SDK の知らせもない時間）が90秒を超えたら打ち切る。動き続けている相談は止めないが、試し直しも含めた全体の上限（6分）は別に持つ。待ち時間は画面の豆知識で埋めるので、遅くなっても止めないことを優先する
 - 試し直すときは、謝ったり振り返ったりさせず、止まったところから続けさせる
 - 直らなければ、`error` イベント（分類で決まった `code` と、利用者向けの短い一文）を送り、`done` で閉じる。詳しいことはログに残す
 
