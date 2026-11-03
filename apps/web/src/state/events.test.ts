@@ -92,7 +92,7 @@ describe("記録した相談を通す", () => {
         staff: "researcher",
         tool: "search_festivals",
         status: "ok",
-        bubble: "8月16日に、みなと中央駅から日帰りで行ける祭りを探しています",
+        bubble: "8月16日に、みなと中央駅から片道2時間以内の日帰りで行ける祭りを探しています",
         result: "2件見つかりました",
       },
     ]);
