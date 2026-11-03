@@ -24,6 +24,8 @@ COPY packages packages
 COPY apps apps
 # 画面のビルドが読む 3D のモデル（Vite が dist/assets に出す）
 COPY assets/3d/models assets/3d/models
+# 出発の駅の候補の一覧（画面のビルドが dist/assets に出す）
+COPY data/stations data/stations
 RUN pnpm --filter @matsuri-ikoka/server --filter @matsuri-ikoka/web run build
 
 # 実行に要る依存だけを取り出す。ワークスペースのパッケージは dist にまとめてある
