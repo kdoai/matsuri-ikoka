@@ -3,9 +3,9 @@ import {
   blockMapTiles,
   closeLog,
   enterShop,
+  expectNoOverlap,
   openLog,
   openPanel,
-  openPreferences,
   recordTexts,
   SAMPLE,
   seenTexts,
@@ -55,15 +55,8 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   // 候補を閉じても、店に戻って選び直せる
   await page.keyboard.press("Escape");
   await expect(page.getByTestId("candidates")).toHaveCount(0);
-  // 会話で伝えたこだわり（穴場・地元の店）が、旅のこだわりの切り替えに反映される
-  await openPreferences(page);
-  await expect(page.getByRole("radio", { name: "穴場", includeHidden: true })).toBeChecked();
-  await expect(
-    page.getByRole("radio", { name: "地元の店も楽しむ", includeHidden: true }),
-  ).toBeChecked();
-  await expect(page.getByTestId("condition-chips")).toContainText("みなと中央駅から");
-  await snap(page, info, "01b-preferences");
-  await page.keyboard.press("Escape");
+  // 会話で伝えた出発の駅が、日付の札に出る
+  await expect(page.getByTestId("date-badge")).toContainText("みなと中央駅から");
   await page.getByRole("button", { name: "祭りの候補を見る" }).click();
   await expect(page.getByTestId("candidates")).toBeVisible();
 
@@ -79,9 +72,20 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   await expect(page.getByTestId("updated-sticker")).toHaveCount(0);
   await expect(page.locator('[data-change="added"], [data-change="changed"]')).toHaveCount(0);
   await expect(page.getByTestId("dialogue")).toContainText("旅程を組みました");
+  // 旅程を確かめる間は、会話の窓に旅程についての選択肢を出す
+  await expect(page.getByTestId("reply-choices")).toContainText("この旅程で決める");
+  await expect(page.getByTestId("reply-choices")).toContainText("少し調整する");
+  // 操作の案内は上の段にあり、旅のしおりの窓とも会話の窓とも重ならない
+  await expectNoOverlap(page, "button-hints", ["itinerary-panel", "dialogue"]);
   await snap(page, info, "02-itinerary");
+  // 予定の行を押すと、くわしい中身が開く
+  const firstRow = items.first().getByRole("button");
+  await firstRow.click();
+  await expect(firstRow).toHaveAttribute("aria-expanded", "true");
+  await firstRow.click();
+  await expect(firstRow).toHaveAttribute("aria-expanded", "false");
 
-  await page.getByRole("tab", { name: "地図" }).click();
+  await page.getByRole("tab", { name: "旅の案内" }).click();
   // 第1版は地図に打てる予定が6つ。旅程に入っていない寄り道の候補も文字で出す
   await expect(page.getByTestId("map-places").getByRole("listitem")).toHaveCount(6, {
     timeout: 15_000,
@@ -110,7 +114,7 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   await expect(page.locator('[data-item-id="go"]')).toHaveAttribute("data-change", "none");
   await snap(page, info, "04-revised");
 
-  await page.getByRole("tab", { name: "出典" }).click();
+  await page.getByRole("tab", { name: "持ち物と確認" }).click();
   await expect(page.getByTestId("source-list").getByRole("listitem").first()).toBeVisible();
   await expect(page.getByTestId("source-list")).toContainText("公式で確認");
 
@@ -232,13 +236,16 @@ test("キーボードだけで、候補を閉じ、タブを移れる", async ({
   await expect(page.getByTestId("candidates")).toBeVisible();
   await page.keyboard.press("Escape");
 
-  // X で旅程・地図・出典のパネルを開き、矢印キーでタブを移る
+  // X で旅のしおりの窓を開き、矢印キーでタブを移る
   await page.keyboard.press("x");
   await expect(page.getByTestId("itinerary-panel")).toBeVisible();
   await page.getByRole("tab", { name: "旅程" }).focus();
   await page.keyboard.press("ArrowRight");
-  await expect(page.getByRole("tab", { name: "地図" })).toBeFocused();
-  await expect(page.getByRole("tab", { name: "地図" })).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByRole("tab", { name: "旅の案内" })).toBeFocused();
+  await expect(page.getByRole("tab", { name: "旅の案内" })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
   await page.keyboard.press("ArrowLeft");
   await expect(page.getByRole("tab", { name: "旅程" })).toHaveAttribute("aria-selected", "true");
 });
@@ -350,4 +357,29 @@ test("文章を書かずに、選択肢を選ぶだけで相談を始められ�
   await openLog(page);
   await expect(page.getByTestId("chat-user").first()).toContainText("・誰と：家族で");
   await closeLog(page);
+});
+
+test("使い方は見出しで区切られ、窓の中でスクロールできる", async ({ page }, info) => {
+  await enterShop(page);
+  // 会話の記録は、ベルではなく吹き出しのボタンから開く。旅のこだわりのボタンはない
+  await expect(
+    page.getByTestId("icon-buttons").getByRole("button", { name: "会話の記録", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "旅のこだわり" })).toHaveCount(0);
+  const help = page.getByTestId("icon-buttons").getByRole("button", { name: "使い方" });
+  if (await help.isVisible()) {
+    await help.click();
+  } else {
+    await page.getByTestId("button-hints").getByRole("button", { name: "メニュー" }).click();
+    await page.getByTestId("game-menu").getByRole("button", { name: "使い方" }).click();
+  }
+  const dialog = page.getByRole("dialog", { name: "使い方" });
+  await expect(dialog.getByRole("heading", { name: "相談の進め方" })).toBeVisible();
+  await expect(dialog.getByRole("heading", { name: "操作の案内" })).toBeVisible();
+  const overflow = await page
+    .getByTestId("help")
+    .evaluate((element) => getComputedStyle(element.parentElement ?? element).overflowY);
+  expect(overflow).toBe("auto");
+  await expectNoOverlap(page, "button-hints", ["dialogue"]);
+  await snap(page, info, "08-help");
 });

@@ -199,7 +199,7 @@ test("接客サーバーとしおりまで進むと、しおりの URL を出し
   }
   await expect(page.getByTestId("verification")).toContainText("予定どおり開催されます");
 
-  await page.getByRole("tab", { name: "地図" }).click();
+  await page.getByRole("tab", { name: "旅の案内" }).click();
   // 動かせる地図は、画像ではなく領域として読ませる
   await expect(page.getByRole("region", { name: "旅程の地図" })).toBeVisible();
   await expect(page.getByRole("img", { name: "旅程の地図" })).toHaveCount(0);

@@ -6,30 +6,32 @@ import {
 } from "@matsuri-ikoka/schema";
 import {
   BookOpen,
+  CalendarDays,
   ChevronRight,
-  ClipboardCheck,
+  Landmark,
+  ListChecks,
   type LucideIcon,
-  Map as MapIcon,
-  Maximize2,
-  Route,
+  MapPin,
+  Users,
   X,
 } from "lucide-react";
-import { Fragment, type KeyboardEvent, lazy, Suspense, useRef } from "react";
+import { type KeyboardEvent, lazy, type ReactNode, Suspense, useRef, useState } from "react";
 import { formatDate, formatDateTime, type Messages } from "../i18n";
 import { useActions, useApp, useT } from "../state/react";
 import { itemChange, shioriReady, usedSources } from "../state/selectors";
 import { PANEL_TABS, type PanelTab, type VerifyState } from "../state/types";
-import { buttonPrimary, Pill, SourceLink } from "./common";
-import { TripSteps } from "./Hud";
-import { itemIcon } from "./icons";
+import { buttonPrimary, SourceLink } from "./common";
+import { itemIcon, LanternIcon } from "./icons";
 
-// 右のパネル：旅程・地図・出典のタブ。旅程は日ごとのカード（「1日目」など）に予定のアイコンを矢印でつないで見せ、
-// その下にくわしい予定と道のりの地図を置く。変わった予定は山吹色で示し、組み直したら「更新！」の札を貼る。
+// 旅のしおりの窓：旅程・旅の案内・持ち物と確認のタブ。
+// 旅程は、表題・日付・同行者・道のりのひとことのカードと、日ごとの時刻・アイコン・予定の縦の並びで見せる。
+// 行を押すと、理由・移動・営業時間・出典をその場で開く。変わった予定は山吹色で示し、組み直したら「更新！」の札を貼る。
+// 文字は 16px（text-base）より小さくしない。
 
 const TAB_ICON: Record<PanelTab, LucideIcon> = {
-  itinerary: Route,
-  map: MapIcon,
-  sources: ClipboardCheck,
+  itinerary: CalendarDays,
+  map: Landmark,
+  sources: ListChecks,
 };
 
 const MapView = lazy(() => import("./MapView"));
@@ -66,7 +68,7 @@ export function VerificationLine({ verify }: { verify: VerifyState }) {
         ? "text-ink-soft"
         : "text-shu-700";
   return (
-    <p className={`font-semibold text-sm ${tone}`} data-testid="verification">
+    <p className={`font-semibold text-base ${tone}`} data-testid="verification">
       {text}
       {verify.checkedAt !== null ? (
         <span className="ml-1 font-normal text-ink-soft">
@@ -77,96 +79,147 @@ export function VerificationLine({ verify }: { verify: VerifyState }) {
   );
 }
 
+/** 小さな札（文字は 16px） */
+function Tag({
+  children,
+  tone,
+}: {
+  children: ReactNode;
+  tone: "ai" | "shu" | "yamabuki" | "wood";
+}) {
+  const tones = {
+    ai: "bg-ai-700 text-white",
+    shu: "bg-shu-600 text-white",
+    yamabuki: "bg-yamabuki-200 text-yamabuki-700 ring-1 ring-yamabuki-400",
+    wood: "bg-wood-100 text-wood-800 ring-1 ring-wood-300",
+  };
+  return (
+    <span
+      className={`inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-0.5 font-bold text-base leading-snug ${tones[tone]}`}
+    >
+      {children}
+    </span>
+  );
+}
+
+function SectionTitle({ children }: { children: ReactNode }) {
+  return <h3 className="font-bold text-ai-800 text-lg">{children}</h3>;
+}
+
+/** 予定の1行。押すと、くわしい中身（理由・移動・営業時間・費用・出典）を開く */
 function ItemRow({ item, main }: { item: ItineraryItem; main: boolean }) {
   const t = useT();
   const change = useApp((state) => itemChange(state, item));
-  const highlight =
-    change === null
-      ? main
-        ? "border-shu-600 bg-white"
-        : "border-wood-300 bg-white"
-      : "border-yamabuki-400 bg-yamabuki-100";
+  const [open, setOpen] = useState(false);
+  const Icon = itemIcon(item);
+  const detailId = `item-detail-${item.id}`;
+  const iconTone = main
+    ? "bg-shu-600 text-white"
+    : change !== null
+      ? "bg-yamabuki-200 text-ink"
+      : "bg-ai-50 text-ai-800";
   return (
     <li
-      className={`rounded-xl border-l-[6px] px-3 py-2 shadow-sm ring-1 ring-kinari-300 ${highlight}`}
+      className="relative pl-7"
       data-testid="itinerary-item"
       data-item-id={item.id}
       data-change={change ?? "none"}
     >
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-        <span className="font-bold font-mono text-ink tabular-nums">
-          {item.start}〜{item.end}
-        </span>
-        <Pill tone={main ? "shu" : "wood"}>{t.itinerary.types[item.type]}</Pill>
-        {change === null ? null : (
-          <Pill tone="yamabuki">
-            {change === "added" ? t.itinerary.added : t.itinerary.changed}
-          </Pill>
-        )}
-      </div>
-      <p className="mt-0.5 font-bold text-ink">{item.name}</p>
-      <p className="text-ink text-sm">
-        <span className="sr-only">{t.itinerary.reason}：</span>
-        {item.reason}
-      </p>
-      <div className="mt-1 flex flex-wrap gap-x-3 text-ink-soft text-xs">
-        {item.move === null ? null : (
-          <span>
-            {t.itinerary.move(
-              t.itinerary.means[item.move.means],
-              item.move.minutes[0],
-              item.move.minutes[1],
+      {/* 時刻の縦の線の上の丸 */}
+      <span
+        aria-hidden="true"
+        className="absolute top-5 left-0.5 size-4 rounded-full border-[3px] border-yamabuki-400 bg-washi"
+      />
+      <div
+        className={`rounded-2xl border transition ${
+          change === null
+            ? main
+              ? "border-shu-600/50 bg-white"
+              : "border-line bg-white/80"
+            : "border-yamabuki-400 bg-yamabuki-100"
+        }`}
+      >
+        <button
+          type="button"
+          className="flex min-h-14 w-full items-center gap-3 rounded-2xl px-3 py-2 text-left hover:bg-white"
+          aria-expanded={open}
+          aria-controls={detailId}
+          onClick={() => setOpen(!open)}
+        >
+          <span className="w-14 shrink-0 font-bold text-base text-ink tabular-nums">
+            {item.start}
+          </span>
+          <span
+            aria-hidden="true"
+            className={`grid size-10 shrink-0 place-items-center rounded-full ${iconTone}`}
+          >
+            <Icon className="size-5" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-bold text-base text-ink leading-snug">{item.name}</span>
+            {change === null ? null : (
+              <span className="mt-0.5 block">
+                <Tag tone="yamabuki">
+                  {change === "added" ? t.itinerary.added : t.itinerary.changed}
+                </Tag>
+              </span>
             )}
-            {item.move.note === undefined ? null : `・${item.move.note}`}
           </span>
-        )}
-        {item.hours === null ? null : (
-          <span>{t.itinerary.hours(item.hours.open, item.hours.close, item.hours.lastEntry)}</span>
-        )}
-        {item.cost === null ? null : (
-          <span>
-            {t.itinerary.cost}：{item.cost}
-          </span>
-        )}
+          <ChevronRight
+            aria-hidden="true"
+            className={`size-5 shrink-0 text-wood-500 transition ${open ? "rotate-90" : ""}`}
+          />
+        </button>
+        {open ? (
+          <div id={detailId} className="space-y-1.5 border-line border-t px-4 pt-2 pb-3 text-base">
+            <p className="flex flex-wrap items-center gap-2">
+              <span className="font-bold tabular-nums">
+                {item.start}〜{item.end}
+              </span>
+              <Tag tone={main ? "shu" : "wood"}>{t.itinerary.types[item.type]}</Tag>
+            </p>
+            <p className="text-ink">
+              <span className="font-bold">{t.itinerary.reason}：</span>
+              {item.reason}
+            </p>
+            {item.move === null ? null : (
+              <p className="text-ink-soft">
+                {t.itinerary.move(
+                  t.itinerary.means[item.move.means],
+                  item.move.minutes[0],
+                  item.move.minutes[1],
+                )}
+                {item.move.note === undefined ? null : `・${item.move.note}`}
+              </p>
+            )}
+            {item.hours === null ? null : (
+              <p className="text-ink-soft">
+                {t.itinerary.hours(item.hours.open, item.hours.close, item.hours.lastEntry)}
+              </p>
+            )}
+            {item.cost === null ? null : (
+              <p className="text-ink-soft">
+                {t.itinerary.cost}：{item.cost}
+              </p>
+            )}
+            {item.sources.length > 0 ? (
+              <ul className="space-y-0.5">
+                {item.sources.map((source) => (
+                  <li key={source.url}>
+                    <SourceLink source={source} compact />
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+        ) : null}
       </div>
-      {item.sources.length > 0 ? (
-        <ul className="mt-1 space-y-0.5">
-          {item.sources.map((source) => (
-            <li key={source.url}>
-              <SourceLink source={source} compact />
-            </li>
-          ))}
-        </ul>
-      ) : null}
     </li>
   );
 }
 
-/** 1日の流れの1こま：予定の種類のアイコンと、始まる時刻 */
-function FlowStep({ item, main, first }: { item: ItineraryItem; main: boolean; first: boolean }) {
-  const change = useApp((state) => itemChange(state, item));
-  const Icon = itemIcon(item);
-  const tone = main
-    ? "border-shu-700 bg-shu-600 text-white"
-    : change !== null
-      ? "border-yamabuki-500 bg-yamabuki-100 text-ink"
-      : "border-ai-200 bg-ai-50 text-ai-800";
-  return (
-    <li className="flex items-start">
-      {first ? null : <ChevronRight className="mt-3 size-4 shrink-0 text-wood-400" />}
-      <div className="flex w-14 flex-col items-center text-center">
-        <span className={`grid size-11 place-items-center rounded-full border-2 shadow-sm ${tone}`}>
-          <Icon className="size-5" />
-        </span>
-        <span className="mt-1 font-bold font-mono text-ink text-xs tabular-nums">{item.start}</span>
-        <span className="line-clamp-2 text-[0.68rem] text-ink-soft leading-tight">{item.name}</span>
-      </div>
-    </li>
-  );
-}
-
-/** 「n日目」のカード。くわしい予定は下の一覧で文字で読めるので、流れの絵は読み上げから外す */
-function DayCard({
+/** 「n日目（日付）」の見出しと、その日の予定の縦の並び */
+function DaySection({
   day,
   dayNumber,
   mainFestivalId,
@@ -176,22 +229,53 @@ function DayCard({
   mainFestivalId: string;
 }) {
   const t = useT();
+  const locale = useApp((state) => state.ui.locale);
+  return (
+    <section aria-labelledby={`day-title-${dayNumber}`} data-testid="day-card">
+      <h3
+        id={`day-title-${dayNumber}`}
+        className="inline-flex items-center gap-2 rounded-full bg-wood-700 py-1 pr-4 pl-3 font-bold text-base text-kinari-50"
+      >
+        <CalendarDays aria-hidden="true" className="size-5" />
+        {t.itinerary.dayHeading(dayNumber, formatDate(day.date, locale))}
+      </h3>
+      <ol className="relative mt-2 space-y-1.5 before:absolute before:top-6 before:bottom-6 before:left-[0.95rem] before:w-0.5 before:bg-yamabuki-400">
+        {day.items.map((item) => (
+          <ItemRow
+            key={item.id}
+            item={item}
+            main={item.type === "festival" && item.festivalId === mainFestivalId}
+          />
+        ))}
+      </ol>
+      {day.stay === null ? null : (
+        <p className="mt-1.5 pl-7 text-base text-ink-soft">{t.itinerary.stay(day.stay.area)}</p>
+      )}
+    </section>
+  );
+}
+
+/** 表題のカード：表題・版・日付・同行者・出発の駅・道のりのひとこと・開催の再確認 */
+function TripCard() {
+  const t = useT();
+  const actions = useActions();
+  const locale = useApp((state) => state.ui.locale);
+  const itinerary = useApp((state) => state.itinerary.current);
+  const verify = useApp((state) => state.verify);
+  const ready = useApp(shioriReady);
   const updated = useApp(
     (state) => state.itinerary.diff !== null && state.itinerary.diff.fromVersion > 0,
   );
+  if (itinerary === null) return null;
+  const day = mainFestivalDay(itinerary);
+  const route = itinerary.days.flatMap((d) => d.items.map((item) => item.name)).join(" → ");
   return (
     <section
-      aria-labelledby={`day-card-title-${dayNumber}`}
-      className="relative rounded-2xl border-2 border-wood-300 bg-white px-3 pt-3 pb-2 shadow-sm"
-      data-testid="day-card"
+      aria-labelledby="trip-card-title"
+      className="relative rounded-2xl border border-line-strong bg-white/90 p-3 shadow-soft"
+      data-testid="trip-card"
     >
-      <h3
-        id={`day-card-title-${dayNumber}`}
-        className="inline-flex rounded-full bg-ai-800 px-3 py-0.5 font-bold text-kinari-50 text-sm"
-      >
-        {t.panel.day(dayNumber)}
-      </h3>
-      {updated && dayNumber === 1 ? (
+      {updated ? (
         <p
           className="-top-3 absolute right-3 rotate-6 rounded-md bg-yamabuki-400 px-2.5 py-1 font-black text-ink shadow-md ring-2 ring-white"
           data-testid="updated-sticker"
@@ -199,50 +283,60 @@ function DayCard({
           {t.panel.updated}
         </p>
       ) : null}
-      <ol aria-hidden="true" className="mt-3 flex flex-wrap items-start gap-y-3">
-        {day.items.map((item, index) => (
-          <FlowStep
-            key={item.id}
-            item={item}
-            first={index === 0}
-            main={item.type === "festival" && item.festivalId === mainFestivalId}
-          />
-        ))}
-      </ol>
-    </section>
-  );
-}
-
-/** 道のりの小さな地図。押すと地図のタブを開く */
-function RouteMapCard() {
-  const t = useT();
-  const actions = useActions();
-  return (
-    <section aria-labelledby="route-map-title" className="relative">
-      <h3 id="route-map-title" className="mb-1 font-bold text-ai-700 text-sm">
-        {t.panel.routeMap}
-      </h3>
-      <div className="overflow-hidden rounded-xl ring-2 ring-wood-300">
-        <Suspense fallback={<div className="h-40" />}>
-          <MapView interactive={false} heightClass="h-40" showPlaces={false} framed={false} />
-        </Suspense>
+      <div className="flex gap-3">
+        <span
+          aria-hidden="true"
+          className="grid size-16 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[#a3471a] to-[#e9a23b] text-kinari-50 shadow-sm"
+        >
+          <LanternIcon className="size-9" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <h2 id="trip-card-title" className="font-bold text-ink text-xl leading-snug">
+              {itinerary.title}
+            </h2>
+            <Tag tone="ai">{t.itinerary.version(itinerary.version)}</Tag>
+          </div>
+          <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-base text-ink">
+            <span className="inline-flex items-center gap-1">
+              <CalendarDays aria-hidden="true" className="size-4 text-wood-600" />
+              {formatDate(day.date, locale)}
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <Users aria-hidden="true" className="size-4 text-wood-600" />
+              {t.conditions.party(itinerary.party.adults, itinerary.party.children)}
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <MapPin aria-hidden="true" className="size-4 text-wood-600" />
+              {t.conditions.origin(itinerary.origin)}
+            </span>
+          </p>
+        </div>
       </div>
-      <button
-        type="button"
-        className="absolute right-2 bottom-2 z-[500] grid size-8 place-items-center rounded-full bg-kinari-50 text-ink shadow hover:bg-kinari-200"
-        aria-label={t.hud.expandMap}
-        title={t.hud.expandMap}
-        onClick={() => actions.setTab("map")}
-      >
-        <Maximize2 className="size-4" />
-      </button>
+      <p className="mt-2 text-base text-ink-soft leading-relaxed">
+        <span className="sr-only">{t.itinerary.route}：</span>
+        {route}
+      </p>
+      <p className="text-base text-ink-soft">
+        {t.itinerary.weather.title}：{weatherText(t, day.weather)}
+      </p>
+      <VerificationLine verify={verify} />
+      {ready ? (
+        <button
+          type="button"
+          className={`${buttonPrimary} mt-2 w-full text-base`}
+          onClick={() => actions.openShiori()}
+        >
+          <BookOpen aria-hidden="true" className="size-5" />
+          {t.itinerary.openShiori}
+        </button>
+      ) : null}
     </section>
   );
 }
 
 function ItineraryTab() {
   const t = useT();
-  const locale = useApp((state) => state.ui.locale);
   const itinerary = useApp((state) => state.itinerary.current);
   const removed = useApp((state) =>
     state.itinerary.diff !== null && state.itinerary.diff.fromVersion > 0
@@ -250,99 +344,128 @@ function ItineraryTab() {
       : [],
   );
   if (itinerary === null) {
-    return <p className="p-4 text-ink-soft">{t.itinerary.empty}</p>;
+    return <p className="p-4 text-base text-ink-soft">{t.itinerary.empty}</p>;
   }
   return (
     <div className="space-y-4 p-3">
+      <TripCard />
       {itinerary.days.map((day, index) => (
-        <DayCard
+        <DaySection
           key={day.date}
           day={day}
           dayNumber={index + 1}
           mainFestivalId={itinerary.mainFestivalId}
         />
       ))}
-      <h3 className="font-bold text-ai-700 text-sm">{t.panel.detail}</h3>
-      <ol className="space-y-2">
-        {itinerary.days.map((day, index) => (
-          <Fragment key={day.date}>
-            {itinerary.days.length > 1 ? (
-              <li className="pt-1 font-bold text-ink text-sm">
-                {t.itinerary.day(index + 1, formatDate(day.date, locale))}
-                <span className="ml-2 font-normal text-ink-soft">
-                  {t.itinerary.weather.title}：{weatherText(t, day.weather)}
-                </span>
-              </li>
-            ) : null}
-            {day.items.map((item) => (
-              <ItemRow
-                key={item.id}
-                item={item}
-                main={item.type === "festival" && item.festivalId === itinerary.mainFestivalId}
-              />
-            ))}
-            {day.stay === null ? null : (
-              <li className="text-ink-soft text-sm">{t.itinerary.stay(day.stay.area)}</li>
-            )}
-          </Fragment>
-        ))}
-      </ol>
       {removed.length > 0 ? (
         <section className="rounded-xl border-2 border-dashed border-yamabuki-400 p-3">
-          <h3 className="font-bold text-sm text-yamabuki-700">{t.itinerary.removed}</h3>
-          <ul className="list-disc pl-5 text-sm line-through">
+          <h3 className="font-bold text-base text-yamabuki-700">{t.itinerary.removed}</h3>
+          <ul className="list-disc pl-5 text-base line-through">
             {removed.map((item) => (
               <li key={item.id}>{item.name}</li>
             ))}
           </ul>
         </section>
       ) : null}
-      {itinerary.notes.length > 0 ? (
-        <section>
-          <h3 className="font-bold text-ai-700 text-sm">{t.itinerary.notes}</h3>
-          <ul className="list-disc pl-5 text-sm">
+    </div>
+  );
+}
+
+/** 旅の案内：道のりの地図、日ごとの天気、行けないときの代わり */
+function GuideTab() {
+  const t = useT();
+  const locale = useApp((state) => state.ui.locale);
+  const itinerary = useApp((state) => state.itinerary.current);
+  return (
+    <div className="space-y-4">
+      <Suspense fallback={<p className="p-4 text-base text-ink-soft">…</p>}>
+        <MapView textClass="text-base" />
+      </Suspense>
+      {itinerary === null ? null : (
+        <div className="space-y-4 px-3 pb-3">
+          <section className="space-y-1">
+            <SectionTitle>{t.itinerary.weather.title}</SectionTitle>
+            <ul className="space-y-0.5 text-base">
+              {itinerary.days.map((day, index) => (
+                <li key={day.date}>
+                  <span className="font-bold">
+                    {t.itinerary.dayHeading(index + 1, formatDate(day.date, locale))}
+                  </span>
+                  ：{weatherText(t, day.weather)}
+                </li>
+              ))}
+            </ul>
+          </section>
+          {itinerary.alternatives.length > 0 ? (
+            <section className="space-y-1">
+              <SectionTitle>{t.itinerary.alternatives}</SectionTitle>
+              <ul className="space-y-1 text-base">
+                {itinerary.alternatives.map((alternative) => (
+                  <li key={alternative.summary}>
+                    <span className="font-bold">{t.itinerary.altKinds[alternative.kind]}：</span>
+                    {alternative.summary}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** 持ち物と確認：開催の再確認、持ち物と注意、出典 */
+function ConfirmTab() {
+  const t = useT();
+  const actions = useActions();
+  const itinerary = useApp((state) => state.itinerary.current);
+  const verify = useApp((state) => state.verify);
+  const ready = useApp(shioriReady);
+  const sources = useApp(usedSources);
+  return (
+    <div className="space-y-4 p-3">
+      {itinerary === null ? null : (
+        <section className="space-y-1">
+          <SectionTitle>{t.itinerary.verification.title}</SectionTitle>
+          <VerificationLine verify={verify} />
+          {ready ? (
+            <button
+              type="button"
+              className={`${buttonPrimary} mt-1 w-full text-base`}
+              onClick={() => actions.openShiori()}
+            >
+              <BookOpen aria-hidden="true" className="size-5" />
+              {t.itinerary.openShiori}
+            </button>
+          ) : null}
+        </section>
+      )}
+      {itinerary !== null && itinerary.notes.length > 0 ? (
+        <section className="space-y-1">
+          <SectionTitle>{t.itinerary.notes}</SectionTitle>
+          <ul className="list-disc space-y-0.5 pl-5 text-base">
             {itinerary.notes.map((note) => (
               <li key={note}>{note}</li>
             ))}
           </ul>
         </section>
       ) : null}
-      {itinerary.alternatives.length > 0 ? (
-        <section>
-          <h3 className="font-bold text-ai-700 text-sm">{t.itinerary.alternatives}</h3>
-          <ul className="space-y-1 text-sm">
-            {itinerary.alternatives.map((alternative) => (
-              <li key={alternative.summary}>
-                <span className="font-semibold">{t.itinerary.altKinds[alternative.kind]}：</span>
-                {alternative.summary}
+      <section className="space-y-2">
+        <SectionTitle>{t.sources.title}</SectionTitle>
+        {sources.length === 0 ? (
+          <p className="text-base text-ink-soft">{t.sources.empty}</p>
+        ) : (
+          <ul className="space-y-2" data-testid="source-list">
+            {sources.map((source) => (
+              <li key={source.url} className="rounded-lg bg-white px-3 py-2 ring-1 ring-kinari-300">
+                <SourceLink source={source} />
               </li>
             ))}
           </ul>
-        </section>
-      ) : null}
-      <RouteMapCard />
-    </div>
-  );
-}
-
-function SourcesTab() {
-  const t = useT();
-  const sources = useApp(usedSources);
-  return (
-    <div className="space-y-3 p-3">
-      <h3 className="font-bold text-ai-700 text-sm">{t.sources.title}</h3>
-      {sources.length === 0 ? (
-        <p className="text-ink-soft">{t.sources.empty}</p>
-      ) : (
-        <ul className="space-y-2" data-testid="source-list">
-          {sources.map((source) => (
-            <li key={source.url} className="rounded-lg bg-white px-3 py-2 ring-1 ring-kinari-300">
-              <SourceLink source={source} />
-            </li>
-          ))}
-        </ul>
-      )}
-      <p className="font-semibold text-ink text-sm">{t.sources.finalCheck}</p>
+        )}
+        <p className="font-semibold text-base text-ink">{t.sources.finalCheck}</p>
+      </section>
     </div>
   );
 }
@@ -351,10 +474,6 @@ export function ItineraryPanel() {
   const t = useT();
   const actions = useActions();
   const tab = useApp((state) => state.ui.tab);
-  const itinerary = useApp((state) => state.itinerary.current);
-  const verify = useApp((state) => state.verify);
-  const locale = useApp((state) => state.ui.locale);
-  const ready = useApp(shioriReady);
   const tabRefs = useRef<Partial<Record<PanelTab, HTMLButtonElement | null>>>({});
 
   // 左右の矢印キーでタブを移る
@@ -373,22 +492,17 @@ export function ItineraryPanel() {
   return (
     <section
       aria-label={t.itinerary.panelLabel}
-      className="washi relative flex h-full min-h-0 flex-col overflow-hidden rounded-panel border border-line-strong shadow-lift"
+      className="washi relative flex h-full min-h-0 flex-col overflow-hidden rounded-panel border-2 border-wood-700/50 shadow-lift"
       data-testid="itinerary-panel"
     >
-      {/* 冊子の綴じ目（左の朱の帯） */}
-      <span aria-hidden="true" className="absolute inset-y-0 left-0 w-1.5 bg-shu-600/80" />
-      <div className="flex shrink-0 items-start gap-2 px-4 pt-3">
-        <div className="min-w-0 flex-1">
-          <p className="flex items-center gap-1.5 font-bold text-shu-700 text-sm tracking-widest">
-            <BookOpen aria-hidden="true" className="size-4" />
-            {t.hud.bookletTitle}
-          </p>
-          <TripSteps className="mt-1.5" />
-        </div>
+      <div className="flex shrink-0 items-center gap-2 bg-wood-700 px-4 py-2 text-kinari-50">
+        <p className="flex min-w-0 flex-1 items-center gap-2 font-bold text-xl tracking-widest">
+          <BookOpen aria-hidden="true" className="size-6 shrink-0" />
+          {t.hud.bookletTitle}
+        </p>
         <button
           type="button"
-          className="grid size-9 shrink-0 place-items-center rounded-full border border-line-strong bg-white/80 text-ink shadow-soft hover:bg-white"
+          className="grid size-10 shrink-0 place-items-center rounded-full border border-kinari-50/60 bg-kinari-50/10 text-kinari-50 hover:bg-kinari-50/25"
           aria-label={t.itinerary.closePanel}
           title={t.itinerary.closePanel}
           onClick={() => actions.setDrawer(false)}
@@ -396,67 +510,40 @@ export function ItineraryPanel() {
           <X className="size-5" />
         </button>
       </div>
-      <div className="mt-2 flex shrink-0 items-center gap-2 border-line border-b px-3">
-        <div
-          role="tablist"
-          aria-label={t.itinerary.panelLabel}
-          className="flex min-w-0 flex-1 gap-1"
-          onKeyDown={onKeyDown}
-        >
-          {PANEL_TABS.map((id) => {
-            const selected = tab === id;
-            const Icon = TAB_ICON[id];
-            return (
-              <button
-                key={id}
-                ref={(element) => {
-                  tabRefs.current[id] = element;
-                }}
-                type="button"
-                role="tab"
-                id={`tab-${id}`}
-                aria-selected={selected}
-                aria-controls={`panel-${id}`}
-                tabIndex={selected ? 0 : -1}
-                onClick={() => actions.setTab(id)}
-                className={`-mb-px flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-t-xl border border-b-0 px-3 py-1.5 font-bold text-sm transition ${
-                  selected
-                    ? "border-line-strong bg-washi text-ai-800"
-                    : "border-transparent text-ink-soft hover:bg-white/60"
-                }`}
-              >
-                <Icon aria-hidden="true" className="size-4" />
-                {t.itinerary.tabs[id]}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {itinerary === null ? null : (
-        <header className="shrink-0 border-kinari-300 border-b px-3 py-2">
-          <div className="flex flex-wrap items-baseline justify-between gap-x-2">
-            <h2 className="font-bold text-ink text-lg leading-snug">{itinerary.title}</h2>
-            <Pill tone="ai">{t.itinerary.version(itinerary.version)}</Pill>
-          </div>
-          <p className="text-ink text-sm">
-            {formatDate(mainFestivalDay(itinerary).date, locale)}・{itinerary.origin}
-            <span className="ml-2 text-ink-soft">
-              {t.itinerary.weather.title}：{weatherText(t, mainFestivalDay(itinerary).weather)}
-            </span>
-          </p>
-          <VerificationLine verify={verify} />
-          {ready ? (
+      <div
+        role="tablist"
+        aria-label={t.itinerary.panelLabel}
+        className="flex shrink-0 gap-2 px-3 pt-3 pb-2"
+        onKeyDown={onKeyDown}
+      >
+        {PANEL_TABS.map((id) => {
+          const selected = tab === id;
+          const Icon = TAB_ICON[id];
+          return (
             <button
+              key={id}
+              ref={(element) => {
+                tabRefs.current[id] = element;
+              }}
               type="button"
-              className={`${buttonPrimary} mt-2 w-full`}
-              onClick={() => actions.openShiori()}
+              role="tab"
+              id={`tab-${id}`}
+              aria-selected={selected}
+              aria-controls={`panel-${id}`}
+              tabIndex={selected ? 0 : -1}
+              onClick={() => actions.setTab(id)}
+              className={`flex min-h-12 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl border-2 px-2 py-1.5 font-bold text-base leading-tight transition ${
+                selected
+                  ? "border-yamabuki-400 bg-yamabuki-400 text-ink shadow-soft"
+                  : "border-line-strong bg-white/80 text-ink hover:bg-white"
+              }`}
             >
-              {t.itinerary.openShiori}
+              <Icon aria-hidden="true" className="size-5 shrink-0" />
+              {t.itinerary.tabs[id]}
             </button>
-          ) : null}
-        </header>
-      )}
+          );
+        })}
+      </div>
 
       <div
         role="tabpanel"
@@ -465,12 +552,8 @@ export function ItineraryPanel() {
         className="relative min-h-0 flex-1 overflow-y-auto"
       >
         {tab === "itinerary" ? <ItineraryTab /> : null}
-        {tab === "map" ? (
-          <Suspense fallback={<p className="p-4 text-ink-soft">…</p>}>
-            <MapView />
-          </Suspense>
-        ) : null}
-        {tab === "sources" ? <SourcesTab /> : null}
+        {tab === "map" ? <GuideTab /> : null}
+        {tab === "sources" ? <ConfirmTab /> : null}
       </div>
     </section>
   );

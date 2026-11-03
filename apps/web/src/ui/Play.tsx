@@ -90,11 +90,19 @@ function useClockText(locale: string): string {
   return text;
 }
 
-/** 操作の一覧。「使い方」とはじめての案内で出す */
-export function ControlsList({ rows }: { rows?: readonly { keys: string; action: string }[] }) {
+/** 操作の一覧。「使い方」とはじめての案内で出す。large のときは 16px の文字で、行の間を広げる */
+export function ControlsList({
+  rows,
+  large = false,
+}: {
+  rows?: readonly { keys: string; action: string }[];
+  large?: boolean;
+}) {
   const t = useT();
   return (
-    <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-sm">
+    <dl
+      className={`grid grid-cols-[auto_1fr] gap-x-4 ${large ? "gap-y-1.5 text-base" : "gap-y-0.5 text-sm"}`}
+    >
       {(rows ?? t.play.controls).map((row) => (
         <div key={row.keys} className="contents">
           <dt className="whitespace-nowrap font-bold text-wood-700">{row.keys}</dt>
