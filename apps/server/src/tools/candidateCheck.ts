@@ -1,3 +1,4 @@
+import { backoffMs, classifyFailure } from "@matsuri-ikoka/agent-kit";
 import type { Festival, IsoDate } from "@matsuri-ikoka/schema";
 import { decideVerification, type VerificationDecision } from "../domain/verification";
 import type { FestivalVerifier } from "./verifier";
@@ -7,6 +8,7 @@ import type { FestivalVerifier } from "./verifier";
 //   結果は domain/verification.ts のルールで決め直す
 // - 候補の3件は並べて動かし、祭りと日付ごとの結果を数時間とっておく
 // - 1件の時間と、1つの相談で新しく確かめる数に上限を置く（費用は1件ごとの上限を verifier に渡す）
+// - 混雑・通信のような一時的な失敗（@matsuri-ikoka/agent-kit の分類で retryable）は、1件の時間の中で1回だけやり直す
 
 /** 1件の確かめの時間の上限 */
 export const CANDIDATE_CHECK_TIMEOUT_MS = 50_000;
@@ -54,11 +56,14 @@ export function createCandidateChecker(deps: {
   timeoutMs?: number;
   ttlMs?: number;
   maxPerSession?: number;
+  /** やり直す前に待つ時間（ミリ秒）。省略すると backoffMs(1) */
+  retryDelayMs?: () => number;
 }): CandidateChecker {
   const clock = deps.clock ?? Date.now;
   const timeoutMs = deps.timeoutMs ?? CANDIDATE_CHECK_TIMEOUT_MS;
   const ttlMs = deps.ttlMs ?? CANDIDATE_CHECK_TTL_MS;
   const maxPerSession = deps.maxPerSession ?? MAX_CANDIDATE_CHECKS_PER_SESSION;
+  const retryDelayMs = deps.retryDelayMs ?? (() => backoffMs(1));
   const cache = new Map<string, Entry>();
   /** 同じ祭りと日付を、同時に2回確かめない */
   const inFlight = new Map<string, Promise<CandidateCheck | null>>();
@@ -74,15 +79,28 @@ export function createCandidateChecker(deps: {
     if (signal.aborted) abort();
     signal.addEventListener("abort", abort, { once: true });
     const timer = setTimeout(() => controller.abort(new Error("timeout")), timeoutMs);
+    const aborted = new Promise<never>((_, reject) =>
+      controller.signal.addEventListener("abort", () => reject(controller.signal.reason), {
+        once: true,
+      }),
+    );
+    // 止められたときに、待っている Promise の失敗を拾われないままにしない
+    aborted.catch(() => {});
+    const verifyOnce = () =>
+      Promise.race([deps.verifier.verify({ festival, date, signal: controller.signal }), aborted]);
     try {
-      const report = await Promise.race([
-        deps.verifier.verify({ festival, date, signal: controller.signal }),
-        new Promise<never>((_, reject) =>
-          controller.signal.addEventListener("abort", () => reject(controller.signal.reason), {
-            once: true,
-          }),
-        ),
-      ]);
+      let report: Awaited<ReturnType<FestivalVerifier["verify"]>>;
+      try {
+        report = await verifyOnce();
+      } catch (error) {
+        // 時間切れ・止められたとき・やり直しても直らない失敗は、やり直さない
+        if (controller.signal.aborted || !classifyFailure(error).retryable) throw error;
+        await Promise.race([
+          new Promise((resolve) => setTimeout(resolve, retryDelayMs())),
+          aborted,
+        ]);
+        report = await verifyOnce();
+      }
       return { decision: decideVerification(festival, report, deps.today(), date), ok: true };
     } catch {
       // 時間切れでも、祭りのデータの公式の出典で確かめてあれば、それを使う
