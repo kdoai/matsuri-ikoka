@@ -11,9 +11,17 @@ import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import { IsoDateSchema } from "../packages/schema/src";
 import { readZipEntry, zipEntries } from "./lib/zip";
-import { buildStations, isStationFile, type StationFeature, stationsFile } from "./stations";
+import {
+  buildStationPoints,
+  buildStations,
+  isStationFile,
+  type StationFeature,
+  stationPointsFile,
+  stationsFile,
+} from "./stations";
 
 const OUTPUT = fileURLToPath(new URL("../data/stations/stations.json", import.meta.url));
+const POINTS_OUTPUT = fileURLToPath(new URL("../data/stations/points.json", import.meta.url));
 
 /** 使っている版のページ（出典に書く） */
 const SOURCE_URL = "https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N02-2025.html";
@@ -52,6 +60,9 @@ function main(): number {
   };
   writeFileSync(OUTPUT, stationsFile(source, stations));
   console.log(`${entry.name} から ${stations.length} 駅を ${OUTPUT} に書きました`);
+  const points = buildStationPoints(geojson.features ?? []);
+  writeFileSync(POINTS_OUTPUT, stationPointsFile(source, points));
+  console.log(`${points.length} 駅の位置を ${POINTS_OUTPUT} に書きました`);
   return 0;
 }
 

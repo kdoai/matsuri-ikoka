@@ -1,6 +1,7 @@
 // 国土数値情報（鉄道データ）の駅を、出発の駅の候補の一覧（data/stations/stations.json）にする。
 // 同じグループコードの駅（乗り換えできる駅）と、近く（1.5km 以内）にある同じ名前の駅は1つにまとめ、
-// 路線の説明を添える。位置は、まとめるかを決めるためだけに使い、一覧には入れない。
+// 路線の説明を添える。画面の一覧には位置を入れない。
+// 接客サーバーが所要時間を見積もるための駅の位置（data/stations/points.json）は、同じまとめ方で別のファイルにする。
 // 出典と利用条件は docs/stations.md。
 
 /** 鉄道データの駅（Station）の属性。使うものだけ */
@@ -82,8 +83,14 @@ export function linesLabel(lines: string[]): string {
   return rest > 0 ? `${shown} ほか${rest}路線` : shown;
 }
 
-/** 駅の一覧を作る。駅名のないものは除き、駅名の順に並べる */
-export function buildStations(features: readonly StationFeature[]): StationEntry[] {
+interface MergedStation {
+  name: string;
+  lines: Set<string>;
+  point: [number, number] | null;
+}
+
+/** 同じグループコードの駅と、近くにある同じ名前の駅をまとめる */
+function mergeStations(features: readonly StationFeature[]): MergedStation[] {
   const groups = new Map<
     string,
     { names: string[]; lines: Set<string>; point: [number, number] | null }
@@ -104,7 +111,7 @@ export function buildStations(features: readonly StationFeature[]): StationEntry
     groups.set(key, group);
   }
   // 同じ名前で近くにあるグループをまとめる（グループコードが路線ごとに分かれている駅）
-  const merged: { name: string; lines: Set<string>; point: [number, number] | null }[] = [];
+  const merged: MergedStation[] = [];
   for (const group of groups.values()) {
     const name = mostCommon(group.names);
     const near = merged.find(
@@ -117,9 +124,14 @@ export function buildStations(features: readonly StationFeature[]): StationEntry
     if (near === undefined) merged.push({ name, lines: new Set(group.lines), point: group.point });
     else for (const line of group.lines) near.lines.add(line);
   }
+  return merged;
+}
+
+/** 駅の一覧を作る。駅名のないものは除き、駅名の順に並べる */
+export function buildStations(features: readonly StationFeature[]): StationEntry[] {
   const seen = new Set<string>();
   const entries: StationEntry[] = [];
-  for (const group of merged) {
+  for (const group of mergeStations(features)) {
     const entry: StationEntry = [
       group.name,
       linesLabel([...group.lines].sort((a, b) => a.localeCompare(b, "ja"))),
@@ -130,6 +142,33 @@ export function buildStations(features: readonly StationFeature[]): StationEntry
     entries.push(entry);
   }
   return entries.sort((a, b) => a[0].localeCompare(b[0], "ja") || a[1].localeCompare(b[1], "ja"));
+}
+
+/** 駅の位置：[駅名, 緯度, 経度]。同じ名前の別の土地の駅は、別の行になる */
+export type StationPoint = [name: string, lat: number, lng: number];
+
+/** 位置の桁（小数4桁でおよそ10m。所要時間の見積もりには十分） */
+const round4 = (value: number) => Math.round(value * 10_000) / 10_000;
+
+/** 駅の位置の一覧を作る。位置の読めない駅は除き、駅名の順に並べる */
+export function buildStationPoints(features: readonly StationFeature[]): StationPoint[] {
+  const seen = new Set<string>();
+  const points: StationPoint[] = [];
+  for (const group of mergeStations(features)) {
+    if (group.point === null) continue;
+    const point: StationPoint = [group.name, round4(group.point[1]), round4(group.point[0])];
+    const id = point.join("\t");
+    if (seen.has(id)) continue;
+    seen.add(id);
+    points.push(point);
+  }
+  return points.sort((a, b) => a[0].localeCompare(b[0], "ja") || a[1] - b[1] || a[2] - b[2]);
+}
+
+/** 駅の位置のファイルの中身。差分を読みやすいよう、駅を1行に1つ書く */
+export function stationPointsFile(source: StationSource, points: StationPoint[]): string {
+  const rows = points.map((point) => `    ${JSON.stringify(point)}`).join(",\n");
+  return `{\n  "source": ${JSON.stringify(source)},\n  "points": [\n${rows}\n  ]\n}\n`;
 }
 
 /** 一覧のファイルの中身。差分を読みやすいよう、駅を1行に1つ書く */
