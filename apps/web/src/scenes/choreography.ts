@@ -74,6 +74,8 @@ const ONCE: ReadonlySet<StaffMotion> = new Set(["nod", "stamp"]);
 export interface PlanOptions {
   /** コンシェルジュがスタッフに作業を頼んでいるところか（相手を指して頼む） */
   asking?: boolean;
+  /** 旅程の提案が出たあとか（スタッフは待機位置から動かず、作業の動きもしない） */
+  calm?: boolean;
 }
 
 /**
@@ -83,6 +85,7 @@ export interface PlanOptions {
  * - 書類を運ぶ（carry）：旅程係がカウンターの書類を置く位置へ、書類を抱えて歩く
  * - しおりの完成の演出の間は、全員がにっこりして、コンシェルジュがはんこを押す
  * - コンシェルジュが頼んでいる間は、待機位置で相手を指す（向きは Staff の lookAt で相手へ）
+ * - 旅程の提案が出たあとは、待機位置に立ったままにする（コンシェルジュは話す仕草だけをする）
  */
 export function staffPlan(
   id: StaffId,
@@ -95,11 +98,11 @@ export function staffPlan(
       ? plan("home", "stamp", "sparkle", ["prop.stamp"], { once: true })
       : plan(staff.phase === "idle" ? "home" : spotOf(staff), "wave", "happy", []);
   }
-  if (staff.motion === "carry") {
+  if (staff.motion === "carry" && options.calm !== true) {
     return plan("drop", "nod", "happy", ["prop.document"], { travel: "carry" });
   }
-  if (staff.phase === "idle" || staff.phase === "returning") {
-    if (id === "concierge" && options.asking === true) {
+  if (options.calm === true || staff.phase === "idle" || staff.phase === "returning") {
+    if (id === "concierge" && options.asking === true && options.calm !== true) {
       return plan("home", "point", "happy", []);
     }
     if (id === "concierge" && staff.motion === "talk") {

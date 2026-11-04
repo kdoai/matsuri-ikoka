@@ -1,4 +1,5 @@
 import type { ConversationStage, StaffId } from "@matsuri-ikoka/schema";
+import { proposalShown } from "./selectors";
 import type { AppData, RelayState, StaffState } from "./types";
 
 // 3D の店内に渡す状態。3D の部品は、これを props で受け取るだけにする（ADR 0003）。
@@ -22,6 +23,8 @@ export interface ShopSceneProps {
   stage: ConversationStage;
   /** 「旅のしおり完成」の演出の最中か（カメラを寄せる合図） */
   celebrating: boolean;
+  /** 旅程の提案が出たあとか。旅程を読む邪魔にならないよう、スタッフは待機位置から動かない */
+  calm: boolean;
   /** 動きを減らす設定。true のときは画面が 2D を主にするので、3D は出さない */
   reducedMotion: boolean;
   /** 画面の部品が重なる場所（画面の並びの情報。ストアの状態ではない） */
@@ -53,6 +56,7 @@ export function selectSceneProps(
     relay: state.relay,
     stage: state.session.stage,
     celebrating: state.ui.celebrating,
+    calm: proposalShown(state),
     reducedMotion,
   };
 }
