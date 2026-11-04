@@ -1,4 +1,5 @@
 import type { Itinerary, SseEvent, SseEventOf, StaffId, ToolName } from "@matsuri-ikoka/schema";
+import { closeRelay, conciergeSpeaks, finishTool, handOver, requestWork } from "./relay";
 import type { AppData, ChatEntry, StaffMotion, StaffState, VerifyState } from "./types";
 
 // SSE のイベントを、ストアの更新に変える。ここだけがイベントを読み、部品はストアだけを読む。
@@ -63,8 +64,9 @@ function isFinishedAtPost(staff: StaffState): boolean {
 }
 
 function onStaffStart(state: AppData, data: SseEventOf<"staff.start">["data"]): AppData {
+  // コンシェルジュが頼み、ほかのスタッフが持っている結果は旅程係かコンシェルジュへ渡る（relay.ts）
+  let next = requestWork(state, data.staff, data.task);
   // 別のスタッフが動き出したら、仕事を終えたスタッフは戻る
-  let next = state;
   for (const id of Object.keys(state.staff) as StaffId[]) {
     const staff = state.staff[id];
     if (id !== data.staff && id !== "concierge" && isFinishedAtPost(staff)) {
@@ -113,7 +115,7 @@ function onToolStart(state: AppData, data: SseEventOf<"tool.start">["data"]): Ap
 }
 
 function onToolEnd(state: AppData, data: SseEventOf<"tool.end">["data"]): AppData {
-  let next = patchStaff(state, data.staff, {
+  let next = patchStaff(finishTool(state, data.staff, data.ok), data.staff, {
     phase: "working",
     motion: "nod",
     tool: null,
@@ -165,7 +167,8 @@ function onItineraryUpdated(
   data: SseEventOf<"itinerary.updated">["data"],
 ): AppData {
   const first = state.itinerary.current === null;
-  let next = patchStaff(state, "planner", { motion: "carry" });
+  // 旅程係は、できた旅程をカウンターのコンシェルジュへ運ぶ
+  let next = patchStaff(handOver(state, "concierge"), "planner", { motion: "carry" });
   next = {
     ...next,
     itinerary: { current: data.itinerary, previous: state.itinerary.current, diff: data.diff },
@@ -227,10 +230,11 @@ function onMessageDelta(state: AppData, data: SseEventOf<"message.delta">["data"
         entry.kind === "concierge" ? { ...entry, text: entry.text + data.text } : entry,
       )
     : [...state.messages, { kind: "concierge", id, text: data.text, streaming: true }];
+  const spoken = conciergeSpeaks(state);
   const next =
-    state.staff.concierge.motion === "talk"
-      ? state
-      : patchStaff(state, "concierge", {
+    spoken.staff.concierge.motion === "talk"
+      ? spoken
+      : patchStaff(spoken, "concierge", {
           motion: "talk",
         });
   return { ...next, messages };
@@ -255,8 +259,9 @@ function onError(state: AppData, data: SseEventOf<"error">["data"]): AppData {
  * 確かめている途中の再確認を戻す、クイズを閉じる。
  */
 export function closeTurn(state: AppData): AppData {
+  const relayed = closeRelay(state);
   let next: AppData = {
-    ...state,
+    ...relayed,
     messages: state.messages.map((entry) => {
       if (entry.kind === "concierge" && entry.streaming) {
         return { ...entry, streaming: false };

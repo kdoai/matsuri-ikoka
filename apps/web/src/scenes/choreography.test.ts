@@ -3,7 +3,10 @@ import { IDLE_STAFF } from "../state/initial";
 import type { StaffState } from "../state/types";
 import {
   exteriorOpacity,
+  facingYaw,
   frameView,
+  LETTER_ARC,
+  letterPoint,
   playerPlan,
   staffPlan,
   turnToward,
@@ -179,5 +182,35 @@ describe("カメラ", () => {
     expect(exteriorOpacity(2.25)).toBe(1);
     expect(exteriorOpacity(2.61)).toBeCloseTo(0.5);
     expect(exteriorOpacity(3)).toBe(0);
+  });
+});
+
+describe("頼みと受け渡しの動き", () => {
+  it("頼んでいる間、コンシェルジュは待機位置で相手を指す", () => {
+    expect(staffPlan("concierge", staff({}), false, { asking: true })).toMatchObject({
+      spot: "home",
+      motion: "point",
+    });
+    // ほかのスタッフは頼む側にならない
+    expect(staffPlan("scout", staff({}), false, { asking: true }).motion).toBe("idle");
+  });
+
+  it("相手の方を向く（正面は +Z）。同じ場所なら向きを変えない", () => {
+    const at = { x: 0, y: 0, z: 0 };
+    expect(facingYaw(at, { x: 0, y: 1, z: 2 })).toBeCloseTo(0);
+    expect(facingYaw(at, { x: 1, y: 0, z: 0 })).toBeCloseTo(Math.PI / 2);
+    expect(facingYaw(at, { x: 0, y: 3, z: 0 })).toBeNull();
+  });
+
+  it("手紙は渡す人から受け取る人へ、山なりに渡る", () => {
+    const from = { x: 0, y: 1, z: 0 };
+    const to = { x: 2, y: 1, z: 0 };
+    expect(letterPoint(from, to, 0)).toEqual(from);
+    expect(letterPoint(from, to, 1)).toEqual(to);
+    const middle = letterPoint(from, to, 0.5);
+    expect(middle.x).toBeCloseTo(1);
+    expect(middle.y).toBeCloseTo(1 + LETTER_ARC);
+    // 範囲の外は端に止める
+    expect(letterPoint(from, to, 2)).toEqual(to);
   });
 });
