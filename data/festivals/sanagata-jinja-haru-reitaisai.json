@@ -1,0 +1,139 @@
+{
+  "id": "sanagata-jinja-haru-reitaisai",
+  "name": {
+    "ja": "佐長田神社の春の例大祭",
+    "en": "Sanagata Shrine Spring Grand Festival (Kinefuri Dance)"
+  },
+  "category": "dance",
+  "municipalities": [
+    {
+      "prefecture": "岐阜県",
+      "name": "加茂郡白川町"
+    }
+  ],
+  "venue": {
+    "name": "佐長田神社",
+    "lat": 35.5509,
+    "lng": 137.3135
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "釣り鐘形の笠をかぶった踊り手が、杵を振りながら神社へ向かう「杵振り踊り」",
+    "神馬、山車、花笠踊り、子ども神輿が列に加わる",
+    "前夜祭には杵振り踊りと打ち上げ花火が出る"
+  ],
+  "trivia": [
+    {
+      "text": "2026年は、杵振り踊りが佐長田神社に初めて奉納されて100年の節目だった",
+      "source": {
+        "url": "https://www.chunichi.co.jp/article/1236011",
+        "title": "中日新聞Web 白川中生が大絵馬力作「杵振り踊り」奉納100年記念の例大祭（2026年4月11日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "杵振り踊りは、中津川市の蛭川地区から伝わったとされる",
+      "source": {
+        "url": "https://www.chunichi.co.jp/article/1236011",
+        "title": "中日新聞Web 白川中生が大絵馬力作「杵振り踊り」奉納100年記念の例大祭（2026年4月11日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "踊り手は、餅をつくように杵を振る所作で、豊作を願う",
+      "source": {
+        "url": "https://www.chunichi.co.jp/article/1236011",
+        "title": "中日新聞Web 白川中生が大絵馬力作「杵振り踊り」奉納100年記念の例大祭（2026年4月11日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "踊りの行列と神社での奉納の見学が中心で、町の案内に混雑や危険についての注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://mino-shirakawa.com/event/sanagatajinjyaharumaturi/",
+        "title": "白川町 みの白川 佐長田神社 春の例大祭（杵振り踊り）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-04-11",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "例年4月の第2日曜に行う決まりから見込んだ日（2027年の発表はまだ見つからない）。2026年は11日夜の前夜祭（18:00〜21:00、19:00に杵振り踊り、20:00に打ち上げ花火）と、12日の本祭（11:30〜15:00ごろ）だった",
+      "sources": [
+        {
+          "url": "https://mino-shirakawa.com/event/sanagatajinjyaharumaturi/",
+          "title": "白川町 みの白川 佐長田神社 春の例大祭（2026年は4月12日(日)11:30〜15:00ごろ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://matsuri-no-hi.com/matsuri/7610",
+          "title": "祭の日 佐長田神社 春の祭典（毎年4月の第2日曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": []
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://mino-shirakawa.com/event/sanagatajinjyaharumaturi/",
+      "title": "白川町 みの白川 佐長田神社 春の例大祭（杵振り踊り）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.chunichi.co.jp/article/1236011",
+      "title": "中日新聞Web 白川中生が大絵馬力作「杵振り踊り」奉納100年記念の例大祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催日の発表と時刻（4月第2日曜という決まりは祭りの日情報サイトにあり、2026年の日程と曜日が合うことで見込んだ）",
+    "雨天の扱い",
+    "最寄り駅と徒歩の時間、主要駅からの行き方（JR 白川口駅とする情報が1つあるが徒歩の時間が不明）",
+    "駐車場、交通規制（町のページに記載がない）",
+    "見学の決まり、撮影の扱い、服装・持ち物（出典に見当たらない）",
+    "踊り手の募集があり、切井賛助会を通じてフォームで申し込むとあるが、募集の対象と時期が不明のため、見学のみとした",
+    "屋台の有無と振る舞い（豚汁の無料配布が岐阜県観光連盟の案内にあるとされるが、ページを開けなかったため入れていない）",
+    "周辺の観光と食の場所（営業時間などを確かめた出典がない）",
+    "会場の緯度・経度は、国土地理院の住所検索で白川町切井の地区の代表点を取ったもの（神社そのものの位置ではない）",
+    "見物客と踊り手の数（規模は、1つの神社の行事として S にした）",
+    "大手の観光サイトには掲載を確認できなかった（検索で主題のページが見つからない）"
+  ]
+}

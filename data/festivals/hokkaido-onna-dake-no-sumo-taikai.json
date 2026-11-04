@@ -1,0 +1,214 @@
+{
+  "id": "hokkaido-onna-dake-no-sumo-taikai",
+  "name": {
+    "ja": "北海道女だけの相撲大会",
+    "en": "Hokkaido Women's Sumo Tournament"
+  },
+  "category": "other",
+  "municipalities": [
+    {
+      "prefecture": "北海道",
+      "name": "松前郡福島町"
+    }
+  ],
+  "venue": {
+    "name": "福島大神宮 境内相撲場",
+    "lat": 41.48,
+    "lng": 140.2513
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "横綱千代の山と千代の富士を生んだ町で、母の日に女性だけが土俵に上がる",
+    "神社の境内の土俵で、全国や外国からも女性が集まり、定員64名で取り組む",
+    "観覧の人も景品の当たる抽選会と写真コンテストに加われる"
+  ],
+  "trivia": [
+    {
+      "text": "福島町は、横綱の千代の山と千代の富士の2人を生んだ町",
+      "source": {
+        "url": "https://be-happy-fukushima.com/event/onna-zumou/",
+        "title": "福島町観光協会 女だけの相撲大会",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2026年は第32回で、女性力士64人が出場した",
+      "source": {
+        "url": "https://kumanichi.com/articles/1989585",
+        "title": "熊本日日新聞 母の日恒例、女相撲で熱戦 2横綱生んだ北海道福島町（共同通信の配信）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "福島町のするめの生産量は、全国最大級とされる",
+      "source": {
+        "url": "https://be-happy-fukushima.com/attractions/michinoeki/",
+        "title": "福島町観光協会 道の駅「横綱の里ふくしま」",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_by_application",
+    "howToJoin": "出場は女性のみで定員64名、参加料は3,000円（保険料などを含む）。申し込みの方法は見つからなかった（福島町観光協会に問い合わせ）。見るだけの人も会場に入れる",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "神社の境内で行う相撲大会で、観覧についての危険や混雑の注意は見つからない"
+    },
+    "photo": {
+      "policy": "allowed",
+      "note": "来場者向けの写真コンテストがある。撮影の制限は見つからない"
+    },
+    "sources": [
+      {
+        "url": "https://be-happy-fukushima.com/event/onna-zumou/",
+        "title": "福島町観光協会 女だけの相撲大会（2026年5月10日、参加資格は原則高校生以上の女性、定員64名、参加料3,000円）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.gutabi.jp/event/detail/1509",
+        "title": "ぐうたび北海道 女だけの相撲大会（2026年、18歳以上の女性、抽選会と写真コンテスト）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-05-09",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": "悪天候の場合は福島町総合体育館で開催（2026年の案内）",
+      "note": "毎年母の日に行う決まりから見込んだ日（2027年の発表はまだ見つからない）。2026年は9:30ごろから14:30ごろまで。会場は福島大神宮の境内で、取組のあとに抽選会や写真コンテストがある",
+      "sources": [
+        {
+          "url": "https://be-happy-fukushima.com/event/onna-zumou/",
+          "title": "福島町観光協会 女だけの相撲大会（毎年母の日に開催）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "函館バス 福島バス停",
+        "walkMinutes": [5, 10],
+        "note": "木古内駅前から函館バス松前行きで約60分。降りてから徒歩約5分（福島町観光協会の案内）"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "木古内駅",
+        "minutes": [60, 70],
+        "route": "函館バス松前行きで福島バス停まで（約60分。本数と今年の時刻は未確認）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://be-happy-fukushima.com/event/onna-zumou/",
+        "title": "福島町観光協会 女だけの相撲大会（バスと車でのアクセス、臨時駐車場は普通車50台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "yokozuna-chiyonoyama-chiyonofuji-kinenkan",
+      "name": "横綱千代の山・千代の富士記念館",
+      "kind": "sightseeing",
+      "summary": "福島町出身の2人の横綱の歩みを伝える記念館。道の駅と駐車場を共用する。12月1日〜3月16日は冬季休業。",
+      "location": {
+        "lat": 41.4802,
+        "lng": 140.2556
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": [],
+      "price": "大人600円、小〜高校生350円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://be-happy-fukushima.com/attractions/yokozuna-kinenkan/",
+          "title": "福島町観光協会 横綱千代の山・千代の富士記念館",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "michinoeki-yokozuna-no-sato-fukushima",
+      "name": "道の駅 横綱の里ふくしま",
+      "kind": "sightseeing",
+      "summary": "南北海道の海と山の産物を扱う道の駅。町名物の肉厚なするめが並ぶ。年末年始（12月30日〜1月4日）は休み。",
+      "location": {
+        "lat": 41.4796,
+        "lng": 140.2556
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://be-happy-fukushima.com/attractions/michinoeki/",
+          "title": "福島町観光協会 道の駅「横綱の里ふくしま」",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://be-happy-fukushima.com/event/onna-zumou/",
+      "title": "福島町観光協会 女だけの相撲大会",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.gutabi.jp/event/detail/1509",
+      "title": "ぐうたび北海道 女だけの相撲大会（会場は福島大神宮 境内相撲場、福島町字福島219番地）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と時刻（2026年の開始は公式が9:30ごろ、ぐうたび北海道が10:00で食い違う）",
+    "出場の申し込みの方法と締め切り、出場の年齢（公式は原則高校生以上、ぐうたび北海道は18歳以上）",
+    "見学の決まり、服装・持ち物、会場のトイレや座れる場所",
+    "屋台の有無と、この日だけの食べもの",
+    "福島バス停へのバスの本数と今年の時刻、木古内駅より遠い玄関口からの所要時間",
+    "周辺の食事・休憩の場所（営業時間を公式で確かめられた店がなかった）。記念館と道の駅は会場からの徒歩時間も未確認",
+    "大手の観光サイトに祭りのページがあるか（検索では見つからなかったため local とした）",
+    "会場の緯度・経度は、国土地理院の住所検索で福島町字福島219番地の点を取ったもの",
+    "規模は、1つの会場で半日の行事（出場64名）として S にした"
+  ]
+}
