@@ -15,8 +15,8 @@ import type {
 
 // しおりの HTML。画面（GET /shiori/:id）と PDF で同じものを使う。
 // 旅程・祭りのデータ・モデルの文章はすべて html`` の差し込みでエスケープし、raw() は自前の CSS と SVG だけに使う。
-// スクリプトは使わない。店「たびや」ののれんと紋、スタッフの顔の絵の吹き出しで、店でもらう冊子の見た目にする。
-// 動き（のれんが揺れる・手を振る・ページをめくる・スタンプを押す・道のりを描く）は CSS だけで付ける（style.ts）。
+// スクリプトは使わない。店「たびや」の札と紋、和紙の紙と紺の枠、手で描いた絵、スタッフの顔の絵の吹き出しで、店でもらう冊子の見た目にする。
+// 動き（提灯が揺れる・手を振る・ページをめくる・スタンプを押す・道のりを描く）は CSS だけで付ける（style.ts）。
 
 type Html = HtmlEscapedString | Promise<HtmlEscapedString>;
 
@@ -50,6 +50,21 @@ const PAGE_LINES: Partial<Record<PageKind, string>> = {
   checklist: "出かける前にチェック！",
   stamps: "旅の思い出に、スタンプやサインをどうぞ",
   sources: "しおりの情報は、ここから調べました",
+  memory: "写真をはったり、絵を描いたりしてね",
+};
+
+/** 見出しの札の左に置く丸い印（絵は飾りで、見出しは文字で読める） */
+const PAGE_MEDALS: Record<PageKind, string> = {
+  cover: "deco-shop-mark",
+  festival: "spot-lantern",
+  overview: "icon-pin",
+  day: "deco-uchiwa",
+  guide: "spot-torii",
+  checklist: "spot-kinchaku",
+  stamps: "deco-crest",
+  sources: "icon-info",
+  memory: "icon-camera",
+  back: "deco-shop-mark",
 };
 
 function icon(name: IconName | `deco-${string}`, cls = "ic"): Html {
@@ -69,6 +84,26 @@ function staffImg(still: StaffStill, cls = "staff"): Html {
 function bubble(still: StaffStill, line: Html | string): Html {
   return html`<p class="bubble"><img class="face" src="assets/staff/${FACES[still]}.webp" alt="" /><span class="say"><span class="who">${STAFF_NAMES[still]}</span>${line}</span></p>`;
 }
+
+/** 見出しに添える小さな挿し絵（assets/shiori/svg/spot-*.svg）。文字の見出しの飾りなので読み上げない */
+function spot(name: "lantern" | "torii" | "kinchaku" | "dango"): Html {
+  return symbol(`spot-${name}`, "spot");
+}
+
+/** 予定の種類を、すごろくのマスの色分け（移動・食事・祭り・休憩・見る）にする */
+const STEP_GROUPS: Partial<Record<IconName, string>> = {
+  train: "move",
+  bus: "move",
+  car: "move",
+  taxi: "move",
+  walk: "move",
+  meal: "meal",
+  festival: "fest",
+  prep: "fest",
+  rest: "rest",
+  sun: "rest",
+  sightseeing: "see",
+};
 
 /** 店の紋と名前（見出しの上の小さな札） */
 function shopTag(): Html {
@@ -92,15 +127,16 @@ function head(
   kicker: string,
   title: Html,
   en: string | null = null,
-  override: { still: StaffStill; line: string } | null = null,
+  override: { still: StaffStill; line: string; medal?: string } | null = null,
 ): Html {
   const still = override?.still ?? PAGE_STAFF[kind];
   const line = override?.line ?? PAGE_LINES[kind];
+  const medal = override?.medal ?? PAGE_MEDALS[kind];
   return html`<header class="head">
     <div class="title">
       <p class="kick">${shopTag()}<span class="kicker">${kicker}</span></p>
-      <h2>${title}${en ? html`<span class="en">${en}</span>` : ""}</h2>
-      ${symbol("deco-wave", "wave")}
+      <h2 class="banner"><span class="medal">${symbol(medal, "")}</span><span class="txt">${title}</span>${symbol("deco-cloud", "cloud")}</h2>
+      ${en ? html`<p class="en head-en">${en}</p>` : ""}
       ${line && still ? bubble(still, line) : ""}
     </div>
     ${still ? staffImg(still) : ""}
@@ -109,49 +145,60 @@ function head(
 
 // ---------------------------------------------------------------------------
 
+/** 紙の四隅の青海波（表紙と裏表紙と、画面で見るときの各ページ） */
+function corners(): Html {
+  return html`<div class="corners" aria-hidden="true">${["tl", "tr", "bl", "br"].map((at) => symbol("deco-corner", at))}</div>`;
+}
+
 function cover(view: ShioriView): Html {
   const c = view.cover;
   const { design } = view;
   const main = view.festivals[0];
-  return html`<section class="sheet cover" aria-label="表紙">
-    <div class="noren" aria-hidden="true">
-      <span>旅の相談所</span><span class="mid">${symbol("deco-shop-mark", "")}</span><span>たびや</span>
-    </div>
+  return html`<section class="sheet cover tone-${design.coverTone}" aria-label="表紙">
+    ${corners()}
+    ${symbol("deco-lantern-cluster", "cluster")}
     ${symbol(`season-${design.season}`, "season a")}
-    <div class="motif-bg"></div>
-    ${symbol(`motif-${design.category}`, "motif")}
-    <p class="brand">${c.brand}</p>
+    <p class="ribbon">${symbol("deco-shop-mark", "mark")}<span class="shop">たびや</span><span class="name">旅のしおり</span></p>
     <p class="length">${c.lengthLabel}</p>
     <h1 class="${c.longTitle ? "long" : ""}">${c.title}</h1>
-    <div class="festival">
-      <p class="label">きょうの主役</p>
-      <p class="name">${c.festivalName}${c.festivalNameEn ? html`<span class="en">${c.festivalNameEn}</span>` : ""}</p>
-      ${c.place ? html`<p class="place">${c.place}</p>` : ""}
-    </div>
-    ${
-      design.compact && main && main.highlights.length > 0
-        ? html`<div class="highlights"><h3>見どころ</h3>${list(main.highlights)}</div>`
-        : ""
-    }
     ${c.verifiedLabel ? html`<p class="verified">${icon("deco-crest")}${c.verifiedLabel}</p>` : ""}
+    <div class="scene">
+      ${symbol(`motif-${design.category}`, "motif")}
+      ${symbol("scene-town", "town")}
+    </div>
     ${c.needsCheckLabel ? html`<p class="needs-check" role="note">${c.needsCheckLabel}</p>` : ""}
-    <dl class="ticket">
+    <dl class="facts">
       <div><dt>${icon("calendar")}日にち</dt><dd>${c.dateLabel}</dd></div>
       <div><dt>${icon("people")}だれと</dt><dd>${c.partyLabel}</dd></div>
-      <div><dt>${icon("pin")}出発</dt><dd>${c.routeLabel}</dd></div>
-      ${c.budgetLabel ? html`<div><dt>${icon("yen")}予算</dt><dd>${c.budgetLabel}</dd></div>` : ""}
       <div><dt>${icon(c.weather.icon)}天気</dt><dd>${c.weather.text}</dd></div>
+      <div><dt>${icon("pin")}出発</dt><dd>${c.routeLabel}</dd></div>
+      ${c.budgetLabel ? html`<div class="wide"><dt>${icon("yen")}予算</dt><dd>${c.budgetLabel}</dd></div>` : ""}
     </dl>
+    <div class="festival">
+      <p class="label">${symbol("deco-uchiwa", "fan")}きょうの主役</p>
+      <p class="name">${c.festivalName}${c.festivalNameEn ? html`<span class="en">${c.festivalNameEn}</span>` : ""}</p>
+      ${c.place ? html`<p class="place">${icon("pin")}${c.place}</p>` : ""}
+    </div>
+    ${
+      main && (main.highlights.length > 0 || main.trivia.length > 0)
+        ? html`<div class="cover-notes">
+            ${main.highlights.length > 0 ? html`<div class="highlights"><h3>${spot("lantern")}見どころ</h3><ol>${main.highlights.map((h, i) => html`<li><span class="num">${i + 1}</span>${h}</li>`)}</ol></div>` : ""}
+            ${main.trivia.length > 0 ? html`<div class="trivia-box"><h3>${icon("info")}祭りの小話</h3>${list(main.trivia.slice(0, 2))}</div>` : ""}
+          </div>`
+        : ""
+    }
+    ${symbol("deco-wave", "cover-wave")}
     <div class="crew">
       ${staffImg("penguin_cheer", "main")}
-      ${staffImg("hiyoko_wave", "waver")}
       ${bubble("hiyoko_wave", c.greeting)}
+      ${staffImg("hiyoko_wave", "waver")}
     </div>
   </section>`;
 }
 
 function festivalPage(f: FestivalView): Html {
   return html`<section class="sheet" aria-label="祭りの紹介">
+    ${corners()}
     ${head("festival", "今回の祭り", html`<span class="fest-name">${f.nameJa}</span>`, f.nameEn)}
     <div class="chips">
       <span class="chip">${icon("festival")}${f.categoryLabel}</span>
@@ -165,7 +212,8 @@ function festivalPage(f: FestivalView): Html {
     </div>
     ${
       f.highlights.length > 0
-        ? html`<div class="keep" style="margin-top:6mm"><h3 class="section-title">${f.nameJa}の見どころ</h3>
+        ? html`<div class="keep" style="margin-top:6mm"><h3 class="section-title">${spot("lantern")}${f.nameJa}の見どころ</h3>
+            ${bubble("owl_book", "ここは見のがさないで！")}
             <div class="cards">${f.highlights.map((h, i) => html`<div class="card"><span class="num">${i + 1}</span>${h}</div>`)}</div></div>`
         : ""
     }
@@ -176,7 +224,7 @@ function festivalPage(f: FestivalView): Html {
     }
     <div class="box line keep with-staff">
       <div>
-        <h3 class="section-title">${icon("meal")}その土地の味</h3>
+        <h3 class="section-title">${spot("dango")}その土地の味</h3>
         <p><b>${f.food.stalls}</b></p>
         ${f.food.local.length > 0 ? list(f.food.local) : html`<p class="muted">地元の料理は、データにありません。</p>`}
       </div>
@@ -214,6 +262,7 @@ function routeMap(route: RouteView, notes: readonly string[]): Html {
 
 function overviewPage(view: ShioriView): Html {
   return html`<section class="sheet" aria-label="旅の全体">
+    ${corners()}
     ${head("overview", view.cover.lengthLabel, html`旅の全体`)}
     ${view.route ? routeMap(view.route, view.styleNotes) : ""}
     <ol class="overview">
@@ -247,23 +296,31 @@ function dayPage(view: ShioriView, day: DayView): Html {
   const showRain = day.rainPlan.length > 0;
   const festivalDay = day.kind === "festival";
   return html`<section class="sheet day-page ${festivalDay ? "festival-day" : "calm-day"}" aria-label="${day.heading}">
+    ${corners()}
     ${festivalDay ? symbol("deco-bunting", "day-bunting") : ""}
     ${head(
       "day",
       `${day.dateLabel}・${day.kindLabel}`,
-      html`<span class="day-head"><span class="day-no">${day.heading}</span>${festivalDay ? symbol(`motif-${view.design.category}`, "day-motif") : ""}</span>`,
+      html`<span class="day-no">${day.heading}</span>`,
       null,
       festivalDay
-        ? { still: "penguin_cheer", line: DAY_LINES.festival }
-        : { still: "hen_point", line: DAY_LINES[day.kind] },
+        ? {
+            still: "penguin_cheer",
+            line: DAY_LINES.festival,
+            medal: `motif-${view.design.category}`,
+          }
+        : { still: "hen_point", line: DAY_LINES[day.kind], medal: "icon-walk" },
     )}
     ${weatherChip(day.weather)}
     <div class="timeline">
-      <p class="endpoint">${icon("pin")}${day.startLabel}</p>
+      <p class="endpoint start"><span class="koma">ふりだし</span>${icon("pin")}${day.startLabel}</p>
       ${day.rows.map(
-        (r) => html`<div class="step${r.festival ? " festival" : ""}">
+        (
+          r,
+          i,
+        ) => html`<div class="step g-${STEP_GROUPS[r.icon] ?? "see"}${r.festival ? " festival" : ""}">
           <span class="time">${r.time}</span>
-          <span class="dot">${icon(r.icon)}</span>
+          <span class="dot">${icon(r.icon)}<b class="masu">${i + 1}</b></span>
           <div class="body">
             <p class="name"><span class="kind">${r.kind}</span>${r.name}</p>
             <p>${r.reason}</p>
@@ -271,7 +328,7 @@ function dayPage(view: ShioriView, day: DayView): Html {
           </div>
         </div>`,
       )}
-      ${day.returnLabel ? html`<p class="endpoint">${icon("home")}${day.returnLabel}</p>` : ""}
+      ${day.returnLabel ? html`<p class="endpoint goal"><span class="koma">あがり</span>${icon("home")}${day.returnLabel}</p>` : ""}
     </div>
     ${
       day.stay
@@ -285,6 +342,7 @@ function dayPage(view: ShioriView, day: DayView): Html {
 
 function guidePage(g: GuideView): Html {
   return html`<section class="sheet" aria-label="はじめての方へ">
+    ${corners()}
     ${head("guide", g.festivalName, html`はじめての方へ`, "For first-time visitors")}
     ${
       g.missing
@@ -292,9 +350,10 @@ function guidePage(g: GuideView): Html {
         : html`
           ${
             g.requests.length > 0
-              ? html`<div class="box alert keep"><h3>${icon("warn")}祭りの方からのお願い<span class="en">&nbsp;Requests from the organizers</span></h3>${list(g.requests)}</div>`
+              ? html`<div class="box alert keep"><h3>${spot("torii")}祭りの方からのお願い<span class="en">&nbsp;Requests from the organizers</span></h3>${list(g.requests)}</div>`
               : ""
           }
+          ${bubble("hen_point", "お願いを守って、地元の人と一緒に楽しもう")}
           <table class="guide">
             ${g.rows.map(
               (r) => html`<tr>
@@ -336,11 +395,12 @@ function sourcesList(view: ShioriView): Html {
 
 function checklistPage(view: ShioriView): Html {
   return html`<section class="sheet" aria-label="持ち物のチェックリスト">
+    ${corners()}
     ${head("checklist", "出かける前に", html`持ち物チェック`)}
     <div class="checks">
       ${view.checklist.map(
         (g) => html`<div class="group">
-          <h3>${g.title}</h3>
+          <h3>${icon(g.icon)}${g.title}</h3>
           ${g.note ? html`<p class="note">${g.note}</p>` : ""}
           <ul>${g.items.map((item) => html`<li>${item}</li>`)}</ul>
         </div>`,
@@ -349,7 +409,7 @@ function checklistPage(view: ShioriView): Html {
     ${
       view.design.compact
         ? html`<div class="box line keep"><h3>${icon("deco-crest")}スタンプ</h3>${stampGrid(view, true)}</div>
-          <div class="box line two-col"><h3>${icon("info")}出典</h3>${sourcesList(view)}</div>`
+          <div class="box line two-col"><h3>${icon("info")}出典</h3>${sourcesList(view)}${shopSeal("mini")}</div>`
         : ""
     }
   </section>`;
@@ -357,6 +417,7 @@ function checklistPage(view: ShioriView): Html {
 
 function stampsPage(view: ShioriView): Html {
   return html`<section class="sheet" aria-label="スタンプ帳">
+    ${corners()}
     ${head("stamps", "旅の記念に", html`スタンプ帳`)}
     ${stampGrid(view, false)}
     ${
@@ -371,8 +432,53 @@ function stampsPage(view: ShioriView): Html {
 
 function sourcesPage(view: ShioriView): Html {
   return html`<section class="sheet" aria-label="出典">
+    ${corners()}
     ${head("sources", "調べたところ", html`出典`)}
     ${sourcesList(view)}
+  </section>`;
+}
+
+/** 冊子のページ数をそろえるための「旅の思い出」のページ */
+function memoryPage(): Html {
+  return html`<section class="sheet" aria-label="旅の思い出">
+    ${corners()}
+    ${head("memory", "旅の記念に", html`旅の思い出`)}
+    <div class="frames">
+      <div class="photo">${icon("camera")}写真をはろう</div>
+      <div class="photo">${spot("lantern")}絵を描こう</div>
+    </div>
+    ${memoBox("思い出のメモ", 6)}
+  </section>`;
+}
+
+/** 裏表紙の帯：店の印と名前、旅の前のお願い（半日のお出かけは持ち物のページの下に置く） */
+/** 店の印（たびや 旅の相談所） */
+function shopSeal(cls = ""): Html {
+  return html`<div class="seal ${cls}">${symbol("deco-shop-mark", "")}<span>たびや</span><span class="sub">旅の相談所</span></div>`;
+}
+
+function backBand(): Html {
+  return html`<div class="back-band keep">
+    ${shopSeal()}
+    <p>このしおりは、たびやのスタッフがお作りしました。<br />出かける前と当日の朝に、公式の情報で開催を確かめてください。</p>
+  </div>`;
+}
+
+/** 裏表紙 */
+function backPage(view: ShioriView): Html {
+  return html`<section class="sheet back" aria-label="裏表紙">
+    ${corners()}
+    ${symbol("deco-lantern-cluster", "cluster")}
+    <p class="ribbon">${symbol("deco-shop-mark", "mark")}<span class="shop">たびや</span><span class="name">旅の相談所</span></p>
+    <p class="thanks">いってらっしゃい！<br />よい旅を。</p>
+    <div class="crew">
+      ${staffImg("penguin_cheer", "main")}
+      ${staffImg("hiyoko_wave", "waver")}
+    </div>
+    <p class="trip">${view.cover.title}<br /><span class="muted">${view.cover.dateLabel}</span></p>
+    ${backBand()}
+    <p class="how">冊子にするとき：A4 の両面で印刷し、プリンターの「小冊子」を選ぶと、2つ折りの A5 の冊子になります。</p>
+    ${symbol("scene-town", "town")}
   </section>`;
 }
 
@@ -389,6 +495,8 @@ function pages(view: ShioriView): Html[] {
     checklist: () => checklistPage(view),
     stamps: () => stampsPage(view),
     sources: () => sourcesPage(view),
+    memory: () => memoryPage(),
+    back: () => backPage(view),
   };
   return view.pages.map((kind) => renderers[kind]());
 }

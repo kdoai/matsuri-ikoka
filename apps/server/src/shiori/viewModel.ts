@@ -133,6 +133,8 @@ export interface GuideView {
 }
 
 export interface ChecklistGroup {
+  /** まとまりの見出しの印 */
+  icon: IconName;
   title: string;
   note: string | null;
   items: string[];
@@ -691,12 +693,13 @@ function checklist(
   );
   const festivalItems = [...new Set([...bring, ...dress])];
   groups.push({
+    icon: "festival",
     title: "祭りのために",
     note: "祭りのデータの「持ち物」と「服装」から",
     items: festivalItems.length > 0 ? festivalItems : [`祭りの持ち物は${UNKNOWN_JA}`],
   });
   if (trip.notes.length > 0) {
-    groups.push({ title: "旅程係のメモ", note: null, items: [...trip.notes] });
+    groups.push({ icon: "info", title: "旅程係のメモ", note: null, items: [...trip.notes] });
   }
   const anyRain = trip.days.some(rainyDay);
   const night = trip.days.some((d) =>
@@ -709,16 +712,18 @@ function checklist(
     ...(night ? [NIGHT_HINT] : []),
     ...SEASON_ITEMS[design.season],
   ];
-  groups.push({ title: "いつもの持ち物", note: "一般的な目安です", items: everyday });
+  groups.push({ icon: "bag", title: "いつもの持ち物", note: "一般的な目安です", items: everyday });
   if (trip.days.length > 1) {
     const nights = trip.days.length - 1;
     groups.push({
+      icon: "stay",
       title: `泊まりの分（${nights}泊）`,
       note: null,
       items: STAY_ITEMS.map((item) => (item === "着替え" ? `着替え（${nights}泊分）` : item)),
     });
   }
-  if (design.kids) groups.push({ title: "子どもと一緒", note: null, items: KIDS_ITEMS });
+  if (design.kids)
+    groups.push({ icon: "people", title: "子どもと一緒", note: null, items: KIDS_ITEMS });
   return groups;
 }
 
