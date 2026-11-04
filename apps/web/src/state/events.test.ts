@@ -99,7 +99,7 @@ describe("記録した相談を通す", () => {
         tool: "search_festivals",
         status: "ok",
         bubble: "8月16日に、みなと中央駅から片道2時間以内の日帰りで行ける祭りを探しています",
-        result: "2件見つかりました",
+        result: "2件見つかりました。いちばん上は「鈴鳴灯籠まつり」",
       },
     ]);
   });
@@ -215,6 +215,100 @@ describe("スタッフの動き", () => {
     state = settleStaff(state);
     expect(state.staff.scout).toMatchObject({ phase: "idle", motion: "idle", bubble: null });
     expect(state.staff.planner.phase).toBe("idle");
+  });
+
+  it("吹き出しは短い文、店内のようすの窓には、くわしい文を持つ", () => {
+    let state = applyEvent(fresh(), {
+      type: "tool.start",
+      data: { toolCallId: "c-1", tool: "search_nearby", staff: "scout", bubble: "探しています" },
+    });
+    expect(state.staff.scout.detail).toBeNull();
+    state = applyEvent(state, {
+      type: "tool.end",
+      data: {
+        toolCallId: "c-1",
+        tool: "search_nearby",
+        staff: "scout",
+        ok: true,
+        bubble: "食事どころ2軒を見つけました",
+        detail: "会場から歩いて10分以内に、食事どころを2軒見つけました",
+        count: 2,
+      },
+    });
+    expect(state.staff.scout).toMatchObject({
+      bubble: "食事どころ2軒を見つけました",
+      detail: "会場から歩いて10分以内に、食事どころを2軒見つけました",
+    });
+    // くわしい文のない次の吹き出しでは、前のくわしい文を残さない
+    state = applyEvent(state, {
+      type: "staff.start",
+      data: { staff: "scout", task: "find_nearby", bubble: "寄り道を探してきます" },
+    });
+    expect(state.staff.scout.detail).toBeNull();
+  });
+
+  it("経路と宿の調べは、旅程係が調べる動きになる", () => {
+    let state = applyEvent(fresh(), {
+      type: "tool.start",
+      data: {
+        toolCallId: "r-1",
+        tool: "research_route",
+        staff: "planner",
+        bubble: "みなと中央駅からの乗り換えを調べています",
+      },
+    });
+    expect(state.staff.planner).toMatchObject({ motion: "look_up", tool: "research_route" });
+    state = applyEvent(state, {
+      type: "tool.start",
+      data: {
+        toolCallId: "l-1",
+        tool: "search_lodging",
+        staff: "planner",
+        bubble: "宿を探しています",
+      },
+    });
+    expect(state.staff.planner).toMatchObject({ motion: "point", tool: "search_lodging" });
+  });
+
+  it("調べ直しの頼みと受けは、吹き出しと頼みの記録に残る", () => {
+    let state = applyEvent(fresh(), {
+      type: "staff.redo",
+      data: {
+        kind: "request",
+        from: "planner",
+        to: "scout",
+        subject: "lunch",
+        bubble: "昼ごはんの店がまだです。もう一度探してもらえますか",
+        detail: "旅程に昼ごはんの店が入っていません。周辺係に調べ直しを頼みます",
+      },
+    });
+    expect(state.staff.planner).toMatchObject({
+      motion: "talk",
+      bubble: "昼ごはんの店がまだです。もう一度探してもらえますか",
+    });
+    expect(state.relay.focus).toBe("scout");
+    state = applyEvent(state, {
+      type: "staff.redo",
+      data: {
+        kind: "accept",
+        from: "scout",
+        to: "planner",
+        subject: "lunch",
+        bubble: "昼ごはんの店ですね。もう一度探してきます",
+      },
+    });
+    expect(state.staff.scout).toMatchObject({
+      motion: "nod",
+      bubble: "昼ごはんの店ですね。もう一度探してきます",
+      detail: null,
+    });
+    expect(
+      state.relay.log.map((entry) => [entry.kind, entry.from, entry.to, entry.subject]),
+    ).toEqual([
+      ["redo_request", "planner", "scout", "lunch"],
+      ["redo_accept", "scout", "planner", "lunch"],
+    ]);
+    expect(state.relay.log[0]?.task).toBe("find_nearby");
   });
 
   it("返答を話している間、コンシェルジュは話す動きになる", () => {

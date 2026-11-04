@@ -8,6 +8,7 @@ import type {
   ItineraryDiff,
   PartialTripConditions,
   Preferences,
+  RedoSubject,
   Source,
   SpotPin,
   STAFF_TASKS,
@@ -69,6 +70,8 @@ export interface StaffState {
   tool: ToolName | null;
   /** 吹き出しの文章。サーバーが決まった型から作ったものをそのまま持つ */
   bubble: string | null;
+  /** 店内のようすの窓に出す、くわしい文（サーバーが決まった型から作る）。なければ吹き出しを出す */
+  detail: string | null;
   /** 変わるたびに1つ増える。うなずき・はんこのような1回きりの動きを出し直すのに使う */
   seq: number;
 }
@@ -85,10 +88,12 @@ export interface RelayEntry {
   id: number;
   /** どの発言のときか */
   turn: number;
-  kind: "request" | "handoff";
+  kind: "request" | "handoff" | "redo_request" | "redo_accept";
   from: StaffId;
   to: StaffId;
   task: StaffTask;
+  /** 調べ直し（redo_request・redo_accept）のときの、足りないもの */
+  subject?: RedoSubject;
 }
 
 export interface RelayState {

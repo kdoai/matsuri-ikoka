@@ -28,11 +28,27 @@ export const TOOL_NAMES = [
   "search_festivals",
   "search_nearby",
   "get_access",
+  "research_route",
   "get_weather",
+  "search_lodging",
   "update_itinerary",
   "verify_festival",
 ] as const;
 export const ToolNameSchema = z.enum(TOOL_NAMES);
+
+/**
+ * 調べ直しを頼む中身：lunch 昼ごはんの店 / dinner 夕ごはんの店 / sightseeing 寄り道 /
+ * route 行き方（乗り換え） / last_mile 駅から会場までの移動 / lodging 宿
+ */
+export const REDO_SUBJECTS = [
+  "lunch",
+  "dinner",
+  "sightseeing",
+  "route",
+  "last_mile",
+  "lodging",
+] as const;
+export const RedoSubjectSchema = z.enum(REDO_SUBJECTS);
 
 /**
  * 会話の状態。サーバーが持ち、画面はこれに合わせて切り替わる。
@@ -122,6 +138,8 @@ export const ToolStartEventSchema = event(
     tool: ToolNameSchema,
     staff: StaffIdSchema,
     bubble: TextSchema,
+    /** 店内のようすの窓に出す、くわしい文。吹き出しより長い */
+    detail: TextSchema.optional(),
   }),
 );
 
@@ -135,6 +153,8 @@ export const ToolEndEventSchema = event(
       staff: StaffIdSchema,
       ok: z.boolean(),
       bubble: TextSchema,
+      /** 店内のようすの窓に出す、くわしい文（見つけたものの件数と代表の1件など） */
+      detail: TextSchema.optional(),
       /** 見つかった件数。件数のないツールでは null */
       count: z.number().int().nonnegative().nullable(),
       candidates: z.array(FestivalCandidateSchema).max(MAX_CANDIDATES).optional(),
@@ -155,6 +175,27 @@ export const ToolEndEventSchema = event(
           message: "spots は search_nearby の結果にだけ付けます",
         });
       }
+    }),
+);
+
+/**
+ * スタッフどうしの調べ直しの頼み（request）と、その受け（accept）。
+ * 足りないもの（subject）から、サーバーが決まった型で吹き出しを作る
+ */
+export const StaffRedoEventSchema = event(
+  "staff.redo",
+  z
+    .strictObject({
+      kind: z.enum(["request", "accept"]),
+      from: StaffIdSchema,
+      to: StaffIdSchema,
+      subject: RedoSubjectSchema,
+      bubble: TextSchema,
+      detail: TextSchema.optional(),
+    })
+    .refine((data) => data.from !== data.to, {
+      path: ["to"],
+      message: "頼む相手は、頼む人と別のスタッフにしてください",
     }),
 );
 
@@ -228,6 +269,7 @@ export const SseEventSchema = z.discriminatedUnion("type", [
   StaffStartEventSchema,
   ToolStartEventSchema,
   ToolEndEventSchema,
+  StaffRedoEventSchema,
   ItineraryUpdatedEventSchema,
   FestivalVerifiedEventSchema,
   MessageDeltaEventSchema,
@@ -237,6 +279,7 @@ export const SseEventSchema = z.discriminatedUnion("type", [
 
 export type StaffId = z.infer<typeof StaffIdSchema>;
 export type ToolName = z.infer<typeof ToolNameSchema>;
+export type RedoSubject = z.infer<typeof RedoSubjectSchema>;
 export type ConversationStage = z.infer<typeof ConversationStageSchema>;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 export type FestivalCandidate = z.infer<typeof FestivalCandidateSchema>;
@@ -249,6 +292,7 @@ export const SSE_EVENT_TYPES = [
   "staff.start",
   "tool.start",
   "tool.end",
+  "staff.redo",
   "itinerary.updated",
   "festival.verified",
   "message.delta",

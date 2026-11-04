@@ -1,5 +1,12 @@
 import type { Itinerary, SseEvent, SseEventOf, StaffId, ToolName } from "@matsuri-ikoka/schema";
-import { closeRelay, conciergeSpeaks, finishTool, handOver, requestWork } from "./relay";
+import {
+  closeRelay,
+  conciergeSpeaks,
+  finishTool,
+  handOver,
+  requestRedo,
+  requestWork,
+} from "./relay";
 import type { AppData, ChatEntry, StaffMotion, StaffState, VerifyState } from "./types";
 
 // SSE のイベントを、ストアの更新に変える。ここだけがイベントを読み、部品はストアだけを読む。
@@ -10,7 +17,9 @@ const TOOL_MOTION: Record<ToolName, StaffMotion> = {
   search_festivals: "flip",
   search_nearby: "point",
   get_access: "look_up",
+  research_route: "look_up",
   get_weather: "look_up",
+  search_lodging: "point",
   update_itinerary: "flip",
   verify_festival: "flip",
 };
@@ -23,6 +32,8 @@ export function applyEvent(state: AppData, event: SseEvent): AppData {
       return onToolStart(state, event.data);
     case "tool.end":
       return onToolEnd(state, event.data);
+    case "staff.redo":
+      return onStaffRedo(state, event.data);
     case "itinerary.updated":
       return onItineraryUpdated(state, event.data);
     case "festival.verified":
@@ -79,6 +90,7 @@ function onStaffStart(state: AppData, data: SseEventOf<"staff.start">["data"]): 
     task: data.task,
     tool: null,
     bubble: data.bubble,
+    detail: null,
   });
   return {
     ...next,
@@ -92,6 +104,7 @@ function onToolStart(state: AppData, data: SseEventOf<"tool.start">["data"]): Ap
     motion: TOOL_MOTION[data.tool],
     tool: data.tool,
     bubble: data.bubble,
+    detail: data.detail ?? null,
   });
   const entry: ChatEntry = {
     kind: "work",
@@ -120,6 +133,7 @@ function onToolEnd(state: AppData, data: SseEventOf<"tool.end">["data"]): AppDat
     motion: "nod",
     tool: null,
     bubble: data.bubble,
+    detail: data.detail ?? null,
   });
 
   const id = `w-${data.toolCallId}`;
@@ -161,6 +175,16 @@ function onToolEnd(state: AppData, data: SseEventOf<"tool.end">["data"]): AppDat
     next = { ...next, verify: { ...next.verify, status: "idle" } };
   }
   return next;
+}
+
+/** 調べ直しの頼みと受け。頼む人・受ける人が、その場で吹き出しを出す（持ち場は動かない） */
+function onStaffRedo(state: AppData, data: SseEventOf<"staff.redo">["data"]): AppData {
+  const next = requestRedo(state, data.kind, data.from, data.to, data.subject);
+  return patchStaff(next, data.from, {
+    motion: data.kind === "request" ? "talk" : "nod",
+    bubble: data.bubble,
+    detail: data.detail ?? null,
+  });
 }
 
 function onItineraryUpdated(
@@ -284,6 +308,7 @@ export function closeTurn(state: AppData): AppData {
           task: null,
           tool: null,
           bubble: null,
+          detail: null,
         });
       }
     } else if (staff.phase !== "idle" && staff.phase !== "returning") {

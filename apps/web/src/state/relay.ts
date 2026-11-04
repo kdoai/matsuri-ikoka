@@ -1,4 +1,4 @@
-import type { StaffId } from "@matsuri-ikoka/schema";
+import type { RedoSubject, StaffId } from "@matsuri-ikoka/schema";
 import type {
   AppData,
   RelayEntry,
@@ -79,6 +79,38 @@ export function requestWork(state: AppData, to: StaffId, task: StaffTask): AppDa
   return next;
 }
 
+/** 調べ直しで足りないものから、それを調べる作業を引く */
+const REDO_TASK: Record<RedoSubject, StaffTask> = {
+  lunch: "find_nearby",
+  dinner: "find_nearby",
+  sightseeing: "find_nearby",
+  route: "plan_route",
+  last_mile: "plan_route",
+  lodging: "plan_route",
+};
+
+/**
+ * 調べ直しの頼み（redo_request：from が to に頼む）と受け（redo_accept：from が to の頼みを受ける）。
+ * サーバーの staff.redo をそのまま記録に残す
+ */
+export function requestRedo(
+  state: AppData,
+  kind: "request" | "accept",
+  from: StaffId,
+  to: StaffId,
+  subject: RedoSubject,
+): AppData {
+  const { relay } = append(state.relay, {
+    turn: state.session.turn,
+    kind: kind === "request" ? "redo_request" : "redo_accept",
+    from,
+    to,
+    task: REDO_TASK[subject],
+    subject,
+  });
+  return { ...state, relay: { ...relay, focus: kind === "request" ? to : relay.focus } };
+}
+
 /** スタッフがツールを使い終えた（tool.end）。うまくいけば結果を持つ。頼みの吹き出しはここで下ろす */
 export function finishTool(state: AppData, staff: StaffId, ok: boolean): AppData {
   if (staff === "concierge") return state;
@@ -124,6 +156,8 @@ export function staffActivity(
   switch (staff.tool) {
     case "search_festivals":
     case "search_nearby":
+    case "research_route":
+    case "search_lodging":
       return "researching";
     case "get_access":
     case "get_weather":
