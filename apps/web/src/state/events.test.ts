@@ -67,10 +67,11 @@ describe("記録した相談を通す", () => {
       food: "local",
       move: "train",
     });
-    expect(state.candidates.map((c) => c.festivalId)).toEqual([
-      "suzunari-toro",
-      "kazami-bon-odori",
-    ]);
+    expect(state.candidates.map((c) => c.festivalId)).toEqual(["suzunari-toro"]);
+    // 希望日の前の日に開く祭りは、候補ではなく「この祭りならやっています」に、ずれを添えて入る
+    expect(state.search?.nearMisses.map((n) => [n.candidate.festivalId, n.miss.condition])).toEqual(
+      [["kazami-bon-odori", "date"]],
+    );
     expect(state.ui.candidatesOpen).toBe(true);
   });
 
@@ -79,7 +80,9 @@ describe("記録した相談を通す", () => {
     const replies = state.messages.filter((entry) => entry.kind === "concierge");
     expect(replies).toHaveLength(1);
     expect(replies[0]).toMatchObject({ streaming: false });
-    expect(replies[0]?.kind === "concierge" && replies[0].text).toContain("どちらにしますか。");
+    expect(replies[0]?.kind === "concierge" && replies[0].text).toContain(
+      "鈴鳴灯籠まつりで旅程を組みましょうか。",
+    );
   });
 
   it("作業の記録は、ツールの開始と終了で1行になる", () => {
@@ -93,7 +96,7 @@ describe("記録した相談を通す", () => {
         tool: "search_festivals",
         status: "ok",
         bubble: "8月16日に、みなと中央駅から片道2時間以内の日帰りで行ける祭りを探しています",
-        result: "2件見つかりました",
+        result: "1件見つかりました",
       },
     ]);
   });

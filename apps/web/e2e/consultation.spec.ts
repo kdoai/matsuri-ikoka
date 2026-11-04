@@ -40,24 +40,30 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   await sendSampleMessage(page, 0);
   const cards = page.getByTestId("candidate-card");
   // 聞き取りに答えて送るので、返答の再生を待つ
-  await expect(cards).toHaveCount(2, { timeout: 20_000 });
+  await expect(cards).toHaveCount(1, { timeout: 20_000 });
   await expect(cards.nth(0)).toContainText("鈴鳴灯籠まつり");
   await expect(cards.nth(0)).toContainText("公式で確認");
   await expect(cards.nth(0)).toContainText("ご希望の日");
-  await expect(cards.nth(1)).toContainText("未確認");
-  await expect(cards.nth(1)).toContainText("ご希望の1日前");
-  await expect(cards.nth(1)).toContainText("要確認");
+  await expect(cards.nth(0)).toContainText("出発の駅から片道およそ48分〜1時間2分");
+  // 希望日から外れる祭りは候補にせず、「この祭りならやっています」に外れている点を添えて出す
+  const nearMiss = page.getByTestId("next-steps").getByTestId("candidate-row");
+  await expect(page.getByTestId("next-steps")).toContainText("この祭りならやっています");
+  await expect(nearMiss).toHaveCount(1);
+  await expect(nearMiss).toContainText("未確認");
+  await expect(nearMiss).toContainText("ご希望の日の1日前（8月15日）に開きます");
+  await expect(nearMiss).toContainText("要確認");
   await expect(cards.nth(0).getByRole("link", { name: "情報の訂正を送る" })).toHaveAttribute(
     "href",
     /issues\/new\?template=festival-correction\.yml/,
   );
   // 開催が確認できていない祭りは選べず、理由を文字で出す
-  await expect(cards.nth(1).getByRole("button", { name: "この祭りにする" })).toBeDisabled();
-  await expect(cards.nth(1)).toContainText("今年の開催がまだ確認できていません");
+  await expect(nearMiss.getByRole("button", { name: "この祭りにする" })).toBeDisabled();
+  await expect(nearMiss).toContainText("今年の開催がまだ確認できていません");
   await waitForReply(page);
   await snap(page, info, "01-candidates");
   // リスト表示に切り替えると、1行ずつ見比べられる。選んだ表示は覚えておく
   await page.getByRole("button", { name: "リスト表示" }).click();
+  // 候補の1行と、「この祭りならやっています」の1行
   await expect(page.getByTestId("candidate-row")).toHaveCount(2);
   await expect(cards).toHaveCount(0);
   await snap(page, info, "01-candidates-list");
@@ -65,7 +71,7 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   await page.getByRole("button", { name: "祭りの候補を見る" }).click();
   await expect(page.getByTestId("candidate-row")).toHaveCount(2);
   await page.getByRole("button", { name: "カード表示" }).click();
-  await expect(cards).toHaveCount(2);
+  await expect(cards).toHaveCount(1);
   // 候補を閉じても、店に戻って選び直せる
   await page.keyboard.press("Escape");
   await expect(page.getByTestId("candidates")).toHaveCount(0);

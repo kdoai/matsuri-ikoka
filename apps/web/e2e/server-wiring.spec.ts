@@ -122,7 +122,7 @@ test("合言葉の要る店では、入口で聞き、すべての /api の呼�
   expect(server.sessionBodies).toEqual([{ sample: "suzunari-day-trip" }]);
 
   await send(page, firstMessage);
-  await expect(page.getByTestId("candidate-card")).toHaveCount(2);
+  await expect(page.getByTestId("candidate-card")).toHaveCount(1);
   expect(server.chatBodies).toHaveLength(1);
 });
 
@@ -158,7 +158,7 @@ test("相談の途中で合言葉を求められたら聞き直し、入れ直�
   await dialog.getByLabel("合言葉").fill(PASSCODE);
   await dialog.getByRole("button", { name: "入れて送り直す" }).click();
   await expect(dialog).toHaveCount(0);
-  await expect(page.getByTestId("candidate-card")).toHaveCount(2);
+  await expect(page.getByTestId("candidate-card")).toHaveCount(1);
   expect(chats).toBe(2);
   await openLog(page);
   await expect(page.getByTestId("chat-user")).toHaveCount(1);
@@ -176,7 +176,7 @@ test("相談が見つからない（404）ときは、新しい相談を自動�
   await expect(page.getByTestId("dialogue-error")).toContainText("新しい相談を始めました");
   await page.getByRole("button", { name: "もう一度送る" }).click();
   await waitForReply(page);
-  await expect(page.getByTestId("candidate-card")).toHaveCount(2);
+  await expect(page.getByTestId("candidate-card")).toHaveCount(1);
   expect(server.chatBodies.map((body) => body.sessionId)).toEqual(["s-1", "s-2"]);
 });
 
