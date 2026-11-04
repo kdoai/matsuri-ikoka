@@ -35,6 +35,10 @@ export interface CandidateChecker {
     session: object;
     signal: AbortSignal;
   }): Promise<CandidateCheck | null>;
+  /**
+   * とってある結果だけを返す（新しく確かめない）。旅程を保存するとき、候補を出す前の確かめの結果を引き継ぐのに使う
+   */
+  peek?(festivalId: string, date: IsoDate): CandidateCheck | null;
 }
 
 interface Entry {
@@ -96,6 +100,11 @@ export function createCandidateChecker(deps: {
   };
 
   return {
+    peek(festivalId, date) {
+      prune(clock());
+      const hit = cache.get(`${festivalId}@${date}`);
+      return hit === undefined ? null : { ...hit.value, cached: true };
+    },
     async check({ festival, date, session, signal }) {
       const key = `${festival.id}@${date}`;
       const at = clock();
