@@ -142,7 +142,7 @@ main ブランチには直接 push しません。人の変更も自動の更新
 
 ### Cloud Run の設定
 
-サービスの設定は Cloud Run の側に置き、デプロイ（`deploy.yml`）ではイメージだけを差し替えます。
+サービスの設定は Cloud Run の側に置き、デプロイ（`deploy.yml`）ではイメージを差し替えます。インスタンスの数（最小 0・最大 1）だけは、デプロイのたびに版に付け直します。
 
 | 項目               | 値                                                                                                                                                | 理由                                                                                                                                                                                 |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -155,7 +155,7 @@ main ブランチには直接 push しません。人の変更も自動の更新
 | 公開               | 認証なしで呼べる（`/api/*` は合言葉で守る）。VPC への外向きの接続は付けない                                                                       |                                                                                                                                                                                      |
 | サービスアカウント | 実行用の専用のアカウント。`ANTHROPIC_API_KEY` と `ACCESS_PASSCODE` のシークレットを読むことと、Firestore の読み書き（`roles/datastore.user`）だけ | 乗っ取られても、できることを小さくする。既定の Compute のアカウントは使わない                                                                                                        |
 | 秘密情報           | Secret Manager から環境変数として渡す                                                                                                             | 値をイメージ・リポジトリ・ログに出さない                                                                                                                                             |
-| イメージ           | Artifact Registry。最新の10版を残し、30日より古いものは消す                                                                                       |                                                                                                                                                                                      |
+| イメージ           | Artifact Registry。最新の10版を残し、1日より古いものは消す                                                                                        |                                                                                                                                                                                      |
 
 - 本番の環境変数：`NODE_ENV=production`・`MATSURI_AGENT_MODE=live`・`MODEL_CONCIERGE`・`MODEL_STAFF`・`MODEL_PLANNER`・`MODEL_VERIFIER`・`DAILY_CHAT_LIMIT`・`DAILY_CHAT_LIMIT_PER_IP`・`AGENT_MAX_BUDGET_USD`・`MAX_CONCURRENT_TURNS`・`TRUSTED_PROXY_HOPS=1`・`MATSURI_STORAGE=firestore`・`FIREBASE_PROJECT_ID`・`FIREBASE_WEB_API_KEY`・`FIREBASE_AUTH_DOMAIN`。`PORT` は Cloud Run が渡す
 - Firestore・TTL・セキュリティルール・Firebase Authentication・実行用のアカウントの権限は、[`scripts/setup-firestore.sh`](../../scripts/setup-firestore.sh) で入れて確かめる（[ログインと保存の仕様](account.md#google-cloud-の設定)）
