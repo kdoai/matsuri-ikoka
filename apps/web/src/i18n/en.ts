@@ -202,7 +202,26 @@ export const en: Messages = {
       back: "Back",
       other: "Other",
     },
-    thinking2: ["Let me look into it", "Hmm, which one would suit you…", "I'll ask the staff"],
+    waitLines: {
+      search: [
+        "Let me look into it",
+        "Hmm, which one would suit you…",
+        "I'll ask the staff",
+        "Looking for festivals that fit your dates",
+      ],
+      plan: [
+        "Let me put a plan together",
+        "Hmm, which order works best…",
+        "I'll ask the staff",
+        "Checking the travel times",
+      ],
+      shiori: [
+        "I'll start on your travel booklet",
+        "Checking the times and etiquette",
+        "I'll have the staff look it over too",
+        "Making the packing list as well",
+      ],
+    },
   },
   consult: {
     title: "Trip consultation",

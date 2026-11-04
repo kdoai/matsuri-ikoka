@@ -204,6 +204,14 @@ export function currentLine(state: Pick<AppData, "messages" | "session">): Dialo
     : { kind: "greeting" };
 }
 
+/**
+ * 旅程の提案が出ているか。出たあとは旅程を読むことに集中できるよう、
+ * 豆知識の窓を出さず、スタッフも店の中を歩き回らない
+ */
+export function proposalShown(state: Pick<AppData, "itinerary">): boolean {
+  return state.itinerary.current !== null;
+}
+
 /** いま動いているスタッフ（待機していない人）。画面の上の「店内のようす」に出す */
 export function busyStaff(state: Pick<AppData, "staff">): StaffId[] {
   return (Object.keys(state.staff) as StaffId[]).filter((id) => state.staff[id].phase !== "idle");

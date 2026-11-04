@@ -1,0 +1,463 @@
+{
+  "id": "aizu-tajima-gion-matsuri",
+  "name": {
+    "ja": "会津田島祇園祭",
+    "en": "Aizu Tajima Gion Festival"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "福島県",
+      "name": "南会津町"
+    }
+  ],
+  "venue": {
+    "name": "田出宇賀神社・熊野神社と田島の町内（会津田島駅の周り）",
+    "lat": 37.2058,
+    "lng": 139.7763
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "本祭の早朝、花嫁衣装の女性たちが酒樽や赤飯を神社へ運ぶ七行器行列（花嫁行列）",
+    "4台の大屋台の上で子どもが演じる屋台歌舞伎（芸場ごとに7〜8分）",
+    "喧嘩屋台とも呼ばれる屋台どうしの駆け引きと、夜の参道に灯る御神燈",
+    "最終日に神楽殿で舞われる太々御神楽と、神楽餅まき"
+  ],
+  "trivia": [
+    {
+      "text": "鎌倉時代の文治年間（1185年ごろ）、領主の長沼宗政が祇園信仰をもとに始めたとされる",
+      "source": {
+        "url": "https://www.town.minamiaizu.lg.jp/official/soshikikarasagasu/shokokankoka/minamiaizuchokankojoho/4/585.html",
+        "title": "南会津町 会津田島祇園祭の歴史",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "献立にふきを多く使うので「富貴祭」、御神酒が濁酒なので「どぶろく祭り」とも呼ばれる",
+      "source": {
+        "url": "https://www.town.minamiaizu.lg.jp/official/soshikikarasagasu/shokokankoka/minamiaizuchokankojoho/4/585.html",
+        "title": "南会津町 会津田島祇園祭の歴史",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "田出宇賀神社の幕は瓜の紋で、この神社では1年を通して胡瓜を食べない習わしがある",
+      "source": {
+        "url": "https://www.town.minamiaizu.lg.jp/official/soshikikarasagasu/shokokankoka/minamiaizuchokankojoho/4/584.html",
+        "title": "南会津町 お党屋制度一年の行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "9組のお党屋組が1年交代で祭りを担う仕組みが、1981年に国の重要無形民俗文化財になった",
+      "source": {
+        "url": "https://www.town.minamiaizu.lg.jp/official/soshikikarasagasu/shokokankoka/minamiaizuchokankojoho/4/585.html",
+        "title": "南会津町 会津田島祇園祭の歴史（現在9組のお党屋組、昭和56年に指定）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_by_application",
+    "howToJoin": "見物は無料・予約不要。七行器行列の花嫁役（町内外の未婚の女性、中学生以上〜35歳前後）は春に南会津町観光物産協会が電話かWebフォームで先着で募集する（2026年は約20名、6月19日締切で定員に達して終了）。着付けなどに補助があるが、着物レンタルの残額・白足袋・交通費・宿泊費は自己負担で、当日は未明から美容室で支度する",
+    "rules": [
+      "駐車場は大変混むので、公共交通機関を使う",
+      "交通規制の区域内に路上駐車しない。無料駐車場を使う（2026年は22日9:00〜23日24:00）",
+      "地図で示された区間は駐車を控え、屋台・神輿が運行するエリアには車を乗り入れない",
+      "祭礼の進行によって行事の時間が前後することがある"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "前年の来場者が約7万人（るるぶ&more.）の混雑で、町内は車両通行止めになる。屋台どうしの激しい運行があるが、主催者によるけがの注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.kanko-aizu.com/wp-content/uploads/2026/07/c5244068d04594740578494aeaa5eb12.pdf",
+        "title": "南会津町観光物産協会 令和8年 会津田島祇園祭祭礼順路（駐車場・交通規制）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kanko-aizu.com/wp-content/uploads/2026/07/ea51675a4fc7033c3a95e5259587ec03.pdf",
+        "title": "南会津町観光物産協会 令和8年 会津田島祇園祭 日程のチラシ",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kanko-aizu.com/information/39063/",
+        "title": "南会津町観光物産協会 令和8年度会津田島祇園祭 七行器行列（花嫁）の募集を開始",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://summer.walkerplus.com/odekake/detail_e/ar0207e73381/data.html",
+        "title": "ウォーカープラス 会津田島祇園祭の詳細データ（入場無料・予約不要、例年約8万人）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002606",
+        "title": "るるぶ&more. 会津田島祇園祭（昨年の来場者7万1000人）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-07-22",
+      "start": "10:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の1日目・例祭（宵祭）。10:00 拝殿で例大祭と浦安の舞、奉納太鼓、11:30 駅前交差点でオープニングセレモニー、12:00 露店開始、16:00 から4台の屋台運行と歌舞伎上演。町内の車両通行止めは11:00〜23:30",
+      "sources": [
+        {
+          "url": "https://www.kanko-aizu.com/wp-content/uploads/2026/07/ea51675a4fc7033c3a95e5259587ec03.pdf",
+          "title": "南会津町観光物産協会 令和8年 会津田島祇園祭 日程のチラシ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kanko-aizu.com/information/39510/",
+          "title": "南会津町観光物産協会 令和8年度会津田島祇園祭スケジュールと祭礼順路のご案内",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kanko-aizu.com/information/39328/",
+          "title": "南会津町観光物産協会 令和8年度会津田島祇園祭ポスターについて",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-07-23",
+      "start": "07:50",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": "天候によって七行器行列の時間が変わることがある（ウォーカープラス）",
+      "note": "2026年の2日目・渡御祭（本祭）。7:50〜8:30 七行器行列（本町下側お党屋組から神社へ）、10:00 神輿渡御が神社を出発、その後に神社駐車場で太鼓演奏、11:00 旧南会津郡役所で紙芝居、12:30 神輿の内廻り（党本から神社へ、着は14:30ごろ）、15:00 上屋台格納庫前で太鼓演奏、16:00 から屋台運行と歌舞伎上演。七行器行列に合わせて会津若松5:54発の臨時列車が出た（会津田島7:11着）。車両通行止めは7:00〜24:00",
+      "sources": [
+        {
+          "url": "https://www.kanko-aizu.com/wp-content/uploads/2026/07/ea51675a4fc7033c3a95e5259587ec03.pdf",
+          "title": "南会津町観光物産協会 令和8年 会津田島祇園祭 日程のチラシ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kanko-aizu.com/wp-content/uploads/2026/07/c5244068d04594740578494aeaa5eb12.pdf",
+          "title": "南会津町観光物産協会 令和8年 会津田島祇園祭祭礼順路",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kanko-aizu.com/information/39510/",
+          "title": "南会津町観光物産協会 令和8年度会津田島祇園祭スケジュールと祭礼順路のご案内",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar0207e73381/data.html",
+          "title": "ウォーカープラス 会津田島祇園祭の詳細データ（雨天・荒天時の対応）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2026-07-24",
+      "start": "13:00",
+      "end": "15:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の3日目・太々御神楽祭（後祭）。13:00〜15:00 神楽殿で太々御神楽を奉奏。神楽の破魔矢と神楽餅まきがある",
+      "sources": [
+        {
+          "url": "https://www.kanko-aizu.com/wp-content/uploads/2026/07/ea51675a4fc7033c3a95e5259587ec03.pdf",
+          "title": "南会津町観光物産協会 令和8年 会津田島祇園祭 日程のチラシ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kanko-aizu.com/wp-content/uploads/2026/07/c5244068d04594740578494aeaa5eb12.pdf",
+          "title": "南会津町観光物産協会 令和8年 会津田島祇園祭祭礼順路（太々御神楽奉納）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-17",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2027年から日程が「海の日と続く土・日を合わせた3日間」に変わり、南会津町が2027年は7月17日〜19日と発表した（土曜日）。時刻の発表はまだない。町の案内の例年の流れでは、1日目は神社での例大祭のあと、夕方から大屋台が町内を巡って子供歌舞伎を上演する",
+      "sources": [
+        {
+          "url": "https://www.town.minamiaizu.lg.jp/official/soshikikarasagasu/shokokankoka/minamiaizuchokankojoho/4/4007.html",
+          "title": "南会津町 会津田島祇園祭 開催日変更のおしらせ（令和9年は7月17日〜19日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kanko-aizu.com/information/39616/",
+          "title": "南会津町観光物産協会 【重要】令和9年度以降の会津田島祇園祭日程変更について",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.town.minamiaizu.lg.jp/official/soshikikarasagasu/shokokankoka/minamiaizuchokankojoho/4/433.html",
+          "title": "南会津町 祭事当日の流れ（1日目 土曜日 宵祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-18",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2027年の2日目・本祭（日曜日）。時刻の発表はまだない。町の案内の例年の流れでは、早朝7:50ごろ七行器行列が本陣を出て、10:00ごろ神輿が出立し、屋台が芸場を巡る。2026年は7:50〜8:30 七行器行列、10:00 神輿渡御、16:00 から屋台運行と歌舞伎だった",
+      "sources": [
+        {
+          "url": "https://www.town.minamiaizu.lg.jp/official/soshikikarasagasu/shokokankoka/minamiaizuchokankojoho/4/4007.html",
+          "title": "南会津町 会津田島祇園祭 開催日変更のおしらせ（令和9年は7月17日〜19日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.town.minamiaizu.lg.jp/official/soshikikarasagasu/shokokankoka/minamiaizuchokankojoho/4/433.html",
+          "title": "南会津町 祭事当日の流れ（2日目 日曜日 本祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-19",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2027年の3日目・太々御神楽祭（海の日の月曜日）。時刻の発表はまだない。町の案内の例年の流れでは、午後1時に神楽殿で太々御神楽が始まり、13座の神舞を奉奏して終わる",
+      "sources": [
+        {
+          "url": "https://www.town.minamiaizu.lg.jp/official/soshikikarasagasu/shokokankoka/minamiaizuchokankojoho/4/4007.html",
+          "title": "南会津町 会津田島祇園祭 開催日変更のおしらせ（令和9年は7月17日〜19日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.town.minamiaizu.lg.jp/official/soshikikarasagasu/shokokankoka/minamiaizuchokankojoho/4/433.html",
+          "title": "南会津町 祭事当日の流れ（3日目 月曜日 太々御神楽祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "会津鉄道 会津田島駅",
+        "walkMinutes": [1, 6],
+        "note": "南会津町の案内では駅から徒歩約1分（祭りの行われる田島の町内まで）。2026年は会津若松方面へ19:40・20:50・21:42（臨時）、会津高原尾瀬口方面へ19:18・20:45・21:47（臨時）に会津田島駅を出る列車があった。2026年は割引のチラシか浴衣で会津鉄道の普通運賃が3割引だった"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "会津若松駅",
+        "minutes": [68, 77],
+        "route": "会津鉄道会津線の各駅停車、乗り換えなし（2026年の祇園祭の案内の、会津若松6:56発→会津田島8:04着と、臨時5:54発→7:11着）"
+      },
+      {
+        "hub": "浅草駅",
+        "minutes": [195, 205],
+        "route": "東武鉄道から会津鬼怒川線を経由して会津田島駅へ（南会津町観光物産協会の案内で3時間15分）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [
+      "県道高陦田島線（旧国道121号）など町内の祭礼の道筋は車両通行止め：7月22日11:00〜23:30、23日7:00〜24:00（2026年）。規制区間の住民や事業者も規制時間中は車の出し入れができない",
+      "屋台・神輿が運行するエリアは車の乗り入れを控えるよう案内された（2026年）",
+      "2026年の無料駐車場は22日9:00〜23日24:00。御蔵入交流館（普通340台）、南会津ふるさと物産館（47台）、びわのかげ運動公園（220台）、旧祇園会館（45台）、田島体育館（45台）、田島建設会館（37台）、きとね（26台）など"
+    ],
+    "sources": [
+      {
+        "url": "https://www.town.minamiaizu.lg.jp/kanko/miru/1717.html",
+        "title": "南会津町 祭り（会津田島祇園祭：会津田島駅から徒歩約1分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kanko-aizu.com/information/39510/",
+        "title": "南会津町観光物産協会 令和8年度会津田島祇園祭スケジュールと祭礼順路のご案内（交通規制・会津鉄道の割引）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kanko-aizu.com/wp-content/uploads/2026/07/c5244068d04594740578494aeaa5eb12.pdf",
+        "title": "南会津町観光物産協会 令和8年 会津田島祇園祭祭礼順路（交通規制・駐車場）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kanko-aizu.com/wp-content/uploads/2026/07/ea51675a4fc7033c3a95e5259587ec03.pdf",
+        "title": "南会津町観光物産協会 令和8年 会津田島祇園祭 日程のチラシ（会津鉄道の列車時刻）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kanko-aizu.com/gion/",
+        "title": "南会津町観光物産協会 会津田島祇園祭（アクセス：浅草駅から3時間15分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "お党屋本膳料理",
+        "note": "祭りを担うお党屋の本膳料理。2026年は会津田島駅2階のはいっと食堂で、22日11:00〜15:00、23日6:30〜8:00と11:00〜15:00、24日11:00〜14:00に出た",
+        "sources": [
+          {
+            "url": "https://www.kanko-aizu.com/wp-content/uploads/2026/07/c5244068d04594740578494aeaa5eb12.pdf",
+            "title": "南会津町観光物産協会 令和8年 会津田島祇園祭祭礼順路（お党屋本膳料理）",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "haitto-shokudo",
+      "name": "はいっと食堂",
+      "kind": "food",
+      "summary": "会津田島駅の2階にある食堂。日替わりランチやソースカツ丼のほか、夜はつゆじやにしん山椒漬けなどの郷土料理も出す。不定休。祇園祭の期間はメニューを絞って営業した（2026年）",
+      "location": {
+        "lat": 37.206,
+        "lng": 139.7743
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "20:00",
+        "lastEntry": "20:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": ["indoor", "local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.kanko-aizu.com/taberu/3897/",
+          "title": "南会津町観光物産協会 はいっと食堂（11:00〜20:00、不定休）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kanko-aizu.com/wp-content/uploads/2026/07/c5244068d04594740578494aeaa5eb12.pdf",
+          "title": "南会津町観光物産協会 令和8年 会津田島祇園祭祭礼順路（はいっと食堂）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "minamiaizu-furusato-bussankan",
+      "name": "まちの駅 南会津ふるさと物産館",
+      "kind": "sightseeing",
+      "summary": "地元の農家が毎朝運ぶ野菜や南会津の特産品の直売所と、観光案内のアンテナショップを兼ねる施設。祭りの間は無料駐車場にもなった（2026年）。不定休",
+      "location": {
+        "lat": 37.206,
+        "lng": 139.78
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "08:30",
+        "close": "17:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.kanko-aizu.com/kau/2115/",
+          "title": "南会津町観光物産協会 まちの駅 南会津ふるさと物産館（8:30〜17:00、冬期は短縮、不定休）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kanko-aizu.com/wp-content/uploads/2026/07/c5244068d04594740578494aeaa5eb12.pdf",
+          "title": "南会津町観光物産協会 令和8年 会津田島祇園祭祭礼順路（南会津ふるさと物産館 8:30〜17:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.kanko-aizu.com/gion/",
+      "title": "南会津町観光物産協会 会津田島祇園祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.town.minamiaizu.lg.jp/kanko/miru/1717.html",
+      "title": "南会津町 祭り（会津田島祇園祭）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.town.minamiaizu.lg.jp/official/soshikikarasagasu/shokokankoka/minamiaizuchokankojoho/4/585.html",
+      "title": "南会津町 会津田島祇園祭の歴史（田出宇賀神社・熊野神社の祭礼）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://online.bunka.go.jp/heritages/detail/170095",
+      "title": "文化遺産オンライン 田島祇園祭のおとうや行事（重要無形民俗文化財）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%8D%97%E4%BC%9A%E6%B4%A5%E7%94%BA%E7%94%B0%E5%B3%B6%E5%AE%AE%E6%9C%AC%E7%94%B2",
+      "title": "国土地理院 住所検索 南会津町田島宮本甲（会場の緯度・経度）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の日ごとの行事の時刻（日付だけ発表。時刻は町の案内の例年の流れと2026年の実績しかない）",
+    "2026年が発表どおりに行われたか（中止・変更の告知は見当たらないが、終わったあとの報告を確かめていない）",
+    "雨のときの扱いの決まり（ウォーカープラスに七行器行列の時間が変わることがあるとだけある）",
+    "各日の終わりの時刻（ウォーカープラスでは2026年は22日22:30まで、23日23:00まで）",
+    "服装、持ち物、撮影の決まり（見物する人向けの案内が見つからない）",
+    "会場の緯度・経度は国土地理院の住所検索の田島宮本甲の代表点で、田出宇賀神社の位置そのものではない。会津田島駅から神社までの徒歩の時間",
+    "見物客の数の公式の値（るるぶ&more.では前年7万1000人、ウォーカープラスでは例年約8万人）",
+    "2027年の臨時列車・会津鉄道の割引・無料駐車場と交通規制の時間",
+    "郡山駅や東京駅から新幹線を使う経路の所要時間と、浅草駅からの経路の詳しい乗り換え",
+    "はいっと食堂と南会津ふるさと物産館の緯度・経度（住所検索の代表点）、休みの日（どちらも不定休）、会場からの徒歩の時間。物産館の案内ページは2015年のもの",
+    "会場から歩ける観光の場所（旧祇園会館は地図で駐車場として示されており、展示の営業を確かめていない）"
+  ]
+}

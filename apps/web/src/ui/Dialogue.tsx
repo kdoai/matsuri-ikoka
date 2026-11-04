@@ -16,11 +16,13 @@ import {
 import { type ReactNode, useState } from "react";
 import { useActions, useApp, useT } from "../state/react";
 import { currentLine, shioriReady } from "../state/selectors";
+import { waitLineIndex, waitPhase } from "../state/waitLines";
 import { Composer, focusComposer } from "./ChatPanel";
 import { ConsultPanel } from "./Consult";
 import { openTripPanel } from "./Hud";
 import { Portrait, type Speaker } from "./Portraits";
 import { errorText, shortLine } from "./text";
+import { useNow, useWaitClock } from "./waitClock";
 
 // 会話の窓。話すときだけ画面の下に出す、クリーム色のセリフの枠。
 // 左に大きな表情の絵と名札、右にいまの一言（1〜2文。全文は「つづきを読む」と会話の記録で読める）。
@@ -254,12 +256,15 @@ function ReplyChoices({ retry }: { retry: boolean }) {
   );
 }
 
+const NO_STAFF: readonly StaffId[] = [];
+
 export function DialogueBox() {
   const t = useT();
   const actions = useActions();
   const locale = useApp((state) => state.ui.locale);
   const line = useApp(currentLine);
-  const turn = useApp((state) => state.session.turn);
+  const streaming = useApp((state) => state.session.streaming);
+  const phase = useApp(waitPhase);
   const consultStep = useApp((state) => state.consult.step);
   const consultOpen = useApp(
     (state) =>
@@ -269,6 +274,12 @@ export function DialogueBox() {
       currentLine(state).kind !== "error",
   );
   const [expanded, setExpanded] = useState<string | null>(null);
+  const { started } = useWaitClock(streaming, NO_STAFF);
+  const now = useNow(streaming && line.kind === "waiting");
+  const waitLines = t.dialogue.waitLines[phase];
+  const waitText =
+    waitLines[waitLineIndex(started === null ? 0 : now - started, waitLines.length)] ??
+    t.dialogue.thinking;
 
   const speaker: StaffId = line.kind === "work" ? line.staff : "concierge";
   const name = t.staff.names[speaker];
@@ -283,8 +294,8 @@ export function DialogueBox() {
         text = t.chat.greeting;
         break;
       case "waiting":
-        // 考えている間は、短いひとことを入れ替えて出す
-        text = t.dialogue.thinking2[turn % t.dialogue.thinking2.length] ?? t.dialogue.thinking;
+        // 考えている間は、いまの段階に合うひとことを5秒おきに入れ替える
+        text = waitText;
         break;
       case "work":
         text = line.text;
@@ -353,7 +364,15 @@ export function DialogueBox() {
               line.kind === "error" && !consultOpen ? "text-shu-700" : "text-ink"
             }`}
           >
-            {text}
+            {line.kind === "waiting" && !consultOpen ? (
+              <>
+                {/* 入れ替わるひとことは読み上げを繰り返さないよう、読み上げには最初の文だけを伝える */}
+                <span aria-hidden="true">{text}</span>
+                <span className="sr-only">{waitLines[0] ?? t.dialogue.thinking}</span>
+              </>
+            ) : (
+              text
+            )}
             {typing ? (
               <span aria-hidden="true" className="ml-1 inline-block animate-pulse text-ai-600">
                 ●●●

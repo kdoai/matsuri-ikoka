@@ -44,6 +44,50 @@ describe("吹き出し（docs/spec/api.md の例）", () => {
     ).toBe("8月15日から8月16日に、みなと中央駅から2泊で行ける祭りを探しています");
   });
 
+  it("search_festivals の前は、行き先と広げた段階も言う", () => {
+    const base = { when: { kind: "date", date: "2026-08-16" }, origin: "みなと中央駅", nights: 1 };
+    expect(toolStartBubble("search_festivals", { ...base, destinations: ["北陸"] }, state)).toBe(
+      "8月16日に、北陸で、みなと中央駅から1泊で行ける祭りを探しています",
+    );
+    expect(toolStartBubble("search_festivals", { ...base, widen: "neighbor" }, state)).toBe(
+      "8月16日に、隣の県まで広げて、みなと中央駅から1泊で行ける祭りを探しています",
+    );
+    expect(toolStartBubble("search_festivals", { ...base, widen: "nationwide" }, state)).toBe(
+      "8月16日に、日本全国で、みなと中央駅から1泊で行ける祭りを探しています",
+    );
+  });
+
+  it("search_festivals の後は、行き先を広げる前の確認と、広げた段階を言う", () => {
+    expect(
+      toolEndBubble("search_festivals", {
+        candidates: [],
+        destination: { needsConsent: "neighbor" },
+      }),
+    ).toEqual({
+      ok: true,
+      bubble: "選んだ地域には見つかりませんでした。隣の県にはあります",
+      count: 0,
+    });
+    expect(
+      toolEndBubble("search_festivals", {
+        candidates: [],
+        destination: { needsConsent: "nationwide" },
+      }).bubble,
+    ).toBe("選んだ地域と隣の県には見つかりませんでした");
+    expect(
+      toolEndBubble("search_festivals", {
+        candidates: [{}, {}],
+        destination: { stage: "neighbor", needsConsent: null },
+      }).bubble,
+    ).toBe("隣の県で2件見つかりました");
+    expect(
+      toolEndBubble("search_festivals", {
+        candidates: [{}],
+        destination: { stage: "nationwide", needsConsent: null },
+      }).bubble,
+    ).toBe("日本全国から1件選びました");
+  });
+
   it("入力の形が崩れていても、決まった文に戻す", () => {
     expect(toolStartBubble("search_festivals", { when: "あした" }, state)).toBe(
       "条件に合う祭りを探しています",
