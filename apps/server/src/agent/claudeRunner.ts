@@ -197,6 +197,8 @@ export class ClaudeAgentRunner implements AgentRunner {
       ...(deps.stations ? { stations: deps.stations } : {}),
       ...(deps.routes ? { routes: deps.routes } : {}),
       ...(deps.nearby ? { nearby: deps.nearby } : {}),
+      // ツールの中の調べ（寄り道の調べ）の進みも、相談の進みとして数える
+      ...(progress ? { progress } : {}),
       today: deps.today,
       now: deps.now,
     };

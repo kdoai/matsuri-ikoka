@@ -717,6 +717,8 @@ export const en: Messages = {
     print: "Print",
     savePdf: "Save as PDF",
     openBooklet: "Open the booklet",
+    booklet: "Travel booklet",
+    notReady: "We will hand you the booklet once the festival dates are confirmed.",
     close: "Back to the shop",
     party: "Party",
     date: "Date",

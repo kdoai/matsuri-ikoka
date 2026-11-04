@@ -22,7 +22,7 @@ import { lastMileMinutes } from "./travelEstimate";
 // 調べた報告は信用しない入力なので、合うかどうかはモデルの言い分ではなく、報告の値とこの決まりで決める。
 // 合うものがなければ、合わないもので埋めずに「見つからなかった」と返す。
 
-/** 会場からこれより遠い場所は、祭りの前後の寄り道にしない（km、直線） */
+/** 会場からこれより遠い場所は、祭りの前後の寄り道にしない（km、直線）。車で回るときは ScreenOptions.maxKm で広げる */
 export const MAX_RESEARCHED_SPOT_KM = 3;
 /** 1か所の食事・寄り道に、1人あたりの旅の予算のこの割合より多くはかけない */
 export const SPOT_BUDGET_SHARE = 0.3;
@@ -100,7 +100,9 @@ function exclusionReason(
   report: ResearchedSpotReport,
   options: ScreenOptions,
 ): ResearchedExclusionReason | null {
-  if (distanceKm(options.venue, report.location) > MAX_RESEARCHED_SPOT_KM) return "too_far";
+  if (distanceKm(options.venue, report.location) > (options.maxKm ?? MAX_RESEARCHED_SPOT_KM)) {
+    return "too_far";
+  }
   if (report.openOnDate === "closed" || isClosedOn(report, options.date)) return "closed_on_date";
   if (options.window !== undefined && !fitsOpeningHours(report.hours, options.window)) {
     return "outside_hours";
@@ -145,6 +147,8 @@ export interface ScreenOptions {
   date: IsoDate;
   window?: TimeWindow;
   venue: LatLng;
+  /** 会場からの距離の上限（km）。省略すると MAX_RESEARCHED_SPOT_KM（歩いて回る範囲） */
+  maxKm?: number;
   /** 確かめた日（出典の checkedAt） */
   today: IsoDate;
   preferences: Preferences;

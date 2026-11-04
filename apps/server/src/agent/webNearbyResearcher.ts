@@ -17,6 +17,7 @@ import { z } from "zod";
 import { formatMonthDayWithWeekday } from "../domain/calendar";
 import { DIETARY_LABELS, FOOD_WISH_LABELS } from "../domain/food";
 import type { ResearchedSpotReport } from "../domain/nearbyResearch";
+import type { NearbySearchPlan } from "../domain/nearbySearch";
 import type { NearbyResearcher } from "../tools/nearbyResearch";
 import type { ResolveHost } from "./addressGuard";
 import type { QueryFn } from "./runner";
@@ -76,6 +77,29 @@ const ANSWER_FORMAT = [
   STRICT_JSON_RULES,
 ].join("\n");
 
+/**
+ * 寄り道の調べのターンの上限。検索の言葉（最大8つ）を並べて呼び、一覧のページと店のページ（最大8つ）を読み、
+ * 合う店がなければ言葉を変えて探し直せるだけの回数をとる。確定前の再確認（10）より多い
+ */
+export const NEARBY_MAX_TURNS = 16;
+
+/** 調べ方を、依頼文に入れる形にする（毎回の調べに必ず入れる） */
+export function searchPlanLines(plan: NearbySearchPlan): string[] {
+  return [
+    "",
+    `## 調べ方（${plan.round === "first" ? "1回目" : "2回目：広げて探し直す"}）`,
+    "",
+    "検索の言葉（上から優先。いくつかを並べて検索する。合う店が少なければ、言葉を変えて探し直してよい）：",
+    ...plan.queries.map((q) => `- ${q}`),
+    "",
+    "店や施設のページで確かめる観点：",
+    ...plan.checkpoints.map((c) => `- ${c}`),
+    "",
+    `探す範囲：会場からおおむね ${plan.radiusKm}km 以内`,
+    ...(plan.widening.length > 0 ? ["", "広げ方：", ...plan.widening.map((w) => `- ${w}`)] : []),
+  ];
+}
+
 /** 調べた結果をとっておく時間（営業の告知が変わりうるので短めにする） */
 export const NEARBY_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 
@@ -116,6 +140,9 @@ export function createWebNearbyResearcher(deps: {
         [...input.dietary].sort(),
         input.perPersonBudgetYen,
         children > 0,
+        input.plan.round,
+        input.plan.radiusKm,
+        input.plan.queries,
       ]);
       const hit = cache.get(key);
       if (hit !== undefined && hit.expiresAt > clock()) return hit.value;
@@ -141,6 +168,8 @@ export function createWebNearbyResearcher(deps: {
               ...input.references.map((r) => `- ${r.name}（${r.kind}）：${r.summary}`),
             ]
           : []),
+        // 調べ方（検索の言葉と確かめる観点）は、コードで決めたものを毎回必ず入れる
+        ...searchPlanLines(input.plan),
       ].join("\n");
       const controller = new AbortController();
       const abort = () => controller.abort(signal.reason);
@@ -157,6 +186,7 @@ export function createWebNearbyResearcher(deps: {
           abortController: controller,
           maxBudgetUsd: deps.maxBudgetUsd,
           withTools,
+          maxTurns: NEARBY_MAX_TURNS,
           ...(withTools
             ? {
                 hooks: createVerifierHooks(
@@ -172,7 +202,7 @@ export function createWebNearbyResearcher(deps: {
       let costUsd = 0;
       let found = 0;
       const ask = async (prompt: string, withTools: boolean) => {
-        const reply = await finalText(deps.query, prompt, options(withTools));
+        const reply = await finalText(deps.query, prompt, options(withTools), input.onActivity);
         costUsd += reply.costUsd;
         return reply.text;
       };
@@ -205,6 +235,7 @@ export function createWebNearbyResearcher(deps: {
         console.info(
           JSON.stringify({
             kind: "nearby_research",
+            round: input.plan.round,
             found,
             totalCostUsd: costUsd,
             elapsedMs: Date.now() - started,

@@ -6,8 +6,9 @@ import type {
   SDKMessage,
 } from "@anthropic-ai/claude-agent-sdk";
 import { describe, expect, it } from "vitest";
+import { type NearbySearchRound, nearbySearchPlan } from "../domain/nearbySearch";
 import type { QueryFn } from "./runner";
-import { createWebNearbyResearcher } from "./webNearbyResearcher";
+import { createWebNearbyResearcher, NEARBY_MAX_TURNS } from "./webNearbyResearcher";
 
 // Agent SDK の代わりに、フックを呼んで決まった返答を返す偽物の query で確かめる。祭り・店・URL はすべて架空
 
@@ -59,7 +60,11 @@ function setup(scripts: Script[]) {
     query,
     resolveHost: async () => ["8.8.8.8"],
   });
-  const research = (foodWishes: ("meat" | "noodles")[] = ["meat"]) =>
+  let activity = 0;
+  const research = (
+    foodWishes: ("meat" | "noodles")[] = ["meat"],
+    round: NearbySearchRound = "first",
+  ) =>
     researcher.research({
       festival: {
         id: "suzunari-toro",
@@ -73,9 +78,24 @@ function setup(scripts: Script[]) {
       perPersonBudgetYen: 20_000,
       party: { adults: 2, children: 1 },
       references: [{ name: "鈴鳴和紙の館", kind: "sightseeing", summary: "和紙すきの工房" }],
+      plan: nearbySearchPlan(
+        {
+          venueName: "鈴鳴川の河原",
+          municipalities: [{ prefecture: "滋賀県", name: "鈴鳴町" }],
+          stations: ["鈴鳴駅", "鈴鳴口駅"],
+          foodWishes,
+          dietary: [],
+          withChildren: true,
+          byCar: false,
+        },
+        round,
+      ),
       signal: new AbortController().signal,
+      onActivity: () => {
+        activity += 1;
+      },
     });
-  return { calls, research };
+  return { calls, research, activity: () => activity };
 }
 
 const read = (hook: Parameters<Script>[0], url: string) =>
@@ -145,11 +165,38 @@ describe("createWebNearbyResearcher", () => {
     expect(calls[0]?.prompt).toContain("食べたいもの：meat（肉料理）");
     expect(calls[0]?.prompt).toContain("同行者：子ども連れ");
     expect(calls[0]?.prompt).toContain("鈴鳴和紙の館");
+    expect(calls[0]?.options.maxTurns).toBe(NEARBY_MAX_TURNS);
 
     expect(await research()).toEqual(report);
     expect(calls).toHaveLength(1);
     // 食べたいものが変われば、調べ直す
     await expect(research(["noodles"])).rejects.toThrow("台本がありません");
+  });
+
+  it("コードで決めた調べ方（検索の言葉・確かめる観点・範囲）を、毎回の依頼に必ず入れる", async () => {
+    const answer: Script = async (hook) => {
+      await read(hook, "https://example.com/grill");
+      return ANSWER;
+    };
+    const { calls, research, activity } = setup([answer, answer]);
+
+    await research();
+    const first = calls[0]?.prompt ?? "";
+    expect(first).toContain("## 調べ方（1回目）");
+    expect(first).toContain("- 鈴鳴駅 焼肉 ランチ");
+    expect(first).toContain("食べログ");
+    expect(first).toContain("子ども連れで入れるか");
+    expect(first).toContain("会場からおおむね 2km 以内");
+    // 調べの間は、Agent SDK の知らせのたびに進みを知らせる
+    expect(activity()).toBeGreaterThan(0);
+
+    // 広げた2回目は、とっておいた1回目の結果を使わずに調べ直す
+    await research(["meat"], "widened");
+    expect(calls).toHaveLength(2);
+    const widened = calls[1]?.prompt ?? "";
+    expect(widened).toContain("## 調べ方（2回目：広げて探し直す）");
+    expect(widened).toContain("鈴鳴口駅");
+    expect(widened).toContain("会場からおおむね 3km 以内");
   });
 
   it("ページを1つも読まずに答えたときや、失敗したときは null", async () => {

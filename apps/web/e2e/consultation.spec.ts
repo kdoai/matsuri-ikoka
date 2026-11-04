@@ -167,23 +167,25 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
     .click();
   const shiori = page.getByTestId("shiori");
   await expect(shiori.getByRole("heading", { level: 1 })).toHaveText("鈴鳴の灯籠と川べりさんぽ");
-  for (const section of ["main", "flow", "map", "food", "first-time", "rain", "sources"]) {
-    await expect(page.getByTestId(`shiori-${section}`)).toBeVisible();
-  }
-  await expect(page.getByTestId("shiori-first-time")).toContainText("First time here?");
-  await expect(page.getByTestId("etiquette-table").getByRole("row")).toHaveCount(8);
-  await expect(page.getByTestId("shiori-first-time")).toContainText("You can join if you apply");
-  await expect(page.getByTestId("shiori-sources")).toContainText("当日は、公式サイトで最終確認");
+  // 最初から、サーバーが作る冊子のしおり（PDF と同じ A4 の紙を見開きで並べたもの）を埋め込んで出す
+  const booklet = page.frameLocator('[data-testid="shiori-booklet"]');
+  await expect(booklet.getByRole("region", { name: "表紙", exact: true })).toBeVisible();
+  await expect(booklet.locator("h1")).toHaveText("鈴鳴の灯籠と川べりさんぽ");
+  await expect(booklet.getByRole("region", { name: "はじめての方へ" }).first()).toContainText(
+    "For first-time visitors",
+  );
+  // 冊子にできるよう、ページの数は4の倍数
+  expect((await booklet.locator(".sheet").count()) % 4).toBe(0);
   await snap(page, info, "06-shiori", true);
 
-  // 印刷すると A4 縦で2枚以内に収まる
+  // 矢印を1回押すと、次の見開き（2〜3ページ）へめくる
   if (info.project.name === "desktop") {
-    await page.emulateMedia({ media: "print" });
-    await snap(page, info, "07-shiori-print", true);
-    const pdf = await page.pdf({ format: "A4", preferCSSPageSize: true, printBackground: true });
-    const pages = pdf.toString("latin1").match(/\/Type\s*\/Page(?!s)/g)?.length ?? 0;
-    expect(pages).toBeGreaterThan(0);
-    expect(pages).toBeLessThanOrEqual(2);
+    await booklet.getByRole("link", { name: "次のページ" }).first().click();
+    // なめらかにめくり終わるまで待つ
+    await expect(booklet.getByRole("group", { name: "2〜3ページ" })).toBeInViewport({
+      ratio: 0.99,
+    });
+    await snap(page, info, "07-shiori-spread", true);
   }
 
   await page.emulateMedia({ media: "screen" });

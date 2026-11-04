@@ -1,6 +1,7 @@
 import type { Itinerary, SseEvent } from "@matsuri-ikoka/schema";
 import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
+import type { NearbySearchRound } from "../domain/nearbySearch";
 import { testFestival } from "../domain/testFestivals";
 import { createStationPointIndex } from "../domain/travelEstimate";
 import { YEAR_NOT_STATED_NOTE } from "../domain/verification";
@@ -19,7 +20,11 @@ import {
   updateItinerary,
   verifyFestival,
 } from "./matsuriTools";
-import type { NearbyResearcher, ResearchedSpotReport } from "./nearbyResearch";
+import type {
+  NearbyResearcher,
+  NearbyResearchRequest,
+  ResearchedSpotReport,
+} from "./nearbyResearch";
 import { testToolContext } from "./testContext";
 
 const signal = new AbortController().signal;
@@ -417,13 +422,15 @@ function grill(edit: Partial<ResearchedSpotReport> = {}): ResearchedSpotReport {
 }
 
 function fakeNearby(
-  answer: () => Promise<{ spots: ResearchedSpotReport[] } | null>,
-): NearbyResearcher & { calls: number } {
+  answer: (round: NearbySearchRound) => Promise<{ spots: ResearchedSpotReport[] } | null>,
+): NearbyResearcher & { calls: number; requests: NearbyResearchRequest[] } {
   const fake = {
     calls: 0,
-    async research() {
+    requests: [] as NearbyResearchRequest[],
+    async research(request: NearbyResearchRequest) {
       fake.calls += 1;
-      return answer();
+      fake.requests.push(request);
+      return answer(request.plan.round);
     },
   };
   return fake;
@@ -443,7 +450,7 @@ describe("search_nearby と周辺係の Web の調べ", () => {
       signal,
     );
 
-    expect(output.research).toEqual({ status: "researched", foodFound: true });
+    expect(output.research).toEqual({ status: "researched", foodFound: true, rounds: 1 });
     const spots = output.spots as { name: string; origin: string; openStatus?: string }[];
     expect(spots.map((s) => [s.name, s.origin])).toEqual([
       ["鈴鳴グリル", "web"],
@@ -467,9 +474,76 @@ describe("search_nearby と周辺係の Web の調べ", () => {
       signal,
     );
 
-    expect(output.research).toEqual({ status: "researched", foodFound: false });
+    expect(output.research).toEqual({ status: "researched", foodFound: false, rounds: 2 });
+    // 1回目で見つからなければ、広げた言葉でもう1回調べる
+    expect(nearby.requests.map((r) => r.plan.round)).toEqual(["first", "widened"]);
     expect((output.spots as { kind: string }[]).filter((s) => s.kind === "food")).toEqual([]);
     expect((output.notes as string[]).join("\n")).toContain("見つかりませんでした");
+  });
+
+  it("1回目で合う店がなく、広げた2回目で見つかれば、2回の結果をまとめて返す", async () => {
+    const nearby = fakeNearby(async (round) => ({
+      spots:
+        round === "first"
+          ? [grill({ name: "鈴鳴うどん", foods: ["noodles"] })]
+          : [grill({ name: "鈴鳴うどん", foods: ["noodles"] }), grill({ name: "鈴鳴ステーキ" })],
+    }));
+    const ctx = testToolContext([suzunari()], { nearby });
+    ctx.session.conditions = {
+      foodWishes: ["meat"],
+      party: { adults: 2, children: 0, infants: 1 },
+    };
+    let progressed = 0;
+    ctx.progress = () => {
+      progressed += 1;
+    };
+
+    const output = await searchNearby.run(
+      { festivalId: "suzunari-toro", date: "2026-08-16", window: { from: "11:30", to: "13:00" } },
+      ctx,
+      signal,
+    );
+
+    expect(output.research).toEqual({ status: "researched", foodFound: true, rounds: 2 });
+    expect((output.spots as { name: string }[]).map((s) => s.name)).toContain("鈴鳴ステーキ");
+    expect(output.notes as string[]).not.toContainEqual(
+      expect.stringContaining("見つかりませんでした"),
+    );
+    // 調べ方は祭りのデータの駅・市町村と、相談の条件（子ども連れ・時間帯）から組んで、毎回渡す
+    const [first, widened] = nearby.requests;
+    expect(first?.plan.queries[0]).toBe("鈴鳴駅 焼肉 ランチ");
+    expect(first?.plan.queries).toContain("鈴鳴駅 焼肉 子連れ");
+    expect(widened?.plan.widening.length).toBeGreaterThan(0);
+    // 調べの進みは、相談の進みとして知らせる
+    expect(first?.onActivity).toBeDefined();
+    first?.onActivity?.();
+    expect(progressed).toBe(1);
+  });
+
+  it("車で回るときは、会場から遠い店も残す", async () => {
+    // 会場から北へ約5.5km
+    const far = grill({ name: "郊外の焼肉店", location: { lat: 35.17, lng: 136.08 } });
+    const walk = testToolContext([suzunari()], {
+      nearby: fakeNearby(async () => ({ spots: [far] })),
+    });
+    walk.session.conditions = { foodWishes: ["meat"] };
+    const byWalk = await searchNearby.run(
+      { festivalId: "suzunari-toro", date: "2026-08-16" },
+      walk,
+      signal,
+    );
+    expect(byWalk.excluded).toContainEqual({ name: "郊外の焼肉店", reason: "too_far" });
+
+    const nearby = fakeNearby(async () => ({ spots: [far] }));
+    const car = testToolContext([suzunari()], { nearby });
+    car.session.conditions = { foodWishes: ["meat"], transport: ["car"] };
+    const byCar = await searchNearby.run(
+      { festivalId: "suzunari-toro", date: "2026-08-16" },
+      car,
+      signal,
+    );
+    expect((byCar.spots as { name: string }[]).map((s) => s.name)).toContain("郊外の焼肉店");
+    expect(nearby.requests[0]?.plan.queries.some((q) => q.includes("駐車場"))).toBe(true);
   });
 
   it("調べられなかったときや失敗したときは、祭りのデータの周辺の場所に戻す", async () => {
@@ -485,7 +559,7 @@ describe("search_nearby と周辺係の Web の調べ", () => {
         ctx,
         signal,
       );
-      expect(output.research).toEqual({ status: "fallback", foodFound: null });
+      expect(output.research).toEqual({ status: "fallback", foodFound: null, rounds: 1 });
       expect((output.spots as { spotId: string }[]).map((s) => s.spotId)).toEqual([
         "suzunari-craft-hall",
       ]);
@@ -499,7 +573,7 @@ describe("search_nearby と周辺係の Web の調べ", () => {
       testToolContext([suzunari()]),
       signal,
     );
-    expect(output.research).toEqual({ status: "data_only", foodFound: null });
+    expect(output.research).toEqual({ status: "data_only", foodFound: null, rounds: 0 });
   });
 
   it("調べた店は、旅程に入れて保存できる。調べていない web- の場所は保存しない", async () => {

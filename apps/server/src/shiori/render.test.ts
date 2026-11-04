@@ -114,7 +114,10 @@ describe("しおりの HTML", () => {
     const page = await render(fictionalWeekend());
 
     expect(page.match(/aria-label="旅の思い出"/g)).toHaveLength(2);
-    expect(page.trimEnd()).toMatch(/aria-label="裏表紙"[\s\S]*<\/section>\s*<\/body>\s*<\/html>$/);
+    const sheets = [...page.matchAll(/<section class="sheet[^"]*" aria-label="([^"]+)"/g)].map(
+      (m) => m[1],
+    );
+    expect(sheets.at(-1)).toBe("裏表紙");
     expect(page).toContain("小冊子");
   });
 

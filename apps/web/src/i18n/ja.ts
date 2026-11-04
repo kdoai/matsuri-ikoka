@@ -676,6 +676,8 @@ export const ja = {
     print: "印刷する",
     savePdf: "PDF で保存",
     openBooklet: "冊子で見る",
+    booklet: "旅のしおり（冊子）",
+    notReady: "しおりは、開催予定を確かめてからお渡しします。",
     close: "店内に戻る",
     party: "同行者",
     date: "日付",

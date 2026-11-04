@@ -43,6 +43,8 @@ const ReportSchema = z.object({
 });
 
 const WEB_TOOLS = ["WebSearch", "WebFetch"];
+/** 道具を使うときのターンの上限。検索を並べて呼び、言葉を変えて探し直せるだけの回数をとる（検索6回・ページ3回まで） */
+export const VERIFIER_MAX_TURNS = 10;
 /** 検索だけで答えようとしたときに、続けさせる回数の上限 */
 const MAX_READ_NUDGES = 1;
 
@@ -73,6 +75,8 @@ export function buildVerifierOptions(input: {
   withTools: boolean;
   /** 1回の呼び出しの費用の上限（米ドル） */
   maxBudgetUsd?: number | undefined;
+  /** 道具を使うときのターンの上限。省略すると VERIFIER_MAX_TURNS（寄り道の調べは多めに渡す） */
+  maxTurns?: number;
 }): Options {
   const tools = input.withTools ? WEB_TOOLS : [];
   return {
@@ -89,8 +93,7 @@ export function buildVerifierOptions(input: {
     env: input.env,
     thinking: { type: "adaptive" },
     effort: "low",
-    // 検索を並べて呼び、言葉を変えて探し直せるだけの回数をとる（検索6回・ページ3回まで）
-    maxTurns: input.withTools ? 10 : 1,
+    maxTurns: input.withTools ? (input.maxTurns ?? VERIFIER_MAX_TURNS) : 1,
     persistSession: false,
     ...(input.maxBudgetUsd ? { maxBudgetUsd: input.maxBudgetUsd } : {}),
     abortController: input.abortController,
@@ -158,15 +161,20 @@ export function createVerifierHooks(
   };
 }
 
-/** query を最後まで回し、成功の結果の文（失敗なら null）と費用（SDK の推定）を返す */
+/**
+ * query を最後まで回し、成功の結果の文（失敗なら null）と費用（SDK の推定）を返す。
+ * onMessage は Agent SDK の知らせが届くたびに呼ぶ（呼ぶ側の進みのない時間を数え直す）
+ */
 export async function finalText(
   query: QueryFn,
   prompt: string,
   options: Options,
+  onMessage?: () => void,
 ): Promise<{ text: string | null; costUsd: number }> {
   let text: string | null = null;
   let costUsd = 0;
   for await (const message of query({ prompt, options })) {
+    onMessage?.();
     if (message.type === "result") {
       text = message.subtype === "success" && !message.is_error ? message.result : null;
       costUsd = message.total_cost_usd ?? 0;
