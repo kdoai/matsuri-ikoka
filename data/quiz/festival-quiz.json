@@ -1,0 +1,508 @@
+{
+  "quizzes": [
+    {
+      "id": "marimo-origin",
+      "festivalId": "akan-marimo-matsuri",
+      "question": "阿寒湖の「まりも祭り」は、何のために始まった？",
+      "choices": ["マリモを守るため", "湖の豊漁を祈るため", "温泉の開湯を祝うため"],
+      "answer": 0,
+      "explanation": "絶滅が心配された阿寒湖のマリモを守ろうと、1950年に始まりました。",
+      "source": {
+        "url": "https://en.kushiro-lakeakan.com/overview/20780",
+        "title": "Kushiro-Lake Akan Tourism（釧路・阿寒湖観光公式サイト）Autumn in Kushiro & Lake Akan",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "umakko-bells",
+      "festivalId": "chagu-chagu-umakko",
+      "question": "チャグチャグ馬コで、1頭の馬が身に着ける鈴はいくつほど？",
+      "choices": ["約70個", "約300個", "700個を超える"],
+      "answer": 2,
+      "explanation": "1頭の馬が身に着ける鈴は、700個を超えると言われます。",
+      "source": {
+        "url": "https://chaguuma.com/",
+        "title": "チャグチャグ馬コ保存会",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "umakko-soundscape",
+      "festivalId": "chagu-chagu-umakko",
+      "question": "チャグチャグ馬コの鈴の音が、1996年に選ばれたのは？",
+      "choices": ["日本の夜景100選", "日本の音風景100選", "名水百選"],
+      "answer": 1,
+      "explanation": "鈴の音は、1996年に環境庁の「日本の音風景100選」に選ばれました。",
+      "source": {
+        "url": "https://www.tohokukanko.jp/festivals/detail_1003783.html",
+        "title": "東北観光推進機構 チャグチャグ馬コ",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "oniyo-three-fire",
+      "festivalId": "daizenji-tamataregu-oniyo",
+      "question": "大善寺玉垂宮の鬼夜は、何の「日本三大」の1つに数えられる？",
+      "choices": ["日本三大火祭り", "日本三大裸祭り", "日本三大綱引き"],
+      "answer": 0,
+      "explanation": "日本三大火祭りの1つとされ、1994年に国の重要無形民俗文化財に指定されました。",
+      "source": {
+        "url": "https://www.tamataregu.or.jp/oniyo/",
+        "title": "大善寺玉垂宮 鬼夜",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "inari-torii",
+      "festivalId": "fushimi-inari-hitakisai",
+      "question": "伏見稲荷大社の稲荷山に並ぶ鳥居は、およそ何基？",
+      "choices": ["約1千基", "約1万基", "約10万基"],
+      "answer": 1,
+      "explanation": "約1万基。願いがかなったお礼に奉納する習わしが、江戸時代に広まりました。",
+      "source": {
+        "url": "https://inari.jp/about/faq/",
+        "title": "伏見稲荷大社 よくあるご質問",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "inari-head-shrine",
+      "festivalId": "fushimi-inari-hitakisai",
+      "question": "全国に約3万社ある稲荷神社。その総本宮は？",
+      "choices": ["北海道神宮", "香取神宮", "伏見稲荷大社"],
+      "answer": 2,
+      "explanation": "伏見稲荷大社が、全国に約3万社ある稲荷神社の総本宮です。",
+      "source": {
+        "url": "https://inari.jp/about/faq/",
+        "title": "伏見稲荷大社 よくあるご質問",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "ikeda-sajiki-expo",
+      "festivalId": "ikeda-kameyama-hachimangu-akimatsuri",
+      "question": "池田の桟敷の広場が、着想の元になったと言われるのは？",
+      "choices": ["1970年の大阪万博「お祭り広場」", "東京の歌舞伎座の舞台", "札幌雪まつりの大雪像"],
+      "answer": 0,
+      "explanation": "亀山八幡宮の秋祭で使う桟敷の広場が、大阪万博の「お祭り広場」の着想の元になりました。",
+      "source": {
+        "url": "https://www.town.shodoshima.lg.jp/gyousei/kakuka/shogaigakushuka/2/1/2700.html",
+        "title": "小豆島町 池田の桟敷【国指定重要有形民俗文化財】",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "saikusa-lily",
+      "festivalId": "isagawa-saikusa-matsuri",
+      "question": "三枝祭で、酒樽を飾る花は？",
+      "choices": ["菊", "笹ゆり", "桜"],
+      "answer": 1,
+      "explanation": "祭神が住んだ川のほとりに笹ゆりが咲いていたことから、酒樽を笹ゆりで飾ります。",
+      "source": {
+        "url": "https://isagawa-jinja.jp/omatsuri/saikusa/",
+        "title": "率川神社 三枝祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "issaki-hoto-weight",
+      "festivalId": "issaki-hoto-matsuri",
+      "question": "石崎奉燈祭の大奉燈の重さは、およそどれくらい？",
+      "choices": ["約200kg", "約2トン", "約20トン"],
+      "answer": 1,
+      "explanation": "重さ約2トン、高さ約12〜15m。1基を100人ほどで担ぎます。",
+      "source": {
+        "url": "https://www.city.nanao.lg.jp/koryu-s/event/8gatsu/documents/panfret.pdf",
+        "title": "石崎奉燈祭奉賛会 石崎奉燈祭パンフレット 2026（奉燈の数と大きさ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "izanagi-oldest",
+      "festivalId": "izanagi-jingu-kayuurasai",
+      "question": "古事記・日本書紀に記される中で、全国でもっとも古い神社とされるのは？",
+      "choices": ["波上宮", "伊弉諾神宮", "北海道神宮"],
+      "answer": 1,
+      "explanation": "伊弉諾神宮です。古事記・日本書紀に記される中で、全国でもっとも古い神社とされます。",
+      "source": {
+        "url": "https://www.awajishima-kanko.jp/manual/detail.html?bid=448",
+        "title": "淡路島観光ガイド 伊弉諾神宮",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "onmatsuri-start",
+      "festivalId": "kasuga-wakamiya-onmatsuri",
+      "question": "春日若宮おん祭が始まったのは何年？",
+      "choices": ["1136年", "1603年", "1868年"],
+      "answer": 0,
+      "explanation": "1136年に始まり、900年近く一度も途切れずに続いています。",
+      "source": {
+        "url": "https://onmatsuri.kasugataisha.or.jp/wakamiya/",
+        "title": "春日若宮おん祭 おん祭について",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "kanuma-rain",
+      "festivalId": "kanuma-aki-matsuri",
+      "question": "鹿沼秋まつり（今宮の例祭）の始まりと伝わる出来事は？",
+      "choices": ["大火からの復興", "城の完成祝い", "大干ばつの雨乞い"],
+      "answer": 2,
+      "explanation": "1608年の大干ばつで雨乞いを続けたら雷雨が来たことが、始まりと伝わります。",
+      "source": {
+        "url": "https://www.buttsuke.com/origin/",
+        "title": "鹿沼秋まつり公式サイト 祭りの起源",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "hanawa-unesco",
+      "festivalId": "hanawa-bayashi",
+      "question": "花輪ばやしは2016年、何の1つとしてユネスコ無形文化遺産になった？",
+      "choices": ["山・鉾・屋台行事", "来訪神 仮面・仮装の神々", "風流踊"],
+      "answer": 0,
+      "explanation": "「山・鉾・屋台行事」の1つとして、2016年にユネスコ無形文化遺産になりました。",
+      "source": {
+        "url": "https://www.city.kazuno.lg.jp/kanko_bunka_sports/kankojoho/9/3/3679.html",
+        "title": "鹿角市 花輪ばやし",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "kasedori-unesco",
+      "festivalId": "mishima-no-kasedori",
+      "question": "見島のかせどりは2018年、何の1つとしてユネスコ無形文化遺産になった？",
+      "choices": ["風流踊", "山・鉾・屋台行事", "来訪神 仮面・仮装の神々"],
+      "answer": 2,
+      "explanation": "「来訪神 仮面・仮装の神々」の1つとして、2018年に登録されました。",
+      "source": {
+        "url": "https://www.asobo-saga.jp/files/uploads/news/%E4%BB%A4%E5%92%8C5%E5%B9%B4%EF%BC%91%E6%9C%88%EF%BD%9E3%E6%9C%88_3.pdf",
+        "title": "佐賀県観光連盟 祭り・行事一覧表（令和5年1月〜3月）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "niino-unesco",
+      "festivalId": "niino-bon-odori",
+      "question": "新野の盆踊りは2022年、何の1つとしてユネスコ無形文化遺産に記載された？",
+      "choices": ["来訪神 仮面・仮装の神々", "風流踊", "山・鉾・屋台行事"],
+      "answer": 1,
+      "explanation": "風流踊の1つとして、2022年に記載されました。",
+      "source": {
+        "url": "https://online.bunka.go.jp/heritages/detail/204003",
+        "title": "文化遺産オンライン 新野の盆踊（重要無形民俗文化財）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "yatsushika-count",
+      "festivalId": "kubono-yatsushika-odori",
+      "question": "窪野の八つ鹿踊りで踊る鹿は、全部で何頭？",
+      "choices": ["5頭", "8頭", "12頭"],
+      "answer": 1,
+      "explanation": "雌鹿1頭、雄鹿2頭、小鹿5頭の計8頭が踊ります。",
+      "source": {
+        "url": "https://www.city.oita.oita.jp/o029/shisejoho/kohokocho/koho/shihooita/documents/20220301_part9_1.pdf",
+        "title": "市報おおいた 令和4年3月1日号 愛媛・大分交流 市町村コラボ企画",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "kuroshima-cattle",
+      "festivalId": "kuroshima-ushi-matsuri",
+      "question": "黒島は、人口の約何倍の牛がいる島と言われる？",
+      "choices": ["約2倍", "約10倍", "約100倍"],
+      "answer": 1,
+      "explanation": "人口の約10倍の牛がいると言われるほど、畜産が盛んな島です。",
+      "source": {
+        "url": "https://www.pref.okinawa.jp/_res/projects/default_project/_page_/001/011/510/ushi.pdf",
+        "title": "沖縄県 黒島牛まつり実行委員会（交流部門、平成25年度認定）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "kuroshima-shape",
+      "festivalId": "kuroshima-ushi-matsuri",
+      "question": "牛まつりが開かれる黒島。島の形は何に似ている？",
+      "choices": ["ハート", "星", "三日月"],
+      "answer": 0,
+      "explanation": "石垣島から18.5km離れた、ハートの形に似た島です。",
+      "source": {
+        "url": "https://www.pref.okinawa.jp/_res/projects/default_project/_page_/001/011/510/ushi.pdf",
+        "title": "沖縄県 黒島牛まつり実行委員会（交流部門、平成25年度認定）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "minakuchi-hikiyama",
+      "festivalId": "minakuchi-hikiyama-matsuri",
+      "question": "水口曳山まつりの町に残る曳山は何基？",
+      "choices": ["6基", "16基", "36基"],
+      "answer": 1,
+      "explanation": "16基が残り、滋賀県でいちばん多い数です。",
+      "source": {
+        "url": "https://minakuchi-jinja.com/%E6%B0%B4%E5%8F%A3%E6%9B%B3%E5%B1%B1%E3%81%BE%E3%81%A4%E3%82%8A",
+        "title": "水口神社 水口曳山まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "bonten-count",
+      "festivalId": "miyoshi-bondensai",
+      "question": "三吉梵天祭で、毎年奉納される梵天はおよそ何本？",
+      "choices": ["約8本", "約80本", "約800本"],
+      "answer": 1,
+      "explanation": "毎年約80本が奉納され、数は県内でいちばん多いとされます。",
+      "source": {
+        "url": "http://www.miyoshi.or.jp/festival/bondensai",
+        "title": "太平山三吉神社総本宮 三吉梵天祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "hanayu-east",
+      "festivalId": "misasa-hanayu-matsuri",
+      "question": "三朝温泉の花湯まつりの大綱引き。東が勝つと、どうなると伝わる？",
+      "choices": ["大漁になる", "豊作になる", "商売繁盛になる"],
+      "answer": 1,
+      "explanation": "東が勝てば豊作、西が勝てば商売繁盛になると伝わります。",
+      "source": {
+        "url": "https://misasaonsen.jp/sightseeings/sightseeing-2881/",
+        "title": "三朝温泉観光協会 花湯まつり・大綱引き「陣所」",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "nagata-oni",
+      "festivalId": "nagata-jinja-tsuinashiki",
+      "question": "長田神社古式追儺式に登場する鬼は何匹？",
+      "choices": ["3匹", "5匹", "7匹"],
+      "answer": 2,
+      "explanation": "鬼は7匹。大役の餅割鬼は、ほかの鬼役を7回以上務めた人しか担えません。",
+      "source": {
+        "url": "https://nagatajinja.jp/gyouji/tsuinashiki.php",
+        "title": "長田神社 長田神社古式追儺式",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "ryukyu-hassha",
+      "festivalId": "naminoue-nanminsai",
+      "question": "琉球八社の制で、第一に位置づけられた神社は？",
+      "choices": ["普天満宮", "波上宮", "北海道神宮"],
+      "answer": 1,
+      "explanation": "波上宮です。琉球八社の制で、その第一に位置づけられました。",
+      "source": {
+        "url": "https://naminouegu.jp/yuisyo.html",
+        "title": "波上宮 由緒",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "niimi-doburoku",
+      "festivalId": "niimi-dogeza-matsuri",
+      "question": "岡山県で、どぶろく造りを許されている神社は？",
+      "choices": ["船川八幡宮", "亀山八幡宮", "間々田八幡宮"],
+      "answer": 0,
+      "explanation": "岡山県でどぶろく造りを許されている神社は、船川八幡宮だけです。",
+      "source": {
+        "url": "https://www.city.niimi.okayama.jp/kanko/event/event_detail/index/1",
+        "title": "新見市観光協会 え〜とこ新見 土下座まつり（御神幸武器行列）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "fukuotoko-start",
+      "festivalId": "nishinomiya-tokaebisu",
+      "question": "西宮の十日えびすで、上位3人を福男と認める決まりが始まったのは？",
+      "choices": ["江戸時代", "昭和15年（1940）", "平成12年（2000）"],
+      "answer": 1,
+      "explanation": "本殿に早く着いた上位3人を福男と認める決まりは、昭和15年に始まりました。",
+      "source": {
+        "url": "https://nishinomiya-ebisu.com/event/kaimonshinji-history/",
+        "title": "西宮神社 開門神事の歴史",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "seppetobe-meaning",
+      "festivalId": "hioki-seppetobe",
+      "question": "鹿児島の祭り「せっぺとべ」は、どんな意味の言葉？",
+      "choices": ["精一杯跳べ", "雪の上を飛べ", "早く帰れ"],
+      "answer": 0,
+      "explanation": "鹿児島の言葉で「精一杯跳べ」。足で田を耕した名残とされます。",
+      "source": {
+        "url": "http://www.pref.kagoshima.jp/ab10/kyoiku-bunka/bunka/museum/shichoson/hioki/yahata.html",
+        "title": "鹿児島県 かごしま地域伝統芸能ミュージアム お田植え祭「せっぺとべ」",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "hyouge-meaning",
+      "festivalId": "hyouge-matsuri",
+      "question": "ひょうげ祭りの「ひょうげる」は、どんな意味？",
+      "choices": ["冷え込む", "おどける", "実りを祝う"],
+      "answer": 1,
+      "explanation": "「ひょうげる」はおどける・滑稽という意味で、祭りの名はここから来ています。",
+      "source": {
+        "url": "https://www.city.takamatsu.kagawa.jp/kurashi/kosodate/bunka/bunkazai/shiteibunkazai/mukei_minzoku/hyoge.html",
+        "title": "高松市 ひょうげ祭り（市指定無形民俗文化財）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "owarai-myth",
+      "festivalId": "hiraoka-owarai-shinji",
+      "question": "枚岡神社のお笑い神事が、なぞらえている神話は？",
+      "choices": ["八岐大蛇の退治", "国譲り", "天の岩戸開き"],
+      "answer": 2,
+      "explanation": "天の岩戸開きの神話になぞらえ、笑いで一年の災いを払い、福を招きます。",
+      "source": {
+        "url": "https://www.hiraoka-jinja.org/rituals/index.html",
+        "title": "枚岡神社 神事・祭典",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "inamura-tsunami",
+      "festivalId": "inamura-no-hi-matsuri",
+      "question": "濱口梧陵が稲むらに火を放ったのは、何から村人を逃がすため？",
+      "choices": ["大津波", "山火事", "大雪"],
+      "answer": 0,
+      "explanation": "1854年の大津波のとき、稲むらの火で村人を高台へ導きました。祭りはこの故事にちなみます。",
+      "source": {
+        "url": "https://www.town.hirogawa.wakayama.jp/kankou/news-event/pdf/R8fire.pdf",
+        "title": "第24回稲むらの火祭り パンフレット（広川町）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "kamaishi-tiger",
+      "festivalId": "kamaishi-matsuri",
+      "question": "釜石まつりで虎舞が舞われるようになった言い伝えは？",
+      "choices": ["虎は一晩で山を越える", "虎は千里行って千里帰る", "虎は海を泳いで渡る"],
+      "answer": 1,
+      "explanation": "千里行って千里帰る虎にあやかり、漁師の無事の帰りを祈って舞われるようになりました。",
+      "source": {
+        "url": "https://kamaishi-kankou.jp/about/local-performing-arts/",
+        "title": "釜石観光物産協会 郷土芸能",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "shinno-tiger",
+      "festivalId": "doshomachi-shinnosai",
+      "question": "神農祭の由来で、1822年のコレラの折に配られた御守は？",
+      "choices": ["招き猫", "だるま", "張子の虎"],
+      "answer": 2,
+      "explanation": "薬種仲間が丸薬と張子の虎の御守を神前で祈って配ったのが、由来とされます。",
+      "source": {
+        "url": "https://www.sinnosan.jp/shinnousai/",
+        "title": "少彦名神社 神農祭",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "konosu-stork",
+      "festivalId": "kou-jinja-torinoichi",
+      "question": "鴻巣の地名のもとになったと伝わる鳥は？",
+      "choices": ["コウノトリ", "ツル", "カラス"],
+      "answer": 0,
+      "explanation": "大蛇から卵を守ったコウノトリに感謝して祀った祠「鴻の宮」が、地名になったと伝わります。",
+      "source": {
+        "url": "https://www.city.kounosu.saitama.jp/page/2979.html",
+        "title": "鴻巣市 こうのとり伝説",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "goou-crows",
+      "festivalId": "kumano-hongu-yatagarasu-shinji",
+      "question": "熊野本宮大社の牛王神符の図柄は、何羽の烏でできている？",
+      "choices": ["8羽", "33羽", "88羽"],
+      "answer": 2,
+      "explanation": "88羽の烏を組み合わせて、文字の形にした図柄です。",
+      "source": {
+        "url": "https://www.hongutaisha.jp/熊野牛王神符/",
+        "title": "熊野本宮大社 熊野牛王神符",
+        "checkedAt": "2026-11-02",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "haare-rainy",
+      "festivalId": "itoman-haare",
+      "question": "糸満では、ハーレー鉦が鳴ると何が起こると言い伝えられている？",
+      "choices": ["梅雨が明ける", "台風が来る", "桜が咲く"],
+      "answer": 0,
+      "explanation": "ハーレー鉦が鳴ると梅雨が明ける、と言い伝えられています。",
+      "source": {
+        "url": "https://www.itoman-okinawa.jp/facility03-detail.php?cms_item_group_id=31611",
+        "title": "糸満市観光協会 糸満ハーレー",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "misogi-count",
+      "festivalId": "kikonai-kanchu-misogi",
+      "question": "木古内の寒中みそぎ祭り。2026年は何回目だった？",
+      "choices": ["96回目", "196回目", "296回目"],
+      "answer": 1,
+      "explanation": "天保2年（1831年）に始まった神事で、2026年が196回目でした。",
+      "source": {
+        "url": "https://www.town.kikonai.hokkaido.jp/kanko/event/kantyu.html",
+        "title": "木古内町 第196回寒中みそぎ祭り＆寒中みそぎフェスティバル2026",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "id": "oyster-island",
+      "festivalId": "akkeshi-kaki-matsuri",
+      "question": "厚岸湖に浮かぶ「牡蠣島」の正式な名前は？",
+      "choices": ["弁天島", "恵比寿島", "大黒島"],
+      "answer": 0,
+      "explanation": "正式な名前は弁天島で、小さな弁天神社が建っています。",
+      "source": {
+        "url": "https://www.akkeshi-town.jp/kanko/kanko10/kakijima/",
+        "title": "厚岸町 厚岸大橋と牡蠣島",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ]
+}

@@ -272,7 +272,6 @@ export function closeTurn(state: AppData): AppData {
       return entry;
     }),
     verify: state.verify.status === "checking" ? { ...state.verify, status: "idle" } : state.verify,
-    quiz: { ...state.quiz, question: null, answer: null },
   };
   for (const id of Object.keys(state.staff) as StaffId[]) {
     const staff = state.staff[id];

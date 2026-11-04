@@ -211,23 +211,11 @@ export interface WaitingTalk {
   source: Source;
 }
 
-export type QuizKind = "category" | "highlight" | "local_food";
-
-export interface QuizQuestion {
-  kind: QuizKind;
-  festivalId: string;
-  festivalName: string;
-  /** category のときは祭りの種類の ID、それ以外はデータの文字列 */
-  choices: [string, string];
-  correct: 0 | 1;
-  source: Source;
-}
-
 export interface QuizState {
-  /** クイズを出した発言の番号。1つの発言に1問まで */
-  offeredTurn: number | null;
-  question: QuizQuestion | null;
-  answer: 0 | 1 | null;
+  /** 出す順に並べたクイズの ID。店を開くたびに混ぜ直す */
+  deck: string[];
+  /** 答えたクイズの ID と、選んだ選択肢の位置。答え直しはできない */
+  answers: Record<string, number>;
 }
 
 export type FestivalLoad = "loading" | "loaded" | "missing";

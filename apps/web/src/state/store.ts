@@ -23,22 +23,21 @@ import {
 import { clientError } from "./errors";
 import { applyEvent } from "./events";
 import { initialData } from "./initial";
+import { quizById } from "./quizBank";
 import {
   addError,
   answerQuiz,
   beginTurn,
   changePreference,
   endTurn,
-  offerQuiz,
   passcodeAccepted,
   requirePasscode,
   resetForNewSession,
   settleStaff,
-  shouldOfferQuiz,
   type TurnStart,
 } from "./transitions";
 import type { AppData, ClientError, Locale, PanelTab } from "./types";
-import { buildQuiz, quizFocusId } from "./waiting";
+import { shuffleDeck } from "./waiting";
 
 // 画面の正しい状態を持つストア。通信の口から届いた SSE の1件を、ここで1か所で検証し、
 // events.ts の純粋な関数でストアの更新に変える。部品はイベントを直接受けない。
@@ -91,7 +90,8 @@ export interface AppActions {
   leaveShop(): void;
   nextTrivia(): void;
   prevTrivia(): void;
-  answerQuiz(choice: 0 | 1): void;
+  /** 豆知識のあいだに出したクイズに答える */
+  answerQuiz(quizId: string, choice: number): void;
   /** 祭りのデータを読み込む（読み込み済みのものは読まない） */
   ensureFestivals(ids: readonly string[]): Promise<void>;
 }
@@ -142,17 +142,6 @@ export function createAppStore(deps: StoreDeps): AppStore {
       timers.clear();
     };
 
-    const maybeOfferQuiz = () => {
-      const state = get();
-      if (!shouldOfferQuiz(state)) {
-        return;
-      }
-      const question = buildQuiz(state.festivals, quizFocusId(state), random);
-      if (question !== null) {
-        update((current) => offerQuiz(current, question));
-      }
-    };
-
     const afterEvent = (event: SseEvent, before: AppData) => {
       if (event.type === "tool.end" && event.data.candidates !== undefined) {
         void get().actions.ensureFestivals(event.data.candidates.map((c) => c.festivalId));
@@ -168,7 +157,6 @@ export function createAppStore(deps: StoreDeps): AppStore {
           update((state) => ({ ...state, ui: { ...state.ui, celebrating: false } })),
         );
       }
-      maybeOfferQuiz();
     };
 
     /** 届いた SSE の1件を検証し、ストアの更新に変える */
@@ -403,7 +391,11 @@ export function createAppStore(deps: StoreDeps): AppStore {
         clearTimers();
         const { ui } = get();
         const fresh = initialData({ locale: ui.locale, tutorialSeen: ui.tutorialSeen });
-        update(() => ({ ...fresh, ui: { ...fresh.ui, soundOn: ui.soundOn, view: "shop" } }));
+        update(() => ({
+          ...fresh,
+          quiz: { ...fresh.quiz, deck: shuffleDeck(fresh.quiz.deck, random) },
+          ui: { ...fresh.ui, soundOn: ui.soundOn, view: "shop" },
+        }));
         await startSession();
       },
 
@@ -499,8 +491,9 @@ export function createAppStore(deps: StoreDeps): AppStore {
       prevTrivia() {
         update((state) => ({ ...state, trivia: { index: state.trivia.index - 1 } }));
       },
-      answerQuiz(choice) {
-        update((state) => answerQuiz(state, choice));
+      answerQuiz(quizId, choice) {
+        const quiz = quizById(quizId);
+        if (quiz !== undefined) update((state) => answerQuiz(state, quiz, choice));
       },
 
       async ensureFestivals(ids) {
@@ -529,12 +522,16 @@ export function createAppStore(deps: StoreDeps): AppStore {
             }));
           }),
         );
-        maybeOfferQuiz();
       },
     };
 
+    const initial = initialData({
+      locale: deps.locale ?? "ja",
+      tutorialSeen: deps.tutorialSeen ?? false,
+    });
     return {
-      ...initialData({ locale: deps.locale ?? "ja", tutorialSeen: deps.tutorialSeen ?? false }),
+      ...initial,
+      quiz: { ...initial.quiz, deck: shuffleDeck(initial.quiz.deck, random) },
       actions,
     };
   });

@@ -539,21 +539,6 @@ describe("時間切れのあと（終わっていないツールの tool.end が
         },
       },
     ]);
-    state = {
-      ...state,
-      quiz: {
-        offeredTurn: state.session.turn,
-        question: {
-          kind: "category",
-          festivalId: "suzunari-toro",
-          festivalName: "鈴鳴灯籠まつり",
-          choices: ["lantern", "dance"],
-          correct: 0,
-          source: fictionalSource("about"),
-        },
-        answer: null,
-      },
-    };
     expect(state.verify.status).toBe("checking");
 
     state = apply(state, [
@@ -570,7 +555,6 @@ describe("時間切れのあと（終わっていないツールの tool.end が
       expect.objectContaining({ id: "w-v", status: "failed" }),
     ]);
     expect(state.verify.status).toBe("idle");
-    expect(state.quiz.question).toBeNull();
     // done は届いているので「接続が切れました」は出さない
     expect(state.messages.filter((entry) => entry.kind === "error")).toHaveLength(1);
   });

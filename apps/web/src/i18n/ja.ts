@@ -667,15 +667,9 @@ export const ja = {
   },
   quiz: {
     title: "祭りクイズ",
-    prompts: {
-      highlight: (name: string) => `「${name}」の見どころはどっち？`,
-      local_food: (name: string) => `「${name}」の町で味わえるのはどっち？`,
-      category: (name: string) => `「${name}」はどんな祭り？`,
-    },
     correct: "正解！ しおりのスタンプが1つ増えました",
     wrong: (answer: string) => `おしい！ 正解は「${answer}」`,
     note: "答えなくても相談は進みます",
-    close: "クイズを閉じる",
     question: "問い",
     stamps: (count: number) => `集めたスタンプ ${count}個`,
   },
