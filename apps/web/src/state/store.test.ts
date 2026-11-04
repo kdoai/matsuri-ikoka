@@ -1,8 +1,12 @@
 import {
+  type ChatRequest,
+  DEFAULT_PREFERENCES,
+  encodeSseEvent,
   type Festival,
   FestivalSchema,
   type SampleConversation,
   SampleConversationSchema,
+  type SearchOutcome,
 } from "@matsuri-ikoka/schema";
 import { describe, expect, it, vi } from "vitest";
 import sampleJson from "../../../../data/samples/conversations/suzunari-day-trip.json";
@@ -499,5 +503,87 @@ describe("ストア：選んで進める相談", () => {
     expect(makeStore(instantReplay(), { tutorialSeen: true }).getState().ui.tutorialSeen).toBe(
       true,
     );
+  });
+});
+
+describe("ストア：条件に合う祭りが見つからないとき", () => {
+  const retry = { when: { kind: "range" as const, from: "2026-08-22", to: "2026-08-23" } };
+  const outcome: SearchOutcome = {
+    status: "none",
+    excluded: { date: 1, travel: 0, area: 0 },
+    nearMisses: [],
+    suggestions: [
+      {
+        kind: "later_dates",
+        label: "次の週末（8月22日〜8月23日）で探す",
+        retry,
+        message: "日程を8月22日〜8月23日に変えて、もう一度祭りを探してください。",
+        found: 1,
+      },
+      { kind: "edit_conditions", label: "条件を選び直す", retry: null, message: null, found: null },
+    ],
+    attempts: 3,
+  };
+  const searched = (search: SearchOutcome) =>
+    encodeSseEvent({
+      type: "tool.end",
+      data: {
+        toolCallId: "call-1",
+        tool: "search_festivals",
+        staff: "researcher",
+        ok: true,
+        bubble: "見つかりませんでした",
+        count: 0,
+        candidates: [],
+        search,
+      },
+    });
+  const done = encodeSseEvent({
+    type: "done",
+    data: { stage: "candidates", conditions: {}, preferences: { ...DEFAULT_PREFERENCES } },
+  });
+
+  function recording(): ChatTransport & { requests: ChatRequest[] } {
+    const requests: ChatRequest[] = [];
+    return {
+      requests,
+      startSession: async () => "s-1",
+      async chat(request, onMessage) {
+        requests.push(request);
+        onMessage(searched(outcome));
+        onMessage(done);
+      },
+      updatePreferences: async () => {},
+    };
+  }
+
+  it("候補が0件でも窓を開き、次の手を押すと変えた条件を添えて探し直す", async () => {
+    const transport = recording();
+    const store = makeStore(transport);
+    await store.getState().actions.enterShop();
+    await store.getState().actions.send("8月16日に日帰りで行ける祭りは？");
+
+    expect(store.getState().candidates).toEqual([]);
+    expect(store.getState().search?.status).toBe("none");
+    expect(store.getState().ui.candidatesOpen).toBe(true);
+
+    await store.getState().actions.chooseSuggestion(outcome.suggestions[0]!);
+    expect(transport.requests[1]).toMatchObject({
+      message: "日程を8月22日〜8月23日に変えて、もう一度祭りを探してください。",
+      search: retry,
+    });
+    expect(store.getState().session.lastRequest?.search).toEqual(retry);
+  });
+
+  it("「条件を選び直す」は送らずに、選んで進める聞き取りに戻る", async () => {
+    const transport = recording();
+    const store = makeStore(transport);
+    await store.getState().actions.enterShop();
+    await store.getState().actions.send("8月16日に日帰りで行ける祭りは？");
+
+    await store.getState().actions.chooseSuggestion(outcome.suggestions[1]!);
+    expect(transport.requests).toHaveLength(1);
+    expect(store.getState().ui.candidatesOpen).toBe(false);
+    expect(store.getState().consult.active).toBe(true);
   });
 });

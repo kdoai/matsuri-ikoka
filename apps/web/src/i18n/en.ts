@@ -1,3 +1,4 @@
+import type { SearchSuggestion } from "@matsuri-ikoka/schema";
 import type { Messages } from "./ja";
 
 // English. Festival data and model text (names, bubbles) stay as they arrive.
@@ -573,6 +574,50 @@ export const en: Messages = {
     needsCheck: "Check before you go",
     found: (place: string) => `I found an unusual festival in ${place}!`,
     foundMany: (count: number) => `I found ${count} festivals for you!`,
+    noneFound: "No festivals match your conditions",
+    noneFoundLine: "No festivals match your conditions. Try another way to search",
+    travel: (lower: number, upper: number, estimate: boolean) => {
+      const span = (m: number) =>
+        m < 60
+          ? `${m} min`
+          : m % 60 === 0
+            ? `${m / 60} h`
+            : `${Math.floor(m / 60)} h ${m % 60} min`;
+      const range = lower === upper ? span(lower) : `${span(lower)}–${span(upper)}`;
+      return `About ${range} one way from your station${estimate ? " (estimate)" : ""}`;
+    },
+    next: {
+      nearTitle: "These festivals are on instead",
+      nearNote: "Each misses one of your conditions. Check what differs before choosing",
+      missLabel: "What differs",
+      title: "Other ways to search",
+      found: (count: number) => `${count} found`,
+      label: (suggestion: SearchSuggestion) => {
+        const retry = suggestion.retry;
+        switch (suggestion.kind) {
+          case "later_dates": {
+            const when = retry?.when;
+            const dates =
+              when === undefined
+                ? ""
+                : when.kind === "date"
+                  ? when.date
+                  : `${when.from} – ${when.to}`;
+            return `Search on later dates (${dates})`;
+          }
+          case "longer_travel":
+            return `Allow up to ${(retry?.maxTravelMinutes ?? 0) / 60} h one way`;
+          case "wider_area":
+            return retry?.widen === "nationwide"
+              ? "Search all of Japan"
+              : "Include neighboring prefectures";
+          case "stay_over":
+            return "Make it an overnight trip";
+          case "edit_conditions":
+            return "Change my conditions";
+        }
+      },
+    },
     details: "See details",
     hideDetails: "Hide details",
     filters: {

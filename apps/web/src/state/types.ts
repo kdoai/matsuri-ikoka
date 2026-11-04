@@ -8,6 +8,8 @@ import type {
   ItineraryDiff,
   PartialTripConditions,
   Preferences,
+  SearchOutcome,
+  SearchRetry,
   Source,
   SpotPin,
   STAFF_TASKS,
@@ -149,6 +151,8 @@ export type ChatEntry =
 export interface ChatRequestDraft {
   message: string;
   preferences: Preferences;
+  /** 候補の窓の次の手（ボタン）から送ったときの、変えて探し直す条件 */
+  search?: SearchRetry;
 }
 
 export interface SessionState {
@@ -261,6 +265,8 @@ export interface AppData {
   /** スタッフどうしの頼みと受け渡し */
   relay: RelayState;
   candidates: FestivalCandidate[];
+  /** 最後の祭り探しの、条件の検査と次の手（見つからなかったとき・3件に満たないとき） */
+  search: SearchOutcome | null;
   spots: SpotPin[];
   itinerary: ItineraryState;
   verify: VerifyState;

@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { type ReactNode, useEffect, useRef } from "react";
 import { formatDate, otherLocale } from "../i18n";
+import { hasNextSteps } from "../state/events";
 import { useActions, useApp, useT } from "../state/react";
 import { shioriReady } from "../state/selectors";
 import type { PanelTab } from "../state/types";
@@ -132,7 +133,9 @@ function GameMenu({
 }) {
   const t = useT();
   const actions = useActions();
-  const hasCandidates = useApp((state) => state.candidates.length > 0);
+  const hasCandidates = useApp(
+    (state) => state.candidates.length > 0 || hasNextSteps(state.search),
+  );
   const hasItinerary = useApp((state) => state.itinerary.current !== null);
   const ready = useApp(shioriReady);
   const items: { key: string; label: string; icon: ReactNode; run: (() => void) | null }[] = [

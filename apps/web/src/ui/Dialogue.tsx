@@ -14,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { type ReactNode, useState } from "react";
+import { hasNextSteps } from "../state/events";
 import { useActions, useApp, useT } from "../state/react";
 import { currentLine, shioriReady } from "../state/selectors";
 import { waitLineIndex, waitPhase } from "../state/waitLines";
@@ -96,7 +97,7 @@ function ReplyChoices({ retry }: { retry: boolean }) {
   const canReopenCandidates = useApp(
     (state) =>
       !state.ui.candidatesOpen &&
-      state.candidates.length > 0 &&
+      (state.candidates.length > 0 || hasNextSteps(state.search)) &&
       (state.session.stage === "candidates" || state.itinerary.current === null),
   );
   const revising = hasItinerary && (stage === "itinerary" || stage === "revising");

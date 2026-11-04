@@ -1,3 +1,5 @@
+import type { SearchSuggestion } from "@matsuri-ikoka/schema";
+
 // 日本語の文言。データとモデルの文章（祭りの名前や吹き出し）は、ここには入れない。
 
 const range = (min: number, max: number) => (min === max ? `${min}` : `${min}〜${max}`);
@@ -538,6 +540,24 @@ export const ja = {
     needsCheck: "要事前確認",
     found: (place: string) => `${place}で、ちょっと珍しいお祭りを見つけたよ！`,
     foundMany: (count: number) => `${count}つ、おすすめの祭りを見つけたよ！`,
+    noneFound: "条件に合う祭りは見つかりませんでした",
+    noneFoundLine: "条件に合う祭りは見つかりませんでした。ほかの探し方を選べます",
+    /** 片道の所要時間（分の幅）。駅の位置からの見積もりなら「目安」と添える */
+    travel: (lower: number, upper: number, estimate: boolean) => {
+      const span = (m: number) =>
+        m < 60 ? `${m}分` : m % 60 === 0 ? `${m / 60}時間` : `${Math.floor(m / 60)}時間${m % 60}分`;
+      const range = lower === upper ? span(lower) : `${span(lower)}〜${span(upper)}`;
+      return `出発の駅から片道およそ${range}${estimate ? "（目安）" : ""}`;
+    },
+    next: {
+      nearTitle: "この祭りならやっています",
+      nearNote: "ご希望の条件から1つだけ外れています。外れている点を確かめてから選んでください",
+      missLabel: "条件から外れている点",
+      title: "ほかの探し方",
+      found: (count: number) => `${count}件`,
+      /** 次の手のボタンの文。日本語はサーバーが決まった型で作った文をそのまま使う */
+      label: (suggestion: SearchSuggestion) => suggestion.label,
+    },
     details: "詳細を見る",
     hideDetails: "詳細を閉じる",
     filters: {
