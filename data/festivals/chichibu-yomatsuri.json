@@ -1,0 +1,283 @@
+{
+  "id": "chichibu-yomatsuri",
+  "name": { "ja": "秩父夜祭", "en": "Chichibu Night Festival" },
+  "category": "float",
+  "municipalities": [{ "prefecture": "埼玉県", "name": "秩父市" }],
+  "venue": { "name": "秩父神社と秩父市街地、御旅所（亀の子石）", "lat": 35.9977, "lng": 139.0849 },
+  "scaleTier": "L",
+  "popularity": "major",
+  "listedIn": ["walkerplus", "rurubu", "japan-guide", "jnto"],
+  "highlights": [
+    "重さ最大20トンの笠鉾・屋台が、大祭の夜に急な団子坂を曳き上げられる",
+    "屋台に張り出し舞台を付けて演じる屋台芝居と、子どもの曳き踊り",
+    "テコ棒とギリ棒で山車を浮かせて向きを変える「ギリ廻し」",
+    "6台の山車が必ず秩父神社の山門前に曳き付けられる宮参り"
+  ],
+  "trivia": [
+    {
+      "text": "笠鉾2基と屋台4基が出て、大きいものは重さが20トンに及ぶ",
+      "source": {
+        "url": "https://navi.city.chichibu.lg.jp/p_festival/1030/",
+        "title": "秩父観光なび 秩父夜祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "秩父神社の神輿が町へ出るのは、夏の川瀬祭と冬の夜祭の年2回だけ",
+      "source": {
+        "url": "http://www.chichibu-jinja.or.jp/saiten/",
+        "title": "秩父神社 祭典・神事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "紅白の襦袢を着る囃子手は、町内で一生に一度選ばれる祭りの花形",
+      "source": {
+        "url": "https://navi.city.chichibu.lg.jp/p_festival/1121/",
+        "title": "秩父観光なび 秩父夜祭のQ&A",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "江戸時代の中ごろ、秩父神社で開かれた絹の大市とともに栄えた祭り",
+      "source": {
+        "url": "https://navi.city.chichibu.lg.jp/p_festival/1030/",
+        "title": "秩父観光なび 秩父夜祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "団子坂の曳き上げは場所がとても狭く、観覧席を予約した人のほかはほぼ見られない",
+      "御旅所の桟敷席は秩父観光協会が売る有料席（2026年のB席は1人4,000円で、すでに売り切れ）",
+      "臨時駐車場は予約できず、2日から3日にかけて車を置いたままにできない",
+      "シャトルバスにペットは原則乗せられない（やむを得ないときはケージに入れる）"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "重い笠鉾・屋台が夜まで市街地を曳き廻され、人出は2023年に36万8000人とされる。主催者によるけがの注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://navi.city.chichibu.lg.jp/p_festival/1121/",
+        "title": "秩父観光なび 秩父夜祭のQ&A（団子坂、臨時駐車場、シャトルバス）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.chichibuji.gr.jp/news/2026yomatsuri_b/",
+        "title": "秩父観光協会 令和8年度秩父夜祭「屋台観覧席」の販売について",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0311e360635/data.html",
+        "title": "ウォーカープラス 秩父夜祭 花火大会の詳細データ（人出 36万8000人、2023年）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-02",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "宵宮（秩父市が2026年の日程を発表。巡行予定表と花火の時刻はまだ出ていない）。例年は午前9〜11時ごろ、宮地・上町・中町・本町の屋台4台が大通りを中心に曳かれ、すれ違い・曳き踊り・宮参りがあり、夜もすれ違いがある。秩父神社では御神馬奉納の儀と新穀奉献祭",
+      "sources": [
+        {
+          "url": "https://navi.city.chichibu.lg.jp/info/2026/10/31171/",
+          "title": "秩父観光なび 令和8年「秩父夜祭」について（10月13日更新）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://navi.city.chichibu.lg.jp/p_festival/1121/",
+          "title": "秩父観光なび 秩父夜祭のQ&A（宵宮の屋台曳行）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "http://www.chichibu-jinja.or.jp/saiten/",
+          "title": "秩父神社 祭典・神事（12月の例祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-12-03",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "大祭（秩父市が2026年の日程を発表。巡行予定表と花火の時刻はまだ出ていない）。例年は朝8〜9時ごろから笠鉾2基・屋台4基の6台が市内を曳き廻され、17:30ごろ神輿と6台が御神幸祭の行列で御旅所へ向かい、22:00ごろ御旅所で斎場祭。夜は団子坂の曳き上げと花火",
+      "sources": [
+        {
+          "url": "https://navi.city.chichibu.lg.jp/info/2026/10/31171/",
+          "title": "秩父観光なび 令和8年「秩父夜祭」について（10月13日更新）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://navi.city.chichibu.lg.jp/p_festival/1121/",
+          "title": "秩父観光なび 秩父夜祭のQ&A（大祭の曳き廻し）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "http://www.chichibu-jinja.or.jp/saiten/",
+          "title": "秩父神社 祭典・神事（御神幸祭・御旅所斎場祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-12-02",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2027年の発表はまだない）。秩父市の案内の「毎年12月2日（宵宮）・3日（大祭）」による宵宮の日で、2027年は木曜日",
+      "sources": [
+        {
+          "url": "https://navi.city.chichibu.lg.jp/p_festival/1030/",
+          "title": "秩父観光なび 秩父夜祭（毎年12月2日・3日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-12-03",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2027年の発表はまだない）。秩父市の案内の「毎年12月2日（宵宮）・3日（大祭）」による大祭の日で、2027年は金曜日",
+      "sources": [
+        {
+          "url": "https://navi.city.chichibu.lg.jp/p_festival/1030/",
+          "title": "秩父観光なび 秩父夜祭（毎年12月2日・3日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "秩父鉄道 秩父駅",
+        "walkMinutes": [3, 8],
+        "note": "秩父神社の最寄り駅。秩父神社まで徒歩3分（秩父神社の案内）"
+      },
+      {
+        "name": "西武 西武秩父駅",
+        "walkMinutes": [15, 20],
+        "note": "秩父神社まで徒歩約15分。祭りの日はさらにかかる（秩父観光なびのQ&A）"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "池袋駅",
+        "minutes": [80, 90],
+        "route": "西武池袋線・西武秩父線の特急ラビュー（全席指定）で西武秩父駅へ、乗り換えなし"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.chichibu-jinja.or.jp/access/",
+        "title": "秩父神社 交通案内（秩父駅から徒歩3分、西武秩父駅から徒歩15分、池袋から特急ラビューで約80分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://navi.city.chichibu.lg.jp/p_festival/1121/",
+        "title": "秩父観光なび 秩父夜祭のQ&A（臨時駐車場：3日は学校の校庭などが有料、2日は宮地グラウンドのみ無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": { "stalls": "unknown", "local": [] },
+  "nearby": [
+    {
+      "id": "chichibu-matsuri-kaikan",
+      "name": "秩父まつり会館",
+      "kind": "sightseeing",
+      "summary": "秩父夜祭の笠鉾・屋台の実物や映像、囃子の実演で秩父の祭りを紹介する館。12〜2月は火曜休館で、12月は夜祭に合わせて休館日が変わることがある",
+      "location": { "lat": 35.9973, "lng": 139.085 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "10:00", "close": "17:00", "lastEntry": "16:30" },
+      "closedDays": ["tue"],
+      "price": "一般500円、小中学生250円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.chichibu-matsuri.jp/riyo/",
+          "title": "秩父まつり会館 ご利用案内（12〜3月 10:00〜17:00、入館受付16:30まで、12〜2月は毎週火曜休館）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%9F%BC%E7%8E%89%E7%9C%8C%E7%A7%A9%E7%88%B6%E5%B8%82%E7%95%AA%E5%A0%B4%E7%94%BA2-8",
+          "title": "国土地理院 住所検索 秩父市番場町2-8（秩父まつり会館の緯度・経度）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://navi.city.chichibu.lg.jp/p_festival/1030/",
+      "title": "秩父観光なび 秩父夜祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "http://www.chichibu-jinja.or.jp/saiten/",
+      "title": "秩父神社 祭典・神事（12月の例祭）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%9F%BC%E7%8E%89%E7%9C%8C%E7%A7%A9%E7%88%B6%E5%B8%82%E7%95%AA%E5%A0%B4%E7%94%BA1-3",
+      "title": "国土地理院 住所検索 秩父市番場町1-3（秩父神社の緯度・経度）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2026年の笠鉾・屋台の巡行予定と時刻",
+    "2026年の花火の時刻と打ち上げ数",
+    "2026年の交通規制の時間と区域",
+    "2026年の臨時駐車場の場所と料金",
+    "雨のときの扱い",
+    "屋台芝居の2026年の当番町と時刻",
+    "服装と持ち物",
+    "写真の撮り方の決まり（三脚・ドローンなど）",
+    "露店の有無と、祭りならではの食べもの",
+    "祭りの夜の帰りの臨時列車",
+    "秩父まつり会館の12月2日・3日の開館",
+    "周辺の食事の場所（確かめられた店がない）",
+    "2027年の開催の発表と、日ごとの行事・時刻"
+  ]
+}

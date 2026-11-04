@@ -1,0 +1,211 @@
+{
+  "id": "yutoku-inari-ohitaki",
+  "name": {
+    "ja": "祐徳稲荷神社 秋季大祭（お火たき）",
+    "en": "Yutoku Inari Shrine Ohitaki Fire Festival"
+  },
+  "category": "fire",
+  "municipalities": [
+    {
+      "prefecture": "佐賀県",
+      "name": "鹿島市"
+    }
+  ],
+  "venue": {
+    "name": "祐徳稲荷神社 境内（本殿前）",
+    "lat": 33.0637,
+    "lng": 130.1104
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "本殿前に積んだ高さ約6mの「お山」に、神前の浄火を移して燃やす",
+    "燃えさかる御神火にあたって、病が癒え穢れが祓われるよう願う",
+    "肌着や写真を代わりの人が火にかざす姿が見られる"
+  ],
+  "trivia": [
+    {
+      "text": "もとは旧暦11月8日の行事で、いまは新嘗祭の夜の神事として12月8日に行う",
+      "source": {
+        "url": "https://tabi-mag.jp/yutoku-ohitaki/",
+        "title": "ニッポン旅マガジン 祐徳稲荷神社『秋季大祭（お火たき）』",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "燃やす「お山」は木を積み重ねて青竹で囲んだもので、高さは約6m",
+      "source": {
+        "url": "https://rurubu.jp/andmore/spot/20004915",
+        "title": "るるぶ&more. 祐徳稲荷神社 秋季大祭（お火たき）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "春の祈年祭と対になる神事で、収穫を終えて山へ帰る神への感謝の意味がある",
+      "source": {
+        "url": "https://rurubu.jp/andmore/spot/20004915",
+        "title": "るるぶ&more. 祐徳稲荷神社 秋季大祭（お火たき）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "境内で御神火にあたって参拝する（料金は無料）",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://rurubu.jp/andmore/spot/20004915",
+        "title": "るるぶ&more. 祐徳稲荷神社 秋季大祭（お火たき）（料金 無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      },
+      {
+        "url": "https://tabi-mag.jp/yutoku-ohitaki/",
+        "title": "ニッポン旅マガジン 祐徳稲荷神社『秋季大祭（お火たき）』",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-08",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "神社の年中行事にある「十二月八日」からの見込み（神社の2026年の告知はまだない）。2025年は20:00から。宮司の祝詞のあと、神前の浄火を松明に移して「お山」に点火する",
+      "sources": [
+        {
+          "url": "https://www.yutokusan.jp/event/annual/",
+          "title": "祐徳稲荷神社 年間行事（秋季大祭(お火たき) 十二月八日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20004915",
+          "title": "るるぶ&more. 祐徳稲荷神社 秋季大祭（お火たき）（2026年12月8日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        },
+        {
+          "url": "https://tabi-mag.jp/yutoku-ohitaki/",
+          "title": "ニッポン旅マガジン 祐徳稲荷神社『秋季大祭（お火たき）』（2025年12月8日 20時から）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-12-08",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "神社の年中行事にある「十二月八日」からの見込み（2027年の発表はまだない）",
+      "sources": [
+        {
+          "url": "https://www.yutokusan.jp/event/annual/",
+          "title": "祐徳稲荷神社 年間行事（秋季大祭(お火たき) 十二月八日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "バス停 祐徳神社前",
+        "walkMinutes": [5, 10],
+        "note": "神社まで徒歩5分（観光サイト）。JR肥前鹿島駅前の鹿島バスセンターから祐徳稲荷神社行きのバスで15分。神社の案内では、肥前鹿島駅からタクシーかバスで約10分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "博多駅",
+        "minutes": [60, 70],
+        "route": "JR長崎本線の特急で肥前鹿島駅まで。そこからバスかタクシー"
+      },
+      {
+        "hub": "佐賀駅",
+        "minutes": [20, 30],
+        "route": "JR長崎本線の特急で肥前鹿島駅まで。そこからバスかタクシー"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.yutokusan.jp/about/access/",
+        "title": "祐徳稲荷神社 アクセス（博多駅〜肥前鹿島駅 約1時間、佐賀駅〜肥前鹿島駅 約20分、外苑第一駐車場）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://tabi-mag.jp/yutoku-ohitaki/",
+        "title": "ニッポン旅マガジン 祐徳稲荷神社『秋季大祭（お火たき）』（鹿島バスセンターから15分、祐徳神社前から徒歩5分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "新米で造った甘酒の振る舞い",
+        "note": "お火たきの夜に振る舞われる（2025年の案内）。2026年もあるかは確かめていない",
+        "sources": [
+          {
+            "url": "https://tabi-mag.jp/yutoku-ohitaki/",
+            "title": "ニッポン旅マガジン 祐徳稲荷神社『秋季大祭（お火たき）』",
+            "checkedAt": "2026-11-04",
+            "confidence": "single"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.yutokusan.jp/event/annual/",
+      "title": "祐徳稲荷神社 年間行事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.yutokusan.jp/about/access/",
+      "title": "祐徳稲荷神社 アクセス（鎮座地 佐賀県鹿島市古枝）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20004915",
+      "title": "るるぶ&more. 祐徳稲荷神社 秋季大祭（お火たき）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2026年の開始時刻",
+    "神事の長さと、火にあたれる時間",
+    "会場の正確な位置",
+    "見物客の数",
+    "危険の度合い（主催者の安全についての注意が見つからない）",
+    "見学の決まり（火に近づける範囲・撮影）と服装・持ち物",
+    "雨天の扱い",
+    "祭りの日の屋台",
+    "周辺の観光と食の場所（祭りの日の営業を確かめられたものがない）"
+  ]
+}

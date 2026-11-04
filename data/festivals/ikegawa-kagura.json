@@ -1,0 +1,206 @@
+{
+  "id": "ikegawa-kagura",
+  "name": {
+    "ja": "池川神楽",
+    "en": "Ikegawa Kagura"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "高知県",
+      "name": "仁淀川町"
+    }
+  ],
+  "venue": {
+    "name": "池川神社",
+    "lat": 33.6097,
+    "lng": 133.1702
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["rurubu", "jalan"],
+  "highlights": [
+    "土佐の神楽で池川神楽にしか伝わらない「児勤の舞」",
+    "13通りの演目を、昼から約4時間かけて奉納する",
+    "国の重要無形民俗文化財の神楽を、秋季大祭の日に地元の神社で見られる"
+  ],
+  "trivia": [
+    {
+      "text": "文禄2年（1593）の記録に名があり、少なくとも400年の歴史を持つ",
+      "source": {
+        "url": "https://www.town.niyodogawa.lg.jp/life/life_dtl.php?hdnKey=300",
+        "title": "仁淀川町 池川神楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1980年（昭和55年）に国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://yosakoi-kochi-bunkasai2026.pref.kochi.lg.jp/event.html?id=271",
+        "title": "よさこい高知文化祭2026 池川神楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "秋季大祭のほか、12月31日に舞納め、1月1日に舞始めを池川神社で行う",
+      "source": {
+        "url": "https://www.town.niyodogawa.lg.jp/life/life_dtl.php?hdnKey=300",
+        "title": "仁淀川町 池川神楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "池川神社は池川郷の産土神で、建久5年（1194）に勧請されたと伝わる",
+      "source": {
+        "url": "https://kochi-tabi.jp/search_spot.html?ID=930",
+        "title": "こうち旅ネット 池川神社",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": ["見学は無料で、事前の申し込みは要らない"],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "神社の境内で神楽を見る行事で、主催者による混雑や危険の注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://yosakoi-kochi-bunkasai2026.pref.kochi.lg.jp/event.html?id=271",
+        "title": "よさこい高知文化祭2026 池川神楽（令和8年11月23日 12:00〜16:00、無料・事前申込不要）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-23",
+      "start": "12:00",
+      "end": "16:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "池川神社の秋季大祭で奉納する（13通りの演目）",
+      "sources": [
+        {
+          "url": "https://yosakoi-kochi-bunkasai2026.pref.kochi.lg.jp/event.html?id=271",
+          "title": "よさこい高知文化祭2026 池川神楽（令和8年11月23日 12:00〜16:00、無料・事前申込不要）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.town.niyodogawa.lg.jp/life/life_dtl.php?hdnKey=300",
+          "title": "仁淀川町 池川神楽（11月23日 池川神社 奉納、13通りの演目）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-11-23",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年11月23日の池川神社の秋季大祭で奉納する。2027年の時刻は未発表",
+      "sources": [
+        {
+          "url": "https://www.town.niyodogawa.lg.jp/life/life_dtl.php?hdnKey=300",
+          "title": "仁淀川町 池川神楽（11月23日 池川神社 奉納）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://kochi-tabi.jp/search_spot.html?ID=930",
+          "title": "こうち旅ネット 池川神社（毎年11月23日の秋季大祭で奉納）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://kochi-tabi.jp/search_spot.html?ID=930",
+        "title": "こうち旅ネット 池川神社（駐車場は普通車約10台・無料、伊野ICから車で約50分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "cafe-and-beef-karu",
+      "name": "CAFE and BEEF かる。",
+      "kind": "food",
+      "summary": "土居川を眺めるコンテナハウスの店。昼はステーキや焼肉、ハンバーグの定食、夜は焼肉。木曜と毎月17日が休み。品切れで早く閉めることがある",
+      "location": {
+        "lat": 33.6071,
+        "lng": 133.1654
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": ["thu"],
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://niyodoblue.jp/gourmet/detail.php?id=167",
+          "title": "仁淀ブルー観光協議会 CAFE and BEEF かる。",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.town.niyodogawa.lg.jp/life/life_dtl.php?hdnKey=300",
+      "title": "仁淀川町 池川神楽",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://yosakoi-kochi-bunkasai2026.pref.kochi.lg.jp/event.html?id=271",
+      "title": "よさこい高知文化祭2026 池川神楽（池川神社、地図つき）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://kochi-tabi.jp/search_spot.html?ID=930",
+      "title": "こうち旅ネット 池川神社",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "最寄りのバス停と徒歩の時間、主要駅からの路線と所要時間",
+    "祭りの日の臨時駐車場の有無（神社の駐車場は普通車約10台）",
+    "雨のときの扱い",
+    "撮影の決まり、服装・持ち物",
+    "見物客の数",
+    "屋台の有無と、祭りの日だけの食べ物",
+    "神社の近くで祭りの日に開いていると確かめられた観光地",
+    "CAFE and BEEF かる。の営業時間（昼11:00〜15:00と夜17:00〜21:00に分かれる）",
+    "2027年の時刻"
+  ]
+}
