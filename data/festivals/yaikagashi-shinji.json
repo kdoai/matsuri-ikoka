@@ -1,0 +1,230 @@
+{
+  "id": "yaikagashi-shinji",
+  "name": {
+    "ja": "焼嗅がし神事",
+    "en": "Yaikagashi Ritual of Sumiyoshi Shrine (Hiroshima)"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "広島県",
+      "name": "広島市"
+    }
+  ],
+  "venue": {
+    "name": "住吉神社",
+    "lat": 34.3849,
+    "lng": 132.4474
+  },
+  "scaleTier": "XS",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan"],
+  "highlights": [
+    "焼いた鰯の頭のにおいを巨大なうちわで送り、鬼や厄を追い払う",
+    "赤鬼・疫病神・貧乏神や、世間を騒がせた人々に扮した者が次々に境内へ現れる",
+    "神事のあと、ヒイラギの枝に刺した鰯の頭を参拝者が持ち帰れる",
+    "平安時代の節分の形を伝えるとする、住吉神社の節分祭"
+  ],
+  "trivia": [
+    {
+      "text": "神事で焼く鰯の頭は1000匹分。強い臭いで厄や鬼を追い払う",
+      "source": {
+        "url": "http://www.sumiyoshijinja.net/setsubun/",
+        "title": "住吉神社 焼嗅がし(やいかがし)神事 平安時代の節分祭",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "神事の時代考証は、広島大学大学院の名誉教授が手がけたと神社は案内している",
+      "source": {
+        "url": "http://www.sumiyoshijinja.net/setsubun/",
+        "title": "住吉神社 焼嗅がし(やいかがし)神事 平安時代の節分祭",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "住吉神社は享保18年（1733）に勧請され、江戸時代は浅野藩の船を守る神として信仰された",
+      "source": {
+        "url": "http://www.sumiyoshijinja.net/yuisho/",
+        "title": "住吉神社 御由緒",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "境内の松は原爆投下を生き延びた被爆樹木で、広島市の台帳に登録されている",
+      "source": {
+        "url": "http://www.sumiyoshijinja.net/keidai/",
+        "title": "住吉神社 境内案内（被爆松）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "当日、神事に参拝すれば、神事のあとにヒイラギに刺した鰯の頭を受け取れる（費用の記載は見当たらない）",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "境内での見学と参拝が中心で、混雑や危険についての特別な注意の案内が見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "http://www.sumiyoshijinja.net/setsubun/",
+        "title": "住吉神社 焼嗅がし神事（神事のあと鰯の頭をヒイラギに刺して参拝者に授与）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-02-03",
+      "start": "14:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": "雨天決行",
+      "note": "2026年は2月3日（火）14時からの予定だった（神社の事前の告知）。巫女が焼いた鰯の頭の臭いを大うちわであおいで厄を払い、神事のあとヒイラギに刺した鰯の頭を参拝者に授与する。節分祭限定の御朱印と、神事で扱う鰯の胴体（4匹入り500円、数量限定）の授与も予定されていた",
+      "sources": [
+        {
+          "url": "http://www.sumiyoshijinja.net/setsubun/",
+          "title": "住吉神社 令和8年節分祭 焼嗅がし神事（2月3日(火)14時〜、雨天決行）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-02-03",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "節分の日に行う（2025年は2月2日）。2027年の節分は2月3日（水）。神社の年間祭事にも2月3日とある。2027年の時刻はまだ発表がない（2026年は14時から）",
+      "sources": [
+        {
+          "url": "http://www.sumiyoshijinja.net/nenkan/",
+          "title": "住吉神社 年間祭事（2月3日 節分祭(焼嗅がし神事)）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2027/rekiyou272.html",
+          "title": "国立天文台 令和9年(2027)暦要項 二十四節気・雑節（節分 2月3日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "広島電鉄 市内線「市役所前鷹野橋」（神社の案内の書き方）",
+        "walkMinutes": [5, 10],
+        "note": "神社の案内では、広電1系統（宇品行き・広電本社前行き）で「市役所前鷹野橋」下車、徒歩5分。広電には「市役所前」と「鷹野橋」の2つの電停があり、どちらを指すかは案内から読み取れない。バスなら広電バス3系統で加古町下車すぐ、広島バス25系統で住吉町下車徒歩3分"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "http://www.sumiyoshijinja.net/koutsu/",
+        "title": "住吉神社 交通案内",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "神事で扱う鰯の胴体",
+        "note": "神事の日に境内で数量限定で授与（2026年の案内では4匹入り500円）",
+        "sources": [
+          {
+            "url": "http://www.sumiyoshijinja.net/setsubun/",
+            "title": "住吉神社 焼嗅がし神事（当日限定数量 鰯の胴体を授与）",
+            "checkedAt": "2026-11-05",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "hiroshima-peace-memorial-museum",
+      "name": "広島平和記念資料館",
+      "kind": "sightseeing",
+      "summary": "原爆の被害と被爆者の遺品などを伝える資料館。12〜2月は7:30〜18:00開館で、7:30〜8:30と16:30〜17:30はオンラインの事前予約が要る。2月中旬の展示入替の期間は休館",
+      "location": {
+        "lat": 34.3922,
+        "lng": 132.451
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "07:30",
+        "close": "18:00"
+      },
+      "closedDays": [],
+      "price": "大学生以上200円",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://hpmmuseum.jp/modules/info/index.php?action=PageView&page_id=2&lang=jpn",
+          "title": "広島平和記念資料館 開館情報（開館時間・休館日・入館料）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "http://www.sumiyoshijinja.net/setsubun/",
+      "title": "住吉神社 焼嗅がし(やいかがし)神事 平安時代の節分祭",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "http://www.sumiyoshijinja.net/nenkan/",
+      "title": "住吉神社 年間祭事",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.walkerplus.com/event/ar0834e528440/",
+      "title": "ウォーカープラス 焼嗅がし神事（2025年2月2日 14:00）",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_338471/",
+      "title": "じゃらんnet 節分祭（焼嗅がし神事）（2025年2月2日 14:00〜）",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    }
+  ],
+  "gaps": [
+    "2027年の開始時刻（まだ発表がない）",
+    "2027年の雨天の扱い",
+    "神事の終わる時刻と所要時間",
+    "鰯の頭の授与に費用がかかるか",
+    "見学の決まり・服装・持ち物・撮影の決まり",
+    "見物客の数",
+    "駐車場の有無",
+    "屋台が出るか",
+    "主要駅から神社までの所要時間",
+    "神社の近くで祭りの日に開いている食事の店"
+  ]
+}
