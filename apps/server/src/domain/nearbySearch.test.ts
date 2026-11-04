@@ -155,6 +155,14 @@ describe("nearbySearchPlan", () => {
   });
 });
 
+describe("nearbySearchPlan の調べ直し", () => {
+  it("評価係の指摘（focus）を、確かめる観点の先頭に入れる", () => {
+    const plan = nearbySearchPlan(input({ focus: ["昼に入れる店を会場の近くで探す"] }), "first");
+    expect(plan.checkpoints[0]).toBe("調べ直し：昼に入れる店を会場の近くで探す");
+    expect(nearbySearchPlan(input(), "first").checkpoints[0]).not.toMatch(/^調べ直し/);
+  });
+});
+
 describe("mergeResearchedReports", () => {
   const report = (name: string, lat: number): ResearchedSpotReport => ({
     name,

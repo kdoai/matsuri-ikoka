@@ -76,6 +76,8 @@ export interface NearbySearchInput {
   byCar: boolean;
   /** 寄り道に使える時間帯。分からなければ昼と夜の両方を探す */
   window?: TimeWindow;
+  /** 調べ直しで特に確かめること（評価係の指摘）。確かめる観点の先頭に入れる */
+  focus?: readonly string[];
 }
 
 export interface NearbySearchPlan {
@@ -246,7 +248,10 @@ export function nearbySearchPlan(
   return {
     round,
     queries: nearbySearchQueries(input, round),
-    checkpoints: nearbyCheckpoints(input),
+    checkpoints: [
+      ...(input.focus ?? []).map((point) => `調べ直し：${point}`),
+      ...nearbyCheckpoints(input),
+    ],
     radiusKm: searchRadiusKm(input.byCar, round),
     widening: round === "widened" ? wideningNotes(input) : [],
   };

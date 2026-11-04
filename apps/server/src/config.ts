@@ -100,6 +100,8 @@ export function readConfig(env: NodeJS.ProcessEnv, cwd: string = process.cwd()):
       staff: nonEmpty(env.MODEL_STAFF),
       planner: nonEmpty(env.MODEL_PLANNER) ?? nonEmpty(env.MODEL_STAFF),
       verifier: nonEmpty(env.MODEL_VERIFIER) ?? nonEmpty(env.MODEL_STAFF),
+      evaluator:
+        nonEmpty(env.MODEL_EVALUATOR) ?? nonEmpty(env.MODEL_PLANNER) ?? nonEmpty(env.MODEL_STAFF),
     },
     accessPasscode: nonEmpty(env.ACCESS_PASSCODE) ?? null,
     dailyChatLimit: limitOf("DAILY_CHAT_LIMIT", env.DAILY_CHAT_LIMIT),

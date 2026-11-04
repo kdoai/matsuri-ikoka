@@ -20,19 +20,22 @@ export const EVALUATION_THRESHOLD = 70;
 /** 1回の相談で評価する回数の上限（最初の1回と、作り直し2回） */
 export const MAX_PLAN_ROUNDS = 3;
 
-/** 不足1つで下げる点 */
+/**
+ * 不足1つで下げる点。行き・帰り・最後の移動・食事・乗り換え・移動の出典は、1つ欠けたら基準（70）を下回る重さにする。
+ * 帰りの最終・採否の理由・食事の出典は、2つ欠けたら下回る
+ */
 const GAP_PENALTY: Readonly<
   Record<PlanGapCode, { criterion: EvaluationCriterion; points: number }>
 > = {
-  outbound_missing: { criterion: "coverage", points: 30 },
-  return_missing: { criterion: "coverage", points: 30 },
-  last_mile_missing: { criterion: "coverage", points: 20 },
-  last_return_unknown: { criterion: "coverage", points: 15 },
-  meal_missing: { criterion: "coverage", points: 20 },
-  research_unreviewed: { criterion: "coverage", points: 15 },
+  outbound_missing: { criterion: "coverage", points: 40 },
+  return_missing: { criterion: "coverage", points: 40 },
+  last_mile_missing: { criterion: "coverage", points: 35 },
+  last_return_unknown: { criterion: "coverage", points: 20 },
+  meal_missing: { criterion: "coverage", points: 35 },
+  research_unreviewed: { criterion: "coverage", points: 20 },
   move_endpoints_missing: { criterion: "specificity", points: 10 },
-  transfer_unknown: { criterion: "specificity", points: 25 },
-  move_unsourced: { criterion: "grounding", points: 25 },
+  transfer_unknown: { criterion: "specificity", points: 35 },
+  move_unsourced: { criterion: "grounding", points: 35 },
   meal_unsourced: { criterion: "grounding", points: 20 },
 };
 

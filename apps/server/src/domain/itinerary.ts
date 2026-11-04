@@ -1,4 +1,5 @@
 import {
+  type ConsideredPlace,
   type Festival,
   type IsoDate,
   type Itinerary,
@@ -33,11 +34,15 @@ export type ItineraryDayDraft = Omit<ItineraryDay, "weather" | "items"> & {
   items: ItineraryItemDraft[];
 };
 
-/** 旅程の下書き。予算・不足・評価はサーバーが付けるので、下書きには持たない */
+/**
+ * 旅程の下書き。予算・不足・評価はサーバーが付けるので、下書きには持たない。
+ * 調べた場所の採否は、理由だけを書く（採ったかと名前はサーバーが決める）
+ */
 export type ItineraryDraft = Omit<
   Itinerary,
-  "id" | "version" | "verification" | "budget" | "days" | "gaps" | "evaluation"
+  "id" | "version" | "verification" | "budget" | "days" | "gaps" | "evaluation" | "considered"
 > & {
+  considered?: Pick<ConsideredPlace, "id" | "reason">[] | undefined;
   days: ItineraryDayDraft[];
 };
 

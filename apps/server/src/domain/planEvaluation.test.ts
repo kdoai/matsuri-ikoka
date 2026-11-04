@@ -45,8 +45,9 @@ describe("scorePlan：点検の結果から観点ごとの点を出す", () => {
       gaps: [mealGap, transferGap],
       warnings: [{ code: "rest_interval", message: "休憩がありません" }],
     });
-    expect(scoreOf(scores, "coverage")).toBe(80);
-    expect(scoreOf(scores, "specificity")).toBe(75);
+    // 食事と乗り換えは、1つ欠けただけで基準（70）を下回る
+    expect(scoreOf(scores, "coverage")).toBe(65);
+    expect(scoreOf(scores, "specificity")).toBe(65);
     expect(scoreOf(scores, "feasibility")).toBe(85);
     expect(scoreOf(scores, "grounding")).toBe(100);
     expect(scores.find((s) => s.criterion === "coverage")?.findings).toEqual([mealGap.message]);
@@ -88,6 +89,22 @@ describe("evaluatePlan：合否と調べ直しの頼み", () => {
     expect(PlanEvaluationSchema.safeParse(evaluation).success).toBe(true);
   });
 
+  it("昼の食事が1つ欠けただけでも不合格にする", () => {
+    const code = scorePlan({
+      itinerary: fictionalPlannedItinerary(),
+      gaps: [mealGap],
+      warnings: [],
+    });
+    const evaluation = evaluatePlan({
+      code,
+      judge: null,
+      gaps: [mealGap],
+      round: 1,
+      evaluatedAt: NOW,
+    });
+    expect(evaluation.passed).toBe(false);
+  });
+
   it("食事が足りなければ、網羅の観点を名指しして周辺係に調べ直しを頼む", () => {
     const gaps = [
       mealGap,
@@ -104,8 +121,13 @@ describe("evaluatePlan：合否と調べ直しの頼み", () => {
   });
 
   it("基準に届いた観点の不足は、調べ直しを頼まない", () => {
-    // 乗り換えの不足1つ（具体さ 75）は基準に届いているので頼まない。網羅が届かないので不合格
-    const gaps = [transferGap, mealGap, mealGap];
+    // 出発・到着の場所の不足1つ（具体さ 90）は基準に届いているので頼まない。網羅が届かないので不合格
+    const endpointsGap: PlanGap = {
+      code: "move_endpoints_missing",
+      itemId: "go",
+      message: "「みなと中央駅から鈴鳴駅へ」の出発・到着の場所がありません",
+    };
+    const gaps = [endpointsGap, mealGap];
     const code = scorePlan({ itinerary: fictionalPlannedItinerary(), gaps, warnings: [] });
     const evaluation = evaluatePlan({ code, judge: null, gaps, round: 1, evaluatedAt: NOW });
     expect(evaluation.redo.map((r) => r.target)).toEqual(["nearby"]);

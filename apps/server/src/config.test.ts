@@ -53,9 +53,14 @@ describe("readConfig", () => {
     });
   });
 
-  it("旅程係と再確認のモデルは、指定があればスタッフのモデルより優先する", () => {
+  it("旅程係と再確認と評価係のモデルは、指定があればスタッフのモデルより優先する", () => {
     const config = readConfig(
-      { MODEL_STAFF: "model-b", MODEL_PLANNER: "model-c", MODEL_VERIFIER: "model-d" },
+      {
+        MODEL_STAFF: "model-b",
+        MODEL_PLANNER: "model-c",
+        MODEL_VERIFIER: "model-d",
+        MODEL_EVALUATOR: "model-e",
+      },
       here,
     );
 
@@ -64,6 +69,18 @@ describe("readConfig", () => {
       staff: "model-b",
       planner: "model-c",
       verifier: "model-d",
+      evaluator: "model-e",
+    });
+  });
+
+  it("評価係のモデルは、指定がなければ旅程係のモデル、それもなければスタッフのモデル", () => {
+    expect(
+      readConfig({ MODEL_STAFF: "model-b", MODEL_PLANNER: "model-c" }, here).models,
+    ).toMatchObject({
+      evaluator: "model-c",
+    });
+    expect(readConfig({ MODEL_STAFF: "model-b" }, here).models).toMatchObject({
+      evaluator: "model-b",
     });
   });
 
