@@ -2,6 +2,8 @@ import { FestivalSchema } from "@matsuri-ikoka/schema";
 import {
   fictionalFestival,
   fictionalItinerary,
+  fictionalLodgingSearch,
+  fictionalResearchedLodgingSearch,
   fictionalSource,
 } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
@@ -103,6 +105,43 @@ describe("しおりの view-model", () => {
       "営業 10:00〜17:00（最終入場 16:30）",
       "費用 和紙すき体験 600円",
     ]);
+  });
+
+  it("泊まりに宿の候補があれば、名前・会場からの目安・料金の目安・調べた日と注意を出す", () => {
+    const trip = fictionalWeekend();
+    trip.days[0]!.stay = { area: "鈴鳴駅の周り", lodging: fictionalResearchedLodgingSearch() };
+    const stay = buildShioriView(trip, lookup).days[0]?.stay;
+
+    expect(stay?.offers).toEqual([
+      {
+        name: "鈴鳴川の宿",
+        url: "https://example.com/inn/kawa",
+        details: [
+          "会場から約0.1km・徒歩1〜2分（目安）",
+          "1泊1人 8,000円〜11,000円（宿のページの目安）",
+        ],
+        summary: "河原まで歩いてすぐの、和室のある宿",
+      },
+      {
+        name: "鈴鳴駅前ホテル",
+        url: "https://example.com/inn/ekimae",
+        details: ["会場から約1.1km・徒歩13〜22分（目安）", "1室 12,000円から"],
+        summary: null,
+      },
+    ]);
+    expect(stay?.lodgingNotes[0]).toContain("空きは調べていない");
+  });
+
+  it("空室検索の宿には、1泊の合計とクレジットを添える", () => {
+    const trip = fictionalWeekend();
+    trip.days[0]!.stay = {
+      area: "鈴鳴駅の周り",
+      lodging: { ...fictionalLodgingSearch(), provider: "rakuten" },
+    };
+    const stay = buildShioriView(trip, lookup).days[0]?.stay;
+
+    expect(stay?.offers[0]?.details).toEqual(["1泊 全員で24,000円から"]);
+    expect(stay?.lodgingNotes).toContain("Supported by Rakuten Developers");
   });
 
   it("雨の日・中止のときの案は、主役の祭りの日に出す", () => {

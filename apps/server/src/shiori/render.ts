@@ -607,10 +607,33 @@ function daySheets(view: ShioriView, day: DayView): Sheet[] {
     });
   }
   if (day.stay) {
-    const note = day.stay.note ? textMm(day.stay.note, BOX_W - 12, pt(10.5), 1.6) : 0;
+    const stay = day.stay;
+    const innerW = BOX_W - 12;
+    const note = stay.note ? textMm(stay.note, innerW, pt(10.5), 1.6) : 0;
+    const offersMm = stay.offers.reduce(
+      (sum, o) =>
+        sum +
+        1.5 +
+        textMm(o.name, innerW, pt(11), 1.5) +
+        (o.details.length > 0 ? textMm(o.details.join("・"), innerW, pt(9.5), 1.5) : 0) +
+        (o.summary ? textMm(o.summary, innerW, pt(9.5), 1.5) : 0) +
+        lineCount(o.url, innerW, pt(8.5)) * LINE(8.5, 1.4),
+      0,
+    );
+    const notesMm = listMm(stay.lodgingNotes, innerW, pt(9), 1.5, 0.5);
     pieces.push({
-      html: html`<div class="box keep stay">${icon("stay")}<div><p class="muted">今夜泊まる地域</p><p class="area">${day.stay.area}</p>${day.stay.note ? html`<p>${day.stay.note}</p>` : ""}<p class="muted">宿の名前と予約は、ご自身で確かめてください。</p></div></div>`,
-      mm: boxMm(LINE() * 2 + LINE(13) + note, false),
+      html: html`<div class="box keep stay${stay.offers.length > 0 ? " with-inns" : ""}">${icon("stay")}<div><p class="muted">今夜泊まる地域</p><p class="area">${stay.area}</p>${stay.note ? html`<p>${stay.note}</p>` : ""}${
+        stay.offers.length > 0
+          ? html`<ol class="inns">${stay.offers.map(
+              (o) =>
+                html`<li><p class="inn">${o.name}</p>${o.details.length > 0 ? html`<p class="inn-meta">${o.details.join("・")}</p>` : ""}${o.summary ? html`<p class="inn-meta">${o.summary}</p>` : ""}<p class="inn-url">${o.url}</p></li>`,
+            )}</ol>${stay.lodgingNotes.map((n) => html`<p class="muted inn-note">${n}</p>`)}`
+          : html`<p class="muted">宿の名前と予約は、ご自身で確かめてください。</p>`
+      }</div></div>`,
+      mm: boxMm(
+        LINE() * 2 + LINE(13) + note + (stay.offers.length > 0 ? offersMm + notesMm - LINE() : 0),
+        false,
+      ),
     });
   }
   if (day.rainPlan.length > 0) {

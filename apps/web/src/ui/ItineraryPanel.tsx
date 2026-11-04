@@ -1,6 +1,8 @@
 import {
   type ItineraryDay,
   type ItineraryItem,
+  type LodgingOffer,
+  type LodgingSearch,
   mainFestivalDay,
   type Party,
   type TripBudget,
@@ -8,6 +10,7 @@ import {
   type Weather,
 } from "@matsuri-ikoka/schema";
 import {
+  BedDouble,
   BookOpen,
   CalendarDays,
   ChevronRight,
@@ -264,7 +267,87 @@ function DaySection({
       {day.stay === null ? null : (
         <p className="mt-1.5 pl-7 text-base text-ink-soft">{t.itinerary.stay(day.stay.area)}</p>
       )}
+      {day.stay?.lodging === undefined || day.stay.lodging.offers.length === 0 ? null : (
+        <StayLodging search={day.stay.lodging} />
+      )}
     </section>
+  );
+}
+
+/** 宿の候補の目安（会場からの距離と移動・料金）。分かるものだけ */
+function offerDetails(offer: LodgingOffer, t: Messages): string[] {
+  const words = t.itinerary.lodging;
+  const details: string[] = [];
+  if (offer.fromVenue !== undefined) {
+    const { distanceKm, mode, minutes } = offer.fromVenue;
+    details.push(
+      mode === "walk"
+        ? words.fromVenueWalk(distanceKm, minutes[0], minutes[1])
+        : words.fromVenueRide(distanceKm, minutes[0], minutes[1]),
+    );
+  }
+  if (offer.nightlyTotalYen !== null) details.push(words.nightlyTotal(offer.nightlyTotalYen));
+  else if (offer.perPersonNightYen !== undefined)
+    details.push(words.perPersonNight(offer.perPersonNightYen[0], offer.perPersonNightYen[1]));
+  else if (offer.priceNote !== undefined) details.push(offer.priceNote);
+  return details;
+}
+
+/** その夜に泊まる宿の候補（1〜3件）。名前は宿のページへのリンクにする */
+function StayLodging({ search }: { search: LodgingSearch }) {
+  const t = useT();
+  const locale = useApp((state) => state.ui.locale);
+  const words = t.itinerary.lodging;
+  const provider = search.provider ?? "rakuten";
+  return (
+    <div
+      className="mt-1.5 ml-7 rounded-xl border border-line-strong bg-white/90 p-2.5"
+      data-testid="stay-lodging"
+    >
+      <p className="flex items-center gap-1.5 font-bold text-base text-ink">
+        <BedDouble aria-hidden="true" className="size-5" />
+        {words.heading}
+      </p>
+      <ul className="mt-1 space-y-2">
+        {search.offers.slice(0, 3).map((offer) => (
+          <li key={offer.id} className="border-line border-t border-dashed pt-1.5 text-base">
+            <a
+              href={offer.bookingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${offer.name}（${words.open}）`}
+              className="break-all font-bold text-ai-700 underline decoration-ai-200 underline-offset-2 hover:decoration-ai-600"
+            >
+              {offer.name}
+            </a>
+            {offer.perspectives !== undefined && offer.perspectives.length > 0 ? (
+              <span className="ml-2 inline-flex flex-wrap gap-1 align-middle">
+                {offer.perspectives.map((p) => (
+                  <span
+                    key={p}
+                    className="rounded-full bg-yamabuki-100 px-2 text-base text-wood-700"
+                  >
+                    {words.perspectives[p]}
+                  </span>
+                ))}
+              </span>
+            ) : null}
+            {offerDetails(offer, t).map((detail) => (
+              <p key={detail} className="text-ink-soft">
+                {detail}
+              </p>
+            ))}
+            {offer.summary === undefined ? null : <p className="text-ink">{offer.summary}</p>}
+          </li>
+        ))}
+      </ul>
+      <p className="mt-1.5 text-base text-ink-soft">
+        {words.searchedAt(formatDateTime(search.searchedAt, locale))}・{words.notes[provider]}
+      </p>
+      {search.provider === "rakuten" ? (
+        <p className="text-base text-ink-soft">Supported by Rakuten Developers</p>
+      ) : null}
+    </div>
   );
 }
 

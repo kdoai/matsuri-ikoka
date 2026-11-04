@@ -3,6 +3,9 @@ import {
   type Etiquette,
   type Festival,
   type ItineraryItem,
+  type LodgingOffer,
+  type LodgingProvider,
+  type LodgingSearch,
   type Source,
   tripBudgetAmounts,
   UNKNOWN,
@@ -82,13 +85,31 @@ export interface DayView {
   /** 出発（1日目）か、前の夜に泊まった地域 */
   startLabel: string;
   rows: TimelineRow[];
-  stay: { area: string; note: string | null } | null;
+  stay: StayView | null;
   /** 最後の日の帰り */
   returnLabel: string | null;
   /** 主役の祭りの日には、雨の日・中止のときの案を出す */
   rainPlan: string[];
   /** 泊まりの旅で、この日のメモ欄の行数（予定が多くて紙面が残らない日は 0） */
   memoLines: number;
+}
+
+/** 提案する宿の1件 */
+export interface LodgingOfferView {
+  name: string;
+  url: string;
+  /** 会場からの距離と移動の目安・料金の目安（どれも分かるものだけ） */
+  details: string[];
+  summary: string | null;
+}
+
+/** その夜に泊まるところ。宿の候補がなければ、地域と注意だけ */
+export interface StayView {
+  area: string;
+  note: string | null;
+  offers: LodgingOfferView[];
+  /** 宿の候補に添える注意（調べた日・空きと料金の注意・クレジット） */
+  lodgingNotes: string[];
 }
 
 export interface FestivalView {
@@ -628,6 +649,65 @@ function styleNotes(trip: ShioriTrip): string[] {
   ];
 }
 
+/** 会場から宿までの目安の文（直線の距離からの計算なので「目安」と書く） */
+export function fromVenueLabel(offer: Pick<LodgingOffer, "fromVenue">): string | null {
+  const from = offer.fromVenue;
+  if (from === undefined) return null;
+  const [min, max] = from.minutes;
+  const minutes = min === max ? `${min}分` : `${min}〜${max}分`;
+  return from.mode === "walk"
+    ? `会場から約${from.distanceKm}km・徒歩${minutes}（目安）`
+    : `会場から約${from.distanceKm}km・バスやタクシーで${minutes}（目安）`;
+}
+
+const yen = (n: number) => `${n.toLocaleString("ja-JP")}円`;
+
+/** 料金の目安の文。空室検索の1泊の合計、ページの1泊1人の幅、ページの料金の文の順に使う。分からなければ null */
+export function lodgingPriceLabel(
+  offer: Pick<LodgingOffer, "nightlyTotalYen" | "perPersonNightYen" | "priceNote">,
+): string | null {
+  if (offer.nightlyTotalYen !== null) return `1泊 全員で${yen(offer.nightlyTotalYen)}から`;
+  if (offer.perPersonNightYen !== undefined) {
+    const [min, max] = offer.perPersonNightYen;
+    return `1泊1人 ${min === max ? yen(min) : `${yen(min)}〜${yen(max)}`}（宿のページの目安）`;
+  }
+  return offer.priceNote ?? null;
+}
+
+const LODGING_PROVIDER_NOTES: Record<LodgingProvider, string> = {
+  rakuten: "空きと料金は、調べた時点のものです。予約の時点で変わることがあります。",
+  web: "宿のページで調べた候補です。空きは調べていないので、空きと料金は予約のページで確かめてください。",
+  fictional: "（架空）と付いた宿は、見本です。本物の宿ではありません。",
+};
+
+function lodgingNotes(search: LodgingSearch): string[] {
+  const provider = search.provider ?? "rakuten";
+  return [
+    `${formatMonthDay(search.searchedAt.slice(0, 10))}に調べた宿の候補です。${LODGING_PROVIDER_NOTES[provider]}`,
+    // クレジットは、楽天の結果と分かるときだけ出す（調べた方法を持たない古い版には出さない）
+    ...(search.provider === "rakuten" ? ["Supported by Rakuten Developers"] : []),
+  ];
+}
+
+function stayView(stay: NonNullable<TripDay["stay"]>): StayView {
+  const offers = (stay.lodging?.offers ?? []).slice(0, 3).map(
+    (offer): LodgingOfferView => ({
+      name: offer.name,
+      url: offer.bookingUrl,
+      details: [fromVenueLabel(offer), lodgingPriceLabel(offer)].filter(
+        (d): d is string => d !== null,
+      ),
+      summary: offer.summary ?? null,
+    }),
+  );
+  return {
+    area: stay.area,
+    note: stay.note ?? null,
+    offers,
+    lodgingNotes: stay.lodging !== undefined && offers.length > 0 ? lodgingNotes(stay.lodging) : [],
+  };
+}
+
 function dayViews(trip: ShioriTrip, mainFestival: Festival | undefined): DayView[] {
   const lastIndex = trip.days.length - 1;
   return trip.days.map((day, index) => {
@@ -651,7 +731,7 @@ function dayViews(trip: ShioriTrip, mainFestival: Festival | undefined): DayView
             ? `${previous.stay.area}から出発`
             : "前の日の宿から出発",
       rows: day.items.map(rowFor),
-      stay: day.stay ? { area: day.stay.area, note: day.stay.note ?? null } : null,
+      stay: day.stay ? stayView(day.stay) : null,
       returnLabel: index === lastIndex ? `${trip.returnTo}に帰る` : null,
       rainPlan: plan,
       memoLines:

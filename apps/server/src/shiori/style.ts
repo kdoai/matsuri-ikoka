@@ -220,6 +220,13 @@ b, strong, h1, h2, h3, h4 { font-weight: 900; }
 .stay { display: flex; gap: 3mm; align-items: center; }
 .stay .ic { width: 9mm; height: 9mm; }
 .stay .area { font-size: 13pt; font-weight: 900; }
+.stay.with-inns { align-items: flex-start; }
+.stay .inns { list-style: none; margin: 1mm 0 0; padding: 0; }
+.stay .inns li { padding: 1.5mm 0 0; border-top: 0.3mm dashed var(--line); }
+.stay .inn { font-size: 11pt; font-weight: 900; line-height: 1.5; }
+.stay .inn-meta { font-size: 9.5pt; line-height: 1.5; }
+.stay .inn-url { font-size: 8.5pt; line-height: 1.4; overflow-wrap: anywhere; word-break: break-all; color: var(--ink); }
+.stay .inn-note { font-size: 9pt; line-height: 1.5; }
 
 /* ---- 旅の全体 ---- */
 .overview li { display: grid; grid-template-columns: 12mm 30mm 1fr 52mm; gap: 2mm; align-items: center; padding: 2.2mm 0; border-bottom: 0.4mm dashed var(--line); }
