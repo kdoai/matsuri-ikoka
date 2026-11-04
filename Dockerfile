@@ -30,6 +30,8 @@ COPY assets/shiori/staff assets/shiori/staff
 COPY assets/audio/bgm_wadaiko.mp3 assets/audio/bgm_wadaiko.mp3
 # 出発の駅の候補の一覧（画面のビルドが dist/assets に出す）
 COPY data/stations data/stations
+# 待ち時間の窓に出すクイズ（画面のビルドに取り込む）
+COPY data/quiz data/quiz
 RUN pnpm --filter @matsuri-ikoka/server --filter @matsuri-ikoka/web run build
 
 # 実行に要る依存だけを取り出す。ワークスペースのパッケージは dist にまとめてある
