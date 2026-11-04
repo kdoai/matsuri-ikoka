@@ -1,6 +1,7 @@
 import type { Access } from "@matsuri-ikoka/schema";
 import { describe, expect, it } from "vitest";
 import {
+  checkDayTripLimit,
   checkResearchedMinutes,
   checkStartsAtOrigin,
   createStationPointIndex,
@@ -214,6 +215,36 @@ describe("checkStartsAtOrigin", () => {
         ],
         "こがね台",
         estimate,
+      ),
+    ).toEqual([]);
+  });
+});
+
+describe("checkDayTripLimit", () => {
+  const move = (id: string, minutes: [number, number]) => ({
+    id,
+    type: "move",
+    name: `${id}の移動`,
+    move: { minutes },
+  });
+  const sightseeing = { id: "walk", type: "sightseeing", name: "散歩", move: null };
+
+  it("行きの移動の下限が上限に収まれば問題なし。上限をまたぐ境目のものも残す", () => {
+    expect(checkDayTripLimit([move("go", [40, 50]), sightseeing], 60)).toEqual([]);
+    expect(checkDayTripLimit([move("go", [50, 80])], 60)).toEqual([]);
+  });
+
+  it("行きの移動の下限が上限を超える旅程は保存しない。続く移動の時間は合わせて見る", () => {
+    expect(checkDayTripLimit([move("go", [40, 50]), move("go2", [25, 30])], 60)).toMatchObject([
+      { code: "over_travel_limit", itemId: "go" },
+    ]);
+  });
+
+  it("行きの移動のあとの予定の移動は数えない", () => {
+    expect(
+      checkDayTripLimit(
+        [move("go", [40, 50]), sightseeing, { ...sightseeing, move: { minutes: [30, 40] } }],
+        60,
       ),
     ).toEqual([]);
   });

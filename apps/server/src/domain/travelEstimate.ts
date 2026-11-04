@@ -290,7 +290,7 @@ export interface StartItem {
 }
 
 export interface StartIssue {
-  code: "start_not_origin" | "origin_move_too_short";
+  code: "start_not_origin" | "origin_move_too_short" | "over_travel_limit";
   itemId: string | null;
   message: string;
 }
@@ -338,4 +338,28 @@ export function checkStartsAtOrigin(
     ];
   }
   return [];
+}
+
+/**
+ * 日帰りの旅程の行きの移動が、利用者の言った片道の上限に収まるかを確かめる（必ず守る条件）。
+ * 1日目のはじめに続く移動の予定の所要時間の下限の合計が上限を超えるものは、どう乗っても収まらないので保存しない。
+ * 下限が収まり上限が超える境目のものは、候補を出すときと同じく残す
+ */
+export function checkDayTripLimit(
+  firstDayItems: readonly StartItem[],
+  maxMinutes: number,
+): StartIssue[] {
+  let lower = 0;
+  for (const item of firstDayItems) {
+    if (item.type !== "move") break;
+    lower += item.move?.minutes[0] ?? 0;
+  }
+  if (lower <= maxMinutes) return [];
+  return [
+    {
+      code: "over_travel_limit",
+      itemId: firstDayItems[0]?.id ?? null,
+      message: `行きの移動が、利用者の言った片道の上限（${maxMinutes}分）を超えます（合計で最短${lower}分）。上限は必ず守る条件なので、この旅程は保存しません。収まる行き方がなければ、利用者に伝えて別の候補を選んでもらってください`,
+    },
+  ];
 }

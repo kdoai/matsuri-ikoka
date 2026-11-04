@@ -56,6 +56,7 @@ import { occurrenceOn } from "../domain/planCheck";
 import { preferenceEffects } from "../domain/preferences";
 import { transportEffects } from "../domain/transport";
 import {
+  checkDayTripLimit,
   checkResearchedMinutes,
   checkStartsAtOrigin,
   estimateTravel,
@@ -866,6 +867,11 @@ export const updateItinerary = defineTool({
         origin,
         main === undefined ? null : travelEstimateFor(ctx, main, origin),
       );
+      // 日帰りの片道の上限は必ず守る条件なので、候補の絞り込みだけでなく、保存する旅程でも確かめる
+      const { nights, maxTravelMinutes } = session.conditions;
+      if (startIssues.length === 0 && nights === 0 && maxTravelMinutes !== undefined) {
+        startIssues.push(...checkDayTripLimit(firstDay, maxTravelMinutes));
+      }
       if (startIssues.length > 0) {
         console.info(
           JSON.stringify({ kind: "itinerary_rejected", codes: startIssues.map((e) => e.code) }),

@@ -876,6 +876,48 @@ describe("update_itinerary と出発の駅", () => {
   });
 });
 
+describe("update_itinerary と日帰りの片道の上限", () => {
+  const dayTrip = (maxTravelMinutes: number) => {
+    const ctx = testToolContext([suzunari()]);
+    ctx.session.conditions = {
+      ...ctx.session.conditions,
+      origin: "みなと中央",
+      nights: 0,
+      maxTravelMinutes,
+    };
+    return ctx;
+  };
+
+  it("行きの移動が上限に収まれば保存する", async () => {
+    const output = await updateItinerary.run(
+      { itinerary: draftOf(fictionalItinerary()) },
+      dayTrip(60),
+      signal,
+    );
+    expect(output).toMatchObject({ saved: true });
+  });
+
+  it("行きの移動の下限でも上限を超える旅程は保存しない", async () => {
+    const output = await updateItinerary.run(
+      { itinerary: draftOf(fictionalItinerary()) },
+      dayTrip(30),
+      signal,
+    );
+    expect(output).toMatchObject({ saved: false, errors: [{ code: "over_travel_limit" }] });
+  });
+
+  it("泊まりの旅では上限で断らない", async () => {
+    const ctx = dayTrip(30);
+    ctx.session.conditions = { ...ctx.session.conditions, nights: 1 };
+    const output = await updateItinerary.run(
+      { itinerary: draftOf(fictionalItinerary()) },
+      ctx,
+      signal,
+    );
+    expect(output).not.toMatchObject({ errors: [{ code: "over_travel_limit" }] });
+  });
+});
+
 describe("verify_festival が失敗したとき", () => {
   it("Web の確かめが失敗しても、祭りのデータの公式の出典で確かめてあれば予定どおりにする", async () => {
     const recent = testFestival({
