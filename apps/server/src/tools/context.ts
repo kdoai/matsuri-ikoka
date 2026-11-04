@@ -83,6 +83,8 @@ export interface ToolContext {
   /** ツールの途中で画面に送るイベント（候補の確かめの結果など） */
   emit?: (event: SseEvent) => void;
   today: () => IsoDate;
+  /** 0 以上 1 未満の乱数（全国からランダムに候補を選ぶとき）。ないときは Math.random */
+  random?: () => number;
   /** 日本の今の日時（ISO 8601） */
   now: () => string;
 }
