@@ -38,6 +38,7 @@ export function initialData({ locale = "ja", tutorialSeen = false }: InitialOpti
       lastWasPreferences: false,
       turnTasks: [],
       turnTools: [],
+      newCandidates: false,
     },
     preferences: { ...DEFAULT_PREFERENCES },
     consult: { ...INITIAL_CONSULT, answers: {} },

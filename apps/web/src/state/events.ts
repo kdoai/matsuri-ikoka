@@ -146,10 +146,11 @@ function onToolEnd(state: AppData, data: SseEventOf<"tool.end">["data"]): AppDat
   };
 
   if (data.ok && data.candidates !== undefined) {
+    // 返答が続いている間は「この祭りにする」を押せないので、ここでは開かず、返答が終わってから開く
     next = {
       ...next,
       candidates: data.candidates,
-      ui: { ...next.ui, candidatesOpen: data.candidates.length > 0 },
+      session: { ...next.session, newCandidates: data.candidates.length > 0 },
     };
   }
   if (data.ok && data.spots !== undefined) {
@@ -309,7 +310,7 @@ function onDone(state: AppData, data: SseEventOf<"done">["data"]): AppData {
     preferences: data.preferences,
     ui: {
       ...next.ui,
-      // 候補を開くのは候補が届いたときだけ。利用者が閉じた候補を、ここで開き直さない
+      // 候補を開くのは、返答が終わって選べるようになったとき（endTurn）。ここでは開かない
       candidatesOpen: data.stage === "candidates" && next.ui.candidatesOpen,
       celebrating: next.ui.celebrating || reachedShiori,
     },

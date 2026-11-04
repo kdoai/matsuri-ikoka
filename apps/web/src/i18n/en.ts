@@ -573,6 +573,7 @@ export const en: Messages = {
     needsCheck: "Check before you go",
     found: (place: string) => `I found an unusual festival in ${place}!`,
     foundMany: (count: number) => `I found ${count} festivals for you!`,
+    stillSearching: "Still searching. You can choose once the picks are ready",
     details: "See details",
     hideDetails: "Hide details",
     filters: {

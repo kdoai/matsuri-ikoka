@@ -170,6 +170,8 @@ export interface SessionState {
   /** この発言で始まった作業と、使われたツール。待ち時間の見込みに使う */
   turnTasks: StaffTask[];
   turnTools: ToolName[];
+  /** この発言で候補が届き、まだ見せていないか。返答が終わって選べるようになったら候補を開く */
+  newCandidates: boolean;
 }
 
 export interface ItineraryState {
