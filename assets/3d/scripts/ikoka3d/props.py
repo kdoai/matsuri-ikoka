@@ -157,13 +157,13 @@ def chochin(name, coll, loc=(0, 0, 0), radius=0.16, height=0.36, tex="lantern", 
     return root
 
 
-def wall_lantern(name, coll, loc, yaw=0.0, tex="lantern"):
+def wall_lantern(name, coll, loc, yaw=0.0, tex="lantern", strength=2.2):
     """Chochin on an L-shaped bracket; `loc` is the wall point, yaw 0 sticks out toward -Y."""
     wood = M.wood("wood_dark", P.WOOD_DARK)
     root = _root(name, coll, loc, yaw)
     U.box(f"{name}.plate", (0.08, 0.03, 0.22), coll, base=(0, 0.0, 0.0), mat=wood, bev=0.006, parent=root)
     U.box(f"{name}.arm", (0.035, 0.32, 0.035), coll, base=(0, -0.16, 0.16), mat=wood, bev=0.005, parent=root)
-    lantern = chochin(f"{name}.lamp", coll, loc=(0, -0.3, 0.16), radius=0.12, height=0.28, tex=tex)
+    lantern = chochin(f"{name}.lamp", coll, loc=(0, -0.3, 0.16), radius=0.12, height=0.28, tex=tex, strength=strength)
     lantern.parent = root
     return root
 
@@ -724,3 +724,162 @@ def bunting(name, coll, p0, p1, n=14, sag=0.12, colors=("#C8473C", "#F6D56A", "#
         cord.append(U.cylinder(f"{name}.cord", 0.004, d.length, coll, loc=(p + q) / 2,
                                rot=d.to_track_quat("Z", "Y").to_euler(), mat=M.flat("cord", "#3A2A20", 0.8), verts=4))
     return U.join(objs + cord, name)
+
+
+# --------------------------------------------------------------------------
+# Festival decorations
+
+
+def shape_panel(name, coll, outline, size, tex, loc=(0, 0, 0), facing="-Y", cell=None, thickness=0.012,
+                parent=None, rough=0.7):
+    """Flat cutout of `outline` (points in a unit square centered on 0, y up) scaled to `size` (w, h).
+
+    UVs map the unit square straight onto the texture (or its atlas `cell`), so a painter can draw the
+    same outline to fill it.
+    """
+    w, h = size
+    bm = bmesh.new()
+    uv = bm.loops.layers.uv.new("UVMap")
+    face = bm.faces.new([bm.verts.new((x * w, y * h, 0)) for x, y in outline])
+    for loop in face.loops:
+        loop[uv].uv = (loop.vert.co.x / w + 0.5, loop.vert.co.y / h + 0.5)
+    rot = FACING[facing] if isinstance(facing, str) else facing
+    obj = U.mesh_object(name, bm, coll, M.textured(f"tex_{tex}", tex, rough), parent=parent)
+    if cell is not None:
+        U.atlas_cell(obj, *cell)
+    if thickness:
+        sol = obj.modifiers.new("Solidify", "SOLIDIFY")
+        sol.thickness = thickness
+    return U.place(obj, loc, rot)
+
+
+def _circle(n=24):
+    return [(0.5 * math.cos(2 * math.pi * i / n), 0.5 * math.sin(2 * math.pi * i / n)) for i in range(n)]
+
+
+_WALL_YAW = {"-Y": 0, "+Y": math.pi, "+X": math.pi / 2, "-X": -math.pi / 2}
+
+
+def uchiwa(name, coll, loc, facing="-Y", r=0.15, design=0, tilt=0.0):
+    """Round paper fan hung on a wall; `loc` is the center of the fan face, the handle points down."""
+    root = U.empty(name, coll, loc=loc, rot=(0, tilt, _WALL_YAW[facing]), size=0.1)
+    shape_panel(f"{name}.face", coll, _circle(), (2 * r, 2 * r), "uchiwa", loc=(0, -0.008, 0), facing="-Y",
+                cell=(design, 4, 1), thickness=0.006, parent=root)
+    bamboo = M.flat("bamboo", "#C9A46A", 0.55)
+    U.box(f"{name}.handle", (0.024, 0.014, r * 0.95), coll, base=(0, -0.004, -r * 1.45), mat=bamboo, bev=0.004,
+          parent=root)
+    return root
+
+
+def fox_mask(name, coll, loc, facing="-Y", size=0.2, red=False):
+    """Festival fox mask hung on a wall by a cord."""
+    from .textures import FOX_OUTLINE
+    root = U.empty(name, coll, loc=loc, rot=(0, 0, _WALL_YAW[facing]), size=0.1)
+    shape_panel(f"{name}.face", coll, FOX_OUTLINE, (size, size), "fox_mask", loc=(0, -0.012, 0), facing="-Y",
+                cell=(1 if red else 0, 2, 1), thickness=0.02, parent=root)
+    color = "#D8402F" if red else "#FBF6EC"
+    # A little snout so the mask is not a flat card.
+    U.sphere(f"{name}.snout", 0.5, coll, loc=(0, -0.03, -size * 0.3), scale=(size * 0.22, size * 0.18, size * 0.16),
+             mat=M.flat(f"mask_{color}", color, 0.45), segs=10, rings=6, parent=root)
+    U.sphere(f"{name}.nose", 0.5, coll, loc=(0, -0.055, -size * 0.31), scale=(0.022, 0.018, 0.016),
+             mat=M.flat("mask_nose", "#2B2220", 0.4), segs=8, rings=5, parent=root)
+    U.cylinder(f"{name}.cord", 0.004, size * 0.4, coll, base=(0, -0.004, size * 0.3),
+               mat=M.flat("cord_red", "#B8302A", 0.7), verts=5, parent=root)
+    return root
+
+
+def taiko(name, coll, loc, yaw=0.0, r=0.24, length=0.42):
+    """Barrel drum lying on a low wooden cradle; the heads face along local ±Y."""
+    root = _root(name, coll, loc, yaw)
+    body = M.wood("taiko_body", "#9A3A26", dark="#5E2015", light="#B8543A", rough=0.4)
+    cz = 0.2 + r
+    n = 10
+    prof = [(r * (0.86 + 0.14 * math.sin(math.pi * i / n)), -length / 2 + length * i / n) for i in range(n + 1)]
+    U.lathe(f"{name}.body", prof, coll, segs=28, loc=(0, 0, cz), rot=(math.pi / 2, 0, 0), mat=body, parent=root)
+    tack = M.flat("taiko_tack", "#D9A93E", 0.3, metal=0.8)
+    rim = M.flat("taiko_rim", "#E2CFA4", 0.7)
+    for s in (-1, 1):
+        y = s * (length / 2 + 0.002)
+        shape_panel(f"{name}.head", coll, _circle(28), (1.72 * r, 1.72 * r), "taiko_head", loc=(0, y, cz),
+                    facing="-Y" if s < 0 else "+Y", thickness=0.0, parent=root)
+        U.torus(f"{name}.rim", r * 0.87, 0.012, coll, loc=(0, y, cz), rot=(math.pi / 2, 0, 0), mat=rim,
+                major_segs=28, minor_segs=5, parent=root)
+        for k in range(18):
+            a = 2 * math.pi * k / 18
+            U.sphere(f"{name}.tack", 0.011, coll, loc=(math.cos(a) * r * 0.9, y - s * 0.03, cz + math.sin(a) * r * 0.9),
+                     mat=tack, segs=6, rings=4, parent=root)
+    for sx in (-1, 1):
+        U.torus(f"{name}.ring", 0.035, 0.008, coll, loc=(sx * r, 0, cz), rot=(0, math.pi / 2, 0), mat=tack,
+                major_segs=12, minor_segs=4, parent=root)
+    wood = M.wood("wood_dark", P.WOOD_DARK)
+    for sy in (-1, 1):
+        for sx in (-1, 1):
+            U.box(f"{name}.leg", (0.05, 0.05, 0.3), coll, base=(sx * 0.14, sy * length * 0.3, 0), rot=(0, -sx * 0.4, 0),
+                  mat=wood, bev=0.006, parent=root)
+        U.box(f"{name}.cradle", (0.44, 0.06, 0.05), coll, base=(0, sy * length * 0.3, 0.2), mat=wood, bev=0.006,
+              parent=root)
+    stick = M.wood("wood_light", P.WOOD_LIGHT)
+    for k, sx in enumerate((-0.05, 0.06)):
+        U.cylinder(f"{name}.bachi", 0.014, 0.38, coll, loc=(sx, 0.0, cz + r + 0.02),
+                   rot=(0, math.pi / 2 + 0.15 - 0.3 * k, 0.5 - 1.0 * k), mat=stick, verts=8, parent=root)
+    return root
+
+
+def striped_awning(name, coll, width, depth, drop, loc=(0, 0, 0), yaw=0.0):
+    """Red-and-white striped awning sloping down toward -Y from a wall at `loc` (its top back center)."""
+    root = _root(name, coll, loc, yaw)
+    slope = math.atan2(drop, depth)
+    canopy = textured_panel(f"{name}.canopy", coll, (width, math.hypot(depth, drop)), "kohaku",
+                            loc=(0, -depth / 2, -drop / 2), facing=(slope, 0, 0), parent=root)
+    canopy.modifiers.new("Solidify", "SOLIDIFY").thickness = 0.01
+    n = max(4, int(width / 0.16))
+    red, white = M.fabric("awning_red", "#D23A30", 0.3), M.fabric("awning_white", "#F7F0E2", 0.3)
+    fw = width / n
+    for i in range(n):
+        x = -width / 2 + fw * (i + 0.5)
+        bm = bmesh.new()
+        pts = [(x + fw / 2 * math.cos(math.pi - math.pi * k / 8), -0.07 * math.sin(math.pi * k / 8)) for k in range(9)]
+        bm.faces.new([bm.verts.new((px, 0.0, pz)) for px, pz in pts])
+        flap = U.mesh_object(f"{name}.flap", bm, coll, red if i % 2 == 0 else white, parent=root)
+        flap.location = (0, -depth - 0.004, -drop)
+        flap.modifiers.new("Solidify", "SOLIDIFY").thickness = 0.008
+    U.box(f"{name}.batten", (width + 0.04, 0.03, 0.03), coll, base=(0, -0.015, -0.03),
+          mat=M.wood("wood_dark", P.WOOD_DARK), parent=root)
+    return root
+
+
+def kingyo_tub(name, coll, loc, yaw=0.0, r=0.3, seed=1):
+    """Goldfish scooping tub on a low stand: blue basin, water, a few fish and paper scoops."""
+    rng = random.Random(seed)
+    root = _root(name, coll, loc, yaw)
+    U.box(f"{name}.stand", (2 * r + 0.08, 2 * r + 0.08, 0.2), coll, base=(0, 0, 0),
+          mat=M.wood("wood_crate", P.WOOD_LIGHT), bev=0.01, parent=root)
+    h = 0.14
+    U.lathe(f"{name}.basin", [(0.0, 0.0), (r * 0.82, 0.0), (r, h * 0.9), (r * 1.02, h), (r * 0.94, h), (r * 0.8, 0.03),
+                              (0.0, 0.03)], coll, segs=32, loc=(0, 0, 0.2), mat=M.flat("tub_blue", "#2F6FB8", 0.35),
+            parent=root)
+    wz = 0.2 + h * 0.72
+    U.cylinder(f"{name}.water", r * 0.93, 0.005, coll, base=(0, 0, wz), mat=M.flat("water", "#7CC3E8", 0.08),
+               verts=32, parent=root)
+    for k in range(7):
+        a, d = rng.uniform(0, 2 * math.pi), rng.uniform(0.05, r * 0.7)
+        col = "#2B2220" if k == 6 else ("#F05A28" if k % 2 else "#F7A23A")
+        x, y = math.cos(a) * d, math.sin(a) * d
+        heading = rng.uniform(0, 2 * math.pi)
+        fish = M.flat(f"fish_{col}", col, 0.3)
+        U.sphere(f"{name}.fish", 0.5, coll, loc=(x, y, wz + 0.008), rot=(0, 0, heading), scale=(0.07, 0.035, 0.012),
+                 mat=fish, segs=10, rings=5, parent=root)
+        U.sphere(f"{name}.fish_tail", 0.5, coll,
+                 loc=(x - math.cos(heading) * 0.045, y - math.sin(heading) * 0.045, wz + 0.008),
+                 rot=(0, 0, heading), scale=(0.03, 0.045, 0.006), mat=fish, segs=8, rings=4, parent=root)
+    paper = M.flat("poi_paper", "#FBF6EC", 0.8)
+    frame = M.flat("poi_frame", "#E86A8A", 0.5)
+    for k, (x, a) in enumerate(((-r * 0.3, 0.3), (r * 0.25, -0.4))):
+        loc = (x, -r - 0.045, 0.1 + 0.02 * k)
+        rot = (math.pi / 2 - 0.15, 0, a)
+        U.torus(f"{name}.poi", 0.045, 0.006, coll, loc=loc, rot=rot, mat=frame, major_segs=14, minor_segs=4,
+                parent=root)
+        U.cylinder(f"{name}.poi_paper", 0.042, 0.002, coll, loc=loc, rot=rot, mat=paper, verts=14, parent=root)
+        U.box(f"{name}.poi_handle", (0.016, 0.006, 0.1), coll, base=(x, -r - 0.05, -0.0 + 0.02 * k), mat=frame,
+              parent=root)
+    return root

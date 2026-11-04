@@ -18,6 +18,7 @@ CREAM = P.CREAM
 PAPER = "#F4E7C9"
 RED = "#C8473C"
 SUN = "#E2553F"
+GOLD_LINE = "#E9B44C"
 
 _images = {}
 
@@ -576,6 +577,133 @@ def paint_lantern_matsuri():
     return c
 
 
+def paint_lantern_red():
+    """Red festival chochin with cream lettering."""
+    c = canvas.Canvas(512, 256, "#D8402F")
+    c.grain(0.04, seed=33)
+    c.rect(0, 0, 512, 30, INK)
+    c.rect(0, 226, 512, 256, INK)
+    c.rect(0, 30, 512, 38, GOLD_LINE)
+    c.rect(0, 218, 512, 226, GOLD_LINE)
+    for x in (128, 384):
+        c.text("祭", x, 128, 124, "#FFF4DC", weight=0.045)
+    return c
+
+
+
+# --------------------------------------------------------------------------
+# Festival decorations: kohaku cloth, fans, masks, taiko
+
+
+def paint_kohaku():
+    """Red-and-white striped festival cloth (stripes run along v) with an indigo hem on top."""
+    c = canvas.Canvas(1024, 256, "#F7F0E2")
+    n = 16
+    w = 1024 / n
+    for i in range(n):
+        x0 = i * w
+        if i % 2 == 0:
+            c.rect(x0, 0, x0 + w, 256, "#D23A30")
+        # A soft fold shadow at each stripe edge so it reads as hanging cloth.
+        c.rect(x0, 0, x0 + w * 0.12, 256, "#000000", alpha=0.10)
+        c.rect(x0 + w * 0.88, 0, x0 + w, 256, "#FFFFFF", alpha=0.08)
+    c.rect(0, 0, 1024, 26, P.INDIGO_DARK)
+    for i in range(16):
+        c.circle(32 + i * 64, 13, 5, CREAM)
+    c.grain(0.035, seed=61, scale=2)
+    return c
+
+
+def paint_uchiwa():
+    """4 x 1 atlas of round fan faces (each cell maps onto a disc)."""
+    c = canvas.Canvas(1024, 256, "#00000000", alpha=0.0)
+    for k in range(4):
+        cx, cy, r = k * 256 + 128, 128, 124
+        if k == 0:
+            c.circle(cx, cy, r, "#1F2A5C")
+            firework(c, cx - 20, cy - 25, 60, "#F7C54E", seed=21)
+            firework(c, cx + 45, cy + 30, 38, "#F08AA6", seed=22)
+        elif k == 1:
+            c.circle(cx, cy, r, "#FBF6EC")
+            for j in range(3):
+                c.arc(cx, cy + 40, 30 + j * 26, math.pi * 1.1, math.pi * 1.9, 4, "#8FC3E6", segs=24)
+            for fx, fy, a in ((cx - 30, cy - 20, 0.4), (cx + 35, cy + 10, -0.5)):
+                c.ellipse(fx, fy, 26, 14, "#E5532F", rot=a)
+                c.polygon([(fx + 22 * math.cos(a), fy + 22 * math.sin(a)),
+                           (fx + 44 * math.cos(a) - 12 * math.sin(a), fy + 44 * math.sin(a) + 12 * math.cos(a)),
+                           (fx + 44 * math.cos(a) + 12 * math.sin(a), fy + 44 * math.sin(a) - 12 * math.cos(a))],
+                          "#E5532F")
+        elif k == 2:
+            c.circle(cx, cy, r, "#D8402F")
+            c.ring(cx, cy, r - 14, 5, "#FFF4DC")
+            c.text("祭", cx, cy, 130, "#FFF4DC", weight=0.05)
+        else:
+            c.circle(cx, cy, r, CREAM)
+            seigaiha(c, cx - r, cy, cx + r, cy + r, 30, INDIGO, CREAM)
+            c.circle(cx - 20, cy - 45, 34, SUN)
+        c.ring(cx, cy, r - 2, 6, P.WOOD_DARK)
+        for j in range(12):
+            a = math.pi * 2 * j / 12
+            c.stroke([(cx, cy), (cx + math.cos(a) * (r - 4), cy + math.sin(a) * (r - 4))], 1.2, "#000000", alpha=0.08)
+    return c
+
+
+def paint_fox_mask():
+    """2 x 1 atlas of fox masks seen from the front (white and red); the mesh outline matches props.FOX_OUTLINE."""
+    c = canvas.Canvas(512, 256, "#00000000", alpha=0.0)
+    for k, (face, mark) in enumerate((("#FBF6EC", "#D8402F"), ("#D8402F", "#FFF4DC"))):
+        ox = k * 256
+
+        def p(x, y, ox=ox):
+            return (ox + 128 + x * 256, 128 - y * 256)
+
+        c.polygon([p(x, y) for x, y in _FOX_POLY], face)
+        for s in (-1, 1):
+            c.polygon([p(s * 0.27, 0.36), p(s * 0.36, 0.44), p(s * 0.36, 0.22)], mark)
+            c.polygon([p(s * 0.06, 0.08), p(s * 0.22, 0.14), p(s * 0.2, 0.06)], INK)
+            c.stroke([p(s * 0.09, -0.05), p(s * 0.24, 0.0)], 5, mark)
+            c.stroke([p(s * 0.08, -0.12), p(s * 0.22, -0.1)], 4, mark)
+        c.polygon([p(-0.05, 0.28), p(0.05, 0.28), p(0.0, 0.18)], mark)
+        c.ellipse(*p(0, -0.36), 14, 9, INK)
+        c.arc(*p(0, -0.3), 30, 0.25 * math.pi, 0.75 * math.pi, 4, INK, segs=16)
+    return c
+
+
+# Fox mask outline in a unit square centered on 0 (x right, y up): ears up, chin down.
+_FOX_POLY = [(0.0, -0.46), (0.14, -0.38), (0.26, -0.18), (0.34, 0.1), (0.4, 0.48), (0.18, 0.3), (0.0, 0.32),
+             (-0.18, 0.3), (-0.4, 0.48), (-0.34, 0.1), (-0.26, -0.18), (-0.14, -0.38)]
+FOX_OUTLINE = _FOX_POLY
+
+
+def paint_nobori():
+    """2 x 1 atlas of tall festival banners: red with cream lettering, indigo with a red sun."""
+    c = canvas.Canvas(512, 768, "#D8402F")
+    c.rect(256, 0, 512, 768, P.INDIGO)
+    for k, (bg, fg) in enumerate((("#D8402F", "#FFF4DC"), (P.INDIGO, CREAM))):
+        x0 = k * 256
+        c.rect(x0, 0, x0 + 256, 768, bg)
+        c.rect(x0, 0, x0 + 34, 768, fg if k == 0 else "#D8402F")
+        for j in range(12):
+            c.rect(x0 + 34, 30 + j * 62, x0 + 60, 44 + j * 62, fg if k == 0 else "#D8402F")
+        if k == 0:
+            c.vtext("まつり旅", x0 + 150, 70, 120, fg, weight=0.04)
+        else:
+            c.circle(x0 + 150, 150, 70, SUN)
+            c.vtext("祭", x0 + 150, 300, 200, fg, weight=0.05)
+            seigaiha(c, x0 + 34, 600, x0 + 256, 768, 30, CREAM, P.INDIGO)
+    c.grain(0.035, seed=73, scale=2)
+    return c
+
+
+def paint_taiko_head():
+    c = canvas.Canvas(256, 256, "#E9D9B6")
+    c.glow(128, 128, 120, "#FFF6E0", 0.5)
+    c.ring(128, 128, 120, 14, "#C9B48A")
+    c.text("祭", 128, 132, 140, INK, weight=0.05)
+    c.grain(0.05, seed=71, scale=2)
+    return c
+
+
 def paint_clock():
     c = canvas.Canvas(256, 256, "#00000000", alpha=0.0)
     c.circle(128, 128, 124, P.WOOD_DARK)
@@ -592,7 +720,7 @@ def paint_clock():
 def paint_quest_header():
     c = canvas.Canvas(512, 128, P.WOOD_DARK)
     c.rect(8, 8, 504, 120, "#EBD3A6", radius=10)
-    c.text("まつりクエスト", 256, 64, 60, INK, weight=0.03)
+    c.text("祭りのたより", 256, 64, 60, INK, weight=0.03)
     return c
 
 
