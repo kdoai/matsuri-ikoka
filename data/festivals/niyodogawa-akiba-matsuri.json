@@ -1,0 +1,137 @@
+{
+  "id": "niyodogawa-akiba-matsuri",
+  "name": {
+    "ja": "秋葉まつり",
+    "en": "Akiba Festival (Niyodogawa)"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "高知県",
+      "name": "吾川郡仁淀川町"
+    }
+  ],
+  "venue": {
+    "name": "別枝地区（岩屋神社から秋葉神社までの練りの道）",
+    "lat": 33.5086,
+    "lng": 133.0548
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "羽根飾りの長い棒を離れた相手へ投げ渡す「鳥毛ひねり」を、狭い山道で見せる",
+    "鼻高面を先頭に、約200人の行列が約3kmの山道を一日かけて練る",
+    "立ち寄る家や寺ごとに太刀踊りとお神楽を奉納する"
+  ],
+  "trivia": [
+    {
+      "text": "1794年に、祭神を今の秋葉神社へ移したと町が伝えている",
+      "source": {
+        "url": "https://www.town.niyodogawa.lg.jp/kanko/life_dtl.php?hdnKey=776",
+        "title": "仁淀川町 秋葉まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "もとは旧暦1月18日の祭りで、今は毎年2月11日に行う",
+      "source": {
+        "url": "https://www.town.niyodogawa.lg.jp/kanko/life_dtl.php?hdnKey=776",
+        "title": "仁淀川町 秋葉まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "行列には本村・霧之窪・沢渡の3集落から役者が集まり、ほら貝を吹いてやって来る",
+      "source": {
+        "url": "https://www.town.niyodogawa.lg.jp/kanko/life_dtl.php?hdnKey=776",
+        "title": "仁淀川町 秋葉まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "沿道で行列を見学する行事で、混雑や危険についての特別な注意は町の案内に見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.town.niyodogawa.lg.jp/kanko/life_dtl.php?hdnKey=776",
+        "title": "仁淀川町 秋葉まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-02-11",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年2月11日に行う決まりから見込んだ日（2027年の発表はまだない）。町の案内（年の記載なし）にある例年の目安：8:30ごろ岩屋神社を出て、民家や法泉寺（11:10ごろ）に立ち寄りながら練り、14:20〜15:30ごろ秋葉神社。鳥毛ひねりは途中の民家の前の狭い道で行う",
+      "sources": [
+        {
+          "url": "https://www.town.niyodogawa.lg.jp/kanko/life_dtl.php?hdnKey=776",
+          "title": "仁淀川町 秋葉まつり（毎年2月11日、立ち寄り先ごとの時刻）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://visitkochijapan.com/en/see-and-do/10572",
+          "title": "Visit Kochi Japan Akiba Festival（毎年2月11日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": []
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.town.niyodogawa.lg.jp/kanko/life_dtl.php?hdnKey=776",
+      "title": "仁淀川町 秋葉まつり（県指定無形民俗文化財、土佐三大祭りの1つ）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://visitkochijapan.com/en/see-and-do/10572",
+      "title": "Visit Kochi Japan Akiba Festival",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表",
+    "会場までの行き方（最寄りのバス停・駅、高知駅からの所要時間）と駐車場（公式の案内が見つからない）",
+    "雨天のときの扱い",
+    "見学の決まり、撮影の扱い、服装・持ち物（2月の山あいの行事だが、防寒の案内は見つからない）",
+    "屋台の有無と、この日だけの食べもの",
+    "周辺の観光と食の場所（営業時間と位置を確かめられた場所がまだない）",
+    "日程の食い違い（町と高知県の観光サイトは2月11日の1日。検索結果の断片には2月9日〜11日の3日間とする紹介もあったが、ページを開けず確かめていない。前後の日に行事があるかは分からない）",
+    "会場の緯度・経度は、国土地理院の住所検索で出た別枝地区の代表点。秋葉神社や練りの道の正確な位置ではない",
+    "大手の観光サイトへの掲載は、検索で主題のページが見つからなかった"
+  ]
+}

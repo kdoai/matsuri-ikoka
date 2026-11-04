@@ -1,0 +1,307 @@
+{
+  "id": "kanuma-aki-matsuri",
+  "name": {
+    "ja": "鹿沼秋まつり",
+    "en": "Kanuma Autumn Festival"
+  },
+  "category": "float",
+  "municipalities": [
+    {
+      "prefecture": "栃木県",
+      "name": "鹿沼市"
+    }
+  ],
+  "venue": {
+    "name": "今宮神社と鹿沼市街",
+    "lat": 36.567,
+    "lng": 139.7439
+  },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": ["jnto"],
+  "highlights": [
+    "全面を彫刻で飾った江戸時代からの彫刻屋台が、町の中を曳かれる",
+    "夜の交差点で屋台どうしが向き合い、囃子を競う「ぶっつけ」",
+    "初日、屋台が鳥居をくぐって今宮神社の境内に勢ぞろいする繰り込み",
+    "2日目は古峯原宮通りで屋台の揃い曳きと一斉きりん"
+  ],
+  "trivia": [
+    {
+      "text": "1608年の大干ばつで雨乞いを続けたら雷雨が来たことが、今宮の例祭の始まりと伝わる",
+      "source": {
+        "url": "https://www.buttsuke.com/origin/",
+        "title": "鹿沼秋まつり公式サイト 祭りの起源",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "氏子34か町のうち27か町が屋台を持ち、文化11年（1814）造の記録がある屋台も残る",
+      "source": {
+        "url": "https://www.buttsuke.com/origin/",
+        "title": "鹿沼秋まつり公式サイト 祭りの起源",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "屋台は、仕事のない冬に日光山から下りた彫刻師が手がけたという言い伝えがある",
+      "source": {
+        "url": "https://www.buttsuke.com/yatai/",
+        "title": "鹿沼秋まつり公式サイト 彫刻屋台",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2003年2月20日に国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.buttsuke.com/origin/",
+        "title": "鹿沼秋まつり公式サイト 祭りの起源",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "「鹿沼今宮神社祭の屋台行事」として、2016年にユネスコ無形文化遺産に登録された",
+      "source": {
+        "url": "https://www.pref.tochigi.lg.jp/c05/pref/kouhou/kouhoushi/429-6.html",
+        "title": "栃木県 県広報誌 2026年7月号",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": [
+      "車で来るときは指定の一般駐車場を使う。福田屋百貨店など商業施設の駐車場は祭りの駐車場ではない",
+      "一般駐車場では「秋まつり保存・運営協力金」（1台1日1,000円、花木センターは500円、かぬまケーブルテレビホールは無料）への協力が求められている",
+      "屋台を間近で見る有料の観覧席がある（2026年は1,000円と3,000円の席）"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "両日9:00〜22:00に市街地で交通規制がかかり、夜は交差点に屋台が集まってぶっつけを行う。けがについての特別な注意書きは見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.buttsuke.com/_file/leaflet2026.pdf",
+        "title": "鹿沼秋まつり実行委員会 鹿沼秋まつりご案内 2026（駐車場・交通規制・観覧席）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.buttsuke.com/venue/",
+        "title": "鹿沼秋まつり公式サイト 会場・イベント案内",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-10-10",
+      "start": "12:30",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "初日（今宮神社例大祭）。12:30 屋台の今宮神社への繰り込み、17:00 繰り出しと手打ち式、19:30ごろから市内の交差点でぶっつけ。屋台は4つの組で計26台",
+      "sources": [
+        {
+          "url": "https://www.buttsuke.com/venue/",
+          "title": "鹿沼秋まつり公式サイト 会場・イベント案内（2026年10月10日・11日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.buttsuke.com/_file/leaflet2026.pdf",
+          "title": "鹿沼秋まつり実行委員会 鹿沼秋まつりご案内 2026（繰り込み・繰り出し・ぶっつけの予定時間）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-11",
+      "start": "09:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2日目。9:00 御巡幸が今宮神社を出発（13:40ごろ戻る）、13:00 出発式、14:00 屋台揃い曳き（古峯原宮通り）、17:15 一斉きりん、17:55 ぶっつけ、18:20 打ち上げ花火で揃い曳きが終わる。そのあとも21:00ごろまで各地の交差点でぶっつけの予定。市民まつりも同じ日",
+      "sources": [
+        {
+          "url": "https://www.buttsuke.com/venue/",
+          "title": "鹿沼秋まつり公式サイト 会場・イベント案内（2026年10月11日の予定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.buttsuke.com/_file/leaflet2026.pdf",
+          "title": "鹿沼秋まつり実行委員会 鹿沼秋まつりご案内 2026（御巡幸・揃い曳きの予定時間）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-10-09",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "今宮神社の例大祭を10月第2土曜日に行う決まりから見込んだ日（2027年の発表はまだない）。2026年は12:30から繰り込み、17:00から繰り出し、夜にぶっつけだった",
+      "sources": [
+        {
+          "url": "https://www.buttsuke.com/_file/guidebook2026.pdf",
+          "title": "鹿沼秋まつり 公式ガイドブック 2026（今宮神社の祭礼：十月第二土曜日 例大祭、日曜日 御巡幸）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-10-10",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "例大祭の翌日曜日に御巡幸を行う決まりから見込んだ日（2027年の発表はまだない）。2026年は9:00から御巡幸、14:00から屋台揃い曳き、夕方に一斉きりんとぶっつけだった",
+      "sources": [
+        {
+          "url": "https://www.buttsuke.com/_file/guidebook2026.pdf",
+          "title": "鹿沼秋まつり 公式ガイドブック 2026（今宮神社の祭礼：十月第二土曜日 例大祭、日曜日 御巡幸）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "東武 新鹿沼駅",
+        "walkMinutes": [10, 15],
+        "note": "公式の案内で駅から徒歩10分（会場の市街地まで）。2026年は新鹿沼駅とJR鹿沼駅・花木センターを結ぶ無料シャトルバスが両日運行し、最終便は新鹿沼駅21:30発。市のリーバスも両日全便無料"
+      },
+      {
+        "name": "JR 鹿沼駅",
+        "walkMinutes": [20, 25],
+        "note": "公式の案内で駅から徒歩20分（会場の市街地まで）"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "浅草駅",
+        "minutes": [80, 90],
+        "route": "東武線で新鹿沼駅へ（公式の案内に乗り換えの記載なし）"
+      },
+      {
+        "hub": "東京駅",
+        "minutes": [70, 80],
+        "route": "JR で鹿沼駅へ。日本政府観光局の案内では、東北新幹線で宇都宮駅へ行き日光線に乗り換え"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [
+      "2026年は10月10日・11日の9:00〜22:00、会場周辺の市街地で通行止めの交通規制（区間は公式の案内図）"
+    ],
+    "sources": [
+      {
+        "url": "https://www.buttsuke.com/access/",
+        "title": "鹿沼秋まつり公式サイト アクセス（浅草駅から新鹿沼駅80分、東京駅から鹿沼駅70分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.buttsuke.com/venue/",
+        "title": "鹿沼秋まつり公式サイト 会場・イベント案内（交通規制・駐車場・シャトルバス）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.buttsuke.com/_file/leaflet2026.pdf",
+        "title": "鹿沼秋まつり実行委員会 鹿沼秋まつりご案内 2026（一般駐車場9か所、8:30〜22:00）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.japan.travel/en/experiences-in-japan/880/",
+        "title": "日本政府観光局 Kanuma Autumn Festival（東北新幹線で宇都宮駅、日光線で鹿沼駅）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "yatai-no-machi-chuo-koen",
+      "name": "屋台のまち中央公園",
+      "kind": "sightseeing",
+      "summary": "彫刻屋台3台を展示し、秋まつりと屋台の歴史を音と映像で伝える展示館、庭園の掬翠園、観光物産館がある公園",
+      "location": {
+        "lat": 36.5662,
+        "lng": 139.748
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": "公園は無料。彫刻屋台展示館は一般200円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://rurubu.jp/andmore/spot/80006723",
+          "title": "るるぶ&more. 屋台のまち中央公園",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://www.tochinavi.net/spot/home/?id=988",
+          "title": "栃ナビ 屋台のまち中央公園（展示館の入館は16:30まで）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.buttsuke.com/",
+      "title": "鹿沼秋まつり公式サイト（主催 鹿沼秋まつり実行委員会）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.buttsuke.com/flow/",
+      "title": "鹿沼秋まつり公式サイト 祭りのながれ",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.nta.co.jp/kokunai/special/eventinfo/10640114.htm",
+      "title": "日本旅行 鹿沼秋まつり（今宮神社・鹿沼市街、鹿沼市今宮町1692）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と時刻（例大祭は10月第2土曜日、翌日曜日に御巡幸という決まりから見込んだ日）",
+    "雨のときの扱い",
+    "見学の仕方（屋台にどこまで近づけるか）、服装・持ち物・撮影の扱い",
+    "屋台の台数の食い違い（2026年の案内では4つの組で計26台、旅行サイトでは27台。公式サイトの起源のページでは屋台を持つのは27か町で、毎年20台ほどが出る）",
+    "祭りならではの食べもの（露店とおもてなし広場の飲食の出店はあるが、名物は案内が見つからない）",
+    "新宿駅・上野駅など、浅草駅と東京駅のほかからの所要時間と、浅草駅からの乗り換えの有無",
+    "会場の近くの食事の場所（営業時間を確かめられた店がまだない）",
+    "屋台のまち中央公園の年末年始・祝日の翌日の休みの扱い（情報源で書き方が違う）",
+    "会場の緯度・経度は、国土地理院の住所検索で鹿沼市今宮町1692番地から取った位置（今宮神社の境内そのものではない。住所は旅行サイトの記載）",
+    "屋台のまち中央公園の営業時間と休館日（観光サイトにしか見つからず、休みの扱いも情報源で違うため入れていない）"
+  ]
+}

@@ -1,0 +1,228 @@
+{
+  "id": "oiso-sagicho",
+  "name": {
+    "ja": "大磯の左義長",
+    "en": "Oiso Sagicho Fire Festival"
+  },
+  "category": "fire",
+  "municipalities": [
+    {
+      "prefecture": "神奈川県",
+      "name": "中郡大磯町"
+    }
+  ],
+  "venue": {
+    "name": "北浜海岸",
+    "lat": 35.3107,
+    "lng": 139.3199
+  },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "北浜海岸の砂浜に立つ9基のサイトに、夜いっせいに火が入る",
+    "浜方と陸方に分かれてソリを引き合うヤンナゴッコ",
+    "焼け落ちたサイトの火でダンゴを焼いて食べる小正月の習わし",
+    "前の数日は町内のオカリヤに道祖神をまつり、ナナトコマイリで巡る"
+  ],
+  "trivia": [
+    {
+      "text": "1980年1月28日に国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.pref.kanagawa.jp/docs/ar3/cnt/f6658/p520428.html",
+        "title": "神奈川県 湘南地域の国指定・県指定無形民俗文化財（大磯の左義長）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "サイトは高さ8mにもなり、張る3本の綱のうち1本は必ずその年の恵方へ向ける",
+      "source": {
+        "url": "https://www.pref.kanagawa.jp/docs/ar3/cnt/f6658/p520428.html",
+        "title": "神奈川県 湘南地域の国指定・県指定無形民俗文化財（大磯の左義長）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "サイトの火で焼いたダンゴを食べると、風邪をひかないと伝えられている",
+      "source": {
+        "url": "https://kanagawa-kankou.or.jp/event/1982",
+        "title": "神奈川県観光協会 大磯の左義長",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "燃やした書き初めが高く舞い上がると、字が上達すると言い伝えられている",
+      "source": {
+        "url": "https://kanagawa-kankou.or.jp/event/1982",
+        "title": "神奈川県観光協会 大磯の左義長",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": []
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-17",
+      "start": "18:30",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年は1月17日（土）。北浜海岸に9基のサイトを建て、18:30に点火。燃え盛るころに浜方と陸方に分かれてヤンナゴッコを行う。1月14日〜16日は町内でナナトコマイリ",
+      "sources": [
+        {
+          "url": "https://www.town.oiso.kanagawa.jp/material/files/group/7/web_Oiso803_3.pdf",
+          "title": "広報おおいそ 令和8年1月号 3ページ「大磯の左義長」行事について（開催日 令和8年1月17日、点火は18:30から）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-16",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "1月14日、14日が平日なら1月第3土曜日に行う決まりから見込んだ日（2027年1月14日は木曜日。2027年の発表はまだない）。神奈川県観光協会の案内では18:30から火入れ",
+      "sources": [
+        {
+          "url": "https://www.pref.kanagawa.jp/docs/ar3/cnt/f6658/p401458.html",
+          "title": "神奈川県 無形民俗文化財の開催地域・開催時期（1月14日、平日なら1月第3土曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://kanagawa-kankou.or.jp/event/1982",
+          "title": "神奈川県観光協会 大磯の左義長（例年1月中旬、18:30〜火入れ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 大磯駅",
+        "walkMinutes": [15, 20],
+        "note": "大磯駅から北浜海岸まで徒歩15分程度"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "東京駅",
+        "minutes": [60, 70],
+        "route": "JR 東海道線で大磯駅へ、乗り換えなし"
+      }
+    ],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://kanagawa-kankou.or.jp/event/1982",
+        "title": "神奈川県観光協会 大磯の左義長（大磯駅から北浜海岸まで徒歩15分程度）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.town.oiso.kanagawa.jp/material/files/group/7/iju_pamphR06.pdf",
+        "title": "大磯町 移住パンフレット（JR 東海道線一本で東京まで約60分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "サイトの火で焼くダンゴ",
+        "note": "サイトが焼け落ちたあと、町内の人が棒の先に付けたダンゴを焼いて食べる。見物に来た人も焼けるかどうかは案内が見つからない",
+        "sources": [
+          {
+            "url": "https://www.pref.kanagawa.jp/docs/ar3/cnt/f6658/p520428.html",
+            "title": "神奈川県 湘南地域の国指定・県指定無形民俗文化財（大磯の左義長）",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "oiso-kyodo-shiryokan",
+      "name": "大磯町郷土資料館",
+      "kind": "sightseeing",
+      "summary": "大磯城山公園の中にある町の資料館。考古・歴史・民俗・自然の常設展示があり、無料で見られる。毎月1日と年末年始（12/29〜1/4）も休館",
+      "location": {
+        "lat": 35.3053,
+        "lng": 139.2908
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["mon"],
+      "price": "無料（企画展は有料のことがある）",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://kanagawa-kankou.or.jp/spot/1580",
+          "title": "神奈川県観光協会 大磯町郷土資料館",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.town.oiso.kanagawa.jp/material/files/group/7/web_Oiso803_3.pdf",
+      "title": "広報おおいそ 令和8年1月号「大磯の左義長」行事について",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.pref.kanagawa.jp/docs/ar3/cnt/f6658/p520428.html",
+      "title": "神奈川県 湘南地域の国指定・県指定無形民俗文化財（大磯の左義長、所在地は大磯町大磯）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://kanagawa-kankou.or.jp/event/1982",
+      "title": "神奈川県観光協会 大磯の左義長（会場 北浜海岸、大磯町大磯1990番地先）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、点火・ヤンナゴッコの時刻",
+    "見学の決まり（立ち位置・火との距離）、服装・持ち物・撮影の扱い、危険度（大きな火を使うが、主催者の注意書きが見つからない）",
+    "見物に来た人がダンゴ焼きに加われるかどうか",
+    "雨や強風のときの扱い",
+    "駐車場の有無と、当日の交通規制",
+    "屋台の有無",
+    "新宿駅などほかの主要駅からの所要時間",
+    "会場の近くの食事の場所（営業時間を公式の情報で確かめられた店がまだない）",
+    "見物客の数（規模は、9地区が9基のサイトを立て、数日にわたる道祖神の行事のあと浜で火を焚く行事として M にした）",
+    "会場の緯度・経度は、国土地理院の住所検索で大磯町大磯1990番地から取った位置（海岸の中のサイトの位置そのものではない）",
+    "ヤンナゴッコの組の呼び名（広報おおいそは浜方と陸方、神奈川県のページは浜方と岡方）"
+  ]
+}
