@@ -7,12 +7,18 @@ import { createStationPointIndex } from "../domain/travelEstimate";
 import { YEAR_NOT_STATED_NOTE } from "../domain/verification";
 import { type CandidateCheck, createCandidateChecker } from "./candidateCheck";
 import { createUnavailableLodging } from "./lodging";
+import type {
+  LodgingResearcher,
+  LodgingResearchRequest,
+  PerspectiveLodgingReport,
+} from "./lodgingResearch";
 import {
   getAccess,
   getWeather,
   LODGING_NOTICE,
   noteConditions,
   pickVerifiedCandidates,
+  RESEARCHED_LODGING_NOTICE,
   researchRoute,
   searchFestivals,
   searchLodging,
@@ -969,14 +975,86 @@ describe("search_lodging", () => {
     });
     const offers = result.offers as {
       name: string;
-      distanceKmFromVenue: number | null;
+      fromVenue: { distanceKm: number; mode: string } | null;
       budget: { overBudget: boolean | null };
     }[];
     expect(offers.length).toBeGreaterThan(0);
     expect(offers.map((o) => o.budget.overBudget)).toContain(true);
     expect(offers.map((o) => o.budget.overBudget)).toContain(false);
-    expect(offers.every((o) => typeof o.distanceKmFromVenue === "number")).toBe(true);
+    expect(offers.every((o) => typeof o.fromVenue?.distanceKm === "number")).toBe(true);
     expect(ctx.session.lodging.get("2026-08-16")?.offers).toHaveLength(offers.length);
+    expect(ctx.session.lodging.get("2026-08-16")?.offers[0]?.fromVenue).toBeDefined();
+  });
+
+  const researchedInn = (
+    name: string,
+    lat: number,
+  ): PerspectiveLodgingReport["hotels"][number] => ({
+    name,
+    summary: "河原まで歩ける宿",
+    location: { lat, lng: 136.08 },
+    perPersonNightYen: [7000, 9000],
+    price: null,
+    familyFriendly: null,
+    pageUrl: `https://example.com/inn/${encodeURIComponent(name)}`,
+    sources: [{ url: `https://example.com/inn/${encodeURIComponent(name)}` }],
+  });
+
+  it("Web の宿の調べがあれば、観点ごとに調べた宿を突き合わせて1〜3件を提案し、空きを調べていない注意を添える", async () => {
+    const requests: LodgingResearchRequest[] = [];
+    const lodgingResearch: LodgingResearcher = {
+      async research(request) {
+        requests.push(request);
+        return {
+          reports: [
+            { perspective: "venue", hotels: [researchedInn("鈴鳴川の宿", 35.121)] },
+            {
+              perspective: "station",
+              hotels: [researchedInn("鈴鳴駅前ホテル", 35.13), researchedInn("鈴鳴川の宿", 35.121)],
+            },
+          ],
+        };
+      },
+    };
+    const ctx = testToolContext([suzunari()], { lodgingResearch });
+    ctx.session.conditions = {
+      party: { adults: 2, children: 1 },
+      lodgingBudget: { perPersonYen: 10000, per: "night" },
+    };
+    const result = await searchLodging.run(args, ctx, signal);
+    expect(requests[0]?.plans.map((p) => p.perspective)).toEqual([
+      "venue",
+      "station",
+      "budget",
+      "family",
+    ]);
+    expect(requests[0]?.perPersonNightLimitYen).toBe(10000);
+    expect(result).toMatchObject({
+      status: "ok",
+      provider: "web",
+      notice: RESEARCHED_LODGING_NOTICE,
+      credit: null,
+    });
+    const offers = result.offers as { name: string; perspectives: string[]; budget: unknown }[];
+    expect(offers.map((o) => o.name)).toEqual(["鈴鳴川の宿", "鈴鳴駅前ホテル"]);
+    expect(offers[0]?.perspectives).toEqual(["venue", "station"]);
+    // 空きを調べていないので、1泊の合計からの予算の計算はしない
+    expect(offers[0]?.budget).toBeNull();
+    expect(ctx.session.lodging.get("2026-08-16")?.provider).toBe("web");
+  });
+
+  it("Web の宿の調べで合う宿がなければ、宿の空きの調べ方の結果に戻る", async () => {
+    const lodgingResearch: LodgingResearcher = { research: async () => null };
+    const ctx = testToolContext([suzunari()], {
+      lodgingResearch,
+      lodging: createUnavailableLodging(),
+    });
+    const result = await searchLodging.run(
+      { ...args, party: { adults: 2, children: 0 } },
+      ctx,
+      signal,
+    );
+    expect(result).toMatchObject({ status: "unavailable" });
   });
 
   it("人数が分からなければ調べない", async () => {

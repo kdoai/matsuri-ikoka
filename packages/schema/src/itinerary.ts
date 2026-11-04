@@ -151,35 +151,70 @@ export const AlternativeSchema = z.strictObject({
 export const MAX_TRIP_DAYS = 7;
 
 // ---------------------------------------------------------------------------
-// 宿の空き（宿泊予約の API で調べた結果）
+// 宿の候補（宿泊予約の API で調べた空き、または公開の Web で調べた宿）
+
+/** 宿の候補を調べた方法。rakuten 空室検索 API / web 公開の Web の調べ / fictional 架空の宿（開発の見本） */
+export const LODGING_PROVIDERS = ["rakuten", "web", "fictional"] as const;
 
 /**
- * 空きのあった宿の1件。名前と料金は API の結果だけから入れ、モデルに作らせない。
+ * 宿を探した観点。venue 会場の近く / station 駅の近く / budget 予算に合う / family 家族向け。
+ * Web の調べでは観点ごとに並べて探し、いくつの観点で挙がったかを突き合わせて選ぶ
+ */
+export const LODGING_PERSPECTIVES = ["venue", "station", "budget", "family"] as const;
+
+/** 会場から宿までの目安。直線の距離からコードで計算する（道のりではない） */
+export const LodgingFromVenueSchema = z.strictObject({
+  distanceKm: z.number().min(0),
+  /** walk 歩いて行ける距離 / ride バス・タクシーなどで移る距離 */
+  mode: z.enum(["walk", "ride"]),
+  minutes: MinuteRangeSchema,
+});
+
+/**
+ * 宿の候補の1件。名前と料金は API の結果か、Web の調べで実際に読んだページだけから入れ、モデルに作らせない。
  * 料金は予約の時点で変わることがあるので、調べた時刻（checkedAt）と必ず一緒に出す。
  */
 export const LodgingOfferSchema = z.strictObject({
-  /** 予約サイトでの宿の ID（同じ宿を版をまたいで指すため） */
+  /** 宿の ID（同じ宿を版をまたいで指すため） */
   id: TextSchema.max(100),
   name: TextSchema.max(100),
-  /** 1泊の料金（全員分・円）。調べた時点の最安のプランの目安 */
-  nightlyTotalYen: z.number().int().min(0),
-  /** 予約のページ */
+  /**
+   * 1泊の料金（全員分・円）。空室検索では調べた時点の最安のプランの目安。
+   * Web の調べでは空きを確かめていないので null にし、ページにある料金の目安は priceNote・perPersonNightYen に書く
+   */
+  nightlyTotalYen: z.number().int().min(0).nullable(),
+  /** ページに書かれた1泊1人あたりの料金の幅（円）。書かれていなければ持たない */
+  perPersonNightYen: z
+    .tuple([z.number().int().min(0), z.number().int().min(0)])
+    .refine(([min, max]) => min <= max, { message: "料金の幅は下限 ≦ 上限にしてください" })
+    .optional(),
+  /** 料金の目安の文（自分の言葉。例：素泊まり1人6,000円台から） */
+  priceNote: TextSchema.max(80).optional(),
+  /** 宿の特徴の要約（自分の言葉で1文） */
+  summary: TextSchema.max(120).optional(),
+  /** 予約のページ（Web の調べでは、宿の公式か予約サイトの宿のページ） */
   bookingUrl: z.url({ protocol: /^https?$/ }),
-  /** 地図に打つ場所。API に位置がなければ null */
+  /** 地図に打つ場所。分からなければ null */
   location: LatLngSchema.nullable(),
+  /** 会場からの距離と移動の目安（コードで計算）。場所が分からなければ持たない */
+  fromVenue: LodgingFromVenueSchema.optional(),
+  /** この宿が挙がった観点（Web の調べ） */
+  perspectives: z.array(z.enum(LODGING_PERSPECTIVES)).max(LODGING_PERSPECTIVES.length).optional(),
   /** 調べた時刻 */
   checkedAt: IsoDateTimeSchema,
-  /** 出典（予約サイト。表示が求められるクレジットは title に書く） */
+  /** 出典（予約サイトや宿のページ。表示が求められるクレジットは title に書く） */
   source: SourceSchema,
 });
 
-/** 宿の空きを調べた結果。offers が空なら、条件に合う空きがなかった */
+/** 宿の候補を調べた結果。offers が空なら、条件に合う宿がなかった */
 export const LodgingSearchSchema = z
   .strictObject({
     checkIn: IsoDateSchema,
     checkOut: IsoDateSchema,
     /** 調べた時刻 */
     searchedAt: IsoDateTimeSchema,
+    /** 調べた方法。古い版の旅程にはない */
+    provider: z.enum(LODGING_PROVIDERS).optional(),
     offers: z.array(LodgingOfferSchema).max(5),
   })
   .refine((search) => search.checkIn < search.checkOut, {
@@ -322,6 +357,9 @@ export type Verification = z.infer<typeof VerificationSchema>;
 export type Weather = z.infer<typeof WeatherSchema>;
 export type Alternative = z.infer<typeof AlternativeSchema>;
 export type LodgingOffer = z.infer<typeof LodgingOfferSchema>;
+export type LodgingFromVenue = z.infer<typeof LodgingFromVenueSchema>;
+export type LodgingPerspective = (typeof LODGING_PERSPECTIVES)[number];
+export type LodgingProvider = (typeof LODGING_PROVIDERS)[number];
 export type LodgingSearch = z.infer<typeof LodgingSearchSchema>;
 export type StayPlan = z.infer<typeof StayPlanSchema>;
 export type Stay = z.infer<typeof StaySchema>;

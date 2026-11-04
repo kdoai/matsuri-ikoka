@@ -183,7 +183,9 @@ export function readVacantHotels(
       },
     ];
   });
-  return offers.sort((a, b) => a.nightlyTotalYen - b.nightlyTotalYen).slice(0, MAX_OFFERS);
+  return offers
+    .sort((a, b) => (a.nightlyTotalYen ?? 0) - (b.nightlyTotalYen ?? 0))
+    .slice(0, MAX_OFFERS);
 }
 
 /** 人数を API の入力にする。小学生は高学年として、幼児は食事と布団なしとして数える */
@@ -287,7 +289,13 @@ export function createRakutenLodging(options: RakutenLodgingOptions): LodgingSer
         const searchedAt = options.now();
         // 404 は「条件に合う宿がない」
         if (response.status === 404) {
-          const search = { checkIn: query.checkIn, checkOut, searchedAt, offers: [] };
+          const search: LodgingSearch = {
+            checkIn: query.checkIn,
+            checkOut,
+            searchedAt,
+            provider: "rakuten",
+            offers: [],
+          };
           cache.set(url, { at: clock(), search });
           return { status: "ok", search };
         }
@@ -304,7 +312,13 @@ export function createRakutenLodging(options: RakutenLodgingOptions): LodgingSer
           checkedAt: searchedAt,
           checkedOn: searchedAt.slice(0, 10),
         });
-        const search = { checkIn: query.checkIn, checkOut, searchedAt, offers };
+        const search: LodgingSearch = {
+          checkIn: query.checkIn,
+          checkOut,
+          searchedAt,
+          provider: "rakuten",
+          offers,
+        };
         cache.set(url, { at: clock(), search });
         return { status: "ok", search };
       } catch {
@@ -350,7 +364,8 @@ export function createFictionalLodging(options: { now: () => string }): LodgingS
           checkIn: query.checkIn,
           checkOut: addDays(query.checkIn, query.nights),
           searchedAt,
-          offers: offers.sort((a, b) => a.nightlyTotalYen - b.nightlyTotalYen),
+          provider: "fictional",
+          offers: offers.sort((a, b) => (a.nightlyTotalYen ?? 0) - (b.nightlyTotalYen ?? 0)),
         },
       };
     },

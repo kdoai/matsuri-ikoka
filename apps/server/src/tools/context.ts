@@ -11,6 +11,7 @@ import type { StationPointIndex } from "../domain/travelEstimate";
 import type { ItineraryStore, Session } from "../session/sessionStore";
 import type { CandidateChecker } from "./candidateCheck";
 import type { LodgingService } from "./lodging";
+import type { LodgingResearcher } from "./lodgingResearch";
 import type { NearbyResearcher } from "./nearbyResearch";
 import type { RouteResearcher } from "./routeResearch";
 import type { FestivalVerifier } from "./verifier";
@@ -75,6 +76,8 @@ export interface ToolContext {
   routes?: RouteResearcher;
   /** 会場の周りの店・寄り道を Web で調べる。ないとき（mock やテスト）は祭りのデータの周辺の場所だけから選ぶ */
   nearby?: NearbyResearcher;
+  /** 会場の近くの宿を Web で調べる（観点ごとに並べて）。ないとき（mock やテスト）は宿の空きの調べ方の結果だけを使う */
+  lodgingResearch?: LodgingResearcher;
   /**
    * ツールの中で調べが進んだ（中の Agent SDK の知らせが届いた）ことを知らせる。相談の進みのない時間を数え直す。
    * 寄り道の調べのように、ツール1回が長くかかっても、動き続けていれば止めない
@@ -97,8 +100,9 @@ export const TOOL_TIMEOUT_MS: Readonly<Record<AgentToolName, number>> = {
   search_nearby: 95_000,
   get_access: 10_000,
   get_weather: 10_000,
-  // 空室検索は1本ずつ間隔を空けて呼ぶので、待ちを含める
-  search_lodging: 20_000,
+  // 空室検索（1本ずつ間隔を空けて呼ぶ）と、空きがないときの Web の宿の調べ（観点ごとに並べて動かす）を含む。
+  // 調べの間は ToolContext.progress で進みを知らせるので、進みのない時間の上限には掛からない
+  search_lodging: 95_000,
   update_itinerary: 10_000,
   // 乗り換え案内や鉄道会社のページを検索して読む
   research_route: 40_000,

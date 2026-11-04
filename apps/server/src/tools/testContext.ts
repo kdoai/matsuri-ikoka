@@ -6,6 +6,7 @@ import type { VerificationReport } from "../domain/verification";
 import { ItineraryStore, SessionStore } from "../session/sessionStore";
 import { newTurnState, type ToolContext } from "./context";
 import { createFictionalLodging, type LodgingService } from "./lodging";
+import type { LodgingResearcher } from "./lodgingResearch";
 import type { NearbyResearcher } from "./nearbyResearch";
 import type { RouteResearcher } from "./routeResearch";
 import type { FestivalVerifier } from "./verifier";
@@ -24,6 +25,7 @@ export function testToolContext(
     stations?: StationPointIndex;
     routes?: RouteResearcher;
     nearby?: NearbyResearcher;
+    lodgingResearch?: LodgingResearcher;
   } = {},
 ): ToolContext & { weatherCalls: string[] } {
   const weatherCalls: string[] = [];
@@ -51,6 +53,7 @@ export function testToolContext(
     ...(options.stations ? { stations: options.stations } : {}),
     ...(options.routes ? { routes: options.routes } : {}),
     ...(options.nearby ? { nearby: options.nearby } : {}),
+    ...(options.lodgingResearch ? { lodgingResearch: options.lodgingResearch } : {}),
     today: () => options.today ?? "2026-08-03",
     now: () => "2026-08-03T10:15:00+09:00",
     weatherCalls,

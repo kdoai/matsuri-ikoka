@@ -8,8 +8,11 @@ import {
   ItineraryDaySchema,
   ItineraryItemSchema,
   ItinerarySchema,
+  type LatLng,
   LocalTimeSchema,
+  type LodgingBudget,
   LodgingBudgetSchema,
+  type LodgingSearch,
   MAX_CANDIDATES,
   MAX_NIGHTS,
   MAX_TRIP_DAYS,
@@ -18,6 +21,7 @@ import {
   mainFestivalDay,
   NightsSchema,
   PartialTripConditionsSchema,
+  type Party,
   PartySchema,
   PreferencesSchema,
   SlugSchema,
@@ -29,7 +33,7 @@ import {
 } from "@matsuri-ikoka/schema";
 import { z } from "zod";
 import { arrivalBufferMinutes } from "../domain/arrivalBuffer";
-import { daysBetween, laterDate } from "../domain/calendar";
+import { addDays, daysBetween, laterDate } from "../domain/calendar";
 import {
   matchHub,
   placeLabel,
@@ -52,7 +56,12 @@ import {
   type ItineraryDraft,
   mergeDay,
 } from "../domain/itinerary";
-import { attachLodging, checkLodgingBudget, distanceKm } from "../domain/lodging";
+import { attachLodging, checkLodgingBudget, perPersonNightLimitYen } from "../domain/lodging";
+import {
+  lodgingFromVenue,
+  lodgingSearchPlans,
+  screenResearchedLodging,
+} from "../domain/lodgingResearch";
 import { festivalInArea, selectNearbySpots, type TimeWindow } from "../domain/nearby";
 import {
   asNearbySpot,
@@ -84,7 +93,7 @@ import { decideVerification } from "../domain/verification";
 import { randomId } from "../session/sessionStore";
 import type { CandidateCheck } from "./candidateCheck";
 import { type AgentToolName, TOOL_TIMEOUT_MS, type ToolContext } from "./context";
-import { MAX_SEARCH_RADIUS_KM, RAKUTEN_CREDIT } from "./lodging";
+import { type LodgingOutcome, MAX_SEARCH_RADIUS_KM, RAKUTEN_CREDIT } from "./lodging";
 
 // 接客エージェントに渡す8つのツール。入出力は Zod で決め、計算と絞り込みは domain の関数で行う。
 // 祭りの日時・場所・営業時間・出典は、祭りのデータとツールの結果だけから返す。
@@ -1162,12 +1171,119 @@ function knownVerification(
 
 /** 宿の候補を出すときに必ず添える一文 */
 export const LODGING_NOTICE = "料金と空きは、予約の時点で変わることがあります";
+/** Web で調べた宿を出すときに必ず添える一文（空きは調べていない） */
+export const RESEARCHED_LODGING_NOTICE =
+  "空きは調べていません。料金と空きは、予約のページで確かめてください";
+
+/**
+ * Web の宿の調べを打ち切る時間。ツールの上限（95秒）より短くし、間に合った観点の結果だけで選ぶ
+ * （ツールの上限で止まると、調べた結果をすべて捨ててしまうため）
+ */
+export const LODGING_RESEARCH_MS = 75_000;
+
+/** 宿の空きの調べ（空室検索）の結果に、会場からの距離と移動の目安を足す */
+function withFromVenue(search: LodgingSearch, venue: LatLng): LodgingSearch {
+  return {
+    ...search,
+    offers: search.offers.map((offer) =>
+      offer.location === null || offer.fromVenue !== undefined
+        ? offer
+        : { ...offer, fromVenue: lodgingFromVenue(venue, offer.location) },
+    ),
+  };
+}
+
+/**
+ * 宿の候補を調べる。空室検索（楽天トラベル）で空きのある宿が見つかればそれを使い、
+ * キーがない・調べられない・空きが見つからないときは、Web の宿の調べ（観点ごとに並べて調べ、コードで突き合わせる）に移る。
+ * どちらもなければ、宿の空きの調べ方の結果（開発では架空の宿、本番では「調べられない」）を返す
+ */
+async function findLodging(
+  ctx: ToolContext,
+  festival: Festival,
+  args: { checkIn: IsoDate; nights: number; radiusKm?: number | undefined },
+  party: Party,
+  budget: LodgingBudget | undefined,
+  signal: AbortSignal,
+): Promise<LodgingOutcome> {
+  const venue = { lat: festival.venue.lat, lng: festival.venue.lng };
+  const query = {
+    checkIn: args.checkIn,
+    nights: args.nights,
+    party,
+    near: venue,
+    radiusKm: args.radiusKm ?? MAX_SEARCH_RADIUS_KM,
+  };
+  let fallback: LodgingOutcome | null = null;
+  if (ctx.lodging.provider === "rakuten") {
+    fallback = await ctx.lodging.search(query, signal);
+    if (fallback.status === "ok" && fallback.search.offers.length > 0) return fallback;
+  }
+  if (ctx.lodgingResearch !== undefined) {
+    const limit = perPersonNightLimitYen(budget, args.nights);
+    const input = {
+      // 検索の言葉には、県名を付けない市町村の名前を使う（宿の一覧のページに当たりやすい）
+      festival: {
+        name: festival.name.ja,
+        place: festival.municipalities[0]?.name ?? placeLabel(festival),
+        venueName: festival.venue.name,
+      },
+      stations: festival.access.stations.map((s) => s.name),
+      checkIn: args.checkIn,
+      nights: args.nights,
+      party,
+      perPersonNightLimitYen: limit,
+    };
+    const report = await ctx.lodgingResearch
+      .research({
+        festival: {
+          id: festival.id,
+          name: festival.name.ja,
+          place: placeLabel(festival),
+          venue: festival.venue,
+        },
+        checkIn: args.checkIn,
+        nights: args.nights,
+        party,
+        perPersonNightLimitYen: limit,
+        plans: lodgingSearchPlans(input),
+        signal: AbortSignal.any([signal, AbortSignal.timeout(LODGING_RESEARCH_MS)]),
+        ...(ctx.progress ? { onActivity: ctx.progress } : {}),
+      })
+      .catch(() => null);
+    if (report !== null) {
+      const searchedAt = ctx.now();
+      const { offers } = screenResearchedLodging(report.reports, {
+        venue,
+        party,
+        perPersonNightLimitYen: limit,
+        checkedAt: searchedAt,
+        today: ctx.today(),
+      });
+      if (offers.length > 0) {
+        return {
+          status: "ok",
+          search: {
+            checkIn: args.checkIn,
+            checkOut: addDays(args.checkIn, args.nights),
+            searchedAt,
+            provider: "web",
+            offers,
+          },
+        };
+      }
+    }
+  }
+  return fallback ?? (await ctx.lodging.search(query, signal));
+}
 
 export const searchLodging = defineTool({
   name: "search_lodging",
   description:
-    "泊まりの旅で、祭りの会場の近くの宿の空きと1泊の料金を、宿泊予約の API で調べる（安い順に5件まで）。" +
+    "泊まりの旅で、祭りの会場の近くに泊まる宿を調べて提案する。宿泊予約の API で空きと1泊の料金を調べ（安い順に5件まで）、" +
+    "使えないときや空きがないときは、Web で観点（会場の近く・駅の近く・予算・家族向け）ごとに並べて調べ、突き合わせて1〜3件を選ぶ（provider が web）。" +
     "人数と宿の予算は聞き取った条件を使う（渡せば上書き）。予算の合計と上限を超えるかは budget に計算して返す。" +
+    "会場からの距離と移動の目安は fromVenue に計算して返す。" +
     "宿の名前・料金・予約のページは結果にあるものだけを使い、調べた時刻（searchedAt）と notice を必ず添えて伝える。" +
     "status が unavailable のときは宿の名前を出さず、泊まる地域だけを案内する。" +
     "結果は相談に残り、旅程を保存するとき、チェックインの日の泊まりに候補として付く。",
@@ -1180,7 +1296,7 @@ export const searchLodging = defineTool({
       .min(0.5)
       .max(MAX_SEARCH_RADIUS_KM)
       .optional()
-      .describe(`会場からの半径（km）。省略すると ${MAX_SEARCH_RADIUS_KM}`),
+      .describe(`空室検索の会場からの半径（km）。省略すると ${MAX_SEARCH_RADIUS_KM}`),
     party: PartySchema.optional().describe("人数。省略すると聞き取った条件の人数"),
     budget: LodgingBudgetSchema.optional().describe(
       "宿の予算の上限（1人あたり）。省略すると聞き取った条件の予算",
@@ -1195,31 +1311,23 @@ export const searchLodging = defineTool({
     const budget = args.budget ?? ctx.session.conditions.lodgingBudget;
     if (args.checkIn < ctx.today()) throw new ToolError("今日より前の日の宿は調べられません");
     const venue = { lat: festival.venue.lat, lng: festival.venue.lng };
-    const outcome = await ctx.lodging.search(
-      {
-        checkIn: args.checkIn,
-        nights: args.nights,
-        party,
-        near: venue,
-        radiusKm: args.radiusKm ?? MAX_SEARCH_RADIUS_KM,
-      },
-      signal,
-    );
+    const outcome = await findLodging(ctx, festival, args, party, budget, signal);
     if (outcome.status === "unavailable") {
       return { status: "unavailable", reason: outcome.reason, checkIn: args.checkIn };
     }
     // 時間切れや接続の切断のあとに、相談の状態を書き換えない
-    if (signal.aborted) throw new ToolError("止められたので、宿の空きは使いません");
-    const { search } = outcome;
+    if (signal.aborted) throw new ToolError("止められたので、宿の候補は使いません");
+    const search = withFromVenue(outcome.search, venue);
+    const provider = search.provider ?? ctx.lodging.provider;
     ctx.session.lodging.set(search.checkIn, search);
     return {
       status: "ok",
-      provider: ctx.lodging.provider,
+      provider,
       checkIn: search.checkIn,
       checkOut: search.checkOut,
       searchedAt: search.searchedAt,
-      notice: LODGING_NOTICE,
-      credit: ctx.lodging.provider === "rakuten" ? RAKUTEN_CREDIT : null,
+      notice: provider === "web" ? RESEARCHED_LODGING_NOTICE : LODGING_NOTICE,
+      credit: provider === "rakuten" ? RAKUTEN_CREDIT : null,
       party,
       budget: budget ?? null,
       tripBudget:
@@ -1230,14 +1338,22 @@ export const searchLodging = defineTool({
         id: offer.id,
         name: offer.name,
         nightlyTotalYen: offer.nightlyTotalYen,
+        perPersonNightYen: offer.perPersonNightYen ?? null,
+        priceNote: offer.priceNote ?? null,
+        summary: offer.summary ?? null,
         bookingUrl: offer.bookingUrl,
-        distanceKmFromVenue: offer.location === null ? null : distanceKm(venue, offer.location),
-        budget: checkLodgingBudget(offer.nightlyTotalYen, {
-          party,
-          nights: args.nights,
-          budget,
-          tripBudget: ctx.session.conditions.budget,
-        }),
+        fromVenue: offer.fromVenue ?? null,
+        perspectives: offer.perspectives ?? [],
+        sourceConfidence: offer.source.confidence,
+        budget:
+          offer.nightlyTotalYen === null
+            ? null
+            : checkLodgingBudget(offer.nightlyTotalYen, {
+                party,
+                nights: args.nights,
+                budget,
+                tripBudget: ctx.session.conditions.budget,
+              }),
       })),
     };
   },
