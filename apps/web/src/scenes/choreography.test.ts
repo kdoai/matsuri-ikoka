@@ -185,6 +185,31 @@ describe("カメラ", () => {
   });
 });
 
+describe("旅程の提案が出たあとの動き", () => {
+  it("作業中でも書類を運ぶ途中でも、待機位置に立ったまま動かない", () => {
+    const calm = { calm: true };
+    expect(
+      staffPlan(
+        "researcher",
+        staff({ phase: "working", motion: "flip", task: "find_festivals" }),
+        false,
+        calm,
+      ),
+    ).toMatchObject({ spot: "home", motion: "idle", props: [] });
+    expect(
+      staffPlan("planner", staff({ phase: "working", motion: "carry" }), false, calm),
+    ).toMatchObject({ spot: "home", motion: "idle", travel: "walk" });
+    expect(staffPlan("concierge", staff({}), false, { ...calm, asking: true }).motion).toBe("idle");
+  });
+
+  it("コンシェルジュの話す仕草と、しおりの完成の演出は残す", () => {
+    expect(staffPlan("concierge", staff({ motion: "talk" }), false, { calm: true }).motion).toBe(
+      "talk",
+    );
+    expect(staffPlan("concierge", staff({}), true, { calm: true }).motion).toBe("stamp");
+  });
+});
+
 describe("頼みと受け渡しの動き", () => {
   it("頼んでいる間、コンシェルジュは待機位置で相手を指す", () => {
     expect(staffPlan("concierge", staff({}), false, { asking: true })).toMatchObject({
