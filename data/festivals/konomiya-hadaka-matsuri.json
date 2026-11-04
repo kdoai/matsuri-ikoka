@@ -1,0 +1,213 @@
+{
+  "id": "konomiya-hadaka-matsuri",
+  "name": {
+    "ja": "国府宮はだか祭（儺追神事）",
+    "en": "Konomiya Hadaka Matsuri"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "愛知県",
+      "name": "稲沢市"
+    }
+  ],
+  "venue": {
+    "name": "尾張大國霊神社（国府宮）",
+    "lat": 35.2557,
+    "lng": 136.8045
+  },
+  "scaleTier": "L",
+  "popularity": "major",
+  "listedIn": ["walkerplus", "jalan", "tripadvisor", "jnto"],
+  "highlights": [
+    "数千の裸男が神男に触れようと押し寄せ、約1時間もみ合う",
+    "地区ごとの裸男が大きな「なおい笹」を掲げて参道を練り込む",
+    "重さ約4トンの大鏡餅が奉納され、翌朝から切り分けて授けられる",
+    "もみ合いの最後に手桶隊が裸男へ水を浴びせる"
+  ],
+  "trivia": [
+    {
+      "text": "767年、称徳天皇の命で全国の国分寺が悪疫を払う祈りをし、尾張の国司もこの社で祈ったのが始まりと伝わる",
+      "source": {
+        "url": "https://www.konomiya.or.jp/hadakamatsuri",
+        "title": "尾張大國霊神社 はだか祭のご案内",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "奉納する大鏡餅は高さ約2.35m、直径約2.4m、重さ約4トンある",
+      "source": {
+        "url": "https://www.konomiya.or.jp/hadakamatsuri",
+        "title": "尾張大國霊神社 はだか祭のご案内",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "裸男は42歳と25歳の厄年の男が中心で、尾張一円から集まる",
+      "source": {
+        "url": "https://aichinow.pref.aichi.jp/events/detail/229/",
+        "title": "Aichi Now 国府宮 はだか祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "旧暦1月13日に行うため、新暦の日付は毎年変わる",
+      "source": {
+        "url": "https://www.konomiya.or.jp/hadakamatsuri",
+        "title": "尾張大國霊神社 はだか祭のご案内",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_by_application",
+    "howToJoin": "裸男は地区ごとの集団で参加する。稲沢の近くに知人がいなければ、神社の案内にある和陽館に問い合わせる。裸になれない人は、名前と年齢を書いた笹用布（1枚500円、祭りの前々日まで）を奉納できる",
+    "rules": [
+      "ドローン・脚立・踏み台は使わない",
+      "雨や雪の日は、参道の太鼓橋など危ない場所が封鎖されることがある",
+      "警察官の指示に従う",
+      "神事の前後3日間は神社の駐車場が使えないので、電車で来る",
+      "裸男は、ふんどしの外から見える所に名前と連絡先か団体名を書き、飲み過ぎない",
+      "もみ合いの後に電車に乗る裸男は、膝下までの上着を着る（ふんどし姿では乗れない）"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "high",
+      "reason": "数千人の裸男が押し合い、主催者がもみ合いで転んだときの身の守り方を案内している"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "ドローン・脚立・踏み台の使用は禁止。神社は写真コンテストも開いている"
+    },
+    "sources": [
+      {
+        "url": "https://www.konomiya.or.jp/hadakamatsuri",
+        "title": "尾張大國霊神社 はだか祭のご案内（見学の注意・はだか男の心得・笹用布）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.konomiya.or.jp/access",
+        "title": "尾張大國霊神社 来社ご案内・地図（神事の前後3日間は駐車場を使えない）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.konomiya.or.jp/",
+        "title": "尾張大國霊神社 トップページ（国府宮はだか祭 写真コンテストのご案内）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-03-01",
+      "start": "15:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績（旧暦1月13日）。15:00から儺追神事",
+      "sources": [
+        {
+          "url": "https://aichinow.pref.aichi.jp/events/detail/229/",
+          "title": "Aichi Now 国府宮 はだか祭（2026年3月1日 15:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.konomiya.or.jp/",
+          "title": "尾張大國霊神社 お知らせ「3月1日 はだか祭に伴う交通規制について」",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-02-19",
+      "start": "15:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "旧暦1月13日。正午ごろから地区ごとの裸男がなおい笹を掲げて着き始め、15:00ごろ祭典、16:00ごろ（年により違う）から神男が儺追殿に入るまで約1時間もみ合う。見学の場所を取るなら昼ごろに来るよう案内がある。前日2/18は13:00大鏡餅奉納、翌2/20は3:00夜儺追神事、8:00から大鏡餅の餅切り",
+      "sources": [
+        {
+          "url": "https://www.konomiya.or.jp/hadakamatsuri",
+          "title": "尾張大國霊神社 はだか祭のご案内（次回は令和9年2月19日（金）15:00から）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "名鉄 国府宮駅",
+        "walkMinutes": [3, 8],
+        "note": "北口から"
+      },
+      {
+        "name": "JR 稲沢駅",
+        "walkMinutes": [15, 20]
+      }
+    ],
+    "fromHubs": [],
+    "parking": "none",
+    "trafficRestrictions": ["神事の前後3日間、神社の周りで交通規制がある"],
+    "sources": [
+      {
+        "url": "https://www.konomiya.or.jp/access",
+        "title": "尾張大國霊神社 来社ご案内・地図（国府宮駅北口から徒歩3分、稲沢駅から徒歩15分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "大鏡餅の切餅",
+        "note": "奉納した大鏡餅を祭りの翌朝から例年3日ほど、1人10袋まで授ける",
+        "sources": [
+          {
+            "url": "https://www.konomiya.or.jp/hadakamatsuri",
+            "title": "尾張大國霊神社 はだか祭のご案内",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.konomiya.or.jp/hadakamatsuri",
+      "title": "尾張大國霊神社 はだか祭のご案内",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://aichinow.pref.aichi.jp/events/detail/229/",
+      "title": "Aichi Now 国府宮 はだか祭（会場 尾張大國霊神社 国府宮参道）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "交通規制の範囲と時間（2026年の案内のPDFは画像で読めなかった）",
+    "名古屋駅など玄関口の駅からの所要時間",
+    "雨や雪のときの扱い（危ない場所を封鎖することだけが分かっている）",
+    "見学する人の服装・持ち物の案内",
+    "もみ合いが終わる時刻",
+    "屋台の有無",
+    "周辺の観光と食の場所"
+  ]
+}

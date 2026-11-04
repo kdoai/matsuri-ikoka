@@ -1,0 +1,146 @@
+{
+  "id": "nagataki-hakusan-jinja-muikamatsuri",
+  "name": {
+    "ja": "六日祭（花奪い祭り）",
+    "en": "Nagataki Hakusan Shrine Muika Matsuri (Hanabai Matsuri)"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "岐阜県",
+      "name": "郡上市"
+    }
+  ],
+  "venue": {
+    "name": "長滝白山神社 拝殿",
+    "lat": 35.9209,
+    "lng": 136.8307
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "高さ6mの天井に吊るした5つの花笠を、人梯子を組んで奪い合う",
+    "国の重要無形民俗文化財「長滝の延年」の舞が拝殿で奉納される",
+    "白山信仰の中心だった長滝白山神社・長瀧寺の古い社殿で行う"
+  ],
+  "trivia": [
+    {
+      "text": "延年は、大晦日から7日間の修正会の最終日に、若い僧や稚児が芸能で僧や神主を労ったもの",
+      "source": {
+        "url": "https://www.kankou-gifu.jp/event/detail_3146.html",
+        "title": "岐阜県観光公式サイト 岐阜の旅ガイド 六日祭（花奪い祭り）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "奪った花を持ち帰ると、豊蚕・豊作・家内安全・商売繁盛になると言われる",
+      "source": {
+        "url": "https://www.kankou-gifu.jp/event/detail_3146.html",
+        "title": "岐阜県観光公式サイト 岐阜の旅ガイド 六日祭（花奪い祭り）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "白鳥観光協会は、長滝の延年を約1000年の歴史がある芸能と紹介している",
+      "source": {
+        "url": "https://shirotori-gujo.com/html/kanko/nagatakihakusan.htm",
+        "title": "白鳥観光協会 長滝白山神社",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": []
+  },
+  "occurrences": [
+    {
+      "date": "2027-01-06",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年1月6日に行う決まりから見込んだ日（2027年の発表はまだ見つからない）。例年13:00から拝殿で延年を奉納し、その途中から花奪いが始まる。当日は長良川鉄道が臨時列車を出す",
+      "sources": [
+        {
+          "url": "https://shirotori-gujo.com/html/kanko/nagatakihakusan.htm",
+          "title": "白鳥観光協会 長滝白山神社（六日祭は毎年1月6日午後1時から）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kankou-gifu.jp/event/detail_3146.html",
+          "title": "岐阜県観光公式サイト 岐阜の旅ガイド 六日祭（花奪い祭り）（毎年1月6日、13:00〜）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "長良川鉄道 白山長滝駅",
+        "walkMinutes": [3, 8],
+        "note": "当日は長良川鉄道が臨時列車を出す（時刻は長良川鉄道の案内で確かめる）"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000851",
+        "title": "るるぶ&more. 六日祭(花奪い祭り)（白山長滝駅から徒歩3分、無料駐車場約110台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      },
+      {
+        "url": "https://www.kankou-gifu.jp/event/detail_3146.html",
+        "title": "岐阜県観光公式サイト 岐阜の旅ガイド 六日祭（花奪い祭り）（長良川鉄道の臨時列車）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.kankou-gifu.jp/event/detail_3146.html",
+      "title": "岐阜県観光公式サイト 岐阜の旅ガイド 六日祭（花奪い祭り）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://shirotori-gujo.com/html/kanko/nagatakihakusan.htm",
+      "title": "白鳥観光協会 長滝白山神社",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、終わりの時刻（13:00〜15:30とする掲載はウォーカープラスの神社のページにだけある）",
+    "見物の人が花奪いに加われるか、加わるときの決まり（人梯子を組む行事だが、主催者の注意書きが見つからない）",
+    "拝殿での見学の決まり、撮影の扱い、服装・持ち物、危険についての案内",
+    "大雪のときの扱い",
+    "美濃太田駅や郡上八幡駅など玄関口の駅からの所要時間と、臨時列車の時刻",
+    "駐車場の台数は、るるぶ&more.の掲載（約110台）だけで、公式の案内で確かめられていない",
+    "屋台の有無（るるぶ&more.には特産品の販売コーナーがあるとだけある）と、この日だけの食べもの",
+    "見物客の数",
+    "周辺の観光と食の場所（白山文化博物館と道の駅 白山文化の里 長滝は「年末年始休み」の期間が分からず、1月6日に開いているか確かめられないため入れていない）"
+  ]
+}

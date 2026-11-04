@@ -1,0 +1,177 @@
+{
+  "id": "matsunoyama-mukonage-suminuri",
+  "name": {
+    "ja": "むこ投げ・すみ塗り",
+    "en": "Mukonage and Suminuri in Matsunoyama Onsen"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "新潟県",
+      "name": "十日町市"
+    }
+  ],
+  "venue": {
+    "name": "松之山温泉湯本 薬師堂付近",
+    "lat": 37.0643,
+    "lng": 138.5967
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "前の年に結婚した婿を、薬師堂の上から雪の斜面へ投げ落とす",
+    "塞の神の灰と雪で作った墨を、見物人も一緒に顔へ塗り合う",
+    "雪深い温泉街で行う小正月の奇祭。終わったら温泉で温まれる"
+  ],
+  "trivia": [
+    {
+      "text": "投げられるのは前年に結ばれた婿で、薬師堂の下およそ5mの雪の斜面へ落とされる",
+      "source": {
+        "url": "https://www.city.tokamachi.lg.jp/material/files/group/1/mukonagesuminuri2026wokaisai.pdf",
+        "title": "十日町市 報道資料「むこ投げすみ塗り」を開催します（2026年）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "よそ者に集落の娘を取られた腹いせが、形を変えて残ったものといわれる",
+      "source": {
+        "url": "https://www.city.tokamachi.lg.jp/material/files/group/1/mukonagesuminuri2026wokaisai.pdf",
+        "title": "十日町市 報道資料「むこ投げすみ塗り」を開催します（2026年）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "すみ塗りの墨は、塞の神を燃やした灰に雪を混ぜて作る",
+      "source": {
+        "url": "https://www.city.tokamachi.lg.jp/material/files/group/1/mukonagesuminuri2026wokaisai.pdf",
+        "title": "十日町市 報道資料「むこ投げすみ塗り」を開催します（2026年）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "婿投げとスミぬりは、それぞれ十日町市の指定文化財（風俗慣習）になっている",
+      "source": {
+        "url": "https://www.city.tokamachi.lg.jp/yukiguni/nihonisan/5479.html",
+        "title": "十日町市 日本遺産 構成文化財一覧表",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "すみ塗りは申し込みなしで、会場にいる観光客も墨を塗り合う。投げられる婿は前の年に結婚した夫婦から選び、毎年11月末日まで一般からも募集する",
+    "rules": [
+      "よい場所で見るために2〜3時間以上前から場所取りをする人がいて、観光客や報道で混み合う（2019年の紹介記事）"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "見物が中心で、観光客や報道で混み合うが、危険についての主催者の注意は見つからない（すみ塗りでは見物人の顔にも墨が塗られる）"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://niigata-kankou.or.jp/blog/detail_84.html",
+        "title": "新潟県観光協会 にいがた観光ナビ むこ投げ・すみ塗りの記事（2019年。観光客も墨を塗られる、2〜3時間以上前からの場所取り）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://niigata-kankou.or.jp/event/detail_2083.html",
+        "title": "新潟県観光協会 にいがた観光ナビ むこ投げ・すみ塗り（出場夫婦を毎年11月末日まで一般募集）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-15",
+      "start": "14:00",
+      "end": "16:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。14:00開始、14:30からむこ投げ、15:00からすみ塗り、16:00まで。主催は松之山温泉組合",
+      "sources": [
+        {
+          "url": "https://www.city.tokamachi.lg.jp/material/files/group/1/mukonagesuminuri2026wokaisai.pdf",
+          "title": "十日町市 報道資料「むこ投げすみ塗り」を開催します（2026年1月15日 14時〜16時）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-15",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年1月15日の決まりから見込んだ日（市と主催者の2027年の発表はまだない）。例年、14:00ごろ始まり、むこ投げ、15:00ごろからすみ塗り、16:00ごろまで",
+      "sources": [
+        {
+          "url": "https://niigata-kankou.or.jp/event/detail_2083.html",
+          "title": "新潟県観光協会 にいがた観光ナビ むこ投げ・すみ塗り（毎年1月15日。2027年1月15日と掲載）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://niigata-kankou.or.jp/event/detail_2083.html",
+        "title": "新潟県観光協会 にいがた観光ナビ むこ投げ・すみ塗り（ほくほく線まつだい駅からタクシー約20分・路線バス約25分、駐車場は台数に限りあり）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000898",
+        "title": "るるぶ&more. 奇祭 むこ投げ・すみ塗り（バス「松之山温泉」から徒歩5分、駐車場50台・無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.city.tokamachi.lg.jp/material/files/group/1/mukonagesuminuri2026wokaisai.pdf",
+      "title": "十日町市 報道資料「むこ投げすみ塗り」を開催します（会場 松之山温泉湯本 薬師堂付近）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://niigata-kankou.or.jp/event/detail_2083.html",
+      "title": "新潟県観光協会 にいがた観光ナビ むこ投げ・すみ塗り（会場 松之山温泉薬師堂。地図の位置）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の市と主催者の発表、時刻",
+    "大雪・荒天のときの扱い",
+    "服装と持ち物の案内",
+    "場所取りの決まり、撮影の扱い",
+    "すみ塗りに加わりたくないときに避けられるかどうか",
+    "越後湯沢駅など玄関口の駅から、まつだい駅までの所要時間",
+    "屋台の有無と、この日だけの食べもの",
+    "周辺の観光と食の場所、日帰り温泉や店の営業時間",
+    "見物客の数"
+  ]
+}

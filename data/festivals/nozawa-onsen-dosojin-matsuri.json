@@ -1,0 +1,230 @@
+{
+  "id": "nozawa-onsen-dosojin-matsuri",
+  "name": {
+    "ja": "野沢温泉の道祖神祭り",
+    "en": "Nozawa Onsen Dosojin Fire Festival"
+  },
+  "category": "fire",
+  "municipalities": [
+    {
+      "prefecture": "長野県",
+      "name": "下高井郡野沢温泉村"
+    }
+  ],
+  "venue": {
+    "name": "道祖神場（馬場の原）",
+    "lat": 36.9231,
+    "lng": 138.4434
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "jnto"],
+  "highlights": [
+    "火付け役の松明と、社殿を守る厄年の男たちが火をめぐってぶつかり合う",
+    "ブナの御神木で組んだ高さ約7mの社殿が、最後に炎に包まれる",
+    "長男が生まれた家の初灯籠が奉納され、社殿とともに燃やされる",
+    "翌朝、燃え残りの火で餅を焼くことができる"
+  ],
+  "trivia": [
+    {
+      "text": "1993年12月13日に、国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://online.bunka.go.jp/heritages/detail/199746",
+        "title": "文化遺産オンライン 野沢温泉の道祖神祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "社殿には長さ約18mのブナの御神木を5本使い、前の年の10月中旬に山から伐り出す",
+      "source": {
+        "url": "https://nozawakanko.jp/event/the-nozawa-onsen-dosojin-festival/",
+        "title": "野沢温泉観光協会 The Nozawa Onsen Dosojin Festival",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "社殿を守る火消し役は、42歳と25歳の厄年の男たちが務める",
+      "source": {
+        "url": "https://nozawakanko.jp/event/the-nozawa-onsen-dosojin-festival/",
+        "title": "野沢温泉観光協会 The Nozawa Onsen Dosojin Festival",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1863年から、毎年1月15日の行事として続けられてきたと紹介されている",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/H30-00628.html",
+        "title": "観光庁 多言語解説文データベース 野沢温泉の道祖神祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "15日の会場は入場券を持つ人だけが入れる。入場券は村の住民と村内に泊まる人に出され、泊まる宿に問い合わせる（2026年の案内）",
+      "社殿に火を付けるのは村の人だけで、観光客は見るだけ",
+      "瓶・缶・酒類を会場に持ち込まない",
+      "会場の近くでドローンを飛ばさない（法令違反として処罰の対象になる）",
+      "祭りの日は村内の道路の全域が駐車禁止。緊急車両や除雪車の通行を妨げない"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "松明で社殿に火を付け合う夜の火祭りを、入場券で区切られた会場で見る（見物人のけがについての主催者の注意書きは見つからない）"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "会場の近くでのドローンの飛行は禁止。そのほかの撮影の決まりは案内に見当たらない"
+    },
+    "sources": [
+      {
+        "url": "https://nozawakanko.jp/event/the-nozawa-onsen-dosojin-festival/",
+        "title": "野沢温泉観光協会 The Nozawa Onsen Dosojin Festival（2026年の来場者へのお願い：入場券、火付けは村民のみで観光客は見学のみ、持ち込み・ドローンの禁止、交通の注意）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.walkerplus.com/event/ar0420e490101/",
+        "title": "ウォーカープラス 野沢温泉の道祖神祭り（入場券は村民と村内宿泊者に発行）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-15",
+      "start": "20:30",
+      "end": "22:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。13日13:00ごろ御神木の里曳き、14日に社殿の組み立て、15日は19:00火元の儀式、19:30初灯籠の到着、20:00花火と道祖神太鼓（悪天候なら太鼓は中止）、20:30火元が着いて点火の攻防、22:00ごろ点火が終わり初灯籠を奉納。16日は道祖神場で餅焼き",
+      "sources": [
+        {
+          "url": "https://nozawakanko.jp/event/the-nozawa-onsen-dosojin-festival/",
+          "title": "野沢温泉観光協会 The Nozawa Onsen Dosojin Festival（2026年1月13日〜15日の日程）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-15",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年1月15日の決まりから見込んだ日（2027年の発表はまだない）。例年、13日に御神木の里曳き、14日に社殿の組み立てをし、15日の夜20:30ごろから火付けの攻防、22:00ごろまで",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/199746",
+          "title": "文化遺産オンライン 野沢温泉の道祖神祭り（公開日：毎年1月15日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.japan.travel/en/spot/2218/",
+          "title": "日本政府観光局 Nozawa Fire Festival（毎年1月15日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [
+      "祭りの日は村内の道路の全域が駐車禁止で、歩行者の規制もある（2026年の案内）"
+    ],
+    "sources": [
+      {
+        "url": "https://nozawakanko.jp/access/",
+        "title": "野沢温泉観光協会 アクセス（飯山駅から直通バス「野沢温泉ライナー」で約25分、冬の駐車場は有料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://nozawakanko.jp/event/the-nozawa-onsen-dosojin-festival/",
+        "title": "野沢温泉観光協会 The Nozawa Onsen Dosojin Festival（村内の駐車禁止）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://itcj.or.jp/japanese-festival/pageindices/index154.html",
+        "title": "地域伝統芸能活用センター 日本の祭り総集編（野沢温泉停留所から徒歩約5分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "道祖神場のお餅焼き",
+        "note": "祭りの翌日（2026年は16日の早朝から日没まで）、道祖神場の燃え残りの火で餅を焼ける。餅・網・トング・醤油などは自分で持っていく",
+        "sources": [
+          {
+            "url": "https://nozawakanko.jp/event/the-nozawa-onsen-dosojin-festival/",
+            "title": "野沢温泉観光協会 The Nozawa Onsen Dosojin Festival（1月16日 お餅焼き）",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://nozawakanko.jp/event/the-nozawa-onsen-dosojin-festival/",
+      "title": "野沢温泉観光協会 The Nozawa Onsen Dosojin Festival",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://online.bunka.go.jp/heritages/detail/199746",
+      "title": "文化遺産オンライン 野沢温泉の道祖神祭り（保護団体 野沢温泉村野沢組）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.japan.travel/en/spot/2218/",
+      "title": "日本政府観光局 Nozawa Fire Festival（会場は大湯から徒歩約5分の道祖神場。地図の位置）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://itcj.or.jp/japanese-festival/pageindices/index154.html",
+      "title": "地域伝統芸能活用センター 日本の祭り総集編（会場 馬場の原）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_350539/",
+      "title": "じゃらんnet 野沢温泉の道祖神祭り",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表、時刻、入場券の出し方（2026年は村の住民と村内に泊まる人だけに入場券を出した）",
+    "大雪・荒天のときの扱い（2026年は道祖神太鼓だけ悪天候で中止と案内）",
+    "服装と持ち物の案内",
+    "見物の立ち位置や、火の粉・混雑についての注意",
+    "長野駅など玄関口の駅から飯山駅までの所要時間",
+    "屋台の有無",
+    "周辺の観光と食の場所、外湯や店の営業時間",
+    "会場（道祖神場・馬場の原）の正確な位置",
+    "見物客の数"
+  ]
+}

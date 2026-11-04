@@ -1,0 +1,177 @@
+{
+  "id": "sakabe-no-fuyumatsuri",
+  "name": {
+    "ja": "坂部の冬祭り",
+    "en": "Sakabe Winter Festival"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "長野県",
+      "name": "下伊那郡天龍村"
+    }
+  ],
+  "venue": {
+    "name": "大森山諏訪神社",
+    "lat": 35.2193,
+    "lng": 137.8175
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "明け方、赤鬼が大鉞で松明を断ち切る「たいきり面」で火の粉が舞殿に散る",
+    "釜の湯を神に捧げて振りかける湯立神楽が、夕方から翌日の昼まで続く",
+    "子どもの花の舞から獅子・翁などの面の舞、狂言めいた演目まで並ぶ"
+  ],
+  "trivia": [
+    {
+      "text": "正長元年（1428年）に始まったと伝わる",
+      "source": {
+        "url": "https://www.pref.nagano.lg.jp/minamichi/minamichi-shokan/event/event/documents/r801.pdf",
+        "title": "長野県南信州地域振興局 南信州 冬の民俗芸能情報",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1978年、天龍村の霜月神楽の1つとして国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.cbr.mlit.go.jp/tenjyo/think/heritage/pdf/077.pdf",
+        "title": "国土交通省 中部地方整備局 伊那谷遺産 天龍村の霜月神楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "村の3地区の霜月神楽のうち、坂部は仮面の舞が多く内容が豊か",
+      "source": {
+        "url": "https://www.cbr.mlit.go.jp/tenjyo/think/heritage/pdf/077.pdf",
+        "title": "国土交通省 中部地方整備局 伊那谷遺産 天龍村の霜月神楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": ["暖かい服装"],
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "冬の山あいで夜を徹して行い、明け方には松明を断ち切って火の粉が舞殿に散る（見学についての主催者の注意は見当たらない）"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.pref.nagano.lg.jp/minamichi/minamichi-shokan/event/event/documents/r801.pdf",
+        "title": "長野県南信州地域振興局 南信州 冬の民俗芸能情報（暖かい服装でのお願い）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.go-nagano.net/tradition-and-culture/id22634",
+        "title": "長野県観光機構 Go! NAGANO 南信州で楽しむ民俗芸能（たいきり面で火の粉が散る）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-04",
+      "start": "18:30",
+      "end": "12:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。4日18:30からお練り、夜通し舞が続き、翌5日の朝5時ごろたいきり面、昼12時ごろ終わる",
+      "sources": [
+        {
+          "url": "https://www.pref.nagano.lg.jp/minamichi/minamichi-shokan/event/event/documents/r801.pdf",
+          "title": "長野県南信州地域振興局 南信州 冬の民俗芸能情報（2026年1月4日 18:30〜お練り）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-04",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年1月4日・5日に行う決まりから見込んだ日（2027年の発表はまだ見つからない）。例年は4日18:30ごろにお練り、5日の朝5時ごろにたいきり面、昼12時ごろに終わる",
+      "sources": [
+        {
+          "url": "https://www.go-nagano.net/tradition-and-culture/id22634",
+          "title": "長野県観光機構 Go! NAGANO 南信州で楽しむ民俗芸能（坂部の冬祭り 1月4日・5日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/159568",
+          "title": "文化遺産オンライン 坂部の冬祭の芸能（毎年1月4日・5日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.pref.nagano.lg.jp/minamichi/minamichi-shokan/event/event/documents/r801.pdf",
+        "title": "長野県南信州地域振興局 南信州 冬の民俗芸能情報（駐車場は神社の上に約10台、神社内に休憩所）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.cbr.mlit.go.jp/tenjyo/think/heritage/pdf/077.pdf",
+        "title": "国土交通省 中部地方整備局 伊那谷遺産 天龍村の霜月神楽（天龍峡ICから45km、車で1時間30分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.pref.nagano.lg.jp/minamichi/minamichi-shokan/event/event/documents/r801.pdf",
+      "title": "長野県南信州地域振興局 南信州 冬の民俗芸能情報（坂部の冬祭り、大森山諏訪神社）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://online.bunka.go.jp/heritages/detail/159568",
+      "title": "文化遺産オンライン 坂部の冬祭の芸能（天竜村坂部の諏訪神社）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://maps.gsi.go.jp/#17/35.2193/137.8175/",
+      "title": "地理院地図 坂部の「諏訪社」の注記（会場の緯度・経度）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と時刻",
+    "最寄り駅と行き方（JR飯田線の駅からの道のり、送迎の有無、夜通しの行事の行き帰りの公共交通）",
+    "飯田駅など玄関口の駅からの所要時間",
+    "大雪のときの扱いと、道路の凍結への注意",
+    "見学の決まり（舞殿の中に入れるか、立ち位置）、撮影の扱い、持ち物",
+    "屋台の有無と、この日だけの食べもの",
+    "周辺の観光と食の場所",
+    "見物客の数"
+  ]
+}
