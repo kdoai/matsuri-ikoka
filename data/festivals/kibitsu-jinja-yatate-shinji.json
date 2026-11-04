@@ -1,0 +1,241 @@
+{
+  "id": "kibitsu-jinja-yatate-shinji",
+  "name": {
+    "ja": "矢立の神事",
+    "en": "Yatate Shinji of Kibitsu Shrine"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "岡山県",
+      "name": "岡山市"
+    }
+  ],
+  "venue": {
+    "name": "吉備津神社（矢置岩）",
+    "lat": 34.6698,
+    "lng": 133.853
+  },
+  "scaleTier": "XS",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu"],
+  "highlights": [
+    "温羅退治の伝説にちなみ、矢置岩から四隅の方角へ神矢を放つ",
+    "正月三日に、鬼の侵入を防ぐ四方祓として行う年頭の神事",
+    "国宝の本殿・拝殿をもつ吉備津神社の境内で見られる"
+  ],
+  "trivia": [
+    {
+      "text": "古くは奉納された桜羽や白羽の矢を岩に供えて祈り、のちに御蔵矢神社へ納めた",
+      "source": {
+        "url": "https://www.kibitujinja.com/about/yadate.php",
+        "title": "吉備津神社 矢立の神事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "一度は途絶えたが、昭和35年に岡山弓道連盟の奉仕で復活した",
+      "source": {
+        "url": "https://www.kibitujinja.com/about/yadate.php",
+        "title": "吉備津神社 矢立の神事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "矢は艮・巽・坤・乾、つまり北東・南東・南西・北西の四隅へ向けて放つ",
+      "source": {
+        "url": "https://www.kibitujinja.com/about/yadate.php",
+        "title": "吉備津神社 矢立の神事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "廻廊を除く建物の中には許可なく入らない",
+      "文化財の建物に触れず、紙吹雪やシャボン玉などで汚さない",
+      "心静かに参拝する"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": {
+      "policy": "restricted",
+      "note": "祈祷中の撮影・録音は不可。許可なく他人を撮らない。営利の撮影は社務所で撮影許可証を受ける"
+    },
+    "sources": [
+      {
+        "url": "https://kibitujinja.com/news/1189.html",
+        "title": "吉備津神社 撮影について",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kibitujinja.com/about/yadate.php",
+        "title": "吉備津神社 矢立の神事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-03",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "正殿で神事のあと、神矢を矢置岩へ運び、四隅の方角へ矢を放つ",
+      "sources": [
+        {
+          "url": "https://www.okayama-kanko.jp/event/12798",
+          "title": "晴れの国おかやま観光情報 【2026年】吉備津神社「矢立の神事」（2026年1月3日、毎年1月3日開催）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.walkerplus.com/event/ar0833e579227/data.html",
+          "title": "ウォーカープラス 吉備津神社 矢立の神事（2026年1月3日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-03",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "神社は毎年正月三日に行うと案内している（2027年の発表はまだない）。例年、正殿での神事のあと、矢置岩で四隅の方角へ矢を放つ",
+      "sources": [
+        {
+          "url": "https://www.kibitujinja.com/event/",
+          "title": "吉備津神社 年中行事（1月3日 矢立の神事）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kibitujinja.com/about/yadate.php",
+          "title": "吉備津神社 矢立の神事（年頭の正月三日に斎行）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR吉備線 吉備津駅",
+        "walkMinutes": [10, 15],
+        "note": "神社の案内で徒歩約10分（るるぶ&more.は約15分）"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "岡山駅",
+        "minutes": [17, 27],
+        "route": "JR吉備線（桃太郎線）、乗り換えなし（神社のアクセス案内で約17分）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.kibitujinja.com/traffic/",
+        "title": "吉備津神社 アクセス（岡山駅から吉備津駅まで約17分、徒歩約10分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.okayama-kanko.jp/event/12798",
+        "title": "晴れの国おかやま観光情報 吉備津神社「矢立の神事」（駐車場 普通車400台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000865",
+        "title": "るるぶ&more. 矢立の神事（駐車場400台、整理料500円（1月1～5日頃まで）（予定））",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "kibitsuhiko-jinja",
+      "name": "吉備津彦神社",
+      "kind": "sightseeing",
+      "summary": "吉備の中山のふもとで大吉備津日子命をまつる、桃太郎伝説の発祥の地と伝わる神社。山には奥宮の磐座がある。18時に閉門し、翌朝6時に開門する",
+      "location": {
+        "lat": 34.6753,
+        "lng": 133.8596
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "06:00",
+        "close": "18:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.kibitsuhiko.or.jp/",
+          "title": "吉備津彦神社（午後6時閉門、午前6時開門）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.kibitujinja.com/about/yadate.php",
+      "title": "吉備津神社 矢立の神事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.kibitujinja.com/event/",
+      "title": "吉備津神社 年中行事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.okayama-kanko.jp/event/12798",
+      "title": "晴れの国おかやま観光情報 吉備津神社「矢立の神事」",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.kibitujinja.com/",
+      "title": "吉備津神社（国宝 本殿・拝殿）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "神事の開始と終わりの時刻",
+    "2027年の開催の発表",
+    "見物できる場所と、矢を放つときの見学の注意",
+    "危険度（矢を放つ場の近くでの注意）",
+    "服装・持ち物",
+    "雨や雪のときの扱い",
+    "神事の見物客の数",
+    "岡山駅から吉備津駅までの正確な所要時間",
+    "露店の有無と、祭りの日に食べられる地元の味",
+    "1月3日に開いている食事の店と、吉備津彦神社のほかの周辺の観光"
+  ]
+}

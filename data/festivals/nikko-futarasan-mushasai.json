@@ -1,0 +1,210 @@
+{
+  "id": "nikko-futarasan-mushasai",
+  "name": {
+    "ja": "武射祭",
+    "en": "Mushasai Festival"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "栃木県",
+      "name": "日光市"
+    }
+  ],
+  "venue": {
+    "name": "日光二荒山神社中宮祠",
+    "lat": 36.7456,
+    "lng": 139.4868
+  },
+  "scaleTier": "XS",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "宮司が境内の上神橋から「ヤー」の掛け声とともに一番矢の鏑矢を放つ",
+    "烏帽子・狩衣の神官と弓道家が、中禅寺湖の上を赤城山の方へ次々に矢を射る",
+    "射られた矢を見つけて持ち帰ると、その年は良いことがあると言われる"
+  ],
+  "trivia": [
+    {
+      "text": "二荒山の神が赤城山の神と争い、弓の名人の子孫の助けで勝ったという神戦伝説に基づく",
+      "source": {
+        "url": "https://www.city.nikko.lg.jp/material/files/group/25/kankougeppou20260101.pdf",
+        "title": "日光市 祭り・イベント情報（2026年1月1日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "室町時代から続く神事とされる",
+      "source": {
+        "url": "https://www.city.nikko.lg.jp/material/files/group/25/kankougeppou20260101.pdf",
+        "title": "日光市 祭り・イベント情報（2026年1月1日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "神社の境内で神事を見学する行事で、混雑や危険についての主催者の注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.nikko.lg.jp/material/files/group/25/kankougeppou20260101.pdf",
+        "title": "日光市 祭り・イベント情報（2026年1月1日）（武射祭の内容）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.visitnikko.jp/en/spots/mushasai-festival/",
+        "title": "日光市観光協会 Nikko Official Guide Mushasai Festival（矢を見つけて持ち帰る）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-04",
+      "start": "10:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の回（日光市の案内）。10:00から、宮司が上神橋から一番矢の鏑矢を放ち、続いて神官と弓道家が赤城山の方へ矢を射る",
+      "sources": [
+        {
+          "url": "https://www.city.nikko.lg.jp/material/files/group/25/kankougeppou20260101.pdf",
+          "title": "日光市 祭り・イベント情報（2026年1月1日）（1/4（日）10:00〜 武射祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-04",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2027年の発表はまだない）。日光市観光協会の案内の「毎年1月4日」から見込んだ日で、2027年は月曜日。2026年は10:00から行われる予定だった",
+      "sources": [
+        {
+          "url": "https://www.visitnikko.jp/en/spots/mushasai-festival/",
+          "title": "日光市観光協会 Nikko Official Guide Mushasai Festival（January 4 every year）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "東武バス 二荒山神社中宮祠バス停",
+        "walkMinutes": [1, 6],
+        "note": "JR 日光駅・東武 東武日光駅から湯元温泉行きのバスで約55分。日光市の案内では、バス停から「徒歩すぐ」（約1分として幅にした）"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.city.nikko.lg.jp/material/files/group/25/kankougeppou20260101.pdf",
+        "title": "日光市 祭り・イベント情報（2026年1月1日）（湯元温泉行きバス約55分、駐車場あり（有料））",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "kegon-falls-elevator",
+      "name": "華厳滝エレベーター",
+      "kind": "sightseeing",
+      "summary": "エレベーターで約100m下の観瀑台へ降り、落差97mの華厳滝を間近に見られる。予約は要らず先着順",
+      "location": {
+        "lat": 36.7389,
+        "lng": 139.5035
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "16:30"
+      },
+      "closedDays": null,
+      "price": "往復 大人600円、小学生400円",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.kegon.jp/info/",
+          "title": "華厳滝エレベーター 営業時間・料金（12月1日〜2月28日 9:00〜16:30、日光市中宮祠2479-2）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kegon.jp/",
+          "title": "華厳滝エレベーター（落差97m、約100m下へ降りる）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E6%A0%83%E6%9C%A8%E7%9C%8C%E6%97%A5%E5%85%89%E5%B8%82%E4%B8%AD%E5%AE%AE%E7%A5%A02479-2",
+          "title": "国土地理院 住所検索 日光市中宮祠2479-2",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.nikko.lg.jp/material/files/group/25/kankougeppou20260101.pdf",
+      "title": "日光市 祭り・イベント情報（2026年1月1日）（武射祭 日光二荒山神社中宮祠）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.visitnikko.jp/en/spots/mushasai-festival/",
+      "title": "日光市観光協会 Nikko Official Guide Mushasai Festival",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20000931",
+      "title": "るるぶ&more. 武射祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    },
+    {
+      "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E4%BA%8C%E8%8D%92%E5%B1%B1%E7%A5%9E%E7%A4%BE%E4%B8%AD%E5%AE%AE%E7%A5%A0",
+      "title": "国土地理院 地名検索 二荒山神社中宮祠（緯度・経度）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "神事の終わりの時刻",
+    "雨や雪、湖の凍結のときの扱い",
+    "矢を拾ってよい場所と、拾ったあとの扱いの決まり（神社の案内を確かめていない）",
+    "見学の場所の決まりと撮影の決まり",
+    "服装と持ち物",
+    "主要駅（浅草駅など）から東武日光駅・日光駅までの所要時間",
+    "駐車場の台数（るるぶ&more.では50台・無料とするが、日光市の案内では有料）",
+    "露店の有無",
+    "周辺の食事の場所（1月4日に開いていると確かめられた店がない）",
+    "華厳滝エレベーターの定休日と、会場からの徒歩の時間"
+  ]
+}

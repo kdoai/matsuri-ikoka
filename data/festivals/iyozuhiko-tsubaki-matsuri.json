@@ -1,0 +1,357 @@
+{
+  "id": "iyozuhiko-tsubaki-matsuri",
+  "name": {
+    "ja": "椿まつり",
+    "en": "Tsubaki Matsuri of Iyozuhiko Shrine"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "愛媛県",
+      "name": "松山市"
+    }
+  ],
+  "venue": {
+    "name": "伊豫豆比古命神社（椿神社）",
+    "lat": 33.8093,
+    "lng": 132.7718
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan"],
+  "highlights": [
+    "掛け声も揺さぶりもなく神輿が夜道を進む「お忍びの渡御」",
+    "守り金を借り、翌年倍にして返す「貸銭神事」",
+    "この祭りでしか手に入らない縁起飴と、参道に並ぶ約800店の露店",
+    "初日0時から最終日まで72時間、昼夜通して開く春を呼ぶ祭り"
+  ],
+  "trivia": [
+    {
+      "text": "初日の午前0時に大太鼓で始まり、最終日まで72時間、夜も休まず続く",
+      "source": {
+        "url": "https://tubaki.or.jp/tsubaki-festival/",
+        "title": "伊豫豆比古命神社 椿まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "旧暦正月8日の例祭日にちなみ、古老は「お八日（おようか）」とも呼ぶ",
+      "source": {
+        "url": "https://tubaki.or.jp/tsubaki-festival/",
+        "title": "伊豫豆比古命神社 椿まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "渡御の道筋の家々は、正月の輪じめなどを焚く「合せ火」で神輿を迎える",
+      "source": {
+        "url": "https://tubaki.or.jp/tsubaki-festival/",
+        "title": "伊豫豆比古命神社 椿まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "大椿の下で山の幸と海の幸を交換する市が開かれた、という話が伝わる",
+      "source": {
+        "url": "https://tubaki.or.jp/tsubaki-festival/",
+        "title": "伊豫豆比古命神社 椿まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "3日間は昼夜とも参拝でき、貸銭神事では氏名や住所を問われずに守り金を借り、翌年倍にして返す",
+    "rules": [
+      "期間中は神社の駐車場が閉鎖されるので、公共交通機関で行く",
+      "古いお札・お守りは鳥居前の道路を渡った交番横の古神札納所へ返す。仏具・寺院のお札・人形などは返納できない",
+      "23時から翌朝8時までは、お札・お守り・御朱印の授与は授与所①だけで受け付ける"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "3日間で約50万人が参拝し、神社へ向かう県道が全面通行止めになるほど混み合う"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://tubaki.or.jp/tsubaki-festival/",
+        "title": "伊豫豆比古命神社 椿まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://tubaki.or.jp/access/",
+        "title": "伊豫豆比古命神社 アクセス（椿まつり期間中は駐車場を閉鎖）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-02-23",
+      "start": "00:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "初日。午前0時に開門し、3日間とも夜通し参拝できる",
+      "sources": [
+        {
+          "url": "https://matsuyama-sightseeing.com/event/15-2/",
+          "title": "松山市公式観光WEBサイト 椿まつり（2026年2月23日〜25日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://tubaki.or.jp/tsubaki-festival/",
+          "title": "伊豫豆比古命神社 椿まつり（旧暦1月7日〜9日の決まりと各日の神事の時刻。日程は令和9年以降を掲載）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-24",
+      "start": "09:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "中日。9:00 春季例大祭、18:00 出御祭とお忍びの渡御、18:30 宮出しと合せ火、20:00 御旅所祭、21:00 還御祭（宮入り）",
+      "sources": [
+        {
+          "url": "https://matsuyama-sightseeing.com/event/15-2/",
+          "title": "松山市公式観光WEBサイト 椿まつり（2026年2月23日〜25日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://tubaki.or.jp/tsubaki-festival/",
+          "title": "伊豫豆比古命神社 椿まつり（旧暦1月7日〜9日の決まりと各日の神事の時刻。日程は令和9年以降を掲載）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-25",
+      "start": "18:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "最終日。終日参拝でき、18:00 後宮祭",
+      "sources": [
+        {
+          "url": "https://matsuyama-sightseeing.com/event/15-2/",
+          "title": "松山市公式観光WEBサイト 椿まつり（2026年2月23日〜25日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://tubaki.or.jp/tsubaki-festival/",
+          "title": "伊豫豆比古命神社 椿まつり（旧暦1月7日〜9日の決まりと各日の神事の時刻。日程は令和9年以降を掲載）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-02-13",
+      "start": "00:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "初日（旧暦1月7日）。午前0時に開門し、3日間とも夜通し参拝できる",
+      "sources": [
+        {
+          "url": "https://tubaki.or.jp/tsubaki-festival/",
+          "title": "伊豫豆比古命神社 椿まつり（令和9年は2月13日〜15日、神事の時刻）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://tubaki.or.jp/",
+          "title": "伊豫豆比古命神社 公式サイト（令和9年椿まつり 2月13日〜15日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-02-14",
+      "start": "09:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "中日（旧暦1月8日）。9:00 春季例大祭、18:00 出御祭とお忍びの渡御、18:30 宮出しと合せ火、20:00 御旅所祭、21:00 還御祭（宮入り）",
+      "sources": [
+        {
+          "url": "https://tubaki.or.jp/tsubaki-festival/",
+          "title": "伊豫豆比古命神社 椿まつり（令和9年は2月13日〜15日、神事の時刻）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://tubaki.or.jp/",
+          "title": "伊豫豆比古命神社 公式サイト（令和9年椿まつり 2月13日〜15日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-02-15",
+      "start": "18:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "最終日（旧暦1月9日）。終日参拝でき、18:00 後宮祭",
+      "sources": [
+        {
+          "url": "https://tubaki.or.jp/tsubaki-festival/",
+          "title": "伊豫豆比古命神社 椿まつり（令和9年は2月13日〜15日、神事の時刻）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://tubaki.or.jp/",
+          "title": "伊豫豆比古命神社 公式サイト（令和9年椿まつり 2月13日〜15日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "伊予鉄バス 椿前バス停",
+        "walkMinutes": [10, 15]
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "松山市駅",
+        "minutes": [20, 30],
+        "route": "伊予鉄バスで約20分（じゃらんnetの案内）"
+      }
+    ],
+    "parking": "none",
+    "trafficRestrictions": [
+      "期間中、国道33号線の交差点から神社までの県道と、はなみづき通りの交差点から神社までの県道が全面通行止め"
+    ],
+    "sources": [
+      {
+        "url": "https://matsuyama-sightseeing.com/spot/123-2/",
+        "title": "松山市公式観光WEBサイト 伊豫豆比古命神社（椿神社）（伊予鉄バス椿前から徒歩約10分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://tubaki.or.jp/access/",
+        "title": "伊豫豆比古命神社 アクセス（椿まつり期間中は駐車場を閉鎖）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://tubaki.or.jp/tsubaki-festival/",
+        "title": "伊豫豆比古命神社 椿まつり（県道の全面交通遮断）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.jalan.net/event/evt_353840/",
+        "title": "じゃらんnet 椿まつり（松山市駅からバスで約20分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "縁起飴",
+        "note": "椿まつりでしか手に入らない飴。参拝の人が多く買い求める",
+        "sources": [
+          {
+            "url": "https://matsuyama-sightseeing.com/event/15-2/",
+            "title": "松山市公式観光WEBサイト 椿まつり",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "matsuyama-castle",
+      "name": "松山城",
+      "kind": "sightseeing",
+      "summary": "江戸時代以前の天守が残る城。ロープウェイ・リフトの長者ヶ平から天守まで徒歩約10分。天守は12月第3水曜が休み",
+      "location": {
+        "lat": 33.8446,
+        "lng": 132.7666
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": [],
+      "price": "天守 大人520円、小学生160円",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.matsuyamajo.jp/guide/",
+          "title": "松山城 観覧ガイド（営業時間・料金・定休）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://matsuyama-sightseeing.com/spot/1-2/",
+          "title": "松山市公式観光WEBサイト 松山城",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://tubaki.or.jp/tsubaki-festival/",
+      "title": "伊豫豆比古命神社 椿まつり",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://matsuyama-sightseeing.com/event/15-2/",
+      "title": "松山市公式観光WEBサイト 椿まつり",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.walkerplus.com/event/ar0938e489990/",
+      "title": "ウォーカープラス 椿まつり（2024年の回）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "雨や雪のときの扱い",
+    "最終日の閉門の時刻",
+    "JR松山駅・松山市駅からのバスの系統と、祭りの期間の臨時便",
+    "撮影の決まり",
+    "服装・持ち物",
+    "渡御を見物できる場所",
+    "会場の近くで祭りの日に開いている食事の店と、松山城のほかの周辺の観光"
+  ]
+}

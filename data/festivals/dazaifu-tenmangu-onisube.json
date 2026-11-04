@@ -1,0 +1,244 @@
+{
+  "id": "dazaifu-tenmangu-onisube",
+  "name": {
+    "ja": "鬼すべ神事",
+    "en": "Onisube Fire Ritual at Dazaifu Tenmangu"
+  },
+  "category": "fire",
+  "municipalities": [
+    {
+      "prefecture": "福岡県",
+      "name": "太宰府市"
+    }
+  ],
+  "venue": {
+    "name": "太宰府天満宮 鬼すべ堂・沿道",
+    "lat": 33.5215,
+    "lng": 130.5354
+  },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "松葉や藁に御神火を灯し、鬼すべ堂に立てこもる鬼を煙でいぶし出す",
+    "煙を送る燻手と、堂の中から壁を叩いて反撃する鬼警固が激しく争う",
+    "同じ夜の鷽かえ神事では、木鷽を「かえましょ」の声で取り替え合う",
+    "氏子約300人の「鬼じゃ、鬼じゃ」の掛け声が境内に響く"
+  ],
+  "trivia": [
+    {
+      "text": "寛和2年（986）、道真公のひ孫にあたる菅原輔正が始めたと伝わる",
+      "source": {
+        "url": "https://www.dazaifutenmangu.or.jp/omatsuri/usokae-onisube",
+        "title": "太宰府天満宮 鷽かえ・鬼すべ神事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "氏子およそ300人が、鬼を払う燻手、鬼を守る鬼警固、鬼係などに分かれて務める",
+      "source": {
+        "url": "https://www.dazaifutenmangu.or.jp/omatsuri/usokae-onisube",
+        "title": "太宰府天満宮 鷽かえ・鬼すべ神事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "災難を除き、火除けを願う神事で、福岡県の無形民俗文化財に指定されている",
+      "source": {
+        "url": "https://www.crossroadfukuoka.jp/event/13582",
+        "title": "クロスロードふくおか 鬼すべ神事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "前に行う鷽かえ神事では、木鷽の中に金鷽が当たるものがあり、後日発表される",
+      "source": {
+        "url": "https://www.dazaifutenmangu.or.jp/omatsuri/usokae-onisube",
+        "title": "太宰府天満宮 鷽かえ・鬼すべ神事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.dazaifutenmangu.or.jp/omatsuri/usokae-onisube",
+        "title": "太宰府天満宮 鷽かえ・鬼すべ神事（境内や沿道で見学できる）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-07",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績（神社と県の観光サイトの2026年の告知は確かめられず、観光情報サイトとニュースサイトの掲載で確かめた）。鷽かえ神事のあと、21:00ごろ斎火を点火して鬼すべの山場を迎えた",
+      "sources": [
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000945",
+          "title": "るるぶ&more. 鬼すべ神事（2026年1月7日、21時ごろ斎火を点火）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://www.fukuoka-now.com/en/event/onisube-dazaifu-2026/",
+          "title": "Fukuoka Now Onisube Dazaifu 2026（1月7日、山場は21:00ごろ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-07",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年1月7日に行う決まりから見込んだ日（神社の2027年の発表はまだない）。福岡県の観光の案内は2027年1月7日（木）19:00ごろからと載せている。神社の案内では例年、15:00 本殿追儺祭、17:00 鬼面飾祭、18:00 鷽かえ神事（天神ひろば）、19:00〜 各所を出発、21:00ごろ 火渡し",
+      "sources": [
+        {
+          "url": "https://www.dazaifutenmangu.or.jp/omatsuri/usokae-onisube",
+          "title": "太宰府天満宮 鷽かえ・鬼すべ神事（毎年1月7日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.crossroadfukuoka.jp/event/13582",
+          "title": "クロスロードふくおか 鬼すべ神事（2027年1月7日、19:00ごろ〜、毎年1月7日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://dazaifu.org/english/event-schedule/",
+          "title": "太宰府観光協会 Event schedule（毎年1月7日の夜、鷽かえのあとに鬼すべ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "西鉄 太宰府駅",
+        "walkMinutes": [5, 10],
+        "note": "西鉄太宰府線。駅から徒歩約5分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "西鉄福岡（天神）駅",
+        "minutes": [35, 45],
+        "route": "西鉄天神大牟田線で二日市駅、太宰府線に乗り換えて太宰府駅へ"
+      },
+      {
+        "hub": "博多駅",
+        "minutes": [50, 60],
+        "route": "地下鉄空港線で天神駅、西鉄福岡（天神）駅から天神大牟田線、二日市駅で太宰府線に乗り換え"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.dazaifutenmangu.or.jp/access",
+        "title": "太宰府天満宮 アクセス（天神から約35分、博多から約50分、太宰府駅から徒歩約5分。太宰府駐車センター 8:00〜17:00）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.crossroadfukuoka.jp/event/13582",
+        "title": "クロスロードふくおか 鬼すべ神事（太宰府駅から徒歩約5分、周辺に有料駐車場あり）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "kyushu-national-museum",
+      "name": "九州国立博物館",
+      "kind": "sightseeing",
+      "summary": "アジアとの交流を軸に、日本の文化の成り立ちを見せる国立の博物館。月曜（祝日のときは翌日）と年末は休館。特別展の期間の土曜は19:00まで開く",
+      "location": {
+        "lat": 33.5161,
+        "lng": 130.5372
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["mon"],
+      "price": "文化交流展 一般700円、大学生350円、高校生以下・18歳未満・70歳以上は無料",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.kyuhaku.jp/visit/visit_top.html",
+          "title": "九州国立博物館 ご利用案内（開館時間・休館日・観覧料）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.crossroadfukuoka.jp/business/learning/13214",
+          "title": "クロスロードふくおか 九州国立博物館（太宰府市石坂4-7-2）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.dazaifutenmangu.or.jp/omatsuri/usokae-onisube",
+      "title": "太宰府天満宮 鷽かえ・鬼すべ神事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.dazaifutenmangu.or.jp/access",
+      "title": "太宰府天満宮 アクセス（太宰府市宰府4-7-1）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.crossroadfukuoka.jp/event/13582",
+      "title": "クロスロードふくおか 鬼すべ神事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の神社の発表と、各行事の時刻",
+    "見物の決まり（境内で立ち入れる場所、火と煙への備え）、服装・持ち物、撮影の扱い",
+    "危険度（主催者による、火の粉や煙・混雑についての注意が見つからない）",
+    "鬼すべが終わる時刻",
+    "雨や雪のときの扱い",
+    "夜の鬼すべの時間に使える駐車場（太宰府駐車センターは17:00まで）と交通規制",
+    "見物客の数",
+    "屋台の有無と、この日だけの食べもの",
+    "周辺の食の場所（祭りの日の営業を確かめられた店がまだない）",
+    "会場の正確な位置（鬼すべ堂の位置）"
+  ]
+}

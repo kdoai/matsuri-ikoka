@@ -1,0 +1,213 @@
+{
+  "id": "tennenji-shujo-onie",
+  "name": {
+    "ja": "天念寺修正鬼会",
+    "en": "Shujo Onie at Tennenji Temple"
+  },
+  "category": "fire",
+  "municipalities": [
+    {
+      "prefecture": "大分県",
+      "name": "豊後高田市"
+    }
+  ],
+  "venue": {
+    "name": "天念寺講堂",
+    "lat": 33.5786,
+    "lng": 131.5388
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "赤鬼と黒鬼に扮した僧侶が、燃える松明を手に講堂を練り歩く",
+    "鬼に尻や肩をたたかれると、無病息災のご利益があるとされる",
+    "男たちが松明を建物の石の土台にたたきつけ、競って火の粉を飛ばす",
+    "寺の前の川の真ん中に、不動明王を刻んだ巨石がある"
+  ],
+  "trivia": [
+    {
+      "text": "鬼は追い払う相手ではなく仏の化身とされ、火の粉を浴びた人に幸運を授けると考えられている",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/H30-01230.html",
+        "title": "観光庁 地域観光資源の多言語解説文データベース 天念寺耶馬（豊後高田市多言語解説協議会）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "法螺貝の音を合図に、男たちは寺の向かいを流れる冷たい川に入って身を清める",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/H30-01243.html",
+        "title": "観光庁 地域観光資源の多言語解説文データベース 天念寺（豊後高田市多言語解説協議会）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "天念寺耶馬と無動寺耶馬は、2017年10月に国の名勝に指定された",
+      "source": {
+        "url": "https://www.city.bungotakada.oita.jp/site/showanomachi/1265.html",
+        "title": "昭和の町・豊後高田市公式観光サイト 天念寺",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "鬼に体をたたいてもらう加持は、その場にいる参拝者も受けられる（申し込みの案内はない）",
+    "rules": "unknown",
+    "dress": ["火の粉が舞うので、服装に気をつける"],
+    "bring": "unknown",
+    "risk": {
+      "level": "high",
+      "reason": "鬼が振り回す燃える松明の火の粉が見物の人にかかり、市の案内も服装に注意を呼びかけている"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.bungotakada.oita.jp/site/showanomachi/1265.html",
+        "title": "昭和の町・豊後高田市公式観光サイト 天念寺（火の粉が舞うため服装に注意、鬼にたたかれるとご利益）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.mlit.go.jp/tagengo-db/H30-01230.html",
+        "title": "観光庁 地域観光資源の多言語解説文データベース 天念寺耶馬（参拝者が松明で打たれることを申し出る）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-02-13",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "市の今後のイベント一覧で、令和9年2月13日（土）、会場は天念寺講堂と発表（時刻は未発表）。毎年旧暦1月7日の夜に行う。旅行サイトによると例年は15:00ごろ昼の勤行、19:00ごろ川で身を清め、20:00ごろ大松明を立てて夜の勤行、22:00すぎに赤鬼・黒鬼が出る",
+      "sources": [
+        {
+          "url": "https://www.city.bungotakada.oita.jp/site/showanomachi/34674.html",
+          "title": "昭和の町・豊後高田市公式観光サイト 今後のイベント一覧（令和9年2月13日 天念寺修正鬼会）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.mlit.go.jp/tagengo-db/H30-01230.html",
+          "title": "観光庁 地域観光資源の多言語解説文データベース 天念寺耶馬（旧暦1月7日に行う）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://tabi-mag.jp/tennenji-onie/",
+          "title": "ニッポン旅マガジン 天念寺 修正鬼会（例年の時刻の流れ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [
+      {
+        "hub": "博多駅",
+        "minutes": [95, 105],
+        "route": "JR の特急で宇佐駅まで約1時間35分。宇佐駅から天念寺へは車"
+      },
+      {
+        "hub": "大分駅",
+        "minutes": [40, 50],
+        "route": "JR の特急で宇佐駅まで約40分。宇佐駅から天念寺へは車"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.city.bungotakada.oita.jp/site/showanomachi/16527.html",
+        "title": "昭和の町・豊後高田市公式観光サイト アクセス情報まとめ（博多駅・大分駅から宇佐駅まで特急）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.bungotakada.oita.jp/site/showanomachi/1265.html",
+        "title": "昭和の町・豊後高田市公式観光サイト 天念寺（昭和ロマン蔵から車で約15分、駐車場40台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "fukiji-bungotakada",
+      "name": "富貴寺",
+      "kind": "sightseeing",
+      "summary": "宇佐神宮の大宮司の氏寺として開かれた寺。国宝の大堂は九州で最も古い木造建築で、日本三阿弥陀堂の1つ。雨の日は大堂の中に入れない。昭和の町から車で約15分",
+      "location": {
+        "lat": 33.5393,
+        "lng": 131.5287
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "08:30",
+        "close": "16:30"
+      },
+      "closedDays": [],
+      "price": "一般・高校生500円、小・中学生150円",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.city.bungotakada.oita.jp/site/showanomachi/1251.html",
+          "title": "昭和の町・豊後高田市公式観光サイト 富貴寺",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.bungotakada.oita.jp/site/showanomachi/1265.html",
+      "title": "昭和の町・豊後高田市公式観光サイト 天念寺",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.bungotakada.oita.jp/site/showanomachi/34674.html",
+      "title": "昭和の町・豊後高田市公式観光サイト 今後のイベント一覧",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.mlit.go.jp/tagengo-db/H30-01243.html",
+      "title": "観光庁 地域観光資源の多言語解説文データベース 天念寺",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.mlit.go.jp/tagengo-db/H30-01230.html",
+      "title": "観光庁 地域観光資源の多言語解説文データベース 天念寺耶馬（松明を石の基礎にたたきつける場面、川の中の不動明王の巨石）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の各行事の時刻（市の発表は日付と会場だけ）",
+    "宇佐駅から天念寺までの公共交通と所要時間、祭りの夜の帰りの足",
+    "祭りの日の駐車場の扱いと交通規制",
+    "雪や雨のときの扱い",
+    "見物の決まり（立ち入りできる場所、撮影）と持ち物",
+    "見物客の数",
+    "屋台の有無と、祭りの日だけの食べ物",
+    "祭りの日に開いている近くの食事の店"
+  ]
+}

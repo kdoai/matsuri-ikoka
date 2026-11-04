@@ -1,0 +1,200 @@
+{
+  "id": "shimosakiyama-hetomato",
+  "name": {
+    "ja": "ヘトマト",
+    "en": "Hetomato Festival of Shimosakiyama"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "長崎県",
+      "name": "五島市"
+    }
+  ],
+  "venue": {
+    "name": "下崎山町一帯（白濱神社〜山城神社）",
+    "lat": 32.6628,
+    "lng": 128.873
+  },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "若者が長さ3mの大草履を担ぎ、見物の女性を乗せては何度も胴上げする",
+    "体にススを塗った若者が、藁の玉を奪い合う玉せせり",
+    "着飾った新婚の女性2人が、酒樽の上に乗って羽根つきをする",
+    "宮相撲から綱引きまで、豊作・大漁・子孫繁栄の祈りを1日で重ねる小正月の行事"
+  ],
+  "trivia": [
+    {
+      "text": "1987年1月8日に、国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.pref.nagasaki.jp/bunkadb/index.php/view/452",
+        "title": "長崎県の文化財 下崎山のヘトマト行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "担いで奉納する大草履は、長さ3mで重さは約300kgある",
+      "source": {
+        "url": "https://goto.nagasaki-tabinet.com/feature/traditional",
+        "title": "五島の観光情報 伝統行事の特集（へトマト）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "ヘトマトという行事の由来には、定まった説がない",
+      "source": {
+        "url": "https://www.city.goto.nagasaki.jp/s014/010/030/040/winter.html",
+        "title": "五島市 冬の行事（下崎山町のヘトマト）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "玉せせりの若者が体に塗るススは「ヘグラ」と呼ばれる",
+      "source": {
+        "url": "https://www.nagasaki-tabinet.com/event/51078",
+        "title": "ながさき旅ネット ヘトマト（国指定重要無形民俗文化財）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.nagasaki-tabinet.com/event/51078",
+        "title": "ながさき旅ネット ヘトマト（見物の娘さんを大草履に乗せて胴上げする）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-18",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。白濱神社での奉納相撲に始まり、羽つき・玉せせり・綱引きのあと、大草履を山城神社へ奉納する",
+      "sources": [
+        {
+          "url": "https://www.nagasaki-tabinet.com/event/51078",
+          "title": "ながさき旅ネット ヘトマト（2026年1月18日（日）、毎年1月第3日曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000916",
+          "title": "るるぶ&more. 下崎山のへトマト行事（2026年1月18日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-17",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年1月第3日曜日に行う決まりから見込んだ日（2027年の発表はまだない）。例年、白濱神社の奉納相撲に始まり、羽つき、玉せせり、綱引き、大草履の山城神社への奉納と続く",
+      "sources": [
+        {
+          "url": "https://www.nagasaki-tabinet.com/event/51078",
+          "title": "ながさき旅ネット ヘトマト（毎年1月第3日曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://goto.nagasaki-tabinet.com/feature/traditional",
+          "title": "五島の観光情報 伝統行事の特集（開催期間：1月の第三日曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "崎山口バス停",
+        "walkMinutes": [2, 7],
+        "note": "福江港からバスで約15分。バス停から徒歩2分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "福江港",
+        "minutes": [15, 25],
+        "route": "車で約15分。バスなら崎山口バス停まで約15分"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.nagasaki-tabinet.com/event/51078",
+        "title": "ながさき旅ネット ヘトマト（福江港から車で15分、駐車場約30台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000916",
+        "title": "るるぶ&more. 下崎山のへトマト行事（福江港からバス15分、崎山口バス停から徒歩2分、崎山漁港駐車場20台・無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.pref.nagasaki.jp/bunkadb/index.php/view/452",
+      "title": "長崎県の文化財 下崎山のヘトマト行事（五島市下崎山町、保護団体 下崎山町内会）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.goto.nagasaki.jp/s014/010/030/040/winter.html",
+      "title": "五島市 冬の行事（下崎山町のヘトマト、1月中旬）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.nagasaki-tabinet.com/event/51078",
+      "title": "ながさき旅ネット ヘトマト（白濱神社 五島市向町2430から始まる）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "各行事の時刻（始まりと終わり）",
+    "2027年の開催の発表",
+    "見物の決まり、大草履の胴上げへの備え、服装・持ち物、撮影の扱い",
+    "危険度（主催者による、見物人への注意が見つからない）",
+    "雨や荒天のときの扱い",
+    "駐車場の台数（観光の案内は約30台、るるぶ&more.は崎山漁港駐車場20台）",
+    "バスの路線と時刻",
+    "見物客の数と、行事に加わる人数",
+    "振る舞いの有無と、この日だけの食べもの",
+    "屋台の有無",
+    "周辺の観光と食の場所（祭りの日に開いていると確かめられた場所がまだない）",
+    "会場の正確な位置（白濱神社と山城神社、各行事の場所）"
+  ]
+}
