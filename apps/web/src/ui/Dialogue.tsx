@@ -100,11 +100,40 @@ function ReplyChoices({ retry }: { retry: boolean }) {
   const revising = hasItinerary && (stage === "itinerary" || stage === "revising");
   // 「少し調整する」を押したら、調整の選択肢に入れ替える
   const [adjusting, setAdjusting] = useState(false);
+  // 「この旅程で決める」は、押し間違えで再確認が始まらないよう、もう一度確かめてから送る
+  const [confirming, setConfirming] = useState(false);
   const other = (
     <Reply icon={<Ellipsis aria-hidden="true" className="size-5" />} onClick={focusComposer}>
       {t.dialogue.replies.other}
     </Reply>
   );
+  if (revising && confirming) {
+    return (
+      <ul
+        aria-label={t.dialogue.replies.decideConfirmLabel}
+        className="flex flex-wrap gap-2"
+        data-testid="reply-choices"
+      >
+        <Reply
+          primary
+          disabled={streaming}
+          icon={<CircleCheck aria-hidden="true" className="size-5" />}
+          onClick={() => {
+            setConfirming(false);
+            void actions.send(t.dialogue.replies.decideMessage);
+          }}
+        >
+          {t.dialogue.replies.decideConfirm}
+        </Reply>
+        <Reply
+          icon={<Undo2 aria-hidden="true" className="size-5" />}
+          onClick={() => setConfirming(false)}
+        >
+          {t.dialogue.replies.back}
+        </Reply>
+      </ul>
+    );
+  }
   if (revising && adjusting) {
     return (
       <ul
@@ -189,7 +218,10 @@ function ReplyChoices({ retry }: { retry: boolean }) {
           <Reply
             disabled={streaming}
             icon={<CircleCheck aria-hidden="true" className="size-5" />}
-            onClick={() => void actions.send(t.dialogue.replies.decideMessage)}
+            onClick={() => {
+              setConfirming(true);
+              window.requestAnimationFrame(focusDialogue);
+            }}
           >
             {t.dialogue.replies.decide}
           </Reply>

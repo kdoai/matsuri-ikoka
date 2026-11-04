@@ -14,9 +14,14 @@ export function parseCandidateView(stored: string | null): CandidateView {
 /** 「この祭りにする」を押せない理由。押せるときは null */
 export type ChooseBlock = "unconfirmed" | "busy";
 
+/** 公式以外の情報源や例年の日程で開催を確かめた候補（要事前確認。選べるが、出発の前に確かめる） */
+export function needsCheck(candidate: Pick<FestivalCandidate, "check">): boolean {
+  return candidate.check?.result === "needs_check";
+}
+
 export function chooseBlock(candidate: FestivalCandidate, streaming: boolean): ChooseBlock | null {
-  // 開催が確認できていない祭りは、確定した旅程に入れられない
-  if (!candidate.confirmed) return "unconfirmed";
+  // 開催の情報が確かめられていない祭りは、確定した旅程に入れられない（要事前確認の祭りは選べる）
+  if (!candidate.confirmed && !needsCheck(candidate)) return "unconfirmed";
   if (streaming) return "busy";
   return null;
 }

@@ -1,5 +1,9 @@
 import { FestivalSchema } from "@matsuri-ikoka/schema";
-import { fictionalFestival, fictionalItinerary } from "@matsuri-ikoka/schema/testing";
+import {
+  fictionalFestival,
+  fictionalItinerary,
+  fictionalSource,
+} from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
 import {
   fictionalFestivals,
@@ -10,7 +14,7 @@ import {
   SECOND_FESTIVAL_ID,
 } from "./testTrips";
 import { toShioriTrip } from "./trip";
-import { buildShioriView, UNKNOWN_JA } from "./viewModel";
+import { buildShioriView, NEEDS_CHECK_LABEL, UNKNOWN_JA } from "./viewModel";
 
 const lookup = lookupOf(fictionalFestivals());
 
@@ -60,6 +64,19 @@ describe("しおりの view-model", () => {
     const trip = fictionalOuting();
     trip.verification = { status: "pending" };
     expect(buildShioriView(trip, lookup).cover.verifiedLabel).toBeNull();
+    expect(buildShioriView(trip, lookup).cover.needsCheckLabel).toBeNull();
+  });
+
+  it("要事前確認の旅程には、出発の前に確かめるよう注意を出す", () => {
+    const trip = fictionalOuting();
+    trip.verification = {
+      status: "needs_check",
+      checkedAt: "2026-08-03T10:00:00+09:00",
+      sources: [fictionalSource("news", "single")],
+    };
+    const { cover } = buildShioriView(trip, lookup);
+    expect(cover.verifiedLabel).toBeNull();
+    expect(cover.needsCheckLabel).toBe(NEEDS_CHECK_LABEL);
   });
 
   it("日ごとに、出発・時刻の流れ・泊まる地域・帰りを出す", () => {

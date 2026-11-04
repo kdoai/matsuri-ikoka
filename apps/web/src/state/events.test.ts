@@ -137,6 +137,16 @@ describe("記録した相談を通す", () => {
     expect(shioriReady(state)).toBe(true);
     expect(state.ui.celebrating).toBe(true);
   });
+
+  it("要事前確認の旅程はしおりを開ける（変更・情報が見つからないときは開けない）", () => {
+    const state = playTurns(4);
+    const needsCheck = { ...state, verify: { ...state.verify, result: "needs_check" as const } };
+    expect(shioriReady(needsCheck)).toBe(true);
+    const notFound = { ...state, verify: { ...state.verify, result: "not_found" as const } };
+    expect(shioriReady(notFound)).toBe(false);
+    const changed = { ...state, verify: { ...state.verify, result: "changed" as const } };
+    expect(shioriReady(changed)).toBe(false);
+  });
 });
 
 describe("スタッフの動き", () => {

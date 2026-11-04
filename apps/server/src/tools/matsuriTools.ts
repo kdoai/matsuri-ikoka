@@ -9,6 +9,7 @@ import {
   ItinerarySchema,
   LocalTimeSchema,
   LodgingBudgetSchema,
+  MAX_CANDIDATES,
   MAX_NIGHTS,
   MAX_TRIP_DAYS,
   MaxTravelMinutesSchema,
@@ -54,6 +55,13 @@ import { festivalInArea, selectNearbySpots } from "../domain/nearby";
 import { occurrenceOn } from "../domain/planCheck";
 import { preferenceEffects } from "../domain/preferences";
 import { transportEffects } from "../domain/transport";
+import {
+  checkResearchedMinutes,
+  checkStartsAtOrigin,
+  estimateTravel,
+  normalizeStationName,
+  type TravelEstimate,
+} from "../domain/travelEstimate";
 import { decideVerification } from "../domain/verification";
 import { randomId } from "../session/sessionStore";
 import type { CandidateCheck } from "./candidateCheck";
@@ -113,6 +121,26 @@ function visitDate(ctx: ToolContext, festival: Festival, given?: IsoDate): IsoDa
 }
 
 const weatherKey = (festivalId: string, date: IsoDate) => `${festivalId}@${date}`;
+
+/** 出発の駅から会場までの所要時間の目安（駅の位置がなければ、データの主要駅からの所要時間だけ） */
+function travelEstimateFor(
+  ctx: ToolContext,
+  festival: Festival,
+  origin: string,
+): TravelEstimate | null {
+  if (ctx.stations !== undefined) {
+    return estimateTravel({ access: festival.access, venue: festival.venue, origin }, ctx.stations);
+  }
+  const minutes = travelMinutesFrom(festival.access, origin);
+  return minutes === null ? null : { minutes, basis: "data", nearestStation: null, viaHub: null };
+}
+
+/** 会場の最寄り駅の名前。データのアクセス案内の最初の駅、なければ駅の位置でいちばん近い駅 */
+function destinationStation(ctx: ToolContext, festival: Festival): string | null {
+  const listed = festival.access.stations[0]?.name;
+  if (listed !== undefined) return listed;
+  return ctx.stations?.nearest({ lat: festival.venue.lat, lng: festival.venue.lng })?.name ?? null;
+}
 
 const ItineraryItemDraftSchema = z
   .strictObject({ ...ItineraryItemSchema.shape })
@@ -197,6 +225,38 @@ async function checkCandidates(
   );
 }
 
+/**
+ * 候補を選ぶ前に開催を確かめる数。情報の取れない祭りは出さないので、出す数（3件）の倍を確かめる
+ */
+export const CANDIDATE_CHECK_POOL = MAX_CANDIDATES * 2;
+
+/**
+ * 確かめの結果で候補を選び直す。
+ * - 中止と分かった祭りと、どこからも開催の情報が取れなかった祭り（not_found）は出さない
+ * - requireInfo のとき（確かめる手段があるとき）は、確かめられず（上限など）データでも確認済みでない祭りも出さない
+ * - 公式で確かめられた祭り（確かめていなければ、データで確認済みの祭り）を先に、要事前確認、変更のあった祭りの順
+ * 同じ段の中は、日程とこだわりで並べた元の順を保つ
+ */
+export function pickVerifiedCandidates<T extends { confirmed: boolean }>(
+  items: readonly { match: T; check: CandidateCheck | null }[],
+  limit: number,
+  options: { requireInfo?: boolean } = {},
+): { match: T; check: CandidateCheck | null }[] {
+  const tier = ({ match, check }: { match: T; check: CandidateCheck | null }) => {
+    if (check === null) return match.confirmed ? 0 : 1;
+    return check.result === "as_planned" ? 0 : check.result === "needs_check" ? 1 : 2;
+  };
+  return items
+    .filter(({ match, check }) => {
+      if (check === null) return !options.requireInfo || match.confirmed;
+      return check.result !== "cancelled" && check.result !== "not_found";
+    })
+    .map((item, index) => ({ item, index }))
+    .sort((a, b) => tier(a.item) - tier(b.item) || a.index - b.index)
+    .slice(0, limit)
+    .map(({ item }) => item);
+}
+
 /** エージェントに返す確かめの結果 */
 function factCheckOf(check: CandidateCheck | null) {
   return check === null
@@ -204,15 +264,18 @@ function factCheckOf(check: CandidateCheck | null) {
     : { result: check.result, note: check.note ?? null, sources: check.sources };
 }
 
-/** 候補に確かめの結果を付ける。公式で確かめられたら確認済み、変更・中止なら未確認にする */
+/**
+ * 候補に確かめの結果を付ける。公式で確かめられたら確認済み。要事前確認・変更・中止は確認済みにしない
+ * （要事前確認の祭りは、画面で「要事前確認」と出して選べるようにする）
+ */
 function withCheck(candidate: FestivalCandidate, check: CandidateCheck | null): FestivalCandidate {
   if (check === null) return candidate;
   const confirmed =
     check.result === "as_planned"
       ? true
-      : check.result === "changed" || check.result === "cancelled"
-        ? false
-        : candidate.confirmed;
+      : check.result === "not_found"
+        ? candidate.confirmed
+        : false;
   return {
     ...candidate,
     confirmed,
@@ -312,17 +375,35 @@ export const searchFestivals = defineTool({
     const pool = ranges.expanded
       ? ctx.festivals.onDates(ranges.expanded.from, ranges.expanded.to)
       : [];
-    const result = searchFestivalDates(pool, {
+    const stations = ctx.stations;
+    const origin = args.origin;
+    const searched = searchFestivalDates(pool, {
       wish: args.when,
       today,
-      origin: args.origin,
+      origin,
       nights: args.nights,
       preferences: session.preferences,
       ...(maxTravelMinutes === undefined ? {} : { maxTravelMinutes }),
+      // 出発の駅の位置から、会場までの所要時間を見積もる（データに出発の駅からの所要時間がない祭りにも使う）
+      ...(stations === undefined
+        ? {}
+        : {
+            travelFor: (festival: Festival) =>
+              estimateTravel({ access: festival.access, venue: festival.venue, origin }, stations),
+          }),
+      limit: ctx.candidateChecks === undefined ? MAX_CANDIDATES : CANDIDATE_CHECK_POOL,
     });
 
-    // 候補を出す前に、開催日・時刻・状態を公式の情報で確かめる（3件を並べて動かす）
-    const checks = await checkCandidates(ctx, result.matches);
+    // 候補を出す前に、開催日・時刻・状態を公式の情報で確かめる（並べて動かす）。
+    // 出す数より多めに確かめ、確かめられた祭りを先に選ぶ
+    const pooledChecks = await checkCandidates(ctx, searched.matches);
+    const picked = pickVerifiedCandidates(
+      searched.matches.map((match, index) => ({ match, check: pooledChecks[index] ?? null })),
+      MAX_CANDIDATES,
+      { requireInfo: ctx.candidateChecks !== undefined },
+    );
+    const result = { ...searched, matches: picked.map((p) => p.match) };
+    const checks = picked.map((p) => p.check);
     const candidates: FestivalCandidate[] = result.matches.map((match, index) =>
       withCheck(toCandidate(match), checks[index] ?? null),
     );
@@ -334,9 +415,33 @@ export const searchFestivals = defineTool({
     if (result.tooFar.length > 0) {
       notes.push(`日帰りの移動の上限を超える祭りを${result.tooFar.length}件除きました`);
     }
-    if (maxTravelMinutes !== undefined && result.travelUnknown.length > 0) {
+    const shown = new Set(result.matches.map((m) => m.festival.id));
+    const unknown = result.travelUnknown.filter((id) => shown.has(id));
+    const uncertain = result.travelUncertain.filter((id) => shown.has(id));
+    if (maxTravelMinutes !== undefined && unknown.length > 0) {
       notes.push(
-        `出発地からの所要時間がデータにない祭りが${result.travelUnknown.length}件あります。上限に収まるかは分からないと伝えてください`,
+        `出発地からの所要時間が分からない祭りが${unknown.length}件あります。上限に収まるかは分からないと伝えてください`,
+      );
+    }
+    if (uncertain.length > 0) {
+      notes.push(
+        `駅の位置からの見積もりでは、上限に収まるか境目の祭りが${uncertain.length}件あります。収まらないかもしれないと伝えてください`,
+      );
+    }
+    const shownIds = new Set(picked.map((p) => p.match.festival.id));
+    const withoutInfo = searched.matches.filter((m, index) => {
+      if (shownIds.has(m.festival.id)) return false;
+      const result = pooledChecks[index]?.result;
+      return result === "not_found" || result === "cancelled";
+    }).length;
+    if (withoutInfo > 0) {
+      notes.push(
+        `開催の情報が見つからなかった・中止と分かった祭りを${withoutInfo}件、候補から外しました`,
+      );
+    }
+    if (picked.some((p) => p.check?.result === "needs_check")) {
+      notes.push(
+        "factCheck が needs_check の祭りは、公式以外の情報源や例年の日程で確かめたものです。「要事前確認」と伝え、出発の前に主催者の案内で確かめるよう添えてください",
       );
     }
     if (candidates.length === 0) notes.push("条件に合う祭りはデータにありませんでした");
@@ -374,6 +479,9 @@ export const searchFestivals = defineTool({
             note: o.note ?? null,
           })),
         travelMinutesEstimate: m.travelMinutes,
+        // data：祭りのデータの所要時間 / estimate：駅の位置からの見積もり（目安と伝える）
+        travelBasis: m.travelBasis,
+        travelFit: m.travelFit,
         // 候補を出す前の確かめ。null は確かめていない（上限や、確かめる手段がない）
         factCheck: factCheckOf(checks[index] ?? null),
         arrivalBufferMinutes: arrivalBufferMinutes(m.festival),
@@ -527,9 +635,21 @@ export const getAccess = defineTool({
     const transport = transportEffects(ctx.session.conditions);
     const { access } = festival;
     const hub = origin === null ? undefined : matchHub(access, origin);
+    const estimate = origin === null ? null : travelEstimateFor(ctx, festival, origin);
     const notes: string[] = [];
-    if (hub === undefined) {
-      notes.push("出発地からの所要時間はデータにありません。主要駅からの目安を使ってください");
+    if (origin !== null) {
+      notes.push(
+        `旅程は出発の駅（${origin}）から始めてください。主要駅（fromHubs）は出発の駅ではありません`,
+      );
+    }
+    if (hub === undefined && estimate !== null) {
+      notes.push(
+        "出発の駅からの所要時間はデータにないので、駅の位置から見積もりました（fromOrigin）。research_route で行き方を調べてから組んでください",
+      );
+    } else if (hub === undefined) {
+      notes.push(
+        "出発の駅からの所要時間は分かりません。research_route で行き方を調べてから組んでください",
+      );
     }
     if (move === "car" || transport.usesCar) {
       if (access.parking === "none") {
@@ -547,14 +667,26 @@ export const getAccess = defineTool({
       estimate: true,
       stations: access.stations.map((s) => ({ ...s, walkMinutesEstimate: s.walkMinutes })),
       fromOrigin:
-        hub === undefined
-          ? null
-          : {
+        hub !== undefined
+          ? {
+              origin,
               hub: hub.hub,
               route: hub.route ?? null,
               trainMinutesEstimate: hub.minutes,
               doorToVenueMinutesEstimate: origin ? travelMinutesFrom(access, origin) : null,
-            },
+              basis: "data",
+            }
+          : estimate === null
+            ? null
+            : {
+                origin,
+                hub: estimate.viaHub,
+                route: null,
+                trainMinutesEstimate: null,
+                doorToVenueMinutesEstimate: estimate.minutes,
+                basis: estimate.basis,
+                nearestStation: estimate.nearestStation,
+              },
       fromHubs: access.fromHubs,
       parking: access.parking,
       trafficRestrictions: access.trafficRestrictions,
@@ -562,6 +694,81 @@ export const getAccess = defineTool({
       sources: access.sources,
       rules: transport.rules,
       notes,
+    };
+  },
+});
+
+export const researchRoute = defineTool({
+  name: "research_route",
+  description:
+    "出発の駅から祭りの会場の最寄り駅までの電車の行き方（乗る路線・乗り換え・所要時間の幅）を、公開の情報で調べる。" +
+    "調べた所要時間は、駅の位置からの見積もりと照らし、食い違うものは使わない（その場合は見積もりを返す）。" +
+    "旅程の最初の移動（出発の駅から）の move.minutes と name・reason に使う。同じ祭りで呼び直さない。",
+  input: {
+    festivalId: SlugSchema.describe("祭りの ID"),
+    origin: z
+      .string()
+      .trim()
+      .min(1)
+      .max(50)
+      .optional()
+      .describe("出発の駅。省略すると相談の出発地"),
+    date: IsoDateSchema.optional().describe("行く日。省略すると候補や旅程の日"),
+    arriveBy: LocalTimeSchema.optional().describe(
+      "この時刻までに会場の最寄り駅に着きたい（HH:MM）",
+    ),
+  },
+  async run(args, ctx, signal) {
+    const festival = festivalOf(ctx, args.festivalId);
+    const origin = args.origin ?? ctx.session.conditions.origin;
+    if (origin === undefined)
+      throw new ToolError("出発の駅が分かりません。先に出発の駅を聞いてください");
+    const date = visitDate(ctx, festival, args.date);
+    const estimate = travelEstimateFor(ctx, festival, origin);
+    const to = destinationStation(ctx, festival);
+    const walk = festival.access.stations[0]?.walkMinutes ?? null;
+    const base = {
+      festivalId: festival.id,
+      origin,
+      destinationStation: to,
+      walkMinutesFromStationEstimate: walk,
+      estimate: estimate === null ? null : { minutes: estimate.minutes, basis: estimate.basis },
+      rules: [
+        `旅程の最初の予定は、出発の駅（${origin}）からの移動（type: "move"）にし、name に出発の駅の名前を入れる`,
+        "move.minutes には、researched があればその minutes、なければ estimate の minutes をそのまま使い、estimate: true にする",
+      ],
+    };
+    const sameStation = to !== null && normalizeStationName(to) === normalizeStationName(origin);
+    if (ctx.routes === undefined || to === null || sameStation) {
+      return { ...base, status: "estimate_only", researched: null };
+    }
+    let report: Awaited<ReturnType<NonNullable<ToolContext["routes"]>["research"]>> = null;
+    try {
+      report = await ctx.routes.research({
+        from: origin,
+        to,
+        date,
+        ...(args.arriveBy ? { arriveBy: args.arriveBy } : {}),
+        signal,
+      });
+    } catch {
+      report = null;
+    }
+    if (signal.aborted) throw new ToolError("止められたので、行き方の結果は使いません");
+    if (report === null) return { ...base, status: "not_found", researched: null };
+    const checked = checkResearchedMinutes(report.minutes, estimate);
+    if (!checked.ok) {
+      return { ...base, status: "rejected", reason: checked.reason, researched: null };
+    }
+    return {
+      ...base,
+      status: "researched",
+      researched: {
+        minutes: checked.minutes,
+        summary: report.summary,
+        transfers: report.transfers,
+        sources: report.sources,
+      },
     };
   },
 });
@@ -641,11 +848,31 @@ export const updateItinerary = defineTool({
     } else {
       throw new ToolError("itinerary か addDay のどちらかを渡してください");
     }
-    // こだわりと予算は相談の状態を正とする。泊まりの宿の候補は、調べた結果だけをサーバーが付ける
+    // こだわりと予算と出発の駅は相談の状態を正とする。泊まりの宿の候補は、調べた結果だけをサーバーが付ける
+    const origin = session.conditions.origin;
     const draft: ItineraryDraft = attachLodging(
-      { ...written, preferences: session.preferences },
+      { ...written, preferences: session.preferences, ...(origin ? { origin } : {}) },
       { searches: session.lodging, previous },
     );
+    // 旅程は出発の駅から始める。始まりの移動の時間が、出発の駅からの目安より明らかに短いものは保存しない
+    if (origin !== undefined) {
+      // 移動の時間を比べるのは、1日目に主役の祭りへ向かうときだけ（何日かの旅の1日目は別の場所へ向かうことがある）
+      const firstDay = draft.days[0]?.items ?? [];
+      const main = firstDay.some((item) => item.festivalId === draft.mainFestivalId)
+        ? ctx.festivals.get(draft.mainFestivalId)
+        : undefined;
+      const startIssues = checkStartsAtOrigin(
+        firstDay,
+        origin,
+        main === undefined ? null : travelEstimateFor(ctx, main, origin),
+      );
+      if (startIssues.length > 0) {
+        console.info(
+          JSON.stringify({ kind: "itinerary_rejected", codes: startIssues.map((e) => e.code) }),
+        );
+        return { saved: false, errors: startIssues, warnings: [] };
+      }
+    }
     // 天気は日ごとに、その日の祭りの開催地（祭りのない日は主役の祭りの開催地）で調べる。
     // 調べた天気は相談に残し、気象庁の予報も地域ごとにキャッシュしているので、何日分でも軽い
     const weatherByDate = new Map<IsoDate, Weather>();
@@ -784,9 +1011,9 @@ export const searchLodging = defineTool({
 export const verifyFestival = defineTool({
   name: "verify_festival",
   description:
-    "利用者が「決定」と言ったあとに、主役の祭りの開催予定を公式の情報で確かめ直す。" +
-    "結果は as_planned（予定どおり）/ changed（変更）/ cancelled（中止）/ not_found（確認できず）。" +
-    "確認できなかったときは確定させない。",
+    "利用者が「決定」と言ったあとに、主役の祭りの開催予定を Web と祭りのデータで確かめ直す。" +
+    "結果は as_planned（公式で確認）/ needs_check（公式以外の情報源などで確認。要事前確認としてしおりを渡す）/ " +
+    "changed（変更）/ cancelled（中止）/ not_found（どこにも情報がない。ほかの候補に戻る）。",
   input: {
     festivalId: SlugSchema.describe("祭りの ID"),
     date: IsoDateSchema.optional().describe("行く日。省略すると旅程の日"),
@@ -794,10 +1021,16 @@ export const verifyFestival = defineTool({
   async run(args, ctx, signal) {
     const festival = festivalOf(ctx, args.festivalId);
     const date = visitDate(ctx, festival, args.date);
-    const report = await ctx.verifier.verify({ festival, date, signal });
+    // Web の確かめが失敗しても、祭りのデータの公式の出典で確かめてあれば、それで決める（decideVerification）
+    let report: Awaited<ReturnType<ToolContext["verifier"]["verify"]>>;
+    try {
+      report = await ctx.verifier.verify({ festival, date, signal });
+    } catch {
+      report = { result: "not_found", sources: [], note: "時間内に確かめられませんでした" };
+    }
     // 時間切れや接続の切断のあとに、再確認の結果で旅程を書き換えない
     if (signal.aborted) throw new ToolError("止められたので、再確認の結果は使いません");
-    const decision = decideVerification(festival, report, ctx.today());
+    const decision = decideVerification(festival, report, ctx.today(), date);
     const checkedAt = ctx.now();
     const verification = {
       status: decision.result,
@@ -851,6 +1084,7 @@ export const MATSURI_TOOLS: readonly MatsuriTool[] = [
   searchFestivals,
   searchNearby,
   getAccess,
+  researchRoute,
   getWeather,
   searchLodging,
   updateItinerary,

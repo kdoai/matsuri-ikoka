@@ -22,6 +22,7 @@ const prompts: AgentPrompts = {
   scout: "周辺係",
   planner: "旅程係",
   verifier: "再確認",
+  route: "行き方の調べ",
 };
 
 function options(overrides: { models?: AgentModels; resume?: string } = {}) {
@@ -85,6 +86,7 @@ describe("接客エージェントを開発環境から切り離す", () => {
     expect(agents?.scout?.tools).toEqual(["mcp__matsuri__search_nearby"]);
     expect(agents?.planner?.tools).toEqual([
       "mcp__matsuri__get_access",
+      "mcp__matsuri__research_route",
       "mcp__matsuri__get_weather",
       "mcp__matsuri__search_nearby",
       "mcp__matsuri__search_lodging",

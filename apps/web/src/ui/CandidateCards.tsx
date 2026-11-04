@@ -38,7 +38,7 @@ import {
 import { useActions, useApp, useT } from "../state/react";
 import { type FitReason, fitReasons } from "../state/reasons";
 import { FestivalBand, ThemeArt } from "./candidates/Art";
-import { type CandidateView, chooseBlock, faceTags } from "./candidates/view";
+import { type CandidateView, chooseBlock, faceTags, needsCheck } from "./candidates/view";
 import { ConfidenceBadge, Pill, SourceLink, timeRange } from "./common";
 import { LanternIcon } from "./icons";
 import { issueUrl } from "./links";
@@ -184,8 +184,11 @@ function DayStamp({ days }: { days: number }) {
   );
 }
 
-/** 開催が確認できていないことの知らせ。「この祭りにする」を押せない理由も兼ねる */
-function UnconfirmedNote({ id }: { id: string }) {
+/**
+ * 開催が確認できていないことの知らせ。「この祭りにする」を押せない理由も兼ねる。
+ * 要事前確認の祭りは、選べることと、出発の前に確かめることを知らせる
+ */
+function UnconfirmedNote({ id, candidate }: { id: string; candidate: FestivalCandidate }) {
   const t = useT();
   return (
     <p
@@ -193,8 +196,19 @@ function UnconfirmedNote({ id }: { id: string }) {
       className="flex items-start gap-1.5 rounded-lg bg-shu-500/10 px-2 py-1 font-medium text-shu-700 text-sm"
     >
       <CircleAlert aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
-      {t.candidates.unconfirmedNote}
+      {needsCheck(candidate) ? t.candidates.needsCheckNote : t.candidates.unconfirmedNote}
     </p>
+  );
+}
+
+/** 確認済みでない候補の札：要事前確認か未確認 */
+function StatusPill({ candidate }: { candidate: FestivalCandidate }) {
+  const t = useT();
+  if (candidate.confirmed) return null;
+  return (
+    <Pill tone="shu">
+      {needsCheck(candidate) ? t.candidates.needsCheck : t.candidates.unconfirmed}
+    </Pill>
   );
 }
 
@@ -413,7 +427,9 @@ function Card({
             <span>{facts.time}</span>
           </p>
           <p className="font-medium text-ink-soft text-sm">{candidate.highlight}</p>
-          {candidate.confirmed ? null : <UnconfirmedNote id={facts.ids.note} />}
+          {candidate.confirmed ? null : (
+            <UnconfirmedNote id={facts.ids.note} candidate={candidate} />
+          )}
           {tags.length > 0 ? (
             <ul className="flex flex-wrap gap-1.5" aria-label={t.festivalCard.features}>
               {tags.map((tag) => {
@@ -435,7 +451,7 @@ function Card({
         <div className="flex flex-col gap-2 md:w-56 md:shrink-0">
           <span className="flex flex-wrap justify-end gap-1">
             <ConfidenceBadge confidence={candidate.confidence} />
-            {candidate.confirmed ? null : <Pill tone="shu">{t.candidates.unconfirmed}</Pill>}
+            <StatusPill candidate={candidate} />
           </span>
           <ChooseButton candidate={candidate} block={facts.block} noteId={facts.ids.note} />
           <DetailsToggle open={open} controls={facts.ids.details} onToggle={() => setOpen(!open)} />
@@ -489,7 +505,7 @@ function Row({ candidate, festival }: { candidate: FestivalCandidate; festival: 
           <span className="flex flex-wrap items-center gap-1">
             <span className="sr-only">{t.candidates.columns.confidence}</span>
             <ConfidenceBadge confidence={candidate.confidence} />
-            {candidate.confirmed ? null : <Pill tone="shu">{t.candidates.unconfirmed}</Pill>}
+            <StatusPill candidate={candidate} />
           </span>
           <span className="flex gap-1.5 md:justify-end">
             <ChooseButton
@@ -508,7 +524,7 @@ function Row({ candidate, festival }: { candidate: FestivalCandidate; festival: 
         </div>
         {candidate.confirmed ? null : (
           <div className="mt-1.5">
-            <UnconfirmedNote id={facts.ids.note} />
+            <UnconfirmedNote id={facts.ids.note} candidate={candidate} />
           </div>
         )}
         <Details id={facts.ids.details} open={open} candidate={candidate} festival={festival}>

@@ -101,6 +101,22 @@ describe("createCandidateChecker", () => {
     expect(verifier.calls).toHaveLength(2);
   });
 
+  it("時間切れでも、祭りのデータの公式の出典で確かめてあれば予定どおりにする", async () => {
+    const verifier = verifierOf(() => new Promise(() => {}));
+    const checker = createCandidateChecker({ verifier, today, now, timeoutMs: 20 });
+    const festival = testFestival({
+      id: "kogane-matsuri",
+      edit: (f) => {
+        for (const o of f.occurrences) {
+          o.sources = [{ ...o.sources[0]!, checkedAt: "2026-07-30", confidence: "official" }];
+        }
+      },
+    });
+
+    const check = await checker.check({ festival, date: "2026-08-16", session: {}, signal });
+    expect(check).toMatchObject({ result: "as_planned", cached: false });
+  });
+
   it("1つの相談で新しく確かめる数に上限を置く", async () => {
     const verifier = verifierOf(async () => official);
     const checker = createCandidateChecker({ verifier, today, now, maxPerSession: 2 });

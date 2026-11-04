@@ -189,6 +189,8 @@ export const en: Messages = {
       map: "Check the map",
       decide: "Go with this plan",
       decideMessage: "I'll go with this plan.",
+      decideConfirm: "Decide and check the schedule",
+      decideConfirmLabel: "Confirm your decision",
       slower: "Make it more relaxed",
       slowerMessage: "Please make the plan a little more relaxed.",
       adjust: "Adjust a little",
@@ -522,6 +524,7 @@ export const en: Messages = {
           ? `${plural(days, "day", "days")} after your date`
           : `${plural(-days, "day", "days")} before your date`,
     unconfirmed: "Unconfirmed",
+    needsCheck: "Check before you go",
     found: (place: string) => `I found an unusual festival in ${place}!`,
     foundMany: (count: number) => `I found ${count} festivals for you!`,
     details: "See details",
@@ -561,6 +564,8 @@ export const en: Messages = {
     },
     unconfirmedNote:
       "This year's date has not been confirmed yet. It will not go into a confirmed plan.",
+    needsCheckNote:
+      "This year's schedule was confirmed with non-official sources. Please check the organizer's notice before you go.",
     timeUnknown: "Time not announced",
     whyFits: "Why it fits",
     highlight: "Highlight",
@@ -628,7 +633,8 @@ export const en: Messages = {
       as_planned: "Going ahead as planned",
       changed: "The schedule has changed",
       cancelled: "Cancelled",
-      not_found: "Could not be confirmed",
+      needs_check: "Check before you go (confirmed with non-official sources)",
+      not_found: "No schedule information was found",
       checkedAt: (when: string) => `Checked ${when}`,
     },
     notes: "What to bring and watch for",
@@ -728,6 +734,8 @@ export const en: Messages = {
     festivalLoading:
       "The festival details are not available right now. Please see the plan and sources.",
     verified: (date: string) => `Schedule confirmed with official information (${date})`,
+    needsCheck:
+      "Check before you go: the schedule was confirmed with non-official sources. Please check the organizer's notice before you leave.",
     finalCheck: "On the day, please check the official website one last time.",
     share: "Booklet URL",
     shareNote: "Share this URL to show the booklet to the people coming with you.",

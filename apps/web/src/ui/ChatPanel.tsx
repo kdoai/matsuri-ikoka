@@ -1,6 +1,6 @@
 import { MAX_MESSAGE_LENGTH } from "@matsuri-ikoka/schema";
 import { SendHorizontal } from "lucide-react";
-import { type FormEvent, type KeyboardEvent, useEffect, useRef, useState } from "react";
+import { type FormEvent, type KeyboardEvent, useEffect, useRef } from "react";
 import { useActions, useApp, useT } from "../state/react";
 import { currentLine, shioriReady } from "../state/selectors";
 import type { ChatEntry } from "../state/types";
@@ -168,7 +168,11 @@ export function focusComposer(): void {
   target?.focus();
 }
 
-/** 発言の入力欄。ふだんは1行の小さな欄で、書いている間（焦点があるか下書きがあるとき）だけ広げる */
+/**
+ * 発言の入力欄。ふだんは1行の小さな欄で、書き始めたら（下書きがあるとき）だけ広げる。
+ * 焦点が移るだけでは大きさを変えない（焦点が外れた瞬間に欄が縮むと、会話の窓の中のボタンの位置がずれ、
+ * 押したつもりのボタンが押されなかったり、別のボタンが押されたりするため）
+ */
 export function Composer() {
   const t = useT();
   const actions = useActions();
@@ -178,8 +182,7 @@ export function Composer() {
   const ready = status === "ready";
   const tooLong = draft.trim().length > MAX_MESSAGE_LENGTH;
   const canSend = ready && !streaming && draft.trim().length > 0 && !tooLong;
-  const [focused, setFocused] = useState(false);
-  const wide = focused || draft.length > 0;
+  const wide = draft.length > 0;
   // 選んで進める聞き取りの間は出さない（自由に書くのは「その他」と「ひとこと」の欄で）
   const hearing = useApp(
     (state) =>
@@ -217,8 +220,6 @@ export function Composer() {
           value={draft}
           onChange={(event) => actions.setDraft(event.target.value)}
           onKeyDown={onKeyDown}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
           placeholder={wide ? t.chat.placeholder : t.dialogue.freeInput}
           // 相談を始める途中でも打てるようにする（使えない入力欄は焦点を受けず、打った文字が
           // 店の中の旅人の操作に渡ってしまう）。送れるのは相談が始まってから

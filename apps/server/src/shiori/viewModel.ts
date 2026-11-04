@@ -167,6 +167,8 @@ export interface CoverView {
   place: string | null;
   weather: WeatherView;
   verifiedLabel: string | null;
+  /** 要事前確認（公式以外の情報源で確かめた）のしおりの注意。公式で確かめていれば null */
+  needsCheckLabel: string | null;
   greeting: string;
 }
 
@@ -771,6 +773,14 @@ function verifiedLabel(trip: ShioriTrip): string | null {
   return `公式情報で開催予定を確認済み（${formatMonthDay(date)} ${time.slice(0, 5)}）`;
 }
 
+/** 要事前確認のしおりに必ず出す注意 */
+export const NEEDS_CHECK_LABEL =
+  "要事前確認：開催は公式以外の情報源などで確かめています。出発の前に、主催者の案内で開催を確かめてください";
+
+function needsCheckLabel(trip: ShioriTrip): string | null {
+  return trip.verification.status === "needs_check" ? NEEDS_CHECK_LABEL : null;
+}
+
 /** しおりの view-model を作る */
 export function buildShioriView(trip: ShioriTrip, lookup: FestivalLookup): ShioriView {
   const festivalIds = festivalIdsOf(trip);
@@ -809,6 +819,7 @@ export function buildShioriView(trip: ShioriTrip, lookup: FestivalLookup): Shior
       place: mainView.missing ? null : `${mainView.place}・${mainView.venue}`,
       weather: weatherView(mainDay.weather),
       verifiedLabel: verifiedLabel(trip),
+      needsCheckLabel: needsCheckLabel(trip),
       greeting:
         design.length === "overnight"
           ? "いってらっしゃい！ 旅のあいだ、このしおりがお供します"

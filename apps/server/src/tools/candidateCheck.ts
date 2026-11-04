@@ -1,4 +1,4 @@
-import type { Festival, IsoDate, VerificationResult } from "@matsuri-ikoka/schema";
+import type { Festival, IsoDate } from "@matsuri-ikoka/schema";
 import { decideVerification, type VerificationDecision } from "../domain/verification";
 import type { FestivalVerifier } from "./verifier";
 
@@ -9,11 +9,11 @@ import type { FestivalVerifier } from "./verifier";
 // - 1件の時間と、1つの相談で新しく確かめる数に上限を置く（費用は1件ごとの上限を verifier に渡す）
 
 /** 1件の確かめの時間の上限 */
-export const CANDIDATE_CHECK_TIMEOUT_MS = 30_000;
+export const CANDIDATE_CHECK_TIMEOUT_MS = 50_000;
 /** 結果をとっておく時間 */
 export const CANDIDATE_CHECK_TTL_MS = 6 * 60 * 60 * 1000;
 /** 1つの相談で、新しく確かめる数の上限（とってある結果を使うぶんは数えない） */
-export const MAX_CANDIDATE_CHECKS_PER_SESSION = 9;
+export const MAX_CANDIDATE_CHECKS_PER_SESSION = 18;
 
 export interface CandidateCheck extends VerificationDecision {
   festivalId: string;
@@ -79,16 +79,16 @@ export function createCandidateChecker(deps: {
           }),
         ),
       ]);
-      return { decision: decideVerification(festival, report, deps.today()), ok: true };
+      return { decision: decideVerification(festival, report, deps.today(), date), ok: true };
     } catch {
-      return {
-        decision: {
-          result: "not_found" as VerificationResult,
-          sources: [],
-          note: "時間内に確かめられませんでした",
-        },
-        ok: false,
-      };
+      // 時間切れでも、祭りのデータの公式の出典で確かめてあれば、それを使う
+      const fallback = decideVerification(
+        festival,
+        { result: "not_found", sources: [], note: "時間内に確かめられませんでした" },
+        deps.today(),
+        date,
+      );
+      return { decision: fallback, ok: false };
     } finally {
       clearTimeout(timer);
       signal.removeEventListener("abort", abort);

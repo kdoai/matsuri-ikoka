@@ -41,7 +41,14 @@ export const TOOLS_BY_STAFF: Readonly<Record<StaffId, readonly AgentToolName[]>>
   concierge: ["note_conditions", "update_itinerary", "verify_festival"],
   researcher: ["search_festivals"],
   scout: ["search_nearby"],
-  planner: ["get_access", "get_weather", "search_nearby", "search_lodging", "update_itinerary"],
+  planner: [
+    "get_access",
+    "research_route",
+    "get_weather",
+    "search_nearby",
+    "search_lodging",
+    "update_itinerary",
+  ],
 };
 
 const STAFF_NAMES: Record<StaffId, string> = {

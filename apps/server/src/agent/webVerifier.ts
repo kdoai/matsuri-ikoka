@@ -18,7 +18,8 @@ import { z } from "zod";
 import { formatMonthDayWithWeekday } from "../domain/calendar";
 import { placeLabel } from "../domain/dateWindow";
 import { occurrenceOn } from "../domain/planCheck";
-import { type VerificationReport, yearStatedOnPage } from "../domain/verification";
+import { bySourcePriority, verificationQueries } from "../domain/searchQueries";
+import { officialHosts, type VerificationReport, yearStatedOnPage } from "../domain/verification";
 import type { FestivalVerifier } from "../tools/verifier";
 import { checkHostAddresses, type ResolveHost, resolveHost } from "./addressGuard";
 import { deny } from "./hooks";
@@ -88,7 +89,8 @@ export function buildVerifierOptions(input: {
     env: input.env,
     thinking: { type: "adaptive" },
     effort: "low",
-    maxTurns: input.withTools ? 6 : 1,
+    // 検索を並べて呼び、言葉を変えて探し直せるだけの回数をとる（検索6回・ページ3回まで）
+    maxTurns: input.withTools ? 10 : 1,
     persistSession: false,
     ...(input.maxBudgetUsd ? { maxBudgetUsd: input.maxBudgetUsd } : {}),
     abortController: input.abortController,
@@ -112,12 +114,17 @@ function fetchedText(response: unknown): string {
   return "";
 }
 
+const READ_NUDGE =
+  "検索結果だけでは開催を確かめられません。公式のページを WebFetch で1つ読んでから、決めた形の JSON で答えてください。";
+
 /** 再確認のエージェントのフック。WebFetch の宛先の確認、読んだページの控え、1回だけ続けさせる */
 export function createVerifierHooks(
   log: WebActivityLog,
   resolve: ResolveHost = resolveHost,
   /** 読んだページの本文を控える先 */
   pages: FetchedPage[] = [],
+  /** 検索だけで答えようとしたときに返す文 */
+  nudge: string = READ_NUDGE,
 ): Partial<Record<HookEvent, HookCallbackMatcher[]>> {
   let nudges = 0;
   const checkFetch: HookCallback = async (input) => {
@@ -142,11 +149,7 @@ export function createVerifierHooks(
     if (input.hook_event_name !== "Stop") return {};
     if (!log.searchedWithoutReading() || nudges >= MAX_READ_NUDGES) return {};
     nudges += 1;
-    return {
-      decision: "block",
-      reason:
-        "検索結果だけでは開催を確かめられません。公式のページを WebFetch で1つ読んでから、決めた形の JSON で答えてください。",
-    };
+    return { decision: "block", reason: nudge };
   };
   return {
     PreToolUse: [{ matcher: "WebFetch", hooks: [checkFetch] }],
@@ -156,7 +159,7 @@ export function createVerifierHooks(
 }
 
 /** query を最後まで回し、成功の結果の文（失敗なら null）と費用（SDK の推定）を返す */
-async function finalText(
+export async function finalText(
   query: QueryFn,
   prompt: string,
   options: Options,
@@ -198,7 +201,16 @@ export function createWebVerifier(deps: {
         `開催地：${placeLabel(festival)}、会場：${festival.venue.name}`,
         `確かめる日：${formatMonthDayWithWeekday(date)}（${date}）`,
         `データの時刻：${occurrence?.start ?? "不明"}〜${occurrence?.end ?? "不明"}`,
-        `データの出典：${[...festival.sources, ...(occurrence?.sources ?? [])].map((s) => s.url).join(" ")}`,
+        // データの出典は、情報源の優先順位（主催者・自治体 → 観光協会 → 広報誌の PDF → …）の順に渡す
+        `データの出典（この順に確かめる）：${[
+          ...new Set(
+            bySourcePriority(
+              [...(occurrence?.sources ?? []), ...festival.sources],
+              officialHosts(festival),
+            ).map((s) => s.url),
+          ),
+        ].join(" ")}`,
+        `検索の言葉（上から優先。いくつかを並べて検索してよい）：${verificationQueries(festival, date).join(" / ")}`,
       ].join("\n");
 
       // 時間の上限は、ツールの包みが signal で知らせる（確定前の再確認は45秒、候補の確かめは1件30秒）。差し戻しも同じ予算の中で行う

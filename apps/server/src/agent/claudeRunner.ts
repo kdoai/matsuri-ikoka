@@ -8,11 +8,13 @@ import {
 import { backoffMs, classifyFailure } from "@matsuri-ikoka/agent-kit";
 import type { IsoDate } from "@matsuri-ikoka/schema";
 import type { FestivalStore } from "../data/festivalStore";
+import type { StationPointIndex } from "../domain/travelEstimate";
 import type { ItineraryStore } from "../session/sessionStore";
 import type { CandidateChecker } from "../tools/candidateCheck";
 import { newTurnState, type ToolContext } from "../tools/context";
 import type { LodgingService } from "../tools/lodging";
 import { createMatsuriMcpServer } from "../tools/mcpServer";
+import type { RouteResearcher } from "../tools/routeResearch";
 import type { FestivalVerifier } from "../tools/verifier";
 import type { WeatherService } from "../tools/weather";
 import { staffBriefing, turnPrompt } from "./briefing";
@@ -41,6 +43,10 @@ export interface ClaudeRunnerDeps {
   verifier: FestivalVerifier;
   /** 候補を出す前の開催の確かめ */
   candidateChecks?: CandidateChecker;
+  /** 駅の位置（出発の駅からの所要時間の見積もり） */
+  stations?: StationPointIndex;
+  /** 出発の駅から会場の最寄り駅までの行き方の調べ */
+  routes?: RouteResearcher;
   prompts: AgentPrompts;
   models: AgentModels;
   /** 1回の発言の費用の上限（米ドル） */
@@ -186,6 +192,8 @@ export class ClaudeAgentRunner implements AgentRunner {
       lodging: deps.lodging,
       verifier: deps.verifier,
       ...(deps.candidateChecks ? { candidateChecks: deps.candidateChecks } : {}),
+      ...(deps.stations ? { stations: deps.stations } : {}),
+      ...(deps.routes ? { routes: deps.routes } : {}),
       today: deps.today,
       now: deps.now,
     };

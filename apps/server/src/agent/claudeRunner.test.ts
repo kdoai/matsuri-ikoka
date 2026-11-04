@@ -28,6 +28,7 @@ const prompts: AgentPrompts = {
   scout: "s",
   planner: "p",
   verifier: "v",
+  route: "rt",
 };
 
 type Script = (api: {

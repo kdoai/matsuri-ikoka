@@ -7,17 +7,24 @@ import {
   type VerificationResult,
 } from "@matsuri-ikoka/schema";
 import type { FestivalStore } from "../data/festivalStore";
+import type { StationPointIndex } from "../domain/travelEstimate";
 import type { ItineraryStore, Session } from "../session/sessionStore";
 import type { CandidateChecker } from "./candidateCheck";
 import type { LodgingService } from "./lodging";
+import type { RouteResearcher } from "./routeResearch";
 import type { FestivalVerifier } from "./verifier";
 import type { WeatherService } from "./weather";
 
 /**
  * 接客エージェントの道具の名前。画面に動きを見せる道具（ToolName）に、
- * 画面にイベントを出さない道具（聞き取った条件の書き留め・宿の空きを調べる）を足したもの
+ * 画面にイベントを出さない道具（聞き取った条件の書き留め・宿の空きを調べる・行き方を調べる）を足したもの
  */
-export const ALL_TOOL_NAMES = [...TOOL_NAMES, "note_conditions", "search_lodging"] as const;
+export const ALL_TOOL_NAMES = [
+  ...TOOL_NAMES,
+  "note_conditions",
+  "search_lodging",
+  "research_route",
+] as const;
 export type AgentToolName = (typeof ALL_TOOL_NAMES)[number];
 
 /** 画面にイベント（tool.start・tool.end）を出す道具か */
@@ -61,6 +68,10 @@ export interface ToolContext {
   verifier: FestivalVerifier;
   /** 候補を出す前の開催の確かめ。ないとき（mock やテスト）は確かめない */
   candidateChecks?: CandidateChecker;
+  /** 駅の位置。出発の駅からの所要時間を見積もる。ないときは祭りのデータの主要駅からの所要時間だけを使う */
+  stations?: StationPointIndex;
+  /** 出発の駅から会場の最寄り駅までの行き方を Web で調べる。ないとき（mock やテスト）は駅の位置からの見積もりだけを返す */
+  routes?: RouteResearcher;
   /** ツールの途中で画面に送るイベント（候補の確かめの結果など） */
   emit?: (event: SseEvent) => void;
   today: () => IsoDate;
@@ -72,13 +83,15 @@ export interface ToolContext {
 export const TOOL_TIMEOUT_MS: Readonly<Record<AgentToolName, number>> = {
   note_conditions: 5_000,
   // 候補の確かめ（1件30秒、3件を並べて動かす）を含む
-  search_festivals: 45_000,
+  search_festivals: 70_000,
   search_nearby: 10_000,
   get_access: 10_000,
   get_weather: 10_000,
   // 空室検索は1本ずつ間隔を空けて呼ぶので、待ちを含める
   search_lodging: 20_000,
   update_itinerary: 10_000,
+  // 乗り換え案内や鉄道会社のページを検索して読む
+  research_route: 40_000,
   // 公式のページを検索して読むので、確定前の再確認のモデル（MODEL_VERIFIER）でも収まる長さにする
-  verify_festival: 45_000,
+  verify_festival: 70_000,
 };
