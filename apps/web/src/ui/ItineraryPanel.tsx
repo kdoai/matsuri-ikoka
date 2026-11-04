@@ -2,6 +2,9 @@ import {
   type ItineraryDay,
   type ItineraryItem,
   mainFestivalDay,
+  type Party,
+  type TripBudget,
+  tripBudgetAmounts,
   type Weather,
 } from "@matsuri-ikoka/schema";
 import {
@@ -13,6 +16,7 @@ import {
   type LucideIcon,
   MapPin,
   Users,
+  Wallet,
   X,
 } from "lucide-react";
 import { type KeyboardEvent, lazy, type ReactNode, Suspense, useRef, useState } from "react";
@@ -35,6 +39,13 @@ const TAB_ICON: Record<PanelTab, LucideIcon> = {
 };
 
 const MapView = lazy(() => import("./MapView"));
+
+/** 旅の予算を、言われた数え方と、コードで換算したもう一方で書く */
+export function budgetText(t: Messages, budget: TripBudget, party: Party): string {
+  const amounts = tripBudgetAmounts(budget, party);
+  const converted = budget.basis === "perPerson" ? amounts.totalYen : amounts.perPersonYen;
+  return t.conditions.budget(budget.basis, budget.yen, converted);
+}
 
 export function weatherText(t: Messages, weather: Weather): string {
   switch (weather.status) {
@@ -310,6 +321,12 @@ function TripCard() {
               <MapPin aria-hidden="true" className="size-4 text-wood-600" />
               {t.conditions.origin(itinerary.origin)}
             </span>
+            {itinerary.budget === undefined ? null : (
+              <span className="inline-flex items-center gap-1" data-testid="trip-budget">
+                <Wallet aria-hidden="true" className="size-4 text-wood-600" />
+                {budgetText(t, itinerary.budget, itinerary.party)}
+              </span>
+            )}
           </p>
         </div>
       </div>

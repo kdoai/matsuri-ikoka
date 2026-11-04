@@ -10,6 +10,7 @@ import {
   mainFestivalDay,
   type Source,
   type Stay,
+  type TripBudget,
   type Weather,
 } from "@matsuri-ikoka/schema";
 import { addDays } from "./calendar";
@@ -26,7 +27,11 @@ export type ItineraryDayDraft = Omit<ItineraryDay, "weather" | "items"> & {
   items: ItineraryItemDraft[];
 };
 
-export type ItineraryDraft = Omit<Itinerary, "id" | "version" | "verification" | "days"> & {
+/** 旅程の下書き。予算は聞き取った条件からサーバーが付けるので、下書きには持たない */
+export type ItineraryDraft = Omit<
+  Itinerary,
+  "id" | "version" | "verification" | "budget" | "days"
+> & {
   days: ItineraryDayDraft[];
 };
 
@@ -202,6 +207,8 @@ export function buildItinerary(
     previous: Itinerary | null;
     weatherFor: (date: IsoDate) => Weather;
     findFestival: (id: string) => Festival | undefined;
+    /** 旅の予算。聞き取った条件から付ける（下書きには書かせない） */
+    budget?: TripBudget | undefined;
   },
 ): BuildItineraryResult {
   const { previous } = options;
@@ -220,6 +227,7 @@ export function buildItinerary(
     id: options.id,
     version,
     verification: keepVerification ? previous.verification : { status: "pending" as const },
+    ...(options.budget === undefined ? {} : { budget: options.budget }),
     days: days.map((day) => ({ ...day, weather: options.weatherFor(day.date) })),
   };
   const parsed = ItinerarySchema.safeParse(candidate);
@@ -266,7 +274,14 @@ function isSameItinerary(previous: Itinerary, next: Itinerary, diff: ItineraryDi
 
 /** 保存した旅程を、旅程係の下書きの形に戻す */
 export function draftFromItinerary(itinerary: Itinerary): ItineraryDraft {
-  const { id: _id, version: _version, verification: _verification, days, ...rest } = itinerary;
+  const {
+    id: _id,
+    version: _version,
+    verification: _verification,
+    budget: _budget,
+    days,
+    ...rest
+  } = itinerary;
   return {
     ...rest,
     days: days.map(({ weather: _weather, items, ...day }) => ({

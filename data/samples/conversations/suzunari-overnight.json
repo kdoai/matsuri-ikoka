@@ -6,7 +6,7 @@
   "turns": [
     {
       "request": {
-        "message": "8月16日から1泊で、友だちと2人で、みなと中央駅から行ける祭りはありますか。人の少ないところで、地元のごはんも食べたいです。宿は1人1泊1万円までにしたいです。",
+        "message": "8月16日から1泊で、友だちと2人で、みなと中央駅から行ける祭りはありますか。人の少ないところで、地元のごはんも食べたいです。宿は1人1泊1万円までにしたいです。旅全体の予算は、2人で5万円くらいです。",
         "preferences": {
           "party": "adults",
           "spot": "auto",
@@ -140,6 +140,10 @@
                 "lodgingBudget": {
                   "perPersonYen": 10000,
                   "per": "night"
+                },
+                "budget": {
+                  "yen": 50000,
+                  "basis": "total"
                 }
               },
               "preferences": {
@@ -348,6 +352,10 @@
                   "spot": "hidden",
                   "food": "local",
                   "move": "train"
+                },
+                "budget": {
+                  "yen": 50000,
+                  "basis": "total"
                 },
                 "mainFestivalId": "suzunari-toro",
                 "verification": {
@@ -793,6 +801,10 @@
                 "lodgingBudget": {
                   "perPersonYen": 10000,
                   "per": "night"
+                },
+                "budget": {
+                  "yen": 50000,
+                  "basis": "total"
                 }
               },
               "preferences": {
@@ -891,6 +903,10 @@
                 "lodgingBudget": {
                   "perPersonYen": 10000,
                   "per": "night"
+                },
+                "budget": {
+                  "yen": 50000,
+                  "basis": "total"
                 }
               },
               "preferences": {

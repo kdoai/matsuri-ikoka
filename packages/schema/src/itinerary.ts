@@ -10,7 +10,7 @@ import {
   type Source,
   SourceSchema,
 } from "./common";
-import { PartySchema, PreferencesSchema } from "./preferences";
+import { PartySchema, PreferencesSchema, TripBudgetSchema } from "./preferences";
 
 const TextSchema = z.string().min(1);
 const VersionSchema = z.number().int().min(1);
@@ -222,6 +222,8 @@ export const ItinerarySchema = z
     returnTo: TextSchema,
     party: PartySchema,
     preferences: PreferencesSchema,
+    /** 旅の予算の上限（聞き取った条件をサーバーが付ける）。言われていなければない */
+    budget: TripBudgetSchema.optional(),
     /** 主役の祭り。どこかの日に必ず予定がある。ほかの日に別の祭りを入れてもよい */
     mainFestivalId: SlugSchema,
     verification: VerificationSchema,

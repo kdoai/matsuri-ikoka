@@ -4,6 +4,7 @@ import {
   type Festival,
   type ItineraryItem,
   type Source,
+  tripBudgetAmounts,
   UNKNOWN,
   type Weather,
 } from "@matsuri-ikoka/schema";
@@ -158,6 +159,8 @@ export interface CoverView {
   lengthLabel: string;
   dateLabel: string;
   partyLabel: string;
+  /** 旅の予算（例：1人あたり 30,000円まで（全員で 60,000円））。聞き取っていなければ null */
+  budgetLabel: string | null;
   routeLabel: string;
   festivalName: string;
   festivalNameEn: string | null;
@@ -373,6 +376,19 @@ function rainyDay(day: TripDay): boolean {
 function partyLabel(trip: ShioriTrip): string {
   const { adults, children } = trip.party;
   return `大人${adults}人${children > 0 ? `・子ども${children}人` : ""}`;
+}
+
+/** 旅の予算を、言われた数え方と、コードで換算したもう一方で書く */
+export function budgetLabel(trip: ShioriTrip): string | null {
+  if (trip.budget === undefined) return null;
+  const yen = (n: number) => `${n.toLocaleString("ja-JP")}円`;
+  const amounts = tripBudgetAmounts(trip.budget, trip.party);
+  if (trip.budget.basis === "perPerson") {
+    const total = amounts.totalYen === null ? "" : `（全員で ${yen(amounts.totalYen)}）`;
+    return `1人あたり ${yen(trip.budget.yen)}まで${total}`;
+  }
+  const each = amounts.perPersonYen === null ? "" : `（1人あたり ${yen(amounts.perPersonYen)}）`;
+  return `全員で ${yen(trip.budget.yen)}まで${each}`;
 }
 
 function lengthLabel(design: ShioriDesign, days: number): string {
@@ -783,6 +799,7 @@ export function buildShioriView(trip: ShioriTrip, lookup: FestivalLookup): Shior
       lengthLabel: lengthLabel(design, trip.days.length),
       dateLabel: dateRangeLabel(trip.days),
       partyLabel: partyLabel(trip),
+      budgetLabel: budgetLabel(trip),
       routeLabel:
         trip.origin === trip.returnTo
           ? `${trip.origin}から`

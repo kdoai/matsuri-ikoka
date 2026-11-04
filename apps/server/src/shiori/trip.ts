@@ -5,6 +5,7 @@ import type {
   ItineraryItem,
   Party,
   Preferences,
+  TripBudget,
   Verification,
   Weather,
 } from "@matsuri-ikoka/schema";
@@ -54,6 +55,8 @@ export interface ShioriTrip {
   returnTo: string;
   party: Party;
   preferences: Preferences;
+  /** 旅の予算。聞き取っていなければない */
+  budget?: TripBudget;
   mainFestivalId: string;
   verification: Verification;
   days: TripDay[];
@@ -72,6 +75,7 @@ export function toShioriTrip(itinerary: Itinerary, style: TripStyle = {}): Shior
     returnTo: itinerary.returnTo,
     party: itinerary.party,
     preferences: itinerary.preferences,
+    ...(itinerary.budget === undefined ? {} : { budget: itinerary.budget }),
     mainFestivalId: itinerary.mainFestivalId,
     verification: itinerary.verification,
     days: itinerary.days,

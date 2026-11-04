@@ -20,6 +20,11 @@ describe("旅程からしおりの形へ", () => {
     const trip = toShioriTrip(itinerary);
 
     expect(trip.days).toBe(itinerary.days);
+    expect(trip.budget).toBeUndefined();
+    expect(toShioriTrip({ ...itinerary, budget: { yen: 90000, basis: "total" } }).budget).toEqual({
+      yen: 90000,
+      basis: "total",
+    });
   });
 });
 
@@ -36,6 +41,19 @@ describe("しおりの view-model", () => {
     });
     expect(view.cover.verifiedLabel).toContain("公式情報で開催予定を確認済み");
     expect(buildShioriView(fictionalOuting(), lookup).cover.lengthLabel).toBe("半日のお出かけ");
+  });
+
+  it("表紙の予算は、言われた数え方と、人数で換算したもう一方を書く", () => {
+    const trip = fictionalOuting();
+    expect(buildShioriView(trip, lookup).cover.budgetLabel).toBeNull();
+    trip.budget = { yen: 30000, basis: "perPerson" };
+    expect(buildShioriView(trip, lookup).cover.budgetLabel).toBe(
+      "1人あたり 30,000円まで（全員で 60,000円）",
+    );
+    trip.budget = { yen: 50000, basis: "total" };
+    expect(buildShioriView(trip, lookup).cover.budgetLabel).toBe(
+      "全員で 50,000円まで（1人あたり 25,000円）",
+    );
   });
 
   it("確認できていない旅程には、確認済みの印を出さない", () => {
