@@ -5,7 +5,13 @@ import {
   type Itinerary,
   type PlanEvaluation,
   type PlanGap,
+  type RedoSubject,
+  type ResearchTarget,
+  type SseEventOf,
+  type StaffId,
 } from "@matsuri-ikoka/schema";
+import { redoEvent } from "../agent/bubbles";
+import { mealGapSlot } from "../domain/planCoverage";
 import { evaluatePlan, type ModelScore, scorePlan } from "../domain/planEvaluation";
 import type { ToolContext } from "./context";
 
@@ -118,4 +124,70 @@ export function nextStepAfter(evaluation: PlanEvaluation): string {
       ? "調べ直しは要りません。"
       : `research_trip を only: ${JSON.stringify(targets)} と、redo の ask を focus に付けて呼び、調べ直してください。`;
   return `基準（${evaluation.threshold}点）に届いていない観点があります（${failing}）。${research}調べた結果と gaps をもとに旅程を直し、update_itinerary を呼び直してください（評価はあと${evaluation.maxRounds - evaluation.round}回）`;
+}
+
+/** 行き方の調べ直しで直る不足のうち、会場までの最後の移動のほか */
+const ROUTE_GAPS = new Set<PlanGap["code"]>([
+  "outbound_missing",
+  "return_missing",
+  "last_return_unknown",
+  "move_endpoints_missing",
+  "transfer_unknown",
+  "move_unsourced",
+]);
+
+/** 調べ直しを頼む先の係と、頼む人。周辺の調べは周辺係に、行き方と宿の調べは旅程係に頼む */
+const REDO_STAFF: Record<ResearchTarget, { from: StaffId; to: StaffId }> = {
+  nearby: { from: "planner", to: "scout" },
+  route: { from: "concierge", to: "planner" },
+  lodging: { from: "concierge", to: "planner" },
+};
+
+/** 調べ直しの頼み（係ごと）に、足りないものの種類を付ける。種類は不足から決め、評価の文は使わない */
+export function redoSubjects(
+  evaluation: PlanEvaluation,
+  gaps: readonly PlanGap[],
+): { target: ResearchTarget; subject: RedoSubject }[] {
+  const subjects = new Map<string, { target: ResearchTarget; subject: RedoSubject }>();
+  const add = (target: ResearchTarget, subject: RedoSubject) =>
+    subjects.set(`${target}:${subject}`, { target, subject });
+  for (const target of new Set(evaluation.redo.map((r) => r.target))) {
+    if (target === "nearby") {
+      const meals = gaps.flatMap((gap) => mealGapSlot(gap) ?? []);
+      if (meals.length === 0) add(target, "sightseeing");
+      for (const slot of meals) add(target, slot);
+    } else if (target === "route") {
+      // 会場までの最後の移動だけが足りないときは last_mile、それ以外の経路の不足（評価係の指摘を含む）は route
+      const lastMileOnly =
+        gaps.some((gap) => gap.code === "last_mile_missing") &&
+        !gaps.some((gap) => ROUTE_GAPS.has(gap.code));
+      if (gaps.some((gap) => gap.code === "last_mile_missing")) add(target, "last_mile");
+      if (!lastMileOnly) add(target, "route");
+    } else {
+      add(target, "lodging");
+    }
+  }
+  return [...subjects.values()];
+}
+
+/**
+ * 評価が基準に届かず、作り直す回数が残っているときの、調べ直しの頼みのイベント（画面のスタッフどうしのやりとり）
+ */
+export function redoRequestEvents(
+  evaluation: PlanEvaluation,
+  gaps: readonly PlanGap[],
+): SseEventOf<"staff.redo">[] {
+  if (evaluation.passed || evaluation.round >= evaluation.maxRounds) return [];
+  return redoSubjects(evaluation, gaps).map(({ target, subject }) =>
+    redoEvent("request", REDO_STAFF[target].from, REDO_STAFF[target].to, subject),
+  );
+}
+
+/** 調べ直しを受けたときのイベント（頼まれた係が、頼んだ人に答える） */
+export function redoAcceptEvent(
+  target: ResearchTarget,
+  subject: RedoSubject,
+): SseEventOf<"staff.redo"> {
+  const { from, to } = REDO_STAFF[target];
+  return redoEvent("accept", to, from, subject);
 }

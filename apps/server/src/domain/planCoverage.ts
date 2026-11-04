@@ -83,6 +83,15 @@ export function stayWindow(day: CoverageDay, isFirstDay: boolean, isLastDay: boo
   return [from, to] as const;
 }
 
+/** 食事の不足（meal_missing）が、どの食事の時間帯のものか。食事の不足でなければ null */
+export function mealGapSlot(gap: PlanGap): MealSlot | null {
+  if (gap.code !== "meal_missing") return null;
+  const slot = (Object.keys(MEAL_LABELS) as MealSlot[]).find((s) =>
+    gap.message.includes(`${MEAL_LABELS[s]}の食事`),
+  );
+  return slot ?? null;
+}
+
 /** その日に案が要る食事 */
 export function mealsNeeded(day: CoverageDay, isFirstDay: boolean, isLastDay: boolean): MealSlot[] {
   const window = stayWindow(day, isFirstDay, isLastDay);

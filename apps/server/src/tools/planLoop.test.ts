@@ -1,4 +1,4 @@
-import type { Itinerary } from "@matsuri-ikoka/schema";
+import type { Itinerary, SseEvent } from "@matsuri-ikoka/schema";
 import { fictionalPlannedItinerary } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
 import { researchedSpotId } from "../domain/nearbyResearch";
@@ -11,6 +11,7 @@ import type {
   ResearchedSpotReport,
 } from "./nearbyResearch";
 import type { ModelScore, PlanEvaluationRequest, PlanEvaluator } from "./planEvaluator";
+import { redoSubjects } from "./planReview";
 import type { RouteResearcher } from "./routeResearch";
 import { testToolContext } from "./testContext";
 
@@ -99,6 +100,12 @@ describe("評価して、点が届くまで調べ直して作り直す", () => {
     const ctx = testToolContext([suzunari()], { nearby, planEvaluator: evaluator });
     // 地元の店も楽しむ（屋台で十分のときは、店を食事の候補にしない）
     ctx.session.preferences = { ...ctx.session.preferences, food: "local" };
+    const events: SseEvent[] = [];
+    ctx.emit = (event) => events.push(event);
+    const redo = () =>
+      events.flatMap((e) =>
+        e.type === "staff.redo" ? [[e.data.kind, e.data.from, e.data.to, e.data.subject]] : [],
+      );
 
     // 1回目：保存はするが、昼の食事がないので網羅が基準に届かない
     const first = await updateItinerary.run({ itinerary: draftOf(morningPlan()) }, ctx, signal);
@@ -126,6 +133,11 @@ describe("評価して、点が届くまで調べ直して作り直す", () => {
     expect(research.route).toBeNull();
     expect(nearby.requests[0]?.plan.checkpoints[0]).toBe(`調べ直し：${ask}`);
     expect(nearby.requests[0]?.plan.queries.join(" ")).toContain("ランチ");
+    // 店内では、旅程係が周辺係に昼ごはんの店の調べ直しを頼み、周辺係が受ける
+    expect(redo()).toEqual([
+      ["request", "planner", "scout", "lunch"],
+      ["accept", "scout", "planner", "lunch"],
+    ]);
 
     // 作り直し：調べた店を昼に入れる
     const revised = draftOf(first.itinerary as Itinerary);
@@ -362,5 +374,51 @@ describe("research_trip：経路と食事・寄り道を並べて調べる", () 
     const route = output.route as { outbound: { status: string }; return: { status: string } };
     expect([route.outbound.status, route.return.status]).toEqual(["researched", "researched"]);
     expect(output.nearby).toBeNull();
+  });
+});
+
+describe("redoSubjects：調べ直しの頼みの、足りないものの種類", () => {
+  const failing = (targets: ("route" | "nearby" | "lodging")[]) => ({
+    round: 1,
+    maxRounds: 3,
+    threshold: 70,
+    passed: false,
+    scores: [
+      { criterion: "coverage" as const, score: 0, findings: [] },
+      { criterion: "specificity" as const, score: 100, findings: [] },
+      { criterion: "feasibility" as const, score: 100, findings: [] },
+      { criterion: "grounding" as const, score: 100, findings: [] },
+    ],
+    redo: targets.map((target) => ({ target, criterion: "coverage" as const, ask: "調べ直す" })),
+    judgedBy: "code" as const,
+    evaluatedAt: "2026-08-03T10:15:00+09:00",
+  });
+  const gap = (code: "meal_missing" | "last_mile_missing" | "transfer_unknown", message = "") => ({
+    code,
+    itemId: null,
+    message,
+  });
+
+  it("食事の不足は昼・夜に分け、食事の不足がない周辺の頼みは寄り道にする", () => {
+    expect(
+      redoSubjects(failing(["nearby"]), [
+        gap("meal_missing", "夜の食事（17:30〜19:30ごろ）の店か案がありません"),
+      ]),
+    ).toEqual([{ target: "nearby", subject: "dinner" }]);
+    expect(redoSubjects(failing(["nearby"]), [])).toEqual([
+      { target: "nearby", subject: "sightseeing" },
+    ]);
+  });
+
+  it("会場までの最後の移動だけが足りなければ last_mile、ほかの経路の不足もあれば route も", () => {
+    expect(redoSubjects(failing(["route"]), [gap("last_mile_missing")])).toEqual([
+      { target: "route", subject: "last_mile" },
+    ]);
+    expect(
+      redoSubjects(failing(["route"]), [gap("last_mile_missing"), gap("transfer_unknown")]),
+    ).toEqual([
+      { target: "route", subject: "last_mile" },
+      { target: "route", subject: "route" },
+    ]);
   });
 });

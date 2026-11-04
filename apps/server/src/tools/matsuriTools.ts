@@ -110,7 +110,7 @@ import { randomId } from "../session/sessionStore";
 import type { CandidateCheck } from "./candidateCheck";
 import { type AgentToolName, TOOL_TIMEOUT_MS, type ToolContext } from "./context";
 import { type LodgingOutcome, MAX_SEARCH_RADIUS_KM, RAKUTEN_CREDIT } from "./lodging";
-import { nextStepAfter, reviewPlan } from "./planReview";
+import { nextStepAfter, redoAcceptEvent, redoRequestEvents, reviewPlan } from "./planReview";
 import type { RouteDirection } from "./routeResearch";
 
 // 接客エージェントに渡すツール。入出力は Zod で決め、計算と絞り込みは domain の関数で行う。
@@ -1260,6 +1260,15 @@ export const researchTrip = defineTool({
       focus: args.focus,
     });
     const window = mealWindow(args.meals);
+    // 評価の頼み（focus つき）で調べ直すときは、頼まれた係が受けるようすを見せる
+    if (args.focus !== undefined) {
+      if (only.has("nearby")) {
+        for (const slot of args.meals ?? ["sightseeing" as const]) {
+          ctx.emit?.(redoAcceptEvent("nearby", slot));
+        }
+      }
+      if (only.has("route")) ctx.emit?.(redoAcceptEvent("route", "route"));
+    }
     const [outbound, inbound, nearby] = await Promise.all([
       only.has("route")
         ? settle(() => researchRouteOnce(ctx, festival, routeOptions("outbound"), signal))
@@ -1485,6 +1494,10 @@ export const updateItinerary = defineTool({
           });
     if (signal.aborted) throw new ToolError("止められたので、旅程は保存しません");
     const itinerary: Itinerary = { ...result.itinerary, evaluation };
+    // 基準に届かなければ、店内のスタッフどうしで調べ直しを頼むようすを見せる
+    if (!result.unchanged) {
+      for (const event of redoRequestEvents(evaluation, result.gaps)) ctx.emit?.(event);
+    }
     if (!result.unchanged) {
       ctx.itineraries.save(itinerary);
       session.itineraryId = itinerary.id;
