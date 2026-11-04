@@ -1,0 +1,202 @@
+{
+  "id": "kuroshima-ushi-matsuri",
+  "name": { "ja": "黒島牛まつり", "en": "Kuroshima Beef Festival" },
+  "category": "other",
+  "municipalities": [{ "prefecture": "沖縄県", "name": "八重山郡竹富町" }],
+  "venue": { "name": "黒島多目的広場", "lat": 24.2371, "lng": 124.0119 },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["jalan"],
+  "highlights": [
+    "来場者みんなが加わる、牛1頭が当たる抽選会",
+    "島の青年会が用意して振る舞う牛汁と、牛そば・モモ焼きなど牛肉の料理",
+    "人より牛が多い島で、島じゅうの人が世代をこえて支度をする一日",
+    "島の芸能や、島の人が作る牛肉コロッケなど手作りの出し物"
+  ],
+  "trivia": [
+    {
+      "text": "1991年（平成3年）の「ハートアイランドフェスティバル」が始まりとされる",
+      "source": {
+        "url": "https://www.pref.okinawa.jp/_res/projects/default_project/_page_/001/011/510/ushi.pdf",
+        "title": "沖縄県 黒島牛まつり実行委員会（交流部門、平成25年度認定）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "黒島は、人口の約10倍の牛がいる島と言われるほど畜産が盛ん",
+      "source": {
+        "url": "https://www.pref.okinawa.jp/_res/projects/default_project/_page_/001/011/510/ushi.pdf",
+        "title": "沖縄県 黒島牛まつり実行委員会（交流部門、平成25年度認定）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "黒島は石垣島から18.5km離れた、ハートの形に似た島",
+      "source": {
+        "url": "https://www.pref.okinawa.jp/_res/projects/default_project/_page_/001/011/510/ushi.pdf",
+        "title": "沖縄県 黒島牛まつり実行委員会（交流部門、平成25年度認定）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "会場の案内には、牧草を乾かして巻いたロールが使われる",
+      "source": {
+        "url": "https://www.pref.okinawa.jp/_res/projects/default_project/_page_/001/011/510/ushi.pdf",
+        "title": "沖縄県 黒島牛まつり実行委員会（交流部門、平成25年度認定）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "当日に会場へ行けば加われる。石垣港からの往復の船・食事券・抽選券をまとめたセット券（2026年は大人6,000円、子ども4,000円）もある",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "広場での食事と催しが中心で、混雑や危険についての主催者の注意は見つからない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://painusima.com/events/event/%E9%BB%92%E5%B3%B6%E3%80%80%E7%89%9B%E3%81%BE%E3%81%A4%E3%82%8A/",
+        "title": "竹富町観光協会 黒島 牛まつり（2026年2月22日、セット券は大人6,000円・子ども4,000円）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.pref.okinawa.jp/_res/projects/default_project/_page_/001/011/510/ushi.pdf",
+        "title": "沖縄県 黒島牛まつり実行委員会（島外から多くの人が訪れ、抽選会には会場の全員が加わる）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-02-22",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "第33回。黒島多目的広場で、牛1頭が当たる抽選会、ライブ、牛汁・牛そばなどの販売があった。石垣港からの船は増便し、当日は予約を受け付けなかった",
+      "sources": [
+        {
+          "url": "https://www.town.taketomi.lg.jp/calendar/1672899496/",
+          "title": "竹富町 第33回 黒島牛まつり（2026年2月22日、黒島多目的広場）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://aneikankou.co.jp/info/detail/491",
+          "title": "安栄観光 第33回黒島牛まつりの日の黒島航路の運航（2026年2月22日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-02-28",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年2月の最終日曜日に開く決まりから見込んだ日（2027年の発表はまだ見つからない）。2026年の第33回は2月22日（日）だった",
+      "sources": [
+        {
+          "url": "https://www.town.taketomi.lg.jp/calendar/1672899496/",
+          "title": "竹富町 第33回 黒島牛まつり（毎年2月最終日曜日に開催）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://painusima.com/access/",
+        "title": "竹富町観光協会 島へのアクセス（石垣港から黒島港へ高速船で25〜30分、石垣空港から離島ターミナルへバスで約30〜50分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://aneikankou.co.jp/info/detail/491",
+        "title": "安栄観光 第33回黒島牛まつりの日の黒島航路の運航（2026年、当日は予約不可で混雑の見込み）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "牛汁",
+        "note": "島の青年会が支度して、会場で振る舞う",
+        "sources": [
+          {
+            "url": "https://www.pref.okinawa.jp/_res/projects/default_project/_page_/001/011/510/ushi.pdf",
+            "title": "沖縄県 黒島牛まつり実行委員会（青年会が振る舞う牛汁を準備）",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      },
+      {
+        "name": "牛そば・モモ焼き・牛丼",
+        "note": "会場の店で売られる。アーサそばやアーサの天ぷらも出る",
+        "sources": [
+          {
+            "url": "https://www.town.taketomi.lg.jp/calendar/1672899496/",
+            "title": "竹富町 第33回 黒島牛まつり（牛汁・牛丼・牛そば・モモ焼き・アーサそばなどの販売）",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.town.taketomi.lg.jp/calendar/1672899496/",
+      "title": "竹富町 第33回 黒島牛まつり（主催は黒島牛まつり実行委員会、会場は黒島多目的広場）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.okinawastory.jp/event/600021492",
+      "title": "沖縄観光情報 おきなわ物語 第33回黒島牛まつり2026（竹富町黒島、黒島多目的広場）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_354159/",
+      "title": "じゃらんnet 黒島牛まつり",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表（日付は「毎年2月最終日曜日」から見込んだもの）",
+    "開始と終了の時刻、抽選会などの催しの時刻（町・観光協会の案内に書いていない）",
+    "雨天の扱い",
+    "2027年のセット券の値段と、船の増便のダイヤ",
+    "見学と参加の決まり、服装・持ち物、撮影についての案内（主催者の案内は Instagram にあるとされ、確かめていない）",
+    "黒島港から会場までの道のりと徒歩の時間",
+    "石垣港までのアクセスは船と路線バスで、玄関口の駅からの所要時間は出せない",
+    "周辺の観光と食の場所（営業時間を公式で確かめられたものが見つかっていない）",
+    "会場の緯度・経度は、国土地理院の住所検索で竹富町黒島の代表点を取ったもの（黒島多目的広場そのものの位置ではない）",
+    "じゃらんnet 以外の大手の観光サイトの掲載（Web 検索では見つからなかった）"
+  ]
+}
