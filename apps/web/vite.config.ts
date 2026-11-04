@@ -33,6 +33,7 @@ const REQUIRED_ASSETS = [
     (name) => `3d/models/${name}.glb`,
   ),
   ...["hiyoko", "owl", "hen", "sparrow", "penguin"].map((name) => `shiori/staff/face_${name}.webp`),
+  "audio/bgm_wadaiko.mp3",
 ];
 
 function requireAssets(): Plugin {
