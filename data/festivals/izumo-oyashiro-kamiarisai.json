@@ -1,0 +1,397 @@
+{
+  "id": "izumo-oyashiro-kamiarisai",
+  "name": {
+    "ja": "神在祭",
+    "en": "Kamiarisai (Izumo Oyashiro)"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "島根県",
+      "name": "出雲市"
+    }
+  ],
+  "venue": {
+    "name": "出雲大社（神迎神事は稲佐の浜）",
+    "lat": 35.404,
+    "lng": 132.6855
+  },
+  "scaleTier": "L",
+  "popularity": "major",
+  "listedIn": ["walkerplus", "jalan", "rurubu", "jnto"],
+  "highlights": [
+    "夜の稲佐の浜でかがり火を焚き、海から来る神々を迎える神迎神事",
+    "浜の斎場で白御幣を受け取り、出雲大社まで神々の行列にお供できる",
+    "神々が十九社に泊まり、上宮で人々の縁を話し合うとされる神在月の祭り"
+  ],
+  "trivia": [
+    {
+      "text": "旧暦10月10日の夕方、神々は海から来て稲佐の浜に上陸するとされる",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/R3-00191.html",
+        "title": "観光庁 地域観光資源の多言語解説文データベース 神在祭、稲佐の浜、十九社、お清めの砂（出雲大社）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "神々は、セグロウミヘビとして知られる龍蛇に導かれて来ると伝わる",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/R3-00191.html",
+        "title": "観光庁 地域観光資源の多言語解説文データベース 神在祭、稲佐の浜、十九社、お清めの砂（出雲大社）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "神々の宿とされる十九社は、名のとおり19の扉を持つ建物",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/R3-00191.html",
+        "title": "観光庁 地域観光資源の多言語解説文データベース 神在祭、稲佐の浜、十九社、お清めの砂（出雲大社）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "稲佐の浜の砂を素鵞社に納め、同じだけの砂をいただいて帰る習わしがある",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/R3-00191.html",
+        "title": "観光庁 地域観光資源の多言語解説文データベース 神在祭、稲佐の浜、十九社、お清めの砂（出雲大社）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "神迎神事では稲佐の浜の斎場で参列でき、斎場の入口で白御幣を受け取って、出雲大社までの神々の行列にお供する",
+    "rules": [
+      "2026年の縁結大祭（11月23日・25日）の参列の申し込みは、どちらも定員に達して締め切られた",
+      "龍蛇神講大祭は講員のための祭典で、直前に加入した人は参列を断られることがある"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "夜の海岸から始まる神事で、主催者が混雑による危険を挙げて、稲佐の浜から出雲大社への道の交通規制を検討している"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://izumooyashiro.or.jp/r8_kamiari",
+        "title": "出雲大社 令和8年 神在祭/縁結大祭について",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.mlit.go.jp/tagengo-db/R3-00191.html",
+        "title": "観光庁 地域観光資源の多言語解説文データベース 神在祭、稲佐の浜、十九社、お清めの砂（出雲大社）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-18",
+      "start": "19:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "神迎神事・神迎祭。19:00から出雲大社の西約1kmの稲佐の浜で神迎神事を行い、神々の行列が出雲大社へ進んで拝殿で神迎祭。旧暦10月10日にあたる（国立天文台の朔弦望で、2026年11月9日が朔）。神在月の期間は11月18日夕刻から25日夕刻まで",
+      "sources": [
+        {
+          "url": "https://izumooyashiro.or.jp/plans/",
+          "title": "出雲大社 出雲大社祭日表（11月18日 神迎神事・神迎祭 午後7時）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://izumooyashiro.or.jp/r8_kamiari",
+          "title": "出雲大社 令和8年 神在祭/縁結大祭について（11月18日夕刻、稲佐の浜）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2026/rekiyou263.html",
+          "title": "国立天文台暦計算室 令和8年(2026)暦要項 朔弦望（11月9日 朔）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-19",
+      "start": "09:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "9:00 神在祭、11:00 出雲大社教 龍蛇神講大祭（講員向け）。11月19日〜24日は毎日17:00から神楽殿で夜神楽祈祷。この日は出雲大社の周辺で8:00から交通規制",
+      "sources": [
+        {
+          "url": "https://izumooyashiro.or.jp/plans/",
+          "title": "出雲大社 出雲大社祭日表（11月19日 神在祭 午前9時）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://izumooyashiro.or.jp/r8_kamiari",
+          "title": "出雲大社 令和8年 神在祭/縁結大祭について",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.taisha-traffic.net/show_contents/10000",
+          "title": "大社交通渋滞対策実行委員会 2026年11月 交通規制情報（8:00から規制）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.taisha-traffic.net",
+          "title": "大社交通渋滞対策実行委員会 交通渋滞対策（11月19日 交通規制）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-23",
+      "start": "10:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "10:00 献穀祭・神在祭・縁結大祭（縁結大祭の参列の申し込みは定員に達した）、19:00 古伝新嘗祭。11月21日〜23日は出雲大社の周辺で8:00から交通規制があり、無料のシャトルバスが走る",
+      "sources": [
+        {
+          "url": "https://izumooyashiro.or.jp/plans/",
+          "title": "出雲大社 出雲大社祭日表（11月23日 献穀祭・神在祭・縁結大祭 午前10時）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.taisha-traffic.net",
+          "title": "大社交通渋滞対策実行委員会 交通渋滞対策（11月21日〜23日 交通規制・無料シャトルバス）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-25",
+      "start": "10:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "10:00 神在祭・縁結大祭、16:00 拝殿で神等去出祭（神々を送り出す祭り）",
+      "sources": [
+        {
+          "url": "https://izumooyashiro.or.jp/plans/",
+          "title": "出雲大社 出雲大社祭日表（11月25日 神在祭・縁結大祭 午前10時、神等去出祭 午後4時）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://izumooyashiro.or.jp/r8_kamiari",
+          "title": "出雲大社 令和8年 神在祭/縁結大祭について",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-12-04",
+      "start": "16:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "16:00 第二神等去出祭",
+      "sources": [
+        {
+          "url": "https://izumooyashiro.or.jp/plans/",
+          "title": "出雲大社 出雲大社祭日表（12月4日 第二神等去出祭 午後4時）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-11-07",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "神迎神事は旧暦10月10日の夕方に行う。国立天文台の朔弦望（10月29日が朔）と二十四節気（小雪が11月22日）から、2027年は11月7日（日曜日）にあたる。2027年の発表はまだなく、日付は暦から計算した見込み。2026年は19:00開始だった",
+      "sources": [
+        {
+          "url": "https://www.mlit.go.jp/tagengo-db/R3-00191.html",
+          "title": "観光庁 地域観光資源の多言語解説文データベース 神在祭、稲佐の浜（旧暦10月10日の夕方に神々を迎える）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2027/rekiyou273.html",
+          "title": "国立天文台暦計算室 令和9年(2027)暦要項 朔弦望（10月29日 朔）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2027/rekiyou272.html",
+          "title": "国立天文台暦計算室 令和9年(2027)暦要項 二十四節気（小雪 11月22日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "一畑電車 出雲大社前駅",
+        "walkMinutes": [10, 15],
+        "note": "出雲大社まで徒歩約10分。電鉄出雲市駅から一畑電車で、川跡駅で乗り換える。稲佐の浜は出雲大社の西約1km"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [
+      "2026年は11月19日と11月21日〜23日に、出雲大社の周辺で8:00から交通規制（区間は大社交通渋滞対策実行委員会の規制図で示す）",
+      "11月18日の神迎神事の際、稲佐の浜から出雲大社への御神幸路の交通規制を検討中（出雲大社の案内）"
+    ],
+    "sources": [
+      {
+        "url": "https://izumo-kankou.gr.jp/676",
+        "title": "出雲観光協会 出雲大社（出雲大社前駅から徒歩約10分、駐車場385台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kankou-shimane.com/pickup/28022.html",
+        "title": "島根県観光連盟 出雲大社へのアクセス＆周辺の駐車場情報",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.taisha-traffic.net/show_contents/10000",
+        "title": "大社交通渋滞対策実行委員会 2026年11月 交通規制情報（8:00から規制）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://izumooyashiro.or.jp/r8_kamiari",
+        "title": "出雲大社 令和8年 神在祭/縁結大祭について（稲佐の浜は出雲大社の西約1km）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "shimane-museum-of-ancient-izumo",
+      "name": "島根県立古代出雲歴史博物館",
+      "kind": "sightseeing",
+      "summary": "出雲大社の東隣にある県立の博物館。改修を終えて2026年10月に再開し、11月29日まで特別展「その後のヲロチとスサノヲ」を開く。2026年11月は10日と17日（火曜）が休館",
+      "location": {
+        "lat": 35.3989,
+        "lng": 132.6885
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.izm.ed.jp/",
+          "title": "島根県立古代出雲歴史博物館 公式サイト（9:00〜17:00、最終入館16:30）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.pref.shimane.lg.jp/press_release/2026/9xqjeuefesxx.html",
+          "title": "島根県 古代出雲歴史博物館リニューアルオープン 関連イベントについて",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "izumo-soba-megumi",
+      "name": "出雲そば めぐみ。惠",
+      "kind": "food",
+      "summary": "大社神門通りに面した古民家を直したそば店。国産のそば粉で毎朝手打ちし、二段の割子そばに唐揚げと炊き込みご飯が付くセットがある。そばが無くなりしだい閉店。駐車場なし",
+      "location": {
+        "lat": 35.3935,
+        "lng": 132.6863
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "16:00"
+      },
+      "closedDays": ["tue"],
+      "price": "二段割子セット850円",
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://izumo-kankou.gr.jp/4951",
+          "title": "出雲観光協会 出雲そば めぐみ。惠",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://izumooyashiro.or.jp/r8_kamiari",
+      "title": "出雲大社 令和8年 神在祭/縁結大祭について",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://izumooyashiro.or.jp/plans/",
+      "title": "出雲大社 出雲大社祭日表",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.mlit.go.jp/tagengo-db/R3-00191.html",
+      "title": "観光庁 地域観光資源の多言語解説文データベース 神在祭、稲佐の浜、十九社、お清めの砂（出雲大社）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20000344",
+      "title": "るるぶ&more. 神在祭（島根県／出雲大社）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    },
+    {
+      "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%87%BA%E9%9B%B2%E5%A4%A7%E7%A4%BE",
+      "title": "国土地理院 地名検索「出雲大社」（地理院地図の注記の点）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "神迎神事の終わる時刻と、稲佐の浜から出雲大社までの行列にかかる時間",
+    "神迎神事に参列するときの服装・持ち物・撮影の決まり",
+    "雨や荒天のときの扱い",
+    "11月18日の御神幸路の交通規制が行われるかどうかと、その区間",
+    "2027年の神在祭・縁結大祭・神等去出祭の日付（旧暦の日の決まりが公式に書かれているのは神迎神事だけ）",
+    "見物客・参列者の数",
+    "主要駅から出雲大社前駅までの所要時間（公式の案内に一畑電車の乗車時間がない）",
+    "屋台の有無と、この祭りの日だけの食べ物",
+    "稲佐の浜の近くで祭りの日に開いていると確かめられた店"
+  ]
+}

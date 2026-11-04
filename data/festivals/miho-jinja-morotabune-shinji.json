@@ -1,0 +1,213 @@
+{
+  "id": "miho-jinja-morotabune-shinji",
+  "name": {
+    "ja": "諸手船神事",
+    "en": "Morotabune Shinji (Miho Shrine)"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "島根県",
+      "name": "松江市"
+    }
+  ],
+  "venue": {
+    "name": "美保神社",
+    "lat": 35.5624,
+    "lng": 133.3036
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "2隻の諸手船が沖へ漕ぎ出して港へ戻り、向かい合って櫂で海水をかけ合う",
+    "国譲り神話で使いの神が船で美保を訪れた場面を再び演じる、毎年12月3日の神事",
+    "神事に使う諸手船は国の重要有形民俗文化財"
+  ],
+  "trivia": [
+    {
+      "text": "かつては旧暦11月の初午の日に行われていた",
+      "source": {
+        "url": "http://mihojinja.or.jp/sinji/",
+        "title": "美保神社 特殊神事（青柴垣神事・諸手船神事）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "古くは「八百穂祭（いやほのまつり）」と呼ばれ、稲の恵みに感謝する秋祭でもある",
+      "source": {
+        "url": "http://mihojinja.or.jp/sinji/",
+        "title": "美保神社 特殊神事（青柴垣神事・諸手船神事）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "船1隻に、漕ぎ手6人とほかの役の3人が乗り込む",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/common/001565189.pdf",
+        "title": "観光庁 地域観光資源の多言語解説文データベース Mihonoseki Port Town",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "諸手船は毎月7日、神社の収蔵庫で公開されることがある（公開する宝物は月ごとに替わる）",
+      "source": {
+        "url": "http://mihojinja.or.jp/saiji/",
+        "title": "美保神社 年間祭事（毎月7日の宝物公開）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "神事と船の競漕の見物が中心で、主催者による危険や混雑の注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "http://mihojinja.or.jp/sinji/",
+        "title": "美保神社 特殊神事（神事は氏子の祭祀組織が役割を担って奉仕する）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.mlit.go.jp/tagengo-db/common/001565189.pdf",
+        "title": "観光庁 地域観光資源の多言語解説文データベース Mihonoseki Port Town",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-03",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年12月3日（2026年は木曜日。神社の2026年の発表はまだない）。神社の年間祭事では、例年9:30 新嘗祭、12:00 客人社祭、13:30 諸手船神事。午後に2隻の船が沖へ漕ぎ出して港へ戻り、向かい合って海水をかけ合う",
+      "sources": [
+        {
+          "url": "http://mihojinja.or.jp/saiji/",
+          "title": "美保神社 年間祭事（12月3日 13:30 諸手船神事）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.mlit.go.jp/tagengo-db/common/001565189.pdf",
+          "title": "観光庁 地域観光資源の多言語解説文データベース Mihonoseki Port Town（毎年12月3日の午後）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000808",
+          "title": "るるぶ&more. 諸手船神事（2026年12月3日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-12-03",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年12月3日（2027年は金曜日。発表はまだない）。神社の年間祭事では、例年13:30から諸手船神事",
+      "sources": [
+        {
+          "url": "http://mihojinja.or.jp/saiji/",
+          "title": "美保神社 年間祭事（12月3日 13:30 諸手船神事）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.mlit.go.jp/tagengo-db/common/001565189.pdf",
+          "title": "観光庁 地域観光資源の多言語解説文データベース Mihonoseki Port Town（毎年12月3日の午後）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.mihonoseki-kankou.jp/access/",
+        "title": "松江観光協会美保関町支部 美保神社・美保関へのアクセス",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000808",
+        "title": "るるぶ&more. 諸手船神事（駐車場40台・無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "http://mihojinja.or.jp/sinji/",
+      "title": "美保神社 特殊神事（青柴垣神事・諸手船神事）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "http://mihojinja.or.jp/saiji/",
+      "title": "美保神社 年間祭事（所在地 松江市美保関町美保関608、国重要有形民俗文化財の諸手船）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.pref.shimane.lg.jp/industry/suisan/gyokou/shiryo/01aoishidatami.html",
+      "title": "島根県 青石畳（12月3日の諸手船神事）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20000808",
+      "title": "るるぶ&more. 諸手船神事（昨年の来場者数 1,500〜2,000人）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    },
+    {
+      "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%BE%8E%E4%BF%9D%E7%A5%9E%E7%A4%BE",
+      "title": "国土地理院 地名検索「美保神社」（地理院地図の注記の点）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2026年の開催の発表と、神事・船の競漕の時刻",
+    "見学できる場所と立ち入りの決まり",
+    "服装・持ち物・撮影の決まり",
+    "雨や荒天のときの扱い",
+    "終わる時刻と、船の競漕のくり返しの回数",
+    "最寄り駅と主要駅からの所要時間（鉄道は通らない。境港駅や松江駅からコミュニティバス・一畑バスを乗り継ぐ。公式の案内は区間ごとの目安だけで、通しの所要時間がない）",
+    "祭りの日の駐車場と交通規制（駐車場40台はるるぶ&more.の記載のみ）",
+    "屋台の有無",
+    "見学者数の公式の数字（るるぶ&more.では前年の来場者数が1,500〜2,000人）",
+    "神社の近くで、2026年12月3日（木曜日）に開いていると公式で確かめられた食事の店",
+    "祭りの前後に寄れる周辺の観光の場所と、その営業時間"
+  ]
+}

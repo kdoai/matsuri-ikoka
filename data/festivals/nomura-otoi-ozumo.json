@@ -1,0 +1,209 @@
+{
+  "id": "nomura-otoi-ozumo",
+  "name": {
+    "ja": "乙亥大相撲",
+    "en": "Otoi Grand Sumo of Nomura"
+  },
+  "category": "other",
+  "municipalities": [
+    {
+      "prefecture": "愛媛県",
+      "name": "西予市"
+    }
+  ],
+  "venue": {
+    "name": "乙亥会館",
+    "lat": 33.3786,
+    "lng": 132.6406
+  },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": ["jalan"],
+  "highlights": [
+    "大相撲の招聘力士と全国のアマチュア選手が同じ土俵で取り組む",
+    "幕内力士が赤ちゃんを抱いて四股を踏む稚児の土俵入り",
+    "1日目は市内の青年、2日目は小中学生の団体戦があり、町ぐるみの相撲が見られる",
+    "両国国技館を手本にした乙亥会館に吊り屋根と土俵を組んで開く"
+  ],
+  "trivia": [
+    {
+      "text": "嘉永5年の大火のあと、火事が起きないよう願って三十三番の相撲を奉納したのが始まり",
+      "source": {
+        "url": "https://www.city.seiyo.ehime.jp/kakuka/nomura_sisho/sangyo/18958.html",
+        "title": "西予市 第175回乙亥大相撲",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "会場の乙亥会館は両国国技館がモデルで、1階に桟敷988席、2階に固定席528席がある",
+      "source": {
+        "url": "https://seiyojikan.jp/spot/%E4%B9%99%E4%BA%A5%E4%BC%9A%E9%A4%A8/",
+        "title": "せいよじかん（西予市観光物産協会） 乙亥会館",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "会館の相撲資料館には化粧回しや番付、歴代の力士の写真や手形が並ぶ",
+      "source": {
+        "url": "https://seiyojikan.jp/spot/%E4%B9%99%E4%BA%A5%E4%BC%9A%E9%A4%A8/",
+        "title": "せいよじかん（西予市観光物産協会） 乙亥会館",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2023年は、平成30年7月豪雨から5年ぶりに通常の形で開かれた",
+      "source": {
+        "url": "https://www.iyokannet.jp/blog/10",
+        "title": "いよ観ネット ひめ旅録 途切れない伝統",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "入場には入場整理券が要る（前売1,500円、当日2,000円、中学生以下は無料）",
+      "前売券は、主催者の都合や不可抗力による中止のほかは払い戻し・再発行をしない",
+      "2026年はマス席（3人1マス、弁当と土産付き）が両日とも完売し、稚児の土俵入りの受付は10月30日で終わった"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "屋内の会館での観戦が中心で、主催者による混雑や危険の注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.seiyo.ehime.jp/kakuka/nomura_sisho/sangyo/18958.html",
+        "title": "西予市 第175回乙亥大相撲（入場整理券・マス席・稚児の土俵入り）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.seiyo.ehime.jp/material/files/group/61/2026otoiozumou_tirasi.pdf",
+        "title": "西予市 第175回乙亥大相撲 チラシ",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-24",
+      "start": "08:00",
+      "end": "18:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "1日目（予定）。8:00 市内一般青年団体対抗戦と個人勝抜戦、12:35 乙亥太鼓・相撲甚句、13:25 プロ・アマ招待選手の取組、14:05 中入（主催者挨拶・初っ切り）、15:05 取組、15:45 稚児の土俵入り、16:45 相撲指導、17:10 取組、18:00 終了。取組の都合で時間が前後する。JR卯之町駅前から無料送迎バス（9:20発、乙亥会館10:00着。帰りは乙亥会館17:30発、卯之町駅前18:00着）",
+      "sources": [
+        {
+          "url": "https://www.city.seiyo.ehime.jp/material/files/group/61/2026otoiozumou_tirasi.pdf",
+          "title": "西予市 第175回乙亥大相撲 チラシ（日程の予定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.seiyo.ehime.jp/kakuka/nomura_sisho/sangyo/18958.html",
+          "title": "西予市 第175回乙亥大相撲（令和8年11月24日・25日、無料送迎バス）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-25",
+      "start": "07:45",
+      "end": "18:35",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2日目（予定）。7:45 市内小学校団体対抗戦と個人勝抜戦、12:05 市内中学校団体対抗戦と個人勝抜戦、15:30 稚児の土俵入り、16:15 プロ・アマ招待選手の取組、16:45 中入、17:00 取組から末三役、18:35 全日程終了。取組の都合で時間が前後する。この日は野村町商店街で商工祭もある。JR卯之町駅前から無料送迎バス（9:20発、乙亥会館10:00着。帰りは乙亥会館17:30発、卯之町駅前18:00着）",
+      "sources": [
+        {
+          "url": "https://www.city.seiyo.ehime.jp/material/files/group/61/2026otoiozumou_tirasi.pdf",
+          "title": "西予市 第175回乙亥大相撲 チラシ（日程の予定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.seiyo.ehime.jp/kakuka/nomura_sisho/sangyo/18958.html",
+          "title": "西予市 第175回乙亥大相撲（令和8年11月24日・25日、無料送迎バス）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.city.seiyo.ehime.jp/kakuka/nomura_sisho/sangyo/18958.html",
+        "title": "西予市 第175回乙亥大相撲（臨時駐車場、三瓶・宇和方面からの無料送迎バス）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://seiyojikan.jp/spot/%E4%B9%99%E4%BA%A5%E4%BC%9A%E9%A4%A8/",
+        "title": "せいよじかん 乙亥会館（松山道西予宇和ICから車で25分、駐車場100台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "ちゃんこ祭り",
+        "note": "両日、乙亥会館の前で開く（内容と値段の案内はない）",
+        "sources": [
+          {
+            "url": "https://www.city.seiyo.ehime.jp/material/files/group/61/2026otoiozumou_tirasi.pdf",
+            "title": "西予市 第175回乙亥大相撲 チラシ",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.city.seiyo.ehime.jp/kakuka/nomura_sisho/sangyo/18958.html",
+      "title": "西予市 第175回乙亥大相撲",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.iyokannet.jp/event/5273",
+      "title": "いよ観ネット 第174回野村乙亥大相撲（2025年の回、乙亥会館）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://seiyojikan.jp/spot/%E4%B9%99%E4%BA%A5%E4%BC%9A%E9%A4%A8/",
+      "title": "せいよじかん 乙亥会館（愛媛県西予市野村町野村12-10）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催日（毎年の日付の決まりが公式に書かれていない）",
+    "JR卯之町駅から会場までの路線バスの所要時間と、主要駅からの所要時間",
+    "撮影の決まり、服装・持ち物",
+    "見物客の数",
+    "ちゃんこ祭りの内容と値段、屋台の有無",
+    "祭りの日に開いていると確かめられた会場近くの観光地と飲食店",
+    "交通規制の有無"
+  ]
+}

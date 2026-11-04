@@ -1,0 +1,250 @@
+{
+  "id": "yatsushiro-myokensai",
+  "name": {
+    "ja": "八代妙見祭",
+    "en": "Yatsushiro Myoken Festival"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "熊本県",
+      "name": "八代市"
+    }
+  ],
+  "venue": {
+    "name": "塩屋八幡宮（お上りの出発）から八代駅前を通って八代神社（妙見宮）・砥崎河原まで",
+    "lat": 32.5,
+    "lng": 130.6413
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["jalan", "rurubu", "tripadvisor"],
+  "highlights": [
+    "亀と蛇が合わさった想像上の生き物「亀蛇（ガメ）」が首を振って舞う",
+    "笠鉾9基や獅子・飾馬など約40の出し物が、約6kmを練り歩く神幸行列",
+    "砥崎河原での獅子舞・亀蛇の演舞と、飾馬が河原を駆ける馬追い",
+    "前夜の御夜では、本町アーケードで出し物を間近に見られる"
+  ],
+  "trivia": [
+    {
+      "text": "獅子舞は元禄4年（1691）、長崎くんちの獅子舞に惚れこんだ城下の商人が初めて奉納したと伝わる",
+      "source": {
+        "url": "https://myouken.com/",
+        "title": "八代妙見祭 公式サイト（神幸行列の出し物 獅子）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "亀蛇の姿は、妙見の神が亀蛇に乗って海を渡ってきたという伝説にちなむ",
+      "source": {
+        "url": "https://myouken.com/",
+        "title": "八代妙見祭 公式サイト（神幸行列の出し物 亀蛇）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "亀と蛇が合わさった想像上の生き物の亀蛇は、八代ではガメの愛称で知られる",
+      "source": {
+        "url": "https://myouken.com/",
+        "title": "八代妙見祭 公式サイト（神幸行列の出し物 亀蛇）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "火王・水王・風王の3つの面の並ぶ順で、翌年が晴れ・雨・風のどれが多い年かを占う",
+      "source": {
+        "url": "https://myouken.com/",
+        "title": "八代妙見祭 公式サイト（神幸行列の出し物）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "砥崎河原の一般観覧席（右岸の階段）の場所取りは前日の22日に解禁され、混雑と斜面での転落を防ぐため、入場の順番を事前の抽選で決める。先着順ではない（2025年の案内）"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "約40の出し物の行列と砥崎河原での飾馬の馬追いを見る祭りで、主催者は砥崎河原の階段の観覧席での転落に注意を促している"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://myouken.com/news/2025-10-30-2",
+        "title": "八代妙見祭 公式サイト 令和7年 八代妙見祭の一般観覧席の場所取りについて（お願い）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-22",
+      "start": null,
+      "end": null,
+      "status": "cancelled",
+      "rainPolicy": null,
+      "note": "令和8年熊本地震の被災と安全面を考え、神幸行列（お下り）と御夜（前夜祭）は中止（2026年9月2日、八代神社と八代妙見祭保存振興会が発表）。一部の神事は八代神社で行う。代わりに保存振興会の「復興祈願でんでん祭」が9:00〜17:30にお祭りでんでん館で開かれ、妙見祭の出し物や民俗芸能の披露、笠鉾の公開組立がある予定。余震や天候で変更・中止の場合がある",
+      "sources": [
+        {
+          "url": "https://myouken.com/news/2026-09-03",
+          "title": "八代妙見祭 公式サイト 令和8年 八代妙見祭の中止について（2026年9月2日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://myouken.com/news/2026-10-29",
+          "title": "八代妙見祭 公式サイト 令和8年 八代妙見祭「復興祈願行事」開催のお知らせ（2026年10月28日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kab.co.jp/news/article/16860831",
+          "title": "KAB熊本朝日放送 八代妙見祭 神幸行列など中止 地震で神社も被災（2026年9月3日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-23",
+      "start": null,
+      "end": null,
+      "status": "cancelled",
+      "rainPolicy": null,
+      "note": "神幸行列（お上り）は中止（2026年9月2日発表）。代わりに保存振興会の「復興祈願妙見奉納祭」が11:00〜17:30に八代神社（妙見宮）の境内で開かれ、復興祈願祭、獅子舞・亀蛇の演舞の奉納、夕方のスカイランタンがある予定。余震や天候で変更・中止の場合がある",
+      "sources": [
+        {
+          "url": "https://myouken.com/news/2026-09-03",
+          "title": "八代妙見祭 公式サイト 令和8年 八代妙見祭の中止について（2026年9月2日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://myouken.com/news/2026-10-29",
+          "title": "八代妙見祭 公式サイト 令和8年 八代妙見祭「復興祈願行事」開催のお知らせ（2026年10月28日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kab.co.jp/news/article/16860831",
+          "title": "KAB熊本朝日放送 八代妙見祭 神幸行列など中止 地震で神社も被災（2026年9月3日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-11-22",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "お上りの前日の22日に、本町アーケード一帯で前夜祭の御夜と、神幸行列のお下りがある（公式サイトの案内からの見込み。2027年の開催の発表はまだない）",
+      "sources": [
+        {
+          "url": "https://myouken.com/",
+          "title": "八代妙見祭 公式サイト 妙見祭をご覧になる方へ（前日の22日に御夜）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-11-23",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "市・県の案内にある「毎年11月23日」の神幸行列（お上り）からの見込み（2027年の開催の発表はまだない）。例年は神輿と神馬を中心に獅子・笠鉾・亀蛇・飾馬など40の出し物が並び、7:30に塩屋八幡宮を出発、本町アーケード、桜十字ホールやつしろ、八代駅前（9:00〜11:30）を通って昼前に八代神社へ着き、12:30〜17:00に砥崎河原で演舞と馬追い。飾馬の順番は当日朝6時の抽選で決まる。規模は、市の中心部をめぐる40の出し物の行列から決めた",
+      "sources": [
+        {
+          "url": "https://www.pref.kumamoto.jp/site/kennan/8423.html",
+          "title": "熊本県 八代妙見祭がユネスコ無形文化遺産に登録されました！（毎年11月23日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://myouken.com/",
+          "title": "八代妙見祭 公式サイト 妙見祭をご覧になる方へ（行列の時刻の予定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR九州・肥薩おれんじ鉄道 八代駅",
+        "walkMinutes": [20, 25],
+        "note": "るるぶは「JR八代駅から徒歩20分」とだけ書き、行き先は示していない。お上りの行列は例年9:00〜11:30に八代駅前を通る"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [
+      "例年11月23日は、八代神社と砥崎河原の周辺で車両の通行・進入ができない。臨時駐車場とシャトルバスを使う"
+    ],
+    "sources": [
+      {
+        "url": "https://myouken.com/",
+        "title": "八代妙見祭 公式サイト 妙見祭をご覧になる方へ（駐車場と交通規制）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000621",
+        "title": "るるぶ&more. 八代妙見祭（JR八代駅から徒歩20分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://myouken.com/",
+      "title": "八代妙見祭 公式サイト",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://kumamoto.guide/spots/detail/12517",
+      "title": "熊本県観光サイト もっと、もっと!くまもっと。 八代妙見祭（八代市妙見町405）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20000621",
+      "title": "るるぶ&more. 八代妙見祭（約6kmの神幸行列、40の出し物）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年に神幸行列を再開するか（八代神社は地震で被災している）",
+    "2027年の時刻",
+    "雨天の扱い",
+    "見学の服装・持ち物、撮影の決まり",
+    "行列の人数",
+    "有料の観覧席の場所と料金",
+    "八代駅から八代神社・砥崎河原までの徒歩の時間",
+    "お下り（22日）の時刻と経路",
+    "主要駅（熊本駅・新八代駅など）から八代駅までの所要時間",
+    "祭りの日の屋台と、この祭りならではの食べもの",
+    "周辺の観光と食の場所（祭りの日の営業を確かめられたものがない）"
+  ]
+}
