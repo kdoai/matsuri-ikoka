@@ -1,0 +1,173 @@
+{
+  "id": "kosaiji-kiraigo",
+  "name": { "ja": "広済寺の鬼来迎", "en": "Kiraigo at Kosaiji Temple" },
+  "category": "performing_arts",
+  "municipalities": [{ "prefecture": "千葉県", "name": "山武郡横芝光町" }],
+  "venue": { "name": "広済寺", "lat": 35.6753, "lng": 140.4933 },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["walkerplus"],
+  "highlights": [
+    "面をつけた鬼が地獄の責め苦を演じ、菩薩が救う古典的な仏教劇",
+    "鬼婆に赤ちゃんを抱いてもらい、子の健やかな育ちを願う",
+    "毎年8月16日の1日だけ演じられる"
+  ],
+  "trivia": [
+    {
+      "text": "全7段のうち、今は地獄の責め苦と救いを描く大序・賽の河原・釜入れ・死出の山の4段を演じる",
+      "source": {
+        "url": "https://www.town.yokoshibahikari.chiba.jp/site/yokoshibahikari-navi/8715.html",
+        "title": "横芝光町 横芝光町を知る！歴史めぐり7選",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "鎌倉時代の始まりとされ、戦争中も絶えることなく約800年演じ継がれてきたと伝わる",
+      "source": {
+        "url": "https://www.town.yokoshibahikari.chiba.jp/site/yokoshibahikari-navi/8715.html",
+        "title": "横芝光町 横芝光町を知る！歴史めぐり7選",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1976年5月4日に国の重要無形民俗文化財に指定された。伝えているのは鬼来迎保存会",
+      "source": {
+        "url": "https://www.pref.chiba.lg.jp/kyouiku/bunkazai/shitei/shichouson/yokoshibahikari.html",
+        "title": "千葉県 横芝光町の国・県指定文化財",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "鬼来迎に使う面のうち13面は、千葉県の有形民俗文化財に指定されている",
+      "source": {
+        "url": "https://www.pref.chiba.lg.jp/kyouiku/bunkazai/shitei/shichouson/yokoshibahikari.html",
+        "title": "千葉県 横芝光町の国・県指定文化財（広済寺の鬼来迎面）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "寺の境内で劇を見学する行事で、混雑や危険についての特別な注意は案内に見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.town.yokoshibahikari.chiba.jp/site/yokoshibahikari-navi/8715.html",
+        "title": "横芝光町 横芝光町を知る！歴史めぐり7選（鬼来迎の段と鬼婆の言い伝え）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://maruchiba.jp/event/detail_10863.html",
+        "title": "ちば観光ナビ 鬼来迎",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-08-16",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年8月16日に演じる決まりから見込んだ日（2027年の発表はまだない）。上演は約1時間半。2026年は施餓鬼供養のあと15:00ごろから1時間強の予定と案内されていた",
+      "sources": [
+        {
+          "url": "https://www.town.yokoshibahikari.chiba.jp/site/yokoshibahikari-navi/8715.html",
+          "title": "横芝光町 横芝光町を知る！歴史めぐり7選（鬼来迎は8月16日、約1時間半）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://maruchiba.jp/event/detail_10863.html",
+          "title": "ちば観光ナビ 鬼来迎（毎年8月16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar0312e609501/",
+          "title": "ウォーカープラス 鬼来迎（2026年8月16日、15:00ごろから）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 横芝駅",
+        "walkMinutes": [60, 65],
+        "note": "徒歩では約60分。タクシーで約10分。見学者用の無料シャトルバスが出ると案内されている（運行の時刻と乗り場は未確認）"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://maruchiba.jp/spot/detail_10245.html",
+        "title": "ちば観光ナビ 広済寺（横芝駅から徒歩約60分、横芝光ICから車で約5分、無料駐車場 普通車20台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://maruchiba.jp/event/detail_10863.html",
+        "title": "ちば観光ナビ 鬼来迎（横芝駅からタクシーで約10分、無料シャトルバス）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.town.yokoshibahikari.chiba.jp/site/yokoshibahikari-navi/8715.html",
+      "title": "横芝光町 横芝光町を知る！歴史めぐり7選",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.pref.chiba.lg.jp/kyouiku/bunkazai/shitei/shichouson/yokoshibahikari.html",
+      "title": "千葉県 横芝光町の国・県指定文化財（鬼来迎、伝承地は横芝光町虫生）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://maruchiba.jp/spot/detail_10245.html",
+      "title": "ちば観光ナビ 広済寺（横芝光町虫生483）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と開始の時刻（例年は施餓鬼供養のあと15:00ごろからとする案内が多いが、主催者の発表は見つからない）",
+    "雨天や台風のときの扱い（過去に台風で中止になった回があると、ちば観光ナビに書かれている。年は書かれていない）",
+    "無料シャトルバスの乗り場・時刻と、毎年出るかどうか",
+    "東京方面から横芝駅までの所要時間（公式の案内が見つからない）",
+    "見学の決まり（立ち位置・場所取り）、撮影の扱い、服装・持ち物",
+    "鬼婆に赤ちゃんを抱いてもらう虫封じの受け方（申し込みの要否・時刻）",
+    "屋台の有無と、この日だけの食べもの",
+    "周辺の観光と食の場所（営業時間を確かめられた場所がまだない）",
+    "寺の建立の年の食い違い（ちば観光ナビは1190年、観光サイトの1つは1196年）",
+    "見物客の数（規模は、1つの寺で約1時間半の上演と、見学者用のシャトルバスが出ることから S にした）",
+    "会場の緯度・経度は、国土地理院の住所検索で虫生483番地から取った位置"
+  ]
+}
