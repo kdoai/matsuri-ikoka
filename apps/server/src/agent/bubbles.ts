@@ -102,7 +102,7 @@ export function toolStartBubble(
       return state.hasItinerary ? "旅程を書き直しています" : "旅程を書き込んでいます";
     }
     case "verify_festival":
-      return "開催予定を公式情報で確かめています";
+      return "旅程を確定しています";
   }
 }
 
@@ -162,6 +162,17 @@ export function toolEndBubble(
     }
     case "verify_festival": {
       const result = output.result as VerificationResult;
+      // 候補を出す前に確かめた結果で確定したときは、調べ直していないので「確定した」とだけ言う
+      if (output.reused === true && (result === "as_planned" || result === "needs_check")) {
+        return {
+          ok: true,
+          bubble:
+            result === "as_planned"
+              ? "旅程を確定しました"
+              : "旅程を確定しました（出発前に開催を要確認）",
+          count: null,
+        };
+      }
       // 「公式情報で確認」と言うのは、公式の出典があるときだけ
       const official =
         Array.isArray(output.sources) &&

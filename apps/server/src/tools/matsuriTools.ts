@@ -4,6 +4,7 @@ import {
   type FestivalCandidate,
   type IsoDate,
   IsoDateSchema,
+  type Itinerary,
   ItineraryDaySchema,
   ItineraryItemSchema,
   ItinerarySchema,
@@ -23,6 +24,7 @@ import {
   type SpotPin,
   StayPlanSchema,
   tripBudgetAmounts,
+  VerificationSchema,
   type Weather,
 } from "@matsuri-ikoka/schema";
 import { z } from "zod";
@@ -912,24 +914,49 @@ export const updateItinerary = defineTool({
     }
     // 時間切れや接続の切断のあとに、旅程を書き換えない
     if (signal.aborted) throw new ToolError("止められたので、旅程は保存しません");
+    const itinerary = result.itinerary;
     if (!result.unchanged) {
-      ctx.itineraries.save(result.itinerary);
-      session.itineraryId = result.itinerary.id;
-      session.selectedFestivalId = result.itinerary.mainFestivalId;
+      ctx.itineraries.save(itinerary);
+      session.itineraryId = itinerary.id;
+      session.selectedFestivalId = itinerary.mainFestivalId;
     }
     ctx.turn.savedItinerary = true;
     return {
       saved: !result.unchanged,
       unchanged: result.unchanged,
-      itineraryId: result.itinerary.id,
-      version: result.itinerary.version,
+      itineraryId: itinerary.id,
+      version: itinerary.version,
       diff: result.diff,
       errors: [],
       warnings: result.warnings,
-      itinerary: result.itinerary,
+      itinerary,
     };
   },
 });
+
+type KnownVerification = Exclude<Itinerary["verification"], { status: "pending" }>;
+
+/**
+ * 決定のときに使える、確かめ済みの開催の結果。旅程にすでにあればそれ、なければ候補を出す前の確かめの結果。
+ * どちらもなければ null（そのときだけ Web で確かめる）
+ */
+function knownVerification(
+  ctx: ToolContext,
+  itinerary: Itinerary,
+  festivalId: string,
+  date: IsoDate,
+): KnownVerification | null {
+  if (itinerary.verification.status !== "pending") return itinerary.verification;
+  const check = ctx.candidateChecks?.peek?.(festivalId, date) ?? null;
+  if (check === null) return null;
+  const parsed = VerificationSchema.safeParse({
+    status: check.result,
+    checkedAt: check.checkedAt,
+    sources: check.sources,
+    ...(check.note ? { note: check.note } : {}),
+  });
+  return parsed.success && parsed.data.status !== "pending" ? parsed.data : null;
+}
 
 /** 宿の候補を出すときに必ず添える一文 */
 export const LODGING_NOTICE = "料金と空きは、予約の時点で変わることがあります";
@@ -1017,7 +1044,9 @@ export const searchLodging = defineTool({
 export const verifyFestival = defineTool({
   name: "verify_festival",
   description:
-    "利用者が「決定」と言ったあとに、主役の祭りの開催予定を Web と祭りのデータで確かめ直す。" +
+    "利用者が「決定」と言ったら、旅程を確定してしおりへ進める。" +
+    "開催は候補を出す前に確かめてあり、その結果が旅程にあれば、それをそのまま使う（Web で調べ直さない）。" +
+    "確かめた結果がないとき（行く日を変えた、確かめの上限に達したなど）だけ、Web と祭りのデータで確かめる。" +
     "結果は as_planned（公式で確認）/ needs_check（公式以外の情報源などで確認。要事前確認としてしおりを渡す）/ " +
     "changed（変更）/ cancelled（中止）/ not_found（どこにも情報がない。ほかの候補に戻る）。",
   input: {
@@ -1027,6 +1056,32 @@ export const verifyFestival = defineTool({
   async run(args, ctx, signal) {
     const festival = festivalOf(ctx, args.festivalId);
     const date = visitDate(ctx, festival, args.date);
+    const current = ctx.session.itineraryId
+      ? ctx.itineraries.get(ctx.session.itineraryId)
+      : undefined;
+    const matches =
+      current !== undefined &&
+      current.mainFestivalId === festival.id &&
+      mainFestivalDay(current).date === date;
+    // 開催は候補を出す前に確かめてある。その結果（か前の決定の結果）があれば、調べ直さずに確定する
+    const known = matches ? knownVerification(ctx, current, festival.id, date) : null;
+    if (matches && known !== null) {
+      ctx.itineraries.save({ ...current, verification: known });
+      ctx.turn.verification = known.status;
+      return {
+        festivalId: festival.id,
+        date,
+        result: known.status,
+        checkedAt: known.checkedAt,
+        sources: known.sources,
+        ...(known.note ? { note: known.note } : {}),
+        /** 確かめ済みの結果を使ったか（Web で調べ直していない） */
+        reused: true,
+        appliedToItinerary: true,
+        daysUntil: daysBetween(ctx.today(), date),
+        occurrenceInData: occurrenceOn(festival, date),
+      };
+    }
     // Web の確かめが失敗しても、祭りのデータの公式の出典で確かめてあれば、それで決める（decideVerification）
     let report: Awaited<ReturnType<ToolContext["verifier"]["verify"]>>;
     try {
@@ -1045,15 +1100,9 @@ export const verifyFestival = defineTool({
       ...(decision.note ? { note: decision.note } : {}),
     };
 
-    const itinerary = ctx.session.itineraryId
-      ? ctx.itineraries.get(ctx.session.itineraryId)
-      : undefined;
-    const applied =
-      itinerary !== undefined &&
-      itinerary.mainFestivalId === festival.id &&
-      mainFestivalDay(itinerary).date === date;
+    const applied = matches;
     if (applied) {
-      ctx.itineraries.save({ ...itinerary, verification });
+      ctx.itineraries.save({ ...current, verification });
       // 会話の状態（しおりへ進むか）は、旅程の再確認の結果を実際に書き換えたときだけ変える
       ctx.turn.verification = decision.result;
     }
@@ -1077,6 +1126,7 @@ export const verifyFestival = defineTool({
       checkedAt,
       sources: decision.sources,
       ...(decision.note ? { note: decision.note } : {}),
+      reused: false,
       /** 旅程の再確認の結果を書き換えたか。主役の祭りと日付が旅程と違えば書き換えない */
       appliedToItinerary: applied,
       daysUntil: daysBetween(ctx.today(), date),

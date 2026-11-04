@@ -76,9 +76,7 @@ describe("吹き出し（docs/spec/api.md の例）", () => {
     expect(toolStartBubble("update_itinerary", {}, { ...state, hasItinerary: true })).toBe(
       "旅程を書き直しています",
     );
-    expect(toolStartBubble("verify_festival", {}, state)).toBe(
-      "開催予定を公式情報で確かめています",
-    );
+    expect(toolStartBubble("verify_festival", {}, state)).toBe("旅程を確定しています");
   });
 
   it("ツールの後は結果の件数", () => {
@@ -115,6 +113,17 @@ describe("吹き出し（docs/spec/api.md の例）", () => {
         sources: [{ url: "https://example.net/a", confidence: "single" }],
       }).bubble,
     ).toBe("開催予定を確かめました");
+    // 候補を出す前に確かめた結果で確定したときは、調べ直したとは言わない
+    expect(
+      toolEndBubble("verify_festival", {
+        result: "as_planned",
+        reused: true,
+        sources: [{ url: "https://example.com/a", confidence: "official" }],
+      }).bubble,
+    ).toBe("旅程を確定しました");
+    expect(
+      toolEndBubble("verify_festival", { result: "needs_check", reused: true, sources: [] }).bubble,
+    ).toBe("旅程を確定しました（出発前に開催を要確認）");
     expect(toolEndBubble("get_access", null)).toEqual({
       ok: false,
       bubble: "うまく調べられませんでした",
