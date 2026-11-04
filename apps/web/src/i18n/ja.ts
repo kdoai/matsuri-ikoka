@@ -151,7 +151,11 @@ export const ja = {
     switchTo: "English",
     soundOn: "音：オン",
     soundOff: "音：オフ",
-    soundHint: "太鼓・拍子木・はんこの音を鳴らします",
+    soundHint: "和太鼓の BGM と、太鼓・拍子木・はんこの音を鳴らします",
+    soundChoice: "音",
+    soundChoiceOn: "オン",
+    soundChoiceOff: "オフ",
+    soundChoiceNote: "店に入ってからも、設定で変えられます",
   },
   dialogue: {
     thinking: "少々お待ちください",

@@ -170,7 +170,11 @@ export const en: Messages = {
     switchTo: "日本語",
     soundOn: "Sound: on",
     soundOff: "Sound: off",
-    soundHint: "Plays taiko, wooden clapper and stamp sounds",
+    soundHint: "Plays taiko background music, plus taiko, wooden clapper and stamp sounds",
+    soundChoice: "Sound",
+    soundChoiceOn: "On",
+    soundChoiceOff: "Off",
+    soundChoiceNote: "You can change this in the settings once inside",
   },
   dialogue: {
     thinking: "One moment, please",
