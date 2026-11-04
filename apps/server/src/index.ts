@@ -10,6 +10,7 @@ import { loadPrompts } from "./agent/prompts";
 import { loadSampleConversations, ReplayAgentRunner } from "./agent/replayRunner";
 import type { AgentRunner } from "./agent/runner";
 import { agentConfigDir, forgetTranscripts } from "./agent/transcripts";
+import { createWebNearbyResearcher } from "./agent/webNearbyResearcher";
 import { createWebRouteResearcher } from "./agent/webRouteResearcher";
 import { createWebVerifier } from "./agent/webVerifier";
 import { createApp } from "./app";
@@ -86,6 +87,15 @@ if (config.mode === "live") {
     // 行き方の調べは旅程係の中で1回動くので、スタッフのモデルで行う
     routes: createWebRouteResearcher({
       prompt: prompts.route,
+      model: config.models.staff,
+      cwd,
+      env,
+      query,
+      maxBudgetUsd: config.maxBudgetUsd,
+    }),
+    // 寄り道の調べは周辺係・旅程係の search_nearby の中で動くので、スタッフのモデルで行う
+    nearby: createWebNearbyResearcher({
+      prompt: prompts.nearby,
       model: config.models.staff,
       cwd,
       env,
