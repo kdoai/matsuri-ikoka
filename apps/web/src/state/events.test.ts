@@ -12,7 +12,13 @@ import { clientError } from "./errors";
 import { applyEvent } from "./events";
 import { initialData } from "./initial";
 import { itemChange, shioriReady } from "./selectors";
-import { beginTurn, endTurn, resetForNewSession, settleStaff } from "./transitions";
+import {
+  beginTurn,
+  endTurn,
+  resetForNewSession,
+  setCandidatesOpen,
+  settleStaff,
+} from "./transitions";
 import type { AppData } from "./types";
 
 const sample: SampleConversation = SampleConversationSchema.parse(sampleJson);
@@ -389,32 +395,75 @@ describe("候補", () => {
 });
 
 describe("候補カードの開け閉め", () => {
-  it("返答の途中で利用者が候補を閉じたら、done で開き直さない", () => {
-    let state = beginTurn(fresh(), {
+  const found: SseEvent = {
+    type: "tool.end",
+    data: {
+      toolCallId: "a",
+      tool: "search_festivals",
+      staff: "researcher",
+      ok: true,
+      bubble: "1件見つかりました",
+      count: 1,
+      candidates: [candidate],
+    },
+  };
+  const done: SseEvent = {
+    type: "done",
+    data: { stage: "candidates", conditions: {}, preferences: fresh().preferences },
+  };
+  function asked(): AppData {
+    return beginTurn(fresh(), {
       kind: "chat",
       message: "8月16日に行ける祭り",
       preferences: fresh().preferences,
     });
-    state = applyEvent(state, {
-      type: "tool.end",
-      data: {
-        toolCallId: "a",
-        tool: "search_festivals",
-        staff: "researcher",
-        ok: true,
-        bubble: "1件見つかりました",
-        count: 1,
-        candidates: [candidate],
-      },
-    });
+  }
+
+  it("候補が届いても、返答が続いている間は開かない", () => {
+    let state = applyEvent(asked(), found);
+    expect(state.candidates).toHaveLength(1);
+    expect(state.ui.candidatesOpen).toBe(false);
+    state = applyEvent(state, done);
+    // done のあとも、接続が閉じるまでは「この祭りにする」を押せないので開かない
+    expect(state.ui.candidatesOpen).toBe(false);
+  });
+
+  it("返答が終わって選べるようになったら開く", () => {
+    const state = endTurn(apply(asked(), [found, done]), null);
+    expect(state.session.streaming).toBe(false);
     expect(state.ui.candidatesOpen).toBe(true);
-    state = { ...state, ui: { ...state.ui, candidatesOpen: false } };
-    state = applyEvent(state, {
-      type: "done",
-      data: { stage: "candidates", conditions: {}, preferences: state.preferences },
-    });
+  });
+
+  it("done が届かないまま閉じたら、候補は残すが開かない", () => {
+    const state = endTurn(applyEvent(asked(), found), null);
+    expect(state.candidates).toHaveLength(1);
+    expect(state.ui.candidatesOpen).toBe(false);
+  });
+
+  it("返答の途中で利用者が候補を開いて閉じたら、終わっても開き直さない", () => {
+    let state = applyEvent(asked(), found);
+    state = setCandidatesOpen(state, true);
+    expect(state.ui.candidatesOpen).toBe(true);
+    state = setCandidatesOpen(state, false);
+    state = endTurn(applyEvent(state, done), null);
     expect(state.ui.candidatesOpen).toBe(false);
     expect(state.candidates).toHaveLength(1);
+  });
+
+  it("候補がないときは、手で開こうとしても開かない", () => {
+    expect(setCandidatesOpen(fresh(), true).ui.candidatesOpen).toBe(false);
+  });
+
+  it("候補を出さなかった返答では、前の候補を開き直さない", () => {
+    let state = endTurn(apply(asked(), [found, done]), null);
+    state = setCandidatesOpen(state, false);
+    state = beginTurn(state, {
+      kind: "chat",
+      message: "もう少し",
+      preferences: fresh().preferences,
+    });
+    state = endTurn(applyEvent(state, done), null);
+    expect(state.ui.candidatesOpen).toBe(false);
   });
 });
 

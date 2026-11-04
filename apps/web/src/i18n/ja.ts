@@ -538,6 +538,7 @@ export const ja = {
     needsCheck: "要事前確認",
     found: (place: string) => `${place}で、ちょっと珍しいお祭りを見つけたよ！`,
     foundMany: (count: number) => `${count}つ、おすすめの祭りを見つけたよ！`,
+    stillSearching: "まだ探しています。そろったら選べます",
     details: "詳細を見る",
     hideDetails: "詳細を閉じる",
     filters: {
