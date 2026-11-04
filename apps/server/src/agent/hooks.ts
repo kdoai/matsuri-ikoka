@@ -23,6 +23,7 @@ import { spotPins } from "../tools/matsuriTools";
 import { MCP_TOOL_PREFIX } from "../tools/mcpServer";
 import {
   isStaff,
+  STAFF_NAMES,
   STAFF_TASK,
   type Staff,
   staffOf,
@@ -49,13 +50,6 @@ export const TOOLS_BY_STAFF: Readonly<Record<StaffId, readonly AgentToolName[]>>
     "search_lodging",
     "update_itinerary",
   ],
-};
-
-const STAFF_NAMES: Record<StaffId, string> = {
-  concierge: "コンシェルジュ",
-  researcher: "祭り調査係",
-  scout: "周辺係",
-  planner: "旅程係",
 };
 
 /** 1回の発言で1回までの道具。再確認は Web を調べるので、費用と時間がかかる */
@@ -203,6 +197,7 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
         staff,
         ok: end.ok,
         bubble: end.bubble,
+        ...(end.detail === undefined ? {} : { detail: end.detail }),
         count: end.count,
         ...(candidates?.success ? { candidates: candidates.data } : {}),
         ...(tool === "search_nearby" && output !== null ? { spots: spotPins(output) } : {}),

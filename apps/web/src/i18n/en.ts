@@ -452,7 +452,9 @@ export const en: Messages = {
       search_festivals: "Festival search",
       search_nearby: "Nearby search",
       get_access: "Access check",
+      research_route: "Transfer check",
       get_weather: "Weather check",
+      search_lodging: "Lodging search",
       update_itinerary: "Writing the plan",
       verify_festival: "Finalizing the plan",
     },
@@ -472,6 +474,18 @@ export const en: Messages = {
     },
     requestLine: (from: string, to: string, task: string) => `${from} → ${to}: asks for "${task}"`,
     handoffLine: (from: string, to: string, item: string) => `${from} → ${to}: hands over ${item}`,
+    redoSubjects: {
+      lunch: "a lunch spot",
+      dinner: "a dinner spot",
+      sightseeing: "side-trip spots",
+      route: "the train route",
+      last_mile: "the way from the station to the venue",
+      lodging: "a place to stay",
+    },
+    redoRequestLine: (from: string, to: string, subject: string) =>
+      `${from} → ${to}: asks to look again for ${subject}`,
+    redoAcceptLine: (from: string, to: string, subject: string) =>
+      `${from} → ${to}: will look again for ${subject}`,
     activities: {
       heading: "On the way",
       asking: "Asking",

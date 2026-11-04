@@ -131,7 +131,9 @@ function describe(event: SseEvent): string {
               )
               .join(",")}`
           : ""
-      }`;
+      }${event.data.detail ? `（${event.data.detail}）` : ""}`;
+    case "staff.redo":
+      return `staff.redo   ${event.data.kind} ${event.data.from}→${event.data.to} ${event.data.subject}「${event.data.bubble}」`;
     case "festival.verified":
       return `festival.verified ${event.data.scope ?? "itinerary"} ${event.data.festivalId} ${event.data.date ?? ""} ${event.data.result} 出典=${event.data.sources.map((s) => `${s.url}(${s.confidence})`).join(",")}${event.data.note ? `「${event.data.note}」` : ""}`;
     case "itinerary.updated":
