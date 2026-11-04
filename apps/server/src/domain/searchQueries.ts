@@ -5,7 +5,7 @@ import type { Festival, IsoDate, Source } from "@matsuri-ikoka/schema";
 // 散らばるので、言葉を広げて並べて検索し、優先順位の高い情報源から読む。
 
 /** 1回の確かめで使う検索の言葉の上限 */
-export const MAX_VERIFICATION_QUERIES = 5;
+export const MAX_VERIFICATION_QUERIES = 7;
 
 /** 令和の年（2026 → 8）。令和より前なら null */
 export function reiwaYear(year: number): number | null {
@@ -34,14 +34,16 @@ export function nameVariants(name: string): string[] {
  * 開催を確かめるための検索の言葉。上から順に優先する。
  * 1. 公式のサイトの中を、祭りの名前と年で探す（主催者・神社・自治体）
  * 2. 名前と年（西暦）と「日程」
- * 3. 市町村の名前と名前と令和の年（地域の呼び方で探す）
- * 4. 名前の別の書き方と年
- * 5. 名前と「広報」（地域の広報誌の PDF に載る小さな行事）
+ * 3. 祭りの名前だけ（年の書かれていない案内や、地域のイベントのページも拾う）
+ * 4. 市町村の名前と名前（同じ名前の別の土地の祭りと分ける）
+ * 5. 市町村の名前と名前と令和の年（地域の呼び方で探す）
+ * 6. 名前と「広報」（地域の広報誌の PDF に載る小さな行事）
+ * 7. 名前の別の書き方と年
  */
 export function verificationQueries(festival: Festival, date: IsoDate): string[] {
   const year = Number(date.slice(0, 4));
   const reiwa = reiwaYear(year);
-  const [name, ...others] = nameVariants(festival.name.ja);
+  const [name = festival.name.ja, ...others] = nameVariants(festival.name.ja);
   const city = festival.municipalities[0]?.name ?? "";
   const officialHost = [...festival.sources, ...festival.occurrences.flatMap((o) => o.sources)]
     .filter((s) => s.confidence === "official")
@@ -50,9 +52,11 @@ export function verificationQueries(festival: Festival, date: IsoDate): string[]
   const queries = [
     ...(officialHost ? [`site:${officialHost} ${name} ${year}`] : []),
     `${name} ${year} 日程`,
+    name,
+    ...(city !== "" ? [`${city} ${name}`] : []),
     ...(reiwa !== null && city !== "" ? [`${city} ${name} 令和${reiwa}年`] : []),
-    ...others.map((other) => `${other} ${year}`),
     `${city} ${name} 広報`.trim(),
+    ...others.map((other) => `${other} ${year}`),
   ];
   return [...new Set(queries)].slice(0, MAX_VERIFICATION_QUERIES);
 }

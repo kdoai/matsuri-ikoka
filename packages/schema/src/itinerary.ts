@@ -95,8 +95,17 @@ export const ItineraryItemSchema = z
 // ---------------------------------------------------------------------------
 // 旅全体の情報
 
-/** 開催の再確認の結果：予定どおり / 変更あり / 中止 / 確認できず */
-export const VERIFICATION_RESULTS = ["as_planned", "changed", "cancelled", "not_found"] as const;
+/**
+ * 開催の確かめの結果：予定どおり（公式の情報で確認）/ 要事前確認（公式以外の情報源や、公式の例年の日程で確認。
+ * 出発の前に主催者の案内で確かめる）/ 変更あり / 中止 / 確認できず（どこからも情報が取れない。提案しない）
+ */
+export const VERIFICATION_RESULTS = [
+  "as_planned",
+  "needs_check",
+  "changed",
+  "cancelled",
+  "not_found",
+] as const;
 export const VerificationResultSchema = z.enum(VERIFICATION_RESULTS);
 
 /** 確定前の再確認。予定どおりと言えるのは、確認した出典があるときだけ */
@@ -109,10 +118,13 @@ export const VerificationSchema = z.discriminatedUnion("status", [
       sources: z.array(SourceSchema),
       note: TextSchema.optional(),
     })
-    .refine((v) => v.status !== "as_planned" || v.sources.length > 0, {
-      path: ["sources"],
-      message: "予定どおりと確認するには出典が必要です",
-    }),
+    .refine(
+      (v) => (v.status !== "as_planned" && v.status !== "needs_check") || v.sources.length > 0,
+      {
+        path: ["sources"],
+        message: "予定どおり・要事前確認とするには出典が必要です",
+      },
+    ),
 ]);
 
 /** 天気。予報の範囲外の日は not_yet（予報前）、取得できなかったときは unavailable */

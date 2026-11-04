@@ -225,24 +225,32 @@ async function checkCandidates(
   );
 }
 
-/** 候補を選ぶ前に開催を確かめる数。確かめられた祭りを先に出せるよう、出す数（3件）より多めに確かめる */
-export const CANDIDATE_CHECK_POOL = MAX_CANDIDATES + 2;
+/**
+ * 候補を選ぶ前に開催を確かめる数。情報の取れない祭りは出さないので、出す数（3件）の倍を確かめる
+ */
+export const CANDIDATE_CHECK_POOL = MAX_CANDIDATES * 2;
 
 /**
- * 確かめの結果で候補を選び直す。中止と分かった祭りは出さず、
- * 公式で確かめられた祭り（確かめていなければ、データで確認済みの祭り）を先に、確認できなかった・変更のあった祭りを後にする。
+ * 確かめの結果で候補を選び直す。
+ * - 中止と分かった祭りと、どこからも開催の情報が取れなかった祭り（not_found）は出さない
+ * - requireInfo のとき（確かめる手段があるとき）は、確かめられず（上限など）データでも確認済みでない祭りも出さない
+ * - 公式で確かめられた祭り（確かめていなければ、データで確認済みの祭り）を先に、要事前確認、変更のあった祭りの順
  * 同じ段の中は、日程とこだわりで並べた元の順を保つ
  */
 export function pickVerifiedCandidates<T extends { confirmed: boolean }>(
   items: readonly { match: T; check: CandidateCheck | null }[],
   limit: number,
+  options: { requireInfo?: boolean } = {},
 ): { match: T; check: CandidateCheck | null }[] {
   const tier = ({ match, check }: { match: T; check: CandidateCheck | null }) => {
     if (check === null) return match.confirmed ? 0 : 1;
-    return check.result === "as_planned" ? 0 : check.result === "not_found" ? 1 : 2;
+    return check.result === "as_planned" ? 0 : check.result === "needs_check" ? 1 : 2;
   };
   return items
-    .filter(({ check }) => check?.result !== "cancelled")
+    .filter(({ match, check }) => {
+      if (check === null) return !options.requireInfo || match.confirmed;
+      return check.result !== "cancelled" && check.result !== "not_found";
+    })
     .map((item, index) => ({ item, index }))
     .sort((a, b) => tier(a.item) - tier(b.item) || a.index - b.index)
     .slice(0, limit)
@@ -256,15 +264,18 @@ function factCheckOf(check: CandidateCheck | null) {
     : { result: check.result, note: check.note ?? null, sources: check.sources };
 }
 
-/** 候補に確かめの結果を付ける。公式で確かめられたら確認済み、変更・中止なら未確認にする */
+/**
+ * 候補に確かめの結果を付ける。公式で確かめられたら確認済み。要事前確認・変更・中止は確認済みにしない
+ * （要事前確認の祭りは、画面で「要事前確認」と出して選べるようにする）
+ */
 function withCheck(candidate: FestivalCandidate, check: CandidateCheck | null): FestivalCandidate {
   if (check === null) return candidate;
   const confirmed =
     check.result === "as_planned"
       ? true
-      : check.result === "changed" || check.result === "cancelled"
-        ? false
-        : candidate.confirmed;
+      : check.result === "not_found"
+        ? candidate.confirmed
+        : false;
   return {
     ...candidate,
     confirmed,
@@ -389,6 +400,7 @@ export const searchFestivals = defineTool({
     const picked = pickVerifiedCandidates(
       searched.matches.map((match, index) => ({ match, check: pooledChecks[index] ?? null })),
       MAX_CANDIDATES,
+      { requireInfo: ctx.candidateChecks !== undefined },
     );
     const result = { ...searched, matches: picked.map((p) => p.match) };
     const checks = picked.map((p) => p.check);
@@ -416,10 +428,20 @@ export const searchFestivals = defineTool({
         `駅の位置からの見積もりでは、上限に収まるか境目の祭りが${uncertain.length}件あります。収まらないかもしれないと伝えてください`,
       );
     }
-    const reordered = picked.some((p, index) => p.match !== searched.matches[index]);
-    if (reordered) {
+    const shownIds = new Set(picked.map((p) => p.match.festival.id));
+    const withoutInfo = searched.matches.filter((m, index) => {
+      if (shownIds.has(m.festival.id)) return false;
+      const result = pooledChecks[index]?.result;
+      return result === "not_found" || result === "cancelled";
+    }).length;
+    if (withoutInfo > 0) {
       notes.push(
-        `開催を確かめた結果で候補を選びました（中止や確認できなかった祭りを後ろに回しました）`,
+        `開催の情報が見つからなかった・中止と分かった祭りを${withoutInfo}件、候補から外しました`,
+      );
+    }
+    if (picked.some((p) => p.check?.result === "needs_check")) {
+      notes.push(
+        "factCheck が needs_check の祭りは、公式以外の情報源や例年の日程で確かめたものです。「要事前確認」と伝え、出発の前に主催者の案内で確かめるよう添えてください",
       );
     }
     if (candidates.length === 0) notes.push("条件に合う祭りはデータにありませんでした");
@@ -989,9 +1011,9 @@ export const searchLodging = defineTool({
 export const verifyFestival = defineTool({
   name: "verify_festival",
   description:
-    "利用者が「決定」と言ったあとに、主役の祭りの開催予定を公式の情報で確かめ直す。" +
-    "結果は as_planned（予定どおり）/ changed（変更）/ cancelled（中止）/ not_found（確認できず）。" +
-    "確認できなかったときは確定させない。",
+    "利用者が「決定」と言ったあとに、主役の祭りの開催予定を Web と祭りのデータで確かめ直す。" +
+    "結果は as_planned（公式で確認）/ needs_check（公式以外の情報源などで確認。要事前確認としてしおりを渡す）/ " +
+    "changed（変更）/ cancelled（中止）/ not_found（どこにも情報がない。ほかの候補に戻る）。",
   input: {
     festivalId: SlugSchema.describe("祭りの ID"),
     date: IsoDateSchema.optional().describe("行く日。省略すると旅程の日"),

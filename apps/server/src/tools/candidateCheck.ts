@@ -9,11 +9,11 @@ import type { FestivalVerifier } from "./verifier";
 // - 1件の時間と、1つの相談で新しく確かめる数に上限を置く（費用は1件ごとの上限を verifier に渡す）
 
 /** 1件の確かめの時間の上限 */
-export const CANDIDATE_CHECK_TIMEOUT_MS = 30_000;
+export const CANDIDATE_CHECK_TIMEOUT_MS = 50_000;
 /** 結果をとっておく時間 */
 export const CANDIDATE_CHECK_TTL_MS = 6 * 60 * 60 * 1000;
 /** 1つの相談で、新しく確かめる数の上限（とってある結果を使うぶんは数えない） */
-export const MAX_CANDIDATE_CHECKS_PER_SESSION = 15;
+export const MAX_CANDIDATE_CHECKS_PER_SESSION = 18;
 
 export interface CandidateCheck extends VerificationDecision {
   festivalId: string;

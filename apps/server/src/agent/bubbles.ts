@@ -108,9 +108,10 @@ export function toolStartBubble(
 
 const VERIFIED_BUBBLES: Record<VerificationResult, string> = {
   as_planned: "開催予定を公式情報で確認しました",
+  needs_check: "開催の情報を見つけました（出発前に要確認）",
   changed: "開催の内容に変更がありました",
   cancelled: "中止が発表されていました",
-  not_found: "公式情報では確かめられませんでした",
+  not_found: "開催の情報が見つかりませんでした",
 };
 
 export const FAILED_BUBBLE = "うまく調べられませんでした";

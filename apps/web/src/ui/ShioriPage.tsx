@@ -342,7 +342,7 @@ export function ShioriPage() {
     festival?.occurrences.find((o) => o.date === festivalDay.date) ?? festival?.occurrences[0];
   const meals = itineraryItems(itinerary).filter((item) => item.type === "meal");
   const verified = verify.result === "as_planned";
-  const unverified = verify.result === "not_found";
+  const needsCheckNotice = verify.result === "needs_check";
   const party = t.conditions.party(itinerary.party.adults, itinerary.party.children);
   const shareUrl = ready ? shioriShareUrl(itinerary.id, window.location.origin) : null;
 
@@ -414,13 +414,13 @@ export function ShioriPage() {
             ) : null}
           </div>
         </header>
-        {unverified ? (
+        {needsCheckNotice ? (
           <p
             role="note"
             className="rounded-card border-2 border-shu-700 bg-white px-3 py-2 font-bold text-shu-700"
-            data-testid="shiori-unverified"
+            data-testid="shiori-needs-check"
           >
-            {t.shiori.unverified}
+            {t.shiori.needsCheck}
           </p>
         ) : null}
 

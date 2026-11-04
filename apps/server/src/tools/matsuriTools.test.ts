@@ -164,8 +164,32 @@ describe("search_festivals の、候補を出す前の確かめ", () => {
     ]);
   });
 
-  it("確かめられなかった見込みの祭りは、未確認のまま結果を付ける", async () => {
+  it("どこからも開催の情報が取れなかった祭りは、候補に出さない", async () => {
     const ctx = testToolContext([testFestival({ id: "suzunari-toro", status: "expected" })]);
+    ctx.candidateChecks = createCandidateChecker({
+      verifier: ctx.verifier,
+      today: ctx.today,
+      now: ctx.now,
+    });
+    const result = await searchFestivals.run(
+      { when: { kind: "date", date: "2026-08-16" }, origin: "みなと中央駅", nights: 0 },
+      ctx,
+      signal,
+    );
+    expect(result.candidates).toEqual([]);
+    expect(result.notes).toContain(
+      "開催の情報が見つからなかった・中止と分かった祭りを1件、候補から外しました",
+    );
+  });
+
+  it("公式以外の情報源で確かめた祭りは、要事前確認として出す", async () => {
+    const ctx = testToolContext([testFestival({ id: "suzunari-toro", status: "expected" })], {
+      report: {
+        result: "as_planned",
+        sources: [{ url: "https://example.net/news" }],
+        yearStated: true,
+      },
+    });
     ctx.candidateChecks = createCandidateChecker({
       verifier: ctx.verifier,
       today: ctx.today,
@@ -179,7 +203,7 @@ describe("search_festivals の、候補を出す前の確かめ", () => {
     expect(result.candidates).toEqual([
       expect.objectContaining({
         confirmed: false,
-        check: expect.objectContaining({ result: "not_found" }),
+        check: expect.objectContaining({ result: "needs_check" }),
       }),
     ]);
   });
@@ -578,7 +602,7 @@ describe("verify_festival", () => {
     expect(output.result).toBe("not_found");
   });
 
-  it("公式のページに今年の開催と書かれていなければ確定させず、その理由を返す", async () => {
+  it("公式のページに今年の開催と書かれていなければ要事前確認にし、その理由を返す", async () => {
     const ctx = testToolContext([suzunari()], {
       report: {
         result: "as_planned",
@@ -595,12 +619,12 @@ describe("verify_festival", () => {
 
     const output = await verifyFestival.run({ festivalId: "suzunari-toro" }, ctx, signal);
 
-    expect(output).toMatchObject({ result: "not_found", note: YEAR_NOT_STATED_NOTE });
+    expect(output).toMatchObject({ result: "needs_check", note: YEAR_NOT_STATED_NOTE });
     expect(ctx.itineraries.get(saved.itineraryId as string)?.verification).toMatchObject({
-      status: "not_found",
+      status: "needs_check",
       note: YEAR_NOT_STATED_NOTE,
     });
-    expect(ctx.turn.verification).toBe("not_found");
+    expect(ctx.turn.verification).toBe("needs_check");
   });
 });
 
@@ -734,15 +758,27 @@ describe("候補を確かめてから選ぶ（pickVerifiedCandidates）", () => 
     cached: false,
   });
 
-  it("中止は出さず、公式で確かめられた祭りを先に、確認できなかった・変更のあった祭りを後にする", () => {
+  it("中止と情報の取れない祭りは出さず、公式で確かめた祭り、要事前確認、変更の順にする", () => {
     const items = [
       { match: { id: "a", confirmed: true }, check: check("a", "not_found") },
       { match: { id: "b", confirmed: false }, check: check("b", "cancelled") },
+      { match: { id: "e", confirmed: true }, check: check("e", "changed") },
+      { match: { id: "f", confirmed: false }, check: check("f", "needs_check") },
       { match: { id: "c", confirmed: false }, check: check("c", "as_planned") },
       { match: { id: "d", confirmed: true }, check: null },
-      { match: { id: "e", confirmed: true }, check: check("e", "changed") },
     ];
-    expect(pickVerifiedCandidates(items, 3).map((p) => p.match.id)).toEqual(["c", "d", "a"]);
+    expect(pickVerifiedCandidates(items, 3).map((p) => p.match.id)).toEqual(["c", "d", "f"]);
+  });
+
+  it("確かめる手段があるとき、確かめられず（上限など）データでも確認済みでない祭りは出さない", () => {
+    const items = [
+      { match: { id: "a", confirmed: false }, check: null },
+      { match: { id: "b", confirmed: true }, check: null },
+    ];
+    expect(pickVerifiedCandidates(items, 3, { requireInfo: true }).map((p) => p.match.id)).toEqual([
+      "b",
+    ]);
+    expect(pickVerifiedCandidates(items, 3).map((p) => p.match.id)).toEqual(["b", "a"]);
   });
 });
 

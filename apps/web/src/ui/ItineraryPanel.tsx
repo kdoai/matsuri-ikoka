@@ -75,9 +75,11 @@ export function VerificationLine({ verify }: { verify: VerifyState }) {
   const tone =
     verify.result === "as_planned"
       ? "text-emerald-800"
-      : verify.result === null
-        ? "text-ink-soft"
-        : "text-shu-700";
+      : verify.result === "needs_check"
+        ? "text-amber-800"
+        : verify.result === null
+          ? "text-ink-soft"
+          : "text-shu-700";
   return (
     <p className={`font-semibold text-base ${tone}`} data-testid="verification">
       {text}

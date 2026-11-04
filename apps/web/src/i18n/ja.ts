@@ -485,6 +485,7 @@ export const ja = {
     daysFromWish: (days: number) =>
       days === 0 ? "ご希望の日" : days > 0 ? `ご希望の${days}日後` : `ご希望の${-days}日前`,
     unconfirmed: "未確認",
+    needsCheck: "要事前確認",
     found: (place: string) => `${place}で、ちょっと珍しいお祭りを見つけたよ！`,
     foundMany: (count: number) => `${count}つ、おすすめの祭りを見つけたよ！`,
     details: "詳細を見る",
@@ -520,6 +521,8 @@ export const ja = {
       wishDay: "ご希望の日",
     },
     unconfirmedNote: "今年の開催がまだ確認できていません。確定した旅程には入れません。",
+    needsCheckNote:
+      "公式以外の情報源などで今年の開催を確かめました。出発の前に、主催者の案内で確かめてください。",
     timeUnknown: "時間は未発表",
     whyFits: "合う理由",
     highlight: "見どころ",
@@ -586,7 +589,8 @@ export const ja = {
       as_planned: "予定どおり開催されます",
       changed: "予定が変わっています",
       cancelled: "中止になりました",
-      not_found: "確認できませんでした",
+      needs_check: "要事前確認（公式以外の情報源などで確認）",
+      not_found: "開催の情報が見つかりませんでした",
       checkedAt: (when: string) => `${when} に確認`,
     },
     notes: "持ち物と注意",
@@ -676,8 +680,8 @@ export const ja = {
     noAlternatives: "雨の日の案はまだありません。",
     festivalLoading: "祭りの詳しい情報は、いまはお出しできません。旅程と出典をご覧ください。",
     verified: (date: string) => `公式情報で開催予定を確認しました（${date}）`,
-    unverified:
-      "開催は公式の情報でまだ確かめられていません。出発の前に、主催者の案内で開催を確かめてください",
+    needsCheck:
+      "要事前確認：開催は公式以外の情報源などで確かめています。出発の前に、主催者の案内で開催を確かめてください",
     finalCheck: "当日は、公式サイトで最終確認をしてください。",
     share: "しおりの URL",
     shareNote: "この URL で、同行する人にもしおりを見せられます。",

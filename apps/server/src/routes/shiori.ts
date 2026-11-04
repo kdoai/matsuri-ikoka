@@ -106,7 +106,7 @@ type Found = { ok: true; trip: ShioriTrip } | { ok: false; notice: Html; status:
 
 /**
  * 確定した旅程を、しおりとして出す。公式の情報で開催予定を確かめられた旅程と、
- * 確かめられなかった（not_found）が利用者が決めた旅程（表紙に注意を出す）。変更・中止と、まだ確かめていない旅程は出さない
+ * 要事前確認（公式以外の情報源で確かめた）の旅程（表紙に注意を出す）。それ以外は出さない
  */
 async function confirmedTrip(deps: ShioriDeps, id: string): Promise<Found> {
   const itinerary = await deps.readItinerary(id);
@@ -119,7 +119,8 @@ async function confirmedTrip(deps: ShioriDeps, id: string): Promise<Found> {
   }
   const { verification } = itinerary;
   const confirmed = verification.status === "as_planned" && hasOfficialSource(verification.sources);
-  if (!confirmed && verification.status !== "not_found") {
+  const needsCheck = verification.status === "needs_check" && verification.sources.length > 0;
+  if (!confirmed && !needsCheck) {
     return {
       ok: false,
       notice: renderShioriNotice(

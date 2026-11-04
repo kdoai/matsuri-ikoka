@@ -83,7 +83,7 @@ export interface ToolContext {
 export const TOOL_TIMEOUT_MS: Readonly<Record<AgentToolName, number>> = {
   note_conditions: 5_000,
   // 候補の確かめ（1件30秒、3件を並べて動かす）を含む
-  search_festivals: 45_000,
+  search_festivals: 70_000,
   search_nearby: 10_000,
   get_access: 10_000,
   get_weather: 10_000,
@@ -93,5 +93,5 @@ export const TOOL_TIMEOUT_MS: Readonly<Record<AgentToolName, number>> = {
   // 乗り換え案内や鉄道会社のページを検索して読む
   research_route: 40_000,
   // 公式のページを検索して読むので、確定前の再確認のモデル（MODEL_VERIFIER）でも収まる長さにする
-  verify_festival: 45_000,
+  verify_festival: 70_000,
 };

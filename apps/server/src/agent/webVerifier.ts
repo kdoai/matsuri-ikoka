@@ -89,7 +89,8 @@ export function buildVerifierOptions(input: {
     env: input.env,
     thinking: { type: "adaptive" },
     effort: "low",
-    maxTurns: input.withTools ? 6 : 1,
+    // 検索を並べて呼び、言葉を変えて探し直せるだけの回数をとる（検索6回・ページ3回まで）
+    maxTurns: input.withTools ? 10 : 1,
     persistSession: false,
     ...(input.maxBudgetUsd ? { maxBudgetUsd: input.maxBudgetUsd } : {}),
     abortController: input.abortController,

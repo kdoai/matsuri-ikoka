@@ -41,6 +41,15 @@ describe("「この祭りにする」を押せるか", () => {
     expect(chooseBlock(candidate(false), true)).toBe("unconfirmed");
   });
 
+  it("要事前確認（公式以外の情報源などで確かめた）の祭りは、確認済みでなくても押せる", () => {
+    const needsCheck = {
+      ...candidate(false),
+      check: { result: "needs_check" as const, checkedAt: "2026-08-03T10:00:00+09:00" },
+    };
+    expect(chooseBlock(needsCheck, false)).toBeNull();
+    expect(chooseBlock(needsCheck, true)).toBe("busy");
+  });
+
   it("返答の途中は押せない", () => {
     expect(chooseBlock(candidate(true), true)).toBe("busy");
   });

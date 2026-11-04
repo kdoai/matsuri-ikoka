@@ -2,10 +2,12 @@ import { describe, expect, it } from "vitest";
 import { testFestival } from "./testFestivals";
 import {
   DATA_CONFIRMED_NOTE,
+  DATA_UNOFFICIAL_NOTE,
   dataConfirmation,
   decideVerification,
   officialHosts,
   statesYear,
+  UNOFFICIAL_NOTE,
   YEAR_NOT_STATED_NOTE,
   yearStatedOnPage,
 } from "./verification";
@@ -39,7 +41,7 @@ describe("decideVerification", () => {
     });
   });
 
-  it("公式の出典でも、今年の開催と書かれていなければ予定どおりと認めず、確認できずにする", () => {
+  it("公式の出典でも、今年の開催と書かれていなければ予定どおりと認めず、要事前確認にする", () => {
     const report = {
       result: "as_planned" as const,
       sources: [{ url: "https://example.com/suzunari/" }],
@@ -49,13 +51,36 @@ describe("decideVerification", () => {
     const unknown = decideVerification(festival, report, today);
 
     for (const decision of [notStated, unknown]) {
-      expect(decision.result).toBe("not_found");
+      expect(decision.result).toBe("needs_check");
       expect(decision.note).toBe(YEAR_NOT_STATED_NOTE);
       expect(decision.sources[0]?.confidence).toBe("official");
     }
   });
 
-  it("公式でない出典1つだけでは予定どおりと認めず、確認できずにする", () => {
+  it("公式でない出典に今年の開催が書かれていれば、要事前確認にする", () => {
+    const stated = decideVerification(
+      festival,
+      { result: "as_planned", sources: [{ url: "https://example.net/news" }], yearStated: true },
+      today,
+    );
+    expect(stated).toMatchObject({ result: "needs_check", note: UNOFFICIAL_NOTE });
+    expect(stated.sources[0]?.confidence).toBe("single");
+  });
+
+  it("自治体のサイトは、データになくても公式の出典として扱う", () => {
+    const decision = decideVerification(
+      festival,
+      {
+        result: "as_planned",
+        sources: [{ url: "https://www.town.example.lg.jp/event" }],
+        yearStated: true,
+      },
+      today,
+    );
+    expect(decision.result).toBe("as_planned");
+  });
+
+  it("公式でない出典1つだけで、年も書かれていなければ確認できずにする", () => {
     const decision = decideVerification(
       festival,
       { result: "as_planned", sources: [{ url: "https://example.net/blog" }] },
@@ -234,6 +259,24 @@ describe("祭りのデータの公式の出典で確かめる（dataConfirmation
       "2026-08-16",
     );
     expect(decision.result).toBe("cancelled");
+  });
+
+  it("データの出典が公式でなければ、確認できずを要事前確認にする", () => {
+    const single = testFestival({
+      id: "kogane-single",
+      edit: (f) => {
+        for (const o of f.occurrences) {
+          o.sources = [{ ...o.sources[0]!, checkedAt: "2026-07-29", confidence: "single" }];
+        }
+      },
+    });
+    const decision = decideVerification(
+      single,
+      { result: "not_found", sources: [] },
+      today,
+      "2026-08-16",
+    );
+    expect(decision).toMatchObject({ result: "needs_check", note: DATA_UNOFFICIAL_NOTE });
   });
 
   it("確かめる日を渡さなければ、データでは確かめない", () => {
