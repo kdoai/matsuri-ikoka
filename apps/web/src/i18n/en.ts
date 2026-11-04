@@ -688,15 +688,9 @@ export const en: Messages = {
   },
   quiz: {
     title: "Festival quiz",
-    prompts: {
-      highlight: (name: string) => `Which one is a highlight of "${name}"?`,
-      local_food: (name: string) => `Which local food can you try in the town of "${name}"?`,
-      category: (name: string) => `What kind of festival is "${name}"?`,
-    },
     correct: "Correct! One more stamp for your booklet",
     wrong: (answer: string) => `Close! The answer is "${answer}"`,
     note: "The conversation goes on even if you don't answer",
-    close: "Close the quiz",
     question: "Question",
     stamps: (count: number) => `Stamps collected: ${count}`,
   },

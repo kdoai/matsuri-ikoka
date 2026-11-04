@@ -12,6 +12,7 @@ import { createReplayTransport } from "../testing/replayTransport";
 import type { ChatTransport, FestivalSource } from "../transport/types";
 import { TransportError } from "../transport/types";
 import { setStay } from "./consult";
+import { QUIZ_BANK } from "./quizBank";
 import { createAppStore, type StoreDeps } from "./store";
 
 const sample: SampleConversation = SampleConversationSchema.parse(sampleJson);
@@ -87,22 +88,15 @@ describe("ストア：記録した相談で、相談からしおりまで", () =
     expect(store.getState().ui.view).toBe("shiori");
   });
 
-  it("待ち時間の長い発言では、祭りのデータからクイズを1問出す", async () => {
+  it("店を開くたびにクイズの順を混ぜ、答えるとスタンプが増える", async () => {
     const store = makeStore(instantReplay());
-    const { actions } = store.getState();
-    await actions.enterShop();
-    await flush();
-    const offered: number[] = [];
-    store.subscribe((state, previous) => {
-      if (state.quiz.question !== null && previous.quiz.question === null) {
-        offered.push(state.session.turn);
-      }
-    });
-    for (const turn of sample.turns) {
-      await actions.send(turn.request.message);
-    }
-    // 周辺係と旅程係が動く発言（2つ目）と、再確認の発言（4つ目）
-    expect(offered).toEqual([2, 4]);
+    const { deck } = store.getState().quiz;
+    expect([...deck].sort()).toEqual(QUIZ_BANK.map((quiz) => quiz.id).sort());
+    const quiz = QUIZ_BANK[0]!;
+    store.getState().actions.answerQuiz(quiz.id, quiz.answer);
+    expect(store.getState().stamps).toBe(1);
+    store.getState().actions.answerQuiz("no-such-quiz", 0);
+    expect(store.getState().stamps).toBe(1);
   });
 
   it("記録の終わりまで再生したら、その旨のエラーを出す", async () => {

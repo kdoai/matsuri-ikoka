@@ -1,8 +1,8 @@
-import type { Preferences, StaffId } from "@matsuri-ikoka/schema";
+import type { FestivalQuiz, Preferences, StaffId } from "@matsuri-ikoka/schema";
 import { clientError } from "./errors";
 import { closeTurn, patchStaff } from "./events";
 import { initialData } from "./initial";
-import type { AppData, ChatEntry, ClientError, QuizQuestion, StaffTask } from "./types";
+import type { AppData, ChatEntry, ClientError } from "./types";
 
 // 画面の側から起きる状態の変化（発言を送る・返答が終わる・クイズに答えるなど）。
 // イベントの変換と同じく純粋な関数にする。
@@ -91,7 +91,6 @@ export function beginTurn(state: AppData, start: TurnStart): AppData {
       turnTools: [],
     },
     messages,
-    quiz: { ...state.quiz, question: null, answer: null },
     ui: { ...state.ui, candidatesOpen: false, draft: start.kind === "chat" ? "" : state.ui.draft },
   };
 }
@@ -146,44 +145,14 @@ export function changePreference<K extends keyof Preferences>(
 // ---------------------------------------------------------------------------
 // クイズ
 
-/** スタッフの作業の、だいたいの所要時間（ミリ秒）。クイズを出すかどうかの見込みにだけ使う */
-const TASK_EXPECTED_MS: Record<StaffTask, number> = {
-  find_festivals: 6_000,
-  find_nearby: 5_000,
-  plan_route: 7_000,
-};
-const VERIFY_EXPECTED_MS = 12_000;
-/** これ以上待ちそうなときだけクイズを出す */
-export const QUIZ_MIN_WAIT_MS = 10_000;
-
-/** この発言で、どのくらい待ちそうか。始まった作業と、再確認の有無から見込む */
-export function expectedWaitMs(state: AppData): number {
-  const taskMs = state.session.turnTasks.reduce((sum, task) => sum + TASK_EXPECTED_MS[task], 0);
-  const verifyMs = state.session.turnTools.includes("verify_festival") ? VERIFY_EXPECTED_MS : 0;
-  return taskMs + verifyMs;
-}
-
-export function shouldOfferQuiz(state: AppData): boolean {
-  return (
-    state.session.streaming &&
-    state.quiz.offeredTurn !== state.session.turn &&
-    expectedWaitMs(state) >= QUIZ_MIN_WAIT_MS
-  );
-}
-
-export function offerQuiz(state: AppData, question: QuizQuestion): AppData {
-  return { ...state, quiz: { offeredTurn: state.session.turn, question, answer: null } };
-}
-
 /** クイズに答える。正解するとスタンプが1つ増える。答え直しはできない */
-export function answerQuiz(state: AppData, choice: 0 | 1): AppData {
-  const { question, answer } = state.quiz;
-  if (question === null || answer !== null) {
+export function answerQuiz(state: AppData, quiz: FestivalQuiz, choice: number): AppData {
+  if (state.quiz.answers[quiz.id] !== undefined || choice < 0 || choice >= quiz.choices.length) {
     return state;
   }
   return {
     ...state,
-    quiz: { ...state.quiz, answer: choice },
-    stamps: state.stamps + (choice === question.correct ? 1 : 0),
+    quiz: { ...state.quiz, answers: { ...state.quiz.answers, [quiz.id]: choice } },
+    stamps: state.stamps + (choice === quiz.answer ? 1 : 0),
   };
 }

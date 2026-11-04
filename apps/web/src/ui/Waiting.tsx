@@ -1,39 +1,37 @@
+import type { FestivalQuiz } from "@matsuri-ikoka/schema";
 import {
   BookOpen,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  PartyPopper,
+  CircleHelp,
   Pause,
   Play,
-  Sparkles,
-  UtensilsCrossed,
-  X,
 } from "lucide-react";
 import { useEffect, useId, useMemo, useState } from "react";
 import { usePlay } from "../state/play";
+import { quizById } from "../state/quizBank";
 import { useActions, useApp, useT } from "../state/react";
-import type { QuizKind, WaitingTalk } from "../state/types";
-import { waitingTalks } from "../state/waiting";
+import type { WaitingTalk } from "../state/types";
+import {
+  slideDelayMs,
+  slidePosition,
+  type WaitingSlide,
+  waitingSlide,
+  waitingTalks,
+} from "../state/waiting";
 import { focusComposer } from "./ChatPanel";
 import { buttonQuiet, SourceLink } from "./common";
 import { GameWindow } from "./GameWindow";
 import { useReducedMotion } from "./hooks";
 import { CATEGORY_ICON, CATEGORY_TONE, LanternIcon } from "./icons";
 import { Portrait } from "./Portraits";
-import { choiceIcon, MAX_STAMP_DOTS, quizDots } from "./quizLook";
 
-// 待ち時間を楽しめる時間にする部品：コンシェルジュの豆知識（祭りの小話・見どころ・作法）と
-// 祭りクイズを1つの窓で出す。しおり完成の演出もここに置く。
+// 待ち時間を楽しめる時間にする部品：コンシェルジュの豆知識（祭りの小話・見どころ・作法）を
+// 時間で送りながら話し、ときどき祭りクイズを挟む。どちらも同じ1つの窓に出す。しおり完成の演出もここに置く。
 
-/** 豆知識を切り替える間隔 */
-const TALK_INTERVAL_MS = 7_000;
-
-/** 何話目かを、話の数の中に収める（前へ戻ると負になるので、正の余りにする） */
-function talkIndex(index: number, count: number): number {
-  const size = Math.max(1, count);
-  return ((index % size) + size) % size;
-}
+/** 窓の下に並べる点の上限 */
+const MAX_DOTS = 5;
 
 /** 豆知識の1話を、画面の言葉にする（決まった値は辞書で、データの文はそのまま） */
 function useTalkText() {
@@ -69,25 +67,39 @@ function useTalks(): WaitingTalk[] {
   );
 }
 
-/** いま話している豆知識（返答を待っていないときは null） */
-function useCurrentTalk(): WaitingTalk | null {
-  const streaming = useApp((state) => state.session.streaming);
+/** いま見せている1枚の中身（豆知識の1話か、クイズの1問） */
+type CurrentSlide = { kind: "talk"; talk: WaitingTalk } | { kind: "quiz"; quiz: FestivalQuiz };
+
+/** いま見せている1枚。並び（何枚目に何を出すか）は state/waiting.ts の関数で決める */
+function useSlide(): {
+  slide: WaitingSlide | null;
+  current: CurrentSlide | null;
+  talks: WaitingTalk[];
+} {
   const index = useApp((state) => state.trivia.index);
+  const deck = useApp((state) => state.quiz.deck);
   const talks = useTalks();
-  const talk = talks[talkIndex(index, talks.length)];
-  return streaming && talk !== undefined ? talk : null;
+  const slide = waitingSlide(index, talks.length, deck);
+  if (slide === null) return { slide, current: null, talks };
+  if (slide.kind === "talk") {
+    const talk = talks[slide.talkIndex];
+    return { slide, current: talk === undefined ? null : { kind: "talk", talk }, talks };
+  }
+  const quiz = quizById(slide.quizId);
+  return { slide, current: quiz === undefined ? null : { kind: "quiz", quiz }, talks };
 }
 
 /**
- * 3D の店で、豆知識係（コンシェルジュ）の頭の上に出す吹き出し。位置は 3D の中から書き込む。
- * 同じ文は豆知識の窓で読めるので、読み上げからは外す
+ * 3D の店で、豆知識係（コンシェルジュ）の頭の上に出す吹き出し。豆知識の文か、クイズの問いを出す。
+ * 位置は 3D の中から書き込む。同じ文は豆知識の窓で読めるので、読み上げからは外す
  */
 export function HostBubble() {
-  const talk = useCurrentTalk();
+  const streaming = useApp((state) => state.session.streaming);
+  const { current } = useSlide();
   const talkText = useTalkText();
   const entering = usePlay((state) => state.entering);
-  if (talk === null || entering) return null;
-  const { text } = talkText(talk);
+  if (!streaming || current === null || entering) return null;
+  const text = current.kind === "talk" ? talkText(current.talk).text : current.quiz.question;
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0">
       <p
@@ -141,52 +153,35 @@ const roundButton =
   "grid size-9 shrink-0 place-items-center rounded-full border-2 border-wood-300 bg-white text-ink shadow-sm transition hover:border-yamabuki-400 hover:bg-yamabuki-100";
 
 /**
- * 豆知識：コンシェルジュが祭りの小話・見どころ・作法を話す（中身は祭りのデータだけで、出典を添える）。
- * 数秒ごとに次の話へ移り、前後へ送る・止めるができる。「くわしく見る」で出典と候補に入れるボタンを開く
+ * 豆知識の1話：コンシェルジュが祭りの小話・見どころ・作法を話す（中身は祭りのデータだけで、出典を添える）。
+ * 「くわしく見る」で出典と候補に入れるボタンを開く
  */
-function TriviaBody() {
+function TalkSlide({
+  talk,
+  slideKey,
+  open,
+  detailsId,
+}: {
+  talk: WaitingTalk;
+  slideKey: number;
+  open: boolean;
+  detailsId: string;
+}) {
   const t = useT();
   const actions = useActions();
-  const index = useApp((state) => state.trivia.index);
   const festivals = useApp((state) => state.festivals);
   const candidates = useApp((state) => state.candidates);
-  const talks = useTalks();
   const talkText = useTalkText();
-  const reducedMotion = useReducedMotion();
-  const [paused, setPaused] = useState(false);
-  const [hovered, setHovered] = useState(false);
-  const [open, setOpen] = useState(false);
-  const detailsId = useId();
-
-  useEffect(() => {
-    if (paused || hovered || open || reducedMotion || talks.length < 2) {
-      return;
-    }
-    const timer = setInterval(() => actions.nextTrivia(), TALK_INTERVAL_MS);
-    return () => clearInterval(timer);
-  }, [paused, hovered, open, reducedMotion, talks.length, actions]);
-
-  const position = talkIndex(index, talks.length);
-  const talk = talks[position];
-  if (talk === undefined) {
-    return null;
-  }
   const line = talkText(talk);
   const isCandidate = candidates.some((c) => c.festivalId === talk.festivalId);
   const category = festivals[talk.festivalId]?.category ?? "other";
-  const dotCount = Math.min(talks.length, MAX_STAMP_DOTS);
   return (
-    // biome-ignore lint/a11y/noStaticElementInteractions: 指を乗せている間は送りを止めるだけで、操作はボタンで行う
-    <div
-      data-testid="trivia-card"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
+    <>
       <div className="flex items-center gap-2">
         <Portrait speaker="concierge" className="size-12 shrink-0 border-2 sm:size-14" />
         <div className="min-w-0 flex-1 rounded-xl bg-white px-2.5 py-2 shadow-sm ring-1 ring-wood-300/60">
           <p
-            key={`${talk.festivalId}-${index}`}
+            key={`${talk.festivalId}-${slideKey}`}
             className="line-clamp-4 font-bold text-ink leading-snug motion-safe:animate-fade"
             data-testid="waiting-talk"
           >
@@ -198,41 +193,6 @@ function TriviaBody() {
           </p>
         </div>
         <Postcard category={category} />
-      </div>
-
-      <div className="mt-2 flex items-center justify-between gap-2">
-        <button
-          type="button"
-          className={roundButton}
-          aria-label={t.waiting.prev}
-          disabled={talks.length < 2}
-          onClick={() => actions.prevTrivia()}
-        >
-          <ChevronLeft className="size-5" aria-hidden="true" />
-        </button>
-        <button
-          type="button"
-          className="inline-flex items-center gap-1.5 rounded-full border-2 border-wood-300 bg-white px-4 py-1 font-bold text-ink shadow-sm transition hover:border-yamabuki-400 hover:bg-yamabuki-100"
-          aria-expanded={open}
-          aria-controls={detailsId}
-          onClick={() => setOpen(!open)}
-        >
-          <BookOpen className="size-4" aria-hidden="true" />
-          {t.waiting.more}
-          <ChevronDown
-            className={`size-4 transition ${open ? "rotate-180" : ""}`}
-            aria-hidden="true"
-          />
-        </button>
-        <button
-          type="button"
-          className={roundButton}
-          aria-label={t.waiting.next}
-          disabled={talks.length < 2}
-          onClick={() => actions.nextTrivia()}
-        >
-          <ChevronRight className="size-5" aria-hidden="true" />
-        </button>
       </div>
 
       {/* 出典は閉じていても文書には残し、開いたときだけ見せる */}
@@ -255,10 +215,198 @@ function TriviaBody() {
           </button>
         )}
       </div>
+    </>
+  );
+}
+
+/** 選択肢の頭に付ける記号（飾りなので読み上げない） */
+const CHOICE_MARKS = ["A", "B", "C", "D"];
+
+/** 選択式のクイズの1問。答えると正解と短い解説、出典を出す。答えなくても相談は進む */
+function QuizSlide({ quiz }: { quiz: FestivalQuiz }) {
+  const t = useT();
+  const actions = useActions();
+  const answer = useApp((state) => state.quiz.answers[quiz.id]);
+  const stamps = useApp((state) => state.stamps);
+  const festivalName = useApp((state) =>
+    quiz.festivalId === undefined ? null : (state.festivals[quiz.festivalId]?.name.ja ?? null),
+  );
+  const answered = answer !== undefined;
+  return (
+    <div data-testid="quiz-card">
+      <div className="flex items-start gap-2">
+        <Portrait speaker="concierge" className="size-12 shrink-0 border-2 sm:size-14" />
+        <div className="min-w-0 flex-1 rounded-xl bg-white px-2.5 py-2 shadow-sm ring-1 ring-wood-300/60">
+          <p className="flex items-start gap-2 font-bold text-ink leading-snug motion-safe:animate-fade">
+            <span
+              aria-hidden="true"
+              className="grid size-6 shrink-0 place-items-center rounded-full bg-shu-600 font-black text-kinari-50 text-xs"
+            >
+              Q
+            </span>
+            <span>
+              <span className="sr-only">{t.quiz.question}：</span>
+              {quiz.question}
+            </span>
+          </p>
+          <p className="mt-0.5 truncate text-ink-soft text-xs">
+            <span className="font-bold text-shu-700">{t.quiz.title}</span>
+            {festivalName === null ? null : `・${t.waiting.from(festivalName)}`}
+          </p>
+        </div>
+      </div>
+      <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
+        {quiz.choices.map((choice, index) => {
+          const isRight = index === quiz.answer;
+          const chosen = answer === index;
+          return (
+            <button
+              key={choice}
+              type="button"
+              disabled={answered}
+              onClick={() => actions.answerQuiz(quiz.id, index)}
+              className={`flex min-h-10 items-center gap-2 rounded-xl border-2 px-2.5 py-1 text-left font-bold text-sm leading-snug shadow-sm transition ${
+                answered && isRight
+                  ? "border-emerald-700 bg-emerald-50 text-emerald-900"
+                  : chosen
+                    ? "border-stone-500 bg-stone-100 text-stone-700"
+                    : "border-wood-300 bg-white text-ink hover:border-yamabuki-400 hover:bg-yamabuki-100"
+              }`}
+            >
+              <span
+                aria-hidden="true"
+                className="grid size-6 shrink-0 place-items-center rounded-full bg-ai-800 font-black text-kinari-50 text-xs"
+              >
+                {CHOICE_MARKS[index]}
+              </span>
+              <span className="min-w-0">{choice}</span>
+            </button>
+          );
+        })}
+      </div>
+      <div className="mt-1.5 text-xs" role="status">
+        {answered ? (
+          <>
+            <p className="font-bold text-ink">
+              {answer === quiz.answer
+                ? t.quiz.correct
+                : t.quiz.wrong(quiz.choices[quiz.answer] ?? "")}
+            </p>
+            <p className="mt-0.5 text-ink" data-testid="quiz-explanation">
+              {quiz.explanation}
+            </p>
+            <p className="mt-0.5 text-ink-soft">{t.quiz.stamps(stamps)}</p>
+          </>
+        ) : (
+          <p className="text-ink-soft">{t.quiz.note}</p>
+        )}
+      </div>
+      {answered ? (
+        <div className="mt-0.5">
+          <SourceLink source={quiz.source} compact />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+/**
+ * 待ち時間の窓の中身。豆知識を時間で送り、ときどきクイズを挟む。
+ * 前後へ送る・止めるができ、指を乗せている間・出典を開いている間・動きを減らす設定のときは送らない
+ */
+function WaitingBody() {
+  const t = useT();
+  const actions = useActions();
+  const index = useApp((state) => state.trivia.index);
+  const deck = useApp((state) => state.quiz.deck);
+  const answers = useApp((state) => state.quiz.answers);
+  const { slide, current, talks } = useSlide();
+  const reducedMotion = useReducedMotion();
+  const [paused, setPaused] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [open, setOpen] = useState(false);
+  const detailsId = useId();
+  const position = slidePosition(index, talks.length, deck);
+  const answered = slide?.kind === "quiz" && answers[slide.quizId] !== undefined;
+  const delay = slide === null ? null : slideDelayMs(slide, answered);
+  const canMove = position.count > 1;
+
+  // 1枚ごとに時計をかけ直す（クイズに答えたら、解説を読む時間でかけ直す）
+  // biome-ignore lint/correctness/useExhaustiveDependencies: index が変わるたびに、その1枚の時間を測り直す
+  useEffect(() => {
+    if (paused || hovered || open || reducedMotion || !canMove || delay === null) {
+      return;
+    }
+    const timer = setTimeout(() => actions.nextTrivia(), delay);
+    return () => clearTimeout(timer);
+  }, [index, paused, hovered, open, reducedMotion, canMove, delay, actions]);
+
+  if (current === null) {
+    return null;
+  }
+  const move = (step: () => void) => {
+    setOpen(false);
+    step();
+  };
+  const dotCount = Math.min(position.count, MAX_DOTS);
+  return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: 指を乗せている間は送りを止めるだけで、操作はボタンで行う
+    <div
+      data-testid="trivia-card"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {current.kind === "talk" ? (
+        <TalkSlide talk={current.talk} slideKey={index} open={open} detailsId={detailsId} />
+      ) : (
+        <QuizSlide key={current.quiz.id} quiz={current.quiz} />
+      )}
+
+      <div className="mt-2 flex items-center justify-between gap-2">
+        <button
+          type="button"
+          className={roundButton}
+          aria-label={t.waiting.prev}
+          disabled={!canMove}
+          onClick={() => move(actions.prevTrivia)}
+        >
+          <ChevronLeft className="size-5" aria-hidden="true" />
+        </button>
+        {current.kind === "talk" ? (
+          <button
+            type="button"
+            className="inline-flex items-center gap-1.5 rounded-full border-2 border-wood-300 bg-white px-4 py-1 font-bold text-ink shadow-sm transition hover:border-yamabuki-400 hover:bg-yamabuki-100"
+            aria-expanded={open}
+            aria-controls={detailsId}
+            onClick={() => setOpen(!open)}
+          >
+            <BookOpen className="size-4" aria-hidden="true" />
+            {t.waiting.more}
+            <ChevronDown
+              className={`size-4 transition ${open ? "rotate-180" : ""}`}
+              aria-hidden="true"
+            />
+          </button>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 font-bold text-shu-700 text-sm">
+            <CircleHelp className="size-4" aria-hidden="true" />
+            {t.quiz.title}
+          </span>
+        )}
+        <button
+          type="button"
+          className={roundButton}
+          aria-label={t.waiting.next}
+          disabled={!canMove}
+          onClick={() => move(actions.nextTrivia)}
+        >
+          <ChevronRight className="size-5" aria-hidden="true" />
+        </button>
+      </div>
 
       <div className="relative mt-2">
-        <Dots count={dotCount} active={position % dotCount} />
-        {talks.length > 1 ? (
+        <Dots count={dotCount} active={position.index % dotCount} />
+        {canMove && !reducedMotion ? (
           <button
             type="button"
             className="absolute top-1/2 right-0 grid size-7 -translate-y-1/2 place-items-center rounded-full text-ink-soft transition hover:bg-kinari-200 hover:text-ink"
@@ -278,163 +426,27 @@ function TriviaBody() {
   );
 }
 
-/** 選択肢に添える絵 */
-function ChoiceGlyph({ kind, choice }: { kind: QuizKind; choice: string }) {
-  const icon = choiceIcon(kind, choice);
-  const Icon =
-    icon.type === "category"
-      ? (CATEGORY_ICON[icon.category] ?? PartyPopper)
-      : icon.type === "food"
-        ? UtensilsCrossed
-        : Sparkles;
-  return <Icon className="size-6 shrink-0 text-shu-600" aria-hidden="true" />;
-}
-
-/**
- * 2択のクイズ。問い・絵つきの選択肢・スタンプの点を、豆知識と同じ窓に出す。
- * 答えなくても相談は進み、閉じると豆知識に戻る。返答が終わると消える
- */
-function QuizBody({ onClose }: { onClose: () => void }) {
-  const t = useT();
-  const actions = useActions();
-  const quiz = useApp((state) => state.quiz);
-  const stamps = useApp((state) => state.stamps);
-  const question = quiz.question;
-  if (question === null) {
-    return null;
-  }
-  const label = (choice: string) =>
-    question.kind === "category"
-      ? (t.categories[choice as keyof typeof t.categories] ?? choice)
-      : choice;
-  const answered = quiz.answer !== null;
-  const correct = quiz.answer === question.correct;
-  const dots = quizDots(stamps, answered);
-  return (
-    <div data-testid="quiz-card">
-      <div className="flex items-start gap-2">
-        <Portrait speaker="concierge" className="size-12 shrink-0 border-2 sm:size-14" />
-        <p className="flex min-w-0 flex-1 items-start gap-2 rounded-xl bg-white px-2.5 py-2 font-bold text-ink leading-snug shadow-sm ring-1 ring-wood-300/60">
-          <span
-            aria-hidden="true"
-            className="grid size-6 shrink-0 place-items-center rounded-full bg-shu-600 font-black text-kinari-50 text-xs"
-          >
-            Q
-          </span>
-          <span>
-            <span className="sr-only">{t.quiz.question}：</span>
-            {t.quiz.prompts[question.kind](question.festivalName)}
-          </span>
-        </p>
-      </div>
-      <div className="mt-2 grid grid-cols-2 gap-2">
-        {question.choices.map((choice, index) => {
-          const isRight = index === question.correct;
-          const chosen = quiz.answer === index;
-          return (
-            <button
-              // biome-ignore lint/suspicious/noArrayIndexKey: 2択の位置そのものが答え
-              key={index}
-              type="button"
-              disabled={answered}
-              onClick={() => actions.answerQuiz(index as 0 | 1)}
-              className={`flex min-h-12 items-center gap-2 rounded-xl border-2 px-2.5 py-1.5 text-left font-bold text-sm leading-snug shadow-sm transition ${
-                answered && isRight
-                  ? "border-emerald-700 bg-emerald-50 text-emerald-900"
-                  : chosen
-                    ? "border-stone-500 bg-stone-100 text-stone-700"
-                    : "border-wood-300 bg-white text-ink hover:border-yamabuki-400 hover:bg-yamabuki-100"
-              }`}
-            >
-              <ChoiceGlyph kind={question.kind} choice={choice} />
-              <span className="min-w-0">{label(choice)}</span>
-            </button>
-          );
-        })}
-      </div>
-      <p className="mt-1.5 text-xs" role="status">
-        {answered ? (
-          <span className="font-bold text-ink">
-            {correct ? t.quiz.correct : t.quiz.wrong(label(question.choices[question.correct]))}
-          </span>
-        ) : (
-          <span className="text-ink-soft">{t.quiz.note}</span>
-        )}
-      </p>
-      {answered ? (
-        <div className="mt-0.5">
-          <SourceLink source={question.source} compact />
-        </div>
-      ) : null}
-      <p
-        className="mt-2 flex justify-center gap-1.5"
-        role="img"
-        aria-label={t.quiz.stamps(stamps)}
-        data-testid="quiz-dots"
-      >
-        {dots.map((dot, i) => (
-          <span
-            // biome-ignore lint/suspicious/noArrayIndexKey: 点は並びの位置だけで見分ける
-            key={i}
-            className={`size-2.5 rounded-full border-2 ${
-              dot === "stamp"
-                ? "border-shu-600 bg-shu-600"
-                : dot === "current"
-                  ? "border-ai-700 bg-kinari-50"
-                  : "border-ai-200 bg-transparent"
-            }`}
-          />
-        ))}
-      </p>
-      {/* 閉じるボタンは選択肢のあとに置き、キーボードでは問いと選択肢を先に回る */}
-      <button
-        type="button"
-        onClick={onClose}
-        aria-label={t.quiz.close}
-        className="absolute -top-3 -right-3 grid size-8 place-items-center rounded-full border-2 border-kinari-50 bg-ai-800 text-kinari-50 shadow-md transition hover:bg-ai-600"
-      >
-        <X className="size-4" aria-hidden="true" />
-      </button>
-    </div>
-  );
-}
-
-/**
- * 待ち時間の窓。クイズが出ていればクイズを、そうでなければ豆知識を、同じ1つの窓に出す。
- * クイズを閉じたら豆知識に戻る（閉じたかどうかは、この窓の見せ方だけの状態）
- */
+/** 待ち時間の窓。返答を待つあいだ、豆知識とクイズを同じ1つの窓に出す */
 export function WaitingCard() {
   const t = useT();
   const streaming = useApp((state) => state.session.streaming);
-  const quizTurn = useApp((state) =>
-    state.quiz.question === null ? null : state.quiz.offeredTurn,
-  );
-  const [closedTurn, setClosedTurn] = useState<number | null>(null);
-  const showQuiz = quizTurn !== null && quizTurn !== closedTurn;
-  if (!streaming && !showQuiz) {
+  if (!streaming) {
     return null;
   }
   return (
     <GameWindow
-      ariaLabel={showQuiz ? t.quiz.title : t.waiting.title}
-      tone={showQuiz ? "shu" : "ai"}
+      ariaLabel={t.waiting.title}
+      tone="ai"
       className="motion-safe:animate-pop"
       testId="waiting-guide"
       title={
-        showQuiz ? (
-          <>
-            <LanternIcon className="size-4" />
-            {t.quiz.title}
-          </>
-        ) : (
-          <>
-            <BookOpen className="size-4" aria-hidden="true" />
-            {t.waiting.host}
-          </>
-        )
+        <>
+          <BookOpen className="size-4" aria-hidden="true" />
+          {t.waiting.host}
+        </>
       }
     >
-      {showQuiz ? <QuizBody onClose={() => setClosedTurn(quizTurn)} /> : <TriviaBody />}
+      <WaitingBody />
     </GameWindow>
   );
 }

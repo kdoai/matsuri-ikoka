@@ -1,5 +1,6 @@
 import { DEFAULT_PREFERENCES, STAFF_IDS, type StaffId } from "@matsuri-ikoka/schema";
 import { INITIAL_CONSULT } from "./consult";
+import { QUIZ_BANK } from "./quizBank";
 import type { AppData, Locale, StaffState } from "./types";
 
 export const IDLE_STAFF: StaffState = Object.freeze({
@@ -54,7 +55,7 @@ export function initialData({ locale = "ja", tutorialSeen = false }: InitialOpti
       sources: [],
       note: null,
     },
-    quiz: { offeredTurn: null, question: null, answer: null },
+    quiz: { deck: QUIZ_BANK.map((quiz) => quiz.id), answers: {} },
     stamps: 0,
     trivia: { index: 0 },
     festivals: {},
