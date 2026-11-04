@@ -114,13 +114,13 @@
           "url": "https://www.city.hamamatsu.shizuoka.jp/bunkazai/shitei/misakubo/misakubo/nishiuredengaku.html",
           "title": "浜松市 西浦の田楽（毎年旧暦1月18日の月の出から翌日の日の出まで）",
           "checkedAt": "2026-11-04",
-          "confidence": "official"
+          "confidence": "inferred"
         },
         {
           "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2027/rekiyou273.html",
           "title": "国立天文台 暦計算室 令和9年暦要項 朔弦望（2月7日 0時56分 朔）",
           "checkedAt": "2026-11-04",
-          "confidence": "official"
+          "confidence": "inferred"
         }
       ]
     }
