@@ -1,0 +1,273 @@
+{
+  "id": "nagano-ebisuko-enka-taikai",
+  "name": {
+    "ja": "長野えびす講煙火大会",
+    "en": "Nagano Ebisuko Fireworks Festival"
+  },
+  "category": "fireworks",
+  "municipalities": [
+    {
+      "prefecture": "長野県",
+      "name": "長野市"
+    }
+  ],
+  "venue": {
+    "name": "長野大橋西側 犀川第2緑地",
+    "lat": 36.6252,
+    "lng": 138.1851
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "初冬を告げる11月23日の夜に、約1万発の花火が上がる",
+    "音楽に合わせたミュージックスターマインと、超ワイド特大スターマイン",
+    "西宮神社のえびす講を祝って、明治から続く商都の花火"
+  ],
+  "trivia": [
+    {
+      "text": "1899年（明治32年）、西宮神社のえびす講を祝って長野の街の有志が始めた",
+      "source": {
+        "url": "https://www.go-nagano.net/tradition-and-culture/id21175",
+        "title": "Go! NAGANO 長野県公式観光サイト 長野えびす講煙火大会",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1995年から、平日の渋滞を避けるため毎年11月23日の祝日に開くようになった",
+      "source": {
+        "url": "https://www.go-nagano.net/tradition-and-culture/id21175",
+        "title": "Go! NAGANO 長野県公式観光サイト 長野えびす講煙火大会",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "大正時代に、日本で初めての2尺玉を打ち上げた大会とされる",
+      "source": {
+        "url": "https://www.go-nagano.net/tradition-and-culture/id21175",
+        "title": "Go! NAGANO 長野県公式観光サイト 長野えびす講煙火大会",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "腕の立つ煙火師だけが参加できることから「出世煙火」とも呼ばれる",
+      "source": {
+        "url": "https://hanabi.walkerplus.com/detail/ar0420e01112/",
+        "title": "ウォーカープラス 第120回 長野えびす講煙火大会",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "無料観覧エリアは当日10:00に開場し、それより前の場所取りは撤去される",
+      "無料観覧エリアは大変混み、入れないことがある（サテライト会場や公式のライブ配信の利用が勧められている）",
+      "無料観覧エリアの中にトイレはなく、一度入ると出にくいので入る前に済ませる",
+      "近くの店や一般の道路に車を止めない。駐車場は予約制（アキッパ）"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "例年約10万人が集まり、夜の河川敷で、無料観覧エリアは混んで入れないこともある"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://nagano-ebisukou.jp/about/",
+        "title": "長野えびす講煙火大会 会場案内（無料観覧エリアは10:00開場、トイレなし）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://nagano-ebisukou.jp/access/",
+        "title": "長野えびす講煙火大会 交通・アクセス（無断駐車の禁止、駐車場の予約）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000387",
+        "title": "るるぶ&more. 第120回長野えびす講煙火大会（昨年の人出 約10万人）",
+        "checkedAt": "2026-11-04",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0420e01112/data.html",
+        "title": "ウォーカープラス 第120回 長野えびす講煙火大会 データ（例年の人出 約10万人）",
+        "checkedAt": "2026-11-04",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-23",
+      "start": "18:00",
+      "end": "19:30",
+      "status": "announced",
+      "rainPolicy": "雨天決行（自然災害が起きたときは中止）",
+      "note": "第120回。17:30ごろ ドローンショー、18:00 打ち上げ開始、19:30ごろ終了の予定。打ち上げは約10,000発。無料観覧エリアは10:00開場。シャトルバスは長野駅東口（ユメリアバスパーク）とビッグハットの間で、行きは15:00〜17:45ごろ、帰りは19:00〜20:30、約10分おき、片道500円",
+      "sources": [
+        {
+          "url": "https://nagano-ebisukou.jp/",
+          "title": "長野えびす講煙火大会 公式サイト（2026年11月23日（月・祝）18:00打ち上げ開始）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://kyodonewsprwire.jp/release/202608314952",
+          "title": "長野商工会議所 第120回長野えびす講煙火大会の発表（17:30ごろドローンショー、18:00打ち上げ、約10,000発）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.go-nagano.net/tradition-and-culture/id21175",
+          "title": "Go! NAGANO 長野えびす講煙火大会（18:00〜19:30予定、約10,000発）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://nagano-ebisukou.jp/access/",
+          "title": "長野えびす講煙火大会 交通・アクセス（シャトルバスの時刻と運賃）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://hanabi.walkerplus.com/detail/ar0420e01112/data.html",
+          "title": "ウォーカープラス 第120回 長野えびす講煙火大会 データ（雨天決行、自然災害のときは中止）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000387",
+          "title": "るるぶ&more. 第120回長野えびす講煙火大会（雨天決行）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        }
+      ]
+    },
+    {
+      "date": "2027-11-23",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "1995年から毎年11月23日に開く決まりから見込んだ日（2027年の発表はまだない）。例年18:00ごろから約90分",
+      "sources": [
+        {
+          "url": "https://www.go-nagano.net/tradition-and-culture/id21175",
+          "title": "Go! NAGANO 長野えびす講煙火大会（1995年から毎年11月23日に開催）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 長野駅",
+        "walkMinutes": [30, 35],
+        "note": "東口から徒歩約30分。主催者は徒歩での来場を勧めている"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "東京駅",
+        "minutes": [80, 100],
+        "route": "北陸新幹線、乗り換えなし（最速1時間20分、通常約1時間40分）"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [
+      "北側の堤防道路：9:00〜21:00 車両通行止め",
+      "南側の堤防道路：17:30〜20:00 車両通行止め",
+      "周辺の道路：13:00〜20:00 地域・関係者の車両以外は進入禁止"
+    ],
+    "sources": [
+      {
+        "url": "https://nagano-ebisukou.jp/access/",
+        "title": "長野えびす講煙火大会 交通・アクセス（長野駅東口から徒歩約30分、交通規制、駐車場はアキッパで予約、会場周辺にコインパーキングなし）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.nagano.nagano.jp/n042000/contents/p004106.html",
+        "title": "長野市 長野市へのアクセス（東京駅から北陸新幹線で通常約1時間40分、最速1時間20分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "zenkoji",
+      "name": "善光寺",
+      "kind": "sightseeing",
+      "summary": "国宝の本堂をもつ長野の古刹。本堂内陣とお戒壇巡りは参拝券で入る。11月の内陣は朝のお勤めの1時間前から16:15まで。長野駅から路線バスで善光寺大門まで約15分",
+      "location": {
+        "lat": 36.6614,
+        "lng": 138.1878
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": "本堂内陣・お戒壇巡り券 800円（参拝セット券 1,500円）",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.zenkoji.jp/meguru/sanpai/",
+          "title": "善光寺 参拝券のご案内",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.zenkoji.jp/access/",
+          "title": "善光寺 アクセス（長野駅から善光寺大門まで路線バスで約15分）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://nagano-ebisukou.jp/",
+      "title": "長野えびす講煙火大会 公式サイト（主催 長野商工会議所）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.go-nagano.net/tradition-and-culture/id21175",
+      "title": "Go! NAGANO 長野県公式観光サイト 長野えびす講煙火大会",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.nagano.nagano.jp/n042000/contents/p016432.html",
+      "title": "長野市 ジュニアアンバサダー取材記事 えびす講煙火大会（主催者の運営、露店の並べ方）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "服装・持ち物・撮影（三脚など）の決まり（有料観覧席の注意事項は画像だけで読めなかった）",
+    "2026年の雨・荒天のときの扱いの主催者の発表（雨天決行・自然災害で中止は観光サイトの記載）",
+    "予約制駐車場の台数と料金",
+    "主な観覧場所ごとの、長野駅からの徒歩の時間",
+    "地元の味・祭りの日だけの食べ物（露店とフードパークが出ることだけ分かっている）",
+    "祭りの前後に寄れる食の店（営業時間を公式で確かめられた店がない）",
+    "2027年の開催時刻と内容"
+  ]
+}

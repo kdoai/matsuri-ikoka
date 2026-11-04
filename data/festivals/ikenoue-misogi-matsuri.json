@@ -1,0 +1,234 @@
+{
+  "id": "ikenoue-misogi-matsuri",
+  "name": {
+    "ja": "池ノ上みそぎ祭",
+    "en": "Ikenoue Misogi Festival"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "岐阜県",
+      "name": "岐阜市"
+    }
+  ],
+  "venue": {
+    "name": "葛懸神社",
+    "lat": 35.4303,
+    "lng": 136.7436
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["walkerplus"],
+  "highlights": [
+    "鉢巻きとふんどし姿の男たちが、12月の長良川に入って身を清める",
+    "町を練り歩いて川へ向かうみそぎを、昼と夜に3回くり返す",
+    "出雲から戻る神を迎える支度として続いてきた、八百年の祭り",
+    "当日は予約なしで一般のご祈祷を受けられる"
+  ],
+  "trivia": [
+    {
+      "text": "大正のころは「ハダカ祭り」とも「蕎麦切祭り」とも呼ばれた。蕎麦切りは祭りのごちそうだった",
+      "source": {
+        "url": "https://www.ikenouemisogi.jp/history/name-history/",
+        "title": "池ノ上みそぎ祭 名称の変化と戦時",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "祭りの日に参道の両側へ蕎麦切りを売る露店が並び、ハダカ祭りの名物になった",
+      "source": {
+        "url": "https://www.ikenouemisogi.jp/history/name-history/",
+        "title": "池ノ上みそぎ祭 名称の変化と戦時",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1955年に副祢宜の役が設けられ、3回のみそぎのうち2回目を副祢宜が務めるようになった",
+      "source": {
+        "url": "https://www.ikenouemisogi.jp/history/negi-history/",
+        "title": "池ノ上みそぎ祭 祢宜の歴史",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "葛懸神社は1937年、長良川の改修工事に合わせて約200m北の今の場所へ移った",
+      "source": {
+        "url": "https://www.ikenouemisogi.jp/history/katsuragake-jinjya/",
+        "title": "池ノ上みそぎ祭 葛懸神社について",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_by_application",
+    "howToJoin": "みそぎへの一般参加は先着50名で、11月中旬に公式サイトで募集する（2026年の申し込み方法・費用・条件はまだ出ていない）。見るだけなら申し込みは要らない",
+    "rules": [
+      "神事やみそぎの進行を妨げる撮影や行為をしない",
+      "撮影する場所は祭典委員の指示に従う",
+      "神社・祭元・みそぎの道筋・みそぎ場では、重さにかかわらずドローンの持ち込み・操縦・撮影をしない"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": {
+      "policy": "restricted",
+      "note": "撮影場所は祭典委員の指示に従い、祭典委員の写真係が優先。ドローンは禁止"
+    },
+    "sources": [
+      {
+        "url": "https://www.ikenouemisogi.jp/2026-12-12/",
+        "title": "池ノ上みそぎ祭 2026年みそぎ祭り（一般参加は先着50名、撮影とドローンの注意）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-12",
+      "start": "13:30",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "13:30 みそぎ始祭、14:30 一般参加者のお祓いと一般ご祈祷の受付（19:30まで）、15:00 1回目のみそぎ神事（公民館を出て境内と堤防を練り歩き、15:30ごろ長良川に入る）、20:00 2回目・3回目のみそぎ神事（氏子と関係者）。当日の様子で前後する。みそぎ場は忠節橋から500mほど下流の右岸。翌13日に大祭",
+      "sources": [
+        {
+          "url": "https://www.ikenouemisogi.jp/2026-12-12/",
+          "title": "池ノ上みそぎ祭 2026年みそぎ祭り（12月12日みそぎ祭り、13日大祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kankou-gifu.jp/event/detail_4002.html",
+          "title": "岐阜の旅ガイド 池ノ上みそぎ祭（毎年12月第2土曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-12-11",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年12月の第2土曜日に行う決まりから見込んだ日（2027年の発表はまだない）。2026年は13:30の始祭から20:00の夜のみそぎまで続いた",
+      "sources": [
+        {
+          "url": "https://www.ikenouemisogi.jp/",
+          "title": "池ノ上みそぎ祭（毎年十二月の第2土曜）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.kankou-gifu.jp/event/detail_4002.html",
+          "title": "岐阜の旅ガイド 池ノ上みそぎ祭（毎年12月第2土曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "岐阜バス 池の上バス停",
+        "walkMinutes": [5, 10],
+        "note": "バス停から神社まで徒歩5分（主催者の案内）"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "JR岐阜駅バスターミナル",
+        "minutes": [20, 30],
+        "route": "岐阜バス、乗り換えなし。8番のりばの C34・C36・C38・C39、または10番のりばの K35 で約20分"
+      }
+    ],
+    "parking": "none",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.ikenouemisogi.jp/access/",
+        "title": "池ノ上みそぎ祭 アクセス（駐車場なし、JR岐阜駅バスターミナルから約20分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.ikenouemisogi.jp/2026-12-12/",
+        "title": "池ノ上みそぎ祭 2026年みそぎ祭り（駐車場なし）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "gifu-daibutsu-shohoji",
+      "name": "岐阜大仏（正法寺）",
+      "kind": "sightseeing",
+      "summary": "高さ13.7mの乾漆の大仏をまつる寺。1832年に38年かけて完成した。大イチョウを芯にし、竹と粘土の上に経典を貼って漆と金箔で仕上げてある。無休",
+      "location": {
+        "lat": 35.4326,
+        "lng": 136.7718
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": [],
+      "price": "大人（高校生以上）300円、小人150円",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.kankou-gifu.jp/spot/detail_918.html",
+          "title": "岐阜の旅ガイド 岐阜大仏（正法寺）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://gifu-daibutsu.com/wp/?page_id=53",
+          "title": "金鳳山正法寺 参拝のご案内（拝観 9:00〜17:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.ikenouemisogi.jp/",
+      "title": "池ノ上みそぎ祭（みそぎ祭奉賛会）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.kankou-gifu.jp/event/detail_4002.html",
+      "title": "岐阜の旅ガイド 池ノ上みそぎ祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2026年の一般参加の申し込み方法・費用・参加の条件（11月中旬に募集とだけ案内がある）",
+    "みそぎに加わるときと見学するときの危険度",
+    "見学者の服装・持ち物",
+    "雨や増水のときの扱い",
+    "一般ご祈祷の受付時間（主催者のページの中で14:00〜19:00と14:30〜19:30が食い違う）と初穂料",
+    "屋台・露店の有無",
+    "交通規制の有無",
+    "参加者と見学者の数",
+    "名古屋駅からJR岐阜駅までの所要時間",
+    "神社の近くで食事ができる店",
+    "岐阜大仏までの徒歩の時間"
+  ]
+}

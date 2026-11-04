@@ -1,0 +1,189 @@
+{
+  "id": "horai-no-himatsuri",
+  "name": {
+    "ja": "鳳来の火まつり",
+    "en": "Horai Fire Festival"
+  },
+  "category": "fire",
+  "municipalities": [
+    {
+      "prefecture": "愛知県",
+      "name": "新城市"
+    }
+  ],
+  "venue": {
+    "name": "旧門谷小学校",
+    "lat": 34.9789,
+    "lng": 137.5862
+  },
+  "scaleTier": "XS",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "約1300年前の開山と伝わる鳳来寺山のふもと、門谷で行う火の行事",
+    "大正時代の木造校舎が残る旧門谷小学校が会場",
+    "紅葉の鳳来寺山もみじまつりの期間中、日曜の午後1時間半だけの行事"
+  ],
+  "trivia": [
+    {
+      "text": "旧門谷小学校の校庭で毎年開かれ、修験道の護摩にちなむ裸足の火渡りが行われてきた",
+      "source": {
+        "url": "https://eee-plan.com/event/23377",
+        "title": "イープラン 鳳来寺山もみじまつり（2018年の案内。火渡りは旧門谷小学校の校庭で毎年開催）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "鳳来寺は約1300年前の開山と伝わり、表参道には1425段の石段が続く",
+      "source": {
+        "url": "https://aichinow.pref.aichi.jp/events/detail/160/",
+        "title": "Aichi Now 令和8年 鳳来寺山もみじまつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "表参道の傘杉は樹齢約800年と伝わり、仁王門は国の重要文化財",
+      "source": {
+        "url": "https://aichinow.pref.aichi.jp/events/detail/160/",
+        "title": "Aichi Now 令和8年 鳳来寺山もみじまつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": []
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-15",
+      "start": "13:30",
+      "end": "15:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "13:30〜15:00、会場は旧門谷小学校（県の観光サイトは同じページで「鳳来寺山表参道」とも書いていて食い違う）。鳳来寺山もみじまつり（11/9〜12/6）の行事の1つ。表参道のライトアップは11/14〜29の土日祝 17:00〜20:00",
+      "sources": [
+        {
+          "url": "https://www.okuminavi.jp/event/detail/1381/",
+          "title": "キラッと奥三河観光ナビ 令和8年 鳳来寺山もみじまつり（鳳来の火まつり 11月15日 13:30〜15:00、旧門谷小学校）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://aichinow.pref.aichi.jp/events/detail/160/",
+          "title": "Aichi Now 令和8年 鳳来寺山もみじまつり（鳳来の火まつり 2026年11月15日 13:30〜15:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.city.shinshiro.lg.jp/kanko/event/kanko/momiji.html",
+        "title": "新城市 令和8年度鳳来寺山もみじまつり（駐車場あり。新城ICから約20分。Sバスは湯谷温泉駅南から鳳来寺山山頂まで約15分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.okuminavi.jp/event/detail/1381/",
+        "title": "キラッと奥三河観光ナビ 令和8年 鳳来寺山もみじまつり（駐車場あり）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.okuminavi.jp/search/detail.php?id=1147",
+        "title": "キラッと奥三河観光ナビ 旧門谷小学校（新城市門谷字宮下26。駐車場は鳳来寺山表参道駐車場を利用）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "horaijisan-shizen-kagaku-hakubutsukan",
+      "name": "鳳来寺山自然科学博物館",
+      "kind": "sightseeing",
+      "summary": "鳳来寺山を中心に、地域の地質と動植物を展示する市の博物館。中庭でフクロウの仲間が見られる。火曜休館（祝日なら翌日）だが、11月と夏休みは無休。駐車場は12台",
+      "location": {
+        "lat": 34.9722,
+        "lng": 137.5788
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": ["tue"],
+      "price": "大人300円、子ども100円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.okuminavi.jp/search/detail.php?id=507",
+          "title": "キラッと奥三河観光ナビ 鳳来寺山自然科学博物館",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.okuminavi.jp/event/detail/1381/",
+      "title": "キラッと奥三河観光ナビ 令和8年 鳳来寺山もみじまつり",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://aichinow.pref.aichi.jp/events/detail/160/",
+      "title": "Aichi Now 令和8年 鳳来寺山もみじまつり",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://eee-plan.com/event/23377",
+      "title": "イープラン 鳳来寺山もみじまつり（2018年の案内）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.okuminavi.jp/search/detail.php?id=1147",
+      "title": "キラッと奥三河観光ナビ 旧門谷小学校",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "当日の内容：火渡りをするか、だれが行うか、一般の人が加われるか",
+    "主催者",
+    "見学・参加の決まり、服装（裸足になるかなど）・持ち物、危険度、撮影の決まり",
+    "雨のときの扱い",
+    "会場の正確な位置",
+    "電車とバスで行く方法（最寄りのバス停と、駅からの所要時間）",
+    "名古屋駅・豊橋駅など玄関口の駅からの所要時間",
+    "11月15日の駐車場の料金と台数",
+    "2027年の開催日",
+    "見学者数",
+    "屋台・露店の有無",
+    "会場の近くの食事処"
+  ]
+}

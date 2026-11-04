@@ -1,0 +1,263 @@
+{
+  "id": "tsuruga-senbeiyaki",
+  "name": {
+    "ja": "せんべい焼き",
+    "en": "Senbei-yaki at Tenman Shrine, Tsuruga"
+  },
+  "category": "fire",
+  "municipalities": [
+    {
+      "prefecture": "福井県",
+      "name": "敦賀市"
+    }
+  ],
+  "venue": {
+    "name": "天満神社",
+    "lat": 35.6598,
+    "lng": 136.0758
+  },
+  "scaleTier": "XS",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "境内のかがり火の神火に、青竹で挟んだ生せんべいをかざして自分で焼く",
+    "焼いたせんべいを食べると病を払い、1年を元気に過ごせると伝わる",
+    "毎年11月20日だけの行事"
+  ],
+  "trivia": [
+    {
+      "text": "青竹に生せんべいをはさんで神火で焼く行事は、およそ380年続いているとされる",
+      "source": {
+        "url": "https://rurubu.jp/andmore/spot/20003330",
+        "title": "るるぶ&more. せんべい焼き",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "当日、境内のかがり火で青竹にはさんだ生せんべいを焼いて食べる。費用は無料（るるぶ&more.）。始まる時刻と、生せんべいの受け取り方は案内がない",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://tsuruga-kanko.jp/event/senbeiyaki",
+        "title": "港都つるが観光協会 せんべい焼き（天満神社）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20003330",
+        "title": "るるぶ&more. せんべい焼き（料金 無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-20",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年11月20日の行事（主催者・観光協会の2026年の発表は見つからない。るるぶ&more.は2026年11月20日と案内）。時刻の案内はない",
+      "sources": [
+        {
+          "url": "https://tsuruga-kanko.jp/event/senbeiyaki",
+          "title": "港都つるが観光協会 せんべい焼き（天満神社）（毎年11月20日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20003330",
+          "title": "るるぶ&more. せんべい焼き（2026年11月20日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-11-20",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年11月20日に行う決まりから見込んだ日（2027年の発表はまだない）",
+      "sources": [
+        {
+          "url": "https://tsuruga-kanko.jp/event/senbeiyaki",
+          "title": "港都つるが観光協会 せんべい焼き（天満神社）（毎年11月20日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "ぐるっと敦賀周遊バス 金崎宮停留所",
+        "walkMinutes": [5, 10],
+        "note": "観光協会の案内で停留所から徒歩5分。るるぶ&more.は、敦賀駅からバスで約6分の栄新町で降り、徒歩2分と案内している"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "JR 敦賀駅",
+        "minutes": [8, 18],
+        "route": "ぐるっと敦賀周遊バスで約8分、金崎宮停留所下車。タクシーなら約8分"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://tsuruga-kanko.jp/event/senbeiyaki",
+        "title": "港都つるが観光協会 せんべい焼き（天満神社）（アクセス）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20003330",
+        "title": "るるぶ&more. せんべい焼き（会場に駐車場はなく、周辺の有料駐車場を使う）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "生せんべい",
+        "note": "会場のかがり火で、青竹にはさんで自分で焼いて食べる",
+        "sources": [
+          {
+            "url": "https://tsuruga-kanko.jp/event/senbeiyaki",
+            "title": "港都つるが観光協会 せんべい焼き（天満神社）",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "kanegasakigu",
+      "name": "金崎宮",
+      "kind": "sightseeing",
+      "summary": "金ヶ崎城跡のふもとの神社。約400本の桜の名所で、桜の枝を交わす「花換え」から恋の宮とも呼ばれる。お市が小豆の袋を信長に届けた逸話にちなむお守りがある",
+      "location": {
+        "lat": 35.6632,
+        "lng": 136.0763
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://tsuruga-kanko.jp/spot/shrines_temples/kanegasakigu-shrine/",
+          "title": "港都つるが観光協会 金崎宮",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "tsuruga-akarenga-soko",
+      "name": "敦賀赤レンガ倉庫",
+      "kind": "sightseeing",
+      "summary": "1905年に石油の倉庫として建てられた国の登録有形文化財。鉄道と港のジオラマ館と、飲食店が入るレストラン館がある。水曜休（祝日なら翌日）、12月30日〜1月2日休み",
+      "location": {
+        "lat": 35.6622,
+        "lng": 136.0745
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "17:30",
+        "lastEntry": "17:00"
+      },
+      "closedDays": ["wed"],
+      "price": "ジオラマ館 大人400円、小学生以下200円",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://tsuruga-kanko.jp/spot/history_culture/redbrick-warehouse/",
+          "title": "港都つるが観光協会 敦賀赤レンガ倉庫（ジオラマ館 9:30〜17:30、レストラン館 9:30〜22:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "nihonkai-sakanamachi",
+      "name": "日本海さかな街",
+      "kind": "food",
+      "summary": "鮮魚・昆布・珍味の店や食事処など約50店が並ぶ海鮮の市場。11〜12月は無休。閉店は7月〜12月30日の平日17:30、土日祝18:00",
+      "location": {
+        "lat": 35.6344,
+        "lng": 136.05
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "17:30"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["indoor", "local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://sakanamachi.co.jp/",
+          "title": "日本海さかな街（営業時間・休業日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://tsuruga-kanko.jp/event/senbeiyaki",
+      "title": "港都つるが観光協会 せんべい焼き（天満神社）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20003330",
+      "title": "るるぶ&more. せんべい焼き（会場 天満神社境内 恵美須神社）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    },
+    {
+      "url": "https://maps.gsi.go.jp/#18/35.659800/136.075780/",
+      "title": "国土地理院 地理院地図（敦賀市栄新町の神社の記号）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2026年の開催の発表と時刻（観光協会は毎年11月20日とだけ案内）",
+    "生せんべいの受け取り方と、費用がかかるか（無料はるるぶ&more.の案内だけ）",
+    "火に近づくときの注意と危険度、見学の決まり、服装・持ち物、撮影の決まり",
+    "雨のときの扱い",
+    "屋台・露店の有無",
+    "参加者の数",
+    "会場の駐車場（るるぶ&more.の案内だけで、観光協会の案内にない）",
+    "神社の境内のどの社で行うか（るるぶ&more.は境内の恵美須神社とし、観光協会は天満神社とだけ書く）",
+    "敦賀駅より遠くの主要駅（京都駅・名古屋駅・金沢駅など）からの所要時間",
+    "金崎宮の参拝時間と、周辺の場所の会場からの徒歩の時間"
+  ]
+}
