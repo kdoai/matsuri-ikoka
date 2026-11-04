@@ -1,0 +1,209 @@
+{
+  "id": "toba-no-himatsuri",
+  "name": {
+    "ja": "鳥羽の火祭り",
+    "en": "Toba Fire Festival"
+  },
+  "category": "fire",
+  "municipalities": [
+    {
+      "prefecture": "愛知県",
+      "name": "西尾市"
+    }
+  ],
+  "venue": {
+    "name": "鳥羽神明社",
+    "lat": 34.8013,
+    "lng": 137.102
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan"],
+  "highlights": [
+    "高さ5mの大松明「すずみ」2基が境内で燃え上がる",
+    "古い幟の衣装の「ネコ」が炎に飛び込み、神木と十二縄を奪い合う",
+    "福地と乾地の勝ち負けと燃え方で、その年の天候と豊凶を占う",
+    "燃え残りの竹は持ち帰れ、箸にすると歯の病気を防ぐと伝わる"
+  ],
+  "trivia": [
+    {
+      "text": "鳥羽神明社ができた大同年間（806〜809年）から続くと伝わる",
+      "source": {
+        "url": "https://www.city.nishio.aichi.jp/sportskanko/bunkazai/1001485/1001608/1001663/1002716.html",
+        "title": "西尾市 鳥羽の火祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "すずみは1基が高さ5m、重さ2トンの大松明",
+      "source": {
+        "url": "https://nishiokanko.com/list/shop/tobanohimatsuri/",
+        "title": "西尾観光 鳥羽の火祭り（鳥羽神明社）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "十二縄は1年の月の数を表している",
+      "source": {
+        "url": "https://www.city.nishio.aichi.jp/sportskanko/bunkazai/1001485/1001608/1001663/1002716.html",
+        "title": "西尾市 鳥羽の火祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "もとは旧暦1月7日に行い、いまは2月の第2日曜日に行う",
+      "source": {
+        "url": "https://www.city.nishio.aichi.jp/sportskanko/bunkazai/1001485/1001608/1001663/1002716.html",
+        "title": "西尾市 鳥羽の火祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "観覧や撮影の場所取りは禁止。当日7時より前に置かれた敷物などは神社の関係者が片付ける",
+      "当日の境内への入場は7時から、南側の参道から",
+      "神明社の南側は関係者用の駐車場で、一般の車は停められない",
+      "桟敷席はない",
+      "混み合うので、電車など公共交通で来る"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "境内で高さ5mの大松明を燃やす（見学の安全についての主催者の注意書きは見つからない）"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "観覧や撮影の場所取りは禁止で、当日7時より前に置かれた敷物などは片付けられる"
+    },
+    "sources": [
+      {
+        "url": "https://nishiokanko.com/list/news/25644/",
+        "title": "西尾観光 令和８年 鳥羽の火祭り開催のお知らせ",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://aichinow.pref.aichi.jp/events/detail/144/",
+        "title": "Aichi Now 鳥羽の火祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-02-08",
+      "start": "19:30",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": "雨天は2月9日（月）に延期",
+      "note": "2026年の実績。15:00ごろみそぎ、19:30ごろ神前で神事、20:00ごろすずみに点火。11:00〜16:00に三河鳥羽駅の駐車場で地元の店が名産を売る「とば市」があった",
+      "sources": [
+        {
+          "url": "https://nishiokanko.com/list/news/25644/",
+          "title": "西尾観光 令和８年 鳥羽の火祭り開催のお知らせ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-02-14",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年2月第2日曜日に行う決まりから見込んだ日（2027年の発表はまだない）。例年は15:00ごろみそぎ、19:30ごろ神事、20:00ごろすずみに点火で、雨天は翌日に延期",
+      "sources": [
+        {
+          "url": "https://www.city.nishio.aichi.jp/sportskanko/bunkazai/1001485/1001608/1001663/1002716.html",
+          "title": "西尾市 鳥羽の火祭り（現在は2月第2日曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://aichinow.pref.aichi.jp/events/detail/144/",
+          "title": "Aichi Now 鳥羽の火祭り（毎年2月第2日曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "名鉄 三河鳥羽駅",
+        "walkMinutes": [10, 15],
+        "note": "名鉄蒲郡線"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://nishiokanko.com/list/news/25644/",
+        "title": "西尾観光 令和８年 鳥羽の火祭り開催のお知らせ（三河鳥羽駅から徒歩約10分、ふるさと公園などの臨時駐車場）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://aichinow.pref.aichi.jp/events/detail/144/",
+        "title": "Aichi Now 鳥羽の火祭り（音羽蒲郡ICから約40分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "ワカメのみそ汁の振る舞い",
+        "note": "2026年は同じ日の11:00〜16:00に三河鳥羽駅の駐車場で地元の店が名産を売る「とば市」があり、そこで11:30ごろと15:00ごろに各約200杯を無料で配った（なくなり次第終わり）",
+        "sources": [
+          {
+            "url": "https://nishiokanko.com/list/news/25644/",
+            "title": "西尾観光 令和８年 鳥羽の火祭り開催のお知らせ",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.city.nishio.aichi.jp/sportskanko/bunkazai/1001485/1001608/1001663/1002716.html",
+      "title": "西尾市 鳥羽の火祭り（国指定の無形民俗文化財）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://nishiokanko.com/list/shop/tobanohimatsuri/",
+      "title": "西尾観光 鳥羽の火祭り（鳥羽神明社、西尾市鳥羽町西迫89）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と時刻",
+    "名古屋駅など玄関口の駅からの所要時間",
+    "交通規制の有無",
+    "見学する人の服装・持ち物、火の粉への注意",
+    "撮影の扱いのうち、場所取りの禁止のほかの決まり",
+    "屋台の有無と、2027年に「とば市」とみそ汁の振る舞いがあるか",
+    "見物客の数",
+    "周辺の観光と食の場所"
+  ]
+}

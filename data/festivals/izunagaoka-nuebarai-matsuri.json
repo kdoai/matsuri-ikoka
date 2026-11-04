@@ -1,0 +1,156 @@
+{
+  "id": "izunagaoka-nuebarai-matsuri",
+  "name": {
+    "ja": "伊豆長岡温泉鵺ばらい祭",
+    "en": "Izunagaoka Onsen Nuebarai Festival"
+  },
+  "category": "dance",
+  "municipalities": [
+    {
+      "prefecture": "静岡県",
+      "name": "伊豆の国市"
+    }
+  ],
+  "venue": {
+    "name": "古奈もみじ公園",
+    "lat": 35.0364,
+    "lng": 138.9402
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "地元の中学生が源頼政の鵺退治を踊りで再現する「鵺踊り」",
+    "大鵺・中鵺・小鵺の7匹の鵺が登場する",
+    "頼政にちなんだ弓のデモンストレーション"
+  ],
+  "trivia": [
+    {
+      "text": "鵺は頭が猿、胴体が虎、尻尾が蛇の妖怪で、弓の名手の源頼政が退治したと伝わる",
+      "source": {
+        "url": "https://izunotabi.com/schedule/nuebarai/",
+        "title": "伊豆の国市観光協会 鵺ばらい祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "古奈には、頼政の妻となった菖蒲御前がいたという言い伝えがある",
+      "source": {
+        "url": "https://www.city.izunokuni.shizuoka.jp/taiga/torick/nuetaizji.html",
+        "title": "伊豆の国市 【源頼政の鵺退治】古奈もみじ公園",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "公園での踊りと弓の披露の見学が中心で、危険についての特別な注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.izunokuni.shizuoka.jp/kankou/kanko/calendar/25nuebarai.html",
+        "title": "伊豆の国市 第61回「伊豆長岡温泉鵺ばらい祭」（中学生の鵺踊りと弓のデモンストレーション）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-25",
+      "start": "11:00",
+      "end": "15:00",
+      "status": "announced",
+      "rainPolicy": "雨天時は長岡総合会館アクシスかつらぎ多目的ホールで11:00〜14:30",
+      "note": "2026年の実績（第61回の本祭）。前日の1月24日は狩野川リバーサイドパークで弓道大会（9:00〜16:00、雨天決行）があった",
+      "sources": [
+        {
+          "url": "https://www.city.izunokuni.shizuoka.jp/kankou/kanko/calendar/25nuebarai.html",
+          "title": "伊豆の国市 第61回「伊豆長岡温泉鵺ばらい祭」（2026年1月25日 11:00〜15:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-31",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年1月最終週の土日（土曜に弓道大会、日曜に本祭）という決まりから見込んだ日（2027年の発表はまだ見つからない）。2027年は1月30日（土）が弓道大会、31日（日）が本祭になる見込み。例年の本祭は11:00〜15:00ごろ",
+      "sources": [
+        {
+          "url": "https://izunotabi.com/schedule/nuebarai/",
+          "title": "伊豆の国市観光協会 鵺ばらい祭（毎年1月最終週の土日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "伊豆箱根鉄道 伊豆長岡駅",
+        "walkMinutes": [18, 23],
+        "note": "バスなら約4分の「古奈温泉南口」からすぐ"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000907",
+        "title": "るるぶ&more. 鵺ばらい祭（伊豆長岡駅から徒歩約18分、駐車場50台・無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.city.izunokuni.shizuoka.jp/kankou/kanko/calendar/25nuebarai.html",
+      "title": "伊豆の国市 第61回「伊豆長岡温泉鵺ばらい祭」（古奈もみじ公園、伊豆の国市古奈60-1）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://izunotabi.com/schedule/nuebarai/",
+      "title": "伊豆の国市観光協会 鵺ばらい祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E4%BC%8A%E8%B1%86%E3%81%AE%E5%9B%BD%E5%B8%82%E5%8F%A4%E5%A5%88",
+      "title": "国土地理院 住所検索 伊豆の国市古奈（会場の緯度・経度）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と時刻、雨天の会場",
+    "見学の決まり、撮影の扱い、服装・持ち物",
+    "三島駅など玄関口の駅から伊豆長岡駅までの所要時間",
+    "屋台・出店の有無と、この日だけの食べもの",
+    "周辺の観光と食の場所",
+    "駅からの道のりと駐車場の公式の案内",
+    "見物客の数と鵺踊りの踊り手の人数",
+    "会場の正確な位置"
+  ]
+}
