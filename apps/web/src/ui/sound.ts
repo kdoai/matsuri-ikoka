@@ -1,9 +1,14 @@
 import { useEffect } from "react";
+import bgmUrl from "../../../../assets/audio/bgm_wadaiko.mp3?url";
 import { useAppStore } from "../state/react";
 import type { SoundKind } from "../state/sound-cues";
 import { soundCues } from "../state/sound-cues";
 
 // 効果音は太鼓・拍子木・はんこの3種類だけ。音の素材は持たず、その場で合成する。
+// BGM は和太鼓の曲を1つだけ持ち、音がオンの間だけ繰り返し流す（assets/audio）。
+
+/** BGM の音量。吹き出しと効果音のじゃまをしない大きさにする */
+const BGM_VOLUME = 0.3;
 
 let context: AudioContext | null = null;
 
@@ -100,4 +105,38 @@ export function useSoundEffects(): void {
       }),
     [store],
   );
+}
+
+/** 音がオンの間だけ BGM を流す。最初は切ってあり、ボタンを押したときに読み込む */
+export function useBackgroundMusic(): void {
+  const store = useAppStore();
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof window.Audio !== "function") {
+      return;
+    }
+    let music: HTMLAudioElement | null = null;
+    const apply = (on: boolean) => {
+      if (!on) {
+        music?.pause();
+        return;
+      }
+      if (music === null) {
+        music = new window.Audio(bgmUrl);
+        music.loop = true;
+        music.volume = BGM_VOLUME;
+      }
+      // 自動再生を断られても、次にボタンを押したときにまた試す
+      void music.play().catch(() => undefined);
+    };
+    apply(store.getState().ui.soundOn);
+    const unsubscribe = store.subscribe((state, previous) => {
+      if (state.ui.soundOn !== previous.ui.soundOn) {
+        apply(state.ui.soundOn);
+      }
+    });
+    return () => {
+      unsubscribe();
+      music?.pause();
+    };
+  }, [store]);
 }
