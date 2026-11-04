@@ -170,6 +170,15 @@ export const RouteSchema = z.strictObject({
 });
 export type Route = z.infer<typeof RouteSchema>;
 
+/** 行き先として挙げられる名前（都道府県・地方）の数の上限 */
+export const MAX_DESTINATIONS = 20;
+
+/**
+ * 行き先：祭りを探す地域（都道府県か地方の名前の並び。例：「富山県」「北陸」）。空の並びは「おまかせ（どこでも）」。
+ * 名前を都道府県に直すこと、隣接する県へ広げることは、サーバーのコードで決める
+ */
+export const DestinationsSchema = z.array(PlaceNameSchema).max(MAX_DESTINATIONS);
+
 /** 泊まる場所の希望：祭りの会場の近く / 街（駅や繁華街の近く）/ おまかせ */
 export const STAY_NEAR = ["festival", "town", "auto"] as const;
 /** 祭りに行く日の数：1日だけ / 何日か / おまかせ */
@@ -227,6 +236,8 @@ export const TripConditionsSchema = z.strictObject({
   when: DateWishSchema,
   origin: PlaceNameSchema,
   nights: NightsSchema,
+  /** 行き先（都道府県・地方）。言われたときだけ。空の並びは「おまかせ（どこでも）」 */
+  destinations: DestinationsSchema.optional(),
   /** 日帰りの片道の所要時間の上限（分）。利用者が言ったときだけ。泊まりの旅では使わない */
   maxTravelMinutes: MaxTravelMinutesSchema.optional(),
   party: PartySchema.optional(),

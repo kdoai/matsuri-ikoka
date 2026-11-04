@@ -274,6 +274,85 @@ describe("search_festivals の日ごとの開催", () => {
   });
 });
 
+describe("search_festivals の行き先", () => {
+  /** 架空の祭りを、開催地の都道府県を変えて作る */
+  const at = (
+    id: string,
+    prefecture: "富山県" | "岐阜県" | "沖縄県" | "滋賀県",
+    date = "2026-08-16",
+  ) =>
+    testFestival({
+      id,
+      date,
+      edit: (f) => {
+        f.municipalities = [{ prefecture, name: "鈴鳴町" }];
+      },
+    });
+  const base = {
+    when: { kind: "date", date: "2026-08-16" },
+    origin: "みなと中央駅",
+    nights: 1,
+  } as const;
+  const ids = (output: Record<string, unknown>) =>
+    (output.candidates as { festivalId: string }[]).map((c) => c.festivalId);
+
+  it("選んだ地域の祭りがあれば、日程がずれていても、それだけを出す", async () => {
+    const ctx = testToolContext([at("shiga", "滋賀県"), at("toyama", "富山県", "2026-08-20")]);
+    const output = await searchFestivals.run({ ...base, destinations: ["北陸"] }, ctx, signal);
+    expect(ids(output)).toEqual(["toyama"]);
+    expect(output.destination).toMatchObject({ stage: "area", needsConsent: null, reason: null });
+    expect(ctx.session.conditions.destinations).toEqual(["北陸"]);
+  });
+
+  it("選んだ地域になければ、候補を出さずに、隣の県を紹介してよいかを聞く", async () => {
+    const ctx = testToolContext([at("gifu", "岐阜県"), at("shiga", "滋賀県")]);
+    const output = await searchFestivals.run({ ...base, destinations: ["富山県"] }, ctx, signal);
+    expect(output.candidates).toEqual([]);
+    expect(ctx.session.candidates).toEqual([]);
+    expect(output.destination).toMatchObject({
+      needsConsent: "neighbor",
+      foundIn: ["岐阜県"],
+      question:
+        "富山県には、この日程で開く祭りが見つかりませんでした。隣の岐阜県なら祭りがあります。こちらを紹介してもよいですか？",
+    });
+  });
+
+  it("了承を得たら、隣の県の祭りを理由を添えて出す（行き先は書き留めたものを使う）", async () => {
+    const ctx = testToolContext([at("gifu", "岐阜県"), at("shiga", "滋賀県")]);
+    ctx.session.conditions = { destinations: ["富山県"] };
+    const output = await searchFestivals.run({ ...base, widen: "neighbor" }, ctx, signal);
+    expect(ids(output)).toEqual(["gifu"]);
+    expect(output.destination).toMatchObject({
+      stage: "neighbor",
+      reason: "富山県にはなかったので、隣の岐阜県の祭りです",
+    });
+  });
+
+  it("隣の県にもなければ、全国から紹介してよいかを聞き、了承を得たらランダムに選ぶ", async () => {
+    const ctx = testToolContext([at("okinawa", "沖縄県"), at("shiga", "滋賀県")]);
+    ctx.random = () => 0;
+    const asked = await searchFestivals.run(
+      { ...base, destinations: ["富山県"], widen: "neighbor" },
+      ctx,
+      signal,
+    );
+    expect(asked.destination).toMatchObject({ needsConsent: "nationwide" });
+    const output = await searchFestivals.run({ ...base, widen: "nationwide" }, ctx, signal);
+    expect(ids(output).sort()).toEqual(["okinawa", "shiga"]);
+    expect(output.destination).toMatchObject({ stage: "nationwide" });
+  });
+
+  it("都道府県にも地方にも当たらない行き先は、推測せずに失敗で返す", async () => {
+    const ctx = testToolContext([at("toyama", "富山県")]);
+    await expect(
+      searchFestivals.run({ ...base, destinations: ["鈴鳴町"] }, ctx, signal),
+    ).rejects.toThrow("都道府県か地方の名前");
+    await expect(noteConditions.run({ destinations: ["鈴鳴町"] }, ctx, signal)).rejects.toThrow(
+      "都道府県か地方の名前",
+    );
+  });
+});
+
 describe("search_festivals", () => {
   it("候補を最大3件返し、聞き取れた条件とこだわりを相談に残す", async () => {
     const ctx = testToolContext([

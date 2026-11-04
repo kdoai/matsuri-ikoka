@@ -75,7 +75,22 @@ export function toolStartBubble(
       if (!wish.success || typeof origin !== "string" || origin.trim() === "") {
         return "条件に合う祭りを探しています";
       }
-      return `${wishLabel(wish.data)}に、${origin.trim().slice(0, 20)}から${stay}行ける祭りを探しています`;
+      const widen = field(input, "widen");
+      const names = field(input, "destinations");
+      const place =
+        widen === "nationwide"
+          ? "日本全国で、"
+          : widen === "neighbor"
+            ? "隣の県まで広げて、"
+            : Array.isArray(names) &&
+                names.length > 0 &&
+                names.every((n) => typeof n === "string" && n.trim() !== "")
+              ? `${names
+                  .map((n: string) => n.trim())
+                  .join("・")
+                  .slice(0, 20)}で、`
+              : "";
+      return `${wishLabel(wish.data)}に、${place}${origin.trim().slice(0, 20)}から${stay}行ける祭りを探しています`;
     }
     case "search_nearby": {
       const given = PreferencesSchema.safeParse(field(input, "preferences"));
@@ -125,9 +140,27 @@ export function toolEndBubble(
   switch (tool) {
     case "search_festivals": {
       const count = Array.isArray(output.candidates) ? output.candidates.length : 0;
+      const needsConsent = field(output.destination, "needsConsent");
+      if (needsConsent === "neighbor" || needsConsent === "nationwide") {
+        return {
+          ok: true,
+          bubble:
+            needsConsent === "neighbor"
+              ? "選んだ地域には見つかりませんでした。隣の県にはあります"
+              : "選んだ地域と隣の県には見つかりませんでした",
+          count: 0,
+        };
+      }
+      const stage = field(output.destination, "stage");
+      const found =
+        stage === "neighbor"
+          ? `隣の県で${count}件見つかりました`
+          : stage === "nationwide"
+            ? `日本全国から${count}件選びました`
+            : `${count}件見つかりました`;
       return {
         ok: true,
-        bubble: count === 0 ? "条件に合う祭りが見つかりませんでした" : `${count}件見つかりました`,
+        bubble: count === 0 ? "条件に合う祭りが見つかりませんでした" : found,
         count,
       };
     }

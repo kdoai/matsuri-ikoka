@@ -148,6 +148,9 @@ export function shopRecord(ctx: ToolContext): string {
       ? `希望日 ${wishLabel(conditions.when)}（${JSON.stringify(conditions.when)}）`
       : null,
     conditions.origin ? `出発地 ${conditions.origin}` : null,
+    conditions.destinations
+      ? `行き先 ${conditions.destinations.length === 0 ? "おまかせ（どこでも）" : conditions.destinations.join("・")}`
+      : null,
     conditions.nights === undefined
       ? null
       : conditions.nights === 0
