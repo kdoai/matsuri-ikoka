@@ -1,9 +1,21 @@
 {
   "id": "etsutsumi-onishi-otsuna-matsuri",
-  "name": { "ja": "お綱まつり", "en": "Otsuna Matsuri (Etsutsumi and Onishi)" },
+  "name": {
+    "ja": "お綱まつり",
+    "en": "Otsuna Matsuri (Etsutsumi and Onishi)"
+  },
   "category": "ritual",
-  "municipalities": [{ "prefecture": "奈良県", "name": "桜井市" }],
-  "venue": { "name": "素盞嗚神社（江包）", "lat": 34.5426, "lng": 135.8229 },
+  "municipalities": [
+    {
+      "prefecture": "奈良県",
+      "name": "桜井市"
+    }
+  ],
+  "venue": {
+    "name": "素盞嗚神社（江包）",
+    "lat": 34.5426,
+    "lng": 135.8229
+  },
   "scaleTier": "M",
   "popularity": "local",
   "listedIn": [],
@@ -125,7 +137,13 @@
         "note": "JR万葉まほろば線（桜井線）。巻向駅の周辺にコンビニはない"
       }
     ],
-    "fromHubs": [],
+    "fromHubs": [
+      {
+        "hub": "奈良駅",
+        "minutes": [22, 25],
+        "route": "JR万葉まほろば線（桜井線）の普通で巻向駅まで、乗り換えなし（2026年11月4日の時刻表で、朝から昼の普通列車は22〜25分）"
+      }
+    ],
     "parking": "none",
     "trafficRestrictions": [],
     "sources": [
@@ -146,6 +164,12 @@
         "title": "桜井市観光協会 2027年2月11日 お綱まつり見学ハイキング",
         "checkedAt": "2026-11-04",
         "confidence": "official"
+      },
+      {
+        "url": "https://timetable.jr-odekake.net/line-timetable/2304",
+        "title": "JRおでかけネット 区間時刻表 万葉まほろば線（桜井線）奈良〜桜井〜高田 下り（2026年11月4日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
       }
     ]
   },
@@ -159,7 +183,10 @@
       "name": "纒向石塚古墳",
       "kind": "sightseeing",
       "summary": "国の史跡の纒向遺跡にある、全長96mの纒向型の前方後円墳。3世紀初めから中ごろの築造とする説が有力で、発生期の古墳の1つとされる",
-      "location": { "lat": 34.5458, "lng": 135.8362 },
+      "location": {
+        "lat": 34.5458,
+        "lng": 135.8362
+      },
       "walkMinutesFromVenue": null,
       "hours": null,
       "closedDays": null,
@@ -214,7 +241,7 @@
     "見学できる場所と、綱が駆け寄る場面や泥相撲を見るときの注意（公式の案内がない）",
     "撮影の決まり",
     "服装と持ち物（公式の案内がない）",
-    "大阪・京都などの主要駅から巻向駅までの所要時間（公式のアクセス案内が見つからない）",
+    "大阪駅・京都駅などから巻向駅までの所要時間（奈良駅からの時間だけ入れた。大阪・京都からは奈良駅などでの乗り換えが要り、通しの時間の公式の案内が見つからない）。祭りの日（2月11日、祝日）の時刻表での所要時間も確かめていない",
     "屋台・露店が出るか。巻向駅の周辺にコンビニがなく、食事をとれる場所が確かめられない",
     "文化財の指定の種類（観光協会は国指定の無形民俗文化財と書くが、国の文化財のデータベースで確かめられなかった）",
     "規模の根拠になる担ぎ手の人数や見物人の数",

@@ -13,6 +13,8 @@ import {
   AUTO,
   AUTO_QUESTIONS,
   answerText,
+  BUDGET_BASES,
+  budgetBasis,
   type ChoiceQuestion,
   CONSULT_OPTIONS,
   CONSULT_QUESTIONS,
@@ -40,6 +42,7 @@ import {
   type Region,
   STAY_OPTIONS,
   setAmount,
+  setBudgetBasis,
   setRange,
   setStay,
   setTravel,
@@ -157,6 +160,7 @@ function ChoiceStep({ question }: { question: ChoiceQuestion & ConsultQuestion }
 
   return (
     <div>
+      {question === "budget" ? <BudgetBasisPicks /> : null}
       <ChoiceGroup label={label} hideLabel note={multi ? t.consult.multi : undefined}>
         {values.map((value, index) => (
           <Choice
@@ -310,11 +314,34 @@ function PrefecturePicks() {
   );
 }
 
+/** 予算の数え方（1人あたり / 全員で）。選択肢と金額の前に選ぶ */
+function BudgetBasisPicks() {
+  const t = useT();
+  const { actions } = useConsult();
+  const basis = useApp((state) => budgetBasis(state.consult.answers.budget));
+  return (
+    <div className="mb-2" data-testid="consult-budget-basis">
+      <ChoiceGroup label={t.consult.basisLabel}>
+        {BUDGET_BASES.map((value) => (
+          <Choice
+            key={value}
+            pressed={basis === value}
+            onClick={() => actions.editConsult((answers) => setBudgetBasis(answers, value))}
+          >
+            {t.consult.wording.budgetBasis[value]}
+          </Choice>
+        ))}
+      </ChoiceGroup>
+    </div>
+  );
+}
+
 /** 予算を金額で伝える欄 */
 function BudgetAmount() {
   const t = useT();
   const { actions, advance } = useConsult();
   const amount = useApp((state) => state.consult.answers.budget?.amount);
+  const basis = useApp((state) => budgetBasis(state.consult.answers.budget));
   const [draft, setDraft] = useState(amount === undefined ? "" : String(amount));
   const id = "consult-budget-amount";
   const commit = (text: string) => {
@@ -325,7 +352,7 @@ function BudgetAmount() {
   return (
     <div className="mt-3">
       <label htmlFor={id} className="mb-1 block font-bold text-ink-soft text-sm">
-        {t.consult.amountLabel}
+        {t.consult.amountLabel(t.consult.wording.budgetBasis[basis])}
       </label>
       <div className="flex items-center gap-2">
         <input

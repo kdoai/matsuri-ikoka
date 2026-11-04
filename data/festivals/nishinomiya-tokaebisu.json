@@ -216,14 +216,14 @@
   "access": {
     "stations": [
       {
-        "name": "阪神 西宮駅",
-        "walkMinutes": [5, 10],
-        "note": "えびす口から南西へ"
-      },
-      {
         "name": "JR さくら夙川駅",
         "walkMinutes": [10, 15],
         "note": "南東へ"
+      },
+      {
+        "name": "阪神 西宮駅",
+        "walkMinutes": [5, 10],
+        "note": "えびす口から南西へ"
       }
     ],
     "fromHubs": [

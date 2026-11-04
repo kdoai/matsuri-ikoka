@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  budgetPayers,
   DAY_TRIP_TRAVEL_LIMITS,
   DateWishSchema,
   DEFAULT_PREFERENCES,
@@ -7,7 +8,9 @@ import {
   PartialTripConditionsSchema,
   PartySchema,
   PreferencesSchema,
+  TripBudgetSchema,
   TripConditionsSchema,
+  tripBudgetAmounts,
 } from "./preferences";
 
 describe("PreferencesSchema", () => {
@@ -201,5 +204,51 @@ describe("TripConditionsSchema", () => {
   it("聞き取りの途中は、どの条件も空でよい", () => {
     expect(PartialTripConditionsSchema.safeParse({}).success).toBe(true);
     expect(PartialTripConditionsSchema.safeParse({ origin: "みなと中央駅" }).success).toBe(true);
+  });
+});
+
+describe("旅の予算", () => {
+  const family = { adults: 2, children: 2, infants: 1 };
+
+  it("1人あたりか全員の合計かを持ち、金額は1円から1000万円まで", () => {
+    expect(TripBudgetSchema.safeParse({ yen: 30000, basis: "perPerson" }).success).toBe(true);
+    expect(TripBudgetSchema.safeParse({ yen: 90000, basis: "total" }).success).toBe(true);
+    expect(TripBudgetSchema.safeParse({ yen: 0, basis: "total" }).success).toBe(false);
+    expect(TripBudgetSchema.safeParse({ yen: 30000, basis: "each" }).success).toBe(false);
+    expect(TripBudgetSchema.safeParse({ yen: 30000 }).success).toBe(false);
+  });
+
+  it("予算を割る人数に、幼児は数えない", () => {
+    expect(budgetPayers(family)).toBe(3);
+    expect(budgetPayers({ adults: 1, children: 0 })).toBe(1);
+  });
+
+  it("1人あたりで受けたら、人数を掛けて合計にする", () => {
+    expect(tripBudgetAmounts({ yen: 30000, basis: "perPerson" }, family)).toEqual({
+      basis: "perPerson",
+      perPersonYen: 30000,
+      totalYen: 90000,
+      payers: 3,
+    });
+  });
+
+  it("合計で受けたら、人数で割って1人あたりにする（割り切れなければ切り捨て）", () => {
+    expect(tripBudgetAmounts({ yen: 100000, basis: "total" }, family)).toEqual({
+      basis: "total",
+      perPersonYen: 33333,
+      totalYen: 100000,
+      payers: 3,
+    });
+  });
+
+  it("人数が分からなければ、換算した側は null", () => {
+    expect(tripBudgetAmounts({ yen: 90000, basis: "total" }, undefined)).toMatchObject({
+      perPersonYen: null,
+      totalYen: 90000,
+    });
+    expect(tripBudgetAmounts({ yen: 30000, basis: "perPerson" }, undefined)).toMatchObject({
+      perPersonYen: 30000,
+      totalYen: null,
+    });
   });
 });

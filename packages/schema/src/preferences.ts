@@ -75,6 +75,57 @@ export const LodgingBudgetSchema = z.strictObject({
 });
 export type LodgingBudget = z.infer<typeof LodgingBudgetSchema>;
 
+/** 旅の予算の単位：1人あたり / 全員の合計 */
+export const BUDGET_BASES = ["perPerson", "total"] as const;
+export type BudgetBasis = (typeof BUDGET_BASES)[number];
+
+/** 旅の予算に入れられる金額の上限（円） */
+export const MAX_BUDGET_YEN = 10_000_000;
+
+/**
+ * 旅の予算の上限（交通・宿・食事などを合わせた目安、円）。利用者の言った単位（1人あたりか全員の合計か）の
+ * まま持ち、1人あたりと合計の換算はコードで行う（tripBudgetAmounts）
+ */
+export const TripBudgetSchema = z.strictObject({
+  yen: z.number().int().min(1).max(MAX_BUDGET_YEN),
+  basis: z.enum(BUDGET_BASES),
+});
+export type TripBudget = z.infer<typeof TripBudgetSchema>;
+
+/** 予算を割る人数。幼児は数えない（宿の予算と同じ） */
+export function budgetPayers(party: Party): number {
+  return Math.max(1, party.adults + party.children - (party.infants ?? 0));
+}
+
+export interface TripBudgetAmounts {
+  basis: BudgetBasis;
+  /** 1人あたりの上限（円）。合計で受けて人数が分からなければ null。割り切れないときは切り捨て */
+  perPersonYen: number | null;
+  /** 全員の合計の上限（円）。1人あたりで受けて人数が分からなければ null */
+  totalYen: number | null;
+  /** 割った・掛けた人数。人数が分からなければ null */
+  payers: number | null;
+}
+
+/** 旅の予算を、1人あたりと全員の合計の両方にする。合計で受けたときは人数で割る */
+export function tripBudgetAmounts(budget: TripBudget, party: Party | undefined): TripBudgetAmounts {
+  const payers = party === undefined ? null : budgetPayers(party);
+  if (budget.basis === "perPerson") {
+    return {
+      basis: budget.basis,
+      perPersonYen: budget.yen,
+      totalYen: payers === null ? null : budget.yen * payers,
+      payers,
+    };
+  }
+  return {
+    basis: budget.basis,
+    perPersonYen: payers === null ? null : Math.floor(budget.yen / payers),
+    totalYen: budget.yen,
+    payers,
+  };
+}
+
 /** 希望の日。1日か、期間（例：来週末） */
 export const DateWishSchema = z.discriminatedUnion("kind", [
   z.strictObject({ kind: z.literal("date"), date: IsoDateSchema }),
@@ -181,6 +232,8 @@ export const TripConditionsSchema = z.strictObject({
   party: PartySchema.optional(),
   /** 宿の予算の上限（1人あたり）。泊まりの旅で、利用者が言ったときだけ */
   lodgingBudget: LodgingBudgetSchema.optional(),
+  /** 旅全体の予算の上限。1人あたりか全員の合計かを持つ。利用者が言ったときだけ */
+  budget: TripBudgetSchema.optional(),
   /** 旅の終わりの場所（駅名まで）。出発地と違ってよい。ないときは出発地に戻る */
   returnTo: PlaceNameSchema.optional(),
   route: RouteSchema.optional(),

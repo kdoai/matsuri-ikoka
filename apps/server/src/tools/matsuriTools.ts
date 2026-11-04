@@ -21,6 +21,7 @@ import {
   SlugSchema,
   type SpotPin,
   StayPlanSchema,
+  tripBudgetAmounts,
   type Weather,
 } from "@matsuri-ikoka/schema";
 import { z } from "zod";
@@ -132,7 +133,7 @@ export const ItineraryDraftSchema = z
     ...ItinerarySchema.shape,
     days: z.array(ItineraryDayDraftSchema).min(1).max(MAX_TRIP_DAYS),
   })
-  .omit({ id: true, version: true, verification: true });
+  .omit({ id: true, version: true, verification: true, budget: true });
 
 /** 聞き取りの場面（祭りを選んだか、その祭りが旅の間に何日も開かれるか）を、相談の状態から決める */
 export function hearingSituation(ctx: ToolContext): HearingSituation {
@@ -245,6 +246,9 @@ const NoteConditionsInputSchema = PartialTripConditionsSchema.extend({
   ),
   leaveToStaff: PartialTripConditionsSchema.shape.leaveToStaff.describe(
     "「あとはおまかせ」と言われたら true",
+  ),
+  budget: PartialTripConditionsSchema.shape.budget.describe(
+    "旅全体の予算の上限（円）と単位（perPerson 1人あたり / total 全員の合計）。言われた単位のまま渡す（自分で割ったり掛けたりしない）",
   ),
   maxTravelMinutes: PartialTripConditionsSchema.shape.maxTravelMinutes.describe(
     "日帰りの片道の所要時間の上限（分）。「出発の駅から1時間以内」なら 60。言われたときだけ",
@@ -637,7 +641,7 @@ export const updateItinerary = defineTool({
     } else {
       throw new ToolError("itinerary か addDay のどちらかを渡してください");
     }
-    // こだわりは相談の状態を正とする。泊まりの宿の候補は、調べた結果だけをサーバーが付ける
+    // こだわりと予算は相談の状態を正とする。泊まりの宿の候補は、調べた結果だけをサーバーが付ける
     const draft: ItineraryDraft = attachLodging(
       { ...written, preferences: session.preferences },
       { searches: session.lodging, previous },
@@ -662,6 +666,7 @@ export const updateItinerary = defineTool({
     const result = buildItinerary(draft, {
       id: previous?.id ?? randomId("trip"),
       previous,
+      budget: session.conditions.budget,
       weatherFor: (date) => weatherByDate.get(date) ?? { status: "unavailable" },
       findFestival: (id) => ctx.festivals.get(id),
     });
@@ -755,13 +760,22 @@ export const searchLodging = defineTool({
       credit: ctx.lodging.provider === "rakuten" ? RAKUTEN_CREDIT : null,
       party,
       budget: budget ?? null,
+      tripBudget:
+        ctx.session.conditions.budget === undefined
+          ? null
+          : tripBudgetAmounts(ctx.session.conditions.budget, party),
       offers: search.offers.map((offer) => ({
         id: offer.id,
         name: offer.name,
         nightlyTotalYen: offer.nightlyTotalYen,
         bookingUrl: offer.bookingUrl,
         distanceKmFromVenue: offer.location === null ? null : distanceKm(venue, offer.location),
-        budget: checkLodgingBudget(offer.nightlyTotalYen, { party, nights: args.nights, budget }),
+        budget: checkLodgingBudget(offer.nightlyTotalYen, {
+          party,
+          nights: args.nights,
+          budget,
+          tripBudget: ctx.session.conditions.budget,
+        }),
       })),
     };
   },

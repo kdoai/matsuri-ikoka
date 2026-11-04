@@ -45,7 +45,30 @@ describe("checkLodgingBudget", () => {
       limitPerPersonYen: null,
       overBudget: null,
       overByPerPersonYen: null,
+      tripBudgetPerPersonYen: null,
+      overTripBudget: null,
     });
+  });
+
+  it("旅全体の予算は、合計で受けたら人数で割り、宿だけで1人あたりを超えるかを出す", () => {
+    const family = { adults: 2, children: 1, infants: 1 };
+    // 2泊で 60,000円、幼児を除く2人で割ると1人 30,000円
+    const total = checkLodgingBudget(30000, {
+      party: family,
+      nights: 2,
+      tripBudget: { yen: 50000, basis: "total" },
+    });
+    expect(total).toMatchObject({
+      perPersonYen: 30000,
+      tripBudgetPerPersonYen: 25000,
+      overTripBudget: true,
+    });
+    const perPerson = checkLodgingBudget(30000, {
+      party: family,
+      nights: 2,
+      tripBudget: { yen: 40000, basis: "perPerson" },
+    });
+    expect(perPerson).toMatchObject({ tripBudgetPerPersonYen: 40000, overTripBudget: false });
   });
 
   it("1泊あたりの予算は、泊数をかけて上限にする", () => {

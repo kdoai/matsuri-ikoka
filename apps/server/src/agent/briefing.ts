@@ -1,10 +1,12 @@
-import type {
-  ConversationStage,
-  DateWish,
-  LodgingBudget,
-  PartialTripConditions,
-  Party,
-  Preferences,
+import {
+  type ConversationStage,
+  type DateWish,
+  type LodgingBudget,
+  type PartialTripConditions,
+  type Party,
+  type Preferences,
+  type TripBudget,
+  tripBudgetAmounts,
 } from "@matsuri-ikoka/schema";
 import { arrivalBufferMinutes } from "../domain/arrivalBuffer";
 import {
@@ -49,6 +51,22 @@ export function partyLabel(party: Party): string {
 export function lodgingBudgetLabel(budget: LodgingBudget): string {
   const yen = budget.perPersonYen.toLocaleString("ja-JP");
   return `宿の予算 ${budget.per === "night" ? "1人1泊" : "1人あたり泊まり全体で"} ${yen}円まで`;
+}
+
+/** 旅の予算（例：旅の予算 全員で 90,000円まで（3人で1人あたり 30,000円）） */
+export function tripBudgetLabel(budget: TripBudget, party: Party | undefined): string {
+  const yen = (n: number) => `${n.toLocaleString("ja-JP")}円`;
+  const amounts = tripBudgetAmounts(budget, party);
+  if (budget.basis === "perPerson") {
+    const total =
+      amounts.totalYen === null ? "" : `（${amounts.payers}人で合計 ${yen(amounts.totalYen)}）`;
+    return `旅の予算 1人あたり ${yen(budget.yen)}まで${total}`;
+  }
+  const each =
+    amounts.perPersonYen === null
+      ? "（人数が分からないので1人あたりは未計算）"
+      : `（${amounts.payers}人で1人あたり ${yen(amounts.perPersonYen)}）`;
+  return `旅の予算 全員で ${yen(budget.yen)}まで${each}`;
 }
 
 export function preferencesLabel(p: Preferences): string {
@@ -137,6 +155,7 @@ export function shopRecord(ctx: ToolContext): string {
         : `${conditions.nights}泊${conditions.nights + 1}日`,
     conditions.party ? partyLabel(conditions.party) : null,
     conditions.lodgingBudget ? lodgingBudgetLabel(conditions.lodgingBudget) : null,
+    conditions.budget ? tripBudgetLabel(conditions.budget, conditions.party) : null,
     ...tripStyleLabels(conditions),
   ].filter((v): v is string => v !== null);
   lines.push(`聞き取れた条件：${known.length === 0 ? "まだありません" : known.join(" / ")}`);

@@ -1,4 +1,6 @@
 import {
+  BUDGET_BASES,
+  type BudgetBasis,
   DAY_TRIP_TRAVEL_LIMITS,
   DIETARY_NEEDS,
   type DietaryNeed,
@@ -126,7 +128,11 @@ export const COUNT_LIMITS: Record<PartyMember, { min: number; max: number }> = {
 /** 日付を指定するときの、泊数の上限（旅程は6泊まで組める） */
 export const MAX_NIGHTS = 6;
 
-/** 予算に直接入れられる金額の上限（1人あたり、円） */
+/** 予算の数え方：1人あたり / 全員の合計。選ばなければ1人あたり */
+export { BUDGET_BASES };
+export const DEFAULT_BUDGET_BASIS: BudgetBasis = "perPerson";
+
+/** 予算に直接入れられる金額の上限（円） */
 export const MAX_AMOUNT = 10_000_000;
 
 export interface DateRange {
@@ -139,7 +145,7 @@ export interface DateRange {
  * text は「その他」の自由記述、origin では出発の駅、note ではひとこと。
  * counts は人数（party）、range は指定した期間と stay は日帰り・泊まり（schedule）、amount は予算の金額、
  * travel は日帰りの片道の所要時間の上限（destination。分）、dietary は食事で気をつけたいこと（food）、
- * transport は想定している交通手段（origin）
+ * transport は想定している交通手段（origin）、basis は予算の数え方（budget）
  */
 export interface ConsultAnswer {
   picks: string[];
@@ -151,6 +157,7 @@ export interface ConsultAnswer {
   travel?: TravelLimit;
   dietary?: DietaryNeed[];
   transport?: TransportMode[];
+  basis?: BudgetBasis;
 }
 
 export type ConsultAnswers = Partial<Record<ConsultQuestion, ConsultAnswer>>;
@@ -347,7 +354,18 @@ export function effectiveAnswers(answers: ConsultAnswers): ConsultAnswers {
   return { ...answers, destination: rest };
 }
 
-/** 予算の金額（1人あたり、円）。入れると選択肢を外し、空にすると金額を消す */
+/** 予算の数え方（1人あたり / 全員で）。選択肢と金額はそのまま残す */
+export function setBudgetBasis(answers: ConsultAnswers, basis: BudgetBasis): ConsultAnswers {
+  const current = answers.budget ?? EMPTY;
+  return { ...answers, budget: { ...current, basis } };
+}
+
+/** 予算の数え方。選んでいなければ1人あたり */
+export function budgetBasis(answer: ConsultAnswer | undefined): BudgetBasis {
+  return answer?.basis ?? DEFAULT_BUDGET_BASIS;
+}
+
+/** 予算の金額（円。数え方は basis）。入れると選択肢を外し、空にすると金額を消す */
 export function setAmount(answers: ConsultAnswers, amount: number | null): ConsultAnswers {
   const current = answers.budget ?? EMPTY;
   if (amount === null || !Number.isFinite(amount) || amount <= 0) {
@@ -550,6 +568,8 @@ export interface ConsultWording {
   /** 指定した期間の泊数（例：「2泊3日」「日帰り」） */
   nights: (nights: number) => string;
   amount: (yen: number) => string;
+  /** 予算の数え方（例：「1人あたり」「全員で」） */
+  budgetBasis: Record<BudgetBasis, string>;
   /** 日帰りの片道の所要時間の上限（例：「出発の駅から片道1時間以内」） */
   travel: (minutes: number) => string;
   /** 食事で気をつけたいこと（例：「気をつけたいこと：ベジタリアン・食物アレルギー」） */
@@ -643,17 +663,23 @@ export function answerText(
     case "destination":
       parts = destinationText(answer, wording);
       break;
-    case "budget":
+    case "budget": {
+      // 金額には、1人あたりか全員でかを必ず添える（おまかせには添えない）
+      const basis = wording.budgetBasis[budgetBasis(answer)];
       if (answer.amount !== undefined && answer.picks.length === 0) {
-        parts = [wording.amount(answer.amount)];
+        parts = [wording.paren(wording.amount(answer.amount), basis)];
         break;
       }
       parts = answer.picks.map((pick) =>
         pick === AUTO
           ? wording.auto
-          : (wording.options.budget[pick as keyof ConsultWording["options"]["budget"]] ?? pick),
+          : wording.paren(
+              wording.options.budget[pick as keyof ConsultWording["options"]["budget"]] ?? pick,
+              basis,
+            ),
       );
       break;
+    }
     default: {
       const options = wording.options[question] as Record<string, string>;
       parts = answer.picks.flatMap((pick) => {

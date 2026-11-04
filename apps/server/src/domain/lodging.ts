@@ -1,10 +1,13 @@
-import type {
-  IsoDate,
-  Itinerary,
-  LatLng,
-  LodgingBudget,
-  LodgingSearch,
-  Party,
+import {
+  budgetPayers,
+  type IsoDate,
+  type Itinerary,
+  type LatLng,
+  type LodgingBudget,
+  type LodgingSearch,
+  type Party,
+  type TripBudget,
+  tripBudgetAmounts,
 } from "@matsuri-ikoka/schema";
 import { daysBetween } from "./calendar";
 import type { ItineraryDraft } from "./itinerary";
@@ -27,7 +30,7 @@ export interface LodgingHeadcount {
 export function lodgingHeadcount(party: Party): LodgingHeadcount {
   const infants = party.infants ?? 0;
   const elementary = party.children - infants;
-  return { adults: party.adults, elementary, infants, payers: party.adults + elementary };
+  return { adults: party.adults, elementary, infants, payers: budgetPayers(party) };
 }
 
 /** チェックインからチェックアウトまでの泊数 */
@@ -49,18 +52,38 @@ export interface LodgingBudgetCheck {
   overBudget: boolean | null;
   /** 上限を超える額（1人あたり・泊まり全体）。超えなければ 0、予算がなければ null */
   overByPerPersonYen: number | null;
+  /** 旅全体の予算の1人あたり（合計で受けたときは人数で割った額）。旅の予算がなければ null */
+  tripBudgetPerPersonYen: number | null;
+  /** 宿だけで旅全体の予算（1人あたり）を超えるか。旅の予算がなければ null */
+  overTripBudget: boolean | null;
 }
 
-/** 1泊の料金（全員分）から、泊まり全体の合計と1人あたりを出し、予算の上限と比べる */
+/**
+ * 1泊の料金（全員分）から、泊まり全体の合計と1人あたりを出し、宿の予算の上限と比べる。
+ * 旅全体の予算があれば、宿だけでその1人あたりを超えるかも出す
+ */
 export function checkLodgingBudget(
   nightlyTotalYen: number,
-  options: { party: Party; nights: number; budget?: LodgingBudget | undefined },
+  options: {
+    party: Party;
+    nights: number;
+    budget?: LodgingBudget | undefined;
+    tripBudget?: TripBudget | undefined;
+  },
 ): LodgingBudgetCheck {
   const { nights, budget } = options;
   const payers = Math.max(1, lodgingHeadcount(options.party).payers);
   const totalYen = nightlyTotalYen * nights;
   const perPersonYen = Math.ceil(totalYen / payers);
   const perPersonPerNightYen = Math.ceil(nightlyTotalYen / payers);
+  const tripBudgetPerPersonYen =
+    options.tripBudget === undefined
+      ? null
+      : tripBudgetAmounts(options.tripBudget, options.party).perPersonYen;
+  const trip = {
+    tripBudgetPerPersonYen,
+    overTripBudget: tripBudgetPerPersonYen === null ? null : perPersonYen > tripBudgetPerPersonYen,
+  };
   if (budget === undefined) {
     return {
       nights,
@@ -70,6 +93,7 @@ export function checkLodgingBudget(
       limitPerPersonYen: null,
       overBudget: null,
       overByPerPersonYen: null,
+      ...trip,
     };
   }
   const limitPerPersonYen =
@@ -83,6 +107,7 @@ export function checkLodgingBudget(
     limitPerPersonYen,
     overBudget: overBy > 0,
     overByPerPersonYen: overBy,
+    ...trip,
   };
 }
 
