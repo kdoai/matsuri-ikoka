@@ -9,7 +9,7 @@ import type { IsoDate, LocalTime, MinuteRange } from "@matsuri-ikoka/schema";
 export interface RouteReport {
   /** 出発の駅から最寄り駅までの所要時間（分の幅） */
   minutes: MinuteRange;
-  /** 乗る路線と乗り換えの要約（例：阪急京都線で桂、嵐山線に乗り換えて嵐山） */
+  /** 乗る路線と乗り換えの要約（例：〇〇線で△△へ、□□線に乗り換えて××） */
   summary: string;
   /** 乗り換えの回数 */
   transfers: number | null;

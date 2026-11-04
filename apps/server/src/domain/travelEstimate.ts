@@ -23,7 +23,7 @@ export interface StationPointIndex {
   nearest(point: LatLng): NearestStation | null;
 }
 
-/** 駅名の前に付きがちな運営会社の名前（「JR 嵯峨嵐山駅」「阪急 嵐山駅」など） */
+/** 駅名の前に付きがちな運営会社の名前（「JR 〇〇駅」「私鉄の名前 〇〇駅」など） */
 const OPERATOR_PREFIXES = [
   "JR",
   "阪急",
@@ -138,7 +138,7 @@ function hubPoint(stations: StationPointIndex, hub: string, venue: LatLng): LatL
 const addRanges = (...ranges: MinuteRange[]): MinuteRange =>
   ranges.reduce<MinuteRange>((sum, r) => [sum[0] + r[0], sum[1] + r[1]], [0, 0]);
 
-/** 出発の駅が主要駅と同じ場所とみなす距離（km）。「大阪」と「梅田」のような隣り合う駅 */
+/** 出発の駅が主要駅と同じ場所とみなす距離（km）。運営会社ごとに名前の違う、隣り合う駅 */
 const SAME_HUB_KM = 1;
 
 export interface TravelEstimate {
