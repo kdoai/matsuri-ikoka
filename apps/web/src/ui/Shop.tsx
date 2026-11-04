@@ -42,7 +42,8 @@ import { WaitingCard } from "./Waiting";
 // - 会話：画面の下に会話の窓（セリフ・選択肢・自由に書く欄）
 // - 計画：旅のしおり（旅程・旅の案内・持ち物と確認）を右に大きく開き、会話の窓は左下に寄せる。
 //   祭りの候補は絵葉書のカードで重ねる
-// 操作の案内は上の段の中に置き、ほかの窓は上の段の下から始めるので、どの幅でも重ならない
+// 操作の案内は上の段の中に置き、ほかの窓は上の段の下から始めるので、どの幅でも重ならない。
+// 広い画面でしおりを開いていないときは、店内のようすと豆知識（クイズ）の窓を右に縦に並べ、会話の窓を左に寄せる
 
 export function LanguageButton({ className = "" }: { className?: string }) {
   const t = useT();
@@ -143,6 +144,7 @@ export function Shop() {
   const hasItinerary = useApp((state) => state.itinerary.current !== null);
   const tutorialSeen = useApp((state) => state.ui.tutorialSeen);
   const wide = useMediaQuery("(min-width: 1024px)");
+  const roomy = useMediaQuery("(min-width: 1280px)");
   const [logOpen, setLogOpen] = useState(false);
   const [menu, setMenu] = useState<HudPanel>(null);
   const unread = useUnread(logOpen);
@@ -150,7 +152,10 @@ export function Shop() {
   const dialogueRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const beside = wide && panelOpen;
-  const frame = useFrameInsets(topRef, dialogueRef, panelRef, beside);
+  /** 店内のようすと豆知識の窓を、右の列に並べるか */
+  const sideColumn = roomy && !panelOpen;
+  // 右の列としおりの窓は同時に出ないので、同じ ref で幅を測る
+  const frame = useFrameInsets(topRef, dialogueRef, panelRef, beside || sideColumn);
 
   useEffect(() => {
     if (tutorialSeen) saveTutorialSeen();
@@ -242,15 +247,27 @@ export function Shop() {
         </div>
       </div>
 
-      {/* 左：いま動いているスタッフと、はじめての操作の案内。店の中のようすは読み上げにも伝える */}
+      {/* 左：いま動いているスタッフ（右の列がないとき）と、はじめての操作の案内。店の中のようすは読み上げにも伝える */}
       <div
         className="pointer-events-none absolute left-2 z-10 flex w-56 flex-col gap-2 sm:left-3 sm:w-64 [&>*]:pointer-events-auto"
         style={{ top: frame.top + 8 }}
       >
-        <StaffActivity />
+        {sideColumn ? null : <StaffActivity />}
         {dialogueOpen || panelOpen ? null : <Tutorial />}
         <PlayStatus hidden />
       </div>
+
+      {/* 右の列：店内のようすと、豆知識（クイズ）の窓。窓の札が上に出るので、間を空ける */}
+      {sideColumn ? (
+        <div
+          ref={panelRef}
+          className="pointer-events-none absolute right-3 z-10 flex w-[22rem] flex-col gap-7 [&>*]:pointer-events-auto"
+          style={{ top: frame.top + 22 }}
+        >
+          <StaffActivity />
+          <WaitingCard />
+        </div>
+      ) : null}
 
       {/* 旅のしおり：旅程・旅の案内・持ち物と確認（広い画面は右に大きく重ね、狭い画面は上に重ねる） */}
       {panelOpen ? (
@@ -279,13 +296,17 @@ export function Shop() {
         className={`absolute inset-x-2 bottom-2 z-20 sm:inset-x-3 sm:bottom-3 ${
           beside
             ? "lg:right-[calc(min(44rem,48vw)+1.5rem)] lg:left-3"
-            : "lg:inset-x-0 lg:mx-auto lg:w-[min(50rem,calc(100vw-30rem))]"
+            : sideColumn
+              ? "lg:right-[24rem] lg:left-3 lg:mx-auto lg:max-w-[50rem]"
+              : "lg:inset-x-0 lg:mx-auto lg:w-[min(50rem,calc(100vw-30rem))]"
         }`}
       >
-        {/* 待ち時間の窓は、会話の窓の真上の中ほどに置き、左上の店内のようすや店内の人物に重ねない */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-full mx-auto mb-6 w-full max-w-md sm:max-w-xl [&>*]:pointer-events-auto">
-          <WaitingCard />
-        </div>
+        {/* 右の列がないときは、待ち時間の窓を会話の窓の真上の中ほどに置き、左上の店内のようすに重ねない */}
+        {sideColumn ? null : (
+          <div className="pointer-events-none absolute inset-x-0 bottom-full mx-auto mb-6 w-full max-w-md [&>*]:pointer-events-auto">
+            <WaitingCard />
+          </div>
+        )}
         <DialogueBox />
       </div>
 

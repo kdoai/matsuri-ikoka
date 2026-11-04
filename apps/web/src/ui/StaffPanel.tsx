@@ -1,9 +1,15 @@
 import { STAFF_IDS, type StaffId } from "@matsuri-ikoka/schema";
+import { ClipboardList, Clock } from "lucide-react";
 import { useApp, useT } from "../state/react";
 import type { StaffState } from "../state/types";
+import { GameWindow } from "./GameWindow";
+import { formatElapsed, useNow, useWaitClock } from "./waitClock";
 
 // スタッフの状態（待機・移動・作業・戻る）と吹き出しを 2D で出す。
 // 3D がないとき・動きを減らす設定のときは、これが店内の見た目の主になる。
+
+/** この時間を過ぎたら、旅程づくりには時間がかかることを伝える */
+const LONG_WAIT_MS = 20_000;
 
 /** 見取り図の上の位置（%）。持ち場は固定、待機の位置はカウンターの近く */
 const POSITIONS: Record<StaffId, { home: [number, number]; post: [number, number] }> = {
@@ -178,44 +184,84 @@ export function StaffList({ showBubbles }: { showBubbles: boolean }) {
 }
 
 /**
- * 店内のようす：いま動いているスタッフだけを、短い文で出す（ゲームの画面の左上）。
- * 3D の動きと吹き出しと同じ情報を、文字でも読めるようにする。全員のようすは会話の記録で読める。
+ * 店内のようす：いま動いているスタッフだけを、短い文で出す（ゲームの画面の右上、狭い画面は左上）。
+ * 3D の動きと吹き出しと同じ情報を、文字でも読めるようにする。返答を待っている間は経過時間も出す。
+ * 全員のようすは会話の記録で読める。
  */
 export function StaffActivity() {
   const t = useT();
   const staff = useApp((state) => state.staff);
+  const streaming = useApp((state) => state.session.streaming);
   const summarize = useStaffSummary(false);
   const busy = STAFF_IDS.filter((id) => staff[id].phase !== "idle");
+  const clock = useWaitClock(streaming, busy);
+  const now = useNow(streaming || busy.length > 0);
   if (busy.length === 0) {
     return null;
   }
+  const elapsed = clock.started === null ? null : now - clock.started;
   return (
-    <section
-      aria-label={t.activity.title}
-      className="rounded-2xl bg-kinari-50/92 px-2.5 py-2 shadow-lg ring-1 ring-wood-700/30 backdrop-blur-sm"
-      data-testid="staff-activity"
+    <GameWindow
+      ariaLabel={t.activity.title}
+      testId="staff-activity"
+      title={
+        <>
+          <ClipboardList className="size-4" aria-hidden="true" />
+          {t.activity.title}
+        </>
+      }
     >
-      <h2 className="font-bold text-ink-soft text-xs">{t.activity.title}</h2>
-      <ul className="mt-1 space-y-1">
+      <ul className="space-y-2">
         {busy.map((id) => {
           const state = staff[id];
+          const since = clock.staffStarted[id];
+          const phase = t.staff.phases[state.phase];
+          // 吹き出しがなく、ようすが札と同じ言葉だけなら、下の行は出さない
+          const detail = showsBubble(state) ? state.bubble : summarize(id, state);
           return (
-            <li key={id} className="flex items-start gap-1.5 text-xs leading-snug">
-              <Badge id={id} size="sm" />
-              <p className="min-w-0">
-                <span className="mr-1 font-bold text-ink">{t.staff.names[id]}</span>
-                <span className="text-ink-soft">{summarize(id, state)}</span>
-                {showsBubble(state) ? (
-                  // 狭い画面では、吹き出しは 3D の上と会話の窓で読めるので省く
-                  <span className="mt-0.5 line-clamp-2 hidden font-medium text-ink sm:block">
-                    「{state.bubble}」
+            <li
+              key={id}
+              className="rounded-xl bg-white px-2 py-1.5 shadow-sm ring-1 ring-wood-300/60"
+            >
+              <div className="flex items-center gap-2">
+                <Badge id={id} size="sm" />
+                <span className="min-w-0 flex-1 truncate font-bold text-base text-ink">
+                  {t.staff.names[id]}
+                </span>
+                {since === undefined ? null : (
+                  <span className="shrink-0 font-mono text-ink-soft text-xs tabular-nums">
+                    {formatElapsed(now - since)}
                   </span>
-                ) : null}
-              </p>
+                )}
+                <span className="shrink-0 whitespace-nowrap rounded-full bg-yamabuki-400 px-2 py-0.5 font-bold text-ink text-xs">
+                  {phase}
+                </span>
+              </div>
+              {detail === null || detail === phase ? null : (
+                <p
+                  className={`mt-1 line-clamp-3 border-yamabuki-400 border-l-4 pl-2 text-xs leading-snug ${
+                    showsBubble(state) ? "font-medium text-ink" : "text-ink-soft"
+                  }`}
+                >
+                  {detail}
+                </p>
+              )}
             </li>
           );
         })}
       </ul>
-    </section>
+      {elapsed === null ? null : (
+        <p
+          className="mt-2 inline-flex items-center gap-1 rounded-full border-2 border-wood-300 bg-white px-2.5 py-0.5 font-mono text-ink-soft text-xs tabular-nums"
+          data-testid="waiting-elapsed"
+        >
+          <Clock className="size-3" aria-hidden="true" />
+          {t.waiting.elapsed(formatElapsed(elapsed))}
+        </p>
+      )}
+      {elapsed !== null && elapsed >= LONG_WAIT_MS ? (
+        <p className="mt-1.5 text-ink-soft text-xs">{t.waiting.longWait}</p>
+      ) : null}
+    </GameWindow>
   );
 }
