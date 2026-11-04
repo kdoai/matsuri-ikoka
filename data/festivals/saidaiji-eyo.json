@@ -1,0 +1,225 @@
+{
+  "id": "saidaiji-eyo",
+  "name": {
+    "ja": "西大寺会陽",
+    "en": "Saidaiji Eyo (Naked Festival)"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "岡山県",
+      "name": "岡山市"
+    }
+  ],
+  "venue": {
+    "name": "西大寺観音院",
+    "lat": 34.654,
+    "lng": 134.038
+  },
+  "scaleTier": "L",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "本堂の御福窓から夜10時に投げ込まれる2本の宝木を、まわし姿の男たちが奪い合う",
+    "2週間の修正会の結びの日に行う、寺の新年の祈りが元の裸祭り"
+  ],
+  "trivia": [
+    {
+      "text": "奈良時代に始まった修正会で、1510年に守護札を投げ与えたら奪い合いになったのが今の形の始まりと伝わる",
+      "source": {
+        "url": "https://www.saidaiji.jp/eyou/",
+        "title": "西大寺観音院 会陽裸祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "宝木は2本で1対。牛玉札を巻き付けて投げ込む",
+      "source": {
+        "url": "https://www.saidaiji.jp/eyou/",
+        "title": "西大寺観音院 会陽裸祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2016年3月2日に国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.city.okayama.jp/higashiku/0000017681.html",
+        "title": "岡山市東区 西大寺会陽（はだか祭り）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_by_application",
+    "howToJoin": "裸で加われるのは男性で、まわしを締めて境内に入る。受付は観音院の案内から岡山商工会議所のサイトで行い、事前の申し込みが勧められている（2027年は争奪戦と地押しを行わないと報じられている）",
+    "rules": [
+      "神聖な伝統行事でありスポーツではない、と観音院が案内している",
+      "酒を飲んだ人や入れ墨のある人などは、裸で加われない",
+      "観覧は無料の境内のほか、有料の座席指定席・立見席・本堂拝観券がある（2026年の例）"
+    ],
+    "dress": ["裸で加わる人はまわしを締める"],
+    "bring": "unknown",
+    "risk": {
+      "level": "high",
+      "reason": "裸群の中は大きな危険を伴い自己責任で加わるよう観音院が注意しており、2026年の争奪戦では2人が亡くなった"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.saidaiji.jp/eyou/attention/",
+        "title": "西大寺観音院 会陽 参加注意事項",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.okayama.jp/higashiku/0000011671.html",
+        "title": "岡山市東区 西大寺観音院（はだか祭り）（参加は男性、まわし姿、飲酒・入れ墨の人は不可）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.okayama.jp/higashiku/0000017681.html",
+        "title": "岡山市東区 西大寺会陽（はだか祭り）（令和8年の観覧券）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://news.ksb.co.jp/article/16978547",
+        "title": "KSB瀬戸内海放送 2人が死亡した会陽の宝木争奪戦 2027年は中止決定（2026年10月20日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-02-21",
+      "start": "22:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。宝木投下は22:00。昼に少年はだか祭り、夕方から会陽甚句・会陽太鼓、18:45ごろから会陽冬花火。前日20日に宵祭り、翌日から後祭りが続いた",
+      "sources": [
+        {
+          "url": "https://www.okayama-kanko.jp/event/detail_12845.html",
+          "title": "おかやま旅ネット 西大寺会陽（はだか祭り）（2026年2月21日、宝木投下22:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.okayama.jp/higashiku/0000017681.html",
+          "title": "岡山市東区 西大寺会陽（はだか祭り）（令和8年2月21日、当日の行事の時刻）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-02-20",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年2月の第3土曜日に行う決まりから見込んだ日（2027年の日程の発表はまだない）。主催の奉賛会は2027年の宝木争奪戦と地押しを行わないと決め、観音院は祭り自体は行うと報じられている。何を見られるかは未発表",
+      "sources": [
+        {
+          "url": "https://www.saidaiji.jp/eyou/schedule/",
+          "title": "西大寺観音院 会陽行事日程（例年2月の第3土曜日、宝木投下22:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://news.ksb.co.jp/article/16978547",
+          "title": "KSB瀬戸内海放送 会陽の宝木争奪戦 2027年は中止決定（観音院は祭り自体は開催）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://kumanichi.com/articles/2048678",
+          "title": "熊本日日新聞（共同通信）「裸祭り」来年は争奪戦せず（2026年10月20日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 西大寺駅",
+        "walkMinutes": [10, 15],
+        "note": "岡山駅前から両備バスで西大寺バスセンターまで約30分、そこから徒歩約10分の行き方もある"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "岡山駅",
+        "minutes": [18, 28],
+        "route": "JR赤穂線、乗り換えなし（岡山市の案内で約18分）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.city.okayama.jp/higashiku/0000011671.html",
+        "title": "岡山市東区 西大寺観音院（はだか祭り）（岡山駅から赤穂線で約18分、西大寺駅から徒歩10分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.saidaiji.jp/access/",
+        "title": "西大寺観音院 アクセス（西大寺駅から徒歩約10分、境内に駐車場）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20001004",
+        "title": "るるぶ&more. 西大寺会陽（はだか祭り）（駐車場 約1,600台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.saidaiji.jp/eyou/",
+      "title": "西大寺観音院 会陽裸祭り",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.okayama-kanko.jp/event/detail_12845.html",
+      "title": "おかやま旅ネット 西大寺会陽（はだか祭り）（岡山市東区西大寺中3-8-8）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.okayama.jp/higashiku/0000017681.html",
+      "title": "岡山市東区 西大寺会陽（はだか祭り）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年に何を行うか（奉賛会は宝木争奪戦と地押しを行わないと決め、観音院は祭り自体は行うと報じられている。宝木投下・少年はだか祭り・花火などの扱いは未発表）",
+    "2028年以降の開催の形（外部の有識者の検討委員会が2026年12月をめどに提言を出す予定と報じられている）",
+    "2027年の日程と時刻の公式の発表",
+    "雨天のときの扱い",
+    "会陽当日の交通規制（観音院のサイトに2026年の交通規制の地図のPDFがあるが、開いて確かめていない）と、当日の駐車場の扱い（台数は観光サイト1件だけの数字）",
+    "撮影の決まり、見学者の服装・持ち物",
+    "女性の参加の扱い（女性も加われるようになったとする観光サイトがあるが、公式の案内で確かめていない）",
+    "屋台の出る場所と、この祭りならではの食べもの（露店が出ることは観光サイト1件だけで確かめた）",
+    "周辺の観光と食の場所（営業時間と位置を確かめられた場所がまだない。北側に看板建築の残る五福通りがある）",
+    "大手の観光サイトへの掲載はるるぶ&more.だけを確かめた（ほかのサイトは検索で主題のページが見つからなかった）",
+    "会場の緯度・経度は、国土地理院の住所検索で西大寺中三丁目8番から取った位置"
+  ]
+}

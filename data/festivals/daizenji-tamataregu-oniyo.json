@@ -1,0 +1,228 @@
+{
+  "id": "daizenji-tamataregu-oniyo",
+  "name": {
+    "ja": "大善寺玉垂宮の鬼夜",
+    "en": "Oniyo Fire Festival at Daizenji Tamataregu Shrine"
+  },
+  "category": "fire",
+  "municipalities": [
+    {
+      "prefecture": "福岡県",
+      "name": "久留米市"
+    }
+  ],
+  "venue": {
+    "name": "大善寺玉垂宮",
+    "lat": 33.276,
+    "lng": 130.4747
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["rurubu", "jnto"],
+  "highlights": [
+    "長さ約13m・重さ約1.2tの大松明6本が、火の粉を散らして境内を回る",
+    "裸の若衆がカリマタという木の支えで大松明を担ぎ回す",
+    "火の粉を浴びると無病息災になると伝わる",
+    "年越しから7日まで続く鬼会の締めくくりの夜の行事"
+  ],
+  "trivia": [
+    {
+      "text": "368年1月7日、賊の首領を松明で焼き討ちしたという言い伝えが始まりとされる",
+      "source": {
+        "url": "https://www.tamataregu.or.jp/oniyo/",
+        "title": "大善寺玉垂宮 鬼夜",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1994年に国の重要無形民俗文化財に指定された。日本三大火祭りの1つに数えられる",
+      "source": {
+        "url": "https://www.tamataregu.or.jp/oniyo/",
+        "title": "大善寺玉垂宮 鬼夜",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "大松明は1月4日の朝に作られて奉納される。頭の部分の直径は約1m",
+      "source": {
+        "url": "https://www.crossroadfukuoka.jp/event/12881",
+        "title": "クロスロードふくおか 大善寺玉垂宮 鬼夜",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "竹で作る大松明は、神社のまわりの6つの地区がそれぞれ作る",
+      "source": {
+        "url": "https://www.japan.travel/en/spot/2266/",
+        "title": "日本政府観光局 Oniyo Fire Festival",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": ["大松明の火の粉で、服に小さな焦げ穴があくことがある"],
+    "bring": "unknown",
+    "risk": {
+      "level": "high",
+      "reason": "大松明の火の粉が見物の場所まで降り、やけどをすることがあると日本政府観光局が注意している"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.japan.travel/en/spot/2266/",
+        "title": "日本政府観光局 Oniyo Fire Festival（火の粉で服に穴があくことがある）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000943",
+        "title": "るるぶ&more. 大善寺玉垂宮の鬼夜（前年の人出 約1万人）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-07",
+      "start": "13:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。13:00 鬼面尊神の鬼堂への神幸、夜にお汐井かき、大松明の点火、大松明廻し。点火は観光の案内では20:40〜20:45ごろ、神社の案内では2番鐘のあと21:30ごろ。終わりは22:35ごろ〜23:10ごろと案内によって違う。有料観覧席は全席自由2,000円（12月1日から販売）",
+      "sources": [
+        {
+          "url": "https://www.crossroadfukuoka.jp/event/12881",
+          "title": "クロスロードふくおか 大善寺玉垂宮 鬼夜（2026年1月7日、13:00〜22:35ごろ、点火20:45ごろ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://welcome-kurume.com/en/events/detail/1b39ad6a-c640-44b1-9306-260b8aadff42",
+          "title": "ほとめきの街 久留米 Oniyo（2026年1月7日、13:00〜23:10、点火20:40ごろ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.tamataregu.or.jp/oniyo/",
+          "title": "大善寺玉垂宮 鬼夜（1月7日の行事の流れ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-07",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": "天候にかかわらず行う（日本政府観光局の案内）",
+      "note": "毎年1月7日に行う決まりから見込んだ日（2027年の発表はまだない）。神社の案内では例年、13:00 鬼面尊神の神幸、19:00すぎ 若衆が集まる、20:00すぎ お汐井かき、21:30ごろ 大松明に点火して境内を回り、23:00すぎに鐘を合図に終わる",
+      "sources": [
+        {
+          "url": "https://www.tamataregu.or.jp/oniyo/",
+          "title": "大善寺玉垂宮 鬼夜（1月7日に行う）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.crossroadfukuoka.jp/event/12881",
+          "title": "クロスロードふくおか 大善寺玉垂宮 鬼夜（毎年1月7日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.japan.travel/en/spot/2266/",
+          "title": "日本政府観光局 Oniyo Fire Festival（天候にかかわらず行う）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "西鉄 大善寺駅",
+        "walkMinutes": [5, 10],
+        "note": "西鉄天神大牟田線。駅から徒歩約5分"
+      },
+      {
+        "name": "西鉄バス 宮前バス停",
+        "walkMinutes": [3, 8],
+        "note": "JR 久留米駅から西鉄バス15番で「宮前」へ。バス停から徒歩約3分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "西鉄福岡（天神）駅",
+        "minutes": [45, 55],
+        "route": "西鉄天神大牟田線で大善寺駅へ"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.tamataregu.or.jp/oniyo/",
+        "title": "大善寺玉垂宮 鬼夜（大善寺駅から徒歩約5分、宮前バス停から徒歩約3分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.crossroadfukuoka.jp/event/12881",
+        "title": "クロスロードふくおか 大善寺玉垂宮 鬼夜（無料駐車場 神苑 約150台・大善寺小学校 約100台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.japan.travel/en/spot/2266/",
+        "title": "日本政府観光局 Oniyo Fire Festival（西鉄福岡駅から電車で約45分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.tamataregu.or.jp/oniyo/",
+      "title": "大善寺玉垂宮 鬼夜（久留米市大善寺町宮本1463-1）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.crossroadfukuoka.jp/event/12881",
+      "title": "クロスロードふくおか 大善寺玉垂宮 鬼夜",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://welcome-kurume.com/en/events/detail/1b39ad6a-c640-44b1-9306-260b8aadff42",
+      "title": "ほとめきの街 久留米 Oniyo",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表、時刻、有料観覧席の料金と販売開始の日",
+    "大松明の点火の時刻の食い違い（観光の案内は20:40〜20:45ごろ、神社の案内は21:30ごろ）と、終わりの時刻",
+    "見物の決まり（立ち入れる場所、火の粉への備え）、撮影の扱い、持ち物",
+    "屋台の有無と、この日だけの食べもの",
+    "周辺の観光と食の場所（営業時間を確かめられた場所がまだない）",
+    "博多駅からの所要時間（公式の案内は西鉄福岡駅からの約45分だけ）",
+    "規模は、1つの神社で昼から夜まで続き、前年の人出が約1万人（るるぶ&more.）であることから M にした。大松明を担ぐ若衆の正確な人数は分からない",
+    "会場の緯度・経度は、国土地理院の住所検索で大善寺町宮本1463番地から取った位置"
+  ]
+}

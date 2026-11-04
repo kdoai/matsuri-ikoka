@@ -1,0 +1,286 @@
+{
+  "id": "issaki-hoto-matsuri",
+  "name": {
+    "ja": "石崎奉燈祭",
+    "en": "Issaki Hoto Festival"
+  },
+  "category": "float",
+  "municipalities": [
+    {
+      "prefecture": "石川県",
+      "name": "七尾市"
+    }
+  ],
+  "venue": {
+    "name": "石崎町 堂前広場",
+    "lat": 37.0751,
+    "lng": 136.9333
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu", "jalan"],
+  "highlights": [
+    "堂前広場で大奉燈がそろって荒々しく舞う乱舞競演",
+    "家々の軒先すれすれに、狭い漁師町の道を大奉燈が進む",
+    "日が暮れて奉燈に明かりがともると、太い墨の文字と武者の絵が闇に映える",
+    "地区ごとに違う大文字と町内カラーを掲げた7基の大奉燈"
+  ],
+  "trivia": [
+    {
+      "text": "明治22年、網大工の口添えで奥能登から古いキリコを移し、祭りを再び始めたのが今の形の起こり",
+      "source": {
+        "url": "https://www.city.nanao.lg.jp/koryu-s/event/8gatsu/documents/panfret.pdf",
+        "title": "石崎奉燈祭奉賛会 石崎奉燈祭パンフレット 2026（石崎奉燈祭の紹介）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "平成7年までは、京都の祇園社の例祭日にあたる旧暦6月15日に行っていた",
+      "source": {
+        "url": "https://www.city.nanao.lg.jp/koryu-s/event/8gatsu/documents/panfret.pdf",
+        "title": "石崎奉燈祭奉賛会 石崎奉燈祭パンフレット 2026（石崎奉燈祭の紹介）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "大奉燈は重さ約2トン、高さ約12〜15m、担ぎ棒は約9m。1基を100人ほどで担ぐ",
+      "source": {
+        "url": "https://www.city.nanao.lg.jp/koryu-s/event/8gatsu/documents/panfret.pdf",
+        "title": "石崎奉燈祭奉賛会 石崎奉燈祭パンフレット 2026（奉燈の数と大きさ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "日本遺産「灯り舞う半島 能登〜熱狂のキリコ祭り〜」の1つ。七尾ではキリコを奉燈と呼ぶ",
+      "source": {
+        "url": "https://www.city.nanao.lg.jp/koryu-s/event/8gatsu/documents/panfret.pdf",
+        "title": "石崎奉燈祭奉賛会 石崎奉燈祭パンフレット 2026（日本遺産の認定）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "周辺でドローンを飛ばさない（七尾市が自粛を求めている）",
+      "消防の水利と緊急車両の通り道のため、海岸道路には車を止めない"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "約2トンの大奉燈を担いで狭い道を練り、深夜0時ごろまで続く。歩行者専用の区域や車の通行止めがある（けがについての主催者の注意書きは見つからない）"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "周辺でのドローンの飛行は控えるよう求められている。ほかの撮影の決まりは見つからない"
+    },
+    "sources": [
+      {
+        "url": "https://www.city.nanao.lg.jp/koryu-s/event/8gatsu/issaki.html",
+        "title": "七尾市 石崎奉燈祭（ドローンの自粛のお願い）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.nanao.lg.jp/koryu-s/event/8gatsu/documents/panfret.pdf",
+        "title": "石崎奉燈祭奉賛会 石崎奉燈祭パンフレット 2026（運行図、海岸道路は駐車禁止）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-07-31",
+      "start": "14:00",
+      "end": "20:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "前夜祭。14:00 少年部の奉燈が出発し、18:00 堂前広場で乱舞して解散。西三区は16:00 小奉燈が駅前を回り、19:00 大奉燈が駅前広場を出発、20:00 終了",
+      "sources": [
+        {
+          "url": "https://www.city.nanao.lg.jp/koryu-s/event/8gatsu/documents/panfret.pdf",
+          "title": "石崎奉燈祭奉賛会 石崎奉燈祭パンフレット 2026（タイムスケジュール 7月31日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-08-01",
+      "start": "14:00",
+      "end": "00:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "本祭。8:30 石崎小学校のマーチングバンドの行進、14:00 奉燈が出発、15:20 から各区が順に堂前に入って大奉燈の乱舞、16:30 大漁祈願祭、17:10 乱舞、19:40 ドローンショー、20:00 夕食後に再び出発、23:00 堂前で大奉燈の乱舞、24:00 解散。大奉燈7基、小奉燈7基",
+      "sources": [
+        {
+          "url": "https://www.city.nanao.lg.jp/koryu-s/event/8gatsu/documents/panfret.pdf",
+          "title": "石崎奉燈祭奉賛会 石崎奉燈祭パンフレット 2026（タイムスケジュール 8月1日、奉燈の数）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.nanao.lg.jp/koryu-s/event/8gatsu/issaki.html",
+          "title": "七尾市 石崎奉燈祭（令和8年8月1日、8月第1土曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-07",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年8月の第1土曜日に行う決まりから見込んだ日（2027年の発表はまだない）。2026年は前日の金曜日に前夜祭があり、本祭は14:00ごろ奉燈が出発し、23:00の堂前の乱舞のあと24:00に解散した",
+      "sources": [
+        {
+          "url": "https://www.city.nanao.lg.jp/koryu-s/event/8gatsu/issaki.html",
+          "title": "七尾市 石崎奉燈祭（開催日は8月第1土曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.city.nanao.lg.jp/koryu-s/event/8gatsu/documents/panfret.pdf",
+          "title": "石崎奉燈祭奉賛会 石崎奉燈祭パンフレット 2026（毎年8月第1土曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 和倉温泉駅",
+        "walkMinutes": [10, 15],
+        "note": "観光サイト2つが徒歩約10分と案内している"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "金沢駅",
+        "minutes": [60, 70],
+        "route": "特急「能登かがり火」、乗り換えなし"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [
+      "2026年は8月1日 8:00〜8月2日 4:00、奉燈の運行路が車両通行止めと歩行者専用の区域になった",
+      "2026年は7月31日 15:00〜22:00、和倉温泉駅前の一部がバス以外の車両の進入禁止になった",
+      "2026年は8月1日 19:00〜21:00、香島製材から浜岡川までが車両通行止めになった",
+      "海岸道路は駐車禁止"
+    ],
+    "sources": [
+      {
+        "url": "https://www.city.nanao.lg.jp/koryu-s/event/8gatsu/documents/panfret.pdf",
+        "title": "石崎奉燈祭奉賛会 石崎奉燈祭パンフレット 2026（運行図と交通アクセス。金沢から特急で約1時間、無料駐車場は能登香島290台・ワクラ村田製作所190台ほか）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://summer.walkerplus.com/odekake/detail_e/ar0517e597676/map.html",
+        "title": "ウォーカープラス 石崎奉燈祭の地図・アクセス（JR和倉温泉駅から徒歩約10分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002844",
+        "title": "るるぶ&more. 石崎奉燈祭（JR和倉温泉駅から徒歩10分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "wakura-onsen-omatsuri-kaikan",
+      "name": "和倉温泉お祭り会館",
+      "kind": "sightseeing",
+      "summary": "七尾の代表的な4つの祭りを、実物大の山車や映像で一年中味わえる施設。石崎奉燈祭も展示で取り上げている。毎月第2・第4水曜日と年末年始は休み",
+      "location": {
+        "lat": 37.0866,
+        "lng": 136.9186
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.nanao.lg.jp/koryu-s/event/9gatsu/documents/okumakabuto2026.pdf",
+          "title": "七尾市・お熊甲祭奉賛会 お熊甲祭パンフレット 2026（施設案内 和倉温泉お祭り会館、9時〜17時）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://wakura-omatsuri.com/",
+          "title": "和倉温泉お祭り会館（第2・第4水曜日は定休日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.mlit.go.jp/tagengo-db/common/001652412.docx",
+          "title": "観光庁 多言語解説文 和倉温泉お祭り会館（石崎奉燈祭を含む4つの祭りの展示）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.nanao.lg.jp/koryu-s/event/8gatsu/issaki.html",
+      "title": "七尾市 石崎奉燈祭（いっさきほうとうまつり、会場は石崎町の堂前広場）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.nanao.lg.jp/koryu-s/event/8gatsu/documents/panfret.pdf",
+      "title": "石崎奉燈祭奉賛会 石崎奉燈祭パンフレット 2026",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.mlit.go.jp/tagengo-db/common/001652412.docx",
+      "title": "観光庁 多言語解説文 そびえ立つ奉燈：石崎奉燈祭（石崎八幡神社、8月の第1土曜日）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.ishikawatravel.jp/spots/issaki-hoto-festival",
+      "title": "石川県観光連盟 Issaki Hoto Festival",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と時刻（2026年は前夜祭が前日の金曜日、本祭は14:00ごろから24:00まで）",
+    "雨天や荒天のときの扱い",
+    "外から来た人が担ぎ手に加われるかどうか",
+    "見物の場所の決まり、服装・持ち物の案内",
+    "屋台の有無と、この祭りならではの食べもの",
+    "周辺の食事や休憩の場所（営業時間を公式で確かめられた店がまだない）",
+    "大奉燈の高さの食い違い（パンフレットは約12〜15m、観光庁の解説文は13m、石川県観光連盟は約10m）と、奉燈の数の食い違い（パンフレットは大奉燈7基、観光庁の解説文は6基）",
+    "見物客の数（規模は、大奉燈7基と小奉燈7基の数から M にした）",
+    "会場の緯度・経度は、国土地理院の住所検索で石崎町ロの地区の代表点を取ったもの（堂前広場そのものの位置ではない）",
+    "東京駅・名古屋駅からの所要時間（パンフレットには名古屋から約3時間30分とあるが、金沢での乗り換えを含む経路のため入れていない）"
+  ]
+}
