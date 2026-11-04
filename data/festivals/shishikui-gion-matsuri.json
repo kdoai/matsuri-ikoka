@@ -1,0 +1,318 @@
+{
+  "id": "shishikui-gion-matsuri",
+  "name": { "ja": "宍喰祇園祭り", "en": "Shishikui Gion Festival" },
+  "category": "float",
+  "municipalities": [{ "prefecture": "徳島県", "name": "海陽町" }],
+  "venue": { "name": "宍喰八坂神社周辺", "lat": 33.5692, "lng": 134.301 },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu"],
+  "highlights": [
+    "飾り立てた関船が、4台のだんじりや神輿とともに宍喰の町を練り歩く本祭",
+    "神社の中で奉納される獅子舞・八橋の舞・先槍の舞",
+    "宵宮に竹あかりで照らされるだんじりと境内、約400発の奉納花火",
+    "神輿が八坂神社から浜へ出るお浜出と、奉納の餅投げ"
+  ],
+  "trivia": [
+    {
+      "text": "宍喰の八坂神社は須佐之男命を祀り、京都・福山市鞆の神社とともに日本三祇園と呼ばれる",
+      "source": {
+        "url": "https://www.kaiyo-kankou.jp/event/event-961/",
+        "title": "海陽町観光協会 宍喰祇園祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2024年の宵宮では、境内の大山鉾の上で祇園囃子が演奏された",
+      "source": {
+        "url": "https://web.archive.org/web/20240713030728/https://www.kaiyo-kankou.jp/event/event-961/",
+        "title": "海陽町観光協会 宍喰祇園祭り【2024年7月16〜17日】開催（保存版）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "八坂神社の祇園祭は国の選択無形民俗文化財、山鉾の行事は徳島県の無形民俗文化財とされる",
+      "source": {
+        "url": "https://rurubu.jp/andmore/spot/20002549",
+        "title": "るるぶ&more. 宍喰祇園祭り奉納花火",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": ["祭りの間は、町の中に通行規制の区間がある"],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "見学が中心で、例年の人出は約1,000人とされる。夜の花火と町内のだんじりの曳き回しがあるが、主催者からのけがや混雑の注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://web.archive.org/web/20240713030728/https://www.kaiyo-kankou.jp/event/event-961/",
+        "title": "海陽町観光協会 宍喰祇園祭り【2024年7月16〜17日】開催（保存版。交通規制の案内）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kaiyo-kankou.jp/en/event/shishikui-gion-festival/",
+        "title": "Kaiyo Town Tourism Association Shishikui Gion Festival（2026年の交通規制の案内）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://summer.walkerplus.com/odekake/detail_e/ar0936e508010/",
+        "title": "ウォーカープラス 宍喰祇園祭り（例年の人出 約1,000人）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-07-16",
+      "start": "18:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": "奉納花火は、雨天の場合は17日に行う",
+      "note": "2026年の宵宮（海陽町観光協会の発表。予定）。18:00〜 夜店（19店の予定）、だんじりと竹あかりのライトアップ、20:30〜 奉納花火（約400発）",
+      "sources": [
+        {
+          "url": "https://www.kaiyo-kankou.jp/event/event-961/",
+          "title": "海陽町観光協会 宍喰祇園祭り（2026年7月16日〜17日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar0936e508010/data.html",
+          "title": "ウォーカープラス 宍喰祇園祭りの詳細データ（2026年）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2026-07-17",
+      "start": "10:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の本祭（海陽町観光協会の発表。予定）。10:00 祇園祭例大祭式、10:30と12:30 奉納獅子舞・八橋・先槍（神社内）、11:00 神幸祭のお神輿お浜出（八坂神社から）、13:00 奉納餅投げ、14:00 だんじり宮出。その後、神輿・だんじり4台・関船が町を練り歩く",
+      "sources": [
+        {
+          "url": "https://www.kaiyo-kankou.jp/event/event-961/",
+          "title": "海陽町観光協会 宍喰祇園祭り（2026年7月16日〜17日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kaiyo-kankou.jp/en/event/shishikui-gion-festival/",
+          "title": "Kaiyo Town Tourism Association Shishikui Gion Festival（2026年。14:00 だんじり宮出）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-16",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2027年の発表はまだない）。海陽町観光協会の案内では、2023年から2026年まで曜日にかかわらず7月16日が宵宮だったことから見込んだ日で、2027年は金曜日。2026年の宵宮は18:00から夜店、20:30から奉納花火だった",
+      "sources": [
+        {
+          "url": "https://web.archive.org/web/20230624175750/https://www.kaiyo-kankou.jp/event/event-961/",
+          "title": "海陽町観光協会 宍喰祇園祭り（保存版。2023年7月16日〜17日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://web.archive.org/web/20250614044146/https://www.kaiyo-kankou.jp/event/event-961/",
+          "title": "海陽町観光協会 宍喰祇園祭り（保存版。2025年7月16日〜17日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.kaiyo-kankou.jp/event/event-961/",
+          "title": "海陽町観光協会 宍喰祇園祭り（2026年7月16日〜17日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-17",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2027年の発表はまだない）。海陽町観光協会の案内では、2023年から2026年まで曜日にかかわらず7月17日が本祭だったことから見込んだ日で、2027年は土曜日。2026年の本祭は10:00 例大祭式、11:00 お神輿お浜出、13:00 餅投げ、14:00 だんじり宮出だった",
+      "sources": [
+        {
+          "url": "https://web.archive.org/web/20240713030728/https://www.kaiyo-kankou.jp/event/event-961/",
+          "title": "海陽町観光協会 宍喰祇園祭り【2024年7月16〜17日】開催（保存版）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://web.archive.org/web/20250614044146/https://www.kaiyo-kankou.jp/event/event-961/",
+          "title": "海陽町観光協会 宍喰祇園祭り（保存版。2025年7月16日〜17日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.kaiyo-kankou.jp/event/event-961/",
+          "title": "海陽町観光協会 宍喰祇園祭り（2026年7月16日〜17日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "阿佐海岸鉄道 宍喰駅",
+        "walkMinutes": [3, 8],
+        "note": "宍喰駅から徒歩3分（海陽町観光協会の案内）。阿佐海岸鉄道は線路と道路を走る DMV で、満席だと乗れないため予約が勧められている"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [
+      "宵宮の17:30〜22:30、会場周辺への車両の進入を規制（るるぶ&more.の案内。公式の規制区間の図は確かめていない）"
+    ],
+    "sources": [
+      {
+        "url": "https://www.kaiyo-kankou.jp/event/event-961/",
+        "title": "海陽町観光協会 宍喰祇園祭り（阿佐海岸鉄道 宍喰駅下車 徒歩3分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://asatetu.com/schedule/",
+        "title": "阿佐海岸鉄道 時刻表（満席時は乗車できないため予約を推奨）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://summer.walkerplus.com/odekake/detail_e/ar0936e508010/map.html",
+        "title": "ウォーカープラス 宍喰祇園祭りの地図・アクセス（臨時駐車場あり・無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002549",
+        "title": "るるぶ&more. 宍喰祇園祭り奉納花火（臨時駐車場、車両の進入規制）",
+        "checkedAt": "2026-11-04",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "food": { "stalls": "yes", "local": [] },
+  "nearby": [
+    {
+      "id": "michinoeki-shishikui-onsen",
+      "name": "道の駅 宍喰温泉",
+      "kind": "rest",
+      "summary": "国道55号沿いの道の駅。寒茶や柚子酢、うつぼの珍味などの土産物と産直があり、観光案内所、2階にイートインとキッズスペースがある。宍喰駅から徒歩15分",
+      "location": { "lat": 33.5691, "lng": 134.3074 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "09:00", "close": "18:00" },
+      "closedDays": [],
+      "price": null,
+      "tags": ["indoor", "seating", "kid_friendly"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.kaiyo-kankou.jp/spots/spots-1321/",
+          "title": "海陽町観光協会 道の駅「宍喰温泉」（9:00〜18:00、年中無休）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "shishikuiura-kaseki-renkon",
+      "name": "宍喰浦の化石漣痕",
+      "kind": "sightseeing",
+      "summary": "約3000〜4000万年前の海底の波の跡が岩に残った国の天然記念物。露出は高さ30m・幅20mと日本最大級とされる。宍喰駅から甲浦方面のバスで角井下車、徒歩2分",
+      "location": { "lat": 33.5607, "lng": 134.3105 },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.kaiyo-kankou.jp/spots/spots-1507/",
+          "title": "海陽町観光協会 国指定天然記念物「化石漣痕」",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "niai-udon-shishikui",
+      "name": "日愛うどん 宍喰店",
+      "kind": "food",
+      "summary": "自家製のもちもちしたうどんと、品数の多い定食の店。お遍路の人にも親しまれている。宍喰駅から徒歩約15分。昼だけの営業",
+      "location": { "lat": 33.5726, "lng": 134.3087 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "11:00", "close": "14:00" },
+      "closedDays": ["wed"],
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.kaiyo-kankou.jp/spots/spots-1586/",
+          "title": "海陽町観光協会 日愛うどん 宍喰店（11:00〜14:00、毎週水曜定休）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.kaiyo-kankou.jp/event/event-961/",
+      "title": "海陽町観光協会 宍喰祇園祭り",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.kaiyo-kankou.jp/en/event/shishikui-gion-festival/",
+      "title": "Kaiyo Town Tourism Association Shishikui Gion Festival",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.openstreetmap.org/node/11768528003",
+      "title": "OpenStreetMap 八坂神社（宍喰駅の北約250m。会場の緯度・経度）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、日ごとの行事・時刻",
+    "2026年が発表どおりに行われたか（中止・変更の告知は見当たらないが、終わったあとの報告を確かめていない）",
+    "本祭（17日）の雨のときの扱いと、だんじり・関船が町を練り歩く道順と終わりの時刻",
+    "2026年の交通規制の区間と時間（公式の案内は画像で、読んで確かめていない）",
+    "臨時駐車場の場所と台数（るるぶ&more.では無料の臨時駐車場80台、ほかに有料100台）",
+    "服装と持ち物、撮影についての決まり（主催者の案内が見つからない）",
+    "徳島駅など主要駅から宍喰駅までの所要時間（阿佐海岸鉄道の時刻表の PDF から駅名を読み取れなかった）と、花火のあとの帰りの便",
+    "会場の緯度・経度は OpenStreetMap の位置で、神社の公式の所在地（番地）を確かめていない",
+    "国の選択無形民俗文化財・徳島県の無形民俗文化財であることを、文化庁や徳島県の公式のページで確かめていない",
+    "祭りならではの食べもの（夜店が出ることだけ分かっている）",
+    "周辺の場所の会場からの徒歩の時間と、知名度（じゃらんnet・トリップアドバイザーなどへの掲載を確かめていない）"
+  ]
+}
