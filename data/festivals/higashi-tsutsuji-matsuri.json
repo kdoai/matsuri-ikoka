@@ -1,0 +1,185 @@
+{
+  "id": "higashi-tsutsuji-matsuri",
+  "name": {
+    "ja": "東村つつじ祭り",
+    "en": "Higashi Village Azalea Festival"
+  },
+  "category": "other",
+  "municipalities": [
+    {
+      "prefecture": "沖縄県",
+      "name": "東村"
+    }
+  ],
+  "venue": {
+    "name": "東村村民の森つつじ園",
+    "lat": 26.6365,
+    "lng": 128.1562
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "やんばるの森の斜面を埋める約5万本のつつじ",
+    "ケラマツツジなど7種類の赤・紫・白の花の色の重なり",
+    "祭りの期間だけ一般に開かれるつつじ園を歩ける"
+  ],
+  "trivia": [
+    {
+      "text": "2027年の祭りで第45回を数える、東村の春の行事",
+      "source": {
+        "url": "https://www.vill.higashi.okinawa.jp/soshikikarasagasu/kikakukankoka/kikakuibento/higashitutujimaturi/1597.html",
+        "title": "東村 2027年 第45回東村つつじ祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "つつじ園は祭りの期間のほかは一般に開放していない",
+      "source": {
+        "url": "https://www.vill.higashi.okinawa.jp/soshikikarasagasu/kikakukankoka/kikakuibento/higashitutujimaturi/1597.html",
+        "title": "東村 2027年 第45回東村つつじ祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "園には7種類・約5万本のつつじが植えられている",
+      "source": {
+        "url": "https://ryukyushimpo.jp/news/entry-4012232.html",
+        "title": "琉球新報 春らんまん、東村で「つつじ祭り」開幕 園内に5万本（2025年3月1日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "ペットは首輪かハーネスを付け、1.5メートル以下のリードを必ず着ける（伸びるリードは短く固定する）",
+      "ペットのふんや吐いたものは飼い主が片付け、マーキングはすぐ水で流す（水と袋は持参）",
+      "リードから手を離して写真を撮らない",
+      "園内でのペットのトラブルは飼い主が対応する"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "花の園を歩いて見る行事で、混雑や危険についての特別な注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.vill.higashi.okinawa.jp/soshikikarasagasu/kikakukankoka/kikakuibento/higashitutujimaturi/2595.html",
+        "title": "東村 ペットとご一緒に入園をお考えのお客様へ（東村つつじ祭り）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.vill.higashi.okinawa.jp/soshikikarasagasu/kikakukankoka/kikakuibento/higashitutujimaturi/1597.html",
+        "title": "東村 2027年 第45回東村つつじ祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-03-01",
+      "endDate": "2026-03-22",
+      "start": "09:00",
+      "end": "17:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "開催の記録（第44回）。東村つつじ祭り実行委員会の主催。入園料（高校生以上500円、中学生以下無料）はるるぶの掲載だけで、主催者の発表は確かめていない",
+      "sources": [
+        {
+          "url": "https://www.okinawastory.jp/event/600021656",
+          "title": "おきなわ物語（沖縄観光コンベンションビューロー） 第44回東村つつじ祭り開催について",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://visitokinawajapan.com/discover/events/higashi-village-azalea-festival/",
+          "title": "VISIT OKINAWA JAPAN（沖縄観光コンベンションビューロー） Higashi Village Azalea Festival（2026年3月1日〜22日、9:00〜17:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20001299",
+          "title": "るるぶ&more. 第44回東村つつじ祭り",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-03-01",
+      "endDate": "2027-03-22",
+      "start": "09:00",
+      "end": "17:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "第45回。最終入園は16:00。入園料は高校生以上500円（15名以上の団体は1人400円）、中学生以下と障がい者手帳を持つ人と付き添いは無料。期間中のステージなどの催しの日時はまだ発表がない",
+      "sources": [
+        {
+          "url": "https://www.vill.higashi.okinawa.jp/soshikikarasagasu/kikakukankoka/kikakuibento/higashitutujimaturi/1597.html",
+          "title": "東村 2027年 第45回東村つつじ祭り（令和9年3月1日〜3月22日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://visitokinawajapan.com/discover/events/higashi-village-azalea-festival/",
+        "title": "VISIT OKINAWA JAPAN（沖縄観光コンベンションビューロー） Higashi Village Azalea Festival（駐車場450台・無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20001299",
+        "title": "るるぶ&more. 第44回東村つつじ祭り（駐車場450台・無料、許田ICから約40km）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.vill.higashi.okinawa.jp/soshikikarasagasu/kikakukankoka/kikakuibento/higashitutujimaturi/1597.html",
+      "title": "東村 2027年 第45回東村つつじ祭り",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.okinawastory.jp/event/600021656",
+      "title": "おきなわ物語（沖縄観光コンベンションビューロー） 第44回東村つつじ祭り開催について",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の期間中のステージ・琉球舞踊・エイサーなどの催しの日時（2025年の報道には期間中にライブがあるとあるが、公式の発表はまだない）",
+    "雨天の扱い",
+    "アクセス（鉄道はない。那覇からの路線バスの経路と所要時間を公式の案内で確かめていない）",
+    "撮影の決まり、服装・持ち物",
+    "屋台や食べ物の販売の有無（2025年の報道には特産品の販売とあるが、公式で確かめていない）",
+    "見頃の時期（その年の気温で変わり、2025年は開幕時に1〜2分咲きだった）",
+    "来場者数",
+    "周辺の観光と食の場所（営業時間を公式で確かめておらず入れていない）",
+    "会場の住所は観光の案内によって平良861-28・861-1と違う。緯度・経度は会場の正確な位置と照らし合わせられていない（国土地理院の住所検索は大字「東村平良」までしか出ない）"
+  ]
+}
