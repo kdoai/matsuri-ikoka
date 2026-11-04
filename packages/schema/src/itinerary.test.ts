@@ -5,14 +5,19 @@ import {
   ItinerarySchema,
   itineraryItems,
   itineraryNights,
+  LastReturnSchema,
   LodgingSearchSchema,
+  MealPlanSchema,
+  MoveSchema,
   mainFestivalDay,
+  transferStations,
   VerificationSchema,
   WeatherSchema,
 } from "./itinerary";
 import {
   fictionalItinerary,
   fictionalLodgingSearch,
+  fictionalPlannedItinerary,
   fictionalResearchedLodgingSearch,
   fictionalSource,
 } from "./testing";
@@ -342,6 +347,75 @@ describe("日ごとの旅程（日帰りのお出かけから6泊7日まで）",
     };
     expect(collectItinerarySources(itinerary).map((s) => s.url)).toContain(
       "https://example.com/suzunari/weather",
+    );
+  });
+});
+
+describe("そろっているべきもの（移動の区間・食事・帰りの最終・調べの採否）", () => {
+  it("移動の区間・乗り換え・食事・帰りの最終・採否をそろえた旅程を受け付ける", () => {
+    expect(ItinerarySchema.safeParse(fictionalPlannedItinerary()).success).toBe(true);
+  });
+
+  it("古い版の旅程（新しい項目がない）も読める", () => {
+    expect(ItinerarySchema.safeParse(fictionalItinerary()).success).toBe(true);
+  });
+
+  it("乗り換えの駅は区間の境から決まる", () => {
+    const go = fictionalPlannedItinerary().days[0]!.items[0]!;
+    expect(transferStations(go.move!)).toEqual(["川辺駅"]);
+  });
+
+  it("区間はつながった順に並べ、移動の出発・到着とそろえる", () => {
+    const broken = fictionalPlannedItinerary();
+    broken.days[0]!.items[0]!.move!.legs![1]!.from = "別の駅";
+    expect(MoveSchema.safeParse(broken.days[0]!.items[0]!.move).success).toBe(false);
+
+    const wrongEnd = fictionalPlannedItinerary();
+    wrongEnd.days[0]!.items[0]!.move!.to = "ちがう駅";
+    expect(MoveSchema.safeParse(wrongEnd.days[0]!.items[0]!.move).success).toBe(false);
+  });
+
+  it("店や屋台の食事の案には出典が要る。持っていく案には要らない", () => {
+    expect(
+      MealPlanSchema.safeParse({
+        slot: "lunch",
+        kind: "shop",
+        name: "鈴鳴そば庵",
+        itemId: null,
+        sources: [],
+      }).success,
+    ).toBe(false);
+    expect(
+      MealPlanSchema.safeParse({
+        slot: "lunch",
+        kind: "bring",
+        name: "おにぎりを持っていく",
+        itemId: null,
+        sources: [],
+      }).success,
+    ).toBe(true);
+  });
+
+  it("食事の itemId は、その日の予定を指す", () => {
+    const itinerary = fictionalPlannedItinerary();
+    itinerary.days[0]!.meals![0]!.itemId = "no-such-item";
+    expect(ItinerarySchema.safeParse(itinerary).success).toBe(false);
+  });
+
+  it("帰りの最終の時刻を書くには出典が要る。分からなければ null にできる", () => {
+    expect(
+      LastReturnSchema.safeParse({ station: "鈴鳴駅", departBy: "22:40", sources: [] }).success,
+    ).toBe(false);
+    expect(
+      LastReturnSchema.safeParse({ station: "鈴鳴駅", departBy: null, sources: [] }).success,
+    ).toBe(true);
+  });
+
+  it("食事と帰りの最終の出典も集める", () => {
+    const itinerary = fictionalPlannedItinerary();
+    itinerary.days[0]!.lastReturn!.sources = [fictionalSource("last-train")];
+    expect(collectItinerarySources(itinerary).map((s) => s.url)).toContain(
+      "https://example.com/suzunari/last-train",
     );
   });
 });
