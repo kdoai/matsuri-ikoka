@@ -1,5 +1,11 @@
 import type { Options, SDKMessage } from "@anthropic-ai/claude-agent-sdk";
-import type { ConversationStage, ErrorCode, Preferences, SseEvent } from "@matsuri-ikoka/schema";
+import type {
+  AgentMode,
+  ConversationStage,
+  ErrorCode,
+  Preferences,
+  SseEvent,
+} from "@matsuri-ikoka/schema";
 import type { Session } from "../session/sessionStore";
 import type { TurnState } from "../tools/context";
 
@@ -8,7 +14,7 @@ import type { TurnState } from "../tools/context";
 // - mock：記録したサンプルの相談を、記録した間隔で再生する（ReplayAgentRunner）
 // done は呼び出し側（routes）が、相談の状態から必ず最後に1回送る。
 
-export type AgentMode = "live" | "mock";
+export type { AgentMode };
 
 export interface TurnInput {
   session: Session;

@@ -19,6 +19,13 @@ describe("API の本文と応答", () => {
   it("POST /api/session の応答はセッション ID", () => {
     expect(SessionResponseSchema.parse({ sessionId: "s-1" })).toEqual({ sessionId: "s-1" });
     expect(SessionResponseSchema.safeParse({ sessionId: "" }).success).toBe(false);
+    expect(SessionResponseSchema.parse({ sessionId: "s-1", mode: "mock" })).toEqual({
+      sessionId: "s-1",
+      mode: "mock",
+    });
+    expect(SessionResponseSchema.safeParse({ sessionId: "s-1", mode: "replay" }).success).toBe(
+      false,
+    );
   });
 
   it("PATCH /api/preferences の本文はセッション ID とこだわり", () => {

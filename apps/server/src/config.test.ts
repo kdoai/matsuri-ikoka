@@ -1,7 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { findRepoRoot, readConfig } from "./config";
+import { findRepoRoot, readConfig, startupNotice } from "./config";
 import { ConcurrencyLimiter, clientIp, DailyLimiter } from "./routes/guard";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -172,5 +172,43 @@ describe("本番の live の設定の確認", () => {
       maxConcurrentTurns: 4,
       trustedProxyHops: 0,
     });
+  });
+});
+
+describe("起動のときの知らせ", () => {
+  it("mock では、見本を再生していることと、live にする方法を出す", () => {
+    const notice = startupNotice({
+      mode: "mock",
+      port: 8787,
+      festivals: 2,
+      festivalDirs: ["data/samples/festivals"],
+      samples: ["sample-a"],
+    });
+    expect(notice.log).toEqual({
+      kind: "server_started",
+      mode: "mock",
+      port: 8787,
+      festivals: 2,
+      festivalDirs: ["data/samples/festivals"],
+      samples: ["sample-a"],
+    });
+    expect(notice.message).toContain("[mode] mock");
+    expect(notice.message).toContain("sample-a");
+    expect(notice.message).toContain("MATSURI_AGENT_MODE=live");
+  });
+
+  it("live では、読み込んだ祭りの件数と場所を出す", () => {
+    const notice = startupNotice({
+      mode: "live",
+      port: 8787,
+      festivals: 21,
+      festivalDirs: ["data/festivals"],
+      samples: [],
+    });
+    expect(notice.log).toMatchObject({ mode: "live", festivals: 21 });
+    expect(notice.log).not.toHaveProperty("samples");
+    expect(notice.message).toBe(
+      "[mode] live：Claude が返事を作ります。祭りのデータ 21件（data/festivals）から探します",
+    );
   });
 });

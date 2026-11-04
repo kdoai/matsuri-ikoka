@@ -263,8 +263,9 @@ export function createAppStore(deps: StoreDeps): AppStore {
         if (current.signal.aborted) {
           return;
         }
+        const mode = transport.agentMode?.() ?? null;
         update((state) =>
-          passcodeAccepted({ ...state, session: { ...state.session, id, status: "ready" } }),
+          passcodeAccepted({ ...state, session: { ...state.session, id, mode, status: "ready" } }),
         );
       } catch (caught) {
         if (current.signal.aborted) {

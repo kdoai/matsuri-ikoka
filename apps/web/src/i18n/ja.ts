@@ -309,6 +309,8 @@ export const ja = {
       "旅人は WASD・矢印・ゲームパッド・タップで歩けます。スタッフに近づくと話せて、店の中の仕掛けも E で使えます。",
     ],
     dateUnset: "旅の日はまだ",
+    replaying: "見本の相談を再生しています",
+    replayingNote: "送った内容にかかわらず、用意した見本の返事が流れます。",
     from: (origin: string) => `${origin}から`,
     hints: { talk: "話す", details: "旅程詳細", map: "地図", menu: "メニュー" },
     menuTitle: "メニュー",

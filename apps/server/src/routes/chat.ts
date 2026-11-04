@@ -144,7 +144,7 @@ export function registerChatRoutes(app: Hono, deps: ChatDeps) {
     }
     const session = deps.sessions.create({ replay });
     await deps.persistence?.saveSession(session);
-    return c.json({ sessionId: session.id } satisfies SessionResponse, 201);
+    return c.json({ sessionId: session.id, mode: deps.runner.mode } satisfies SessionResponse, 201);
   });
 
   app.post("/api/chat", async (c) => {

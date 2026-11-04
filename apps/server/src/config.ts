@@ -116,3 +116,30 @@ export function readConfig(env: NodeJS.ProcessEnv, cwd: string = process.cwd()):
   checkProductionConfig(config, env);
   return config;
 }
+
+/** 起動のときに、どちらのモードで動いているかと、読み込んだ祭りの件数を知らせる */
+export function startupNotice(input: {
+  mode: AgentMode;
+  port: number;
+  festivals: number;
+  festivalDirs: readonly string[];
+  /** mock で再生する見本の相談の名前 */
+  samples: readonly string[];
+}): { log: Record<string, unknown>; message: string } {
+  const dirs = input.festivalDirs.join("、");
+  const log = {
+    kind: "server_started",
+    mode: input.mode,
+    port: input.port,
+    festivals: input.festivals,
+    festivalDirs: input.festivalDirs,
+    ...(input.mode === "mock" ? { samples: input.samples } : {}),
+  };
+  const message =
+    input.mode === "live"
+      ? `[mode] live：Claude が返事を作ります。祭りのデータ ${input.festivals}件（${dirs}）から探します`
+      : `[mode] mock：見本の相談（${input.samples.join("、")}）を再生しています。` +
+        `送った内容にかかわらず、記録した返答を流します（祭りのデータ ${input.festivals}件、${dirs}）。` +
+        "Claude で返事を作るには MATSURI_AGENT_MODE=live で起動してください";
+  return { log, message };
+}

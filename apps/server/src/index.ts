@@ -12,7 +12,7 @@ import type { AgentRunner } from "./agent/runner";
 import { agentConfigDir, forgetTranscripts } from "./agent/transcripts";
 import { createWebVerifier } from "./agent/webVerifier";
 import { createApp } from "./app";
-import { readConfig } from "./config";
+import { readConfig, startupNotice } from "./config";
 import { festivalDirs, loadFestivals } from "./data/festivalStore";
 import { nowInJapan, todayInJapan } from "./domain/calendar";
 import { ConcurrencyLimiter, clientIp, DailyLimiter } from "./routes/guard";
@@ -59,6 +59,7 @@ for (const issue of festivals.issues) {
 
 const itineraries = new ItineraryStore();
 let runner: AgentRunner;
+let sampleIds: string[] = [];
 let sessions = new SessionStore();
 if (config.mode === "live") {
   const prompts = await loadPrompts();
@@ -119,6 +120,7 @@ if (config.mode === "live") {
   const samples = await loadSampleConversations(
     path.join(config.repoRoot, "data", "samples", "conversations"),
   );
+  sampleIds = samples.map((sample) => sample.id);
   runner = new ReplayAgentRunner(samples, itineraries, { speed: config.replaySpeed });
 }
 
@@ -162,5 +164,15 @@ setInterval(
 ).unref();
 
 serve({ fetch: app.fetch, port: config.port }, (info) => {
+  const notice = startupNotice({
+    mode: config.mode,
+    port: info.port,
+    festivals: festivals.store.size,
+    festivalDirs: dirs.map((dir) => path.relative(config.repoRoot, dir) || "."),
+    samples: sampleIds,
+  });
+  console.info(JSON.stringify(notice.log));
   console.info(`server listening on http://localhost:${info.port} (${config.mode})`);
+  // mock のままだと、何を相談しても同じ見本が流れる。気づけるように目立つ出力にする
+  (config.mode === "mock" ? console.warn : console.info)(notice.message);
 });

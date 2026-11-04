@@ -2,18 +2,18 @@
 
 ## API
 
-| メソッド | パス                  | 本文                                 | 返すもの                                                                                                                              |
-| -------- | --------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
-| POST     | `/api/session`        | `SessionRequestSchema`（省略できる） | 201 `SessionResponseSchema`（`{ "sessionId": "…" }`）                                                                                 |
-| POST     | `/api/chat`           | `ChatRequestSchema`                  | 返答を SSE のイベントで返す                                                                                                           |
-| PATCH    | `/api/preferences`    | `PreferencesRequestSchema`           | SSE。旅程があり live のときは旅程係だけを動かして組み直す。それ以外（旅程がない、mock）はこだわりを変えて `done` だけを返す           |
-| GET      | `/api/festivals`      | —                                    | 祭りのデータの一覧（`FestivalsResponseSchema`、`{ "festivals": [...] }`）。候補が出る前の豆知識に使う                                 |
-| GET      | `/api/festivals/:id`  | —                                    | 祭りのデータ（`FestivalSchema`）。しおりの作法・地元の味・アクセス、待ち時間の小話に使う                                              |
-| GET      | `/api/itinerary/:id`  | —                                    | 旅程（`ItinerarySchema`）。`:id` は旅程の ID（ログインして残していなければ、最後の保存から30日）か共有の ID（`sh-…`、作ってから30日） |
-| GET      | `/shiori/:id`         | —                                    | 旅のしおり（画面で見る HTML）。公式の情報で開催予定を確かめた旅程だけ（[しおり](shiori.md)）                                          |
-| GET      | `/shiori/:id.pdf`     | —                                    | 同じしおりの A4 の PDF。混み合っていたら 503（`upstream_unavailable`）と `Retry-After`                                                |
-| GET      | `/shiori/assets/*`    | —                                    | しおりのフォントとスタッフの静止画                                                                                                    |
-| GET      | `/healthz`・`/health` | —                                    | 死活監視。`{ "status": "ok" }`。Cloud Run の既定の URL では `/healthz` が外に出ないので、外からは `/health` を使う                    |
+| メソッド | パス                  | 本文                                 | 返すもの                                                                                                                                            |
+| -------- | --------------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| POST     | `/api/session`        | `SessionRequestSchema`（省略できる） | 201 `SessionResponseSchema`（`{ "sessionId": "…", "mode": "live" }`）。`mode` は `live` か `mock`（見本の相談の再生）。画面は mock のときに札を出す |
+| POST     | `/api/chat`           | `ChatRequestSchema`                  | 返答を SSE のイベントで返す                                                                                                                         |
+| PATCH    | `/api/preferences`    | `PreferencesRequestSchema`           | SSE。旅程があり live のときは旅程係だけを動かして組み直す。それ以外（旅程がない、mock）はこだわりを変えて `done` だけを返す                         |
+| GET      | `/api/festivals`      | —                                    | 祭りのデータの一覧（`FestivalsResponseSchema`、`{ "festivals": [...] }`）。候補が出る前の豆知識に使う                                               |
+| GET      | `/api/festivals/:id`  | —                                    | 祭りのデータ（`FestivalSchema`）。しおりの作法・地元の味・アクセス、待ち時間の小話に使う                                                            |
+| GET      | `/api/itinerary/:id`  | —                                    | 旅程（`ItinerarySchema`）。`:id` は旅程の ID（ログインして残していなければ、最後の保存から30日）か共有の ID（`sh-…`、作ってから30日）               |
+| GET      | `/shiori/:id`         | —                                    | 旅のしおり（画面で見る HTML）。公式の情報で開催予定を確かめた旅程だけ（[しおり](shiori.md)）                                                        |
+| GET      | `/shiori/:id.pdf`     | —                                    | 同じしおりの A4 の PDF。混み合っていたら 503（`upstream_unavailable`）と `Retry-After`                                                              |
+| GET      | `/shiori/assets/*`    | —                                    | しおりのフォントとスタッフの静止画                                                                                                                  |
+| GET      | `/healthz`・`/health` | —                                    | 死活監視。`{ "status": "ok" }`。Cloud Run の既定の URL では `/healthz` が外に出ないので、外からは `/health` を使う                                  |
 
 ログインと自分の旅の API（`/api/auth/config`・`/api/trips`・`/api/me/trips`）は [ログインと保存の仕様](account.md#api) にあります。
 

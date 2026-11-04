@@ -1,4 +1,5 @@
 import type {
+  AgentMode,
   ConversationStage,
   ErrorCode,
   Festival,
@@ -112,6 +113,8 @@ export interface ChatRequestDraft {
 
 export interface SessionState {
   id: string | null;
+  /** 接客サーバーの動き方。mock は見本の相談の再生で、画面にそれと出す。分からなければ null */
+  mode: AgentMode | null;
   status: "closed" | "opening" | "ready" | "failed";
   stage: ConversationStage;
   conditions: PartialTripConditions;

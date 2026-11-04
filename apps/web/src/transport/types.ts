@@ -1,4 +1,5 @@
 import {
+  type AgentMode,
   ApiErrorSchema,
   type ChatRequest,
   type Festival,
@@ -24,6 +25,8 @@ export interface ChatTransport {
     onMessage: OnSseMessage,
     signal: AbortSignal,
   ): Promise<void>;
+  /** 最後に始めた相談で、サーバーが知らせた動き方（知らせがなければ null） */
+  agentMode?(): AgentMode | null;
   /** 接続が切れたあとに、サーバーが応答するかを確かめる（つながらなければ false） */
   checkServer?(): Promise<boolean>;
   /** 接客サーバーのときだけ：合言葉を覚えて、これからの呼び出しに付ける */

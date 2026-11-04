@@ -232,6 +232,13 @@ describe("ストア：通信のエラー", () => {
     expect(store.getState().messages.at(-1)).toMatchObject({ code: "server_unreachable" });
   });
 
+  it("相談を始めたら、サーバーが知らせた動き方を持つ", async () => {
+    const store = makeStore({ ...failing(async () => {}), agentMode: () => "mock" });
+    expect(store.getState().session.mode).toBeNull();
+    await store.getState().actions.enterShop();
+    expect(store.getState().session).toMatchObject({ status: "ready", mode: "mock" });
+  });
+
   it("接続が切れたら「もう一度送る」で同じ発言を送り直す", async () => {
     const chat = vi
       .fn<ChatTransport["chat"]>()

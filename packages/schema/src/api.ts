@@ -16,8 +16,16 @@ const SessionIdSchema = z.string().min(1);
 export const SessionRequestSchema = z.strictObject({ sample: SlugSchema.optional() });
 export type SessionRequest = z.infer<typeof SessionRequestSchema>;
 
-/** POST /api/session の応答 */
-export const SessionResponseSchema = z.strictObject({ sessionId: SessionIdSchema });
+/** 接客サーバーの動き方。live は Claude が返事を作る / mock は記録した見本の相談を再生する */
+export const AGENT_MODES = ["live", "mock"] as const;
+export const AgentModeSchema = z.enum(AGENT_MODES);
+export type AgentMode = z.infer<typeof AgentModeSchema>;
+
+/** POST /api/session の応答。mode は、画面が「見本の相談を再生しています」と出すのに使う */
+export const SessionResponseSchema = z.strictObject({
+  sessionId: SessionIdSchema,
+  mode: AgentModeSchema.optional(),
+});
 export type SessionResponse = z.infer<typeof SessionResponseSchema>;
 
 /** GET /api/festivals の応答。掲載停止の祭りは含めない */
