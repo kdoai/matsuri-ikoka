@@ -52,6 +52,7 @@ import { attachLodging, checkLodgingBudget, distanceKm } from "../domain/lodging
 import { festivalInArea, selectNearbySpots } from "../domain/nearby";
 import { occurrenceOn } from "../domain/planCheck";
 import { preferenceEffects } from "../domain/preferences";
+import { transportEffects } from "../domain/transport";
 import { decideVerification } from "../domain/verification";
 import { randomId } from "../session/sessionStore";
 import type { CandidateCheck } from "./candidateCheck";
@@ -238,6 +239,9 @@ const NoteConditionsInputSchema = PartialTripConditionsSchema.extend({
   ),
   dietary: PartialTripConditionsSchema.shape.dietary.describe(
     "食事で気をつけたいこと（ベジタリアン・アレルギーなど）。言われたときだけ。アレルギーの中身は書き留めない",
+  ),
+  transport: PartialTripConditionsSchema.shape.transport.describe(
+    "想定している交通手段（車・新幹線・在来線・バス・船・飛行機・レンタカー・徒歩）。おまかせなら空の並び",
   ),
   leaveToStaff: PartialTripConditionsSchema.shape.leaveToStaff.describe(
     "「あとはおまかせ」と言われたら true",
@@ -505,7 +509,8 @@ export const getAccess = defineTool({
   name: "get_access",
   description:
     "出発地から祭りの会場への行き方の目安を、保存してある公式のアクセス案内から返す。" +
-    "最寄り駅と徒歩、主要駅からの所要時間、駐車場、交通規制。時間はすべて目安。",
+    "最寄り駅と徒歩、主要駅からの所要時間、駐車場、交通規制。時間はすべて目安。" +
+    "聞き取りで想定している交通手段を言われていれば、それに合わせた道のりの決まりを rules に入れる。",
   input: {
     festivalId: SlugSchema.describe("祭りの ID"),
     origin: z.string().trim().min(1).max(50).optional().describe("出発地。省略すると相談の出発地"),
@@ -515,13 +520,14 @@ export const getAccess = defineTool({
     const festival = festivalOf(ctx, args.festivalId);
     const origin = args.origin ?? ctx.session.conditions.origin ?? null;
     const move = args.move ?? ctx.session.preferences.move;
+    const transport = transportEffects(ctx.session.conditions);
     const { access } = festival;
     const hub = origin === null ? undefined : matchHub(access, origin);
     const notes: string[] = [];
     if (hub === undefined) {
       notes.push("出発地からの所要時間はデータにありません。主要駅からの目安を使ってください");
     }
-    if (move === "car") {
+    if (move === "car" || transport.usesCar) {
       if (access.parking === "none") {
         notes.push("会場の近くに駐車場がありません。電車で行くことをすすめてください");
       } else if (access.parking === "limited") {
@@ -550,6 +556,7 @@ export const getAccess = defineTool({
       trafficRestrictions: access.trafficRestrictions,
       arrivalBufferMinutes: arrivalBufferMinutes(festival),
       sources: access.sources,
+      rules: transport.rules,
       notes,
     };
   },

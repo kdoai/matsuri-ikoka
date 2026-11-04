@@ -4,6 +4,8 @@ import {
   type DietaryNeed,
   FOOD_WISHES,
   MAX_MESSAGE_LENGTH,
+  TRANSPORT_MODES,
+  type TransportMode,
 } from "@matsuri-ikoka/schema";
 
 // 選んで進める相談（聞き取り）。文章を書かなくても、選択肢を選ぶだけで旅の好みを伝えられる。
@@ -69,6 +71,9 @@ export type TravelLimit = (typeof TRAVEL_LIMITS)[number];
 /** 食べたいものの段階で、あわせて選べる食事で気をつけたいこと（いくつでも） */
 export const DIETARY_OPTIONS = DIETARY_NEEDS;
 
+/** 出発の駅の段階で、あわせて選べる想定している交通手段（いくつでも） */
+export const TRANSPORT_OPTIONS = TRANSPORT_MODES;
+
 /** 日程で、期間の決まった範囲（今週末など）や未定を選んだあとに聞く、日帰り・泊まり */
 export const STAY_OPTIONS = ["dayTrip", "oneNight", "twoNights", "longer"] as const;
 export type StayOption = (typeof STAY_OPTIONS)[number];
@@ -133,7 +138,8 @@ export interface DateRange {
  * 1つの項目の答え。picks は選んだ選択肢（auto・other を含む）。
  * text は「その他」の自由記述、origin では出発の駅、note ではひとこと。
  * counts は人数（party）、range は指定した期間と stay は日帰り・泊まり（schedule）、amount は予算の金額、
- * travel は日帰りの片道の所要時間の上限（destination。分）、dietary は食事で気をつけたいこと（food）
+ * travel は日帰りの片道の所要時間の上限（destination。分）、dietary は食事で気をつけたいこと（food）、
+ * transport は想定している交通手段（origin）
  */
 export interface ConsultAnswer {
   picks: string[];
@@ -144,6 +150,7 @@ export interface ConsultAnswer {
   amount?: number;
   travel?: TravelLimit;
   dietary?: DietaryNeed[];
+  transport?: TransportMode[];
 }
 
 export type ConsultAnswers = Partial<Record<ConsultQuestion, ConsultAnswer>>;
@@ -315,6 +322,20 @@ export function toggleDietary(answers: ConsultAnswers, need: DietaryNeed): Consu
   return { ...answers, food: { ...current, dietary } };
 }
 
+/** 想定している交通手段を付け外しする。すべて外したら項目ごと消す（おまかせ） */
+export function toggleTransport(answers: ConsultAnswers, mode: TransportMode): ConsultAnswers {
+  const current = answers.origin ?? EMPTY;
+  const selected = current.transport ?? [];
+  const transport = selected.includes(mode)
+    ? selected.filter((value) => value !== mode)
+    : TRANSPORT_OPTIONS.filter((value) => value === mode || selected.includes(value));
+  if (transport.length === 0) {
+    const { transport: _removed, ...rest } = current;
+    return { ...answers, origin: rest };
+  }
+  return { ...answers, origin: { ...current, transport } };
+}
+
 /**
  * 送る・確かめるときの答え。日帰りでなくなったら、所要時間の上限は使わない
  * （泊まりの旅は遠くても行けるので、所要時間で絞らない）
@@ -345,6 +366,7 @@ export function isAnswered(answer: ConsultAnswer | undefined, question: ConsultQ
   if (answer === undefined) return false;
   switch (question) {
     case "origin":
+      return answer.text.trim().length > 0 || (answer.transport?.length ?? 0) > 0;
     case "note":
       return answer.text.trim().length > 0;
     case "schedule":
@@ -376,6 +398,8 @@ export function hasAnyAnswer(answers: ConsultAnswers): boolean {
 function stepDone(step: ConsultStep, answers: ConsultAnswers): boolean {
   if (step === "confirm") return false;
   if (step === "note") return true;
+  // 交通手段だけでは進めない。祭りを探すのに出発の駅が要る
+  if (step === "origin") return (answers.origin?.text.trim().length ?? 0) > 0;
   return isAnswered(answers[step], step);
 }
 
@@ -531,6 +555,9 @@ export interface ConsultWording {
   /** 食事で気をつけたいこと（例：「気をつけたいこと：ベジタリアン・食物アレルギー」） */
   dietary: (needs: string[]) => string;
   dietaryOptions: Record<DietaryNeed, string>;
+  /** 想定している交通手段（例：「交通手段：新幹線・在来線」） */
+  transport: (modes: string[]) => string;
+  transportOptions: Record<TransportMode, string>;
   /** 1項目の行（例：「・だれと：家族で」） */
   line: (label: string, text: string) => string;
 }
@@ -594,7 +621,16 @@ export function answerText(
   if (answer === undefined || !isAnswered(answer, question)) return null;
   let parts: string[];
   switch (question) {
-    case "origin":
+    case "origin": {
+      const transport = answer.transport ?? [];
+      parts = [
+        answer.text.trim(),
+        ...(transport.length > 0
+          ? [wording.transport(transport.map((mode) => wording.transportOptions[mode]))]
+          : []),
+      ];
+      break;
+    }
     case "note":
       parts = [answer.text.trim()];
       break;

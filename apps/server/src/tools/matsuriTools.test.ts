@@ -391,6 +391,30 @@ describe("get_access", () => {
   });
 });
 
+describe("get_access の交通手段", () => {
+  it("聞き取りの交通手段を決まりに入れ、レンタカーなら駐車場の注意を出す", async () => {
+    const ctx = testToolContext([suzunari()]);
+    ctx.session.conditions = { origin: "みなと中央駅", transport: ["plane", "rental_car"] };
+
+    const output = await getAccess.run({ festivalId: "suzunari-toro" }, ctx, signal);
+
+    const rules = (output.rules as string[]).join("\n");
+    expect(rules).toContain("想定している交通手段（飛行機・レンタカー）");
+    expect(rules).toContain("飛行機の便と時刻はデータにない");
+    expect(output.notes).toContain(
+      "会場の近くに駐車場がありません。電車で行くことをすすめてください",
+    );
+  });
+
+  it("交通手段を聞いていなければ、決まりを足さない", async () => {
+    const ctx = testToolContext([suzunari()]);
+
+    const output = await getAccess.run({ festivalId: "suzunari-toro" }, ctx, signal);
+
+    expect(output.rules).toEqual([]);
+  });
+});
+
 describe("get_weather", () => {
   it("開催地の天気を返し、旅程に使うために相談に残す", async () => {
     const ctx = testToolContext([suzunari()]);

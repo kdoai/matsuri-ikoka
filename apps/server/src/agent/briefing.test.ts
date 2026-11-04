@@ -76,6 +76,16 @@ describe("店の記録", () => {
     expect(record).toContain("食事で気をつけたいこと ベジタリアン");
   });
 
+  it("想定している交通手段を載せる", () => {
+    const context = ctx();
+    context.session.conditions = {
+      origin: "みなと中央駅",
+      transport: ["shinkansen", "rental_car"],
+    };
+
+    expect(shopRecord(context)).toContain("交通手段 新幹線・レンタカー");
+  });
+
   it("旅程係には、今の旅程の全体と到着の余裕を渡す。調査係には渡さない", () => {
     const context = ctx();
     const itinerary = fictionalItinerary();
