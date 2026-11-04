@@ -1,0 +1,340 @@
+{
+  "id": "hanawa-bayashi",
+  "name": {
+    "ja": "花輪ばやし",
+    "en": "Hanawa Bayashi"
+  },
+  "category": "float",
+  "municipalities": [
+    {
+      "prefecture": "秋田県",
+      "name": "鹿角市"
+    }
+  ],
+  "venue": {
+    "name": "JR鹿角花輪駅前広場と花輪の町内",
+    "lat": 40.1887,
+    "lng": 140.7815
+  },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "10町内の屋台10台が駅前広場に勢ぞろいし、お囃子を打ち合う駅前行事",
+    "本漆と金粉で飾った屋台と、夜通し町に響く祭り囃子",
+    "真夜中に始まる朝詰で、桝形に向かう屋台の運行と神様への奉納曲",
+    "祭りの節目ごとに見られる、花輪祭独特の手打ち「サンサ」"
+  ],
+  "trivia": [
+    {
+      "text": "花輪ばやしの最も古い記録は、1765年の尾去沢銅山の定め書とされる",
+      "source": {
+        "url": "https://www.hanawabayashi.jp/hanawabayashi/",
+        "title": "花輪ばやし 公式ホームページ 花輪ばやしとは",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "はじめ屋台を出していたのは六日町・谷地田町・大町の3町だけだった",
+      "source": {
+        "url": "https://www.hanawabayashi.jp/hanawabayashi/",
+        "title": "花輪ばやし 公式ホームページ 花輪ばやしとは",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1977年には、フランス・ニースのカーニバルで演奏を披露した",
+      "source": {
+        "url": "https://www.hanawabayashi.jp/hanawabayashi/",
+        "title": "花輪ばやし 公式ホームページ 花輪ばやしとは",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2016年に「山・鉾・屋台行事」の1つとしてユネスコ無形文化遺産になった",
+      "source": {
+        "url": "https://www.city.kazuno.lg.jp/kanko_bunka_sports/kankojoho/9/3/3679.html",
+        "title": "鹿角市 花輪ばやし",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "会場の周りの道路はすべて駐車禁止。路上に停めず、市内の駐車場か臨時駐車場を使う",
+      "JR鹿角花輪駅前広場には駐車しない",
+      "駅前の桟敷席は有料（販売は道の駅かづの あんとらあ）。立って見るのは無料"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "屋台が夜通し町内を運行し、町じゅうが車両通行止めになる夜の行事。主催者によるけがの注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "http://www.hanawabayashi.jp/wp-content/uploads/2026/07/747279cbd0867f588ce6032d50460d92.pdf",
+        "title": "花輪ばやし祭典委員会 令和8年 花輪ばやし 交通規制図",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "http://www.hanawabayashi.jp/wp-content/uploads/2026/07/19ccb08804705b27a9698deb9c6e96af.pdf",
+        "title": "花輪ばやし祭典委員会 令和8年 花輪ばやし 運行概要・見どころ（駐車場について）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.hanawabayashi.jp/2026/07/01/%e4%bb%a4%e5%92%8c8%e5%b9%b4%e5%ba%a6%e3%80%808-19%e3%83%bb8-20%e3%80%80%e8%8a%b1%e8%bc%aa%e3%81%b0%e3%82%84%e3%81%97%e6%a1%9f%e6%95%b7%e5%b8%ad%e3%81%ae%e8%b2%a9%e5%a3%b2%e3%81%ab%e3%81%a4%e3%81%84/",
+        "title": "花輪ばやし 公式ホームページ 令和8年度 8/19・8/20 花輪ばやし桟敷席の販売について",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20003021",
+        "title": "るるぶ&more. 花輪ばやし（無料、駅前桟敷席3,500円）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-19",
+      "start": "17:30",
+      "end": "06:00",
+      "status": "announced",
+      "rainPolicy": "天候によって時間や内容が変わることがある（主催者の運行概要）",
+      "note": "2026年の1日目（主催者の発表。時刻は予定）。10:00〜11:30 子供パレード、17:30 のろしを合図に御旅所へ出発、18:35 御旅所詰（サンサ）、19:00 駅前広場で町おどり、19:50〜21:10 駅前行事（屋台10台が勢ぞろい）、20日0:00 朝詰の運行、3:35〜4:50 桝形行事、6:00ごろまで各町内へ帰る",
+      "sources": [
+        {
+          "url": "http://www.hanawabayashi.jp/wp-content/uploads/2026/07/19ccb08804705b27a9698deb9c6e96af.pdf",
+          "title": "花輪ばやし祭典委員会 令和8年 花輪ばやし 運行概要・見どころ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.kazuno.lg.jp/kanko_bunka_sports/kankojoho/9/3/3679.html",
+          "title": "鹿角市 花輪ばやし（令和8年の交通規制図・運行概要を掲載）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.hanawabayashi.jp/",
+          "title": "花輪ばやし 公式ホームページ（10町内・10台）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-08-20",
+      "start": "18:30",
+      "end": "03:00",
+      "status": "announced",
+      "rainPolicy": "天候によって時間や内容が変わることがある。駅前の郷土芸能は雨のとき変更・中止がある（主催者の運行概要）",
+      "note": "2026年の2日目（主催者の発表。時刻は予定）。12:00〜18:30 町内自主運行（門付け、中央通りに露店）、18:30 駅前広場へ出発、19:00〜20:10 駅前で郷土芸能（毛馬内の盆踊・水沢盆踊り太鼓）、20:10〜21:20 駅前行事、21:20 赤鳥居詰の運行、23:25〜23:50 赤鳥居行事（最後のサンサ）、21日3:00ごろまで各町内へ帰る",
+      "sources": [
+        {
+          "url": "http://www.hanawabayashi.jp/wp-content/uploads/2026/07/19ccb08804705b27a9698deb9c6e96af.pdf",
+          "title": "花輪ばやし祭典委員会 令和8年 花輪ばやし 運行概要・見どころ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.kazuno.lg.jp/kanko_bunka_sports/kankojoho/9/3/3679.html",
+          "title": "鹿角市 花輪ばやし（令和8年の交通規制図・運行概要を掲載）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-19",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2027年の発表はまだない）。鹿角市の案内の「毎年8月19日・20日」から見込んだ日で、2027年は木曜日。2026年の1日目は17:30 出発、19:50 から駅前行事、真夜中に朝詰だった",
+      "sources": [
+        {
+          "url": "https://www.city.kazuno.lg.jp/kanko_bunka_sports/kankojoho/9/3/3679.html",
+          "title": "鹿角市 花輪ばやし（毎年8月19日・20日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-20",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2027年の発表はまだない）。鹿角市の案内の「毎年8月19日・20日」から見込んだ日で、2027年は金曜日。2026年の2日目は18:30 出発、20:10 から駅前行事、夜に赤鳥居行事だった",
+      "sources": [
+        {
+          "url": "https://www.city.kazuno.lg.jp/kanko_bunka_sports/kankojoho/9/3/3679.html",
+          "title": "鹿角市 花輪ばやし（毎年8月19日・20日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 鹿角花輪駅",
+        "walkMinutes": [1, 6],
+        "note": "鹿角市の案内では駅から徒歩約1分。2026年は8月19日・20日に大館行きの臨時列車が21:47に鹿角花輪駅を出た（主催者の案内）"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "盛岡駅",
+        "minutes": [120, 124],
+        "route": "JR花輪線の普通列車（大館行き）、乗り換えなし（調べた列車は1923D・1925D）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [
+      "花輪の町内は8月19日9:00から21日4:30まで車両通行止め（2026年）",
+      "中央通り（国道〜商店街通り）は露店のため、19日8:00から21日4:30まで車両通行止め（2026年）",
+      "時間規制の区間は19日13:00〜23:00、20日14:00〜24:30（2026年、予定）",
+      "駅前行事の規制は19日18:30〜23:00、20日20:00〜24:30（2026年、予定）",
+      "稲村橋行事の規制は20日2:00〜3:30（2026年、予定）",
+      "2026年は100円のシャトルバスが16:40〜22:20に20分おきに出た。市役所→鹿角地域振興局前→花輪郵便局前→あんとらあ、帰りはあんとらあ→NTT前→鹿角地域振興局前→市役所。臨時駐車場は市役所・鹿角地域振興局・かづの商工会・あんとらあ"
+    ],
+    "sources": [
+      {
+        "url": "https://www.city.kazuno.lg.jp/kanko_bunka_sports/kankojoho/9/3/3679.html",
+        "title": "鹿角市 花輪ばやし（JR鹿角花輪駅から徒歩約1分、鹿角八幡平ICから車で約5分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "http://www.hanawabayashi.jp/wp-content/uploads/2026/07/747279cbd0867f588ce6032d50460d92.pdf",
+        "title": "花輪ばやし祭典委員会 令和8年 花輪ばやし 交通規制図（シャトルバス時刻表つき）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "http://www.hanawabayashi.jp/wp-content/uploads/2026/07/19ccb08804705b27a9698deb9c6e96af.pdf",
+        "title": "花輪ばやし祭典委員会 令和8年 花輪ばやし 運行概要（駐車場・交通規制・臨時列車）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.hanawabayashi.jp/access/",
+        "title": "花輪ばやし 公式ホームページ アクセス",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://timetables.jreast.co.jp/2611/train/035/038101.html",
+        "title": "JR東日本 時刻表 花輪線 普通 1923D（盛岡 5:00 発、鹿角花輪 7:00 着）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://timetables.jreast.co.jp/2611/train/005/007831.html",
+        "title": "JR東日本 時刻表 花輪線 普通 1925D（盛岡 6:55 発、鹿角花輪 8:59 着）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "michi-no-eki-kazuno-antora",
+      "name": "道の駅かづの あんとらあ",
+      "kind": "food",
+      "summary": "屋台を展示する祭り展示館や食事処がある道の駅。時間はレストランMITACHIの4〜11月のもの。11月などに日を決めた休みがある。8/16〜21は屋台展示を休む",
+      "location": {
+        "lat": 40.1833,
+        "lng": 140.7858
+      },
+      "walkMinutesFromVenue": [10, 15],
+      "hours": {
+        "open": "10:00",
+        "close": "18:00",
+        "lastEntry": "17:30"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://antlerkazuno.jp/businesshours/",
+          "title": "道の駅かづの あんとらあ 営業時間（4/1〜11/30 レストランMITACHI 10:00〜18:00、L.O 17:30）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://antlerkazuno.jp/hanawa-bayashi/",
+          "title": "道の駅かづの あんとらあ 「花輪ばやし」祭り展示館",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "http://www.hanawabayashi.jp/wp-content/uploads/2026/07/19ccb08804705b27a9698deb9c6e96af.pdf",
+          "title": "花輪ばやし祭典委員会 令和8年 運行概要（あんとらあ駐車場から駅周辺まで徒歩約10分）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.hanawabayashi.jp/",
+      "title": "花輪ばやし 公式ホームページ（花輪ばやし祭典委員会）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.hanawabayashi.jp/hanawabayashi/",
+      "title": "花輪ばやし 公式ホームページ 花輪ばやしとは（幸稲荷神社の祭礼ばやし）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.kazuno.lg.jp/kanko_bunka_sports/kankojoho/9/3/3679.html",
+      "title": "鹿角市 花輪ばやし",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%B9%BF%E8%A7%92%E8%8A%B1%E8%BC%AA%E9%A7%85",
+      "title": "国土地理院 地名検索 鹿角花輪駅（会場の緯度・経度）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、日ごとの行事・時刻",
+    "2026年が発表どおりに行われたか（中止・変更の告知は見当たらないが、終わったあとの報告を確かめていない）",
+    "雨のときの扱いの決まり（主催者は「天候次第で時間・内容が変わる」とだけ案内）",
+    "服装、持ち物、撮影の決まり（主催者の案内が見つからない）",
+    "桟敷席の場所・料金・席数（主催者の案内先の販売ページが開けなかった。るるぶ&more.では駅前桟敷席3,500円）",
+    "見物客の数",
+    "秋田駅や大館駅から鹿角花輪駅までの所要時間と、祭りの夜の帰りの列車の本数",
+    "臨時駐車場の台数（るるぶ&more.では駐車場250台・無料）",
+    "祭りならではの食べもの（中央通りに露店が出ることだけ分かる）",
+    "道の駅かづの あんとらあの定休日と、緯度・経度（国土地理院の住所検索で、花輪新田町11番地の代表点）",
+    "周辺の観光の場所（あんとらあの祭り展示館は祭りの間は屋台の展示を休む）"
+  ]
+}
