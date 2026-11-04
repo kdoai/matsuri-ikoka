@@ -13,6 +13,7 @@ import type { ItineraryStore } from "../session/sessionStore";
 import type { CandidateChecker } from "../tools/candidateCheck";
 import { newTurnState, type ToolContext } from "../tools/context";
 import type { LodgingService } from "../tools/lodging";
+import type { LodgingResearcher } from "../tools/lodgingResearch";
 import { createMatsuriMcpServer } from "../tools/mcpServer";
 import type { NearbyResearcher } from "../tools/nearbyResearch";
 import type { RouteResearcher } from "../tools/routeResearch";
@@ -49,6 +50,8 @@ export interface ClaudeRunnerDeps {
   /** 出発の駅から会場の最寄り駅までの行き方の調べ */
   routes?: RouteResearcher;
   nearby?: NearbyResearcher;
+  /** 会場の近くの宿の Web の調べ（観点ごとに並べて動かす） */
+  lodgingResearch?: LodgingResearcher;
   prompts: AgentPrompts;
   models: AgentModels;
   /** 1回の発言の費用の上限（米ドル） */
@@ -197,6 +200,7 @@ export class ClaudeAgentRunner implements AgentRunner {
       ...(deps.stations ? { stations: deps.stations } : {}),
       ...(deps.routes ? { routes: deps.routes } : {}),
       ...(deps.nearby ? { nearby: deps.nearby } : {}),
+      ...(deps.lodgingResearch ? { lodgingResearch: deps.lodgingResearch } : {}),
       // ツールの中の調べ（寄り道の調べ）の進みも、相談の進みとして数える
       ...(progress ? { progress } : {}),
       today: deps.today,

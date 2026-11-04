@@ -30,6 +30,7 @@ const prompts: AgentPrompts = {
   verifier: "v",
   route: "rt",
   nearby: "nb",
+  lodging: "lg",
 };
 
 type Script = (api: {

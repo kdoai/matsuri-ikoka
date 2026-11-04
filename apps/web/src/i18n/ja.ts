@@ -592,6 +592,29 @@ export const ja = {
   itinerary: {
     day: (n: number, date: string) => `${n}日目・${date}`,
     stay: (area: string) => `この夜は${area}に泊まる`,
+    lodging: {
+      heading: "泊まる宿の候補",
+      fromVenueWalk: (km: number, min: number, max: number) =>
+        `会場から約${km}km・徒歩${range(min, max)}分（目安）`,
+      fromVenueRide: (km: number, min: number, max: number) =>
+        `会場から約${km}km・バスやタクシーで${range(min, max)}分（目安）`,
+      nightlyTotal: (yen: number) => `1泊 全員で${yen.toLocaleString("ja-JP")}円から`,
+      perPersonNight: (min: number, max: number) =>
+        `1泊1人 ${min === max ? min.toLocaleString("ja-JP") : `${min.toLocaleString("ja-JP")}〜${max.toLocaleString("ja-JP")}`}円（宿のページの目安）`,
+      perspectives: {
+        venue: "会場の近く",
+        station: "駅の近く",
+        budget: "予算に合う",
+        family: "家族向け",
+      },
+      open: "宿のページを開く",
+      searchedAt: (date: string) => `${date}に調べた候補`,
+      notes: {
+        rakuten: "空きと料金は、調べた時点のものです。予約の時点で変わることがあります。",
+        web: "宿のページで調べた候補です。空きは調べていないので、空きと料金は予約のページで確かめてください。",
+        fictional: "（架空）と付いた宿は見本です。本物の宿ではありません。",
+      },
+    },
     dayHeading: (n: number, date: string) => `${n}日目（${date}）`,
     route: "道のり",
     tabs: { itinerary: "旅程", map: "旅の案内", sources: "持ち物と確認" },

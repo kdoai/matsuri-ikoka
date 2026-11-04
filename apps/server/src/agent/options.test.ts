@@ -24,6 +24,7 @@ const prompts: AgentPrompts = {
   verifier: "再確認",
   route: "行き方の調べ",
   nearby: "寄り道の調べ",
+  lodging: "宿の調べ",
 };
 
 function options(overrides: { models?: AgentModels; resume?: string } = {}) {

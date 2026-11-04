@@ -10,7 +10,12 @@ import {
   VerificationSchema,
   WeatherSchema,
 } from "./itinerary";
-import { fictionalItinerary, fictionalLodgingSearch, fictionalSource } from "./testing";
+import {
+  fictionalItinerary,
+  fictionalLodgingSearch,
+  fictionalResearchedLodgingSearch,
+  fictionalSource,
+} from "./testing";
 
 describe("ItinerarySchema", () => {
   it("架空の祭りへの旅程を受け付ける", () => {
@@ -194,6 +199,23 @@ describe("LodgingSearchSchema", () => {
     const search = fictionalLodgingSearch();
     search.offers[0]!.bookingUrl = "javascript:alert(1)";
     expect(LodgingSearchSchema.safeParse(search).success).toBe(false);
+  });
+
+  it("Web で調べた宿は、1泊の合計を null にし、料金の目安・会場からの目安・観点を持てる", () => {
+    expect(LodgingSearchSchema.safeParse(fictionalResearchedLodgingSearch()).success).toBe(true);
+  });
+
+  it("料金の幅は下限が上限以下で、観点と調べた方法は決まった値だけ", () => {
+    const reversed = fictionalResearchedLodgingSearch();
+    reversed.offers[0]!.perPersonNightYen = [12000, 8000];
+    expect(LodgingSearchSchema.safeParse(reversed).success).toBe(false);
+    const perspective = fictionalResearchedLodgingSearch();
+    (perspective.offers[0]!.perspectives as string[]) = ["onsen"];
+    expect(LodgingSearchSchema.safeParse(perspective).success).toBe(false);
+    expect(
+      LodgingSearchSchema.safeParse({ ...fictionalResearchedLodgingSearch(), provider: "other" })
+        .success,
+    ).toBe(false);
   });
 });
 

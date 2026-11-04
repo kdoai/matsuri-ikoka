@@ -172,7 +172,13 @@ describe("createRakutenLodging", () => {
     const outcome = await service.search({ ...query, nights: 2 }, signal);
     expect(outcome).toEqual({
       status: "ok",
-      search: { checkIn: "2026-08-15", checkOut: "2026-08-17", searchedAt: now(), offers: [] },
+      search: {
+        checkIn: "2026-08-15",
+        checkOut: "2026-08-17",
+        searchedAt: now(),
+        provider: "rakuten",
+        offers: [],
+      },
     });
     const url = new URL(calls[0]!.url);
     expect(`${url.origin}${url.pathname}`).toBe(RAKUTEN_VACANT_HOTEL_URL);

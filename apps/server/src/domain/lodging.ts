@@ -111,6 +111,17 @@ export function checkLodgingBudget(
   };
 }
 
+/** 宿の予算を、1泊1人あたりの上限（円、切り捨て）にする。予算がなければ null */
+export function perPersonNightLimitYen(
+  budget: LodgingBudget | undefined,
+  nights: number,
+): number | null {
+  if (budget === undefined) return null;
+  return budget.per === "night"
+    ? budget.perPersonYen
+    : Math.floor(budget.perPersonYen / Math.max(1, nights));
+}
+
 const EARTH_RADIUS_KM = 6371;
 
 /** 2点の間の直線の距離（km、小数1桁）。道のりではないので、目安として扱う */

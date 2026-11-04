@@ -631,6 +631,29 @@ export const en: Messages = {
   itinerary: {
     day: (n: number, date: string) => `Day ${n} · ${date}`,
     stay: (area: string) => `Overnight around ${area}`,
+    lodging: {
+      heading: "Places to stay",
+      fromVenueWalk: (km: number, min: number, max: number) =>
+        `About ${km} km from the venue, ${range(min, max)} min on foot (estimate)`,
+      fromVenueRide: (km: number, min: number, max: number) =>
+        `About ${km} km from the venue, ${range(min, max)} min by bus or taxi (estimate)`,
+      nightlyTotal: (yen: number) => `From ¥${yen.toLocaleString("en-US")} per night for everyone`,
+      perPersonNight: (min: number, max: number) =>
+        `¥${min === max ? min.toLocaleString("en-US") : `${min.toLocaleString("en-US")}–${max.toLocaleString("en-US")}`} per person per night (from the hotel's page)`,
+      perspectives: {
+        venue: "Near the venue",
+        station: "Near the station",
+        budget: "Fits the budget",
+        family: "Family-friendly",
+      },
+      open: "Open the hotel's page",
+      searchedAt: (date: string) => `Looked up on ${date}`,
+      notes: {
+        rakuten: "Rates and availability are as of the search and may change when you book.",
+        web: "Found on hotel pages. Availability was not checked, so confirm rooms and rates on the booking page.",
+        fictional: "Hotels marked (架空) are samples, not real places.",
+      },
+    },
     dayHeading: (n: number, date: string) => `Day ${n} (${date})`,
     route: "Route",
     tabs: { itinerary: "Plan", map: "Trip guide", sources: "Packing & checks" },

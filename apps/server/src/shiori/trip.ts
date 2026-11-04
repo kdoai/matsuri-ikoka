@@ -3,6 +3,7 @@ import type {
   IsoDate,
   Itinerary,
   ItineraryItem,
+  LodgingSearch,
   Party,
   Preferences,
   TripBudget,
@@ -11,15 +12,16 @@ import type {
 } from "@matsuri-ikoka/schema";
 
 // しおりが読む旅程の形。旅程の型（ItinerarySchema）に直接たよるのは、このファイルの toShioriTrip だけにする。
-// 日ごとの予定（days）と、その夜に泊まる地域（stay）を持つ。
+// 日ごとの予定（days）と、その夜に泊まる地域と宿の候補（stay）を持つ。
 
 /** 旅の日数の上限（6泊7日） */
 export const MAX_TRIP_DAYS = 7;
 
-/** その夜に泊まる地域。宿の名前は持たない */
+/** その夜に泊まる地域と、調べた宿の候補（宿の名前は候補の中だけに持つ） */
 export interface TripStay {
   area: string;
   note?: string;
+  lodging?: LodgingSearch;
 }
 
 export interface TripDay {

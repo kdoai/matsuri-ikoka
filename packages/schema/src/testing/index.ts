@@ -153,6 +153,56 @@ export function fictionalItinerary(): Itinerary {
   };
 }
 
+/**
+ * 架空の宿を Web で調べた結果（鈴鳴町に1泊）。空きは調べていないので1泊の合計は null にし、
+ * 宿のページの料金の目安・会場からの目安・挙がった観点を持つ。URL は example.com にする
+ */
+export function fictionalResearchedLodgingSearch(): LodgingSearch {
+  const checkedAt = "2026-08-01T10:00:00+09:00";
+  return {
+    checkIn: "2026-08-15",
+    checkOut: "2026-08-16",
+    searchedAt: checkedAt,
+    provider: "web",
+    offers: [
+      {
+        id: "web-0123456789ab",
+        name: "鈴鳴川の宿",
+        nightlyTotalYen: null,
+        perPersonNightYen: [8000, 11000],
+        summary: "河原まで歩いてすぐの、和室のある宿",
+        bookingUrl: "https://example.com/inn/kawa",
+        location: { lat: 35.121, lng: 136.081 },
+        fromVenue: { distanceKm: 0.1, mode: "walk", minutes: [1, 2] },
+        perspectives: ["venue", "station"],
+        checkedAt,
+        source: {
+          url: "https://example.com/inn/kawa",
+          title: "鈴鳴川の宿",
+          checkedAt: "2026-08-01",
+          confidence: "corroborated",
+        },
+      },
+      {
+        id: "web-ba9876543210",
+        name: "鈴鳴駅前ホテル",
+        nightlyTotalYen: null,
+        priceNote: "1室 12,000円から",
+        bookingUrl: "https://example.com/inn/ekimae",
+        location: { lat: 35.13, lng: 136.08 },
+        fromVenue: { distanceKm: 1.1, mode: "walk", minutes: [13, 22] },
+        perspectives: ["station"],
+        checkedAt,
+        source: {
+          url: "https://example.com/inn/ekimae",
+          checkedAt: "2026-08-01",
+          confidence: "single",
+        },
+      },
+    ],
+  };
+}
+
 /** 架空の宿の空き（鈴鳴町に1泊、大人2人）。宿も予約のページも架空で、URL は example.com にする */
 export function fictionalLodgingSearch(): LodgingSearch {
   const checkedAt = "2026-08-01T10:00:00+09:00";

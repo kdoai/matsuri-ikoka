@@ -1,3 +1,4 @@
+import { fictionalResearchedLodgingSearch } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
 import { loadShioriAssets, svgToSymbol } from "./assets";
 import { chooseDesign } from "./design";
@@ -144,6 +145,18 @@ describe("しおりの HTML", () => {
     expect(page).toContain("鈴鳴駅の周り");
     // 1日目は予定が多く雨の日の案もあるので、メモ欄は2日目だけ
     expect(page.match(/この日のメモ/g)).toHaveLength(1);
+  });
+
+  it("泊まりに宿の候補があれば、名前と目安と宿のページの URL を文字で出す", async () => {
+    const trip = fictionalWeekend();
+    trip.days[0]!.stay = { area: "鈴鳴駅の周り", lodging: fictionalResearchedLodgingSearch() };
+    const page = await render(trip);
+
+    expect(page).toContain("鈴鳴川の宿");
+    expect(page).toContain("会場から約0.1km・徒歩1〜2分（目安）");
+    expect(page).toContain("https://example.com/inn/kawa");
+    expect(page).not.toContain("宿の名前と予約は、ご自身で確かめてください。");
+    expect(page).not.toMatch(/(?:src|href)="https?:/);
   });
 
   it("泊まりの旅には旅のかたちの図を入れ、日帰りには入れない", async () => {
