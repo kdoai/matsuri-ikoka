@@ -8,6 +8,7 @@ import {
   sanitizeMessage,
   shopRecord,
   staffBriefing,
+  tripBudgetLabel,
   turnPrompt,
 } from "./briefing";
 
@@ -107,6 +108,19 @@ describe("人数と宿の予算の書き方", () => {
     );
     expect(lodgingBudgetLabel({ perPersonYen: 30000, per: "trip" })).toBe(
       "宿の予算 1人あたり泊まり全体で 30,000円まで",
+    );
+  });
+
+  it("旅の予算は、言われた単位と、コードで換算したもう一方を書く", () => {
+    const party = { adults: 2, children: 1, infants: 1 };
+    expect(tripBudgetLabel({ yen: 30000, basis: "perPerson" }, party)).toBe(
+      "旅の予算 1人あたり 30,000円まで（2人で合計 60,000円）",
+    );
+    expect(tripBudgetLabel({ yen: 90000, basis: "total" }, { adults: 3, children: 0 })).toBe(
+      "旅の予算 全員で 90,000円まで（3人で1人あたり 30,000円）",
+    );
+    expect(tripBudgetLabel({ yen: 90000, basis: "total" }, undefined)).toBe(
+      "旅の予算 全員で 90,000円まで（人数が分からないので1人あたりは未計算）",
     );
   });
 });

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { MESSAGES } from "../i18n";
 import {
+  budgetBasis,
   type ConsultAnswers,
   canReach,
   composeConsultMessage,
@@ -21,6 +22,7 @@ import {
   selectableDay,
   setAmount,
   setAnswerText,
+  setBudgetBasis,
   setRange,
   setStay,
   setTravel,
@@ -159,6 +161,26 @@ describe("isAnswered", () => {
     expect(answers.budget?.picks).toEqual([]);
     answers = setAmount(answers, null);
     expect(isAnswered(answers.budget, "budget")).toBe(false);
+  });
+
+  it("予算の数え方は、選ばなければ1人あたりで、選択肢や金額を変えても残る", () => {
+    expect(budgetBasis(undefined)).toBe("perPerson");
+    let answers = setBudgetBasis({}, "total");
+    expect(isAnswered(answers.budget, "budget")).toBe(false);
+    answers = pickAnswer(answers, "budget", "under50k");
+    expect(budgetBasis(answers.budget)).toBe("total");
+    answers = setAmount(answers, 90_000);
+    expect(budgetBasis(answers.budget)).toBe("total");
+    expect(composeConsultMessage(answers, wording, "2030-06-05")).toContain(
+      "・予算：90,000円（全員で）",
+    );
+    answers = pickAnswer(setBudgetBasis(answers, "perPerson"), "budget", "under30k");
+    expect(composeConsultMessage(answers, wording, "2030-06-05")).toContain(
+      "・予算：〜3万円（1人あたり）",
+    );
+    expect(
+      composeConsultMessage(pickAnswer({}, "budget", "auto"), wording, "2030-06-05"),
+    ).toContain("・予算：おまかせ");
   });
 });
 
@@ -360,7 +382,7 @@ describe("composeConsultMessage", () => {
         "・出発する駅：みなと中央駅",
         "・行き先：関東（東京都・神奈川県）、九州・沖縄",
         "・食べたいもの：海鮮、そば",
-        "・予算（1人あたり）：25,000円",
+        "・予算：25,000円（1人あたり）",
         "・ひとこと：子どもが歩き疲れないように",
         "この条件に合う祭りを探してください。",
       ].join("\n"),

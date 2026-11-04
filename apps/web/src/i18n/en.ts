@@ -18,7 +18,7 @@ const consultLabels = {
   activities: "Besides the festival",
   food: "Food to try",
   pace: "Pace",
-  budget: "Budget (per person)",
+  budget: "Budget",
   note: "Anything else",
 };
 const consultOptions = {
@@ -211,7 +211,7 @@ export const en: Messages = {
       activities: "Anything you'd like to enjoy besides the festival?",
       food: "Any food you'd like to try?",
       pace: "What pace suits you?",
-      budget: "Roughly how much per person?",
+      budget: "Roughly how much is your budget?",
       note: "Anything else you'd like us to know?",
       confirm: "Great, we'll look for festivals that match!",
     },
@@ -258,7 +258,8 @@ export const en: Messages = {
       "Station list: adapted from National Land Numerical Information (Railway Data), MLIT",
     stationSourceLink: "Open the source page (new tab)",
     station: (name: string) => `${name} Station`,
-    amountLabel: "Or enter an amount (per person)",
+    amountLabel: (basis: string) => `Or enter an amount (${basis})`,
+    basisLabel: "Count the budget",
     amountUnit: "yen",
     notePlaceholder: "e.g. Our kids get tired walking long distances",
     decide: "OK",
@@ -293,6 +294,7 @@ export const en: Messages = {
       nights: (nights: number) =>
         nights === 0 ? "day trip" : `${plural(nights, "night", "nights")}`,
       amount: (yen: number) => `¥${yen.toLocaleString("en-US")}`,
+      budgetBasis: { perPerson: "per person", total: "for everyone" },
       travel: (minutes: number) =>
         `Within ${minutes / 60} hour${minutes === 60 ? "" : "s"} one way from your station`,
       dietary: (needs: string[]) => `dietary needs: ${needs.join(", ")}`,
@@ -467,6 +469,12 @@ export const en: Messages = {
       children > 0
         ? `${plural(adults, "adult", "adults")}, ${plural(children, "child", "children")}`
         : plural(adults, "adult", "adults"),
+    budget: (basis: "perPerson" | "total", yen: number, converted: number | null) => {
+      const amount = (n: number) => `¥${n.toLocaleString("en-US")}`;
+      return basis === "perPerson"
+        ? `Budget up to ${amount(yen)} per person${converted === null ? "" : ` (${amount(converted)} for everyone)`}`
+        : `Budget up to ${amount(yen)} for everyone${converted === null ? "" : ` (${amount(converted)} per person)`}`;
+    },
     move: { train: "Train", car: "Car" },
     range: (from: string, to: string) => `${from} – ${to}`,
   },

@@ -439,9 +439,14 @@ test("文章を書かずに、選択肢を選ぶだけで相談を始められ�
   await consult.getByRole("textbox", { name: "食べたいもの（自由に書く）" }).fill("川魚");
   await decide();
   await consult.getByRole("button", { name: "ゆっくり", exact: true }).click();
-  // 予算は金額でも伝えられる
-  const amount = consult.getByRole("textbox", { name: "金額で伝える（1人あたり）" });
-  await amount.fill("25000");
+  // 予算は金額でも伝えられ、1人あたりか全員でかを選べる
+  await expect(consult.getByRole("textbox", { name: "金額で伝える（1人あたり）" })).toBeVisible();
+  await page
+    .getByTestId("consult-budget-basis")
+    .getByRole("button", { name: "全員で", exact: true })
+    .click();
+  const amount = consult.getByRole("textbox", { name: "金額で伝える（全員で）" });
+  await amount.fill("75000");
   await noOverlap();
   await amount.press("Enter");
   await consult.getByRole("textbox", { name: "ひとこと" }).fill("子どもが歩き疲れないように");
@@ -454,7 +459,7 @@ test("文章を書かずに、選択肢を選ぶだけで相談を始められ�
   await expect(summary).toContainText("みなと中央駅");
   await expect(summary).toContainText("関東（東京都）、川沿いの町");
   await noOverlap();
-  await expect(summary).toContainText("25,000円");
+  await expect(summary).toContainText("75,000円（全員で）");
   // 一覧から段階へ戻って直すと、確認へ戻る
   await consult.getByRole("button", { name: "旅のペース：直す" }).click();
   await consult.getByRole("button", { name: "たっぷり", exact: true }).click();
@@ -475,9 +480,7 @@ test("文章を書かずに、選択肢を選ぶだけで相談を始められ�
   await expect(page.getByTestId("chat-user").first()).toContainText(
     "・だれと：家族で（大人2人、子ども1人、計3人）",
   );
-  await expect(page.getByTestId("chat-user").first()).toContainText(
-    "・予算（1人あたり）：25,000円",
-  );
+  await expect(page.getByTestId("chat-user").first()).toContainText("・予算：75,000円（全員で）");
   await closeLog(page);
 });
 

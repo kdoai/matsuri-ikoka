@@ -124,6 +124,37 @@ describe("buildItinerary", () => {
     expect(result.diff.fromVersion).toBe(0);
   });
 
+  it("旅の予算は聞き取った条件から付け、変わったら版を上げる", () => {
+    const options = {
+      id: "trip-1",
+      weatherFor: () => ({ status: "not_yet" }) as const,
+      findFestival: find,
+    };
+    const draft = draftOf(fictionalItinerary());
+    const first = buildItinerary(draft, {
+      ...options,
+      previous: null,
+      budget: { yen: 60000, basis: "total" },
+    });
+    expect(first.ok && first.itinerary.budget).toEqual({ yen: 60000, basis: "total" });
+    if (!first.ok) return;
+    // 下書きに戻すと予算は持たない（下書きには書かせない）
+    expect("budget" in draftFromItinerary(first.itinerary)).toBe(false);
+
+    const same = buildItinerary(draft, {
+      ...options,
+      previous: first.itinerary,
+      budget: { yen: 60000, basis: "total" },
+    });
+    expect(same.ok && same.unchanged).toBe(true);
+    const changed = buildItinerary(draft, {
+      ...options,
+      previous: first.itinerary,
+      budget: { yen: 30000, basis: "perPerson" },
+    });
+    expect(changed.ok && !changed.unchanged && changed.itinerary.version).toBe(2);
+  });
+
   it("泊まりの旅は、日ごとに天気を引いて付ける", () => {
     const asked: string[] = [];
     const result = buildItinerary(twoDays(), {

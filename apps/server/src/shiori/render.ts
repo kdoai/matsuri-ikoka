@@ -138,6 +138,7 @@ function cover(view: ShioriView): Html {
       <div><dt>${icon("calendar")}日にち</dt><dd>${c.dateLabel}</dd></div>
       <div><dt>${icon("people")}だれと</dt><dd>${c.partyLabel}</dd></div>
       <div><dt>${icon("pin")}出発</dt><dd>${c.routeLabel}</dd></div>
+      ${c.budgetLabel ? html`<div><dt>${icon("yen")}予算</dt><dd>${c.budgetLabel}</dd></div>` : ""}
       <div><dt>${icon(c.weather.icon)}天気</dt><dd>${c.weather.text}</dd></div>
     </dl>
     <div class="crew">

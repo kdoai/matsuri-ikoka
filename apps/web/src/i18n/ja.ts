@@ -15,7 +15,7 @@ const consultLabels = {
   activities: "祭りのほかに楽しみたいこと",
   food: "食べたいもの",
   pace: "旅のペース",
-  budget: "予算（1人あたり）",
+  budget: "予算",
   note: "ひとこと",
 };
 const consultOptions = {
@@ -192,7 +192,7 @@ export const ja = {
       activities: "祭りのほかに、楽しみたいことはありますか？",
       food: "旅先で食べたいものはありますか？",
       pace: "旅のペースはどうしますか？",
-      budget: "予算は1人あたり、どのくらいですか？",
+      budget: "予算はどのくらいですか？",
       note: "ほかに伝えておきたいことがあれば、どうぞ",
       confirm: "この内容で、合う祭りを探しますね！",
     },
@@ -236,7 +236,8 @@ export const ja = {
     stationSource: "駅の候補：「国土数値情報（鉄道データ）」（国土交通省）を加工して作成",
     stationSourceLink: "出典のページを開く（新しいタブ）",
     station: (name: string) => `${name}駅`,
-    amountLabel: "金額で伝える（1人あたり）",
+    amountLabel: (basis: string) => `金額で伝える（${basis}）`,
+    basisLabel: "金額の数え方",
     amountUnit: "円",
     notePlaceholder: "例：子どもが歩き疲れないようにしたい",
     decide: "決定",
@@ -266,6 +267,7 @@ export const ja = {
       paren: (main: string, note: string) => `${main}（${note}）`,
       nights: (nights: number) => (nights === 0 ? "日帰り" : `${nights}泊${nights + 1}日`),
       amount: (yen: number) => `${yen.toLocaleString("ja-JP")}円`,
+      budgetBasis: { perPerson: "1人あたり", total: "全員で" },
       travel: (minutes: number) => `出発の駅から片道${minutes / 60}時間以内`,
       dietary: (needs: string[]) => `気をつけたいこと：${needs.join("・")}`,
       dietaryOptions: consultDietary,
@@ -431,6 +433,13 @@ export const ja = {
     nights: (nights: number) => (nights === 0 ? "日帰り" : `${nights}泊${nights + 1}日`),
     party: (adults: number, children: number) =>
       children > 0 ? `大人${adults}・子ども${children}` : `大人${adults}`,
+    /** 旅の予算。言われた数え方と、換算したもう一方（人数が分からなければ出さない） */
+    budget: (basis: "perPerson" | "total", yen: number, converted: number | null) => {
+      const amount = (n: number) => `${n.toLocaleString("ja-JP")}円`;
+      return basis === "perPerson"
+        ? `予算 1人あたり ${amount(yen)}まで${converted === null ? "" : `（全員で ${amount(converted)}）`}`
+        : `予算 全員で ${amount(yen)}まで${converted === null ? "" : `（1人あたり ${amount(converted)}）`}`;
+    },
     move: { train: "電車", car: "車" },
     range: (from: string, to: string) => `${from}〜${to}`,
   },
