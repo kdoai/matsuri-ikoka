@@ -11,11 +11,12 @@ const BASE = String.raw`
 @font-face { font-family: "ShioriMaru"; font-weight: 100 600; font-display: block; src: url("assets/fonts/ZenMaruGothic-Medium.woff2") format("woff2"); }
 @font-face { font-family: "ShioriMaru"; font-weight: 700 900; font-display: block; src: url("assets/fonts/ZenMaruGothic-Black.woff2") format("woff2"); }
 
-@page { size: A4; margin: 11mm 12mm 13mm;
-  @bottom-center { content: counter(page) " / " counter(pages); font-family: "ShioriMaru", sans-serif; font-size: 9pt; color: #4a4038; } }
+@page { size: A4; margin: 6mm 6mm 8mm;
+  @bottom-center { content: counter(page) " / " counter(pages); font-family: "ShioriMaru", sans-serif; font-size: 8.5pt; color: #4a4038; } }
 @page cover { margin: 7mm; @bottom-center { content: none; } }
 
-:root { color-scheme: light; --ink: #1e1a17; --sub: #4a4038; --line: #d9cfc0; --paper: #ffffff; }
+:root { color-scheme: light; --ink: #1e1a17; --sub: #4a4038; --line: #d9cfc0; --paper: #fbf4e4; --card: #fffdf7; --navy: #22396b; --gold: #c9973a; }
+html { background: var(--paper); }
 * { box-sizing: border-box; }
 html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 body { margin: 0; font-family: "ShioriMaru", "Hiragino Maru Gothic ProN", "Noto Sans JP", sans-serif; font-weight: 500;
@@ -35,15 +36,20 @@ b, strong, h1, h2, h3, h4 { font-weight: 900; }
 .keep { break-inside: avoid; }
 
 /* ---- 見出しの帯 ---- */
-.head { position: relative; display: flex; align-items: flex-end; gap: 4mm; min-height: 27mm; margin-bottom: 4mm; padding-right: 30mm; }
+.head { position: relative; display: flex; align-items: flex-end; gap: 4mm; min-height: 24mm; margin-bottom: 3mm; padding-right: 30mm; }
 .head .title { flex: 1; }
 .kick { display: flex; flex-wrap: wrap; align-items: center; gap: 1mm 2mm; }
-.shop-tag { display: inline-flex; white-space: nowrap; align-items: center; gap: 0.8mm; font-weight: 900; font-size: 9pt; color: var(--noren); letter-spacing: 0.08em; }
-.mark-mini { width: 5.2mm; height: 5.2mm; color: var(--noren); --mark-bg: #fff; }
+.shop-tag { display: inline-flex; white-space: nowrap; align-items: center; gap: 0.8mm; font-weight: 900; font-size: 9pt; color: var(--navy); letter-spacing: 0.08em; }
+.mark-mini { width: 5.2mm; height: 5.2mm; color: var(--navy); --mark-bg: #fff; }
 .head .kicker { display: inline-block; background: var(--accent); color: var(--on-accent); font-weight: 900; font-size: 9.5pt; letter-spacing: 0.08em; padding: 0.6mm 3mm; border-radius: 99px; }
-.head h2 { font-size: 22pt; line-height: 1.2; color: var(--ink); margin-top: 1mm; }
-.head h2 .en { display: block; font-size: 10pt; margin-top: 0.5mm; }
-.head .wave { display: block; width: 100%; height: 4mm; margin-top: 2mm; color: var(--accent); --wave: var(--accent); opacity: 0.55; }
+.banner { display: flex; align-items: center; margin-top: 1.5mm; font-size: 20pt; line-height: 1.25; }
+.banner .medal { position: relative; z-index: 1; flex: none; width: 15mm; height: 15mm; margin-right: -4mm; border-radius: 50%; background: var(--card);
+  border: 0.8mm solid var(--gold); box-shadow: 0 0 0 0.6mm var(--navy); display: flex; align-items: center; justify-content: center; }
+.banner .medal svg { width: 10.5mm; height: 10.5mm; color: var(--ink); --mark-bg: #fff; --crest: var(--accent); }
+.banner .txt { background: var(--navy); color: #fff8ec; padding: 1.4mm 11mm 1.6mm 8mm; clip-path: polygon(0 0, 100% 0, calc(100% - 4mm) 50%, 100% 100%, 0 100%); }
+.banner .cloud { flex: none; width: 22mm; height: 7mm; margin-left: 2mm; color: var(--gold); }
+.banner .fest-name, .banner .day-no { font-size: inherit; color: inherit; }
+.head-en { display: block; margin: 1mm 0 0 13mm; font-size: 10pt; }
 .head .staff { position: absolute; right: -2mm; bottom: -3mm; height: 33mm; width: auto; }
 .bubble { position: relative; display: inline-flex; align-items: center; gap: 2mm; margin-top: 2mm; background: #fff; border: 0.5mm solid var(--ink);
   border-radius: 6mm; padding: 1mm 3.5mm 1mm 1mm; font-size: 9.5pt; line-height: 1.45; }
@@ -53,7 +59,7 @@ b, strong, h1, h2, h3, h4 { font-weight: 900; }
 
 /* ---- 箱とチップ ---- */
 .box { background: var(--soft); border-radius: 4mm; padding: 3.5mm 4.5mm; margin-top: 4mm; }
-.box.line { background: #fff; border: 0.6mm solid var(--line); }
+.box.line { background: var(--card); border: 0.6mm solid var(--line); }
 .box.alert { background: #fff; border: 0.8mm solid var(--accent); }
 .box h3 { display: flex; align-items: center; gap: 1.8mm; font-size: 12.5pt; color: var(--accent); margin-bottom: 1.5mm; }
 .box h3 .ic, .section-title .ic { width: 5mm; height: 5mm; }
@@ -63,46 +69,103 @@ b, strong, h1, h2, h3, h4 { font-weight: 900; }
 .dots li { position: relative; padding-left: 4.2mm; margin: 0.6mm 0; }
 .dots li::before { content: ""; position: absolute; left: 0.6mm; top: 0.62em; width: 1.8mm; height: 1.8mm; border-radius: 50%; background: var(--accent); }
 .unknown { display: inline-block; border: 0.4mm dashed var(--sub); border-radius: 1.5mm; padding: 0 1.8mm; color: var(--sub); font-weight: 900; }
+.spot { width: 1.6em; height: 1.6em; flex: none; color: var(--ink); }
+.with-spot { display: inline-flex; align-items: center; gap: 2mm; }
+.with-spot .spot { width: 11mm; height: 11mm; }
+.section-title .spot, .box h3 .spot { width: 8mm; height: 8mm; }
 .tape { position: absolute; width: 30mm; height: 9mm; color: var(--ink); --tape: var(--c2); }
 
 /* ---- 表紙 ---- */
-.cover { page: cover; height: 283mm; overflow: hidden; border-radius: 6mm; background: var(--cover-bg); color: var(--cover-ink);
-  --ink-on: var(--cover-ink); padding: 14mm 13mm 0; display: flex; flex-direction: column; }
-.cover { padding-top: 32mm; }
-.noren { position: absolute; left: 12mm; right: 12mm; top: 0; height: 27mm; display: flex; gap: 1.4mm; z-index: 1; }
-.noren > span { flex: 1; display: flex; align-items: center; justify-content: center; background: var(--noren); color: #fff8ec;
-  border: 0.5mm solid rgba(255, 248, 236, 0.35); border-top: 0; border-radius: 0 0 2.5mm 2.5mm; writing-mode: vertical-rl;
-  font-weight: 900; font-size: 10pt; letter-spacing: 0.2em; padding: 2.5mm 0 3mm; box-shadow: inset 0 -2.2mm 0 rgba(0, 0, 0, 0.16); }
-.noren > .mid svg { width: 17mm; height: 17mm; color: var(--noren); --mark-bg: #fff8ec; }
-.cover .season { position: absolute; width: 70mm; height: 70mm; color: var(--cover-ink); opacity: 0.9; }
-.cover .season.a { right: -12mm; top: 30mm; }
-.cover .brand { position: relative; font-weight: 900; letter-spacing: 0.2em; font-size: 10pt; margin-top: 4mm; }
-.cover .length { position: relative; display: inline-block; align-self: flex-start; margin-top: 3mm; background: var(--accent); color: var(--on-accent);
-  font-weight: 900; font-size: 13pt; padding: 1mm 5mm; border-radius: 99px; border: 0.6mm solid var(--cover-ink); }
-.cover h1 { position: relative; font-size: 34pt; line-height: 1.22; margin-top: 4mm; max-width: 108mm; overflow-wrap: anywhere; }
-.cover h1.long { font-size: 27pt; }
-.cover .motif { position: absolute; right: 8mm; top: 70mm; width: 86mm; height: 86mm; color: #1e1a17; }
-.cover .motif-bg { position: absolute; right: 2mm; top: 64mm; width: 98mm; height: 98mm; border-radius: 50%; background: var(--cover-ink); opacity: 0.12; }
-.cover .festival { position: relative; margin-top: 6mm; max-width: 100mm; }
-.cover .festival .label { font-size: 10pt; font-weight: 900; opacity: 0.9; }
+.cover, .back { page: cover; height: 283mm; overflow: hidden; border-radius: 3mm; background: var(--paper); color: var(--ink);
+  border: 1.2mm double var(--navy); padding: 9mm 11mm 0; display: flex; flex-direction: column; z-index: 1; }
+.corners { position: absolute; inset: 0; pointer-events: none; }
+.corners svg { position: absolute; width: 16mm; height: 16mm; }
+.corners .tl { left: 0; top: 0; }
+.corners .tr { right: 0; top: 0; transform: scaleX(-1); }
+.corners .bl { left: 0; bottom: 0; transform: scaleY(-1); }
+.corners .br { right: 0; bottom: 0; transform: scale(-1, -1); }
+.cover .cluster, .back .cluster { position: absolute; left: 2mm; top: 2mm; width: 50mm; height: 50mm; color: #3b2a1c; z-index: 1; }
+.cover .season { position: absolute; width: 40mm; height: 40mm; color: var(--ink); }
+.cover .season.a { right: 2mm; top: 2mm; }
+.ribbon { position: relative; z-index: 2; align-self: center; display: inline-flex; align-items: center; gap: 2mm; background: var(--navy); color: #fff8ec;
+  border: 0.8mm solid var(--gold); outline: 0.6mm solid var(--navy); border-radius: 2.5mm; padding: 1.6mm 8mm; font-weight: 900; }
+.ribbon .mark { width: 9mm; height: 9mm; color: var(--navy); --mark-bg: #fff8ec; }
+.ribbon .shop { font-size: 10pt; letter-spacing: 0.15em; border-right: 0.4mm solid rgba(255, 248, 236, 0.5); padding-right: 2.5mm; }
+.ribbon .name { font-size: 20pt; letter-spacing: 0.2em; }
+.cover .length { position: relative; z-index: 2; align-self: center; margin-top: 3mm; background: var(--accent); color: var(--on-accent);
+  font-weight: 900; font-size: 11pt; padding: 0.6mm 5mm; border-radius: 99px; }
+.cover h1 { position: relative; z-index: 2; align-self: center; text-align: center; font-size: 30pt; line-height: 1.25; margin-top: 2.5mm; max-width: 130mm; overflow-wrap: anywhere; }
+.cover h1.long { font-size: 24pt; }
+.cover .verified { position: absolute; z-index: 3; right: 9mm; top: 62mm; width: 32mm; text-align: center; color: #b8302a; font-weight: 900; font-size: 7.5pt; line-height: 1.3;
+  background: var(--card); border: 0.8mm solid #b8302a; border-radius: 50%; aspect-ratio: 1; display: flex; flex-direction: column; justify-content: center; padding: 3mm; transform: rotate(-8deg); }
+.cover .verified .ic { width: 7mm; height: 7mm; margin: 0 auto 0.5mm; color: #b8302a; --crest: #b8302a; }
+.cover .scene { position: relative; flex: none; height: 80mm; margin: 4mm -11mm 0; overflow: hidden;
+  background: linear-gradient(180deg, var(--cover-bg) 0%, var(--cover-bg) 45%, var(--soft) 100%); }
+.cover.tone-day .scene { background: linear-gradient(180deg, #e7f0fa 0%, var(--paper) 100%); }
+.cover .scene .motif { position: absolute; left: 50%; top: 1mm; width: 50mm; height: 50mm; margin-left: -25mm; color: #1e1a17; }
+.cover .scene .town { position: absolute; left: 0; bottom: 0; width: 100%; height: 58mm; }
+.cover .needs-check { position: relative; margin: 3mm 0 0; padding: 2mm 3mm; border: 0.6mm solid #b8302a; border-radius: 2mm; background: var(--card); color: #b8302a; font-weight: 900; font-size: 9pt; line-height: 1.45; }
+.facts { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 3mm; border-top: 0.5mm solid var(--gold); border-bottom: 0.5mm solid var(--gold); padding: 2mm 0; }
+.facts > div { padding: 0 2.5mm; border-left: 0.4mm dashed var(--gold); }
+.facts > div:first-child { border-left: 0; }
+.facts .wide { grid-column: 1 / -1; border-left: 0; border-top: 0.4mm dashed var(--gold); margin-top: 1.5mm; padding-top: 1.5mm; display: flex; gap: 3mm; align-items: baseline; }
+.facts dt { font-size: 9pt; color: var(--sub); display: flex; align-items: center; gap: 1.2mm; }
+.facts dt .ic { width: 5mm; height: 5mm; color: var(--gold); }
+.facts dd { font-weight: 900; font-size: 10.5pt; line-height: 1.35; }
+.cover .festival { position: relative; margin-top: 6mm; background: var(--card); border: 0.6mm solid var(--navy); border-radius: 4mm; padding: 6mm 5mm 3mm; }
+.cover .festival .label { position: absolute; left: 4mm; top: -4mm; display: inline-flex; align-items: center; gap: 1.5mm; background: var(--navy); color: #fff8ec;
+  font-size: 10.5pt; font-weight: 900; padding: 0.6mm 6mm 0.6mm 2mm; clip-path: polygon(0 0, 100% 0, calc(100% - 3mm) 50%, 100% 100%, 0 100%); }
+.cover .festival .fan { width: 7mm; height: 7mm; color: #1e1a17; }
 .cover .festival .name { font-size: 19pt; font-weight: 900; line-height: 1.3; }
-.cover .festival .en { color: inherit; opacity: 0.85; display: block; }
-.cover .festival .place { font-size: 10.5pt; margin-top: 1mm; }
-.ticket { position: relative; margin-top: auto; margin-bottom: 4mm; background: #fffaf0; color: #1e1a17; border: 0.6mm solid #1e1a17; border-radius: 4mm;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 2mm 6mm; padding: 4mm 6mm; width: 118mm; }
-.ticket dt { font-size: 9pt; color: #4a4038; display: flex; align-items: center; gap: 1.2mm; }
-.ticket dd { font-weight: 900; font-size: 11.5pt; line-height: 1.35; }
-.ticket .wide { grid-column: 1 / -1; }
-.cover .verified { position: absolute; right: 12mm; bottom: 74mm; width: 46mm; text-align: center; color: #b8302a; font-weight: 900; font-size: 8.5pt; line-height: 1.35;
-  background: #fffaf0; border: 0.8mm solid #b8302a; border-radius: 50%; aspect-ratio: 1; display: flex; flex-direction: column; justify-content: center; padding: 4mm; transform: rotate(-8deg); }
-.cover .verified .ic { width: 9mm; height: 9mm; margin: 0 auto 1mm; color: #b8302a; --crest: #b8302a; }
-.cover .needs-check { position: relative; margin: 3mm 0 0; padding: 2mm 3mm; border: 0.6mm solid #b8302a; border-radius: 2mm; background: #fffaf0; color: #b8302a; font-weight: 900; font-size: 9pt; line-height: 1.45; }
-.cover .crew { position: relative; display: flex; align-items: flex-end; gap: 2mm; height: 48mm; margin: 0 -4mm; }
-.cover .crew img.main, .cover .crew img.waver { height: 44mm; width: auto; }
-.cover .crew img.main { height: 48mm; }
-.cover .crew .bubble { color: #1e1a17; margin-bottom: 20mm; max-width: 92mm; }
-.cover .highlights { position: relative; margin-top: 4mm; background: #fffaf0; color: #1e1a17; border-radius: 4mm; padding: 3mm 4.5mm; max-width: 112mm; border: 0.6mm solid #1e1a17; }
-.cover .highlights h3 { font-size: 11pt; color: var(--accent); }
+.cover .festival .en { display: block; font-size: 10pt; }
+.cover .festival .place { display: flex; align-items: center; gap: 1mm; font-size: 10.5pt; margin-top: 0.5mm; }
+.cover-notes { position: relative; display: grid; grid-template-columns: 1.2fr 1fr; gap: 4mm; margin-top: 3mm; }
+.cover-notes > div { background: var(--card); border: 0.5mm solid var(--line); border-radius: 3mm; padding: 2.5mm 4mm; }
+.cover-notes h3 { display: flex; align-items: center; gap: 1.5mm; font-size: 11.5pt; color: var(--navy); margin-bottom: 1mm; }
+.cover-notes .spot { width: 7mm; height: 7mm; }
+.cover-notes .ic { width: 5mm; height: 5mm; color: var(--gold); }
+.cover-notes ol li { display: flex; gap: 2mm; align-items: flex-start; padding: 0.8mm 0; border-bottom: 0.3mm dashed var(--line); line-height: 1.4; }
+.cover-notes ol li:last-child { border-bottom: 0; }
+.cover-notes .num { flex: none; width: 5.6mm; height: 5.6mm; border-radius: 50%; background: var(--gold); color: #fff; font-weight: 900; font-size: 9pt;
+  display: flex; align-items: center; justify-content: center; margin-top: 0.3mm; }
+.cover .cover-wave, .back .town { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; }
+.cover .cover-wave { height: 13mm; --wave: var(--navy); opacity: 0.45; }
+.cover .crew { position: relative; display: flex; align-items: flex-end; justify-content: space-between; gap: 2mm; margin-top: auto; height: 42mm; }
+.cover .crew img.main, .cover .crew img.waver { height: 40mm; width: auto; }
+.cover .crew .bubble { color: #1e1a17; margin-bottom: 18mm; max-width: 100mm; }
+
+/* ---- 裏表紙 ---- */
+.back { align-items: center; text-align: center; padding-top: 22mm; }
+.back .thanks { margin-top: 12mm; font-size: 30pt; font-weight: 900; line-height: 1.3; color: var(--navy); }
+.back .crew { display: flex; gap: 6mm; align-items: flex-end; margin-top: 8mm; }
+.back .crew img { height: 52mm; width: auto; }
+.back .trip { margin-top: 6mm; font-weight: 900; font-size: 13pt; }
+.back .back-band { margin-top: 8mm; text-align: left; max-width: 150mm; }
+.back .how { margin-top: 5mm; font-size: 9pt; color: var(--sub); max-width: 150mm; }
+.back .town { height: 58mm; }
+.back-band { display: flex; align-items: center; gap: 5mm; margin-top: 5mm; padding: 3mm 5mm; border-top: 0.5mm solid var(--gold); border-bottom: 0.5mm solid var(--gold); font-size: 9.5pt; }
+.back-band .seal { flex: none; width: 24mm; height: 24mm; border: 0.9mm solid #b8302a; border-radius: 50%; color: #b8302a; font-weight: 900; font-size: 9pt;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.15; transform: rotate(-6deg); }
+.back-band .seal svg { width: 10mm; height: 10mm; color: #b8302a; --mark-bg: transparent; }
+.back-band .seal .sub { font-size: 6pt; }
+
+/* ---- 旅の思い出 ---- */
+.frames { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; margin-top: 2mm; }
+.frames .photo { height: 92mm; border: 0.8mm dashed var(--navy); border-radius: 3mm; background: var(--card); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 2mm; font-weight: 900; color: var(--sub); }
+.frames .photo svg { width: 14mm; height: 14mm; }
+
+/* ---- 枠：どのページも、紙の地に紺の二重の枠と四隅の青海波。印刷では1ページの高さにそろえる ---- */
+@media print {
+  .sheet:not(.cover):not(.back) { min-height: 283mm; border: 1.2mm double var(--navy); border-radius: 3mm; background: var(--paper); padding: 6mm 8mm 4mm; }
+  .sheet .corners svg { width: 12mm; height: 12mm; }
+}
+.two-col { position: relative; }
+.seal.mini { position: absolute; right: 5mm; top: -7mm; background: var(--paper); width: 17mm; height: 17mm; border: 0.7mm solid #b8302a; border-radius: 50%; color: #b8302a; font-weight: 900;
+  font-size: 6.5pt; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; transform: rotate(-8deg); }
+.seal.mini svg { width: 6mm; height: 6mm; color: #b8302a; --mark-bg: transparent; }
+.seal.mini .sub { font-size: 5pt; }
+}
 
 /* ---- 祭りのページ ---- */
 .fest-name { font-size: 24pt; line-height: 1.25; }
@@ -120,21 +183,34 @@ b, strong, h1, h2, h3, h4 { font-weight: 900; }
 .day-head { display: flex; align-items: center; gap: 3mm; flex-wrap: wrap; }
 .day-no { font-size: 26pt; font-weight: 900; color: var(--accent); line-height: 1; }
 .weather { display: inline-flex; align-items: center; gap: 1.5mm; background: var(--soft); border-radius: 99px; padding: 0.8mm 3mm; font-size: 9.5pt; }
-.timeline { position: relative; margin-top: 3mm; }
-.timeline::before { content: ""; position: absolute; left: 25mm; top: 2mm; bottom: 2mm; border-left: 0.8mm dotted var(--accent); }
-.step { position: relative; display: grid; grid-template-columns: 21mm 8mm 1fr; gap: 0 2mm; padding: 1.6mm 0; break-inside: avoid; }
-.step .time { font-weight: 900; font-size: 10pt; text-align: right; padding-top: 0.6mm; font-variant-numeric: tabular-nums; line-height: 1.3; }
-.step .dot { position: relative; z-index: 1; width: 8mm; height: 8mm; border-radius: 50%; background: #fff; border: 0.6mm solid var(--accent); display: flex; align-items: center; justify-content: center; }
-.step .dot .ic { width: 4.6mm; height: 4.6mm; }
-.step .body { padding: 0.4mm 2mm 1.2mm; }
+/* すごろく：ふりだしからあがりまで、マス（予定）を道でつなぐ。マスの色は種類の目印で、種類は文字でも書く */
+.timeline { position: relative; margin-top: 3mm; --g-move: #dbe8f7; --g-meal: #fde3cf; --g-fest: var(--accent); --g-rest: #dcefd8; --g-see: #f6ecc4; }
+.timeline::before { content: ""; position: absolute; left: 25.7mm; top: 3mm; bottom: 3mm; width: 3.4mm; border-radius: 2mm;
+  background: repeating-linear-gradient(180deg, var(--soft) 0 3mm, #fff 3mm 4.4mm); border: 0.4mm solid var(--line); }
+.step { position: relative; display: grid; grid-template-columns: 19mm 12mm 1fr; gap: 0 2.4mm; padding: 1.4mm 0; break-inside: avoid; align-items: start; }
+.step .time { font-weight: 900; font-size: 10pt; text-align: right; padding-top: 2.2mm; font-variant-numeric: tabular-nums; line-height: 1.3; }
+.step .dot { position: relative; z-index: 1; width: 12mm; height: 12mm; border-radius: 3mm; background: var(--g, #fff); border: 0.6mm solid var(--ink);
+  display: flex; align-items: center; justify-content: center; box-shadow: 0.8mm 0.8mm 0 var(--ink); }
+.step .dot .ic { width: 6.4mm; height: 6.4mm; color: var(--ink); }
+.step .masu { position: absolute; top: -1.8mm; left: -1.8mm; min-width: 4.8mm; height: 4.8mm; border-radius: 99px; background: #fff; border: 0.4mm solid var(--ink);
+  font-size: 7.5pt; line-height: 4mm; text-align: center; padding: 0 0.6mm; }
+.step .body { padding: 1.2mm 3mm 1.6mm; border: 0.4mm solid var(--line); border-left: 1.6mm solid var(--g, var(--line)); border-radius: 2.5mm; background: #fff; }
 .step .name { font-weight: 900; font-size: 11.5pt; line-height: 1.4; }
-.step .kind { display: inline-block; font-size: 8.5pt; color: var(--sub); border: 0.3mm solid var(--line); border-radius: 99px; padding: 0 1.8mm; margin-right: 1.5mm; vertical-align: 0.15em; }
+.step .kind { display: inline-block; font-size: 8.5pt; color: var(--ink); background: var(--g, #fff); border: 0.3mm solid var(--ink); border-radius: 99px; padding: 0 1.8mm; margin-right: 1.5mm; vertical-align: 0.15em; }
 .step .details { font-size: 9.5pt; color: var(--sub); }
-.step.festival .body { background: var(--soft); border: 0.7mm solid var(--accent); border-radius: 3mm; padding: 1.6mm 3mm 2mm; }
-.step.festival .dot { background: var(--accent); }
-.step.festival .dot .ic { color: var(--on-accent); }
-.endpoint { display: flex; align-items: center; gap: 2mm; font-weight: 900; margin: 1mm 0 1mm 21.5mm; }
+.g-move { --g: var(--g-move); }
+.g-meal { --g: var(--g-meal); }
+.g-rest { --g: var(--g-rest); }
+.g-see { --g: var(--g-see); }
+.g-fest { --g: var(--g-fest); }
+.step.g-fest .dot .ic { color: var(--on-accent); }
+.step.g-fest .kind { color: var(--on-accent); }
+.step.festival .body { background: var(--soft); border: 0.7mm solid var(--accent); border-left-width: 1.6mm; padding: 1.6mm 3mm 2mm; }
+.step.festival .dot { width: 13mm; height: 13mm; border-radius: 50%; }
+.endpoint { position: relative; z-index: 1; display: flex; align-items: center; gap: 2mm; font-weight: 900; margin: 1mm 0 1mm 19.5mm; }
 .endpoint .ic { width: 6mm; height: 6mm; }
+.endpoint .koma { display: inline-block; white-space: nowrap; background: var(--ink); color: #fff; border-radius: 1.5mm; padding: 0.4mm 2mm; font-size: 9pt; letter-spacing: 0.1em; }
+.endpoint.goal .koma { background: var(--accent); color: var(--on-accent); }
 .stay { display: flex; gap: 3mm; align-items: center; }
 .stay .ic { width: 9mm; height: 9mm; }
 .stay .area { font-size: 13pt; font-weight: 900; }
@@ -164,15 +240,10 @@ b, strong, h1, h2, h3, h4 { font-weight: 900; }
 .stop .sub .ic { width: 3.6mm; height: 3.6mm; }
 
 /* ---- 祭りの日とそうでない日 ---- */
-.festival-day .day-motif { width: 13mm; height: 13mm; color: var(--ink); }
 .festival-day .day-bunting { display: block; width: 100%; height: 11mm; margin: 0 0 2mm; color: var(--ink); }
 .festival-day .head .kicker { background: var(--accent); }
-.festival-day .day-no { color: var(--accent); }
 .calm-day .head .kicker { background: #fff; color: var(--ink); border: 0.5mm solid var(--ink); }
-.calm-day .day-no { color: var(--ink); }
-.calm-day .timeline::before { border-left-style: dashed; border-left-color: var(--sub); }
-.calm-day .step .dot { border-color: var(--sub); }
-.calm-day .step .dot .ic { color: var(--ink); }
+.calm-day .step.g-fest .dot .ic { color: var(--on-accent); }
 
 /* ---- はじめての方へ ---- */
 .guide { width: 100%; border-collapse: collapse; margin-top: 3mm; }
@@ -186,9 +257,9 @@ b, strong, h1, h2, h3, h4 { font-weight: 900; }
 /* ---- 持ち物 ---- */
 .checks { columns: 2; column-gap: 6mm; }
 .checks .group { break-inside: avoid; margin-bottom: 4mm; }
-.checks h3 { font-size: 12pt; color: var(--accent); }
+.checks h3 { display: flex; align-items: center; gap: 1.5mm; font-size: 12pt; color: var(--accent); }
 .checks .note { font-size: 8.5pt; color: var(--sub); }
-.checks li { display: flex; gap: 2mm; align-items: flex-start; margin: 1.2mm 0; }
+.checks li { display: flex; gap: 2mm; align-items: flex-start; margin: 0.8mm 0; }
 .checks li::before { content: ""; flex: none; width: 4.4mm; height: 4.4mm; margin-top: 0.3em; border: 0.6mm solid var(--ink); border-radius: 1mm; background: #fff; }
 
 /* ---- スタンプとメモ ---- */
@@ -228,29 +299,38 @@ b, strong, h1, h2, h3, h4 { font-weight: 900; }
   body { background: #e9e1d4; padding: 0 0 12mm; }
   .toolbar { display: flex; justify-content: center; gap: 12px; padding: 14px 16px; position: sticky; top: 0; z-index: 5; background: #e9e1d4; }
   .toolbar a { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: var(--on-accent); font-weight: 900; text-decoration: none; padding: 10px 20px; border-radius: 99px; font-size: 16px; }
-  .sheet { width: 210mm; max-width: calc(100% - 24px); margin: 0 auto 10mm; background: var(--paper); padding: 12mm; border-radius: 4mm; box-shadow: 0 2px 10px rgba(60, 40, 20, 0.18); }
-  .cover { min-height: 283mm; height: auto; padding-bottom: 0; padding-top: 32mm; }
-  .sheet.cover { background: var(--cover-bg); }
+  .sheet { width: 210mm; max-width: calc(100% - 24px); margin: 0 auto 10mm; background: var(--paper); padding: 12mm; border-radius: 4mm;
+    border: 1.2mm double var(--navy); box-shadow: 0 2px 10px rgba(60, 40, 20, 0.18); }
+  .cover, .back { min-height: 297mm; height: auto; padding: 10mm 12mm 0; }
 }
 @media screen and (max-width: 820px) {
   body { font-size: 16px; }
   .sheet { padding: 16px; border-radius: 12px; }
-  .cover { min-height: 0; }
-  .cover h1 { font-size: 28px; }
-  .cover .motif, .cover .motif-bg { position: relative; right: auto; top: auto; width: 150px; height: 150px; margin: 8px auto 0; display: block; }
-  .cover .motif-bg { display: none; }
-  .cover .verified { position: relative; right: auto; bottom: auto; margin: 8px 0 0 auto; width: 150px; }
-  .ticket { width: auto; grid-template-columns: 1fr; }
+  .cover, .back { min-height: 0; padding: 12px 12px 0; }
+  .cover .cluster, .back .cluster, .cover .season.a { display: none; }
+  .ribbon .name { font-size: 20px; }
+  .cover h1 { font-size: 26px; }
+  .cover .verified { position: relative; right: auto; top: auto; margin: 8px auto 0; width: 120px; }
+  .cover-notes { grid-template-columns: 1fr; }
+  .cover .scene { height: 46vw; margin: 12px -12px 0; }
+  .cover .scene .town { height: 36vw; }
+  .cover .scene .motif { width: 30vw; height: 30vw; right: 8vw; }
+  .facts { grid-template-columns: 1fr 1fr; gap: 8px 0; }
+  .facts > div:nth-child(3) { border-left: 0; }
   .head { padding-right: 90px; }
   .head .staff { height: 96px; }
-  .noren { left: 8px; right: 8px; height: 84px; }
-  .noren > span { font-size: 12px; }
-  .noren > .mid svg { width: 48px; height: 48px; }
-  .cover { padding-top: 100px; }
+  .banner { font-size: 20px; }
+  .banner .cloud { display: none; }
   .shop-stamp { right: 104px; }
-  .cover .crew { flex-wrap: wrap; height: auto; margin: 12px 0 0; }
-  .cover .crew img.main, .cover .crew img.waver { height: 120px; }
+  .cover .crew { flex-wrap: wrap; height: auto; margin: 16px 0 24px; }
+  .cover .crew img.main, .cover .crew img.waver { height: 110px; }
   .cover .crew .bubble { order: -1; flex-basis: 100%; max-width: none; margin-bottom: 4px; }
+  .back .thanks { font-size: 26px; }
+  .back .crew img { height: 120px; }
+  .back .back-band { flex-direction: column; text-align: center; }
+  .back .town { position: relative; height: 30vw; margin-top: 12px; }
+  .frames { grid-template-columns: 1fr; }
+  .frames .photo { height: 160px; }
   .cards, .two, .stamps { grid-template-columns: 1fr; }
   .checks { columns: 1; }
   .overview li { grid-template-columns: 40px 1fr; }
@@ -260,7 +340,7 @@ b, strong, h1, h2, h3, h4 { font-weight: 900; }
 
 /**
  * 画面で見るときの動き。ここに書いた animation は、終わると BASE の姿（最後の状態）になる。
- * 長く続くもの（のれん・手を振る）は、止めたときの姿も BASE と同じになるよう、0% を BASE にする
+ * 長く続くもの（提灯が揺れる・手を振る）は、止めたときの姿も BASE と同じになるよう、0% を BASE にする
  */
 const MOTION = String.raw`
 @media screen and (prefers-reduced-motion: no-preference) {
@@ -270,10 +350,8 @@ const MOTION = String.raw`
   @supports (animation-timeline: view()) {
     .sheet:not(.cover) { animation-delay: 0s; animation-timeline: view(); animation-range: entry 0% entry 55%; }
   }
-  /* 表紙：のれんが風で揺れ、ひよこが手を振る */
-  .noren > span { transform-origin: top center; animation: shiori-sway 3.6s ease-in-out infinite; }
-  .noren > span:nth-child(2) { animation-delay: -1.2s; }
-  .noren > span:nth-child(3) { animation-delay: -2.4s; }
+  /* 表紙：提灯が風で揺れ、ひよこが手を振る */
+  .cover .cluster, .back .cluster { transform-origin: 30% 0; animation: shiori-swing 4s ease-in-out infinite; }
   .cover .waver { transform-origin: 50% 92%; animation: shiori-wave 1.4s ease-in-out 0.8s infinite; }
   .bubble { transform-origin: 6mm 50%; animation: shiori-pop 0.5s 0.5s cubic-bezier(0.3, 1.5, 0.5, 1) both; }
   /* スタンプを押す：上から落ちてきて、紙に押される */
@@ -286,7 +364,7 @@ const MOTION = String.raw`
   .timeline::before { transform-origin: top; animation: shiori-grow 1.2s 0.3s ease-out both; }
 }
 @keyframes shiori-turn { from { transform: perspective(2200px) rotateY(-75deg); opacity: 0; } to { transform: none; opacity: 1; } }
-@keyframes shiori-sway { 0%, 100% { transform: none; } 30% { transform: skewX(4deg); } 70% { transform: skewX(-3deg); } }
+@keyframes shiori-swing { 0%, 100% { transform: none; } 30% { transform: rotate(2.5deg); } 70% { transform: rotate(-2deg); } }
 @keyframes shiori-wave { 0%, 100% { transform: none; } 25% { transform: rotate(-7deg); } 75% { transform: rotate(6deg); } }
 @keyframes shiori-pop { from { transform: scale(0.4); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes shiori-press-cover { from { transform: translateY(-30mm) scale(1.6) rotate(-20deg); opacity: 0; } 70% { opacity: 1; } to { transform: rotate(-8deg); opacity: 1; } }
@@ -309,7 +387,6 @@ export function shioriStyle(palette: Palette): string {
     `--s1: ${palette.s1}`,
     `--s2: ${palette.s2}`,
     `--s3: ${palette.s3}`,
-    "--noren: #213C72",
   ].join("; ");
   return `${BASE}\n:root { ${vars}; }\n${MOTION}`;
 }

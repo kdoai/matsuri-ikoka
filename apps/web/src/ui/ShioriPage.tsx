@@ -23,6 +23,7 @@ import { mainFestival, shioriReady, usedSources } from "../state/selectors";
 import { buttonPrimary, buttonSecondary, ConfidenceBadge, PrintedUrl, timeRange } from "./common";
 import { weatherText } from "./ItineraryPanel";
 import { shioriShareUrl, sourceLabel } from "./links";
+import { Portrait, type Speaker } from "./Portraits";
 import { FestivalStamp } from "./Waiting";
 
 // 旅のしおり。A4 縦 1〜2 枚に収まる紙面で、印刷しても読める。
@@ -30,16 +31,74 @@ import { FestivalStamp } from "./Waiting";
 
 const MapView = lazy(() => import("./MapView"));
 
+// 紙のしおり（apps/server/src/shiori）と同じ、手で描いた SVG の絵（assets/shiori/svg）。
+// 絵は飾りで読み上げない。情報はすべて文字でも書く
+const ART = import.meta.glob<string>("../../../../assets/shiori/svg/*.svg", {
+  query: "?url",
+  import: "default",
+  eager: true,
+});
+
+function Art({ name, className }: { name: string; className: string }) {
+  const url = ART[`../../../../assets/shiori/svg/${name}.svg`];
+  return url === undefined ? null : (
+    <img src={url} alt="" aria-hidden="true" draggable={false} className={className} />
+  );
+}
+
+type PlanItem = Itinerary["days"][number]["items"][number];
+
+const ITEM_ART: Record<string, string> = {
+  free: "icon-sun",
+  sightseeing: "icon-sightseeing",
+  meal: "icon-meal",
+  rest: "icon-rest",
+  festival_prep: "icon-prep",
+  festival: "icon-festival",
+};
+
+/** すごろくのマスの色（移動・食事・祭り・休憩・見る）。種類は名前と理由の文字でも分かる */
+const ITEM_TONE: Record<string, string> = {
+  move: "bg-[#dbe8f7]",
+  meal: "bg-[#fde3cf]",
+  festival: "bg-[#f8d9cf]",
+  festival_prep: "bg-[#f8d9cf]",
+  rest: "bg-[#dcefd8]",
+  free: "bg-[#dcefd8]",
+};
+
+/** 予定の種類ごとの絵の印（紙のしおりと同じ。移動は手段の印） */
+function itemArt(item: PlanItem): string {
+  if (item.type === "move") return `icon-${item.move?.means ?? "walk"}`;
+  return ITEM_ART[item.type] ?? "icon-pin";
+}
+
+/** スタッフの顔の絵つきのひとこと */
+function Say({ speaker, children }: { speaker: Speaker; children: ReactNode }) {
+  return (
+    <p className="mb-2 inline-flex items-center gap-2 rounded-full border-2 border-ink bg-white py-0.5 pr-3 pl-0.5 text-sm print:hidden">
+      <Portrait speaker={speaker} className="size-8 border-2 shadow-none ring-0" />
+      {children}
+    </p>
+  );
+}
+
 function Section({
   id,
   title,
   children,
   className = "",
+  art,
+  say,
 }: {
   id: string;
   title: ReactNode;
   children: ReactNode;
   className?: string;
+  /** 見出しに添える小さな絵（assets/shiori/svg の名前） */
+  art?: string;
+  /** スタッフのひとこと */
+  say?: { speaker: Speaker; text: string };
 }) {
   return (
     <section
@@ -49,10 +108,12 @@ function Section({
     >
       <h2
         id={`shiori-${id}`}
-        className="mb-2 font-bold text-ai-800 text-lg print:mb-1 print:text-[11pt]"
+        className="mb-2 flex items-center gap-2 font-bold text-ai-800 text-lg print:mb-1 print:text-[11pt]"
       >
-        {title}
+        {art === undefined ? null : <Art name={art} className="size-8 shrink-0 print:size-5" />}
+        <span>{title}</span>
       </h2>
+      {say === undefined ? null : <Say speaker={say.speaker}>{say.text}</Say>}
       {children}
     </section>
   );
@@ -361,6 +422,18 @@ export function ShioriPage() {
             {t.shiori.print}
           </button>
           {/* 確定したしおりは、サーバーで A4 の PDF にして渡す（店のしおりと同じ見た目） */}
+          {/* 店のしおりと同じ、絵の入った冊子の見た目（印刷すると冊子になる） */}
+          {shareUrl === null ? null : (
+            <a
+              href={shareUrl}
+              target="_blank"
+              rel="noopener"
+              className={`${buttonPrimary} inline-flex items-center`}
+              data-testid="shiori-booklet"
+            >
+              {t.shiori.openBooklet}
+            </a>
+          )}
           {shareUrl === null ? null : (
             <a
               href={`${shareUrl}.pdf`}
@@ -379,13 +452,24 @@ export function ShioriPage() {
         aria-labelledby="shiori-title"
         className="mx-auto max-w-[210mm] space-y-4 bg-kinari-50 px-5 py-6 text-ink shadow-2xl sm:px-10 print:max-w-none print:space-y-3 print:bg-white print:p-0 print:shadow-none"
       >
-        {/* 1. 表紙 */}
+        {/* 1. 表紙：提灯の列と麻の葉、祭りの種類の絵 */}
         <header
-          className="print-avoid-break flex items-start justify-between gap-4"
+          className="print-avoid-break relative flex items-start justify-between gap-4 overflow-hidden rounded-card bg-ai-800 px-4 pt-14 pb-4 text-kinari-50 print:pt-9 print:pb-2"
           data-testid="shiori-cover"
         >
-          <div className="min-w-0">
-            <p className="font-bold text-shu-700 tracking-widest">{t.shiori.title}</p>
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-12 bg-[length:auto_100%] bg-repeat-x print:h-8"
+            style={{
+              backgroundImage: `url("${ART["../../../../assets/shiori/svg/deco-lanterns.svg"]}")`,
+            }}
+          />
+          <Art
+            name="deco-asanoha"
+            className="pointer-events-none absolute -bottom-10 -left-10 size-56 opacity-15 invert"
+          />
+          <div className="relative min-w-0">
+            <p className="font-bold text-kinari-200 tracking-widest">{t.shiori.title}</p>
             <h1
               id="shiori-title"
               ref={headingRef}
@@ -403,12 +487,19 @@ export function ShioriPage() {
               <dd>{weatherText(t, festivalDay.weather)}</dd>
             </dl>
           </div>
-          <div className="shrink-0 text-center">
+          <div className="relative shrink-0 text-center">
+            {festival === null ? null : (
+              <span className="mx-auto mb-1 grid size-32 place-items-center rounded-full bg-kinari-50/15 print:size-20">
+                <Art name={`motif-${festival.category}`} className="size-28 print:size-16" />
+              </span>
+            )}
             {verified ? (
-              <FestivalStamp name={festival?.name.ja ?? mainItem?.name ?? null} size="lg" />
+              <span className="inline-block rounded-full bg-kinari-50 p-1">
+                <FestivalStamp name={festival?.name.ja ?? mainItem?.name ?? null} size="lg" />
+              </span>
             ) : null}
             {stamps > 0 ? (
-              <p className="mt-1 font-semibold text-shu-700 text-xs">
+              <p className="mt-1 font-semibold text-kinari-100 text-xs">
                 {t.shiori.stamps}：{"◉".repeat(Math.min(stamps, 6))}
               </p>
             ) : null}
@@ -425,7 +516,12 @@ export function ShioriPage() {
         ) : null}
 
         {/* 2. 今日の主役 */}
-        <Section id="main" title={t.shiori.sections.main}>
+        <Section
+          id="main"
+          title={t.shiori.sections.main}
+          art="spot-lantern"
+          say={{ speaker: "researcher", text: t.shiori.lines.main }}
+        >
           {festival === null ? (
             <p className="text-ink-soft">
               {loadState === "loading" ? "…" : t.shiori.festivalLoading}
@@ -487,8 +583,13 @@ export function ShioriPage() {
         </Section>
 
         {/* 3. 1日の流れ */}
-        <Section id="flow" title={t.shiori.sections.flow}>
-          <ol className="space-y-1.5 text-sm">
+        <Section
+          id="flow"
+          title={t.shiori.sections.flow}
+          art="deco-uchiwa"
+          say={{ speaker: "planner", text: t.shiori.lines.flow }}
+        >
+          <ol className="relative space-y-1.5 text-sm before:absolute before:top-3 before:bottom-3 before:left-[calc(6.5rem+0.5rem+1.125rem-3px)] before:w-1.5 before:rounded-full before:bg-wood-200 print:before:left-[calc(7rem+0.5rem+0.75rem-3px)]">
             {itinerary.days.map((day, index) => (
               <Fragment key={day.date}>
                 {itinerary.days.length > 1 ? (
@@ -499,13 +600,25 @@ export function ShioriPage() {
                     </span>
                   </li>
                 ) : null}
+                {index === 0 ? (
+                  <li className="relative pl-[6.5rem] print:hidden">
+                    <span className="rounded bg-ink px-2 py-0.5 font-bold text-kinari-50 text-xs">
+                      {t.shiori.start}
+                    </span>
+                  </li>
+                ) : null}
                 {day.items.map((item) => (
                   <li
                     key={item.id}
-                    className="grid grid-cols-[6.5rem_1fr] gap-x-2 print:grid-cols-[7rem_1fr]"
+                    className="relative grid grid-cols-[6.5rem_2.25rem_1fr] items-start gap-x-2 print:grid-cols-[7rem_1.5rem_1fr]"
                   >
-                    <span className="font-bold font-mono tabular-nums">
+                    <span className="pt-1.5 font-bold font-mono tabular-nums print:pt-0.5">
                       {item.start}〜{item.end}
+                    </span>
+                    <span
+                      className={`grid size-9 place-items-center border-2 border-ink shadow-[2px_2px_0_var(--color-ink)] print:size-6 print:border print:shadow-none ${item.type === "festival" ? "rounded-full" : "rounded-lg"} ${ITEM_TONE[item.type] ?? "bg-[#f6ecc4]"}`}
+                    >
+                      <Art name={itemArt(item)} className="size-5 print:size-4" />
                     </span>
                     <span>
                       <span className="font-bold">{item.name}</span>
@@ -523,8 +636,17 @@ export function ShioriPage() {
                   </li>
                 ))}
                 {day.stay === null ? null : (
-                  <li className="text-ink-soft">{t.itinerary.stay(day.stay.area)}</li>
+                  <li className="relative pl-[9.25rem] text-ink-soft print:pl-[9.5rem]">
+                    {t.itinerary.stay(day.stay.area)}
+                  </li>
                 )}
+                {index === itinerary.days.length - 1 ? (
+                  <li className="relative pl-[6.5rem] print:hidden">
+                    <span className="rounded bg-shu-700 px-2 py-0.5 font-bold text-white text-xs">
+                      {t.shiori.goal}
+                    </span>
+                  </li>
+                ) : null}
               </Fragment>
             ))}
           </ol>
@@ -551,7 +673,12 @@ export function ShioriPage() {
               </dl>
             )}
           </Section>
-          <Section id="food" title={t.shiori.sections.food}>
+          <Section
+            id="food"
+            title={t.shiori.sections.food}
+            art="spot-dango"
+            say={{ speaker: "scout", text: t.shiori.lines.food }}
+          >
             {festival === null ? null : (
               <p className="font-semibold text-sm">{t.shiori.stalls[festival.food.stalls]}</p>
             )}
@@ -586,6 +713,8 @@ export function ShioriPage() {
         {/* 6. はじめての方へ（日本語と英語） */}
         <Section
           id="first-time"
+          art="spot-torii"
+          say={{ speaker: "concierge", text: t.shiori.lines.firstTime }}
           title={
             <>
               {MESSAGES.ja.etiquette.heading} /{" "}
@@ -601,7 +730,12 @@ export function ShioriPage() {
         </Section>
 
         {/* 7. 雨の日の案 と 8. 出典 */}
-        <Section id="rain" title={t.shiori.sections.rain}>
+        <Section
+          id="rain"
+          title={t.shiori.sections.rain}
+          art="icon-umbrella"
+          say={{ speaker: "planner", text: t.shiori.lines.rain }}
+        >
           {itinerary.alternatives.length === 0 ? (
             <p className="text-ink-soft text-sm">{t.shiori.noAlternatives}</p>
           ) : (

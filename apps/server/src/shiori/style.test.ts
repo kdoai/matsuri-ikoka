@@ -31,11 +31,12 @@ function screenBlock(css: string): string {
 }
 
 describe("画面で見るときのしおりの見た目", () => {
-  it("用紙の地の色を付けたあとも、表紙は表紙の地の色のまま", () => {
-    const block = screenBlock(shioriStyle(palette));
-    const sheet = block.search(/\.sheet\s*\{[^}]*background:\s*var\(--paper\)/);
-    const cover = block.search(/\.sheet\.cover\s*\{[^}]*background:\s*var\(--cover-bg\)/);
-    expect(sheet).toBeGreaterThanOrEqual(0);
-    expect(cover).toBeGreaterThan(sheet);
+  it("どのページも和紙の色の紙にし、表紙の風景の空は表紙の地の色（夜の祭りは夜空）にする", () => {
+    const css = shioriStyle(palette);
+    const block = screenBlock(css);
+    expect(block).toMatch(/\.sheet\s*\{[^}]*background:\s*var\(--paper\)/);
+    expect(css).toMatch(
+      /\.cover \.scene \{[^}]*background:\s*linear-gradient\([^)]*var\(--cover-bg\)/,
+    );
   });
 });

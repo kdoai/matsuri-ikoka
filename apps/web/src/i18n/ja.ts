@@ -675,6 +675,7 @@ export const ja = {
     title: "旅のしおり",
     print: "印刷する",
     savePdf: "PDF で保存",
+    openBooklet: "冊子で見る",
     close: "店内に戻る",
     party: "同行者",
     date: "日付",
@@ -715,6 +716,15 @@ export const ja = {
     copied: "コピーしました",
     homeward: "帰りの混雑",
     cautions: "注意",
+    start: "ふりだし",
+    goal: "あがり",
+    lines: {
+      main: "ここは見のがさないで！",
+      flow: "時刻は目安。早めに動くと安心です",
+      food: "屋台や地元の味も楽しんで",
+      firstTime: "お願いを守って、地元の人と一緒に楽しもう",
+      rain: "雨でも楽しめる案も用意しました",
+    },
     parking: {
       available: "駐車場があります",
       limited: "駐車場は少なめです",

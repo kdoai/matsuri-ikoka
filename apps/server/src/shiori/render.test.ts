@@ -101,13 +101,21 @@ describe("しおりの HTML", () => {
     }
   });
 
-  it("ページの数は、半日は薄く、泊まりは日ごとに増える", async () => {
+  it("ページの数は、半日は薄く、泊まりは日ごとに増え、冊子にできるよう4の倍数にそろえる", async () => {
     const sections = async (trip: ShioriTrip) =>
       (await render(trip)).match(/<section class="sheet/g)?.length ?? 0;
 
     expect(await sections(fictionalOuting())).toBe(4);
-    expect(await sections(fictionalWeekend())).toBe(9);
-    expect(await sections(fictionalWeek())).toBe(16);
+    expect(await sections(fictionalWeekend())).toBe(12);
+    expect(await sections(fictionalWeek())).toBe(20);
+  });
+
+  it("泊まりの旅は裏表紙で終わり、足りない分は旅の思い出のページで埋める", async () => {
+    const page = await render(fictionalWeekend());
+
+    expect(page.match(/aria-label="旅の思い出"/g)).toHaveLength(2);
+    expect(page.trimEnd()).toMatch(/aria-label="裏表紙"[\s\S]*<\/section>\s*<\/body>\s*<\/html>$/);
+    expect(page).toContain("小冊子");
   });
 
   it("画面で見るときだけ、PDF のリンクを出す", async () => {
@@ -162,11 +170,55 @@ describe("しおりの HTML", () => {
     for (const file of files) expect(assets.files.has(file), file).toBe(true);
   });
 
-  it("店ののれんと紋を表紙に、店のスタンプをスタンプ帳に出す", async () => {
+  it("店の紋と名前を表紙の札に、店のスタンプをスタンプ帳に出す", async () => {
     const page = await render(fictionalWeekend());
 
-    expect(page).toContain('<div class="noren" aria-hidden="true">');
+    expect(page).toMatch(
+      /<p class="ribbon">.*<span class="shop">たびや<\/span><span class="name">旅のしおり<\/span><\/p>/,
+    );
     expect(page).toContain('<div class="shop-stamp">');
+  });
+
+  it("表紙に、祭りの種類の絵と町の風景、提灯・季節の飾り・うちわ・波・四隅の青海波を置く", async () => {
+    const page = await render(fictionalWeekend());
+    const cover = page.slice(page.indexOf('aria-label="表紙"'), page.indexOf("</section>"));
+
+    for (const id of [
+      "deco-lantern-cluster",
+      "scene-town",
+      "deco-corner",
+      "season-summer",
+      "deco-uchiwa",
+      "deco-wave",
+      `motif-${festivals[0]?.category}`,
+    ]) {
+      expect(cover).toContain(`href="#s-${id}"`);
+    }
+  });
+
+  it("1日の流れは、ふりだしからあがりまで、番号と種類の色のマスでたどる", async () => {
+    const page = await render(fictionalOuting());
+
+    expect(page).toContain('<span class="koma">ふりだし</span>');
+    expect(page).toContain('<span class="koma">あがり</span>');
+    expect(page).toMatch(/<div class="step g-move">/);
+    expect(page).toMatch(/<div class="step g-fest festival">/);
+    expect(page).toContain('<b class="masu">1</b>');
+    // 種類は色だけでなく文字でも書く
+    expect(page).toContain('<span class="kind">移動</span>');
+  });
+
+  it("見どころ・作法・持ち物に小さな絵と、スタッフのひとことを添える", async () => {
+    const page = await render(fictionalWeekend());
+
+    for (const spot of ["lantern", "torii", "kinchaku", "dango"]) {
+      expect(page).toContain(`href="#s-spot-${spot}"`);
+    }
+    expect(page).toContain("ここは見のがさないで！");
+    expect(page).toContain("お願いを守って、地元の人と一緒に楽しもう");
+    expect(page).toMatch(
+      /<h3><svg class="ic" aria-hidden="true"><use href="#s-icon-bag"><\/use><\/svg>いつもの持ち物<\/h3>/,
+    );
   });
 
   it("シニアと一緒の旅は文字を大きくする", async () => {

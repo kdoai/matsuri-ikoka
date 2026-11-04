@@ -716,6 +716,7 @@ export const en: Messages = {
     title: "Travel booklet",
     print: "Print",
     savePdf: "Save as PDF",
+    openBooklet: "Open the booklet",
     close: "Back to the shop",
     party: "Party",
     date: "Date",
@@ -766,6 +767,15 @@ export const en: Messages = {
     copied: "Copied",
     homeward: "Getting home",
     cautions: "Please note",
+    start: "Start",
+    goal: "Goal",
+    lines: {
+      main: "Don't miss these!",
+      flow: "Times are estimates. Moving early keeps it relaxed",
+      food: "Enjoy the stalls and the local flavors too",
+      firstTime: "Follow the organizers' requests and enjoy it with the locals",
+      rain: "Here is a plan for a rainy day, too",
+    },
     parking: {
       available: "Parking is available",
       limited: "Parking is limited",

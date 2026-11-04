@@ -20,7 +20,9 @@ export type PageKind =
   | "guide"
   | "checklist"
   | "stamps"
-  | "sources";
+  | "sources"
+  | "memory"
+  | "back";
 
 /** 素材の静止画（assets/shiori/staff/{name}.webp） */
 export type StaffStill =
@@ -183,8 +185,13 @@ export function chooseDesign(
   };
 }
 
+/** 冊子にするとき、1枚の紙を2つ折りにすると4ページになる */
+export const BOOKLET_PAGES = 4;
+
 /**
  * ページの並び。日帰りや半日は薄く、泊まりの旅は日ごとにページが増える。
+ * 印刷して冊子にできるよう、表紙で始めて裏表紙で終え、ページの数を4の倍数にそろえる。
+ * 足りない分は、裏表紙の前に「旅の思い出」のページを入れる。半日のお出かけは、持ち物のページが裏表紙を兼ねる。
  * 泊まりの旅では、表紙の次に旅のかたちの図と日ごとの一覧（旅の全体）を置き、
  * 日ごとのページの下に「この日のメモ」を置く
  */
@@ -194,19 +201,28 @@ export function pagePlan(design: ShioriDesign, days: number, festivals: number):
   const guidePages = repeat("guide", Math.max(1, festivals));
   const dayPages = repeat("day", days);
   if (design.length === "outing") {
-    // 表紙に祭りの紹介をのせ、スタンプと出典は持ち物のページに続ける
-    return ["cover", ...dayPages, ...guidePages, "checklist"];
+    // 表紙に祭りの紹介をのせ、スタンプと出典は持ち物のページ（裏表紙を兼ねる）に続ける
+    return padToBooklet(["cover", ...dayPages, ...guidePages], ["checklist"]);
   }
-  return [
-    "cover",
-    ...(design.length === "overnight" ? (["overview"] as PageKind[]) : []),
-    ...festivalPages,
-    ...dayPages,
-    ...guidePages,
-    "checklist",
-    "stamps",
-    "sources",
-  ];
+  return padToBooklet(
+    [
+      "cover",
+      ...(design.length === "overnight" ? (["overview"] as PageKind[]) : []),
+      ...festivalPages,
+      ...dayPages,
+      ...guidePages,
+      "checklist",
+      "stamps",
+      "sources",
+    ],
+    ["back"],
+  );
+}
+
+function padToBooklet(body: PageKind[], end: PageKind[]): PageKind[] {
+  const total = body.length + end.length;
+  const blank = (BOOKLET_PAGES - (total % BOOKLET_PAGES)) % BOOKLET_PAGES;
+  return [...body, ...Array.from({ length: blank }, (): PageKind => "memory"), ...end];
 }
 
 /** ページごとに出すスタッフ（と旅人） */
@@ -219,4 +235,6 @@ export const PAGE_STAFF: Record<PageKind, StaffStill | null> = {
   checklist: "penguin_stampbook",
   stamps: "hiyoko_stamp",
   sources: "owl_book",
+  memory: "penguin_stampbook",
+  back: "hiyoko_wave",
 };
