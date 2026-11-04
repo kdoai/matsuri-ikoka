@@ -331,13 +331,14 @@ export function DialogueBox() {
       >
         <X aria-hidden="true" className="size-4" />
       </button>
-      <div className="flex gap-3 sm:gap-5">
+      <div className="flex min-h-0 gap-3 sm:gap-5">
         <Portrait
           speaker={speaker as Speaker}
           className={`-mt-8 size-14 shrink-0 sm:size-20 ${thinking ? "animate-pulse" : ""}`}
         />
+        {/* 「つづきを読む」で全文を開いても窓が画面からはみ出さないよう、せりふは高さを決めて窓の中でスクロールする */}
         <div
-          className="min-h-[3.5rem] min-w-0 flex-1"
+          className="max-h-[min(38dvh,18rem)] min-h-[3.5rem] min-w-0 flex-1 overflow-y-auto overscroll-contain pr-1"
           aria-live="polite"
           aria-busy={typing}
           data-testid={line.kind === "error" && !consultOpen ? "dialogue-error" : "dialogue-line"}

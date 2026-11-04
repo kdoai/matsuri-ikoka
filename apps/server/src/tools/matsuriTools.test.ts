@@ -709,6 +709,52 @@ describe("update_itinerary", () => {
 });
 
 describe("verify_festival", () => {
+  it("候補を出す前に確かめた結果を旅程に引き継ぎ、決定では Web で調べ直さずに確定する", async () => {
+    const ctx = testToolContext([testFestival({ id: "suzunari-toro", status: "expected" })], {
+      report: {
+        result: "as_planned",
+        sources: [{ url: "https://example.com/suzunari/2026" }],
+        yearStated: true,
+      },
+    });
+    let calls = 0;
+    const verifier = ctx.verifier;
+    ctx.verifier = {
+      verify: (input) => {
+        calls += 1;
+        return verifier.verify(input);
+      },
+    };
+    ctx.candidateChecks = createCandidateChecker({
+      verifier: ctx.verifier,
+      today: ctx.today,
+      now: ctx.now,
+    });
+    await searchFestivals.run(
+      { when: { kind: "date", date: "2026-08-16" }, origin: "みなと中央駅", nights: 0 },
+      ctx,
+      signal,
+    );
+    expect(calls).toBe(1);
+
+    const saved = await updateItinerary.run(
+      { itinerary: draftOf(fictionalItinerary()) },
+      ctx,
+      signal,
+    );
+    // 決定するまでは確定扱いにしない（しおりは決定のあとに出す）
+    expect(saved.itinerary).toMatchObject({ verification: { status: "pending" } });
+
+    const output = await verifyFestival.run({ festivalId: "suzunari-toro" }, ctx, signal);
+    expect(output).toMatchObject({ result: "as_planned", reused: true });
+    expect(calls).toBe(1);
+    expect(ctx.turn.verification).toBe("as_planned");
+    expect(ctx.itineraries.get(saved.itineraryId as string)?.verification).toMatchObject({
+      status: "as_planned",
+      checkedAt: "2026-08-03T10:15:00+09:00",
+    });
+  });
+
   it("公式の出典で確かめられたら予定どおりにし、旅程の再確認の結果を書き換える", async () => {
     const ctx = testToolContext([suzunari()], {
       report: {

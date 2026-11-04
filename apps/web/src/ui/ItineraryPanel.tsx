@@ -268,7 +268,7 @@ function DaySection({
   );
 }
 
-/** 表題のカード：表題・版・日付・同行者・出発の駅・道のりのひとこと・開催の再確認 */
+/** 表題のカード：表題・版・日付・同行者・出発の駅・道のりのひとこと・開催の確認 */
 function TripCard() {
   const t = useT();
   const actions = useActions();
@@ -434,7 +434,7 @@ function GuideTab() {
   );
 }
 
-/** 持ち物と確認：開催の再確認、持ち物と注意、出典 */
+/** 持ち物と確認：開催の確認、持ち物と注意、出典 */
 function ConfirmTab() {
   const t = useT();
   const actions = useActions();
