@@ -6,10 +6,23 @@ import { promisify } from "node:util";
 import { brotliCompress, constants, gzip } from "node:zlib";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
-import { defineConfig, type Plugin } from "vite";
+import { defineConfig, loadEnv, type Plugin } from "vite";
 
-// 画面はいつも接客サーバーと話す。開発中は /api と /shiori を接客サーバー（apps/server）へ中継する
-const serverOrigin = process.env.MATSURI_SERVER_ORIGIN ?? "http://localhost:8787";
+/**
+ * 画面はいつも接客サーバーと話す。開発中は /api と /shiori を接客サーバー（apps/server）へ中継する。
+ * 中継先は、接客サーバーと同じくルートの .env の PORT に合わせる（シェルの環境変数が優先）。
+ * 画面のポートがふさがっていたら、別のポートへずらさずに止める。ずらすと、別の環境の接客サーバーと組んでしまうため
+ */
+function devPorts(mode: string): { webPort: number; serverOrigin: string } {
+  const env = {
+    ...loadEnv(mode, fileURLToPath(new URL("../..", import.meta.url)), ""),
+    ...process.env,
+  };
+  return {
+    webPort: Number(env.MATSURI_WEB_PORT || 5173),
+    serverOrigin: env.MATSURI_SERVER_ORIGIN || `http://localhost:${env.PORT || 8787}`,
+  };
+}
 
 /**
  * 画面が読む素材。ないままビルドすると、3D の店は 2D に落ち、会話の窓の顔は空の丸になるので、ビルドを止める
@@ -78,19 +91,24 @@ function precompress(): Plugin {
   };
 }
 
-export default defineConfig({
-  plugins: [react(), tailwindcss(), requireAssets(), precompress()],
-  server: {
-    proxy: {
-      "/api": serverOrigin,
-      "/shiori": serverOrigin,
-      "/healthz": serverOrigin,
+export default defineConfig(({ mode }) => {
+  const { webPort, serverOrigin } = devPorts(mode);
+  return {
+    plugins: [react(), tailwindcss(), requireAssets(), precompress()],
+    server: {
+      port: webPort,
+      strictPort: true,
+      proxy: {
+        "/api": serverOrigin,
+        "/shiori": serverOrigin,
+        "/healthz": serverOrigin,
+      },
     },
-  },
-  preview: {
-    proxy: {
-      "/api": serverOrigin,
-      "/shiori": serverOrigin,
+    preview: {
+      proxy: {
+        "/api": serverOrigin,
+        "/shiori": serverOrigin,
+      },
     },
-  },
+  };
 });

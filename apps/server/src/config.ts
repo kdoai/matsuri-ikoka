@@ -143,3 +143,15 @@ export function startupNotice(input: {
         "Claude で返事を作るには MATSURI_AGENT_MODE=live で起動してください";
   return { log, message };
 }
+
+/**
+ * ポートがふさがっていて起動できないときの知らせ。別の pnpm dev が動いていることが多いので、
+ * 止めるか、ポートを変えて起動し直す方法を示す（画面の開発サーバーは同じ PORT へ中継する）
+ */
+export function portInUseMessage(port: number): string {
+  return (
+    `[server] ポート ${port} はほかのプロセスが使っています。` +
+    "別の pnpm dev が動いていれば止めてください。並べて動かすときは、" +
+    `PORT=${port + 1} MATSURI_WEB_PORT=5174 pnpm dev のように、ポートを変えて起動してください`
+  );
+}
