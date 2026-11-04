@@ -1,5 +1,6 @@
 import {
   type IsoDate,
+  type PlanEvaluation,
   type SearchRetry,
   type SseEvent,
   type StaffId,
@@ -14,19 +15,21 @@ import type { CandidateChecker } from "./candidateCheck";
 import type { LodgingService } from "./lodging";
 import type { LodgingResearcher } from "./lodgingResearch";
 import type { NearbyResearcher } from "./nearbyResearch";
+import type { PlanEvaluator } from "./planEvaluator";
 import type { RouteResearcher } from "./routeResearch";
 import type { FestivalVerifier } from "./verifier";
 import type { WeatherService } from "./weather";
 
 /**
  * 接客エージェントの道具の名前。画面に動きを見せる道具（ToolName）に、
- * 画面にイベントを出さない道具（聞き取った条件の書き留め・宿の空きを調べる・行き方を調べる）を足したもの
+ * 画面にイベントを出さない道具（聞き取った条件の書き留め・宿の空きを調べる・行き方を調べる・旅の調べを並べる）を足したもの
  */
 export const ALL_TOOL_NAMES = [
   ...TOOL_NAMES,
   "note_conditions",
   "search_lodging",
   "research_route",
+  "research_trip",
 ] as const;
 export type AgentToolName = (typeof ALL_TOOL_NAMES)[number];
 
@@ -45,6 +48,10 @@ export interface TurnState {
   verification: VerificationResult | null;
   /** 候補の窓の次の手（ボタン）から送られた、変えて探し直す条件。search_festivals が正として使う */
   searchRetry: SearchRetry | null;
+  /** この発言で旅程を評価した回数（評価して作り直すループの回数） */
+  planRounds: number;
+  /** この発言の最後の評価。旅程係が基準に届かないまま終えようとしたら、作り直しに戻す */
+  lastEvaluation: PlanEvaluation | null;
 }
 
 export function newTurnState(searchRetry: SearchRetry | null = null): TurnState {
@@ -55,6 +62,8 @@ export function newTurnState(searchRetry: SearchRetry | null = null): TurnState 
     savedItinerary: false,
     verification: null,
     searchRetry,
+    planRounds: 0,
+    lastEvaluation: null,
   };
 }
 
@@ -82,6 +91,8 @@ export interface ToolContext {
   nearby?: NearbyResearcher;
   /** 会場の近くの宿を Web で調べる（観点ごとに並べて）。ないとき（mock やテスト）は宿の空きの調べ方の結果だけを使う */
   lodgingResearch?: LodgingResearcher;
+  /** 保存した旅程を観点ごとに採点する評価係。ないとき（mock やテスト）は点検の点だけで決める */
+  planEvaluator?: PlanEvaluator;
   /**
    * ツールの中で調べが進んだ（中の Agent SDK の知らせが届いた）ことを知らせる。相談の進みのない時間を数え直す。
    * 寄り道の調べのように、ツール1回が長くかかっても、動き続けていれば止めない
@@ -109,9 +120,13 @@ export const TOOL_TIMEOUT_MS: Readonly<Record<AgentToolName, number>> = {
   // 空室検索（1本ずつ間隔を空けて呼ぶ）と、空きがないときの Web の宿の調べ（観点ごとに並べて動かす）を含む。
   // 調べの間は ToolContext.progress で進みを知らせるので、進みのない時間の上限には掛からない
   search_lodging: 95_000,
-  update_itinerary: 10_000,
+  // 保存のあとに評価係の採点（EVALUATION_MS で打ち切る）を含む
+  update_itinerary: 75_000,
   // 乗り換え案内や鉄道会社のページを検索して読む
   research_route: 40_000,
+  // 行き・帰りの行き方と、食事と寄り道の調べを並べて動かす。いちばん長い寄り道の調べ（search_nearby）に合わせる。
+  // 調べの間は ToolContext.progress で進みを知らせるので、進みのない時間の上限には掛からない
+  research_trip: 100_000,
   // 公式のページを検索して読むので、確定前の再確認のモデル（MODEL_VERIFIER）でも収まる長さにする
   verify_festival: 70_000,
 };

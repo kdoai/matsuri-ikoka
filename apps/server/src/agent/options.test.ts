@@ -25,6 +25,7 @@ const prompts: AgentPrompts = {
   route: "行き方の調べ",
   nearby: "寄り道の調べ",
   lodging: "宿の調べ",
+  evaluator: "旅程の評価",
 };
 
 function options(overrides: { models?: AgentModels; resume?: string } = {}) {
@@ -89,6 +90,7 @@ describe("接客エージェントを開発環境から切り離す", () => {
     expect(agents?.planner?.tools).toEqual([
       "mcp__matsuri__get_access",
       "mcp__matsuri__research_route",
+      "mcp__matsuri__research_trip",
       "mcp__matsuri__get_weather",
       "mcp__matsuri__search_nearby",
       "mcp__matsuri__search_lodging",
@@ -129,13 +131,15 @@ describe("接客エージェントを開発環境から切り離す", () => {
     expect(opts.agents?.scout?.model).toBe("model-b");
   });
 
-  it("考える深さはコンシェルジュ medium・スタッフ low。スタッフの指示は共通の前置きから始める", () => {
+  it("考える深さはコンシェルジュ medium・調査係と周辺係 low・旅程係 medium。スタッフの指示は共通の前置きから始める", () => {
     const opts = options();
 
     expect(opts.thinking).toEqual({ type: "adaptive" });
     expect(opts.effort).toBe("medium");
+    expect(opts.agents?.researcher?.effort).toBe("low");
+    expect(opts.agents?.scout?.effort).toBe("low");
+    expect(opts.agents?.planner?.effort).toBe("medium");
     for (const staff of ["researcher", "scout", "planner"] as const) {
-      expect(opts.agents?.[staff]?.effort).toBe("low");
       expect(opts.agents?.[staff]?.prompt.startsWith("共通の前置き\n\n")).toBe(true);
     }
   });

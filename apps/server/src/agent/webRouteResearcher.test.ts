@@ -66,7 +66,7 @@ function setup(scripts: Script[]) {
       date: "2026-08-16",
       signal: new AbortController().signal,
     });
-  return { calls, research };
+  return { calls, research, researcher };
 }
 
 const read = (hook: Parameters<Script>[0], url: string) =>
@@ -129,5 +129,69 @@ describe("createWebRouteResearcher", () => {
 
     expect(await research()).toMatchObject({ minutes: [55, 70] });
     expect(calls[1]?.options.tools).toEqual([]);
+  });
+});
+
+describe("乗り換えの区間と帰りの最終", () => {
+  const legs = [
+    { from: "こがね台", to: "川辺", line: "こがね線", minutes: [30, 40] },
+    { from: "川辺", to: "鈴鳴駅", line: "鈴鳴線", minutes: [20, 25] },
+  ];
+
+  it("出発の駅から着く駅までつながった区間だけを使う", async () => {
+    const connected = setup([
+      async (hook) => {
+        await read(hook, "https://example.com/route");
+        return JSON.stringify({ ...JSON.parse(ANSWER), legs });
+      },
+    ]);
+    expect(await connected.research()).toMatchObject({ legs });
+
+    const broken = setup([
+      async (hook) => {
+        await read(hook, "https://example.com/route");
+        return JSON.stringify({
+          ...JSON.parse(ANSWER),
+          legs: [legs[0], { ...legs[1], from: "別の駅" }],
+        });
+      },
+    ]);
+    const report = await broken.research();
+    expect(report).not.toBeNull();
+    expect(report).not.toHaveProperty("legs");
+  });
+
+  it("帰りは最終の時刻も調べる。分からなければ null にし、行きとは別にとっておく", async () => {
+    const { calls, researcher } = setup([
+      async (hook) => {
+        await read(hook, "https://example.com/route");
+        return JSON.stringify({ ...JSON.parse(ANSWER), lastDeparture: "22:40" });
+      },
+      async (hook) => {
+        await read(hook, "https://example.com/route");
+        return ANSWER;
+      },
+    ]);
+    const back = await researcher.research({
+      from: "鈴鳴駅",
+      to: "こがね台",
+      date: "2026-08-16",
+      direction: "return",
+      signal: new AbortController().signal,
+    });
+    expect(back).toMatchObject({ lastDeparture: "22:40" });
+    expect(calls[0]?.prompt).toContain("帰り");
+
+    // 行きは最終を持たない。調べ直し（focus）は、とっておいた結果を使わない
+    const go = await researcher.research({
+      from: "鈴鳴駅",
+      to: "こがね台",
+      date: "2026-08-16",
+      focus: "乗り換えの駅を確かめる",
+      signal: new AbortController().signal,
+    });
+    expect(go).not.toHaveProperty("lastDeparture");
+    expect(calls).toHaveLength(2);
+    expect(calls[1]?.prompt).toContain("調べ直しで特に確かめること：乗り換えの駅を確かめる");
   });
 });

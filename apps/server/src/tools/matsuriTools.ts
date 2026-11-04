@@ -1,3 +1,4 @@
+import { retryOnce } from "@matsuri-ikoka/agent-kit";
 import {
   DateWishSchema,
   DestinationsSchema,
@@ -18,6 +19,8 @@ import {
   MAX_NIGHTS,
   MAX_TRIP_DAYS,
   MaxTravelMinutesSchema,
+  MEAL_SLOTS,
+  type MealSlot,
   MOVE_MODES,
   mainFestivalDay,
   type NearMiss,
@@ -26,8 +29,10 @@ import {
   type Party,
   PartySchema,
   PreferencesSchema,
+  RESEARCH_TARGETS,
   type SearchOutcome,
   SlugSchema,
+  type Source,
   type SpotPin,
   StayPlanSchema,
   tripBudgetAmounts,
@@ -36,7 +41,7 @@ import {
 } from "@matsuri-ikoka/schema";
 import { z } from "zod";
 import { arrivalBufferMinutes } from "../domain/arrivalBuffer";
-import { addDays, daysBetween, laterDate } from "../domain/calendar";
+import { addDays, daysBetween, fromMinutes, laterDate, toMinutes } from "../domain/calendar";
 import { matchHub, placeLabel, toCandidate, travelMinutesFrom } from "../domain/dateWindow";
 import {
   DESTINATION_STAGES,
@@ -83,6 +88,7 @@ import {
   nearbySearchPlan,
 } from "../domain/nearbySearch";
 import { occurrenceOn } from "../domain/planCheck";
+import { MEAL_WINDOWS, type ResearchedPlace } from "../domain/planCoverage";
 import { preferenceEffects } from "../domain/preferences";
 import {
   excludedCounts,
@@ -107,8 +113,10 @@ import { randomId } from "../session/sessionStore";
 import type { CandidateCheck } from "./candidateCheck";
 import { type AgentToolName, TOOL_TIMEOUT_MS, type ToolContext } from "./context";
 import { type LodgingOutcome, MAX_SEARCH_RADIUS_KM, RAKUTEN_CREDIT } from "./lodging";
+import { nextStepAfter, redoAcceptEvent, redoRequestEvents, reviewPlan } from "./planReview";
+import type { RouteDirection } from "./routeResearch";
 
-// 接客エージェントに渡す8つのツール。入出力は Zod で決め、計算と絞り込みは domain の関数で行う。
+// 接客エージェントに渡すツール。入出力は Zod で決め、計算と絞り込みは domain の関数で行う。
 // 祭りの日時・場所・営業時間・出典は、祭りのデータとツールの結果だけから返す。
 
 /** ツールの失敗。message はエージェントに返す（利用者にそのまま見せる文ではない） */
@@ -210,7 +218,34 @@ export const ItineraryDraftSchema = z
     ...ItinerarySchema.shape,
     days: z.array(ItineraryDayDraftSchema).min(1).max(MAX_TRIP_DAYS),
   })
-  .omit({ id: true, version: true, verification: true, budget: true });
+  .omit({
+    id: true,
+    version: true,
+    verification: true,
+    budget: true,
+    gaps: true,
+    evaluation: true,
+  })
+  // 今の旅程を写して渡されたときに断らないよう、サーバーが付ける項目は受け取って捨てる
+  .extend({
+    gaps: z.unknown().optional().describe("サーバーが付ける。書かない（書いても使わない）"),
+    evaluation: z.unknown().optional().describe("サーバーが付ける。書かない（書いても使わない）"),
+    considered: z
+      .array(
+        z.object({
+          id: z.string().trim().min(1).max(100).describe("場所の ID（spotId か宿の候補の id）"),
+          reason: z
+            .string()
+            .trim()
+            .min(1)
+            .max(120)
+            .describe("採った理由、または採らなかった理由（1文）"),
+        }),
+      )
+      .max(40)
+      .optional()
+      .describe("周辺係・宿の係が見つけた場所の採否の理由。採ったかと名前はサーバーが決める"),
+  });
 
 /** 聞き取りの場面（祭りを選んだか、その祭りが旅の間に何日も開かれるか）を、相談の状態から決める */
 export function hearingSituation(ctx: ToolContext): HearingSituation {
@@ -740,6 +775,7 @@ function nearbySearchInput(
   ctx: ToolContext,
   festival: Festival,
   window: TimeWindow | undefined,
+  focus?: string,
 ): NearbySearchInput {
   const { conditions } = ctx.session;
   const party = conditions.party;
@@ -752,6 +788,7 @@ function nearbySearchInput(
     withChildren: (party?.children ?? 0) + (party?.infants ?? 0) > 0,
     byCar: travelsByCar(ctx),
     ...(window === undefined ? {} : { window }),
+    ...(focus === undefined ? {} : { focus: [focus] }),
   };
 }
 
@@ -768,7 +805,8 @@ async function researchNearby(
   if (ctx.nearby === undefined) return null;
   const { conditions } = ctx.session;
   try {
-    const report = await ctx.nearby.research({
+    const nearby = ctx.nearby;
+    const request = {
       festival: {
         id: festival.id,
         name: festival.name.ja,
@@ -787,7 +825,9 @@ async function researchNearby(
       plan: nearbySearchPlan(search, round),
       signal: AbortSignal.any([signal, AbortSignal.timeout(timeoutMs)]),
       ...(ctx.progress ? { onActivity: ctx.progress } : {}),
-    });
+    };
+    // 混雑や通信の失敗は、1回だけやり直す
+    const report = await retryOnce(() => nearby.research(request), { signal: request.signal });
     return report?.spots ?? null;
   } catch {
     return null;
@@ -835,6 +875,13 @@ export const searchNearby = defineTool({
       .optional()
       .describe("寄り道に使える時間帯（HH:MM）"),
     preferences: PreferencesSchema.optional().describe("省略すると相談のこだわりを使う"),
+    focus: z
+      .string()
+      .trim()
+      .min(1)
+      .max(300)
+      .optional()
+      .describe("調べ直しで特に確かめること（評価の redo の ask）"),
   },
   async run(args, ctx, signal) {
     if (args.preferences !== undefined) ctx.session.preferences = args.preferences;
@@ -861,7 +908,7 @@ export const searchNearby = defineTool({
       stalls: festival.food.stalls,
       rules: [...preferenceEffects(ctx.session.preferences).rules, ...food.rules],
     };
-    const search = nearbySearchInput(ctx, festival, args.window);
+    const search = nearbySearchInput(ctx, festival, args.window, args.focus);
     const started = Date.now();
     const first = await researchNearby(
       ctx,
@@ -927,6 +974,12 @@ export const searchNearby = defineTool({
     }
     // 旅程を保存するとき、祭りのデータの場所と同じく照らせるよう、調べた場所を相談に残す
     for (const spot of screened.spots) ctx.session.researchedSpots.set(spot.id, asNearbySpot(spot));
+    // 見つけた場所は、旅程を保存するときに採否と理由がそろっているかを確かめる（調べ直しの分も足す）
+    const found = new Map(
+      (ctx.session.foundSpots.get(festival.id) ?? []).map((spot) => [spot.id, spot]),
+    );
+    for (const spot of screened.spots) found.set(spot.id, { id: spot.id, name: spot.name });
+    ctx.session.foundSpots.set(festival.id, [...found.values()]);
     // 祭りのデータの店は、出す料理が分からないので、食べたいものがあるときは調べた店だけにする
     const wanted = shopFoodWishes(conditions.foodWishes ?? []);
     const researchedNames = new Set(screened.spots.map((spot) => sameName(spot.name)));
@@ -1039,12 +1092,119 @@ export const getAccess = defineTool({
   },
 });
 
+/** 調べた行き方の出典を、旅程の出典の形にする。行き方の調べは1つの情報源として扱う */
+function routeSources(
+  ctx: ToolContext,
+  sources: readonly { url: string; title?: string }[],
+): Source[] {
+  return sources.map((s) => ({
+    url: s.url,
+    ...(s.title ? { title: s.title } : {}),
+    checkedAt: ctx.today(),
+    confidence: "single" as const,
+  }));
+}
+
+/** 行き方を1回調べる（行きか帰り）。research_route と research_trip から呼ぶ */
+async function researchRouteOnce(
+  ctx: ToolContext,
+  festival: Festival,
+  options: {
+    origin?: string | undefined;
+    date?: IsoDate | undefined;
+    arriveBy?: string | undefined;
+    direction: RouteDirection;
+    focus?: string | undefined;
+  },
+  signal: AbortSignal,
+) {
+  const origin = options.origin ?? ctx.session.conditions.origin;
+  if (origin === undefined)
+    throw new ToolError("出発の駅が分かりません。先に出発の駅を聞いてください");
+  const date = visitDate(ctx, festival, options.date);
+  const station = destinationStation(ctx, festival);
+  const returnTo = ctx.session.conditions.returnTo ?? origin;
+  const isReturn = options.direction === "return";
+  const from = isReturn ? station : origin;
+  const to = isReturn ? returnTo : station;
+  // 駅の位置からの見積もりは出発の駅から会場まで。帰りは、終わりの場所が出発の駅と同じときだけ照らす
+  const estimate =
+    !isReturn || returnTo === origin ? travelEstimateFor(ctx, festival, origin) : null;
+  const walk = festival.access.stations[0]?.walkMinutes ?? null;
+  const base = {
+    festivalId: festival.id,
+    direction: options.direction,
+    origin: from,
+    destinationStation: to,
+    walkMinutesFromStationEstimate: walk,
+    estimate: estimate === null ? null : { minutes: estimate.minutes, basis: estimate.basis },
+    rules: isReturn
+      ? [
+          `帰りの移動（type: "move"、move.purpose: "return"）の move.from は会場、move.to は ${returnTo} にする`,
+          "researched.legs があれば、会場から駅まで歩く区間を先頭に足して move.legs にし、researched.sources を出典にする",
+          "researched.lastDeparture があれば、その日の lastReturn に station と departBy と researched.sources を書く。null なら departBy を null にする（推測で書かない）",
+        ]
+      : [
+          `旅程の最初の予定は、出発の駅（${origin}）からの移動（type: "move"、move.purpose: "outbound"）にし、name に出発の駅の名前を入れる`,
+          "move.minutes には、researched があればその minutes、なければ estimate の minutes をそのまま使い、estimate: true にする",
+          "researched.legs があれば move.legs にそのまま写し（乗り換えの駅は区間の境）、researched.sources を予定の出典にする",
+        ],
+  };
+  const sameStation =
+    station !== null && normalizeStationName(station) === normalizeStationName(origin);
+  if (ctx.routes === undefined || from === null || to === null || sameStation) {
+    return { ...base, status: "estimate_only" as const, researched: null };
+  }
+  const routes = ctx.routes;
+  let report: Awaited<ReturnType<NonNullable<ToolContext["routes"]>["research"]>> = null;
+  try {
+    // 混雑や通信の失敗は、1回だけやり直す
+    report = await retryOnce(
+      () =>
+        routes.research({
+          from,
+          to,
+          date,
+          direction: options.direction,
+          ...(options.arriveBy ? { arriveBy: options.arriveBy } : {}),
+          ...(options.focus ? { focus: options.focus } : {}),
+          signal,
+        }),
+      { signal },
+    );
+  } catch {
+    report = null;
+  }
+  if (signal.aborted) throw new ToolError("止められたので、行き方の結果は使いません");
+  if (report === null) return { ...base, status: "not_found" as const, researched: null };
+  const checked = checkResearchedMinutes(report.minutes, estimate);
+  if (!checked.ok) {
+    return { ...base, status: "rejected" as const, reason: checked.reason, researched: null };
+  }
+  const sources = routeSources(ctx, report.sources);
+  // 旅程を保存するとき、移動と帰りの最終の出典として認めるよう、読んだページを相談に残す
+  for (const source of sources) ctx.session.researchedSources.set(source.url, source);
+  return {
+    ...base,
+    status: "researched" as const,
+    researched: {
+      minutes: checked.minutes,
+      summary: report.summary,
+      transfers: report.transfers,
+      legs: report.legs ?? null,
+      ...(isReturn ? { lastDeparture: report.lastDeparture ?? null } : {}),
+      sources,
+    },
+  };
+}
+
 export const researchRoute = defineTool({
   name: "research_route",
   description:
-    "出発の駅から祭りの会場の最寄り駅までの電車の行き方（乗る路線・乗り換え・所要時間の幅）を、公開の情報で調べる。" +
+    "出発の駅から祭りの会場の最寄り駅までの電車の行き方（乗る路線・乗り換えごとの区間・所要時間の幅）を、公開の情報で調べる。" +
+    "direction: return では、会場の最寄り駅から終わりの駅までの帰りの行き方と、その日のうちに帰れる最終の時刻（lastDeparture）を調べる。" +
     "調べた所要時間は、駅の位置からの見積もりと照らし、食い違うものは使わない（その場合は見積もりを返す）。" +
-    "旅程の最初の移動（出発の駅から）の move.minutes と name・reason に使う。同じ祭りで呼び直さない。",
+    "旅程の行き・帰りの移動の move（minutes・from・to・legs）と出典、帰りの最終（lastReturn）に使う。同じ祭りで同じ向きを呼び直さない（調べ直しは focus を付ける）。",
   input: {
     festivalId: SlugSchema.describe("祭りの ID"),
     origin: z
@@ -1058,58 +1218,160 @@ export const researchRoute = defineTool({
     arriveBy: LocalTimeSchema.optional().describe(
       "この時刻までに会場の最寄り駅に着きたい（HH:MM）",
     ),
+    direction: z
+      .enum(["outbound", "return"])
+      .optional()
+      .describe("outbound 行き（省略時）/ return 帰り（最終の時刻も調べる）"),
+    focus: z
+      .string()
+      .trim()
+      .min(1)
+      .max(300)
+      .optional()
+      .describe("調べ直しで特に確かめること（評価の redo の ask）"),
   },
   async run(args, ctx, signal) {
     const festival = festivalOf(ctx, args.festivalId);
-    const origin = args.origin ?? ctx.session.conditions.origin;
-    if (origin === undefined)
-      throw new ToolError("出発の駅が分かりません。先に出発の駅を聞いてください");
-    const date = visitDate(ctx, festival, args.date);
-    const estimate = travelEstimateFor(ctx, festival, origin);
-    const to = destinationStation(ctx, festival);
-    const walk = festival.access.stations[0]?.walkMinutes ?? null;
-    const base = {
-      festivalId: festival.id,
-      origin,
-      destinationStation: to,
-      walkMinutesFromStationEstimate: walk,
-      estimate: estimate === null ? null : { minutes: estimate.minutes, basis: estimate.basis },
-      rules: [
-        `旅程の最初の予定は、出発の駅（${origin}）からの移動（type: "move"）にし、name に出発の駅の名前を入れる`,
-        "move.minutes には、researched があればその minutes、なければ estimate の minutes をそのまま使い、estimate: true にする",
-      ],
-    };
-    const sameStation = to !== null && normalizeStationName(to) === normalizeStationName(origin);
-    if (ctx.routes === undefined || to === null || sameStation) {
-      return { ...base, status: "estimate_only", researched: null };
-    }
-    let report: Awaited<ReturnType<NonNullable<ToolContext["routes"]>["research"]>> = null;
-    try {
-      report = await ctx.routes.research({
-        from: origin,
-        to,
-        date,
-        ...(args.arriveBy ? { arriveBy: args.arriveBy } : {}),
-        signal,
-      });
-    } catch {
-      report = null;
-    }
-    if (signal.aborted) throw new ToolError("止められたので、行き方の結果は使いません");
-    if (report === null) return { ...base, status: "not_found", researched: null };
-    const checked = checkResearchedMinutes(report.minutes, estimate);
-    if (!checked.ok) {
-      return { ...base, status: "rejected", reason: checked.reason, researched: null };
-    }
-    return {
-      ...base,
-      status: "researched",
-      researched: {
-        minutes: checked.minutes,
-        summary: report.summary,
-        transfers: report.transfers,
-        sources: report.sources,
+    return researchRouteOnce(
+      ctx,
+      festival,
+      {
+        origin: args.origin,
+        date: args.date,
+        arriveBy: args.arriveBy,
+        direction: args.direction ?? "outbound",
+        focus: args.focus,
       },
+      signal,
+    );
+  },
+});
+
+/** research_trip で、食事の時間帯から寄り道の調べの時間帯を決める（昼と夜の両方なら決めない） */
+function mealWindow(meals: readonly MealSlot[] | undefined): TimeWindow | undefined {
+  const [only] = meals ?? [];
+  if (meals === undefined || meals.length !== 1 || only === undefined) return undefined;
+  const [start, end] = MEAL_WINDOWS[only];
+  // 食事の時間帯の前後30分も含めて探す
+  return { from: fromMinutes(toMinutes(start) - 30), to: fromMinutes(toMinutes(end) + 30) };
+}
+
+/** 並べた調べの1つ。失敗しても、ほかの調べの結果は使う */
+async function settle<T>(
+  task: () => Promise<T>,
+): Promise<{ ok: true; value: T } | { ok: false; error: string }> {
+  try {
+    return { ok: true, value: await task() };
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error.message : "調べられませんでした" };
+  }
+}
+
+export const researchTrip = defineTool({
+  name: "research_trip",
+  description:
+    "旅程を組む前（と、評価で調べ直しを頼まれたとき）に、経路と食事・寄り道の調べを並べて動かす。" +
+    "route：行き（出発の駅→会場の最寄り駅、乗り換えごとの区間）と帰り（会場の最寄り駅→終わりの駅、乗り換えと最終の時刻）。" +
+    "nearby：会場の周りの食事の店・寄り道の場所（search_nearby と同じ調べ。meals で昼・夜に絞れる）。" +
+    "lodging は search_lodging で調べる（ここでは調べない）。係の失敗は分類して1回だけ自動でやり直し、失敗した調べは failed に名前を返す。" +
+    "評価の redo を受けたら、only に係を、focus に ask を渡して呼ぶ。",
+  input: {
+    festivalId: SlugSchema.describe("祭りの ID"),
+    date: IsoDateSchema.optional().describe("行く日。省略すると候補や旅程の日"),
+    only: z
+      .array(z.enum(RESEARCH_TARGETS))
+      .min(1)
+      .max(RESEARCH_TARGETS.length)
+      .optional()
+      .describe("調べる係（省略すると route と nearby の両方）"),
+    focus: z
+      .string()
+      .trim()
+      .min(1)
+      .max(300)
+      .optional()
+      .describe("調べ直しで特に確かめること（評価の redo の ask）"),
+    meals: z
+      .array(z.enum(MEAL_SLOTS))
+      .min(1)
+      .max(MEAL_SLOTS.length)
+      .optional()
+      .describe("食事の店を探す時間帯（省略すると昼と夜の両方）"),
+    arriveBy: LocalTimeSchema.optional().describe(
+      "この時刻までに会場の最寄り駅に着きたい（HH:MM）",
+    ),
+  },
+  async run(args, ctx, signal) {
+    const festival = festivalOf(ctx, args.festivalId);
+    const only = new Set(args.only ?? ["route", "nearby"]);
+    const routeOptions = (direction: RouteDirection) => ({
+      date: args.date,
+      arriveBy: direction === "outbound" ? args.arriveBy : undefined,
+      direction,
+      focus: args.focus,
+    });
+    const window = mealWindow(args.meals);
+    // 評価の頼み（focus つき）で調べ直すときは、頼まれた係が受けるようすを見せる
+    if (args.focus !== undefined) {
+      if (only.has("nearby")) {
+        for (const slot of args.meals ?? ["sightseeing" as const]) {
+          ctx.emit?.(redoAcceptEvent("nearby", slot));
+        }
+      }
+      if (only.has("route")) ctx.emit?.(redoAcceptEvent("route", "route"));
+    }
+    const [outbound, inbound, nearby] = await Promise.all([
+      only.has("route")
+        ? settle(() => researchRouteOnce(ctx, festival, routeOptions("outbound"), signal))
+        : null,
+      only.has("route")
+        ? settle(() => researchRouteOnce(ctx, festival, routeOptions("return"), signal))
+        : null,
+      only.has("nearby")
+        ? settle(() =>
+            searchNearby.run(
+              {
+                festivalId: festival.id,
+                ...(args.date ? { date: args.date } : {}),
+                ...(window ? { window } : {}),
+                ...(args.focus ? { focus: args.focus } : {}),
+              },
+              ctx,
+              signal,
+            ),
+          )
+        : null,
+    ]);
+    if (signal.aborted) throw new ToolError("止められたので、調べの結果は使いません");
+    const failed = [
+      ...(outbound?.ok === false ? ["route:outbound"] : []),
+      ...(inbound?.ok === false ? ["route:return"] : []),
+      ...(nearby?.ok === false ? ["nearby"] : []),
+    ];
+    const notes = [
+      "経路と食事の結果から、行き・最後の移動・帰りの move（from・to・purpose・legs）と出典、帰りの最終（lastReturn）、滞在の時間帯の昼・夜の食事（meals か食事の予定）を書いてください",
+      "見つけた場所（nearby.spots の origin: web）は、使うか使わないかと理由を considered に書いてください",
+      ...(only.has("lodging")
+        ? ["宿の調べ直しは search_lodging で行ってください（同じ条件で呼び直さない）"]
+        : []),
+      ...(failed.length > 0
+        ? [
+            `調べられなかったもの（${failed.join("、")}）は推測で埋めず、旅程の gaps に残ります。お客さまには分からなかったと伝えてください`,
+          ]
+        : []),
+    ];
+    return {
+      festivalId: festival.id,
+      route:
+        outbound === null
+          ? null
+          : {
+              outbound: outbound.ok ? outbound.value : null,
+              return: inbound?.ok ? inbound.value : null,
+            },
+      nearby: nearby === null ? null : nearby.ok ? nearby.value : null,
+      failed,
+      notes,
     };
   },
 });
@@ -1144,7 +1406,12 @@ export const updateItinerary = defineTool({
     "到着の余裕の不足があれば保存せず errors を返すので、直してもう一度呼ぶ。修正のときも全体を渡す（予定の id は版をまたいで同じにする）。" +
     "何日かの旅は1日ずつ書く：はじめに主役の祭りの日だけの旅程を itinerary で保存し、そのあと addDay で1日ずつ足す（同じ日付なら置き換える）。" +
     "後ろに足すときは、それまでの最後の日の夜に泊まる地域を stayBefore に書く。保存のたびに画面の旅程が更新される。" +
-    "stay に宿の名前は書かない。search_lodging で調べた宿の候補は、チェックインの日の stay にサーバーが付ける。",
+    "stay に宿の名前は書かない。search_lodging で調べた宿の候補は、チェックインの日の stay にサーバーが付ける。" +
+    "移動には from・to・purpose（outbound・last_mile・between・return）と、電車・バスなら legs（乗り換えごとの区間）と出典を書く。" +
+    "日ごとに、滞在の時間帯にかかる昼・夜の食事の案（meals）と、その日のうちに帰る日は帰りの最終（lastReturn）を書く。" +
+    "周辺係・宿の係が見つけた場所は、採否の理由を considered に書く（採ったかはサーバーが決める）。" +
+    "保存すると、そろっていないもの（gaps）と評価（evaluation：網羅・具体さ・無理のなさ・出典の点）を返す。" +
+    "基準に届かなければ next に従って research_trip で調べ直し、作り直して呼び直す（評価は1回の発言で3回まで）。",
   input: {
     itinerary: ItineraryDraftSchema.optional().describe(
       "旅程の全体（id・version・verification・日ごとの weather はサーバーが付ける）",
@@ -1166,7 +1433,8 @@ export const updateItinerary = defineTool({
       : null;
     let written: ItineraryDraft;
     if (args.itinerary !== undefined) {
-      written = args.itinerary as ItineraryDraft;
+      const { gaps: _gaps, evaluation: _evaluation, ...draft } = args.itinerary;
+      written = draft as ItineraryDraft;
     } else if (args.addDay !== undefined) {
       if (previous === null) {
         throw new ToolError(
@@ -1247,6 +1515,12 @@ export const updateItinerary = defineTool({
         ...(previous === null ? [] : researchedSpotsInItinerary(previous)),
         ...session.researchedSpots,
       ]),
+      // 行き方の調べで読んだページも出典として認める。前の版の移動の出典も引き継ぐ
+      extraSources: new Map([
+        ...(previous === null ? [] : routeSourcesInItinerary(previous)),
+        ...session.researchedSources,
+      ]),
+      researched: researchedPlaces(ctx, draft),
     });
     if (!result.ok) {
       // 旅程係の組み方の傾向をつかむため、断った理由の種類だけを残す（予定の名前や文は残さない）
@@ -1257,7 +1531,24 @@ export const updateItinerary = defineTool({
     }
     // 時間切れや接続の切断のあとに、旅程を書き換えない
     if (signal.aborted) throw new ToolError("止められたので、旅程は保存しません");
-    const itinerary = result.itinerary;
+    // 保存する旅程を評価する（評価して作り直すループの1回）。前と同じ旅程なら、評価し直さない
+    const evaluation =
+      result.unchanged && result.itinerary.evaluation !== undefined
+        ? result.itinerary.evaluation
+        : await reviewPlan({
+            ctx,
+            itinerary: result.itinerary,
+            gaps: result.gaps,
+            warnings: result.warnings,
+            conditions: shopRecordForReview(ctx),
+            signal,
+          });
+    if (signal.aborted) throw new ToolError("止められたので、旅程は保存しません");
+    const itinerary: Itinerary = { ...result.itinerary, evaluation };
+    // 基準に届かなければ、店内のスタッフどうしで調べ直しを頼むようすを見せる
+    if (!result.unchanged) {
+      for (const event of redoRequestEvents(evaluation, result.gaps)) ctx.emit?.(event);
+    }
     if (!result.unchanged) {
       ctx.itineraries.save(itinerary);
       session.itineraryId = itinerary.id;
@@ -1272,10 +1563,57 @@ export const updateItinerary = defineTool({
       diff: result.diff,
       errors: [],
       warnings: result.warnings,
+      gaps: result.gaps,
+      evaluation,
+      next: result.unchanged
+        ? `前の版と同じ旅程です。${nextStepAfter(evaluation)}`
+        : nextStepAfter(evaluation),
       itinerary,
     };
   },
 });
+
+/** 前の版の移動・帰りの最終の出典（相談を戻したあとでも、同じ出典で直せるように） */
+function routeSourcesInItinerary(itinerary: Itinerary): Map<string, Source> {
+  const sources = new Map<string, Source>();
+  for (const day of itinerary.days) {
+    for (const item of day.items) {
+      if (item.type !== "move") continue;
+      for (const source of item.sources) sources.set(source.url, source);
+    }
+    for (const source of day.lastReturn?.sources ?? []) sources.set(source.url, source);
+  }
+  return sources;
+}
+
+/** 周辺係が見つけた場所（主役の祭りの周り）と、泊まりに付けた宿の候補。採否と理由がそろっているかを確かめる */
+function researchedPlaces(ctx: ToolContext, draft: ItineraryDraft): ResearchedPlace[] {
+  const spots = (ctx.session.foundSpots.get(draft.mainFestivalId) ?? []).map(
+    (spot): ResearchedPlace => ({ ...spot, from: "nearby" }),
+  );
+  const offers = draft.days.flatMap((day) =>
+    (day.stay?.lodging?.offers ?? []).map(
+      (offer): ResearchedPlace => ({ id: offer.id, name: offer.name, from: "lodging" }),
+    ),
+  );
+  return [...spots, ...offers];
+}
+
+/** 評価係に渡す、聞き取った条件の要約（会話の文は渡さない） */
+function shopRecordForReview(ctx: ToolContext): string {
+  const { conditions, preferences } = ctx.session;
+  return JSON.stringify({
+    origin: conditions.origin ?? null,
+    returnTo: conditions.returnTo ?? null,
+    nights: conditions.nights ?? null,
+    party: conditions.party ?? null,
+    foodWishes: conditions.foodWishes ?? [],
+    dietary: conditions.dietary ?? [],
+    pace: conditions.pace ?? null,
+    interests: conditions.interests ?? [],
+    preferences,
+  });
+}
 
 type KnownVerification = Exclude<Itinerary["verification"], { status: "pending" }>;
 
@@ -1591,6 +1929,7 @@ export const MATSURI_TOOLS: readonly MatsuriTool[] = [
   searchNearby,
   getAccess,
   researchRoute,
+  researchTrip,
   getWeather,
   searchLodging,
   updateItinerary,

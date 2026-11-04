@@ -408,7 +408,19 @@
                           "means": "train",
                           "minutes": [40, 50],
                           "estimate": true,
-                          "note": "鈴鳴線"
+                          "note": "鈴鳴線",
+                          "from": "みなと中央駅",
+                          "to": "鈴鳴駅",
+                          "purpose": "outbound",
+                          "legs": [
+                            {
+                              "means": "train",
+                              "from": "みなと中央駅",
+                              "to": "鈴鳴駅",
+                              "line": "鈴鳴線",
+                              "minutes": [40, 50]
+                            }
+                          ]
                         },
                         "hours": null,
                         "cost": null,
@@ -435,7 +447,10 @@
                         "move": {
                           "means": "walk",
                           "minutes": [5, 8],
-                          "estimate": true
+                          "estimate": true,
+                          "from": "鈴鳴駅",
+                          "to": "鈴鳴そば庵",
+                          "purpose": "between"
                         },
                         "hours": {
                           "open": "11:00",
@@ -466,7 +481,10 @@
                         "move": {
                           "means": "walk",
                           "minutes": [10, 15],
-                          "estimate": true
+                          "estimate": true,
+                          "from": "鈴鳴そば庵",
+                          "to": "鈴鳴川の土手道",
+                          "purpose": "between"
                         },
                         "hours": null,
                         "cost": "無料",
@@ -494,7 +512,10 @@
                         "move": {
                           "means": "walk",
                           "minutes": [3, 5],
-                          "estimate": true
+                          "estimate": true,
+                          "from": "鈴鳴川の土手道",
+                          "to": "灯籠流しの申し込み",
+                          "purpose": "between"
                         },
                         "hours": null,
                         "cost": "灯籠1つ 500円",
@@ -522,7 +543,10 @@
                         "move": {
                           "means": "walk",
                           "minutes": [5, 8],
-                          "estimate": true
+                          "estimate": true,
+                          "from": "灯籠流しの申し込み",
+                          "to": "川べりの茶屋",
+                          "purpose": "between"
                         },
                         "hours": {
                           "open": "10:00",
@@ -553,7 +577,10 @@
                         "move": {
                           "means": "walk",
                           "minutes": [5, 8],
-                          "estimate": true
+                          "estimate": true,
+                          "from": "川べりの茶屋",
+                          "to": "鈴鳴川の河原",
+                          "purpose": "last_mile"
                         },
                         "hours": null,
                         "cost": null,
@@ -603,7 +630,26 @@
                           "means": "train",
                           "minutes": [50, 60],
                           "estimate": true,
-                          "note": "会場から鈴鳴駅まで歩いて8〜12分。そこから鈴鳴線"
+                          "note": "会場から鈴鳴駅まで歩いて8〜12分。そこから鈴鳴線",
+                          "from": "鈴鳴川の河原",
+                          "to": "みなと中央駅",
+                          "purpose": "return",
+                          "legs": [
+                            {
+                              "means": "walk",
+                              "from": "鈴鳴川の河原",
+                              "to": "鈴鳴駅",
+                              "line": null,
+                              "minutes": [8, 12]
+                            },
+                            {
+                              "means": "train",
+                              "from": "鈴鳴駅",
+                              "to": "みなと中央駅",
+                              "line": "鈴鳴線",
+                              "minutes": [40, 50]
+                            }
+                          ]
                         },
                         "hours": null,
                         "cost": null,
@@ -617,7 +663,48 @@
                         "changedInVersion": 1
                       }
                     ],
-                    "stay": null
+                    "stay": null,
+                    "meals": [
+                      {
+                        "slot": "lunch",
+                        "kind": "shop",
+                        "name": "鈴鳴そば庵",
+                        "itemId": "lunch",
+                        "spotId": "suzunari-soba-an",
+                        "sources": [
+                          {
+                            "url": "https://example.com/soba-an",
+                            "checkedAt": "2026-07-20",
+                            "confidence": "single"
+                          }
+                        ]
+                      },
+                      {
+                        "slot": "dinner",
+                        "kind": "stalls",
+                        "name": "会場の屋台",
+                        "itemId": "festival",
+                        "sources": [
+                          {
+                            "url": "https://example.com/suzunari/2026",
+                            "checkedAt": "2026-07-20",
+                            "confidence": "official"
+                          }
+                        ]
+                      }
+                    ],
+                    "lastReturn": {
+                      "station": "鈴鳴駅",
+                      "departBy": "22:45",
+                      "note": "鈴鳴線のみなと中央駅ゆきの最終の目安",
+                      "sources": [
+                        {
+                          "url": "https://example.com/suzunari/access",
+                          "checkedAt": "2026-07-20",
+                          "confidence": "official"
+                        }
+                      ]
+                    }
                   }
                 ],
                 "notes": [
@@ -635,7 +722,39 @@
                     "kind": "cancelled",
                     "summary": "荒天の場合は翌日に順延になる。日を変えられないときは、町の散策と鈴鳴そばだけでも楽しめる"
                   }
-                ]
+                ],
+                "gaps": [],
+                "evaluation": {
+                  "round": 1,
+                  "maxRounds": 3,
+                  "threshold": 70,
+                  "passed": true,
+                  "scores": [
+                    {
+                      "criterion": "coverage",
+                      "score": 100,
+                      "findings": []
+                    },
+                    {
+                      "criterion": "specificity",
+                      "score": 90,
+                      "findings": ["帰りに乗る電車の時刻の目安が書かれていない"]
+                    },
+                    {
+                      "criterion": "feasibility",
+                      "score": 100,
+                      "findings": []
+                    },
+                    {
+                      "criterion": "grounding",
+                      "score": 100,
+                      "findings": []
+                    }
+                  ],
+                  "redo": [],
+                  "judgedBy": "code+model",
+                  "evaluatedAt": "2026-08-03T10:00:00+09:00"
+                }
               },
               "diff": {
                 "fromVersion": 0,
@@ -789,7 +908,19 @@
                           "means": "train",
                           "minutes": [40, 50],
                           "estimate": true,
-                          "note": "鈴鳴線"
+                          "note": "鈴鳴線",
+                          "from": "みなと中央駅",
+                          "to": "鈴鳴駅",
+                          "purpose": "outbound",
+                          "legs": [
+                            {
+                              "means": "train",
+                              "from": "みなと中央駅",
+                              "to": "鈴鳴駅",
+                              "line": "鈴鳴線",
+                              "minutes": [40, 50]
+                            }
+                          ]
                         },
                         "hours": null,
                         "cost": null,
@@ -816,7 +947,10 @@
                         "move": {
                           "means": "walk",
                           "minutes": [5, 8],
-                          "estimate": true
+                          "estimate": true,
+                          "from": "鈴鳴駅",
+                          "to": "鈴鳴そば庵",
+                          "purpose": "between"
                         },
                         "hours": {
                           "open": "11:00",
@@ -847,7 +981,10 @@
                         "move": {
                           "means": "walk",
                           "minutes": [10, 15],
-                          "estimate": true
+                          "estimate": true,
+                          "from": "鈴鳴そば庵",
+                          "to": "鈴鳴川の土手道",
+                          "purpose": "between"
                         },
                         "hours": null,
                         "cost": "無料",
@@ -875,7 +1012,10 @@
                         "move": {
                           "means": "walk",
                           "minutes": [5, 10],
-                          "estimate": true
+                          "estimate": true,
+                          "from": "鈴鳴川の土手道",
+                          "to": "鈴鳴和紙の館",
+                          "purpose": "between"
                         },
                         "hours": {
                           "open": "10:00",
@@ -907,7 +1047,10 @@
                         "move": {
                           "means": "walk",
                           "minutes": [10, 15],
-                          "estimate": true
+                          "estimate": true,
+                          "from": "鈴鳴和紙の館",
+                          "to": "灯籠流しの申し込み",
+                          "purpose": "between"
                         },
                         "hours": null,
                         "cost": "灯籠1つ 500円",
@@ -935,7 +1078,10 @@
                         "move": {
                           "means": "walk",
                           "minutes": [5, 8],
-                          "estimate": true
+                          "estimate": true,
+                          "from": "灯籠流しの申し込み",
+                          "to": "川べりの茶屋",
+                          "purpose": "between"
                         },
                         "hours": {
                           "open": "10:00",
@@ -966,7 +1112,10 @@
                         "move": {
                           "means": "walk",
                           "minutes": [5, 8],
-                          "estimate": true
+                          "estimate": true,
+                          "from": "川べりの茶屋",
+                          "to": "鈴鳴川の河原",
+                          "purpose": "last_mile"
                         },
                         "hours": null,
                         "cost": null,
@@ -1016,7 +1165,26 @@
                           "means": "train",
                           "minutes": [50, 60],
                           "estimate": true,
-                          "note": "会場から鈴鳴駅まで歩いて8〜12分。そこから鈴鳴線"
+                          "note": "会場から鈴鳴駅まで歩いて8〜12分。そこから鈴鳴線",
+                          "from": "鈴鳴川の河原",
+                          "to": "みなと中央駅",
+                          "purpose": "return",
+                          "legs": [
+                            {
+                              "means": "walk",
+                              "from": "鈴鳴川の河原",
+                              "to": "鈴鳴駅",
+                              "line": null,
+                              "minutes": [8, 12]
+                            },
+                            {
+                              "means": "train",
+                              "from": "鈴鳴駅",
+                              "to": "みなと中央駅",
+                              "line": "鈴鳴線",
+                              "minutes": [40, 50]
+                            }
+                          ]
                         },
                         "hours": null,
                         "cost": null,
@@ -1030,7 +1198,48 @@
                         "changedInVersion": 1
                       }
                     ],
-                    "stay": null
+                    "stay": null,
+                    "meals": [
+                      {
+                        "slot": "lunch",
+                        "kind": "shop",
+                        "name": "鈴鳴そば庵",
+                        "itemId": "lunch",
+                        "spotId": "suzunari-soba-an",
+                        "sources": [
+                          {
+                            "url": "https://example.com/soba-an",
+                            "checkedAt": "2026-07-20",
+                            "confidence": "single"
+                          }
+                        ]
+                      },
+                      {
+                        "slot": "dinner",
+                        "kind": "stalls",
+                        "name": "会場の屋台",
+                        "itemId": "festival",
+                        "sources": [
+                          {
+                            "url": "https://example.com/suzunari/2026",
+                            "checkedAt": "2026-07-20",
+                            "confidence": "official"
+                          }
+                        ]
+                      }
+                    ],
+                    "lastReturn": {
+                      "station": "鈴鳴駅",
+                      "departBy": "22:45",
+                      "note": "鈴鳴線のみなと中央駅ゆきの最終の目安",
+                      "sources": [
+                        {
+                          "url": "https://example.com/suzunari/access",
+                          "checkedAt": "2026-07-20",
+                          "confidence": "official"
+                        }
+                      ]
+                    }
                   }
                 ],
                 "notes": [
@@ -1048,7 +1257,39 @@
                     "kind": "cancelled",
                     "summary": "荒天の場合は翌日に順延になる。日を変えられないときは、町の散策と鈴鳴そばだけでも楽しめる"
                   }
-                ]
+                ],
+                "gaps": [],
+                "evaluation": {
+                  "round": 1,
+                  "maxRounds": 3,
+                  "threshold": 70,
+                  "passed": true,
+                  "scores": [
+                    {
+                      "criterion": "coverage",
+                      "score": 100,
+                      "findings": []
+                    },
+                    {
+                      "criterion": "specificity",
+                      "score": 90,
+                      "findings": ["帰りに乗る電車の時刻の目安が書かれていない"]
+                    },
+                    {
+                      "criterion": "feasibility",
+                      "score": 100,
+                      "findings": []
+                    },
+                    {
+                      "criterion": "grounding",
+                      "score": 100,
+                      "findings": []
+                    }
+                  ],
+                  "redo": [],
+                  "judgedBy": "code+model",
+                  "evaluatedAt": "2026-08-03T10:00:00+09:00"
+                }
               },
               "diff": {
                 "fromVersion": 1,

@@ -113,3 +113,52 @@ function statusOf(error: unknown): number | undefined {
   }
   return undefined;
 }
+
+/** 待ち時間（ミリ秒）だけ待つ。signal が止まったら、待ちをやめて止まった理由を投げる */
+function waitMs(ms: number, signal?: AbortSignal): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (signal?.aborted) {
+      reject(signal.reason);
+      return;
+    }
+    const timer = setTimeout(() => {
+      signal?.removeEventListener("abort", onAbort);
+      resolve();
+    }, ms);
+    const onAbort = () => {
+      clearTimeout(timer);
+      reject(signal?.reason);
+    };
+    signal?.addEventListener("abort", onAbort, { once: true });
+  });
+}
+
+export interface RetryOnceOptions {
+  /** 止められたら、やり直さない */
+  signal?: AbortSignal;
+  /** 待ち方（テストで差し替える）。省略すると setTimeout で待つ */
+  wait?: (ms: number, signal?: AbortSignal) => Promise<void>;
+  /** やり直す前に呼ぶ（ログに失敗の種類を残すため） */
+  onRetry?: (failure: Failure) => void;
+}
+
+/**
+ * 処理を動かし、時間をおけば直りうる失敗（混雑・通信・時間切れ・一時的な異常終了）のときだけ、
+ * 少し待ってから1回だけやり直す。やり直しても失敗したら、その失敗を投げる
+ */
+export async function retryOnce<T>(
+  task: () => Promise<T>,
+  options: RetryOnceOptions = {},
+): Promise<T> {
+  const { signal, wait = waitMs, onRetry } = options;
+  try {
+    return await task();
+  } catch (error) {
+    if (signal?.aborted) throw error;
+    const failure = classifyFailure(error);
+    if (!failure.retryable) throw error;
+    onRetry?.(failure);
+    await wait(backoffMs(1), signal);
+    return task();
+  }
+}

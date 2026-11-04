@@ -10,6 +10,7 @@ import {
   type Source,
   SourceSchema,
 } from "./common";
+import { PlanEvaluationSchema, PlanGapSchema } from "./evaluation";
 import { PartySchema, PreferencesSchema, TripBudgetSchema } from "./preferences";
 
 const TextSchema = z.string().min(1);
@@ -36,13 +37,73 @@ export const ITINERARY_ITEM_TYPES = [
 
 export const MOVE_MEANS = ["walk", "train", "bus", "car", "taxi"] as const;
 
-/** 前の予定からの移動。所要時間は必ず目安として扱う */
-export const MoveSchema = z.strictObject({
+/**
+ * 移動の役目。outbound 出発の駅から目的地の駅へ / last_mile 駅から祭りの会場へ（最後の移動）/
+ * between 寄り道どうしの移動 / return 帰り（終わりの場所へ）
+ */
+export const MOVE_PURPOSES = ["outbound", "last_mile", "between", "return"] as const;
+
+/**
+ * 移動の1区間（乗り換えまでの1本）。区間の境の駅が乗り換えの駅になる。
+ * 路線は調べた結果にあるものだけを書き、分からなければ null
+ */
+export const MoveLegSchema = z.strictObject({
   means: z.enum(MOVE_MEANS),
+  from: TextSchema.max(60),
+  to: TextSchema.max(60),
+  line: TextSchema.max(60).nullable(),
   minutes: MinuteRangeSchema,
-  estimate: z.literal(true),
-  note: TextSchema.optional(),
 });
+
+/** 前の予定からの移動。所要時間は必ず目安として扱う */
+export const MoveSchema = z
+  .strictObject({
+    means: z.enum(MOVE_MEANS),
+    minutes: MinuteRangeSchema,
+    estimate: z.literal(true),
+    note: TextSchema.optional(),
+    /** 出発の場所（駅・会場・店の名前） */
+    from: TextSchema.max(60).optional(),
+    /** 到着の場所 */
+    to: TextSchema.max(60).optional(),
+    purpose: z.enum(MOVE_PURPOSES).optional(),
+    /** 乗り換えごとの区間（電車・バスの移動）。区間はつながった順に並べる */
+    legs: z.array(MoveLegSchema).min(1).max(6).optional(),
+  })
+  .superRefine((move, ctx) => {
+    const legs = move.legs ?? [];
+    legs.forEach((leg, index) => {
+      const next = legs[index + 1];
+      if (next !== undefined && leg.to !== next.from) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["legs", index + 1, "from"],
+          message: "区間は、前の区間の到着の場所から始めてください",
+        });
+      }
+    });
+    const first = legs[0];
+    const last = legs.at(-1);
+    if (first !== undefined && move.from !== undefined && first.from !== move.from) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["legs", 0, "from"],
+        message: "最初の区間は、移動の出発の場所から始めてください",
+      });
+    }
+    if (last !== undefined && move.to !== undefined && last.to !== move.to) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["legs", legs.length - 1, "to"],
+        message: "最後の区間は、移動の到着の場所で終えてください",
+      });
+    }
+  });
+
+/** 乗り換えの駅（区間の境の場所）。区間がなければ空 */
+export function transferStations(move: Pick<Move, "legs">): string[] {
+  return (move.legs ?? []).slice(1).map((leg) => leg.from);
+}
 
 export const ItineraryItemSchema = z
   .strictObject({
@@ -240,12 +301,80 @@ export const StaySchema = StayPlanSchema.extend({
   lodging: LodgingSearchSchema.optional(),
 });
 
+// ---------------------------------------------------------------------------
+// 食事・帰りの最終・調べの採否
+
+/** 食事の時間帯。lunch 昼 / dinner 夜 */
+export const MEAL_SLOTS = ["lunch", "dinner"] as const;
+
+/** 食事の案の種類。shop 店 / stalls 祭りの会場の屋台 / station 駅や道中で買う / bring 持っていく */
+export const MEAL_PLAN_KINDS = ["shop", "stalls", "station", "bring"] as const;
+
+/**
+ * 滞在の時間帯にかかる食事（昼・夜）ごとの案。店の予定（type: meal）のほかに、
+ * 祭りの最中に屋台で食べるなど、ほかの予定の中でとる食事もここに書く
+ */
+export const MealPlanSchema = z
+  .strictObject({
+    slot: z.enum(MEAL_SLOTS),
+    kind: z.enum(MEAL_PLAN_KINDS),
+    /** 店の名前か、案の短い説明（例：会場の屋台で鈴鳴焼き） */
+    name: TextSchema.max(60),
+    /** この食事をとる予定の id（店の予定、または祭りの予定など）。予定の外なら null */
+    itemId: TextSchema.nullable(),
+    /** 店の場所の ID（祭りのデータの周辺の場所か、周辺係が調べた場所） */
+    spotId: SlugSchema.optional(),
+    sources: z.array(SourceSchema),
+  })
+  .refine((meal) => (meal.kind !== "shop" && meal.kind !== "stalls") || meal.sources.length > 0, {
+    path: ["sources"],
+    message: "店や屋台の食事の案には出典が必要です",
+  });
+
+/**
+ * 帰りの最終の目安。乗る駅と、そこを出る最終の時刻。調べて分からなければ departBy を null にする
+ * （その日の不足 last_return_unknown になる）
+ */
+export const LastReturnSchema = z
+  .strictObject({
+    /** 帰りに乗る駅 */
+    station: TextSchema.max(60),
+    /** この時刻までに乗る（最終の目安） */
+    departBy: LocalTimeSchema.nullable(),
+    note: TextSchema.max(120).optional(),
+    sources: z.array(SourceSchema),
+  })
+  .refine((last) => last.departBy === null || last.sources.length > 0, {
+    path: ["sources"],
+    message: "最終の時刻を書くときは出典が必要です",
+  });
+
 /** 旅程の1日。stay が null の日は、その日のうちに帰る（旅の最後の日は必ず null） */
 export const ItineraryDaySchema = z.strictObject({
   date: IsoDateSchema,
   weather: WeatherSchema,
   items: z.array(ItineraryItemSchema).min(1),
   stay: StaySchema.nullable(),
+  /** 滞在の時間帯にかかる食事の案。古い版の旅程にはない */
+  meals: z.array(MealPlanSchema).max(4).optional(),
+  /** 帰りの最終の目安（その日のうちに帰る日）。古い版の旅程にはない */
+  lastReturn: LastReturnSchema.nullable().optional(),
+});
+
+/** 調べた場所を見つけた係。nearby 周辺係 / lodging 宿の係 */
+export const CONSIDERED_FROM = ["nearby", "lodging"] as const;
+
+/**
+ * 周辺係・宿の係が見つけた場所の採否。採ったか（adopted）は旅程の予定と宿の候補からサーバーが決め、
+ * 理由は旅程係が書く（採らなかったときは、なぜ採らなかったか）
+ */
+export const ConsideredPlaceSchema = z.strictObject({
+  /** 場所の ID（周辺の場所の spotId か、宿の候補の id） */
+  id: TextSchema.max(100),
+  name: TextSchema.max(100),
+  from: z.enum(CONSIDERED_FROM),
+  adopted: z.boolean(),
+  reason: TextSchema.max(120),
 });
 
 /** YYYY-MM-DD の次の日 */
@@ -278,6 +407,12 @@ export const ItinerarySchema = z
     /** 持ち物と注意 */
     notes: z.array(TextSchema),
     alternatives: z.array(AlternativeSchema),
+    /** 周辺係・宿の係が見つけた場所の採否と理由。古い版の旅程にはない */
+    considered: z.array(ConsideredPlaceSchema).max(40).optional(),
+    /** 点検で見つかった不足（サーバーがコードで決める）。古い版の旅程にはない */
+    gaps: z.array(PlanGapSchema).max(40).optional(),
+    /** 評価係の採点（サーバーが付ける）。古い版の旅程にはない */
+    evaluation: PlanEvaluationSchema.optional(),
   })
   .superRefine((itinerary, ctx) => {
     const { days } = itinerary;
@@ -304,6 +439,16 @@ export const ItinerarySchema = z
           message: "最後の日は帰る日なので、stay を null にしてください",
         });
       }
+      const itemIds = new Set(day.items.map((item) => item.id));
+      day.meals?.forEach((meal, mealIndex) => {
+        if (meal.itemId !== null && !itemIds.has(meal.itemId)) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["days", index, "meals", mealIndex, "itemId"],
+            message: "食事の itemId は、その日の予定の id にしてください",
+          });
+        }
+      });
       day.items.forEach((item, itemIndex) => {
         if (item.changedInVersion > itinerary.version) {
           ctx.addIssue({
@@ -351,6 +496,13 @@ export const ItineraryDiffSchema = z
   });
 
 export type Move = z.infer<typeof MoveSchema>;
+export type MoveLeg = z.infer<typeof MoveLegSchema>;
+export type MovePurpose = (typeof MOVE_PURPOSES)[number];
+export type MealSlot = (typeof MEAL_SLOTS)[number];
+export type MealPlanKind = (typeof MEAL_PLAN_KINDS)[number];
+export type MealPlan = z.infer<typeof MealPlanSchema>;
+export type LastReturn = z.infer<typeof LastReturnSchema>;
+export type ConsideredPlace = z.infer<typeof ConsideredPlaceSchema>;
 export type ItineraryItem = z.infer<typeof ItineraryItemSchema>;
 export type VerificationResult = z.infer<typeof VerificationResultSchema>;
 export type Verification = z.infer<typeof VerificationSchema>;
@@ -367,7 +519,7 @@ export type ItineraryDay = z.infer<typeof ItineraryDaySchema>;
 export type Itinerary = z.infer<typeof ItinerarySchema>;
 export type ItineraryDiff = z.infer<typeof ItineraryDiffSchema>;
 
-/** 旅程で使った出典（予定・天気・再確認・宿の候補）を、URL の重複を除いて集める（しおりの「出典」に出す） */
+/** 旅程で使った出典（予定・天気・再確認・宿の候補・食事・帰りの最終）を、URL の重複を除いて集める（しおりの「出典」に出す） */
 export function collectItinerarySources(itinerary: Itinerary): Source[] {
   const all = [
     ...itineraryItems(itinerary).flatMap((item) => item.sources),
@@ -378,6 +530,8 @@ export function collectItinerarySources(itinerary: Itinerary): Source[] {
     ...itinerary.days.flatMap(
       (day) => day.stay?.lodging?.offers.map((offer) => offer.source) ?? [],
     ),
+    ...itinerary.days.flatMap((day) => day.meals?.flatMap((meal) => meal.sources) ?? []),
+    ...itinerary.days.flatMap((day) => day.lastReturn?.sources ?? []),
   ];
   const byUrl = new Map<string, Source>();
   for (const source of all) {

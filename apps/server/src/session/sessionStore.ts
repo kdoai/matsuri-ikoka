@@ -9,6 +9,7 @@ import {
   type NearbySpot,
   type PartialTripConditions,
   type Preferences,
+  type Source,
   type Weather,
 } from "@matsuri-ikoka/schema";
 
@@ -40,6 +41,10 @@ export interface Session {
   lodging: Map<IsoDate, LodgingSearch>;
   /** 周辺係が Web で調べて残した場所。キーは場所の ID（web-…）。旅程を保存するとき、祭りのデータの場所と同じく照らす */
   researchedSpots: Map<string, NearbySpot>;
+  /** 行き方の調べで実際に読んだページ。キーは URL。旅程を保存するとき、移動・帰りの最終の出典として認める */
+  researchedSources: Map<string, Source>;
+  /** 周辺係が Web で見つけた場所の名前。キーは祭りの ID。旅程を保存するとき、採否と理由がそろっているかを確かめる */
+  foundSpots: Map<string, { id: string; name: string }[]>;
   /** live：Agent SDK のセッション ID（resume に使う） */
   agentSessionId: string | null;
   /**
@@ -114,6 +119,8 @@ export class SessionStore {
       weather: new Map(),
       lodging: new Map(),
       researchedSpots: new Map(),
+      researchedSources: new Map(),
+      foundSpots: new Map(),
       agentSessionId: null,
       replay: init.replay ?? null,
       busy: false,
@@ -150,6 +157,8 @@ export class SessionStore {
       nearMisses: [],
       lodging: new Map(),
       researchedSpots: new Map(),
+      researchedSources: new Map(),
+      foundSpots: new Map(),
       agentSessionId: null,
       busy: false,
     };

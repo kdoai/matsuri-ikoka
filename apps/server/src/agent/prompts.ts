@@ -15,6 +15,7 @@ export const PROMPT_NAMES = [
   "route",
   "nearby",
   "lodging",
+  "evaluator",
 ] as const;
 export type PromptName = (typeof PROMPT_NAMES)[number];
 export type AgentPrompts = Record<PromptName, string>;

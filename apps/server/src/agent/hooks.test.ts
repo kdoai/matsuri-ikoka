@@ -247,3 +247,58 @@ describe("extractToolOutput", () => {
     expect(extractToolOutput(undefined)).toBeNull();
   });
 });
+
+describe("評価の基準に届かないまま旅程係が終えようとしたとき", () => {
+  const evaluation = (round: number, passed: boolean) => ({
+    round,
+    maxRounds: 3,
+    threshold: 70,
+    passed,
+    scores: [
+      { criterion: "coverage" as const, score: passed ? 100 : 65, findings: [] },
+      { criterion: "specificity" as const, score: 100, findings: [] },
+      { criterion: "feasibility" as const, score: 100, findings: [] },
+      { criterion: "grounding" as const, score: 100, findings: [] },
+    ],
+    redo: passed
+      ? []
+      : [{ target: "nearby" as const, criterion: "coverage" as const, ask: "昼の店を調べ直す" }],
+    judgedBy: "code" as const,
+    evaluatedAt: "2026-08-03T10:15:00+09:00",
+  });
+  const stop = { agent_id: "a1", agent_type: "planner", stop_hook_active: false };
+
+  it("回数が残っていれば、作り直しに戻す（調べ直しの頼みを添える）", async () => {
+    const { ctx, call } = setup();
+    ctx.turn.lastEvaluation = evaluation(1, false);
+
+    const output = (await call("SubagentStop", stop)) as { decision?: string; reason?: string };
+
+    expect(output.decision).toBe("block");
+    expect(output.reason).toContain("research_trip");
+  });
+
+  it("合格したとき、回数を使い切ったとき、旅程係でないときは戻さない", async () => {
+    const passed = setup();
+    passed.ctx.turn.lastEvaluation = evaluation(1, true);
+    expect(await passed.call("SubagentStop", stop)).toEqual({});
+
+    const exhausted = setup();
+    exhausted.ctx.turn.lastEvaluation = evaluation(3, false);
+    expect(await exhausted.call("SubagentStop", stop)).toEqual({});
+
+    const scout = setup();
+    scout.ctx.turn.lastEvaluation = evaluation(1, false);
+    expect(await scout.call("SubagentStop", { ...stop, agent_type: "scout" })).toEqual({});
+  });
+
+  it("評価の回数が進まないまま戻し続けない（戻すのは上限の回数−1まで）", async () => {
+    const { ctx, call } = setup();
+    ctx.turn.lastEvaluation = evaluation(1, false);
+    const decisions = [];
+    for (let i = 0; i < 4; i += 1) {
+      decisions.push(((await call("SubagentStop", stop)) as { decision?: string }).decision);
+    }
+    expect(decisions).toEqual(["block", "block", undefined, undefined]);
+  });
+});

@@ -16,6 +16,7 @@ import type { LodgingService } from "../tools/lodging";
 import type { LodgingResearcher } from "../tools/lodgingResearch";
 import { createMatsuriMcpServer } from "../tools/mcpServer";
 import type { NearbyResearcher } from "../tools/nearbyResearch";
+import type { PlanEvaluator } from "../tools/planEvaluator";
 import type { RouteResearcher } from "../tools/routeResearch";
 import type { FestivalVerifier } from "../tools/verifier";
 import type { WeatherService } from "../tools/weather";
@@ -33,7 +34,7 @@ import {
   type TurnInput,
 } from "./runner";
 
-// live：Agent SDK でコンシェルジュと3人のスタッフを動かす。
+// live：Agent SDK でコンシェルジュと3人のスタッフを動かす。旅程の評価係はツールの中で動く。
 // 会話は Agent SDK のセッションを resume して続ける。フックから出たイベントと、
 // コンシェルジュの返答の文（message.delta）を SSE に流す。
 
@@ -52,6 +53,8 @@ export interface ClaudeRunnerDeps {
   nearby?: NearbyResearcher;
   /** 会場の近くの宿の Web の調べ（観点ごとに並べて動かす） */
   lodgingResearch?: LodgingResearcher;
+  /** 保存した旅程を観点ごとに採点する評価係 */
+  planEvaluator?: PlanEvaluator;
   prompts: AgentPrompts;
   models: AgentModels;
   /** 1回の発言の費用の上限（米ドル） */
@@ -204,6 +207,7 @@ export class ClaudeAgentRunner implements AgentRunner {
       ...(deps.routes ? { routes: deps.routes } : {}),
       ...(deps.nearby ? { nearby: deps.nearby } : {}),
       ...(deps.lodgingResearch ? { lodgingResearch: deps.lodgingResearch } : {}),
+      ...(deps.planEvaluator ? { planEvaluator: deps.planEvaluator } : {}),
       // ツールの中の調べ（寄り道の調べ）の進みも、相談の進みとして数える
       ...(progress ? { progress } : {}),
       today: deps.today,

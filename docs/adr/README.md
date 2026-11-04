@@ -2,12 +2,13 @@
 
 アプリに関わる設計の判断を、「背景・判断・結果」の形で短く残します。判断を変えるときは、元の ADR を書き換えず、新しい ADR を足して古いものの状態を「置き換え」にします。
 
-| 番号                                         | 判断                                                                         | 状態 |
-| -------------------------------------------- | ---------------------------------------------------------------------------- | ---- |
-| [0001](0001-claude-agent-sdk.md)             | 接客エージェントに Claude Agent SDK（TypeScript）を使う                      | 採用 |
-| [0002](0002-festival-data-as-json-in-git.md) | 祭りのデータを1件1ファイルの JSON にし、Git で管理する                       | 採用 |
-| [0003](0003-3d-as-a-view-layer.md)           | 3D の店内を、状態の見た目の層にとどめる                                      | 採用 |
-| [0004](0004-authentication.md)               | 場面ごとに Claude への認証を分ける                                           | 採用 |
-| [0005](0005-login-and-storage.md)            | ログインに Firebase Authentication、保存先に Firestore を使う                | 採用 |
-| [0006](0006-lodging-search.md)               | 宿の空きと料金を、楽天トラベルの空室検索 API から取る                        | 採用 |
-| [0007](0007-festival-refresh-workflow.md)    | 祭りのデータを、GitHub Actions から Managed Agents で確かめ直し、PR で届ける | 採用 |
+| 番号                                           | 判断                                                                               | 状態 |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------- | ---- |
+| [0001](0001-claude-agent-sdk.md)               | 接客エージェントに Claude Agent SDK（TypeScript）を使う                            | 採用 |
+| [0002](0002-festival-data-as-json-in-git.md)   | 祭りのデータを1件1ファイルの JSON にし、Git で管理する                             | 採用 |
+| [0003](0003-3d-as-a-view-layer.md)             | 3D の店内を、状態の見た目の層にとどめる                                            | 採用 |
+| [0004](0004-authentication.md)                 | 場面ごとに Claude への認証を分ける                                                 | 採用 |
+| [0005](0005-login-and-storage.md)              | ログインに Firebase Authentication、保存先に Firestore を使う                      | 採用 |
+| [0006](0006-lodging-search.md)                 | 宿の空きと料金を、楽天トラベルの空室検索 API から取る                              | 採用 |
+| [0007](0007-festival-refresh-workflow.md)      | 祭りのデータを、GitHub Actions から Managed Agents で確かめ直し、PR で届ける       | 採用 |
+| [0008](0008-plan-check-and-evaluation-loop.md) | 旅程にそろうべきものを型とコードで確かめ、評価係の採点が届くまで調べ直して作り直す | 採用 |
