@@ -1,0 +1,232 @@
+{
+  "id": "oyamazumi-jinja-otaue-sai",
+  "name": { "ja": "大山祇神社御田植祭", "en": "Oyamazumi Shrine Rice Planting Festival" },
+  "category": "ritual",
+  "municipalities": [{ "prefecture": "愛媛県", "name": "今治市" }],
+  "venue": {
+    "name": "大山祇神社（境内の斎田）",
+    "lat": 34.2481,
+    "lng": 133.0052
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu"],
+  "highlights": [
+    "一力山が目に見えない稲の精霊と取り組む「一人角力」で、その年の豊作を占う",
+    "島内から選ばれた16名の早乙女が、境内の斎田で田植えを奉仕する",
+    "神輿3基を先頭に、神職・早乙女の行列が本社から斎田前の御棧敷殿へ進む"
+  ],
+  "trivia": [
+    {
+      "text": "精霊は目に見えないため、力士が一人で相撲を取るように見えるのが名の由来",
+      "source": {
+        "url": "https://oomishimagu.jp/worship/worship03/",
+        "title": "大山祇神社 祭礼・催し",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "一人角力は愛媛県の無形民俗文化財に指定されている",
+      "source": {
+        "url": "https://www.city.imabari.ehime.jp/event/?a=127",
+        "title": "今治市 大山祇神社御田植祭（一人角力）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "早乙女16名は、大三島の島内13地区から選ばれる",
+      "source": {
+        "url": "https://www.city.imabari.ehime.jp/event/?a=127",
+        "title": "今治市 大山祇神社御田植祭（一人角力）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "このとき植えた稲の初穂は、秋の抜穂祭で刈られ、神酒「白鷺」の原料にもなる",
+      "source": {
+        "url": "https://oomishimagu.jp/worship/worship03/",
+        "title": "大山祇神社 祭礼・催し",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "境内での神事と田植えの見学が中心で、混雑や危険についての特別な注意は見つからない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.imabari.ehime.jp/event/?a=127",
+        "title": "今治市 イベント情報 大山祇神社御田植祭（一人角力）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://oomishimagu.jp/worship/worship03/",
+        "title": "大山祇神社 祭礼・催し（御田植祭の流れ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-06-19",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "開催の記録（今治市のイベント情報に2026年6月19日と掲載）",
+      "sources": [
+        {
+          "url": "https://www.city.imabari.ehime.jp/event/?a=127",
+          "title": "今治市 大山祇神社御田植祭（一人角力）（2026年6月19日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-06-09",
+      "start": "12:30",
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "神社の年中行事にある「旧暦5月5日、午後0時30分より斎行」と、国立天文台の暦要項の2027年の朔（6月5日）から見込んだ日（2027年の発表はまだない）。本社で神事、神輿3基を先頭に斎田前の御棧敷殿へ進み、早乙女の御田植神事、一人角力の順",
+      "sources": [
+        {
+          "url": "https://oomishimagu.jp/worship/worship03/",
+          "title": "大山祇神社 祭礼・催し（御田植祭 旧暦5月5日 午後0時30分）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2027/rekiyou273.html",
+          "title": "国立天文台 令和9年暦要項 朔弦望",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [
+      {
+        "hub": "今治駅",
+        "minutes": [65, 75],
+        "route": "JR今治駅前から、せとうちバス（特急）または瀬戸内海交通（急行）で大山祇神社前下車、乗り換えなし。本州側からは福山駅から高速バスしまなみライナーで大三島BSへ行き、瀬戸内海交通の宮浦港行きに乗り換えて約12分"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://oomishimagu.jp/access/",
+        "title": "大山祇神社 交通案内（今治駅前からバス約65分、鳥居脇に駐車場13台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.imabari.ehime.jp/kanko/spot/?a=226",
+        "title": "今治市 大山祇神社（鳥居脇13台、最寄りは藤公園市営駐車場・無料50台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": { "stalls": "unknown", "local": [] },
+  "nearby": [
+    {
+      "id": "imabari-omishima-museum",
+      "name": "今治市大三島美術館",
+      "kind": "sightseeing",
+      "summary": "現代の日本画を集めた市立の美術館。月曜が祝日なら翌日に振り替えて休館、12月27日〜31日も休み",
+      "location": { "lat": 34.2491, "lng": 133.0033 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "09:00", "close": "17:00" },
+      "closedDays": ["mon"],
+      "price": "一般520円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.imabari.ehime.jp/museum/omishima/",
+          "title": "今治市大三島美術館（9時〜17時、月曜休館、一般520円）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.imabari.ehime.jp/kanko/spot/?a=229",
+          "title": "今治市 観光スポット 大三島美術館（地図の位置）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "michi-no-eki-shimanami-no-eki-mishima",
+      "name": "道の駅 しまなみの駅御島",
+      "kind": "sightseeing",
+      "summary": "大三島の総合観光案内所を併設した物産センター。温水シャワー（1回200円）も使える",
+      "location": { "lat": 34.249, "lng": 133.0053 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "08:30", "close": "17:00" },
+      "closedDays": [],
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.imabari.ehime.jp/kanko/spot/?a=233",
+          "title": "今治市 重点「道の駅」しまなみの駅御島（8時30分〜17時、無休）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://oomishimagu.jp/worship/worship03/",
+      "title": "大山祇神社 祭礼・催し（御田植祭は旧暦5月5日、境内の斎田）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.imabari.ehime.jp/event/?a=127",
+      "title": "今治市 イベント情報 大山祇神社御田植祭（一人角力）（今治市大三島町宮浦3327）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.imabari.ehime.jp/kanko/spot/?a=226",
+      "title": "今治市 観光スポット 大山祇神社（地図の位置、無休、拝観無料）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表（日付は旧暦5月5日と国立天文台の朔の表から見込んだもの。時刻は神社の年中行事の表の午後0時30分）",
+    "終わりの時刻",
+    "雨天の扱い",
+    "見学の決まり（斎田のまわりでの立ち位置・撮影）、服装・持ち物（神社と市の案内に記載がない）",
+    "大山祇神社前のバス停から境内・斎田までの徒歩の時間と、当日のバスの時刻",
+    "福山駅から大三島BSまでの所要時間",
+    "交通規制の有無",
+    "屋台の有無と、この祭りの日だけの食べもの",
+    "周辺の食事の場所（営業時間と定休日を公式で確かめられた店が見つかっていない）",
+    "知名度は、じゃらんnet・トリップアドバイザー・japan-guide.com・日本政府観光局の祭りのページが検索で見つからなかったことによる"
+  ]
+}

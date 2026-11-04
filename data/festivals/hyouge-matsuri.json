@@ -1,0 +1,189 @@
+{
+  "id": "hyouge-matsuri",
+  "name": {
+    "ja": "ひょうげ祭り",
+    "en": "Hyouge Festival"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "香川県",
+      "name": "高松市"
+    }
+  ],
+  "venue": {
+    "name": "香川町浅野（浅野地区集落研修センターから新池まで）",
+    "lat": 34.2566,
+    "lng": 134.0356
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan"],
+  "highlights": [
+    "飼料袋の裃や紙を張って墨を塗った果物かごなど、手作りの仮装で約2kmをおどけて歩く",
+    "新池の堤で神職が矢を放つと、神輿が池へ押し入って祭りが締めくくられる",
+    "なす・ひょうたん・へちま・かぼちゃで作った鉾など、農作物と日用品の神具"
+  ],
+  "trivia": [
+    {
+      "text": "「ひょうげる」はおどける・滑稽という意味で、祭りの名はここから来ている",
+      "source": {
+        "url": "https://www.city.takamatsu.kagawa.jp/kurashi/kosodate/bunka/bunkazai/shiteibunkazai/mukei_minzoku/hyoge.html",
+        "title": "高松市 ひょうげ祭り（市指定無形民俗文化財）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "水不足に悩む浅野に新池を築いた矢延平六をしのび、水の恵みに感謝する祭り",
+      "source": {
+        "url": "https://www.city.takamatsu.kagawa.jp/kurashi/kosodate/bunka/bunkazai/shiteibunkazai/mukei_minzoku/hyoge.html",
+        "title": "高松市 ひょうげ祭り（市指定無形民俗文化財）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "祭りは高松市の無形民俗文化財、農作物で作った神具は香川県の有形民俗文化財に指定",
+      "source": {
+        "url": "https://www.pref.kagawa.lg.jp/kmuseum/setorekishi/maturi-gyouji-minnzokugeinou/sinnikejinnjyanohyougematuri.html",
+        "title": "香川県 新池神社のひょうげ祭（高松市）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "前夜祭では平六の冥福を祈って、鐘や太鼓とともに獅子舞を奉納する",
+      "source": {
+        "url": "https://www.pref.kagawa.lg.jp/tochikai/midori_info/festival/hyouge.html",
+        "title": "香川県 ひょうげ祭り（ため池の祭り）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "道を練り歩く行列と池の堤での神事を見学するもので、主催者や市の混雑・危険についての注意は見つからない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.takamatsu.kagawa.jp/kurashi/kosodate/bunka/bunkazai/shiteibunkazai/mukei_minzoku/hyoge.html",
+        "title": "高松市 ひょうげ祭り（香川町ひょうげ祭り保存会が実施、県内外から多くの見物人が訪れる）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-09-13",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "開催の記録。地域の住民約100人が、神輿を担ぎ獅子舞を披露しながら約2kmを練り歩いた。観光の案内サイトは13:30〜16:00としていた",
+      "sources": [
+        {
+          "url": "https://news.ksb.co.jp/article/16886228",
+          "title": "KSB瀬戸内海放送 「ひょうげ祭り」仮装した住民らが約2kmを練り歩く（2026年9月14日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://www.walkerplus.com/event/ar0937e607822/",
+          "title": "ウォーカープラス ひょうげ祭り（2026年9月13日、13:30〜16:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        }
+      ]
+    },
+    {
+      "date": "2027-09-12",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "高松市の文化財の案内にある「毎年9月の第2日曜日」から見込んだ日（2027年の発表はまだない）。前夜祭で獅子舞を奉納し、本祭は浅野地区集落研修センターから新池まで約2kmを行列が練り歩く。新池の堤で神職が祝詞をあげて矢を放ち、神輿が池に入って終わる",
+      "sources": [
+        {
+          "url": "https://www.city.takamatsu.kagawa.jp/kurashi/kosodate/bunka/bunkazai/shiteibunkazai/mukei_minzoku/hyoge.html",
+          "title": "高松市 ひょうげ祭り（毎年9月の第2日曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.pref.kagawa.lg.jp/tochikai/midori_info/festival/hyouge.html",
+          "title": "香川県 ひょうげ祭り（前夜祭と本祭の流れ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "ことでんバス 竜満池バス停",
+        "walkMinutes": [20, 25],
+        "note": "JR高松駅から塩江線。バス停から新池まで徒歩約20分（観光の案内サイトの情報）"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.nta.co.jp/kokunai/special/eventinfo/10636050.htm",
+        "title": "日本旅行 ひょうげ祭り（竜満池バス停から徒歩約20分、川東小学校運動場に100台、会場までシャトルバス約5分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.city.takamatsu.kagawa.jp/kurashi/kosodate/bunka/bunkazai/shiteibunkazai/mukei_minzoku/hyoge.html",
+      "title": "高松市 ひょうげ祭り（高松市香川町浅野、浅野地区集落研修センターから新池まで）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.pref.kagawa.lg.jp/kmuseum/setorekishi/maturi-gyouji-minnzokugeinou/sinnikejinnjyanohyougematuri.html",
+      "title": "香川県 新池神社のひょうげ祭（高松市）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://takamatsu-asano-cc.jimdofree.com/",
+      "title": "浅野校区コミュニティ協議会（令和8年は9月13日）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、行列の出発・新池への到着の時刻（2026年は観光の案内サイトで13:30〜16:00）",
+    "毎年開かれるか（2026年の報道に「2年ぶりの開催」とあり、2025年は開かれなかったとみられる）",
+    "雨天の扱い",
+    "見学の決まり（立ち位置・撮影）、服装・持ち物（主催者の案内が見つからない）",
+    "一般の人が行列に加われるか（地元の協議会が参加者を募っているが、条件が分からない）",
+    "交通規制の有無",
+    "駐車場とバスの情報は観光の案内サイトだけのもの。市の2026年の開催のお知らせのページは開けなかった（無料の送迎バスがあったかは未確認）",
+    "高松駅から竜満池バス停までの所要時間",
+    "屋台の有無と、この祭りの日だけの食べもの",
+    "周辺の観光と食の場所（会場の近くで営業時間を確かめられたものがない）",
+    "会場の緯度・経度は、国土地理院の住所検索で市の案内の所在地（香川町浅野831番地）を取ったもの。行列の出発地の研修センターそのものの位置かは確かめていない。到着地の新池は観光の案内サイトで香川町川東上2620-3付近とされる"
+  ]
+}
