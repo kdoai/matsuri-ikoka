@@ -59,11 +59,15 @@ export function mainFestival(state: Pick<AppData, "itinerary" | "festivals">): F
 }
 
 /** しおりを開けるか。確定前の再確認で「予定どおり」と分かり、会話がしおりまで進んだとき */
+/**
+ * しおりを開けるか。公式で確かめられた旅程と、確かめられなかった（not_found）が利用者が決めた旅程
+ * （しおりに、出発の前に確かめるよう注意を出す）。変更・中止は候補へ戻る
+ */
 export function shioriReady(state: Pick<AppData, "session" | "verify" | "itinerary">): boolean {
   return (
     state.itinerary.current !== null &&
     state.session.stage === "shiori" &&
-    state.verify.result === "as_planned"
+    (state.verify.result === "as_planned" || state.verify.result === "not_found")
   );
 }
 

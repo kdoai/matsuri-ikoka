@@ -189,6 +189,8 @@ export const en: Messages = {
       map: "Check the map",
       decide: "Go with this plan",
       decideMessage: "I'll go with this plan.",
+      decideConfirm: "Decide and check the schedule",
+      decideConfirmLabel: "Confirm your decision",
       slower: "Make it more relaxed",
       slowerMessage: "Please make the plan a little more relaxed.",
       adjust: "Adjust a little",
@@ -728,6 +730,8 @@ export const en: Messages = {
     festivalLoading:
       "The festival details are not available right now. Please see the plan and sources.",
     verified: (date: string) => `Schedule confirmed with official information (${date})`,
+    unverified:
+      "The schedule has not been confirmed with official information yet. Please check the organizer's notice before you leave.",
     finalCheck: "On the day, please check the official website one last time.",
     share: "Booklet URL",
     shareNote: "Share this URL to show the booklet to the people coming with you.",

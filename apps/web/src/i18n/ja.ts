@@ -170,6 +170,8 @@ export const ja = {
       map: "地図で確認",
       decide: "この旅程で決める",
       decideMessage: "この旅程で決定します。",
+      decideConfirm: "決定して、開催を確かめる",
+      decideConfirmLabel: "決定の確認",
       slower: "もっとゆっくり回りたい",
       slowerMessage: "もう少しゆっくり回れる旅程にしてください。",
       adjust: "少し調整する",
@@ -674,6 +676,8 @@ export const ja = {
     noAlternatives: "雨の日の案はまだありません。",
     festivalLoading: "祭りの詳しい情報は、いまはお出しできません。旅程と出典をご覧ください。",
     verified: (date: string) => `公式情報で開催予定を確認しました（${date}）`,
+    unverified:
+      "開催は公式の情報でまだ確かめられていません。出発の前に、主催者の案内で開催を確かめてください",
     finalCheck: "当日は、公式サイトで最終確認をしてください。",
     share: "しおりの URL",
     shareNote: "この URL で、同行する人にもしおりを見せられます。",

@@ -342,6 +342,7 @@ export function ShioriPage() {
     festival?.occurrences.find((o) => o.date === festivalDay.date) ?? festival?.occurrences[0];
   const meals = itineraryItems(itinerary).filter((item) => item.type === "meal");
   const verified = verify.result === "as_planned";
+  const unverified = verify.result === "not_found";
   const party = t.conditions.party(itinerary.party.adults, itinerary.party.children);
   const shareUrl = ready ? shioriShareUrl(itinerary.id, window.location.origin) : null;
 
@@ -413,6 +414,15 @@ export function ShioriPage() {
             ) : null}
           </div>
         </header>
+        {unverified ? (
+          <p
+            role="note"
+            className="rounded-card border-2 border-shu-700 bg-white px-3 py-2 font-bold text-shu-700"
+            data-testid="shiori-unverified"
+          >
+            {t.shiori.unverified}
+          </p>
+        ) : null}
 
         {/* 2. 今日の主役 */}
         <Section id="main" title={t.shiori.sections.main}>
