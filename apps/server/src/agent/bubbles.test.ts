@@ -57,6 +57,12 @@ describe("吹き出し（docs/spec/api.md の例）", () => {
     );
   });
 
+  it("search_festivals の後、条件に合う祭りがなければ、見つからなかったと言う", () => {
+    expect(
+      toolEndBubble("search_festivals", { candidates: [], search: { status: "none" } }),
+    ).toEqual({ ok: true, bubble: "条件に合う祭りは見つかりませんでした", count: 0 });
+  });
+
   it("search_festivals の後は、行き先を広げる前の確認と、広げた段階を言う", () => {
     expect(
       toolEndBubble("search_festivals", {

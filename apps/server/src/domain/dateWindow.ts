@@ -134,6 +134,11 @@ export interface FestivalSearchOptions {
   travelFor?: (festival: Festival) => TravelEstimate | null;
   /** 返す数。省略すると MAX_CANDIDATES（開催を確かめてから選ぶときは多めに取る） */
   limit?: number;
+  /**
+   * 片道の上限を超える祭りも matches に残す（travelFit は over。tooFar にも入れる）。
+   * 条件の検査（searchConditions.ts）で外した理由を残し、「少し遠い」祭りとして紹介するときに使う
+   */
+  keepOverLimit?: boolean;
 }
 
 /** 祭りのデータの主要駅からの所要時間だけで決める、移動時間の目安 */
@@ -224,7 +229,7 @@ export function searchFestivalDates(
 
     if (best.travelFit === "over" && best.travelMinutes !== null) {
       tooFar.push({ festivalId: festival.id, travelMinutes: best.travelMinutes });
-      continue;
+      if (!options.keepOverLimit) continue;
     }
     matches.push(best);
   }
@@ -260,7 +265,7 @@ export function searchFestivalDates(
 
 /** 上限に収まると分かっている祭りを先に、境目、分からない祭りの順 */
 function fitRank(fit: TravelFit | null): number {
-  return fit === "within" ? 0 : fit === "uncertain" ? 1 : 2;
+  return fit === "within" ? 0 : fit === "uncertain" ? 1 : fit === "over" ? 3 : 2;
 }
 
 /** 表示用の開催地（例：滋賀県鈴鳴町）。複数の市町村にまたがるときは「・」でつなぐ */

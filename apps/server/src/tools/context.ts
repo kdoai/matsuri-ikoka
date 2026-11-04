@@ -1,5 +1,6 @@
 import {
   type IsoDate,
+  type SearchRetry,
   type SseEvent,
   type StaffId,
   TOOL_NAMES,
@@ -42,15 +43,18 @@ export interface TurnState {
   searched: boolean;
   savedItinerary: boolean;
   verification: VerificationResult | null;
+  /** 候補の窓の次の手（ボタン）から送られた、変えて探し直す条件。search_festivals が正として使う */
+  searchRetry: SearchRetry | null;
 }
 
-export function newTurnState(): TurnState {
+export function newTurnState(searchRetry: SearchRetry | null = null): TurnState {
   return {
     startedStaff: new Set(),
     toolCalls: [],
     searched: false,
     savedItinerary: false,
     verification: null,
+    searchRetry,
   };
 }
 

@@ -151,6 +151,9 @@ export function toolEndBubble(
           count: 0,
         };
       }
+      if (count === 0 && field(output.search, "status") === "none") {
+        return { ok: true, bubble: "条件に合う祭りは見つかりませんでした", count: 0 };
+      }
       const stage = field(output.destination, "stage");
       const found =
         stage === "neighbor"
