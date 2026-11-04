@@ -4,6 +4,7 @@ import type {
   ConversationStage,
   ErrorCode,
   Preferences,
+  SearchRetry,
   SseEvent,
 } from "@matsuri-ikoka/schema";
 import type { Session } from "../session/sessionStore";
@@ -20,6 +21,8 @@ export interface TurnInput {
   session: Session;
   message: string;
   preferences: Preferences;
+  /** 候補の窓の次の手（ボタン）から送られた、変えて探し直す条件 */
+  searchRetry?: SearchRetry;
   /** 時間の上限や接続の切断で止めるための signal */
   signal: AbortSignal;
   /** 進みがあったことを知らせる（イベントを出さない作業の途中。進みのない時間の上限を数え直す） */

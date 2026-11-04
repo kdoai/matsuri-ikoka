@@ -1,4 +1,4 @@
-import type { Festival, FestivalCandidate } from "@matsuri-ikoka/schema";
+import type { Festival, FestivalCandidate, SearchMiss, SearchOutcome } from "@matsuri-ikoka/schema";
 import {
   Baby,
   BookOpen,
@@ -16,8 +16,10 @@ import {
   type LucideIcon,
   MapPin,
   Moon,
+  RotateCcw,
   Star,
   Store,
+  TrainFront,
   Users,
   UtensilsCrossed,
   X,
@@ -25,6 +27,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Messages } from "../i18n";
 import { formatDate } from "../i18n";
+import { hasNextSteps } from "../state/events";
 import {
   candidateArea,
   candidateMonth,
@@ -52,6 +55,8 @@ import { loadCandidateView, saveCandidateView } from "./storage";
 // 「詳細を見る」で、おすすめポイント・合う理由・「ここでしか」・祭りの特徴・出典を開く。
 // 開催が確認できていない祭りは選べず、理由を文字で出す。写真は使わず、自分たちで描いた絵にする。
 // どれも祭りのデータと候補の項目から出し、その場で文章を作らない。選ぶと旅程を組み始める。
+// 条件に合う祭りがなければ「見つかりませんでした」と出し、条件を1つだけ外せば出る祭り（外れている点つき）と、
+// 次の手のボタン（押すと変えた条件で探し直す）を並べる。
 
 function reasonText(t: Messages, reason: FitReason): string {
   switch (reason.kind) {
@@ -167,6 +172,33 @@ function useCandidateFacts(candidate: FestivalCandidate, festival: Festival | nu
       note: `candidate-note-${candidate.festivalId}`,
     },
   };
+}
+
+/** 出発の駅からの片道の所要時間（条件に照らした値）。分からなければ出さない */
+function TravelLine({ candidate }: { candidate: FestivalCandidate }) {
+  const t = useT();
+  const minutes = candidate.travel?.minutes;
+  if (minutes === null || minutes === undefined) return null;
+  return (
+    <p className="flex items-center gap-1.5 text-ink text-sm" data-testid="candidate-travel">
+      <TrainFront aria-hidden="true" className="size-4 shrink-0 text-ink-soft" />
+      {t.candidates.travel(minutes[0], minutes[1], candidate.travel?.basis === "estimate")}
+    </p>
+  );
+}
+
+/** 条件から外れている点（「この祭りならやっています」の祭り） */
+function MissNote({ miss }: { miss: SearchMiss }) {
+  const t = useT();
+  return (
+    <p className="mt-1.5 flex items-start gap-1.5 rounded-lg bg-shu-500/10 px-2 py-1 font-bold text-shu-700 text-sm">
+      <CircleAlert aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+      <span>
+        <span className="sr-only">{t.candidates.next.missLabel}：</span>
+        {miss.detail}
+      </span>
+    </p>
+  );
 }
 
 /** 希望の日との関係の札（切手のような形） */
@@ -443,6 +475,7 @@ function Card({
             {facts.date}
             <span>{facts.time}</span>
           </p>
+          <TravelLine candidate={candidate} />
           <p className="font-medium text-ink-soft text-sm">{candidate.highlight}</p>
           {candidate.confirmed ? null : (
             <UnconfirmedNote id={facts.ids.note} candidate={candidate} />
@@ -486,7 +519,16 @@ function Card({
 }
 
 /** リスト表示の1行：名前・日時・場所・確度と、選ぶボタン */
-function Row({ candidate, festival }: { candidate: FestivalCandidate; festival: Festival | null }) {
+function Row({
+  candidate,
+  festival,
+  miss,
+}: {
+  candidate: FestivalCandidate;
+  festival: Festival | null;
+  /** 「この祭りならやっています」の祭りなら、条件から外れている点 */
+  miss?: SearchMiss;
+}) {
   const t = useT();
   const [open, setOpen] = useState(false);
   const facts = useCandidateFacts(candidate, festival);
@@ -539,6 +581,8 @@ function Row({ candidate, festival }: { candidate: FestivalCandidate; festival: 
             />
           </span>
         </div>
+        {miss === undefined ? null : <MissNote miss={miss} />}
+        <TravelLine candidate={candidate} />
         {candidate.confirmed ? null : (
           <div className="mt-1.5">
             <UnconfirmedNote id={facts.ids.note} candidate={candidate} />
@@ -711,6 +755,7 @@ export function CandidateCards() {
   const actions = useActions();
   const open = useApp((state) => state.ui.candidatesOpen);
   const candidates = useApp((state) => state.candidates);
+  const search = useApp((state) => state.search);
   const festivals = useApp((state) => state.festivals);
   const streaming = useApp((state) => state.session.streaming);
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -727,7 +772,7 @@ export function CandidateCards() {
   // biome-ignore lint/correctness/useExhaustiveDependencies: 候補が変わったときだけ戻す
   useEffect(() => setFilters(NO_FILTERS), [candidates]);
 
-  if (!open || candidates.length === 0) {
+  if (!open || (candidates.length === 0 && !hasNextSteps(search))) {
     return null;
   }
   const shown = filterCandidates(candidates, festivals, filters);
@@ -735,9 +780,11 @@ export function CandidateCards() {
   // コンシェルジュのひとこと（1行）。くわしいことはカードに書く
   const line = streaming
     ? t.candidates.stillSearching
-    : candidates.length === 1 && first !== undefined
-      ? t.candidates.found(candidateArea(first.place))
-      : t.candidates.foundMany(candidates.length);
+    : candidates.length === 0
+      ? t.candidates.noneFoundLine
+      : candidates.length === 1 && first !== undefined
+        ? t.candidates.found(candidateArea(first.place))
+        : t.candidates.foundMany(candidates.length);
   const changeView = (next: CandidateView) => {
     setView(next);
     saveCandidateView(next);
@@ -785,11 +832,21 @@ export function CandidateCards() {
           {t.candidates.close}
         </button>
       </div>
-      <div className="washi mx-auto mb-4 flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-2 rounded-card border border-line-strong px-4 py-2 shadow-soft">
-        {candidates.length > 1 ? <Filters filters={filters} onChange={setFilters} /> : null}
-        <ViewSwitch view={view} onChange={changeView} />
-      </div>
-      {shown.length === 0 ? (
+      {candidates.length === 0 ? null : (
+        <div className="washi mx-auto mb-4 flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-2 rounded-card border border-line-strong px-4 py-2 shadow-soft">
+          {candidates.length > 1 ? <Filters filters={filters} onChange={setFilters} /> : null}
+          <ViewSwitch view={view} onChange={changeView} />
+        </div>
+      )}
+      {candidates.length === 0 ? (
+        <p
+          className="washi mx-auto max-w-6xl rounded-card border-2 border-shu-500/50 px-4 py-3 font-black text-ink text-xl"
+          role="status"
+          data-testid="candidates-none"
+        >
+          {t.candidates.noneFound}
+        </p>
+      ) : shown.length === 0 ? (
         <p className="washi mx-auto max-w-6xl rounded-card px-4 py-3 font-bold text-ink">
           {t.candidates.filters.none}
         </p>
@@ -815,6 +872,76 @@ export function CandidateCards() {
           ))}
         </div>
       )}
+      {search === null ? null : <NextSteps search={search} />}
     </section>
+  );
+}
+
+/**
+ * 条件に合う祭りが足りないときの案内：条件を1つだけ外せば出る祭り（外れている点つき）と、次の手のボタン。
+ * 次の手は、サーバーが変えた条件で数え直して見つかったものだけが届く。押すと変えた条件で探し直す
+ */
+function NextSteps({ search }: { search: SearchOutcome }) {
+  const t = useT();
+  const actions = useActions();
+  const festivals = useApp((state) => state.festivals);
+  const streaming = useApp((state) => state.session.streaming);
+  if (search.nearMisses.length === 0 && search.suggestions.length === 0) return null;
+  return (
+    <div className="mx-auto mt-4 flex max-w-6xl flex-col gap-3" data-testid="next-steps">
+      {search.nearMisses.length === 0 ? null : (
+        <section aria-labelledby="near-misses-title" className="flex flex-col gap-2">
+          <div className="washi rounded-card border border-line-strong px-4 py-2 shadow-soft">
+            <h3 id="near-misses-title" className="font-black text-ink text-lg">
+              {t.candidates.next.nearTitle}
+            </h3>
+            <p className="text-ink-soft text-sm">{t.candidates.next.nearNote}</p>
+          </div>
+          <ul className="flex flex-col gap-2">
+            {search.nearMisses.map(({ candidate, miss }) => (
+              <Row
+                key={candidate.festivalId}
+                candidate={candidate}
+                festival={festivals[candidate.festivalId] ?? null}
+                miss={miss}
+              />
+            ))}
+          </ul>
+        </section>
+      )}
+      {search.suggestions.length === 0 ? null : (
+        <section
+          aria-labelledby="next-steps-title"
+          className="washi rounded-card border border-line-strong px-4 py-3 shadow-soft"
+        >
+          <h3 id="next-steps-title" className="mb-2 font-black text-ink text-lg">
+            {t.candidates.next.title}
+          </h3>
+          <ul className="flex flex-wrap gap-2">
+            {search.suggestions.map((suggestion) => (
+              <li key={`${suggestion.kind}-${suggestion.label}`}>
+                <button
+                  type="button"
+                  className="inline-flex min-h-11 items-center gap-1.5 rounded-full border-2 border-wood-700/30 bg-kinari-50 px-4 font-bold text-ink shadow-soft transition hover:bg-yamabuki-200 disabled:cursor-not-allowed disabled:opacity-60"
+                  disabled={streaming}
+                  data-testid="next-step"
+                  onClick={() => void actions.chooseSuggestion(suggestion)}
+                >
+                  {suggestion.kind === "edit_conditions" ? (
+                    <RotateCcw aria-hidden="true" className="size-4" />
+                  ) : null}
+                  {t.candidates.next.label(suggestion)}
+                  {suggestion.found === null ? null : (
+                    <span className="rounded-full bg-yamabuki-400 px-2 py-0.5 text-xs">
+                      {t.candidates.next.found(suggestion.found)}
+                    </span>
+                  )}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </div>
   );
 }

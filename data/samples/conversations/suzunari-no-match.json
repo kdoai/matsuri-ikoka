@@ -1,0 +1,373 @@
+{
+  "id": "suzunari-no-match",
+  "title": "架空の町の祭りが見つからず、日程を延ばして探し直す相談",
+  "description": "友だち2人で、架空の「みなと中央駅」から片道2時間以内の日帰りで行ける祭りを探す相談。希望の日（8月9日）に条件に合う祭りがなく、「見つかりませんでした」と、条件を1つだけ外せば出る祭り、次の手のボタンを返す。次の週末を選ぶと、変えた条件で探し直して候補が出る。登場する祭り・店・駅・出典はすべて架空。",
+  "today": "2026-08-03",
+  "turns": [
+    {
+      "request": {
+        "message": "8月9日に、友だちと2人で、みなと中央駅から片道2時間以内の日帰りで行ける祭りはありますか。",
+        "preferences": {
+          "party": "adults",
+          "spot": "auto",
+          "food": "stalls",
+          "move": "train"
+        }
+      },
+      "events": [
+        {
+          "atMs": 0,
+          "event": {
+            "type": "staff.start",
+            "data": {
+              "staff": "researcher",
+              "task": "find_festivals",
+              "bubble": "調べてきますね"
+            }
+          }
+        },
+        {
+          "atMs": 400,
+          "event": {
+            "type": "tool.start",
+            "data": {
+              "toolCallId": "call-1",
+              "tool": "search_festivals",
+              "staff": "researcher",
+              "bubble": "8月9日に、みなと中央駅から片道2時間以内の日帰りで行ける祭りを探しています"
+            }
+          }
+        },
+        {
+          "atMs": 3000,
+          "event": {
+            "type": "tool.end",
+            "data": {
+              "toolCallId": "call-1",
+              "tool": "search_festivals",
+              "staff": "researcher",
+              "ok": true,
+              "bubble": "条件に合う祭りが見つかりませんでした",
+              "detail": "希望の日と出発地から行ける祭りが、データにありませんでした。日や条件を変えて探せます",
+              "count": 0,
+              "candidates": [],
+              "search": {
+                "status": "none",
+                "excluded": {
+                  "date": 2,
+                  "travel": 0,
+                  "area": 0
+                },
+                "nearMisses": [
+                  {
+                    "candidate": {
+                      "festivalId": "kazami-bon-odori",
+                      "name": "風見町 盆おどり",
+                      "date": "2026-08-15",
+                      "start": "19:00",
+                      "end": "21:30",
+                      "venueName": "風見町民広場",
+                      "place": "滋賀県風見町",
+                      "daysFromWish": 6,
+                      "confidence": "single",
+                      "confirmed": false,
+                      "highlight": "やぐらを囲む町の人の輪",
+                      "source": {
+                        "url": "https://example.com/kazami/2025",
+                        "checkedAt": "2026-07-20",
+                        "confidence": "single"
+                      },
+                      "travel": {
+                        "minutes": [55, 70],
+                        "basis": "data",
+                        "limitMinutes": 120,
+                        "fit": "within"
+                      }
+                    },
+                    "miss": {
+                      "condition": "date",
+                      "detail": "ご希望の日の6日後（8月15日）に開きます"
+                    }
+                  },
+                  {
+                    "candidate": {
+                      "festivalId": "suzunari-toro",
+                      "name": "鈴鳴灯籠まつり",
+                      "date": "2026-08-16",
+                      "start": "18:30",
+                      "end": "21:00",
+                      "venueName": "鈴鳴川の河原",
+                      "place": "滋賀県鈴鳴町",
+                      "daysFromWish": 7,
+                      "confidence": "official",
+                      "confirmed": true,
+                      "highlight": "川面に浮かぶ千の灯籠",
+                      "source": {
+                        "url": "https://example.com/suzunari/2026",
+                        "checkedAt": "2026-07-20",
+                        "confidence": "official"
+                      },
+                      "travel": {
+                        "minutes": [48, 62],
+                        "basis": "data",
+                        "limitMinutes": 120,
+                        "fit": "within"
+                      }
+                    },
+                    "miss": {
+                      "condition": "date",
+                      "detail": "ご希望の日の7日後（8月16日）に開きます"
+                    }
+                  }
+                ],
+                "suggestions": [
+                  {
+                    "kind": "later_dates",
+                    "label": "次の週末（8月15日〜8月16日）で探す",
+                    "retry": {
+                      "when": {
+                        "kind": "range",
+                        "from": "2026-08-15",
+                        "to": "2026-08-16"
+                      }
+                    },
+                    "message": "日程を8月15日〜8月16日に変えて、もう一度祭りを探してください。",
+                    "found": 2
+                  },
+                  {
+                    "kind": "edit_conditions",
+                    "label": "条件を選び直す",
+                    "retry": null,
+                    "message": null,
+                    "found": null
+                  }
+                ],
+                "attempts": 5
+              }
+            }
+          }
+        },
+        {
+          "atMs": 3400,
+          "event": {
+            "type": "message.delta",
+            "data": {
+              "messageId": "m-1",
+              "text": "条件に合う祭りは見つかりませんでした。8月9日に、片道2時間以内で開く祭りはデータにありません。"
+            }
+          }
+        },
+        {
+          "atMs": 3700,
+          "event": {
+            "type": "message.delta",
+            "data": {
+              "messageId": "m-1",
+              "text": "ご希望の日の7日後（16日）なら、川面に千の灯籠が浮かぶ「鈴鳴灯籠まつり」をやっています。6日後（15日）の「風見町 盆おどり」は、今年の開催がまだ確認できていません。"
+            }
+          }
+        },
+        {
+          "atMs": 4000,
+          "event": {
+            "type": "message.delta",
+            "data": {
+              "messageId": "m-1",
+              "text": "下のボタンから探し方を選ぶか、ほかの条件を教えてください。"
+            }
+          }
+        },
+        {
+          "atMs": 4100,
+          "event": {
+            "type": "done",
+            "data": {
+              "stage": "candidates",
+              "conditions": {
+                "when": {
+                  "kind": "date",
+                  "date": "2026-08-09"
+                },
+                "origin": "みなと中央駅",
+                "nights": 0,
+                "maxTravelMinutes": 120,
+                "party": {
+                  "adults": 2,
+                  "children": 0
+                }
+              },
+              "preferences": {
+                "party": "adults",
+                "spot": "hidden",
+                "food": "local",
+                "move": "train"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "request": {
+        "message": "日程を8月15日〜8月16日に変えて、もう一度祭りを探してください。",
+        "preferences": {
+          "party": "adults",
+          "spot": "auto",
+          "food": "stalls",
+          "move": "train"
+        },
+        "search": {
+          "when": {
+            "kind": "range",
+            "from": "2026-08-15",
+            "to": "2026-08-16"
+          }
+        }
+      },
+      "events": [
+        {
+          "atMs": 0,
+          "event": {
+            "type": "staff.start",
+            "data": {
+              "staff": "researcher",
+              "task": "find_festivals",
+              "bubble": "調べてきますね"
+            }
+          }
+        },
+        {
+          "atMs": 400,
+          "event": {
+            "type": "tool.start",
+            "data": {
+              "toolCallId": "call-2",
+              "tool": "search_festivals",
+              "staff": "researcher",
+              "bubble": "8月15日から8月16日に、みなと中央駅から片道2時間以内の日帰りで行ける祭りを探しています"
+            }
+          }
+        },
+        {
+          "atMs": 3000,
+          "event": {
+            "type": "tool.end",
+            "data": {
+              "toolCallId": "call-2",
+              "tool": "search_festivals",
+              "staff": "researcher",
+              "ok": true,
+              "bubble": "1件見つかりました。いちばん上は「鈴鳴灯籠まつり」",
+              "detail": "希望の日に開かれる祭りを1件見つけました。いちばん上は「鈴鳴灯籠まつり」（8月16日・滋賀県鈴鳴町）です",
+              "count": 1,
+              "candidates": [
+                {
+                  "festivalId": "suzunari-toro",
+                  "name": "鈴鳴灯籠まつり",
+                  "date": "2026-08-16",
+                  "start": "18:30",
+                  "end": "21:00",
+                  "venueName": "鈴鳴川の河原",
+                  "place": "滋賀県鈴鳴町",
+                  "daysFromWish": 0,
+                  "confidence": "official",
+                  "confirmed": true,
+                  "highlight": "川面に浮かぶ千の灯籠",
+                  "source": {
+                    "url": "https://example.com/suzunari/2026",
+                    "checkedAt": "2026-07-20",
+                    "confidence": "official"
+                  },
+                  "travel": {
+                    "minutes": [48, 62],
+                    "basis": "data",
+                    "limitMinutes": 120,
+                    "fit": "within"
+                  }
+                }
+              ],
+              "search": {
+                "status": "found",
+                "excluded": {
+                  "date": 0,
+                  "travel": 0,
+                  "area": 0
+                },
+                "nearMisses": [],
+                "suggestions": [
+                  {
+                    "kind": "edit_conditions",
+                    "label": "条件を選び直す",
+                    "retry": null,
+                    "message": null,
+                    "found": null
+                  }
+                ],
+                "attempts": 5
+              }
+            }
+          }
+        },
+        {
+          "atMs": 3400,
+          "event": {
+            "type": "message.delta",
+            "data": {
+              "messageId": "m-2",
+              "text": "8月16日なら、川面に千の灯籠が浮かぶ「鈴鳴灯籠まつり」がおすすめです。"
+            }
+          }
+        },
+        {
+          "atMs": 3700,
+          "event": {
+            "type": "message.delta",
+            "data": {
+              "messageId": "m-2",
+              "text": "15日の「風見町 盆おどり」は、今年の開催がまだ発表されていないので、候補から外しました。"
+            }
+          }
+        },
+        {
+          "atMs": 4000,
+          "event": {
+            "type": "message.delta",
+            "data": {
+              "messageId": "m-2",
+              "text": "鈴鳴灯籠まつりで旅程を組みましょうか。"
+            }
+          }
+        },
+        {
+          "atMs": 4100,
+          "event": {
+            "type": "done",
+            "data": {
+              "stage": "candidates",
+              "conditions": {
+                "when": {
+                  "kind": "range",
+                  "from": "2026-08-15",
+                  "to": "2026-08-16"
+                },
+                "origin": "みなと中央駅",
+                "nights": 0,
+                "maxTravelMinutes": 120,
+                "party": {
+                  "adults": 2,
+                  "children": 0
+                }
+              },
+              "preferences": {
+                "party": "adults",
+                "spot": "hidden",
+                "food": "local",
+                "move": "train"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

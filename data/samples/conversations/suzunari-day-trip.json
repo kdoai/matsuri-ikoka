@@ -47,9 +47,9 @@
               "tool": "search_festivals",
               "staff": "researcher",
               "ok": true,
-              "bubble": "2件見つかりました。いちばん上は「鈴鳴灯籠まつり」",
-              "detail": "希望の日に開かれる祭りを1件、前後の日を1件見つけました。いちばん上は「鈴鳴灯籠まつり」（8月16日・滋賀県鈴鳴町）です。うち1件は、開催をまだ確かめられていません",
-              "count": 2,
+              "bubble": "1件見つかりました。いちばん上は「鈴鳴灯籠まつり」",
+              "detail": "希望の日に開かれる祭りを1件見つけました。いちばん上は「鈴鳴灯籠まつり」（8月16日・滋賀県鈴鳴町）です",
+              "count": 1,
               "candidates": [
                 {
                   "festivalId": "suzunari-toro",
@@ -67,27 +67,65 @@
                     "url": "https://example.com/suzunari/2026",
                     "checkedAt": "2026-07-20",
                     "confidence": "official"
-                  }
-                },
-                {
-                  "festivalId": "kazami-bon-odori",
-                  "name": "風見町 盆おどり",
-                  "date": "2026-08-15",
-                  "start": "19:00",
-                  "end": "21:30",
-                  "venueName": "風見町民広場",
-                  "place": "滋賀県風見町",
-                  "daysFromWish": -1,
-                  "confidence": "single",
-                  "confirmed": false,
-                  "highlight": "やぐらを囲む町の人の輪",
-                  "source": {
-                    "url": "https://example.com/kazami/2025",
-                    "checkedAt": "2026-07-20",
-                    "confidence": "single"
+                  },
+                  "travel": {
+                    "minutes": [48, 62],
+                    "basis": "data",
+                    "limitMinutes": 120,
+                    "fit": "within"
                   }
                 }
-              ]
+              ],
+              "search": {
+                "status": "found",
+                "excluded": {
+                  "date": 1,
+                  "travel": 0,
+                  "area": 0
+                },
+                "nearMisses": [
+                  {
+                    "candidate": {
+                      "festivalId": "kazami-bon-odori",
+                      "name": "風見町 盆おどり",
+                      "date": "2026-08-15",
+                      "start": "19:00",
+                      "end": "21:30",
+                      "venueName": "風見町民広場",
+                      "place": "滋賀県風見町",
+                      "daysFromWish": -1,
+                      "confidence": "single",
+                      "confirmed": false,
+                      "highlight": "やぐらを囲む町の人の輪",
+                      "source": {
+                        "url": "https://example.com/kazami/2025",
+                        "checkedAt": "2026-07-20",
+                        "confidence": "single"
+                      },
+                      "travel": {
+                        "minutes": [55, 70],
+                        "basis": "data",
+                        "limitMinutes": 120,
+                        "fit": "within"
+                      }
+                    },
+                    "miss": {
+                      "condition": "date",
+                      "detail": "ご希望の日の1日前（8月15日）に開きます"
+                    }
+                  }
+                ],
+                "suggestions": [
+                  {
+                    "kind": "edit_conditions",
+                    "label": "条件を選び直す",
+                    "retry": null,
+                    "message": null,
+                    "found": null
+                  }
+                ],
+                "attempts": 5
+              }
             }
           }
         },
@@ -107,7 +145,7 @@
             "type": "message.delta",
             "data": {
               "messageId": "m-1",
-              "text": "前の日の15日には「風見町 盆おどり」もありますが、今年の開催はまだ発表されておらず、未確認です。"
+              "text": "ご希望の日の1日前（15日）なら「風見町 盆おどり」もやっていますが、今年の開催はまだ発表されておらず、未確認です。"
             }
           }
         },
@@ -117,7 +155,7 @@
             "type": "message.delta",
             "data": {
               "messageId": "m-1",
-              "text": "どちらにしますか。"
+              "text": "鈴鳴灯籠まつりで旅程を組みましょうか。"
             }
           }
         },
@@ -194,8 +232,7 @@
               "tool": "search_nearby",
               "staff": "scout",
               "ok": true,
-              "bubble": "4か所見つけました。うち食事どころ1軒",
-              "detail": "会場の近くで、食事どころを1軒、見どころを2か所、休めるところを1か所見つけました",
+              "bubble": "4か所見つかりました",
               "count": 4,
               "spots": [
                 {

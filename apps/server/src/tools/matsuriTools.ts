@@ -23,12 +23,14 @@ import {
   type MealSlot,
   MOVE_MODES,
   mainFestivalDay,
+  type NearMiss,
   NightsSchema,
   PartialTripConditionsSchema,
   type Party,
   PartySchema,
   PreferencesSchema,
   RESEARCH_TARGETS,
+  type SearchOutcome,
   SlugSchema,
   type Source,
   type SpotPin,
@@ -40,21 +42,13 @@ import {
 import { z } from "zod";
 import { arrivalBufferMinutes } from "../domain/arrivalBuffer";
 import { addDays, daysBetween, fromMinutes, laterDate, toMinutes } from "../domain/calendar";
-import {
-  matchHub,
-  placeLabel,
-  searchFestivalDates,
-  searchRanges,
-  toCandidate,
-  travelMinutesFrom,
-} from "../domain/dateWindow";
+import { matchHub, placeLabel, toCandidate, travelMinutesFrom } from "../domain/dateWindow";
 import {
   DESTINATION_STAGES,
   destinationLabel,
   destinationQuestion,
   destinationReason,
   knownDestinationNames,
-  pickByDestination,
   resolveDestination,
 } from "../domain/destination";
 import { foodEffects } from "../domain/food";
@@ -96,6 +90,15 @@ import {
 import { occurrenceOn } from "../domain/planCheck";
 import { MEAL_WINDOWS, type ResearchedPlace } from "../domain/planCoverage";
 import { preferenceEffects } from "../domain/preferences";
+import {
+  excludedCounts,
+  nearMissesOf,
+  runSearch,
+  type SearchDeps,
+  type SearchQuery,
+  suggestNextSteps,
+  withinConditions,
+} from "../domain/searchConditions";
 import { transportEffects } from "../domain/transport";
 import {
   checkDayTripLimit,
@@ -147,6 +150,15 @@ function festivalOf(ctx: ToolContext, id: string): Festival {
   return festival;
 }
 
+/** 出した候補（なければ、条件を1つだけ外せば出る祭り）から祭りを引く */
+function knownCandidate(ctx: ToolContext, festivalId: string): FestivalCandidate | undefined {
+  const { candidates, nearMisses } = ctx.session;
+  return (
+    candidates.find((c) => c.festivalId === festivalId) ??
+    nearMisses.find((c) => c.festivalId === festivalId)
+  );
+}
+
 /** 日付の指定がないとき、その祭りへ行く日を、候補・旅程・開催回から決める */
 function visitDate(ctx: ToolContext, festival: Festival, given?: IsoDate): IsoDate {
   if (given !== undefined) return given;
@@ -154,7 +166,7 @@ function visitDate(ctx: ToolContext, festival: Festival, given?: IsoDate): IsoDa
     ? ctx.itineraries.get(ctx.session.itineraryId)
     : undefined;
   if (itinerary?.mainFestivalId === festival.id) return mainFestivalDay(itinerary).date;
-  const candidate = ctx.session.candidates.find((c) => c.festivalId === festival.id);
+  const candidate = knownCandidate(ctx, festival.id);
   if (candidate !== undefined) return candidate.date;
   const today = ctx.today();
   const upcoming = festival.occurrences
@@ -241,7 +253,7 @@ export function hearingSituation(ctx: ToolContext): HearingSituation {
   const festivalId = session.selectedFestivalId;
   if (festivalId === null) return {};
   const festival = ctx.festivals.get(festivalId);
-  const date = session.candidates.find((c) => c.festivalId === festivalId)?.date;
+  const date = knownCandidate(ctx, festivalId)?.date;
   const nights = session.conditions.nights ?? 0;
   return {
     festivalChosen: true,
@@ -427,8 +439,9 @@ export const searchFestivals = defineTool({
   name: "search_festivals",
   description:
     "希望日（または期間）・出発地・泊数に合う祭りを、祭りのデータから最大3件探す。" +
-    "希望日の祭りを先に並べ、足りなければ前後2週間で補い、希望日からのずれ（日）を付ける。" +
-    "今日より前の日・中止・掲載停止の祭りは出ない。日帰り（0泊）は移動の上限を超える祭りを除く。" +
+    "条件（希望の日程・日帰りの片道の所要時間・行き先）はコードで確かめ、すべて合う祭りだけを候補にする。" +
+    "今日より前の日・中止・掲載停止の祭りは出ない。候補が0件なら search.status が none になり、" +
+    "条件を1つだけ外せば出る祭り（search.nearMisses、外れている点つき）と、次の手（search.suggestions）を返す。" +
     "行き先があれば、その地域の祭りだけを出す。地域になければ候補を出さずに destination.question を返すので、" +
     "その問いをお客さまに聞き、了承を得てから widen を広げて探し直す。",
   input: {
@@ -458,34 +471,43 @@ export const searchFestivals = defineTool({
   async run(args, ctx) {
     const { session } = ctx;
     if (args.preferences !== undefined) session.preferences = args.preferences;
-    const maxTravelMinutes = args.maxTravelMinutes ?? session.conditions.maxTravelMinutes;
+    // 候補の窓の次の手（ボタン）から探し直すときは、ボタンの条件を正とする（モデルの渡した値より先に使う）
+    const retry = ctx.turn.searchRetry;
+    const when = retry?.when ?? args.when;
+    const nights = retry?.nights ?? args.nights;
+    const maxTravelMinutes =
+      retry?.maxTravelMinutes ?? args.maxTravelMinutes ?? session.conditions.maxTravelMinutes;
+    const widen = retry?.widen ?? args.widen ?? "area";
     const destinations = args.destinations ?? session.conditions.destinations ?? [];
     const prefectures = destinationOf(destinations);
     // 聞き取りで書き留めたほかの条件（旅のかたち・ペースなど）は残す
     session.conditions = {
       ...session.conditions,
-      when: args.when,
+      when,
       origin: args.origin,
-      nights: args.nights,
+      nights,
       ...(args.party === undefined ? {} : { party: args.party }),
       ...(maxTravelMinutes === undefined ? {} : { maxTravelMinutes }),
       ...(args.destinations === undefined ? {} : { destinations: args.destinations }),
     };
 
     const today = ctx.today();
-    const ranges = searchRanges(args.when, today);
-    const pool = ranges.expanded
-      ? ctx.festivals.onDates(ranges.expanded.from, ranges.expanded.to)
-      : [];
     const stations = ctx.stations;
     const origin = args.origin;
-    const found = searchFestivalDates(pool, {
-      wish: args.when,
-      today,
+    const label = destinationLabel(destinations);
+    const query: SearchQuery = {
+      when,
       origin,
-      nights: args.nights,
-      preferences: session.preferences,
+      nights,
       ...(maxTravelMinutes === undefined ? {} : { maxTravelMinutes }),
+      prefectures,
+      destinationLabel: label,
+      widen,
+      preferences: session.preferences,
+    };
+    const searchDeps: SearchDeps = {
+      today,
+      festivalsOn: (from, to) => ctx.festivals.onDates(from, to),
       // 出発の駅の位置から、会場までの所要時間を見積もる（データに出発の駅からの所要時間がない祭りにも使う）
       ...(stations === undefined
         ? {}
@@ -493,79 +515,78 @@ export const searchFestivals = defineTool({
             travelFor: (festival: Festival) =>
               estimateTravel({ access: festival.access, venue: festival.venue, origin }, stations),
           }),
-      // 行き先で絞ってから数をそろえるので、ここでは減らさない
-      limit: Number.POSITIVE_INFINITY,
-    });
-
-    // 行き先を守る：選んだ地域 → 隣接する県 → 全国の順。了承を得た段階より先へは広げず、問いを返す
-    const label = destinationLabel(destinations);
-    const placed = pickByDestination(found.matches, {
-      prefectures,
-      widen: args.widen ?? "area",
       random: ctx.random ?? Math.random,
-    });
-    if (placed.kind === "ask") {
-      session.candidates = [];
-      ctx.turn.searched = true;
-      return {
-        today,
-        searchedRange: ranges,
-        candidates: [],
-        details: [],
-        destination: {
-          prefectures,
-          stage: null,
-          needsConsent: placed.next,
-          foundIn: placed.foundIn,
-          question: destinationQuestion(label, placed),
-        },
-        notes: [
-          "候補はまだ出していません。destination.question をそのままお客さまに聞き、了承を得たら widen を広げて探し直してください",
-        ],
-      };
-    }
-    const poolSize = ctx.candidateChecks === undefined ? MAX_CANDIDATES : CANDIDATE_CHECK_POOL;
-    const searched = {
-      ...found,
-      matches: placed.kind === "matches" ? placed.matches.slice(0, poolSize) : [],
     };
+
+    // 条件（日程・片道の所要時間・行き先）に照らし、すべて合う祭りだけを候補にする
+    const attempt = runSearch(query, searchDeps);
+    const ranges = attempt.ranges;
+    const poolSize = ctx.candidateChecks === undefined ? MAX_CANDIDATES : CANDIDATE_CHECK_POOL;
+    const pool = attempt.fits.slice(0, poolSize);
 
     // 候補を出す前に、開催日・時刻・状態を公式の情報で確かめる（並べて動かす）。
     // 出す数より多めに確かめ、確かめられた祭りを先に選ぶ
-    const pooledChecks = await checkCandidates(ctx, searched.matches);
+    const pooledChecks = await checkCandidates(ctx, pool);
     const picked = pickVerifiedCandidates(
-      searched.matches.map((match, index) => ({ match, check: pooledChecks[index] ?? null })),
+      pool.map((match, index) => ({ match, check: pooledChecks[index] ?? null })),
       MAX_CANDIDATES,
       { requireInfo: ctx.candidateChecks !== undefined },
     );
-    const result = { ...searched, matches: picked.map((p) => p.match) };
-    const checks = picked.map((p) => p.check);
-    const candidates: FestivalCandidate[] = result.matches.map((match, index) =>
-      withCheck(toCandidate(match), checks[index] ?? null),
-    );
+    // 出す直前に、候補の形の値で条件を確かめ直す。合わないものが混じっていたら出さない
+    const shown = picked
+      .map((p) => ({
+        ...p,
+        candidate: withCheck({ ...toCandidate(p.match), travel: p.match.travel }, p.check),
+      }))
+      .filter((p) =>
+        withinConditions(p.candidate, ctx.festivals.get(p.candidate.festivalId), query),
+      );
+    const candidates = shown.map((p) => p.candidate);
     session.candidates = candidates;
     ctx.turn.searched = true;
 
+    // 条件を1つだけ外せば出る祭りと、次の手（変えた条件で数え直す）。候補が3件に満たないときだけ
+    const short = candidates.length < MAX_CANDIDATES;
+    const nearMisses: NearMiss[] = short
+      ? nearMissesOf(attempt).map(({ match, miss }) => ({
+          candidate: { ...toCandidate(match), travel: match.travel },
+          miss,
+        }))
+      : [];
+    const next = short
+      ? suggestNextSteps(query, searchDeps, { shown: new Set(candidates.map((c) => c.festivalId)) })
+      : { suggestions: [], attempts: 1 };
+    session.nearMisses = nearMisses.map((n) => n.candidate);
+    const search: SearchOutcome = {
+      status: candidates.length > 0 ? "found" : "none",
+      excluded: excludedCounts(attempt.misses),
+      nearMisses,
+      suggestions: next.suggestions,
+      attempts: next.attempts,
+    };
+
     const notes: string[] = [];
     if (ranges.wish === null) notes.push("希望の日はすでに過ぎています。別の日を聞いてください");
-    if (result.tooFar.length > 0) {
-      notes.push(`日帰りの移動の上限を超える祭りを${result.tooFar.length}件除きました`);
-    }
-    const shown = new Set(result.matches.map((m) => m.festival.id));
-    const unknown = result.travelUnknown.filter((id) => shown.has(id));
-    const uncertain = result.travelUncertain.filter((id) => shown.has(id));
-    if (maxTravelMinutes !== undefined && unknown.length > 0) {
+    const { excluded } = search;
+    if (excluded.date + excluded.travel + excluded.area > 0) {
       notes.push(
-        `出発地からの所要時間が分からない祭りが${unknown.length}件あります。上限に収まるかは分からないと伝えてください`,
+        `条件から外れる祭りを候補から外しました（日程${excluded.date}件・片道の所要時間${excluded.travel}件・行き先${excluded.area}件）`,
       );
     }
-    if (uncertain.length > 0) {
+    const unknown = shown.filter((p) => p.match.travel.fit === "unknown").length;
+    const uncertain = shown.filter((p) => p.match.travel.fit === "uncertain").length;
+    if (unknown > 0) {
       notes.push(
-        `駅の位置からの見積もりでは、上限に収まるか境目の祭りが${uncertain.length}件あります。収まらないかもしれないと伝えてください`,
+        `出発地からの所要時間が分からない祭りが${unknown}件あります。上限に収まるかは分からないと伝えてください`,
+      );
+    }
+    if (uncertain > 0) {
+      notes.push(
+        `駅の位置からの見積もりでは、上限に収まるか境目の祭りが${uncertain}件あります。収まらないかもしれないと伝えてください`,
       );
     }
     const shownIds = new Set(picked.map((p) => p.match.festival.id));
-    const withoutInfo = searched.matches.filter((m, index) => {
+    const withoutInfo = pool.filter((m, index) => {
       if (shownIds.has(m.festival.id)) return false;
       const result = pooledChecks[index]?.result;
       return result === "not_found" || result === "cancelled";
@@ -580,11 +601,40 @@ export const searchFestivals = defineTool({
         "factCheck が needs_check の祭りは、公式以外の情報源や例年の日程で確かめたものです。「要事前確認」と伝え、出発の前に主催者の案内で確かめるよう添えてください",
       );
     }
-    if (candidates.length === 0) notes.push("条件に合う祭りはデータにありませんでした");
-    const stage = placed.kind === "matches" ? placed.stage : null;
-    const foundIn = placed.kind === "matches" ? placed.foundIn : [];
+    if (candidates.length === 0) {
+      notes.push(
+        "条件に合う祭りは見つかりませんでした。条件に合わない祭りを候補としてすすめず、「条件に合う祭りは見つかりませんでした」とそのまま伝えてください。" +
+          "search.nearMisses の祭りは、外れている点（miss.detail）を必ず添えて「この祭りならやっています」と紹介し、" +
+          "search.suggestions の次の手は画面のボタンにも出ています",
+      );
+    }
+    const destination = attempt.destination;
+    if (destination.kind === "ask") {
+      notes.push(
+        "destination.question をそのままお客さまに聞き、了承を得たら widen を広げて探し直してください",
+      );
+      return {
+        today,
+        searchedRange: ranges,
+        candidates,
+        details: [],
+        destination: {
+          prefectures,
+          stage: null,
+          needsConsent: destination.next,
+          foundIn: destination.foundIn,
+          question: destinationQuestion(label, destination),
+        },
+        search,
+        notes,
+      };
+    }
+    const stage = destination.kind === "matches" ? destination.stage : null;
+    const foundIn = destination.kind === "matches" ? destination.foundIn : [];
     const reason = stage === null ? null : destinationReason(label, stage, foundIn);
-    if (reason !== null) notes.push(`候補を出すときに「${reason}」と添えてください`);
+    if (reason !== null && candidates.length > 0) {
+      notes.push(`候補を出すときに「${reason}」と添えてください`);
+    }
 
     return {
       today,
@@ -593,7 +643,7 @@ export const searchFestivals = defineTool({
       ...(prefectures.length === 0
         ? {}
         : { destination: { prefectures, stage, needsConsent: null, foundIn, reason } }),
-      details: result.matches.map((m, index) => ({
+      details: shown.map(({ match: m, check }) => ({
         festivalId: m.festival.id,
         category: m.festival.category,
         scaleTier: m.festival.scaleTier,
@@ -624,12 +674,13 @@ export const searchFestivals = defineTool({
         travelMinutesEstimate: m.travelMinutes,
         // data：祭りのデータの所要時間 / estimate：駅の位置からの見積もり（目安と伝える）
         travelBasis: m.travelBasis,
-        travelFit: m.travelFit,
+        travelFit: m.travel.fit,
         // 候補を出す前の確かめ。null は確かめていない（上限や、確かめる手段がない）
-        factCheck: factCheckOf(checks[index] ?? null),
+        factCheck: factCheckOf(check),
         arrivalBufferMinutes: arrivalBufferMinutes(m.festival),
         participation: m.festival.etiquette.participation,
       })),
+      search,
       notes,
     };
   },

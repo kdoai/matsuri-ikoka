@@ -1,6 +1,6 @@
-import type { FestivalQuiz, Preferences, StaffId } from "@matsuri-ikoka/schema";
+import type { FestivalQuiz, Preferences, SearchRetry, StaffId } from "@matsuri-ikoka/schema";
 import { clientError } from "./errors";
-import { closeTurn, patchStaff } from "./events";
+import { closeTurn, hasNextSteps, patchStaff } from "./events";
 import { initialData } from "./initial";
 import type { AppData, ChatEntry, ClientError } from "./types";
 
@@ -64,7 +64,14 @@ export function resetForNewSession(state: AppData): AppData {
 
 export type TurnStart =
   /** 利用者の発言。retry のときは会話欄に同じ発言を足さない */
-  | { kind: "chat"; message: string; preferences: Preferences; retry?: boolean }
+  | {
+      kind: "chat";
+      message: string;
+      preferences: Preferences;
+      retry?: boolean;
+      /** 次の手（ボタン）から送るときの、変えて探し直す条件 */
+      search?: SearchRetry;
+    }
   /** こだわりの切り替え（旅程係だけが組み直す） */
   | { kind: "preferences"; preferences: Preferences };
 
@@ -84,7 +91,11 @@ export function beginTurn(state: AppData, start: TurnStart): AppData {
       sawDone: false,
       lastRequest:
         start.kind === "chat"
-          ? { message: start.message, preferences: start.preferences }
+          ? {
+              message: start.message,
+              preferences: start.preferences,
+              ...(start.search === undefined ? {} : { search: start.search }),
+            }
           : state.session.lastRequest,
       lastWasPreferences: start.kind === "preferences",
       turnTasks: [],
@@ -107,7 +118,7 @@ export function endTurn(state: AppData, error: ClientError | null): AppData {
     state.session.sawDone &&
     state.session.newCandidates &&
     state.session.stage === "candidates" &&
-    state.candidates.length > 0;
+    (state.candidates.length > 0 || hasNextSteps(state.search));
   let next: AppData = {
     ...state,
     session: { ...state.session, streaming: false, newCandidates: false },
@@ -126,7 +137,7 @@ export function endTurn(state: AppData, error: ClientError | null): AppData {
  * 返答の途中で閉じたら、返答が終わっても開き直さない
  */
 export function setCandidatesOpen(state: AppData, open: boolean): AppData {
-  const candidatesOpen = open && state.candidates.length > 0;
+  const candidatesOpen = open && (state.candidates.length > 0 || hasNextSteps(state.search));
   return {
     ...state,
     session: open ? state.session : { ...state.session, newCandidates: false },

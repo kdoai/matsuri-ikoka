@@ -3,6 +3,8 @@ import {
   type FestivalCandidate,
   MAX_MESSAGE_LENGTH,
   type Preferences,
+  type SearchRetry,
+  type SearchSuggestion,
   type SseEvent,
   type SseMessage,
 } from "@matsuri-ikoka/schema";
@@ -57,6 +59,8 @@ export interface AppActions {
   retry(): Promise<void>;
   /** 候補カードから祭りを選ぶ */
   chooseCandidate(candidate: FestivalCandidate): Promise<void>;
+  /** 見つからなかったときの次の手を選ぶ。変えた条件で探し直す（条件を選び直すなら聞き取りに戻る） */
+  chooseSuggestion(suggestion: SearchSuggestion): Promise<void>;
   /** こだわりを切り替える。旅程があれば、旅程係が組み直す */
   setPreference<K extends keyof Preferences>(key: K, value: Preferences[K]): Promise<void>;
   /** 相談を最初からやり直す */
@@ -286,7 +290,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
       }
     };
 
-    const sendChat = async (message: string, retry: boolean) => {
+    const sendChat = async (message: string, retry: boolean, search?: SearchRetry) => {
       const state = get();
       const sessionId = state.session.id;
       if (state.session.streaming || sessionId === null) {
@@ -294,8 +298,11 @@ export function createAppStore(deps: StoreDeps): AppStore {
       }
       const { preferences } = state;
       if (!state.ui.dialogueOpen) setUi({ dialogueOpen: true });
-      await runStream({ kind: "chat", message, preferences, retry }, (onMessage, signal) =>
-        transport.chat({ sessionId, message, preferences }, onMessage, signal),
+      const withSearch = search === undefined ? {} : { search };
+      await runStream(
+        { kind: "chat", message, preferences, retry, ...withSearch },
+        (onMessage, signal) =>
+          transport.chat({ sessionId, message, preferences, ...withSearch }, onMessage, signal),
       );
     };
 
@@ -354,13 +361,22 @@ export function createAppStore(deps: StoreDeps): AppStore {
           return;
         }
         if (state.session.lastRequest !== null) {
-          await sendChat(state.session.lastRequest.message, true);
+          await sendChat(state.session.lastRequest.message, true, state.session.lastRequest.search);
         }
       },
 
       async chooseCandidate(candidate) {
         setUi({ candidatesOpen: false });
         await sendChat(MESSAGES[get().ui.locale].candidates.chooseMessage(candidate.name), false);
+      },
+
+      async chooseSuggestion(suggestion) {
+        setUi({ candidatesOpen: false });
+        if (suggestion.retry === null || suggestion.message === null) {
+          actions.reopenConsult();
+          return;
+        }
+        await sendChat(suggestion.message, false, suggestion.retry);
       },
 
       async setPreference(key, value) {

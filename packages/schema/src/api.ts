@@ -3,6 +3,7 @@ import { SlugSchema } from "./common";
 import { ErrorEventSchema } from "./events";
 import { FestivalSchema } from "./festival";
 import { PreferencesSchema } from "./preferences";
+import { SearchRetrySchema } from "./search";
 
 // 接客サーバーの API の本文と応答（docs/spec/api.md）。
 // 返答のイベントは SSE（events.ts）、旅程は ItinerarySchema、祭りは FestivalSchema の形で返す。
@@ -37,6 +38,8 @@ export const ChatRequestSchema = z.strictObject({
   sessionId: SessionIdSchema,
   message: z.string().trim().min(1).max(MAX_MESSAGE_LENGTH),
   preferences: PreferencesSchema,
+  /** 候補の窓の次の手（ボタン）から送るとき、変えて探し直す条件 */
+  search: SearchRetrySchema.optional(),
 });
 export type ChatRequest = z.infer<typeof ChatRequestSchema>;
 

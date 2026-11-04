@@ -1,4 +1,9 @@
-import { type Festival, PREFECTURES, type Prefecture } from "@matsuri-ikoka/schema";
+import {
+  DESTINATION_WIDEN_STAGES,
+  type Festival,
+  PREFECTURES,
+  type Prefecture,
+} from "@matsuri-ikoka/schema";
 
 // 行き先（都道府県・地方）で祭りの候補を絞る。行き先は強く守る条件なので、広げるのは段階を追って、
 // お客さまの了承を得てからにする（docs/spec/agents.md の「行き先の守り方」）。
@@ -218,7 +223,7 @@ export function festivalInPrefectures(
  * 候補を探した段階。area 選んだ地域 / neighbor 隣接する県 / nationwide 全国からランダム /
  * anywhere 行き先を決めていない（おまかせ）
  */
-export const DESTINATION_STAGES = ["area", "neighbor", "nationwide"] as const;
+export const DESTINATION_STAGES = DESTINATION_WIDEN_STAGES;
 export type DestinationStage = (typeof DESTINATION_STAGES)[number];
 
 export interface DestinationMatch {

@@ -161,6 +161,18 @@ export function registerChatRoutes(app: Hono, deps: ChatDeps) {
     const { session, release } = opened;
     // 画面で選んでいるこだわりを正とする。会話で切り替わったら、ツールが相談の状態を書き換える
     session.preferences = request.preferences;
+    // 次の手（ボタン）から探し直すときは、変えた条件を先に書き留める（コンシェルジュの要約にも出す）
+    const retry = request.search;
+    if (retry !== undefined) {
+      session.conditions = {
+        ...session.conditions,
+        ...(retry.when === undefined ? {} : { when: retry.when }),
+        ...(retry.nights === undefined ? {} : { nights: retry.nights }),
+        ...(retry.maxTravelMinutes === undefined
+          ? {}
+          : { maxTravelMinutes: retry.maxTravelMinutes }),
+      };
+    }
     return streamTurn(
       c,
       session,
@@ -172,6 +184,7 @@ export function registerChatRoutes(app: Hono, deps: ChatDeps) {
               session,
               message: request.message,
               preferences: request.preferences,
+              ...(retry === undefined ? {} : { searchRetry: retry }),
               signal,
               progress,
             },

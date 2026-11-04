@@ -150,3 +150,43 @@ describe("createCandidateChecker", () => {
     expect(verifier.calls).toEqual([]);
   });
 });
+
+describe("createCandidateChecker の、一時的な失敗のやり直し", () => {
+  it("混雑や通信の失敗は1回だけやり直し、直れば結果をとっておく", async () => {
+    let calls = 0;
+    const verifier = verifierOf(async () => {
+      calls += 1;
+      if (calls === 1) throw Object.assign(new Error("overloaded"), { status: 529 });
+      return official;
+    });
+    const checker = createCandidateChecker({ verifier, today, now, retryDelayMs: () => 0 });
+    const festival = testFestival({ id: "suzunari-toro" });
+
+    const result = await checker.check({ festival, date: "2026-08-16", session: {}, signal });
+    expect(result).toMatchObject({ result: "as_planned", cached: false });
+    expect(verifier.calls).toHaveLength(2);
+  });
+
+  it("やり直しても直らない失敗（認証など）はやり直さず、確認できずとして返す", async () => {
+    const verifier = verifierOf(async () => {
+      throw Object.assign(new Error("unauthorized"), { status: 401 });
+    });
+    const checker = createCandidateChecker({ verifier, today, now, retryDelayMs: () => 0 });
+    const festival = testFestival({ id: "suzunari-toro", confidence: "single" });
+
+    const result = await checker.check({ festival, date: "2026-08-16", session: {}, signal });
+    expect(verifier.calls).toHaveLength(1);
+    expect(result?.result).not.toBe("as_planned");
+  });
+
+  it("2回目も失敗したら、それ以上はやり直さない", async () => {
+    const verifier = verifierOf(async () => {
+      throw new Error("fetch failed");
+    });
+    const checker = createCandidateChecker({ verifier, today, now, retryDelayMs: () => 0 });
+    const festival = testFestival({ id: "suzunari-toro", confidence: "single" });
+
+    await checker.check({ festival, date: "2026-08-16", session: {}, signal });
+    expect(verifier.calls).toHaveLength(2);
+  });
+});

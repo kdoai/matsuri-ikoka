@@ -29,6 +29,8 @@ export interface Session {
   preferences: Preferences;
   /** 最後に出した祭りの候補 */
   candidates: FestivalCandidate[];
+  /** 最後の検索で、条件を1つだけ外せば出た祭り（「この祭りならやっています」） */
+  nearMisses: FestivalCandidate[];
   /** 利用者が選んだ祭り（寄り道を探した祭り） */
   selectedFestivalId: string | null;
   /** この相談の旅程の ID。保存した旅程は ItineraryStore にある */
@@ -111,6 +113,7 @@ export class SessionStore {
       conditions: {},
       preferences: { ...(init.preferences ?? DEFAULT_PREFERENCES) },
       candidates: [],
+      nearMisses: [],
       selectedFestivalId: null,
       itineraryId: null,
       weather: new Map(),
@@ -151,6 +154,7 @@ export class SessionStore {
       ...saved,
       lastActiveAt: this.#now(),
       weather: new Map(),
+      nearMisses: [],
       lodging: new Map(),
       researchedSpots: new Map(),
       researchedSources: new Map(),

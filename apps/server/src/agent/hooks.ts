@@ -8,6 +8,7 @@ import {
   FestivalCandidateSchema,
   FestivalVerifiedEventSchema,
   ItineraryDiffSchema,
+  SearchOutcomeSchema,
   type SseEvent,
   type StaffId,
   type ToolName,
@@ -192,6 +193,10 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
       tool === "search_festivals" && output !== null
         ? z.array(FestivalCandidateSchema).max(3).safeParse(output.candidates)
         : null;
+    const search =
+      tool === "search_festivals" && output !== null
+        ? SearchOutcomeSchema.safeParse(output.search)
+        : null;
     emit({
       type: "tool.end",
       data: {
@@ -203,6 +208,7 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
         ...(end.detail === undefined ? {} : { detail: end.detail }),
         count: end.count,
         ...(candidates?.success ? { candidates: candidates.data } : {}),
+        ...(search?.success ? { search: search.data } : {}),
         ...(tool === "search_nearby" && output !== null ? { spots: spotPins(output) } : {}),
       },
     });

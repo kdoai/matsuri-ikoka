@@ -1,4 +1,4 @@
-import type { Itinerary, SseEvent } from "@matsuri-ikoka/schema";
+import type { FestivalCandidate, Itinerary, SearchOutcome, SseEvent } from "@matsuri-ikoka/schema";
 import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
 import type { NearbySearchRound } from "../domain/nearbySearch";
@@ -35,6 +35,8 @@ import { testToolContext } from "./testContext";
 
 const signal = new AbortController().signal;
 const suzunari = () => testFestival({ id: "suzunari-toro" });
+/** search_festivals の結果の、条件の検査と次の手 */
+const searchOf = (output: Record<string, unknown>) => output.search as SearchOutcome;
 
 function draftOf(itinerary: Itinerary) {
   const { id: _id, version: _v, verification: _ver, days, ...rest } = itinerary;
@@ -302,12 +304,26 @@ describe("search_festivals の行き先", () => {
   const ids = (output: Record<string, unknown>) =>
     (output.candidates as { festivalId: string }[]).map((c) => c.festivalId);
 
-  it("選んだ地域の祭りがあれば、日程がずれていても、それだけを出す", async () => {
-    const ctx = testToolContext([at("shiga", "滋賀県"), at("toyama", "富山県", "2026-08-20")]);
+  it("選んだ地域の祭りがあれば、それだけを出す", async () => {
+    const ctx = testToolContext([at("shiga", "滋賀県"), at("toyama", "富山県")]);
     const output = await searchFestivals.run({ ...base, destinations: ["北陸"] }, ctx, signal);
     expect(ids(output)).toEqual(["toyama"]);
     expect(output.destination).toMatchObject({ stage: "area", needsConsent: null, reason: null });
     expect(ctx.session.conditions.destinations).toEqual(["北陸"]);
+  });
+
+  it("選んだ地域の祭りが希望の日程から外れていれば候補に出さず、ずれを添えて紹介する", async () => {
+    const ctx = testToolContext([at("shiga", "滋賀県"), at("toyama", "富山県", "2026-08-20")]);
+    const output = await searchFestivals.run({ ...base, destinations: ["北陸"] }, ctx, signal);
+    expect(ids(output)).toEqual([]);
+    expect(output.destination).toMatchObject({ needsConsent: "neighbor", foundIn: ["滋賀県"] });
+    expect(searchOf(output).status).toBe("none");
+    expect(searchOf(output).nearMisses.map((n) => [n.candidate.festivalId, n.miss.detail])).toEqual(
+      [
+        ["toyama", "ご希望の日の4日後（8月20日）に開きます"],
+        ["shiga", "行き先（北陸）の外の滋賀県にあります"],
+      ],
+    );
   });
 
   it("選んだ地域になければ、候補を出さずに、隣の県を紹介してよいかを聞く", async () => {
@@ -384,10 +400,12 @@ describe("search_festivals", () => {
         c.festivalId,
         c.confirmed,
       ]),
-    ).toEqual([
-      ["suzunari-toro", true],
-      ["kazami", false],
-    ]);
+    ).toEqual([["suzunari-toro", true]]);
+    // 希望日の前の日に開く祭りは、候補ではなく「この祭りならやっています」として、ずれを添えて返す
+    expect(
+      searchOf(output).nearMisses.map((n) => [n.candidate.festivalId, n.miss.condition]),
+    ).toEqual([["kazami", "date"]]);
+    expect(ctx.session.nearMisses.map((c) => c.festivalId)).toEqual(["kazami"]);
     expect(ctx.session.conditions).toEqual({
       when: { kind: "date", date: "2026-08-16" },
       origin: "みなと中央駅",
@@ -395,11 +413,11 @@ describe("search_festivals", () => {
       party: { adults: 2, children: 0 },
     });
     expect(ctx.session.preferences.spot).toBe("hidden");
-    expect(ctx.session.candidates).toHaveLength(2);
+    expect(ctx.session.candidates).toHaveLength(1);
     expect(ctx.turn.searched).toBe(true);
   });
 
-  it("日帰りの所要時間の上限は、聞き取りで書き留めたものを使い、分からない祭りを知らせる", async () => {
+  it("日帰りの所要時間の上限は、聞き取りで書き留めたものを使い、収まると分かる祭りだけを出す", async () => {
     const ctx = testToolContext([
       testFestival({ id: "near", date: "2026-08-16", fromHubMinutes: [40, 45] }),
       testFestival({ id: "far", date: "2026-08-16", fromHubMinutes: [90, 100] }),
@@ -415,13 +433,73 @@ describe("search_festivals", () => {
 
     expect((output.candidates as { festivalId: string }[]).map((c) => c.festivalId)).toEqual([
       "near",
-      "unknown",
     ]);
-    expect(output.notes).toContain("日帰りの移動の上限を超える祭りを1件除きました");
+    expect((output.candidates as FestivalCandidate[])[0]?.travel).toEqual({
+      minutes: [48, 57],
+      basis: "data",
+      limitMinutes: 60,
+      fit: "within",
+    });
     expect(output.notes).toContain(
-      "出発地からの所要時間が分からない祭りが1件あります。上限に収まるかは分からないと伝えてください",
+      "条件から外れる祭りを候補から外しました（日程0件・片道の所要時間2件・行き先0件）",
+    );
+    // 少し遠い祭りは「この祭りならやっています」に、所要時間の分からない祭りは出さない
+    expect(searchOf(output).nearMisses.map((n) => [n.candidate.festivalId, n.miss.detail])).toEqual(
+      [["far", "片道およそ1時間38分〜1時間52分で、上限の1時間を超えます"]],
     );
     expect(ctx.session.conditions.maxTravelMinutes).toBe(60);
+  });
+
+  it("条件に合う祭りがなければ、見つからなかったと返し、数え直して見つかる次の手を出す", async () => {
+    const ctx = testToolContext([
+      testFestival({ id: "next-week", date: "2026-08-22", fromHubMinutes: [40, 45] }),
+      testFestival({ id: "far", date: "2026-08-16", fromHubMinutes: [90, 100] }),
+    ]);
+
+    const output = await searchFestivals.run(
+      {
+        when: { kind: "date", date: "2026-08-16" },
+        origin: "みなと中央駅",
+        nights: 0,
+        maxTravelMinutes: 60,
+      },
+      ctx,
+      signal,
+    );
+
+    expect(output.candidates).toEqual([]);
+    expect(searchOf(output).status).toBe("none");
+    expect(searchOf(output).suggestions.map((s) => [s.kind, s.label, s.found])).toEqual([
+      ["later_dates", "次の週末（8月22日〜8月23日）で探す", 1],
+      ["longer_travel", "片道2時間まで広げる", 1],
+      ["stay_over", "1泊の旅にする", 1],
+      ["edit_conditions", "条件を選び直す", null],
+    ]);
+    expect(
+      (output.notes as string[]).some((n) => n.startsWith("条件に合う祭りは見つかりませんでした")),
+    ).toBe(true);
+  });
+
+  it("次の手（ボタン）から探し直すときは、ボタンの条件を正として探す", async () => {
+    const ctx = testToolContext([
+      testFestival({ id: "next-week", date: "2026-08-22", fromHubMinutes: [40, 45] }),
+    ]);
+    ctx.turn.searchRetry = { when: { kind: "range", from: "2026-08-22", to: "2026-08-23" } };
+
+    const output = await searchFestivals.run(
+      { when: { kind: "date", date: "2026-08-16" }, origin: "みなと中央駅", nights: 0 },
+      ctx,
+      signal,
+    );
+
+    expect((output.candidates as FestivalCandidate[]).map((c) => c.festivalId)).toEqual([
+      "next-week",
+    ]);
+    expect(ctx.session.conditions.when).toEqual({
+      kind: "range",
+      from: "2026-08-22",
+      to: "2026-08-23",
+    });
   });
 
   it("希望日が過ぎていれば、そのことを返す", async () => {

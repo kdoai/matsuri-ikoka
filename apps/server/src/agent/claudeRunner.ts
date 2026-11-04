@@ -187,9 +187,12 @@ export class ClaudeAgentRunner implements AgentRunner {
     this.#query = deps.query ?? ((params) => sdkQuery(params));
   }
 
-  async runTurn({ session, message, signal, progress }: TurnInput, emit: EmitEvent): Promise<void> {
+  async runTurn(
+    { session, message, signal, progress, searchRetry }: TurnInput,
+    emit: EmitEvent,
+  ): Promise<void> {
     const deps = this.#deps;
-    const turn = newTurnState();
+    const turn = newTurnState(searchRetry ?? null);
     const ctx: ToolContext = {
       session,
       turn,

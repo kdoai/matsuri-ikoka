@@ -24,6 +24,11 @@ const TOOL_MOTION: Record<ToolName, StaffMotion> = {
   verify_festival: "flip",
 };
 
+/** 候補の窓に、見つからなかったときの案内（この祭りならやっています・次の手）を出すものがあるか */
+export function hasNextSteps(search: AppData["search"]): boolean {
+  return search !== null && (search.status === "none" || search.nearMisses.length > 0);
+}
+
 export function applyEvent(state: AppData, event: SseEvent): AppData {
   switch (event.type) {
     case "staff.start":
@@ -160,11 +165,17 @@ function onToolEnd(state: AppData, data: SseEventOf<"tool.end">["data"]): AppDat
   };
 
   if (data.ok && data.candidates !== undefined) {
-    // 返答が続いている間は「この祭りにする」を押せないので、ここでは開かず、返答が終わってから開く
+    // 返答が続いている間は「この祭りにする」を押せないので、ここでは開かず、返答が終わってから開く。
+    // 見つからなかったときも、「見つかりませんでした」と次の手を見せるために開く
+    const search = data.search ?? null;
     next = {
       ...next,
       candidates: data.candidates,
-      session: { ...next.session, newCandidates: data.candidates.length > 0 },
+      search,
+      session: {
+        ...next.session,
+        newCandidates: data.candidates.length > 0 || hasNextSteps(search),
+      },
     };
   }
   if (data.ok && data.spots !== undefined) {

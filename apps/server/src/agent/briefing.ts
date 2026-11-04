@@ -181,6 +181,12 @@ export function shopRecord(ctx: ToolContext): string {
       );
     }
   }
+  if (session.candidates.length === 0 && session.nearMisses.length > 0) {
+    lines.push("条件に合う祭りは見つかりませんでした。条件を1つだけ外せば出る祭り：");
+    for (const c of session.nearMisses) {
+      lines.push(`- ${c.festivalId}：${c.name} ${formatMonthDay(c.date)}`);
+    }
+  }
   if (session.selectedFestivalId) lines.push(`選んだ祭り：${session.selectedFestivalId}`);
 
   const itinerary = session.itineraryId ? ctx.itineraries.get(session.itineraryId) : undefined;

@@ -1,6 +1,7 @@
 import {
   type IsoDate,
   type PlanEvaluation,
+  type SearchRetry,
   type SseEvent,
   type StaffId,
   TOOL_NAMES,
@@ -45,19 +46,22 @@ export interface TurnState {
   searched: boolean;
   savedItinerary: boolean;
   verification: VerificationResult | null;
+  /** 候補の窓の次の手（ボタン）から送られた、変えて探し直す条件。search_festivals が正として使う */
+  searchRetry: SearchRetry | null;
   /** この発言で旅程を評価した回数（評価して作り直すループの回数） */
   planRounds: number;
   /** この発言の最後の評価。旅程係が基準に届かないまま終えようとしたら、作り直しに戻す */
   lastEvaluation: PlanEvaluation | null;
 }
 
-export function newTurnState(): TurnState {
+export function newTurnState(searchRetry: SearchRetry | null = null): TurnState {
   return {
     startedStaff: new Set(),
     toolCalls: [],
     searched: false,
     savedItinerary: false,
     verification: null,
+    searchRetry,
     planRounds: 0,
     lastEvaluation: null,
   };

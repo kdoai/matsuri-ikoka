@@ -47,6 +47,7 @@ export function initialData({ locale = "ja", tutorialSeen = false }: InitialOpti
     staff: byStaff(IDLE_STAFF),
     relay: { log: [], asking: null, focus: null, holding: [] },
     candidates: [],
+    search: null,
     spots: [],
     itinerary: { current: null, previous: null, diff: null },
     verify: {

@@ -8,3 +8,4 @@ export * from "./itinerary";
 export * from "./preferences";
 export * from "./quiz";
 export * from "./sample";
+export * from "./search";
