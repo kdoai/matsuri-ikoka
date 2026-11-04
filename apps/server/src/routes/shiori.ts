@@ -18,9 +18,10 @@ import { apiError } from "./errors";
 // しおりは URL で共有するので、合言葉はいらない（ID は推測されにくい乱数）。
 // 祭りのデータとモデルの文章は、すべて文字列として埋め込む（エスケープする）。スクリプトは使わず、
 // Content-Security-Policy で読み込める先を、このサーバーのフォントと画像だけに絞る。
+// 店内の画面は、しおりをそのまま埋め込んで見せる（?embed=1。同じオリジンからだけ埋め込める）。
 
 export const SHIORI_CSP =
-  "default-src 'none'; style-src 'unsafe-inline'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'";
+  "default-src 'none'; style-src 'unsafe-inline'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'";
 
 type Html = HtmlEscapedString | Promise<HtmlEscapedString>;
 
@@ -96,8 +97,12 @@ export function registerShioriRoutes(app: Hono, deps: ShioriDeps) {
     const id = c.req.param("id");
     const found = await confirmedTrip(deps, id);
     if (!found.ok) return c.html(found.notice, found.status);
+    // 店内の画面に埋め込むときは、画面の側に「PDF で保存」があるので、しおりの上の帯を出さない
+    const embedded = c.req.query("embed") === "1";
     return c.html(
-      await shiori.html(found.trip, lookup, { pdfHref: `${encodeURIComponent(id)}.pdf` }),
+      await shiori.html(found.trip, lookup, {
+        pdfHref: embedded ? null : `${encodeURIComponent(id)}.pdf`,
+      }),
     );
   });
 }

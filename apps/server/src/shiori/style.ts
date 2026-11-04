@@ -11,9 +11,7 @@ const BASE = String.raw`
 @font-face { font-family: "ShioriMaru"; font-weight: 100 600; font-display: block; src: url("assets/fonts/ZenMaruGothic-Medium.woff2") format("woff2"); }
 @font-face { font-family: "ShioriMaru"; font-weight: 700 900; font-display: block; src: url("assets/fonts/ZenMaruGothic-Black.woff2") format("woff2"); }
 
-@page { size: A4; margin: 6mm 6mm 8mm;
-  @bottom-center { content: counter(page) " / " counter(pages); font-family: "ShioriMaru", sans-serif; font-size: 8.5pt; color: #4a4038; } }
-@page cover { margin: 7mm; @bottom-center { content: none; } }
+@page { size: A4; margin: 0; }
 
 :root { color-scheme: light; --ink: #1e1a17; --sub: #4a4038; --line: #d9cfc0; --paper: #fbf4e4; --card: #fffdf7; --navy: #22396b; --gold: #c9973a; }
 html { background: var(--paper); }
@@ -31,8 +29,16 @@ b, strong, h1, h2, h3, h4 { font-weight: 900; }
 .muted { color: var(--sub); }
 .toolbar { display: none; }
 
-.sheet { position: relative; break-before: page; }
-.sheet:first-of-type { break-before: auto; }
+/* どのページも A4 1枚の決まった大きさの紙。中身は render.ts でページに詰め、はみ出す分は「つづき」のページに送る */
+.page { width: 210mm; height: 297mm; padding: 6mm; overflow: hidden; background: var(--paper); break-before: page; break-inside: avoid; }
+.spread:first-child .page:first-child { break-before: auto; }
+.sheet { position: relative; height: 100%; overflow: hidden; display: flex; flex-direction: column; background: var(--paper); color: var(--ink);
+  border: 1.2mm double var(--navy); border-radius: 3mm; padding: 7mm 9mm 10mm; }
+.flow { flex: 1; min-height: 0; }
+.folio { position: absolute; left: 0; right: 0; bottom: 2.5mm; text-align: center; font-size: 8.5pt; color: var(--sub); }
+.turn, .where { display: none; }
+.guide-note { margin-top: 3mm; font-size: 9pt; }
+.highlights-block { margin-top: 6mm; }
 .keep { break-inside: avoid; }
 
 /* ---- 見出しの帯 ---- */
@@ -76,8 +82,14 @@ b, strong, h1, h2, h3, h4 { font-weight: 900; }
 .tape { position: absolute; width: 30mm; height: 9mm; color: var(--ink); --tape: var(--c2); }
 
 /* ---- 表紙 ---- */
-.cover, .back { page: cover; height: 283mm; overflow: hidden; border-radius: 3mm; background: var(--paper); color: var(--ink);
-  border: 1.2mm double var(--navy); padding: 9mm 11mm 0; display: flex; flex-direction: column; z-index: 1; }
+.cover, .back { padding: 9mm 11mm 0; z-index: 1; }
+/* 表紙の中身が多いときは、風景の絵とスタッフを小さくして1ページに収める */
+.cover.tight .scene { height: 56mm; margin-top: 2mm; }
+.cover.tight .scene .motif { width: 38mm; height: 38mm; margin-left: -19mm; }
+.cover.tight .scene .town { height: 42mm; }
+.cover.tight .crew { height: 34mm; }
+.cover.tight .crew img.main, .cover.tight .crew img.waver { height: 32mm; }
+.cover.tight .crew .bubble { margin-bottom: 12mm; }
 .corners { position: absolute; inset: 0; pointer-events: none; }
 .corners svg { position: absolute; width: 16mm; height: 16mm; }
 .corners .tl { left: 0; top: 0; }
@@ -155,17 +167,11 @@ b, strong, h1, h2, h3, h4 { font-weight: 900; }
   align-items: center; justify-content: center; gap: 2mm; font-weight: 900; color: var(--sub); }
 .frames .photo svg { width: 14mm; height: 14mm; }
 
-/* ---- 枠：どのページも、紙の地に紺の二重の枠と四隅の青海波。印刷では1ページの高さにそろえる ---- */
-@media print {
-  .sheet:not(.cover):not(.back) { min-height: 283mm; border: 1.2mm double var(--navy); border-radius: 3mm; background: var(--paper); padding: 6mm 8mm 4mm; }
-  .sheet .corners svg { width: 12mm; height: 12mm; }
-}
 .two-col { position: relative; }
 .seal.mini { position: absolute; right: 5mm; top: -7mm; background: var(--paper); width: 17mm; height: 17mm; border: 0.7mm solid #b8302a; border-radius: 50%; color: #b8302a; font-weight: 900;
   font-size: 6.5pt; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; transform: rotate(-8deg); }
 .seal.mini svg { width: 6mm; height: 6mm; color: #b8302a; --mark-bg: transparent; }
 .seal.mini .sub { font-size: 5pt; }
-}
 
 /* ---- 祭りのページ ---- */
 .fest-name { font-size: 24pt; line-height: 1.25; }
@@ -284,57 +290,42 @@ b, strong, h1, h2, h3, h4 { font-weight: 900; }
 .memo-box .ln { height: 8mm; border-bottom: 0.4mm dashed var(--line); }
 
 /* ---- 出典 ---- */
-.sources li { padding: 1.2mm 0; border-bottom: 0.3mm dashed var(--line); break-inside: avoid; counter-increment: src; display: grid; grid-template-columns: 8mm 1fr; }
-.sources li::before { content: counter(src); font-weight: 900; color: var(--accent); }
+.sources li { padding: 1.2mm 0; border-bottom: 0.3mm dashed var(--line); break-inside: avoid; display: grid; grid-template-columns: 8mm 1fr; }
+.sources .n { font-weight: 900; color: var(--accent); }
 .sources .t { font-weight: 900; font-size: 10pt; overflow-wrap: anywhere; }
 .sources .url { font-size: 9pt; overflow-wrap: anywhere; word-break: break-all; color: var(--ink); }
 .sources .meta { font-size: 8.5pt; color: var(--sub); margin-left: 1mm; word-break: normal; }
-.sources { counter-reset: src; }
 .two-col .sources { columns: 2; column-gap: 5mm; }
 .closing { margin-top: 4mm; font-weight: 900; break-inside: avoid; }
 .box .closing { margin-top: 2mm; }
 
-/* ---- 画面で見るとき ---- */
+/* ---- 画面で見るとき：見開きで2ページずつ並べ、矢印のリンクでめくる（スクリプトは使わない） ---- */
 @media screen {
-  body { background: #e9e1d4; padding: 0 0 12mm; }
-  .toolbar { display: flex; justify-content: center; gap: 12px; padding: 14px 16px; position: sticky; top: 0; z-index: 5; background: #e9e1d4; }
-  .toolbar a { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: var(--on-accent); font-weight: 900; text-decoration: none; padding: 10px 20px; border-radius: 99px; font-size: 16px; }
-  .sheet { width: 210mm; max-width: calc(100% - 24px); margin: 0 auto 10mm; background: var(--paper); padding: 12mm; border-radius: 4mm;
-    border: 1.2mm double var(--navy); box-shadow: 0 2px 10px rgba(60, 40, 20, 0.18); }
-  .cover, .back { min-height: 297mm; height: auto; padding: 10mm 12mm 0; }
-}
-@media screen and (max-width: 820px) {
-  body { font-size: 16px; }
-  .sheet { padding: 16px; border-radius: 12px; }
-  .cover, .back { min-height: 0; padding: 12px 12px 0; }
-  .cover .cluster, .back .cluster, .cover .season.a { display: none; }
-  .ribbon .name { font-size: 20px; }
-  .cover h1 { font-size: 26px; }
-  .cover .verified { position: relative; right: auto; top: auto; margin: 8px auto 0; width: 120px; }
-  .cover-notes { grid-template-columns: 1fr; }
-  .cover .scene { height: 46vw; margin: 12px -12px 0; }
-  .cover .scene .town { height: 36vw; }
-  .cover .scene .motif { width: 30vw; height: 30vw; right: 8vw; }
-  .facts { grid-template-columns: 1fr 1fr; gap: 8px 0; }
-  .facts > div:nth-child(3) { border-left: 0; }
-  .head { padding-right: 90px; }
-  .head .staff { height: 96px; }
-  .banner { font-size: 20px; }
-  .banner .cloud { display: none; }
-  .shop-stamp { right: 104px; }
-  .cover .crew { flex-wrap: wrap; height: auto; margin: 16px 0 24px; }
-  .cover .crew img.main, .cover .crew img.waver { height: 110px; }
-  .cover .crew .bubble { order: -1; flex-basis: 100%; max-width: none; margin-bottom: 4px; }
-  .back .thanks { font-size: 26px; }
-  .back .crew img { height: 120px; }
-  .back .back-band { flex-direction: column; text-align: center; }
-  .back .town { position: relative; height: 30vw; margin-top: 12px; }
-  .frames { grid-template-columns: 1fr; }
-  .frames .photo { height: 160px; }
-  .cards, .two, .stamps { grid-template-columns: 1fr; }
-  .checks { columns: 1; }
-  .overview li { grid-template-columns: 40px 1fr; }
-  .guide th { width: 34%; }
+  html, body { height: 100%; }
+  body { display: flex; flex-direction: column; overflow: hidden; background: #4a3a2c; }
+  .toolbar { flex: none; display: flex; justify-content: center; gap: 12px; padding: 8px 16px; }
+  .toolbar a { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: var(--on-accent); font-weight: 900; text-decoration: none; padding: 8px 20px; border-radius: 99px; font-size: 16px; }
+  .book { flex: 1; min-height: 0; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-behavior: smooth;
+    overscroll-behavior-x: contain; scrollbar-width: none; container: book / size; }
+  .book::-webkit-scrollbar { display: none; }
+  .spread { position: relative; flex: 0 0 100%; height: 100%; scroll-snap-align: start; scroll-snap-stop: always; display: flex; align-items: center;
+    justify-content: center; padding: 0 0 22px; }
+  .page { zoom: 0.2; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4); }
+  .spread:not(.single) .page:first-of-type { box-shadow: -4px 4px 18px rgba(0, 0, 0, 0.4), inset -8mm 0 8mm -6mm rgba(60, 40, 20, 0.25); }
+  .spread:not(.single) .page:last-of-type { box-shadow: 4px 4px 18px rgba(0, 0, 0, 0.4), inset 8mm 0 8mm -6mm rgba(60, 40, 20, 0.25); }
+  .turn { position: absolute; z-index: 5; top: 50%; transform: translateY(-50%); display: flex; align-items: center; justify-content: center; width: 52px; height: 96px;
+    border-radius: 14px; background: rgba(30, 26, 23, 0.55); color: #fff8ec; font-size: 44px; line-height: 1; text-decoration: none; font-weight: 900; }
+  .turn:hover, .turn:focus-visible { background: var(--accent); color: var(--on-accent); outline: 3px solid #fff8ec; outline-offset: 2px; }
+  .turn.prev { left: 8px; }
+  .turn.next { right: 8px; }
+  .where { position: absolute; left: 0; right: 0; bottom: 2px; text-align: center; color: #fff8ec; font-size: 13px; line-height: 20px; }
+  @container book (orientation: portrait) {
+    .spread { flex-direction: column; justify-content: flex-start; gap: 12px; overflow-y: auto; padding: 12px 0 76px; }
+    .page { flex: none; }
+    .spread:not(.single) .page:first-of-type, .spread:not(.single) .page:last-of-type { box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4); }
+    .turn { position: fixed; top: auto; bottom: 10px; transform: none; width: 64px; height: 52px; font-size: 36px; }
+    .where { position: fixed; bottom: 24px; }
+  }
 }
 `;
 
@@ -344,11 +335,11 @@ b, strong, h1, h2, h3, h4 { font-weight: 900; }
  */
 const MOTION = String.raw`
 @media screen and (prefers-reduced-motion: no-preference) {
-  /* ページをめくる：左の綴じ目を軸に、紙が開いてくる */
+  /* ページをめくる：左の綴じ目を軸に、紙が開いてくる。見開きを横に送るのに合わせる */
   .sheet { transform-origin: left center; animation: shiori-turn 0.9s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
-  .sheet:nth-of-type(2) { animation-delay: 0.35s; }
+  .spread:not(.single) .page:last-of-type .sheet { animation-delay: 0.2s; }
   @supports (animation-timeline: view()) {
-    .sheet:not(.cover) { animation-delay: 0s; animation-timeline: view(); animation-range: entry 0% entry 55%; }
+    .spread:not(:first-child) .sheet { animation-delay: 0s; animation-timeline: view(inline); animation-range: entry 0% entry 70%; }
   }
   /* 表紙：提灯が風で揺れ、ひよこが手を振る */
   .cover .cluster, .back .cluster { transform-origin: 30% 0; animation: shiori-swing 4s ease-in-out infinite; }
@@ -374,6 +365,29 @@ const MOTION = String.raw`
 @keyframes shiori-grow { from { transform: scaleY(0); } to { transform: none; } }
 `;
 
+/** 1mm の画面の長さ（px） */
+const MM_PX = 96 / 25.4;
+
+/**
+ * 画面で見るときの紙の縮尺。紙の中身は mm と pt で組んであるので、スクリプトを使わずに画面に合わせるよう、
+ * 見開きの置き場（.book）の大きさごとの縮尺（zoom）を、決まった刻みのコンテナクエリで決める。
+ * 横長なら2ページ（420mm × 297mm）とめくる矢印が、縦長なら1ページの幅が収まる、いちばん大きな縮尺にする
+ */
+export function screenScaleRules(): string {
+  const rules: string[] = [];
+  for (let step = 10; step <= 70; step++) {
+    const z = step / 50;
+    const spreadW = Math.ceil(z * 2 * 210 * MM_PX + 2 * 64);
+    const spreadH = Math.ceil(z * 297 * MM_PX + 28);
+    const singleW = Math.ceil(z * 210 * MM_PX + 16);
+    rules.push(
+      `@container book (orientation: landscape) and (min-width: ${spreadW}px) and (min-height: ${spreadH}px) { .page { zoom: ${z}; } }`,
+      `@container book (orientation: portrait) and (min-width: ${singleW}px) { .page { zoom: ${z}; } }`,
+    );
+  }
+  return `@media screen {\n${rules.join("\n")}\n}`;
+}
+
 export function shioriStyle(palette: Palette): string {
   const vars = [
     `--accent: ${palette.accent}`,
@@ -388,5 +402,5 @@ export function shioriStyle(palette: Palette): string {
     `--s2: ${palette.s2}`,
     `--s3: ${palette.s3}`,
   ].join("; ");
-  return `${BASE}\n:root { ${vars}; }\n${MOTION}`;
+  return `${BASE}\n:root { ${vars}; }\n${screenScaleRules()}\n${MOTION}`;
 }
