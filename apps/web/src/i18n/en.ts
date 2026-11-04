@@ -82,6 +82,16 @@ const consultDietary = {
   allergy: "Food allergies",
   no_raw: "No raw food",
 };
+const consultTransport = {
+  car: "Car",
+  shinkansen: "Shinkansen",
+  local_train: "Local train",
+  bus: "Bus",
+  ferry: "Ferry",
+  plane: "Plane",
+  rental_car: "Rental car",
+  walk: "Walking",
+};
 const consultStay = {
   dayTrip: "Day trip",
   oneNight: "1 night",
@@ -223,6 +233,8 @@ export const en: Messages = {
     prefectures,
     travelLabel: "From your station (one way, for a day trip)",
     travelOption: (minutes: number) => `Within ${minutes / 60} h`,
+    transportLabel: "How you'd like to travel (choose any, or leave it to us)",
+    transport: consultTransport,
     dietaryLabel: "Dietary needs (if any, choose any)",
     dietary: consultDietary,
     prefecturesLabel: (region: string) => `Narrow down within ${region} (optional)`,
@@ -299,6 +311,8 @@ export const en: Messages = {
         `Within ${minutes / 60} hour${minutes === 60 ? "" : "s"} one way from your station`,
       dietary: (needs: string[]) => `dietary needs: ${needs.join(", ")}`,
       dietaryOptions: consultDietary,
+      transport: (modes: string[]) => `getting around by ${modes.join(", ")}`,
+      transportOptions: consultTransport,
       line: (label: string, text: string) => `- ${label}: ${text}`,
     },
   },

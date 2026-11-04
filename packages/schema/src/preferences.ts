@@ -202,6 +202,22 @@ export const DIETARY_NEEDS = ["vegetarian", "vegan", "halal", "allergy", "no_raw
 export type DietaryNeed = (typeof DIETARY_NEEDS)[number];
 
 /**
+ * 想定している交通手段：車（自家用車）/ 新幹線 / 在来線 / バス / 船 / 飛行機 / レンタカー / 徒歩。
+ * いくつでも選べる。こだわりの「移動」（電車 / 車）より細かく、道のりを調べるときの決まりに使う
+ */
+export const TRANSPORT_MODES = [
+  "car",
+  "shinkansen",
+  "local_train",
+  "bus",
+  "ferry",
+  "plane",
+  "rental_car",
+  "walk",
+] as const;
+export type TransportMode = (typeof TRANSPORT_MODES)[number];
+
+/**
  * 旅の条件。日付・出発地・泊数がそろうと、祭りを探し始める。同行者は任意。
  * 近場のお出かけと分かる相談では、泊まるかを聞き直さず 0 泊にしてよい。
  * 出発地は駅名までにとどめ、住所は聞かない。
@@ -230,6 +246,8 @@ export const TripConditionsSchema = z.strictObject({
   foodWishes: z.array(z.enum(FOOD_WISHES)).max(FOOD_WISHES.length).optional(),
   /** 食事で気をつけたいこと。利用者が言ったときだけ。アレルギーの中身などは持たない */
   dietary: z.array(z.enum(DIETARY_NEEDS)).max(DIETARY_NEEDS.length).optional(),
+  /** 想定している交通手段。空の並びは「おまかせ」 */
+  transport: z.array(z.enum(TRANSPORT_MODES)).max(TRANSPORT_MODES.length).optional(),
   /** 「あとはおまかせ」。true のとき、まだ聞いていない項目は聞かずに組む */
   leaveToStaff: z.boolean().optional(),
 });

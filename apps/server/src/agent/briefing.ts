@@ -17,6 +17,7 @@ import {
 } from "../domain/calendar";
 import { DIETARY_LABELS, FOOD_WISH_LABELS } from "../domain/food";
 import { preferenceEffects } from "../domain/preferences";
+import { TRANSPORT_LABELS } from "../domain/transport";
 import type { ToolContext } from "../tools/context";
 import { hearingReport } from "../tools/matsuriTools";
 import type { Staff } from "./bubbles";
@@ -120,6 +121,9 @@ function tripStyleLabels(conditions: PartialTripConditions): string[] {
       : null,
     conditions.dietary && conditions.dietary.length > 0
       ? `食事で気をつけたいこと ${conditions.dietary.map((d) => DIETARY_LABELS[d]).join("・")}`
+      : null,
+    conditions.transport && conditions.transport.length > 0
+      ? `交通手段 ${conditions.transport.map((m) => TRANSPORT_LABELS[m]).join("・")}`
       : null,
     conditions.leaveToStaff ? "あとはおまかせ" : null,
   ].filter((v): v is string => v !== null);

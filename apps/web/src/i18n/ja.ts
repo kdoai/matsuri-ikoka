@@ -69,6 +69,16 @@ const consultDietary = {
   allergy: "食物アレルギー",
   no_raw: "生ものが苦手",
 };
+const consultTransport = {
+  car: "車",
+  shinkansen: "新幹線",
+  local_train: "在来線",
+  bus: "バス",
+  ferry: "船",
+  plane: "飛行機",
+  rental_car: "レンタカー",
+  walk: "徒歩",
+};
 const consultStay = { dayTrip: "日帰り", oneNight: "1泊", twoNights: "2泊", longer: "3泊以上" };
 const consultMembers = {
   adults: "大人（中学生以上）",
@@ -204,6 +214,8 @@ export const ja = {
     prefectures,
     travelLabel: "出発の駅から（片道・日帰りのとき）",
     travelOption: (minutes: number) => `${minutes / 60}時間以内`,
+    transportLabel: "使いたい交通手段（いくつでも・選ばなければおまかせ）",
+    transport: consultTransport,
     dietaryLabel: "食事で気をつけたいこと（あれば・いくつでも）",
     dietary: consultDietary,
     prefecturesLabel: (region: string) => `${region}の中でしぼる（選ばなくてもよい）`,
@@ -271,6 +283,8 @@ export const ja = {
       travel: (minutes: number) => `出発の駅から片道${minutes / 60}時間以内`,
       dietary: (needs: string[]) => `気をつけたいこと：${needs.join("・")}`,
       dietaryOptions: consultDietary,
+      transport: (modes: string[]) => `交通手段：${modes.join("・")}`,
+      transportOptions: consultTransport,
       line: (label: string, text: string) => `・${label}：${text}`,
     },
   },

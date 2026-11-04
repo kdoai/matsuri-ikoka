@@ -37,7 +37,7 @@ pnpm install
 pnpm dev
 ```
 
-`pnpm dev` で、画面（http://localhost:5173 ）と接客サーバー（http://localhost:8787 ）が一緒に立ち上がります。画面はいつも接客サーバーと話します（Vite が `/api` と `/shiori` を中継します）。
+`pnpm dev` で、画面（http://localhost:5173 ）と接客サーバー（http://localhost:8787 ）が一緒に立ち上がります。画面はいつも接客サーバーと話します（Vite が `/api` と `/shiori` を中継します）。どちらかのポートがふさがっていると、別のポートへずらさずに止まります。別の `pnpm dev` を止めるか、`PORT=8788 MATSURI_WEB_PORT=5174 pnpm dev` のようにポートを変えて起動してください（画面は `PORT` の接客サーバーへ中継します）。
 
 #### AI だけのモック（既定、キーは要りません）
 

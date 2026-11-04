@@ -12,7 +12,7 @@ import type { AgentRunner } from "./agent/runner";
 import { agentConfigDir, forgetTranscripts } from "./agent/transcripts";
 import { createWebVerifier } from "./agent/webVerifier";
 import { createApp } from "./app";
-import { readConfig, startupNotice } from "./config";
+import { portInUseMessage, readConfig, startupNotice } from "./config";
 import { festivalDirs, loadFestivals } from "./data/festivalStore";
 import { nowInJapan, todayInJapan } from "./domain/calendar";
 import { ConcurrencyLimiter, clientIp, DailyLimiter } from "./routes/guard";
@@ -163,7 +163,7 @@ setInterval(
   10 * 60 * 1000,
 ).unref();
 
-serve({ fetch: app.fetch, port: config.port }, (info) => {
+const server = serve({ fetch: app.fetch, port: config.port }, (info) => {
   const notice = startupNotice({
     mode: config.mode,
     port: info.port,
@@ -175,4 +175,10 @@ serve({ fetch: app.fetch, port: config.port }, (info) => {
   console.info(`server listening on http://localhost:${info.port} (${config.mode})`);
   // mock のままだと、何を相談しても同じ見本が流れる。気づけるように目立つ出力にする
   (config.mode === "mock" ? console.warn : console.info)(notice.message);
+});
+// ポートがふさがっていたら、長いスタックトレースではなく、何をすればよいかを出して止まる
+server.on("error", (error: NodeJS.ErrnoException) => {
+  if (error.code !== "EADDRINUSE") throw error;
+  console.error(portInUseMessage(config.port));
+  process.exit(1);
 });

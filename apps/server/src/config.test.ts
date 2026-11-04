@@ -1,7 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { findRepoRoot, readConfig, startupNotice } from "./config";
+import { findRepoRoot, portInUseMessage, readConfig, startupNotice } from "./config";
 import { ConcurrencyLimiter, clientIp, DailyLimiter } from "./routes/guard";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -210,5 +210,13 @@ describe("起動のときの知らせ", () => {
     expect(notice.message).toBe(
       "[mode] live：Claude が返事を作ります。祭りのデータ 21件（data/festivals）から探します",
     );
+  });
+});
+
+describe("portInUseMessage", () => {
+  it("ふさがっているポートと、ポートを変えて起動し直す方法を示す", () => {
+    const message = portInUseMessage(8787);
+    expect(message).toContain("ポート 8787");
+    expect(message).toContain("PORT=8788 MATSURI_WEB_PORT=5174 pnpm dev");
   });
 });

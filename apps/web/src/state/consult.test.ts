@@ -31,6 +31,7 @@ import {
   stepCount,
   todayInJapan,
   toggleDietary,
+  toggleTransport,
 } from "./consult";
 
 const wording = MESSAGES.ja.consult.wording;
@@ -342,6 +343,43 @@ describe("toggleDietary", () => {
     answers = toggleDietary(answers, "halal");
     answers = pickAnswer(answers, "food", "auto");
     expect(answers.food).toEqual({ picks: ["auto"], text: "", dietary: ["halal"] });
+  });
+});
+
+describe("toggleTransport", () => {
+  it("交通手段を選択肢の順で付け外しし、すべて外したら消す", () => {
+    let answers = toggleTransport({}, "rental_car");
+    answers = toggleTransport(answers, "shinkansen");
+    answers = toggleTransport(answers, "walk");
+    expect(answers.origin?.transport).toEqual(["shinkansen", "rental_car", "walk"]);
+
+    for (const mode of ["shinkansen", "rental_car", "walk"] as const) {
+      answers = toggleTransport(answers, mode);
+    }
+    expect(answers.origin?.transport).toBeUndefined();
+  });
+
+  it("出発の駅とは別に持ち、駅を入れるまでは先へ進めない", () => {
+    let answers: ConsultAnswers = {
+      ...pickAnswer({}, "party", "solo"),
+      schedule: { picks: ["thisWeekend"], text: "", stay: "dayTrip" },
+    };
+    answers = toggleTransport(answers, "bus");
+    expect(canReach("destination", answers)).toBe(false);
+
+    answers = setAnswerText(answers, "origin", "みなと中央駅");
+    expect(answers.origin).toEqual({ picks: [], text: "みなと中央駅", transport: ["bus"] });
+    expect(canReach("destination", answers)).toBe(true);
+  });
+
+  it("まとめの発言で、出発の駅に交通手段を添える", () => {
+    let answers = setAnswerText({}, "origin", "みなと中央駅");
+    for (const mode of ["car", "ferry", "plane"] as const) {
+      answers = toggleTransport(answers, mode);
+    }
+    expect(composeConsultMessage(answers, wording, "2030-06-05")).toContain(
+      "・出発する駅：みなと中央駅、交通手段：車・船・飛行機",
+    );
   });
 });
 

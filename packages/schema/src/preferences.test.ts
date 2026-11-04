@@ -179,6 +179,28 @@ describe("TripConditionsSchema", () => {
     );
   });
 
+  it("想定している交通手段は決まった選択肢から、いくつでも", () => {
+    expect(
+      TripConditionsSchema.safeParse({
+        ...conditions,
+        transport: [
+          "car",
+          "shinkansen",
+          "local_train",
+          "bus",
+          "ferry",
+          "plane",
+          "rental_car",
+          "walk",
+        ],
+      }).success,
+    ).toBe(true);
+    expect(TripConditionsSchema.safeParse({ ...conditions, transport: [] }).success).toBe(true);
+    expect(TripConditionsSchema.safeParse({ ...conditions, transport: ["bicycle"] }).success).toBe(
+      false,
+    );
+  });
+
   it("聞き取りの途中は、どの条件も空でよい", () => {
     expect(PartialTripConditionsSchema.safeParse({}).success).toBe(true);
     expect(PartialTripConditionsSchema.safeParse({ origin: "みなと中央駅" }).success).toBe(true);

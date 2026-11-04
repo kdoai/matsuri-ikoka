@@ -48,9 +48,11 @@ import {
   setTravel,
   stepAfterAnswer,
   stepCount,
+  TRANSPORT_OPTIONS,
   TRAVEL_LIMITS,
   todayInJapan,
   toggleDietary,
+  toggleTransport,
 } from "../state/consult";
 import { useActions, useApp, useT } from "../state/react";
 import {
@@ -444,14 +446,39 @@ function OriginStep() {
   const { actions, advance } = useConsult();
   const text = useApp((state) => state.consult.answers.origin?.text ?? "");
   return (
-    <StationInput
-      value={text}
-      onChange={(value) => actions.setConsultText("origin", value)}
-      onDecide={(value) => {
-        actions.setConsultText("origin", value);
-        advance();
-      }}
-    />
+    <div>
+      <StationInput
+        value={text}
+        onChange={(value) => actions.setConsultText("origin", value)}
+        onDecide={(value) => {
+          actions.setConsultText("origin", value);
+          advance();
+        }}
+      />
+      <TransportPicks />
+    </div>
+  );
+}
+
+/** 出発の駅の段階で、あわせて想定している交通手段も伝えられる（選ばなければおまかせ） */
+function TransportPicks() {
+  const t = useT();
+  const { actions } = useConsult();
+  const transport = useApp((state) => state.consult.answers.origin?.transport ?? []);
+  return (
+    <div className="mt-2" data-testid="consult-transport">
+      <ChoiceGroup label={t.consult.transportLabel}>
+        {TRANSPORT_OPTIONS.map((mode) => (
+          <Choice
+            key={mode}
+            pressed={transport.includes(mode)}
+            onClick={() => actions.editConsult((answers) => toggleTransport(answers, mode))}
+          >
+            {t.consult.transport[mode]}
+          </Choice>
+        ))}
+      </ChoiceGroup>
+    </div>
   );
 }
 
