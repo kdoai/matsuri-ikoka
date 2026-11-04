@@ -1,0 +1,203 @@
+{
+  "id": "hanase-matsuage",
+  "name": {
+    "ja": "花脊松上げ",
+    "en": "Hanase Matsuage"
+  },
+  "category": "fire",
+  "municipalities": [
+    {
+      "prefecture": "京都府",
+      "name": "京都市"
+    }
+  ],
+  "venue": {
+    "name": "花背山村都市交流の森前（左京区花脊八桝町）",
+    "lat": 35.2228,
+    "lng": 135.7811
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "川原に立てた約千本の松明に、いっせいに火がともる",
+    "高さ約20mの燈籠木の大笠へ、火のついた松明を投げ上げる",
+    "火のついた大笠を最後に引き倒して、行事が終わる",
+    "洛北の山あいの集落に伝わる、お盆の夜の愛宕の火祭り"
+  ],
+  "trivia": [
+    {
+      "text": "お盆に先祖を送る火と、火よけの愛宕さんを敬う心が重なって生まれた行事とみられる",
+      "source": {
+        "url": "https://www.city.kyoto.lg.jp/sakyo/page/0000024256.html",
+        "title": "京都市左京区 花脊松上げ",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "投げ上げる手松明「アゲマツ」は、男たちがそれぞれの家で作って持ち寄る",
+      "source": {
+        "url": "https://www.city.kyoto.lg.jp/sakyo/page/0000024256.html",
+        "title": "京都市左京区 花脊松上げ",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "松明の的になる檜の柱は祭りの日の昼に立てられ、先端のカサには枝葉が詰められる",
+      "source": {
+        "url": "https://www.city.kyoto.lg.jp/sakyo/page/0000024256.html",
+        "title": "京都市左京区 花脊松上げ",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "松上げを終えた男たちは、伊勢音頭を歌いながら公民館へ帰っていく",
+      "source": {
+        "url": "https://www.city.kyoto.lg.jp/sakyo/page/0000024256.html",
+        "title": "京都市左京区 花脊松上げ",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": [
+      "足もとを照らす懐中電灯（会場は灯りが少ない。2024年の京都バスの観賞バスの案内の転載から）",
+      "弁当など（会場に食堂などがない。2024年の京都バスの観賞バスの案内の転載から）"
+    ],
+    "risk": {
+      "level": "medium",
+      "reason": "火を使う行事を夜に見学し、会場は灯りの少ない山間地。主催者による危険の注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://ja.kyoto.travel/event/single.php?event_id=4713",
+        "title": "京都観光Navi（京都市観光協会） 花脊（はなせ）松上げ",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.zaikei.co.jp/releases/2525502/",
+        "title": "財経新聞（京都バスの発表の転載・2024年） 花背松上げ・広河原松上げ 観賞バスツアーを販売開始",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-15",
+      "start": "21:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": "小雨決行",
+      "note": "2026年の回（土曜日）。昼に燈籠木を立て、夜に男たちが公民館に集まる。21:00 ごろ川原の約千本の松明に点火し、大笠へ松明を投げ上げ、最後に大笠を引き倒して終わる。京都バスの観賞バスは出町柳駅 17:40 集合、約5時間30分（要予約、大人4,000円）",
+      "sources": [
+        {
+          "url": "https://ja.kyoto.travel/event/single.php?event_id=4713",
+          "title": "京都観光Navi（京都市観光協会） 花脊（はなせ）松上げ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.keihan.co.jp/k-press/outing/202608-kyotobus.php",
+          "title": "京阪電車 K PRESS 2026年8月 京都バスの花背松上げ観賞バス",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.kyoto.lg.jp/sakyo/page/0000024256.html",
+          "title": "京都市左京区 花脊松上げ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-15",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年8月15日に行う決まりから見込んだ日（日曜日）。2027年の発表はまだない。2026年は 21:00 に始まった",
+      "sources": [
+        {
+          "url": "https://ja.kyoto.travel/event/single.php?event_id=4713",
+          "title": "京都観光Navi（京都市観光協会） 花脊（はなせ）松上げ（毎年8月15日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.city.kyoto.lg.jp/sakyo/page/0000024256.html",
+          "title": "京都市左京区 花脊松上げ（毎年8月15日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [
+      {
+        "hub": "出町柳駅",
+        "minutes": [90, 100],
+        "route": "京都バスの広河原行きで約90分、花背交流の森前下車。路線バスでは日帰りできないため、自家用車か京都バスの観賞バスを使う"
+      }
+    ],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://ja.kyoto.travel/event/single.php?event_id=4713",
+        "title": "京都観光Navi（京都市観光協会） 花脊（はなせ）松上げ",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://ja.kyoto.travel/event/single.php?event_id=4713",
+      "title": "京都観光Navi（京都市観光協会） 花脊（はなせ）松上げ",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.kyoto.lg.jp/sakyo/page/0000024256.html",
+      "title": "京都市左京区 花脊松上げ",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と開始の時刻（8月15日は毎年の決まりからの見込み）",
+    "2026年に実際に行われたかの報告（京都観光Navi は2026年8月15日の予定を載せて「終了しました」とするだけ）",
+    "帰りの足：路線バスでは日帰りできず、2027年の観賞バスの運行はまだ発表がない",
+    "見学できる場所と、見物の人が守ること（主催者の案内が見つからない）",
+    "持ち物と会場の飲食の案内は、京都バスの2024年の発表をニュースサイトが転載したものだけが根拠。京都バスの自社のページ（2024・2025年の案内の PDF）は開けず、2026年の案内も確かめられなかった",
+    "服装と撮影の決まり",
+    "荒天のときの扱い（小雨決行とだけある）",
+    "駐車場の有無と台数、交通規制",
+    "終わりの時刻（2024年の観賞バスは出町柳に 23:10 ごろ戻る行程だった）",
+    "屋台が出るか（京都バスの案内では会場に食堂などがない）",
+    "会場の緯度・経度は、国土地理院の住所検索で出る花脊八桝町の代表の点で、行事を行う川原の位置ではない",
+    "京都駅など玄関口の駅から出町柳駅までの所要時間",
+    "加わる人数や松明の正確な数（約千本とだけある）",
+    "周辺の観光と食の場所（確かめられなかった）",
+    "主催者（地元の保存会など）の公式の案内が見つからない"
+  ]
+}

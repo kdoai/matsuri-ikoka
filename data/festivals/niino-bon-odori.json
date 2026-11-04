@@ -1,0 +1,281 @@
+{
+  "id": "niino-bon-odori",
+  "name": {
+    "ja": "新野の盆踊り",
+    "en": "Niino Bon Odori"
+  },
+  "category": "dance",
+  "municipalities": [
+    {
+      "prefecture": "長野県",
+      "name": "下伊那郡阿南町"
+    }
+  ],
+  "venue": {
+    "name": "新野本町通り",
+    "lat": 35.2596,
+    "lng": 137.7457
+  },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": ["walkerplus"],
+  "highlights": [
+    "三味線も太鼓も使わず、歌声の掛け合いだけで夜明けまで踊る",
+    "17日の明け方、神送りの行列と、踊りをやめたくない踊り子の輪がせめぎ合う",
+    "地元で手作りされた切り子灯籠が櫓を飾り、最後に火で送られる",
+    "扇子を持つ踊りと手踊り、合わせて7種の踊りが伝わる"
+  ],
+  "trivia": [
+    {
+      "text": "楽器の伴奏はなく、櫓から歌い出す声に踊り手が歌で返し、それだけで踊りが続く",
+      "source": {
+        "url": "http://www.town.anan.nagano.jp/tourism/niino_bonodori/",
+        "title": "阿南町 新野の盆踊り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "毎晩最初の踊り「すくいさ」には、米の振る舞いを願う昔の農民の思いがこもるという",
+      "source": {
+        "url": "http://www.town.anan.nagano.jp/tourism/niino_bonodori/",
+        "title": "阿南町 新野の盆踊り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "踊り「能登」は、17日明け方の踊り神送りの間だけ踊られる",
+      "source": {
+        "url": "http://www.town.anan.nagano.jp/tourism/niino_bonodori/",
+        "title": "阿南町 新野の盆踊り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2022年、風流踊の一つとしてユネスコの無形文化遺産に記載された",
+      "source": {
+        "url": "https://online.bunka.go.jp/heritages/detail/204003",
+        "title": "文化遺産オンライン 新野の盆踊（重要無形民俗文化財）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "通りの踊りの輪に加わり、音頭取りの歌に返しの歌で応えて踊る。町は盆唄を覚えて参加するよう呼びかけ、盆唄の CD（1,500円）を新野出張所で売っている",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "夜通しの行事で、17日の明け方に切り子灯籠を積んで燃やす。見物の人や踊り手と火との距離は出典から分からないため、火を使う行事として medium にした"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "http://www.town.anan.nagano.jp/tourism/niino_bonodori/",
+        "title": "阿南町 新野の盆踊り（盆唄を覚えて盆踊りに参加するよう案内）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://online.bunka.go.jp/heritages/detail/159878",
+        "title": "文化遺産オンライン 新野の盆踊（音頭台を囲む輪、歌い返しで進む）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-14",
+      "start": "20:00",
+      "end": "06:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の予定（町の発表）（初日）。20:00 踊り神迎えの神事、21:00 から翌朝6:00 まで盆踊り",
+      "sources": [
+        {
+          "url": "http://www.town.anan.nagano.jp/tourism/niino_bonodori/",
+          "title": "阿南町 新野の盆踊り（2026年のスケジュール）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar0420e603620/data.html",
+          "title": "ウォーカープラス 新野の盆踊りの詳細データ",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2026-08-15",
+      "start": "21:00",
+      "end": "06:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の予定（町の発表）。21:00 から翌朝6:00 まで盆踊り。毎晩「すくいさ」から踊り始める",
+      "sources": [
+        {
+          "url": "http://www.town.anan.nagano.jp/tourism/niino_bonodori/",
+          "title": "阿南町 新野の盆踊り（2026年のスケジュール）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-08-16",
+      "start": "21:00",
+      "end": "06:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の予定（町の発表）（最後の夜）。21:00 から17日の朝6:00 まで盆踊り。17日4:30 から踊り神送りの神事があり、その間だけ「能登」を踊る。行列が広場に着くと切り子灯籠に火を付け、振り返らずに帰る",
+      "sources": [
+        {
+          "url": "http://www.town.anan.nagano.jp/tourism/niino_bonodori/",
+          "title": "阿南町 新野の盆踊り（2026年のスケジュール）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-08-22",
+      "start": "21:00",
+      "end": "06:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の予定（町の発表）（うら盆）。21:00 から翌朝6:00 まで踊る。うら盆は以前の8月24日から、8月第4土曜日の夜に変わった",
+      "sources": [
+        {
+          "url": "http://www.town.anan.nagano.jp/tourism/niino_bonodori/",
+          "title": "阿南町 新野の盆踊り（2026年のスケジュール、うら盆の日程変更）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-14",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年8月14〜16日に行う決まりから見込んだ日（町は日付を目安としている。2027年の発表はまだない）。2026年はこの夜、20:00 に踊り神迎えの神事があり、21:00〜翌朝6:00 に踊った",
+      "sources": [
+        {
+          "url": "http://www.town.anan.nagano.jp/tourism/niino_bonodori/",
+          "title": "阿南町 新野の盆踊り（開催日 毎年8月14〜16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-15",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年8月14〜16日に行う決まりから見込んだ日（2027年の発表はまだない）。2026年は21:00〜翌朝6:00 だった",
+      "sources": [
+        {
+          "url": "http://www.town.anan.nagano.jp/tourism/niino_bonodori/",
+          "title": "阿南町 新野の盆踊り（開催日 毎年8月14〜16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-16",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年8月14〜16日に行う決まりから見込んだ日（2027年の発表はまだない）。例年は翌17日の明け方に踊り神送りがある。2026年は21:00〜翌朝6:00 踊り、17日4:30 から神送りだった",
+      "sources": [
+        {
+          "url": "http://www.town.anan.nagano.jp/tourism/niino_bonodori/",
+          "title": "阿南町 新野の盆踊り（開催日 毎年8月14〜16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-28",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "うら盆を8月第4土曜日の夜に行う決まりから見込んだ日（2027年の発表はまだない）。2026年は21:00〜翌朝6:00 だった",
+      "sources": [
+        {
+          "url": "http://www.town.anan.nagano.jp/tourism/niino_bonodori/",
+          "title": "阿南町 新野の盆踊り（うら盆は8月第4土曜日の夜）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://summer.walkerplus.com/odekake/detail_e/ar0420e603620/map.html",
+        "title": "ウォーカープラス 新野の盆踊りの地図・アクセス（天龍峡ICから車で約40分、周辺の駐車場100台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "http://www.town.anan.nagano.jp/tourism/niino_bonodori/",
+      "title": "阿南町 新野の盆踊り",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://online.bunka.go.jp/heritages/detail/204003",
+      "title": "文化遺産オンライン 新野の盆踊（重要無形民俗文化財）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://online.bunka.go.jp/heritages/detail/159878",
+      "title": "文化遺産オンライン 新野の盆踊（本町と東町の商店の通りが会場）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と各夜の時刻（日付は毎年8月14〜16日と、うら盆は8月第4土曜日の決まりからの見込み。町は日付を目安としている）",
+    "2026年の各回が町の予定どおりに行われたか（町のページは「予定」のままで、実施の報告を確かめていない）",
+    "最寄り駅と、公共交通での行き帰りの手段（夜通しの行事で、公式の案内に公共交通の記載がない）",
+    "飯田駅など玄関口の駅からの所要時間（車では三遠南信自動車道の天龍峡ICから約40分とウォーカープラスにだけある）",
+    "駐車場の場所と台数の公式の案内（周辺の駐車場100台とウォーカープラスにだけある）",
+    "雨のときの扱い",
+    "交通規制の有無",
+    "初めての人が踊りを覚える機会（練習会など）と、扇子を持つ踊りに加わるときの扇子の用意",
+    "服装・持ち物・撮影の決まり、見物の人へのお願い",
+    "屋台の有無と、この行事ならではの食べもの",
+    "踊り手や見物の人の数（規模は、4晩にわたり神迎え・踊り・神送り・うら盆と日ごとに見せ場が変わる行事として M にした）",
+    "周辺の観光と食の場所（確かめられなかった）"
+  ]
+}
