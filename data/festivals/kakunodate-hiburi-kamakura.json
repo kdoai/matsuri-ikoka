@@ -1,0 +1,278 @@
+{
+  "id": "kakunodate-hiburi-kamakura",
+  "name": {
+    "ja": "角館の火振りかまくら",
+    "en": "Kakunodate Hiburi Kamakura"
+  },
+  "category": "fire",
+  "municipalities": [
+    {
+      "prefecture": "秋田県",
+      "name": "仙北市"
+    }
+  ],
+  "venue": {
+    "name": "角館町内各所（主会場ほか町内ごとの会場）",
+    "lat": 39.594,
+    "lng": 140.5766
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["jalan", "rurubu", "walkerplus"],
+  "highlights": [
+    "縄を付けた炭俵に火をともし、体のまわりで振り回して雪の中に火の輪を描く",
+    "高さ3mほどの長木に稲藁を巻いた天筆に火を付け、正月の門松などを焼く",
+    "主会場では、観光で訪れた人も火振りを体験できる",
+    "主会場だけでなく、角館の町内ごとに火振りが行われる"
+  ],
+  "trivia": [
+    {
+      "text": "旧暦の小正月行事の一つで、神聖な火で田んぼの厄を払い、家族の無病息災を祈る",
+      "source": {
+        "url": "https://www.city.semboku.akita.jp/sightseeing/spot/07_hiburi.html",
+        "title": "仙北市 角館の火振りかまくら（市指定無形民俗文化財）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "火振りに使うのは炭俵で、1mほどの縄を結び、雪のかまどの火を移して振り回す",
+      "source": {
+        "url": "https://www.city.semboku.akita.jp/event/event.php?id=1362",
+        "title": "仙北市 イベント情報 角館の火振りかまくら",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "仙北市の指定無形民俗文化財になっている",
+      "source": {
+        "url": "https://www.city.semboku.akita.jp/sightseeing/spot/07_hiburi.html",
+        "title": "仙北市 角館の火振りかまくら（市指定無形民俗文化財）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_by_application",
+    "howToJoin": "主会場で観光客向けの火振り体験があり、2026年は一部が整理券制だった（整理券の配り方と費用は未発表）。別に、歴史の語りと法被が付く有料の特別体験（2026年は1人8,800円、定員8名、予約サイトで申し込み）もあった",
+    "rules": "unknown",
+    "dress": ["暖かい服装と歩きやすい靴（会場は足場が悪く、寒さが厳しい）"],
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.semboku.akita.jp/event/event.php?id=1362",
+        "title": "仙北市 イベント情報 角館の火振りかまくら（主会場で観光客の火振り体験を予定、2025年）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://media.jreast.co.jp/articles/5684",
+        "title": "JR東日本 秋田の冬イベント4選（角館の火振りかまくら、一部火振り体験は整理券制）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.semboku.akita.jp/file/12920.pdf",
+        "title": "仙北市・田沢湖・角館観光協会・JR東日本秋田支社「角館の火振りかまくら特別体験」を販売します（2025年12月19日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-02-14",
+      "start": "18:00",
+      "end": "20:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年は2月14日（土）18:00〜20:00に町内各所で開く予定だった。同じ日の有料の特別体験は、17:45に会場へ移動し、18:00から本町通り会場で火振りを体験する予定だった",
+      "sources": [
+        {
+          "url": "https://media.jreast.co.jp/articles/5684",
+          "title": "JR東日本 秋田の冬イベント4選（2026年2月14日（土）18:00〜20:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.semboku.akita.jp/file/12920.pdf",
+          "title": "仙北市ほか「角館の火振りかまくら特別体験」（2026年2月14日、本町通り会場）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-02-14",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "仙北市は開催日を毎年2月14日（角館町内各所、夕方から）と案内している。2027年の時刻と会場はまだ発表がない。2025年・2026年はどちらも18:00〜20:00",
+      "sources": [
+        {
+          "url": "https://www.city.semboku.akita.jp/sightseeing/spot/07_hiburi.html",
+          "title": "仙北市 角館の火振りかまくら（開催日 2月14日、14日夕方から主会場と各町内で開催）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.semboku.akita.jp/event/event.php?id=1362",
+          "title": "仙北市 イベント情報 角館の火振りかまくら（令和7年2月14日 18:00〜20:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 角館駅",
+        "walkMinutes": [20, 25],
+        "note": "るるぶ&more.の記載で徒歩20分。これは桧木内川河川敷の会場についての数字で、今の主会場（市の2025年の案内では北会場）に当てはまるかは分からない"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "盛岡駅",
+        "minutes": [45, 55],
+        "route": "秋田新幹線で約45分（仙北市の案内）"
+      },
+      {
+        "hub": "秋田駅",
+        "minutes": [45, 55],
+        "route": "秋田新幹線で約45分（仙北市の案内）"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.city.semboku.akita.jp/sightseeing/access/",
+        "title": "仙北市 交通アクセス（盛岡駅・秋田駅から角館駅まで秋田新幹線で約45分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.semboku.akita.jp/file/12920.pdf",
+        "title": "仙北市ほか「角館の火振りかまくら特別体験」（専用駐車場はなく、近隣の駐車場を使う）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20001034",
+        "title": "るるぶ&more. 角館の火振りかまくら（JR角館駅から徒歩20分、駐車場50台・無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "甘酒などの振る舞い",
+        "note": "2025年は2月14日の10時〜16時に、観光協会と商工会がJR角館駅前と樺細工伝承館前広場で無料で振る舞った。2027年はまだ発表がない",
+        "sources": [
+          {
+            "url": "https://www.city.semboku.akita.jp/event/event.php?id=1362",
+            "title": "仙北市 イベント情報 角館の火振りかまくら（飲食振る舞い、2025年）",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "kakunodate-aoyagi-ke",
+      "name": "角館歴史村 青柳家",
+      "kind": "sightseeing",
+      "summary": "のぞき窓の付いた黒塀と、1860年の銘がある薬医門が残る武家屋敷。萱葺の主屋や蔵などが一体で残る。県指定史跡。JR角館駅から徒歩20分",
+      "location": {
+        "lat": 39.6003,
+        "lng": 140.5617
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "16:00"
+      },
+      "closedDays": [],
+      "price": "大人500円、中学生・高校生300円、小学生200円",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.city.semboku.akita.jp/sightseeing/spot/07_buke.html",
+          "title": "仙北市 武家屋敷（角館歴史村 青柳家、12月〜3月は9:00〜16:00、年中無休）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kakunodate-kawarada-ke",
+      "name": "河原田家",
+      "kind": "sightseeing",
+      "summary": "芦名氏の重臣として角館に移った家の武家屋敷。明治24年に建てた四室の主屋が角館の武家住宅の典型を残す。市指定史跡。ガイド付き見学あり。年末年始は休み",
+      "location": {
+        "lat": 39.5977,
+        "lng": 140.5628
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "16:30",
+        "lastEntry": "16:00"
+      },
+      "closedDays": [],
+      "price": "大人（高校生以上）500円、小・中学生300円",
+      "tags": ["indoor"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.city.semboku.akita.jp/sightseeing/spot/07_buke.html",
+          "title": "仙北市 武家屋敷（河原田家、12月〜3月は9:00〜16:30、最終受付16:00、年末年始休み）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.semboku.akita.jp/sightseeing/spot/07_hiburi.html",
+      "title": "仙北市 角館の火振りかまくら（市指定無形民俗文化財）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.semboku.akita.jp/event/event.php?id=1362",
+      "title": "仙北市 イベント情報 角館の火振りかまくら",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "主会場の正確な位置",
+    "2027年の時刻と主会場・各町内の会場",
+    "観光客の火振り体験の受付方法、整理券の配り方、費用",
+    "火の粉や火振りのそばでの注意と、危険度",
+    "見学の決まり（立ち入ってよい場所、場所取り）",
+    "撮影の決まり",
+    "持ち物",
+    "雨や吹雪のときの扱い",
+    "交通規制の有無と、近くの駐車場の場所と台数",
+    "JR角館駅から主会場までの徒歩の時間",
+    "見物人の数と、会場の数",
+    "屋台が出るか",
+    "祭りの夜に開いている食事の店"
+  ]
+}

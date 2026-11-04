@@ -1,0 +1,186 @@
+{
+  "id": "hokkoji-gohanshiki",
+  "name": {
+    "ja": "発光路の強飯式",
+    "en": "Hokkoji Gohanshiki"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "栃木県",
+      "name": "鹿沼市"
+    }
+  ],
+  "venue": {
+    "name": "発光路公民館（郷土文化保存伝習館）と妙見神社",
+    "lat": 36.5838,
+    "lng": 139.5126
+  },
+  "scaleTier": "XS",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "山伏と強力が口上を述べ、「責め棒」で新太夫らの首根を押さえて高盛飯を強いる",
+    "ヨビツカイの子どもたちが各戸を回り、当番宿へ招く祭り当番の受け渡し",
+    "山伏・強力の姿に残る日光修験の名残"
+  ],
+  "trivia": [
+    {
+      "text": "地元の言い伝えでは、延文年間（1356〜1361）から行われてきたとされる",
+      "source": {
+        "url": "https://www.city.kanuma.tochigi.jp/0299/info-0000001963-0.html",
+        "title": "鹿沼市 発光路の強飯式",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "大量の飯や芋、酒を受ける人に強いることから「強飯」と呼ばれる",
+      "source": {
+        "url": "https://www.city.kanuma.tochigi.jp/0299/info-0000001963-0.html",
+        "title": "鹿沼市 発光路の強飯式",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "平成8年12月20日に国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.city.kanuma.tochigi.jp/0299/info-0000001963-0.html",
+        "title": "鹿沼市 発光路の強飯式",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "強力が述べる口上には、見ている人を笑わせるおどけたものもある",
+      "source": {
+        "url": "https://kanuma-kanko.jp/purpose/%e7%99%ba%e5%85%89%e8%b7%af%e3%81%ae%e5%bc%b7%e9%a3%af%e5%bc%8f/",
+        "title": "鹿沼市観光協会 鹿沼日和 発光路の強飯式",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "公民館での儀式を見学する行事で、混雑や危険についての主催者の注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://kanuma-kanko.jp/purpose/%e7%99%ba%e5%85%89%e8%b7%af%e3%81%ae%e5%bc%b7%e9%a3%af%e5%bc%8f/",
+        "title": "鹿沼市観光協会 鹿沼日和 発光路の強飯式（観客の笑いを誘う口上）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.kanuma.tochigi.jp/0299/info-0000001963-0.html",
+        "title": "鹿沼市 発光路の強飯式（見学は鹿沼市観光物産協会へ問い合わせ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-03",
+      "start": null,
+      "end": null,
+      "status": "cancelled",
+      "rainPolicy": null,
+      "note": "2026年は妙見神社の神事だけを行い、強飯式は中止（鹿沼市観光協会の案内。理由は書かれていない）",
+      "sources": [
+        {
+          "url": "https://kanuma-kanko.jp/purpose/%e7%99%ba%e5%85%89%e8%b7%af%e3%81%ae%e5%bc%b7%e9%a3%af%e5%bc%8f/",
+          "title": "鹿沼市観光協会 鹿沼日和 発光路の強飯式（2026年は神事のみ、強飯式は中止）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-03",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2027年の発表はまだない）。2026年は神事のみで強飯式は中止だった。鹿沼市の案内の「毎年1月3日」から見込んだ日で、2027年は日曜日。例年の流れは 9:00〜10:00 妙見神社の神事、10:00〜11:30 発光路公民館で強飯式（鹿沼市観光協会の案内）。1月3日は市営バスが運休し、公共のバスでは行けない",
+      "sources": [
+        {
+          "url": "https://www.city.kanuma.tochigi.jp/0299/info-0000001963-0.html",
+          "title": "鹿沼市 発光路の強飯式（毎年1月3日、1月3日はバス運休）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://kanuma-kanko.jp/purpose/%e7%99%ba%e5%85%89%e8%b7%af%e3%81%ae%e5%bc%b7%e9%a3%af%e5%bc%8f/",
+          "title": "鹿沼市観光協会 鹿沼日和 発光路の強飯式（主なスケジュール）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://kanuma-kanko.jp/purpose/%e7%99%ba%e5%85%89%e8%b7%af%e3%81%ae%e5%bc%b7%e9%a3%af%e5%bc%8f/",
+        "title": "鹿沼市観光協会 鹿沼日和 発光路の強飯式（駐車場 普通車40台、栃木ICから約45分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.kanuma.tochigi.jp/0299/info-0000001963-0.html",
+        "title": "鹿沼市 発光路の強飯式（リーバス上粕尾山の神線、1月3日は運休）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.city.kanuma.tochigi.jp/0299/info-0000001963-0.html",
+      "title": "鹿沼市 発光路の強飯式（会場：発光路公民館 上粕尾740、妙見神社 上粕尾915）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://kanuma-kanko.jp/purpose/%e7%99%ba%e5%85%89%e8%b7%af%e3%81%ae%e5%bc%b7%e9%a3%af%e5%bc%8f/",
+      "title": "鹿沼市観光協会 鹿沼日和 発光路の強飯式",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%99%BA%E5%85%89%E8%B7%AF",
+      "title": "国土地理院 地名検索 発光路（集落の位置）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年に強飯式が行われるか（2026年は神事のみで強飯式は中止だった）",
+    "発光路公民館と妙見神社の正確な位置",
+    "雨や雪のときの扱い",
+    "見学できる場所と人数の決まり、撮影の決まり",
+    "服装と持ち物",
+    "公共の交通での行き方（1月3日はバスが運休する）と、主要駅からの所要時間",
+    "露店の有無",
+    "周辺の観光と食事の場所（1月3日に開いていると確かめられた場所がない）"
+  ]
+}

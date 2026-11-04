@@ -1,0 +1,227 @@
+{
+  "id": "chakkirako",
+  "name": {
+    "ja": "チャッキラコ",
+    "en": "Chakkirako"
+  },
+  "category": "dance",
+  "municipalities": [
+    {
+      "prefecture": "神奈川県",
+      "name": "三浦市"
+    }
+  ],
+  "venue": {
+    "name": "海南神社と三崎の仲崎・花暮地区",
+    "lat": 35.1423,
+    "lng": 139.6187
+  },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "赤い晴れ着の少女約20人が踊り、黒い着物に羽織の女性約10人が唄う女性だけの芸能",
+    "鈴と五色の紙を付けた綾竹（チャッキラコ）を打ち鳴らす踊りなど、6種類の踊り",
+    "楽器を使わず、素唄と囃し言葉だけで踊る",
+    "午後は仲崎・花暮の竜神様の祠の前で踊り、旧家や老舗を祝って回る"
+  ],
+  "trivia": [
+    {
+      "text": "宝暦6年（1756年）刊の『三崎志』に、15日に女児が集まって踊るという記録がある",
+      "source": {
+        "url": "https://www.city.miura.kanagawa.jp/soshiki/bunkasportska/bunkasportska_bunka/shiteibunkazai_soshiki/682.html",
+        "title": "三浦市 チャッキラコ/ユネスコ無形文化遺産「風流踊」",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "下を向いて真顔で踊るのは、源頼朝の前で笑顔を見せられなかった名残と言われる",
+      "source": {
+        "url": "https://www.city.miura.kanagawa.jp/soshiki/bunkasportska/bunkasportska_bunka/shiteibunkazai_soshiki/682.html",
+        "title": "三浦市 チャッキラコ/ユネスコ無形文化遺産「風流踊」",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "踊りで使う綾竹の別名コキリコが変わって、チャッキラコの名になったと考えられている",
+      "source": {
+        "url": "https://www.city.miura.kanagawa.jp/soshiki/bunkasportska/bunkasportska_bunka/shiteibunkazai_soshiki/682.html",
+        "title": "三浦市 チャッキラコ/ユネスコ無形文化遺産「風流踊」",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "昭和51年に国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.city.miura.kanagawa.jp/soshiki/bunkasportska/bunkasportska_bunka/shiteibunkazai_soshiki/682.html",
+        "title": "三浦市 チャッキラコ/ユネスコ無形文化遺産「風流踊」",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "神社や祠の前での踊りを見学する行事で、混雑や危険についての主催者の注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.miura.kanagawa.jp/soshiki/bunkasportska/bunkasportska_bunka/shiteibunkazai_soshiki/682.html",
+        "title": "三浦市 チャッキラコ/ユネスコ無形文化遺産「風流踊」（当日の奉納の流れ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-15",
+      "start": "10:30",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の回。神奈川県の発表では海南神社で10:30から。三浦市の例年の流れでは、その前の10:00ごろに本宮の祠前で踊り、10:30ごろ 海南神社の社殿前で奉納、午後は仲崎竜神様・花暮竜宮様の祠前で踊り、旧家や老舗を回る",
+      "sources": [
+        {
+          "url": "https://www.pref.kanagawa.jp/osirase/0602/feelshonan/en/news/5849/index.html",
+          "title": "神奈川県 Feel SHONAN Chakkirako will be performed（2026年1月15日 10:30〜 海南神社）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.miura.kanagawa.jp/soshiki/bunkasportska/bunkasportska_bunka/shiteibunkazai_soshiki/682.html",
+          "title": "三浦市 チャッキラコ/ユネスコ無形文化遺産「風流踊」（当日の奉納の流れ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-15",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2027年の発表はまだない）。三浦市の案内の「毎年1月15日」から見込んだ日で、2027年は金曜日。例年は10:00ごろ 本宮の祠前、10:30ごろ 海南神社の社殿前で奉納し、午後は竜神様の祠前や旧家・老舗を回る",
+      "sources": [
+        {
+          "url": "https://www.city.miura.kanagawa.jp/soshiki/bunkasportska/bunkasportska_bunka/shiteibunkazai_soshiki/682.html",
+          "title": "三浦市 チャッキラコ/ユネスコ無形文化遺産「風流踊」（毎年1月15日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://kanagawa-kankou.or.jp/event/6054",
+          "title": "観光かながわNOW チャッキラコ【三浦市】（開催期間 毎年1月15日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "京急バス 三崎港バス停",
+        "walkMinutes": [3, 8],
+        "note": "京急 三崎口駅から京急バスの三崎港方面で約20分。三崎港バス停から海南神社まで徒歩3分（三浦市の案内）"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.city.miura.kanagawa.jp/soshiki/bunkasportska/bunkasportska_bunka/shiteibunkazai_soshiki/682.html",
+        "title": "三浦市 チャッキラコ（三崎口駅から京急バス、三崎港下車徒歩3分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kanagawa-kankou.or.jp/spot/424",
+        "title": "観光かながわNOW 海南神社【三浦市】（三崎口駅からバスで約20分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "urari-marche",
+      "name": "うらりマルシェ「さかな館」「やさい館」",
+      "kind": "food",
+      "summary": "三崎港の海の駅。1階のさかな館にマグロや地魚、水産加工品の店が13店、2階のやさい館に三浦の野菜が並ぶ",
+      "location": {
+        "lat": 35.1411,
+        "lng": 139.617
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["indoor", "local_food"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://miura-info.ne.jp/souvenir-misaki/souvenir-1/",
+          "title": "三浦市観光協会 うらりマルシェ「さかな館」「やさい館」（さかな館 9:00〜17:00、年中無休、三崎5-3-1）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A5%9E%E5%A5%88%E5%B7%9D%E7%9C%8C%E4%B8%89%E6%B5%A6%E5%B8%82%E4%B8%89%E5%B4%8E5-3-1",
+          "title": "国土地理院 住所検索 三浦市三崎5-3-1",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.miura.kanagawa.jp/soshiki/bunkasportska/bunkasportska_bunka/shiteibunkazai_soshiki/682.html",
+      "title": "三浦市 チャッキラコ/ユネスコ無形文化遺産「風流踊」（海南神社 三崎4-12-11）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.pref.kanagawa.jp/docs/ar3/cnt/f6658/p399767.html",
+      "title": "神奈川県 横須賀三浦地域の国指定・県指定無形民俗文化財（チャッキラコ）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A5%9E%E5%A5%88%E5%B7%9D%E7%9C%8C%E4%B8%89%E6%B5%A6%E5%B8%82%E4%B8%89%E5%B4%8E4%E4%B8%81%E7%9B%AE12-11",
+      "title": "国土地理院 住所検索 三浦市三崎4丁目12-11（海南神社の緯度・経度）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "午後に回る祠・旧家・老舗の場所と時刻",
+    "雨のときの扱い",
+    "見学の場所の決まりと撮影の決まり",
+    "服装と持ち物",
+    "主要駅（品川駅など）から三崎口駅までの所要時間と、三崎口駅から三崎港までのバスの本数",
+    "駐車場の有無と台数",
+    "露店の有無",
+    "周辺の観光の場所（祭りの日に開いていると確かめられた場所がない）"
+  ]
+}

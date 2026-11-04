@@ -127,13 +127,13 @@
           "url": "https://www.city.nishio.aichi.jp/sportskanko/bunkazai/1001485/1001608/1001663/1002716.html",
           "title": "西尾市 鳥羽の火祭り（現在は2月第2日曜日）",
           "checkedAt": "2026-11-04",
-          "confidence": "official"
+          "confidence": "inferred"
         },
         {
           "url": "https://aichinow.pref.aichi.jp/events/detail/144/",
           "title": "Aichi Now 鳥羽の火祭り（毎年2月第2日曜日）",
           "checkedAt": "2026-11-04",
-          "confidence": "official"
+          "confidence": "inferred"
         }
       ]
     }

@@ -123,7 +123,7 @@
           "url": "https://www.toyokawainari.jp/event/year/",
           "title": "豊川稲荷 年中行事（秋季大祭（鎮座祭）は十一月第三・土日）",
           "checkedAt": "2026-11-04",
-          "confidence": "official"
+          "confidence": "inferred"
         }
       ]
     }
