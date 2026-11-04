@@ -134,7 +134,7 @@
           "url": "https://www.city.katsuyama.fukui.jp/kankou/sagityo/",
           "title": "勝山市 勝山左義長（2月の最終土曜日・日曜日に開催）",
           "checkedAt": "2026-11-04",
-          "confidence": "official"
+          "confidence": "inferred"
         }
       ]
     },
@@ -150,7 +150,7 @@
           "url": "https://www.city.katsuyama.fukui.jp/kankou/sagityo/",
           "title": "勝山市 勝山左義長（2月の最終土曜日・日曜日に開催、20時に一斉点火）",
           "checkedAt": "2026-11-04",
-          "confidence": "official"
+          "confidence": "inferred"
         }
       ]
     }
