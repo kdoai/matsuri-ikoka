@@ -1,0 +1,152 @@
+{
+  "id": "noji-haru-matsuri",
+  "name": {
+    "ja": "幸崎能地春祭",
+    "en": "Kosaki Noji Spring Festival"
+  },
+  "category": "float",
+  "municipalities": [
+    {
+      "prefecture": "広島県",
+      "name": "三原市"
+    }
+  ],
+  "venue": {
+    "name": "常磐神社一帯（幸崎能地四丁目）",
+    "lat": 34.334,
+    "lng": 133.0331
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "布団を重ねて飾った「ふとんだんじり」が、町内ごとに1台ずつ神輿に付き従う",
+    "化粧をした子ども2人が太鼓を叩き、若衆が担いで練り合い、押し合う",
+    "各神社で獅子舞と、子どもたちによる獅子太鼓の奉納がある"
+  ],
+  "trivia": [
+    {
+      "text": "能地のふとんだんじりは、江戸時代後期ごろに伝わったとされる",
+      "source": {
+        "url": "https://dive-hiroshima.com/events/events-121403/",
+        "title": "DIVE! HIROSHIMA 幸崎能地春祭り・ふとんだんじり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "ふとんだんじりは広島県の無形民俗文化財に指定されている",
+      "source": {
+        "url": "https://dive-hiroshima.com/events/events-121403/",
+        "title": "DIVE! HIROSHIMA 幸崎能地春祭り・ふとんだんじり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "だんじりは一丁目から四丁目まで各町内が1台ずつ、全部で4台が出る",
+      "source": {
+        "url": "https://dive-hiroshima.com/events/events-121403/",
+        "title": "DIVE! HIROSHIMA 幸崎能地春祭り・ふとんだんじり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "だんじり同士が練り合い、押し合う場面がある（見学についての主催者の注意書きは見つからない）"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://dive-hiroshima.com/events/events-121403/",
+        "title": "DIVE! HIROSHIMA 幸崎能地春祭り・ふとんだんじり（だんじり同士が練り合い、押し合う）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-03-20",
+      "endDate": "2027-03-21",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "広島県神社庁の一覧に毎年3月の第3土日曜日とあることから見込んだ日（2027年の発表はまだ見つからない）。2026年は3月21日・22日の両日とも13時から、神輿の渡御にだんじり4台が付き従った。1日目は常磐神社から幸崎神社を経て老婆社（御旅）へ、2日目は老婆社から常磐神社、幸崎神社を回って常磐神社へ戻った",
+      "sources": [
+        {
+          "url": "https://www.hiroshima-jinjacho.jp/month03/",
+          "title": "広島県神社庁 広島のまつり【3月】（幸崎能地春祭、第3土日曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://dive-hiroshima.com/events/events-121403/",
+          "title": "DIVE! HIROSHIMA 幸崎能地春祭り・ふとんだんじり（2026年3月21日・22日、13時から）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR呉線 安芸幸崎駅",
+        "walkMinutes": [10, 15],
+        "note": "駅から西へ徒歩約10分"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://dive-hiroshima.com/events/events-121403/",
+        "title": "DIVE! HIROSHIMA 幸崎能地春祭り・ふとんだんじり（安芸幸崎駅から徒歩約10分、無料の臨時駐車場、芸陽バス賑橋から徒歩3分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://dive-hiroshima.com/events/events-121403/",
+      "title": "DIVE! HIROSHIMA 幸崎能地春祭り・ふとんだんじり（三原市幸崎能地四丁目、常磐神社一帯）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.hiroshima-jinjacho.jp/month03/",
+      "title": "広島県神社庁 広島のまつり【3月】（幸崎能地春祭、幸崎神社）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と開始・終了の時刻（日付は神社庁の「第3土日曜日」から見込んだもの。2026年は両日13時から）",
+    "雨天の扱い",
+    "見学の決まり（場所取り・立ち位置・撮影）、服装・持ち物（主催者の案内が見つからない）",
+    "交通規制の有無",
+    "広島駅・三原駅など玄関口の駅から安芸幸崎駅までの所要時間",
+    "屋台の有無と、この祭りの日だけの食べもの",
+    "周辺の観光と食の場所（会場の近くで営業時間を確かめられたものが見つかっていない）",
+    "会場の緯度・経度は、国土地理院の住所検索で幸崎能地四丁目の代表点を取ったもの（常磐神社そのものの位置ではない）",
+    "三原市の公式の案内ページ（市の資料に別の年の日付が載っていたが、本文を読めなかった）",
+    "神輿の巡行は幸崎神社・老婆社にも及ぶが、会場は常磐神社一帯とした"
+  ]
+}
