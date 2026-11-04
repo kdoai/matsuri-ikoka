@@ -8,6 +8,7 @@ import {
   ItinerarySchema,
   MAX_TRIP_DAYS,
   mainFestivalDay,
+  type NearbySpot,
   type Source,
   type Stay,
   type TripBudget,
@@ -137,6 +138,8 @@ export function knownSources(festival: Festival): Map<string, Source> {
 export function enrichDraft(
   draft: ItineraryDraft,
   findFestival: (id: string) => Festival | undefined,
+  /** 祭りのデータのほかに照らす場所（周辺係が Web で調べた場所）。キーは場所の ID */
+  extraSpots: ReadonlyMap<string, NearbySpot> = new Map(),
 ): { draft: ItineraryDraft; warnings: ItineraryIssue[] } {
   const warnings: ItineraryIssue[] = [];
   const festivalIds = new Set([
@@ -150,7 +153,7 @@ export function enrichDraft(
     return festival === undefined ? [] : [festival];
   });
   const sources = new Map<string, Source>();
-  const spots = new Map<string, Festival["nearby"][number]>();
+  const spots = new Map<string, NearbySpot>(extraSpots);
   for (const festival of festivals) {
     for (const [url, source] of knownSources(festival)) sources.set(url, source);
     for (const spot of festival.nearby) spots.set(spot.id, spot);
@@ -207,12 +210,14 @@ export function buildItinerary(
     previous: Itinerary | null;
     weatherFor: (date: IsoDate) => Weather;
     findFestival: (id: string) => Festival | undefined;
+    /** 祭りのデータのほかに照らす場所（周辺係が Web で調べた場所）。キーは場所の ID */
+    extraSpots?: ReadonlyMap<string, NearbySpot>;
     /** 旅の予算。聞き取った条件から付ける（下書きには書かせない） */
     budget?: TripBudget | undefined;
   },
 ): BuildItineraryResult {
   const { previous } = options;
-  const enriched = enrichDraft(draft, options.findFestival);
+  const enriched = enrichDraft(draft, options.findFestival, options.extraSpots);
   const warnings: ItineraryIssue[] = [...enriched.warnings];
   const version = (previous?.version ?? 0) + 1;
   const { days, diff } = diffDays(previous, enriched.draft.days, version);
@@ -243,7 +248,7 @@ export function buildItinerary(
     };
   }
 
-  const check = checkPlan(parsed.data, options.findFestival);
+  const check = checkPlan(parsed.data, options.findFestival, options.extraSpots);
   warnings.push(...check.warnings);
   if (check.errors.length > 0) {
     return { ok: false, errors: check.errors, warnings };

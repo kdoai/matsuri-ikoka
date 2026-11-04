@@ -1,12 +1,14 @@
 import { STAFF_IDS, type StaffId } from "@matsuri-ikoka/schema";
-import { ClipboardList, Clock } from "lucide-react";
+import { ArrowRight, ClipboardList, Clock, Mail } from "lucide-react";
 import { useApp, useT } from "../state/react";
-import type { StaffState } from "../state/types";
+import { staffActivity, turnRelays } from "../state/relay";
+import type { RelayEntry, StaffState } from "../state/types";
 import { GameWindow } from "./GameWindow";
 import { formatElapsed, useNow, useWaitClock } from "./waitClock";
 
 // スタッフの状態（待機・移動・作業・戻る）と吹き出しを 2D で出す。
 // 3D がないとき・動きを減らす設定のときは、これが店内の見た目の主になる。
+// スタッフどうしの頼みと受け渡しも、見取り図の矢印と、文字の一覧（RelayLog）で読める。
 
 /** この時間を過ぎたら、旅程づくりには時間がかかることを伝える */
 const LONG_WAIT_MS = 20_000;
@@ -29,6 +31,22 @@ export const STAFF_LOOK: Record<StaffId, { initial: string; badge: string }> = {
 
 function atPost(staff: StaffState): boolean {
   return staff.phase === "walking" || staff.phase === "working";
+}
+
+function floorPosition(id: StaffId, staff: StaffState): [number, number] {
+  return atPost(staff) ? POSITIONS[id].post : POSITIONS[id].home;
+}
+
+/** 頼みと受け渡しの1件を文にする（辞書の決まった型） */
+export function useRelayLine() {
+  const t = useT();
+  return (entry: RelayEntry): string => {
+    const from = t.staff.names[entry.from];
+    const to = t.staff.names[entry.to];
+    return entry.kind === "request"
+      ? t.relay.requestLine(from, to, t.staff.tasks[entry.task])
+      : t.relay.handoffLine(from, to, t.relay.items[entry.task]);
+  };
 }
 
 /** 吹き出しを出すか（作業に向かう・作業中のときだけ） */
@@ -86,6 +104,11 @@ function Badge({ id, size = "md" }: { id: StaffId; size?: "sm" | "md" }) {
 export function StaffFloor() {
   const t = useT();
   const staff = useApp((state) => state.staff);
+  const relay = useApp((state) => state.relay);
+  // 返答を待っている間だけ出す（終わったあとの矢印は残さない）
+  const latest = useApp((state) =>
+    state.session.streaming ? (turnRelays(state).at(-1) ?? null) : null,
+  );
   const summarize = useStaffSummary(true);
   const furniture: [StaffId, string][] = [
     ["researcher", "left-[6%] w-[24%]"],
@@ -112,17 +135,51 @@ export function StaffFloor() {
         {t.staff.posts.concierge}
       </div>
 
+      {/* いちばん新しい頼みか受け渡しを、渡す人から受け取る人への矢印で出す（文字は RelayLog） */}
+      {latest === null ? null : (
+        <svg
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 h-full w-full"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          data-testid="relay-arrow"
+          data-kind={latest.kind}
+        >
+          <line
+            key={latest.id}
+            x1={floorPosition(latest.from, staff[latest.from])[0]}
+            y1={floorPosition(latest.from, staff[latest.from])[1]}
+            x2={floorPosition(latest.to, staff[latest.to])[0]}
+            y2={floorPosition(latest.to, staff[latest.to])[1]}
+            className={`animate-fade motion-reduce:animate-none ${
+              latest.kind === "handoff" ? "stroke-shu-600" : "stroke-ai-700"
+            }`}
+            strokeWidth={3}
+            strokeDasharray="8 6"
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
+      )}
       {STAFF_IDS.map((id) => {
         const state = staff[id];
-        const [x, y] = atPost(state) ? POSITIONS[id].post : POSITIONS[id].home;
+        const [x, y] = floorPosition(id, state);
+        const activity = staffActivity(id, state, relay);
         return (
           <div
             key={id}
-            className="absolute flex w-[29%] max-w-48 flex-col items-center sm:w-[23%] transition-[left,top] duration-[900ms] ease-in-out"
+            className="absolute flex w-[29%] max-w-48 flex-col items-center sm:w-[23%] transition-[left,top] duration-[900ms] ease-in-out motion-reduce:transition-none"
             style={{ left: `${x}%`, top: `${y}%`, transform: "translate(-50%, -50%)" }}
             data-testid={`staff-${id}`}
             data-phase={state.phase}
           >
+            {activity === null ? null : (
+              <span
+                className="mb-0.5 rounded-full bg-yamabuki-400 px-2 font-bold text-ink text-xs shadow"
+                data-testid="staff-status"
+              >
+                {t.relay.activities[activity]}
+              </span>
+            )}
             <Badge id={id} />
             <span className="mt-0.5 rounded bg-kinari-50/90 px-1.5 font-bold text-ink text-xs">
               {t.staff.names[id]}
@@ -192,8 +249,12 @@ export function StaffActivity() {
   const t = useT();
   const staff = useApp((state) => state.staff);
   const streaming = useApp((state) => state.session.streaming);
+  const relay = useApp((state) => state.relay);
+  const relays = useApp((state) => turnRelays(state));
   const summarize = useStaffSummary(false);
-  const busy = STAFF_IDS.filter((id) => staff[id].phase !== "idle");
+  const busy = STAFF_IDS.filter(
+    (id) => staff[id].phase !== "idle" || staffActivity(id, staff[id], relay) !== null,
+  );
   const clock = useWaitClock(streaming, busy);
   const now = useNow(streaming || busy.length > 0);
   if (busy.length === 0) {
@@ -215,7 +276,9 @@ export function StaffActivity() {
         {busy.map((id) => {
           const state = staff[id];
           const since = clock.staffStarted[id];
-          const phase = t.staff.phases[state.phase];
+          const activity = staffActivity(id, state, relay);
+          const phase =
+            activity === null ? t.staff.phases[state.phase] : t.relay.activities[activity];
           // 吹き出しがなく、ようすが札と同じ言葉だけなら、下の行は出さない
           const detail = showsBubble(state) ? state.bubble : summarize(id, state);
           return (
@@ -250,6 +313,7 @@ export function StaffActivity() {
           );
         })}
       </ul>
+      {streaming ? <RelayLog entries={relays} limit={4} /> : null}
       {elapsed === null ? null : (
         <p
           className="mt-2 inline-flex items-center gap-1 rounded-full border-2 border-wood-300 bg-white px-2.5 py-0.5 font-mono text-ink-soft text-xs tabular-nums"
@@ -263,5 +327,37 @@ export function StaffActivity() {
         <p className="mt-1.5 text-ink-soft text-xs">{t.waiting.longWait}</p>
       ) : null}
     </GameWindow>
+  );
+}
+
+/**
+ * 頼みと受け渡しの一覧（文字の記録）。3D の向き・吹き出し・手紙の動きと同じことを文で読む。
+ * 動きを減らす設定のときも、これで進み具合が分かる。limit を付けると新しいものだけを出す
+ */
+export function RelayLog({ entries, limit }: { entries: readonly RelayEntry[]; limit?: number }) {
+  const t = useT();
+  const line = useRelayLine();
+  if (entries.length === 0) return null;
+  const shown = limit === undefined ? entries : entries.slice(-limit);
+  return (
+    <section aria-label={t.relay.title} className="mt-2" data-testid="relay-log">
+      <h3 className="font-bold text-ink-soft text-xs">{t.relay.title}</h3>
+      <ol className="mt-1 space-y-0.5">
+        {shown.map((entry) => (
+          <li
+            key={entry.id}
+            className="flex items-start gap-1 text-ink text-xs leading-snug"
+            data-kind={entry.kind}
+          >
+            {entry.kind === "handoff" ? (
+              <Mail className="mt-0.5 size-3 shrink-0 text-shu-600" aria-hidden="true" />
+            ) : (
+              <ArrowRight className="mt-0.5 size-3 shrink-0 text-ai-700" aria-hidden="true" />
+            )}
+            <span>{line(entry)}</span>
+          </li>
+        ))}
+      </ol>
+    </section>
   );
 }

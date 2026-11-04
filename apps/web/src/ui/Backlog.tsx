@@ -1,14 +1,16 @@
 import { useEffect, useRef } from "react";
-import { useT } from "../state/react";
+import { useApp, useT } from "../state/react";
 import { ChatLog } from "./ChatPanel";
 import { buttonQuiet } from "./common";
-import { StaffList } from "./StaffPanel";
+import { RelayLog, StaffList } from "./StaffPanel";
 
-// 会話の記録。これまでのやりとり・作業の記録と、店内のスタッフ全員のようすを文字で読む。
+// 会話の記録。これまでのやりとり・作業の記録・スタッフどうしの頼みと受け渡しと、
+// 店内のスタッフ全員のようすを文字で読む。
 
 export function Backlog({ onClose }: { onClose: () => void }) {
   const t = useT();
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const relays = useApp((state) => state.relay.log);
 
   useEffect(() => {
     headingRef.current?.focus();
@@ -41,8 +43,9 @@ export function Backlog({ onClose }: { onClose: () => void }) {
         <div className="mt-2 flex min-h-0 flex-1 flex-col">
           <ChatLog />
         </div>
-        <div className="mt-3 border-wood-300 border-t pt-3">
+        <div className="mt-3 max-h-[30dvh] overflow-y-auto border-wood-300 border-t pt-3">
           <StaffList showBubbles />
+          <RelayLog entries={relays} />
         </div>
       </section>
     </div>

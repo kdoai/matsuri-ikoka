@@ -168,6 +168,8 @@ function checkSpot(timed: TimedItem, spot: NearbySpot, date: IsoDate, errors: Pl
 export function checkPlan(
   plan: PlanToCheck,
   findFestival: (id: string) => Festival | undefined,
+  /** 祭りのデータのほかに照らす場所（周辺係が Web で調べた場所）。キーは場所の ID */
+  extraSpots: ReadonlyMap<string, NearbySpot> = new Map(),
 ): PlanCheckResult {
   const errors: PlanIssue[] = [];
   const warnings: PlanIssue[] = [];
@@ -191,7 +193,7 @@ export function checkPlan(
       festivals.set(festival.id, festival);
     }
   }
-  const spots = new Map<string, NearbySpot>();
+  const spots = new Map<string, NearbySpot>(extraSpots);
   for (const festival of festivals.values()) {
     for (const spot of festival.nearby) spots.set(spot.id, spot);
   }
@@ -263,7 +265,7 @@ function checkDay(
       errors.push({
         code: "unknown_spot",
         itemId: item.id,
-        message: `「${item.name}」（${item.spotId}）は、祭りの周辺の場所のデータにありません`,
+        message: `「${item.name}」（${item.spotId}）は、祭りの周辺の場所のデータにも、調べた場所にもありません`,
       });
     } else {
       checkSpot(timed, spot, day.date, errors);

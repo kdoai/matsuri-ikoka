@@ -1,0 +1,228 @@
+{
+  "id": "hokkaido-gishisai",
+  "name": {
+    "ja": "北海道義士祭",
+    "en": "Hokkaido Gishi Festival"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "北海道",
+      "name": "砂川市"
+    }
+  ],
+  "venue": {
+    "name": "北泉岳寺",
+    "lat": 43.542,
+    "lng": 141.9284
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "赤穂浪士の装束の義士隊が、寺の参道の階段で勝ちどきを上げる",
+    "義士の墓前での法要と、試し斬りの奉納",
+    "雪の境内でふるまわれる甘酒と、名物の義士そば"
+  ],
+  "trivia": [
+    {
+      "text": "赤穂浪士が吉良邸に討ち入った12月14日に合わせて開かれる",
+      "source": {
+        "url": "https://www.visit-hokkaido.jp/event/detail_11025.html",
+        "title": "北海道観光機構 北海道義士祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2019年12月14日の回が第64回で、土曜日だったため子どもも義士として加わった",
+      "source": {
+        "url": "https://www.city.sunagawa.hokkaido.jp/kouhou/2020/files/01/0101p6-7.pdf",
+        "title": "広報すながわ 2020年1月1日号 まちの話題",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "忠臣蔵好きだった初代住職の思いを継ぎ、2代目住職が1956年に始めたと報じられている",
+      "source": {
+        "url": "https://www.hokkaido-np.co.jp/movies/detail/5293321616001/",
+        "title": "北海道新聞 師走に響く勝ちどき 砂川で義士祭（2013年12月16日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "2013年は大人43人と子ども20人が四十七士の装束で市内を歩いた",
+      "source": {
+        "url": "https://www.hokkaido-np.co.jp/movies/detail/5293321616001/",
+        "title": "北海道新聞 師走に響く勝ちどき 砂川で義士祭（2013年12月16日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "寺の境内での法要と義士隊の見学が中心で、混雑や危険についての特別な注意は見つからない"
+    },
+    "photo": {
+      "policy": "allowed",
+      "note": "義士墓前祭は撮影の見どころとして案内されている"
+    },
+    "sources": [
+      {
+        "url": "https://www.visit-hokkaido.jp/event/detail_11025.html",
+        "title": "北海道観光機構 北海道義士祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.gutabi.jp/event/detail/2550",
+        "title": "ぐうたび北海道 第70回 北海道義士祭（義士墓前祭は撮影ポイント）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2025-12-14",
+      "start": "11:00",
+      "end": "14:55",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "第70回。追慕法要、義士装束の隊列の行進、試し斬りの奉納、義士墓前祭、勝ちどき。義士隊の境内への到着は13:30ごろの予定と案内された（ぐうたび北海道は11:30〜14:40予定と案内）",
+      "sources": [
+        {
+          "url": "https://www.visit-hokkaido.jp/event/detail_11025.html",
+          "title": "北海道観光機構 北海道義士祭（2025年12月14日 11:00〜14:55）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.gutabi.jp/event/detail/2550",
+          "title": "ぐうたび北海道 第70回 北海道義士祭（2025年12月14日 11:30〜14:40予定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2026-12-12",
+      "start": "10:30",
+      "end": "14:00",
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "るるぶ&more.だけが2026年12月12日（土）10:30〜14:00（予定）と載せている。主催者と市の発表は見つからず、北海道観光機構は「毎年12月14日」と案内しているので、日付が変わるおそれがある。居合道、義士装束の墓前法要など",
+      "sources": [
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000697",
+          "title": "るるぶ&more. 北海道義士祭（2026年12月12日 10:30〜14:00予定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.visit-hokkaido.jp/event/detail_11025.html",
+        "title": "北海道観光機構 北海道義士祭（駐車場40台・無料、道央自動車道砂川ICから約10分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000697",
+        "title": "るるぶ&more. 北海道義士祭（JR滝川駅からバス10分、空知太小学校で降りて徒歩10分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "甘酒のふるまい",
+        "note": "会場の北泉岳寺の境内で、温かい甘酒がふるまわれる",
+        "sources": [
+          {
+            "url": "https://www.visit-hokkaido.jp/event/detail_11025.html",
+            "title": "北海道観光機構 北海道義士祭",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      },
+      {
+        "name": "義士そば",
+        "note": "会場で出る名物のそば。2026年は有料と案内されている（2025年はキッチンカーも出た）",
+        "sources": [
+          {
+            "url": "https://www.visit-hokkaido.jp/event/detail_11025.html",
+            "title": "北海道観光機構 北海道義士祭（名物のそば、キッチンカー）",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          },
+          {
+            "url": "https://rurubu.jp/andmore/spot/20000697",
+            "title": "るるぶ&more. 北海道義士祭（義士そば・有料）",
+            "checkedAt": "2026-11-04",
+            "confidence": "single"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.visit-hokkaido.jp/event/detail_11025.html",
+      "title": "北海道観光機構 北海道義士祭（北泉岳寺、砂川市空知太444-1）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.sunagawa.hokkaido.jp/kouhou/2020/files/01/0101p6-7.pdf",
+      "title": "広報すながわ 2020年1月1日号 まちの話題（第64回北海道義士祭）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20000697",
+      "title": "るるぶ&more. 北海道義士祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.hokkaido-np.co.jp/movies/detail/5293321616001/",
+      "title": "北海道新聞 師走に響く勝ちどき 砂川で義士祭（2013年12月16日）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2026年の開催日の主催者・市の発表（るるぶ&more.の12月12日と、北海道観光機構の「毎年12月14日」が食い違う）",
+    "2026年の時刻と当日の流れの主催者の発表",
+    "雨や雪のときの扱い",
+    "鉄道の駅から歩けない。JR滝川駅からバスで空知太小学校まで行くとるるぶ&more.は案内するが、バスの本数と、札幌駅など玄関口の駅からの所要時間は確かめられていない",
+    "見学のルール、服装、持ち物（主催者の案内が見つからない）",
+    "一般の人が義士隊に加われるか",
+    "義士そばの値段と、ふるまいか有料か（2025年はそばのふるまいとする案内もあった）",
+    "義士隊の人数（今回の数。2013年は大人43人と子ども20人）",
+    "前後に寄れる観光・食事の場所",
+    "会場の緯度・経度は、国土地理院の住所検索で砂川市空知太444番地を取ったもの"
+  ]
+}

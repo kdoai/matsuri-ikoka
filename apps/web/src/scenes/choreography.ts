@@ -71,14 +71,25 @@ const WORK_PROPS: Partial<Record<StaffMotion, string[]>> = {
 
 const ONCE: ReadonlySet<StaffMotion> = new Set(["nod", "stamp"]);
 
+export interface PlanOptions {
+  /** コンシェルジュがスタッフに作業を頼んでいるところか（相手を指して頼む） */
+  asking?: boolean;
+}
+
 /**
  * スタッフ1人の段取り。
  * - 待機・戻る：待機位置へ。待機では idle（コンシェルジュが話しているときは talk）
  * - 持ち場へ移動・作業：持ち場へ。着いたら作業の動き（めくる・指す・見上げる・うなずく）
  * - 書類を運ぶ（carry）：旅程係がカウンターの書類を置く位置へ、書類を抱えて歩く
  * - しおりの完成の演出の間は、全員がにっこりして、コンシェルジュがはんこを押す
+ * - コンシェルジュが頼んでいる間は、待機位置で相手を指す（向きは Staff の lookAt で相手へ）
  */
-export function staffPlan(id: StaffId, staff: StaffState, celebrating: boolean): StaffPlan {
+export function staffPlan(
+  id: StaffId,
+  staff: StaffState,
+  celebrating: boolean,
+  options: PlanOptions = {},
+): StaffPlan {
   if (celebrating) {
     return id === "concierge"
       ? plan("home", "stamp", "sparkle", ["prop.stamp"], { once: true })
@@ -88,6 +99,9 @@ export function staffPlan(id: StaffId, staff: StaffState, celebrating: boolean):
     return plan("drop", "nod", "happy", ["prop.document"], { travel: "carry" });
   }
   if (staff.phase === "idle" || staff.phase === "returning") {
+    if (id === "concierge" && options.asking === true) {
+      return plan("home", "point", "happy", []);
+    }
     if (id === "concierge" && staff.motion === "talk") {
       return plan("home", "talk", "happy", []);
     }
@@ -176,6 +190,31 @@ export function walkStep(from: Point, to: Point, dt: number, speed = WALK_SPEED)
       : { x: from.x + dx * ratio, y: from.y + (to.y - from.y) * ratio, z: from.z + dz * ratio },
     arrived,
     heading: Math.atan2(dx, dz),
+  };
+}
+
+/** from に立って to を向くときの向き（Y 軸まわり）。同じ場所なら null */
+export function facingYaw(from: Point, to: Point): number | null {
+  const dx = to.x - from.x;
+  const dz = to.z - from.z;
+  return Math.hypot(dx, dz) <= ARRIVE_DISTANCE ? null : Math.atan2(dx, dz);
+}
+
+/** 手紙が渡る時間（秒）と、弧のいちばん高いところ（m） */
+export const LETTER_SECONDS = 1.4;
+export const LETTER_ARC = 0.45;
+
+/**
+ * 受け渡しの手紙の位置。from の頭の上から to の頭の上へ、山なりに渡る。t は 0〜1（はみ出したら端に止める）
+ */
+export function letterPoint(from: Point, to: Point, t: number): Point {
+  const u = Math.min(1, Math.max(0, t));
+  // はじめはゆっくり、なかほどで速く、着く前にゆっくり
+  const e = u * u * (3 - 2 * u);
+  return {
+    x: from.x + (to.x - from.x) * e,
+    y: from.y + (to.y - from.y) * e + Math.sin(Math.PI * e) * LETTER_ARC,
+    z: from.z + (to.z - from.z) * e,
   };
 }
 

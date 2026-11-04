@@ -4,6 +4,7 @@ import {
   type FestivalCandidate,
   type IsoDate,
   IsoDateSchema,
+  type Itinerary,
   ItineraryDaySchema,
   ItineraryItemSchema,
   ItinerarySchema,
@@ -23,6 +24,7 @@ import {
   type SpotPin,
   StayPlanSchema,
   tripBudgetAmounts,
+  VerificationSchema,
   type Weather,
 } from "@matsuri-ikoka/schema";
 import { z } from "zod";
@@ -52,6 +54,14 @@ import {
 } from "../domain/itinerary";
 import { attachLodging, checkLodgingBudget, distanceKm } from "../domain/lodging";
 import { festivalInArea, selectNearbySpots } from "../domain/nearby";
+import {
+  asNearbySpot,
+  type ResearchedSpot,
+  type ResearchedSpotReport,
+  researchedSpotsInItinerary,
+  screenResearchedSpots,
+  shopFoodWishes,
+} from "../domain/nearbyResearch";
 import { occurrenceOn } from "../domain/planCheck";
 import { preferenceEffects } from "../domain/preferences";
 import { transportEffects } from "../domain/transport";
@@ -562,12 +572,64 @@ function searchArea(
   };
 }
 
+/** 寄り道の Web の調べを打ち切る時間（ミリ秒）。超えたら祭りのデータの周辺の場所に戻す。ツールの上限より短くする */
+export const NEARBY_RESEARCH_MS = 45_000;
+
+/** 会場の周りを Web で調べる。調べる手段がない・上限を超えた・失敗したときは null */
+async function researchNearby(
+  ctx: ToolContext,
+  festival: Festival,
+  date: IsoDate,
+  signal: AbortSignal,
+): Promise<ResearchedSpotReport[] | null> {
+  if (ctx.nearby === undefined) return null;
+  const { conditions } = ctx.session;
+  try {
+    const report = await ctx.nearby.research({
+      festival: {
+        id: festival.id,
+        name: festival.name.ja,
+        place: placeLabel(festival),
+        venue: festival.venue,
+      },
+      date,
+      foodWishes: conditions.foodWishes ?? [],
+      dietary: conditions.dietary ?? [],
+      perPersonBudgetYen:
+        conditions.budget === undefined
+          ? null
+          : tripBudgetAmounts(conditions.budget, conditions.party).perPersonYen,
+      party: conditions.party ?? null,
+      references: festival.nearby.map((s) => ({ name: s.name, kind: s.kind, summary: s.summary })),
+      signal: AbortSignal.any([signal, AbortSignal.timeout(NEARBY_RESEARCH_MS)]),
+    });
+    return report?.spots ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function researchedSpotOutput(s: ResearchedSpot) {
+  return {
+    ...spotOutput(s),
+    origin: "web" as const,
+    // confirmed：行く日の営業を確かめた / needs_check：確かめられなかった（行く前に要確認）
+    openStatus: s.openStatus,
+    matchedFoods: s.matchedFoods,
+  };
+}
+
+/** 名前を比べる形にする（空白を除く） */
+const sameName = (name: string) => name.replace(/\s+/g, "");
+
 export const searchNearby = defineTool({
   name: "search_nearby",
   description:
-    "祭りの前後に寄れる観光・食・休憩の場所を、祭りのデータの周辺の場所から探す。" +
+    "祭りの前後に寄れる観光・食・休憩の場所を探す。周辺係が会場の周りを Web で調べ（祭りのデータの周辺の場所は参考にする）、" +
+    "食べたいもの・食事で気をつけたいこと・予算・同行者に合い、行く日に営業している場所だけを返す（origin: web）。" +
+    "行く日の営業を確かめられなかった場所は openStatus: needs_check になる。調べられなかったときは、祭りのデータの周辺の場所から選ぶ（research.status: fallback）。" +
     "当日が休業の場所、使える時間帯に営業時間が合わない場所、「屋台で十分」のときの店は除き、こだわりに合う順に返す。" +
-    "聞き取りで屋台のほかに食べたいものを言われていれば店も残し、食べたいもの・食事で気をつけたいことを rules に入れる。" +
+    "食べたいものに合う店が見つからなければ research.foodFound が false になり、合わない店は返さない。" +
     "祭りのない日の行き先は、festivalId の代わりに area（都道府県や市町村の名前）と date で探す。" +
     "その地域のほかの祭りの周辺の場所と、その日にその地域で開かれる祭りを返す（場所には持ち主の祭りの festivalId が付く）。",
   input: {
@@ -588,7 +650,7 @@ export const searchNearby = defineTool({
       .describe("寄り道に使える時間帯（HH:MM）"),
     preferences: PreferencesSchema.optional().describe("省略すると相談のこだわりを使う"),
   },
-  async run(args, ctx) {
+  async run(args, ctx, signal) {
     if (args.preferences !== undefined) ctx.session.preferences = args.preferences;
     if (args.festivalId === undefined) {
       if (args.area === undefined)
@@ -606,14 +668,72 @@ export const searchNearby = defineTool({
       wantsShopMeals: food.wantsShopMeals,
       ...(args.window === undefined ? {} : { window: args.window }),
     });
-    return {
+    const base = {
       festivalId: festival.id,
       date,
-      spots: selection.spots.map(spotOutput),
-      excluded: selection.excluded,
       localFood: festival.food.local.map((f) => ({ name: f.name, note: f.note ?? null })),
       stalls: festival.food.stalls,
       rules: [...preferenceEffects(ctx.session.preferences).rules, ...food.rules],
+    };
+    const researched = await researchNearby(ctx, festival, date, signal);
+    if (signal.aborted) throw new ToolError("止められたので、寄り道の結果は使いません");
+    if (researched === null) {
+      return {
+        ...base,
+        research: { status: ctx.nearby === undefined ? "data_only" : "fallback", foodFound: null },
+        spots: selection.spots.map((spot) => ({ ...spotOutput(spot), origin: "data" as const })),
+        excluded: selection.excluded,
+        notes:
+          ctx.nearby === undefined
+            ? []
+            : ["会場の周りを Web で調べられなかったので、祭りのデータの周辺の場所から選びました"],
+      };
+    }
+
+    const { conditions } = ctx.session;
+    const screened = screenResearchedSpots(researched, {
+      date,
+      ...(args.window === undefined ? {} : { window: args.window }),
+      venue: festival.venue,
+      today: ctx.today(),
+      preferences: ctx.session.preferences,
+      foodWishes: conditions.foodWishes ?? [],
+      dietary: conditions.dietary ?? [],
+      perPersonBudgetYen:
+        conditions.budget === undefined
+          ? null
+          : tripBudgetAmounts(conditions.budget, conditions.party).perPersonYen,
+      party: conditions.party ?? null,
+    });
+    // 旅程を保存するとき、祭りのデータの場所と同じく照らせるよう、調べた場所を相談に残す
+    for (const spot of screened.spots) ctx.session.researchedSpots.set(spot.id, asNearbySpot(spot));
+    // 祭りのデータの店は、出す料理が分からないので、食べたいものがあるときは調べた店だけにする
+    const wanted = shopFoodWishes(conditions.foodWishes ?? []);
+    const researchedNames = new Set(screened.spots.map((spot) => sameName(spot.name)));
+    const dataSpots = selection.spots.filter(
+      (spot) =>
+        !(wanted.length > 0 && spot.kind === "food") && !researchedNames.has(sameName(spot.name)),
+    );
+    const notes: string[] = [];
+    if (screened.foodFound === false) {
+      notes.push(
+        "食べたいものに合う店は、調べても見つかりませんでした。合わない店で埋めず、見つからなかったと伝えてください（屋台と地元の味は localFood・stalls にあります）",
+      );
+    }
+    if (screened.spots.some((spot) => spot.openStatus === "needs_check")) {
+      notes.push(
+        "openStatus が needs_check の場所は、行く日の営業を確かめられませんでした。予定に入れるなら、reason に「営業は行く前に要確認」と書いてください",
+      );
+    }
+    return {
+      ...base,
+      research: { status: "researched", foodFound: screened.foodFound },
+      spots: [
+        ...screened.spots.map(researchedSpotOutput),
+        ...dataSpots.map((spot) => ({ ...spotOutput(spot), origin: "data" as const })),
+      ],
+      excluded: [...selection.excluded, ...screened.excluded],
+      notes,
     };
   },
 });
@@ -902,6 +1022,11 @@ export const updateItinerary = defineTool({
       budget: session.conditions.budget,
       weatherFor: (date) => weatherByDate.get(date) ?? { status: "unavailable" },
       findFestival: (id) => ctx.festivals.get(id),
+      // 周辺係が調べた場所も照らす。前の版に入っている調べた場所は、相談を戻したあとでも直せるよう前の版から引く
+      extraSpots: new Map([
+        ...(previous === null ? [] : researchedSpotsInItinerary(previous)),
+        ...session.researchedSpots,
+      ]),
     });
     if (!result.ok) {
       // 旅程係の組み方の傾向をつかむため、断った理由の種類だけを残す（予定の名前や文は残さない）
@@ -912,24 +1037,49 @@ export const updateItinerary = defineTool({
     }
     // 時間切れや接続の切断のあとに、旅程を書き換えない
     if (signal.aborted) throw new ToolError("止められたので、旅程は保存しません");
+    const itinerary = result.itinerary;
     if (!result.unchanged) {
-      ctx.itineraries.save(result.itinerary);
-      session.itineraryId = result.itinerary.id;
-      session.selectedFestivalId = result.itinerary.mainFestivalId;
+      ctx.itineraries.save(itinerary);
+      session.itineraryId = itinerary.id;
+      session.selectedFestivalId = itinerary.mainFestivalId;
     }
     ctx.turn.savedItinerary = true;
     return {
       saved: !result.unchanged,
       unchanged: result.unchanged,
-      itineraryId: result.itinerary.id,
-      version: result.itinerary.version,
+      itineraryId: itinerary.id,
+      version: itinerary.version,
       diff: result.diff,
       errors: [],
       warnings: result.warnings,
-      itinerary: result.itinerary,
+      itinerary,
     };
   },
 });
+
+type KnownVerification = Exclude<Itinerary["verification"], { status: "pending" }>;
+
+/**
+ * 決定のときに使える、確かめ済みの開催の結果。旅程にすでにあればそれ、なければ候補を出す前の確かめの結果。
+ * どちらもなければ null（そのときだけ Web で確かめる）
+ */
+function knownVerification(
+  ctx: ToolContext,
+  itinerary: Itinerary,
+  festivalId: string,
+  date: IsoDate,
+): KnownVerification | null {
+  if (itinerary.verification.status !== "pending") return itinerary.verification;
+  const check = ctx.candidateChecks?.peek?.(festivalId, date) ?? null;
+  if (check === null) return null;
+  const parsed = VerificationSchema.safeParse({
+    status: check.result,
+    checkedAt: check.checkedAt,
+    sources: check.sources,
+    ...(check.note ? { note: check.note } : {}),
+  });
+  return parsed.success && parsed.data.status !== "pending" ? parsed.data : null;
+}
 
 /** 宿の候補を出すときに必ず添える一文 */
 export const LODGING_NOTICE = "料金と空きは、予約の時点で変わることがあります";
@@ -1017,7 +1167,9 @@ export const searchLodging = defineTool({
 export const verifyFestival = defineTool({
   name: "verify_festival",
   description:
-    "利用者が「決定」と言ったあとに、主役の祭りの開催予定を Web と祭りのデータで確かめ直す。" +
+    "利用者が「決定」と言ったら、旅程を確定してしおりへ進める。" +
+    "開催は候補を出す前に確かめてあり、その結果が旅程にあれば、それをそのまま使う（Web で調べ直さない）。" +
+    "確かめた結果がないとき（行く日を変えた、確かめの上限に達したなど）だけ、Web と祭りのデータで確かめる。" +
     "結果は as_planned（公式で確認）/ needs_check（公式以外の情報源などで確認。要事前確認としてしおりを渡す）/ " +
     "changed（変更）/ cancelled（中止）/ not_found（どこにも情報がない。ほかの候補に戻る）。",
   input: {
@@ -1027,6 +1179,32 @@ export const verifyFestival = defineTool({
   async run(args, ctx, signal) {
     const festival = festivalOf(ctx, args.festivalId);
     const date = visitDate(ctx, festival, args.date);
+    const current = ctx.session.itineraryId
+      ? ctx.itineraries.get(ctx.session.itineraryId)
+      : undefined;
+    const matches =
+      current !== undefined &&
+      current.mainFestivalId === festival.id &&
+      mainFestivalDay(current).date === date;
+    // 開催は候補を出す前に確かめてある。その結果（か前の決定の結果）があれば、調べ直さずに確定する
+    const known = matches ? knownVerification(ctx, current, festival.id, date) : null;
+    if (matches && known !== null) {
+      ctx.itineraries.save({ ...current, verification: known });
+      ctx.turn.verification = known.status;
+      return {
+        festivalId: festival.id,
+        date,
+        result: known.status,
+        checkedAt: known.checkedAt,
+        sources: known.sources,
+        ...(known.note ? { note: known.note } : {}),
+        /** 確かめ済みの結果を使ったか（Web で調べ直していない） */
+        reused: true,
+        appliedToItinerary: true,
+        daysUntil: daysBetween(ctx.today(), date),
+        occurrenceInData: occurrenceOn(festival, date),
+      };
+    }
     // Web の確かめが失敗しても、祭りのデータの公式の出典で確かめてあれば、それで決める（decideVerification）
     let report: Awaited<ReturnType<ToolContext["verifier"]["verify"]>>;
     try {
@@ -1045,15 +1223,9 @@ export const verifyFestival = defineTool({
       ...(decision.note ? { note: decision.note } : {}),
     };
 
-    const itinerary = ctx.session.itineraryId
-      ? ctx.itineraries.get(ctx.session.itineraryId)
-      : undefined;
-    const applied =
-      itinerary !== undefined &&
-      itinerary.mainFestivalId === festival.id &&
-      mainFestivalDay(itinerary).date === date;
+    const applied = matches;
     if (applied) {
-      ctx.itineraries.save({ ...itinerary, verification });
+      ctx.itineraries.save({ ...current, verification });
       // 会話の状態（しおりへ進むか）は、旅程の再確認の結果を実際に書き換えたときだけ変える
       ctx.turn.verification = decision.result;
     }
@@ -1077,6 +1249,7 @@ export const verifyFestival = defineTool({
       checkedAt,
       sources: decision.sources,
       ...(decision.note ? { note: decision.note } : {}),
+      reused: false,
       /** 旅程の再確認の結果を書き換えたか。主役の祭りと日付が旅程と違えば書き換えない */
       appliedToItinerary: applied,
       daysUntil: daysBetween(ctx.today(), date),

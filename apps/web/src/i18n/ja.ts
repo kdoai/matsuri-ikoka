@@ -170,7 +170,7 @@ export const ja = {
       map: "地図で確認",
       decide: "この旅程で決める",
       decideMessage: "この旅程で決定します。",
-      decideConfirm: "決定して、開催を確かめる",
+      decideConfirm: "決定して、しおりを作る",
       decideConfirmLabel: "決定の確認",
       slower: "もっとゆっくり回りたい",
       slowerMessage: "もう少しゆっくり回れる旅程にしてください。",
@@ -323,7 +323,7 @@ export const ja = {
       "コンシェルジュに話しかけて、誰と・いつ・どこへなどを選んでください。「その他」を選ぶと、自由に書けます。",
       "祭りの候補から1つ選ぶと、スタッフが旅程を組みます。",
       "旅程は「旅程詳細」（X）で開く旅のしおりで、地図と出典もいっしょに見られます。",
-      "「決定」と伝えると、公式の情報で開催を確かめて、旅のしおりができます。",
+      "開催は候補を出す前に確かめてあります。「決定」と伝えると、そのまま旅のしおりができます。",
       "旅人は WASD・矢印・ゲームパッド・タップで歩けます。スタッフに近づくと話せて、店の中の仕掛けも E で使えます。",
     ],
     dateUnset: "旅の日はまだ",
@@ -397,9 +397,35 @@ export const ja = {
       get_access: "アクセスの確認",
       get_weather: "天気の確認",
       update_itinerary: "旅程の書き込み",
-      verify_festival: "開催の再確認",
+      verify_festival: "旅程の確定",
     },
     sceneLabel: "店内の見取り図。スタッフの持ち場と、いまの動き",
+  },
+  relay: {
+    title: "頼みと受け渡し",
+    /** コンシェルジュの頼みの吹き出し。作業の種類から決まった型で作る */
+    request: {
+      find_festivals: (name: string) => `${name}さん、条件に合う祭り探しをお願い！`,
+      find_nearby: (name: string) => `${name}さん、会場の近くの寄り道探しをお願い！`,
+      plan_route: (name: string) => `${name}さん、道のりと旅程づくりをお願い！`,
+    },
+    /** 受け渡すもの（渡す人の作業から決まる） */
+    items: {
+      find_festivals: "祭りの候補",
+      find_nearby: "寄り道の候補",
+      plan_route: "旅程",
+    },
+    requestLine: (from: string, to: string, task: string) => `${from} → ${to}：「${task}」を頼む`,
+    handoffLine: (from: string, to: string, item: string) => `${from} → ${to}：${item}を渡す`,
+    /** 頭の上に出す、いまのようす */
+    activities: {
+      heading: "向かっている",
+      asking: "頼んでいる",
+      researching: "調べている",
+      checking: "確かめている",
+      summarizing: "まとめている",
+      delivering: "届けている",
+    },
   },
   chat: {
     title: "相談",
@@ -583,9 +609,9 @@ export const ja = {
           .join("・"),
     },
     verification: {
-      title: "開催の再確認",
-      pending: "確定前に、公式情報で開催を確かめます",
-      checking: "開催予定を公式情報で確かめています",
+      title: "開催の確認",
+      pending: "決定すると、旅のしおりを作ります",
+      checking: "旅程を確定しています",
       as_planned: "予定どおり開催されます",
       changed: "予定が変わっています",
       cancelled: "中止になりました",

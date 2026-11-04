@@ -74,6 +74,46 @@ export interface StaffState {
 }
 
 // ---------------------------------------------------------------------------
+// スタッフどうしの頼みと受け渡し
+
+/**
+ * 頼み（コンシェルジュがスタッフに作業を頼む）と受け渡し（作業の結果を次の人へ渡す）の1件。
+ * task は、頼みでは頼んだ作業、受け渡しでは渡すものを作った作業。文は画面の辞書の決まった型で作る
+ */
+export interface RelayEntry {
+  /** 通し番号。3D の手紙の動きを1回だけ流すのに使う */
+  id: number;
+  /** どの発言のときか */
+  turn: number;
+  kind: "request" | "handoff";
+  from: StaffId;
+  to: StaffId;
+  task: StaffTask;
+}
+
+export interface RelayState {
+  /** これまでの頼みと受け渡し（古いものから） */
+  log: RelayEntry[];
+  /** コンシェルジュがいま頼んでいる相手（吹き出しを出す間） */
+  asking: { to: StaffId; task: StaffTask } | null;
+  /** コンシェルジュが向いている相手（頼んだ相手・結果を受け取った相手） */
+  focus: StaffId | null;
+  /** 作業を終えて、まだ結果を渡していないスタッフ */
+  holding: StaffId[];
+}
+
+/** 頭の上に出す、いまの作業のようす */
+export const STAFF_ACTIVITIES = [
+  "heading",
+  "asking",
+  "researching",
+  "checking",
+  "summarizing",
+  "delivering",
+] as const;
+export type StaffActivity = (typeof STAFF_ACTIVITIES)[number];
+
+// ---------------------------------------------------------------------------
 // 会話欄
 
 export type WorkStatus = "running" | "ok" | "failed";
@@ -230,6 +270,8 @@ export interface AppData {
   consult: ConsultState;
   messages: ChatEntry[];
   staff: Record<StaffId, StaffState>;
+  /** スタッフどうしの頼みと受け渡し */
+  relay: RelayState;
   candidates: FestivalCandidate[];
   spots: SpotPin[];
   itinerary: ItineraryState;

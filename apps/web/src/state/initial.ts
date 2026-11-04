@@ -42,6 +42,7 @@ export function initialData({ locale = "ja", tutorialSeen = false }: InitialOpti
     consult: { ...INITIAL_CONSULT, answers: {} },
     messages: [],
     staff: byStaff(IDLE_STAFF),
+    relay: { log: [], asking: null, focus: null, holding: [] },
     candidates: [],
     spots: [],
     itinerary: { current: null, previous: null, diff: null },

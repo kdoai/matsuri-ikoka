@@ -1,5 +1,5 @@
 import type { ConversationStage, StaffId } from "@matsuri-ikoka/schema";
-import type { AppData, StaffState } from "./types";
+import type { AppData, RelayState, StaffState } from "./types";
 
 // 3D の店内に渡す状態。3D の部品は、これを props で受け取るだけにする（ADR 0003）。
 // 同じ情報は 2D のスタッフの一覧と会話の窓でも、文字で読める。
@@ -17,6 +17,8 @@ export const NO_INSETS: FrameInsets = Object.freeze({ top: 0, right: 0, bottom: 
 export interface ShopSceneProps {
   /** スタッフごとの状態（待機・移動・作業・戻る、動き、吹き出し） */
   staff: Readonly<Record<StaffId, StaffState>>;
+  /** スタッフどうしの頼みと受け渡し（コンシェルジュの向き・頼みの吹き出し・手紙の動き） */
+  relay: Readonly<RelayState>;
   stage: ConversationStage;
   /** 「旅のしおり完成」の演出の最中か（カメラを寄せる合図） */
   celebrating: boolean;
@@ -48,6 +50,7 @@ export function selectSceneProps(
     talking: state.session.streaming,
     dialogueOpen: state.ui.dialogueOpen,
     staff: state.staff,
+    relay: state.relay,
     stage: state.session.stage,
     celebrating: state.ui.celebrating,
     reducedMotion,

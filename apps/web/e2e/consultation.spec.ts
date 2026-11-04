@@ -78,6 +78,22 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   await cards.nth(0).getByRole("button", { name: "この祭りにする" }).click();
   await expect(page.getByTestId("candidates")).toHaveCount(0);
   await waitForReply(page);
+  // 低い画面で「つづきを読む」を押しても、会話の窓は画面に収まり、選択肢は見えたまま（せりふだけが窓の中でスクロールする）。
+  // 狭い画面では旅程のパネルが会話の窓に重なって開くので、PC の幅で確かめる
+  if (info.project.name !== "mobile") {
+    const viewport = page.viewportSize();
+    const lowHeight = 560;
+    if (viewport !== null) await page.setViewportSize({ width: viewport.width, height: lowHeight });
+    const dialogue = page.getByTestId("dialogue");
+    await dialogue.getByRole("button", { name: "つづきを読む" }).click();
+    const box = await dialogue.boundingBox();
+    if (box === null) throw new Error("会話の窓が見えません");
+    expect(box.y).toBeGreaterThanOrEqual(0);
+    expect(box.y + box.height).toBeLessThanOrEqual(lowHeight);
+    await expect(page.getByTestId("reply-choices")).toBeInViewport();
+    await dialogue.getByRole("button", { name: "たたむ" }).click();
+    if (viewport !== null) await page.setViewportSize(viewport);
+  }
   await openPanel(page);
   const items = page.getByTestId("itinerary-item");
   await expect(items).toHaveCount(8);
