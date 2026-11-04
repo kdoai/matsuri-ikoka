@@ -435,6 +435,29 @@ export const en: Messages = {
     },
     sceneLabel: "Floor plan of the shop: where each staff member works and what they are doing",
   },
+  relay: {
+    title: "Requests and handoffs",
+    request: {
+      find_festivals: (name: string) => `${name}, could you find festivals that fit?`,
+      find_nearby: (name: string) => `${name}, could you find side trips near the venue?`,
+      plan_route: (name: string) => `${name}, could you work out the route and the plan?`,
+    },
+    items: {
+      find_festivals: "festival options",
+      find_nearby: "side-trip options",
+      plan_route: "the itinerary",
+    },
+    requestLine: (from: string, to: string, task: string) => `${from} → ${to}: asks for "${task}"`,
+    handoffLine: (from: string, to: string, item: string) => `${from} → ${to}: hands over ${item}`,
+    activities: {
+      heading: "On the way",
+      asking: "Asking",
+      researching: "Researching",
+      checking: "Checking",
+      summarizing: "Summarizing",
+      delivering: "Delivering",
+    },
+  },
   chat: {
     title: "Conversation",
     greeting:

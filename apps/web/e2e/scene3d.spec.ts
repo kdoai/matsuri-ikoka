@@ -54,6 +54,10 @@ test("店の外観を見せてから入店し、店内のスタッフが持ち�
   for (const selector of [bubble, dialogue, activity]) {
     expect((await seenTexts(page, selector)).join()).toContain("祭りを探しています");
   }
+  // コンシェルジュの頼みと、頭の上のようすも、店内のようすで文字として読める
+  const activities = (await seenTexts(page, activity)).join();
+  expect(activities).toContain("コンシェルジュ → 祭り調査係");
+  expect(activities).toContain("調べている");
 });
 
 /** 旅人の床の上の位置（店の要素の data-player） */

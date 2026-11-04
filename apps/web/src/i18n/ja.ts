@@ -401,6 +401,32 @@ export const ja = {
     },
     sceneLabel: "店内の見取り図。スタッフの持ち場と、いまの動き",
   },
+  relay: {
+    title: "頼みと受け渡し",
+    /** コンシェルジュの頼みの吹き出し。作業の種類から決まった型で作る */
+    request: {
+      find_festivals: (name: string) => `${name}さん、条件に合う祭り探しをお願い！`,
+      find_nearby: (name: string) => `${name}さん、会場の近くの寄り道探しをお願い！`,
+      plan_route: (name: string) => `${name}さん、道のりと旅程づくりをお願い！`,
+    },
+    /** 受け渡すもの（渡す人の作業から決まる） */
+    items: {
+      find_festivals: "祭りの候補",
+      find_nearby: "寄り道の候補",
+      plan_route: "旅程",
+    },
+    requestLine: (from: string, to: string, task: string) => `${from} → ${to}：「${task}」を頼む`,
+    handoffLine: (from: string, to: string, item: string) => `${from} → ${to}：${item}を渡す`,
+    /** 頭の上に出す、いまのようす */
+    activities: {
+      heading: "向かっている",
+      asking: "頼んでいる",
+      researching: "調べている",
+      checking: "確かめている",
+      summarizing: "まとめている",
+      delivering: "届けている",
+    },
+  },
   chat: {
     title: "相談",
     greeting:
