@@ -53,7 +53,7 @@ import {
   mergeDay,
 } from "../domain/itinerary";
 import { attachLodging, checkLodgingBudget, distanceKm } from "../domain/lodging";
-import { festivalInArea, selectNearbySpots } from "../domain/nearby";
+import { festivalInArea, selectNearbySpots, type TimeWindow } from "../domain/nearby";
 import {
   asNearbySpot,
   type ResearchedSpot,
@@ -62,6 +62,13 @@ import {
   screenResearchedSpots,
   shopFoodWishes,
 } from "../domain/nearbyResearch";
+import {
+  maxSpotKm,
+  mergeResearchedReports,
+  type NearbySearchInput,
+  type NearbySearchRound,
+  nearbySearchPlan,
+} from "../domain/nearbySearch";
 import { occurrenceOn } from "../domain/planCheck";
 import { preferenceEffects } from "../domain/preferences";
 import { transportEffects } from "../domain/transport";
@@ -572,14 +579,49 @@ function searchArea(
   };
 }
 
-/** 寄り道の Web の調べを打ち切る時間（ミリ秒）。超えたら祭りのデータの周辺の場所に戻す。ツールの上限より短くする */
-export const NEARBY_RESEARCH_MS = 45_000;
+/**
+ * 寄り道の Web の調べ（1回目と、広げた2回目を合わせて）を打ち切る時間（ミリ秒）。
+ * 超えたら、それまでに調べた結果か、祭りのデータの周辺の場所に戻す。ツールの上限（95秒）より短くする
+ */
+export const NEARBY_RESEARCH_MS = 85_000;
+/** 1回目の調べを打ち切る時間（ミリ秒）。2回目に回す時間を残す */
+export const NEARBY_FIRST_ROUND_MS = 55_000;
+/** 残りがこれより短ければ、広げた2回目の調べはしない（ミリ秒） */
+export const NEARBY_WIDEN_MIN_MS = 25_000;
 
-/** 会場の周りを Web で調べる。調べる手段がない・上限を超えた・失敗したときは null */
+/** 車で回るか（想定している交通手段か、こだわりの移動） */
+function travelsByCar(ctx: ToolContext): boolean {
+  return transportEffects(ctx.session.conditions).usesCar || ctx.session.preferences.move === "car";
+}
+
+/** 調べ方を組むための、祭りのデータと相談の条件 */
+function nearbySearchInput(
+  ctx: ToolContext,
+  festival: Festival,
+  window: TimeWindow | undefined,
+): NearbySearchInput {
+  const { conditions } = ctx.session;
+  const party = conditions.party;
+  return {
+    venueName: festival.venue.name,
+    municipalities: festival.municipalities,
+    stations: festival.access.stations.map((s) => s.name),
+    foodWishes: conditions.foodWishes ?? [],
+    dietary: conditions.dietary ?? [],
+    withChildren: (party?.children ?? 0) + (party?.infants ?? 0) > 0,
+    byCar: travelsByCar(ctx),
+    ...(window === undefined ? {} : { window }),
+  };
+}
+
+/** 会場の周りを Web で1回調べる。調べる手段がない・上限を超えた・失敗したときは null */
 async function researchNearby(
   ctx: ToolContext,
   festival: Festival,
   date: IsoDate,
+  search: NearbySearchInput,
+  round: NearbySearchRound,
+  timeoutMs: number,
   signal: AbortSignal,
 ): Promise<ResearchedSpotReport[] | null> {
   if (ctx.nearby === undefined) return null;
@@ -601,7 +643,9 @@ async function researchNearby(
           : tripBudgetAmounts(conditions.budget, conditions.party).perPersonYen,
       party: conditions.party ?? null,
       references: festival.nearby.map((s) => ({ name: s.name, kind: s.kind, summary: s.summary })),
-      signal: AbortSignal.any([signal, AbortSignal.timeout(NEARBY_RESEARCH_MS)]),
+      plan: nearbySearchPlan(search, round),
+      signal: AbortSignal.any([signal, AbortSignal.timeout(timeoutMs)]),
+      ...(ctx.progress ? { onActivity: ctx.progress } : {}),
     });
     return report?.spots ?? null;
   } catch {
@@ -629,7 +673,8 @@ export const searchNearby = defineTool({
     "食べたいもの・食事で気をつけたいこと・予算・同行者に合い、行く日に営業している場所だけを返す（origin: web）。" +
     "行く日の営業を確かめられなかった場所は openStatus: needs_check になる。調べられなかったときは、祭りのデータの周辺の場所から選ぶ（research.status: fallback）。" +
     "当日が休業の場所、使える時間帯に営業時間が合わない場所、「屋台で十分」のときの店は除き、こだわりに合う順に返す。" +
-    "食べたいものに合う店が見つからなければ research.foodFound が false になり、合わない店は返さない。" +
+    "食べたいものに合う店が1回目の調べで見つからなければ、場所と言葉を広げてもう1回調べる（research.rounds: 2）。" +
+    "それでも見つからなければ research.foodFound が false になり、合わない店は返さない。車で回るときは、会場から遠い店も返す。" +
     "祭りのない日の行き先は、festivalId の代わりに area（都道府県や市町村の名前）と date で探す。" +
     "その地域のほかの祭りの周辺の場所と、その日にその地域で開かれる祭りを返す（場所には持ち主の祭りの festivalId が付く）。",
   input: {
@@ -675,12 +720,26 @@ export const searchNearby = defineTool({
       stalls: festival.food.stalls,
       rules: [...preferenceEffects(ctx.session.preferences).rules, ...food.rules],
     };
-    const researched = await researchNearby(ctx, festival, date, signal);
+    const search = nearbySearchInput(ctx, festival, args.window);
+    const started = Date.now();
+    const first = await researchNearby(
+      ctx,
+      festival,
+      date,
+      search,
+      "first",
+      NEARBY_FIRST_ROUND_MS,
+      signal,
+    );
     if (signal.aborted) throw new ToolError("止められたので、寄り道の結果は使いません");
-    if (researched === null) {
+    if (first === null) {
       return {
         ...base,
-        research: { status: ctx.nearby === undefined ? "data_only" : "fallback", foodFound: null },
+        research: {
+          status: ctx.nearby === undefined ? "data_only" : "fallback",
+          foodFound: null,
+          rounds: ctx.nearby === undefined ? 0 : 1,
+        },
         spots: selection.spots.map((spot) => ({ ...spotOutput(spot), origin: "data" as const })),
         excluded: selection.excluded,
         notes:
@@ -691,20 +750,40 @@ export const searchNearby = defineTool({
     }
 
     const { conditions } = ctx.session;
-    const screened = screenResearchedSpots(researched, {
-      date,
-      ...(args.window === undefined ? {} : { window: args.window }),
-      venue: festival.venue,
-      today: ctx.today(),
-      preferences: ctx.session.preferences,
-      foodWishes: conditions.foodWishes ?? [],
-      dietary: conditions.dietary ?? [],
-      perPersonBudgetYen:
-        conditions.budget === undefined
-          ? null
-          : tripBudgetAmounts(conditions.budget, conditions.party).perPersonYen,
-      party: conditions.party ?? null,
-    });
+    const screen = (reports: readonly ResearchedSpotReport[]) =>
+      screenResearchedSpots(reports, {
+        date,
+        ...(args.window === undefined ? {} : { window: args.window }),
+        venue: festival.venue,
+        maxKm: maxSpotKm(search.byCar),
+        today: ctx.today(),
+        preferences: ctx.session.preferences,
+        foodWishes: conditions.foodWishes ?? [],
+        dietary: conditions.dietary ?? [],
+        perPersonBudgetYen:
+          conditions.budget === undefined
+            ? null
+            : tripBudgetAmounts(conditions.budget, conditions.party).perPersonYen,
+        party: conditions.party ?? null,
+      });
+    let screened = screen(first);
+    let rounds = 1;
+    // 食べたいものに合う店が1つもなければ、時間の残りがあるときだけ、場所と言葉を広げてもう1回調べる
+    const remaining = NEARBY_RESEARCH_MS - (Date.now() - started);
+    if (screened.foodFound === false && remaining >= NEARBY_WIDEN_MIN_MS) {
+      const widened = await researchNearby(
+        ctx,
+        festival,
+        date,
+        search,
+        "widened",
+        remaining,
+        signal,
+      );
+      if (signal.aborted) throw new ToolError("止められたので、寄り道の結果は使いません");
+      rounds = 2;
+      if (widened !== null) screened = screen(mergeResearchedReports(first, widened));
+    }
     // 旅程を保存するとき、祭りのデータの場所と同じく照らせるよう、調べた場所を相談に残す
     for (const spot of screened.spots) ctx.session.researchedSpots.set(spot.id, asNearbySpot(spot));
     // 祭りのデータの店は、出す料理が分からないので、食べたいものがあるときは調べた店だけにする
@@ -727,7 +806,7 @@ export const searchNearby = defineTool({
     }
     return {
       ...base,
-      research: { status: "researched", foodFound: screened.foodFound },
+      research: { status: "researched", foodFound: screened.foodFound, rounds },
       spots: [
         ...screened.spots.map(researchedSpotOutput),
         ...dataSpots.map((spot) => ({ ...spotOutput(spot), origin: "data" as const })),

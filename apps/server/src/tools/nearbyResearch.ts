@@ -1,5 +1,6 @@
 import type { DietaryNeed, FoodWish, IsoDate, LatLng, Party } from "@matsuri-ikoka/schema";
 import type { ResearchedSpotReport } from "../domain/nearbyResearch";
+import type { NearbySearchPlan } from "../domain/nearbySearch";
 
 export type { ResearchedSpotReport };
 
@@ -13,7 +14,11 @@ export interface NearbyResearchRequest {
   party: Party | null;
   /** 祭りのデータにある周辺の場所（参考として渡す） */
   references: { name: string; kind: string; summary: string }[];
+  /** 調べ方（検索の言葉・確かめる観点・範囲）。コードで決め、毎回の調べに必ず渡す（domain/nearbySearch.ts） */
+  plan: NearbySearchPlan;
   signal: AbortSignal;
+  /** 調べが進んだ（検索やページの読み込みがあった）ときに呼ぶ。相談の進みのない時間を数え直す */
+  onActivity?: () => void;
 }
 
 /**

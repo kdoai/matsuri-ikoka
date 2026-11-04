@@ -75,6 +75,11 @@ export interface ToolContext {
   routes?: RouteResearcher;
   /** 会場の周りの店・寄り道を Web で調べる。ないとき（mock やテスト）は祭りのデータの周辺の場所だけから選ぶ */
   nearby?: NearbyResearcher;
+  /**
+   * ツールの中で調べが進んだ（中の Agent SDK の知らせが届いた）ことを知らせる。相談の進みのない時間を数え直す。
+   * 寄り道の調べのように、ツール1回が長くかかっても、動き続けていれば止めない
+   */
+  progress?: () => void;
   /** ツールの途中で画面に送るイベント（候補の確かめの結果など） */
   emit?: (event: SseEvent) => void;
   today: () => IsoDate;
@@ -87,8 +92,9 @@ export const TOOL_TIMEOUT_MS: Readonly<Record<AgentToolName, number>> = {
   note_conditions: 5_000,
   // 候補の確かめ（1件30秒、3件を並べて動かす）を含む
   search_festivals: 70_000,
-  // 会場の周りの店を Web で調べる（NEARBY_RESEARCH_MS で打ち切り、祭りのデータの場所に戻す）
-  search_nearby: 60_000,
+  // 会場の周りの店を Web で調べる。1回目と、合う店がなければ広げた2回目を含めて NEARBY_RESEARCH_MS で打ち切り、
+  // 祭りのデータの場所に戻す。調べの間は ToolContext.progress で進みを知らせるので、進みのない時間の上限には掛からない
+  search_nearby: 95_000,
   get_access: 10_000,
   get_weather: 10_000,
   // 空室検索は1本ずつ間隔を空けて呼ぶので、待ちを含める

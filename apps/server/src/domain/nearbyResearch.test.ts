@@ -141,6 +141,17 @@ describe("screenResearchedSpots", () => {
     expect(result.excluded.map((e) => e.reason)).toEqual(["too_far", "adults_only", "over_budget"]);
   });
 
+  it("距離の上限を広げれば（車で回るとき）、歩いては遠い店も残す", () => {
+    // 会場から北へ約5.5km
+    const far = report({ name: "郊外の店", location: { lat: 35.17, lng: 136.08 } });
+    expect(screenResearchedSpots([far], options()).excluded).toEqual([
+      { name: "郊外の店", reason: "too_far" },
+    ]);
+    expect(screenResearchedSpots([far], options({ maxKm: 10 })).spots.map((s) => s.name)).toEqual([
+      "郊外の店",
+    ]);
+  });
+
   it("ベジタリアン・ハラールなどは、対応するとページにある店だけを残す", () => {
     const result = screenResearchedSpots(
       [
