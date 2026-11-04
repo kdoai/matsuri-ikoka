@@ -1,6 +1,6 @@
 import type { FestivalQuiz, Preferences, SearchRetry, StaffId } from "@matsuri-ikoka/schema";
 import { clientError } from "./errors";
-import { closeTurn, patchStaff } from "./events";
+import { closeTurn, hasNextSteps, patchStaff } from "./events";
 import { initialData } from "./initial";
 import type { AppData, ChatEntry, ClientError } from "./types";
 
@@ -100,6 +100,7 @@ export function beginTurn(state: AppData, start: TurnStart): AppData {
       lastWasPreferences: start.kind === "preferences",
       turnTasks: [],
       turnTools: [],
+      newCandidates: false,
     },
     messages,
     ui: { ...state.ui, candidatesOpen: false, draft: start.kind === "chat" ? "" : state.ui.draft },
@@ -111,7 +112,18 @@ export function beginTurn(state: AppData, start: TurnStart): AppData {
  * done を受け取らずに閉じたら、接続が切れたものとして「もう一度送る」を出す。
  */
 export function endTurn(state: AppData, error: ClientError | null): AppData {
-  let next: AppData = { ...state, session: { ...state.session, streaming: false } };
+  // この発言で届いた候補は、返答が終わって選べるようになったここで開く
+  const showCandidates =
+    error === null &&
+    state.session.sawDone &&
+    state.session.newCandidates &&
+    state.session.stage === "candidates" &&
+    (state.candidates.length > 0 || hasNextSteps(state.search));
+  let next: AppData = {
+    ...state,
+    session: { ...state.session, streaming: false, newCandidates: false },
+    ui: showCandidates ? { ...state.ui, candidatesOpen: true } : state.ui,
+  };
   if (error !== null) {
     next = addError(next, error);
   } else if (!state.session.sawDone) {
@@ -120,12 +132,25 @@ export function endTurn(state: AppData, error: ClientError | null): AppData {
   return state.session.sawDone ? next : closeTurn(next);
 }
 
+/**
+ * 利用者が候補の窓を開け閉めする。候補がなければ開かない。
+ * 返答の途中で閉じたら、返答が終わっても開き直さない
+ */
+export function setCandidatesOpen(state: AppData, open: boolean): AppData {
+  const candidatesOpen = open && (state.candidates.length > 0 || hasNextSteps(state.search));
+  return {
+    ...state,
+    session: open ? state.session : { ...state.session, newCandidates: false },
+    ui: { ...state.ui, candidatesOpen },
+  };
+}
+
 /** 戻っているスタッフを待機にする（戻る動きが終わったころに呼ぶ） */
 export function settleStaff(state: AppData): AppData {
   let next = state;
   for (const id of Object.keys(state.staff) as StaffId[]) {
     if (state.staff[id].phase === "returning") {
-      next = patchStaff(next, id, { phase: "idle", motion: "idle", bubble: null });
+      next = patchStaff(next, id, { phase: "idle", motion: "idle", bubble: null, detail: null });
     }
   }
   return next;

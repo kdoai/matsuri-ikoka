@@ -1,5 +1,12 @@
 import type { Itinerary, SseEvent, SseEventOf, StaffId, ToolName } from "@matsuri-ikoka/schema";
-import { closeRelay, conciergeSpeaks, finishTool, handOver, requestWork } from "./relay";
+import {
+  closeRelay,
+  conciergeSpeaks,
+  finishTool,
+  handOver,
+  requestRedo,
+  requestWork,
+} from "./relay";
 import type { AppData, ChatEntry, StaffMotion, StaffState, VerifyState } from "./types";
 
 // SSE のイベントを、ストアの更新に変える。ここだけがイベントを読み、部品はストアだけを読む。
@@ -10,7 +17,9 @@ const TOOL_MOTION: Record<ToolName, StaffMotion> = {
   search_festivals: "flip",
   search_nearby: "point",
   get_access: "look_up",
+  research_route: "look_up",
   get_weather: "look_up",
+  search_lodging: "point",
   update_itinerary: "flip",
   verify_festival: "flip",
 };
@@ -28,6 +37,8 @@ export function applyEvent(state: AppData, event: SseEvent): AppData {
       return onToolStart(state, event.data);
     case "tool.end":
       return onToolEnd(state, event.data);
+    case "staff.redo":
+      return onStaffRedo(state, event.data);
     case "itinerary.updated":
       return onItineraryUpdated(state, event.data);
     case "festival.verified":
@@ -84,6 +95,7 @@ function onStaffStart(state: AppData, data: SseEventOf<"staff.start">["data"]): 
     task: data.task,
     tool: null,
     bubble: data.bubble,
+    detail: null,
   });
   return {
     ...next,
@@ -97,6 +109,7 @@ function onToolStart(state: AppData, data: SseEventOf<"tool.start">["data"]): Ap
     motion: TOOL_MOTION[data.tool],
     tool: data.tool,
     bubble: data.bubble,
+    detail: data.detail ?? null,
   });
   const entry: ChatEntry = {
     kind: "work",
@@ -125,6 +138,7 @@ function onToolEnd(state: AppData, data: SseEventOf<"tool.end">["data"]): AppDat
     motion: "nod",
     tool: null,
     bubble: data.bubble,
+    detail: data.detail ?? null,
   });
 
   const id = `w-${data.toolCallId}`;
@@ -151,13 +165,17 @@ function onToolEnd(state: AppData, data: SseEventOf<"tool.end">["data"]): AppDat
   };
 
   if (data.ok && data.candidates !== undefined) {
+    // 返答が続いている間は「この祭りにする」を押せないので、ここでは開かず、返答が終わってから開く。
+    // 見つからなかったときも、「見つかりませんでした」と次の手を見せるために開く
     const search = data.search ?? null;
     next = {
       ...next,
       candidates: data.candidates,
       search,
-      // 見つからなかったときも窓を開き、「見つかりませんでした」と次の手を見せる
-      ui: { ...next.ui, candidatesOpen: data.candidates.length > 0 || hasNextSteps(search) },
+      session: {
+        ...next.session,
+        newCandidates: data.candidates.length > 0 || hasNextSteps(search),
+      },
     };
   }
   if (data.ok && data.spots !== undefined) {
@@ -168,6 +186,16 @@ function onToolEnd(state: AppData, data: SseEventOf<"tool.end">["data"]): AppDat
     next = { ...next, verify: { ...next.verify, status: "idle" } };
   }
   return next;
+}
+
+/** 調べ直しの頼みと受け。頼む人・受ける人が、その場で吹き出しを出す（持ち場は動かない） */
+function onStaffRedo(state: AppData, data: SseEventOf<"staff.redo">["data"]): AppData {
+  const next = requestRedo(state, data.kind, data.from, data.to, data.subject);
+  return patchStaff(next, data.from, {
+    motion: data.kind === "request" ? "talk" : "nod",
+    bubble: data.bubble,
+    detail: data.detail ?? null,
+  });
 }
 
 function onItineraryUpdated(
@@ -291,6 +319,7 @@ export function closeTurn(state: AppData): AppData {
           task: null,
           tool: null,
           bubble: null,
+          detail: null,
         });
       }
     } else if (staff.phase !== "idle" && staff.phase !== "returning") {
@@ -317,7 +346,7 @@ function onDone(state: AppData, data: SseEventOf<"done">["data"]): AppData {
     preferences: data.preferences,
     ui: {
       ...next.ui,
-      // 候補を開くのは候補が届いたときだけ。利用者が閉じた候補を、ここで開き直さない
+      // 候補を開くのは、返答が終わって選べるようになったとき（endTurn）。ここでは開かない
       candidatesOpen: data.stage === "candidates" && next.ui.candidatesOpen,
       celebrating: next.ui.celebrating || reachedShiori,
     },

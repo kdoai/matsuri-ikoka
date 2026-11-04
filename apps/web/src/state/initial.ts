@@ -9,6 +9,7 @@ export const IDLE_STAFF: StaffState = Object.freeze({
   task: null,
   tool: null,
   bubble: null,
+  detail: null,
   seq: 0,
 });
 
@@ -38,6 +39,7 @@ export function initialData({ locale = "ja", tutorialSeen = false }: InitialOpti
       lastWasPreferences: false,
       turnTasks: [],
       turnTools: [],
+      newCandidates: false,
     },
     preferences: { ...DEFAULT_PREFERENCES },
     consult: { ...INITIAL_CONSULT, answers: {} },

@@ -43,9 +43,22 @@ export function useRelayLine() {
   return (entry: RelayEntry): string => {
     const from = t.staff.names[entry.from];
     const to = t.staff.names[entry.to];
-    return entry.kind === "request"
-      ? t.relay.requestLine(from, to, t.staff.tasks[entry.task])
-      : t.relay.handoffLine(from, to, t.relay.items[entry.task]);
+    switch (entry.kind) {
+      case "request":
+        return t.relay.requestLine(from, to, t.staff.tasks[entry.task]);
+      case "handoff":
+        return t.relay.handoffLine(from, to, t.relay.items[entry.task]);
+      case "redo_request":
+      case "redo_accept": {
+        const subject =
+          entry.subject === undefined
+            ? t.staff.tasks[entry.task]
+            : t.relay.redoSubjects[entry.subject];
+        return entry.kind === "redo_request"
+          ? t.relay.redoRequestLine(from, to, subject)
+          : t.relay.redoAcceptLine(from, to, subject);
+      }
+    }
   };
 }
 
@@ -279,8 +292,9 @@ export function StaffActivity() {
           const activity = staffActivity(id, state, relay);
           const phase =
             activity === null ? t.staff.phases[state.phase] : t.relay.activities[activity];
+          // 吹き出しより、くわしい文があればそれを出す。
           // 吹き出しがなく、ようすが札と同じ言葉だけなら、下の行は出さない
-          const detail = showsBubble(state) ? state.bubble : summarize(id, state);
+          const detail = showsBubble(state) ? (state.detail ?? state.bubble) : summarize(id, state);
           return (
             <li
               key={id}
@@ -302,7 +316,7 @@ export function StaffActivity() {
               </div>
               {detail === null || detail === phase ? null : (
                 <p
-                  className={`mt-1 line-clamp-3 border-yamabuki-400 border-l-4 pl-2 text-xs leading-snug ${
+                  className={`mt-1 line-clamp-4 border-yamabuki-400 border-l-4 pl-2 text-xs leading-snug ${
                     showsBubble(state) ? "font-medium text-ink" : "text-ink-soft"
                   }`}
                 >

@@ -9,10 +9,8 @@ import {
   Play,
 } from "lucide-react";
 import { useEffect, useId, useMemo, useState } from "react";
-import { usePlay } from "../state/play";
 import { quizById } from "../state/quizBank";
 import { useActions, useApp, useT } from "../state/react";
-import { proposalShown } from "../state/selectors";
 import type { WaitingTalk } from "../state/types";
 import {
   slideDelayMs,
@@ -88,32 +86,6 @@ function useSlide(): {
   }
   const quiz = quizById(slide.quizId);
   return { slide, current: quiz === undefined ? null : { kind: "quiz", quiz }, talks };
-}
-
-/**
- * 3D の店で、豆知識係（コンシェルジュ）の頭の上に出す吹き出し。豆知識の文か、クイズの問いを出す。
- * 位置は 3D の中から書き込む。同じ文は豆知識の窓で読めるので、読み上げからは外す。
- * 旅程の提案が出たあとは、豆知識の窓と同じく出さない
- */
-export function HostBubble() {
-  const streaming = useApp((state) => state.session.streaming);
-  const proposed = useApp(proposalShown);
-  const { current } = useSlide();
-  const talkText = useTalkText();
-  const entering = usePlay((state) => state.entering);
-  if (!streaming || proposed || current === null || entering) return null;
-  const text = current.kind === "talk" ? talkText(current.talk).text : current.quiz.question;
-  return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-      <p
-        data-bubble="concierge"
-        className="absolute top-0 left-0 line-clamp-3 max-w-60 rounded-2xl border-2 border-ai-700 bg-kinari-50 px-2.5 py-1 text-center font-bold text-ink text-xs leading-snug shadow-lg"
-        data-testid="host-bubble"
-      >
-        {text}
-      </p>
-    </div>
-  );
 }
 
 /** 窓の下に並べる点。いまの位置を塗る（飾りなので読み上げない） */

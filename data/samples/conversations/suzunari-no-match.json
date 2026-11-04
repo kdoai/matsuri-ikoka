@@ -47,7 +47,8 @@
               "tool": "search_festivals",
               "staff": "researcher",
               "ok": true,
-              "bubble": "条件に合う祭りは見つかりませんでした",
+              "bubble": "条件に合う祭りが見つかりませんでした",
+              "detail": "希望の日と出発地から行ける祭りが、データにありませんでした。日や条件を変えて探せます",
               "count": 0,
               "candidates": [],
               "search": {
@@ -256,7 +257,8 @@
               "tool": "search_festivals",
               "staff": "researcher",
               "ok": true,
-              "bubble": "1件見つかりました",
+              "bubble": "1件見つかりました。いちばん上は「鈴鳴灯籠まつり」",
+              "detail": "希望の日に開かれる祭りを1件見つけました。いちばん上は「鈴鳴灯籠まつり」（8月16日・滋賀県鈴鳴町）です",
               "count": 1,
               "candidates": [
                 {

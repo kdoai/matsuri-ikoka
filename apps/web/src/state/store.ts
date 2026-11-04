@@ -23,7 +23,7 @@ import {
   todayInJapan,
 } from "./consult";
 import { clientError } from "./errors";
-import { applyEvent, hasNextSteps } from "./events";
+import { applyEvent } from "./events";
 import { initialData } from "./initial";
 import { quizById } from "./quizBank";
 import {
@@ -35,6 +35,7 @@ import {
   passcodeAccepted,
   requirePasscode,
   resetForNewSession,
+  setCandidatesOpen,
   settleStaff,
   type TurnStart,
 } from "./transitions";
@@ -431,9 +432,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
         setUi({ drawerOpen: open });
       },
       setCandidatesOpen(open) {
-        setUi({
-          candidatesOpen: open && (get().candidates.length > 0 || hasNextSteps(get().search)),
-        });
+        update((state) => setCandidatesOpen(state, open));
       },
       openShiori() {
         if (get().itinerary.current !== null) {
