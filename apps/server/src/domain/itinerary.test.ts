@@ -1,5 +1,5 @@
 import type { Itinerary } from "@matsuri-ikoka/schema";
-import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
+import { fictionalItinerary, fictionalPlannedItinerary } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
 import {
   buildItinerary,
@@ -356,5 +356,126 @@ describe("mergeDay（1日ずつ書く）", () => {
     }
     expect(draft.days).toHaveLength(7);
     expect(mergeDay(draft, day("2026-08-23", null), { area: "鈴鳴の町" }).ok).toBe(false);
+  });
+});
+
+describe("buildItinerary：そろっているか・調べた場所の採否", () => {
+  const craftHall = { id: "suzunari-craft-hall", name: "鈴鳴和紙の館", from: "nearby" as const };
+  const ramen = { id: "web-ramen", name: "鈴鳴ラーメン", from: "nearby" as const };
+
+  it("そろった旅程は不足なしで保存し、採否を予定から決める", () => {
+    const result = buildItinerary(draftOf(fictionalPlannedItinerary()), {
+      id: "trip-1",
+      previous: null,
+      weatherFor: () => ({ status: "not_yet" }),
+      findFestival: find,
+      researched: [craftHall],
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.gaps).toEqual([]);
+    expect(result.itinerary.gaps).toEqual([]);
+    expect(result.itinerary.considered).toEqual([
+      { ...craftHall, adopted: true, reason: "灯籠に使う和紙の作り方が分かる" },
+    ]);
+  });
+
+  it("足りないものは保存を止めずに不足に書く", () => {
+    const result = buildItinerary(draftOf(fictionalItinerary()), {
+      id: "trip-1",
+      previous: null,
+      weatherFor: () => ({ status: "not_yet" }),
+      findFestival: find,
+      researched: [craftHall, ramen],
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.gaps.map((gap) => gap.code)).toEqual(
+      expect.arrayContaining(["return_missing", "meal_missing", "research_unreviewed"]),
+    );
+    expect(result.itinerary.gaps).toEqual(result.gaps);
+  });
+
+  it("行き方の調べで読んだページは出典に残し、どこにもない URL の食事・最終の出典は外す", () => {
+    const routePage = {
+      url: "https://example.com/route/minato-suzunari",
+      checkedAt: "2026-08-01",
+      confidence: "single" as const,
+    };
+    const draft = draftOf(fictionalPlannedItinerary());
+    const day = draft.days[0]!;
+    day.items[0] = { ...day.items[0]!, sources: [routePage] };
+    day.lastReturn = {
+      station: "鈴鳴駅",
+      departBy: "22:40",
+      sources: [{ ...routePage, url: "https://example.org/made-up" }],
+    };
+    day.meals = [
+      {
+        slot: "dinner",
+        kind: "shop",
+        name: "作った店",
+        itemId: null,
+        sources: [{ ...routePage, url: "https://example.org/shop" }],
+      },
+    ];
+
+    const result = buildItinerary(draft, {
+      id: "trip-1",
+      previous: null,
+      weatherFor: () => ({ status: "not_yet" }),
+      findFestival: find,
+      extraSources: new Map([[routePage.url, routePage]]),
+    });
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const saved = result.itinerary.days[0]!;
+    expect(saved.items[0]?.sources).toEqual([routePage]);
+    // 出典の残らない最終の時刻と店の案は使わず、不足にする
+    expect(saved.lastReturn).toEqual({ station: "鈴鳴駅", departBy: null, sources: [] });
+    expect(saved.meals).toEqual([]);
+    expect(result.gaps.map((gap) => gap.code)).toEqual(
+      expect.arrayContaining(["last_return_unknown", "meal_missing"]),
+    );
+  });
+
+  it("帰りの最終に間に合わない旅程は保存しない", () => {
+    const draft = draftOf(fictionalPlannedItinerary());
+    draft.days[0]!.lastReturn = {
+      station: "鈴鳴駅",
+      departBy: "21:25",
+      sources: [festival.access.sources[0]!],
+    };
+    const result = build(draft);
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.errors.map((e) => [e.code, e.itemId])).toEqual([["after_last_return", "back"]]);
+  });
+
+  it("評価だけが違う旅程は、同じ旅程として版を上げない", () => {
+    const first = build(draftOf(fictionalPlannedItinerary()));
+    expect(first.ok).toBe(true);
+    if (!first.ok) return;
+    const previous = {
+      ...first.itinerary,
+      evaluation: {
+        round: 1,
+        maxRounds: 3,
+        threshold: 70,
+        passed: true,
+        scores: [
+          { criterion: "coverage" as const, score: 100, findings: [] },
+          { criterion: "specificity" as const, score: 100, findings: [] },
+          { criterion: "feasibility" as const, score: 100, findings: [] },
+          { criterion: "grounding" as const, score: 100, findings: [] },
+        ],
+        redo: [],
+        judgedBy: "code" as const,
+        evaluatedAt: "2026-08-03T10:00:00+09:00",
+      },
+    };
+    const again = build(draftFromItinerary(previous), previous);
+    expect(again.ok && again.unchanged).toBe(true);
   });
 });

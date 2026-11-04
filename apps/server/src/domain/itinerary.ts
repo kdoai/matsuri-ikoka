@@ -6,9 +6,12 @@ import {
   type ItineraryDiff,
   type ItineraryItem,
   ItinerarySchema,
+  type LastReturn,
   MAX_TRIP_DAYS,
+  type MealPlan,
   mainFestivalDay,
   type NearbySpot,
+  type PlanGap,
   type Source,
   type Stay,
   type TripBudget,
@@ -16,10 +19,12 @@ import {
 } from "@matsuri-ikoka/schema";
 import { addDays } from "./calendar";
 import { checkPlan, occurrenceOn, type PlanIssue } from "./planCheck";
+import { findGaps, type ResearchedPlace, reconcileConsidered } from "./planCoverage";
 
 // 旅程係が書いた下書きから、保存する旅程を作る。
 // 場所・営業時間・出典は祭りのデータから入れ直し、天気を日ごとに付け、版と差分を付け、
-// スキーマと旅程の検証を通す。日帰りのお出かけ（1日）から6泊7日まで同じ形で扱う。
+// 調べた場所の採否と不足（gaps）を付け、スキーマと旅程の検証を通す。
+// 日帰りのお出かけ（1日）から6泊7日まで同じ形で扱う。
 
 export type ItineraryItemDraft = Omit<ItineraryItem, "changedInVersion">;
 
@@ -28,10 +33,10 @@ export type ItineraryDayDraft = Omit<ItineraryDay, "weather" | "items"> & {
   items: ItineraryItemDraft[];
 };
 
-/** 旅程の下書き。予算は聞き取った条件からサーバーが付けるので、下書きには持たない */
+/** 旅程の下書き。予算・不足・評価はサーバーが付けるので、下書きには持たない */
 export type ItineraryDraft = Omit<
   Itinerary,
-  "id" | "version" | "verification" | "budget" | "days"
+  "id" | "version" | "verification" | "budget" | "days" | "gaps" | "evaluation"
 > & {
   days: ItineraryDayDraft[];
 };
@@ -50,6 +55,8 @@ export type BuildItineraryResult =
       itinerary: Itinerary;
       diff: ItineraryDiff;
       warnings: ItineraryIssue[];
+      /** そろっていないもの（itinerary.gaps と同じ） */
+      gaps: PlanGap[];
     }
   | { ok: false; errors: ItineraryIssue[]; warnings: ItineraryIssue[] };
 
@@ -140,6 +147,8 @@ export function enrichDraft(
   findFestival: (id: string) => Festival | undefined,
   /** 祭りのデータのほかに照らす場所（周辺係が Web で調べた場所）。キーは場所の ID */
   extraSpots: ReadonlyMap<string, NearbySpot> = new Map(),
+  /** 祭りのデータのほかに認める出典（行き方の調べで実際に読んだページ）。キーは URL */
+  extraSources: ReadonlyMap<string, Source> = new Map(),
 ): { draft: ItineraryDraft; warnings: ItineraryIssue[] } {
   const warnings: ItineraryIssue[] = [];
   const festivalIds = new Set([
@@ -152,7 +161,7 @@ export function enrichDraft(
     const festival = findFestival(id);
     return festival === undefined ? [] : [festival];
   });
-  const sources = new Map<string, Source>();
+  const sources = new Map<string, Source>(extraSources);
   const spots = new Map<string, NearbySpot>(extraSpots);
   for (const festival of festivals) {
     for (const [url, source] of knownSources(festival)) sources.set(url, source);
@@ -190,10 +199,56 @@ export function enrichDraft(
     return { ...item, sources: known };
   };
 
-  const days = draft.days.map((day) => ({
-    ...day,
-    items: day.items.map((item) => enrichItem(item, day.date)),
-  }));
+  /** 出典を、祭りのデータと調べた結果にある URL だけにする */
+  const knownOnly = (list: readonly Source[], label: string): Source[] => {
+    const known = list.flatMap((source) => {
+      const match = sources.get(source.url);
+      return match === undefined ? [] : [match];
+    });
+    if (known.length < list.length) {
+      warnings.push({
+        code: "unknown_source",
+        itemId: null,
+        message: `${label}の出典のうち、祭りのデータにも調べた結果にもない URL を外しました`,
+      });
+    }
+    return known;
+  };
+  /**
+   * 食事の案の出典を入れ直す。店の場所はそのデータの出典、祭りの予定の中の屋台はその祭りの出典にする。
+   * 出典の要る案（店・屋台）で出典が残らなければ、案を外す（不足 meal_missing になる）
+   */
+  const enrichMeal = (meal: MealPlan, items: readonly ItineraryItemDraft[]): MealPlan[] => {
+    const spot = meal.spotId === undefined ? undefined : spots.get(meal.spotId);
+    const host = items.find((item) => item.id === meal.itemId);
+    const mealSources =
+      spot !== undefined
+        ? spot.sources
+        : meal.kind === "stalls" && host?.type === "festival"
+          ? host.sources
+          : knownOnly(meal.sources, `食事の案「${meal.name}」`);
+    if ((meal.kind === "shop" || meal.kind === "stalls") && mealSources.length === 0) return [];
+    return [{ ...meal, sources: mealSources }];
+  };
+  const enrichLastReturn = (last: LastReturn): LastReturn => {
+    const kept = knownOnly(last.sources, "帰りの最終");
+    // 出典の残らない最終の時刻は使わない（分からないとして不足に書く）
+    return kept.length === 0
+      ? { ...last, departBy: null, sources: [] }
+      : { ...last, sources: kept };
+  };
+
+  const days = draft.days.map((day) => {
+    const items = day.items.map((item) => enrichItem(item, day.date));
+    return {
+      ...day,
+      items,
+      ...(day.meals === undefined
+        ? {}
+        : { meals: day.meals.flatMap((meal) => enrichMeal(meal, items)) }),
+      ...(day.lastReturn == null ? {} : { lastReturn: enrichLastReturn(day.lastReturn) }),
+    };
+  });
   return { draft: { ...draft, days }, warnings };
 }
 
@@ -214,10 +269,19 @@ export function buildItinerary(
     extraSpots?: ReadonlyMap<string, NearbySpot>;
     /** 旅の予算。聞き取った条件から付ける（下書きには書かせない） */
     budget?: TripBudget | undefined;
+    /** 祭りのデータのほかに認める出典（行き方の調べで実際に読んだページ）。キーは URL */
+    extraSources?: ReadonlyMap<string, Source>;
+    /** 周辺係・宿の係が見つけた場所。採否と理由のない場所は不足にする */
+    researched?: readonly ResearchedPlace[];
   },
 ): BuildItineraryResult {
   const { previous } = options;
-  const enriched = enrichDraft(draft, options.findFestival, options.extraSpots);
+  const enriched = enrichDraft(
+    draft,
+    options.findFestival,
+    options.extraSpots,
+    options.extraSources,
+  );
   const warnings: ItineraryIssue[] = [...enriched.warnings];
   const version = (previous?.version ?? 0) + 1;
   const { days, diff } = diffDays(previous, enriched.draft.days, version);
@@ -227,13 +291,22 @@ export function buildItinerary(
     mainFestivalDay(previous).date ===
       mainFestivalDay({ ...draft, days: days as ItineraryDay[] }).date;
 
+  const researched = options.researched ?? [];
+  const lodgingOfferIds = new Set(
+    enriched.draft.days.flatMap((day) => day.stay?.lodging?.offers.map((offer) => offer.id) ?? []),
+  );
+  const { considered: written, ...rest } = enriched.draft;
+  const considered = reconcileConsidered(written, { days }, researched, lodgingOfferIds);
+  const gaps = findGaps({ days, considered }, researched).slice(0, 40);
   const candidate = {
-    ...enriched.draft,
+    ...rest,
     id: options.id,
     version,
     verification: keepVerification ? previous.verification : { status: "pending" as const },
     ...(options.budget === undefined ? {} : { budget: options.budget }),
     days: days.map((day) => ({ ...day, weather: options.weatherFor(day.date) })),
+    ...(considered.length === 0 ? {} : { considered }),
+    gaps,
   };
   const parsed = ItinerarySchema.safeParse(candidate);
   if (!parsed.success) {
@@ -255,9 +328,9 @@ export function buildItinerary(
   }
 
   if (previous !== null && isSameItinerary(previous, parsed.data, diff)) {
-    return { ok: true, unchanged: true, itinerary: previous, diff, warnings };
+    return { ok: true, unchanged: true, itinerary: previous, diff, warnings, gaps };
   }
-  return { ok: true, unchanged: false, itinerary: parsed.data, diff, warnings };
+  return { ok: true, unchanged: false, itinerary: parsed.data, diff, warnings, gaps };
 }
 
 function isSameItinerary(previous: Itinerary, next: Itinerary, diff: ItineraryDiff): boolean {
@@ -267,7 +340,8 @@ function isSameItinerary(previous: Itinerary, next: Itinerary, diff: ItineraryDi
       .map((day) => `${day.date}:${day.items.map((item) => item.id).join(",")}`)
       .join("\n");
   if (order(previous) !== order(next)) return false;
-  const overview = ({ id: _id, version: _v, days, ...rest }: Itinerary) => ({
+  // 評価は保存したあとに付けるので、同じかどうかの比べには入れない
+  const overview = ({ id: _id, version: _v, evaluation: _e, days, ...rest }: Itinerary) => ({
     ...rest,
     days: days.map(({ items: _items, ...day }) => day),
   });
@@ -284,6 +358,8 @@ export function draftFromItinerary(itinerary: Itinerary): ItineraryDraft {
     version: _version,
     verification: _verification,
     budget: _budget,
+    gaps: _gaps,
+    evaluation: _evaluation,
     days,
     ...rest
   } = itinerary;
