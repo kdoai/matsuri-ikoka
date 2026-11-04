@@ -1,9 +1,21 @@
 {
   "id": "rikubetsu-shibare-festival",
-  "name": { "ja": "しばれフェスティバル", "en": "Rikubetsu Shibare Festival" },
+  "name": {
+    "ja": "しばれフェスティバル",
+    "en": "Rikubetsu Shibare Festival"
+  },
   "category": "other",
-  "municipalities": [{ "prefecture": "北海道", "name": "足寄郡陸別町" }],
-  "venue": { "name": "陸別町 ウエンベツ イベント広場", "lat": 43.464, "lng": 143.7585 },
+  "municipalities": [
+    {
+      "prefecture": "北海道",
+      "name": "足寄郡陸別町"
+    }
+  ],
+  "venue": {
+    "name": "陸別町 ウエンベツ イベント広場",
+    "lat": 43.464,
+    "lng": 143.7585
+  },
   "scaleTier": "M",
   "popularity": "regional",
   "listedIn": ["walkerplus", "rurubu"],
@@ -170,27 +182,10 @@
   ],
   "access": {
     "stations": [],
-    "fromHubs": [
-      {
-        "hub": "北見",
-        "minutes": [102, 112],
-        "route": "路線バスで1時間42分（陸別町の案内）。陸別の道の駅にバスの案内所がある"
-      },
-      {
-        "hub": "池田",
-        "minutes": [110, 120],
-        "route": "路線バスで1時間50分（陸別町の案内）"
-      }
-    ],
+    "fromHubs": [],
     "parking": "available",
     "trafficRestrictions": [],
     "sources": [
-      {
-        "url": "https://www.rikubetsu.jp/shokai/profile/accessmap/",
-        "title": "陸別町 アクセス",
-        "checkedAt": "2026-11-04",
-        "confidence": "official"
-      },
       {
         "url": "https://www.rikubetsu.jp/kanko/event/shibare/access/",
         "title": "陸別町 しばれフェスティバル アクセス・会場マップ（市街地循環バス・天文台循環バス）",
@@ -200,6 +195,12 @@
       {
         "url": "https://www.visit-hokkaido.jp/event/detail_11035.html",
         "title": "北海道観光振興機構 HOKKAIDO LOVE! 陸別しばれフェスティバル（駐車場1,000台・無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.rikubetsu.jp/shokai/profile/accessmap/",
+        "title": "陸別町 アクセス",
         "checkedAt": "2026-11-04",
         "confidence": "official"
       }
@@ -228,9 +229,15 @@
       "name": "銀河の森天文台（りくべつ宇宙地球科学館）",
       "kind": "sightseeing",
       "summary": "口径115cmの反射望遠鏡がある公開天文台。オーロラや宇宙の展示もある。月・火曜と年末年始は休み、イベントで振替の休館もある",
-      "location": { "lat": 43.4568, "lng": 143.7661 },
+      "location": {
+        "lat": 43.4568,
+        "lng": 143.7661
+      },
       "walkMinutesFromVenue": null,
-      "hours": { "open": "13:00", "close": "21:30" },
+      "hours": {
+        "open": "13:00",
+        "close": "21:30"
+      },
       "closedDays": ["mon", "tue"],
       "price": "大人500円、小・中学生300円（現金のみ）",
       "tags": ["indoor"],
@@ -255,9 +262,15 @@
       "name": "関寛斎資料館",
       "kind": "sightseeing",
       "summary": "道の駅オーロラタウン93りくべつの中にある資料館。月曜休館",
-      "location": { "lat": 43.468, "lng": 143.7424 },
+      "location": {
+        "lat": 43.468,
+        "lng": 143.7424
+      },
       "walkMinutesFromVenue": null,
-      "hours": { "open": "09:30", "close": "16:30" },
+      "hours": {
+        "open": "09:30",
+        "close": "16:30"
+      },
       "closedDays": ["mon"],
       "price": null,
       "tags": ["indoor"],
@@ -276,9 +289,15 @@
       "name": "道の駅 オーロラタウン93りくべつ（陸別町観光・物産館）",
       "kind": "rest",
       "summary": "国道242号沿いの道の駅。観光・物産館のほか、十勝バス・北見バスの案内所がある。祭りの期間は会場への循環バスがここに停まる",
-      "location": { "lat": 43.468, "lng": 143.7424 },
+      "location": {
+        "lat": 43.468,
+        "lng": 143.7424
+      },
       "walkMinutesFromVenue": null,
-      "hours": { "open": "09:00", "close": "17:00" },
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
       "closedDays": null,
       "price": null,
       "tags": ["indoor"],
@@ -322,7 +341,7 @@
     "2日目の終わりの時刻（13:30 から閉会式・もちまき）",
     "しばれ花火の打ち上げ数と、来場者数の公表値（規模の根拠になる数が公式に見つからない）",
     "入場料（公式のページに記載がない）",
-    "帯広・札幌・女満別空港から公共交通で来る場合の経路と所要時間",
+    "主要駅から会場までの通しの所要時間（陸別町の案内は、北見から約1時間42分・池田から約1時間50分の路線バスで陸別の町までの数字だけで、乗り場の駅と、町から会場への時間が分からない。帯広駅・札幌駅・女満別空港からの経路と所要時間もない）",
     "道の駅から会場までの歩く時間（期間中は道の駅と会場を結ぶ循環バスがある）",
     "交通規制の有無",
     "祭りの日に開いている町内の食事の店（確かめられなかった）",

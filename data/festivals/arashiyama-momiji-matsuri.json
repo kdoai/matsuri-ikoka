@@ -149,13 +149,13 @@
   "access": {
     "stations": [
       {
-        "name": "嵐電 嵐山駅",
-        "walkMinutes": [2, 7]
-      },
-      {
         "name": "JR 嵯峨嵐山駅",
         "walkMinutes": [8, 13],
         "note": "渡月橋までの時間"
+      },
+      {
+        "name": "嵐電 嵐山駅",
+        "walkMinutes": [2, 7]
       },
       {
         "name": "京都市バス 嵐山公園バス停",
