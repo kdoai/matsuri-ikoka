@@ -1,0 +1,254 @@
+{
+  "id": "shurijo-shinshun-no-utage",
+  "name": {
+    "ja": "新春の宴",
+    "en": "Shurijo Castle New Year Celebration (Shinshun no Utage)"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "沖縄県",
+      "name": "那覇市"
+    }
+  ],
+  "venue": {
+    "name": "首里城公園（奉神門〜下之御庭）",
+    "lat": 26.2172,
+    "lng": 127.719
+  },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": ["jalan"],
+  "highlights": [
+    "琉球王国の正月の儀式「朝拝御規式」を、城の御庭で一部再現する",
+    "国王・王妃に扮した人が奉神門に姿を見せる出御",
+    "宮廷の音楽「御座楽」の演奏と、琉球舞踊・古典音楽の舞台",
+    "三が日の夕方に、万国津梁の鐘を自分でつける"
+  ],
+  "trivia": [
+    {
+      "text": "朝拝御規式は、琉球王国の時代に首里城の正殿の前で行っていた正月の儀式",
+      "source": {
+        "url": "https://oki-park.jp/shurijo/events/detail/10405",
+        "title": "首里城公園 新春の宴〜首里城で迎える初春の慶び〜（2026年1月1日〜3日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1713年の『琉球国由来記』に、首里城を中心に王府が行った年中行事が記されている",
+      "source": {
+        "url": "https://oki-park.jp/shurijo/event/9724",
+        "title": "首里城公園『新春の宴』",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "焼けた正殿は建て直され、2026年11月23日の正午から一般の公開が始まる",
+      "source": {
+        "url": "https://oki-park.jp/shurijo/info/15/",
+        "title": "首里城公園 休園日、開園・開場時間（2026年11月の臨時休園と正殿の公開）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "奉神門から先の有料区域（世誇殿の映像上映など）に入るには入場料が要る",
+      "鐘つき体験は無料だが、当日の入場券（半券でよい）か年間パスポートを見せる"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "城の御庭で儀式や芸能を見学するもので、公園の案内に混雑や危険についての特別な注意は見つからない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://oki-park.jp/shurijo/events/detail/10405",
+        "title": "首里城公園 新春の宴（会場・料金・鐘つき体験の条件）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://oki-park.jp/shurijo/info/15/",
+        "title": "首里城公園 休園日、開園・開場時間（有料区域は奉神門・世誇殿・東のアザナ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-01",
+      "endDate": "2026-01-02",
+      "start": "08:30",
+      "end": "16:25",
+      "status": "announced",
+      "rainPolicy": "雨のときは回ごとに中止することがある（1月1日10時の朝拝御規式は雨で中止した）",
+      "note": "開催の記録。両日とも8:30・9:30・10:30 御座楽（各20分）、10:00・11:00・12:00 朝拝御規式の一部紹介（各15分、奉神門〜下之御庭）、13:00〜16:00 の毎正時に琉球芸能の宴（各25分）、16:30〜17:30 万国津梁の鐘の鐘つき体験。芸能は1日と2日で出演の団体が違う",
+      "sources": [
+        {
+          "url": "https://oki-park.jp/shurijo/events/detail/10405",
+          "title": "首里城公園 新春の宴〜首里城で迎える初春の慶び〜（2026年1月1日〜3日、各行事の時刻）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-03",
+      "start": "10:00",
+      "end": "12:10",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "開催の記録。10:00・11:00・12:00 国王・王妃の出御（各10分、奉神門）。朝拝御規式はなく、琉球すごろく体験と16:30〜17:30の鐘つき体験があった",
+      "sources": [
+        {
+          "url": "https://oki-park.jp/shurijo/events/detail/10405",
+          "title": "首里城公園 新春の宴（1月3日の国王・王妃出御）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-01",
+      "endDate": "2027-01-02",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "首里城公園は2027年1月の新春の宴（朝拝御規式・国王・王妃の出御）を予告しているが、日付と時刻はまだ発表がない。2026年は1月1日・2日に御座楽と朝拝御規式、3日に国王・王妃の出御を行ったので、同じ分け方と見込んだ。正殿の公開が始まってから初めての正月になる",
+      "sources": [
+        {
+          "url": "https://oki-park.jp/shurijo/events/detail/10882",
+          "title": "首里城公園 令和8年度 首里城復興祭 国王・王妃募集（公務に令和9年1月の新春の宴〔朝拝御規式／国王・王妃出御〕）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://oki-park.jp/shurijo/information/detail/4898",
+          "title": "首里城公園 令和元年度「新春の宴」開催（令和2年1月1日〜3日の正月三が日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://oki-park.jp/shurijo/events/detail/10405",
+          "title": "首里城公園 新春の宴（2026年1月1日〜3日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-03",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "国王・王妃の出御の日の見込み。2026年は1月3日に出御を行い、朝拝御規式はなかった。2027年の日付と時刻はまだ発表がない",
+      "sources": [
+        {
+          "url": "https://oki-park.jp/shurijo/events/detail/10882",
+          "title": "首里城公園 令和8年度 首里城復興祭 国王・王妃募集（公務に令和9年1月の新春の宴〔朝拝御規式／国王・王妃出御〕）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://oki-park.jp/shurijo/information/detail/4898",
+          "title": "首里城公園 令和元年度「新春の宴」開催（令和2年1月1日〜3日の正月三が日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://oki-park.jp/shurijo/events/detail/10405",
+          "title": "首里城公園 新春の宴（2026年1月1日〜3日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "ゆいレール 首里駅",
+        "walkMinutes": [15, 20],
+        "note": "首里城公園の案内では、首里駅から守礼門まで徒歩約15分。儀式のある奉神門は守礼門よりさらに奥。首里駅から路線バス（7・8番で首里城前、14・17・346番で首里城公園入口）にも乗れる"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "那覇空港駅",
+        "minutes": [27, 37],
+        "route": "ゆいレール、乗り換えなし（約27分）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://oki-park.jp/shurijo/access/9751/",
+        "title": "首里城公園 交通アクセス（首里駅から守礼門まで徒歩約15分、那覇空港駅から首里駅まで約27分、駐車場は午前中に満車になることがある）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://oki-park.jp/shurijo/info/15/",
+        "title": "首里城公園 休園日、開園・開場時間（首里杜館駐車場は12月〜3月 8:30〜18:30）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://visitokinawajapan.com/discover/events/shurijo-castle-new-year-celebration/",
+        "title": "Visit Okinawa Japan Shurijo Castle New Year Celebration（有料の駐車場あり）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://oki-park.jp/shurijo/events/detail/10405",
+      "title": "首里城公園 新春の宴〜首里城で迎える初春の慶び〜（2026年1月1日〜3日）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://oki-park.jp/shurijo/event/9724",
+      "title": "首里城公園『新春の宴』",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_229300/",
+      "title": "じゃらんnet 首里城公園「新春の宴」（2019年1月1日〜3日）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の日付・時刻・行事の内容（公園は1月の開催を予告しているだけで、詳しい発表はまだない）",
+    "正殿の公開が始まったあと、朝拝御規式を正殿の前の御庭で行うか、これまでどおり奉神門〜下之御庭で行うか",
+    "雨天・荒天の扱いの決まり（2026年は雨で1回を中止した記録だけ）",
+    "見学の決まり（立ち位置・撮影）、服装・持ち物",
+    "正月の首里城の周りの交通規制とバスの迂回（公園は別のお知らせで案内するが、2027年の分はまだ見つからない）",
+    "駐車場の台数と料金、正月の満車の見込み",
+    "儀式の見学そのものに入場料が要るか（会場の奉神門は有料区域、下之御庭は無料区域）",
+    "屋台やふるまいの有無（2020年の回はお茶・泡盛の試飲があったが、2026年の案内には載っていない）",
+    "規模の根拠の数（3日間の来場者数の公式の値は見つけていない。日ごとに違う見せ場が続くことから M とした）",
+    "周辺の観光と食の場所（正月三が日の営業を公式で確かめられたものがない）",
+    "会場の緯度・経度は、首里城の下之御庭あたりの地図上の位置で、公園の公式の地図からは取っていない"
+  ]
+}
