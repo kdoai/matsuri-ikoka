@@ -77,6 +77,8 @@ export function buildVerifierOptions(input: {
   maxBudgetUsd?: number | undefined;
   /** 道具を使うときのターンの上限。省略すると VERIFIER_MAX_TURNS（寄り道の調べは多めに渡す） */
   maxTurns?: number;
+  /** 考える深さ。省略すると low（決まった形の確かめを速く済ませる） */
+  effort?: Options["effort"];
 }): Options {
   const tools = input.withTools ? WEB_TOOLS : [];
   return {
@@ -92,7 +94,7 @@ export function buildVerifierOptions(input: {
     cwd: input.cwd,
     env: input.env,
     thinking: { type: "adaptive" },
-    effort: "low",
+    effort: input.effort ?? "low",
     maxTurns: input.withTools ? (input.maxTurns ?? VERIFIER_MAX_TURNS) : 1,
     persistSession: false,
     ...(input.maxBudgetUsd ? { maxBudgetUsd: input.maxBudgetUsd } : {}),

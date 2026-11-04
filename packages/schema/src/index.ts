@@ -1,6 +1,7 @@
 export * from "./account";
 export * from "./api";
 export * from "./common";
+export * from "./evaluation";
 export * from "./events";
 export * from "./festival";
 export * from "./itinerary";

@@ -6,6 +6,7 @@ import { getConnInfo } from "@hono/node-server/conninfo";
 import { createAccount, readAccountConfig } from "./account/firebase";
 import { ClaudeAgentRunner } from "./agent/claudeRunner";
 import { agentEnv, createAgentWorkdir } from "./agent/options";
+import { createPlanEvaluator } from "./agent/planEvaluator";
 import { loadPrompts } from "./agent/prompts";
 import { loadSampleConversations, ReplayAgentRunner } from "./agent/replayRunner";
 import type { AgentRunner } from "./agent/runner";
@@ -85,7 +86,17 @@ if (config.mode === "live") {
   const stations = await loadStationPoints(config.repoRoot);
   runner = new ClaudeAgentRunner({
     ...(stations ? { stations } : {}),
-    // 行き方の調べは旅程係の中で1回動くので、スタッフのモデルで行う
+    // 旅程の評価は、旅程係が保存するたびに update_itinerary の中で動く。足りないところを見抜く力が要るので、
+    // 評価係のモデル（MODEL_EVALUATOR、省略時は旅程係のモデル）で行う
+    planEvaluator: createPlanEvaluator({
+      prompt: prompts.evaluator,
+      model: config.models.evaluator,
+      cwd,
+      env,
+      query,
+      maxBudgetUsd: config.maxBudgetUsd,
+    }),
+    // 行き方の調べは旅程係の中で行きと帰りの2回動くので、スタッフのモデルで行う
     routes: createWebRouteResearcher({
       prompt: prompts.route,
       model: config.models.staff,

@@ -1,6 +1,6 @@
 import { ERROR_CODES } from "@matsuri-ikoka/schema";
 import { describe, expect, it } from "vitest";
-import { backoffMs, classifyFailure, classifyResultSubtype } from "./failure";
+import { backoffMs, classifyFailure, classifyResultSubtype, retryOnce } from "./failure";
 
 function httpError(status: number): Error {
   return Object.assign(new Error(`request failed with status ${status}`), { status });
@@ -79,5 +79,69 @@ describe("backoffMs", () => {
   it("上限で止める", () => {
     expect(backoffMs(10, { random: () => 1 })).toBe(30_000);
     expect(backoffMs(10, { random: () => 0 })).toBe(15_000);
+  });
+});
+
+describe("retryOnce", () => {
+  const noWait = async () => {};
+
+  it("一時的な失敗なら、1回だけやり直す", async () => {
+    let calls = 0;
+    const kinds: string[] = [];
+    const value = await retryOnce(
+      async () => {
+        calls += 1;
+        if (calls === 1) throw httpError(529);
+        return "ok";
+      },
+      { wait: noWait, onRetry: (failure) => kinds.push(failure.kind) },
+    );
+    expect(value).toBe("ok");
+    expect(calls).toBe(2);
+    expect(kinds).toEqual(["overloaded"]);
+  });
+
+  it("やり直しても失敗したら、その失敗を投げる（2回で止める）", async () => {
+    let calls = 0;
+    await expect(
+      retryOnce(
+        async () => {
+          calls += 1;
+          throw httpError(503);
+        },
+        { wait: noWait },
+      ),
+    ).rejects.toThrow("503");
+    expect(calls).toBe(2);
+  });
+
+  it("やり直しても直らない失敗（認証など）は、やり直さない", async () => {
+    let calls = 0;
+    await expect(
+      retryOnce(
+        async () => {
+          calls += 1;
+          throw httpError(401);
+        },
+        { wait: noWait },
+      ),
+    ).rejects.toThrow("401");
+    expect(calls).toBe(1);
+  });
+
+  it("止められたあとは、やり直さない", async () => {
+    const controller = new AbortController();
+    let calls = 0;
+    await expect(
+      retryOnce(
+        async () => {
+          calls += 1;
+          controller.abort();
+          throw httpError(529);
+        },
+        { wait: noWait, signal: controller.signal },
+      ),
+    ).rejects.toThrow("529");
+    expect(calls).toBe(1);
   });
 });

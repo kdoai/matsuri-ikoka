@@ -1,5 +1,5 @@
 import { DEFAULT_PREFERENCES, type Preferences } from "@matsuri-ikoka/schema";
-import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
+import { fictionalItinerary, fictionalPlannedItinerary } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
 import { checkPlan, type PlanItem, type PlanToCheck } from "./planCheck";
 import { lookup, testFestival } from "./testFestivals";
@@ -425,5 +425,37 @@ describe("checkPlan のこだわりの確認（warnings）", () => {
     const result = checkPlan(plan([longWalk, fest], { party: "seniors" }), find);
 
     expect(result.warnings.map((w) => [w.code, w.itemId])).toEqual([["long_walk", "hall"]]);
+  });
+});
+
+describe("checkPlan：帰りの最終", () => {
+  it("帰りの移動が、最終の時刻より後に駅を出る組み方なら誤り（駅までの歩きを足して比べる）", () => {
+    const itinerary = fictionalPlannedItinerary();
+    // 帰りは 21:20 に会場を出て、駅まで歩いて最短8分 → 21:28 に駅を出る
+    itinerary.days[0]!.lastReturn = {
+      station: "鈴鳴駅",
+      departBy: "21:25",
+      sources: [itinerary.days[0]!.items[0]!.sources[0]!],
+    };
+    expect(codes(checkPlan(itinerary, find))).toEqual([["after_last_return", "back"]]);
+
+    itinerary.days[0]!.lastReturn.departBy = "21:30";
+    expect(checkPlan(itinerary, find).errors).toEqual([]);
+  });
+
+  it("日をまたいだ最終（0時台）は、次の日の時刻として比べる", () => {
+    const itinerary = fictionalPlannedItinerary();
+    itinerary.days[0]!.lastReturn = {
+      station: "鈴鳴駅",
+      departBy: "00:10",
+      sources: [itinerary.days[0]!.items[0]!.sources[0]!],
+    };
+    expect(checkPlan(itinerary, find).errors).toEqual([]);
+  });
+
+  it("最終の時刻が分からなければ（null）、ここでは確かめない（不足として残す）", () => {
+    const itinerary = fictionalPlannedItinerary();
+    itinerary.days[0]!.lastReturn = { station: "鈴鳴駅", departBy: null, sources: [] };
+    expect(checkPlan(itinerary, find).errors).toEqual([]);
   });
 });

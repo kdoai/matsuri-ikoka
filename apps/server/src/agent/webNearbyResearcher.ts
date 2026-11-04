@@ -143,6 +143,7 @@ export function createWebNearbyResearcher(deps: {
         input.plan.round,
         input.plan.radiusKm,
         input.plan.queries,
+        input.plan.checkpoints,
       ]);
       const hit = cache.get(key);
       if (hit !== undefined && hit.expiresAt > clock()) return hit.value;

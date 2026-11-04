@@ -21,6 +21,7 @@ import {
 } from "../tools/context";
 import { spotPins } from "../tools/matsuriTools";
 import { MCP_TOOL_PREFIX } from "../tools/mcpServer";
+import { nextStepAfter } from "../tools/planReview";
 import {
   isStaff,
   STAFF_NAMES,
@@ -36,6 +37,7 @@ import {
 // - SubagentStart → staff.start（スタッフが持ち場へ歩く）。スタッフに店の記録を渡す
 // - PreToolUse → tool.start。スタッフと道具の組み合わせ、スタッフを呼ぶ回数もここで守る
 // - PostToolUse / PostToolUseFailure → tool.end、続けて itinerary.updated・festival.verified
+// - SubagentStop → 旅程係が、評価の基準に届かないまま（回数が残っているのに）終えようとしたら、作り直しに戻す
 
 /** スタッフが使える道具。仕様の表（docs/spec/agents.md）と同じ */
 export const TOOLS_BY_STAFF: Readonly<Record<StaffId, readonly AgentToolName[]>> = {
@@ -45,6 +47,7 @@ export const TOOLS_BY_STAFF: Readonly<Record<StaffId, readonly AgentToolName[]>>
   planner: [
     "get_access",
     "research_route",
+    "research_trip",
     "get_weather",
     "search_nearby",
     "search_lodging",
@@ -255,10 +258,24 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
     };
   };
 
+  /** 旅程係を作り直しに戻した回数。評価の回数が進まないまま戻し続けないよう、上限を付ける */
+  let sentBack = 0;
+  const subagentStop: HookCallback = async (input) => {
+    if (input.hook_event_name !== "SubagentStop" || input.agent_type !== "planner") return {};
+    const evaluation = turn.lastEvaluation;
+    if (evaluation === null || evaluation.passed || evaluation.round >= evaluation.maxRounds) {
+      return {};
+    }
+    if (sentBack >= evaluation.maxRounds - 1 || ctx.signal.aborted) return {};
+    sentBack += 1;
+    return { decision: "block", reason: nextStepAfter(evaluation) };
+  };
+
   return {
     PreToolUse: [{ hooks: [preToolUse] }],
     PostToolUse: [{ matcher: `^${MCP_TOOL_PREFIX}`, hooks: [postToolUse] }],
     PostToolUseFailure: [{ matcher: `^${MCP_TOOL_PREFIX}`, hooks: [postToolUseFailure] }],
     SubagentStart: [{ hooks: [subagentStart] }],
+    SubagentStop: [{ hooks: [subagentStop] }],
   };
 }
