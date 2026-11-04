@@ -19,6 +19,7 @@ import {
   updateItinerary,
   verifyFestival,
 } from "./matsuriTools";
+import type { NearbyResearcher, ResearchedSpotReport } from "./nearbyResearch";
 import { testToolContext } from "./testContext";
 
 const signal = new AbortController().signal;
@@ -392,6 +393,154 @@ describe("search_nearby", () => {
     await expect(
       searchNearby.run({ festivalId: "no-such" }, testToolContext([]), signal),
     ).rejects.toThrow("祭りのデータにありません");
+  });
+});
+
+// 周辺係の Web の調べの代わり。架空の店を返す
+function grill(edit: Partial<ResearchedSpotReport> = {}): ResearchedSpotReport {
+  return {
+    name: "鈴鳴グリル",
+    kind: "food",
+    summary: "炭火焼きの肉料理の店",
+    location: { lat: 35.122, lng: 136.082 },
+    foods: ["meat"],
+    dietaryOk: [],
+    adultsOnly: false,
+    pricePerPersonYen: [1500, 3000],
+    price: "ランチ 1,500円から",
+    hours: { open: "11:00", close: "21:00" },
+    closedDays: ["wed"],
+    openOnDate: "open",
+    sources: [{ url: "https://example.com/grill", title: "鈴鳴グリル" }],
+    ...edit,
+  };
+}
+
+function fakeNearby(
+  answer: () => Promise<{ spots: ResearchedSpotReport[] } | null>,
+): NearbyResearcher & { calls: number } {
+  const fake = {
+    calls: 0,
+    async research() {
+      fake.calls += 1;
+      return answer();
+    },
+  };
+  return fake;
+}
+
+describe("search_nearby と周辺係の Web の調べ", () => {
+  it("調べた店のうち、食べたいものに合い行く日に営業する店を返し、相談に残す", async () => {
+    const nearby = fakeNearby(async () => ({
+      spots: [grill(), grill({ name: "鈴鳴うどん", foods: ["noodles"] })],
+    }));
+    const ctx = testToolContext([suzunari()], { nearby });
+    ctx.session.conditions = { foodWishes: ["meat"] };
+
+    const output = await searchNearby.run(
+      { festivalId: "suzunari-toro", date: "2026-08-16" },
+      ctx,
+      signal,
+    );
+
+    expect(output.research).toEqual({ status: "researched", foodFound: true });
+    const spots = output.spots as { name: string; origin: string; openStatus?: string }[];
+    expect(spots.map((s) => [s.name, s.origin])).toEqual([
+      ["鈴鳴グリル", "web"],
+      ["鈴鳴和紙の館", "data"],
+    ]);
+    expect(spots[0]?.openStatus).toBe("confirmed");
+    expect(output.excluded).toContainEqual({ name: "鈴鳴うどん", reason: "food_not_wished" });
+    expect([...ctx.session.researchedSpots.values()].map((s) => s.name)).toEqual(["鈴鳴グリル"]);
+  });
+
+  it("食べたいものに合う店がなければ、合わない店で埋めず、見つからなかったと返す", async () => {
+    const nearby = fakeNearby(async () => ({
+      spots: [grill({ name: "鈴鳴うどん", foods: ["noodles"] })],
+    }));
+    const ctx = testToolContext([suzunari()], { nearby });
+    ctx.session.conditions = { foodWishes: ["meat"] };
+
+    const output = await searchNearby.run(
+      { festivalId: "suzunari-toro", date: "2026-08-16" },
+      ctx,
+      signal,
+    );
+
+    expect(output.research).toEqual({ status: "researched", foodFound: false });
+    expect((output.spots as { kind: string }[]).filter((s) => s.kind === "food")).toEqual([]);
+    expect((output.notes as string[]).join("\n")).toContain("見つかりませんでした");
+  });
+
+  it("調べられなかったときや失敗したときは、祭りのデータの周辺の場所に戻す", async () => {
+    for (const nearby of [
+      fakeNearby(async () => null),
+      fakeNearby(async () => {
+        throw new Error("時間切れ");
+      }),
+    ]) {
+      const ctx = testToolContext([suzunari()], { nearby });
+      const output = await searchNearby.run(
+        { festivalId: "suzunari-toro", date: "2026-08-16" },
+        ctx,
+        signal,
+      );
+      expect(output.research).toEqual({ status: "fallback", foodFound: null });
+      expect((output.spots as { spotId: string }[]).map((s) => s.spotId)).toEqual([
+        "suzunari-craft-hall",
+      ]);
+      expect(nearby.calls).toBe(1);
+    }
+  });
+
+  it("調べる手段がない（mock・テスト）ときは、祭りのデータの周辺の場所だけから選ぶ", async () => {
+    const output = await searchNearby.run(
+      { festivalId: "suzunari-toro", date: "2026-08-16" },
+      testToolContext([suzunari()]),
+      signal,
+    );
+    expect(output.research).toEqual({ status: "data_only", foodFound: null });
+  });
+
+  it("調べた店は、旅程に入れて保存できる。調べていない web- の場所は保存しない", async () => {
+    const nearby = fakeNearby(async () => ({ spots: [grill()] }));
+    const ctx = testToolContext([suzunari()], { nearby });
+    ctx.session.conditions = { foodWishes: ["meat"] };
+    const output = await searchNearby.run(
+      { festivalId: "suzunari-toro", date: "2026-08-16" },
+      ctx,
+      signal,
+    );
+    const spotId = (output.spots as { spotId: string }[])[0]!.spotId;
+
+    const draft = draftOf(fictionalItinerary());
+    const lunch = {
+      ...draft.days[0]!.items[1]!,
+      id: "dinner",
+      start: "16:40",
+      end: "17:40",
+      type: "meal" as const,
+      name: "鈴鳴グリル",
+      reason: "肉料理が食べたいという希望に合う",
+      cost: null,
+      spotId,
+      sources: [],
+    };
+    draft.days[0]!.items.splice(2, 0, lunch);
+    const saved = await updateItinerary.run({ itinerary: draft }, ctx, signal);
+    expect(saved).toMatchObject({ saved: true });
+    const item = (saved.itinerary as Itinerary).days[0]!.items.find((i) => i.id === "dinner");
+    // 場所・営業時間・出典は、調べた結果で入れ直す
+    expect(item).toMatchObject({
+      location: { lat: 35.122, lng: 136.082 },
+      hours: { open: "11:00", close: "21:00" },
+      sources: [{ url: "https://example.com/grill", checkedAt: "2026-08-03" }],
+    });
+
+    // 調べていない相談では、場所も出典も入れ直せないので保存しない
+    const other = testToolContext([suzunari()]);
+    const rejected = await updateItinerary.run({ itinerary: draft }, other, signal);
+    expect(rejected).toMatchObject({ saved: false });
   });
 });
 

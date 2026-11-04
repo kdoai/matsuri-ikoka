@@ -29,6 +29,7 @@ const prompts: AgentPrompts = {
   planner: "p",
   verifier: "v",
   route: "rt",
+  nearby: "nb",
 };
 
 type Script = (api: {

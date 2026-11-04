@@ -6,6 +6,7 @@ import {
   type IsoDate,
   type Itinerary,
   type LodgingSearch,
+  type NearbySpot,
   type PartialTripConditions,
   type Preferences,
   type Weather,
@@ -35,6 +36,8 @@ export interface Session {
   weather: Map<string, Weather>;
   /** 調べた宿の空き。キーはチェックインの日。旅程を保存するとき、その日の泊まりに付ける */
   lodging: Map<IsoDate, LodgingSearch>;
+  /** 周辺係が Web で調べて残した場所。キーは場所の ID（web-…）。旅程を保存するとき、祭りのデータの場所と同じく照らす */
+  researchedSpots: Map<string, NearbySpot>;
   /** live：Agent SDK のセッション ID（resume に使う） */
   agentSessionId: string | null;
   /**
@@ -107,6 +110,7 @@ export class SessionStore {
       itineraryId: null,
       weather: new Map(),
       lodging: new Map(),
+      researchedSpots: new Map(),
       agentSessionId: null,
       replay: init.replay ?? null,
       busy: false,
@@ -117,7 +121,7 @@ export class SessionStore {
 
   /**
    * 保存の口に残した途中の状態から、相談をメモリに戻す。メモリにもうあれば、それを返す。
-   * 天気・宿の空きと Agent SDK の会話は戻さない（エージェントは、相談の状態の要約から続ける）
+   * 天気・宿の空き・調べた寄り道と Agent SDK の会話は戻さない（エージェントは、相談の状態の要約から続ける）
    */
   restore(
     saved: Pick<
@@ -141,6 +145,7 @@ export class SessionStore {
       lastActiveAt: this.#now(),
       weather: new Map(),
       lodging: new Map(),
+      researchedSpots: new Map(),
       agentSessionId: null,
       busy: false,
     };
