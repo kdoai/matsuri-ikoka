@@ -214,7 +214,7 @@ test("待ち時間には豆知識係が祭りの話と出典を出し、送る�
   await recordTexts(page, [staffLine, elapsedLine, talkCard]);
   await sendSampleMessage(page, 0);
 
-  // 最初の返答（クイズは出ない）の間に、次の話へ送り、止める
+  // 最初の返答の間に、次の話へ送り、止める
   const guide = page.getByTestId("waiting-guide");
   const talk = page.getByTestId("waiting-talk");
   await expect(talk).toBeVisible();
@@ -243,17 +243,22 @@ test("待ち時間には豆知識係が祭りの話と出典を出し、送る�
     .first()
     .getByRole("button", { name: "この祭りにする" })
     .click();
-  // 長い返答では、豆知識と同じ窓にクイズが出る。その間も、店内のようすでだれが何をしているかを出し続ける
+  // 豆知識を送っていくと、同じ窓にクイズが出る。その間も、店内のようすでだれが何をしているかを出し続ける
   const quiz = page.getByTestId("quiz-card");
-  await expect(quiz).toBeVisible({ timeout: 10_000 });
+  await expect(guide).toBeVisible();
+  for (let i = 0; i < 4 && (await quiz.count()) === 0; i++) {
+    await guide.getByRole("button", { name: "次の話" }).click();
+  }
+  await expect(quiz).toBeVisible();
   await expect(page.getByTestId("staff-activity")).toBeVisible();
   await quiz.getByRole("button").first().click();
   await expect(quiz.getByRole("status")).toHaveText(/正解|おしい/);
+  await expect(quiz.getByTestId("quiz-explanation")).not.toBeEmpty();
   await snap(page, info, "11-quiz");
-  // クイズは閉じられ、同じ窓が豆知識に戻る（返答が終わるまで待たない）
-  await quiz.getByRole("button", { name: "クイズを閉じる" }).click();
+  // 次へ送ると、同じ窓が豆知識に戻る（返答が終わるまで待たない）
+  await guide.getByRole("button", { name: "次の話" }).click();
   await expect(quiz).toHaveCount(0);
-  await expect(guide.getByTestId("trivia-card")).toBeVisible();
+  await expect(guide.getByTestId("waiting-talk")).toBeVisible();
   await waitForReply(page);
   await expect(quiz).toHaveCount(0);
   await expect(guide).toHaveCount(0);
