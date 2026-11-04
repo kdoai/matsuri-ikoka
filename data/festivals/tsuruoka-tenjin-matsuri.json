@@ -137,24 +137,12 @@
   ],
   "access": {
     "stations": [],
-    "fromHubs": [
-      {
-        "hub": "東京駅",
-        "minutes": [240, 250],
-        "route": "上越新幹線で新潟駅、羽越本線に乗り換えて鶴岡駅。鶴岡駅から天満宮へはバスで約12分"
-      }
-    ],
+    "fromHubs": [],
     "parking": "available",
     "trafficRestrictions": [
       "2026年は鶴岡公園周辺の中心市街地で交通規制があった（2027年の規制は未発表）"
     ],
     "sources": [
-      {
-        "url": "https://www.tsuruokakanko.com/access",
-        "title": "つるおか観光ナビ 交通アクセス",
-        "checkedAt": "2026-11-04",
-        "confidence": "official"
-      },
       {
         "url": "https://www.tohokukanko.jp/sozaishu/detail_1003201.html",
         "title": "旅東北 鶴岡天神祭「化けものまつり」",
@@ -164,6 +152,12 @@
       {
         "url": "https://www.tsuruokakanko.com/spot/2066",
         "title": "つるおか観光ナビ 鶴岡天神祭（化けものまつり）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.tsuruokakanko.com/access",
+        "title": "つるおか観光ナビ 交通アクセス",
         "checkedAt": "2026-11-04",
         "confidence": "official"
       }
@@ -333,6 +327,7 @@
     "2027年の交通規制と、祭りの日に使える駐車場",
     "2026年のパレードの参加者数（2024年は約2,000人と市の広報にある）",
     "庄内観光物産館の定休日",
-    "周辺の場所の大手の観光サイトへの掲載（確かめられたページがなく、知名度は local にしてある）"
+    "周辺の場所の大手の観光サイトへの掲載（確かめられたページがなく、知名度は local にしてある）",
+    "主要駅から会場までの通しの所要時間（つるおか観光ナビでは東京駅から上越新幹線と羽越本線で鶴岡駅まで約4時間、旅東北では鶴岡駅から会場へバスで約12分と区間ごとの案内だけ）"
   ]
 }

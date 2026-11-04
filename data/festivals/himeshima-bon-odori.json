@@ -1,8 +1,16 @@
 {
   "id": "himeshima-bon-odori",
-  "name": { "ja": "姫島盆踊り", "en": "Himeshima Bon Odori" },
+  "name": {
+    "ja": "姫島盆踊り",
+    "en": "Himeshima Bon Odori"
+  },
   "category": "dance",
-  "municipalities": [{ "prefecture": "大分県", "name": "姫島村" }],
+  "municipalities": [
+    {
+      "prefecture": "大分県",
+      "name": "姫島村"
+    }
+  ],
   "venue": {
     "name": "中央広場（姫島港フェリー広場）および各地区の盆坪",
     "lat": 33.7194,
@@ -199,9 +207,9 @@
     ],
     "fromHubs": [
       {
-        "hub": "伊美港（国東市）",
+        "hub": "伊美港",
         "minutes": [20, 30],
-        "route": "村営フェリーで約20分、片道大人580円。伊美港へは JR 宇佐駅から大分交通のバス伊美行きで約1時間、大分空港から車で約50分"
+        "route": "国東市の伊美港から、村営フェリーで約20分、片道大人580円。伊美港へは JR 宇佐駅から大分交通のバス伊美行きで約1時間、大分空港から車で約50分"
       }
     ],
     "parking": "available",
@@ -268,7 +276,10 @@
       "name": "観音崎（姫島の黒曜石産地）",
       "kind": "sightseeing",
       "summary": "黒曜石の断崖が続く島いちばんの景勝地で、国の天然記念物。海食崖と海食洞があり、馬頭観音を祀る千人堂もある",
-      "location": { "lat": 33.7329, "lng": 131.6427 },
+      "location": {
+        "lat": 33.7329,
+        "lng": 131.6427
+      },
       "walkMinutesFromVenue": null,
       "hours": null,
       "closedDays": null,

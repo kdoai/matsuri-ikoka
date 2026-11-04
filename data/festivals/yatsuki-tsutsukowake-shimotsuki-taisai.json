@@ -103,13 +103,54 @@
         "note": "水郡線。町の案内で徒歩約13分（約900m）、タクシーで約3分"
       }
     ],
-    "fromHubs": [],
+    "fromHubs": [
+      {
+        "hub": "郡山駅",
+        "minutes": [71, 74],
+        "route": "JR水郡線の普通列車（水戸方面）、乗り換えなし（調べた列車は320D・322D・328D）"
+      },
+      {
+        "hub": "水戸駅",
+        "minutes": [122, 131],
+        "route": "JR水郡線の普通列車（郡山方面）、乗り換えなし（調べた列車は327D・337D）"
+      }
+    ],
     "parking": "available",
     "trafficRestrictions": [],
     "sources": [
       {
         "url": "https://www.town.tanagura.fukushima.jp/kasseika-kannkoubussann/kankospot/page000327.html",
         "title": "棚倉町活性化・観光物産協会 八槻都々古別神社（近津駅から徒歩13分、駐車場約20台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://timetables.jreast.co.jp/2611/train/065/069301.html",
+        "title": "JR東日本 時刻表 水郡線 普通 320D（郡山 6:06 発、近津 7:19 着）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://timetables.jreast.co.jp/2611/train/065/069311.html",
+        "title": "JR東日本 時刻表 水郡線 普通 322D（郡山 7:15 発、近津 8:26 着）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://timetables.jreast.co.jp/2611/train/065/069371.html",
+        "title": "JR東日本 時刻表 水郡線 普通 328D（郡山 13:42 発、近津 14:56 着）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://timetables.jreast.co.jp/2611/train/065/069151.html",
+        "title": "JR東日本 時刻表 水郡線 普通 327D（水戸 7:28 発、近津 9:39 着）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://timetables.jreast.co.jp/2611/train/065/069191.html",
+        "title": "JR東日本 時刻表 水郡線 普通 337D（水戸 15:16 発、近津 17:18 着）",
         "checkedAt": "2026-11-04",
         "confidence": "official"
       }
@@ -234,7 +275,7 @@
     "投げ餅・三春ひょっとこ踊りがあるかと、その時刻（公式の案内では確かめられず、1つの情報源だけ）",
     "雨や雪のときの扱い",
     "見学の決まり（拝殿での見学の場所、撮影、服装、持ち物）",
-    "主要駅（郡山駅・仙台駅など）から近津駅までの所要時間（町の案内は郡山駅から磐城棚倉駅までの数字だけ）",
+    "仙台駅・新白河駅から近津駅までの所要時間（郡山駅で水郡線に乗り換える場合や、新白河駅からバスで来る場合の通しの数字を確かめていない）",
     "周辺の観光地の開園時間と休み、会場からの徒歩の時間",
     "会場の座標は神社の字（大宮）の代表点で、建物の位置ではない",
     "神楽の奉納の回数など、規模を決める数（拝殿での奉納と市から S とした）"

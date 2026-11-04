@@ -194,6 +194,11 @@
         "hub": "新花巻駅",
         "minutes": [95, 103],
         "route": "JR釜石線の快速はまゆり、乗り換えなし（東北新幹線からの乗り継ぎ）"
+      },
+      {
+        "hub": "仙台駅",
+        "minutes": [171, 182],
+        "route": "東北新幹線で新花巻駅へ、JR釜石線の快速はまゆりに乗り換えて釜石駅まで（調べた乗り継ぎは、はやぶさ101号→3657D と やまびこ65号→3665D）"
       }
     ],
     "parking": "limited",
@@ -223,6 +228,18 @@
       {
         "url": "https://timetables.jreast.co.jp/2611/train/150/154671.html",
         "title": "JR東日本 時刻表 快速はまゆり 3665D（盛岡 17:15 発、新花巻 17:58 発、釜石 19:41 着）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://timetables.jreast.co.jp/2611/train/050/054591.html",
+        "title": "JR東日本 時刻表 はやぶさ101号（仙台 8:50 発、新花巻 9:50 着）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://timetables.jreast.co.jp/2611/train/060/062311.html",
+        "title": "JR東日本 時刻表 やまびこ65号（仙台 16:39 発、新花巻 17:41 着）",
         "checkedAt": "2026-11-04",
         "confidence": "official"
       }
