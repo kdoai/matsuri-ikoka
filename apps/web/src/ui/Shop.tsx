@@ -10,6 +10,7 @@ import { otherLocale } from "../i18n";
 import { playStore } from "../state/play";
 import { useActions, useApp, useAppStore, useT } from "../state/react";
 import { type FrameInsets, NO_INSETS } from "../state/scene";
+import { proposalShown } from "../state/selectors";
 import type { PanelTab } from "../state/types";
 import { AccountMenu } from "./AccountMenu";
 import { Backlog } from "./Backlog";
@@ -43,7 +44,8 @@ import { WaitingCard } from "./Waiting";
 // - 計画：旅のしおり（旅程・旅の案内・持ち物と確認）を右に大きく開き、会話の窓は左下に寄せる。
 //   祭りの候補は絵葉書のカードで重ねる
 // 操作の案内は上の段の中に置き、ほかの窓は上の段の下から始めるので、どの幅でも重ならない。
-// 広い画面でしおりを開いていないときは、店内のようすと豆知識（クイズ）の窓を右に縦に並べ、会話の窓を左に寄せる
+// 広い画面でしおりを開いていないときは、店内のようすと豆知識（クイズ）の窓を右に縦に並べる。会話の窓は画面の横の真ん中に置く。
+// 旅程の提案が出たあとは、旅程を読む邪魔にならないよう豆知識（クイズ）の窓を出さない
 
 export function LanguageButton({ className = "" }: { className?: string }) {
   const t = useT();
@@ -142,6 +144,7 @@ export function Shop() {
   const panelOpen = useApp((state) => state.ui.drawerOpen);
   const tab = useApp((state) => state.ui.tab);
   const hasItinerary = useApp((state) => state.itinerary.current !== null);
+  const showWaiting = !useApp(proposalShown);
   const tutorialSeen = useApp((state) => state.ui.tutorialSeen);
   const wide = useMediaQuery("(min-width: 1024px)");
   const roomy = useMediaQuery("(min-width: 1280px)");
@@ -265,7 +268,7 @@ export function Shop() {
           style={{ top: frame.top + 22 }}
         >
           <StaffActivity />
-          <WaitingCard />
+          {showWaiting ? <WaitingCard /> : null}
         </div>
       ) : null}
 
@@ -297,12 +300,13 @@ export function Shop() {
           beside
             ? "lg:right-[calc(min(44rem,48vw)+1.5rem)] lg:left-3"
             : sideColumn
-              ? "lg:right-[24rem] lg:left-3 lg:mx-auto lg:max-w-[50rem]"
+              ? // 右の列と重ならない幅で、画面の横の真ん中に置く
+                "lg:inset-x-0 lg:mx-auto lg:w-[min(50rem,calc(100vw-47rem))]"
               : "lg:inset-x-0 lg:mx-auto lg:w-[min(50rem,calc(100vw-30rem))]"
         }`}
       >
         {/* 右の列がないときは、待ち時間の窓を会話の窓の真上の中ほどに置き、左上の店内のようすに重ねない */}
-        {sideColumn ? null : (
+        {sideColumn || !showWaiting ? null : (
           <div className="pointer-events-none absolute inset-x-0 bottom-full mx-auto mb-6 w-full max-w-md [&>*]:pointer-events-auto">
             <WaitingCard />
           </div>

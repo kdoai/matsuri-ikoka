@@ -374,6 +374,7 @@ function Shop({
             marks={set.marks[id]}
             plan={staffPlan(id, staff, props.celebrating, {
               asking: id === "concierge" && props.relay.asking !== null,
+              calm: props.calm,
             })}
             seq={staff.seq}
             lookAt={

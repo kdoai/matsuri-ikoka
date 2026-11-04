@@ -152,6 +152,16 @@ describe("TripConditionsSchema", () => {
     ).toBe(true);
   });
 
+  it("行き先は都道府県や地方の名前の並びで、空の並びはおまかせ", () => {
+    expect(
+      TripConditionsSchema.safeParse({ ...conditions, destinations: ["滋賀県", "北陸"] }).success,
+    ).toBe(true);
+    expect(TripConditionsSchema.safeParse({ ...conditions, destinations: [] }).success).toBe(true);
+    expect(TripConditionsSchema.safeParse({ ...conditions, destinations: [""] }).success).toBe(
+      false,
+    );
+  });
+
   it("回りたい地域は5つまで、楽しみたいことは決まった選択肢から", () => {
     const areas = ["一", "二", "三", "四", "五", "六"];
     expect(

@@ -1,5 +1,6 @@
 import {
   DateWishSchema,
+  DestinationsSchema,
   type Festival,
   type FestivalCandidate,
   type IsoDate,
@@ -38,6 +39,15 @@ import {
   toCandidate,
   travelMinutesFrom,
 } from "../domain/dateWindow";
+import {
+  DESTINATION_STAGES,
+  destinationLabel,
+  destinationQuestion,
+  destinationReason,
+  knownDestinationNames,
+  pickByDestination,
+  resolveDestination,
+} from "../domain/destination";
 import { foodEffects } from "../domain/food";
 import {
   festivalOpenDaysAround,
@@ -334,7 +344,21 @@ const NoteConditionsInputSchema = PartialTripConditionsSchema.extend({
   maxTravelMinutes: PartialTripConditionsSchema.shape.maxTravelMinutes.describe(
     "日帰りの片道の所要時間の上限（分）。「出発の駅から1時間以内」なら 60。言われたときだけ",
   ),
+  destinations: PartialTripConditionsSchema.shape.destinations.describe(
+    "行き先（都道府県か地方の名前。例：「富山県」「北陸」「近畿」）。言われた名前のまま渡す。どこでもよい・おまかせなら空の並び",
+  ),
 });
+
+/** 行き先の名前を都道府県に直す。都道府県にも地方にも当たらない名前はエージェントに返す */
+function destinationOf(names: readonly string[]) {
+  const resolved = resolveDestination(names);
+  if (resolved.unknown.length > 0) {
+    throw new ToolError(
+      `行き先「${resolved.unknown.join("・")}」は都道府県か地方の名前で渡してください（使える名前：${knownDestinationNames().join("・")}）`,
+    );
+  }
+  return resolved.prefectures;
+}
 
 export const noteConditions = defineTool({
   name: "note_conditions",
@@ -347,6 +371,7 @@ export const noteConditions = defineTool({
     const given = Object.fromEntries(
       Object.entries(args).filter(([, value]) => value !== undefined),
     );
+    if (args.destinations !== undefined) destinationOf(args.destinations);
     const merged = PartialTripConditionsSchema.safeParse({ ...ctx.session.conditions, ...given });
     if (!merged.success) throw new ToolError("条件の形が正しくありません");
     ctx.session.conditions = merged.data;
@@ -359,7 +384,9 @@ export const searchFestivals = defineTool({
   description:
     "希望日（または期間）・出発地・泊数に合う祭りを、祭りのデータから最大3件探す。" +
     "希望日の祭りを先に並べ、足りなければ前後2週間で補い、希望日からのずれ（日）を付ける。" +
-    "今日より前の日・中止・掲載停止の祭りは出ない。日帰り（0泊）は移動の上限を超える祭りを除く。",
+    "今日より前の日・中止・掲載停止の祭りは出ない。日帰り（0泊）は移動の上限を超える祭りを除く。" +
+    "行き先があれば、その地域の祭りだけを出す。地域になければ候補を出さずに destination.question を返すので、" +
+    "その問いをお客さまに聞き、了承を得てから widen を広げて探し直す。",
   input: {
     when: DateWishSchema.describe(
       "希望日。1日なら {kind:'date',date}、期間なら {kind:'range',from,to}",
@@ -373,11 +400,23 @@ export const searchFestivals = defineTool({
     maxTravelMinutes: MaxTravelMinutesSchema.optional().describe(
       "日帰りの片道の所要時間の上限（分）。利用者が言ったときだけ。省略すると相談で書き留めた上限。泊まりの旅では使わない",
     ),
+    destinations: DestinationsSchema.optional().describe(
+      "行き先（都道府県か地方の名前）。省略すると相談で書き留めた行き先。空の並びはおまかせ（どこでも）",
+    ),
+    widen: z
+      .enum(DESTINATION_STAGES)
+      .optional()
+      .describe(
+        "行き先をどこまで広げてよいか。area 選んだ地域だけ（既定）/ neighbor 隣接する県まで / nationwide 全国からランダムに。" +
+          "お客さまが destination.question に了承したときだけ広げる",
+      ),
   },
   async run(args, ctx) {
     const { session } = ctx;
     if (args.preferences !== undefined) session.preferences = args.preferences;
     const maxTravelMinutes = args.maxTravelMinutes ?? session.conditions.maxTravelMinutes;
+    const destinations = args.destinations ?? session.conditions.destinations ?? [];
+    const prefectures = destinationOf(destinations);
     // 聞き取りで書き留めたほかの条件（旅のかたち・ペースなど）は残す
     session.conditions = {
       ...session.conditions,
@@ -386,6 +425,7 @@ export const searchFestivals = defineTool({
       nights: args.nights,
       ...(args.party === undefined ? {} : { party: args.party }),
       ...(maxTravelMinutes === undefined ? {} : { maxTravelMinutes }),
+      ...(args.destinations === undefined ? {} : { destinations: args.destinations }),
     };
 
     const today = ctx.today();
@@ -395,7 +435,7 @@ export const searchFestivals = defineTool({
       : [];
     const stations = ctx.stations;
     const origin = args.origin;
-    const searched = searchFestivalDates(pool, {
+    const found = searchFestivalDates(pool, {
       wish: args.when,
       today,
       origin,
@@ -409,8 +449,42 @@ export const searchFestivals = defineTool({
             travelFor: (festival: Festival) =>
               estimateTravel({ access: festival.access, venue: festival.venue, origin }, stations),
           }),
-      limit: ctx.candidateChecks === undefined ? MAX_CANDIDATES : CANDIDATE_CHECK_POOL,
+      // 行き先で絞ってから数をそろえるので、ここでは減らさない
+      limit: Number.POSITIVE_INFINITY,
     });
+
+    // 行き先を守る：選んだ地域 → 隣接する県 → 全国の順。了承を得た段階より先へは広げず、問いを返す
+    const label = destinationLabel(destinations);
+    const placed = pickByDestination(found.matches, {
+      prefectures,
+      widen: args.widen ?? "area",
+      random: ctx.random ?? Math.random,
+    });
+    if (placed.kind === "ask") {
+      session.candidates = [];
+      ctx.turn.searched = true;
+      return {
+        today,
+        searchedRange: ranges,
+        candidates: [],
+        details: [],
+        destination: {
+          prefectures,
+          stage: null,
+          needsConsent: placed.next,
+          foundIn: placed.foundIn,
+          question: destinationQuestion(label, placed),
+        },
+        notes: [
+          "候補はまだ出していません。destination.question をそのままお客さまに聞き、了承を得たら widen を広げて探し直してください",
+        ],
+      };
+    }
+    const poolSize = ctx.candidateChecks === undefined ? MAX_CANDIDATES : CANDIDATE_CHECK_POOL;
+    const searched = {
+      ...found,
+      matches: placed.kind === "matches" ? placed.matches.slice(0, poolSize) : [],
+    };
 
     // 候補を出す前に、開催日・時刻・状態を公式の情報で確かめる（並べて動かす）。
     // 出す数より多めに確かめ、確かめられた祭りを先に選ぶ
@@ -463,11 +537,18 @@ export const searchFestivals = defineTool({
       );
     }
     if (candidates.length === 0) notes.push("条件に合う祭りはデータにありませんでした");
+    const stage = placed.kind === "matches" ? placed.stage : null;
+    const foundIn = placed.kind === "matches" ? placed.foundIn : [];
+    const reason = stage === null ? null : destinationReason(label, stage, foundIn);
+    if (reason !== null) notes.push(`候補を出すときに「${reason}」と添えてください`);
 
     return {
       today,
       searchedRange: ranges,
       candidates,
+      ...(prefectures.length === 0
+        ? {}
+        : { destination: { prefectures, stage, needsConsent: null, foundIn, reason } }),
       details: result.matches.map((m, index) => ({
         festivalId: m.festival.id,
         category: m.festival.category,
