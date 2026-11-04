@@ -163,6 +163,45 @@ describe("SseEventSchema", () => {
     expect(SseEventSchema.safeParse(event).success).toBe(false);
   });
 
+  it("調べ直しの頼みは、ほかのスタッフに送る。足りないものは決まった種類だけ", () => {
+    const redo = {
+      type: "staff.redo",
+      data: {
+        kind: "request",
+        from: "planner",
+        to: "scout",
+        subject: "lunch",
+        bubble: "昼ごはんの店がまだです。もう一度探してもらえますか",
+      },
+    };
+    expect(SseEventSchema.safeParse(redo).success).toBe(true);
+    expect(
+      SseEventSchema.safeParse({ ...redo, data: { ...redo.data, to: "planner" } }).success,
+    ).toBe(false);
+    expect(
+      SseEventSchema.safeParse({ ...redo, data: { ...redo.data, subject: "dessert" } }).success,
+    ).toBe(false);
+  });
+
+  it("ツールの後に、くわしい文を付けられる（空の文は送らない）", () => {
+    const end = {
+      type: "tool.end",
+      data: {
+        toolCallId: "c-1",
+        tool: "search_lodging",
+        staff: "planner",
+        ok: true,
+        bubble: "宿を2軒見つけました",
+        detail: "8月15日に泊まれる宿を2軒見つけました",
+        count: 2,
+      },
+    };
+    expect(SseEventSchema.safeParse(end).success).toBe(true);
+    expect(SseEventSchema.safeParse({ ...end, data: { ...end.data, detail: "" } }).success).toBe(
+      false,
+    );
+  });
+
   it("空の返答の続きは送らない", () => {
     const event = { type: "message.delta", data: { messageId: "m-1", text: "" } };
     expect(SseEventSchema.safeParse(event).success).toBe(false);

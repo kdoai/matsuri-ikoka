@@ -12,6 +12,7 @@ import {
   Gem,
   LayoutGrid,
   List,
+  LoaderCircle,
   type LucideIcon,
   MapPin,
   Moon,
@@ -225,6 +226,22 @@ function ChooseButton({
 }) {
   const t = useT();
   const actions = useActions();
+  // 返答の途中に手で開いたときは、押せないボタンを出さず、まだ探していることを書く
+  if (block === "busy") {
+    return (
+      <p
+        className={`inline-flex items-center justify-center gap-1.5 rounded-full border-2 border-dashed border-wood-700/30 font-bold text-ink-soft ${
+          compact ? "min-h-10 px-3 text-xs" : "min-h-12 w-full px-4 text-sm"
+        }`}
+      >
+        <LoaderCircle
+          aria-hidden="true"
+          className="size-4 shrink-0 animate-spin motion-reduce:animate-none"
+        />
+        {t.candidates.stillSearching}
+      </p>
+    );
+  }
   return (
     <button
       type="button"
@@ -695,6 +712,7 @@ export function CandidateCards() {
   const open = useApp((state) => state.ui.candidatesOpen);
   const candidates = useApp((state) => state.candidates);
   const festivals = useApp((state) => state.festivals);
+  const streaming = useApp((state) => state.session.streaming);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const [filters, setFilters] = useState<PostcardFilters>(NO_FILTERS);
   // 表示の切り替えは画面だけの見た目の好みなので、ストアに置かず、この端末に覚えておく
@@ -715,8 +733,9 @@ export function CandidateCards() {
   const shown = filterCandidates(candidates, festivals, filters);
   const first = candidates[0];
   // コンシェルジュのひとこと（1行）。くわしいことはカードに書く
-  const line =
-    candidates.length === 1 && first !== undefined
+  const line = streaming
+    ? t.candidates.stillSearching
+    : candidates.length === 1 && first !== undefined
       ? t.candidates.found(candidateArea(first.place))
       : t.candidates.foundMany(candidates.length);
   const changeView = (next: CandidateView) => {

@@ -9,7 +9,6 @@ import { GreetingBubble, PlayPrompt } from "./Play";
 import { SceneLoading } from "./SceneLoading";
 import { StaffFloor } from "./StaffPanel";
 import { ShopScene, StorefrontScene, useModelProgress, useScene3d } from "./scene3d";
-import { HostBubble } from "./Waiting";
 
 // ゲームの画面の背景になる店。3D の部品（src/scenes/ShopScene.tsx）は ShopSceneProps を受け取り、
 // ストアの状態だけを読む。読み込むまでは 2D の見取り図を出しておき、3D が描けたら上に重ねる。
@@ -127,7 +126,6 @@ export function GameStage({
                 }}
               />
             </div>
-            <HostBubble />
             <GreetingBubble />
             <PlayPrompt />
           </Suspense>

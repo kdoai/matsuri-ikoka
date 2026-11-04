@@ -211,7 +211,9 @@ test("待ち時間には豆知識係が祭りの話と出典を出し、送る�
   const staffLine = '[data-testid="staff-activity"]';
   const elapsedLine = '[data-testid="waiting-elapsed"]';
   const talkCard = '[data-testid="trivia-card"]';
-  await recordTexts(page, [staffLine, elapsedLine, talkCard]);
+  const talkText = '[data-testid="waiting-talk"]';
+  const headBubble = "[data-bubble]";
+  await recordTexts(page, [staffLine, elapsedLine, talkCard, talkText, headBubble]);
   await sendSampleMessage(page, 0);
 
   // 最初の返答の間に、次の話へ送り、止める
@@ -237,6 +239,11 @@ test("待ち時間には豆知識係が祭りの話と出典を出し、送る�
   // 候補が出る前は、読み込んである祭りの全体から、出典つきで話す
   expect(talks.join()).toMatch(/(鈴鳴灯籠まつり|風見町 盆おどり)より/);
   expect(talks.join()).toContain("example.com");
+  // 豆知識は豆知識の窓にだけ出し、スタッフの頭の上の吹き出しには出さない
+  const bubbles = await seenTexts(page, headBubble);
+  for (const text of await seenTexts(page, talkText)) {
+    expect(bubbles.some((bubble) => bubble.includes(text))).toBe(false);
+  }
 
   await page
     .getByTestId("candidate-card")

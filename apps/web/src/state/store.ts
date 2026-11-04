@@ -33,6 +33,7 @@ import {
   passcodeAccepted,
   requirePasscode,
   resetForNewSession,
+  setCandidatesOpen,
   settleStaff,
   type TurnStart,
 } from "./transitions";
@@ -415,7 +416,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
         setUi({ drawerOpen: open });
       },
       setCandidatesOpen(open) {
-        setUi({ candidatesOpen: open && get().candidates.length > 0 });
+        update((state) => setCandidatesOpen(state, open));
       },
       openShiori() {
         if (get().itinerary.current !== null) {

@@ -99,7 +99,8 @@ describe("createAgentHooks", () => {
       data: {
         toolCallId: "call-1",
         ok: true,
-        bubble: "1件見つかりました",
+        bubble: expect.stringMatching(/^1件見つかりました。いちばん上は「.+」$/),
+        detail: expect.stringContaining("いちばん上は"),
         count: 1,
         candidates: [{ festivalId: "suzunari-toro" }],
       },

@@ -419,7 +419,9 @@ export const ja = {
       search_festivals: "祭りの検索",
       search_nearby: "寄り道の検索",
       get_access: "アクセスの確認",
+      research_route: "乗り換えの調べ",
       get_weather: "天気の確認",
+      search_lodging: "宿の調べ",
       update_itinerary: "旅程の書き込み",
       verify_festival: "旅程の確定",
     },
@@ -441,6 +443,19 @@ export const ja = {
     },
     requestLine: (from: string, to: string, task: string) => `${from} → ${to}：「${task}」を頼む`,
     handoffLine: (from: string, to: string, item: string) => `${from} → ${to}：${item}を渡す`,
+    /** 調べ直しで足りないもの */
+    redoSubjects: {
+      lunch: "昼ごはんの店",
+      dinner: "夕ごはんの店",
+      sightseeing: "寄り道の場所",
+      route: "乗り換えの行き方",
+      last_mile: "駅から会場までの行き方",
+      lodging: "泊まる宿",
+    },
+    redoRequestLine: (from: string, to: string, subject: string) =>
+      `${from} → ${to}：「${subject}」の調べ直しを頼む`,
+    redoAcceptLine: (from: string, to: string, subject: string) =>
+      `${from} → ${to}：「${subject}」の調べ直しを受ける`,
     /** 頭の上に出す、いまのようす */
     activities: {
       heading: "向かっている",
@@ -538,6 +553,7 @@ export const ja = {
     needsCheck: "要事前確認",
     found: (place: string) => `${place}で、ちょっと珍しいお祭りを見つけたよ！`,
     foundMany: (count: number) => `${count}つ、おすすめの祭りを見つけたよ！`,
+    stillSearching: "まだ探しています。そろったら選べます",
     details: "詳細を見る",
     hideDetails: "詳細を閉じる",
     filters: {
