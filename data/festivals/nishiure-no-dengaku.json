@@ -1,0 +1,173 @@
+{
+  "id": "nishiure-no-dengaku",
+  "name": {
+    "ja": "西浦の田楽",
+    "en": "Nishiure Dengaku"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "静岡県",
+      "name": "浜松市天竜区"
+    }
+  ],
+  "venue": {
+    "name": "西浦 観音堂",
+    "lat": 35.2282,
+    "lng": 137.9006
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "月の出から翌朝の日の出まで、山里の観音堂で夜通し舞が続く",
+    "地能33番とはね能12番、獅子舞、しずめの舞までを一夜で演じる",
+    "豊作と無病息災を願う、旧暦の正月の神事芸能"
+  ],
+  "trivia": [
+    {
+      "text": "1976年5月4日に国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.city.hamamatsu.shizuoka.jp/bunkazai/shitei/misakubo/misakubo/nishiuredengaku.html",
+        "title": "浜松市 西浦の田楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "演目は地能33番とはね能12番、それに獅子舞としずめの舞からなる",
+      "source": {
+        "url": "https://www.city.hamamatsu.shizuoka.jp/bunkazai/shitei/misakubo/misakubo/nishiuredengaku.html",
+        "title": "浜松市 西浦の田楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "旧暦1月18日の月の出に始まり、翌日の日の出まで舞い続ける",
+      "source": {
+        "url": "https://www.city.hamamatsu.shizuoka.jp/bunkazai/shitei/misakubo/misakubo/nishiuredengaku.html",
+        "title": "浜松市 西浦の田楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": ["足元を照らす懐中電灯など（夜道が暗い）"],
+    "risk": {
+      "level": "medium",
+      "reason": "山あいの集落で冬の夜を通して行い、市が夜道の暗さを注意している"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.hamamatsu.shizuoka.jp/bunkazai/shitei/misakubo/misakubo/nishiuredengaku.html",
+        "title": "浜松市 西浦の田楽（懐中電灯などを持ってくるよう案内）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.hamamatsu.shizuoka.jp/documents/169820/r803nishiure-bus.pdf",
+        "title": "浜松市 令和8年 西浦の田楽 無料送迎バス時刻表",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-03-06",
+      "start": "21:00",
+      "end": "08:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。3月6日（金）の月の出から7日（土）の日の出まで、おおむね21:00〜翌8:00。無料送迎バスは行きが6日19:30・20:10・20:50に水窪支所発、帰りが7日7:30・8:30・9:15に田楽の里発。田楽の里から会場まで徒歩約15分",
+      "sources": [
+        {
+          "url": "https://www.city.hamamatsu.shizuoka.jp/bunkazai/shitei/misakubo/misakubo/nishiuredengaku.html",
+          "title": "浜松市 西浦の田楽（令和8年3月6日月の出〜7日日の出）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.hamamatsu.shizuoka.jp/documents/169820/r803nishiure-bus.pdf",
+          "title": "浜松市 令和8年 西浦の田楽 無料送迎バス時刻表",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-02-24",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "旧暦1月18日に行う決まりから見込んだ日（2027年の発表はまだない）。国立天文台の暦で2027年の旧暦1月1日は2月7日にあたり、1月18日は2月24日（水）。決まりでは24日の月の出から25日（木）の日の出まで夜通し行う",
+      "sources": [
+        {
+          "url": "https://www.city.hamamatsu.shizuoka.jp/bunkazai/shitei/misakubo/misakubo/nishiuredengaku.html",
+          "title": "浜松市 西浦の田楽（毎年旧暦1月18日の月の出から翌日の日の出まで）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2027/rekiyou273.html",
+          "title": "国立天文台 暦計算室 令和9年暦要項 朔弦望（2月7日 0時56分 朔）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "送迎バスの乗り降り場 田楽の里",
+        "walkMinutes": [15, 20],
+        "note": "2026年は無料送迎バスが水窪支所から出た（行き6日19:30・20:10・20:50、帰り7日7:30・8:30・9:15 田楽の里発）。2027年は未発表"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.city.hamamatsu.shizuoka.jp/documents/169820/r803nishiure-bus.pdf",
+        "title": "浜松市 令和8年 西浦の田楽 無料送迎バス時刻表",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.city.hamamatsu.shizuoka.jp/bunkazai/shitei/misakubo/misakubo/nishiuredengaku.html",
+      "title": "浜松市 西浦の田楽（水窪町西浦の観音堂）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、月の出・日の出の時刻",
+    "最寄り駅と、鉄道で来たときの水窪支所までの行き方。2027年の送迎バスの有無と時刻",
+    "浜松駅など玄関口の駅からの所要時間",
+    "駐車場の有無と台数",
+    "見学の決まり（場所・堂内に入れるか）、撮影の扱い、服装（冬の夜通しの屋外の行事だが、防寒の案内は見つからない）",
+    "雪のときの扱いと、山道の凍結への注意",
+    "屋台の有無と、この日だけの食べもの",
+    "周辺の観光と食の場所",
+    "見物客の数",
+    "会場の正確な位置"
+  ]
+}

@@ -1,0 +1,188 @@
+{
+  "id": "notocho-amamehagi",
+  "name": {
+    "ja": "アマメハギ",
+    "en": "Amamehagi (Noto Town)"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "石川県",
+      "name": "鳳珠郡能登町"
+    }
+  ],
+  "venue": {
+    "name": "能登町秋吉（ほかに宮犬・清真・河ヶ谷の地内）",
+    "lat": 37.3324,
+    "lng": 137.2321
+  },
+  "scaleTier": "XS",
+  "popularity": "regional",
+  "listedIn": ["rurubu", "walkerplus"],
+  "highlights": [
+    "鬼の面に蓑とフカグツ姿の子どもたちが「アマメー」と叫んで家々を回る",
+    "囲炉裏にあたりすぎてできる火だこ「あまめ」をはぎ取り、怠け心を戒める",
+    "冬の夜の神事で、これが済むと能登に遅い春が来るとされる"
+  ],
+  "trivia": [
+    {
+      "text": "「能登のアマメハギ」は1979年に国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://kunishitei.bunka.go.jp/bsys/maindetails/302/60",
+        "title": "文化庁 国指定文化財等データベース 能登のアマメハギ",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2018年、ユネスコ無形文化遺産「来訪神：仮面・仮装の神々」の1つに記載された",
+      "source": {
+        "url": "https://www.pref.ishikawa.lg.jp/kyoiku/bunkazai/mukeibunkaisan/amamehagi_unesco.html",
+        "title": "石川県 「能登のアマメハギ」を含む「来訪神」ユネスコ無形文化遺産に記載",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "「あまめ」は、囲炉裏端に長くいるとできる火だこのこと",
+      "source": {
+        "url": "https://www.town.noto.lg.jp/kakuka/1009/gyomu/20/1254.html",
+        "title": "能登町 アマメハギ（ユネスコ無形文化遺産）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2026年の秋吉では、面をつけた小中学生7人が家々を回った",
+      "source": {
+        "url": "https://www.chunichi.co.jp/article/1203683",
+        "title": "北陸中日新聞 「アマメー」小さな神 声を大に 能登町３集落に活気（2026年2月4日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "地区の家々を回る行事の見学が中心で、見学についての特別な注意書きは見つからない（冬の夜の屋外）"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.town.noto.lg.jp/kakuka/1009/gyomu/20/1254.html",
+        "title": "能登町 アマメハギ（地区の小中学生が鬼に扮して家々を回る）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://notocho.jp/event/320/",
+        "title": "能登町観光ガイド あまめはぎ（行事の案内）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-02-03",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。秋吉など3集落で行われた（報道）。日本観光振興協会の掲載では17:30〜20:00",
+      "sources": [
+        {
+          "url": "https://www.chunichi.co.jp/article/1203683",
+          "title": "北陸中日新聞 「アマメー」小さな神 声を大に 能登町３集落に活気（2026年2月4日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://www.japan47go.travel/ja/detail/0365cfda-83b6-447e-8027-23e39fd4715e",
+          "title": "JAPAN 47 GO アマメハギ（石川県能登町）（2026年2月3日 17:30〜20:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        }
+      ]
+    },
+    {
+      "date": "2027-02-03",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年2月3日（節分の日）に行う決まりから見込んだ日（2027年の発表はまだない）。例年、日が暮れた17:30〜18:00ごろに各地区を出発し、出発の時刻は地区ごとに違う",
+      "sources": [
+        {
+          "url": "https://notocho.jp/event/320/",
+          "title": "能登町観光ガイド あまめはぎ（毎年2月3日、17:30〜18:00ごろ出発）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.town.noto.lg.jp/kakuka/1009/gyomu/20/1254.html",
+          "title": "能登町 アマメハギ（2月3日 午後5時30分ごろから）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://rurubu.jp/andmore/spot/20001047",
+        "title": "るるぶ&more. あまめはぎ（駐車場15台・無料、のと鉄道穴水駅からバス約1時間30分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.town.noto.lg.jp/kakuka/1009/gyomu/20/1254.html",
+      "title": "能登町 アマメハギ（秋吉・河ヶ谷・清真・宮犬の地内）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://notocho.jp/event/320/",
+      "title": "能登町観光ガイド あまめはぎ",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://kunishitei.bunka.go.jp/bsys/maindetails/302/60",
+      "title": "文化庁 国指定文化財等データベース 能登のアマメハギ",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "見学の決まり（家の中に入れるか、どこから見ればよいか、地区の人への声のかけ方）",
+    "撮影してよいか",
+    "2027年の開催の発表と、各地区の出発の時刻",
+    "節分が2月2日になる年に、2月3日と2月2日のどちらで行うか",
+    "大雪のときの扱い",
+    "夜の行事のあと、公共交通で帰る手段があるか",
+    "金沢駅など玄関口の駅からの所要時間",
+    "服装・持ち物の案内",
+    "秋吉公民館のアマメハギの展示の開館日と時間",
+    "周辺の観光と食の場所"
+  ]
+}
