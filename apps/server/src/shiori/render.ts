@@ -134,6 +134,7 @@ function cover(view: ShioriView): Html {
         : ""
     }
     ${c.verifiedLabel ? html`<p class="verified">${icon("deco-crest")}${c.verifiedLabel}</p>` : ""}
+    ${c.unverifiedLabel ? html`<p class="unverified" role="note">${c.unverifiedLabel}</p>` : ""}
     <dl class="ticket">
       <div><dt>${icon("calendar")}日にち</dt><dd>${c.dateLabel}</dd></div>
       <div><dt>${icon("people")}だれと</dt><dd>${c.partyLabel}</dd></div>

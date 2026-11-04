@@ -49,7 +49,8 @@ export class AgentError extends Error {
 
 /**
  * 発言1回のあとの会話の状態（docs/spec/agents.md の状態の移り方）。
- * - 再確認：予定どおりならしおり、変更・中止なら候補へ戻る、確認できなければ確定前の確認のまま
+ * - 再確認：予定どおりならしおり、変更・中止なら候補へ戻る。確認できなければ、未確認と明記したしおりへ進む
+ *   （行き止まりにしない。しおりの表紙と画面に、出発の前に確かめるよう必ず出す）
  * - 旅程を保存した → 旅程の案
  * - 旅程係が動いたのに保存できなかった（修正の途中）→ 修正
  * - 祭りを探した → 祭りの候補
@@ -67,7 +68,7 @@ export function nextStage(
     case "cancelled":
       return "candidates";
     case "not_found":
-      return "verifying";
+      return "shiori";
     case null:
       break;
   }

@@ -24,11 +24,11 @@ describe("nextStage", () => {
     );
   });
 
-  it("再確認：予定どおりならしおり、変更・中止なら候補へ戻り、確認できなければ確定前の確認のまま", () => {
+  it("再確認：予定どおりならしおり、変更・中止なら候補へ戻り、確認できなければ未確認と明記したしおりへ進む", () => {
     expect(nextStage("itinerary", turn({ verification: "as_planned" }), true)).toBe("shiori");
     expect(nextStage("itinerary", turn({ verification: "cancelled" }), true)).toBe("candidates");
     expect(nextStage("itinerary", turn({ verification: "changed" }), true)).toBe("candidates");
-    expect(nextStage("itinerary", turn({ verification: "not_found" }), true)).toBe("verifying");
+    expect(nextStage("itinerary", turn({ verification: "not_found" }), true)).toBe("shiori");
   });
 
   it("何も調べなければ状態は変わらない", () => {

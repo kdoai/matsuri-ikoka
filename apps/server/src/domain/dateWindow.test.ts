@@ -314,3 +314,45 @@ describe("toCandidate", () => {
     expect(placeLabel(festival)).toBe("滋賀県鈴鳴町");
   });
 });
+
+describe("駅の位置からの見積もり（travelFor）", () => {
+  const estimate = (minutes: [number, number]) => ({
+    minutes,
+    basis: "estimate" as const,
+    nearestStation: "鈴鳴",
+    viaHub: null,
+  });
+  const festivals = [
+    testFestival({ id: "island", date: "2026-08-16", fromHubMinutes: null }),
+    testFestival({ id: "border", date: "2026-08-16", fromHubMinutes: null }),
+    testFestival({ id: "near-later", date: "2026-08-18", fromHubMinutes: null }),
+  ];
+  const travel: Record<string, [number, number]> = {
+    island: [200, 600],
+    border: [100, 240],
+    "near-later": [40, 90],
+  };
+  const search = (maxTravelMinutes?: number) =>
+    searchFestivalDates(festivals, {
+      ...base,
+      nights: 0,
+      wish: day("2026-08-16"),
+      today: "2026-08-03",
+      travelFor: (festival) => estimate(travel[festival.id] ?? [0, 0]),
+      ...(maxTravelMinutes === undefined ? {} : { maxTravelMinutes }),
+    });
+
+  it("見積もりの下限でも上限を超える祭りは除き、境目の祭りは残して知らせる", () => {
+    const result = search(180);
+    expect(result.tooFar.map((t) => t.festivalId)).toEqual(["island"]);
+    expect(result.travelUncertain).toEqual(["border"]);
+    expect(result.matches.find((m) => m.festival.id === "border")).toMatchObject({
+      travelBasis: "estimate",
+      travelFit: "uncertain",
+    });
+  });
+
+  it("上限を言われたら、必ず守る条件なので、希望日の境目の祭りより、収まる祭りを先に並べる", () => {
+    expect(search(180).matches.map((m) => m.festival.id)).toEqual(["near-later", "border"]);
+  });
+});

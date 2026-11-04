@@ -96,6 +96,7 @@ b, strong, h1, h2, h3, h4 { font-weight: 900; }
 .cover .verified { position: absolute; right: 12mm; bottom: 74mm; width: 46mm; text-align: center; color: #b8302a; font-weight: 900; font-size: 8.5pt; line-height: 1.35;
   background: #fffaf0; border: 0.8mm solid #b8302a; border-radius: 50%; aspect-ratio: 1; display: flex; flex-direction: column; justify-content: center; padding: 4mm; transform: rotate(-8deg); }
 .cover .verified .ic { width: 9mm; height: 9mm; margin: 0 auto 1mm; color: #b8302a; --crest: #b8302a; }
+.cover .unverified { position: relative; margin: 3mm 0 0; padding: 2mm 3mm; border: 0.6mm solid #b8302a; border-radius: 2mm; background: #fffaf0; color: #b8302a; font-weight: 900; font-size: 9pt; line-height: 1.45; }
 .cover .crew { position: relative; display: flex; align-items: flex-end; gap: 2mm; height: 48mm; margin: 0 -4mm; }
 .cover .crew img.main, .cover .crew img.waver { height: 44mm; width: auto; }
 .cover .crew img.main { height: 48mm; }

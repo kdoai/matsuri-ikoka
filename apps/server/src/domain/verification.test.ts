@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { testFestival } from "./testFestivals";
 import {
+  DATA_CONFIRMED_NOTE,
+  dataConfirmation,
   decideVerification,
   officialHosts,
   statesYear,
@@ -183,5 +185,60 @@ describe("yearStatedOnPage", () => {
       false,
     );
     expect(yearStatedOnPage({ dateText: " ", pages: [page], date: "2026-08-16" })).toBe(false);
+  });
+});
+
+describe("祭りのデータの公式の出典で確かめる（dataConfirmation）", () => {
+  // 開催回の公式の出典を、今日の5日前に確かめた架空の祭り
+  const recent = testFestival({
+    id: "kogane-matsuri",
+    edit: (f) => {
+      for (const o of f.occurrences) {
+        o.sources = [{ ...o.sources[0]!, checkedAt: "2026-07-29", confidence: "official" }];
+      }
+    },
+  });
+
+  it("発表済みで、最近確かめた公式の出典があれば、その出典を返す", () => {
+    expect(dataConfirmation(recent, "2026-08-16", today)).toHaveLength(1);
+  });
+
+  it("出典が古いとき・見込みのとき・その日の開催回がないときは返さない", () => {
+    expect(dataConfirmation(festival, "2026-08-16", today)).toEqual([]);
+    const expected = testFestival({ id: "kogane-yotei", status: "expected" });
+    expect(dataConfirmation(expected, "2026-08-16", today)).toEqual([]);
+    expect(dataConfirmation(recent, "2026-09-01", today)).toEqual([]);
+  });
+
+  it("Web で確認できなくても、データの公式の出典で確かめてあれば予定どおりにする", () => {
+    const decision = decideVerification(
+      recent,
+      {
+        result: "as_planned",
+        sources: [{ url: "https://example.com/suzunari/top" }],
+        yearStated: false,
+      },
+      today,
+      "2026-08-16",
+    );
+    expect(decision.result).toBe("as_planned");
+    expect(decision.note).toBe(DATA_CONFIRMED_NOTE);
+    expect(decision.sources[0]?.checkedAt).toBe("2026-07-29");
+  });
+
+  it("変更・中止の知らせは、データより Web の結果を優先する", () => {
+    const decision = decideVerification(
+      recent,
+      { result: "cancelled", sources: [{ url: "https://example.com/suzunari/news" }] },
+      today,
+      "2026-08-16",
+    );
+    expect(decision.result).toBe("cancelled");
+  });
+
+  it("確かめる日を渡さなければ、データでは確かめない", () => {
+    expect(decideVerification(recent, { result: "not_found", sources: [] }, today).result).toBe(
+      "not_found",
+    );
   });
 });

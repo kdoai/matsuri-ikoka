@@ -104,7 +104,10 @@ export function registerShioriRoutes(app: Hono, deps: ShioriDeps) {
 
 type Found = { ok: true; trip: ShioriTrip } | { ok: false; notice: Html; status: 404 | 409 };
 
-/** 公式の情報で開催予定を確かめられた旅程だけを、しおりとして出す */
+/**
+ * 確定した旅程を、しおりとして出す。公式の情報で開催予定を確かめられた旅程と、
+ * 確かめられなかった（not_found）が利用者が決めた旅程（表紙に注意を出す）。変更・中止と、まだ確かめていない旅程は出さない
+ */
 async function confirmedTrip(deps: ShioriDeps, id: string): Promise<Found> {
   const itinerary = await deps.readItinerary(id);
   if (itinerary === undefined) {
@@ -115,7 +118,8 @@ async function confirmedTrip(deps: ShioriDeps, id: string): Promise<Found> {
     };
   }
   const { verification } = itinerary;
-  if (verification.status !== "as_planned" || !hasOfficialSource(verification.sources)) {
+  const confirmed = verification.status === "as_planned" && hasOfficialSource(verification.sources);
+  if (!confirmed && verification.status !== "not_found") {
     return {
       ok: false,
       notice: renderShioriNotice(

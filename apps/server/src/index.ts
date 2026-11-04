@@ -10,10 +10,12 @@ import { loadPrompts } from "./agent/prompts";
 import { loadSampleConversations, ReplayAgentRunner } from "./agent/replayRunner";
 import type { AgentRunner } from "./agent/runner";
 import { agentConfigDir, forgetTranscripts } from "./agent/transcripts";
+import { createWebRouteResearcher } from "./agent/webRouteResearcher";
 import { createWebVerifier } from "./agent/webVerifier";
 import { createApp } from "./app";
 import { portInUseMessage, readConfig, startupNotice } from "./config";
 import { festivalDirs, loadFestivals } from "./data/festivalStore";
+import { loadStationPoints } from "./data/stationPoints";
 import { nowInJapan, todayInJapan } from "./domain/calendar";
 import { ConcurrencyLimiter, clientIp, DailyLimiter } from "./routes/guard";
 import { StoragePersistence } from "./session/persistence";
@@ -78,7 +80,18 @@ if (config.mode === "live") {
   // 相談が消えたら、その相談の会話の記録を消す
   sessions = new SessionStore({ onRemove: forgetTranscripts(deleteSession, cwd) });
   const env = agentEnv(process.env);
+  const stations = await loadStationPoints(config.repoRoot);
   runner = new ClaudeAgentRunner({
+    ...(stations ? { stations } : {}),
+    // 行き方の調べは旅程係の中で1回動くので、スタッフのモデルで行う
+    routes: createWebRouteResearcher({
+      prompt: prompts.route,
+      model: config.models.staff,
+      cwd,
+      env,
+      query,
+      maxBudgetUsd: config.maxBudgetUsd,
+    }),
     festivals: festivals.store,
     itineraries,
     weather: createJmaWeather(),

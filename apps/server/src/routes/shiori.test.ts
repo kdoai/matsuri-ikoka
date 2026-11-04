@@ -12,10 +12,16 @@ import { createShiori } from "../shiori";
 import type { PdfEngine } from "../shiori/pdf";
 import { registerShioriRoutes } from "./shiori";
 
-function setup(engine?: PdfEngine, verified = true) {
+function setup(engine?: PdfEngine, verified: boolean | "not_found" = true) {
   const itineraries = new ItineraryStore();
   const itinerary = fictionalItinerary();
-  if (verified) {
+  if (verified === "not_found") {
+    itinerary.verification = {
+      status: "not_found",
+      checkedAt: "2026-08-03T10:00:00+09:00",
+      sources: [],
+    };
+  } else if (verified) {
     itinerary.verification = {
       status: "as_planned",
       checkedAt: "2026-08-03T10:00:00+09:00",
@@ -71,6 +77,13 @@ describe("GET /shiori/:id.pdf", () => {
 
     expect((await app.request(`/shiori/${id}.pdf`)).status).toBe(409);
     expect((await app.request("/shiori/no-such.pdf")).status).toBe(404);
+  });
+
+  it("公式で確かめられなかったが決めた旅程は、未確認の注意を表紙に出して渡す", async () => {
+    const { app, id, renders } = setup(undefined, "not_found");
+
+    expect((await app.request(`/shiori/${id}.pdf`)).status).toBe(200);
+    expect(renders[0]).toContain("開催は公式の情報でまだ確かめられていません");
   });
 
   it("混み合っていたら 503 で、少し待ってから開き直すよう伝える", async () => {

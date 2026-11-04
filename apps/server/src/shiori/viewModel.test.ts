@@ -10,7 +10,7 @@ import {
   SECOND_FESTIVAL_ID,
 } from "./testTrips";
 import { toShioriTrip } from "./trip";
-import { buildShioriView, UNKNOWN_JA } from "./viewModel";
+import { buildShioriView, UNKNOWN_JA, UNVERIFIED_LABEL } from "./viewModel";
 
 const lookup = lookupOf(fictionalFestivals());
 
@@ -60,6 +60,19 @@ describe("しおりの view-model", () => {
     const trip = fictionalOuting();
     trip.verification = { status: "pending" };
     expect(buildShioriView(trip, lookup).cover.verifiedLabel).toBeNull();
+    expect(buildShioriView(trip, lookup).cover.unverifiedLabel).toBeNull();
+  });
+
+  it("公式で確かめられなかった旅程には、出発の前に確かめるよう注意を出す", () => {
+    const trip = fictionalOuting();
+    trip.verification = {
+      status: "not_found",
+      checkedAt: "2026-08-03T10:00:00+09:00",
+      sources: [],
+    };
+    const { cover } = buildShioriView(trip, lookup);
+    expect(cover.verifiedLabel).toBeNull();
+    expect(cover.unverifiedLabel).toBe(UNVERIFIED_LABEL);
   });
 
   it("日ごとに、出発・時刻の流れ・泊まる地域・帰りを出す", () => {
