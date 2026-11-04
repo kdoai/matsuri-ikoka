@@ -11,8 +11,8 @@
     },
     {
       "file": "interior.glb",
-      "kilobytes": 2251.9,
-      "triangles": 105096,
+      "kilobytes": 2435.2,
+      "triangles": 117796,
       "animations": [
         "gimmick.bell.ring",
         "gimmick.cat.sleep",
@@ -27,7 +27,7 @@
         "gimmick.secret.open",
         "gimmick.stamp.press"
       ],
-      "textures": 27
+      "textures": 29
     },
     {
       "file": "motion_carry.glb",
@@ -182,5 +182,5 @@
       "textures": 5
     }
   ],
-  "total_kilobytes": 4230.7
+  "total_kilobytes": 4414.0
 }
