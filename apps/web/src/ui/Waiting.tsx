@@ -1,54 +1,38 @@
-import { STAFF_IDS, type StaffId } from "@matsuri-ikoka/schema";
-import { BookOpen, Clock, PartyPopper, Sparkles, UtensilsCrossed, X } from "lucide-react";
-import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import {
+  BookOpen,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  PartyPopper,
+  Pause,
+  Play,
+  Sparkles,
+  UtensilsCrossed,
+  X,
+} from "lucide-react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { usePlay } from "../state/play";
 import { useActions, useApp, useT } from "../state/react";
 import type { QuizKind, WaitingTalk } from "../state/types";
 import { waitingTalks } from "../state/waiting";
 import { focusComposer } from "./ChatPanel";
 import { buttonQuiet, SourceLink } from "./common";
+import { GameWindow } from "./GameWindow";
 import { useReducedMotion } from "./hooks";
-import { CATEGORY_ICON, LanternIcon } from "./icons";
+import { CATEGORY_ICON, CATEGORY_TONE, LanternIcon } from "./icons";
 import { Portrait } from "./Portraits";
-import { choiceIcon, quizDots } from "./quizLook";
-import { STAFF_LOOK } from "./StaffPanel";
+import { choiceIcon, MAX_STAMP_DOTS, quizDots } from "./quizLook";
 
-// 待ち時間を楽しめる時間にする部品：豆知識係（祭りの小話・見どころ・作法）、クイズ、しおり完成の演出。
+// 待ち時間を楽しめる時間にする部品：コンシェルジュの豆知識（祭りの小話・見どころ・作法）と
+// 祭りクイズを1つの窓で出す。しおり完成の演出もここに置く。
 
 /** 豆知識を切り替える間隔 */
 const TALK_INTERVAL_MS = 7_000;
-/** この時間を過ぎたら、旅程づくりには時間がかかることを伝える */
-const LONG_WAIT_MS = 20_000;
 
-/** 秒を「1:05」の形にする */
-export function formatElapsed(ms: number): string {
-  const seconds = Math.max(0, Math.floor(ms / 1000));
-  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
-}
-
-/** 返答を待っている間だけ、1秒ごとに描き直すための今の時刻 */
-function useNow(running: boolean): number {
-  const [now, setNow] = useState(() => Date.now());
-  useEffect(() => {
-    if (!running) return;
-    setNow(Date.now());
-    const timer = setInterval(() => setNow(Date.now()), 1_000);
-    return () => clearInterval(timer);
-  }, [running]);
-  return now;
-}
-
-/** 返答を待ち始めた時刻と、スタッフごとに動き始めた時刻 */
-function useWaitClock(streaming: boolean, busy: readonly StaffId[]) {
-  const started = useRef<number | null>(null);
-  const staffStarted = useRef<Partial<Record<StaffId, number>>>({});
-  if (streaming && started.current === null) started.current = Date.now();
-  if (!streaming) started.current = null;
-  for (const id of STAFF_IDS) {
-    if (busy.includes(id)) staffStarted.current[id] ??= Date.now();
-    else delete staffStarted.current[id];
-  }
-  return { started: started.current, staffStarted: staffStarted.current };
+/** 何話目かを、話の数の中に収める（前へ戻ると負になるので、正の余りにする） */
+function talkIndex(index: number, count: number): number {
+  const size = Math.max(1, count);
+  return ((index % size) + size) % size;
 }
 
 /** 豆知識の1話を、画面の言葉にする（決まった値は辞書で、データの文はそのまま） */
@@ -74,31 +58,36 @@ function useTalkText() {
   };
 }
 
-/** いま話している豆知識（返答を待っていないときは null） */
-function useCurrentTalk(): { talk: WaitingTalk; count: number } | null {
-  const streaming = useApp((state) => state.session.streaming);
+/** 待ち時間に話せる豆知識の一覧 */
+function useTalks(): WaitingTalk[] {
   const festivals = useApp((state) => state.festivals);
   const candidates = useApp((state) => state.candidates);
   const itinerary = useApp((state) => state.itinerary);
-  const index = useApp((state) => state.trivia.index);
-  const talks = useMemo(
+  return useMemo(
     () => waitingTalks({ festivals, candidates, itinerary }),
     [festivals, candidates, itinerary],
   );
-  const talk = talks[index % Math.max(1, talks.length)];
-  return streaming && talk !== undefined ? { talk, count: talks.length } : null;
+}
+
+/** いま話している豆知識（返答を待っていないときは null） */
+function useCurrentTalk(): WaitingTalk | null {
+  const streaming = useApp((state) => state.session.streaming);
+  const index = useApp((state) => state.trivia.index);
+  const talks = useTalks();
+  const talk = talks[talkIndex(index, talks.length)];
+  return streaming && talk !== undefined ? talk : null;
 }
 
 /**
  * 3D の店で、豆知識係（コンシェルジュ）の頭の上に出す吹き出し。位置は 3D の中から書き込む。
- * 同じ文は豆知識係のカードで読めるので、読み上げからは外す
+ * 同じ文は豆知識の窓で読めるので、読み上げからは外す
  */
 export function HostBubble() {
-  const current = useCurrentTalk();
+  const talk = useCurrentTalk();
   const talkText = useTalkText();
   const entering = usePlay((state) => state.entering);
-  if (current === null || entering) return null;
-  const { text } = talkText(current.talk);
+  if (talk === null || entering) return null;
+  const { text } = talkText(talk);
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0">
       <p
@@ -112,191 +101,180 @@ export function HostBubble() {
   );
 }
 
-/** 窓の頭に重ねる見出しの札 */
-function PanelTag({ children, tone }: { children: ReactNode; tone: "ai" | "shu" }) {
+/** 窓の下に並べる点。いまの位置を塗る（飾りなので読み上げない） */
+function Dots({ count, active }: { count: number; active: number }) {
   return (
-    <p
-      className={`absolute -top-3.5 left-4 inline-flex items-center gap-1.5 rounded-full border-2 border-kinari-50 px-3 py-0.5 font-bold text-kinari-50 text-sm shadow-md ${
-        tone === "ai" ? "bg-ai-800" : "-rotate-2 bg-shu-600"
-      }`}
-    >
-      {children}
+    <p aria-hidden="true" className="flex justify-center gap-1.5">
+      {Array.from({ length: count }, (_, i) => (
+        <span
+          // biome-ignore lint/suspicious/noArrayIndexKey: 点は並びの位置だけで見分ける
+          key={i}
+          className={`size-2.5 rounded-full border-2 ${
+            i === active ? "border-yamabuki-700 bg-yamabuki-400" : "border-wood-300 bg-kinari-200"
+          }`}
+        />
+      ))}
     </p>
   );
 }
 
-/** スタッフの小さな印（法被の色と頭文字）。名前は横に文字で出すので、読み上げない */
-function StaffMark({ id }: { id: StaffId }) {
-  const look = STAFF_LOOK[id];
+/** 祭りの種類の絵葉書（このアプリで描いた色と紋。祭りの写真は使わない）。飾りなので読み上げない */
+function Postcard({ category }: { category: string }) {
+  const Emblem = CATEGORY_ICON[category] ?? LanternIcon;
+  const tone = CATEGORY_TONE[category] ?? CATEGORY_TONE.other;
   return (
     <span
       aria-hidden="true"
-      className={`grid size-6 shrink-0 place-items-center rounded-full font-bold text-[0.7rem] ring-2 ${look.badge}`}
+      className="grid size-16 shrink-0 rotate-3 place-items-center rounded-md border-4 border-white shadow-md sm:size-20"
     >
-      {look.initial}
+      <span
+        className={`grid size-full place-items-center rounded-sm bg-gradient-to-br text-kinari-50 ${tone}`}
+      >
+        <Emblem className="size-8 sm:size-10" />
+      </span>
     </span>
   );
 }
 
-/** 札の下に置く町並みの影（このアプリのために描いた形）。飾りなので読み上げない */
-function Townscape() {
-  return (
-    <svg
-      viewBox="0 0 320 28"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-x-0 bottom-0 h-7 w-full rounded-b-[1.1rem] text-ai-200/70"
-      fill="currentColor"
-    >
-      <path d="M0 28V18h22v-6l12-6 12 6v6h18v-4h26v4h14V8l4-4 4 4v2h6v-2l4-4 4 4v20h18v-8l16-8 16 8v8h20V14h30v14h12v-6l10-6 10 6v6h22v-10h24v10h16V16l14-6 14 6v12z" />
-    </svg>
-  );
-}
+/** 丸い送りのボタン */
+const roundButton =
+  "grid size-9 shrink-0 place-items-center rounded-full border-2 border-wood-300 bg-white text-ink shadow-sm transition hover:border-yamabuki-400 hover:bg-yamabuki-100";
 
 /**
- * 待ち時間の豆知識係。スタッフが調べものや旅程づくりをしている間、コンシェルジュが
- * 祭りの小話・見どころ・作法を話す（中身は祭りのデータだけで、出典を添える）。
- * 数秒ごとに次の話へ移り、送る・止めるができる。いま動いているスタッフと経過時間も、同じ枠に出す。
+ * 豆知識：コンシェルジュが祭りの小話・見どころ・作法を話す（中身は祭りのデータだけで、出典を添える）。
+ * 数秒ごとに次の話へ移り、前後へ送る・止めるができる。「くわしく見る」で出典と候補に入れるボタンを開く
  */
-/** compact のときは話を出さず、だれが何をしているかと経過時間だけを出す（クイズと並べるとき） */
-export function WaitingGuide({ compact = false }: { compact?: boolean }) {
+function TriviaBody() {
   const t = useT();
   const actions = useActions();
-  const streaming = useApp((state) => state.session.streaming);
+  const index = useApp((state) => state.trivia.index);
   const festivals = useApp((state) => state.festivals);
   const candidates = useApp((state) => state.candidates);
-  const itinerary = useApp((state) => state.itinerary);
-  const staff = useApp((state) => state.staff);
-  const index = useApp((state) => state.trivia.index);
+  const talks = useTalks();
+  const talkText = useTalkText();
   const reducedMotion = useReducedMotion();
   const [paused, setPaused] = useState(false);
   const [hovered, setHovered] = useState(false);
-  const talks = useMemo(
-    () => waitingTalks({ festivals, candidates, itinerary }),
-    [festivals, candidates, itinerary],
-  );
-  const busy = STAFF_IDS.filter((id) => id !== "concierge" && staff[id].phase !== "idle");
-  const clock = useWaitClock(streaming, busy);
-  const now = useNow(streaming);
-  const talkText = useTalkText();
+  const [open, setOpen] = useState(false);
+  const detailsId = useId();
 
   useEffect(() => {
-    if (!streaming || compact || paused || hovered || reducedMotion || talks.length < 2) {
+    if (paused || hovered || open || reducedMotion || talks.length < 2) {
       return;
     }
     const timer = setInterval(() => actions.nextTrivia(), TALK_INTERVAL_MS);
     return () => clearInterval(timer);
-  }, [streaming, compact, paused, hovered, reducedMotion, talks.length, actions]);
+  }, [paused, hovered, open, reducedMotion, talks.length, actions]);
 
-  if (!streaming) {
+  const position = talkIndex(index, talks.length);
+  const talk = talks[position];
+  if (talk === undefined) {
     return null;
   }
-  const talk = talks[index % Math.max(1, talks.length)];
-  const elapsed = clock.started === null ? 0 : now - clock.started;
-  const isCandidate =
-    talk !== undefined && candidates.some((c) => c.festivalId === talk.festivalId);
-  const line = talk === undefined ? null : talkText(talk);
+  const line = talkText(talk);
+  const isCandidate = candidates.some((c) => c.festivalId === talk.festivalId);
+  const category = festivals[talk.festivalId]?.category ?? "other";
+  const dotCount = Math.min(talks.length, MAX_STAMP_DOTS);
   return (
-    <aside
-      aria-label={t.waiting.title}
-      className="relative w-full rounded-2xl border-4 border-ai-700 bg-kinari-50/95 px-3 pt-5 pb-2 text-sm shadow-xl motion-safe:animate-pop"
-      data-testid="waiting-guide"
+    // biome-ignore lint/a11y/noStaticElementInteractions: 指を乗せている間は送りを止めるだけで、操作はボタンで行う
+    <div
+      data-testid="trivia-card"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <PanelTag tone="ai">
-        <BookOpen className="size-4" aria-hidden="true" />
-        {t.waiting.host}
-      </PanelTag>
-      <div className="flex gap-3">
-        <div className="flex shrink-0 flex-col items-center gap-0.5">
-          <Portrait speaker="concierge" className="size-12 border-2 sm:size-14" />
+      <div className="flex items-center gap-2">
+        <Portrait speaker="concierge" className="size-12 shrink-0 border-2 sm:size-14" />
+        <div className="min-w-0 flex-1 rounded-xl bg-white px-2.5 py-2 shadow-sm ring-1 ring-wood-300/60">
           <p
-            className="inline-flex items-center gap-0.5 font-mono text-ink-soft text-xs tabular-nums"
-            data-testid="waiting-elapsed"
+            key={`${talk.festivalId}-${index}`}
+            className="line-clamp-4 font-bold text-ink leading-snug motion-safe:animate-fade"
+            data-testid="waiting-talk"
           >
-            <Clock className="size-3" aria-hidden="true" />
-            {t.waiting.elapsed(formatElapsed(elapsed))}
+            {line.text}
+          </p>
+          <p className="mt-0.5 truncate text-ink-soft text-xs">
+            <span className="font-bold text-shu-700">{line.label}</span>・
+            {t.waiting.from(talk.festivalName)}
           </p>
         </div>
-        <div className="min-w-0 flex-1">
-          {!compact && talk !== undefined && line !== null ? (
-            <div data-testid="trivia-card">
-              <p className="font-bold text-shu-700 text-xs">{line.label}</p>
-              <p
-                key={`${talk.festivalId}-${index}`}
-                className="mt-0.5 font-medium text-ink motion-safe:animate-fade"
-                data-testid="waiting-talk"
-              >
-                {line.text}
-              </p>
-              <p className="mt-0.5 text-ink-soft text-xs">{t.waiting.from(talk.festivalName)}</p>
-              <div className="mt-0.5">
-                <SourceLink source={talk.source} compact />
-              </div>
-            </div>
-          ) : null}
-          <div className={`mt-1.5 flex flex-wrap gap-1 ${compact ? "hidden" : ""}`}>
-            {talks.length > 1 ? (
-              <button type="button" className={buttonQuiet} onClick={() => actions.nextTrivia()}>
-                {t.waiting.next}
-              </button>
-            ) : null}
-            {talks.length > 1 ? (
-              <button
-                type="button"
-                className={buttonQuiet}
-                aria-pressed={paused}
-                onClick={() => setPaused(!paused)}
-              >
-                {paused ? t.waiting.resume : t.waiting.pause}
-              </button>
-            ) : null}
-            {talk === undefined || isCandidate ? null : (
-              <button
-                type="button"
-                className={buttonQuiet}
-                onClick={() => {
-                  actions.setDraft(t.trivia.addMessage(talk.festivalName));
-                  focusComposer();
-                }}
-              >
-                {t.trivia.addCandidate}
-              </button>
-            )}
-          </div>
-          {busy.length > 0 ? (
-            <div
-              className={compact ? "" : "mt-1.5 border-ai-100 border-t pt-1.5"}
-              data-testid="waiting-staff"
-            >
-              <p className="font-bold text-ink-soft text-xs">{t.waiting.working}</p>
-              <ul className="mt-0.5 divide-y divide-line text-xs">
-                {busy.map((id) => {
-                  const state = staff[id];
-                  const since = clock.staffStarted[id];
-                  return (
-                    <li key={id} className="flex items-center gap-1.5 py-0.5">
-                      <StaffMark id={id} />
-                      <span className="shrink-0 font-bold text-ink">{t.staff.names[id]}</span>
-                      <span className="min-w-0 flex-1 truncate text-ink-soft">
-                        {state.bubble ?? t.staff.phases[state.phase]}
-                      </span>
-                      <span className="shrink-0 font-mono text-ink-soft tabular-nums">
-                        {since === undefined ? "" : formatElapsed(now - since)}
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ) : null}
-          {elapsed >= LONG_WAIT_MS ? (
-            <p className="mt-1.5 text-ink-soft text-xs">{t.waiting.longWait}</p>
-          ) : null}
-        </div>
+        <Postcard category={category} />
       </div>
-    </aside>
+
+      <div className="mt-2 flex items-center justify-between gap-2">
+        <button
+          type="button"
+          className={roundButton}
+          aria-label={t.waiting.prev}
+          disabled={talks.length < 2}
+          onClick={() => actions.prevTrivia()}
+        >
+          <ChevronLeft className="size-5" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          className="inline-flex items-center gap-1.5 rounded-full border-2 border-wood-300 bg-white px-4 py-1 font-bold text-ink shadow-sm transition hover:border-yamabuki-400 hover:bg-yamabuki-100"
+          aria-expanded={open}
+          aria-controls={detailsId}
+          onClick={() => setOpen(!open)}
+        >
+          <BookOpen className="size-4" aria-hidden="true" />
+          {t.waiting.more}
+          <ChevronDown
+            className={`size-4 transition ${open ? "rotate-180" : ""}`}
+            aria-hidden="true"
+          />
+        </button>
+        <button
+          type="button"
+          className={roundButton}
+          aria-label={t.waiting.next}
+          disabled={talks.length < 2}
+          onClick={() => actions.nextTrivia()}
+        >
+          <ChevronRight className="size-5" aria-hidden="true" />
+        </button>
+      </div>
+
+      {/* 出典は閉じていても文書には残し、開いたときだけ見せる */}
+      <div
+        id={detailsId}
+        hidden={!open}
+        className="mt-2 space-y-1.5 border-wood-300/60 border-t pt-2"
+      >
+        <SourceLink source={talk.source} compact />
+        {isCandidate ? null : (
+          <button
+            type="button"
+            className={buttonQuiet}
+            onClick={() => {
+              actions.setDraft(t.trivia.addMessage(talk.festivalName));
+              focusComposer();
+            }}
+          >
+            {t.trivia.addCandidate}
+          </button>
+        )}
+      </div>
+
+      <div className="relative mt-2">
+        <Dots count={dotCount} active={position % dotCount} />
+        {talks.length > 1 ? (
+          <button
+            type="button"
+            className="absolute top-1/2 right-0 grid size-7 -translate-y-1/2 place-items-center rounded-full text-ink-soft transition hover:bg-kinari-200 hover:text-ink"
+            aria-label={paused ? t.waiting.resume : t.waiting.pause}
+            aria-pressed={paused}
+            onClick={() => setPaused(!paused)}
+          >
+            {paused ? (
+              <Play className="size-4" aria-hidden="true" />
+            ) : (
+              <Pause className="size-4" aria-hidden="true" />
+            )}
+          </button>
+        ) : null}
+      </div>
+    </div>
   );
 }
 
@@ -309,14 +287,14 @@ function ChoiceGlyph({ kind, choice }: { kind: QuizKind; choice: string }) {
       : icon.type === "food"
         ? UtensilsCrossed
         : Sparkles;
-  return <Icon className="size-6 shrink-0 text-shu-600 sm:size-7" aria-hidden="true" />;
+  return <Icon className="size-6 shrink-0 text-shu-600" aria-hidden="true" />;
 }
 
 /**
- * 2択のクイズ。ゲームの問題の札のように、見出しの札・問い・絵つきの選択肢・スタンプの点を1枚にまとめる。
- * 答えなくても相談は進み、閉じることもできる。返答が終わると消える
+ * 2択のクイズ。問い・絵つきの選択肢・スタンプの点を、豆知識と同じ窓に出す。
+ * 答えなくても相談は進み、閉じると豆知識に戻る。返答が終わると消える
  */
-export function QuizCard({ onClose }: { onClose: () => void }) {
+function QuizBody({ onClose }: { onClose: () => void }) {
   const t = useT();
   const actions = useActions();
   const quiz = useApp((state) => state.quiz);
@@ -333,74 +311,63 @@ export function QuizCard({ onClose }: { onClose: () => void }) {
   const correct = quiz.answer === question.correct;
   const dots = quizDots(stamps, answered);
   return (
-    <aside
-      aria-labelledby="quiz-title"
-      className="relative w-full rounded-[1.4rem] border-4 border-ai-700 bg-gradient-to-b from-kinari-50 to-kinari-200 px-3 pt-6 pb-8 shadow-xl motion-safe:animate-pop sm:px-4"
-      data-testid="quiz-card"
-    >
-      <Townscape />
-      <PanelTag tone="shu">
-        <LanternIcon className="size-4" />
-        <span id="quiz-title">{t.quiz.title}</span>
-      </PanelTag>
-      <div className="relative flex items-start gap-2">
-        <Portrait speaker="concierge" className="hidden size-14 border-2 sm:grid" />
-        <div className="min-w-0 flex-1">
-          <p className="flex items-start gap-2 font-bold text-base text-ink sm:text-lg">
-            <span
-              aria-hidden="true"
-              className="grid size-7 shrink-0 place-items-center rounded-full bg-shu-600 font-black text-kinari-50 text-sm"
-            >
-              Q
-            </span>
-            <span>
-              <span className="sr-only">{t.quiz.question}：</span>
-              {t.quiz.prompts[question.kind](question.festivalName)}
-            </span>
-          </p>
-          <div className="mt-2 grid grid-cols-2 gap-2">
-            {question.choices.map((choice, index) => {
-              const isRight = index === question.correct;
-              const chosen = quiz.answer === index;
-              return (
-                <button
-                  // biome-ignore lint/suspicious/noArrayIndexKey: 2択の位置そのものが答え
-                  key={index}
-                  type="button"
-                  disabled={answered}
-                  onClick={() => actions.answerQuiz(index as 0 | 1)}
-                  className={`flex min-h-14 items-center gap-2 rounded-xl border-2 px-2.5 py-1.5 text-left font-bold text-sm leading-snug shadow-sm transition sm:text-base ${
-                    answered && isRight
-                      ? "border-emerald-700 bg-emerald-50 text-emerald-900"
-                      : chosen
-                        ? "border-stone-500 bg-stone-100 text-stone-700"
-                        : "border-wood-300 bg-white text-ink hover:border-yamabuki-400 hover:bg-yamabuki-100"
-                  }`}
-                >
-                  <ChoiceGlyph kind={question.kind} choice={choice} />
-                  <span className="min-w-0">{label(choice)}</span>
-                </button>
-              );
-            })}
-          </div>
-          <p className="mt-1.5 text-xs" role="status">
-            {answered ? (
-              <span className="font-bold text-ink">
-                {correct ? t.quiz.correct : t.quiz.wrong(label(question.choices[question.correct]))}
-              </span>
-            ) : (
-              <span className="text-ink-soft">{t.quiz.note}</span>
-            )}
-          </p>
-          {answered ? (
-            <div className="mt-0.5">
-              <SourceLink source={question.source} compact />
-            </div>
-          ) : null}
-        </div>
+    <div data-testid="quiz-card">
+      <div className="flex items-start gap-2">
+        <Portrait speaker="concierge" className="size-12 shrink-0 border-2 sm:size-14" />
+        <p className="flex min-w-0 flex-1 items-start gap-2 rounded-xl bg-white px-2.5 py-2 font-bold text-ink leading-snug shadow-sm ring-1 ring-wood-300/60">
+          <span
+            aria-hidden="true"
+            className="grid size-6 shrink-0 place-items-center rounded-full bg-shu-600 font-black text-kinari-50 text-xs"
+          >
+            Q
+          </span>
+          <span>
+            <span className="sr-only">{t.quiz.question}：</span>
+            {t.quiz.prompts[question.kind](question.festivalName)}
+          </span>
+        </p>
       </div>
+      <div className="mt-2 grid grid-cols-2 gap-2">
+        {question.choices.map((choice, index) => {
+          const isRight = index === question.correct;
+          const chosen = quiz.answer === index;
+          return (
+            <button
+              // biome-ignore lint/suspicious/noArrayIndexKey: 2択の位置そのものが答え
+              key={index}
+              type="button"
+              disabled={answered}
+              onClick={() => actions.answerQuiz(index as 0 | 1)}
+              className={`flex min-h-12 items-center gap-2 rounded-xl border-2 px-2.5 py-1.5 text-left font-bold text-sm leading-snug shadow-sm transition ${
+                answered && isRight
+                  ? "border-emerald-700 bg-emerald-50 text-emerald-900"
+                  : chosen
+                    ? "border-stone-500 bg-stone-100 text-stone-700"
+                    : "border-wood-300 bg-white text-ink hover:border-yamabuki-400 hover:bg-yamabuki-100"
+              }`}
+            >
+              <ChoiceGlyph kind={question.kind} choice={choice} />
+              <span className="min-w-0">{label(choice)}</span>
+            </button>
+          );
+        })}
+      </div>
+      <p className="mt-1.5 text-xs" role="status">
+        {answered ? (
+          <span className="font-bold text-ink">
+            {correct ? t.quiz.correct : t.quiz.wrong(label(question.choices[question.correct]))}
+          </span>
+        ) : (
+          <span className="text-ink-soft">{t.quiz.note}</span>
+        )}
+      </p>
+      {answered ? (
+        <div className="mt-0.5">
+          <SourceLink source={question.source} compact />
+        </div>
+      ) : null}
       <p
-        className="absolute inset-x-0 bottom-2 flex justify-center gap-1.5"
+        className="mt-2 flex justify-center gap-1.5"
         role="img"
         aria-label={t.quiz.stamps(stamps)}
         data-testid="quiz-dots"
@@ -428,27 +395,47 @@ export function QuizCard({ onClose }: { onClose: () => void }) {
       >
         <X className="size-4" aria-hidden="true" />
       </button>
-    </aside>
+    </div>
   );
 }
 
 /**
- * 待ち時間のカード。クイズが出ているときは、クイズの札と動いているスタッフの枠を重ねずに縦に並べる。
- * クイズを閉じたら豆知識係だけにする（閉じたかどうかは、この窓の見せ方だけの状態）
+ * 待ち時間の窓。クイズが出ていればクイズを、そうでなければ豆知識を、同じ1つの窓に出す。
+ * クイズを閉じたら豆知識に戻る（閉じたかどうかは、この窓の見せ方だけの状態）
  */
 export function WaitingCard() {
+  const t = useT();
+  const streaming = useApp((state) => state.session.streaming);
   const quizTurn = useApp((state) =>
     state.quiz.question === null ? null : state.quiz.offeredTurn,
   );
   const [closedTurn, setClosedTurn] = useState<number | null>(null);
   const showQuiz = quizTurn !== null && quizTurn !== closedTurn;
-  return showQuiz ? (
-    <div className="flex flex-col gap-5">
-      <QuizCard onClose={() => setClosedTurn(quizTurn)} />
-      <WaitingGuide compact />
-    </div>
-  ) : (
-    <WaitingGuide />
+  if (!streaming && !showQuiz) {
+    return null;
+  }
+  return (
+    <GameWindow
+      ariaLabel={showQuiz ? t.quiz.title : t.waiting.title}
+      tone={showQuiz ? "shu" : "ai"}
+      className="motion-safe:animate-pop"
+      testId="waiting-guide"
+      title={
+        showQuiz ? (
+          <>
+            <LanternIcon className="size-4" />
+            {t.quiz.title}
+          </>
+        ) : (
+          <>
+            <BookOpen className="size-4" aria-hidden="true" />
+            {t.waiting.host}
+          </>
+        )
+      }
+    >
+      {showQuiz ? <QuizBody onClose={() => setClosedTurn(quizTurn)} /> : <TriviaBody />}
+    </GameWindow>
   );
 }
 

@@ -190,7 +190,7 @@ test("待ち時間には豆知識係が祭りの話と出典を出し、送る�
 }, info) => {
   test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
   await enterShop(page);
-  const staffLine = '[data-testid="waiting-staff"]';
+  const staffLine = '[data-testid="staff-activity"]';
   const elapsedLine = '[data-testid="waiting-elapsed"]';
   const talkCard = '[data-testid="trivia-card"]';
   await recordTexts(page, [staffLine, elapsedLine, talkCard]);
@@ -225,16 +225,17 @@ test("待ち時間には豆知識係が祭りの話と出典を出し、送る�
     .first()
     .getByRole("button", { name: "この祭りにする" })
     .click();
-  // 長い返答ではクイズが出る。クイズが出ている間も、だれが何をしているかは出し続ける
+  // 長い返答では、豆知識と同じ窓にクイズが出る。その間も、店内のようすでだれが何をしているかを出し続ける
   const quiz = page.getByTestId("quiz-card");
   await expect(quiz).toBeVisible({ timeout: 10_000 });
-  await expect(page.getByTestId("waiting-staff")).toBeVisible();
+  await expect(page.getByTestId("staff-activity")).toBeVisible();
   await quiz.getByRole("button").first().click();
   await expect(quiz.getByRole("status")).toHaveText(/正解|おしい/);
-  // クイズは閉じられる（返答が終わるまで待たない）
+  await snap(page, info, "11-quiz");
+  // クイズは閉じられ、同じ窓が豆知識に戻る（返答が終わるまで待たない）
   await quiz.getByRole("button", { name: "クイズを閉じる" }).click();
   await expect(quiz).toHaveCount(0);
-  await snap(page, info, "11-quiz");
+  await expect(guide.getByTestId("trivia-card")).toBeVisible();
   await waitForReply(page);
   await expect(quiz).toHaveCount(0);
   await expect(guide).toHaveCount(0);

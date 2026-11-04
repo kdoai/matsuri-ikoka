@@ -90,6 +90,7 @@ export interface AppActions {
   /** のれんをくぐって店の外へ出る（相談はそのまま残す） */
   leaveShop(): void;
   nextTrivia(): void;
+  prevTrivia(): void;
   answerQuiz(choice: 0 | 1): void;
   /** 祭りのデータを読み込む（読み込み済みのものは読まない） */
   ensureFestivals(ids: readonly string[]): Promise<void>;
@@ -494,6 +495,9 @@ export function createAppStore(deps: StoreDeps): AppStore {
       },
       nextTrivia() {
         update((state) => ({ ...state, trivia: { index: state.trivia.index + 1 } }));
+      },
+      prevTrivia() {
+        update((state) => ({ ...state, trivia: { index: state.trivia.index - 1 } }));
       },
       answerQuiz(choice) {
         update((state) => answerQuiz(state, choice));
