@@ -1,0 +1,273 @@
+{
+  "id": "toyama-kamimachi-shimotsukimatsuri",
+  "name": {
+    "ja": "遠山の霜月祭り（上町正八幡宮）",
+    "en": "Toyama Shimotsuki Festival at Kamimachi Shohachimangu Shrine"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "長野県",
+      "name": "飯田市"
+    }
+  ],
+  "venue": {
+    "name": "上町・正八幡宮",
+    "lat": 35.3865,
+    "lng": 137.9699
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "社殿の釜で煮えたぎらせた湯を、面をつけた神々が素手ではねかける湯立神楽",
+    "夜を徹して続き、夜明け前に面の神々が次々と現れる",
+    "2基の土の竈と上に吊る湯の上飾りを合わせた、上町の「湯殿」",
+    "湯立神楽の古い形を伝える、国の重要無形民俗文化財"
+  ],
+  "trivia": [
+    {
+      "text": "上町の面は全17面。15面は正八幡宮の祭神、2面は末社の稲荷と山の神",
+      "source": {
+        "url": "https://shimotsukimatsuri.com/home/kamimachi/",
+        "title": "遠山の霜月祭り 上町・正八幡宮",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "上町の面は明治18年の火事で焼け、翌年に作り直されたものが今も使われている",
+      "source": {
+        "url": "https://shimotsukimatsuri.com/home/kamimachi/",
+        "title": "遠山の霜月祭り 上町・正八幡宮",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "夫婦で日と月を表す神太夫と姥は、回ると月日が早く過ぎるとして湯釜を回らずに帰る",
+      "source": {
+        "url": "https://shimotsukimatsuri.com/home/kamimachi/",
+        "title": "遠山の霜月祭り 上町・正八幡宮",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "昼がいちばん短くなる霜月に、太陽と命のよみがえりを願う祭りとされる",
+      "source": {
+        "url": "https://www.go-nagano.net/tradition-and-culture/id22634",
+        "title": "長野県公式観光サイト Go NAGANO 遠山の霜月祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "祭りは狭い神社の中で行うので、大人数での見学は控える",
+      "写真やビデオは、村人やほかの見学者の邪魔にならないようにする",
+      "フラッシュは使わない",
+      "駐車場はないので、公共交通機関を使うよう求められている",
+      "見学させてもらう気持ちで、できる範囲で奉納するよう勧められている"
+    ],
+    "dress": ["深夜から明け方まで続くので、しっかり防寒する"],
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "冬の夜の山あいで夜を徹して続き、狭い社殿の中で煮え湯をはねかける場面がある（主催者は防寒を求めている）"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "フラッシュは使わない。村人やほかの見学者の邪魔にならないようにする"
+    },
+    "sources": [
+      {
+        "url": "https://shimotsukimatsuri.com/manners/",
+        "title": "遠山の霜月祭り 見学・奉納の方へ",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.pref.nagano.lg.jp/osakajimu/pressreleases/documents/documents/2611arukuma.pdf",
+        "title": "長野県大阪観光情報センター アルクマ便り 2026年11月号（遠山の霜月祭り 注意事項）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.go-nagano.net/tradition-and-culture/id22634",
+        "title": "長野県公式観光サイト Go NAGANO 遠山の霜月祭り（一般見学が可能、防寒対策は必須）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-11",
+      "start": "11:00",
+      "end": "07:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年は12月11日（金）11:00〜翌7:00（予定）、面の登場は翌5:30ごろから。前日に準備と宵祭り。昼過ぎに神職による例祭、夜中0時ごろ「御一門の湯」、翌朝の神送りで終わる。見学は午後5時以後、翌朝まで続く神社では午後7時以後がよいと主催者が案内している。時間は当日の進行で変わることがある",
+      "sources": [
+        {
+          "url": "https://shimotsukimatsuri.com/",
+          "title": "遠山の霜月祭り 2026年の開催日・時間（上町・正八幡宮 12月11日 11:00〜翌7:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.pref.nagano.lg.jp/osakajimu/pressreleases/documents/documents/2611arukuma.pdf",
+          "title": "長野県大阪観光情報センター アルクマ便り 2026年11月号（遠山の霜月祭り 12月5日〜19日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://shimotsukimatsuri.com/home/kamimachi/",
+          "title": "遠山の霜月祭り 上町・正八幡宮（当日の流れ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://shimotsukimatsuri.com/manners/",
+          "title": "遠山の霜月祭り 見学・奉納の方へ（午後5時以後、翌朝まで行う神社は午後7時以後）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-12-11",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "上町は毎年12月11日と決まっている（2027年の時刻の発表はまだない）。2026年は11:00〜翌7:00、面の登場は翌5:30ごろからだった",
+      "sources": [
+        {
+          "url": "https://shimotsukimatsuri.com/home/kamimachi/",
+          "title": "遠山の霜月祭り 上町・正八幡宮（祭日は毎年12月11日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "none",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.pref.nagano.lg.jp/osakajimu/pressreleases/documents/documents/2611arukuma.pdf",
+        "title": "長野県大阪観光情報センター アルクマ便り 2026年11月号（駐車場なし、飯田駅からタクシーかレンタカーで約60分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20006072",
+        "title": "るるぶ&more. 遠山の霜月祭り（JR飯田駅から車で約1時間〈上村地区〉）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "tohyamago-kagura-no-yu",
+      "name": "道の駅 遠山郷 かぐらの湯",
+      "kind": "rest",
+      "summary": "南信濃和田の道の駅にある日帰り温泉。含硫黄・ナトリウム塩化物泉で、露天風呂や中庭の足湯、郷土料理の食事処がある。食事処は11:00〜14:30と17:00〜19:00（金・土は21:00まで）。木曜休み（祝日は営業）",
+      "location": {
+        "lat": 35.3216,
+        "lng": 137.9303
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "21:00"
+      },
+      "closedDays": ["thu"],
+      "price": "入浴 大人800円、小人400円",
+      "tags": ["indoor", "seating", "local_food"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://tohyamago.com/kagura",
+          "title": "遠山郷観光協会 道の駅遠山郷・かぐらの湯",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "shimoguri-no-sato",
+      "name": "下栗の里",
+      "kind": "sightseeing",
+      "summary": "標高800〜1,100mの斜面に家と畑が張り付く集落。南アルプスを望むビューポイントがあり、二度芋の田楽などの郷土の味も知られる。道は狭く、全長7m以上の車は入れない。冬の通行の案内は出典にない",
+      "location": {
+        "lat": 35.374,
+        "lng": 137.9851
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://tohyamago.com/shimoguri",
+          "title": "遠山郷観光協会 下栗の里",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://shimotsukimatsuri.com/",
+      "title": "遠山の霜月祭り ウェブサイト",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://shimotsukimatsuri.com/home/kamimachi/",
+      "title": "遠山の霜月祭り 上町・正八幡宮",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.go-nagano.net/tradition-and-culture/id22634",
+      "title": "長野県公式観光サイト Go NAGANO 遠山の霜月祭り",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://tohyamago.com/archives/1203",
+      "title": "遠山郷観光協会 遠山の霜月祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "公共交通での行き方と、夜を徹する祭りの帰りの足（県の案内は飯田駅からタクシーかレンタカーで約60分、駐車場はない）",
+    "神社の近くで車を停められる場所（主催者は駐車場はないと案内している）",
+    "持ち物の案内（防寒のほかに書かれていない）",
+    "有料の休憩所が出る神社と場所（主催者が確認中と案内している）",
+    "雪の日の扱いと、道路の凍結の注意",
+    "屋台・振る舞いの有無と、祭りの日だけの食べ物",
+    "見学者数の公表値（地区によって約50〜100人という観光サイトの案内だけ）",
+    "上町・正八幡宮の近くで夜に開いている食事の場所",
+    "上村まつり伝承館天伯の開館時間と休館日（公式の案内が見つからない）"
+  ]
+}
