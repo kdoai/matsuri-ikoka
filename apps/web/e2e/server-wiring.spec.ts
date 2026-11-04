@@ -205,11 +205,13 @@ test("接客サーバーとしおりまで進むと、しおりの URL を出し
   await page.getByRole("button", { name: "旅のしおりを開く" }).first().click();
   const share = page.getByTestId("shiori-share");
   await expect(share.getByRole("link")).toHaveAttribute("href", /\/shiori\/trip-suzunari-sample$/);
-  await expect(page.getByTestId("shiori-main")).toContainText(
-    "祭りの詳しい情報は、いまはお出しできません。",
+  // しおりは、共有と同じ URL の冊子をそのまま埋め込む
+  await expect(page.getByTestId("shiori-booklet")).toHaveAttribute(
+    "src",
+    //shiori/trip-suzunari-sample?embed=1$/,
   );
-  await expect(page.getByTestId("shiori-flow")).toContainText("鈴鳴灯籠まつり");
-  await expect(page.getByTestId("shiori-share-printed")).toContainText(
-    "/shiori/trip-suzunari-sample",
+  await expect(page.getByTestId("shiori-pdf")).toHaveAttribute(
+    "href",
+    //shiori/trip-suzunari-sample.pdf$/,
   );
 });

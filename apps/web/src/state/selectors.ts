@@ -1,6 +1,5 @@
 import {
   collectItinerarySources,
-  type Festival,
   type Itinerary,
   type ItineraryItem,
   itineraryItems,
@@ -50,12 +49,6 @@ export function usedSources(state: Pick<AppData, "itinerary" | "verify" | "candi
     }
   }
   return [...byUrl.values()];
-}
-
-/** 旅程の主役の祭りのデータ（読み込めていなければ null） */
-export function mainFestival(state: Pick<AppData, "itinerary" | "festivals">): Festival | null {
-  const id = state.itinerary.current?.mainFestivalId;
-  return id === undefined ? null : (state.festivals[id] ?? null);
 }
 
 /** しおりを開けるか。確定前の再確認で「予定どおり」と分かり、会話がしおりまで進んだとき */
