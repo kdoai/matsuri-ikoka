@@ -14,6 +14,7 @@ import type { CandidateChecker } from "../tools/candidateCheck";
 import { newTurnState, type ToolContext } from "../tools/context";
 import type { LodgingService } from "../tools/lodging";
 import { createMatsuriMcpServer } from "../tools/mcpServer";
+import type { NearbyResearcher } from "../tools/nearbyResearch";
 import type { RouteResearcher } from "../tools/routeResearch";
 import type { FestivalVerifier } from "../tools/verifier";
 import type { WeatherService } from "../tools/weather";
@@ -47,6 +48,7 @@ export interface ClaudeRunnerDeps {
   stations?: StationPointIndex;
   /** 出発の駅から会場の最寄り駅までの行き方の調べ */
   routes?: RouteResearcher;
+  nearby?: NearbyResearcher;
   prompts: AgentPrompts;
   models: AgentModels;
   /** 1回の発言の費用の上限（米ドル） */
@@ -194,6 +196,7 @@ export class ClaudeAgentRunner implements AgentRunner {
       ...(deps.candidateChecks ? { candidateChecks: deps.candidateChecks } : {}),
       ...(deps.stations ? { stations: deps.stations } : {}),
       ...(deps.routes ? { routes: deps.routes } : {}),
+      ...(deps.nearby ? { nearby: deps.nearby } : {}),
       today: deps.today,
       now: deps.now,
     };

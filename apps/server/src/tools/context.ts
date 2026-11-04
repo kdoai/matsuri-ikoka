@@ -11,6 +11,7 @@ import type { StationPointIndex } from "../domain/travelEstimate";
 import type { ItineraryStore, Session } from "../session/sessionStore";
 import type { CandidateChecker } from "./candidateCheck";
 import type { LodgingService } from "./lodging";
+import type { NearbyResearcher } from "./nearbyResearch";
 import type { RouteResearcher } from "./routeResearch";
 import type { FestivalVerifier } from "./verifier";
 import type { WeatherService } from "./weather";
@@ -72,6 +73,8 @@ export interface ToolContext {
   stations?: StationPointIndex;
   /** 出発の駅から会場の最寄り駅までの行き方を Web で調べる。ないとき（mock やテスト）は駅の位置からの見積もりだけを返す */
   routes?: RouteResearcher;
+  /** 会場の周りの店・寄り道を Web で調べる。ないとき（mock やテスト）は祭りのデータの周辺の場所だけから選ぶ */
+  nearby?: NearbyResearcher;
   /** ツールの途中で画面に送るイベント（候補の確かめの結果など） */
   emit?: (event: SseEvent) => void;
   today: () => IsoDate;
@@ -84,7 +87,8 @@ export const TOOL_TIMEOUT_MS: Readonly<Record<AgentToolName, number>> = {
   note_conditions: 5_000,
   // 候補の確かめ（1件30秒、3件を並べて動かす）を含む
   search_festivals: 70_000,
-  search_nearby: 10_000,
+  // 会場の周りの店を Web で調べる（NEARBY_RESEARCH_MS で打ち切り、祭りのデータの場所に戻す）
+  search_nearby: 60_000,
   get_access: 10_000,
   get_weather: 10_000,
   // 空室検索は1本ずつ間隔を空けて呼ぶので、待ちを含める

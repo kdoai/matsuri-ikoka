@@ -23,6 +23,7 @@ const prompts: AgentPrompts = {
   planner: "旅程係",
   verifier: "再確認",
   route: "行き方の調べ",
+  nearby: "寄り道の調べ",
 };
 
 function options(overrides: { models?: AgentModels; resume?: string } = {}) {
