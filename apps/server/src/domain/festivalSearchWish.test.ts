@@ -645,6 +645,8 @@ describe("文字の一致だけで誤って合うとしない", () => {
     ["写真", "写真を撮りたい", textFestival("rule", "撮影の決まりを守って見る")],
     ["雪", "雪が見たい", textFestival("sandal", "雪駄を履いて歩く")],
     ["灯り", "灯りを見たい", textFestival("dark", "灯りを消した闇の中を進む")],
+    ["灯り", "灯りを見たい", textFestival("dark2", "灯りは厳禁の参道を進む")],
+    ["灯り", "灯りを見たい", textFestival("dark3", "灯りを使えない暗い参道を進む")],
     ["夜", "夜がいい", textFestival("dusk", "朝から夕方まで町を回る")],
     ["名物", "名物を食べたい", textFestival("meibutsu", "名物の山車が進む")],
     [
