@@ -25,6 +25,32 @@
     "お旅所の芝舞台で夜まで続く、神楽・田楽・舞楽などの奉納",
     "一之鳥居の影向の松の前で芸能を披露する松の下式"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1136年に始まり、900年近く途切れず続いている",
+      "sources": [
+        {
+          "url": "https://onmatsuri.kasugataisha.or.jp/wakamiya/",
+          "title": "春日若宮おん祭 おん祭について",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "奈良市の青年の保存会や旧神領の人々が行列を担う",
+      "sources": [
+        {
+          "url": "https://onmatsuri.kasugataisha.or.jp/owatarishiki/",
+          "title": "春日若宮おん祭 御渡り式",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "1136年に始まり、900年近く一度も途切れずに続いている",

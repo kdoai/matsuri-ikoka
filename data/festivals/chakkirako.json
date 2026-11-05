@@ -25,6 +25,38 @@
     "楽器を使わず、素唄と囃し言葉だけで踊る",
     "午後は仲崎・花暮の竜神様の祠の前で踊り、旧家や老舗を祝って回る"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1756年刊の書に記録があり、1976年に国の重要無形民俗文化財になった",
+      "sources": [
+        {
+          "url": "https://www.city.miura.kanagawa.jp/soshiki/bunkasportska/bunkasportska_bunka/shiteibunkazai_soshiki/682.html",
+          "title": "三浦市 チャッキラコ/ユネスコ無形文化遺産「風流踊」",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "ちゃっきらこ保存会と三崎町の人々が、少女の踊りを奉納する",
+      "sources": [
+        {
+          "url": "https://kunishitei.bunka.go.jp/heritage/detail/302/45",
+          "title": "国指定文化財等データベース チャッキラコ",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.pref.kanagawa.jp/docs/ar3/cnt/f6659/yunesuko.html",
+          "title": "神奈川県 チャッキラコの紹介",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "宝暦6年（1756年）刊の『三崎志』に、15日に女児が集まって踊るという記録がある",

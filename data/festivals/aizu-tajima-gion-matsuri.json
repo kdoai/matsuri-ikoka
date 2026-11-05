@@ -25,6 +25,32 @@
     "喧嘩屋台とも呼ばれる屋台どうしの駆け引きと、夜の参道に灯る御神燈",
     "最終日に神楽殿で舞われる太々御神楽と、神楽餅まき"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "お党屋組の祭りの仕組みが1981年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.town.minamiaizu.lg.jp/official/soshikikarasagasu/shokokankoka/minamiaizuchokankojoho/4/585.html",
+          "title": "南会津町 会津田島祇園祭の歴史（現在9組のお党屋組、昭和56年に指定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "9組のお党屋組が1年交代で祭りを担う",
+      "sources": [
+        {
+          "url": "https://www.town.minamiaizu.lg.jp/official/soshikikarasagasu/shokokankoka/minamiaizuchokankojoho/4/585.html",
+          "title": "南会津町 会津田島祇園祭の歴史（現在9組のお党屋組、昭和56年に指定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "鎌倉時代の文治年間（1185年ごろ）、領主の長沼宗政が祇園信仰をもとに始めたとされる",

@@ -25,6 +25,32 @@
     "長男が生まれた家の初灯籠が奉納され、社殿とともに燃やされる",
     "翌朝、燃え残りの火で餅を焼くことができる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1993年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/199746",
+          "title": "文化遺産オンライン 野沢温泉の道祖神祭り",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "村の野沢組が保護団体として担う",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/199746",
+          "title": "文化遺産オンライン 野沢温泉の道祖神祭り（保護団体 野沢温泉村野沢組）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "1993年12月13日に、国の重要無形民俗文化財に指定された",

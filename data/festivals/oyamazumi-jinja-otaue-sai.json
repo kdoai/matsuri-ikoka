@@ -16,6 +16,32 @@
     "島内から選ばれた16名の早乙女が、境内の斎田で田植えを奉仕する",
     "神輿3基を先頭に、神職・早乙女の行列が本社から斎田前の御棧敷殿へ進む"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "一人角力は愛媛県の無形民俗文化財に指定されている",
+      "sources": [
+        {
+          "url": "https://www.city.imabari.ehime.jp/event/?a=127",
+          "title": "今治市 大山祇神社御田植祭（一人角力）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "早乙女16名は大三島の島内13地区から選ばれる",
+      "sources": [
+        {
+          "url": "https://www.city.imabari.ehime.jp/event/?a=127",
+          "title": "今治市 大山祇神社御田植祭（一人角力）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "精霊は目に見えないため、力士が一人で相撲を取るように見えるのが名の由来",

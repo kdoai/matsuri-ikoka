@@ -25,6 +25,32 @@
     "16日は浜で灯籠流しのあと、砂浜で踊る",
     "瀬戸内の島で続く、ユネスコ無形文化遺産の風流踊の1つ"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "源平の水島合戦の供養に始まると伝わり、国の重要無形民俗文化財",
+      "sources": [
+        {
+          "url": "https://www.city.kasaoka.okayama.jp/soshiki/39/34282.html",
+          "title": "笠岡市 白石踊を受け継ぐ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "島の白石踊会が島民の暮らしと結びついた踊りを受け継ぐ",
+      "sources": [
+        {
+          "url": "https://www.city.kasaoka.okayama.jp/soshiki/39/34282.html",
+          "title": "笠岡市 白石踊を受け継ぐ",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "源平の水島合戦で亡くなった人たちを弔うために始まったと伝えられる",

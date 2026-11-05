@@ -25,6 +25,32 @@
     "装束から抜いた藁を屋根にのせ、火よけのお守りにする",
     "鐘を鳴らすひょっとこと、手桶を担いだおかめが家々を回る"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "国の重要無形民俗文化財に指定された行事",
+      "sources": [
+        {
+          "url": "https://www.pref.miyagi.jp/soshiki/bunkazai/03yonekawa.html",
+          "title": "宮城県 指定文化財〈重要無形民俗文化財〉米川の水かぶり",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "五日町地区に伝わる行事として受け継がれている",
+      "sources": [
+        {
+          "url": "https://www.city.tome.miyagi.jp/bunkazai/yonekawa.html",
+          "title": "登米市 米川の水かぶりの開催について",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "装束から抜き取った藁を屋根にのせると、火災よけのお守りになるとされる",

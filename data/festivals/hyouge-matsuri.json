@@ -24,6 +24,32 @@
     "新池の堤で神職が矢を放つと、神輿が池へ押し入って祭りが締めくくられる",
     "なす・ひょうたん・へちま・かぼちゃで作った鉾など、農作物と日用品の神具"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "高松市の無形民俗文化財に指定されている",
+      "sources": [
+        {
+          "url": "https://www.city.takamatsu.kagawa.jp/kurashi/kosodate/bunka/bunkazai/shiteibunkazai/mukei_minzoku/hyoge.html",
+          "title": "高松市 ひょうげ祭り（市指定無形民俗文化財）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "香川町ひょうげ祭り保存会が実施する",
+      "sources": [
+        {
+          "url": "https://www.city.takamatsu.kagawa.jp/kurashi/kosodate/bunka/bunkazai/shiteibunkazai/mukei_minzoku/hyoge.html",
+          "title": "高松市 ひょうげ祭り（香川町ひょうげ祭り保存会が実施、県内外から多くの見物人が訪れる）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "「ひょうげる」はおどける・滑稽という意味で、祭りの名はここから来ている",

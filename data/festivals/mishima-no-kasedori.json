@@ -12,6 +12,38 @@
     "竹の音で厄を払う、佐賀県内でほかに伝わっていない小正月の来訪神の行事",
     "神社での所作のあと、提灯・天狗・御幣を持つ一行が集落の家々を回る"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "2003年に国の重要無形民俗文化財、2018年にユネスコ無形文化遺産になった",
+      "sources": [
+        {
+          "url": "https://www.saga-otakara.jp/search/detail.html?cultureId=5346&cityId=8",
+          "title": "さがの歴史・文化お宝帳 見島のカセドリ行事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.asobo-saga.jp/files/uploads/news/%E4%BB%A4%E5%92%8C5%E5%B9%B4%EF%BC%91%E6%9C%88%EF%BD%9E3%E6%9C%88_3.pdf",
+          "title": "佐賀県観光連盟 祭り・行事一覧表（令和5年1月〜3月）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "加勢鳥保存会が熊野神社の行事を伝え、青年が務める",
+      "sources": [
+        {
+          "url": "https://www.saga-otakara.jp/search/detail.html?cultureId=5346&cityId=8",
+          "title": "さがの歴史・文化お宝帳 見島のカセドリ行事（佐賀市蓮池町大字見島 熊野神社、加勢鳥保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "寛永年間（1624〜1644年）ごろから続いていると、地元では伝えられている",

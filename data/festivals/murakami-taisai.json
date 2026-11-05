@@ -13,6 +13,38 @@
     "夕方に神輿が神社へ戻ると、各町の屋台は提灯をともして自分の町へ帰る",
     "国の重要無形民俗文化財で、ユネスコ無形文化遺産「山・鉾・屋台行事」にも加わった"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1633年の遷宮祭が始まりとされ、国の重要無形民俗文化財",
+      "sources": [
+        {
+          "url": "https://www.sake3.com/event/7681",
+          "title": "村上市観光協会 令和8年 村上大祭（村上祭の屋台行事）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://online.bunka.go.jp/db/heritages/detail/436599",
+          "title": "文化遺産オンライン 村上祭の屋台行事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "村上まつり保存会が保護団体で、各町が屋台を組み立て巡行する",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/436599",
+          "title": "文化遺産オンライン 村上祭の屋台行事（保護団体 村上まつり保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "1633年、藩主の堀直竒が西奈彌羽黒神社を今の地に移した遷宮祭が始まりとされる",

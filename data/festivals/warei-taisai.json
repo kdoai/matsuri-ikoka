@@ -13,6 +13,20 @@
     "6隻の御座船を連ねて、神輿が海を渡る海上渡御",
     "山家清兵衛を祀る和霊神社で、いちばん大きな祭事"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "山家清兵衛を祀る御霊信仰の祭りで、300年以上続く伝統行事とされる",
+      "sources": [
+        {
+          "url": "https://ushioni.gaina.ne.jp/wareitaisai",
+          "title": "うわじま牛鬼まつり公式 和霊大祭とは",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "祭神の山家清兵衛は宇和島藩の家臣で、1620年に藩士の一味に襲われて亡くなった",

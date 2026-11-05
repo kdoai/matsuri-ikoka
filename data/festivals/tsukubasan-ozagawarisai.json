@@ -24,6 +24,32 @@
     "下ろした古い神衣を神輿に納め、氏子の地区を巡る神幸祭",
     "この日だけ、家光が奉納した御神橋を渡れる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1600年に江戸城鎮護の神事と定められた、古来春秋に行う祭り",
+      "sources": [
+        {
+          "url": "https://tsukubasanjinja.jp/history/",
+          "title": "筑波山神社 由緒",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "筑波地区の4地区が1年ごとに祭りを受け持つ当番制",
+      "sources": [
+        {
+          "url": "https://www.bunkajoho.pref.ibaraki.jp/dento/dento/%E7%AD%91%E6%B3%A2%E5%B1%B1%E5%BE%A1%E5%BA%A7%E6%9B%BF%E7%A5%AD",
+          "title": "いばらきの伝統文化 筑波山御座替祭",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "筑波山神社の例大祭で、春は4月1日、秋は11月1日の年2回行う",

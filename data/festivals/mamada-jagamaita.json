@@ -24,6 +24,38 @@
     "境内の池で蛇に水を飲ませる「水呑みの儀」",
     "水を飲んだ蛇が各町内へ戻り、掛け声とともに練り歩く"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "国の重要無形民俗文化財で、江戸時代から続く伝統行事",
+      "sources": [
+        {
+          "url": "https://www.city.oyama.tochigi.jp/kankou-bunka/rekishi_bunka/page006686.html",
+          "title": "小山市 江戸時代から続く伝統行事！間々田のじゃがまいたが開催されます!",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.pref.tochigi.lg.jp/c05/intro/tochigiken/miryoku/kennan/012.html",
+          "title": "栃木県 間々田のじゃがまいた",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "7つの町内（自治会）が蛇を1体ずつ作って奉納する",
+      "sources": [
+        {
+          "url": "https://www.pref.tochigi.lg.jp/c05/intro/tochigiken/miryoku/kennan/012.html",
+          "title": "栃木県 間々田のじゃがまいた",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "7つの町内（自治会）が蛇を1体ずつ作り、間々田八幡宮の拝殿前に並べる",

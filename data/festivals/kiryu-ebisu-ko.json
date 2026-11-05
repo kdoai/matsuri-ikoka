@@ -25,6 +25,32 @@
     "福銭やえびす菓子をまく福まきが、両日の夕方から夜に何度もある",
     "えびす講の名物として、福鯛あめと甘酒が売られる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1901年に西宮神社の分霊を迎えた社殿の建築以来続く秋の例祭",
+      "sources": [
+        {
+          "url": "https://www.city.kiryu.lg.jp/_res/projects/default_project/_page_/001/012/273/2024-2syou1.pdf",
+          "title": "桐生市歴史的風致維持向上計画 第2章（ゑびす講の歴史）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "町衆の世話人が代々世襲で引き継いでゑびす講を運営する",
+      "sources": [
+        {
+          "url": "https://www.city.kiryu.lg.jp/_res/projects/default_project/_page_/001/012/273/2024-2syou1.pdf",
+          "title": "桐生市歴史的風致維持向上計画 第2章（ゑびす講の行程と活動）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "明治34年に兵庫の西宮神社から分霊され、関東でただ1つの直系の分社とされる",

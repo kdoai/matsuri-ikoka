@@ -25,6 +25,32 @@
     "焼け落ちたサイトの火でダンゴを焼いて食べる小正月の習わし",
     "前の数日は町内のオカリヤに道祖神をまつり、ナナトコマイリで巡る"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1980年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.pref.kanagawa.jp/docs/ar3/cnt/f6658/p520428.html",
+          "title": "神奈川県 湘南地域の国指定・県指定無形民俗文化財（大磯の左義長）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "町内ごとにオカリヤを壊し、サイトを立てて火入れに臨む",
+      "sources": [
+        {
+          "url": "https://www.pref.kanagawa.jp/docs/ar3/cnt/f6658/p520428.html",
+          "title": "神奈川県 湘南地域の国指定・県指定無形民俗文化財（大磯の左義長、所在地は大磯町大磯）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "1980年1月28日に国の重要無形民俗文化財に指定された",

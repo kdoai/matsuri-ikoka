@@ -25,6 +25,32 @@
     "猿田彦が鉦・太鼓に合わせて境内いっぱいに舞う奉幣式",
     "瀬嵐の集落は、神輿と枠旗を船に乗せて海から本社へ向かう"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "国の重要無形民俗文化財に指定されている",
+      "sources": [
+        {
+          "url": "https://www.city.nanao.lg.jp/koryu-s/event/9gatsu/okumakabuto-.html",
+          "title": "七尾市 お熊甲祭＜国指定重要無形民俗文化財＞",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "沿道の村々の人が総出で加わり、若者が枠旗を担ぐ",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/199736",
+          "title": "文化遺産オンライン 熊甲二十日祭の枠旗行事",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "毎年9月20日に行うので「二十日祭り」とも呼ばれる",

@@ -24,6 +24,32 @@
     "綱引きの前に、東西の旗頭が気勢を上げて競い合う",
     "人数合わせで、旅行者が東西のどちらかに加わって綱を引くこともある"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "300年の伝統がある大綱引きと報じられた",
+      "sources": [
+        {
+          "url": "https://ryukyushimpo.jp/region/entry-3347527.html",
+          "title": "琉球新報 300年の伝統、渡嘉敷の大綱引き（2024年8月7日。観光客も綱をつかんで引き合いに加わった）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "集落の東西に分かれた住民が、本家・分家の由来を負って引き合う",
+      "sources": [
+        {
+          "url": "https://www.mlit.go.jp/tagengo-db/R2-00911.html",
+          "title": "観光庁 多言語解説文データベース 渡嘉敷村 渡嘉敷地区：大綱引き",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "西が勝てば翌年は豊作、東が勝てば豊漁になると言い伝えられている",

@@ -25,6 +25,32 @@
     "深夜に大松明へ火が入り、炎と煙の中で舞が続く",
     "雪を豊作のしるしとし、雪がなければ峠から運んで神前に供える"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1977年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.cbr.mlit.go.jp/tenjyo/think/heritage/pdf/076.pdf",
+          "title": "国土交通省 中部地方整備局 伊那谷遺産 新野の雪まつり",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "伊豆神社雪祭り保存会が保護団体として、役の組が演じる",
+      "sources": [
+        {
+          "url": "https://kunishitei.bunka.go.jp/bsys/maindetails/302/67",
+          "title": "国指定文化財等データベース 雪祭（保護団体 伊豆神社雪祭り保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "1977年に国の重要無形民俗文化財に指定された",

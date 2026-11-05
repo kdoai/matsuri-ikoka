@@ -13,6 +13,38 @@
     "20日の夜、提灯をともして町内へ帰る「帰り山」",
     "曳山とともに纏田楽が神社へ渡行し、境内に奉納される"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1735年の曳き出しの記録があり、滋賀県の無形民俗文化財に指定",
+      "sources": [
+        {
+          "url": "https://minakuchi-jinja.com/%E6%B0%B4%E5%8F%A3%E6%9B%B3%E5%B1%B1%E3%81%BE%E3%81%A4%E3%82%8A",
+          "title": "水口神社 水口曳山まつり",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://koka-kanko.org/see/minakuchijinjya/",
+          "title": "甲賀市観光ガイド 水口神社（水口曳山祭は滋賀県指定無形民俗文化財）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "県指定の保存団体として水口祭保存振興会が祭りを受け継ぐ",
+      "sources": [
+        {
+          "url": "https://www.pref.shiga.lg.jp/site/jourei/reiki_int/reiki_honbun/k001RG00001477.html",
+          "title": "滋賀県の告示 水口曳山祭の指定（保存団体 水口祭保存振興会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "曳山が初めて曳き出されたのは享保20年（1735）と、石王日記に記録がある",

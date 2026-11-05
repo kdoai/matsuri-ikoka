@@ -17,6 +17,32 @@
     "本祭の1週間前の夜、JR日田駅前に9基の山鉾がそろう集団顔見世",
     "笛・太鼓・三味線と手作りの篠笛で奏でる、端唄や俗曲由来の日田祇園囃子"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "国の重要無形民俗文化財で、ユネスコ無形文化遺産にも登録された",
+      "sources": [
+        {
+          "url": "https://oidehita.com/archives/63949",
+          "title": "日田市観光協会 日田祇園（国の重要無形民俗文化財、ユネスコ無形文化遺産）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "山鉾町の町内の人々が山鉾の組立てや飾り付けを担う",
+      "sources": [
+        {
+          "url": "https://oidehita.com/archives/63949",
+          "title": "日田市観光協会 日田祇園（国の重要無形民俗文化財、ユネスコ無形文化遺産）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "正徳4年（1714年）には、今と同じような山鉾がすでに奉納されていた",

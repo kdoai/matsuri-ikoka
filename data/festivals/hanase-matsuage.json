@@ -25,6 +25,20 @@
     "火のついた大笠を最後に引き倒して、行事が終わる",
     "洛北の山あいの集落に伝わる、お盆の夜の愛宕の火祭り"
   ],
+  "styles": [
+    {
+      "style": "community",
+      "basis": "集落の男たちが各家で作った松明を持ち寄り、投げ上げる",
+      "sources": [
+        {
+          "url": "https://www.city.kyoto.lg.jp/sakyo/page/0000024256.html",
+          "title": "京都市左京区 花脊松上げ",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "お盆に先祖を送る火と、火よけの愛宕さんを敬う心が重なって生まれた行事とみられる",

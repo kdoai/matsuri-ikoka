@@ -24,6 +24,32 @@
     "猿田彦を先頭に獅子・稲かけ・杵などの諸役が郷内を一巡し、農作業をまねて見せる",
     "前の晩は、大宝寺の中にある言代主神社で3時間ほどの夜神楽"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1979年に国の選択無形民俗文化財、1982年に県の無形民俗文化財になった",
+      "sources": [
+        {
+          "url": "https://www.pref.nagasaki.jp/bunkadb/index.php/view/453",
+          "title": "長崎県の文化財 下五島大宝郷の砂打ち",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "地区の団体「大宝郷会」が文化財の保護団体として受け継ぐ",
+      "sources": [
+        {
+          "url": "https://www.pref.nagasaki.jp/bunkadb/index.php/view/453",
+          "title": "長崎県の文化財 下五島大宝郷の砂打ち",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "砂を打ちつけるのは、災いを払い、疫病を追い出すためと伝わる",

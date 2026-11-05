@@ -23,6 +23,32 @@
     "天照大神が岩戸から出る様子を演じる「舞出し」が神楽の中心",
     "昼から夕方まで、鬼神や猿田彦の舞など多くの演目が続く"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1790年の神楽本が残り、国の重要無形民俗文化財の神楽",
+      "sources": [
+        {
+          "url": "https://www.niyodogawa.tv/schedule/schedule-8290/",
+          "title": "によどがわ.TV（仁淀川町観光協会） 安居神楽",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "安居神楽保存会が土佐の神楽（安居神楽）の保存団体として受け継ぐ",
+      "sources": [
+        {
+          "url": "https://www.pref.kochi.lg.jp/doc/2024090200209/file_contents/file_202492120316_1.pdf",
+          "title": "高知県 指定文化財一覧（土佐の神楽・安居神楽の保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "寛政2年（1790）の神楽本と天保9年（1838）の古面が、神楽の古さを示す資料として残る",

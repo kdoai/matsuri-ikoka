@@ -25,6 +25,20 @@
     "川の水上ステージで太鼓が打ち鳴らされる",
     "豊作への感謝に始まり、約940年続くとされる3日間の祭り"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "約940年の歴史があるとされる若宮八幡神社の秋の大祭",
+      "sources": [
+        {
+          "url": "https://www.city.bungotakada.oita.jp/site/showanomachi/28649.html",
+          "title": "昭和の町・豊後高田市公式観光サイト 若宮八幡神社秋季大祭・裸祭り【12月4日～6日開催】",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "豊後大たいまつは全長約16m・重さ約5tで、2025年に40周年を迎えた",

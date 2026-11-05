@@ -24,6 +24,20 @@
     "銛に刺したマクブやタマンをノロに捧げる「トゥダヌイュー」",
     "豊漁と航海安全を願う、平安座島でいちばん大きな3日間の行事"
   ],
+  "styles": [
+    {
+      "style": "community",
+      "basis": "区民が島の東のナンザ岩へ歩いて渡り、豊漁を祈る",
+      "sources": [
+        {
+          "url": "https://www.city.uruma.lg.jp/documents/1065/08kouhou05p02.pdf",
+          "title": "広報うるま 2008年5月号（平安座 サングヮチャー）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "平安座島でいちばん大きな伝統行事で、旧暦3月3日から5日までの3日間続く",

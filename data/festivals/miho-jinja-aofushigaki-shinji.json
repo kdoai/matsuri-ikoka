@@ -25,6 +25,32 @@
     "氏子が受け継ぐ當屋の制度で営まれる、国の選択無形民俗文化財の春祭",
     "国の重要文化財の本殿と、鳥居わきから佛谷寺へ続く江戸時代の青石畳"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1973年に国の選択無形民俗文化財となり、1717年の地誌にも載る",
+      "sources": [
+        {
+          "url": "https://www.city.matsue.lg.jp/material/files/group/32/aofushigaki04_09_siryou1-6.pdf",
+          "title": "松江市 青柴垣神事関連及び年中行事関連年表",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "氏子の祭祀組織が役割を担って神事に奉仕する",
+      "sources": [
+        {
+          "url": "http://mihojinja.or.jp/sinji/",
+          "title": "美保神社 特殊神事（神事は氏子の祭祀組織が役割を担って奉仕する）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "もとは旧暦3月3日、桃の節句の日に行われていた",

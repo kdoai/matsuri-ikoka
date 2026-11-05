@@ -24,6 +24,32 @@
     "能・狂言を演じる中世の松囃子の古い形を伝える、国の重要無形民俗文化財",
     "三段の祝言の舞に続いて、仕舞「老松」などの仕舞と狂言を演じる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "国の重要無形民俗文化財で、少なくとも室町時代には伝承されていた",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/136974",
+          "title": "文化遺産オンライン 菊池の松囃子",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "御松囃子御能保存会が保護団体として伝える",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/136974",
+          "title": "文化遺産オンライン 菊池の松囃子",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "地元では、菊池武光が懐良親王を迎え、年頭の祝いとして正月2日に催したのが始まりと伝わる",

@@ -29,6 +29,32 @@
     "最終日、婦人たちが炊事道具を手に横へ3歩ずつ歩き「オサラバー」と比木の一行を見送る",
     "百済王族の父と子が年に一度再会するという言い伝えをたどる3日間"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "国の記録作成等の措置を講ずべき無形の民俗文化財になっている",
+      "sources": [
+        {
+          "url": "https://www.town.miyazaki-misato.lg.jp/kiji003945/3_945_6310_up_46tr6ew1.pdf",
+          "title": "美郷町 令和8年師走祭りパンフレット（記録作成等の措置を講ずべき無形の民俗文化財）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "地区の自治会や青年団体などが迎え火のやぐらを設ける",
+      "sources": [
+        {
+          "url": "https://www.town.miyazaki-misato.lg.jp/kiji003945/index.html",
+          "title": "美郷町 師走祭り",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "木城町の比木神社の一行は、約90km（23里）離れた神門神社まで御神体を運ぶ",

@@ -25,6 +25,32 @@
     "三体廻しのあと、神輿を海で清めて祭りを締めくくる",
     "前の晩には八坂神社で宵宮祭が開かれる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1291年の疫病除けの祈りが始まりと伝わり、1978年に復活した",
+      "sources": [
+        {
+          "url": "https://tabi-mag.jp/onomichi-gion/",
+          "title": "ニッポン旅マガジン 祇園祭（尾道）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "3つの地区の氏子が神輿を担ぐ",
+      "sources": [
+        {
+          "url": "https://tabi-mag.jp/onomichi-gion/",
+          "title": "ニッポン旅マガジン 祇園祭（尾道）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "久保八坂神社の例祭で、尾道の三大夏祭りの1つに数えられる",

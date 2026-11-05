@@ -25,6 +25,32 @@
     "2基の土の竈と上に吊る湯の上飾りを合わせた、上町の「湯殿」",
     "湯立神楽の古い形を伝える、国の重要無形民俗文化財"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "国の重要無形民俗文化財の霜月祭りの一つ",
+      "sources": [
+        {
+          "url": "https://www.go-nagano.net/tradition-and-culture/id22634",
+          "title": "長野県公式観光サイト Go NAGANO 遠山の霜月祭り",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "上村遠山霜月祭保存会の上町支部が国指定の保護団体として担う",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/136404",
+          "title": "文化遺産オンライン 遠山の霜月祭（保護団体に上町支部）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "上町の面は全17面。15面は正八幡宮の祭神、2面は末社の稲荷と山の神",

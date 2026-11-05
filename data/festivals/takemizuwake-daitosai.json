@@ -24,6 +24,20 @@
     "行列の宝船から、沿道の見物人へ御供（みかんや日用品）が撒かれる",
     "5人の頭人が1日に1人ずつ練る、400年以上続く新嘗祭"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "文禄2年（1593）から頭人の名を記し、四百数十年続いてきた",
+      "sources": [
+        {
+          "url": "https://www.city.chikuma.lg.jp/material/files/group/28/02_2syou.pdf",
+          "title": "千曲市 歴史的風致維持向上計画 第2章 千曲市の維持向上すべき歴史的風致",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "御頭帳には文禄2年（1593）から今までの頭人の名が記され、四百数十年続いてきたと分かる",

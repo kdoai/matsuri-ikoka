@@ -25,6 +25,20 @@
     "祇園神社から一條神社まで歩く稚児行列と、土佐中村一條太鼓",
     "3日間、神社の階段と境内に御神火灯篭が並び、町なかに露店が出る"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1862年の一條神社の建立以来、続けられてきた大祭とされる",
+      "sources": [
+        {
+          "url": "https://www.shimanto-kankou.com/kanko/culture/ichijyotaisai.html",
+          "title": "四万十市観光協会（一條大祭奉賛会事務局） 一條大祭",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "一條神社は文久2年（1862年）、中村御所跡の一條家の御廟所跡に有志が建てた",

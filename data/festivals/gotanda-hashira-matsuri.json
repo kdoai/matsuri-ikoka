@@ -24,6 +24,32 @@
     "各地区から集まった若者が一斉に投げ上げ、かごが燃え上がるまで続く",
     "盆の夜空に火の玉が尾を引いて舞う、県指定無形民俗文化財の火祭り"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "戦国時代に始まったと伝わり、県の文化財として案内されている",
+      "sources": [
+        {
+          "url": "https://www.pref.ehime.jp/ehimenotakara/340.html",
+          "title": "えひめの文化財 五反田の柱祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "各地区から集まった若者が松明を投げ上げる",
+      "sources": [
+        {
+          "url": "https://www.pref.ehime.jp/ehimenotakara/340.html",
+          "title": "えひめの文化財 五反田の柱祭（各地区から集まった若者が松明を投げ上げる）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "戦国時代、夜に松明を持って城へ近づいた修験者が誤って射られ、その霊を鎮めるために始まったと伝わる",

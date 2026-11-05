@@ -24,6 +24,32 @@
     "化粧をした子ども2人が太鼓を叩き、若衆が担いで練り合い、押し合う",
     "各神社で獅子舞と、子どもたちによる獅子太鼓の奉納がある"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "ふとんだんじりが広島県の無形民俗文化財に指定されている",
+      "sources": [
+        {
+          "url": "https://dive-hiroshima.com/events/events-121403/",
+          "title": "DIVE! HIROSHIMA 幸崎能地春祭り・ふとんだんじり",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "一〜四丁目の各町内がだんじりを1台ずつ出す",
+      "sources": [
+        {
+          "url": "https://dive-hiroshima.com/events/events-121403/",
+          "title": "DIVE! HIROSHIMA 幸崎能地春祭り・ふとんだんじり",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "能地のふとんだんじりは、江戸時代後期ごろに伝わったとされる",

@@ -24,6 +24,20 @@
     "湯立の神事と舞楽からなる、国の重要無形民俗文化財の神楽",
     "桜の名所の松前公園で、さくらまつりの時期に公開される"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "2018年に国の重要無形民俗文化財に指定。藩の行事の記録は1674年",
+      "sources": [
+        {
+          "url": "https://www.town.matsumae.hokkaido.jp/bunkazai/detail/00001640.html",
+          "title": "松前町 松前神楽",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "延宝2年（1674）には、福山城内で湯立の神楽が藩の公式行事として奏されていた",

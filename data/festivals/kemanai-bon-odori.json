@@ -25,6 +25,32 @@
     "紋付や留袖に豆絞りの手ぬぐいで頬被りをした踊り手の姿",
     "撮影許可証があれば、決まった数分間だけ輪の中から撮影できる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "江戸時代中ごろから踊られ、1998年に国の重要無形民俗文化財になった",
+      "sources": [
+        {
+          "url": "https://www.ink.or.jp/~kemanai09/yurai/",
+          "title": "毛馬内盆踊り 公式ホームページ 毛馬内盆踊りの由来",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "毛馬内盆踊保存会が保護団体として受け継ぐ",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/161361",
+          "title": "文化遺産オンライン 毛馬内の盆踊（保護団体 毛馬内盆踊保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "文献から、少なくとも江戸時代の中ごろには踊られていたと分かっている",

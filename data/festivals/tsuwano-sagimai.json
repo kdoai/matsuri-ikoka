@@ -13,6 +13,32 @@
     "天狗（猿田彦命）を先頭に、囃子と唄の行列が城下町を練り歩く",
     "鷺舞に先立ち、子どもたちの子鷺踊りが町を巡って披露される"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1542年に伝わり、1643年に京都で習い直して受け継がれてきた",
+      "sources": [
+        {
+          "url": "https://tsuwano-kanko.net/info/sagimai/",
+          "title": "津和野町観光協会 鷺舞神事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "弥栄神社の鷺舞保存会が保護団体として受け継ぐ",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/203483",
+          "title": "文化遺産オンライン 津和野弥栄神社の鷺舞（保護団体 鷺舞保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "1542年に吉見正頼が山口の祇園会から移したと伝わり、本元は京都の八坂神社の祇園会",

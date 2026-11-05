@@ -24,6 +24,38 @@
     "白久保天満宮の宵祭りとして続く、国の重要無形民俗文化財",
     "14世紀中ごろの闘茶とのつながりが指摘される"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1990年に国の重要無形民俗文化財になり、1799年の覚帳が残る",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/160761",
+          "title": "文化遺産オンライン 上州白久保のお茶講",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://tabi-mag.jp/nakanojyou-ochakou/",
+          "title": "ニッポン旅マガジン 白久保のお茶講",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "白久保お茶講保存会が受け継ぐ",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/160761",
+          "title": "文化遺産オンライン 上州白久保のお茶講",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "全問正解の人や、まったく当たらない人が多い年は豊作になると言い伝えられる",

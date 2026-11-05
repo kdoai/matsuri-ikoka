@@ -13,6 +13,38 @@
     "夜の秩父神社に山車が集まる天王柱立て神事と、雪洞を灯した曳行",
     "山車どうしがすれ違い、飾り花や団扇を交わす曳き別れ"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1659年の古文書に名が見え、県の無形民俗文化財になっている",
+      "sources": [
+        {
+          "url": "http://www.chichibu-jinja.or.jp/saiten/",
+          "title": "秩父神社 祭典・神事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.pref.saitama.lg.jp/f2216/bunkazai/shitei03.html",
+          "title": "埼玉県 令和3年度に新たに県指定となった文化財",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "川瀬祭保存会が継承し、氏子17町から選ばれた担ぎ手が神輿洗いを行う",
+      "sources": [
+        {
+          "url": "https://www.pref.saitama.lg.jp/f2216/bunkazai/shitei03.html",
+          "title": "埼玉県 新たに県指定となった文化財（秩父川瀬祭）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "川瀬祭は、万治2年（1659年）の古文書にすでに名前が出てくる",

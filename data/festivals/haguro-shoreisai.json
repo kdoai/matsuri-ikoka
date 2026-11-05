@@ -24,6 +24,32 @@
     "百日の修行を終えた2人の松聖が臨む、羽黒修験の冬の峰を締めくくる神事",
     "年が明けると、国分神事や火の打替神事で新しい火を迎える"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "大松明の行事が2014年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/db/heritages/detail/442273",
+          "title": "文化遺産オンライン 松例祭の大松明行事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "手向地区の若者が二組に分かれて大松明を作り引く",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/db/heritages/detail/442273",
+          "title": "文化遺産オンライン 松例祭の大松明行事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "大松明の行事は、2014年に国の重要無形民俗文化財に指定された",

@@ -25,6 +25,32 @@
     "玉に触れると災難を逃れ、幸運を授かると伝わる",
     "末社の玉取恵比須神社での祭典のあと、玉を奪い合いながら本宮の楼門へ競り進む"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "室町時代に始まったとされ、約500年続く",
+      "sources": [
+        {
+          "url": "https://hakozakigu.or.jp/omatsuri/tamatorisai/",
+          "title": "筥崎宮 玉取祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "氏子が競り子となり、筥崎宮玉せせり行事保存会が受け継ぐ",
+      "sources": [
+        {
+          "url": "https://bunkazai.city.fukuoka.lg.jp/cultural_properties/detail/794/",
+          "title": "福岡市の文化財 筥崎宮の玉せせり行事（市指定、保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "室町時代に始まったとされ、約500年続く。確かな起こりは分かっていない",

@@ -25,6 +25,20 @@
     "七福神があめを配る時代行列が歩行者天国を練り歩く",
     "2日目は中心市街地が歩行者天国になり、太鼓と演舞の競演が続く"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "江戸時代前期に神主が塩を売った塩市が起こりとされる",
+      "sources": [
+        {
+          "url": "https://www.city.matsumoto.nagano.jp/soshiki/75/96952.html",
+          "title": "松本市 令和9年松本あめ市",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "江戸時代前期、1月11日の市始めに宮村天神（今の深志神社）の神主が塩を売った「塩市」が起こりとされる",

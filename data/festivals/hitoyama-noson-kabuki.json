@@ -25,6 +25,38 @@
     "上演の合間に、客席で割子弁当を広げて楽しむ",
     "中山地区と合わせた「小豆島農村歌舞伎」は、国が記録を残すべき無形の民俗文化財に選んでいる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1686年に始まったとされ、国の記録選択の民俗文化財になっている",
+      "sources": [
+        {
+          "url": "https://www.pref.kagawa.lg.jp/tochikai/midori_info/festival/nouson_kabuki.html",
+          "title": "香川県 小豆島の農村歌舞伎",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://online.bunka.go.jp/db/heritages/detail/262662",
+          "title": "文化遺産オンライン 小豆島農村歌舞伎",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "地区の約250戸を6組に分け、交代で役者を務める",
+      "sources": [
+        {
+          "url": "https://www.pref.kagawa.lg.jp/tochikai/midori_info/festival/nouson_kabuki.html",
+          "title": "香川県 小豆島の農村歌舞伎",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "1686年、ため池の蛙子池の完成を祝って住民が芝居を催したのが始まり",

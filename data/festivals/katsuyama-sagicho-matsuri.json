@@ -25,6 +25,32 @@
     "世相を狂歌や絵で風刺する絵行燈が辻や櫓に掛かる",
     "2日目の夜、御神火で一斉に火を入れるどんど焼きで締めくくる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1748年の史料があり、それ以前から行われていたと考えられている",
+      "sources": [
+        {
+          "url": "https://www.city.katsuyama.fukui.jp/kankou/sagityo/about/about01.html",
+          "title": "勝山市 勝山左義長 勝山左義長とは",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "12の区の櫓が毎年順番に一番太鼓を受け持つ",
+      "sources": [
+        {
+          "url": "https://www.city.katsuyama.fukui.jp/kankou/sagityo/about/about10.html",
+          "title": "勝山市 勝山左義長 一番太鼓",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "記録として最も古いのは寛延元年（1748年）の史料で、それ以前から行われていたと考えられている",

@@ -24,6 +24,20 @@
     "鬼のような大きな面の番内さんが家々を回り、青竹で地面を叩いて厄を払う",
     "出雲大社の本殿前で、吉兆の一行が大社神謡を詠う"
   ],
+  "styles": [
+    {
+      "style": "community",
+      "basis": "番内は大社地域の住民が担う正月行事とされる",
+      "sources": [
+        {
+          "url": "https://www.city.izumo.shimane.jp/www/contents/1347411393274/html/common/5d146ac1008.html",
+          "title": "出雲市の伝統芸能（伴内・番内）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "「吉兆さん」は「歳徳神」と縫い取った高さ約10mの大幟のこと",

@@ -24,6 +24,32 @@
     "集落の三上神社で祈祷を受けたアマハゲが、18:30ごろに出発して集落を巡る",
     "国の重要無形民俗文化財で、ユネスコ無形文化遺産の来訪神行事の一つ"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "遊佐の小正月行事として国の重要無形民俗文化財に指定",
+      "sources": [
+        {
+          "url": "https://bunka.nii.ac.jp/heritages/detail/170765",
+          "title": "文化遺産オンライン 遊佐の小正月行事（重要無形民俗文化財）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "女鹿・滝ノ浦・鳥崎の3集落が各集落で伝えてきた",
+      "sources": [
+        {
+          "url": "https://www.town.yuza.yamagata.jp/ou/kyoiku/bunka/8207.html",
+          "title": "遊佐町 遊佐の小正月行事（アマハゲ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "囲炉裏にあたりすぎてできる火斑を方言でアマミと呼び、それを剥ぐのが名の由来とされる",

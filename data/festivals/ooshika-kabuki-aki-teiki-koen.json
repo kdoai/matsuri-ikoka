@@ -13,6 +13,32 @@
     "嘉永4年に建てられた市場神社の芝居舞台で上演される",
     "鹿塩温泉の塩泉から煮詰めた山塩や、村のジビエ料理を味わえる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "明和4年の記録が残り、18世紀半ばから村で歌舞伎が演じられた",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/region/20/20417",
+          "title": "文化遺産オンライン 大鹿村の文化財（大鹿歌舞伎）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "村の人々が受け継ぎ、保存会の会員が中学生を指導する",
+      "sources": [
+        {
+          "url": "https://www.vill.ooshika.nagano.jp/what_ooshikakabuki/",
+          "title": "大鹿村 大鹿歌舞伎とは",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "明和4年の記録が残り、18世紀半ばには村で歌舞伎が演じられていたと分かる",

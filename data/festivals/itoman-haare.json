@@ -25,6 +25,32 @@
     "山巓毛の丘から旗を振って始まる、幕開けの御願バーレー",
     "各村の選りすぐりの漕ぎ手が競う、締めくくりのアガイスーブ"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "2012年に糸満市の無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.city.itoman.lg.jp/site/kankou-navi/15706.html",
+          "title": "糸満市 糸満のハーリー・ハーレー",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "西村・中村・新島の古い3つの村が舟を出して競う",
+      "sources": [
+        {
+          "url": "https://www.city.itoman.lg.jp/site/kankou-navi/15706.html",
+          "title": "糸満市 糸満のハーリー・ハーレー",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "ハーレー鉦が鳴ると梅雨が明ける、と糸満では言い伝えられている",

@@ -25,6 +25,32 @@
     "福浦地区の春祭りの4月10日に上演される",
     "300人が入れる専用の「歌舞伎の館」で、地元の人と並んで観る"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1984年に青森県の無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.pref.aomori.lg.jp/soshiki/kyoiku/e-bunka/kenmukei_34.html",
+          "title": "青森県 福浦の歌舞伎",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "福浦地区の漁師が明治から地元で歌舞伎を受け継いでいる",
+      "sources": [
+        {
+          "url": "https://saikanko.sakura.ne.jp/history/kabuki",
+          "title": "佐井村観光協会 福浦の歌舞伎（一般も入場できるが有料、館が開くのは上演のときだけ）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "1984年に青森県の無形民俗文化財に指定された",

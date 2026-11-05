@@ -24,6 +24,38 @@
     "囲炉裏にあたりすぎてできる火だこ「あまめ」をはぎ取り、怠け心を戒める",
     "冬の夜の神事で、これが済むと能登に遅い春が来るとされる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1979年に国の重要無形民俗文化財に指定され、2018年にユネスコ無形文化遺産にも記載",
+      "sources": [
+        {
+          "url": "https://kunishitei.bunka.go.jp/bsys/maindetails/302/60",
+          "title": "文化庁 国指定文化財等データベース 能登のアマメハギ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.pref.ishikawa.lg.jp/kyoiku/bunkazai/mukeibunkaisan/amamehagi_unesco.html",
+          "title": "石川県 「能登のアマメハギ」を含む「来訪神」ユネスコ無形文化遺産に記載",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "地区の小中学生が鬼に扮して家々を回る",
+      "sources": [
+        {
+          "url": "https://www.town.noto.lg.jp/kakuka/1009/gyomu/20/1254.html",
+          "title": "能登町 アマメハギ（地区の小中学生が鬼に扮して家々を回る）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "「能登のアマメハギ」は1979年に国の重要無形民俗文化財に指定された",

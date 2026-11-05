@@ -25,6 +25,20 @@
     "大和高田市奥田の池の蓮を蔵王権現に供える法会",
     "金峯山寺の三大行事の1つ"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "蓮華会が奈良県指定の無形民俗文化財になっている",
+      "sources": [
+        {
+          "url": "https://sitereports.nabunken.go.jp/article/47400",
+          "title": "奈良県指定無形民俗文化財 金峯山寺の蓮華会（月刊奈良の解説記事の書誌）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "蔵王権現をそしった男が大鷲に崖へ置き去りにされ、蛙の姿で救われたという伝説を演じる",

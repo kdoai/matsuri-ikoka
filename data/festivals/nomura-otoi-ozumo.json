@@ -25,6 +25,20 @@
     "1日目は市内の青年、2日目は小中学生の団体戦があり、町ぐるみの相撲が見られる",
     "両国国技館を手本にした乙亥会館に吊り屋根と土俵を組んで開く"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "嘉永5年の大火のあとに相撲を奉納したのが始まりとされる",
+      "sources": [
+        {
+          "url": "https://www.city.seiyo.ehime.jp/kakuka/nomura_sisho/sangyo/18958.html",
+          "title": "西予市 第175回乙亥大相撲",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "嘉永5年の大火のあと、火事が起きないよう願って三十三番の相撲を奉納したのが始まり",

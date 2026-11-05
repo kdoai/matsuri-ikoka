@@ -25,6 +25,32 @@
     "真夜中に始まる朝詰で、桝形に向かう屋台の運行と神様への奉納曲",
     "祭りの節目ごとに見られる、花輪祭独特の手打ち「サンサ」"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "最も古い記録は1765年の定め書。2016年にユネスコ無形文化遺産に登録",
+      "sources": [
+        {
+          "url": "https://www.hanawabayashi.jp/hanawabayashi/",
+          "title": "花輪ばやし 公式ホームページ 花輪ばやしとは",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "各町が屋台を出し、花輪ばやし祭典委員会が国の保護団体を務める",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/438810",
+          "title": "文化遺産オンライン 花輪祭の屋台行事（保護団体 花輪ばやし祭典委員会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "花輪ばやしの最も古い記録は、1765年の尾去沢銅山の定め書とされる",

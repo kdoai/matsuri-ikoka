@@ -13,6 +13,32 @@
     "テコ棒とギリ棒で山車を浮かせて向きを変える「ギリ廻し」",
     "6台の山車が必ず秩父神社の山門前に曳き付けられる宮参り"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "江戸時代の中ごろ、絹の大市とともに栄えた祭り",
+      "sources": [
+        {
+          "url": "https://navi.city.chichibu.lg.jp/p_festival/1030/",
+          "title": "秩父観光なび 秩父夜祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "囃子手は町内で認められた人が一生に一度務める花形役",
+      "sources": [
+        {
+          "url": "https://navi.city.chichibu.lg.jp/p_festival/1121/",
+          "title": "秩父観光なび 秩父夜祭のQ&A",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "笠鉾2基と屋台4基が出て、大きいものは重さが20トンに及ぶ",

@@ -25,6 +25,38 @@
     "茂吉鬼が湯蓋の蜂の巣を払い落とし、落ちたお宝を見物人が拾う",
     "釜の湯を振りまく湯ばやし。浴びると一年間健康で過ごせるという言い伝えがある"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "東栄町の花祭は国の重要無形民俗文化財で、約700年前に始まったと推定される",
+      "sources": [
+        {
+          "url": "https://www.town.toei.aichi.jp/hana_maturi/",
+          "title": "東栄町 花祭り公式サイト",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.town.toei.aichi.jp/5403.htm",
+          "title": "東栄町 花祭 Q&A",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "足込の花祭保存会が祭りの窓口を担い、地区で受け継ぐ",
+      "sources": [
+        {
+          "url": "https://www.town.toei.aichi.jp/5408.htm",
+          "title": "東栄町 足込地区の花祭",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "東栄町の花祭は1976年に国の重要無形民俗文化財に指定された",

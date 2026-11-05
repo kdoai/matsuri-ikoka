@@ -24,6 +24,20 @@
     "音楽に合わせたミュージックスターマインと、超ワイド特大スターマイン",
     "西宮神社のえびす講を祝って、明治から続く商都の花火"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1899年に西宮神社のえびす講を祝い、街の有志が始めた",
+      "sources": [
+        {
+          "url": "https://www.go-nagano.net/tradition-and-culture/id21175",
+          "title": "Go! NAGANO 長野県公式観光サイト 長野えびす講煙火大会",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "1899年（明治32年）、西宮神社のえびす講を祝って長野の街の有志が始めた",

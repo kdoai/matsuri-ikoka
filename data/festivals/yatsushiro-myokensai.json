@@ -25,6 +25,32 @@
     "砥崎河原での獅子舞・亀蛇の演舞と、飾馬が河原を駆ける馬追い",
     "前夜の御夜では、本町アーケードで出し物を間近に見られる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "約400年の歴史があり、神輿の奉納は1635年とされる",
+      "sources": [
+        {
+          "url": "https://myouken.com/",
+          "title": "八代妙見祭 公式サイト",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "10の町内が神輿を交代で奉仕し、各町が笠鉾を受け持つ",
+      "sources": [
+        {
+          "url": "https://myouken.com/",
+          "title": "八代妙見祭 公式サイト",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "獅子舞は元禄4年（1691）、長崎くんちの獅子舞に惚れこんだ城下の商人が初めて奉納したと伝わる",

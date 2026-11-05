@@ -24,6 +24,32 @@
     "徳島県内では珍しい、面を着けて舞う神楽",
     "地元の若連がふるまう年越しそばと御神酒"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "江戸初期に始まると伝わり、昭和62年に保存会が復活させた",
+      "sources": [
+        {
+          "url": "https://www.town.tokushima-tsurugi.lg.jp/docs/3452.html",
+          "title": "つるぎ町 天の岩戸神楽",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "保存会が復活させ、若連が年越しそばをふるまう",
+      "sources": [
+        {
+          "url": "https://www.town.tokushima-tsurugi.lg.jp/docs/3452.html",
+          "title": "つるぎ町 天の岩戸神楽",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "江戸時代の初めに、神楽石という平らな大岩の上で舞ったのが始まりと伝わる",

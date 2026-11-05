@@ -25,6 +25,32 @@
     "着飾った新婚の女性2人が、酒樽の上に乗って羽根つきをする",
     "宮相撲から綱引きまで、豊作・大漁・子孫繁栄の祈りを1日で重ねる小正月の行事"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1987年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.pref.nagasaki.jp/bunkadb/index.php/view/452",
+          "title": "長崎県の文化財 下崎山のヘトマト行事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "保護団体の下崎山町内会が行事を受け継ぐ",
+      "sources": [
+        {
+          "url": "https://www.pref.nagasaki.jp/bunkadb/index.php/view/452",
+          "title": "長崎県の文化財 下崎山のヘトマト行事（五島市下崎山町、保護団体 下崎山町内会）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "1987年1月8日に、国の重要無形民俗文化財に指定された",

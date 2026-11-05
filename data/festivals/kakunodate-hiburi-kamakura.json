@@ -25,6 +25,20 @@
     "主会場では、観光で訪れた人も火振りを体験できる",
     "主会場だけでなく、角館の町内ごとに火振りが行われる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "旧暦の小正月行事で、仙北市の指定無形民俗文化財になっている",
+      "sources": [
+        {
+          "url": "https://www.city.semboku.akita.jp/sightseeing/spot/07_hiburi.html",
+          "title": "仙北市 角館の火振りかまくら（市指定無形民俗文化財）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "旧暦の小正月行事の一つで、神聖な火で田んぼの厄を払い、家族の無病息災を祈る",

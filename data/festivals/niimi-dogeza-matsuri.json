@@ -25,6 +25,20 @@
     "国税庁の許可を受けて神社で造るどぶろくを、祭りの2日間いただける",
     "前夜は12の鉄釜を並べる湯立て神事"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1697年に藩主が神幸の警護をさせたのが始まりと伝わる",
+      "sources": [
+        {
+          "url": "https://www.okayama-kanko.jp/event/detail_12688.html",
+          "title": "岡山観光WEB 【2026年】土下座まつり（御神幸武器行列）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "1697年に新見藩の初代藩主・関長治が、神幸の警護に当たらせたのが始まりと伝わる",

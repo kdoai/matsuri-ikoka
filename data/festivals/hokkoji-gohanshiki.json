@@ -24,6 +24,32 @@
     "ヨビツカイの子どもたちが各戸を回り、当番宿へ招く祭り当番の受け渡し",
     "山伏・強力の姿に残る日光修験の名残"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "国の重要無形民俗文化財で、14世紀中ごろからと伝わる",
+      "sources": [
+        {
+          "url": "https://www.city.kanuma.tochigi.jp/0299/info-0000001963-0.html",
+          "title": "鹿沼市 発光路の強飯式",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "氏子の祭り当番と当番宿が中心となり、村人が当番を引き受ける",
+      "sources": [
+        {
+          "url": "https://kanuma-kanko.jp/purpose/%e7%99%ba%e5%85%89%e8%b7%af%e3%81%ae%e5%bc%b7%e9%a3%af%e5%bc%8f/",
+          "title": "鹿沼市観光協会 鹿沼日和 発光路の強飯式",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "地元の言い伝えでは、延文年間（1356〜1361）から行われてきたとされる",

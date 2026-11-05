@@ -25,6 +25,32 @@
     "2日目は谷地奴を先頭に、囃子屋台が従う神輿還御の行列が町を進む",
     "最終日の夜、5〜9台の囃子屋台が音色を競い、提灯屋台が灯る"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "林家舞楽が1981年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.yachihachimangu.jp/goyuisho/?hsLang=ja",
+          "title": "谷地八幡宮 御由緒",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "各町内が囃子屋台を出し、若衆が町印を担いだり曳いたりする",
+      "sources": [
+        {
+          "url": "https://www.town.kahoku.yamagata.jp/soshiki/shoko/kankousinkou/3342/700.html",
+          "title": "河北町 谷地どんがまつり",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "舞楽の笛と太鼓が「おひゃらどんが」と聞こえることが、名の由来といわれる",
