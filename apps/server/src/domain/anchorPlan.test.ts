@@ -38,6 +38,7 @@ const POINTS: StationPoint[] = [
   ["鈴鳴", VENUE.lat, VENUE.lng + 0.01],
   ["みなと中央", 34.9, 135.9],
   ["遠い北", 43.0, 141.3],
+  ["東の都", 35.68, 139.76],
 ];
 const stations = createStationPointIndex(POINTS);
 
@@ -136,6 +137,39 @@ describe("computeAnchorPlan", () => {
 
   it("近い祭りは日帰りでよく、警告を出さない", () => {
     const result = plan({ nights: 0 });
+
+    expect(result.minNights).toBe(0);
+    expect(result.warnings).toEqual([]);
+  });
+
+  it("夜の祭りに片道の長いところから日帰りすると、終電に間に合わないので泊まりを勧める", () => {
+    const result = plan({
+      festival: festival({ start: "18:00", end: null }),
+      origin: "東の都駅",
+      nights: 0,
+    });
+
+    expect(result.minNights).toBeGreaterThanOrEqual(1);
+    expect(result.warnings.join()).toContain("日帰りでは");
+  });
+
+  it("夜の祭りでも、1泊するなら注意を出さない", () => {
+    const result = plan({
+      festival: festival({ start: "18:00", end: null }),
+      origin: "東の都駅",
+      nights: 1,
+    });
+
+    expect(result.minNights).toBe(1);
+    expect(result.warnings).toEqual([]);
+  });
+
+  it("昼に終わる祭りは、片道が長くても日帰りできる", () => {
+    const result = plan({
+      festival: festival({ start: "12:00", end: "14:00" }),
+      origin: "東の都駅",
+      nights: 0,
+    });
 
     expect(result.minNights).toBe(0);
     expect(result.warnings).toEqual([]);
