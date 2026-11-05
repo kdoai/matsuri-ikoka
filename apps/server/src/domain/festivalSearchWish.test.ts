@@ -210,7 +210,7 @@ const WISH_CASES: { wish: string; top: string[]; below?: string[] }[] = [
   { wish: "歴史のある祭り", top: ["old"] },
   { wish: "海辺の絶景", top: ["photo"] },
   { wish: "鈴鳴灯籠祭に行きたい", top: ["named"] },
-  { wish: "神楽が見たい", top: ["kagura", "arts"] },
+  { wish: "神楽が見たい", top: ["kagura"] },
 ];
 
 describe("自由記述の上位の精度", () => {
@@ -741,17 +741,31 @@ describe("灯りと種類の言い方", () => {
     }
   });
 
-  it("種類が一致した祭りは、名前に言葉がある祭りより上にする", () => {
+  it("中身の広い種類の一部を名指しされたら、同じ種類というだけでは合うとしない", () => {
     const intent = reading({ terms: ["神楽"] });
-    const sameKind = textFestival("kinds", "舞を奉じる", { category: "performing_arts" });
-    const nameOnly = plain("textonly", {
-      edit: (f) => {
-        f.name = { ja: "架空神楽の市" };
-      },
-    });
-    expect(scoreOf(sameKind, intent, "神楽").points).toBeGreaterThan(
-      scoreOf(nameOnly, intent, "神楽").points,
+    const taiko = textFestival("taiko", "太鼓を打ち鳴らす", { category: "performing_arts" });
+    const kagura = textFestival("kagura", "夜通し神楽を舞う", { category: "performing_arts" });
+    const inRitual = textFestival("ritual", "社殿で神楽を奉納する", { category: "ritual" });
+
+    expect(scoreOf(taiko, intent, "神楽").points).toBe(0);
+    expect(scoreOf(taiko, intent, "神楽").fit).toBe("none");
+    expect(scoreOf(kagura, intent, "神楽").points).toBeGreaterThan(
+      scoreOf(inRitual, intent, "神楽").points,
     );
+    expect(scoreOf(inRitual, intent, "神楽").fit).toBe("matched");
+  });
+
+  it("種類全体を指す言葉なら、同じ種類の祭りは合う", () => {
+    const taiko = textFestival("taiko", "太鼓を打ち鳴らす", { category: "performing_arts" });
+    const intent = reading({ terms: ["芸能"], categories: ["performing_arts"] });
+
+    expect(scoreOf(taiko, intent, "伝統芸能").fit).toBe("matched");
+  });
+
+  it("中身のそろった種類は、言葉が文になくても合う（山車と言われて曳山の祭り）", () => {
+    const hikiyama = textFestival("hikiyama", "曳山が町を巡る", { category: "float" });
+
+    expect(scoreOf(hikiyama, reading({ terms: ["山車"] }), "山車").fit).toBe("matched");
   });
 });
 
