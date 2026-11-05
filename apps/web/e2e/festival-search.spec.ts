@@ -224,6 +224,15 @@ test("入口の2択から祭りを探し、続きを見て、選んでここで�
   await expect(page.getByTestId("chat-user")).toHaveCount(0);
 });
 
+test("接客サーバーの検索の口につながり、結果の一覧を出す", async ({ page }) => {
+  await open(page);
+  await answerAll(page);
+  // 祭りの有無はサンプルのデータと今日の日付で変わるので、一覧が開くことと、失敗の文が出ないことを確かめる
+  await expect(page.getByTestId("festival-results")).toBeVisible();
+  await expect(page.getByTestId("festival-results-footer")).toBeVisible();
+  await expect(page.getByTestId("festival-search-error")).toHaveCount(0);
+});
+
 test("0件のときは、外れている点つきの祭りと次の手を出し、条件を選び直せる", async ({ page }) => {
   await fakeSearch(page, [
     reply({
