@@ -1,0 +1,257 @@
+{
+  "id": "takasaki-matsuri-dai-hanabi-taikai",
+  "name": {
+    "ja": "高崎まつり大花火大会",
+    "en": "Takasaki Festival Grand Fireworks"
+  },
+  "category": "fireworks",
+  "municipalities": [
+    {
+      "prefecture": "群馬県",
+      "name": "高崎市"
+    }
+  ],
+  "venue": {
+    "name": "烏川 和田橋上流河川敷",
+    "lat": 36.3238,
+    "lng": 138.9933
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "約1万5000発をわずか50分で打ち上げる密度の濃さ",
+    "高崎まつりの初日の夜に開かれ、町じゅうの祭りの熱気の中で見られる",
+    "約5万3000人分の無料観覧エリアがある"
+  ],
+  "styles": [],
+  "trivia": [
+    {
+      "text": "多くの大会が2時間ほどかけて上げる規模の花火を、50分で打ち上げる",
+      "source": {
+        "url": "https://hanabi.walkerplus.com/detail/ar0310e00905/",
+        "title": "ウォーカープラス 第52回 高崎大花火大会",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "2025年は高崎まつりとあわせて約95万人が訪れた",
+      "source": {
+        "url": "https://rurubu.jp/andmore/spot/20002726",
+        "title": "るるぶ&more. 第52回高崎まつり大花火大会",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "C・D・E会場（無料）の場所取りは当日8:00から。A・B・F会場（有料）は事前の場所取りができない",
+      "シートの敷きっぱなし、カラースプレーでの場所取り、スペースの独り占めは禁止",
+      "観覧エリアでいすと三脚を使わない（有料カメラマン席を除く）",
+      "ドローンなどの小型無人機は全面禁止",
+      "観覧エリアは禁煙で、ペットの同伴は遠慮する。ごみは持ち帰る",
+      "堤防上の通路で観覧しない",
+      "会場周辺に車を止めない。城南球場立体駐車場には止められない"
+    ],
+    "dress": "unknown",
+    "bring": ["A・B会場はシートを各自で用意する（F会場はいすの席）"],
+    "risk": {
+      "level": "medium",
+      "reason": "無料観覧エリアだけで約5万3000人を見込み、混むと入場制限があり、夜の河川敷で見る"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "三脚は有料カメラマン席だけで使える。ドローンは禁止"
+    },
+    "sources": [
+      {
+        "url": "https://www.takasaki-matsuri.jp/oohanabi_taikai/",
+        "title": "高崎まつり 公式 大花火大会（場所取り、禁止事項、無料観覧エリア）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-22",
+      "start": "19:30",
+      "end": "20:20",
+      "status": "announced",
+      "rainPolicy": "荒天は8月23日に順延",
+      "note": "第52回。約15,000発。有料席は18:00入場で、大人3,500円・高校生以下2,500円。無料観覧エリアの場所取りは当日8:00から",
+      "sources": [
+        {
+          "url": "https://www.takasaki-matsuri.jp/oohanabi_taikai/",
+          "title": "高崎まつり 公式 大花火大会（2026年8月22日 19:30〜20:20、約15,000発）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://hanabi.walkerplus.com/detail/ar0310e00905/data.html",
+          "title": "ウォーカープラス 第52回 高崎大花火大会 データ（約1万5000発）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20002726",
+          "title": "るるぶ&more. 第52回高崎まつり大花火大会（荒天は8月23日に順延）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-28",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2025・2026年の日付（第4土曜）からの見込み（2027年の発表はまだない）",
+      "sources": [
+        {
+          "url": "https://www.city.takasaki.gunma.jp/uploaded/attachment/32294.pdf",
+          "title": "高崎市 第51回高崎まつり及び第23回高崎山車まつりの開催概要（大花火大会は令和7年8月23日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.takasaki-matsuri.jp/oohanabi_taikai/",
+          "title": "高崎まつり 公式 大花火大会（2026年8月22日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 高崎駅",
+        "walkMinutes": [15, 20],
+        "note": "西口から"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "東京駅",
+        "minutes": [60, 70],
+        "route": "上越新幹線、乗り換えなし（約1時間）"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [
+      "2026年：花火の当日は18:00〜21:30 花火会場の周辺で規制",
+      "2026年：まつりの交通規制は8月22日13:00〜22:00（駅前通りは12:00から）",
+      "八島町交差点〜あら町交差点の区域は車両進入不可（22日は0:00〜22:00）"
+    ],
+    "sources": [
+      {
+        "url": "https://www.takasaki-matsuri.jp/oohanabi_taikai/",
+        "title": "高崎まつり 公式 大花火大会（交通規制、市内の有料駐車場の案内）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.takasaki-matsuri.jp/access/",
+        "title": "高崎まつり 公式 アクセス（東京から上越新幹線で約1時間、交通規制）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0310e00905/data.html",
+        "title": "ウォーカープラス 第52回 データ（JR高崎駅西口から徒歩15分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002726",
+        "title": "るるぶ&more. 第52回（JR高崎駅西口から徒歩15分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "開運たかさき食堂",
+        "note": "高崎まつりのもてなし広場に地元の店が集まる。2026年は8月22日13:00〜20:45、23日13:00〜19:45",
+        "sources": [
+          {
+            "url": "https://www.takasaki-matsuri.jp/takasaki_shokudou/",
+            "title": "高崎まつり 公式 開運たかさき食堂",
+            "checkedAt": "2026-11-05",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "shorinzan-darumaji",
+      "name": "少林山達磨寺",
+      "kind": "sightseeing",
+      "summary": "縁起だるま発祥の寺として知られる高崎市鼻高町の黄檗宗の寺。ブルーノ・タウトが暮らした寺でもある。達磨堂と札場は9:00〜17:00",
+      "location": {
+        "lat": 36.3305,
+        "lng": 138.9564
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.daruma.or.jp/",
+          "title": "少林山達磨寺 公式サイト（受付時間、所在地）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.takasaki-matsuri.jp/oohanabi_taikai/",
+      "title": "高崎まつり 公式 大花火大会（主催 高崎まつり実行委員会）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://hanabi.walkerplus.com/detail/ar0310e00905/",
+      "title": "ウォーカープラス 第52回 高崎大花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20002726",
+      "title": "るるぶ&more. 第52回高崎まつり大花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://www.jalan.net/theme/hanabi/gunma/09_hanabi03.html",
+      "title": "じゃらんnet 高崎まつり大花火大会の花火大会情報2026",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    }
+  ],
+  "gaps": [
+    "2027年の開催日の発表と時刻",
+    "服装の決まり",
+    "祭りの前後に寄れる食の店",
+    "少林山達磨寺の休みと拝観料"
+  ]
+}

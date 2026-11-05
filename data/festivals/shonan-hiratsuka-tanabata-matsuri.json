@@ -1,0 +1,284 @@
+{
+  "id": "shonan-hiratsuka-tanabata-matsuri",
+  "name": {
+    "ja": "湘南ひらつか七夕まつり",
+    "en": "Shonan Hiratsuka Tanabata Festival"
+  },
+  "category": "other",
+  "municipalities": [
+    {
+      "prefecture": "神奈川県",
+      "name": "平塚市"
+    }
+  ],
+  "venue": {
+    "name": "JR平塚駅北口商店街（湘南スターモール・紅谷パールロード）",
+    "lat": 35.3284,
+    "lng": 139.3478
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu"],
+  "highlights": [
+    "中心街に飾りが約300本、うち5mを超える大型の飾りは約100本",
+    "流行のスポーツ選手や動物を取り入れた飾りが並ぶ",
+    "夕方5時半ごろから点灯し、夜の飾りも楽しめる"
+  ],
+  "styles": [
+    {
+      "style": "community",
+      "basis": "市内の団体が手作りする市民飾りや、保育園・小学校などの子ども飾りが通りに並ぶ",
+      "sources": [
+        {
+          "url": "https://tanabata-hiratsuka.com/qa/",
+          "title": "湘南ひらつか七夕まつり よくある質問（開催日の決め方、雨天、露店、駐車場、ドローン、喫煙）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.hiratsuka.kanagawa.jp/kanko/page-c_01132.html",
+          "title": "平塚市 まつりの起源・特徴（昭和26年に第1回、仙台を手本に）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "戦後の1951年、仙台の七夕を手本に商工会議所と商店街連合会が始めた",
+      "source": {
+        "url": "https://www.city.hiratsuka.kanagawa.jp/kanko/page-c_01132.html",
+        "title": "平塚市 まつりの起源・特徴（昭和26年に第1回、仙台を手本に）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "市民飾りは、減った飾りを埋めるために2001年の第51回から始まった",
+      "source": {
+        "url": "https://tanabata-hiratsuka.com/qa/",
+        "title": "湘南ひらつか七夕まつり よくある質問（開催日の決め方、雨天、露店、駐車場、ドローン、喫煙）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "飾りつけは前夜の午後8時に始まり、初日の朝8時半までに掲げ終える",
+      "source": {
+        "url": "https://tanabata-hiratsuka.com/qa/",
+        "title": "湘南ひらつか七夕まつり よくある質問（開催日の決め方、雨天、露店、駐車場、ドローン、喫煙）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "開催日は7月7日の曜日で決まる。2028年は7月7日〜9日の予定",
+      "source": {
+        "url": "https://tanabata-hiratsuka.com/qa/",
+        "title": "湘南ひらつか七夕まつり よくある質問（開催日の決め方、雨天、露店、駐車場、ドローン、喫煙）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "開催エリアでのドローンなどの飛行は禁止",
+      "路上で喫煙しない。喫煙所は会場付近の3か所",
+      "ペットは勧められていない。連れてくるなら必ずリードをつける",
+      "飾りは最終日の終了後に下ろすので、来場者は歩道に上がる"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "昨年の来場者は115万人とされ、会場は大変混み合い、足元が見えにくくなる"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://tanabata-hiratsuka.com/qa/",
+        "title": "湘南ひらつか七夕まつり よくある質問（開催日の決め方、雨天、露店、駐車場、ドローン、喫煙）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://tanabata-hiratsuka.com/manners/",
+        "title": "湘南ひらつか七夕まつり マナーアップの取組み（戦災復興を願って開始）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002466",
+        "title": "るるぶ&more. 第74回湘南ひらつか七夕まつり（昨年の来場者 115万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-07-03",
+      "endDate": "2026-07-05",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": "雨天でも開催。一部のイベントは中止あり",
+      "note": "第74回。7月3日 10:00 開会式、10:30 七夕おどり千人パレード。3日と4日は20:30まで、最終日は19:00まで。露店は19:30まで（最終日は18:30）。七夕おどり千人パレードの参加は団体の事前の募集（2026年は電子申請で4月1日〜5月1日、応募多数は審査）",
+      "sources": [
+        {
+          "url": "https://tanabata-hiratsuka.com/summary/",
+          "title": "湘南ひらつか七夕まつり 開催概要（約300本、交通案内）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://tanabata-hiratsuka.com/qa/",
+          "title": "湘南ひらつか七夕まつり よくある質問（開催日の決め方、雨天、露店、駐車場、ドローン、喫煙）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.hiratsuka.kanagawa.jp/press/page02_e00001_03215.html",
+          "title": "平塚市 第74回湘南ひらつか七夕まつりの概要を決定",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://tanabata-hiratsuka.com/join/parade/",
+          "title": "湘南ひらつか七夕まつり 七夕おどり千人パレード参加団体の募集",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-02",
+      "endDate": "2027-07-04",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": "雨天でも開催。一部のイベントは中止あり",
+      "note": "第75回。時刻と行事の発表はまだない",
+      "sources": [
+        {
+          "url": "https://www.city.hiratsuka.kanagawa.jp/kanko/page-c_01099.html",
+          "title": "平塚市 湘南ひらつか七夕まつり（第75回は令和9年7月2日〜4日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://tanabata-hiratsuka.com/qa/",
+          "title": "湘南ひらつか七夕まつり よくある質問（開催日の決め方、雨天、露店、駐車場、ドローン、喫煙）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 平塚駅",
+        "walkMinutes": [2, 7],
+        "note": "北口から"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "東京駅",
+        "minutes": [60, 70],
+        "route": "JR上野東京ライン"
+      },
+      {
+        "hub": "新宿駅",
+        "minutes": [65, 75],
+        "route": "JR湘南新宿ライン"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [
+      "湘南スターモールと紅谷パールロードは、前日の20:00から交通規制（第74回の例）"
+    ],
+    "sources": [
+      {
+        "url": "https://tanabata-hiratsuka.com/summary/",
+        "title": "湘南ひらつか七夕まつり 開催概要（約300本、交通案内）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://tanabata-hiratsuka.com/summary/kotu/",
+        "title": "湘南ひらつか七夕まつり 交通規制について",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://tanabata-hiratsuka.com/qa/",
+        "title": "湘南ひらつか七夕まつり よくある質問（開催日の決め方、雨天、露店、駐車場、ドローン、喫煙）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.hiratsuka.kanagawa.jp/kanko/page-c_01099.html",
+        "title": "平塚市 湘南ひらつか七夕まつり（第75回は令和9年7月2日〜4日）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://tanabata-hiratsuka.com/summary/",
+      "title": "湘南ひらつか七夕まつり 開催概要（約300本、交通案内）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.hiratsuka.kanagawa.jp/kanko/page-c_01099.html",
+      "title": "平塚市 湘南ひらつか七夕まつり（第75回は令和9年7月2日〜4日）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.hiratsuka.kanagawa.jp/kanko/page-c_01132.html",
+      "title": "平塚市 まつりの起源・特徴（昭和26年に第1回、仙台を手本に）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://summer.walkerplus.com/odekake/detail_e/ar0314e184116/",
+      "title": "ウォーカープラス 第74回 湘南ひらつか七夕まつり",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20002466",
+      "title": "るるぶ&more. 第74回湘南ひらつか七夕まつり",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.city.hiratsuka.kanagawa.jp/press/page02_e00001_03215.html",
+      "title": "平塚市 第74回湘南ひらつか七夕まつりの概要を決定（大型飾り 約100本）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の時刻と行事",
+    "第75回の交通規制の時間と範囲",
+    "服装・持ち物・撮影の決まり",
+    "地元の味",
+    "祭りの前後に寄れる場所",
+    "個人で七夕おどりや飾りに加わる手段"
+  ]
+}

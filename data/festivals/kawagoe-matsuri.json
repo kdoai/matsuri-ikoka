@@ -1,0 +1,330 @@
+{
+  "id": "kawagoe-matsuri",
+  "name": {
+    "ja": "川越まつり",
+    "en": "Kawagoe Festival"
+  },
+  "category": "float",
+  "municipalities": [
+    {
+      "prefecture": "埼玉県",
+      "name": "川越市"
+    }
+  ],
+  "venue": {
+    "name": "川越市中心市街地",
+    "lat": 35.9242,
+    "lng": 139.4826
+  },
+  "scaleTier": "M",
+  "popularity": "major",
+  "listedIn": ["walkerplus", "jalan", "rurubu", "jnto"],
+  "highlights": [
+    "向かい合った山車どうしが囃子を競う「曳っかわせ」",
+    "夜は提灯を掲げ、曳き手の歓声で最も盛り上がる",
+    "江戸の二重の形を受け継ぐ江戸系川越型の山車"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "川越氷川祭の山車行事は国の重要無形民俗文化財で、ユネスコ無形文化遺産にも登録",
+      "sources": [
+        {
+          "url": "https://kawagoematsuri.jp/about/about_history.html",
+          "title": "川越まつり 概要・歴史（1648年、国の重要無形民俗文化財、ユネスコ無形文化遺産）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "氷川神社の氏子の町々が受け継ぎ、山車の多くは町ごとに持つ",
+      "sources": [
+        {
+          "url": "https://kawagoematsuri.jp/about/about_history.html",
+          "title": "川越まつり 概要・歴史（1648年、国の重要無形民俗文化財、ユネスコ無形文化遺産）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://kawagoematsuri.jp/dashi/index.html",
+          "title": "川越まつり 山車紹介（29台）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "1648年、川越藩主の松平信綱が氷川神社に神輿・獅子頭・太鼓を寄進したのが始まり",
+      "source": {
+        "url": "https://kawagoematsuri.jp/about/about_history.html",
+        "title": "川越まつり 概要・歴史（1648年、国の重要無形民俗文化財、ユネスコ無形文化遺産）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1698年、高沢町が初めて踊り屋台を出したと伝わる",
+      "source": {
+        "url": "https://kawagoematsuri.jp/about/about_history.html",
+        "title": "川越まつり 概要・歴史（1648年、国の重要無形民俗文化財、ユネスコ無形文化遺産）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "公式の山車紹介には29台が載り、1台を除いて町の山車",
+      "source": {
+        "url": "https://kawagoematsuri.jp/dashi/index.html",
+        "title": "川越まつり 山車紹介（29台）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2005年に国の重要無形民俗文化財、2016年にユネスコ無形文化遺産になった",
+      "source": {
+        "url": "https://kawagoematsuri.jp/about/about_history.html",
+        "title": "川越まつり 概要・歴史（1648年、国の重要無形民俗文化財、ユネスコ無形文化遺産）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "会場では立ち止まらず、左側を歩く",
+      "歩きたばこは禁止。喫煙は指定の場所で",
+      "ドローンなどは法律で原則禁止",
+      "小さな子ども連れ、ベビーカー、車いすの人に配慮する",
+      "規制区域では自転車を押して歩く",
+      "雨でも開催されるが、山車を曳くかは町内ごとに決めるので山車は減る（2023年の公式の案内）"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "2日間で約66万人が集まり、広い範囲が長時間の交通規制と歩行のルールの中で動く"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://kawagoematsuri.jp/traffic-R8.html",
+        "title": "令和8年 川越まつり情報（10月17日・18日、交通規制、マナー）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kawagoematsuri.jp/news/20231013.html",
+        "title": "川越まつり 雨天時の川越まつりについて（2023年の案内）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000059",
+        "title": "るるぶ&more. 川越まつり（駅からの徒歩、前年の来場者 66万1000人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-10-17",
+      "endDate": "2026-10-18",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。神幸祭、宵山、曳っかわせ。両日とも10:00〜22:00は車両通行禁止",
+      "sources": [
+        {
+          "url": "https://kawagoematsuri.jp/traffic-R8.html",
+          "title": "令和8年 川越まつり情報（10月17日・18日、交通規制、マナー）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-10-16",
+      "endDate": "2027-10-17",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年10月の第3日曜日とその前日に開く決まりから見込んだ日（2027年の発表はまだない）",
+      "sources": [
+        {
+          "url": "https://kawagoematsuri.jp/about/about_history.html",
+          "title": "川越まつり 概要・歴史（1648年、国の重要無形民俗文化財、ユネスコ無形文化遺産）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "西武 本川越駅",
+        "walkMinutes": [0, 5],
+        "note": "すぐ。東武 川越市駅からは徒歩約25分"
+      },
+      {
+        "name": "JR・東武 川越駅",
+        "walkMinutes": [30, 35],
+        "note": "徒歩約30分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "池袋駅",
+        "minutes": [30, 40],
+        "route": "東武東上線の急行で川越駅へ"
+      },
+      {
+        "hub": "西武新宿駅",
+        "minutes": [44, 54],
+        "route": "西武新宿線の特急で本川越駅へ"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": ["両日とも10:00〜22:00は広い範囲で車両通行禁止（令和8年の例）"],
+    "sources": [
+      {
+        "url": "https://kawagoematsuri.jp/traffic-R8.html",
+        "title": "令和8年 川越まつり情報（10月17日・18日、交通規制、マナー）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://kawagoematsuri.jp/",
+        "title": "川越まつり 公式サイト（第3日曜とその前日、アクセス）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000059",
+        "title": "るるぶ&more. 川越まつり（駅からの徒歩、前年の来場者 66万1000人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "kawagoe-matsuri-kaikan",
+      "name": "川越まつり会館",
+      "kind": "sightseeing",
+      "summary": "実物の山車2台と祭りの映像を見られる。日曜・祝日は囃子の実演がある。毎月第2・第4水曜（祝日は翌日）と12月29日〜1月1日は休館",
+      "location": {
+        "lat": 35.9242,
+        "lng": 139.4826
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "17:30",
+        "lastEntry": "17:00"
+      },
+      "closedDays": null,
+      "price": "一般300円、小中学生100円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://kawagoematsuri.jp/matsurimuseum/index.html",
+          "title": "川越まつり会館（開館時間、休館日、観覧料）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kawagoe-hikawa-jinja",
+      "name": "川越氷川神社",
+      "kind": "sightseeing",
+      "summary": "川越まつりの起こりである川越氷川祭の神社。だれでも自由に参拝できる",
+      "location": {
+        "lat": 35.9275,
+        "lng": 139.4888
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.kawagoehikawa.jp/",
+          "title": "川越氷川神社 公式サイト（所在地、自由に参拝できる）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://kawagoematsuri.jp/about/about_history.html",
+          "title": "川越まつり 概要・歴史（1648年、国の重要無形民俗文化財、ユネスコ無形文化遺産）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://kawagoematsuri.jp/",
+      "title": "川越まつり 公式サイト（第3日曜とその前日、アクセス）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://kawagoematsuri.jp/about/about_history.html",
+      "title": "川越まつり 概要・歴史（1648年、国の重要無形民俗文化財、ユネスコ無形文化遺産）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.japan.travel/en/spot/325/",
+      "title": "日本政府観光局 Kawagoe Festival",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20000059",
+      "title": "るるぶ&more. 川越まつり（駅からの徒歩、前年の来場者 66万1000人）",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.walkerplus.com/event/ar0311e566823/",
+      "title": "ウォーカープラス 川越まつり",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_331580/",
+      "title": "じゃらんnet 川越まつり",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "山車を曳く一般向けの募集があるか",
+    "2026年と2027年の行事の時刻",
+    "服装・持ち物・撮影の決まり",
+    "地元の味（屋台村の案内はあるが詳細が分からない）",
+    "祭りの前後に寄れる食の店",
+    "周辺の場所の知名度"
+  ]
+}
