@@ -1,5 +1,6 @@
 import { randomBytes } from "node:crypto";
 import {
+  type AnchorPlan,
   type ConversationStage,
   DEFAULT_PREFERENCES,
   type FestivalCandidate,
@@ -10,6 +11,8 @@ import {
   type PartialTripConditions,
   type Preferences,
   type Source,
+  type TripAnchor,
+  type VerificationResult,
   type Weather,
 } from "@matsuri-ikoka/schema";
 
@@ -35,6 +38,14 @@ export interface Session {
   selectedFestivalId: string | null;
   /** この相談の旅程の ID。保存した旅程は ItineraryStore にある */
   itineraryId: string | null;
+  /** 祭りから探して決めた、必ず行く祭りと行く日。あれば、この祭りを固定して旅程を組む */
+  anchor: TripAnchor | null;
+  /** 固定した祭りを軸にした組み立て。出発地か泊数が分からない間は null */
+  anchorPlan: AnchorPlan | null;
+  /** 固定した祭りの開催を組み始める前に確かめた結果。まだなら null */
+  anchorCheck: VerificationResult | null;
+  /** 組み始める前の確かめで中止と分かった祭り。この祭りの旅程は保存しない */
+  cancelledAnchor: (TripAnchor & { name: string; note: string | null }) | null;
   /** 調べた天気。キーは「祭りの ID@日付」 */
   weather: Map<string, Weather>;
   /** 調べた宿の空き。キーはチェックインの日。旅程を保存するとき、その日の泊まりに付ける */
@@ -116,6 +127,10 @@ export class SessionStore {
       nearMisses: [],
       selectedFestivalId: null,
       itineraryId: null,
+      anchor: null,
+      anchorPlan: null,
+      anchorCheck: null,
+      cancelledAnchor: null,
       weather: new Map(),
       lodging: new Map(),
       researchedSpots: new Map(),
@@ -145,13 +160,19 @@ export class SessionStore {
       | "selectedFestivalId"
       | "itineraryId"
       | "replay"
-    >,
+    > &
+      Partial<Pick<Session, "anchor" | "anchorPlan" | "anchorCheck" | "cancelledAnchor">>,
   ): Session {
     const existing = this.get(saved.id);
     if (existing !== undefined) return existing;
     this.#makeRoom();
     const session: Session = {
       ...saved,
+      // アンカーの項目がない、前の形の保存も読めるようにする
+      anchor: saved.anchor ?? null,
+      anchorPlan: saved.anchorPlan ?? null,
+      anchorCheck: saved.anchorCheck ?? null,
+      cancelledAnchor: saved.cancelledAnchor ?? null,
       lastActiveAt: this.#now(),
       weather: new Map(),
       nearMisses: [],

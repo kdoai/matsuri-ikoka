@@ -14,6 +14,7 @@ import type { CandidateChecker } from "../tools/candidateCheck";
 import { newTurnState, type ToolContext } from "../tools/context";
 import type { LodgingService } from "../tools/lodging";
 import type { LodgingResearcher } from "../tools/lodgingResearch";
+import { confirmAnchor } from "../tools/matsuriTools";
 import { createMatsuriMcpServer } from "../tools/mcpServer";
 import type { NearbyResearcher } from "../tools/nearbyResearch";
 import type { PlanEvaluator } from "../tools/planEvaluator";
@@ -219,6 +220,9 @@ export class ClaudeAgentRunner implements AgentRunner {
       emit(event);
     };
     ctx.emit = counted;
+    // 祭りを固定した旅程は、組み始める前に開催を確かめる（中止と分かったら店の記録で伝え、旅程を組まない）
+    await confirmAnchor(ctx);
+    progress?.();
     const prompt = turnPrompt(ctx, message);
     /** 直前の試みで、Agent SDK がセッションを名乗ったか（続きの会話を読めたか） */
     let initSeen = false;

@@ -1,9 +1,12 @@
 import type {
+  AnchorPlan,
   ConversationStage,
   FestivalCandidate,
   Itinerary,
   PartialTripConditions,
   Preferences,
+  TripAnchor,
+  VerificationResult,
 } from "@matsuri-ikoka/schema";
 
 // 保存の口（docs/spec/account.md）。Firestore の実装（firestore.ts）と、テストと手元用のメモリの実装（memory.ts）がある。
@@ -65,6 +68,11 @@ export interface SessionSnapshot {
   candidates: FestivalCandidate[];
   selectedFestivalId: string | null;
   itineraryId: string | null;
+  /** 祭りを固定した旅程の状態。この項目がない、前の形の保存もある */
+  anchor?: TripAnchor | null;
+  anchorPlan?: AnchorPlan | null;
+  anchorCheck?: VerificationResult | null;
+  cancelledAnchor?: (TripAnchor & { name: string; note: string | null }) | null;
   replay: { sampleId: string; nextTurn: number; itineraryIds?: Record<string, string> } | null;
 }
 
