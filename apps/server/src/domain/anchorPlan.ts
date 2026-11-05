@@ -276,6 +276,15 @@ function originPointOf(
   return best;
 }
 
+/**
+ * 利用者が決めた初日から祭りの日までの日数。決めていない、今日より前、泊数に祭りの日が入らないときは null
+ */
+function fixedDaysBefore(anchor: TripAnchor, nights: number, today: IsoDate): number | null {
+  if (anchor.startDate === undefined || anchor.startDate < today) return null;
+  const before = daysBetween(anchor.startDate, anchor.date);
+  return before >= 0 && before <= nights ? before : null;
+}
+
 /** 選んだ祭りを軸に、旅を組み立てる。アンカーは refuseAnchor で確かめてから渡す */
 export function computeAnchorPlan(
   input: AnchorPlanInput,
@@ -309,6 +318,11 @@ export function computeAnchorPlan(
     stops.push({ prefecture: match.prefecture, point: PREFECTURE_POINTS[match.prefecture] });
   }
 
+  // 利用者が初日を決めていて、泊数の中に祭りの日が入るなら、その日程を守る
+  const fixedBefore = fixedDaysBefore(anchor, nights, today);
+  const afterRoom = (minutes: number) =>
+    extraDays(minutes, frame.roomAfter, frame.dayMinutes) <= nights - (fixedBefore ?? 0);
+
   if (originPoint !== null && originToVenue !== null) {
     const context: RouteContext = {
       frame,
@@ -316,9 +330,14 @@ export function computeAnchorPlan(
       originPoint,
       venue,
       originToVenue,
-      festivalFirst: daysBetween(today, anchor.date) <= 0,
+      festivalFirst: daysBetween(today, anchor.date) <= 0 || fixedBefore === 0,
     };
-    const fits = (r: Route) => r.minutes <= capacity && r.extra <= nights;
+    const fits = (r: Route) =>
+      r.minutes <= capacity &&
+      r.extra <= nights &&
+      (fixedBefore === null ||
+        (extraDays(r.beforeMinutes, frame.roomBefore, frame.dayMinutes) <= fixedBefore &&
+          afterRoom(r.minutes - r.beforeMinutes - frame.stay)));
     // 3〜5. 寄り道の増える時間が少ない場所から足していく
     let chosen: Stop[] = [];
     let rest = [...stops];
@@ -392,7 +411,8 @@ export function computeAnchorPlan(
   // 6. 旅の日付。祭りの前に要る日のぶんだけ初日を前にずらす（今日より前にはしない）
   const needBefore =
     route === null ? 0 : extraDays(route.beforeMinutes, frame.roomBefore, frame.dayMinutes);
-  const daysBefore = Math.min(nights, needBefore, Math.max(0, daysBetween(today, anchor.date)));
+  const daysBefore =
+    fixedBefore ?? Math.min(nights, needBefore, Math.max(0, daysBetween(today, anchor.date)));
   const startDate = addDays(anchor.date, -daysBefore);
 
   // 7. 選んだ泊数で祭りに無理なく行けるか
@@ -407,6 +427,20 @@ export function computeAnchorPlan(
     warnings.push(
       `${nightsLabel(nights)}では、この祭りに無理なく行けません（片道の目安は${hoursLabel(originToVenue ?? 0)}）。${minNights}泊あると安心です`,
     );
+  }
+
+  // 決めた日程では祭りの前後の移動が収まらないときは、日程を変えずに伝える
+  if (fixedBefore !== null && originToVenue !== null) {
+    if (extraDays(originToVenue, frame.roomBefore, frame.dayMinutes) > fixedBefore) {
+      warnings.push(
+        `選んだ初日に出発すると、祭りの開始に間に合わないかもしれません（片道の目安は${hoursLabel(originToVenue)}）。もう1日前に出発すると安心です`,
+      );
+    }
+    if (!afterRoom(originToVenue)) {
+      warnings.push(
+        `祭りのあと、選んだ最後の日のうちに帰り着けないかもしれません（片道の目安は${hoursLabel(originToVenue)}）。もう1泊あると安心です`,
+      );
+    }
   }
 
   return {

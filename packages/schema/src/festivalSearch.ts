@@ -150,10 +150,17 @@ export const FestivalWishIntentSchema = z.strictObject({
 // 祭りを決めたあとの旅程（選んだ祭りを必ず行く場所にする）
 
 /** 必ず行く祭りと、行く日。行く日は祭りのデータの開催回の中の日だけ */
-export const TripAnchorSchema = z.strictObject({
-  festivalId: SlugSchema,
-  date: IsoDateSchema,
-});
+export const TripAnchorSchema = z
+  .strictObject({
+    festivalId: SlugSchema,
+    date: IsoDateSchema,
+    /** 利用者が決めた旅の初日。なければ、回る順からコードで決める */
+    startDate: IsoDateSchema.optional(),
+  })
+  .refine((anchor) => anchor.startDate === undefined || anchor.startDate <= anchor.date, {
+    path: ["startDate"],
+    message: "旅の初日は、祭りの日以前にしてください",
+  });
 
 /**
  * 寄りたい場所の扱い。
