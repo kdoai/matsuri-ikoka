@@ -1,5 +1,6 @@
 import {
   type AgentMode,
+  AnchorPlanSchema,
   FestivalSchema,
   FestivalSearchResponseSchema,
   type SessionRequest,
@@ -141,6 +142,23 @@ export function createServerTransport(options: ServerTransportOptions = {}): Cha
       const parsed = FestivalSearchResponseSchema.safeParse(
         await response.json().catch(() => undefined),
       );
+      if (!parsed.success) {
+        throw new TransportError("invalid_event", { status: response.status });
+      }
+      return parsed.data;
+    },
+    async previewFestivalTrip(request, signal) {
+      const response = await fetchImpl("/api/festival-trips/preview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...authHeaders(passcode) },
+        body: JSON.stringify(request),
+        ...(signal === undefined ? {} : { signal }),
+      });
+      if (!response.ok) {
+        // 404 は相談でなく祭りが見つからないとき。本文の一文をそのまま伝える
+        throw await errorFromResponse(response, false);
+      }
+      const parsed = AnchorPlanSchema.safeParse(await response.json().catch(() => undefined));
       if (!parsed.success) {
         throw new TransportError("invalid_event", { status: response.status });
       }

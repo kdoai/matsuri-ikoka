@@ -290,6 +290,40 @@ export const ja = {
     needOne: "1つ以上答えると、相談できます",
     reopen: "条件を選び直す",
     startOver: "はじめからやり直す",
+    anchored: {
+      prompts: {
+        schedule: (name: string) => `「${name}」に行く日と、泊まるかどうかを決めましょう`,
+        destination: (name: string) =>
+          `「${name}」は必ず行きます。ほかに寄りたい場所はありますか？`,
+        confirm: "この組み立てで、旅程を組みますね！",
+      },
+      dayLabel: "行く日",
+      stayLabel: "日帰り・泊まり",
+      pickDates: "日付を指定",
+      calendarHint: (day: string) => `${day}を含むように、行きの日と帰りの日を選んでください`,
+      festivalDay: (day: string) => `${day}（祭りの日）`,
+      must: "必ず行く",
+      mustNote: "決めた祭りの開催地です。外せません",
+      wishLabel: "ほかに寄りたい場所",
+      wishLimit: (max: number) =>
+        `寄りたい場所は${max}か所まで確かめられます。先に選んだ${max}か所で確かめます`,
+      plan: {
+        title: "旅の組み立て",
+        festival: "必ず行く祭り",
+        dates: "旅の日付",
+        datesNote: "寄る場所と移動に合わせて、旅の日付を決めました",
+        order: "回る順",
+        included: "入れる",
+        maybe: "余裕があれば入れる",
+        dropped: "今回は外す",
+        warnings: "注意",
+        fixNights: (nights: number) => `泊数を見直す（${nights}泊あると安心です）`,
+        loading: "旅の組み立てを確かめています",
+        failed: "組み立てを確かめられませんでした。このまま相談すると、旅程を組むときに確かめます",
+        retry: "もう一度確かめる",
+      },
+      submit: "この内容で旅程を組む",
+    },
     entry: {
       label: "相談の入口",
       prompt: "いらっしゃいませ！ 今日はどんなふうに探しましょう？",
@@ -322,6 +356,13 @@ export const ja = {
       transport: (modes: string[]) => `交通手段：${modes.join("・")}`,
       transportOptions: consultTransport,
       line: (label: string, text: string) => `・${label}：${text}`,
+      anchored: {
+        intro: (name: string, date: string) =>
+          `「${name}」（${date}）に行く旅を組んでください。選んだ条件はこちらです。`,
+        outro: "祭りは探し直さず、この祭りを必ず入れて旅程を組んでください。",
+        mustGo: (place: string) => `必ず行く：${place}`,
+        wishes: (places: string) => `寄りたい場所：${places}`,
+      },
     },
   },
   festivalSearch: {

@@ -8,6 +8,7 @@ import {
   Map as MapIcon,
   MessageCircle,
   RotateCcw,
+  Search,
   SlidersHorizontal,
   Sparkles,
   Undo2,
@@ -16,7 +17,7 @@ import {
 import { type ReactNode, useState } from "react";
 import { hasNextSteps } from "../state/events";
 import { useActions, useApp, useT } from "../state/react";
-import { currentLine, shioriReady } from "../state/selectors";
+import { canReturnToFestivals, currentLine, shioriReady } from "../state/selectors";
 import { waitLineIndex, waitPhase } from "../state/waitLines";
 import { Composer, focusComposer } from "./ChatPanel";
 import { ConsultPanel, useConsultLine } from "./Consult";
@@ -100,6 +101,8 @@ function ReplyChoices({ retry }: { retry: boolean }) {
       (state.candidates.length > 0 || hasNextSteps(state.search)) &&
       (state.session.stage === "candidates" || state.itinerary.current === null),
   );
+  const canReturn = useApp(canReturnToFestivals);
+  const anchorCancelled = useApp((state) => state.consult.anchorCancelled);
   const revising = hasItinerary && (stage === "itinerary" || stage === "revising");
   // 「少し調整する」を押したら、調整の選択肢に入れ替える
   const [adjusting, setAdjusting] = useState(false);
@@ -240,7 +243,18 @@ function ReplyChoices({ retry }: { retry: boolean }) {
           </Reply>
         </>
       ) : null}
-      {stage === "hearing" || stage === "candidates" ? (
+      {canReturn ? (
+        <Reply
+          primary={anchorCancelled && !retry}
+          disabled={streaming}
+          icon={<Search aria-hidden="true" className="size-5" />}
+          onClick={() => actions.returnToFestivalResults()}
+        >
+          {t.festivalSearch.decide.others}
+        </Reply>
+      ) : null}
+      {/* 中止と分かった祭りの条件は選び直せない。ほかの祭りを見るか、はじめからやり直す */}
+      {(stage === "hearing" || stage === "candidates") && !anchorCancelled ? (
         <Reply
           disabled={streaming}
           icon={<RotateCcw aria-hidden="true" className="size-5" />}

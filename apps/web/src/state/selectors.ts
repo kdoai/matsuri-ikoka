@@ -205,6 +205,19 @@ export function currentLine(state: Pick<AppData, "messages" | "session">): Dialo
 }
 
 /**
+ * 祭りの結果へ戻る操作を出すか。祭りを決めて送ったのに、旅程の段階へ進まなかったとき
+ * （中止と分かった・固定が外れた・まだ聞き返されている）に出す
+ */
+export function canReturnToFestivals(state: Pick<AppData, "consult" | "session">): boolean {
+  const { stage } = state.session;
+  return (
+    state.consult.anchor !== null &&
+    !state.consult.active &&
+    (stage === "hearing" || stage === "candidates")
+  );
+}
+
+/**
  * 旅程の提案が出ているか。出たあとは旅程を読むことに集中できるよう、
  * 豆知識の窓を出さず、スタッフも店の中を歩き回らない
  */

@@ -1,5 +1,7 @@
 import {
   type AgentMode,
+  type AnchorPlan,
+  type AnchorPlanRequest,
   ApiErrorSchema,
   type ChatRequest,
   type Festival,
@@ -32,6 +34,8 @@ export interface ChatTransport {
     request: FestivalSearchRequest,
     signal?: AbortSignal,
   ): Promise<FestivalSearchResponse>;
+  /** 決めた祭りを軸にした旅の組み立てを確かめる（モデルは呼ばない） */
+  previewFestivalTrip(request: AnchorPlanRequest, signal?: AbortSignal): Promise<AnchorPlan>;
   /** 最後に始めた相談で、サーバーが知らせた動き方（知らせがなければ null） */
   agentMode?(): AgentMode | null;
   /** 接続が切れたあとに、サーバーが応答するかを確かめる（つながらなければ false） */

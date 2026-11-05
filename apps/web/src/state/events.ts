@@ -238,13 +238,25 @@ export function verifyFromItinerary(itinerary: Itinerary): VerifyState {
   };
 }
 
+/** 決めた祭りが中止と分かったことを残す。祭りの結果へ戻る操作を、いちばん前に出す */
+function noteAnchorCancelled(
+  state: AppData,
+  data: SseEventOf<"festival.verified">["data"],
+): AppData {
+  const { anchor } = state.consult;
+  if (data.result !== "cancelled" || anchor?.festivalId !== data.festivalId) return state;
+  if (data.date !== undefined && data.date !== anchor.date) return state;
+  return { ...state, consult: { ...state.consult, anchorCancelled: true } };
+}
+
 function onFestivalVerified(
   state: AppData,
   data: SseEventOf<"festival.verified">["data"],
 ): AppData {
+  const noted = noteAnchorCancelled(state, data);
   // 候補を出す前の確かめは、旅程の再確認の結果にしない
-  if (data.scope === "candidate") return state;
-  const next = patchStaff(state, "concierge", { phase: "working", motion: "stamp" });
+  if (data.scope === "candidate") return noted;
+  const next = patchStaff(noted, "concierge", { phase: "working", motion: "stamp" });
   return {
     ...next,
     verify: {

@@ -1,4 +1,10 @@
-import type { FestivalQuiz, Preferences, SearchRetry, StaffId } from "@matsuri-ikoka/schema";
+import type {
+  FestivalQuiz,
+  Preferences,
+  SearchRetry,
+  StaffId,
+  TripAnchor,
+} from "@matsuri-ikoka/schema";
 import { clientError } from "./errors";
 import { closeTurn, hasNextSteps, patchStaff } from "./events";
 import { initialData } from "./initial";
@@ -58,6 +64,10 @@ export function resetForNewSession(state: AppData): AppData {
     festivalLoad: state.festivalLoad,
     auth: state.auth,
     ui: { ...state.ui, candidatesOpen: false, celebrating: false, drawerOpen: false },
+    // 祭りを決めたあとなら、送り直したあとも祭りの結果へ戻れるよう、決めたことを残す
+    ...(state.consult.anchor === null
+      ? {}
+      : { consult: state.consult, festivalSearch: state.festivalSearch }),
   };
   return addError(next, clientError("session_lost"));
 }
@@ -71,6 +81,8 @@ export type TurnStart =
       retry?: boolean;
       /** 次の手（ボタン）から送るときの、変えて探し直す条件 */
       search?: SearchRetry;
+      /** 祭りから探して決めた祭りと行く日 */
+      anchor?: TripAnchor;
     }
   /** こだわりの切り替え（旅程係だけが組み直す） */
   | { kind: "preferences"; preferences: Preferences };
@@ -95,6 +107,7 @@ export function beginTurn(state: AppData, start: TurnStart): AppData {
               message: start.message,
               preferences: start.preferences,
               ...(start.search === undefined ? {} : { search: start.search }),
+              ...(start.anchor === undefined ? {} : { anchor: start.anchor }),
             }
           : state.session.lastRequest,
       lastWasPreferences: start.kind === "preferences",

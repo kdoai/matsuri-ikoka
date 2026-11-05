@@ -145,6 +145,54 @@ describe("接客サーバーとの通信", () => {
     });
   });
 
+  describe("祭りを決めたあとの旅の組み立ての確認", () => {
+    const anchor = { festivalId: "kasou-matsuri", date: "2030-08-16" };
+    const request = { sessionId: "s-1", anchor, origin: "みなと中央駅", nights: 1, wishes: [] };
+    const plan = {
+      anchor,
+      festivalName: "架空の祭り",
+      mustPrefectures: ["香川県"],
+      visits: [],
+      order: ["みなと中央駅", "架空の祭り"],
+      startDate: "2030-08-16",
+      endDate: "2030-08-17",
+      minNights: null,
+      warnings: [],
+    };
+
+    it("合言葉を付けて送り、結果を受け取る", async () => {
+      const fetchImpl = vi.fn<typeof fetch>(async () => json(plan, 200));
+      const passcode = createPasscodeHolder();
+      passcode.set("matsuri");
+      const transport = createServerTransport({ fetch: fetchImpl, passcode });
+      await expect(transport.previewFestivalTrip(request)).resolves.toEqual(plan);
+      const [url, init] = fetchImpl.mock.calls[0] ?? [];
+      expect(url).toBe("/api/festival-trips/preview");
+      expect(JSON.parse(String(init?.body))).toEqual(request);
+      expect(headerOf(init, PASSCODE_HEADER)).toBe("matsuri");
+    });
+
+    it("形の違う応答は受け取らない", async () => {
+      const transport = createServerTransport({
+        fetch: async () => json({ ...plan, order: [] }, 200),
+      });
+      await expect(transport.previewFestivalTrip(request)).rejects.toMatchObject({
+        code: "invalid_event",
+      });
+    });
+
+    it("404 は相談が切れたのでなく、祭りが見つからないものとして本文の一文を読む", async () => {
+      const transport = createServerTransport({
+        fetch: async () =>
+          json({ code: "bad_request", message: "祭りが見つかりません。", retryable: false }, 404),
+      });
+      await expect(transport.previewFestivalTrip(request)).rejects.toMatchObject({
+        code: "bad_request",
+        serverMessage: "祭りが見つかりません。",
+      });
+    });
+  });
+
   it("サーバーが知らせた動き方（mock・live）を覚える", async () => {
     const replies = [
       json({ sessionId: "s-1", mode: "mock" }, 201),
