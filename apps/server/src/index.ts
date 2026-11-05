@@ -66,6 +66,7 @@ const itineraries = new ItineraryStore();
 let runner: AgentRunner;
 let sampleIds: string[] = [];
 let sessions = new SessionStore();
+const stations = await loadStationPoints(config.repoRoot);
 if (config.mode === "live") {
   const prompts = await loadPrompts();
   const cwd = createAgentWorkdir();
@@ -83,7 +84,6 @@ if (config.mode === "live") {
   // 相談が消えたら、その相談の会話の記録を消す
   sessions = new SessionStore({ onRemove: forgetTranscripts(deleteSession, cwd) });
   const env = agentEnv(process.env);
-  const stations = await loadStationPoints(config.repoRoot);
   runner = new ClaudeAgentRunner({
     ...(stations ? { stations } : {}),
     // 旅程の評価は、旅程係が保存するたびに update_itinerary の中で動く。足りないところを見抜く力が要るので、
@@ -179,6 +179,7 @@ const app = createApp({
   verifier: account.verifier,
   authConfig: account.web,
   festivals: festivals.store,
+  ...(stations ? { stations } : {}),
   limiter: new DailyLimiter(config.dailyChatLimit, today),
   ipLimiter: new DailyLimiter(config.dailyChatLimitPerIp, today),
   concurrency: new ConcurrencyLimiter(config.maxConcurrentTurns),

@@ -45,6 +45,8 @@ export interface TurnState {
   toolCalls: AgentToolName[];
   searched: boolean;
   savedItinerary: boolean;
+  /** この発言で祭りの固定を外した（結果へ戻る） */
+  anchorReleased: boolean;
   verification: VerificationResult | null;
   /** 候補の窓の次の手（ボタン）から送られた、変えて探し直す条件。search_festivals が正として使う */
   searchRetry: SearchRetry | null;
@@ -60,6 +62,7 @@ export function newTurnState(searchRetry: SearchRetry | null = null): TurnState 
     toolCalls: [],
     searched: false,
     savedItinerary: false,
+    anchorReleased: false,
     verification: null,
     searchRetry,
     planRounds: 0,

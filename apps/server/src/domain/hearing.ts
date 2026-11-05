@@ -6,6 +6,7 @@ import { addDays } from "./calendar";
 // - 1〜2泊：泊まる場所の希望は祭りを選んでから、祭りに行く日の数は何日も開かれる祭りのときだけ聞く
 // - 3〜6泊：旅のかたち（と回る地域）を聞いてから探し、組む前に終わりの場所・ペース・楽しみを聞く
 // 言われたことは聞き直さない。「おまかせ」と言われた項目と、「あとはおまかせ」のあとは聞かない。
+// 祭りを固定した旅程では、祭りと日は決まっているので、日付と旅のかたちを聞かず、祭りも探さない。
 
 export type HearingField =
   | "when"
@@ -29,6 +30,8 @@ export interface HearingSituation {
   festivalChosen?: boolean;
   /** 選んだ（または候補の）祭りが、旅の間に何日も開かれる */
   multiDayFestival?: boolean;
+  /** 選んだ祭りを必ず行く場所に固定している（行く日も決まっている） */
+  anchored?: boolean;
 }
 
 export interface HearingPlan {
@@ -83,7 +86,10 @@ export function planHearing(
   conditions: PartialTripConditions,
   situation: HearingSituation = {},
 ): HearingPlan {
-  const baseMissing = BASE_FIELDS.filter((field) => !answered(conditions, field));
+  const anchored = situation.anchored === true;
+  const baseMissing = BASE_FIELDS.filter(
+    (field) => !(anchored && field === "when") && !answered(conditions, field),
+  );
   if (baseMissing.length > 0 || conditions.nights === undefined) {
     return {
       missing: baseMissing,
@@ -96,13 +102,13 @@ export function planHearing(
   const leftToStaff = conditions.leaveToStaff === true;
   const pending = (fields: HearingField[]) =>
     leftToStaff ? [] : fields.filter((field) => !answered(conditions, field));
-  const searchMissing = pending(beforeSearch(nights));
+  const searchMissing = anchored ? [] : pending(beforeSearch(nights));
   const planMissing = pending(beforePlan(nights, situation));
   const missing = [...searchMissing, ...planMissing];
   return {
     missing,
     ask: missing.slice(0, MAX_QUESTIONS_PER_TURN),
-    readyToSearch: searchMissing.length === 0,
+    readyToSearch: !anchored && searchMissing.length === 0,
     readyToPlan: situation.festivalChosen === true && missing.length === 0,
   };
 }

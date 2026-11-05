@@ -56,7 +56,7 @@ export class AgentError extends Error {
  *   変更・中止・どこからも情報が取れなかったときは、候補へ戻る（行き止まりにしない）
  * - 旅程を保存した → 旅程の案
  * - 旅程係が動いたのに保存できなかった（修正の途中）→ 修正
- * - 祭りを探した → 祭りの候補
+ * - 祭りを探した・祭りの固定を外した → 祭りの候補
  * - それ以外は変わらない
  */
 export function nextStage(
@@ -77,6 +77,6 @@ export function nextStage(
   }
   if (turn.savedItinerary) return "itinerary";
   if (turn.startedStaff.has("planner") && hasItinerary) return "revising";
-  if (turn.searched) return "candidates";
+  if (turn.searched || turn.anchorReleased) return "candidates";
   return previous;
 }

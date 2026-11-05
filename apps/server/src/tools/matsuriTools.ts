@@ -40,6 +40,7 @@ import {
   type Weather,
 } from "@matsuri-ikoka/schema";
 import { z } from "zod";
+import { type AnchorIssue, checkAnchoredItinerary, refreshAnchorPlan } from "../domain/anchorPlan";
 import { arrivalBufferMinutes } from "../domain/arrivalBuffer";
 import { addDays, daysBetween, fromMinutes, laterDate, toMinutes } from "../domain/calendar";
 import { matchHub, placeLabel, toCandidate, travelMinutesFrom } from "../domain/dateWindow";
@@ -162,6 +163,8 @@ function knownCandidate(ctx: ToolContext, festivalId: string): FestivalCandidate
 /** 日付の指定がないとき、その祭りへ行く日を、候補・旅程・開催回から決める */
 function visitDate(ctx: ToolContext, festival: Festival, given?: IsoDate): IsoDate {
   if (given !== undefined) return given;
+  const { anchor } = ctx.session;
+  if (anchor?.festivalId === festival.id) return anchor.date;
   const itinerary = ctx.session.itineraryId
     ? ctx.itineraries.get(ctx.session.itineraryId)
     : undefined;
@@ -253,10 +256,14 @@ export function hearingSituation(ctx: ToolContext): HearingSituation {
   const festivalId = session.selectedFestivalId;
   if (festivalId === null) return {};
   const festival = ctx.festivals.get(festivalId);
-  const date = knownCandidate(ctx, festivalId)?.date;
+  const date =
+    session.anchor?.festivalId === festivalId
+      ? session.anchor.date
+      : knownCandidate(ctx, festivalId)?.date;
   const nights = session.conditions.nights ?? 0;
   return {
     festivalChosen: true,
+    anchored: session.anchor !== null,
     multiDayFestival:
       festival !== undefined &&
       date !== undefined &&
@@ -307,6 +314,45 @@ async function checkCandidates(
       return check;
     }),
   );
+}
+
+/**
+ * 祭りを固定した旅程で、組み始める前に開催を確かめる（確かめは1回だけ。候補と同じ口で、結果はとってある）。
+ * 中止と分かったら固定を外し、旅程を組まずに結果へ戻す。ほかの結果は店の記録に載せてそのまま進める
+ */
+export async function confirmAnchor(ctx: ToolContext): Promise<void> {
+  const { session } = ctx;
+  const { anchor } = session;
+  if (anchor === null || session.anchorCheck !== null) return;
+  const festival = ctx.festivals.get(anchor.festivalId);
+  if (festival === undefined) return;
+  const [check] = await checkCandidates(ctx, [{ festival, date: anchor.date }]);
+  if (check === undefined || check === null || ctx.signal.aborted) return;
+  session.anchorCheck = check.result;
+  if (check.result !== "cancelled") return;
+  session.cancelledAnchor = { ...anchor, name: festival.name.ja, note: check.note ?? null };
+  releaseAnchor(ctx);
+  ctx.turn.verification = "cancelled";
+}
+
+/** 祭りの固定を外す（別の祭りを選び直すとき） */
+function releaseAnchor(ctx: ToolContext): void {
+  const { session } = ctx;
+  session.anchor = null;
+  session.anchorPlan = null;
+  session.selectedFestivalId = null;
+  ctx.turn.anchorReleased = true;
+}
+
+/** 相談の条件が変わったら、固定した祭りの組み立てを計算し直す */
+function refreshAnchor(ctx: ToolContext): void {
+  const { session } = ctx;
+  if (session.anchor === null) return;
+  refreshAnchorPlan(session, {
+    festival: ctx.festivals.get(session.anchor.festivalId),
+    stations: ctx.stations,
+    today: ctx.today(),
+  });
 }
 
 /**
@@ -403,6 +449,12 @@ const NoteConditionsInputSchema = PartialTripConditionsSchema.extend({
   destinations: PartialTripConditionsSchema.shape.destinations.describe(
     "行き先（都道府県か地方の名前。例：「富山県」「北陸」「近畿」）。言われた名前のまま渡す。どこでもよい・おまかせなら空の並び",
   ),
+  releaseAnchor: z
+    .literal(true)
+    .optional()
+    .describe(
+      "祭りを固定した旅程で、ほかの祭りに変えたいと言われたら true。固定を外して結果へ戻る",
+    ),
 });
 
 /** 行き先の名前を都道府県に直す。都道府県にも地方にも当たらない名前はエージェントに返す */
@@ -421,17 +473,21 @@ export const noteConditions = defineTool({
   description:
     "お客さまの発言から読み取れた旅の条件を書き留め、まだ分からない項目と、次に聞くこと（1回に2つまで）を返す。" +
     "言われた項目だけを渡す（渡さない項目は前のまま）。自由な言葉から読み取れるものは読み取って渡し、推測では埋めない。" +
-    "readyToSearch が true になったら祭りを探し始め、askNext の項目だけを聞く。",
+    "readyToSearch が true になったら祭りを探し始め、askNext の項目だけを聞く。" +
+    "祭りを固定した旅程では、条件が変わるとサーバーが組み立てを計算し直す（行く日は変わらない）。",
   input: NoteConditionsInputSchema.shape,
   async run(args, ctx) {
+    const { releaseAnchor: release, ...noted } = args;
     const given = Object.fromEntries(
-      Object.entries(args).filter(([, value]) => value !== undefined),
+      Object.entries(noted).filter(([, value]) => value !== undefined),
     );
     if (args.destinations !== undefined) destinationOf(args.destinations);
     const merged = PartialTripConditionsSchema.safeParse({ ...ctx.session.conditions, ...given });
     if (!merged.success) throw new ToolError("条件の形が正しくありません");
     ctx.session.conditions = merged.data;
-    return { conditions: merged.data, ...hearingReport(ctx) };
+    if (release === true) releaseAnchor(ctx);
+    refreshAnchor(ctx);
+    return { conditions: ctx.session.conditions, ...hearingReport(ctx) };
   },
 });
 
@@ -470,6 +526,11 @@ export const searchFestivals = defineTool({
   },
   async run(args, ctx) {
     const { session } = ctx;
+    if (session.anchor !== null) {
+      throw new ToolError(
+        "お客さまは祭りを決めています（店の記録の「必ず行く祭り」）。祭りを探さず、周辺係と旅程係へ進んでください",
+      );
+    }
     if (args.preferences !== undefined) session.preferences = args.preferences;
     // 候補の窓の次の手（ボタン）から探し直すときは、ボタンの条件を正とする（モデルの渡した値より先に使う）
     const retry = ctx.turn.searchRetry;
@@ -893,7 +954,8 @@ export const searchNearby = defineTool({
     }
     const festival = festivalOf(ctx, args.festivalId);
     const date = visitDate(ctx, festival, args.date);
-    ctx.session.selectedFestivalId = festival.id;
+    // 祭りを固定しているときは、ほかの祭りの周りを探しても、選んだ祭りを変えない
+    if (ctx.session.anchor === null) ctx.session.selectedFestivalId = festival.id;
     const food = foodEffects(ctx.session.conditions);
     const selection = selectNearbySpots(festival.nearby, {
       date,
@@ -1457,6 +1519,17 @@ export const updateItinerary = defineTool({
     } else {
       throw new ToolError("itinerary か addDay のどちらかを渡してください");
     }
+    // 祭りを固定しているときは、主役の祭り・祭りの日・旅の日付を先に確かめる
+    const anchorChecks = checkAnchorOnSave(ctx, written);
+    if (anchorChecks.errors.length > 0) {
+      console.info(
+        JSON.stringify({
+          kind: "itinerary_rejected",
+          codes: anchorChecks.errors.map((e) => e.code),
+        }),
+      );
+      return { saved: false, errors: anchorChecks.errors, warnings: [] };
+    }
     // こだわりと予算と出発の駅は相談の状態を正とする。泊まりの宿の候補は、調べた結果だけをサーバーが付ける
     const origin = session.conditions.origin;
     const draft: ItineraryDraft = attachLodging(
@@ -1529,6 +1602,7 @@ export const updateItinerary = defineTool({
       );
       return { saved: false, errors: result.errors, warnings: result.warnings };
     }
+    const warnings = [...result.warnings, ...anchorChecks.warnings];
     // 時間切れや接続の切断のあとに、旅程を書き換えない
     if (signal.aborted) throw new ToolError("止められたので、旅程は保存しません");
     // 保存する旅程を評価する（評価して作り直すループの1回）。前と同じ旅程なら、評価し直さない
@@ -1539,7 +1613,7 @@ export const updateItinerary = defineTool({
             ctx,
             itinerary: result.itinerary,
             gaps: result.gaps,
-            warnings: result.warnings,
+            warnings,
             conditions: shopRecordForReview(ctx),
             signal,
           });
@@ -1562,7 +1636,7 @@ export const updateItinerary = defineTool({
       version: itinerary.version,
       diff: result.diff,
       errors: [],
-      warnings: result.warnings,
+      warnings,
       gaps: result.gaps,
       evaluation,
       next: result.unchanged
@@ -1572,6 +1646,44 @@ export const updateItinerary = defineTool({
     };
   },
 });
+
+/** 祭りを固定した旅程の決まりを確かめる。中止と分かった祭りの旅程は、固定を外したあとでも保存しない */
+function checkAnchorOnSave(
+  ctx: ToolContext,
+  draft: ItineraryDraft,
+): {
+  errors: (AnchorIssue | { code: "anchor_cancelled"; itemId: null; message: string })[];
+  warnings: AnchorIssue[];
+} {
+  const { anchor, anchorPlan, cancelledAnchor: cancelled } = ctx.session;
+  if (
+    cancelled !== null &&
+    draft.mainFestivalId === cancelled.festivalId &&
+    draft.days.some(
+      (day) =>
+        day.date === cancelled.date &&
+        day.items.some((i) => i.type === "festival" && i.festivalId === cancelled.festivalId),
+    )
+  ) {
+    return {
+      errors: [
+        {
+          code: "anchor_cancelled",
+          itemId: null,
+          message: `${cancelled.name}の${cancelled.date}の開催は中止と分かりました。この旅程は保存しません。お客さまに伝えて、ほかの祭りを選んでもらってください`,
+        },
+      ],
+      warnings: [],
+    };
+  }
+  if (anchor === null) return { errors: [], warnings: [] };
+  return checkAnchoredItinerary(
+    draft,
+    anchor,
+    anchorPlan,
+    (id) => ctx.festivals.get(id)?.municipalities.map((m) => m.prefecture) ?? [],
+  );
+}
 
 /** 前の版の移動・帰りの最終の出典（相談を戻したあとでも、同じ出典で直せるように） */
 function routeSourcesInItinerary(itinerary: Itinerary): Map<string, Source> {
