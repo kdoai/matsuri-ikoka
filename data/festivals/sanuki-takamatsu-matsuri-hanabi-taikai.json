@@ -1,0 +1,283 @@
+{
+  "id": "sanuki-takamatsu-matsuri-hanabi-taikai",
+  "name": {
+    "ja": "さぬき高松まつり花火大会",
+    "en": "Sanuki Takamatsu Festival Fireworks"
+  },
+  "category": "fireworks",
+  "municipalities": [
+    {
+      "prefecture": "香川県",
+      "name": "高松市"
+    }
+  ],
+  "venue": {
+    "name": "サンポート高松周辺・水城通り（打ち上げは高松港玉藻防波堤）",
+    "lat": 34.3544,
+    "lng": 134.0464
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu"],
+  "highlights": [
+    "瀬戸内の港で、夜空と海面を照らす約30分の6,000発",
+    "音楽とともに打ち上がる音楽花火（水城通り・サンポート高松周辺）",
+    "JR高松駅から歩いて約4分で見られる海辺の花火"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "さぬき高松まつりは郷土の先人が築いた祭りと開催要綱に記され、2026年で第59回",
+      "sources": [
+        {
+          "url": "https://www.city.takamatsu.kagawa.jp/kanko/takamatsumatsuri/matsuri.files/59kaisaiyoukou.pdf",
+          "title": "高松市 第59回さぬき高松まつり開催要綱（趣旨）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "さぬき高松まつりは四国の四大祭りの一つとして親しまれている",
+      "source": {
+        "url": "https://www.city.takamatsu.kagawa.jp/kanko/takamatsumatsuri/matsuri.files/59kaisaiyoukou.pdf",
+        "title": "高松市 第59回さぬき高松まつり開催要綱（趣旨）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "花火大会のテーマは「どんどん高松」。最大は8号玉",
+      "source": {
+        "url": "https://www.city.takamatsu.kagawa.jp/kanko/takamatsumatsuri/matsuri.files/59kaisaiyoukou.pdf",
+        "title": "高松市 第59回さぬき高松まつり開催要綱（花火大会）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "有料観覧席は2025年の約2,000席から2026年は約2,700席に増えた",
+      "source": {
+        "url": "https://www.city.takamatsu.kagawa.jp/kanko/takamatsumatsuri/matsuri.files/59kaisaiyoukou.pdf",
+        "title": "高松市 第59回さぬき高松まつり開催要綱（有料観覧席）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "本会場と観覧の場所の周辺でドローンを飛ばさない",
+      "歩きながらスマートフォンを使わない（事故を防ぐため）",
+      "小型船舶で観覧しない（危険海域に入ると花火が中断する）",
+      "2026年の無料の観覧はサンポート高松周辺と水城通り。せとシーパレットと5万t級バースは有料観覧席（約2,700席）",
+      "周辺の道路は混むので、公共交通を使う"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "約10万人が集まり、夜の港のまわりに立入禁止や歩行者専用の規制がある"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.takamatsu.kagawa.jp/smph/kanko/takamatsumatsuri/matsurienglish.html",
+        "title": "高松市 第59回さぬき高松まつり 英語版（ドローンの禁止、歩きスマホ）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.takamatsu.kagawa.jp/kanko/takamatsumatsuri/matsuri.files/59hanabitirashiomete.pdf",
+        "title": "高松市 第59回さぬき高松まつり花火大会 交通規制・花火プログラムの案内（小型船舶での観覧、公共交通の利用）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.takamatsu.kagawa.jp/kanko/takamatsumatsuri/matsuri.files/59kaisaiyoukou.pdf",
+        "title": "高松市 第59回さぬき高松まつり開催要綱（観覧場所、有料観覧席）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0937e00702/data.html",
+        "title": "ウォーカープラス 第59回 さぬき高松まつり花火大会 データ（人出 約10万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20003098",
+        "title": "るるぶ&more. 第59回さぬき高松まつり花火大会（昨年の来場者 約10万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-13",
+      "start": "20:15",
+      "end": "20:45",
+      "status": "announced",
+      "rainPolicy": "雨天決行、荒天の場合は中止",
+      "note": "第59回。打ち上げは6,000発（最大8号玉）。さぬき高松まつり（8月12〜14日）の2日目。18:00から周辺で交通規制",
+      "sources": [
+        {
+          "url": "https://www.city.takamatsu.kagawa.jp/kanko/takamatsumatsuri/matsuri.files/59kaisaiyoukou.pdf",
+          "title": "高松市 第59回さぬき高松まつり開催要綱（8月13日 20:15〜20:45、6,000発）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.takamatsu.kagawa.jp/kanko/takamatsumatsuri/matsuri.files/59hanabitirashiomete.pdf",
+          "title": "高松市 第59回さぬき高松まつり花火大会 交通規制・花火プログラムの案内",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.takamatsu.kagawa.jp/smph/kanko/takamatsumatsuri/matsurienglish.html",
+          "title": "高松市 第59回さぬき高松まつり 英語版",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-13",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2027年の発表はまだない。毎年8月12〜14日の3日間の2日目に開くというウォーカープラスの案内から見込んだ日",
+      "sources": [
+        {
+          "url": "https://hanabi.walkerplus.com/detail/ar0937e00702/",
+          "title": "ウォーカープラス 第59回 さぬき高松まつり花火大会（毎年8月12〜14日の2日目）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 高松駅",
+        "walkMinutes": [4, 9]
+      },
+      {
+        "name": "ことでん 高松築港駅",
+        "walkMinutes": [4, 9]
+      }
+    ],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [
+      "2026年：サンポート高松周辺の歩行者専用道路と車両の通行止めは18:00〜22:00（区間により19:00または20:30から）",
+      "危険海域の規制は18:30〜21:15。立入禁止の区域あり（18:00〜22:00、19:45〜20:45、終日）",
+      "臨時駐車場は17:00〜21:30に開く（新番丁小学校ほか、2026年）"
+    ],
+    "sources": [
+      {
+        "url": "https://www.city.takamatsu.kagawa.jp/smph/kanko/takamatsumatsuri/matsurienglish.html",
+        "title": "高松市 第59回さぬき高松まつり 英語版（JR高松駅・ことでん高松築港駅から徒歩約4分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.takamatsu.kagawa.jp/kanko/takamatsumatsuri/matsuri.files/59hanabitirashiomete.pdf",
+        "title": "高松市 第59回さぬき高松まつり花火大会 交通規制・花火プログラムの案内（規制の時間、臨時駐車場）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20003098",
+        "title": "るるぶ&more. 第59回さぬき高松まつり花火大会（駐車場 約600台）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "ritsurin-garden",
+      "name": "栗林公園",
+      "kind": "sightseeing",
+      "summary": "高松市内の庭園。8月の開園は5:30〜19:00で年中無休（高松地域に暴風警報が出ると臨時休園）",
+      "location": {
+        "lat": 34.3293,
+        "lng": 134.0448
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "05:30",
+        "close": "19:00"
+      },
+      "closedDays": [],
+      "price": "大人500円、小人170円",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.my-kagawa.jp/ritsuringarden/feature/ritsuringarden/guide",
+          "title": "香川県観光協会 栗林公園 開園時間・入園料",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.takamatsu.kagawa.jp/kanko/takamatsumatsuri/matsuri.files/59kaisaiyoukou.pdf",
+      "title": "高松市 第59回さぬき高松まつり開催要綱（主催 高松市・高松まつり振興会）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.takamatsu.kagawa.jp/kanko/takamatsumatsuri/matsuri.files/59hanabitirashiomete.pdf",
+      "title": "高松市 第59回さぬき高松まつり花火大会 交通規制・花火プログラムの案内",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.takamatsu.kagawa.jp/smph/kanko/takamatsumatsuri/matsurienglish.html",
+      "title": "高松市 第59回さぬき高松まつり 英語版",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://hanabi.walkerplus.com/detail/ar0937e00702/",
+      "title": "ウォーカープラス 第59回 さぬき高松まつり花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://hanabi.walkerplus.com/detail/ar0937e00702/data.html",
+      "title": "ウォーカープラス 第59回 さぬき高松まつり花火大会 データ",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20003098",
+      "title": "るるぶ&more. 第59回さぬき高松まつり花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の時刻・打ち上げ数・会場の区分（まだ発表がない）",
+    "服装・持ち物・撮影の決まり",
+    "主要駅（岡山駅など）から高松駅までの所要時間",
+    "地元の味・祭りの日だけの食べ物（飲食コーナーが多目的広場などに出ることだけ分かっている）",
+    "会場から歩ける食の店と玉藻公園の営業時間"
+  ]
+}

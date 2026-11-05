@@ -1,0 +1,308 @@
+{
+  "id": "otaru-yuki-akari-no-michi",
+  "name": {
+    "ja": "小樽雪あかりの路",
+    "en": "Otaru Snow Light Path Festival"
+  },
+  "category": "lantern",
+  "municipalities": [
+    {
+      "prefecture": "北海道",
+      "name": "小樽市"
+    }
+  ],
+  "venue": {
+    "name": "運河会場（小樽運河）",
+    "lat": 43.1972,
+    "lng": 141.0085
+  },
+  "scaleTier": "L",
+  "popularity": "major",
+  "listedIn": ["walkerplus", "jalan", "rurubu", "japan-guide", "jnto"],
+  "highlights": [
+    "小樽運河の水面に、ガラスの浮き玉キャンドルが浮かぶ",
+    "旧国鉄手宮線の跡に、雪とろうそくのあかりが続く",
+    "天狗山の山頂までろうそくのあかりが続き、街を見下ろせる",
+    "町内会や学校が作る、あかりの路の会場が市内に点在する"
+  ],
+  "styles": [
+    {
+      "style": "community",
+      "basis": "市民有志が1999年に始め、町内会や商店街、学校も独自の会場を作る",
+      "sources": [
+        {
+          "url": "https://www.city.otaru.lg.jp/docs/2020100801138/",
+          "title": "小樽市 第28回小樽雪あかりの路 開催日程について（市民有志が平成11年に始めた）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "名前は小樽にゆかりのある作家、伊藤整の小説『雪明りの路』から取った",
+      "source": {
+        "url": "https://www.visit-hokkaido.jp/event/detail_11004.html",
+        "title": "北海道公式観光サイト 小樽雪あかりの路（2027年2月6日〜13日、JR小樽駅から徒歩約10分、駐車場なし）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "平成11年（1999年）2月に、市民有志が始めた",
+      "source": {
+        "url": "https://www.city.otaru.lg.jp/docs/2020100801138/",
+        "title": "小樽市 第28回小樽雪あかりの路 開催日程について（市民有志が平成11年に始めた）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "ろうそくのあかりは、ボランティアの手作業で作られている",
+      "source": {
+        "url": "https://www.city.otaru.lg.jp/docs/2020100801138/",
+        "title": "小樽市 第28回小樽雪あかりの路 開催日程について（市民有志が平成11年に始めた）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2024年の第26回は、8日間に約25万1千人が訪れ、ボランティアは延べ1,575人",
+      "source": {
+        "url": "https://www.otaru-journal.com/2024/05/post-99978/",
+        "title": "小樽ジャーナル 小樽雪あかり最終実行委員会（第26回の来場者とボランティアの数）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": ["主催者は駐車場を用意していないので、公共交通機関で来る"],
+    "dress": ["暖かい服装"],
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "8日間で約24万人が訪れ、夜の屋外の会場は土日祝に混み合う"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://otaru.gr.jp/event/otaruyukiakari-2026",
+        "title": "小樽観光協会 第28回小樽雪あかりの路（17:00〜21:00）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.visit-hokkaido.jp/event/detail_11004.html",
+        "title": "北海道公式観光サイト 小樽雪あかりの路（2027年2月6日〜13日、JR小樽駅から徒歩約10分、駐車場なし）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20001098",
+        "title": "るるぶ&more. 第28回小樽雪あかりの路（約6万本、昨年の人出 約24万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-02-07",
+      "endDate": "2026-02-14",
+      "start": "17:00",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "第28回の8日間。ろうそくは約6万本。運河会場・手宮線会場・小樽芸術村会場など",
+      "sources": [
+        {
+          "url": "https://otaru.gr.jp/event/otaruyukiakari-2026",
+          "title": "小樽観光協会 第28回小樽雪あかりの路（17:00〜21:00）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.otaru.lg.jp/docs/2020100801138/",
+          "title": "小樽市 第28回小樽雪あかりの路 開催日程について（市民有志が平成11年に始めた）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20001098",
+          "title": "るるぶ&more. 第28回小樽雪あかりの路（約6万本、昨年の人出 約24万人）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-02-06",
+      "endDate": "2027-02-13",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "第29回の8日間。時間と会場の詳細は発表待ち（2026年は17:00〜21:00）",
+      "sources": [
+        {
+          "url": "https://otaru.gr.jp/event/yukiakari2027",
+          "title": "小樽観光協会 2027小樽雪あかりの路（2月6日〜13日に決定）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.visit-hokkaido.jp/event/detail_11004.html",
+          "title": "北海道公式観光サイト 小樽雪あかりの路（2027年2月6日〜13日、JR小樽駅から徒歩約10分、駐車場なし）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.japan-guide.com/e/e6706.html",
+          "title": "japan-guide.com Otaru Snow Light Path Festival 2027",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 小樽駅",
+        "walkMinutes": [10, 15],
+        "note": "運河会場まで。手宮線会場は駅と運河の中ほど。天狗山会場はバスとロープウェイを使う"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "札幌駅",
+        "minutes": [30, 35],
+        "route": "JR快速、乗り換えなし"
+      }
+    ],
+    "parking": "none",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.visit-hokkaido.jp/event/detail_11004.html",
+        "title": "北海道公式観光サイト 小樽雪あかりの路（2027年2月6日〜13日、JR小樽駅から徒歩約10分、駐車場なし）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.japan.travel/en/spot/1853/",
+        "title": "Travel Japan Otaru Snow Light Path（札幌駅から快速で30〜35分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.japan-guide.com/e/e6706.html",
+        "title": "japan-guide.com Otaru Snow Light Path Festival 2027",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "otaru-museum-unga-kan",
+      "name": "小樽市総合博物館 運河館",
+      "kind": "sightseeing",
+      "summary": "運河のそばの博物館で、小樽の歴史を見られる。JR小樽駅から徒歩約10分。休館は12月29日〜1月3日",
+      "location": {
+        "lat": 43.2005,
+        "lng": 141.0005
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "17:00"
+      },
+      "closedDays": [],
+      "price": "一般300円",
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://otaru.gr.jp/shop/otaru-museum-canal",
+          "title": "小樽観光協会 小樽市総合博物館 運河館",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://otaru.gr.jp/event/yukiakari2027",
+      "title": "小樽観光協会 2027小樽雪あかりの路（2月6日〜13日に決定）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://otaru.gr.jp/event/otaruyukiakari-2026",
+      "title": "小樽観光協会 第28回小樽雪あかりの路（17:00〜21:00）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.otaru.lg.jp/docs/2020100801138/",
+      "title": "小樽市 第28回小樽雪あかりの路 開催日程について（市民有志が平成11年に始めた）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.visit-hokkaido.jp/event/detail_11004.html",
+      "title": "北海道公式観光サイト 小樽雪あかりの路（2027年2月6日〜13日、JR小樽駅から徒歩約10分、駐車場なし）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.walkerplus.com/event/ar0101e399739/",
+      "title": "ウォーカープラス 第28回小樽雪あかりの路",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_320524/",
+      "title": "じゃらんnet 小樽雪あかりの路",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20001098",
+      "title": "るるぶ&more. 第28回小樽雪あかりの路",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.japan-guide.com/e/e6706.html",
+      "title": "japan-guide.com Otaru Snow Light Path Festival 2027",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.japan.travel/en/spot/1853/",
+      "title": "Travel Japan Otaru Snow Light Path",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の時間・会場・体験の内容（詳細は決まり次第発表される）",
+    "ボランティアの2027年の募集",
+    "雪や強風のときの扱い",
+    "持ち物と撮影の決まり",
+    "地元の味（手宮線会場に屋台が出ることと、食べ歩きチケットが売られることだけ分かっている）",
+    "祭りの前後に寄れる食の店と、周辺の場所の知名度",
+    "その場で加われる体験の2027年の有無（2025年はメッセージキャンドルに当日加われたが、2026年の実施は分からない）"
+  ]
+}

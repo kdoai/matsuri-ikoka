@@ -1,0 +1,400 @@
+{
+  "id": "akita-kanto-matsuri",
+  "name": {
+    "ja": "秋田竿燈まつり",
+    "en": "Akita Kanto Festival"
+  },
+  "category": "lantern",
+  "municipalities": [
+    {
+      "prefecture": "秋田県",
+      "name": "秋田市"
+    }
+  ],
+  "venue": {
+    "name": "竿燈大通り",
+    "lat": 39.7188,
+    "lng": 140.115
+  },
+  "scaleTier": "L",
+  "popularity": "major",
+  "listedIn": ["walkerplus", "jalan", "rurubu", "japan-guide", "jnto"],
+  "highlights": [
+    "提灯46個を下げた長さ12m、重さ50kgの大若を手や額、肩、腰で支える",
+    "夜の竿燈大通りに光の竿が立ち並ぶ",
+    "演技のあとのふれあい竿燈で、写真撮影や竿燈の体験の時間がある",
+    "昼はエリアなかいちで差し手が技を競う妙技大会"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "江戸時代のねぶり流しに連なる行事で、国の重要無形民俗文化財に指定されている",
+      "sources": [
+        {
+          "url": "https://www.kantou.gr.jp/about/",
+          "title": "秋田竿燈まつり公式 竿燈まつりについて",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kantou.gr.jp/english/",
+          "title": "秋田竿燈まつり公式 英語版（国の重要無形民俗文化財）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "38の町内が参加し、企業や学校を含めると70団体を超える",
+      "sources": [
+        {
+          "url": "https://www.kantou.gr.jp/faq/",
+          "title": "秋田竿燈まつり公式 よくあるご質問（毎年8月3日から6日、38町内が参加）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "夏の病気や邪気を払うねぶり流しが元で、宝暦年間には原型があったとされる",
+      "source": {
+        "url": "https://www.kantou.gr.jp/about/",
+        "title": "秋田竿燈まつり公式 竿燈まつりについて",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "残る最古の記録は1789年の紀行文「雪の降る道」で、長い竿に灯籠を下げた様子を記す",
+      "source": {
+        "url": "https://www.kantou.gr.jp/about/",
+        "title": "秋田竿燈まつり公式 竿燈まつりについて",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "提灯に使ったろうそくは安産のお守りで、短いほどお産が軽いという言い伝えがある",
+      "source": {
+        "url": "https://www.kantou.gr.jp/tips/",
+        "title": "秋田竿燈まつり公式 竿燈豆知識",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "竿燈を上げやすいよう、竿燈大通りの電線は地下に埋められている",
+      "source": {
+        "url": "https://www.kantou.gr.jp/tips/",
+        "title": "秋田竿燈まつり公式 竿燈豆知識",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "夜の演技の終わりのふれあい竿燈（2026年は20:25または20:35から）で、写真撮影や竿燈の体験ができる",
+    "rules": [
+      "観覧席でのごみは持ち帰る",
+      "観覧席にペットは連れて行けない",
+      "観覧席の入場は竿燈の入場より前（2026年は18:35）。座席の要らない乳幼児のほかは席ごとに料金がかかる"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "昨年の来場者数が約103万人の混雑で、夜の会場周辺に交通規制がかかる"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.akita-yulala.jp/festival/335",
+        "title": "アキタッチ＋ 秋田竿燈まつり（ふれあい竿燈で写真撮影や竿燈体験）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kantou.gr.jp/eventa/item.cgi?pro2&1",
+        "title": "秋田竿燈まつり公式 2026年のスケジュール",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kantou.gr.jp/faq/",
+        "title": "秋田竿燈まつり公式 よくあるご質問（毎年8月3日から6日、38町内が参加）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kantou.gr.jp/kanran/",
+        "title": "秋田竿燈まつり公式 観覧席申込み（2026年の日程）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002865",
+        "title": "るるぶ&more. 秋田竿燈まつり（JR秋田駅から徒歩15分、昨年の来場者数103万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://summer.walkerplus.com/odekake/detail_e/ar0205e41482/data.html",
+        "title": "ウォーカープラス 秋田竿燈まつりの詳細データ（2025年度の人出103万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-03",
+      "start": "19:10",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": "原則中止せず、晴れ間を見て演技する。天候で時間を短くすることがある",
+      "note": "18:45 竿燈入場、19:10〜20:25 演技、20:25 ふれあい竿燈、20:35〜20:50 ドローンショー、21:00 終了（予定）。昼の行事なし",
+      "sources": [
+        {
+          "url": "https://www.kantou.gr.jp/eventa/item.cgi?pro2&1",
+          "title": "秋田竿燈まつり公式 2026年のスケジュール",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kantou.gr.jp/faq/",
+          "title": "秋田竿燈まつり公式 よくあるご質問（毎年8月3日から6日、38町内が参加）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-08-04",
+      "endDate": "2026-08-05",
+      "start": "19:15",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": "原則中止せず、晴れ間を見て演技する。天候で時間を短くすることがある。昼の妙技大会は雨ならCNAアリーナ★あきた（予定）",
+      "note": "昼 9:00〜15:40 妙技大会（予選、エリアなかいち にぎわい広場）。夜 18:50 竿燈入場、19:15〜20:35 演技、20:35〜20:50 ふれあい竿燈、21:00 終了（予定）",
+      "sources": [
+        {
+          "url": "https://www.kantou.gr.jp/eventa/item.cgi?pro2&1",
+          "title": "秋田竿燈まつり公式 2026年のスケジュール",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kantou.gr.jp/faq/",
+          "title": "秋田竿燈まつり公式 よくあるご質問（毎年8月3日から6日、38町内が参加）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-08-06",
+      "start": "19:10",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": "原則中止せず、晴れ間を見て演技する。天候で時間を短くすることがある。昼の妙技大会は雨ならCNAアリーナ★あきた（予定）",
+      "note": "昼 9:20〜15:00 妙技大会（決勝）。夜 18:45 竿燈入場、19:10〜20:25 演技、20:25 ふれあい竿燈、20:35〜20:50 ドローンショー、21:00 終了（予定）",
+      "sources": [
+        {
+          "url": "https://www.kantou.gr.jp/eventa/item.cgi?pro2&1",
+          "title": "秋田竿燈まつり公式 2026年のスケジュール",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kantou.gr.jp/faq/",
+          "title": "秋田竿燈まつり公式 よくあるご質問（毎年8月3日から6日、38町内が参加）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-03",
+      "endDate": "2027-08-06",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "公式の「毎年8月3日から6日までの4日間」の決まりから見込んだ日（2027年の発表はまだない）",
+      "sources": [
+        {
+          "url": "https://www.kantou.gr.jp/faq/",
+          "title": "秋田竿燈まつり公式 よくあるご質問（毎年8月3日から6日、38町内が参加）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 秋田駅",
+        "walkMinutes": [15, 20],
+        "note": "竿燈大通りまで徒歩約15分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "東京駅",
+        "minutes": [229, 239],
+        "route": "秋田新幹線で約3時間49分"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": ["竿燈大通り周辺：18:15〜21:30 交通規制（2026年の予定）"],
+    "sources": [
+      {
+        "url": "https://www.kantou.gr.jp/faq/",
+        "title": "秋田竿燈まつり公式 よくあるご質問（毎年8月3日から6日、38町内が参加）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kantou.gr.jp/eventa/item.cgi?pro2&1",
+        "title": "秋田竿燈まつり公式 2026年のスケジュール",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002865",
+        "title": "るるぶ&more. 秋田竿燈まつり（JR秋田駅から徒歩15分、昨年の来場者数103万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://www.japan-guide.com/e/e3627.html",
+        "title": "japan-guide.com Kanto Matsuri（Kanto Odori は秋田駅から徒歩約15分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://www.city.akita.lg.jp/kanko/kanrenshisetsu/1002685/1009873/1035791/1035792.html",
+        "title": "秋田市 交通案内・所在地（東京から秋田新幹線で約3時間49分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "akita-neburi-nagashi-kan",
+      "name": "秋田市民俗芸能伝承館（ねぶり流し館）",
+      "kind": "sightseeing",
+      "summary": "秋田の民俗芸能を伝える市の施設。秋田駅から徒歩15分。ふだんは9:30〜16:30で、竿燈まつりの期間（8/3〜8/6）は19時まで開く。12月29日〜1月3日は休み",
+      "location": {
+        "lat": 39.72,
+        "lng": 140.1167
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "19:00"
+      },
+      "closedDays": [],
+      "price": "130円（高校生以下は無料）",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.akita.lg.jp/kanko/kanrenshisetsu/1003644/1002380.html",
+          "title": "秋田市 観覧のご案内（ねぶり流し館の開館時間と観覧料）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.akita.lg.jp/shisetsu/hakubutukan-tpsyokan/1011113/1006737.html",
+          "title": "秋田市 施設案内 民俗芸能伝承館（秋田駅から徒歩15分）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.kantou.gr.jp/faq/",
+      "title": "秋田竿燈まつり公式 よくあるご質問（毎年8月3日から6日、38町内が参加）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.kantou.gr.jp/eventa/item.cgi?pro2&1",
+      "title": "秋田竿燈まつり公式 2026年のスケジュール",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.kantou.gr.jp/english/",
+      "title": "秋田竿燈まつり公式 英語版（国の重要無形民俗文化財）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.akita-yulala.jp/festival/335",
+      "title": "アキタッチ＋ 秋田竿燈まつり（ふれあい竿燈で写真撮影や竿燈体験）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.akita-yulala.jp/selection/5000013989",
+      "title": "アキタッチ＋ 秋田竿燈まつりの案内（竿燈屋台村 15:00〜21:30）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.japan.travel/en/spot/1829/",
+      "title": "Travel Japan（日本政府観光局） Akita Kanto Festival",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20002865",
+      "title": "るるぶ&more. 秋田竿燈まつり（JR秋田駅から徒歩15分、昨年の来場者数103万人）",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://www.japan-guide.com/e/e3627.html",
+      "title": "japan-guide.com Kanto Matsuri（Kanto Odori は秋田駅から徒歩約15分）",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://summer.walkerplus.com/odekake/detail_e/ar0205e41482/data.html",
+      "title": "ウォーカープラス 秋田竿燈まつりの詳細データ（2025年度の人出103万人）",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_343190/",
+      "title": "じゃらんnet 秋田竿燈まつり",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の演技の時刻",
+    "写真・撮影の決まり（三脚など）",
+    "服装・持ち物の案内",
+    "ふれあい竿燈の費用や条件（公式の日程表には時刻だけが載っている）",
+    "地元の味・祭りの日だけの食べ物（竿燈屋台村が出ることだけ分かっている）",
+    "祭りの前後に寄れる食の店",
+    "ねぶり流し館の祭りの期間の最終入館の時刻",
+    "周辺の場所の知名度",
+    "竿燈の総本数"
+  ]
+}

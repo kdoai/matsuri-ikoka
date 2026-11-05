@@ -1,0 +1,345 @@
+{
+  "id": "hirosaki-neputa-matsuri",
+  "name": {
+    "ja": "弘前ねぷたまつり",
+    "en": "Hirosaki Neputa Festival"
+  },
+  "category": "float",
+  "municipalities": [
+    {
+      "prefecture": "青森県",
+      "name": "弘前市"
+    }
+  ],
+  "venue": {
+    "name": "弘前市内の運行コース（土手町コース・駅前コース）",
+    "lat": 40.5992,
+    "lng": 140.4749
+  },
+  "scaleTier": "L",
+  "popularity": "major",
+  "listedIn": ["walkerplus", "jalan", "rurubu", "jnto"],
+  "highlights": [
+    "三国志や水滸伝の武者絵を描いた扇ねぷたが夜の城下町を進む",
+    "最大で9mを超える大型ねぷたと、後ろに続く囃子",
+    "津軽情っ張り大太鼓を試し打ちできる日がある",
+    "8月7日は朝の運行のあと、岩木川でなぬかびおくり"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1722年の文献に登場し、1980年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.hirosaki-kanko.or.jp/edit.html?id=cat02_summer_neputa",
+          "title": "弘前観光コンベンション協会 弘前ねぷたまつり（令和8年、会期は毎年8月1日〜7日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "弘前のねぷたは1722（享保7）年に初めて文献に現れ、2022年に300年を迎えた",
+      "source": {
+        "url": "https://www.hirosaki-kanko.or.jp/edit.html?id=cat02_summer_neputa",
+        "title": "弘前観光コンベンション協会 弘前ねぷたまつり（令和8年、会期は毎年8月1日〜7日）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1980（昭和55）年に国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.hirosaki-kanko.or.jp/edit.html?id=cat02_summer_neputa",
+        "title": "弘前観光コンベンション協会 弘前ねぷたまつり（令和8年、会期は毎年8月1日〜7日）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "合同運行は小型のねぷたから始まり、後半になるほど大型が出てくる",
+      "source": {
+        "url": "https://www.hirosaki-kanko.or.jp/edit.html?id=cat02_summer_neputa",
+        "title": "弘前観光コンベンション協会 弘前ねぷたまつり（令和8年、会期は毎年8月1日〜7日）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "見物の人はスマートフォンから観客賞を投票できる（1アカウント1票）",
+      "source": {
+        "url": "https://www.hirosaki-kanko.or.jp/edit.html?id=cat02_summer_neputa",
+        "title": "弘前観光コンベンション協会 弘前ねぷたまつり（令和8年、会期は毎年8月1日〜7日）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_by_application",
+    "howToJoin": "観光客も運行に加われる自由参加の団体がある。服装や条件は各団体に問い合わせる（案内は弘前市立観光館）",
+    "rules": [
+      "運行コースと観覧場所の周辺でドローンなどの無人航空機を飛ばさない",
+      "歩道や点字ブロックをふさがない",
+      "交通規制の間は警察官や交通指導隊の指示に従う"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "昨年の来場者数が約118万人の混雑で、夜の運行中は交通規制がかかる"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "運行コースと観覧場所の周辺でドローンは飛ばせない"
+    },
+    "sources": [
+      {
+        "url": "https://www.hirosaki-kanko.or.jp/edit.html?id=cat02_summer_neputa",
+        "title": "弘前観光コンベンション協会 弘前ねぷたまつり（令和8年、会期は毎年8月1日〜7日）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002810",
+        "title": "るるぶ&more. 弘前ねぷたまつり（大小約60台、昨年の来場者数118万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-01",
+      "endDate": "2026-08-04",
+      "start": "19:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": "雨天決行（大雨・暴風・雷の警報や注意報が出たときは17時に最終判断し、17時に花火が上がれば運行）",
+      "note": "土手町コース。運行の前に桜大通りで出陣式。ねぷたは大小約60台（観光サイトの記載）。コンテスト審査は8/1・2（雨天順延）",
+      "sources": [
+        {
+          "url": "https://www.hirosaki-kanko.or.jp/edit.html?id=cat02_summer_neputa",
+          "title": "弘前観光コンベンション協会 弘前ねぷたまつり（令和8年、会期は毎年8月1日〜7日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20002810",
+          "title": "るるぶ&more. 弘前ねぷたまつり（大小約60台、昨年の来場者数118万人）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar0202e04839/",
+          "title": "ウォーカープラス 弘前ねぷたまつり（大小約60台以上）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        }
+      ]
+    },
+    {
+      "date": "2026-08-05",
+      "endDate": "2026-08-06",
+      "start": "19:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": "雨天決行（大雨・暴風・雷の警報や注意報が出たときは17時に最終判断し、17時に花火が上がれば運行）",
+      "note": "駅前コース",
+      "sources": [
+        {
+          "url": "https://www.hirosaki-kanko.or.jp/edit.html?id=cat02_summer_neputa",
+          "title": "弘前観光コンベンション協会 弘前ねぷたまつり（令和8年、会期は毎年8月1日〜7日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-08-07",
+      "start": "10:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": "雨天決行",
+      "note": "土手町（午前）コース。17:00〜20:30（予定）に岩木川河川敷でなぬかびおくり（雨天中止）",
+      "sources": [
+        {
+          "url": "https://www.hirosaki-kanko.or.jp/edit.html?id=cat02_summer_neputa",
+          "title": "弘前観光コンベンション協会 弘前ねぷたまつり（令和8年、会期は毎年8月1日〜7日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-01",
+      "endDate": "2027-08-07",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "弘前観光コンベンション協会の「会期は毎年8月1日〜7日」の決まりから見込んだ日（2027年の発表はまだない）。弘前市の案内では、例年1〜6日は19:00〜21:00ごろ、7日は午前の運行",
+      "sources": [
+        {
+          "url": "https://www.hirosaki-kanko.or.jp/edit.html?id=cat02_summer_neputa",
+          "title": "弘前観光コンベンション協会 弘前ねぷたまつり（令和8年、会期は毎年8月1日〜7日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.city.hirosaki.aomori.jp/qa/kankou/2014-1222-1622-48.html",
+          "title": "弘前市 よくある質問（観光）（例年の運行時間とコース）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 弘前駅",
+        "walkMinutes": [15, 20],
+        "note": "土手町コースまで徒歩15分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "新青森駅",
+        "minutes": [25, 40],
+        "route": "JR奥羽本線の特急・快速・普通。東京駅から新青森駅までは東北新幹線はやぶさで最短2時間59分"
+      }
+    ],
+    "parking": "unknown",
+    "trafficRestrictions": [
+      "8月1〜6日：18:30〜22:00ごろ、運行コースで交通規制（目安。2026年の案内）",
+      "8月7日：9:30〜11:30、運行コースで交通規制（目安。2026年の案内）",
+      "桜大通り：8月1〜4日の17:30から車両通行禁止（2026年の案内）"
+    ],
+    "sources": [
+      {
+        "url": "https://www.hirosaki-kanko.or.jp/edit.html?id=cat02_summer_neputa",
+        "title": "弘前観光コンベンション協会 弘前ねぷたまつり（令和8年、会期は毎年8月1日〜7日）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://summer.walkerplus.com/odekake/detail_e/ar0202e04839/map.html",
+        "title": "ウォーカープラス 弘前ねぷたまつりの地図・アクセス（JR弘前駅から徒歩15分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      },
+      {
+        "url": "https://www.hirosaki-kanko.or.jp/edit.html?id=access01",
+        "title": "弘前観光コンベンション協会 弘前へのアクセス",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "tsugaruhan-neputa-mura",
+      "name": "津軽藩ねぷた村",
+      "kind": "sightseeing",
+      "summary": "ねぷたや津軽の工芸を見て体験できる施設。JR弘前駅からバスで約13分。工芸づくりや三味線などの体験は別料金",
+      "location": {
+        "lat": 40.6113,
+        "lng": 140.4698
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": [],
+      "price": "一般600円、中高生400円、小学生300円、3歳以上の幼児100円",
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.hirosaki-kanko.or.jp/details.html?id=CNT00404021037505273",
+          "title": "弘前観光コンベンション協会 津軽藩ねぷた村",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "hirosaki-park",
+      "name": "弘前公園（弘前城）",
+      "kind": "sightseeing",
+      "summary": "弘前城のある公園。本丸・北の郭は4月1日〜11月23日が有料で無休。期間外は無料で入れるが天守には入れない",
+      "location": {
+        "lat": 40.6061,
+        "lng": 140.466
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": [],
+      "price": "本丸・北の郭 大人320円、小・中学生100円",
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.city.hirosaki.aomori.jp/qa/kankou/2014-1222-1622-48.html",
+          "title": "弘前市 よくある質問（観光）（弘前公園の有料時間と料金）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.hirosaki-kanko.or.jp/edit.html?id=cat02_summer_neputa",
+      "title": "弘前観光コンベンション協会 弘前ねぷたまつり（令和8年、会期は毎年8月1日〜7日）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.japan.travel/en/spot/457/",
+      "title": "Travel Japan（日本政府観光局） Hirosaki Neputa Festival",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20002810",
+      "title": "るるぶ&more. 弘前ねぷたまつり（大小約60台、昨年の来場者数118万人）",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://summer.walkerplus.com/odekake/detail_e/ar0202e04839/",
+      "title": "ウォーカープラス 弘前ねぷたまつり（大小約60台以上）",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_342954/",
+      "title": "じゃらんnet 弘前ねぷたまつり",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の運行時刻とコース",
+    "8月7日の朝の運行の雨天のときの判断の時刻",
+    "服装・持ち物の案内",
+    "運行の終わりの時刻",
+    "ねぷたの総台数の公式の数（観光サイトは大小約60台）",
+    "一般向けの駐車場の有無（観光サイトは駐車場なしと表示）",
+    "屋台が出るかどうか、祭りの日だけの食べ物",
+    "祭りの前後に寄れる食の店",
+    "周辺の場所の知名度"
+  ]
+}

@@ -1,0 +1,285 @@
+{
+  "id": "genkai-cho-hanabi",
+  "name": {
+    "ja": "玄海町花火大会",
+    "en": "Genkai Town Fireworks Festival"
+  },
+  "category": "fireworks",
+  "municipalities": [
+    {
+      "prefecture": "佐賀県",
+      "name": "玄海町"
+    }
+  ],
+  "venue": {
+    "name": "玄海町いこいの広場",
+    "lat": 33.4672,
+    "lng": 129.8554
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "11月の夜に町の広場で上がる約20分の花火",
+    "2026年は町の特産品が並ぶ産業文化祭と同じ日に開く",
+    "入場は無料で、有料の観覧席はない"
+  ],
+  "styles": [],
+  "trivia": [
+    {
+      "text": "例年は約40分の打ち上げを、2026年は約20分にまとめて上げる",
+      "source": {
+        "url": "https://all-genkai.jp/",
+        "title": "玄海町みんなの地域商社 玄海町花火大会2026の告知",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2025年は8月31日に開き、音楽に合わせた30分の花火だった",
+      "source": {
+        "url": "https://www.jalan.net/event/evt_346201/",
+        "title": "じゃらんnet 玄海町花火大会",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": ["近くの店に車を止めない", "会場内は満車になると車で入れなくなる"],
+    "dress": ["日が落ちると冷えるので、暖かい上着を用意する"],
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "見学が中心で、来場は例年約1万人。混雑や危険についての特別な注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://all-genkai.jp/",
+        "title": "玄海町みんなの地域商社 玄海町花火大会2026の告知（迷惑駐車のお願い、上着の持参）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://weathernews.jp/hanabi/spot/5001002/",
+        "title": "ウェザーニュース 玄海町花火大会（満車で乗り入れ禁止）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20003786",
+        "title": "るるぶ&more. 玄海町花火大会（昨年の来場者 約1万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar1041e00948/data.html",
+        "title": "ウォーカープラス 玄海町花火大会 データ（例年の人出 約1万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2025-08-31",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "前回の実績。音楽に合わせて30分打ち上げた",
+      "sources": [
+        {
+          "url": "https://www.jalan.net/event/evt_346201/",
+          "title": "じゃらんnet 玄海町花火大会（2025年8月31日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-15",
+      "start": "18:30",
+      "end": "18:50",
+      "status": "announced",
+      "rainPolicy": "荒天時は中止（観光サイトの案内。佐賀県の観光サイトは「荒天時未定」と書いている）",
+      "note": "18:30から約20分。同じ日に産業文化祭を開く。シャトルバスと臨時駐車場（仮屋・南部浄化センター横）は今年はない",
+      "sources": [
+        {
+          "url": "https://all-genkai.jp/",
+          "title": "玄海町みんなの地域商社 玄海町花火大会2026の告知（主催 玄海町、11月15日 18:30から約20分）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.asobo-saga.jp/articles/detail/214d2c32-ad21-447c-873a-149323557caf",
+          "title": "あそぼーさが 佐賀の花火大会情報2026（11月15日 18:30、荒天時未定）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://hanabi.walkerplus.com/detail/ar1041e00948/data.html",
+          "title": "ウォーカープラス 玄海町花火大会 データ（18:30〜18:50、荒天時中止）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20003786",
+          "title": "るるぶ&more. 玄海町花火大会（18:30ごろから、荒天時は中止）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [
+      {
+        "hub": "JR 唐津駅",
+        "minutes": [25, 30],
+        "route": "車かタクシーで会場まで（近くに鉄道の駅はない。2026年はシャトルバスがない）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [
+      "一部の車両は進入禁止で、時間帯によって誘導がある（時間と場所の詳細は未発表）"
+    ],
+    "sources": [
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar1041e00948/data.html",
+        "title": "ウォーカープラス 玄海町花火大会 データ（JR唐津駅からタクシーで約25分、無料駐車場 約1,000台）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20003786",
+        "title": "るるぶ&more. 玄海町花火大会（JR唐津駅から車で約30分、無料駐車場 約1,000台、交通規制）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://all-genkai.jp/",
+        "title": "玄海町みんなの地域商社 玄海町花火大会2026の告知（シャトルバスと臨時駐車場はない）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "玄海町の特産品",
+        "note": "同じ日に開く産業文化祭に並ぶ。品目の案内はまだ見当たらない",
+        "sources": [
+          {
+            "url": "https://all-genkai.jp/",
+            "title": "玄海町みんなの地域商社 玄海町花火大会2026の告知（産業文化祭と同日開催）",
+            "checkedAt": "2026-11-05",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "hamanoura-tanada",
+      "name": "浜野浦の棚田",
+      "kind": "sightseeing",
+      "summary": "海に向かって大小約280枚の田が重なる、11.5ヘクタールの棚田。町の案内では11月はコスモスの時期。JR唐津駅から車で約30分",
+      "location": {
+        "lat": 33.489,
+        "lng": 129.8464
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://all-genkai.jp/rice_terraces/",
+          "title": "玄海町みんなの地域商社 浜野浦の棚田",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "genkai-kaijo-onsen-parea",
+      "name": "玄海海上温泉パレア",
+      "kind": "rest",
+      "summary": "海辺の温泉施設で、食事処では名物の鯛の海丼を出す。食事は昼と夕方に分かれ、水曜が祝日のときは火曜か木曜が休館",
+      "location": {
+        "lat": 33.4791,
+        "lng": 129.8617
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "22:00",
+        "lastEntry": "21:00"
+      },
+      "closedDays": ["wed"],
+      "price": null,
+      "tags": ["indoor", "seating", "local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://all-genkai.jp/eat/737/",
+          "title": "玄海町みんなの地域商社 玄海海上温泉パレア",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://all-genkai.jp/",
+      "title": "玄海町みんなの地域商社（主催 玄海町、運営 同社）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://hanabi.walkerplus.com/detail/ar1041e00948/data.html",
+      "title": "ウォーカープラス 玄海町花火大会 データ（玄海町いこいの広場）",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://weathernews.jp/hanabi/spot/5001002/",
+      "title": "ウェザーニュース 玄海町花火大会（玄海町いこいの広場、新田1809）",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_346201/",
+      "title": "じゃらんnet 玄海町花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20003786",
+      "title": "るるぶ&more. 玄海町花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "打ち上げ数（非公開）。規模は例年の人出 約1万人から決めた",
+    "2026年の会場の主催者の案内（観光サイトは玄海町いこいの広場、佐賀県の観光サイトは玄海町総合運動場と書いている）",
+    "荒天時の扱いの主催者の発表",
+    "交通規制の時間と場所",
+    "屋台の有無、産業文化祭の時間と内容",
+    "持ち物、三脚などの撮影の決まり",
+    "周辺の場所の知名度",
+    "2027年の開催日（2025年は8月31日、2026年は11月15日で、決まった日がない）"
+  ]
+}

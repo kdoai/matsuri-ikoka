@@ -1,0 +1,413 @@
+{
+  "id": "tosa-no-okyaku",
+  "name": {
+    "ja": "土佐の「おきゃく」",
+    "en": "Tosa no Okyaku"
+  },
+  "category": "other",
+  "municipalities": [
+    {
+      "prefecture": "高知県",
+      "name": "高知市"
+    }
+  ],
+  "venue": {
+    "name": "東洋電化中央公園ほか 高知市中心街",
+    "lat": 33.5601,
+    "lng": 133.5406
+  },
+  "scaleTier": "L",
+  "popularity": "major",
+  "listedIn": ["walkerplus", "jalan", "rurubu", "jnto"],
+  "highlights": [
+    "商店街のアーケードや公園に座敷が出て、街じゅうが宴会場になる",
+    "県内の酒蔵の酒と土佐の料理を、地元の人と同じ席で楽しめる",
+    "酒好きを見守る「べろべろの神様」に参拝できる",
+    "しばてん踊り、お座敷体験、おきゃく電車など高知ならではの企画が続く"
+  ],
+  "styles": [],
+  "trivia": [
+    {
+      "text": "「おきゃく」は土佐弁で宴会のこと",
+      "source": {
+        "url": "https://www.walkerplus.com/event/ar0939e581479/",
+        "title": "ウォーカープラス 土佐の「おきゃく」2026",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "街なかを大きな宴席にする催しとして、2006年に始まった",
+      "source": {
+        "url": "https://tosa-okyaku.com/about_us/the-okyaku-of-tosa/",
+        "title": "土佐の「おきゃく」公式サイト The Okyaku of Tosa",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "「べろべろの神様」は2015年、10周年を記念して生まれた酒好きの神様",
+      "source": {
+        "url": "https://tosa-okyaku.com/about_us/the-okyaku-of-tosa/",
+        "title": "土佐の「おきゃく」公式サイト The Okyaku of Tosa",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "高知では、8月のよさこい祭りに次ぐ規模の催しと紹介されている",
+      "source": {
+        "url": "https://www.japan.travel/en/japans-local-treasures/tosa-no-okyaku-festival-2022/",
+        "title": "日本政府観光局 Tosa no Okyaku Festival",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "公園や商店街の会場へ行き、飲食はその場で買って加わる。有料の畳席（ご当地グルメ屋台村・土佐の大座敷）は事前にWebで予約する（2026年の案内で、1テーブル6名まで、支払いはクレジットカードのみ）。お座敷体験やおきゃく電車は料金のある別の企画",
+    "rules": [
+      "公園の畳席では、飲食物を公園内で買う。外からの持ち込みはできない",
+      "公園の畳席は全席禁煙で、ペットの同伴は控える",
+      "畳席は靴を脱いで使う。席は選べず、ステージは見えない。受付は予約の10分前から公園北側のインフォメーションで",
+      "公式の宣言は、深酒をせず、ほどよく飲んで機嫌よく過ごすことを勧めている"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "飲食と見物が中心で、混雑や危険についての特別な注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://tosa-okyaku.com/events/gotouchi-gourmet/",
+        "title": "土佐の「おきゃく」公式サイト ご当地グルメ屋台村（有料畳席と持ち込みの決まり）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://tosa-okyaku.com/events/tosa-ohzashiki/",
+        "title": "土佐の「おきゃく」公式サイト 土佐の大座敷（有料畳席、2026年の案内）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://tosa-okyaku.com/about_us/the-okyaku-of-tosa/",
+        "title": "土佐の「おきゃく」公式サイト The Okyaku of Tosa（5つの宣言）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.japan.travel/en/japans-local-treasures/tosa-no-okyaku-festival-2022/",
+        "title": "日本政府観光局 Tosa no Okyaku Festival（地元の人との交流）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-03-07",
+      "endDate": "2026-03-15",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "企画ごとに日時が違う。3/7・8 ご当地グルメ屋台村（10:00〜21:00）、3/14・15 土佐の大座敷（10:00〜19:00）、3/15 おびさんマルシェほか",
+      "sources": [
+        {
+          "url": "https://tosa-okyaku.com/events/2026-03-15/",
+          "title": "土佐の「おきゃく」公式サイト 2026年3月15日のイベント",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.walkerplus.com/event/ar0939e581479/data.html",
+          "title": "ウォーカープラス 土佐の「おきゃく」2026 データ（2026年3月7日〜15日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20003800",
+          "title": "るるぶ&more. 土佐の「おきゃく」2026（2026年3月7日〜15日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        }
+      ]
+    },
+    {
+      "date": "2027-03-06",
+      "start": "12:00",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "20回開催記念の年の初日。12:00〜19:00 ジャンピングMAX（帯屋町1丁目）、18:00〜21:00 オールドアメリカンフェスティバル（東洋電化中央公園）、18:30〜20:30 お座敷体験（ホテル高砂、7,500円）。公園のご当地グルメ屋台村、しばてん踊りも。全体の会期の表記はなく、公式のイベント一覧の日付による。企画は順次足され、変わることがある",
+      "sources": [
+        {
+          "url": "https://tosa-okyaku.com/events/%e3%83%aa%e3%82%b9%e3%83%88/?tribe-bar-date=2027-03-01",
+          "title": "土佐の「おきゃく」公式サイト 2027イベント一覧",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://tosa-okyaku.com/",
+          "title": "土佐の「おきゃく」2027 公式サイト（20回開催記念）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-03-07",
+      "start": "10:00",
+      "end": "19:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "10:00〜16:00 南国土佐皿鉢祭（大橋通り商店街・ひろめ市場前広場）、10:00〜16:00 土讃線のアテンダント特別企画（高知駅〜土佐久礼の予定）、10:00〜17:00 土佐・ぶんたん祭（東洋電化中央公園北口）、12:00〜19:00 ニンジャMAX（帯屋町1丁目）",
+      "sources": [
+        {
+          "url": "https://tosa-okyaku.com/events/%e3%83%aa%e3%82%b9%e3%83%88/?tribe-bar-date=2027-03-01",
+          "title": "土佐の「おきゃく」公式サイト 2027イベント一覧",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-03-09",
+      "start": "18:30",
+      "end": "20:30",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "土佐のお座敷体験、土佐の酒肴（ホテル おおりや、7,500円）",
+      "sources": [
+        {
+          "url": "https://tosa-okyaku.com/events/%e3%83%aa%e3%82%b9%e3%83%88/?tribe-bar-date=2027-03-01",
+          "title": "土佐の「おきゃく」公式サイト 2027イベント一覧",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-03-12",
+      "start": "18:30",
+      "end": "20:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "おきゃく電車（高知駅前から運行、7,000円）",
+      "sources": [
+        {
+          "url": "https://tosa-okyaku.com/events/%e3%83%aa%e3%82%b9%e3%83%88/?tribe-bar-date=2027-03-01",
+          "title": "土佐の「おきゃく」公式サイト 2027イベント一覧",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-03-13",
+      "start": "10:00",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "10:00〜16:00 土讃線のアテンダント特別企画（高知駅〜土佐久礼の予定）、16:00〜21:00 よさこい春の舞（東洋電化中央公園ほか）、18:30〜20:30 お座敷体験（土佐御苑、8,000円）",
+      "sources": [
+        {
+          "url": "https://tosa-okyaku.com/events/%e3%83%aa%e3%82%b9%e3%83%88/?tribe-bar-date=2027-03-01",
+          "title": "土佐の「おきゃく」公式サイト 2027イベント一覧",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-03-14",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "しばてん踊り（東洋電化中央公園）、海山の揚げ物（はりまや橋商店街）。時刻の発表はまだない",
+      "sources": [
+        {
+          "url": "https://tosa-okyaku.com/events/%e3%83%aa%e3%82%b9%e3%83%88/?tribe-bar-date=2027-03-01",
+          "title": "土佐の「おきゃく」公式サイト 2027イベント一覧",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 高知駅",
+        "walkMinutes": [10, 15],
+        "note": "多くの会場まで。路面電車なら約5分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "岡山駅",
+        "minutes": [150, 160],
+        "route": "JR の列車で高知駅まで約2時間半"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.japan.travel/en/japans-local-treasures/tosa-no-okyaku-festival-2022/",
+        "title": "日本政府観光局 Tosa no Okyaku Festival（高知駅から徒歩10〜15分、岡山駅から約2.5時間）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.walkerplus.com/event/ar0939e581479/data.html",
+        "title": "ウォーカープラス 土佐の「おきゃく」2026 データ（路面電車で約5分、周辺の有料駐車場）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20003800",
+        "title": "るるぶ&more. 土佐の「おきゃく」2026（専用の駐車場なし）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "南国土佐皿鉢祭",
+        "note": "食の祭典。2027年は第59回で3月7日10:00〜16:00、大橋通り商店街・ひろめ市場前広場",
+        "sources": [
+          {
+            "url": "https://tosa-okyaku.com/events/%e3%83%aa%e3%82%b9%e3%83%88/?tribe-bar-date=2027-03-01",
+            "title": "土佐の「おきゃく」公式サイト 2027イベント一覧",
+            "checkedAt": "2026-11-05",
+            "confidence": "official"
+          }
+        ]
+      },
+      {
+        "name": "土佐の酒",
+        "note": "県内18の酒蔵が高知市に集まり、地元の料理と一緒に味わえる",
+        "sources": [
+          {
+            "url": "https://www.japan.travel/en/japans-local-treasures/tosa-no-okyaku-festival-2022/",
+            "title": "日本政府観光局 Tosa no Okyaku Festival",
+            "checkedAt": "2026-11-05",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "hirome-ichiba",
+      "name": "ひろめ市場",
+      "kind": "food",
+      "summary": "高知の食が集まる屋内の市場。日曜は9:00から。店ごとに時間が違い、休館日は公式のお知らせで案内される",
+      "location": {
+        "lat": 33.56,
+        "lng": 133.536
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "23:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": ["indoor", "local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://hirome.co.jp/",
+          "title": "ひろめ市場 公式サイト（営業時間、所在地）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kochi-castle",
+      "name": "高知城",
+      "kind": "sightseeing",
+      "summary": "天守と懐徳館に入れる高知の城。12月26日〜1月1日は休館",
+      "location": {
+        "lat": 33.5608,
+        "lng": 133.5308
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": [],
+      "price": "18歳以上500円（18歳未満は無料）",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://kochipark.jp/kochijyo/",
+          "title": "高知城 公式の案内（開館時間、休館日、入場料）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://tosa-okyaku.com/",
+      "title": "土佐の「おきゃく」2027 公式サイト",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://tosa-okyaku.com/about_us/the-okyaku-of-tosa/",
+      "title": "土佐の「おきゃく」公式サイト The Okyaku of Tosa",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.japan.travel/en/japans-local-treasures/tosa-no-okyaku-festival-2022/",
+      "title": "日本政府観光局 Tosa no Okyaku Festival",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.walkerplus.com/event/ar0939e581479/",
+      "title": "ウォーカープラス 土佐の「おきゃく」2026",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20003800",
+      "title": "るるぶ&more. 土佐の「おきゃく」2026",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_251573/",
+      "title": "じゃらんnet 土佐の「おきゃく」（2020年は中止の回のページ）",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の全体の会期の正式な表記、企画の追加（公式のイベント一覧の日付は3月6〜14日。3月15日まで続く展示もある）",
+    "2027年の有料畳席の日時・料金・予約の開始",
+    "雨のときの扱い",
+    "服装・持ち物・撮影の決まり",
+    "2027年の交通規制",
+    "周辺の店の追加"
+  ]
+}

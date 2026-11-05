@@ -1,0 +1,260 @@
+{
+  "id": "matsuyama-minato-matsuri-mitsuhama-hanabi",
+  "name": {
+    "ja": "松山港まつり・三津浜花火大会",
+    "en": "Matsuyama Port Festival Mitsuhama Fireworks"
+  },
+  "category": "fireworks",
+  "municipalities": [
+    {
+      "prefecture": "愛媛県",
+      "name": "松山市"
+    }
+  ],
+  "venue": {
+    "name": "三津ふ頭",
+    "lat": 33.8642,
+    "lng": 132.7085
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "1時間で約1万発が三津ふ頭の夜空に上がる",
+    "ふ頭と台船の両方から上げる花火と音楽の共演",
+    "締めくくりの大玉水中花火と特大スターマイン"
+  ],
+  "styles": [
+    {
+      "style": "community",
+      "basis": "三津浜中学校など地元の学校や企業が、ボランティアや協力企業として加わっている",
+      "sources": [
+        {
+          "url": "https://www.mitsuhama-hanabi.com/sponsorship",
+          "title": "三津浜花火大会 公式 協賛のお願い・ボランティア募集",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "2026年の花火は4部構成で、テーマは「ワクワクしようや」",
+      "source": {
+        "url": "https://hanabi.walkerplus.com/detail/ar0938e00029/",
+        "title": "ウォーカープラス 第74回 松山港まつり・三津浜花火大会",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "火気厳禁（カセットコンロも使えない）",
+      "ドローンの飛行と撮影は禁止",
+      "会場内は全面禁煙で、喫煙は指定の喫煙所のみ",
+      "ごみは持ち帰る",
+      "いす・テーブル・レジャーシートの持ち込みができない区域がある",
+      "入場券は紛失すると入場できない。転売目的の購入は禁止"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "昨年は約23万人が集まり、夜のふ頭のまわりで車両通行止めがある"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "ドローンでの撮影は禁止"
+    },
+    "sources": [
+      {
+        "url": "https://www.mitsuhama-hanabi.com/guidance",
+        "title": "三津浜花火大会 公式 会場交通案内・有料席案内",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.mitsuhama-hanabi.com/program",
+        "title": "三津浜花火大会 公式 プログラム・よくある質問（入場券）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20003627",
+        "title": "るるぶ&more. 第74回松山港まつり 三津浜花火大会（昨年の来場者 約23万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0938e00029/data.html",
+        "title": "ウォーカープラス 第74回 データ（例年の人出 23万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-01",
+      "start": "20:00",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": "小雨決行、荒天は8月2日に順延",
+      "note": "第74回。打ち上げは約1万発。有料席の開場は17:00",
+      "sources": [
+        {
+          "url": "https://www.mitsuhama-hanabi.com/",
+          "title": "三津浜花火大会 公式サイト（2026年8月1日 20:00〜21:00、荒天は8月2日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://hanabi.walkerplus.com/detail/ar0938e00029/data.html",
+          "title": "ウォーカープラス 第74回 データ（約1万発）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20003627",
+          "title": "るるぶ&more. 第74回（小雨決行）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-07",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2024年（8月3日）・2026年（8月1日）の開催日がどちらも8月第1土曜なので、その決まりから見込んだ日（2025年の開催日は公式で未確認。2027年の発表はまだない）",
+      "sources": [
+        {
+          "url": "https://www.mitsuhama-hanabi.com/post/2ed7d8be",
+          "title": "三津浜花火大会 公式 第72回開催決定（令和6年8月3日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.mitsuhama-hanabi.com/",
+          "title": "三津浜花火大会 公式サイト（2026年8月1日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "伊予鉄道 三津駅",
+        "walkMinutes": [15, 20]
+      },
+      {
+        "name": "JR 三津浜駅",
+        "walkMinutes": [30, 35]
+      }
+    ],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [
+      "2026年：会場周辺で車両通行止め（地点により14:00・17:00・18:00・18:30から23:00まで）"
+    ],
+    "sources": [
+      {
+        "url": "https://www.mitsuhama-hanabi.com/guidance",
+        "title": "三津浜花火大会 公式 会場交通案内",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0938e00029/data.html",
+        "title": "ウォーカープラス 第74回 データ（三津駅から徒歩15分、三津浜駅から徒歩30分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20003627",
+        "title": "るるぶ&more. 第74回（三津駅から徒歩15分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "mitsuhama-townscape",
+      "name": "三津浜の町並み",
+      "kind": "sightseeing",
+      "summary": "江戸時代から松山の海の玄関だった港町。明治・大正の洋館や格子戸の木造家屋、旧銀行通りなどが残り、古い建物を生かした店も増えている。散策は無料",
+      "location": {
+        "lat": 33.8633,
+        "lng": 132.7156
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": "無料",
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://matsuyama-sightseeing.com/spot/126-2/",
+          "title": "松山市公式観光サイト 三津浜の町並み",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.mitsuhama-hanabi.com/",
+      "title": "三津浜花火大会 公式サイト（松山港まつり事務局）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.mitsuhama-hanabi.com/guidance",
+      "title": "三津浜花火大会 公式 会場交通案内",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://hanabi.walkerplus.com/detail/ar0938e00029/data.html",
+      "title": "ウォーカープラス 第74回 データ",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20003627",
+      "title": "るるぶ&more. 第74回",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://www.jalan.net/theme/hanabi/ehime/38_hanabi10.html",
+      "title": "じゃらんnet 松山港まつり・三津浜花火大会の花火大会情報2026",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    }
+  ],
+  "gaps": [
+    "2027年の開催日の発表と時刻",
+    "2025年の開催日の主催者の記録",
+    "当日のボランティアの募集の条件",
+    "服装・持ち物の決まり",
+    "主要駅からの所要時間",
+    "祭りの前後に寄れる食の店",
+    "周辺の場所の知名度"
+  ]
+}

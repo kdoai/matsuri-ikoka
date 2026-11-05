@@ -1,0 +1,174 @@
+{
+  "id": "kitsuregawa-hanabi",
+  "name": {
+    "ja": "きつれ川花火大会",
+    "en": "Kitsuregawa Fireworks Festival"
+  },
+  "category": "fireworks",
+  "municipalities": [
+    {
+      "prefecture": "栃木県",
+      "name": "さくら市"
+    }
+  ],
+  "venue": {
+    "name": "荒川水辺公園（道の駅きつれがわ隣）",
+    "lat": 36.7156,
+    "lng": 140.0313
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu"],
+  "highlights": [
+    "喜連川温泉の町で、秋の夜に尺玉とスターマインが上がる",
+    "昼は温泉クイズや喜連川温泉音頭のステージがある"
+  ],
+  "styles": [],
+  "trivia": [
+    {
+      "text": "2026年は、喜連川温泉の湧出から45周年を記念する大会",
+      "source": {
+        "url": "https://www.city.tochigi-sakura.lg.jp/sightseeing/000039/000236/p005433.html",
+        "title": "さくら市 きつれ川花火大会",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "例年の人出は約3万人とされる",
+      "source": {
+        "url": "https://hanabi.walkerplus.com/detail/ar0309e00420/data.html",
+        "title": "ウォーカープラス 喜連川温泉湧出45周年記念花火大会 きつれ川花火大会2026 データ（約5000発、例年約3万人、荒天は11月8日、屋台あり）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "路上に駐車せず、立入禁止の区域に入らない",
+      "近くのスーパーやコンビニなどの商業施設に車を止めない",
+      "駐車場は20:30までに車を動かす",
+      "花火の不発弾を見つけたら触らず、喜連川観光協会へ連絡する"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "例年約3万人が集まる夜の水辺で、打ち上げ場所の近くに交通規制がある"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://sakura-navi.net/event/kitsuregawa-hanabi-festival/",
+        "title": "さくら市観光協会 きつれ川花火大会2026（11月7日 18:00、注意事項、駐車場）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0309e00420/data.html",
+        "title": "ウォーカープラス 喜連川温泉湧出45周年記念花火大会 きつれ川花火大会2026 データ（約5000発、例年約3万人、荒天は11月8日、屋台あり）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-07",
+      "start": "18:00",
+      "end": "19:10",
+      "status": "announced",
+      "rainPolicy": "小雨決行。荒天のときは11月8日（日）に延期",
+      "note": "12:00〜 ステージ、17:50 セレモニーとカウントダウン、18:00 打ち上げ開始。打ち上げは約5,000発。花火の後は氏家駅への路線バスがなくなるので、タクシーなどを使う",
+      "sources": [
+        {
+          "url": "https://sakura-navi.net/event/kitsuregawa-hanabi-festival/",
+          "title": "さくら市観光協会 きつれ川花火大会2026（11月7日 18:00、注意事項、駐車場）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.tochigi-sakura.lg.jp/sightseeing/000039/000236/p005433.html",
+          "title": "さくら市 きつれ川花火大会",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://hanabi.walkerplus.com/detail/ar0309e00420/data.html",
+          "title": "ウォーカープラス 喜連川温泉湧出45周年記念花火大会 きつれ川花火大会2026 データ（約5000発、例年約3万人、荒天は11月8日、屋台あり）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [
+      {
+        "hub": "JR 氏家駅",
+        "minutes": [25, 40],
+        "route": "関東バス 約15分、連城橋から徒歩約10分。花火の後は路線バスなし"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": ["打ち上げ場所の近くの一部の区域で交通規制"],
+    "sources": [
+      {
+        "url": "https://sakura-navi.net/event/kitsuregawa-hanabi-festival/",
+        "title": "さくら市観光協会 きつれ川花火大会2026（11月7日 18:00、注意事項、駐車場）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0309e00420/data.html",
+        "title": "ウォーカープラス 喜連川温泉湧出45周年記念花火大会 きつれ川花火大会2026 データ（約5000発、例年約3万人、荒天は11月8日、屋台あり）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://sakura-navi.net/event/kitsuregawa-hanabi-festival/",
+      "title": "さくら市観光協会 きつれ川花火大会2026（11月7日 18:00、注意事項、駐車場）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.tochigi-sakura.lg.jp/sightseeing/000039/000236/p005433.html",
+      "title": "さくら市 きつれ川花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://hanabi.walkerplus.com/detail/ar0309e00420/data.html",
+      "title": "ウォーカープラス 喜連川温泉湧出45周年記念花火大会 きつれ川花火大会2026 データ（約5000発、例年約3万人、荒天は11月8日、屋台あり）",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20003576",
+      "title": "るるぶ&more. 喜連川温泉湧出45周年記念 きつれ川花火大会2026",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "打ち上げ数と雨天の扱いの主催者の発表",
+    "2027年の開催日",
+    "服装・持ち物・撮影の決まり",
+    "交通規制の時間と範囲",
+    "主要駅から氏家駅までの所要時間",
+    "地元の味・祭りの日だけの食べ物",
+    "祭りの前後に寄れる場所"
+  ]
+}

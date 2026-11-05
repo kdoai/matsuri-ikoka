@@ -1,0 +1,278 @@
+{
+  "id": "akagawa-hanabi-taikai",
+  "name": {
+    "ja": "赤川花火大会",
+    "en": "Akagawa Fireworks Festival"
+  },
+  "category": "fireworks",
+  "municipalities": [
+    {
+      "prefecture": "山形県",
+      "name": "鶴岡市"
+    }
+  ],
+  "venue": {
+    "name": "赤川河川敷（三川橋〜羽黒橋）",
+    "lat": 38.742,
+    "lng": 139.844
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "音楽に合わせて打ち上げるミュージックスターマイン",
+    "割物とデザイン花火の2部門で花火師が競う競技会",
+    "観客の投票で選ぶ「感動花火No1」"
+  ],
+  "styles": [],
+  "trivia": [
+    {
+      "text": "観客の投票で「感動花火No1」を決める。部門は割物花火とデザイン花火の2つ",
+      "source": {
+        "url": "https://akagawahanabi.com/competition",
+        "title": "赤川花火大会 プログラム（観客が選ぶ感動花火No1）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "最大の玉は10号玉で、BGMに合わせて打ち上げる演目が名物",
+      "source": {
+        "url": "https://rurubu.jp/andmore/spot/20002767",
+        "title": "るるぶ&more. 第33回赤川花火大会（JR鶴岡駅から徒歩約20分、ミュージックスターマイン）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "打ち上げは約90分で約1万2000発、例年約4万人が見に来る",
+      "source": {
+        "url": "https://hanabi.walkerplus.com/detail/ar0206e00656/data.html",
+        "title": "ウォーカープラス 第33回 赤川花火大会 データ（約1万2000発、19:15〜20:45、例年約4万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "実行委員会が設ける無料の観覧場所はなく、チケットがなければ土手を含む河川敷に入れない",
+      "ペットを連れて来ない",
+      "タープやテントを使わない。脚つきの椅子は原則持ち込まない（脚のない座椅子やクッションは使える）",
+      "テーブルは自席の枠内で使う",
+      "道路や私有地に車を止めない"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "例年約4万人が集まる夜の河川敷で、当日は会場周辺に交通規制がかかり、帰りの駅は入場規制のことがある"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "三脚は自分の席の中で目線の高さまで。後方や自席の外、通路では使わない"
+    },
+    "sources": [
+      {
+        "url": "https://akagawahanabi.com/qanda",
+        "title": "赤川花火大会 よくあるご質問",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://akagawahanabi.com/access",
+        "title": "赤川花火大会 アクセス（会場周辺に駐車場なし、交通規制）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://akagawahanabi.com/transportation",
+        "title": "赤川花火大会 交通機関（鶴岡駅からの臨時バスなし）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0206e00656/data.html",
+        "title": "ウォーカープラス 第33回 赤川花火大会 データ（約1万2000発、19:15〜20:45、例年約4万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002767",
+        "title": "るるぶ&more. 第33回赤川花火大会（JR鶴岡駅から徒歩約20分、ミュージックスターマイン）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-15",
+      "start": "19:15",
+      "end": "20:45",
+      "status": "announced",
+      "rainPolicy": "小雨は決行。台風や雷などで安全に開けないときは中止（順延なし）",
+      "note": "第33回。打ち上げは約12,000発（観光サイトの記載）。19:15 打ち上げ開始、20:45ごろ終了",
+      "sources": [
+        {
+          "url": "https://akagawahanabi.com/about",
+          "title": "赤川花火大会 開催概要（2026年8月15日、19:15打ち上げ開始、荒天の順延なし）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://akagawahanabi.com/qanda",
+          "title": "赤川花火大会 よくあるご質問",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://hanabi.walkerplus.com/detail/ar0206e00656/data.html",
+          "title": "ウォーカープラス 第33回 赤川花火大会 データ（約1万2000発、19:15〜20:45、例年約4万人）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20002767",
+          "title": "るるぶ&more. 第33回赤川花火大会（JR鶴岡駅から徒歩約20分、ミュージックスターマイン）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-21",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "公式サイトのトップに、第34回は2027年8月21日（土）開催予定とある。同じサイトの実行委員会の文に来年度以降の開催は未定ともあるので、見込みとしている",
+      "sources": [
+        {
+          "url": "https://akagawahanabi.com/",
+          "title": "赤川花火大会 公式サイト（第34回は2027年8月21日（土）開催予定）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 鶴岡駅",
+        "walkMinutes": [20, 30],
+        "note": "徒歩約20〜30分。鶴岡駅から会場までの臨時バスは出ない。帰りは混むので、きっぷを先に買う（交通系電子マネーは使えない）"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [
+      "大会当日は会場周辺が交通規制になり、車両は通れない（規制区域に住む人は通行許可証が要る）"
+    ],
+    "sources": [
+      {
+        "url": "https://akagawahanabi.com/access",
+        "title": "赤川花火大会 アクセス（会場周辺に駐車場なし、交通規制）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://akagawahanabi.com/transportation",
+        "title": "赤川花火大会 交通機関（鶴岡駅からの臨時バスなし）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0206e00656/data.html",
+        "title": "ウォーカープラス 第33回 赤川花火大会 データ（約1万2000発、19:15〜20:45、例年約4万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002767",
+        "title": "るるぶ&more. 第33回赤川花火大会（JR鶴岡駅から徒歩約20分、ミュージックスターマイン）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "chido-museum",
+      "name": "致道博物館",
+      "kind": "sightseeing",
+      "summary": "鶴岡市の家中新町にある博物館。3〜11月は9:00〜17:00。水曜と12月28日〜1月4日は休み。展示替えで一部休むことがある",
+      "location": {
+        "lat": 38.7279,
+        "lng": 139.8212
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["wed"],
+      "price": "一般1,000円、高大生400円、小中生300円",
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.chido.jp/?p=15",
+          "title": "致道博物館 開館時間と入館料",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://akagawahanabi.com/",
+      "title": "赤川花火大会 公式サイト（第34回は2027年8月21日（土）開催予定）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://akagawahanabi.com/about",
+      "title": "赤川花火大会 開催概要（2026年8月15日、19:15打ち上げ開始、荒天の順延なし）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://hanabi.walkerplus.com/detail/ar0206e00656/data.html",
+      "title": "ウォーカープラス 第33回 赤川花火大会 データ（約1万2000発、19:15〜20:45、例年約4万人）",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20002767",
+      "title": "るるぶ&more. 第33回赤川花火大会（JR鶴岡駅から徒歩約20分、ミュージックスターマイン）",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_343264/",
+      "title": "じゃらんnet 赤川花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催が確定しているか（公式サイトに開催予定の日付と、未定とする文の両方がある）",
+    "2027年の時刻と内容",
+    "打ち上げ数の公式の数（公式の開催概要に記載がなく、観光サイトの約12,000発による）",
+    "服装・持ち物の案内",
+    "東京駅などから鶴岡駅までの所要時間",
+    "会場の正確な座標（赤川河川敷の目安の値）",
+    "地元の味・祭りの日だけの食べ物",
+    "祭りの前後に寄れる食の店"
+  ]
+}

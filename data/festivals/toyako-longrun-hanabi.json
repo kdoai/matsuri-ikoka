@@ -1,0 +1,232 @@
+{
+  "id": "toyako-longrun-hanabi",
+  "name": {
+    "ja": "洞爺湖ロングラン花火大会",
+    "en": "Lake Toya Long Run Fireworks Festival"
+  },
+  "category": "fireworks",
+  "municipalities": [
+    {
+      "prefecture": "北海道",
+      "name": "洞爺湖町"
+    }
+  ],
+  "venue": {
+    "name": "洞爺湖温泉湖畔",
+    "lat": 42.5636,
+    "lng": 140.8178
+  },
+  "scaleTier": "XS",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "春から秋まで約半年、毎晩20:45から湖の上に花火が上がる",
+    "船が約2km動きながら打ち上げるので、打ち上げ地点が変わっていく",
+    "花火と一緒に湖を動く鑑賞船から、近くで見られる"
+  ],
+  "styles": [],
+  "trivia": [
+    {
+      "text": "2026年で45回目。約半年のあいだ毎晩打ち上げる",
+      "source": {
+        "url": "https://www.laketoya.com/event/fireworks/",
+        "title": "洞爺湖温泉観光協会 洞爺湖ロングラン花火大会（第45回、2026年4月28日〜10月31日）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "打ち上げ地点は船とともに約2kmにわたって移動する",
+      "source": {
+        "url": "https://www.visit-hokkaido.jp/event/detail_11046.html",
+        "title": "北海道公式観光サイト 洞爺湖ロングラン花火大会（約450発、打ち上げ地点は約2km移動、鑑賞船）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "排出するCO2は、洞爺湖温泉の組合が作ったJ-クレジットで相殺している",
+      "source": {
+        "url": "https://www.laketoya.com/event/fireworks/",
+        "title": "洞爺湖温泉観光協会 洞爺湖ロングラン花火大会（第45回、2026年4月28日〜10月31日）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "岸からの見学が中心で、混雑や危険についての特別な注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.laketoya.com/event/fireworks/",
+        "title": "洞爺湖温泉観光協会 洞爺湖ロングラン花火大会（第45回、2026年4月28日〜10月31日）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.visit-hokkaido.jp/event/detail_11046.html",
+        "title": "北海道公式観光サイト 洞爺湖ロングラン花火大会（約450発、打ち上げ地点は約2km移動、鑑賞船）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-04-28",
+      "endDate": "2026-10-31",
+      "start": "20:45",
+      "end": "21:05",
+      "status": "announced",
+      "rainPolicy": "雨天決行。風向や風速が不安定なときは中止することがある",
+      "note": "第45回。毎晩約20分、約450発。見物は無料",
+      "sources": [
+        {
+          "url": "https://www.laketoya.com/event/fireworks/",
+          "title": "洞爺湖温泉観光協会 洞爺湖ロングラン花火大会（第45回、2026年4月28日〜10月31日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.laketoya.com/",
+          "title": "洞爺湖温泉観光協会 公式サイト（毎日450発）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.visit-hokkaido.jp/event/detail_11046.html",
+          "title": "北海道公式観光サイト 洞爺湖ロングラン花火大会（約450発、打ち上げ地点は約2km移動、鑑賞船）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-04-28",
+      "endDate": "2027-10-31",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "「毎年4月下旬から10月まで」という案内から見込んだ期間で、始まりと終わりの日は2026年と同じと仮に置いた（2027年の発表はまだない）",
+      "sources": [
+        {
+          "url": "https://www.visit-hokkaido.jp/spot/detail_10616.html",
+          "title": "北海道公式観光サイト 洞爺湖温泉（花火は毎年4月下旬から10月まで）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.laketoya.com/event/fireworks/",
+          "title": "洞爺湖温泉観光協会 洞爺湖ロングラン花火大会（第45回、2026年4月28日〜10月31日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "道南バス 洞爺湖温泉バスターミナル",
+        "walkMinutes": [5, 10],
+        "note": "JR室蘭本線の洞爺駅からバスに乗り換える"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "JR 洞爺駅",
+        "minutes": [20, 30],
+        "route": "道南バスで洞爺湖温泉バスターミナルまで"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://rurubu.jp/andmore/spot/20001715",
+        "title": "るるぶ&more. 第45回洞爺湖ロングラン花火大会（JR洞爺駅からバス20分、徒歩5分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://www.jalan.net/event/evt_354477/",
+        "title": "じゃらんnet 洞爺湖ロングラン花火大会（バス約20分、徒歩約5分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://www.visit-hokkaido.jp/event/detail_11046.html",
+        "title": "北海道公式観光サイト 洞爺湖ロングラン花火大会（約450発、打ち上げ地点は約2km移動、鑑賞船）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.laketoya.com/event/fireworks/",
+      "title": "洞爺湖温泉観光協会 洞爺湖ロングラン花火大会（第45回、2026年4月28日〜10月31日）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.laketoya.com/",
+      "title": "洞爺湖温泉観光協会 公式サイト（毎日450発）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.visit-hokkaido.jp/event/detail_11046.html",
+      "title": "北海道公式観光サイト 洞爺湖ロングラン花火大会（約450発、打ち上げ地点は約2km移動、鑑賞船）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.visit-hokkaido.jp/spot/detail_10616.html",
+      "title": "北海道公式観光サイト 洞爺湖温泉（花火は毎年4月下旬から10月まで）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://hanabi.walkerplus.com/detail/ar0101e66092/",
+      "title": "ウォーカープラス 第45回 洞爺湖ロングラン花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_354477/",
+      "title": "じゃらんnet 洞爺湖ロングラン花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20001715",
+      "title": "るるぶ&more. 第45回洞爺湖ロングラン花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催期間・時刻（発表がなく、日付は見込み）",
+    "鑑賞船の2027年の運航（2026年の出航時刻は20:35と20:30で情報源が分かれる。問い合わせは洞爺湖汽船）",
+    "見物のときの決まり・服装・持ち物・撮影",
+    "主要駅（札幌駅・新千歳空港など）から洞爺駅までの所要時間",
+    "屋台の有無と地元の味",
+    "祭りの前後に寄れる観光と食の場所"
+  ]
+}
