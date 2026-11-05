@@ -36,8 +36,8 @@ const DEFAULT_FESTIVAL_STAY_MINUTES = 180;
 const stopStayMinutes = (pace: Pace) => (pace === "relaxed" ? 240 : 180);
 /** 祭りの日に出発できるいちばん早い時刻（祭りの開始までに使える時間を出す） */
 const EARLIEST_DEPARTURE = "07:00";
-/** 祭りのあとに、その日のうちに帰れる時刻（0時まで） */
-const LATEST_HOME_MINUTES = 24 * 60;
+/** 祭りのあとに、その日のうちに帰り着く時刻の上限（地方は終電が早いので、23時までに見ておく） */
+const LATEST_HOME_MINUTES = 23 * 60;
 
 export type AnchorRefusal = { status: 400 | 404; message: string };
 
