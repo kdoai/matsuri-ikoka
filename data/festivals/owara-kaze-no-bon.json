@@ -1,0 +1,426 @@
+{
+  "id": "owara-kaze-no-bon",
+  "name": {
+    "ja": "越中八尾 おわら風の盆",
+    "en": "Owara Kaze no Bon Festival"
+  },
+  "category": "dance",
+  "municipalities": [
+    {
+      "prefecture": "富山県",
+      "name": "富山市"
+    }
+  ],
+  "venue": {
+    "name": "八尾町の旧町（11の町）",
+    "lat": 36.5764,
+    "lng": 137.1302
+  },
+  "scaleTier": "L",
+  "popularity": "major",
+  "listedIn": ["walkerplus", "jalan", "rurubu", "jnto"],
+  "highlights": [
+    "ぼんぼりの灯る坂の町を、踊り手が静かに流す町流し",
+    "胡弓と三味線が重なる哀愁のある音色",
+    "11の町ごとに違う踊りの手さばき・浴衣・唄",
+    "輪踊りの時間には見に来た人も加われる"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1702年に始まるとされ、300年ほど風を鎮める祈りとして踊り継がれてきた",
+      "sources": [
+        {
+          "url": "https://owara-gyoujiunei.com/about.html",
+          "title": "おわら風の盆行事運営委員会 おわら風の盆とは",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "11の町の支部がそれぞれ踊り手と地方を出し、自分の町を流す",
+      "sources": [
+        {
+          "url": "https://owara-gyoujiunei.com/about.html",
+          "title": "おわら風の盆行事運営委員会 おわら風の盆とは",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://owara-gyoujiunei.com/feature.html",
+          "title": "おわら風の盆行事運営委員会 11の町紹介",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "1702年、町の開祖の家が許可証を取り戻した祝いに三日三晩練り歩いたのが始まりとされる",
+      "source": {
+        "url": "https://owara-gyoujiunei.com/about.html",
+        "title": "おわら風の盆行事運営委員会 おわら風の盆とは",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "「おわら」の名は大藁説や小原村説などがあり、確かな文献は残っていない",
+      "source": {
+        "url": "https://owara-gyoujiunei.com/about.html",
+        "title": "おわら風の盆行事運営委員会 おわら風の盆とは",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "男女混合の踊りは比較的新しく、1968年に鏡町が披露したのが最初とされる",
+      "source": {
+        "url": "https://owara-gyoujiunei.com/about.html",
+        "title": "おわら風の盆行事運営委員会 おわら風の盆とは",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "踊りは農作業を表す豊年踊りが古く、男踊りは舞台用に振り付けられた",
+      "source": {
+        "url": "https://owara-gyoujiunei.com/about.html",
+        "title": "おわら風の盆行事運営委員会 おわら風の盆とは",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "輪踊りの時間にその場で加われる。福島と上新町は例年「大輪踊り」の時間があり、ほかの町も輪踊りを設ける（費用の記載はない）",
+    "rules": [
+      "行事の場は町の人の暮らしの場なので、そのつもりで振る舞う",
+      "大声を出さず、静かに聴く。スマートフォンの使い過ぎに気をつける",
+      "夜の坂道なので足元に注意する",
+      "町の飲食店は少なく混む。自販機も少なく、行事エリアにコンビニはないので、必要なものは先に買う",
+      "トイレは駅前や曳山展示館の近くなど数か所で数に限りがあるので、飲み過ぎに注意する"
+    ],
+    "dress": "unknown",
+    "bring": [
+      "マイボトル（暑さ対策）",
+      "小腹がすいたときの携行食",
+      "足元を照らすライト",
+      "雨具はレインコート（町流しの妨げにならないように）"
+    ],
+    "risk": {
+      "level": "medium",
+      "reason": "夜の坂道で大変混み、高山線の乗車に整理券が要り、暑さ対策が必須と案内されている"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "フラッシュと暗闇での接近撮影は、踊り手の視界を奪うので控える。三脚は後ろの人の視界や通路をふさがない"
+    },
+    "sources": [
+      {
+        "url": "https://owara-gyoujiunei.com/stay.html",
+        "title": "おわら風の盆行事運営委員会 巡り方・宿泊・食事（心得）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://owara-gyoujiunei.com/outline.html",
+        "title": "おわら風の盆行事運営委員会 Q&A（輪踊り、雨、撮影、トイレ）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://owara-gyoujiunei.com/access.html",
+        "title": "おわら風の盆行事運営委員会 アクセス・駐車場（高山線の整理券）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-09-01",
+      "start": "16:00",
+      "end": "23:00",
+      "status": "announced",
+      "rainPolicy": "雨のときは中止ではなく中断。各町が晴れ間を見て判断する",
+      "note": "演技時間の目安：町によって16:00〜17:00ごろから、夕方の休憩をはさんで22:30ごろまで。行事は23:00に終わる",
+      "sources": [
+        {
+          "url": "https://owara-gyoujiunei.com/images/pdf/schedule2026.pdf",
+          "title": "おわら風の盆行事運営委員会 2026年 全体スケジュール（開催日別の演技時間の目安）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://owara-gyoujiunei.com/stay.html",
+          "title": "おわら風の盆行事運営委員会 巡り方・宿泊・食事（2026年9月1〜3日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://owara-gyoujiunei.com/outline.html",
+          "title": "おわら風の盆行事運営委員会 Q&A（雨は中断）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20003255",
+          "title": "るるぶ&more. 越中八尾 おわら風の盆（2026年9月1日〜3日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-02",
+      "start": "16:00",
+      "end": "23:00",
+      "status": "announced",
+      "rainPolicy": "雨のときは中止ではなく中断。各町が晴れ間を見て判断する",
+      "note": "演技時間の目安：町によって16:00〜19:00ごろから、休憩をはさんで22:30ごろまで。行事は23:00に終わる",
+      "sources": [
+        {
+          "url": "https://owara-gyoujiunei.com/images/pdf/schedule2026.pdf",
+          "title": "おわら風の盆行事運営委員会 2026年 全体スケジュール（開催日別の演技時間の目安）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://owara-gyoujiunei.com/outline.html",
+          "title": "おわら風の盆行事運営委員会 Q&A（雨は中断）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-03",
+      "start": "18:15",
+      "end": "23:00",
+      "status": "announced",
+      "rainPolicy": "雨のときは中止ではなく中断。各町が晴れ間を見て判断する",
+      "note": "演技時間の目安：鏡町の18:15を先に、多くの町は19:00ごろから。行事は23:00に終わる",
+      "sources": [
+        {
+          "url": "https://owara-gyoujiunei.com/images/pdf/schedule2026.pdf",
+          "title": "おわら風の盆行事運営委員会 2026年 全体スケジュール（開催日別の演技時間の目安）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://owara-gyoujiunei.com/outline.html",
+          "title": "おわら風の盆行事運営委員会 Q&A（雨は中断）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-09-01",
+      "endDate": "2027-09-03",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "主催者が9月1日（水）〜3日（金）と案内している。町ごとのスケジュールは例年8月中旬に決まる。屋内の競演会は八尾曳山展示館で18:00〜19:00と19:20〜20:20、4,000円",
+      "sources": [
+        {
+          "url": "https://owara-gyoujiunei.com/",
+          "title": "おわら風の盆行事運営委員会 お知らせ（9月1日（水）・2日（木）・3日（金））",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://owara-gyoujiunei.com/stage.html",
+          "title": "おわら風の盆行事運営委員会 競演会・チケット（2027年9月1〜3日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://owara-gyoujiunei.com/outline.html",
+          "title": "おわら風の盆行事運営委員会 Q&A（スケジュールは例年8月中旬に決まる）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [
+      {
+        "hub": "富山駅",
+        "minutes": [25, 30],
+        "route": "JR高山本線で越中八尾駅まで（祭りの日は乗車に整理券が要る）。駅から町へは歩くかバス"
+      },
+      {
+        "hub": "富山駅（南口バス停6番）",
+        "minutes": [50, 60],
+        "route": "地鉄バス八尾線で八尾の終点まで"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [
+      "八尾の町中：9月1・2日は16:00ごろ、3日は18:00ごろから規制し、行事の終了後に解除（2026年の目安。時刻は開催日別スケジュールの表から）"
+    ],
+    "sources": [
+      {
+        "url": "https://owara-gyoujiunei.com/access.html",
+        "title": "おわら風の盆行事運営委員会 アクセス・駐車場（電車とバスの所要時間、協力金 1台3,000円）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://owara-gyoujiunei.com/images/pdf/schedule2026.pdf",
+        "title": "おわら風の盆行事運営委員会 2026年 全体スケジュール（交通規制の開始と解除）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://owara-gyoujiunei.com/",
+        "title": "おわら風の盆行事運営委員会 お知らせ（2026年は駐車スペースが不足した）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20003255",
+        "title": "るるぶ&more. 越中八尾 おわら風の盆（駐車場 約600台）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "おわら弁当",
+        "note": "地元のスーパー・アルビスが祭りに合わせて予約限定で売る弁当",
+        "sources": [
+          {
+            "url": "https://owara-gyoujiunei.com/stay.html",
+            "title": "おわら風の盆行事運営委員会 巡り方・宿泊・食事",
+            "checkedAt": "2026-11-05",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "yatsuo-hikiyama-tenjikan",
+      "name": "八尾曳山展示館",
+      "kind": "sightseeing",
+      "summary": "春の曳山祭の高さ7.5mの曳山を常時3台展示。祭りの期間は屋内の競演会の会場になる。越中八尾駅からバスで11分",
+      "location": {
+        "lat": 36.5764,
+        "lng": 137.1302
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": [],
+      "price": "大人500円、高校生以下300円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.yatsuo.net/ythl",
+          "title": "越中八尾観光協会 曳山展示館",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "yatsuo-owara-shiryokan",
+      "name": "八尾おわら資料館",
+      "kind": "sightseeing",
+      "summary": "おわらの踊りを映像で見て、唄・踊り・地方の成り立ちを展示で学べる施設。格子戸の町家の休憩所もある。年末年始は休館",
+      "location": {
+        "lat": 36.5768,
+        "lng": 137.136
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": [],
+      "price": "大人200円、高校生以下無料",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.toyama.lg.jp/shisei/shisetsu/1011072/1011076/1005775.html",
+          "title": "富山市 八尾おわら資料館",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://owara-gyoujiunei.com/about.html",
+      "title": "おわら風の盆行事運営委員会 おわら風の盆とは",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://owara-gyoujiunei.com/",
+      "title": "おわら風の盆行事運営委員会 公式サイト",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://owara-gyoujiunei.com/feature.html",
+      "title": "おわら風の盆行事運営委員会 11の町紹介",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.japan.travel/en/spot/246/",
+      "title": "JNTO Owara Kaze no Bon Festival",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.walkerplus.com/event/ar0516e04797/",
+      "title": "ウォーカープラス 越中八尾おわら風の盆",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_328284/",
+      "title": "じゃらんnet 越中八尾おわら風の盆",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20003255",
+      "title": "るるぶ&more. 越中八尾 おわら風の盆",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "服装の決まり",
+    "越中八尾駅から各町までの徒歩の時間",
+    "屋台の有無（キッチンカーや屋台が出ることはあるが、路面への出店は控えられている）",
+    "2027年の町ごとの時間と交通規制",
+    "祭りの期間の周辺の施設の営業時間",
+    "祭りの前後に寄れる食の店",
+    "周辺の場所の知名度"
+  ]
+}
