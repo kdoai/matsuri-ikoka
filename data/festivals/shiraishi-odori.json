@@ -1,0 +1,314 @@
+{
+  "id": "shiraishi-odori",
+  "name": {
+    "ja": "白石踊",
+    "en": "Shiraishi Odori"
+  },
+  "category": "dance",
+  "municipalities": [
+    {
+      "prefecture": "岡山県",
+      "name": "笠岡市"
+    }
+  ],
+  "venue": {
+    "name": "白石島（8月13〜15日は白石公民館、16日は白石島海水浴場）",
+    "lat": 34.407,
+    "lng": 133.5125
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "1つの口説に合わせ、男踊・女踊など違う振りの踊りが同じ輪で踊られる",
+    "お盆の踊りは参加自由で、観光客も浴衣や普段着で輪に入れる",
+    "16日は浜で灯籠流しのあと、砂浜で踊る",
+    "瀬戸内の島で続く、ユネスコ無形文化遺産の風流踊の1つ"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "源平の水島合戦の供養に始まると伝わり、国の重要無形民俗文化財",
+      "sources": [
+        {
+          "url": "https://www.city.kasaoka.okayama.jp/soshiki/39/34282.html",
+          "title": "笠岡市 白石踊を受け継ぐ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "島の白石踊会が島民の暮らしと結びついた踊りを受け継ぐ",
+      "sources": [
+        {
+          "url": "https://www.city.kasaoka.okayama.jp/soshiki/39/34282.html",
+          "title": "笠岡市 白石踊を受け継ぐ",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "源平の水島合戦で亡くなった人たちを弔うために始まったと伝えられる",
+      "source": {
+        "url": "https://www.city.kasaoka.okayama.jp/soshiki/39/34282.html",
+        "title": "笠岡市 白石踊を受け継ぐ",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "踊りは男踊・女踊・笠踊・奴踊など13種類が伝わる",
+      "source": {
+        "url": "https://www.city.kasaoka.okayama.jp/soshiki/39/34282.html",
+        "title": "笠岡市 白石踊を受け継ぐ",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "唄は最も多いころ60以上あったとされ、今は「那須与一」など20余りが残る",
+      "source": {
+        "url": "https://www.city.kasaoka.okayama.jp/soshiki/39/34282.html",
+        "title": "笠岡市 白石踊を受け継ぐ",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2022年11月30日、「風流踊」の1つとしてユネスコ無形文化遺産に登録された",
+      "source": {
+        "url": "https://www.okayama-kanko.jp/event/detail_12621.html",
+        "title": "岡山観光WEB 白石島 盆踊り（白石踊）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "参加は自由で、当日その場で踊りの輪に加われる（費用の案内はない）",
+    "rules": "unknown",
+    "dress": ["浴衣でも普段着でもよい（お盆の踊りは衣装を着けずに踊る）"],
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.okayama-kanko.jp/event/detail_12621.html",
+        "title": "岡山観光WEB 白石島 盆踊り（白石踊）（参加自由、浴衣や普段着で踊れる）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kasaoka-kankou.jp/spot/2115",
+        "title": "笠岡市観光協会 白石踊（お盆の踊りは衣装を着けない）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-13",
+      "endDate": "2026-08-15",
+      "start": "19:30",
+      "end": "23:00",
+      "status": "announced",
+      "rainPolicy": "雨天中止",
+      "note": "2026年の実績。3日とも白石公民館で19:30ごろ〜23:00ごろ。るるぶ&more.の案内では、盆踊りのあとの時間には定期船の便がない",
+      "sources": [
+        {
+          "url": "https://www.okayama-kanko.jp/event/detail_12621.html",
+          "title": "岡山観光WEB 【2026年】白石島 盆踊り（白石踊）（8月13日〜16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20002971",
+          "title": "るるぶ&more. 白石踊（2026年8月13日〜16日、盆踊りのあとは定期船がない）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2026-08-16",
+      "start": "20:00",
+      "end": "22:00",
+      "status": "announced",
+      "rainPolicy": "雨天中止",
+      "note": "2026年の実績。白石島海水浴場で19:00から灯籠流し、20:00ごろ〜22:00ごろ白石踊。るるぶ&more.の案内では、盆踊りのあとの時間には定期船の便がない",
+      "sources": [
+        {
+          "url": "https://www.okayama-kanko.jp/event/detail_12621.html",
+          "title": "岡山観光WEB 【2026年】白石島 盆踊り（白石踊）（8月13日〜16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20002971",
+          "title": "るるぶ&more. 白石踊（2026年8月13日〜16日、盆踊りのあとは定期船がない）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-13",
+      "endDate": "2027-08-15",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2027年の発表はまだない）。毎年8月13日〜16日の夜に行う決まりから見込んだ日。2026年は13〜15日が白石公民館で19:30ごろ〜23:00ごろだった",
+      "sources": [
+        {
+          "url": "https://www.okayama-kanko.jp/event/detail_12621.html",
+          "title": "岡山観光WEB 白石島 盆踊り（白石踊）（毎年8月13日〜16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.kasaoka-kankou.jp/spot/2115",
+          "title": "笠岡市観光協会 白石踊（毎年8月のお盆の夜、13日〜16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-16",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2027年の発表はまだない）。毎年8月13日〜16日の夜に行う決まりから見込んだ日。2026年の16日は白石島海水浴場で、灯籠流しのあと20:00ごろ〜22:00ごろだった",
+      "sources": [
+        {
+          "url": "https://www.okayama-kanko.jp/event/detail_12621.html",
+          "title": "岡山観光WEB 白石島 盆踊り（白石踊）（毎年8月13日〜16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.kasaoka-kankou.jp/spot/2115",
+          "title": "笠岡市観光協会 白石踊（毎年8月のお盆の夜、13日〜16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 笠岡駅",
+        "walkMinutes": [10, 15],
+        "note": "笠岡港（住吉乗り場）までの徒歩。そこから三洋汽船の高速船で約20〜22分（普通船は約35分）で白石島へ。伏越港（駅から徒歩約20分）からはフェリーで約40〜45分"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.okayama-kanko.jp/event/detail_12621.html",
+        "title": "岡山観光WEB 白石島 盆踊り（白石踊）（JR笠岡駅から笠岡港まで徒歩約10分、高速船約20分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kasaoka-kankou.jp/spot/2115",
+        "title": "笠岡市観光協会 白石踊（住吉乗り場から高速船22分・普通船35分、伏越港からフェリー45分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://timetable.jr-odekake.net/line-timetable/2239",
+        "title": "JRおでかけネット 区間時刻表 山陽本線(岡山～広島～新山口) 下り（2026年11月4日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://timetable.jr-odekake.net/line-timetable/2240",
+        "title": "JRおでかけネット 区間時刻表 山陽本線(新山口～広島～岡山) 上り（2026年11月4日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "shiraishijima-kairyuji",
+      "name": "弘法山開龍寺",
+      "kind": "sightseeing",
+      "summary": "白石島の真言宗の寺。806年に弘法大師が島で37日間修行したと伝わり、巨石の下に奥の院がある。白石港から徒歩約15分",
+      "location": {
+        "lat": 34.4031,
+        "lng": 133.5151
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.kasaoka-kankou.jp/spot/372",
+          "title": "笠岡市観光協会 弘法山開龍寺",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.okayama-kanko.jp/event/detail_12621.html",
+      "title": "岡山観光WEB 白石島 盆踊り（白石踊）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.kasaoka-kankou.jp/spot/2115",
+      "title": "笠岡市観光協会 白石踊",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.kasaoka.okayama.jp/soshiki/39/34282.html",
+      "title": "笠岡市 白石踊を受け継ぐ",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.okayama-kanko.jp/spot/detail_10679.html",
+      "title": "岡山観光WEB 白石島海水浴場（西ノ浦）（会場の位置）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "盆踊りのあとの帰りの船（公式の案内が見つからず、るるぶ&more.では定期船の便がないとある）と、島の宿や海上タクシーの手配",
+    "2027年の開催の発表と時刻",
+    "来場の決まり・持ち物・撮影の扱い・危険度（公式の注意書きが見つからない）",
+    "白石公民館の位置（会場の緯度・経度は16日の会場の白石島海水浴場のもの）と、白石港から公民館・海水浴場までの徒歩の時間",
+    "主要駅から白石島までの通しの所要時間。笠岡駅までは JR山陽本線の普通で岡山駅から44〜50分（2026年11月4日の時刻表、9時〜14時台の発車）、福山駅から14〜15分（同、9時〜13時台の発車）。そこから笠岡港まで徒歩約10分、高速船で約20〜22分かかり、船の待ち時間を含む公式の目安がないため、主要駅からの所要時間は入れていない",
+    "笠岡港の駐車場（公式の案内が見つからず、るるぶ&more.では島に駐車場はなく、住吉乗り場の周りに無料の駐車場がある）",
+    "屋台の有無と、祭りならではの食べもの",
+    "島の食事・休憩の場所（夏だけ開く店の名前は分かるが、営業時間が分からない）",
+    "開龍寺の緯度・経度（国土地理院の住所検索の白石島の代表点で、寺そのものの位置ではない）と拝観の時間",
+    "踊り手と見物客の数（規模は、1つの会場で一晩の行事を数日くり返すものとして S にした）",
+    "8月13〜15日の始まりの時刻（岡山観光WEBは19:30ごろ、るるぶ&more.は20時からとしていて食い違う。公式の19:30を採った）"
+  ]
+}

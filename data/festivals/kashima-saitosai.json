@@ -1,0 +1,318 @@
+{
+  "id": "kashima-saitosai",
+  "name": {
+    "ja": "鹿島の祭頭祭",
+    "en": "Kashima Saitosai Festival"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "茨城県",
+      "name": "鹿嶋市"
+    }
+  ],
+  "venue": {
+    "name": "鹿島神宮と宮中地区",
+    "lat": 35.9688,
+    "lng": 140.6315
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "甲冑を着た幼い大総督を先頭に、囃人が町内を練り歩く祭頭囃",
+    "15、6人の組が太鼓に合わせ、樫の棒を組んではほぐしながら囃す",
+    "夕方の春季祭で万灯と大豊竹を打ち壊し、翌年の当番の地区を占いで決める"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "文献に残る最古の記録は1204年",
+      "sources": [
+        {
+          "url": "https://city.kashima.ibaraki.jp/site/bunkazai/50068.html",
+          "title": "鹿嶋市 鹿島の祭頭祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "神宮周辺の地区から占いで当番の2地区を選び、その地区が担う",
+      "sources": [
+        {
+          "url": "https://city.kashima.ibaraki.jp/site/bunkazai/50068.html",
+          "title": "鹿嶋市 鹿島の祭頭祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "当番は神宮周辺の50余りの地区から占いで2地区を選び、約20〜25年に1度回ってくる",
+      "source": {
+        "url": "https://city.kashima.ibaraki.jp/site/bunkazai/50068.html",
+        "title": "鹿嶋市 鹿島の祭頭祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "大総督（新発意）は当番の地区から選ばれる3〜6歳の男の子",
+      "source": {
+        "url": "https://city.kashima.ibaraki.jp/site/bunkazai/50076.html",
+        "title": "鹿嶋市 祭頭祭当日の神事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "文献に残る最も古い記録は建仁4年（1204年）",
+      "source": {
+        "url": "https://city.kashima.ibaraki.jp/site/bunkazai/50068.html",
+        "title": "鹿嶋市 鹿島の祭頭祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "江戸時代までは旧暦2月15日の祭りで、明治6年の太陽暦の採用のあと3月9日になった",
+      "source": {
+        "url": "https://city.kashima.ibaraki.jp/site/bunkazai/50069.html",
+        "title": "鹿嶋市 祭頭祭の歴史",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": []
+  },
+  "occurrences": [
+    {
+      "date": "2026-03-14",
+      "start": "12:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績（祭頭囃と春季祭）。12:00 平井郷、13:00 浜津賀郷が出陣して宮中地区を囃す（囃子人は349名と274名）。18:00 鹿島神宮本宮で春季祭。3月9日（月）10:00に本宮で祭頭祭の神事があった",
+      "sources": [
+        {
+          "url": "https://kashimajingu.jp/news/%E7%A5%AD%E9%A0%AD%E7%A5%AD%E3%81%AE%E5%BE%A1%E6%A1%88%E5%86%85%E4%BB%A4%E5%92%8C8%E5%B9%B4/",
+          "title": "鹿島神宮 祭頭祭の御案内(令和8年)",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://city.kashima.ibaraki.jp/site/bunkazai/82676.html",
+          "title": "鹿嶋市 令和8年祭頭祭について",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-03-09",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年3月9日に鹿島神宮で出陣の神事（祭頭祭）を行う（2027年の発表はまだない）。例年は10:00から11:00ごろで、地区の代表者などの役員だけで行う。町を練り歩く祭頭囃は、3月9日が平日の年は直近の土曜日に行う",
+      "sources": [
+        {
+          "url": "https://city.kashima.ibaraki.jp/site/bunkazai/50068.html",
+          "title": "鹿嶋市 鹿島の祭頭祭（日程の決まり）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://city.kashima.ibaraki.jp/site/bunkazai/50076.html",
+          "title": "鹿嶋市 祭頭祭当日の神事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-03-13",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "祭頭囃（凱旋の神事）と春季祭（卜定の神事）。3月9日以降の直近の土曜日に行う決まりから（2027年の発表はまだない）。例年、昼ごろに本陣を出て町内を練り歩き、16:00ごろ境内に着いて一斉に囃す。春季祭は18:00から",
+      "sources": [
+        {
+          "url": "https://city.kashima.ibaraki.jp/site/bunkazai/50068.html",
+          "title": "鹿嶋市 鹿島の祭頭祭（3月9日以降の直近の土曜日に祭頭囃と春季祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://city.kashima.ibaraki.jp/site/bunkazai/50076.html",
+          "title": "鹿嶋市 祭頭祭当日の神事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 鹿島神宮駅",
+        "walkMinutes": [10, 15]
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "東京駅",
+        "minutes": [120, 130],
+        "route": "八重洲南口から高速バス「かしま号」で「鹿島神宮」停留所へ（鉄道ではない）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [
+      "2025年は祭頭囃の日に、鹿島神宮の鳥居前の大町通りと周辺の道路の一部で車が入れなかった（時間は市の交通規制図による）"
+    ],
+    "sources": [
+      {
+        "url": "https://www.city.kashima.ibaraki.jp/site/kankou/3091.html",
+        "title": "鹿嶋市 交通アクセス（鹿島神宮駅から徒歩10分、東京駅から高速バスで2時間）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://kashimajingu.jp/info/%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E3%83%BB%E9%A7%90%E8%BB%8A%E5%A0%B4/",
+        "title": "鹿島神宮 アクセス・駐車場（高速バス かしま号 約2時間、参拝者駐車場）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.kashima.ibaraki.jp/site/kankou/9110.html",
+        "title": "鹿嶋市 祭頭祭（令和7年開催について）交通規制",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "kashima-jingu-mitarashi-ike",
+      "name": "鹿島神宮 御手洗池",
+      "kind": "sightseeing",
+      "summary": "鹿島神宮の境内の奥にある池で、1日40万リットルを超える水が湧き、底まで見えるほど澄む。昔は参拝の前にここで禊をした",
+      "location": {
+        "lat": 35.9713,
+        "lng": 140.6359
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://kashimajingu.jp/guidance/%E5%A2%83%E5%86%85%E6%A1%88%E5%86%85/",
+          "title": "鹿島神宮 境内案内",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kashima-amataro-honten",
+      "name": "かしま甘太郎 本店",
+      "kind": "food",
+      "summary": "もちもちの皮であんを包んだ地元の菓子の店。宮中にある本店。定休日なし",
+      "location": {
+        "lat": 35.9667,
+        "lng": 140.6287
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "18:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.ibarakiguide.jp/gourmet/seaside_gourmet/page001882.html",
+          "title": "茨城県観光物産協会 鹿嶋市のグルメガイド",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "maruzan-jingu-ekimae",
+      "name": "丸三 神宮駅前",
+      "kind": "food",
+      "summary": "文政5年（1822年）創業の和菓子の店。鹿島神宮駅の近く。定休日なし",
+      "location": {
+        "lat": 35.9674,
+        "lng": 140.625
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "18:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.ibarakiguide.jp/gourmet/seaside_gourmet/page001882.html",
+          "title": "茨城県観光物産協会 鹿嶋市のグルメガイド",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://city.kashima.ibaraki.jp/site/bunkazai/50068.html",
+      "title": "鹿嶋市 鹿島の祭頭祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://kashimajingu.jp/news/%E7%A5%AD%E9%A0%AD%E7%A5%AD%E3%81%AE%E5%BE%A1%E6%A1%88%E5%86%85%E4%BB%A4%E5%92%8C8%E5%B9%B4/",
+      "title": "鹿島神宮 祭頭祭の御案内(令和8年)",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、当番の地区、出陣の時刻",
+    "外から来た人が囃人として加われるか（2026年は祭頭囃保存会が「祭頭囃 体験」と「満喫ツアー」を催したが、内容と申し込みは確かめていない）",
+    "見学の決まり・服装・持ち物・危険度・撮影の決まり（公式の案内が見つからない）",
+    "雨の日の扱い",
+    "2027年の交通規制の時間と場所",
+    "2027年の練り歩きの道順と、終わる時刻",
+    "屋台が出るか",
+    "御手洗池まで、本宮から歩く時間（2026年2月の大雪のあと、池の周りで倒木の撤去が続いていた）",
+    "かしま甘太郎 本店・丸三の値段",
+    "鹿島神宮 御手洗池を見られる時間と休み"
+  ]
+}

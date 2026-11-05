@@ -1,5 +1,12 @@
 import { expect, test } from "@playwright/test";
-import { blockMapTiles, openLog, talkToConcierge } from "./helpers";
+import {
+  answerHearing,
+  blockMapTiles,
+  HEARING_WORDS,
+  openLog,
+  say,
+  talkToConcierge,
+} from "./helpers";
 
 // 接客サーバーにつなぐときの受け取り方。サーバーの代わりに、SSE の返答をテストの中で返す。
 
@@ -16,6 +23,8 @@ test.beforeEach(async ({ page }, info) => {
 });
 
 test("done の前に接続が切れたら「もう一度送る」を出し、送り直せる", async ({ page }) => {
+  // サーバーは動いている（接続だけが切れた）
+  await page.route("**/healthz", (route) => route.fulfill({ json: { status: "ok" } }));
   let calls = 0;
   const bodies: unknown[] = [];
   await page.route("**/api/chat", async (route) => {
@@ -46,13 +55,11 @@ test("done の前に接続が切れたら「もう一度送る」を出し、送
   await page.goto("/?scene=2d");
   await page.getByRole("button", { name: "入店する" }).click();
   await talkToConcierge(page);
-  const input = page.getByRole("textbox", { name: "相談の発言" });
-  await input.fill("みなと中央駅から行ける祭りはありますか");
-  await input.press("Enter");
+  await say(page, "みなと中央駅から行ける祭りはありますか");
 
   const retry = page.getByRole("button", { name: "もう一度送る" });
   await expect(retry).toBeVisible();
-  await expect(page.getByTestId("dialogue-error")).toContainText("接続が切れました");
+  await expect(page.getByTestId("dialogue-error")).toContainText("通信が途中で切れて");
   await retry.click();
 
   // 読み取れた条件は、左下の旅の日と出発の駅に出る
@@ -61,11 +68,51 @@ test("done の前に接続が切れたら「もう一度送る」を出し、送
   expect(calls).toBe(2);
   expect(bodies[1]).toMatchObject({
     sessionId: "s-test",
-    message: "みなと中央駅から行ける祭りはありますか",
+    message: expect.stringContaining("・ひとこと：みなと中央駅から行ける祭りはありますか"),
     preferences: PREFERENCES,
   });
   await openLog(page);
   await expect(page.getByTestId("chat-user")).toHaveCount(1);
+});
+
+test("done の前に切れて、サーバーも応答しなければ、つながらないことを伝える", async ({ page }) => {
+  await page.route("**/healthz", (route) => route.abort("connectionrefused"));
+  await page.route("**/api/chat", (route) =>
+    route.fulfill({
+      status: 200,
+      headers: { "content-type": "text/event-stream" },
+      body: sse([
+        { type: "message.delta", data: { messageId: "m-1", text: "少々お待ちください。" } },
+      ]),
+    }),
+  );
+
+  await page.goto("/?scene=2d");
+  await page.getByRole("button", { name: "入店する" }).click();
+  await talkToConcierge(page);
+  await say(page, "みなと中央駅から行ける祭りはありますか");
+
+  await expect(page.getByRole("button", { name: "もう一度送る" })).toBeVisible();
+  await expect(page.getByTestId("dialogue-error")).toContainText("お店のサーバーにつながりません");
+});
+
+test("見本の相談を再生しているサーバー（mock）のときだけ、それと分かる札を出す", async ({
+  page,
+}) => {
+  let mode = "mock";
+  await page.route("**/api/session", (route) =>
+    route.fulfill({ status: 201, json: { sessionId: "s-test", mode } }),
+  );
+
+  await page.goto("/?scene=2d");
+  await page.getByRole("button", { name: "入店する" }).click();
+  await expect(page.getByTestId("mode-badge")).toContainText("見本の相談を再生しています");
+
+  mode = "live";
+  await page.goto("/?scene=2d");
+  await page.getByRole("button", { name: "入店する" }).click();
+  await talkToConcierge(page);
+  await expect(page.getByTestId("mode-badge")).toHaveCount(0);
 });
 
 test("サーバーのエラーは一文だけを出し、HTML として埋め込まない", async ({ page }) => {
@@ -92,9 +139,7 @@ test("サーバーのエラーは一文だけを出し、HTML として埋め込
   await page.goto("/?scene=2d");
   await page.getByRole("button", { name: "入店する" }).click();
   await talkToConcierge(page);
-  const input = page.getByRole("textbox", { name: "相談の発言" });
-  await input.fill("こんにちは");
-  await input.press("Enter");
+  await say(page, "こんにちは");
 
   await expect(page.getByTestId("dialogue-error")).toHaveText("今日の相談はここまでです");
   await expect(page.getByRole("button", { name: "もう一度送る" })).toHaveCount(0);
@@ -122,9 +167,7 @@ test("英語の画面では、サーバーの日本語の一文ではなく辞�
   await page.getByRole("button", { name: /English/ }).click();
   await page.getByRole("button", { name: "Come in" }).click();
   await talkToConcierge(page, "Talk to the concierge");
-  const input = page.getByRole("textbox", { name: "Your message" });
-  await input.fill("Hello");
-  await input.press("Enter");
+  await answerHearing(page, "Hello", HEARING_WORDS.en);
   await expect(page.getByTestId("dialogue-error")).toHaveText(
     "Today's conversation limit has been reached.",
   );

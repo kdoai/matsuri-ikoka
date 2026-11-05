@@ -1,16 +1,11 @@
 import { mainFestivalDay } from "@matsuri-ikoka/schema";
 import {
-  Bell,
   BookOpen,
-  Briefcase,
-  ChevronRight,
   CircleHelp,
   ClipboardCheck,
-  Landmark,
   Map as MapIcon,
-  Maximize2,
   Menu,
-  Navigation,
+  MessageCircleMore,
   Route,
   Settings,
   Sparkles,
@@ -18,23 +13,21 @@ import {
   Volume2,
   VolumeX,
 } from "lucide-react";
-import { lazy, type ReactNode, Suspense, useEffect, useRef } from "react";
+import { type ReactNode, useEffect, useRef } from "react";
 import { formatDate, otherLocale } from "../i18n";
+import { hasNextSteps } from "../state/events";
 import { useActions, useApp, useT } from "../state/react";
-import { currentSection, mainFestival, type Section, shioriReady } from "../state/selectors";
+import { shioriReady } from "../state/selectors";
 import type { PanelTab } from "../state/types";
-import { ConditionChips, PreferenceBar } from "./ChatPanel";
-import { LanternIcon, YaguraIcon } from "./icons";
+import { YaguraIcon } from "./icons";
+import { ControlsList, PlayStatus } from "./Play";
 import { playSound } from "./sound";
 
-// ゲームの画面に重ねる表示（HUD）：ロゴ、場面のタブ、丸いボタン、旅の案内のカード、小さな地図、
-// 日付、ボタンの案内。どれもストアを読むだけで、操作はストアの actions を呼ぶ。
-
-const MapView = lazy(() => import("./MapView"));
+// ゲームの画面に重ねる表示（HUD）：ロゴ、丸いボタン、日付の札、操作の案内。
+// 探索の間は小さな札だけを出し、3D の店内を隠さない。どれもストアを読むだけで、操作はストアの actions を呼ぶ。
 
 /** HUD の紙の板の見た目 */
-export const hudCard =
-  "rounded-2xl border-2 border-wood-700/50 bg-kinari-50/95 shadow-[0_8px_24px_rgb(0_0_0/0.3)] backdrop-blur-sm";
+export const hudCard = "washi rounded-panel border border-line-strong shadow-lift";
 
 // ---------------------------------------------------------------------------
 // 上の段
@@ -53,76 +46,21 @@ export function Logo() {
   );
 }
 
-const SECTION_ICON: Record<Section, (props: { className?: string }) => ReactNode> = {
-  guide: (props) => <Landmark {...props} />,
-  candidates: (props) => <Sparkles {...props} />,
-  shiori: (props) => <BookOpen {...props} />,
-  confirm: (props) => <ClipboardCheck {...props} />,
-};
-
-/** 場面のタブ：旅程の案内・祭りの候補・旅のしおり・確認 */
-export function SectionTabs({ className = "" }: { className?: string }) {
-  const t = useT();
-  const actions = useActions();
-  const active = useApp(currentSection);
-  const hasCandidates = useApp((state) => state.candidates.length > 0);
-  const hasItinerary = useApp((state) => state.itinerary.current !== null);
-  const ready = useApp(shioriReady);
-
-  const open: Record<Section, (() => void) | null> = {
-    guide: () => openTripPanel(actions, "itinerary"),
-    candidates: hasCandidates ? () => actions.setCandidatesOpen(true) : null,
-    shiori: ready ? () => actions.openShiori() : null,
-    confirm: hasItinerary ? () => openTripPanel(actions, "sources") : null,
-  };
-
-  return (
-    <nav aria-label={t.hud.sectionsLabel} className={className} data-testid="section-tabs">
-      <ul className="flex gap-1 rounded-full bg-ai-900/60 p-1 shadow-lg backdrop-blur-sm">
-        {(Object.keys(open) as Section[]).map((section) => {
-          const Icon = SECTION_ICON[section];
-          const onClick = open[section];
-          const current = active === section;
-          return (
-            <li key={section}>
-              <button
-                type="button"
-                aria-current={current ? "page" : undefined}
-                aria-disabled={onClick === null}
-                title={onClick === null ? t.hud.notYet : undefined}
-                onClick={onClick ?? undefined}
-                className={`flex min-h-10 items-center gap-2 whitespace-nowrap rounded-full px-4 py-1.5 font-bold text-sm transition ${
-                  current
-                    ? "bg-yamabuki-400 text-ink shadow-[inset_0_-2px_0_rgb(0_0_0/0.15)]"
-                    : onClick === null
-                      ? "cursor-not-allowed text-kinari-50/45"
-                      : "text-kinari-50 hover:bg-ai-700/80"
-                }`}
-              >
-                <Icon className="size-4.5" />
-                {t.hud.sections[section]}
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
-  );
-}
-
 const roundIcon =
   "relative grid size-10 shrink-0 place-items-center sm:size-11 rounded-full border-2 border-kinari-50/85 bg-ai-900/70 text-kinari-50 shadow-lg backdrop-blur-sm transition hover:bg-ai-700";
 
-/** 丸いボタンから開く小さな板。外を押すか Esc で閉じる */
+/** 丸いボタンから開く小さな板。外を押すか Esc で閉じる。中身が長ければ、板の中でスクロールする */
 function Popover({
   id,
   title,
   onClose,
+  wide = false,
   children,
 }: {
   id: string;
   title: string;
   onClose: () => void;
+  wide?: boolean;
   children: ReactNode;
 }) {
   const t = useT();
@@ -147,24 +85,26 @@ function Popover({
       id={id}
       role="dialog"
       aria-label={title}
-      className={`${hudCard} absolute top-full right-0 z-50 mt-2 w-[min(22rem,calc(100vw-1.5rem))] p-4 text-ink`}
+      className={`${hudCard} absolute top-full right-0 z-50 mt-2 flex max-h-[calc(100dvh-6rem)] flex-col p-4 text-ink ${
+        wide ? "w-[min(32rem,calc(100vw-1.5rem))]" : "w-[min(22rem,calc(100vw-1.5rem))]"
+      }`}
     >
-      <div className="mb-2 flex items-center justify-between gap-2">
-        <p className="font-bold">{title}</p>
+      <div className="mb-2 flex shrink-0 items-center justify-between gap-2">
+        <p className="font-bold text-lg">{title}</p>
         <button
           type="button"
-          className="rounded-full px-2 py-0.5 text-ink-soft text-sm hover:bg-kinari-200"
+          className="min-h-10 rounded-full px-3 text-base text-ink-soft hover:bg-kinari-200"
           onClick={onClose}
         >
           {t.hud.close}
         </button>
       </div>
-      {children}
+      <div className="-mr-2 min-h-0 flex-1 overflow-y-auto overscroll-contain pr-2">{children}</div>
     </div>
   );
 }
 
-type Panel = "menu" | "preferences" | "settings" | "help" | null;
+type Panel = "menu" | "settings" | "help" | null;
 
 type Actions = ReturnType<typeof useActions>;
 
@@ -174,6 +114,9 @@ export function openTripPanel(actions: Actions, tab: PanelTab): void {
   actions.setTab(tab);
   actions.setDrawer(true);
 }
+
+const helpHeading =
+  "mb-1.5 border-wood-300 border-b-2 pb-1 font-bold text-ai-800 text-lg leading-snug";
 
 const menuItem =
   "flex min-h-12 w-full items-center gap-3 rounded-xl border-2 border-wood-300/70 bg-white px-3 font-bold text-ink transition hover:border-ai-500 hover:bg-ai-50 aria-disabled:cursor-not-allowed aria-disabled:opacity-45 aria-disabled:hover:border-wood-300/70 aria-disabled:hover:bg-white";
@@ -190,7 +133,9 @@ function GameMenu({
 }) {
   const t = useT();
   const actions = useActions();
-  const hasCandidates = useApp((state) => state.candidates.length > 0);
+  const hasCandidates = useApp(
+    (state) => state.candidates.length > 0 || hasNextSteps(state.search),
+  );
   const hasItinerary = useApp((state) => state.itinerary.current !== null);
   const ready = useApp(shioriReady);
   const items: { key: string; label: string; icon: ReactNode; run: (() => void) | null }[] = [
@@ -227,7 +172,7 @@ function GameMenu({
     {
       key: "log",
       label: t.hud.notifications,
-      icon: <Bell className="size-5 text-wood-700" />,
+      icon: <MessageCircleMore className="size-5 text-wood-700" />,
       run: onOpenLog,
     },
     {
@@ -254,7 +199,7 @@ function GameMenu({
               }}
             >
               <span aria-hidden="true">{item.icon}</span>
-              <span className="text-left text-sm leading-tight">{item.label}</span>
+              <span className="text-left text-base leading-tight">{item.label}</span>
             </button>
           </li>
         ))}
@@ -263,7 +208,7 @@ function GameMenu({
   );
 }
 
-/** 右上の丸いボタン：お知らせ（会話の記録）・旅のこだわり・設定・使い方（狭い画面ではメニューも） */
+/** 右上の丸いボタン：会話の記録・設定・使い方（メニューは、左に並ぶ操作の案内の M から開く） */
 export function IconButtons({
   onOpenLog,
   unread,
@@ -286,39 +231,17 @@ export function IconButtons({
     <div className="relative flex items-center gap-1.5 sm:gap-2" data-testid="icon-buttons">
       <button
         type="button"
-        className={`${roundIcon} lg:hidden`}
-        aria-label={t.hud.hints.menu}
-        title={t.hud.hints.menu}
-        aria-expanded={menu === "menu"}
-        aria-controls="hud-menu"
-        onClick={() => toggle("menu")}
-      >
-        <Menu className="size-5" />
-      </button>
-      <button
-        type="button"
         className={roundIcon}
         aria-label={t.hud.notifications}
         title={t.hud.notifications}
         onClick={onOpenLog}
       >
-        <Bell className="size-5" />
+        <MessageCircleMore className="size-5" />
         {unread ? (
           <span className="absolute top-0.5 right-0.5 size-3 rounded-full bg-shu-500 ring-2 ring-kinari-50">
             <span className="sr-only">{t.hud.newNotice}</span>
           </span>
         ) : null}
-      </button>
-      <button
-        type="button"
-        className={roundIcon}
-        aria-label={t.hud.preferences}
-        title={t.hud.preferences}
-        aria-expanded={menu === "preferences"}
-        aria-controls="hud-preferences"
-        onClick={() => toggle("preferences")}
-      >
-        <Briefcase className="size-5" />
       </button>
       <button
         type="button"
@@ -345,14 +268,6 @@ export function IconButtons({
 
       {menu === "menu" ? (
         <GameMenu onOpenLog={onOpenLog} onHelp={() => onMenu("help")} onClose={close} />
-      ) : null}
-      {menu === "preferences" ? (
-        <Popover id="hud-preferences" title={t.hud.preferences} onClose={close}>
-          <div className="space-y-3">
-            <ConditionChips />
-            <PreferenceBar />
-          </div>
-        </Popover>
       ) : null}
       {menu === "settings" ? (
         <Popover id="hud-settings" title={t.hud.settings} onClose={close}>
@@ -393,12 +308,31 @@ export function IconButtons({
         </Popover>
       ) : null}
       {menu === "help" ? (
-        <Popover id="hud-help" title={t.hud.helpTitle} onClose={close}>
-          <ol className="list-decimal space-y-1.5 pl-5 text-sm leading-relaxed">
-            {t.hud.helpLines.map((line) => (
-              <li key={line}>{line}</li>
-            ))}
-          </ol>
+        <Popover id="hud-help" title={t.hud.helpTitle} onClose={close} wide>
+          <div className="space-y-4 text-base leading-relaxed" data-testid="help">
+            <section aria-labelledby="help-steps">
+              <h3 id="help-steps" className={helpHeading}>
+                {t.hud.helpSections.steps}
+              </h3>
+              <ol className="list-decimal space-y-2 pl-6">
+                {t.hud.helpLines.map((line) => (
+                  <li key={line}>{line}</li>
+                ))}
+              </ol>
+            </section>
+            <section aria-labelledby="help-controls">
+              <h3 id="help-controls" className={helpHeading}>
+                {t.play.controlsTitle}
+              </h3>
+              <ControlsList large />
+            </section>
+            <section aria-labelledby="help-status">
+              <h3 id="help-status" className={helpHeading}>
+                {t.hud.helpSections.status}
+              </h3>
+              <PlayStatus className="text-ink-soft" />
+            </section>
+          </div>
         </Popover>
       ) : null}
     </div>
@@ -406,119 +340,9 @@ export function IconButtons({
 }
 
 // ---------------------------------------------------------------------------
-// 右上：旅の案内のカードと小さな地図
+// 日付の札と操作の案内
 
-/** 旅の案内：いまの旅程（なければ相談の入り口）、主役の祭りの見どころ、次にすること */
-export function GuideCard() {
-  const t = useT();
-  const actions = useActions();
-  const locale = useApp((state) => state.ui.locale);
-  const itinerary = useApp((state) => state.itinerary.current);
-  const stage = useApp((state) => state.session.stage);
-  const conditions = useApp((state) => state.session.conditions);
-  const festival = useApp(mainFestival);
-  const ready = useApp(shioriReady);
-
-  const date =
-    (itinerary ? mainFestivalDay(itinerary).date : undefined) ??
-    (conditions.when?.kind === "date" ? conditions.when.date : undefined);
-  const origin = itinerary?.origin ?? conditions.origin;
-  const highlight = festival?.highlights[0] ?? null;
-
-  return (
-    <section aria-labelledby="guide-card-title" className={`${hudCard} relative w-full p-3 pt-5`}>
-      <p
-        id="guide-card-title"
-        className="-top-3.5 absolute left-3 flex items-center gap-1.5 rounded-full bg-ai-800 py-1 pr-3 pl-2 font-bold text-kinari-50 text-xs shadow-md ring-2 ring-yamabuki-400"
-      >
-        <LanternIcon className="size-4 text-yamabuki-400" />
-        {t.hud.guideTitle}
-      </p>
-      <div className="flex items-start gap-2">
-        <div className="min-w-0 flex-1">
-          <p className="font-bold text-ink text-lg leading-snug">
-            {itinerary?.title ?? t.hud.noTrip}
-          </p>
-          {date !== undefined || origin !== undefined ? (
-            <p className="mt-0.5 text-ink-soft text-sm">
-              {[date === undefined ? null : formatDate(date, locale), origin]
-                .filter((part) => part !== null && part !== undefined)
-                .join("・")}
-            </p>
-          ) : null}
-          {festival !== null ? (
-            <p className="mt-1.5 text-sm">
-              <span className="mr-1 rounded bg-shu-600 px-1.5 py-0.5 font-bold text-white text-xs">
-                {t.hud.mainFestival}
-              </span>
-              <span className="font-bold">{festival.name.ja}</span>
-              {highlight === null ? null : <span className="block text-ink-soft">{highlight}</span>}
-            </p>
-          ) : null}
-          <p
-            className={`mt-1.5 flex items-start gap-1.5 text-sm ${ready ? "font-bold text-emerald-800" : "text-ink"}`}
-            data-testid="guide-step"
-          >
-            <span
-              aria-hidden="true"
-              className={`mt-1 size-3 shrink-0 rounded-sm border-2 ${ready ? "border-emerald-700 bg-emerald-600" : "border-wood-500"}`}
-            />
-            {t.hud.steps[stage]}
-          </p>
-        </div>
-        {itinerary === null ? null : (
-          <button
-            type="button"
-            className="grid size-8 shrink-0 place-items-center rounded-full bg-kinari-200 text-ink hover:bg-kinari-300"
-            aria-label={t.hud.guideOpen}
-            title={t.hud.guideOpen}
-            onClick={() => openTripPanel(actions, "itinerary")}
-          >
-            <ChevronRight className="size-5" />
-          </button>
-        )}
-      </div>
-    </section>
-  );
-}
-
-/** 小さな地図：旅程の地点と順番。押すと旅程のパネルの地図を開く */
-export function MiniMapCard() {
-  const t = useT();
-  const actions = useActions();
-  return (
-    <section
-      aria-label={t.hud.minimap}
-      className={`${hudCard} relative overflow-hidden p-1`}
-      data-testid="mini-map"
-    >
-      <Suspense fallback={<div className="h-36" />}>
-        <MapView interactive={false} heightClass="h-36" showPlaces={false} framed={false} />
-      </Suspense>
-      <span
-        aria-hidden="true"
-        className="absolute top-2 right-2 z-[500] grid size-8 place-items-center rounded-full bg-kinari-50 text-ink shadow"
-        title={t.hud.north}
-      >
-        <Navigation className="size-4 fill-ink" />
-      </span>
-      <button
-        type="button"
-        className="absolute right-2 bottom-2 z-[500] grid size-8 place-items-center rounded-full bg-kinari-50 text-ink shadow hover:bg-kinari-200"
-        aria-label={t.hud.expandMap}
-        title={t.hud.expandMap}
-        onClick={() => openTripPanel(actions, "map")}
-      >
-        <Maximize2 className="size-4" />
-      </button>
-    </section>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// 下の段：日付とボタンの案内
-
-/** 日付と出発の駅（左下） */
+/** 日付と出発の駅。ロゴの下の小さな札 */
 export function DateBadge() {
   const t = useT();
   const locale = useApp((state) => state.ui.locale);
@@ -531,67 +355,101 @@ export function DateBadge() {
   return (
     <section
       aria-label={t.conditions.title}
-      className={`${hudCard} flex items-center gap-3 px-4 py-2.5`}
+      className="hud-chip flex w-fit items-center gap-1.5 rounded-full py-1 pr-3 pl-2 text-xs leading-tight sm:text-sm"
       data-testid="date-badge"
     >
-      <Sun aria-hidden="true" className="size-8 shrink-0 text-yamabuki-400 drop-shadow" />
-      <div className="leading-tight">
-        <p className="font-bold text-ink text-xl">
-          {date === undefined ? t.hud.dateUnset : formatDate(date, locale)}
-        </p>
-        {origin === undefined ? null : (
-          <p className="text-ink-soft text-sm">{t.hud.from(origin)}</p>
-        )}
-      </div>
+      <Sun aria-hidden="true" className="size-4 shrink-0 text-yamabuki-400" />
+      <span className="font-bold">
+        {date === undefined ? t.hud.dateUnset : formatDate(date, locale)}
+      </span>
+      {origin === undefined ? null : <span>・{t.hud.from(origin)}</span>}
     </section>
   );
 }
 
-export function KeyCap({ children }: { children: ReactNode }) {
+/** 接客サーバーが見本の相談を再生しているとき（mock）だけ出す、小さな札 */
+export function ModeBadge() {
+  const t = useT();
+  const mode = useApp((state) => state.session.mode);
+  if (mode !== "mock") return null;
+  return (
+    <p
+      className="hud-chip w-fit rounded-full px-3 py-1 text-xs leading-tight"
+      data-testid="mode-badge"
+      title={t.hud.replayingNote}
+    >
+      {t.hud.replaying}
+      <span className="sr-only">。{t.hud.replayingNote}</span>
+    </p>
+  );
+}
+
+export function KeyCap({ children, small = false }: { children: ReactNode; small?: boolean }) {
   return (
     <span
       aria-hidden="true"
-      className="grid size-7 place-items-center rounded-full bg-kinari-50 font-black text-ink text-sm"
+      className={`grid shrink-0 place-items-center rounded-full bg-kinari-50 font-black text-ink ${
+        small ? "size-5 text-[0.7rem]" : "size-7 text-sm"
+      }`}
     >
       {children}
     </span>
   );
 }
 
-/** ボタンの案内（右下）。キーボードの X・Y・M でも同じことができる */
+/**
+ * 操作の案内（上の段の、丸いボタンの左に同じ段で並ぶ札）。キーボードの X・Y・M、ゲームパッドの X・Y・スタートでも同じことができる。
+ * 上の段の中に置くので、店内の絵や会話の窓・旅のしおりと重ならない。狭い画面ではキーの印とアイコンだけにする
+ */
 export function ButtonHints({
   onDetails,
   onMap,
   onMenu,
-  stacked = false,
+  menuOpen,
 }: {
   onDetails: () => void;
   onMap: () => void;
   onMenu: () => void;
-  /** 縦に積む（会話の窓の横に置くとき） */
-  stacked?: boolean;
+  menuOpen: boolean;
 }) {
   const t = useT();
   const hint =
-    "flex items-center gap-2 rounded-full border-2 border-kinari-50/70 bg-ink/65 py-1 pr-4 pl-1 font-bold text-kinari-50 text-sm shadow-lg backdrop-blur-sm transition hover:bg-ink/85";
+    "flex min-h-9 items-center gap-1 rounded-full py-0.5 pr-1.5 pl-0.5 font-bold text-sm transition hover:bg-kinari-50/15 sm:gap-1.5 sm:pr-2.5 sm:text-base";
   return (
-    <div
-      className={`flex gap-2 ${stacked ? "flex-col items-end" : "items-center"}`}
+    <nav
+      aria-label={t.hud.opsGuide}
+      className="hud-chip flex items-center gap-0.5 rounded-full p-1"
       data-testid="button-hints"
     >
-      <button type="button" className={hint} onClick={onDetails}>
+      <button type="button" className={hint} onClick={onDetails} aria-label={t.hud.hints.details}>
         <KeyCap>X</KeyCap>
-        {t.hud.hints.details}
+        <Route aria-hidden="true" className="size-4" />
+        <span aria-hidden="true" className="max-sm:hidden">
+          {t.hud.hints.details}
+        </span>
       </button>
-      <button type="button" className={hint} onClick={onMap}>
+      <button type="button" className={hint} onClick={onMap} aria-label={t.hud.hints.map}>
         <KeyCap>Y</KeyCap>
-        {t.hud.hints.map}
+        <MapIcon aria-hidden="true" className="size-4" />
+        <span aria-hidden="true" className="max-sm:hidden">
+          {t.hud.hints.map}
+        </span>
       </button>
-      <button type="button" className={hint} onClick={onMenu}>
-        <KeyCap>＋</KeyCap>
-        {t.hud.hints.menu}
+      <button
+        type="button"
+        className={hint}
+        onClick={onMenu}
+        aria-label={t.hud.hints.menu}
+        aria-expanded={menuOpen}
+        aria-controls="hud-menu"
+      >
+        <KeyCap>M</KeyCap>
+        <Menu aria-hidden="true" className="size-4" />
+        <span aria-hidden="true" className="max-sm:hidden">
+          {t.hud.hints.menu}
+        </span>
       </button>
-    </div>
+    </nav>
   );
 }
 

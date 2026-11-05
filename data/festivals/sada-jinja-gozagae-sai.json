@@ -1,0 +1,233 @@
+{
+  "id": "sada-jinja-gozagae-sai",
+  "name": {
+    "ja": "佐太神社 御座替祭（佐陀神能）",
+    "en": "Sada Shrine Gozagae Festival (Sada Shin Noh)"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "島根県",
+      "name": "松江市"
+    }
+  ],
+  "venue": {
+    "name": "佐太神社（松江市鹿島町佐陀宮内）",
+    "lat": 35.5127,
+    "lng": 133.0011
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "夕闇の中、本殿三社と末社の神座の茣蓙を一斉に敷き替える年に一度の神事",
+    "神事と並んで舞殿で素顔の舞手が剣などを手に舞う「七座」",
+    "翌日の夜、能を取り入れた「式三番」と神話の劇舞「神能」が奉納される"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "佐陀神能が1976年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.city.matsue.lg.jp/material/files/group/32/rekimachikeikaku_sadasinnnou.pdf",
+          "title": "松江市歴史的風致維持向上計画（第2期） 神在祭と佐陀神能に見られる歴史的風致",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "氏子の有志が関わる佐陀神能保存会が神能を受け継ぐ",
+      "sources": [
+        {
+          "url": "https://itcj.or.jp/japanese-festival/pageindices/index250.html",
+          "title": "地域伝統芸能活用センター 日本の祭り 佐陀神能（佐陀神能保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "敷き替えるのは本殿3社と境内・境外の社を合わせた23の神座の茣蓙",
+      "source": {
+        "url": "https://www.city.matsue.lg.jp/material/files/group/32/rekimachikeikaku_sadasinnnou.pdf",
+        "title": "松江市歴史的風致維持向上計画（第2期） 神在祭と佐陀神能に見られる歴史的風致",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "佐陀神能は1976年に国の重要無形民俗文化財、2011年にユネスコ無形文化遺産になった",
+      "source": {
+        "url": "https://www.city.matsue.lg.jp/material/files/group/32/rekimachikeikaku_sadasinnnou.pdf",
+        "title": "松江市歴史的風致維持向上計画（第2期） 神在祭と佐陀神能に見られる歴史的風致",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "式三番と神能は、1608年に京へ上った神職が能や狂言を取り入れて作ったと考えられている",
+      "source": {
+        "url": "https://www.city.matsue.lg.jp/material/files/group/32/rekimachikeikaku_sadasinnnou.pdf",
+        "title": "松江市歴史的風致維持向上計画（第2期） 神在祭と佐陀神能に見られる歴史的風致",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "9月19日、神職は日本海の浜で禊をし、神事に使う海水と海藻を持ち帰る",
+      "source": {
+        "url": "https://www.city.matsue.lg.jp/material/files/group/32/rekimachikeikaku_sadasinnnou.pdf",
+        "title": "松江市歴史的風致維持向上計画（第2期） 神在祭と佐陀神能に見られる歴史的風致",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "境内で神事と舞を見学するもので、混雑や危険についての特別な注意は見つからない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://rurubu.jp/andmore/spot/20003239",
+        "title": "るるぶ&more. 御座替祭(佐陀神能)（観覧無料、昨年の来場者約3,000人）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      },
+      {
+        "url": "https://www.city.matsue.lg.jp/material/files/group/32/rekimachikeikaku_sadasinnnou.pdf",
+        "title": "松江市歴史的風致維持向上計画（第2期） 神在祭と佐陀神能に見られる歴史的風致",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-09-24",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "御座替神事の日。松江市の資料にある「毎年9月24日」から見込んだ日（2027年の発表はまだない）。夕方に神職が忌火を起こして供物を作り、日が落ちるころ境外の末社から御座替えが始まる。並んで舞殿で「七座」が舞われ、すべて終わると巫女舞「真ノ神楽」がある",
+      "sources": [
+        {
+          "url": "https://www.city.matsue.lg.jp/material/files/group/32/rekimachikeikaku_sadasinnnou.pdf",
+          "title": "松江市歴史的風致維持向上計画（第2期） 御座替神事（毎年9月24日）の流れ",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.visit-matsue.com/calendar/september",
+          "title": "松江観光協会 VISIT MATSUE 9月の行事（御座替神事は毎年9月24日・25日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-09-25",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "例祭の日。松江市の資料にある「翌25日の例祭」から見込んだ日（2027年の発表はまだない）。例年、日没後の19時ごろから「七座」「式三番」「神能」が奉納される",
+      "sources": [
+        {
+          "url": "https://www.city.matsue.lg.jp/material/files/group/32/rekimachikeikaku_sadasinnnou.pdf",
+          "title": "松江市歴史的風致維持向上計画（第2期） 佐陀神能「式三番」「神能」（9月25日、日没後の午後7時から）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.visit-matsue.com/calendar/september",
+          "title": "松江観光協会 VISIT MATSUE 9月の行事（御座替神事は毎年9月24日・25日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "一畑バス 佐太神社前バス停",
+        "walkMinutes": [2, 7],
+        "note": "JR松江駅から一畑バスの恵曇方面行き。バス停から徒歩2分（観光の案内サイト）、下車すぐ（地域伝統芸能活用センター）"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "松江駅",
+        "minutes": [25, 35],
+        "route": "一畑バスの恵曇方面行きで約25分、佐太神社前で下車（観光の案内サイトはバスで20分としている）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://itcj.or.jp/japanese-festival/pageindices/index250.html",
+        "title": "地域伝統芸能活用センター 日本の祭り 佐陀神能（JR松江駅から一畑バス恵曇方面行き約25分、佐太神社前下車すぐ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20003239",
+        "title": "るるぶ&more. 御座替祭(佐陀神能)（JR松江駅からバス20分、佐太神社前から徒歩2分、駐車場37台・無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.city.matsue.lg.jp/material/files/group/32/rekimachikeikaku_sadasinnnou.pdf",
+      "title": "松江市歴史的風致維持向上計画（第2期） 神在祭と佐陀神能に見られる歴史的風致（佐太神社、御座替神事と佐陀神能）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.visit-matsue.com/calendar/september",
+      "title": "松江観光協会 VISIT MATSUE 9月の行事（佐太神社の御座替神事）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://itcj.or.jp/japanese-festival/pageindices/index250.html",
+      "title": "地域伝統芸能活用センター 日本の祭り 佐陀神能（佐陀神能保存会）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、9月24日の神事・七座の始まりの時刻（資料には「陽が落ちるころから」とだけある）",
+    "9月25日の奉納の時刻は松江市の資料にある例年の決まり（日没後、午後7時から）で、2027年の発表ではない。終わりの時刻も分からない",
+    "2026年の開催の実績（観光の案内サイトに2026年9月24日〜25日の掲載はあるが、主催者や市の発表を確かめていない）",
+    "雨天の扱い",
+    "見学の決まり（見る場所、撮影、夜の神事の間の注意）、服装・持ち物（主催者の案内が見つからない）",
+    "佐太神社の公式のサイトが見つからなかった",
+    "松江駅からのバスの所要時間は情報源で20分と約25分に分かれる。運行本数と、夜の神事のあとの帰りのバスがあるか",
+    "駐車場は観光の案内サイトの情報だけ（37台・無料）。祭りの日に使えるか",
+    "屋台の有無と、この祭りならではの食べもの",
+    "周辺の観光と食の場所（営業時間を確かめられたものがない）",
+    "会場の緯度・経度は、国土地理院の住所検索で「松江市鹿島町佐陀宮内」の町の位置を取ったもので、社殿の位置そのものではない"
+  ]
+}

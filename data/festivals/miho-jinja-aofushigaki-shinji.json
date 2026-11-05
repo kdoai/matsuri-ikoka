@@ -1,0 +1,291 @@
+{
+  "id": "miho-jinja-aofushigaki-shinji",
+  "name": {
+    "ja": "青柴垣神事",
+    "en": "Aofushigaki Shinji (Miho Shrine)"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "島根県",
+      "name": "松江市"
+    }
+  ],
+  "venue": {
+    "name": "美保神社",
+    "lat": 35.5622,
+    "lng": 133.3069
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "當屋2人を乗せた2隻の御船が美保湾を巡り、国譲り神話の場面を再び演じる",
+    "湾の中ほどの船上で、當屋が神霊をいただく御船ノ儀と巫女の田楽が行われる",
+    "氏子が受け継ぐ當屋の制度で営まれる、国の選択無形民俗文化財の春祭",
+    "国の重要文化財の本殿と、鳥居わきから佛谷寺へ続く江戸時代の青石畳"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1973年に国の選択無形民俗文化財となり、1717年の地誌にも載る",
+      "sources": [
+        {
+          "url": "https://www.city.matsue.lg.jp/material/files/group/32/aofushigaki04_09_siryou1-6.pdf",
+          "title": "松江市 青柴垣神事関連及び年中行事関連年表",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "氏子の祭祀組織が役割を担って神事に奉仕する",
+      "sources": [
+        {
+          "url": "http://mihojinja.or.jp/sinji/",
+          "title": "美保神社 特殊神事（神事は氏子の祭祀組織が役割を担って奉仕する）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "もとは旧暦3月3日、桃の節句の日に行われていた",
+      "source": {
+        "url": "http://mihojinja.or.jp/sinji/",
+        "title": "美保神社 特殊神事（青柴垣神事・諸手船神事）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1973年11月5日、国の「記録作成等の措置を講ずべき無形の民俗文化財」に選ばれた",
+      "source": {
+        "url": "https://www.city.matsue.lg.jp/material/files/group/32/aofushigaki04_09_siryou1-6.pdf",
+        "title": "松江市 青柴垣神事関連及び年中行事関連年表",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "享保2年（1717）の地誌『雲陽誌』に、すでに青柴垣神事と諸手船神事が載っている",
+      "source": {
+        "url": "https://www.city.matsue.lg.jp/material/files/group/32/aofushigaki04_09_siryou1-6.pdf",
+        "title": "松江市 青柴垣神事関連及び年中行事関連年表",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "主役の當屋2人は3月31日から神社にこもり、祭りの後も4月12日まで祭儀が続く",
+      "source": {
+        "url": "https://www.bunka.go.jp/prmagazine/rensai/matsuri/matsuri_027.html",
+        "title": "文化庁 ぶんかる 日本の祭り 美保神社の蒼柴垣神事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "神事と船の巡行の見物が中心で、主催者による危険や混雑の注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "http://mihojinja.or.jp/sinji/",
+        "title": "美保神社 特殊神事（神事は氏子の祭祀組織が役割を担って奉仕する）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.bunka.go.jp/prmagazine/rensai/matsuri/matsuri_027.html",
+        "title": "文化庁 ぶんかる 日本の祭り 美保神社の蒼柴垣神事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-04-07",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年4月7日（2027年は水曜日。2027年の発表はまだない）。神社の年間祭事では、例年9:30から例大祭、13:30から青柴垣神事。午後に當屋らが2隻の御船で美保湾へ出て、戻ってから奉幣などの祭儀が続く",
+      "sources": [
+        {
+          "url": "http://mihojinja.or.jp/saiji/",
+          "title": "美保神社 年間祭事（4月7日 9:30 例大祭、13:30 青柴垣神事）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.matsue.lg.jp/material/files/group/32/mihonoseki2022_03365677.pdf",
+          "title": "美保関町まちづくり協議会 美保関歴史ガイドマップ（令和4年2月。青柴垣神事は毎年4月7日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.bunka.go.jp/prmagazine/rensai/matsuri/matsuri_027.html",
+          "title": "文化庁 ぶんかる 日本の祭り 美保神社の蒼柴垣神事（毎年4月7日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.mihonoseki-kankou.jp/access/",
+        "title": "松江観光協会美保関町支部 美保神社・美保関へのアクセス",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "mihonoseki-aoishidatami-dori",
+      "name": "青石畳通り",
+      "kind": "sightseeing",
+      "summary": "美保神社の鳥居の右手から佛谷寺へ続く参詣の道。江戸時代に地元の緑色凝灰岩を敷いた石畳で、雨に濡れると青緑色に見える。沿道に国の登録有形文化財の旅館が建つ",
+      "location": {
+        "lat": 35.5627,
+        "lng": 133.308
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.mihonoseki-kankou.jp/spot/1007/",
+          "title": "松江観光協会美保関町支部 青石畳通り",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.matsue.lg.jp/material/files/group/32/mihonoseki2022_03365677.pdf",
+          "title": "美保関町まちづくり協議会 美保関歴史ガイドマップ（令和4年2月）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "mihonoseki-bukkokuji",
+      "name": "佛谷寺",
+      "kind": "sightseeing",
+      "summary": "青石畳通りの先にある寺。隠岐へ流された後鳥羽上皇と後醍醐天皇が風待ちの仮御所とした三明院を合わせたと伝わり、大日堂に平安中期の重要文化財の仏像5体を安置する",
+      "location": {
+        "lat": 35.5641,
+        "lng": 133.3084
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.matsue.lg.jp/material/files/group/32/mihonoseki2022_03365677.pdf",
+          "title": "美保関町まちづくり協議会 美保関歴史ガイドマップ（令和4年2月。⑦佛谷寺、大日堂）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "mihonoseki-gohonmatsu-park",
+      "name": "五本松公園",
+      "kind": "sightseeing",
+      "summary": "民謡「関乃五本松節」の由来の松が立つ、標高100〜130mほどの丘の公園。頂上から美保湾を見渡せる。約5,000株のツツジは4月下旬〜5月上旬が見ごろ。入口のわきに駐車場がある",
+      "location": {
+        "lat": 35.5611,
+        "lng": 133.3028
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.mihonoseki-kankou.jp/spot/257/",
+          "title": "松江観光協会美保関町支部 五本松公園",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.matsue.lg.jp/material/files/group/32/mihonoseki2022_03365677.pdf",
+          "title": "美保関町まちづくり協議会 美保関歴史ガイドマップ（令和4年2月）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "http://mihojinja.or.jp/sinji/",
+      "title": "美保神社 特殊神事（青柴垣神事・諸手船神事）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "http://mihojinja.or.jp/saiji/",
+      "title": "美保神社 年間祭事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.bunka.go.jp/prmagazine/rensai/matsuri/matsuri_027.html",
+      "title": "文化庁 ぶんかる 日本の祭り 美保神社の蒼柴垣神事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20001823",
+      "title": "るるぶ&more. 青柴垣神事（昨年の来場者数 約2,000人）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、神事・御船の出る時刻",
+    "見学できる場所と立ち入りの決まり（公式の案内が見つからない）",
+    "服装・持ち物・撮影の決まり",
+    "雨や荒天のときの扱い",
+    "終わる時刻と、御船が湾を巡る時間",
+    "最寄り駅と主要駅からの所要時間（鉄道は通らない。境港駅から美保関コミュニティバス、または松江駅から一畑バスで美保関ターミナルへ行き、コミュニティバスに乗り継ぐ。公式の案内は各区間の目安だけで、通しの所要時間がない）",
+    "祭りの日の駐車場と交通規制",
+    "屋台の有無",
+    "見学者数の公式の数字（るるぶ&more.では前年の来場者数が約2,000人）",
+    "神社の近くで、2027年4月7日（水曜日）に開いていると公式で確かめられた食事の店（美保関灯台ビュッフェは水曜・木曜が休み）",
+    "周辺の場所の営業時間・休みの日と、会場からの徒歩の時間"
+  ]
+}

@@ -1,0 +1,280 @@
+{
+  "id": "hioki-seppetobe",
+  "name": {
+    "ja": "せっぺとべ",
+    "en": "Seppetobe Rice-Planting Festival"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "鹿児島県",
+      "name": "日置市"
+    }
+  ],
+  "venue": {
+    "name": "日置八幡神社",
+    "lat": 31.5894,
+    "lng": 130.352
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["jalan", "walkerplus"],
+  "highlights": [
+    "白装束の若者が神田で円陣を組み、唄いながら泥まみれで跳ね回る",
+    "八幡神社では巨大な人形「大王殿（でおどん）」が練り歩く",
+    "子どもたちを中心に、虚無僧踊・棒踊・鎌踊・笹踊などのお田植え踊が奉納される",
+    "同じ朝に吉利の鬼丸神社でも行われ、2つの神社で見られる"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1595年ごろ、八幡神社が日置郷の総鎮守となった頃に始まったとされる",
+      "sources": [
+        {
+          "url": "http://www.pref.kagoshima.jp/ab10/kyoiku-bunka/bunka/museum/shichoson/hioki/yahata.html",
+          "title": "鹿児島県 かごしま地域伝統芸能ミュージアム お田植え祭「せっぺとべ」",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "15〜35歳の二才衆が担い手を務める",
+      "sources": [
+        {
+          "url": "http://www.pref.kagoshima.jp/ab10/kyoiku-bunka/bunka/museum/shichoson/hioki/yahata.html",
+          "title": "鹿児島県 かごしま地域伝統芸能ミュージアム お田植え祭「せっぺとべ」",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "「せっぺとべ」は鹿児島の言葉で「精一杯跳べ」。足で田を耕した名残とされる",
+      "source": {
+        "url": "http://www.pref.kagoshima.jp/ab10/kyoiku-bunka/bunka/museum/shichoson/hioki/yahata.html",
+        "title": "鹿児島県 かごしま地域伝統芸能ミュージアム お田植え祭「せっぺとべ」",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1595年、日置島津家3代の常久が八幡神社を日置郷の総鎮守としたころに始まったとされる",
+      "source": {
+        "url": "http://www.pref.kagoshima.jp/ab10/kyoiku-bunka/bunka/museum/shichoson/hioki/yahata.html",
+        "title": "鹿児島県 かごしま地域伝統芸能ミュージアム お田植え祭「せっぺとべ」",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "泥の中で跳ねるのは、土をこねるのと、害虫を踏みつぶす意味があるという",
+      "source": {
+        "url": "http://www.city.hioki.kagoshima.jp/kanko/kankou/asobu/event-calendar/jun/seppetobe.html",
+        "title": "日置市 せっぺとべ",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "せっぺとべを担うのは15〜35歳の二才衆で、途中で成年に酒がふるまわれる",
+      "source": {
+        "url": "http://www.pref.kagoshima.jp/ab10/kyoiku-bunka/bunka/museum/shichoson/hioki/yahata.html",
+        "title": "鹿児島県 かごしま地域伝統芸能ミュージアム お田植え祭「せっぺとべ」",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "http://www.pref.kagoshima.jp/ab10/kyoiku-bunka/bunka/museum/shichoson/hioki/yahata.html",
+        "title": "鹿児島県 かごしま地域伝統芸能ミュージアム お田植え祭「せっぺとべ」（担い手は15〜35歳の二才衆）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-06-07",
+      "start": "10:30",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の予定（市の発表）。日置八幡神社は9:30神事、10:30せっぺとべ。吉利鬼丸神社は8:00神事、9:30せっぺとべ（予定）。参道周辺の「せっぺとべマルシェ」は悪天候の予想で中止になった",
+      "sources": [
+        {
+          "url": "http://www.city.hioki.kagoshima.jp/kanko/kankou/asobu/event-calendar/jun/seppetobe.html",
+          "title": "日置市 せっぺとべ（令和8年6月7日、2026年6月5日更新）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-06-06",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "例年6月の第1日曜日（2027年の発表はまだない）。例年、日置八幡神社と吉利鬼丸神社で、神事とお田植え踊の奉納に続いてせっぺとべを行い、鬼丸神社の方が先に始まる。2025年は小雨決行と案内していた",
+      "sources": [
+        {
+          "url": "http://www.pref.kagoshima.jp/ab10/kyoiku-bunka/bunka/museum/shichoson/hioki/yahata.html",
+          "title": "鹿児島県 かごしま地域伝統芸能ミュージアム お田植え祭「せっぺとべ」（毎年6月の第1日曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.hioki.kagoshima.jp/bunkazai/kurashi/kosodate-kyoiku/shakaikyoiku/bunkazai/hiyoshi/hachimanjinja.html",
+          "title": "日置市 八幡神社（せっぺとべは毎年6月の第1日曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://hiokishi-kankou.com/news/news-26961/",
+          "title": "日置市観光協会 お田植祭り「せっぺとべ」（2025年6月1日、小雨決行）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "鹿児島交通バス 日置郵便局前",
+        "walkMinutes": [5, 10],
+        "note": "JR 伊集院駅から鹿児島交通バスの枕崎行きで15分。降りて日置八幡神社まで徒歩5分（市の案内）。伊集院駅から車なら約15分"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "http://www.city.hioki.kagoshima.jp/kanko/kankou/asobu/event-calendar/jun/seppetobe.html",
+        "title": "日置市 せっぺとべ（バスと駐車場の案内。2026年の駐車場は明信寺こども園・日吉支所・日吉武道館の予定）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://hiokishi-kankou.com/news/news-26961/",
+        "title": "日置市観光協会 お田植祭り「せっぺとべ」（2025年の駐車場は日吉支所・妙信寺こども園・日吉武道館・日吉運動公園）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "yoshitoshi-onimaru-jinja",
+      "name": "鬼丸神社（吉利）",
+      "kind": "sightseeing",
+      "summary": "吉利の領主となった禰寝重張が、父の重長の霊をまつるために建てた神社。市指定史跡。せっぺとべのもう1つの会場で、八幡神社より先に始まる",
+      "location": {
+        "lat": 31.5757,
+        "lng": 130.3461
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.hioki.kagoshima.jp/bunkazai/kurashi/kosodate-kyoiku/shakaikyoiku/bunkazai/hiyoshi/onimarujinja.html",
+          "title": "日置市 鬼丸神社",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "http://www.pref.kagoshima.jp/ab10/kyoiku-bunka/bunka/museum/shichoson/hioki/yahata.html",
+          "title": "鹿児島県 お田植え祭「せっぺとべ」（吉利鬼丸神社 日置市日吉町吉利4827）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "yaezakura-hiyoshi",
+      "name": "お食事処八重さくら",
+      "kind": "food",
+      "summary": "日吉町日置の食事処。うな丼、マグロ南蛮、ひおき西郷うどん、海老だけ天丼などを出す。駐車場は15台ほど",
+      "location": {
+        "lat": 31.598,
+        "lng": 130.3472
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "14:00",
+        "lastEntry": "13:30"
+      },
+      "closedDays": ["mon"],
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://hiokishi-kankou.com/spot/spot043/",
+          "title": "日置市観光協会 お食事処八重さくら",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "http://www.city.hioki.kagoshima.jp/kanko/kankou/asobu/event-calendar/jun/seppetobe.html",
+      "title": "日置市 せっぺとべ",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "http://www.pref.kagoshima.jp/ab10/kyoiku-bunka/bunka/museum/shichoson/hioki/yahata.html",
+      "title": "鹿児島県 かごしま地域伝統芸能ミュージアム お田植え祭「せっぺとべ」",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://hiokishi-kankou.com/news/news-26961/",
+      "title": "日置市観光協会 お田植祭り「せっぺとべ」",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、神事・せっぺとべの時刻",
+    "鹿児島中央駅からの所要時間（市の案内では鹿児島中央駅から伊集院駅までJRで18分。伊集院駅からのバスの待ち時間を含む通しの目安は見つからない）",
+    "見学できる場所と、泥がはねることへの注意などの決まり",
+    "危険度（主催者による、けがのおそれの注意が見つからない）",
+    "服装・持ち物・撮影の決まり",
+    "2027年の雨のときの扱い（2025年は小雨決行）",
+    "2027年のマルシェと飲食の出店（2025年は日吉支所の駐車場で出店があり、2026年は悪天候の予想で中止）",
+    "終わる時刻と、お田植え踊の奉納の時刻",
+    "見学者数の公表値（規模は2つの神社で行うことから決めた）",
+    "会場の緯度・経度は OpenStreetMap の神社の位置で、公的な検索では大字までしか分からなかった",
+    "周辺の場所が2件だけ（日吉町の物産館は住所の案内が2つに分かれ、ほかの店は日曜が休み）",
+    "鬼丸神社の参拝の時間",
+    "周辺の場所の3件目（祭りの日曜に開いていると公式で確かめられた場所が2件だけ）"
+  ]
+}

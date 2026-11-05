@@ -1,0 +1,173 @@
+{
+  "id": "mishima-jinja-bojutsu-kakkomai",
+  "name": {
+    "ja": "三島の棒術と羯鼓舞",
+    "en": "Mishima Staff Martial Art and Kakko-mai"
+  },
+  "category": "performing_arts",
+  "municipalities": [{ "prefecture": "千葉県", "name": "君津市" }],
+  "venue": { "name": "三島神社", "lat": 35.2066, "lng": 140.0287 },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "県指定無形民俗文化財の棒術が奉納される",
+    "旅名の羯鼓舞も伝わる",
+    "杉並木の参道を進んで参拝する"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1962年に千葉県の無形民俗文化財になった",
+      "sources": [
+        {
+          "url": "https://www.pref.chiba.lg.jp/kyouiku/bunkazai/shitei/shichouson/kimitsu-minzoku.html",
+          "title": "千葉県 君津市の民俗・無形文化財",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "氏子連が棒術と羯鼓舞を奉納する",
+      "sources": [
+        {
+          "url": "https://www.city.kimitsu.lg.jp/site/kanko/2224.html",
+          "title": "君津市 三島神社（秋の祭礼で棒術・羯鼓舞を奉納）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "1962年（昭和37年）に千葉県の無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.pref.chiba.lg.jp/kyouiku/bunkazai/shitei/shichouson/kimitsu-minzoku.html",
+        "title": "千葉県 君津市の民俗・無形文化財",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "棒術は、源頼朝の家来が土着して神社で奉納試合をしたのが始まりと伝わる",
+      "source": {
+        "url": "https://maruchiba.jp/spot/detail_10479.html",
+        "title": "ちば観光ナビ 三島神社",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "羯鼓舞は、龍が雨を降らせた伝説にならった獅子舞とされる",
+      "source": {
+        "url": "https://maruchiba.jp/spot/detail_10479.html",
+        "title": "ちば観光ナビ 三島神社",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": []
+  },
+  "occurrences": [
+    {
+      "date": "2026-09-27",
+      "start": null,
+      "end": null,
+      "status": "cancelled",
+      "rainPolicy": null,
+      "note": "2026年は台風第25号の被害状況を考慮して、棒術の演舞が中止になった",
+      "sources": [
+        {
+          "url": "https://www.city.kimitsu.lg.jp/site/kanko/2222.html",
+          "title": "君津市 【開催中止】三島の棒術と羯鼓舞（2026年9月25日更新）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-09-26",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "例年9月の最終日曜日に行う決まりから見込んだ日（2027年の発表はまだ見つからない）。市の案内に、諸事情により実施されない場合があるとある",
+      "sources": [
+        {
+          "url": "https://www.city.kimitsu.lg.jp/site/kanko/2224.html",
+          "title": "君津市 三島神社（現在は9月の最終日曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "コミュニティバス中島・豊英線 宿原バス停",
+        "walkMinutes": [5, 10],
+        "note": "JR内房線 君津駅の南口から周西線で清和公民館バス停へ、中島・豊英線に乗り換える"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "none",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.city.kimitsu.lg.jp/site/kanko/2224.html",
+        "title": "君津市 三島神社（駐車場なし、君津駅からバス乗り継ぎ、宿原バス停から徒歩5分ほど）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.city.kimitsu.lg.jp/site/kanko/2224.html",
+      "title": "君津市 三島神社（秋の祭礼で棒術・羯鼓舞を奉納）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.pref.chiba.lg.jp/kyouiku/bunkazai/shitei/shichouson/kimitsu-minzoku.html",
+      "title": "千葉県 君津市の民俗・無形文化財（三島の棒術と羯鼓舞）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://maruchiba.jp/spot/detail_10479.html",
+      "title": "ちば観光ナビ 三島神社（君津市宿原）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と開始・終了の時刻（日付は市の案内の「9月の最終日曜日」から見込んだ）",
+    "雨天のときの扱い（2026年は台風の被害を受けた中止で、通常の雨天の決まりは分からない）",
+    "見学の決まり、撮影の扱い、服装・持ち物などの作法",
+    "屋台の有無と、この日の食べもの",
+    "行列や演目の細かい時刻と順序",
+    "君津駅から宿原バス停までの所要時間とバスの本数（市が時刻表のPDFを案内しているが、開いて確かめていない）",
+    "周辺の観光と食の場所（営業時間と定休日を公式の情報源で確かめられなかったため入れていない）",
+    "会場の緯度・経度は、国土地理院の住所検索で君津市宿原の地区の代表点を取ったもの（三島神社そのものの位置ではない）",
+    "演者の人数や幡の数（規模は、1つの神社で半日ほど行う行事として S にした）"
+  ]
+}

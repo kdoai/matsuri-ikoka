@@ -66,6 +66,28 @@ describe("近くで使えるもの", () => {
     ];
     expect(nearestTarget(targets, { x: 0, z: 0 })?.id).toBe("concierge");
   });
+
+  it("のれんの外のネコは入口の左の柱のそばでなで、のれんの真下では外に出る", () => {
+    // interior.glb の目印の位置（interact.cat と、のれんにいちばん近い床）
+    const cat: Target = {
+      id: "gimmick.cat",
+      interaction: { kind: "gimmick", gimmick: "cat" },
+      stand: { x: -3.05, z: 2.75 },
+      radius: 0.75,
+      face: { x: -3.72, z: 4.15 },
+    };
+    const exit: Target = {
+      id: "exit",
+      interaction: { kind: "exit" },
+      stand: { x: -2.675, z: 2.88 },
+      radius: 0.35,
+      face: { x: -2.675, z: 3.06 },
+    };
+    expect(nearestTarget([cat, exit], { x: -3.05, z: 2.75 })?.id).toBe("gimmick.cat");
+    expect(nearestTarget([cat, exit], { x: -2.675, z: 2.88 })?.id).toBe("exit");
+    // 店の奥からは届かない
+    expect(nearestTarget([cat, exit], { x: -3.05, z: 1.5 })).toBeNull();
+  });
 });
 
 describe("時計とカメラ", () => {

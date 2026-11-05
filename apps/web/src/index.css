@@ -39,6 +39,16 @@
   --color-yamabuki-400: #e9b528;
   --color-yamabuki-700: #7a5807;
 
+  /* 画面の部品の共通の見た目：温かいクリーム色、薄い輪郭線、柔らかい影、角丸 */
+  --color-washi: #fbf6ea;
+  --color-washi-deep: #f3e8d0;
+  --color-line: rgb(95 62 33 / 0.22);
+  --color-line-strong: rgb(95 62 33 / 0.45);
+  --radius-panel: 1.5rem;
+  --radius-card: 1rem;
+  --shadow-soft: 0 4px 14px rgb(46 30 16 / 0.16);
+  --shadow-lift: 0 10px 28px rgb(46 30 16 / 0.22);
+
   --font-sans:
     "Zen Maru Gothic", "Noto Sans JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI",
     "Yu Gothic", "Meiryo", system-ui, sans-serif;
@@ -112,6 +122,41 @@ body {
       color-mix(in srgb, var(--color-wood-400) 45%, transparent) 63px 65px
     ),
     linear-gradient(180deg, var(--color-wood-100), var(--color-wood-200));
+}
+
+/* 和紙：薄い繊維の模様を重ねたクリーム色の紙（会話の窓・旅のしおり・絵葉書） */
+.washi {
+  background-color: var(--color-washi);
+  background-image:
+    radial-gradient(circle at 20% 30%, rgb(187 133 81 / 0.06) 0 1px, transparent 2px),
+    radial-gradient(circle at 70% 80%, rgb(187 133 81 / 0.05) 0 1px, transparent 2px),
+    linear-gradient(180deg, var(--color-washi), var(--color-washi-deep));
+  background-size:
+    23px 19px,
+    31px 27px,
+    100% 100%;
+}
+
+/* HUD の小さな札（日付・操作の案内）：半透明の木の色に薄い輪郭線 */
+.hud-chip {
+  border: 1px solid rgb(253 250 243 / 0.45);
+  background: rgb(46 30 16 / 0.62);
+  color: var(--color-kinari-50);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(4px);
+}
+
+/* 頭の上の吹き出しのしっぽ：板の下の真ん中から、話している人を指す */
+.speech-bubble::after {
+  content: "";
+  position: absolute;
+  top: calc(100% - 1px);
+  left: 50%;
+  width: 22px;
+  height: 14px;
+  translate: -50% 0;
+  background: #fff;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
 }
 
 /* Leaflet の帰属表示を読みやすく */

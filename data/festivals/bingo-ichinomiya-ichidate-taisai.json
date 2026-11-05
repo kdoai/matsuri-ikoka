@@ -1,0 +1,341 @@
+{
+  "id": "bingo-ichinomiya-ichidate-taisai",
+  "name": {
+    "ja": "市立大祭",
+    "en": "Ichidate Taisai (Bingo Ichinomiya Kibitsu Shrine)"
+  },
+  "category": "market",
+  "municipalities": [
+    {
+      "prefecture": "広島県",
+      "name": "福山市"
+    }
+  ],
+  "venue": {
+    "name": "備後一宮 吉備津神社",
+    "lat": 34.5684,
+    "lng": 133.2679
+  },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": ["jalan"],
+  "highlights": [
+    "備後一宮の例大祭。境内に露店が並び、櫻山神社の境内では植木大市が立つ",
+    "最終日は御池から本殿北の広場で、備後絣音頭や地元の太鼓が奉納される",
+    "初日は本殿で例大祭・新穀感謝祭があり、巫女舞・雅楽・謡曲・吟詠が奉じられる",
+    "水野勝成が造った国の重要文化財の本殿と、石造りの太鼓橋がかかる御池"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "中世に備後の各地から人が集まり物々交換をした市の祭りだったと伝わる",
+      "sources": [
+        {
+          "url": "https://bingokibitujinja.com/event/",
+          "title": "備後一宮 吉備津神社 祭典・行事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "境内に数百の露店が並んだことから、例大祭が「市立（いちだて）」大祭と呼ばれるようになったという",
+      "source": {
+        "url": "https://bingokibitujinja.com/news/%E4%BB%A4%E5%92%8C%EF%BC%98%E5%B9%B4%E5%B8%82%E7%AB%8B%E5%A4%A7%E7%A5%AD%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6/",
+        "title": "備後一宮 吉備津神社 令和8年市立大祭について（ご案内のチラシ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "かつては一か月近く続き、収穫への感謝と正月の支度を兼ねた、その年最後の秋祭りだった",
+      "source": {
+        "url": "https://bingokibitujinja.com/news/%E4%BB%A4%E5%92%8C%EF%BC%98%E5%B9%B4%E5%B8%82%E7%AB%8B%E5%A4%A7%E7%A5%AD%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6/",
+        "title": "備後一宮 吉備津神社 令和8年市立大祭について（ご案内のチラシ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "大祭でもてなされた出雲の使者が居ついたという話から、参道に随身門が上下2つあると伝わる",
+      "source": {
+        "url": "https://www.k-shinichi.com/spot?id=6",
+        "title": "新市町観光協会 備後一宮 吉備津神社（いっきゅうさん）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "中世には、備後の各地から人が収穫物を持ち寄り、物々交換をした市の祭りだったと伝わる",
+      "source": {
+        "url": "https://bingokibitujinja.com/event/",
+        "title": "備後一宮 吉備津神社 祭典・行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "期間中に参拝し、境内の露店や櫻山神社境内の植木大市、斎館のお茶会を回れる（申し込みや費用の案内はない）",
+    "rules": [
+      "11月20日〜23日の8:00〜18:00は、境内に車を乗り入れられない",
+      "車は神社の駐車場か臨時駐車場に停める"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "参拝と市・奉納の見物が中心で、主催者による危険の注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://bingokibitujinja.com/news/%E4%BB%A4%E5%92%8C%EF%BC%98%E5%B9%B4%E5%B8%82%E7%AB%8B%E5%A4%A7%E7%A5%AD%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6/",
+        "title": "備後一宮 吉備津神社 令和8年市立大祭について（2026年10月24日掲載）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-20",
+      "start": "10:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "10:00から本殿で例大祭・新穀感謝祭、巫女舞・雅楽・謡曲・吟詠。期間中（20〜23日）は境内広場の露店、櫻山神社境内の植木大市、斎館のお茶会、一宮門前（旧県道）の軒先ギャラリー、拝殿の写真展がある",
+      "sources": [
+        {
+          "url": "https://bingokibitujinja.com/news/%E4%BB%A4%E5%92%8C%EF%BC%98%E5%B9%B4%E5%B8%82%E7%AB%8B%E5%A4%A7%E7%A5%AD%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6/",
+          "title": "備後一宮 吉備津神社 令和8年市立大祭について（ご案内のチラシ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-21",
+      "start": "10:30",
+      "end": "14:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "10:30〜14:00 ほら吹き広場で大道芸（歌と踊りの饗宴）の奉納",
+      "sources": [
+        {
+          "url": "https://bingokibitujinja.com/news/%E4%BB%A4%E5%92%8C%EF%BC%98%E5%B9%B4%E5%B8%82%E7%AB%8B%E5%A4%A7%E7%A5%AD%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6/",
+          "title": "備後一宮 吉備津神社 令和8年市立大祭について（ご案内のチラシ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-22",
+      "start": "08:30",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "武道の奉納。8:30 奉納剣道大会（網引小学校体育館）、9:00 奉納空手道大会（新市中央中学校体育館）、9:30 奉納柔道錬成稽古（新市スポーツセンター）。どれも境内の外の会場",
+      "sources": [
+        {
+          "url": "https://bingokibitujinja.com/news/%E4%BB%A4%E5%92%8C%EF%BC%98%E5%B9%B4%E5%B8%82%E7%AB%8B%E5%A4%A7%E7%A5%AD%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6/",
+          "title": "備後一宮 吉備津神社 令和8年市立大祭について（ご案内のチラシ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-23",
+      "start": "11:30",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "11:30から御池から本殿北広場で郷土芸能の奉納（備後絣音頭、備後かわち太鼓、蛇円太鼓芸能保存会、備後しんいち鬼炎太鼓）。境内への車の乗り入れ規制はこの日まで",
+      "sources": [
+        {
+          "url": "https://bingokibitujinja.com/news/%E4%BB%A4%E5%92%8C%EF%BC%98%E5%B9%B4%E5%B8%82%E7%AB%8B%E5%A4%A7%E7%A5%AD%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6/",
+          "title": "備後一宮 吉備津神社 令和8年市立大祭について（ご案内のチラシ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 新市駅",
+        "walkMinutes": [20, 25],
+        "note": "県の観光サイトの案内で徒歩20分。中国バス 金丸行きで約5分の「一の宮」下車すぐもあるが、神社は便数が少ないと案内している。駅からタクシーで5分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "福山駅",
+        "minutes": [40, 50],
+        "route": "JR福塩線で新市駅へ（神社の案内で約40分）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": ["11月20日〜23日の8:00〜18:00、境内への車の乗り入れ禁止"],
+    "sources": [
+      {
+        "url": "https://bingokibitujinja.com/access/",
+        "title": "備後一宮 吉備津神社 アクセス（駐車場約200台、福山駅から福塩線で新市駅まで約40分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://dive-hiroshima.com/explore/186/",
+        "title": "Dive! Hiroshima 備後一宮 吉備津神社（新市駅から徒歩20分、駐車場250台無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://bingokibitujinja.com/news/%E4%BB%A4%E5%92%8C%EF%BC%98%E5%B9%B4%E5%B8%82%E7%AB%8B%E5%A4%A7%E7%A5%AD%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6/",
+        "title": "備後一宮 吉備津神社 令和8年市立大祭について（境内への車両規制）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "一宮さん最中",
+        "note": "吉備津神社ゆかりの最中。神社の近く（新市町宮内）の小田弘月堂で買える",
+        "sources": [
+          {
+            "url": "https://www.k-shinichi.com/shop?id=5",
+            "title": "新市町観光協会 小田弘月堂「もっこく・一宮さん最中」",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "fukuyama-shinichi-rekimin-museum",
+      "name": "福山市しんいち歴史民俗博物館",
+      "kind": "sightseeing",
+      "summary": "新市町の歴史・民俗・考古の資料と、この地の繊維産業の礎になった備後絣を中心に紹介する市の博物館。新市駅から徒歩約10分。月曜休館（祝日なら翌日）、年末年始休館",
+      "location": {
+        "lat": 34.5584,
+        "lng": 133.2757
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": ["mon"],
+      "price": "無料（特別展は有料のことがある）",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.fukuyama.hiroshima.jp/soshiki/shinichi-rekimin/",
+          "title": "福山市 しんいち歴史民俗博物館",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "shinichi-susanoo-jinja",
+      "name": "素盞嗚神社（てんのうさん）",
+      "kind": "sightseeing",
+      "summary": "備後風土記の蘇民将来の話の舞台とされる古社で、祇園祭の発祥の地と地元で伝える。本殿は水野勝成の造営。相方城から移したと伝わる山門が残る。JR上戸手駅から徒歩2分",
+      "location": {
+        "lat": 34.5526,
+        "lng": 133.2794
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.k-shinichi.com/spot?id=7",
+          "title": "新市町観光協会 疫隈國社 素盞嗚神社（てんのうさん）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "oda-kogetsudo",
+      "name": "御菓子司 小田弘月堂",
+      "kind": "food",
+      "summary": "吉備津神社の近くの和菓子店。神社ゆかりの「一宮さん最中」で知られ、地元産の素材にこだわった菓子を作る",
+      "location": {
+        "lat": 34.5652,
+        "lng": 133.2726
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "21:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.k-shinichi.com/shop?id=5",
+          "title": "新市町観光協会 小田弘月堂「もっこく・一宮さん最中」（営業9:00〜21:00、無休）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://bingokibitujinja.com/news/%E4%BB%A4%E5%92%8C%EF%BC%98%E5%B9%B4%E5%B8%82%E7%AB%8B%E5%A4%A7%E7%A5%AD%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6/",
+      "title": "備後一宮 吉備津神社 令和8年市立大祭について",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://bingokibitujinja.com/event/",
+      "title": "備後一宮 吉備津神社 祭典・行事（市立大祭は11月23日前後の日曜を含む数日間）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://bingokibitujinja.com/",
+      "title": "備後一宮 吉備津神社（本殿は国の重要文化財）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_316464/",
+      "title": "じゃらんnet 備後一宮吉備津神社 市立大祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "雨の日の扱い（大道芸や郷土芸能の奉納を含む）",
+    "露店と植木大市の営業時間、露店の数（チラシでは「数百」は名の由来としての記載）",
+    "各日の終わる時刻（20日・22日・23日）",
+    "臨時駐車場の場所と台数（神社の駐車場は約200台と神社が案内、県の観光サイトは250台）",
+    "岡山駅・広島駅からの所要時間（公式の案内の数字が見つからない）",
+    "服装・持ち物・撮影の決まり",
+    "見学者数の公表値",
+    "祭りの日の昼食・夕食に使える近くの食事の店（営業時間を公式で確かめられた店がない）",
+    "素盞嗚神社の参拝時間"
+  ]
+}

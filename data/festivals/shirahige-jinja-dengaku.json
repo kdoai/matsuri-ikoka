@@ -1,0 +1,199 @@
+{
+  "id": "shirahige-jinja-dengaku",
+  "name": {
+    "ja": "白鬚神社の田楽",
+    "en": "Shirahige Shrine Dengaku"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "佐賀県",
+      "name": "佐賀市"
+    }
+  ],
+  "venue": {
+    "name": "白鬚神社（久保泉町川久保）",
+    "lat": 33.3335,
+    "lng": 130.3261
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "女装して化粧をした少年4人が、ささらを鳴らして舞う稚児田楽",
+    "社殿の前を青竹の玉垣で囲った場で、三三九度から始まる6曲を約1時間半演じる",
+    "佐賀県内にただ1つ残る田楽で、国の重要無形民俗文化財"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1734年の鳥居の刻字が最古の記録で、国の重要無形民俗文化財",
+      "sources": [
+        {
+          "url": "https://kunishitei.bunka.go.jp/heritage/detail/302/732",
+          "title": "文化庁 国指定文化財等データベース 白鬚神社の田楽",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "川久保地区の住民が演じ、氏子総代を中心とする保存会が担う",
+      "sources": [
+        {
+          "url": "https://kunishitei.bunka.go.jp/heritage/detail/302/732",
+          "title": "文化庁 国指定文化財等データベース 白鬚神社の田楽",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "最も古い記録は、1734年に建てた鳥居に刻まれた「時奏村田楽」の文字とされる",
+      "source": {
+        "url": "https://kunishitei.bunka.go.jp/heritage/detail/302/732",
+        "title": "文化庁 国指定文化財等データベース 白鬚神社の田楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "演じる人は、希望した人の中から神職がくじで選ぶ",
+      "source": {
+        "url": "https://kunishitei.bunka.go.jp/heritage/detail/302/732",
+        "title": "文化庁 国指定文化財等データベース 白鬚神社の田楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "神社は近江の白鬚大明神の分霊を移したものと伝わり、継体天皇の時代の創建とされる",
+      "source": {
+        "url": "https://www.city.saga.lg.jp/material/files/group/63/s26052_20101216042708.pdf",
+        "title": "佐賀市 佐賀市歴史探訪30 白鬚神社の田楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "記録に出るのは江戸時代の中ごろからだが、起源は平安時代にさかのぼると考えられている",
+      "source": {
+        "url": "https://www.city.saga.lg.jp/material/files/group/63/s26052_20101216042708.pdf",
+        "title": "佐賀市 佐賀市歴史探訪30 白鬚神社の田楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": []
+  },
+  "occurrences": [
+    {
+      "date": "2027-10-18",
+      "endDate": "2027-10-19",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年10月18・19日の秋の例祭に奉納する（2027年の発表はまだない）。どちらの日に田楽を演じるかと時刻は、公式の案内で確かめられていない。例年、演者が身を清め、鳥居まで道行きをしてから、青竹で囲った場で約1時間半演じる",
+      "sources": [
+        {
+          "url": "https://kunishitei.bunka.go.jp/heritage/detail/302/732",
+          "title": "文化庁 国指定文化財等データベース 白鬚神社の田楽（毎年10月18・19日の祭礼）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.saga.lg.jp/material/files/group/63/s26052_20101216042708.pdf",
+          "title": "佐賀市 佐賀市歴史探訪30 白鬚神社の田楽（毎年10月18・19日に秋の例祭典）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.saga-otakara.jp/search/detail.html?cultureId=5345&cityId=8",
+          "title": "さがの歴史・文化お宝帳 白鬚神社の田楽（10月18・19日の秋の例祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": []
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "obukumayama-kogoishi",
+      "name": "帯隈山神籠石",
+      "kind": "sightseeing",
+      "summary": "久保泉町川久保の帯隈山を中心に、切り出した花こう岩の列石が約2.4km環状に巡る古代の山城の跡。1951年に国の史跡に指定された",
+      "location": {
+        "lat": 33.3357,
+        "lng": 130.3344
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.saga.lg.jp/material/files/group/63/s26052_20101216042553.pdf",
+          "title": "佐賀市 佐賀市歴史探訪 帯隈山神籠石",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://kunishitei.bunka.go.jp/heritage/detail/302/732",
+      "title": "文化庁 国指定文化財等データベース 白鬚神社の田楽",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.saga.lg.jp/material/files/group/63/s26052_20101216042708.pdf",
+      "title": "佐賀市 佐賀市歴史探訪30 白鬚神社の田楽（市報さが 平成14年9月15日号を平成22年3月に加筆修正）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.pref.saga.lg.jp/kiji00366322/3_66322_up_xibk8022.pdf",
+      "title": "佐賀県 郷土学習資料「佐賀巡り」第4章 佐賀県の文化（国指定 白鬚神社の田楽／佐賀市久保泉町川久保 白鬚神社）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、田楽を奉納する日（18日か19日か両日か）と時刻（主催者・市の告知が見つからない）",
+    "見学の仕方、決まり、服装・持ち物・撮影の扱い、危険度",
+    "雨のときの扱い",
+    "最寄りの駅・バス停と所要時間、主要駅からの行き方（公式のアクセスの案内が見つからない）",
+    "駐車場の有無と交通規制",
+    "屋台の有無と、祭りならではの食べもの",
+    "見物客の数（規模は、演者の道行きと約1時間半の奉納から S にした）",
+    "神社の近くで、祭りの日に営業を確かめられる食事の店（公式の営業時間の案内が見つからない）"
+  ]
+}

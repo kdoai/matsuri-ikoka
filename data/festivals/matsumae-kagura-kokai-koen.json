@@ -1,0 +1,195 @@
+{
+  "id": "matsumae-kagura-kokai-koen",
+  "name": {
+    "ja": "松前神楽公開公演",
+    "en": "Matsumae Kagura Public Performance"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "北海道",
+      "name": "松前町"
+    }
+  ],
+  "venue": {
+    "name": "松前公園本丸広場",
+    "lat": 41.4307,
+    "lng": 140.1072
+  },
+  "scaleTier": "XS",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "松前藩の城内で藩の行事として奏された神楽を、城跡の広場で見られる",
+    "湯立の神事と舞楽からなる、国の重要無形民俗文化財の神楽",
+    "桜の名所の松前公園で、さくらまつりの時期に公開される"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "2018年に国の重要無形民俗文化財に指定。藩の行事の記録は1674年",
+      "sources": [
+        {
+          "url": "https://www.town.matsumae.hokkaido.jp/bunkazai/detail/00001640.html",
+          "title": "松前町 松前神楽",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "延宝2年（1674）には、福山城内で湯立の神楽が藩の公式行事として奏されていた",
+      "source": {
+        "url": "https://www.town.matsumae.hokkaido.jp/bunkazai/detail/00001640.html",
+        "title": "松前町 松前神楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "松前神楽は2018年3月8日に国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.town.matsumae.hokkaido.jp/bunkazai/detail/00001640.html",
+        "title": "松前町 松前神楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "いまの松前神楽は12の神事と21の舞楽からなり、松前・福島・函館・小樽の4地域で伝えている",
+      "source": {
+        "url": "https://www.town.matsumae.hokkaido.jp/bunkazai/detail/00001640.html",
+        "title": "松前町 松前神楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "公園の広場での公開の公演を見るもので、混雑や危険についての特別な注意は見つからない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.town.matsumae.hokkaido.jp/bunkazai/detail/00001640.html",
+        "title": "松前町 松前神楽（毎年4月29日、松前公園本丸広場で公開公演）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-04-29",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "松前町の案内に「毎年4月29日」とあることから見込んだ日（2027年の発表はまだ見つからない）。開始の時刻は案内に書かれていない。",
+      "sources": [
+        {
+          "url": "https://www.town.matsumae.hokkaido.jp/bunkazai/detail/00001640.html",
+          "title": "松前町 松前神楽（毎年4月29日、松前公園本丸広場で公開公演）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://itcj.or.jp/japanese-festival/pageindices/index32.html",
+          "title": "地域伝統芸能活用センター 日本の祭り総集編（松前神楽、毎年4月29日に松前公園本丸広場で公開公演。2025年12月末現在の情報）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.visit-hokkaido.jp/spot/detail_10161.html",
+        "title": "北海道公式観光サイト 松前公園・松前さくらまつり（JR木古内駅からバスで約90分、駐車場150台、さくらまつりの期間中は有料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "matsumae-castle-museum",
+      "name": "松前城資料館",
+      "kind": "sightseeing",
+      "summary": "松前公園の中にある松前城の天守を資料館にしたもの。開館は4月10日から12月10日まで（冬は閉館）。",
+      "location": {
+        "lat": 41.4307,
+        "lng": 140.1072
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": [],
+      "price": "大人360円、小・中学生240円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.town.matsumae.hokkaido.jp/hotnews/detail/00001504.html",
+          "title": "松前町 料金・営業時間（松前城資料館、4月10日〜12月10日、9時〜17時、入館は16時30分まで）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.visit-hokkaido.jp/spot/detail_10161.html",
+          "title": "北海道公式観光サイト 松前公園・松前さくらまつり（松前城資料館、無休、冬期休館）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.town.matsumae.hokkaido.jp/bunkazai/detail/00001640.html",
+      "title": "松前町 松前神楽（松前公園本丸広場での公開公演）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://itcj.or.jp/japanese-festival/pageindices/index32.html",
+      "title": "地域伝統芸能活用センター 日本の祭り総集編（松前神楽）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の公演の発表と開始・終了の時刻（日付は町の案内の「毎年4月29日」から見込んだもの）",
+    "雨天の扱い（屋外の広場での公演）",
+    "その年に演じる演目と公演の長さ",
+    "見学の決まり（場所取り・撮影）、服装・持ち物（主催者の案内が見つからない）",
+    "松前町には鉄道の駅がない。木古内駅から会場近くの停留所までのバスの所要時間と停留所名を、公式の出典で確かめられていない（北海道公式観光サイトは木古内駅からバスで約90分とだけ書く）",
+    "函館駅など玄関口の駅からの所要時間",
+    "さくらまつり期間中の駐車場の料金と、交通規制の有無",
+    "屋台の有無と、この日だけの食べもの",
+    "会場の近くの食事と休憩の場所（営業時間を公式で確かめられたものが見つかっていない）",
+    "会場と松前城資料館の緯度・経度は、国土地理院の住所検索で松前町松城の代表点を取ったもの（本丸広場・資料館そのものの位置ではない）",
+    "公演の規模（演じ手の人数・演目の数）"
+  ]
+}

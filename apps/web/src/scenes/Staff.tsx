@@ -15,6 +15,8 @@ import {
 import type { GLTF } from "three/addons/loaders/GLTFLoader.js";
 import {
   FACES,
+  facingYaw,
+  type Point,
   type SceneMotion,
   type Spot,
   type StaffPlan,
@@ -38,6 +40,8 @@ const FADE_SECONDS = 0.25;
 /** まばたきの間隔（秒）と長さ */
 const BLINK_EVERY = [2.5, 5] as const;
 const BLINK_LENGTH = 0.12;
+/** 吹き出しのしっぽの先を置く高さ（足もとから）。頭に少しすき間をあけ、しっぽが頭に重ならないようにする */
+const BUBBLE_HEIGHT = 1.4;
 
 export function faceTexture(root: Object3D, kind: string): Texture | null {
   const face = findNode(root, `${kind}.face`);
@@ -69,9 +73,11 @@ export interface StaffProps {
   seq: number;
   /** 吹き出しを重ねる位置（頭の上）を、毎フレーム書き込む */
   onHead?: (x: number, y: number, z: number) => void;
+  /** 立ち止まっている間に向く相手の位置（頼んだ相手・結果を受け取る相手）。なければ目印の向き */
+  lookAt?: () => Point | null;
 }
 
-export function Staff({ id, kind, model, clips, marks, plan, seq, onHead }: StaffProps) {
+export function Staff({ id, kind, model, clips, marks, plan, seq, onHead, lookAt }: StaffProps) {
   const group = useRef<Group>(null);
   const root = model.scene;
   const mixer = useMemo(() => new AnimationMixer(root), [root]);
@@ -160,7 +166,9 @@ export function Staff({ id, kind, model, clips, marks, plan, seq, onHead }: Staf
       s.yaw = turnToward(s.yaw, step.heading, dt * 8);
       play(plan.travel, false);
     } else {
-      s.yaw = turnToward(s.yaw, target.yaw, dt * 5);
+      const partner = lookAt?.() ?? null;
+      const yaw = partner === null ? null : facingYaw(object.position, partner);
+      s.yaw = turnToward(s.yaw, yaw ?? target.yaw, dt * 5);
       if (plan.once && !s.onceDone) {
         play(plan.motion, true);
       } else {
@@ -183,7 +191,7 @@ export function Staff({ id, kind, model, clips, marks, plan, seq, onHead }: Staf
       }
     }
 
-    onHead?.(object.position.x, object.position.y + 1.25, object.position.z);
+    onHead?.(object.position.x, object.position.y + BUBBLE_HEIGHT, object.position.z);
   });
 
   return (

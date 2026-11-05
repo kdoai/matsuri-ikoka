@@ -1,0 +1,337 @@
+{
+  "id": "tsuchiura-zenkoku-hanabi-kyogi-taikai",
+  "name": {
+    "ja": "土浦全国花火競技大会",
+    "en": "Tsuchiura All Japan Fireworks Competition"
+  },
+  "category": "fireworks",
+  "municipalities": [
+    {
+      "prefecture": "茨城県",
+      "name": "土浦市"
+    }
+  ],
+  "venue": {
+    "name": "桜川畔（学園大橋付近）",
+    "lat": 36.0668,
+    "lng": 140.1873
+  },
+  "scaleTier": "L",
+  "popularity": "major",
+  "listedIn": ["walkerplus", "jalan", "rurubu", "jnto"],
+  "highlights": [
+    "全国の花火師がスターマイン・10号玉・創造花火の3部門で腕を競う",
+    "3部門の優勝者から内閣総理大臣賞が選ばれる",
+    "晩秋の夜に約2万発、競技は約2時間半続く"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1925年に神龍寺の住職が始めた花火大会が、競技大会として続いていると主催者が紹介している",
+      "sources": [
+        {
+          "url": "https://www.tsuchiura-hanabi.jp/page/page000012.html",
+          "title": "土浦全国花火競技大会 大会の歴史",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "1925年、神龍寺の住職が私財を投じて霞ヶ浦の湖畔で開いたのが始まり",
+      "source": {
+        "url": "https://www.tsuchiura-hanabi.jp/page/page000012.html",
+        "title": "土浦全国花火競技大会 大会の歴史",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "海軍航空隊の殉職者の慰霊と、震災後の不況に苦しむ土浦の活性化が開催の理由",
+      "source": {
+        "url": "https://www.tsuchiura-hanabi.jp/page/page000012.html",
+        "title": "土浦全国花火競技大会 大会の歴史",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2000年（平成12年）から、3部門の優勝者から選ぶ内閣総理大臣賞が加わった",
+      "source": {
+        "url": "https://www.tsuchiura-hanabi.jp/page/page000012.html",
+        "title": "土浦全国花火競技大会 大会の歴史",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "大会の翌朝は、地元の小中学生を含む約2,400名が清掃にあたる",
+      "source": {
+        "url": "https://www.tsuchiura-hanabi.jp/page/page000024.html",
+        "title": "土浦全国花火競技大会 ゴミについて（翌日に約2,400名の清掃ボランティア）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "主催者の観覧席はすべて有料で、無料の観覧席はない。通路や道路に立ち止まって見ない",
+      "有料席はチケット1人1枚が必要で、指定の席に座って見る。立ち見や通路での観覧は禁止",
+      "有料席にテント・イス・パラソル・大型テーブル・ペットを持ち込めない。席での火気も禁止",
+      "観覧中は傘をささない",
+      "会場は全面禁煙（電子たばこも）で、喫煙所はない",
+      "会場周辺でのドローンなどの飛行、ヘリコプターの遊覧飛行は禁止",
+      "ごみは決められたごみ置き場に置く"
+    ],
+    "dress": [
+      "暖かい服装",
+      "スニーカーなど歩きやすい靴",
+      "汚れてもよい靴や服",
+      "燃えかすよけの帽子やメガネ"
+    ],
+    "bring": [
+      "雨具（レインコートなど）",
+      "懐中電灯",
+      "上着やひざ掛け",
+      "レジャーシートやクッション",
+      "ティッシュやウェットティッシュ",
+      "携帯ラジオ",
+      "大きなごみ袋",
+      "飲食物（有料席の会場内で販売の予定はない）"
+    ],
+    "risk": {
+      "level": "medium",
+      "reason": "前回の人出は約65万人で、夜の河川敷。足場が悪くなることがあり、燃えかすも落ちる"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "通路など席以外からの撮影は禁止。自席でも座高を超える高さで撮らない。座高を超える三脚は使えない"
+    },
+    "sources": [
+      {
+        "url": "https://www.tsuchiura-hanabi.jp/",
+        "title": "土浦全国花火競技大会 公式サイト（第95回、ヘリコプターとドローンの飛行禁止）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.tsuchiura-hanabi.jp/page/page000309.html",
+        "title": "土浦全国花火競技大会 チケットをお持ちでない方へ（無料観覧席なし）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.tsuchiura-hanabi.jp/page/page000298.html",
+        "title": "土浦全国花火競技大会 有料観覧席について（持ち込み・撮影・雨天の決まり）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.tsuchiura-hanabi.jp/page/page000025.html",
+        "title": "土浦全国花火競技大会 マナーについて",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.tsuchiura-hanabi.jp/page/page000024.html",
+        "title": "土浦全国花火競技大会 ゴミについて（翌日に約2,400名の清掃ボランティア）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.tsuchiura-hanabi.jp/faq.php?mode=detail&lc=0&c=4&code=23",
+        "title": "土浦全国花火競技大会 FAQ 服装",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.tsuchiura-hanabi.jp/faq.php?mode=detail&lc=0&c=4&code=24",
+        "title": "土浦全国花火競技大会 FAQ 持ち物",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0308e00280/data.html",
+        "title": "ウォーカープラス 第95回 土浦全国花火競技大会 データ（約2万発、前回の人出 約65万人、臨時駐車場、屋台あり）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-07",
+      "start": "17:30",
+      "end": "20:00",
+      "status": "announced",
+      "rainPolicy": "原則として雨天決行。荒天のときは11月14日（土）に延期",
+      "note": "第95回。17:30 競技開始、20:00 終了予定。打ち上げは約2万発",
+      "sources": [
+        {
+          "url": "https://www.tsuchiura-hanabi.jp/page/page000010.html",
+          "title": "土浦全国花火競技大会 大会概要（11月7日 17:30〜20:00、荒天は11月14日、3部門）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.tsuchiura-hanabi.jp/",
+          "title": "土浦全国花火競技大会 公式サイト（第95回、ヘリコプターとドローンの飛行禁止）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.tsuchiura-hanabi.jp/page/page000298.html",
+          "title": "土浦全国花火競技大会 有料観覧席について（持ち込み・撮影・雨天の決まり）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://hanabi.walkerplus.com/detail/ar0308e00280/data.html",
+          "title": "ウォーカープラス 第95回 土浦全国花火競技大会 データ（約2万発、前回の人出 約65万人、臨時駐車場、屋台あり）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR常磐線 土浦駅",
+        "walkMinutes": [30, 35],
+        "note": "約2.5km。東口から有料のシャトルバスで約10分（片道 大人400円、15:00〜17:30、18:30〜21:30）。混むと駅の入場が規制されることがある"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "上野駅",
+        "minutes": [45, 80],
+        "route": "JR常磐線。特急で約45分、普通で約70分"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.tsuchiura-hanabi.jp/page/page000020.html",
+        "title": "土浦全国花火競技大会 電車でお越しの方（上野駅から特急約45分、普通約70分、駅から徒歩約30分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.tsuchiura-hanabi.jp/page/page000021.html",
+        "title": "土浦全国花火競技大会 シャトルバス",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.tsuchiura-hanabi.jp/page/page000257.html",
+        "title": "土浦全国花火競技大会 車でお越しの方",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0308e00280/data.html",
+        "title": "ウォーカープラス 第95回 土浦全国花火競技大会 データ（約2万発、前回の人出 約65万人、臨時駐車場、屋台あり）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "tsuchiura-machikado-kura-daitoku",
+      "name": "土浦まちかど蔵「大徳」",
+      "kind": "sightseeing",
+      "summary": "江戸時代後期の呉服店を改装した蔵。観光案内と土産の販売をしている。12月29日〜1月3日は休み。土浦駅から徒歩約15分",
+      "location": {
+        "lat": 36.0826,
+        "lng": 140.2002
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "18:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.tsuchiura-kankou.jp/machikado_kura/",
+          "title": "土浦市観光協会 まちかど蔵",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/80005977",
+          "title": "るるぶ&more. 土浦まちかど蔵（土浦駅から徒歩約15分）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.tsuchiura-hanabi.jp/",
+      "title": "土浦全国花火競技大会 公式サイト（第95回、ヘリコプターとドローンの飛行禁止）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.tsuchiura-hanabi.jp/page/page000010.html",
+      "title": "土浦全国花火競技大会 大会概要（11月7日 17:30〜20:00、荒天は11月14日、3部門）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.tsuchiura-hanabi.jp/page/page000012.html",
+      "title": "土浦全国花火競技大会 大会の歴史",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://hanabi.walkerplus.com/detail/ar0308e00280/data.html",
+      "title": "ウォーカープラス 第95回 土浦全国花火競技大会 データ（約2万発、前回の人出 約65万人、臨時駐車場、屋台あり）",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_346951/",
+      "title": "じゃらんnet 土浦全国花火競技大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20003258",
+      "title": "るるぶ&more. 土浦全国花火競技大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.japan.travel/en/ph/spot-activity/tsuchiura-all-japan-fireworks-competition/",
+      "title": "日本政府観光局 Tsuchiura All Japan Fireworks Competition（開催の時期は古い記載）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "交通規制の時間と場所",
+    "駐車場の台数と料金の主催者の発表（約4,500台は観光サイトの記載。公式は販売制の駐車場を案内している）",
+    "2027年の開催日",
+    "地元の味・祭りの日だけの食べ物",
+    "祭りの前後に寄れる食の店",
+    "周辺の場所の知名度"
+  ]
+}

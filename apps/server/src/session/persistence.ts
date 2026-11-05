@@ -1,4 +1,9 @@
-import { type Itinerary, ItinerarySchema } from "@matsuri-ikoka/schema";
+import {
+  AnchorPlanSchema,
+  type Itinerary,
+  ItinerarySchema,
+  TripAnchorSchema,
+} from "@matsuri-ikoka/schema";
 import type { SessionSnapshot, TripStorage } from "../storage/types";
 import type { ItineraryStore, Session, SessionStore } from "./sessionStore";
 
@@ -25,7 +30,22 @@ export function snapshotOf(session: Session, now: number): SessionSnapshot {
     candidates: session.candidates,
     selectedFestivalId: session.selectedFestivalId,
     itineraryId: session.itineraryId,
+    anchor: session.anchor,
+    anchorPlan: session.anchorPlan,
+    anchorCheck: session.anchorCheck,
+    cancelledAnchor: session.cancelledAnchor,
     replay: session.replay,
+  };
+}
+
+/** 保存の口から読んだアンカーを、いまの形で確かめる。前の形のものは捨てる（組み立ては次の発言で計算し直す） */
+function currentAnchorState(saved: SessionSnapshot): SessionSnapshot {
+  const anchor = TripAnchorSchema.safeParse(saved.anchor);
+  const plan = AnchorPlanSchema.safeParse(saved.anchorPlan);
+  return {
+    ...saved,
+    anchor: anchor.success ? anchor.data : null,
+    anchorPlan: anchor.success && plan.success ? plan.data : null,
   };
 }
 
@@ -111,7 +131,7 @@ export class StoragePersistence {
       const itinerary = await this.readShared(saved.itineraryId).catch(() => undefined);
       if (itinerary !== undefined) this.#itineraries.remember(itinerary);
     }
-    return this.#sessions.restore(saved);
+    return this.#sessions.restore(currentAnchorState(saved));
   }
 
   /**

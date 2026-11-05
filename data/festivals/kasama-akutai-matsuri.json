@@ -1,0 +1,191 @@
+{
+  "id": "kasama-akutai-matsuri",
+  "name": { "ja": "悪態まつり", "en": "Kasama Akutai Festival" },
+  "category": "ritual",
+  "municipalities": [{ "prefecture": "茨城県", "name": "笠間市" }],
+  "venue": { "name": "愛宕神社の北側の飯綱神社と愛宕山", "lat": 36.2917, "lng": 140.2546 },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "白装束の天狗に向かって、参拝者が悪態をつきながら付いて回る",
+    "山中の祠に納められた供え物を、参拝者どうしが奪い合う",
+    "白装束で天狗の姿をした13人が16か所の祠を巡る"
+  ],
+  "styles": [
+    {
+      "style": "community",
+      "basis": "愛宕神社の総代の人たちが催行する",
+      "sources": [
+        {
+          "url": "https://www.city.kasama.lg.jp/page/page000154.html",
+          "title": "笠間市 悪態まつり",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "天狗の姿の13人が、16か所の祠に供え物を納めて回る",
+      "source": {
+        "url": "https://www.city.kasama.lg.jp/page/page000154.html",
+        "title": "笠間市 悪態まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "怨霊や疫病を退ける「悪退」の祭りが起こりという説など、由来には諸説ある",
+      "source": {
+        "url": "https://www.city.kasama.lg.jp/page/page000154.html",
+        "title": "笠間市 悪態まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "奪った供え物を持ち帰ると、無病息災や五穀豊穣のご利益があるとされる",
+      "source": {
+        "url": "https://www.city.kasama.lg.jp/page/page000154.html",
+        "title": "笠間市 悪態まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "昔は夜に行っていたが、今は昼間に行う",
+      "source": {
+        "url": "https://www.kasama-kankou.jp/section.php?code=450",
+        "title": "笠間観光協会 悪態まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "当日、参拝者として悪態をつき、供え物の奪い合いに加われる（料金は無料）",
+    "rules": [
+      "神官が拝み終わる前に供え物を奪わない（掟破りとして天狗に青竹で止められる）",
+      "個人の名前を挙げて悪口を言わない"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "high",
+      "reason": "供え物を奪い合い、掟を破ると天狗が青竹で止めるので、けがをするおそれがあると笠間市が注意している"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.kasama.lg.jp/page/page000154.html",
+        "title": "笠間市 悪態まつり（注意事項）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kasama-kankou.jp/section.php?code=450",
+        "title": "笠間観光協会 悪態まつり（料金無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-20",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2026年の発表はまだない）。笠間市の年間行事の「12月第3日曜日」による日。2025年は13:30 飯綱神社で御祈祷、13:50 天狗の巡拝が出発して約4kmの山道を約1時間半で回り、15:30 愛宕神社で餅・菓子まきだった",
+      "sources": [
+        {
+          "url": "https://www.city.kasama.lg.jp/page/page002298.html",
+          "title": "笠間市 年間行事（12月第3日曜日 悪態まつり 愛宕神社）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://kasamablog.com/?p=2712",
+          "title": "かさまブログ 笠間市・飯綱神社で「悪態まつり」開催 2025年12月21日（当日の流れ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-12-19",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2027年の発表はまだない）。笠間市の年間行事の「12月第3日曜日」による日",
+      "sources": [
+        {
+          "url": "https://www.city.kasama.lg.jp/page/page002298.html",
+          "title": "笠間市 年間行事（12月第3日曜日 悪態まつり 愛宕神社）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR常磐線 岩間駅",
+        "walkMinutes": [60, 65],
+        "note": "徒歩約60分。車で約10分（4km）"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.kasama-kankou.jp/section.php?code=450",
+        "title": "笠間観光協会 悪態まつり（岩間駅から車で10分、徒歩60分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": { "stalls": "unknown", "local": [] },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.city.kasama.lg.jp/page/page000154.html",
+      "title": "笠間市 悪態まつり",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.kasama-kankou.jp/section.php?code=450",
+      "title": "笠間観光協会 悪態まつり",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.kasama.lg.jp/map.php?code=110",
+      "title": "笠間市 年間行事の地図 愛宕神社（緯度・経度）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2026年の開催日と時刻の発表",
+    "毎年の開催日の決まり（笠間市は12月第3日曜日、笠間観光協会は旧暦11月14日としていて食い違う）",
+    "会場（飯綱神社）の正確な位置",
+    "雨のときの扱い",
+    "駐車場の有無",
+    "服装と持ち物",
+    "写真の撮り方の決まり",
+    "露店の有無と、祭りならではの食べもの",
+    "巡拝の道のどこで見物できるか",
+    "主要駅から岩間駅までの所要時間",
+    "周辺の観光と食事の場所（確かめられた場所がない）"
+  ]
+}

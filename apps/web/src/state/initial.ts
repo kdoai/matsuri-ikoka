@@ -1,4 +1,7 @@
 import { DEFAULT_PREFERENCES, STAFF_IDS, type StaffId } from "@matsuri-ikoka/schema";
+import { INITIAL_CONSULT } from "./consult";
+import { INITIAL_FESTIVAL_SEARCH } from "./festivalSearch";
+import { QUIZ_BANK } from "./quizBank";
 import type { AppData, Locale, StaffState } from "./types";
 
 export const IDLE_STAFF: StaffState = Object.freeze({
@@ -7,6 +10,7 @@ export const IDLE_STAFF: StaffState = Object.freeze({
   task: null,
   tool: null,
   bubble: null,
+  detail: null,
   seq: 0,
 });
 
@@ -16,13 +20,16 @@ function byStaff<T>(value: T): Record<StaffId, T> {
 
 export interface InitialOptions {
   locale?: Locale;
+  /** はじめての操作の案内を、前に見終えているか */
+  tutorialSeen?: boolean;
 }
 
 /** 相談を始める前の状態。新しい相談を始めるときも、ここから作り直す */
-export function initialData({ locale = "ja" }: InitialOptions = {}): AppData {
+export function initialData({ locale = "ja", tutorialSeen = false }: InitialOptions = {}): AppData {
   return {
     session: {
       id: null,
+      mode: null,
       status: "closed",
       stage: "hearing",
       conditions: {},
@@ -33,11 +40,16 @@ export function initialData({ locale = "ja" }: InitialOptions = {}): AppData {
       lastWasPreferences: false,
       turnTasks: [],
       turnTools: [],
+      newCandidates: false,
     },
     preferences: { ...DEFAULT_PREFERENCES },
+    consult: { ...INITIAL_CONSULT, answers: {} },
+    festivalSearch: { ...INITIAL_FESTIVAL_SEARCH },
     messages: [],
     staff: byStaff(IDLE_STAFF),
+    relay: { log: [], asking: null, focus: null, holding: [] },
     candidates: [],
+    search: null,
     spots: [],
     itinerary: { current: null, previous: null, diff: null },
     verify: {
@@ -48,7 +60,7 @@ export function initialData({ locale = "ja" }: InitialOptions = {}): AppData {
       sources: [],
       note: null,
     },
-    quiz: { offeredTurn: null, question: null, answer: null },
+    quiz: { deck: QUIZ_BANK.map((quiz) => quiz.id), answers: {} },
     stamps: 0,
     trivia: { index: 0 },
     festivals: {},
@@ -64,6 +76,7 @@ export function initialData({ locale = "ja" }: InitialOptions = {}): AppData {
       celebrating: false,
       draft: "",
       dialogueOpen: false,
+      tutorialSeen,
     },
   };
 }

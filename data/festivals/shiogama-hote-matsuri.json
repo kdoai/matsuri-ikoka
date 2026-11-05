@@ -1,0 +1,256 @@
+{
+  "id": "shiogama-hote-matsuri",
+  "name": {
+    "ja": "帆手祭",
+    "en": "Shiogama Shrine Hote Matsuri"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "宮城県",
+      "name": "塩竈市"
+    }
+  ],
+  "venue": {
+    "name": "志波彦神社・鹽竈神社",
+    "lat": 38.3186,
+    "lng": 141.0133
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["rurubu", "jalan"],
+  "highlights": [
+    "約1トンの神輿が、202段の急な表坂（男坂）を担がれて下りる",
+    "500人を超えるお供と稚児行列を従えて、神輿が塩竈の町を一日かけて巡る",
+    "夜7時ごろ、町を巡った神輿が表坂の下へ帰ってくる"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "市の案内では、江戸時代から続く火伏せの祭りとされる",
+      "sources": [
+        {
+          "url": "https://www.city.shiogama.miyagi.jp/soshiki/48/56010.html",
+          "title": "塩竈市 塩竈の歳時記",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "もとは正月の神輿洗いの神事で、火伏せの祭りとして始まったとされる",
+      "source": {
+        "url": "https://www.miyagi-kankou.or.jp/kakikomi/detail.php?id=3545",
+        "title": "宮城まるごと探訪 鹽竈神社帆手祭(ほてまつり) '26.3.10(火)",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "神輿の担ぎ手は16人。約1トンの神輿で202段の石段を下りる",
+      "source": {
+        "url": "https://www.miyagi-kankou.or.jp/kakikomi/detail.php?id=3545",
+        "title": "宮城まるごと探訪 鹽竈神社帆手祭(ほてまつり) '26.3.10(火)",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "塩竈市は、この神輿を日本三大荒れ神輿の一つとして紹介している",
+      "source": {
+        "url": "https://www.city.shiogama.miyagi.jp/soshiki/48/56010.html",
+        "title": "塩竈市 塩竈の歳時記",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "神輿が町を巡る「氏子三祭」の一つで、地元では春を呼ぶ祭りともいわれる",
+      "source": {
+        "url": "https://kankoubussan.shiogama.miyagi.jp/event/detail.php?id=476",
+        "title": "塩竈市観光物産協会 イベントカレンダー 帆手祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": []
+  },
+  "occurrences": [
+    {
+      "date": "2026-03-10",
+      "start": "10:00",
+      "end": "19:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "10:00 本殿祭、11:00 発輿祭、11:30 神輿が出発して表坂を下り、市内を御神幸、19:00ごろ表坂下に還御。お供は500人を超える",
+      "sources": [
+        {
+          "url": "https://www.miyagi-kankou.or.jp/kakikomi/detail.php?id=3545",
+          "title": "宮城まるごと探訪 鹽竈神社帆手祭(ほてまつり) '26.3.10(火)（宮城県観光連盟）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://kankoubussan.shiogama.miyagi.jp/event/detail.php?id=476",
+          "title": "塩竈市観光物産協会 イベントカレンダー 帆手祭（2026-03-10、本殿祭10:00・発輿祭11:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-03-10",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "宮城県観光連盟の案内の「毎年同日」と、塩竈市の歳時記の「3月10日」から見込んだ日（2027年の発表はまだない）。例年は午前に本殿祭と発輿祭、昼前に神輿が出発し、夜に表坂下へ還御する",
+      "sources": [
+        {
+          "url": "https://www.miyagi-kankou.or.jp/kakikomi/detail.php?id=3545",
+          "title": "宮城まるごと探訪 鹽竈神社帆手祭(ほてまつり)（毎年同日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.city.shiogama.miyagi.jp/soshiki/48/56010.html",
+          "title": "塩竈市 塩竈の歳時記（3月10日 帆手祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 本塩釜駅",
+        "walkMinutes": [10, 15],
+        "note": "JR仙石線。宮城県観光連盟の案内で徒歩約10分（るるぶ&more.は徒歩15分）"
+      },
+      {
+        "name": "JR 塩釜駅",
+        "walkMinutes": [20, 25],
+        "note": "JR東北本線。宮城県観光連盟の案内で徒歩約20分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "仙台駅",
+        "minutes": [27, 37],
+        "route": "JR仙石線で本塩釜駅まで約27分（塩竈市の案内）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.miyagi-kankou.or.jp/kakikomi/detail.php?id=3545",
+        "title": "宮城まるごと探訪 鹽竈神社帆手祭(ほてまつり)（本塩釜駅から徒歩約10分、塩釜駅から徒歩約20分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.shiogama.miyagi.jp/soshiki/6/2374.html",
+        "title": "塩竈市 塩竈市へのアクセス・市内交通（仙台駅から仙石線で本塩釜駅まで約27分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://shiogamajinja.jp/access/",
+        "title": "志波彦神社・鹽竈神社 アクセス（参拝者専用の無料駐車場が4か所、約350台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20001167",
+        "title": "るるぶ&more. 帆手祭（JR本塩釜駅から徒歩15分、駐車場300台・無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "shiogama-shrine-museum",
+      "name": "鹽竈神社博物館",
+      "kind": "sightseeing",
+      "summary": "鹽竈神社の境内にある博物館。武具や古文書など神社に伝わる文化財と、塩づくり・漁業の資料を展示し、藻塩焼神事を映像で紹介している。神社の祭典の日は木曜でも開館する",
+      "location": {
+        "lat": 38.3182,
+        "lng": 141.0151
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "16:00"
+      },
+      "closedDays": ["thu"],
+      "price": "一般500円",
+      "tags": ["indoor"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://shiogamajinja.jp/shiogama-shrine-museum/",
+          "title": "志波彦神社・鹽竈神社 鹽竈神社博物館（9:00〜16:00、木曜休館、祭典の日は開館）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.miyagi-kankou.or.jp/kakikomi/detail.php?id=3545",
+      "title": "宮城まるごと探訪 鹽竈神社帆手祭(ほてまつり)（宮城県観光連盟、会場は志波彦神社・鹽竈神社境内〜塩竈市内）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://kankoubussan.shiogama.miyagi.jp/event/detail.php?id=476",
+      "title": "塩竈市観光物産協会 イベントカレンダー 帆手祭（鹽竈神社及び塩竈市内）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.shiogama.miyagi.jp/soshiki/48/56010.html",
+      "title": "塩竈市 塩竈の歳時記（3月10日 帆手祭）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://shiogamajinja.jp/access/",
+      "title": "志波彦神社・鹽竈神社 アクセス（宮城県塩竈市一森山1-1）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と時刻（日は宮城県観光連盟の「毎年同日」と市の歳時記の「3月10日」から見込んだもの）",
+    "作法（見学のしかた、神輿に近づくときの注意、撮影、服装、持ち物）が、主催の神社・市・観光団体の案内に見つからない。神社の公式サイトはつくり直され、帆手祭のページが見当たらない",
+    "神輿が市内を巡る道筋と、立ち寄る場所・おおよその通過の時刻",
+    "雨天の扱い",
+    "祭りの日の交通規制",
+    "祭りの日に神社の駐車場が使えるか（平常は参拝者用の無料駐車場が約350台）",
+    "屋台・露店が出るか",
+    "仙台駅から塩釜駅（東北本線）経由の所要時間（塩釜駅まで約15分と市は案内するが、合計の時間は確かめていない）",
+    "前後に寄れる食事・休憩の場所（塩釜水産物仲卸市場は水曜定休で、2027年3月10日は水曜のため選ばなかった）",
+    "会場の緯度・経度は、国土地理院の地名検索で境内の「鹽竈神社の鹽竈ザクラ」の位置を使ったもの（社殿そのものの位置ではない）",
+    "博物館の最終入館の時刻"
+  ]
+}

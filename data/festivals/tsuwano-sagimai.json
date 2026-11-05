@@ -1,0 +1,366 @@
+{
+  "id": "tsuwano-sagimai",
+  "name": { "ja": "鷺舞神事", "en": "Tsuwano Sagimai (Egret Dance)" },
+  "category": "performing_arts",
+  "municipalities": [{ "prefecture": "島根県", "name": "鹿足郡津和野町" }],
+  "venue": { "name": "弥栄神社ほか町内各所", "lat": 34.4696, "lng": 131.769 },
+  "scaleTier": "M",
+  "popularity": "major",
+  "listedIn": ["walkerplus", "jalan", "rurubu", "jnto"],
+  "highlights": [
+    "白い鷺の装束をつけた雌雄2羽が、羽を広げて向かい合って舞う",
+    "20日は11か所、27日は9か所の決まった場所で、年に2日だけ舞う",
+    "天狗（猿田彦命）を先頭に、囃子と唄の行列が城下町を練り歩く",
+    "鷺舞に先立ち、子どもたちの子鷺踊りが町を巡って披露される"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1542年に伝わり、1643年に京都で習い直して受け継がれてきた",
+      "sources": [
+        {
+          "url": "https://tsuwano-kanko.net/info/sagimai/",
+          "title": "津和野町観光協会 鷺舞神事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "弥栄神社の鷺舞保存会が保護団体として受け継ぐ",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/203483",
+          "title": "文化遺産オンライン 津和野弥栄神社の鷺舞（保護団体 鷺舞保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "1542年に吉見正頼が山口の祇園会から移したと伝わり、本元は京都の八坂神社の祇園会",
+      "source": {
+        "url": "https://tsuwano-kanko.net/info/sagimai/",
+        "title": "津和野町観光協会 鷺舞神事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "一度途絶えたが、1643年に亀井茲政が京都へ人を送って習わせ、今まで受け継がれてきた",
+      "source": {
+        "url": "https://tsuwano-kanko.net/info/sagimai/",
+        "title": "津和野町観光協会 鷺舞神事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "鷺頭は高さ85cm・約3kg。39枚の羽を扇形にまとめた鷺羽は約12kgある",
+      "source": {
+        "url": "https://www.kankou-shimane.com/destination/21279",
+        "title": "島根県観光連盟 鷺舞神事（祗園祭）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2022年に、全国の風流踊の一つとしてユネスコ無形文化遺産に登録された",
+      "source": {
+        "url": "https://www.kankou-shimane.com/hagiiwami-magazine/news/1411/",
+        "title": "TRIP WEB MAGAZINE 萩・石見 【津和野】祇園祭 鷺舞神事（2026年6月22日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "町内の決まった場所で舞を見学する行事で、混雑や危険についての特別な注意は案内に見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://tsuwano-kanko.net/info/sagimai/",
+        "title": "津和野町観光協会 鷺舞神事（舞方・囃方・唄方などの構成と順路）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kankou-shimane.com/pickup/46563.html",
+        "title": "島根県観光連盟 津和野の鷺舞（さぎまい）神事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-07-20",
+      "start": "16:00",
+      "end": "18:10",
+      "status": "announced",
+      "rainPolicy": "雨天のときは、役場向かいの町民センターの体育館で行う",
+      "note": "ご神幸の日。町内11か所で舞う。16:00 頭屋前（町民センター）を出発、16:15 弥栄神社、16:40 嘉楽園、17:45 お旅所などを巡り、18:10ごろ頭屋前に戻る（観光協会の2025年からの時刻表。状況により前後する）",
+      "sources": [
+        {
+          "url": "https://www.kankou-shimane.com/hagiiwami-magazine/news/1411/",
+          "title": "TRIP WEB MAGAZINE 萩・石見 【津和野】祇園祭 鷺舞神事（2026年6月22日、7月20日・27日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kankou-shimane.com/pickup/46563.html",
+          "title": "島根県観光連盟 津和野の鷺舞（さぎまい）神事（7月20日（月・祝）・7月27日（月））",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://tsuwano-kanko.net/info/sagimai/",
+          "title": "津和野町観光協会 鷺舞神事（2025年からの時刻表）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-07-27",
+      "start": "16:00",
+      "end": "18:20",
+      "status": "announced",
+      "rainPolicy": "雨天のときは、役場向かいの町民センターの体育館で行う",
+      "note": "ご還幸の日。20日と逆の道筋で町内9か所で舞う。16:00 頭屋前を出発、16:45 お旅所、17:30 弥栄神社（翌年の頭屋への引き継ぎ）を経て、18:20ごろ頭屋前に戻る（観光協会の2025年からの時刻表。状況により前後する）",
+      "sources": [
+        {
+          "url": "https://www.kankou-shimane.com/hagiiwami-magazine/news/1411/",
+          "title": "TRIP WEB MAGAZINE 萩・石見 【津和野】祇園祭 鷺舞神事（2026年6月22日、7月20日・27日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kankou-shimane.com/pickup/46563.html",
+          "title": "島根県観光連盟 津和野の鷺舞（さぎまい）神事（7月20日（月・祝）・7月27日（月））",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://tsuwano-kanko.net/info/sagimai/",
+          "title": "津和野町観光協会 鷺舞神事（2025年からの時刻表）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-20",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年7月20日に行う決まりから見込んだ日（2027年の発表はまだない）。例年は16:00に頭屋前を出発し、町内11か所で舞って18:10ごろに戻る",
+      "sources": [
+        {
+          "url": "https://www.town.tsuwano.lg.jp/www/contents/1355963334578/index.html",
+          "title": "津和野町 弥栄神社（鷺舞は毎年7月20日と27日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://tsuwano-kanko.net/info/sagimai/",
+          "title": "津和野町観光協会 鷺舞神事（7月20日ご神幸・27日ご還幸）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-27",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年7月27日に行う決まりから見込んだ日（2027年の発表はまだない）。例年は16:00に頭屋前を出発し、町内9か所で舞って18:20ごろに戻る",
+      "sources": [
+        {
+          "url": "https://www.town.tsuwano.lg.jp/www/contents/1355963334578/index.html",
+          "title": "津和野町 弥栄神社（鷺舞は毎年7月20日と27日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://tsuwano-kanko.net/info/sagimai/",
+          "title": "津和野町観光協会 鷺舞神事（7月20日ご神幸・27日ご還幸）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 津和野駅",
+        "walkMinutes": [10, 15],
+        "note": "鷺舞神事の会場（島根県観光連盟の案内で徒歩10分）"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "新山口駅",
+        "minutes": [60, 70],
+        "route": "JR山口線の特急（新幹線の停車駅から約1時間）"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.kankou-shimane.com/destination/21279",
+        "title": "島根県観光連盟 鷺舞神事（祗園祭）（津和野駅から徒歩10分、周辺の有料駐車場200台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://tsuwano-kanko.net/yuna/about_tsuwano/",
+        "title": "津和野町観光協会 津和野について（新山口駅から特急で約1時間）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "源氏巻",
+        "note": "こしあんを薄い生地で包んだ津和野の銘菓。町内の菓子店で買える",
+        "sources": [
+          {
+            "url": "https://www.kankou-shimane.com/destination/20959",
+            "title": "島根県観光連盟 源氏巻",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      },
+      {
+        "name": "うずめ飯",
+        "note": "角切りの具をご飯の下に埋め、薬味をのせてすまし汁をかける郷土料理。町内の郷土料理店で出す",
+        "sources": [
+          {
+            "url": "https://www.kankou-shimane.com/destination/21384",
+            "title": "島根県観光連盟 うずめ飯",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "anno-mitsumasa-art-museum",
+      "name": "安野光雅美術館",
+      "kind": "sightseeing",
+      "summary": "津和野出身の画家・安野光雅の作品約120点を展示する美術館。昭和初期の教室の再現やプラネタリウム、図書室もある。津和野駅のすぐそば。12月29〜31日も休館",
+      "location": { "lat": 34.4717, "lng": 131.7745 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "09:00", "close": "17:00", "lastEntry": "16:45" },
+      "closedDays": ["thu"],
+      "price": "一般800円",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.kankou-shimane.com/destination/20360",
+          "title": "島根県観光連盟 安野光雅美術館（木曜休館、祝日は開館）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "taikodani-inari-jinja",
+      "name": "太皷谷稲成神社",
+      "kind": "sightseeing",
+      "summary": "1773年に津和野藩主が伏見稲荷から迎えた神社で、日本五大稲荷の一つに数えられる。約1,000本の鳥居が続く参道を登る。津和野駅から徒歩約30分",
+      "location": { "lat": 34.4654, "lng": 131.7651 },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": [],
+      "price": null,
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.kankou-shimane.com/destination/20246",
+          "title": "島根県観光連盟 太皷谷稲成神社（休みなし、駐車場約100台無料）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "chikufuken-genjimaki-teyaki",
+      "name": "竹風軒 源氏巻手焼き体験",
+      "kind": "food",
+      "summary": "竹風軒本町店の横で、源氏巻を自分で焼ける体験。3〜11月の土日祝は13:00〜15:00に先着順、ほかの日は1週間前までの予約で9:00〜15:00に受ける",
+      "location": { "lat": 34.4697, "lng": 131.7746 },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": [],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.kankou-shimane.com/destination/47230",
+          "title": "島根県観光連盟 源氏巻手焼き体験（年中無休）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.town.tsuwano.lg.jp/www/contents/1355963334578/index.html",
+      "title": "津和野町 弥栄神社",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://tsuwano-kanko.net/info/sagimai/",
+      "title": "津和野町観光協会 鷺舞神事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.kankou-shimane.com/destination/21279",
+      "title": "島根県観光連盟 鷺舞神事（祗園祭）（津和野町後田ロ64-6）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と時刻",
+    "見学の決まり（立ち位置・場所取り）、撮影の扱い、服装・持ち物",
+    "開始の時刻の食い違い（観光協会の時刻表は16:00出発、島根県観光連盟の別のページは午後3時ごろから）",
+    "子鷺踊りの時刻と巡る場所",
+    "祭りの日の交通規制と駐車場の扱い",
+    "屋台の有無と、祭りの日だけの食べもの",
+    "会場の緯度・経度は国土地理院の住所検索で後田ロの地番から取った近い位置で、弥栄神社の正確な位置ではない",
+    "太皷谷稲成神社の参拝の時間",
+    "源氏巻手焼き体験の料金と、平日（2026年は月曜、2027年は火曜）の予約の受け方",
+    "見物客の数（規模は、町内の11か所・9か所をめぐり日ごとに道筋が違う行事として M にした）"
+  ]
+}

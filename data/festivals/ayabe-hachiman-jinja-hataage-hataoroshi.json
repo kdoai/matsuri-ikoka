@@ -1,0 +1,222 @@
+{
+  "id": "ayabe-hachiman-jinja-hataage-hataoroshi",
+  "name": {
+    "ja": "綾部八幡神社の旗上げ・旗下ろし行事",
+    "en": "Ayabe Hachiman Shrine Flag Raising and Lowering Rituals"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "佐賀県",
+      "name": "みやき町"
+    }
+  ],
+  "venue": {
+    "name": "綾部八幡神社",
+    "lat": 33.3602,
+    "lng": 130.439
+  },
+  "scaleTier": "XS",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "締め込み姿の男衆が道具を使わず大イチョウに登り、竹竿の先の神旗を樹上に掲げる",
+    "秋分の日の翌日に旗を下ろし、巻き具合から宮司が風雨と作物の出来を占って伝える",
+    "旗を掲げている間、宮司が毎日朝夕に旗のなびき方を記録し続ける"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "951年に始まったと伝わり、2017年に佐賀県の重要無形民俗文化財になった",
+      "sources": [
+        {
+          "url": "https://www.town.miyaki.lg.jp/kanko/_5532.html",
+          "title": "みやき町 綾部八幡神社の旗上げ・旗下ろし行事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "身を清めた氏子の男衆が神木に登って神旗を掲げる",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/region/41/41346",
+          "title": "文化遺産オンライン 綾部八幡神社の旗上げ・旗下ろし行事",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "951年に始まったと伝わる行事で、2017年に佐賀県の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.town.miyaki.lg.jp/kanko/_5532.html",
+        "title": "みやき町 綾部八幡神社の旗上げ・旗下ろし行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "国の「記録作成等の措置を講ずべき無形の民俗文化財」にも選ばれている風占いの行事",
+      "source": {
+        "url": "https://online.bunka.go.jp/heritages/region/41/41346",
+        "title": "文化遺産オンライン 佐賀県みやき町（綾部八幡神社の旗上げ・旗下ろし行事）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "神旗は長さ18mの竹の先に結ばれ、高さ約30mの大イチョウの先端に取り付けられる",
+      "source": {
+        "url": "https://www.saga-s.co.jp/articles/-/548588",
+        "title": "佐賀新聞 占いの旗大木に掲げ 綾部神社 みやき町（2020年7月15日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "神社の境内で神事を見守るもので、町や主催者の混雑・危険についての注意は見つからない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.town.miyaki.lg.jp/kanko/_5532.html",
+        "title": "みやき町 綾部八幡神社の旗上げ・旗下ろし行事（神旗人と呼ばれる締め込み姿の男衆が担う）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-07-15",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "開催の記録（旗上げ）。約45cm×30cmの麻の神旗を大イチョウに掲げた。時刻は分からない",
+      "sources": [
+        {
+          "url": "https://www.saga-s.co.jp/articles/-/1798060",
+          "title": "佐賀新聞 「干ばつ続く恐れある」 みやき町の綾部八幡神社で旗下ろし神事（2026年9月26日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "start": "14:00",
+      "end": "17:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "開催の記録（旗下ろし）。締め込み姿の男衆3人が大イチョウから神旗を下ろし、宮司が占いの結果を伝えた。前後に子どもから大人までの奉納相撲があった。時刻は観光の案内サイトのもの",
+      "sources": [
+        {
+          "url": "https://www.saga-s.co.jp/articles/-/1798060",
+          "title": "佐賀新聞 「干ばつ続く恐れある」 みやき町の綾部八幡神社で旗下ろし神事（2026年9月26日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://www.nta.co.jp/kokunai/special/eventinfo/10636005.htm",
+          "title": "日本旅行 綾部八幡神社 旗下ろし神事（2026年9月24日、14:00〜17:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-15",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "町と文化庁の案内にある「毎年7月15日に旗上げ」から見込んだ日（2027年の発表はまだない）。旗下ろしは秋分の日の翌日",
+      "sources": [
+        {
+          "url": "https://www.town.miyaki.lg.jp/kanko/_5532.html",
+          "title": "みやき町 綾部八幡神社の旗上げ・旗下ろし行事（旗上げは毎年7月15日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://online.bunka.go.jp/heritages/region/41/41346",
+          "title": "文化遺産オンライン 綾部八幡神社の旗上げ・旗下ろし行事（7月15日に旗上げ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 中原駅",
+        "walkMinutes": [20, 25],
+        "note": "JR長崎本線。駅から徒歩約20分（観光の案内サイトの情報）"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.nta.co.jp/kokunai/special/eventinfo/10636005.htm",
+        "title": "日本旅行 綾部八幡神社 旗下ろし神事（中原駅から徒歩約20分、駐車場50台・無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.town.miyaki.lg.jp/kanko/_5532.html",
+      "title": "みやき町 綾部八幡神社の旗上げ・旗下ろし行事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://online.bunka.go.jp/heritages/region/41/41346",
+      "title": "文化遺産オンライン 佐賀県みやき町（綾部八幡神社の旗上げ・旗下ろし行事）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.nta.co.jp/kokunai/special/eventinfo/10636005.htm",
+      "title": "日本旅行 綾部八幡神社 旗下ろし神事（みやき町原古賀2338）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "旗上げ（7月15日）の時刻（町・文化庁・報道のどれにも書かれていない）",
+    "2027年の開催の発表",
+    "一般の人が境内で旗上げ・旗下ろしを見学できるか、見学の決まり（立ち位置・撮影）、服装・持ち物（主催者の案内が見つからない）",
+    "雨天の扱い",
+    "旗下ろしの2026年の時刻（14:00〜17:00）は観光の案内サイトだけのもの",
+    "駐車場は観光の案内サイトで、旗下ろしの日は50台、秋分の日の奉納行列浮立の日は約100台と書かれていて食い違う。旗上げの日の駐車場は分からない",
+    "博多駅など主要駅から中原駅までの所要時間",
+    "屋台の有無と、この行事の日だけの食べもの",
+    "周辺の観光と食の場所（営業時間を確かめられたものがない）",
+    "みやき町観光協会のサイトはメンテナンス中で開けなかった",
+    "会場の緯度・経度は、国土地理院の住所検索で神社の所在地（みやき町原古賀2338）を取ったもの。大イチョウそのものの位置ではない"
+  ]
+}

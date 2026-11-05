@@ -1,0 +1,188 @@
+{
+  "id": "yasui-kagura",
+  "name": {
+    "ja": "安居神楽"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "高知県",
+      "name": "仁淀川町"
+    }
+  ],
+  "venue": {
+    "name": "八所河内神社（偶数年）・熊野神社（奇数年）",
+    "lat": 33.6403,
+    "lng": 133.1946
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "八所河内神社と熊野神社が1年ごとに交代で、12月に奉納する国の重要無形民俗文化財の神楽",
+    "天照大神が岩戸から出る様子を演じる「舞出し」が神楽の中心",
+    "昼から夕方まで、鬼神や猿田彦の舞など多くの演目が続く"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1790年の神楽本が残り、国の重要無形民俗文化財の神楽",
+      "sources": [
+        {
+          "url": "https://www.niyodogawa.tv/schedule/schedule-8290/",
+          "title": "によどがわ.TV（仁淀川町観光協会） 安居神楽",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "安居神楽保存会が土佐の神楽（安居神楽）の保存団体として受け継ぐ",
+      "sources": [
+        {
+          "url": "https://www.pref.kochi.lg.jp/doc/2024090200209/file_contents/file_202492120316_1.pdf",
+          "title": "高知県 指定文化財一覧（土佐の神楽・安居神楽の保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "寛政2年（1790）の神楽本と天保9年（1838）の古面が、神楽の古さを示す資料として残る",
+      "source": {
+        "url": "https://www.niyodogawa.tv/schedule/schedule-8290/",
+        "title": "によどがわ.TV（仁淀川町観光協会） 安居神楽",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "言い伝えでは、隣村の旧吾北村（今のいの町）の家から舞を伝えられたという",
+      "source": {
+        "url": "https://www.niyodogawa.tv/schedule/schedule-8290/",
+        "title": "によどがわ.TV（仁淀川町観光協会） 安居神楽",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "五穀豊穣と氏子の無病息災を祈って奉納される",
+      "source": {
+        "url": "https://moak.jp/event/performing_arts/post_565.html",
+        "title": "高知県立美術館 美術館のお正月神楽公演 安居神楽",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "神社で神楽を見る行事で、混雑や危険についての特別な注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.niyodogawa.tv/schedule/schedule-8290/",
+        "title": "によどがわ.TV（仁淀川町観光協会） 安居神楽",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2025-12-12",
+      "start": "12:00",
+      "end": "17:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "奇数年の回で、会場は熊野神社（仁淀川町宮ケ平）。12:00頃から17:00頃まで奉納",
+      "sources": [
+        {
+          "url": "https://www.niyodogawa.tv/schedule/schedule-8290/",
+          "title": "によどがわ.TV（仁淀川町観光協会） 安居神楽（2025年12月12日 12:00頃〜17:00頃）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-12-08",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "偶数年は12月8日に八所河内神社で奉納する決まり。2026年の時刻はまだ発表がない（2025年の熊野神社の回は12:00頃〜17:00頃）",
+      "sources": [
+        {
+          "url": "https://www.niyodogawa.tv/schedule/schedule-8290/",
+          "title": "によどがわ.TV（仁淀川町観光協会） 安居神楽（12月8日 八所河内神社〈偶数年〉、12月12日 熊野神社〈奇数年〉）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-12-12",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "奇数年は12月12日に熊野神社（仁淀川町宮ケ平）で奉納する決まり。2027年の時刻は未発表",
+      "sources": [
+        {
+          "url": "https://www.niyodogawa.tv/schedule/schedule-8290/",
+          "title": "によどがわ.TV（仁淀川町観光協会） 安居神楽（12月8日 八所河内神社〈偶数年〉、12月12日 熊野神社〈奇数年〉）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": []
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.niyodogawa.tv/schedule/schedule-8290/",
+      "title": "によどがわ.TV（仁淀川町観光協会） 安居神楽（会場の地図つき）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://moak.jp/event/performing_arts/post_565.html",
+      "title": "高知県立美術館 美術館のお正月神楽公演 安居神楽",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2026年の奉納の時刻",
+    "最寄りのバス停と徒歩の時間、主要駅からの路線と所要時間",
+    "駐車場の有無",
+    "雨のときの扱い",
+    "見学のきまり、撮影の決まり、服装・持ち物",
+    "見物客の数",
+    "屋台やふるまいの有無",
+    "神社の近くで奉納の日に開いていると確かめられた観光地と食事の場所",
+    "会場の正確な位置（八所河内神社・熊野神社とも）"
+  ]
+}

@@ -1,13 +1,14 @@
 import { Component, type ReactNode, Suspense, useEffect, useState } from "react";
+import { SHOP_SCENE_MODELS } from "../scenes/modelFiles";
 import { playStore } from "../state/play";
 import { useApp, useT } from "../state/react";
 import { type FrameInsets, selectSceneProps } from "../state/scene";
 import { TalkButton } from "./Hud";
 import { useReducedMotion } from "./hooks";
 import { GreetingBubble, PlayPrompt } from "./Play";
+import { SceneLoading } from "./SceneLoading";
 import { StaffFloor } from "./StaffPanel";
-import { ShopScene, StorefrontScene, useScene3d } from "./scene3d";
-import { HostBubble } from "./Waiting";
+import { ShopScene, StorefrontScene, useModelProgress, useScene3d } from "./scene3d";
 
 // ゲームの画面の背景になる店。3D の部品（src/scenes/ShopScene.tsx）は ShopSceneProps を受け取り、
 // ストアの状態だけを読む。読み込むまでは 2D の見取り図を出しておき、3D が描けたら上に重ねる。
@@ -65,6 +66,7 @@ function FloorBox({
 /** 店内を読み込む間の表示：店の外観と「店に入っています」 */
 function Entering() {
   const t = useT();
+  const shopLoaded = useModelProgress(SHOP_SCENE_MODELS) >= 1;
   return (
     <div className="absolute inset-0 bg-wood-900" data-testid="shop-entering">
       {StorefrontScene === null ? null : (
@@ -72,12 +74,16 @@ function Entering() {
           <StorefrontScene testId="entering-scene" />
         </Suspense>
       )}
-      <p
-        role="status"
-        className="-translate-x-1/2 absolute top-1/3 left-1/2 animate-pulse rounded-full bg-ink/70 px-5 py-2 font-bold text-kinari-50 shadow-lg backdrop-blur-sm"
-      >
-        {t.app.entering}
-      </p>
+      <div className="-translate-x-1/2 absolute top-1/3 left-1/2 flex flex-col items-center gap-2">
+        <p
+          role="status"
+          className="rounded-full bg-ink/70 px-5 py-2 font-bold text-kinari-50 shadow-lg backdrop-blur-sm motion-safe:animate-pulse"
+        >
+          {t.app.entering}
+        </p>
+        {/* 店内のモデルがまだ取れていなければ、進み具合も出す */}
+        {shopLoaded ? null : <SceneLoading models={SHOP_SCENE_MODELS} />}
+      </div>
     </div>
   );
 }
@@ -120,7 +126,6 @@ export function GameStage({
                 }}
               />
             </div>
-            <HostBubble />
             <GreetingBubble />
             <PlayPrompt />
           </Suspense>

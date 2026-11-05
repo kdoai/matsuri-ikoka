@@ -1,0 +1,240 @@
+{
+  "id": "takachiho-shinwa-yokagura-matsuri",
+  "name": {
+    "ja": "神話の高千穂夜神楽まつり",
+    "en": "Takachiho Yokagura Festival"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "宮崎県",
+      "name": "高千穂町"
+    }
+  ],
+  "venue": {
+    "name": "高千穂神社 神楽殿",
+    "lat": 32.7054,
+    "lng": 131.2999
+  },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "集落ごとに夜通し舞われる夜神楽三十三番を、2日かけてすべて見られる",
+    "天岩戸の神話を舞う終盤の岩戸五番（手力雄・鈿女・戸取など）",
+    "入場無料で出入り自由。毎晩の高千穂神楽では4番しか舞わない"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "奉納される夜神楽は1978年に国の重要無形民俗文化財に指定",
+      "sources": [
+        {
+          "url": "https://takachiho-kanko.info/kagura/yokagura/",
+          "title": "高千穂町観光協会 高千穂の夜神楽",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "町内の約20の集落がそれぞれの例祭日に夜神楽を奉納する",
+      "sources": [
+        {
+          "url": "https://takachiho-kanko.info/kagura/yokagura/",
+          "title": "高千穂町観光協会 高千穂の夜神楽",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "高千穂の夜神楽は、1978年に国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://takachiho-kanko.info/kagura/yokagura/",
+        "title": "高千穂町観光協会 高千穂の夜神楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "夜神楽はふだん、町内の約20の集落が11月中旬から2月上旬に、それぞれの例祭日に夜通し奉納する",
+      "source": {
+        "url": "https://takachiho-kanko.info/kagura/yokagura/",
+        "title": "高千穂町観光協会 高千穂の夜神楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "一番から七番は「よど七番」と呼ばれ、ふつうはこの七番を舞えば願成就とされる",
+      "source": {
+        "url": "https://takachiho-kanko.info/kagura/yokagura/",
+        "title": "高千穂町観光協会 高千穂の夜神楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": ["入場は無料で、出入りは自由"],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "神社の神楽殿で神楽を見るもので、主催者の混雑・危険についての注意は見つからない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://takachiho-kanko.info/news/239/",
+        "title": "高千穂町観光協会 【11月22日・23日開催】神話の高千穂夜神楽まつりについて",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-22",
+      "start": "18:00",
+      "end": "22:30",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "前夜祭。終わりは22:30頃で、当日の状況で前後する。毎晩20:00からの高千穂神楽はこの日休演",
+      "sources": [
+        {
+          "url": "https://takachiho-kanko.info/news/239/",
+          "title": "高千穂町観光協会 【11月22日・23日開催】神話の高千穂夜神楽まつりについて（2026年10月3日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-23",
+      "start": "10:00",
+      "end": "23:30",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "本祭。前夜祭と合わせた2日間で夜神楽三十三番をすべて奉納する。終わりは23:30頃で、当日の状況で前後する。高千穂神楽はこの日も休演",
+      "sources": [
+        {
+          "url": "https://takachiho-kanko.info/news/239/",
+          "title": "高千穂町観光協会 【11月22日・23日開催】神話の高千穂夜神楽まつりについて（2026年10月3日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-11-22",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "観光協会の案内にある「毎年11月22日、23日」からの見込み（2027年の発表はまだない）。2026年の前夜祭は18:00〜22:30頃",
+      "sources": [
+        {
+          "url": "https://takachiho-kanko.info/kagura/information/",
+          "title": "高千穂町観光協会 高千穂神楽のご案内（毎年11月22日、23日は神話の高千穂夜神楽まつり）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-11-23",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "観光協会の案内にある「毎年11月22日、23日」からの見込み（2027年の発表はまだない）。2026年の本祭は10:00〜23:30頃",
+      "sources": [
+        {
+          "url": "https://takachiho-kanko.info/kagura/information/",
+          "title": "高千穂町観光協会 高千穂神楽のご案内（毎年11月22日、23日は神話の高千穂夜神楽まつり）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "宮崎交通 高千穂バスセンター",
+        "walkMinutes": [10, 15],
+        "note": "高千穂神社まで徒歩10分（るるぶ）。徒歩15分とする案内もある。鉄道の駅からは遠く、路線バスで来る"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "JR延岡駅",
+        "minutes": [80, 100],
+        "route": "宮崎交通の高千穂バスセンター行きのバスで終点まで（約1時間20分とする案内と約1時間30分とする案内がある）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://takachiho-kanko.info/kagura/information/",
+        "title": "高千穂町観光協会 高千穂神楽のご案内（駐車場 約100台・無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000385",
+        "title": "るるぶ&more. 神話の高千穂夜神楽まつり（延岡駅からバス1時間30分、高千穂バスセンターから徒歩10分、駐車場50台・無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      },
+      {
+        "url": "https://www.mapple.net/article/17881/",
+        "title": "まっぷるトラベルガイド 高千穂の夜神楽を解説（延岡駅からバス1時間20分、終点から徒歩15分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://takachiho-kanko.info/news/239/",
+      "title": "高千穂町観光協会 【11月22日・23日開催】神話の高千穂夜神楽まつりについて",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://takachiho-kanko.info/kagura/yokagura/",
+      "title": "高千穂町観光協会 高千穂の夜神楽",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20000385",
+      "title": "るるぶ&more. 神話の高千穂夜神楽まつり（高千穂町三田井1037 高千穂神社）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の時刻",
+    "各日にどの番を何時ごろ舞うか",
+    "見学の決まり（撮影・飲食・座る場所）と服装・持ち物",
+    "雨天の扱い",
+    "祭りの日の駐車場の混み具合（神社の駐車場の台数は、約100台と約50台の案内がある）",
+    "祭りの日の屋台と、この祭りならではの食べもの",
+    "周辺の観光と食の場所（祭りの日の営業を確かめられたものがない）"
+  ]
+}

@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { expect, type Page, test } from "@playwright/test";
-import { blockMapTiles, openLog, talkToConcierge, waitForReply } from "./helpers";
+import { blockMapTiles, openLog, say, talkToConcierge, waitForReply } from "./helpers";
 
 // 接客サーバーとのつなぎ：合言葉、SSE の前の断り、相談の作り直し、記録の名前、祭りのデータ、しおりの共有。
 // サーバーの代わりに、記録した架空の相談のイベントをテストの中で SSE として返す。
@@ -86,9 +86,7 @@ async function fakeServer(
 }
 
 async function send(page: Page, message: string) {
-  const input = page.getByRole("textbox", { name: "相談の発言" });
-  await input.fill(message);
-  await input.press("Enter");
+  await say(page, message);
   await waitForReply(page);
 }
 
@@ -124,7 +122,7 @@ test("合言葉の要る店では、入口で聞き、すべての /api の呼�
   expect(server.sessionBodies).toEqual([{ sample: "suzunari-day-trip" }]);
 
   await send(page, firstMessage);
-  await expect(page.getByTestId("candidate-card")).toHaveCount(2);
+  await expect(page.getByTestId("candidate-card")).toHaveCount(1);
   expect(server.chatBodies).toHaveLength(1);
 });
 
@@ -160,7 +158,7 @@ test("相談の途中で合言葉を求められたら聞き直し、入れ直�
   await dialog.getByLabel("合言葉").fill(PASSCODE);
   await dialog.getByRole("button", { name: "入れて送り直す" }).click();
   await expect(dialog).toHaveCount(0);
-  await expect(page.getByTestId("candidate-card")).toHaveCount(2);
+  await expect(page.getByTestId("candidate-card")).toHaveCount(1);
   expect(chats).toBe(2);
   await openLog(page);
   await expect(page.getByTestId("chat-user")).toHaveCount(1);
@@ -178,7 +176,7 @@ test("相談が見つからない（404）ときは、新しい相談を自動�
   await expect(page.getByTestId("dialogue-error")).toContainText("新しい相談を始めました");
   await page.getByRole("button", { name: "もう一度送る" }).click();
   await waitForReply(page);
-  await expect(page.getByTestId("candidate-card")).toHaveCount(2);
+  await expect(page.getByTestId("candidate-card")).toHaveCount(1);
   expect(server.chatBodies.map((body) => body.sessionId)).toEqual(["s-1", "s-2"]);
 });
 
@@ -199,7 +197,7 @@ test("接客サーバーとしおりまで進むと、しおりの URL を出し
   }
   await expect(page.getByTestId("verification")).toContainText("予定どおり開催されます");
 
-  await page.getByRole("tab", { name: "地図" }).click();
+  await page.getByRole("tab", { name: "旅の案内" }).click();
   // 動かせる地図は、画像ではなく領域として読ませる
   await expect(page.getByRole("region", { name: "旅程の地図" })).toBeVisible();
   await expect(page.getByRole("img", { name: "旅程の地図" })).toHaveCount(0);
@@ -207,11 +205,13 @@ test("接客サーバーとしおりまで進むと、しおりの URL を出し
   await page.getByRole("button", { name: "旅のしおりを開く" }).first().click();
   const share = page.getByTestId("shiori-share");
   await expect(share.getByRole("link")).toHaveAttribute("href", /\/shiori\/trip-suzunari-sample$/);
-  await expect(page.getByTestId("shiori-main")).toContainText(
-    "祭りの詳しい情報は、いまはお出しできません。",
+  // しおりは、共有と同じ URL の冊子をそのまま埋め込む
+  await expect(page.getByTestId("shiori-booklet")).toHaveAttribute(
+    "src",
+    //shiori/trip-suzunari-sample?embed=1$/,
   );
-  await expect(page.getByTestId("shiori-flow")).toContainText("鈴鳴灯籠まつり");
-  await expect(page.getByTestId("shiori-share-printed")).toContainText(
-    "/shiori/trip-suzunari-sample",
+  await expect(page.getByTestId("shiori-pdf")).toHaveAttribute(
+    "href",
+    //shiori/trip-suzunari-sample.pdf$/,
   );
 });

@@ -1,0 +1,298 @@
+{
+  "id": "suwako-matsuri-kojo-hanabi-taikai",
+  "name": {
+    "ja": "諏訪湖祭湖上花火大会",
+    "en": "Lake Suwa Festival Fireworks"
+  },
+  "category": "fireworks",
+  "municipalities": [
+    {
+      "prefecture": "長野県",
+      "name": "諏訪市"
+    }
+  ],
+  "venue": {
+    "name": "諏訪市湖畔公園前 諏訪湖上",
+    "lat": 36.0531,
+    "lng": 138.1122
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "湖上の打上台から上がる水上スターマイン",
+    "四方の山に音がはね返り、体の芯まで響く",
+    "初島と湖上の打上台から打ち上げる湖ならではの会場"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1949年8月15日に市民の立ち直りを願って始まり、8月15日の行事として受け継がれてきた",
+      "sources": [
+        {
+          "url": "https://suwako-hanabi.com/kojyou/history/",
+          "title": "諏訪湖の花火 公式 花火の歴史",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "第1回は1949年8月15日。戦後の市民に明るい希望をと始まり、約5万人が集まった",
+      "source": {
+        "url": "https://suwako-hanabi.com/kojyou/history/",
+        "title": "諏訪湖の花火 公式 花火の歴史",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "観光と打ち上げ場を兼ねた「初島」は1954年にできた",
+      "source": {
+        "url": "https://suwako-hanabi.com/kojyou/history/",
+        "title": "諏訪湖の花火 公式 花火の歴史",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "第60回の2008年に、過去最高の50万人の観客を集めた",
+      "source": {
+        "url": "https://suwako-hanabi.com/kojyou/history/",
+        "title": "諏訪湖の花火 公式 花火の歴史",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2020年の第72回は、大会の前に中止を決めた初めての年だった",
+      "source": {
+        "url": "https://suwako-hanabi.com/kojyou/history/",
+        "title": "諏訪湖の花火 公式 花火の歴史",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "無料の席はないが、有料エリアの外から無料で見ることはできる。路上での立ち見や座り込みは控える（緊急車両の通路）",
+      "場所取りは1人が膝を抱えて座れる程度まで。18:00までに着席し、打ち上げ中は座って見る",
+      "イス・テーブル・クーラーボックス・テントなどの大きな荷物は持ち込まず、手荷物預かり所を使う",
+      "湖畔公園は火気禁止（バーベキュー・手持ち花火も不可）。喫煙は指定の場所で",
+      "ドローンとラジコンヘリの持ち込み・飛行は禁止。ペットは入場できない",
+      "ごみは持ち帰る。チケットの転売と転売サイトからの購入は禁止",
+      "路上駐車は禁止。周辺に無料の駐車場はなく、諏訪湖サービスエリアでの駐車や観覧もできない"
+    ],
+    "dress": [
+      "汚れてもよい服（煙や燃えかす、染料が降ることがある）",
+      "肌寒くなることがあるので長袖",
+      "ヒールやサンダルを避け、歩きやすい靴"
+    ],
+    "bring": [
+      "座るためのビニールシートや座布団（敷物はなく、イスは使えない）",
+      "雨具はカッパやレインコート（打ち上げ中は傘を使えない）",
+      "懐中電灯",
+      "日傘・帽子・飲み物・塩分（熱中症対策）",
+      "チケット（リストバンド。再発行できず、大会が終わるまで外さない）"
+    ],
+    "risk": {
+      "level": "medium",
+      "reason": "夜の湖畔で大変混み、煙や燃えかすが降ることがあり、入場の決まりや交通規制がある"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "自席で撮る。立ち上がる・頭の高さを超える・通路に出る撮影は禁止。三脚などの補助機材はカメラマン席のほかは使えない。商業目的の撮影と、他の来場者が映った画像の配信は控える"
+    },
+    "sources": [
+      {
+        "url": "https://suwako-hanabi.com/kojyou/precautions/",
+        "title": "諏訪湖の花火 公式 ルール・注意事項",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://suwako-hanabi.com/kojyou/faq/",
+        "title": "諏訪湖の花火 公式 よくあるお問い合わせ（無料観覧）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-15",
+      "start": "19:00",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": "雨天決行。危険と判断したときは中止または中断。順延日はない",
+      "note": "第78回。19:00〜21:00の予定。打ち上げ数は非公開（22セット、2026年はナイヤガラなし）",
+      "sources": [
+        {
+          "url": "https://suwako-hanabi.com/kojyou/overview/",
+          "title": "諏訪湖の花火 公式 大会概要（2026年8月15日19:00ごろ、雨天決行）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://suwako-hanabi.com/wp-content/themes/suwako-hanabi_2018/images/78_outline_of_event.pdf",
+          "title": "第78回諏訪湖祭湖上花火大会 概要（打上数は非公開、22セット、ナイヤガラなし）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://suwako-hanabi.com/kojyou/faq/",
+          "title": "諏訪湖の花火 公式 よくあるお問い合わせ（19:00〜21:00、中止の基準、順延なし）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-15",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "1975年から8月15日だけに開く決まりから見込んだ日（2027年の発表はまだない）",
+      "sources": [
+        {
+          "url": "https://suwako-hanabi.com/kojyou/history/",
+          "title": "諏訪湖の花火 公式 花火の歴史（昭和50年以降は15日のみの開催）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 上諏訪駅",
+        "walkMinutes": [10, 15],
+        "note": "混雑時は10分以上かかる"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "新宿駅",
+        "minutes": [120, 130],
+        "route": "中央本線の特急、乗り換えなし（約2時間）"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://suwako-hanabi.com/wp-content/themes/suwako-hanabi_2018/images/78_outline_of_event.pdf",
+        "title": "第78回諏訪湖祭湖上花火大会 概要（上諏訪駅から徒歩10分、臨時駐車場 約3,000台は有料で事前予約）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://suwako-hanabi.com/kojyou/faq/",
+        "title": "諏訪湖の花火 公式 よくあるお問い合わせ（混雑、臨時列車）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://suwako-hanabi.com/access",
+        "title": "諏訪湖の花火 公式 諏訪へのアクセス",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://suwako-hanabi.com/kojyou/parkings/",
+        "title": "諏訪湖の花火 公式 交通案内・会場情報（予約制の臨時駐車場）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "katakurakan",
+      "name": "片倉館",
+      "kind": "rest",
+      "summary": "昭和3年に製糸で栄えた片倉財閥が建てた国重要文化財の温泉施設。深さ1.1mの千人風呂が名物。上諏訪駅から徒歩約8分。第2・4火曜が休館",
+      "location": {
+        "lat": 36.0485,
+        "lng": 138.114
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "20:00",
+        "lastEntry": "19:30"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.suwakanko.jp/attraction/%e7%89%87%e5%80%89%e9%a4%a8%ef%bc%88%e5%9b%bd%e9%87%8d%e8%a6%81%e6%8c%87%e5%ae%9a%e6%96%87%e5%8c%96%e8%b2%a1%ef%bc%89/",
+          "title": "諏訪観光協会 片倉館（国重要指定文化財）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://suwako-hanabi.com/kojyou/overview/",
+      "title": "諏訪湖の花火 公式 大会概要",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://suwako-hanabi.com/wp-content/themes/suwako-hanabi_2018/images/78_outline_of_event.pdf",
+      "title": "第78回諏訪湖祭湖上花火大会 概要（諏訪湖祭実行委員会）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://suwako-hanabi.com/kojyou/history/",
+      "title": "諏訪湖の花火 公式 花火の歴史",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://hanabi.walkerplus.com/detail/ar0420e00799/",
+      "title": "ウォーカープラス 第78回 諏訪湖祭湖上花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_344456/",
+      "title": "じゃらんnet 第77回諏訪湖祭湖上花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20002786",
+      "title": "るるぶ&more. 第78回諏訪湖祭湖上花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "交通規制の時間と場所",
+    "開門の時刻",
+    "打ち上げ数（主催者は非公開）",
+    "2027年の開催時刻と雨天の扱い",
+    "地元の味・祭りの日だけの食べ物（フードコートなどが出ることだけ分かっている）",
+    "祭りの前後に寄れる観光と食の場所",
+    "名古屋駅からの乗り換えを含む所要時間（特急で塩尻駅まで約2時間、中央東線で約35分）",
+    "周辺の場所の知名度"
+  ]
+}

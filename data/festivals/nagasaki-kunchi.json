@@ -1,0 +1,465 @@
+{
+  "id": "nagasaki-kunchi",
+  "name": {
+    "ja": "長崎くんち",
+    "en": "Nagasaki Kunchi"
+  },
+  "category": "dance",
+  "municipalities": [
+    {
+      "prefecture": "長崎県",
+      "name": "長崎市"
+    }
+  ],
+  "venue": {
+    "name": "諏訪神社",
+    "lat": 32.7537,
+    "lng": 129.8825
+  },
+  "scaleTier": "L",
+  "popularity": "major",
+  "listedIn": ["walkerplus", "jalan", "rurubu", "japan-guide", "jnto"],
+  "highlights": [
+    "7年に1度だけ出番が来る踊町の奉納踊",
+    "龍踊やコッコデショなど、異国の影響が残る演し物",
+    "町の店先や民家の前で短く舞う庭先回り",
+    "三基の神輿が港近くのお旅所へ下るお下り"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1634年に始まったとされ、奉納踊の演し物は国の重要無形民俗文化財",
+      "sources": [
+        {
+          "url": "https://nagasaki-kunchi.com/about",
+          "title": "長崎くんち公式サイト 長崎くんちとは",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "市内58か町が7組に分かれ、7年に1度の当番で踊町として奉納する",
+      "sources": [
+        {
+          "url": "https://nagasaki-kunchi.com/about",
+          "title": "長崎くんち公式サイト 長崎くんちとは",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "1634年、遊女の高尾と音羽が諏訪神社の神前で小舞を奉納したのが始まりとされる",
+      "source": {
+        "url": "https://nagasaki-kunchi.com/about",
+        "title": "長崎くんち公式サイト 長崎くんちとは",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "踊町は市内に58か町あり、7組に分かれて7年に1度当番が回る",
+      "source": {
+        "url": "https://nagasaki-kunchi.com/about",
+        "title": "長崎くんち公式サイト 長崎くんちとは",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "踊りの後に客席から上がるアンコールの声は「モッテコーイ」",
+      "source": {
+        "url": "https://kumanichi.com/articles/2043888",
+        "title": "熊本日日新聞（共同通信） 秋の大祭、長崎くんち開幕（2026年10月7日）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "10月3日の庭見世では、町の店先に傘鉾や衣装、祝い品が並ぶ",
+      "source": {
+        "url": "https://nagasaki-kunchi.com/gyoji",
+        "title": "長崎くんち公式サイト 行事一覧",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": [
+      "踊場は有料の観覧席。諏訪神社・お旅所・八坂神社は4人掛けの桝席、中央公園は1人ごとの席で、数週間前に売り切れることが多い",
+      "諏訪神社の長坂は無料の観覧席だが、事前応募と抽選の長坂整理券が要る。諏訪神社には当日売りの立見席もある（令和8年は1,500円）",
+      "踊場へは路面電車やバスなど公共交通で来るよう案内されている",
+      "庭先回りの行程は、9月末ごろから配られる庭先回りマップと公式サイトで確かめる"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "券なしで踊場をのぞける場所はとても混み、周辺の道路も混雑が見込まれる"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://nagasaki-kunchi.com/",
+        "title": "長崎伝統芸能振興会 長崎くんち公式サイト（令和8年の披露時刻、雨天の変更、交通アクセス）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://nagasaki-kunchi.com/odoriba",
+        "title": "長崎くんち公式サイト どこで観られる？",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://nagasaki-kunchi.com/kanranken",
+        "title": "長崎くんち公式サイト 観覧券のご案内（令和8年販売分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.japan-guide.com/e/e4411.html",
+        "title": "japan-guide.com Nagasaki Kunchi Festival",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-10-07",
+      "start": "07:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": "天候で日程や時間が変わる。前日の朝が中止なら翌日以降に順延、前日の夕方が中止なら中日に行う",
+      "note": "前日。諏訪神社 7:00〜と16:00〜、お旅所 9:10〜、中央公園 17:10〜。13:00 お下り。1町30分ほどで6町が奉納",
+      "sources": [
+        {
+          "url": "https://nagasaki-kunchi.com/",
+          "title": "長崎伝統芸能振興会 長崎くんち公式サイト（令和8年の披露時刻、雨天の変更、交通アクセス）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://nagasaki-kunchi.com/gyoji",
+          "title": "長崎くんち公式サイト 行事一覧",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://nagasaki-kunchi.com/kanranken",
+          "title": "長崎くんち公式サイト 観覧券のご案内（令和8年販売分）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://kumanichi.com/articles/2043888",
+          "title": "熊本日日新聞（共同通信） 秋の大祭、長崎くんち開幕（2026年10月7日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-08",
+      "start": "07:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": "天候で日程や時間が変わる。前日の朝が中止なら翌日以降に順延、前日の夕方が中止なら中日に行う",
+      "note": "中日。八坂神社 7:00〜、中央公園 8:00〜",
+      "sources": [
+        {
+          "url": "https://nagasaki-kunchi.com/",
+          "title": "長崎伝統芸能振興会 長崎くんち公式サイト（令和8年の披露時刻、雨天の変更、交通アクセス）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://nagasaki-kunchi.com/kanranken",
+          "title": "長崎くんち公式サイト 観覧券のご案内（令和8年販売分）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-09",
+      "start": "07:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": "天候で日程や時間が変わる。前日の朝が中止なら翌日以降に順延、前日の夕方が中止なら中日に行う",
+      "note": "後日。お旅所 7:00〜、諏訪神社 8:20〜。13:00 お上り",
+      "sources": [
+        {
+          "url": "https://nagasaki-kunchi.com/",
+          "title": "長崎伝統芸能振興会 長崎くんち公式サイト（令和8年の披露時刻、雨天の変更、交通アクセス）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://nagasaki-kunchi.com/gyoji",
+          "title": "長崎くんち公式サイト 行事一覧",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://nagasaki-kunchi.com/kanranken",
+          "title": "長崎くんち公式サイト 観覧券のご案内（令和8年販売分）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-10-07",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "前日の見込み。毎年10月7日から3日間の決まりから見込んだ日（2027年の発表はまだない）。踊町は馬町・東濵町・八坂町・銅座町・築町・湊町・広馬場町が予定されている",
+      "sources": [
+        {
+          "url": "https://nagasaki-kunchi.com/",
+          "title": "長崎くんち公式サイト（毎年10月7日から3日間）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://nagasaki-kunchi.com/dashimono",
+          "title": "長崎くんち公式サイト 踊町と演し物",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-10-08",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "中日の見込み。毎年10月7日から3日間の決まりから見込んだ日（2027年の発表はまだない）。踊町は馬町・東濵町・八坂町・銅座町・築町・湊町・広馬場町が予定されている",
+      "sources": [
+        {
+          "url": "https://nagasaki-kunchi.com/",
+          "title": "長崎くんち公式サイト（毎年10月7日から3日間）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://nagasaki-kunchi.com/dashimono",
+          "title": "長崎くんち公式サイト 踊町と演し物",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-10-09",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "後日の見込み。毎年10月7日から3日間の決まりから見込んだ日（2027年の発表はまだない）。踊町は馬町・東濵町・八坂町・銅座町・築町・湊町・広馬場町が予定されている",
+      "sources": [
+        {
+          "url": "https://nagasaki-kunchi.com/",
+          "title": "長崎くんち公式サイト（毎年10月7日から3日間）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://nagasaki-kunchi.com/dashimono",
+          "title": "長崎くんち公式サイト 踊町と演し物",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "長崎電気軌道 諏訪神社電停",
+        "walkMinutes": [1, 6],
+        "note": "諏訪神社まで。お旅所は大波止電停、八坂神社は崇福寺電停、中央公園はめがね橋電停など"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://nagasaki-kunchi.com/",
+        "title": "長崎伝統芸能振興会 長崎くんち公式サイト（令和8年の披露時刻、雨天の変更、交通アクセス）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000214",
+        "title": "るるぶ&more. 長崎くんち（諏訪神社電停から徒歩1分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      },
+      {
+        "url": "https://www.japan.travel/en/spot/343/",
+        "title": "日本政府観光局 Nagasaki Kunchi",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://osuwasan.jp/",
+        "title": "鎮西大社 諏訪神社 公式サイト（例年10月7・8・9日の大祭）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "はしまき",
+        "note": "くんちの屋台で出る、巻いたお好み焼き",
+        "sources": [
+          {
+            "url": "https://www.japan.travel/en/spot/343/",
+            "title": "日本政府観光局 Nagasaki Kunchi",
+            "checkedAt": "2026-11-05",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "nagasaki-museum-of-history-and-culture",
+      "name": "長崎歴史文化博物館",
+      "kind": "sightseeing",
+      "summary": "長崎の歴史と文化を扱う博物館。毎月第1・第3月曜と12月28日〜31日が休み（祝日なら翌平日か翌日）",
+      "location": {
+        "lat": 32.752,
+        "lng": 129.8797
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "08:30",
+        "close": "19:00",
+        "lastEntry": "18:30"
+      },
+      "closedDays": null,
+      "price": "常設展 大人630円、小中高校生310円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.nmhc.jp/",
+          "title": "長崎歴史文化博物館 公式サイト（4〜11月の開館時間、休館日、観覧料）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "dejima",
+      "name": "出島",
+      "kind": "sightseeing",
+      "summary": "長崎の歴史を伝える出島の史跡。年中無休で、最寄りは出島電停。施設によっては点検で閉まる",
+      "location": {
+        "lat": 32.7436,
+        "lng": 129.8723
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "08:00",
+        "close": "21:00",
+        "lastEntry": "20:40"
+      },
+      "closedDays": [],
+      "price": "大人1,100円、小中高校生550円",
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://nagasakidejima.jp/",
+          "title": "出島 公式サイト（公開時間、入場料）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://nagasaki-kunchi.com/",
+      "title": "長崎伝統芸能振興会 長崎くんち公式サイト（令和8年の披露時刻、雨天の変更、交通アクセス）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://nagasaki-kunchi.com/about",
+      "title": "長崎くんち公式サイト 長崎くんちとは",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://osuwasan.jp/",
+      "title": "鎮西大社 諏訪神社 公式サイト（例年10月7・8・9日の大祭）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.japan.travel/en/spot/343/",
+      "title": "日本政府観光局 Nagasaki Kunchi",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://kumanichi.com/articles/2043888",
+      "title": "熊本日日新聞（共同通信） 秋の大祭、長崎くんち開幕（2026年10月7日）",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.walkerplus.com/event/ar1042e595956/",
+      "title": "ウォーカープラス 長崎くんち",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_349467/",
+      "title": "じゃらんnet 長崎くんち",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20000214",
+      "title": "るるぶ&more. 長崎くんち",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.japan-guide.com/e/e4411.html",
+      "title": "japan-guide.com Nagasaki Kunchi Festival",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "一般の人が踊町の出演や手伝いに加われるか",
+    "撮影の決まり、服装・持ち物の決まり",
+    "交通規制の時間と区間（公式サイトは警察の公表後に案内するとしている）",
+    "主要駅から諏訪神社電停までの所要時間",
+    "祭りの前後に寄れる食の店",
+    "周辺の場所の知名度",
+    "2027年の披露時刻と観覧券の発売の発表"
+  ]
+}

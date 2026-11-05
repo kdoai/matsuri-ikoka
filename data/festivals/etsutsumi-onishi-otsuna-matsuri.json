@@ -1,0 +1,265 @@
+{
+  "id": "etsutsumi-onishi-otsuna-matsuri",
+  "name": {
+    "ja": "お綱まつり",
+    "en": "Otsuna Matsuri (Etsutsumi and Onishi)"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "奈良県",
+      "name": "桜井市"
+    }
+  ],
+  "venue": {
+    "name": "素盞嗚神社（江包）",
+    "lat": 34.5426,
+    "lng": 135.8229
+  },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "江包の雄綱と大西の雌綱を神社の前で結び合わせる儀式",
+    "綱の尾を土俵にして田んぼで取る泥相撲",
+    "藁の大綱を担いで、2つの集落が神々の夫婦の契りを再現する",
+    "結ばれた綱は初瀬川を越えて対岸の木に渡され、5月中旬まで吊られる"
+  ],
+  "styles": [
+    {
+      "style": "community",
+      "basis": "江包と大西の二つの集落が、それぞれ雄綱と雌綱を作って結ぶ",
+      "sources": [
+        {
+          "url": "https://sakuraikanko.com/sp/otsuna/",
+          "title": "桜井市観光協会 江包 大西 お綱まつり",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "大洪水で流れ着いた素盞嗚命を江包が、稲田姫を大西が祀り、年に一度夫婦の契りを結ぶと伝わる",
+      "source": {
+        "url": "https://sakuraikanko.com/m-info/%e3%81%8a%e7%b6%b1%e3%81%be%e3%81%a4%e3%82%8a%e6%b1%9f%e5%8c%85%e3%83%bb%e5%a4%a7%e8%a5%bf-%e4%bb%a4%e5%92%8c8%e5%b9%b42%e6%9c%8811%e6%97%a5/",
+        "title": "桜井市観光協会 お綱まつり(江包・大西) 令和8年2月11日",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "雄綱の頭は直径約2m・長さ約3m。江包が雄綱を、大西が雌綱を作る",
+      "source": {
+        "url": "https://sakuraikanko.com/sp/otsuna/",
+        "title": "桜井市観光協会 江包 大西 お綱まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "泥相撲では、体に泥が多くつくほどその年は豊作になるとされる",
+      "source": {
+        "url": "https://sakuraikanko.com/sp/otsuna/",
+        "title": "桜井市観光協会 江包 大西 お綱まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "洪水のとき稲田姫が蛇になって川を渡ったことが、この行事の始まりとも言われる",
+      "source": {
+        "url": "https://sakuraikanko.com/sp/otsuna/",
+        "title": "桜井市観光協会 江包 大西 お綱まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "集落の道や田んぼで行う見学中心の行事。雄綱を担いで雌綱へ駆け寄る場面や泥相撲があるが、見学についての主催者の注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://sakuraikanko.com/sp/otsuna/",
+        "title": "桜井市観光協会 江包 大西 お綱まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-02-11",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年2月11日。例年の目安は、8:00頃から両地区で綱の支度、9:00頃 大西の雌綱が大西の神社を出て地区を巡り、泥田で相撲。江包も雄綱を担いで巡り、泥相撲。11:00頃 雌綱が素盞嗚神社に着き、11:30頃 雄綱が雌綱へ駆け寄る。正午すぎに両綱を結び、鳥居の脇の木に吊るす。時間は目安で、2つの地区に分かれて進む。桜井市観光協会は2027年2月11日にお綱まつりを見学するハイキングを募集している",
+      "sources": [
+        {
+          "url": "https://sakuraikanko.com/sp/otsuna/",
+          "title": "桜井市観光協会 江包 大西 お綱まつり",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://sakuraikanko.com/wp-content/uploads/2026/05/889d608378cf2092b422c3578f747d67.pdf",
+          "title": "桜井市観光協会 観光パンフレット（令和8年4月1日時点の情報） 年中行事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://sakuraikanko.com/product/2027_otsuna/",
+          "title": "桜井市観光協会 2027年2月11日 お綱まつり見学ハイキング",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-11",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の回。桜井市観光協会の案内では、素盞嗚神社とその周辺で行われた（終了）",
+      "sources": [
+        {
+          "url": "https://sakuraikanko.com/m-info/%e3%81%8a%e7%b6%b1%e3%81%be%e3%81%a4%e3%82%8a%e6%b1%9f%e5%8c%85%e3%83%bb%e5%a4%a7%e8%a5%bf-%e4%bb%a4%e5%92%8c8%e5%b9%b42%e6%9c%8811%e6%97%a5/",
+          "title": "桜井市観光協会 お綱まつり(江包・大西) 令和8年2月11日",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 巻向駅",
+        "walkMinutes": [30, 35],
+        "note": "JR万葉まほろば線（桜井線）。巻向駅の周辺にコンビニはない"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "奈良駅",
+        "minutes": [22, 25],
+        "route": "JR万葉まほろば線（桜井線）の普通で巻向駅まで、乗り換えなし（2026年11月4日の時刻表で、朝から昼の普通列車は22〜25分）"
+      }
+    ],
+    "parking": "none",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://sakuraikanko.com/m-info/%e3%81%8a%e7%b6%b1%e3%81%be%e3%81%a4%e3%82%8a%e6%b1%9f%e5%8c%85%e3%83%bb%e5%a4%a7%e8%a5%bf-%e4%bb%a4%e5%92%8c8%e5%b9%b42%e6%9c%8811%e6%97%a5/",
+        "title": "桜井市観光協会 お綱まつり(江包・大西) 令和8年2月11日",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://sakuraikanko.com/sp/otsuna/",
+        "title": "桜井市観光協会 江包 大西 お綱まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://sakuraikanko.com/product/2027_otsuna/",
+        "title": "桜井市観光協会 2027年2月11日 お綱まつり見学ハイキング",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://timetable.jr-odekake.net/line-timetable/2304",
+        "title": "JRおでかけネット 区間時刻表 万葉まほろば線（桜井線）奈良〜桜井〜高田 下り（2026年11月4日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "makimuku-ishizuka-kofun",
+      "name": "纒向石塚古墳",
+      "kind": "sightseeing",
+      "summary": "国の史跡の纒向遺跡にある、全長96mの纒向型の前方後円墳。3世紀初めから中ごろの築造とする説が有力で、発生期の古墳の1つとされる",
+      "location": {
+        "lat": 34.5458,
+        "lng": 135.8362
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://sakuraikanko.com/remains/%e7%ba%92%e5%90%91%e3%81%be%e3%81%8d%e3%82%80%e3%81%8f%ef%bc%89%e7%9f%b3%e5%a1%9a%e5%8f%a4%e5%a2%b3/",
+          "title": "桜井市観光協会 纒向(まきむく）石塚古墳",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://sakuraikanko.com/remains/%e7%ba%92%e5%90%91%e3%81%be%e3%81%8d%e3%82%80%e3%81%8f%ef%bc%89%e9%81%ba%e8%b7%a1%e3%80%80%e5%9b%bd%e5%8f%b2%e8%b7%a1/",
+          "title": "桜井市観光協会 纒向(まきむく）遺跡 国史跡",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.jalan.net/kankou/spt_guide000000214692/",
+          "title": "じゃらんnet 纒向石塚古墳（所在地）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://sakuraikanko.com/sp/otsuna/",
+      "title": "桜井市観光協会 江包 大西 お綱まつり",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://sakuraikanko.com/m-info/%e3%81%8a%e7%b6%b1%e3%81%be%e3%81%a4%e3%82%8a%e6%b1%9f%e5%8c%85%e3%83%bb%e5%a4%a7%e8%a5%bf-%e4%bb%a4%e5%92%8c8%e5%b9%b42%e6%9c%8811%e6%97%a5/",
+      "title": "桜井市観光協会 お綱まつり(江包・大西) 令和8年2月11日",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://sakuraikanko.com/wp-content/uploads/2026/05/889d608378cf2092b422c3578f747d67.pdf",
+      "title": "桜井市観光協会 観光パンフレット（令和8年4月1日時点の情報） 年中行事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開始時刻（観光協会の年中行事の一覧では例年10:00〜。両綱を結ぶのは正午すぎの目安）",
+    "雨天のときの扱い",
+    "見学できる場所と、綱が駆け寄る場面や泥相撲を見るときの注意（公式の案内がない）",
+    "撮影の決まり",
+    "服装と持ち物（公式の案内がない）",
+    "大阪駅・京都駅などから巻向駅までの所要時間（奈良駅からの時間だけ入れた。大阪・京都からは奈良駅などでの乗り換えが要り、通しの時間の公式の案内が見つからない）。祭りの日（2月11日、祝日）の時刻表での所要時間も確かめていない",
+    "屋台・露店が出るか。巻向駅の周辺にコンビニがなく、食事をとれる場所が確かめられない",
+    "文化財の指定の種類（観光協会は国指定の無形民俗文化財と書くが、国の文化財のデータベースで確かめられなかった）",
+    "規模の根拠になる担ぎ手の人数や見物人の数",
+    "周辺の食事処（会場の近くで公式の案内で確かめられる店がなく、入れていない）",
+    "纒向石塚古墳の見学できる時間と、会場からの徒歩の時間"
+  ]
+}

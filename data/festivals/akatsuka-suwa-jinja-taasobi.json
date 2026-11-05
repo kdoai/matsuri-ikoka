@@ -1,0 +1,247 @@
+{
+  "id": "akatsuka-suwa-jinja-taasobi",
+  "name": {
+    "ja": "赤塚諏訪神社田遊び",
+    "en": "Ta-asobi of Akatsuka Suwa Shrine"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "東京都",
+      "name": "板橋区"
+    }
+  ],
+  "venue": {
+    "name": "赤塚諏訪神社 境内",
+    "lat": 35.7841,
+    "lng": 139.6484
+  },
+  "scaleTier": "XS",
+  "popularity": "local",
+  "listedIn": ["jalan"],
+  "highlights": [
+    "神輿の渡御で幕を開け、花籠を付けた槍の前で獅子が舞う槍突き",
+    "天狗が土地を鎮める舞を踊る",
+    "お篝りの火で前の年の災厄を焼き払い、家内安全と子孫繁栄を願う"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "板橋の田遊びとして1976年に国の重要無形民俗文化財になった",
+      "sources": [
+        {
+          "url": "https://www.city.itabashi.tokyo.jp/bunka/kanko/jyukei/1006825.html",
+          "title": "板橋区 板橋十景 田遊び",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "下赤塚の田遊び保存会が保護団体で、氏子が唱え言の掛け合いに加わる",
+      "sources": [
+        {
+          "url": "https://kunishitei.bunka.go.jp/heritage/detail/302/42",
+          "title": "国指定文化財等データベース 板橋の田遊び",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "神社は長禄年間（1457〜1460）、赤塚城主の千葉自胤が信州の諏訪大社から分霊したと伝わる",
+      "source": {
+        "url": "https://www.city.itabashi.tokyo.jp/bunka/kanko/map/1033865.html",
+        "title": "板橋区 赤塚散策コース",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "江戸時代の記録にも、昔から続き古い形を残す祭りとして紹介されている",
+      "source": {
+        "url": "https://www.city.itabashi.tokyo.jp/kyoikuiinkai/torikumi/1012694/1036930/1036935.html",
+        "title": "教育広報「教育の板橋」第107号 3面 板橋の田遊び",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "神社では田遊びのほかに、区の無形民俗文化財に指定された獅子舞も行われる",
+      "source": {
+        "url": "https://www.city.itabashi.tokyo.jp/bunka/kanko/map/1033865.html",
+        "title": "板橋区 赤塚散策コース",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "徳丸北野神社の田遊びとあわせ、昭和51年に「板橋の田遊び」として国の重要無形民俗文化財になった",
+      "source": {
+        "url": "https://www.city.itabashi.tokyo.jp/bunka/kanko/jyukei/1006825.html",
+        "title": "板橋区 板橋十景 田遊び",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.itabashi.tokyo.jp/bunka/bunkazi/bunkazai/1004839.html",
+        "title": "板橋区 国指定重要無形民俗文化財「田遊び」",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://prtimes.jp/main/html/rd/p/000000295.000129038.html",
+        "title": "板橋区 国指定重要無形民俗文化財「田遊び」が徳丸北野神社と赤塚諏訪神社で開催されます（2026年2月10日）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-02-13",
+      "start": "19:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "19:00から2時間ほどの予定だった（区の開催前の告知）。神輿渡御、槍突き（獅子）、天狗の舞、お篝りなどを演じる",
+      "sources": [
+        {
+          "url": "https://prtimes.jp/main/html/rd/p/000000295.000129038.html",
+          "title": "板橋区 国指定重要無形民俗文化財「田遊び」が徳丸北野神社と赤塚諏訪神社で開催されます（令和8年2月13日 19時から2時間程度）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-02-13",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年2月13日の夜に行う（区の案内）。2027年の時刻はまだ発表がない。区の文化財の案内では、例年19:00から2時間ほど",
+      "sources": [
+        {
+          "url": "https://www.city.itabashi.tokyo.jp/kyoikuiinkai/torikumi/1012694/1036930/1036935.html",
+          "title": "教育広報「教育の板橋」第107号 3面（毎年2月13日の夜間）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.itabashi.tokyo.jp/bunka/bunkazi/bunkazai/1004839.html",
+          "title": "板橋区 国指定重要無形民俗文化財「田遊び」（2月13日 午後7時から2時間程度）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "都営三田線 新高島平駅",
+        "walkMinutes": [15, 20]
+      },
+      {
+        "name": "東武東上線 下赤塚駅",
+        "walkMinutes": [25, 30]
+      },
+      {
+        "name": "東京メトロ有楽町線 地下鉄赤塚駅",
+        "walkMinutes": [25, 30],
+        "note": "東武東上線 成増駅と三田線 高島平駅からはバスもある"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.city.itabashi.tokyo.jp/bunka/bunkazi/bunkazai/1004839.html",
+        "title": "板橋区 国指定重要無形民俗文化財「田遊び」（交通）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "itabashi-kyodo-shiryokan",
+      "name": "板橋区立郷土資料館",
+      "kind": "sightseeing",
+      "summary": "板橋の歴史と文化を紹介する区立の資料館。赤塚城跡と赤塚溜池公園の隣にあり、江戸時代の農家の旧田中家住宅を移築している。月曜（祝日なら翌日）と年末年始は休み。展示替えなどで臨時に休むことがある",
+      "location": {
+        "lat": 35.7858,
+        "lng": 139.6434
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["mon"],
+      "price": "常設展は無料",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.itabashi.tokyo.jp/kyodoshiryokan/annai/index.html",
+          "title": "板橋区立郷土資料館 利用案内",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.itabashi.tokyo.jp/bunka/bunkazi/bunkazai/1004839.html",
+      "title": "板橋区 国指定重要無形民俗文化財「田遊び」",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://prtimes.jp/main/html/rd/p/000000295.000129038.html",
+      "title": "板橋区 国指定重要無形民俗文化財「田遊び」が徳丸北野神社と赤塚諏訪神社で開催されます",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_337186/",
+      "title": "じゃらんnet 赤塚諏訪神社 田遊び",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開始時刻と終わりの時刻（まだ発表がない）",
+    "危険度（お篝りの火と見物の場所の距離、主催者の注意が見つからない）",
+    "雨や雪のときの扱い",
+    "見学の決まり（立ち位置・撮影など）、服装、持ち物",
+    "駐車場の有無（主催者の案内がない）",
+    "屋台の有無と、祭りの日だけの食べ物",
+    "主要駅から最寄り駅までの所要時間",
+    "見物客の数",
+    "祭りの夜に寄れる、営業時間を確かめられた近くの飲食店"
+  ]
+}

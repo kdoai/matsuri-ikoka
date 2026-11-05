@@ -8,6 +8,7 @@ import {
   FestivalCandidateSchema,
   FestivalVerifiedEventSchema,
   ItineraryDiffSchema,
+  SearchOutcomeSchema,
   type SseEvent,
   type StaffId,
   type ToolName,
@@ -21,8 +22,10 @@ import {
 } from "../tools/context";
 import { spotPins } from "../tools/matsuriTools";
 import { MCP_TOOL_PREFIX } from "../tools/mcpServer";
+import { nextStepAfter } from "../tools/planReview";
 import {
   isStaff,
+  STAFF_NAMES,
   STAFF_TASK,
   type Staff,
   staffOf,
@@ -35,20 +38,22 @@ import {
 // - SubagentStart → staff.start（スタッフが持ち場へ歩く）。スタッフに店の記録を渡す
 // - PreToolUse → tool.start。スタッフと道具の組み合わせ、スタッフを呼ぶ回数もここで守る
 // - PostToolUse / PostToolUseFailure → tool.end、続けて itinerary.updated・festival.verified
+// - SubagentStop → 旅程係が、評価の基準に届かないまま（回数が残っているのに）終えようとしたら、作り直しに戻す
 
 /** スタッフが使える道具。仕様の表（docs/spec/agents.md）と同じ */
 export const TOOLS_BY_STAFF: Readonly<Record<StaffId, readonly AgentToolName[]>> = {
   concierge: ["note_conditions", "update_itinerary", "verify_festival"],
   researcher: ["search_festivals"],
   scout: ["search_nearby"],
-  planner: ["get_access", "get_weather", "search_nearby", "update_itinerary"],
-};
-
-const STAFF_NAMES: Record<StaffId, string> = {
-  concierge: "コンシェルジュ",
-  researcher: "祭り調査係",
-  scout: "周辺係",
-  planner: "旅程係",
+  planner: [
+    "get_access",
+    "research_route",
+    "research_trip",
+    "get_weather",
+    "search_nearby",
+    "search_lodging",
+    "update_itinerary",
+  ],
 };
 
 /** 1回の発言で1回までの道具。再確認は Web を調べるので、費用と時間がかかる */
@@ -188,6 +193,10 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
       tool === "search_festivals" && output !== null
         ? z.array(FestivalCandidateSchema).max(3).safeParse(output.candidates)
         : null;
+    const search =
+      tool === "search_festivals" && output !== null
+        ? SearchOutcomeSchema.safeParse(output.search)
+        : null;
     emit({
       type: "tool.end",
       data: {
@@ -196,8 +205,10 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
         staff,
         ok: end.ok,
         bubble: end.bubble,
+        ...(end.detail === undefined ? {} : { detail: end.detail }),
         count: end.count,
         ...(candidates?.success ? { candidates: candidates.data } : {}),
+        ...(search?.success ? { search: search.data } : {}),
         ...(tool === "search_nearby" && output !== null ? { spots: spotPins(output) } : {}),
       },
     });
@@ -253,10 +264,24 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
     };
   };
 
+  /** 旅程係を作り直しに戻した回数。評価の回数が進まないまま戻し続けないよう、上限を付ける */
+  let sentBack = 0;
+  const subagentStop: HookCallback = async (input) => {
+    if (input.hook_event_name !== "SubagentStop" || input.agent_type !== "planner") return {};
+    const evaluation = turn.lastEvaluation;
+    if (evaluation === null || evaluation.passed || evaluation.round >= evaluation.maxRounds) {
+      return {};
+    }
+    if (sentBack >= evaluation.maxRounds - 1 || ctx.signal.aborted) return {};
+    sentBack += 1;
+    return { decision: "block", reason: nextStepAfter(evaluation) };
+  };
+
   return {
     PreToolUse: [{ hooks: [preToolUse] }],
     PostToolUse: [{ matcher: `^${MCP_TOOL_PREFIX}`, hooks: [postToolUse] }],
     PostToolUseFailure: [{ matcher: `^${MCP_TOOL_PREFIX}`, hooks: [postToolUseFailure] }],
     SubagentStart: [{ hooks: [subagentStart] }],
+    SubagentStop: [{ hooks: [subagentStop] }],
   };
 }

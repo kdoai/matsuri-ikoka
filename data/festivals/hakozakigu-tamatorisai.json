@@ -1,0 +1,272 @@
+{
+  "id": "hakozakigu-tamatorisai",
+  "name": {
+    "ja": "玉取祭",
+    "en": "Tamatorisai (Tamaseseri) at Hakozakigu Shrine"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "福岡県",
+      "name": "福岡市"
+    }
+  ],
+  "venue": {
+    "name": "筥崎宮（玉取恵比須神社〜筥崎宮境内）",
+    "lat": 33.6138,
+    "lng": 130.4243
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu"],
+  "highlights": [
+    "締め込み姿の競り子が、水を浴びながら木の玉を奪い合って本宮へ進む",
+    "陸側と浜側のどちらが玉を上げるかで、その年の豊作か豊漁かを占う",
+    "玉に触れると災難を逃れ、幸運を授かると伝わる",
+    "末社の玉取恵比須神社での祭典のあと、玉を奪い合いながら本宮の楼門へ競り進む"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "室町時代に始まったとされ、約500年続く",
+      "sources": [
+        {
+          "url": "https://hakozakigu.or.jp/omatsuri/tamatorisai/",
+          "title": "筥崎宮 玉取祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "氏子が競り子となり、筥崎宮玉せせり行事保存会が受け継ぐ",
+      "sources": [
+        {
+          "url": "https://bunkazai.city.fukuoka.lg.jp/cultural_properties/detail/794/",
+          "title": "福岡市の文化財 筥崎宮の玉せせり行事（市指定、保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "室町時代に始まったとされ、約500年続く。確かな起こりは分かっていない",
+      "source": {
+        "url": "https://hakozakigu.or.jp/omatsuri/tamatorisai/",
+        "title": "筥崎宮 玉取祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "玉の由来の一説では、明応3年（1494）の正月、博多の人が浜で光る2つの玉を拾ったという",
+      "source": {
+        "url": "https://hakozakigu.or.jp/omatsuri/tamatorisai/",
+        "title": "筥崎宮 玉取祭（玉の由来の3つの説）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "奪い合う玉は木でできていて、重さは8kgある",
+      "source": {
+        "url": "https://www.crossroadfukuoka.jp/event/12608",
+        "title": "クロスロードふくおか 玉せせり（玉取祭）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "玉は陰と陽の2つ。玉せせりで競り子に渡されるのは陽の玉のほう",
+      "source": {
+        "url": "https://hakozakigu.or.jp/omatsuri/tamatorisai/",
+        "title": "筥崎宮 玉取祭（玉洗式と玉せせり）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "ドローンや大型の撮影機材は使えない（報道を除く）",
+      "同行や単独のカメラマンが撮るときは、前もって社務所への連絡が要る（参拝者本人や家族の撮影は不要）",
+      "ライブ配信や同じ種類の動画の撮影、商用の利用（収益化を含む）はしない",
+      "周りの道路は駐車禁止。駐車場の出入りは国道3号線側から、横断は横断歩道か歩道橋で"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "前年の来場者は約5万人で混み合い、競り子の近くでは玉せせりでかける水を浴びることがある"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "ドローン・脚立・ライブ配信・商用の撮影は不可。カメラマンの撮影は社務所へ事前に連絡"
+    },
+    "sources": [
+      {
+        "url": "https://hakozakigu.or.jp/omatsuri/tamatorisai/",
+        "title": "筥崎宮 玉取祭（撮影についてのお願い・駐車場）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.crossroadfukuoka.jp/event/12608",
+        "title": "クロスロードふくおか 玉せせり（ドローン・脚立など大型撮影機材の使用禁止）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.japan.travel/en/spot/2261/",
+        "title": "日本政府観光局 Hakozakigu Shrine（近くの見物人は水を浴びることがある）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000942",
+        "title": "るるぶ&more. 玉せせり（昨年の来場者数 約5万人）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-03",
+      "start": "13:00",
+      "end": "14:30",
+      "status": "announced",
+      "rainPolicy": "雨天決行",
+      "note": "2026年の実績。13:00ごろ 絵馬殿前で玉洗式、玉を玉取恵比須神社へ運んで祭典、陽の玉を競り子に渡して玉せせり。楼門で神職に玉を渡し、14:30ごろ終わる",
+      "sources": [
+        {
+          "url": "https://www.crossroadfukuoka.jp/event/12608",
+          "title": "クロスロードふくおか 玉せせり（2026年1月3日、13:00〜、雨天決行）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://hakozakigu.or.jp/omatsuri/tamatorisai/",
+          "title": "筥崎宮 玉取祭（1月3日、13:00ごろ〜14:30ごろ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.walkerplus.com/event/ar1040e576066/",
+          "title": "ウォーカープラス 筥崎宮 玉せせり（2026年1月3日 13:00〜14:30）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-03",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年1月3日に行う決まりから見込んだ日（2027年の発表はまだない）。神社の案内では例年、13:00ごろ玉洗式、14:30ごろ玉が神前に納まって終わる",
+      "sources": [
+        {
+          "url": "https://hakozakigu.or.jp/omatsuri/tamatorisai/",
+          "title": "筥崎宮 玉取祭（1月3日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.crossroadfukuoka.jp/event/12608",
+          "title": "クロスロードふくおか 玉せせり（毎年1月3日の午後）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "福岡市地下鉄 箱崎宮前駅",
+        "walkMinutes": [3, 8],
+        "note": "箱崎線。1番出口から徒歩約3分"
+      },
+      {
+        "name": "JR 箱崎駅",
+        "walkMinutes": [8, 13],
+        "note": "鹿児島本線。徒歩約8分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "博多駅",
+        "minutes": [20, 30],
+        "route": "地下鉄空港線で中洲川端駅、箱崎線に乗り換えて箱崎宮前駅へ"
+      },
+      {
+        "hub": "天神駅",
+        "minutes": [15, 25],
+        "route": "地下鉄空港線で中洲川端駅、箱崎線に乗り換えて箱崎宮前駅へ"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://hakozakigu.or.jp/access/",
+        "title": "筥崎宮 アクセス（博多駅から約20分、天神駅から約15分。お潮井浜側の駐車場は1月1日〜3日のみ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.crossroadfukuoka.jp/event/12608",
+        "title": "クロスロードふくおか 玉せせり（箱崎宮前駅から徒歩約3分、JR箱崎駅から徒歩約8分、駐車場あり）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000942",
+        "title": "るるぶ&more. 玉せせり（駐車場約2000台、1月中は有料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://hakozakigu.or.jp/omatsuri/tamatorisai/",
+      "title": "筥崎宮 玉取祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://hakozakigu.or.jp/access/",
+      "title": "筥崎宮 アクセス（福岡市東区箱崎1-22-1）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.crossroadfukuoka.jp/event/12608",
+      "title": "クロスロードふくおか 玉せせり（玉取祭）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と時刻",
+    "見物の決まり（立ち入れる場所、水がかかる場所）、服装・持ち物",
+    "競り子の人数と見物客の数",
+    "祭りの日の駐車場の台数と料金（公式の案内に台数と料金がない）",
+    "屋台の有無と、この日だけの食べもの",
+    "周辺の観光と食の場所（1月3日に開いていると確かめられた場所がまだない）",
+    "玉せせりの道筋の正確な位置（玉取恵比須神社から楼門まで）"
+  ]
+}

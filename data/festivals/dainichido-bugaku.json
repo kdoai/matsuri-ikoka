@@ -1,0 +1,246 @@
+{
+  "id": "dainichido-bugaku",
+  "name": {
+    "ja": "大日堂舞楽",
+    "en": "Dainichido Bugaku"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "秋田県",
+      "name": "鹿角市"
+    }
+  ],
+  "venue": {
+    "name": "大日霊貴神社（大日堂）",
+    "lat": 40.1437,
+    "lng": 140.8065
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["jalan", "rurubu"],
+  "highlights": [
+    "大里・小豆沢・長嶺・谷内の4集落の能衆が、7つの本舞を順に奉納する",
+    "鳥舞では、雄・雌・雛の鳥甲をかぶった3人の童子が扇を手に舞う",
+    "烏遍舞の終わりに、幸運を授かるとされる御守が撒かれる",
+    "朝8時過ぎ、幡笛に合わせて行列で境内を3周する幡綜から行事が進む"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1976年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.city.kazuno.lg.jp/kanko_bunka_sports/kankojoho/9/3/3676.html",
+          "title": "鹿角市 大日堂舞楽",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "舞い手は古くから土地を与えられた地付神役とされる",
+      "sources": [
+        {
+          "url": "http://dainichido.p1.bindsite.jp/bugaku/intro.html",
+          "title": "大日堂舞楽保存会 大日堂舞楽の由緒と概要",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "718年、大日堂の再建を祝う式で、都から来た楽人が舞ったのが始まりと伝わる",
+      "source": {
+        "url": "http://dainichido.p1.bindsite.jp/bugaku/intro.html",
+        "title": "大日堂舞楽保存会 大日堂舞楽の由緒と概要",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "舞う人には古くから土地が与えられて「地付神役」とされ、江戸時代も南部藩が田畑を与えた",
+      "source": {
+        "url": "http://dainichido.p1.bindsite.jp/bugaku/intro.html",
+        "title": "大日堂舞楽保存会 大日堂舞楽の由緒と概要",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "駒舞は、全国に伝わる駒踊りの元の形ともいわれ、駒頭は御神体とされる",
+      "source": {
+        "url": "http://dainichido.p1.bindsite.jp/bugaku/bugaku.html",
+        "title": "大日堂舞楽保存会 大日堂舞楽と行事の解説",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1976年に国の重要無形民俗文化財、2009年にユネスコ無形文化遺産になった",
+      "source": {
+        "url": "https://www.city.kazuno.lg.jp/kanko_bunka_sports/kankojoho/9/3/3676.html",
+        "title": "鹿角市 大日堂舞楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "撮影するときは、奉納する人・参拝者・観覧者の迷惑にならないようにする（2025年の保存会の案内）",
+      "体調の悪い人、37.5度以上の熱がある人は観覧を控える（2025年の保存会の案内）",
+      "車で来る人は、なるべく道の駅かづの（あんとらあ）からのシャトルバスを使う（2025年の保存会の案内）"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "社殿の前と殿内で舞を見る行事で、保存会の案内には駐車場の混雑のほかに危険についての注意がない"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "舞楽の奉納中も一般の人が撮影できるが、脚立は使えない（報道を除く）。2025年の保存会の案内"
+    },
+    "sources": [
+      {
+        "url": "https://dainichido-bugaku.blogspot.com/",
+        "title": "大日堂舞楽オフィシャルブログ 令和七年正月二日の大日堂舞楽奉納について（2024年12月12日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "http://dainichido.p1.bindsite.jp/bugaku/access.html",
+        "title": "大日堂舞楽保存会 アクセス（駐車場は八幡平駅前、当日は大変混雑）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-01-02",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年正月2日（保存会・鹿角市）。2027年の保存会の発表はまだない。例年の流れは、8:00 修祓の儀と地蔵舞、8:10 幡綜と花舞、8:30 幡上げ、8:50 神子舞、9:00 神名手舞と大小行事、9:40 権現舞、10:00 駒舞、10:30 烏遍舞、10:45 鳥舞、11:10 五大尊舞、11:40 工匠舞、11:50 田楽舞。保存会は奉納を8:00〜11:30とし、進行で舞の時刻が遅れることがあると案内している",
+      "sources": [
+        {
+          "url": "http://dainichido.p1.bindsite.jp/bugaku/intro.html",
+          "title": "大日堂舞楽保存会 正月二日のタイムスケジュール",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "http://dainichido.p1.bindsite.jp/bugaku/access.html",
+          "title": "大日堂舞楽保存会 アクセス（奉納 1月2日 8:00〜11:30）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.kazuno.lg.jp/kanko_bunka_sports/kankojoho/9/3/3676.html",
+          "title": "鹿角市 大日堂舞楽（開催日程 1月2日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 八幡平駅",
+        "walkMinutes": [1, 6],
+        "note": "保存会と鹿角市の案内で、駅から徒歩約1分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "盛岡駅",
+        "minutes": [116, 117],
+        "route": "JR花輪線の普通列車（大館行き）、乗り換えなし（盛岡5:00発→八幡平6:57着の1923D、6:55発→8:51着の1925D）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "http://dainichido.p1.bindsite.jp/bugaku/access.html",
+        "title": "大日堂舞楽保存会 アクセス（八幡平駅から徒歩1分、駐車場は八幡平駅前で当日は大変混雑）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.kazuno.lg.jp/kanko_bunka_sports/kankojoho/9/3/3676.html",
+        "title": "鹿角市 大日堂舞楽（JR八幡平駅から徒歩約1分、鹿角八幡平ICから車で約5分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://dainichido-bugaku.blogspot.com/",
+        "title": "大日堂舞楽オフィシャルブログ（2025年は道の駅かづのからシャトルバス）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://timetables.jreast.co.jp/2611/train/035/038101.html",
+        "title": "JR東日本 時刻表 花輪線 普通 1923D（盛岡 5:00 発、八幡平 6:57 着）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://timetables.jreast.co.jp/2611/train/005/007831.html",
+        "title": "JR東日本 時刻表 花輪線 普通 1925D（盛岡 6:55 発、八幡平 8:51 着）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000842",
+        "title": "るるぶ&more. 大日堂舞楽（駐車場50台・無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.city.kazuno.lg.jp/kanko_bunka_sports/kankojoho/9/3/3676.html",
+      "title": "鹿角市 大日堂舞楽（所在地 鹿角市八幡平字堂の上16）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "http://dainichido.p1.bindsite.jp/bugaku/",
+      "title": "大日堂舞楽保存会 公式ホームページ",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "http://dainichido.p1.bindsite.jp/bugaku/bugaku.html",
+      "title": "大日堂舞楽保存会 大日堂舞楽と行事の解説",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の奉納の発表と、公開や撮影の決まり（保存会の告知は2025年の回が最新）",
+    "2027年のシャトルバスの有無と時刻、道の駅かづのからの乗り場",
+    "大雪のときの扱い",
+    "服装・持ち物",
+    "見物人の数",
+    "1月2日に開いている周辺の観光・食事の場所",
+    "地元の味・祭りの日だけの食べ物と、屋台が出るか",
+    "2027年1月2日の花輪線の運転時刻"
+  ]
+}

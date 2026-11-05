@@ -1,0 +1,356 @@
+{
+  "id": "niimi-dogeza-matsuri",
+  "name": {
+    "ja": "土下座まつり（御神幸武器行列）",
+    "en": "Niimi Dogeza Festival (Gojinko Buki Procession)"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "岡山県",
+      "name": "新見市"
+    }
+  ],
+  "venue": {
+    "name": "船川八幡宮・新見御殿町周辺",
+    "lat": 34.9841,
+    "lng": 133.474
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["jalan"],
+  "highlights": [
+    "白熊と呼ぶ大槍・薙刀・鉄砲・弓・大旗などを掲げた総勢64人の武器行列",
+    "沿道の人は盛り砂で清め、腰を低くして行列を迎える",
+    "国税庁の許可を受けて神社で造るどぶろくを、祭りの2日間いただける",
+    "前夜は12の鉄釜を並べる湯立て神事"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1697年に藩主が神幸の警護をさせたのが始まりと伝わる",
+      "sources": [
+        {
+          "url": "https://www.okayama-kanko.jp/event/detail_12688.html",
+          "title": "岡山観光WEB 【2026年】土下座まつり（御神幸武器行列）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "1697年に新見藩の初代藩主・関長治が、神幸の警護に当たらせたのが始まりと伝わる",
+      "source": {
+        "url": "https://www.okayama-kanko.jp/event/detail_12688.html",
+        "title": "岡山観光WEB 【2026年】土下座まつり（御神幸武器行列）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "湯立て神事の12の鉄釜は、1715年に藩主が寄進したもの",
+      "source": {
+        "url": "https://www.city.niimi.okayama.jp/kanko/event/event_detail/index/1",
+        "title": "新見市観光協会 え〜とこ新見 土下座まつり（御神幸武器行列）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "船川八幡宮のどぶろく造りは、1981年に新見市の無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.city.niimi.okayama.jp/kanko/event/event_detail/index/1",
+        "title": "新見市観光協会 え〜とこ新見 土下座まつり（御神幸武器行列）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "岡山県でどぶろく造りを許されている神社は、船川八幡宮だけ",
+      "source": {
+        "url": "https://www.city.niimi.okayama.jp/kanko/event/event_detail/index/1",
+        "title": "新見市観光協会 え〜とこ新見 土下座まつり（御神幸武器行列）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": [
+      "行列が通る間は、座るか腰を低くして、その場所から動かない",
+      "どぶろくは、車を運転する人と未成年は飲まない"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "見学と参拝が中心で、主催者による混雑やけがの注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.niimi.okayama.jp/kanko/event/event_detail/index/1",
+        "title": "新見市観光協会 え〜とこ新見 土下座まつり（御神幸武器行列）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-10-15",
+      "start": "13:30",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": "一部の行事は天候により中止することがある",
+      "note": "2026年の実績。10:00〜11:00 本殿祭、13:30 船川八幡宮の鳥居前から御神幸武器行列が出発（前駆の武器行列・神輿・後駆のお囃子の順）。船川八幡宮と御旅所のあいだ往復約1.5km。前夜14日の19:00から宵宮祭と湯立て神事。14・15日は神社でどぶろくの拝戴。15日は御殿町センターで特産品と弁当の「ゆめ市場」（11:00〜15:00）、無料休憩所・縁日・ワークショップ（10:00〜15:00）、総合案内所（10:00〜16:00）",
+      "sources": [
+        {
+          "url": "https://www.city.niimi.okayama.jp/kanko/event/event_detail/index/1",
+          "title": "新見市観光協会 え〜とこ新見 土下座まつり（御神幸武器行列）（2026年10月14日〜15日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.okayama-kanko.jp/event/detail_12688.html",
+          "title": "岡山観光WEB 【2026年】土下座まつり（御神幸武器行列）（2026年10月15日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-10-15",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年10月15日（2027年の発表はまだない）。例年、前夜の14日に宵宮祭と湯立て神事がある。2026年は13:30に行列が出発した。行列は総勢64人",
+      "sources": [
+        {
+          "url": "https://www.city.niimi.okayama.jp/kanko/event/event_detail/index/1",
+          "title": "新見市観光協会 え〜とこ新見 土下座まつり（毎年10月15日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.okayama-jinjacho.or.jp/search/18916/",
+          "title": "岡山県神社庁 船川八幡宮（10月15日 例大祭、御神幸武器行列は総勢64名）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 新見駅",
+        "walkMinutes": [25, 30],
+        "note": "船川八幡宮までの目安。新見御殿町までは駅から徒歩約15分。2026年は祭りの日に新見駅から無料の循環バス（10:30から30分ごと、最終16:00。新見高校前・新見市役所前・新見美術館などを経由）が出た。駅からタクシーで約10分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "岡山駅",
+        "minutes": [61, 67],
+        "route": "JR伯備線の特急やくも、乗り換えなし（2026年11月4日の時刻表で、岡山7:05〜13:13発の7本は61〜67分）"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.jalan.net/event/evt_349054/",
+        "title": "じゃらんnet 土下座まつり（大名行列・御神幸武器行列）（新見駅から徒歩25分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      },
+      {
+        "url": "https://www.city.niimi.okayama.jp/kanko/spot/spot_detail/index/65",
+        "title": "新見市観光協会 え〜とこ新見 新見御殿町（新見駅から徒歩約15分。駐車は城山体育館か御殿町センター）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.niimi.okayama.jp/kanko/event/event_detail/index/1",
+        "title": "新見市観光協会 え〜とこ新見 土下座まつり（2026年の無料循環バス）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.okayama-kanko.jp/event/detail_12688.html",
+        "title": "岡山観光WEB 土下座まつり（新見駅からタクシー約10分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.okayama-jinjacho.or.jp/search/18916/",
+        "title": "岡山県神社庁 船川八幡宮（駐車場20台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://timetable.jr-odekake.net/line-timetable/2411",
+        "title": "JRおでかけネット 区間時刻表 伯備線(岡山～倉敷～米子) 下り（2026年11月4日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "船川八幡宮のどぶろく（濁酒）",
+        "note": "祭りの2日間（10月14・15日）、船川八幡宮で拝戴できる。車を運転する人と未成年は飲まない",
+        "sources": [
+          {
+            "url": "https://www.city.niimi.okayama.jp/kanko/event/event_detail/index/1",
+            "title": "新見市観光協会 え〜とこ新見 土下座まつり（濁酒拝戴）",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          },
+          {
+            "url": "https://www.okayama-jinjacho.or.jp/search/18916/",
+            "title": "岡山県神社庁 船川八幡宮（国税庁の特別の許可で醸造した濁酒を当日参拝者にふるまう）",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "niimi-gotenmachi",
+      "name": "新見御殿町",
+      "kind": "sightseeing",
+      "summary": "新見藩の初代藩主・関長治が元禄年間に城の代わりに御殿を構えてつくった町並み。太池邸や元料亭「松葉」が残り、御殿町センターには武器行列の模型がある。時間と休みは御殿町センターのもの",
+      "location": {
+        "lat": 34.9841,
+        "lng": 133.4668
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "18:00"
+      },
+      "closedDays": ["sat", "sun"],
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.niimi.okayama.jp/kanko/spot/spot_detail/index/65",
+          "title": "新見市観光協会 え〜とこ新見 新見御殿町",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.okayama-kanko.jp/spot/detail_10958.html",
+          "title": "岡山観光WEB 新見御殿町",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "niimi-art-museum",
+      "name": "新見美術館",
+      "kind": "sightseeing",
+      "summary": "近代日本画や現代作家、郷土作家の作品など1,300点以上を持つ美術館。ミュージアムショップと喫茶がある。月曜休館（祝休日は開館）、12月27日〜1月4日と展示替えの期間は休館",
+      "location": {
+        "lat": 34.9822,
+        "lng": 133.455
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["mon"],
+      "price": "展覧会によって異なる",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.pref.okayama.jp/site/art/632662.html",
+          "title": "岡山県 アートプロジェクトおかやま 新見美術館（新見駅から徒歩約10分）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "yakiniku-chiyagyu-ashin-hiroba",
+      "name": "焼肉千屋牛（JA晴れの国岡山 あしん広場）",
+      "kind": "food",
+      "summary": "JAの産直市場あしん広場にある直営の焼肉店で、和牛のルーツの一つとされる千屋牛を使う千屋牛丼がある。火曜定休（祝日・GW・彼岸・盆は営業）。平日は昼と夜で営業が分かれる",
+      "location": {
+        "lat": 34.9646,
+        "lng": 133.471
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": ["tue"],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.okayama-kanko.jp/gourmet/detail_10978.html",
+          "title": "岡山観光WEB 千屋牛丼（焼肉千屋牛）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.okayama-kanko.jp/spot/detail_10918.html",
+          "title": "岡山観光WEB JA晴れの国岡山 あしん広場",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.niimi.okayama.jp/kanko/event/event_detail/index/1",
+      "title": "新見市観光協会 え〜とこ新見 土下座まつり（御神幸武器行列）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.okayama-kanko.jp/event/detail_12688.html",
+      "title": "岡山観光WEB 【2026年】土下座まつり（御神幸武器行列）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.okayama-jinjacho.or.jp/search/18916/",
+      "title": "岡山県神社庁 船川八幡宮",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、本殿祭・行列の出発の時刻",
+    "行列の道すじと御旅所の場所（往復約1.5kmとだけ分かる）",
+    "見学に向いた場所と、行列への参加・どぶろくの拝戴の受付の時刻",
+    "服装・持ち物・撮影の決まり",
+    "雨のときの扱い（2026年は天候によって中止することがあると案内された）",
+    "交通規制の時間と場所、祭りの日の駐車場",
+    "2027年の無料循環バスの有無",
+    "船川八幡宮の位置（岡山県神社庁の地図の位置を採った。国土地理院の住所検索の新見1781番地は北東へ約800mずれる）",
+    "新見駅から船川八幡宮までの徒歩の時間の公式の案内（大手の観光サイトの徒歩25分だけ）",
+    "焼肉千屋牛の営業時間（平日は11:00〜14:30と16:30〜21:00に分かれ、土日祝は11:00〜21:00。L.O.は30分前）",
+    "会場から歩いて行ける食事の店（営業時間を公式で確かめられた店がない）",
+    "見学者数の公表値",
+    "屋台が出るか（2026年は御殿町センターで縁日があった）"
+  ]
+}

@@ -15,11 +15,24 @@ import {
 } from "@matsuri-ikoka/schema";
 import { addDays, daysBetween, earlierDate, laterDate } from "./calendar";
 import { popularityRank } from "./preferences";
+import { type TravelEstimate, type TravelFit, travelFit } from "./travelEstimate";
 
 /** 希望日の祭りが3件に満たないとき、前後に広げる日数 */
 export const WISH_EXPANSION_DAYS = 14;
 /** 日帰りで行ける、片道の移動時間の上限（分）の初期値 */
 export const DAY_TRIP_MAX_TRAVEL_MINUTES = 150;
+
+/**
+ * 日帰りの片道の上限（分）。泊まりの旅は遠くても行けるので絞り込まず null。
+ * 利用者が上限を言っていなければ、初期値（DAY_TRIP_MAX_TRAVEL_MINUTES）
+ */
+export function dayTripTravelLimit(
+  nights: TripConditions["nights"],
+  maxTravelMinutes: number | undefined,
+): number | null {
+  if (nights > 0) return null;
+  return maxTravelMinutes ?? DAY_TRIP_MAX_TRAVEL_MINUTES;
+}
 
 export interface DateRange {
   from: IsoDate;
@@ -96,6 +109,10 @@ export interface FestivalMatch {
   confirmed: boolean;
   /** 出発地からの移動時間の目安。分からなければ null */
   travelMinutes: MinuteRange | null;
+  /** 移動時間の目安の根拠。data：祭りのデータ / estimate：駅の位置からの見積もり / null：分からない */
+  travelBasis: TravelEstimate["basis"] | null;
+  /** 日帰りの上限と比べた結果。泊まりの旅や、移動時間が分からないときは null */
+  travelFit: TravelFit | null;
 }
 
 export interface FestivalSearchOptions {
@@ -105,16 +122,41 @@ export interface FestivalSearchOptions {
   /** 泊数。0（日帰り・お出かけ）は、片道の移動の上限を超える祭りを除く */
   nights: TripConditions["nights"];
   preferences: Preferences;
-  /** 日帰りの片道の上限（分）。省略すると DAY_TRIP_MAX_TRAVEL_MINUTES */
+  /**
+   * 日帰りの片道の上限（分）。利用者が言ったときだけ渡す。省略すると DAY_TRIP_MAX_TRAVEL_MINUTES。
+   * 渡したときは、上限に収まると分かっている祭りを、所要時間の分からない祭りより先に並べる
+   */
   maxTravelMinutes?: number;
+  /**
+   * 祭りごとの、出発地からの移動時間の目安。省略すると祭りのデータの主要駅からの所要時間だけを使う
+   * （出発地が主要駅でなければ分からない）。接客サーバーは駅の位置からの見積もり（estimateTravel）を渡す
+   */
+  travelFor?: (festival: Festival) => TravelEstimate | null;
+  /** 返す数。省略すると MAX_CANDIDATES（開催を確かめてから選ぶときは多めに取る） */
+  limit?: number;
+  /**
+   * 片道の上限を超える祭りも matches に残す（travelFit は over。tooFar にも入れる）。
+   * 条件の検査（searchConditions.ts）で外した理由を残し、「少し遠い」祭りとして紹介するときに使う
+   */
+  keepOverLimit?: boolean;
+}
+
+/** 祭りのデータの主要駅からの所要時間だけで決める、移動時間の目安 */
+function dataTravel(festival: Festival, origin: string): TravelEstimate | null {
+  const minutes = travelMinutesFrom(festival.access, origin);
+  return minutes === null ? null : { minutes, basis: "data", nearestStation: null, viaHub: null };
 }
 
 export interface FestivalSearchResult {
   ranges: SearchRanges;
-  /** 希望日の祭りを先に、こだわりに合う順で最大3件 */
+  /** 希望日の祭りを先に、こだわりに合う順で最大3件（limit を渡せばその数） */
   matches: FestivalMatch[];
   /** 日帰りの移動の上限を超えたので除いた祭り */
   tooFar: { festivalId: string; travelMinutes: MinuteRange }[];
+  /** 日帰りで、出発地からの所要時間が分からないまま候補に残した祭り（matches のうち） */
+  travelUnknown: string[];
+  /** 日帰りで、見積もりの幅が上限をまたぐ（収まるか分からない）まま候補に残した祭り（matches のうち） */
+  travelUncertain: string[];
 }
 
 /** 開催回のうち、範囲に入る日で希望日にいちばん近い日。なければ null */
@@ -138,23 +180,33 @@ function closestDayInRange(
  * 1. 希望日（期間）の祭りを先に並べる
  * 2. 3件に満たなければ、前後2週間の祭りで補う（ずれの日数を付ける）
  * 3. 今日より前の日、中止・延期、掲載停止の祭りは出さない
- * 4. 日帰りは、片道の移動時間の上限を超える祭りを除く（移動時間が分からない祭りは残す）
+ * 4. 日帰りは、片道の移動時間の上限を超える祭りを除く。駅の位置からの見積もりは、下限でも超えるときだけ除く
+ *    （移動時間が分からない祭りと、見積もりが境目の祭りは残す）。
+ *    利用者が上限を言ったときは、必ず守る条件なので希望日より先に、上限に収まると分かっている祭り、
+ *    境目の祭り、分からない祭りの順に並べる。
+ *    泊まりの旅は絞り込まない
  */
 export function searchFestivalDates(
   festivals: readonly Festival[],
   options: FestivalSearchOptions,
 ): FestivalSearchResult {
   const ranges = searchRanges(options.wish, options.today);
-  const maxTravel = options.maxTravelMinutes ?? DAY_TRIP_MAX_TRAVEL_MINUTES;
+  const maxTravel = dayTripTravelLimit(options.nights, options.maxTravelMinutes);
+  const preferKnownTravel = maxTravel !== null && options.maxTravelMinutes !== undefined;
   const tooFar: FestivalSearchResult["tooFar"] = [];
   const matches: FestivalMatch[] = [];
 
-  if (ranges.expanded === null) return { ranges, matches, tooFar };
+  if (ranges.expanded === null) {
+    return { ranges, matches, tooFar, travelUnknown: [], travelUncertain: [] };
+  }
+  const travelFor =
+    options.travelFor ?? ((festival: Festival) => dataTravel(festival, options.origin));
 
   for (const festival of festivals) {
     if (festival.optOut) continue;
 
     let best: FestivalMatch | null = null;
+    const travel = travelFor(festival);
     for (const occurrence of festival.occurrences) {
       if (occurrence.status === "cancelled" || occurrence.status === "postponed") continue;
       const date = closestDayInRange(occurrence, ranges.expanded, options.wish);
@@ -167,20 +219,27 @@ export function searchFestivalDates(
           date,
           daysFromWish: offset,
           confirmed: isOccurrenceConfirmed(occurrence),
-          travelMinutes: travelMinutesFrom(festival.access, options.origin),
+          travelMinutes: travel?.minutes ?? null,
+          travelBasis: travel?.basis ?? null,
+          travelFit: travel === null || maxTravel === null ? null : travelFit(travel, maxTravel),
         };
       }
     }
     if (best === null) continue;
 
-    if (options.nights === 0 && best.travelMinutes !== null && best.travelMinutes[1] > maxTravel) {
+    if (best.travelFit === "over" && best.travelMinutes !== null) {
       tooFar.push({ festivalId: festival.id, travelMinutes: best.travelMinutes });
-      continue;
+      if (!options.keepOverLimit) continue;
     }
     matches.push(best);
   }
 
   matches.sort((a, b) => {
+    // 利用者が言った所要時間の上限は必ず守る条件なので、日のずれ（希望）より先に見る
+    if (preferKnownTravel) {
+      const byFit = fitRank(a.travelFit) - fitRank(b.travelFit);
+      if (byFit !== 0) return byFit;
+    }
     const byWish = Number(a.daysFromWish !== 0) - Number(b.daysFromWish !== 0);
     if (byWish !== 0) return byWish;
     const byDistance = Math.abs(a.daysFromWish) - Math.abs(b.daysFromWish);
@@ -197,7 +256,16 @@ export function searchFestivalDates(
     return a.festival.id.localeCompare(b.festival.id);
   });
 
-  return { ranges, matches: matches.slice(0, MAX_CANDIDATES), tooFar };
+  const top = matches.slice(0, options.limit ?? MAX_CANDIDATES);
+  const travelUnknown =
+    maxTravel === null ? [] : top.filter((m) => m.travelMinutes === null).map((m) => m.festival.id);
+  const travelUncertain = top.filter((m) => m.travelFit === "uncertain").map((m) => m.festival.id);
+  return { ranges, matches: top, tooFar, travelUnknown, travelUncertain };
+}
+
+/** 上限に収まると分かっている祭りを先に、境目、分からない祭りの順 */
+function fitRank(fit: TravelFit | null): number {
+  return fit === "within" ? 0 : fit === "uncertain" ? 1 : fit === "over" ? 3 : 2;
 }
 
 /** 表示用の開催地（例：滋賀県鈴鳴町）。複数の市町村にまたがるときは「・」でつなぐ */

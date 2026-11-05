@@ -100,6 +100,117 @@ describe("接客サーバーとの通信", () => {
     expect(String(fetchMock.mock.calls[1]?.[0])).toBe("/api/session");
   });
 
+  describe("祭りから探す", () => {
+    const request = {
+      sessionId: "s-1",
+      kinds: ["fireworks" as const],
+      season: "summer" as const,
+      prefectures: [],
+      excludeIds: [],
+    };
+    const empty = { results: [], remaining: 0, nearMatches: [], next: [], reading: null };
+
+    it("POST で条件を送り、合言葉をヘッダーで付け、応答をスキーマで確かめて返す", async () => {
+      const fetchMock = vi.fn<typeof fetch>(async () => json(empty, 200));
+      const transport = createServerTransport({ fetch: fetchMock });
+      transport.setPasscode?.("matsuri");
+      await expect(transport.searchFestivals(request)).resolves.toEqual(empty);
+      const [url, init] = fetchMock.mock.calls[0] ?? [];
+      expect(String(url)).toBe("/api/festivals/search");
+      expect(init?.method).toBe("POST");
+      expect(JSON.parse(String(init?.body))).toEqual(request);
+      expect(headerOf(init, PASSCODE_HEADER)).toBe("matsuri");
+    });
+
+    it("形の違う応答は受け取らない", async () => {
+      const transport = createServerTransport({
+        fetch: async () => json({ ...empty, remaining: "たくさん" }, 200),
+      });
+      await expect(transport.searchFestivals(request)).rejects.toMatchObject({
+        code: "invalid_event",
+      });
+    });
+
+    it("断られたら本文のエラーを読み、404 は相談が切れたものとして扱う", async () => {
+      const refused = createServerTransport({
+        fetch: async () =>
+          json({ code: "rate_limited", message: "今日はここまでです", retryable: false }, 429),
+      });
+      await expect(refused.searchFestivals(request)).rejects.toMatchObject({
+        code: "rate_limited",
+        serverMessage: "今日はここまでです",
+      });
+      const lost = createServerTransport({ fetch: async () => json({}, 404) });
+      await expect(lost.searchFestivals(request)).rejects.toMatchObject({ code: "session_lost" });
+    });
+  });
+
+  describe("祭りを決めたあとの旅の組み立ての確認", () => {
+    const anchor = { festivalId: "kasou-matsuri", date: "2030-08-16" };
+    const request = { sessionId: "s-1", anchor, origin: "みなと中央駅", nights: 1, wishes: [] };
+    const plan = {
+      anchor,
+      festivalName: "架空の祭り",
+      mustPrefectures: ["香川県"],
+      visits: [],
+      order: ["みなと中央駅", "架空の祭り"],
+      startDate: "2030-08-16",
+      endDate: "2030-08-17",
+      minNights: null,
+      warnings: [],
+    };
+
+    it("合言葉を付けて送り、結果を受け取る", async () => {
+      const fetchImpl = vi.fn<typeof fetch>(async () => json(plan, 200));
+      const passcode = createPasscodeHolder();
+      passcode.set("matsuri");
+      const transport = createServerTransport({ fetch: fetchImpl, passcode });
+      await expect(transport.previewFestivalTrip(request)).resolves.toEqual(plan);
+      const [url, init] = fetchImpl.mock.calls[0] ?? [];
+      expect(url).toBe("/api/festival-trips/preview");
+      expect(JSON.parse(String(init?.body))).toEqual(request);
+      expect(headerOf(init, PASSCODE_HEADER)).toBe("matsuri");
+    });
+
+    it("形の違う応答は受け取らない", async () => {
+      const transport = createServerTransport({
+        fetch: async () => json({ ...plan, order: [] }, 200),
+      });
+      await expect(transport.previewFestivalTrip(request)).rejects.toMatchObject({
+        code: "invalid_event",
+      });
+    });
+
+    it("404 は相談が切れたのでなく、祭りが見つからないものとして本文の一文を読む", async () => {
+      const transport = createServerTransport({
+        fetch: async () =>
+          json({ code: "bad_request", message: "祭りが見つかりません。", retryable: false }, 404),
+      });
+      await expect(transport.previewFestivalTrip(request)).rejects.toMatchObject({
+        code: "bad_request",
+        serverMessage: "祭りが見つかりません。",
+      });
+    });
+  });
+
+  it("サーバーが知らせた動き方（mock・live）を覚える", async () => {
+    const replies = [
+      json({ sessionId: "s-1", mode: "mock" }, 201),
+      json({ sessionId: "s-2", mode: "live" }, 201),
+      json({ sessionId: "s-3" }, 201),
+    ];
+    const transport = createServerTransport({ fetch: async () => replies.shift() as Response });
+
+    expect(transport.agentMode?.()).toBeNull();
+    await transport.startSession();
+    expect(transport.agentMode?.()).toBe("mock");
+    await transport.startSession();
+    expect(transport.agentMode?.()).toBe("live");
+    // 知らせのない古いサーバーでは分からないまま
+    await transport.startSession();
+    expect(transport.agentMode?.()).toBeNull();
+  });
+
   it("記録の名前がなければ、空の本文で始める", async () => {
     const fetchMock = vi.fn<typeof fetch>(async () => json({ sessionId: "s-1" }, 201));
     await createServerTransport({ fetch: fetchMock }).startSession();
@@ -142,6 +253,21 @@ describe("接客サーバーとの通信", () => {
     const list = await createServerFestivalSource({ fetch: fetchMock }).initial();
     expect(list.map((item) => item.id)).toEqual([festival.id]);
     expect(String(fetchMock.mock.calls[0]?.[0])).toBe("/api/festivals");
+  });
+
+  it("接続が切れたあとは、合言葉の要らない死活監視の口でサーバーが応答するかを確かめる", async () => {
+    const up = vi.fn<typeof fetch>(async () => json({ status: "ok" }, 200));
+    expect(await createServerTransport({ fetch: up }).checkServer?.()).toBe(true);
+    expect(up.mock.calls[0]?.[0]).toBe("/healthz");
+
+    const refused = vi.fn<typeof fetch>(async () => {
+      throw new TypeError("Failed to fetch");
+    });
+    expect(await createServerTransport({ fetch: refused }).checkServer?.()).toBe(false);
+
+    // 開発の中継（Vite）は、サーバーが止まっていると 500 を返す
+    const proxyError = vi.fn<typeof fetch>(async () => new Response("", { status: 500 }));
+    expect(await createServerTransport({ fetch: proxyError }).checkServer?.()).toBe(false);
   });
 
   it("一覧の経路がないサーバーでは、豆知識に使う祭りは空のまま", async () => {

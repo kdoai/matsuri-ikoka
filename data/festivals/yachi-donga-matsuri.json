@@ -1,0 +1,318 @@
+{
+  "id": "yachi-donga-matsuri",
+  "name": {
+    "ja": "谷地どんがまつり",
+    "en": "Yachi Donga Matsuri"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "山形県",
+      "name": "河北町"
+    }
+  ],
+  "venue": {
+    "name": "谷地八幡宮",
+    "lat": 38.4261,
+    "lng": 140.3131
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["rurubu", "jalan", "walkerplus"],
+  "highlights": [
+    "国の重要無形民俗文化財「林家舞楽」を、境内の石舞台で昼と夜に見られる",
+    "夜の舞楽のあと、暗がりの中を神輿が渡御する",
+    "2日目は谷地奴を先頭に、囃子屋台が従う神輿還御の行列が町を進む",
+    "最終日の夜、5〜9台の囃子屋台が音色を競い、提灯屋台が灯る"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "林家舞楽が1981年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.yachihachimangu.jp/goyuisho/?hsLang=ja",
+          "title": "谷地八幡宮 御由緒",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "各町内が囃子屋台を出し、若衆が町印を担いだり曳いたりする",
+      "sources": [
+        {
+          "url": "https://www.town.kahoku.yamagata.jp/soshiki/shoko/kankousinkou/3342/700.html",
+          "title": "河北町 谷地どんがまつり",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "舞楽の笛と太鼓が「おひゃらどんが」と聞こえることが、名の由来といわれる",
+      "source": {
+        "url": "https://benibananosato.com/kahoku/%E8%B0%B7%E5%9C%B0%E3%81%A9%E3%82%93%E3%81%8C%E3%81%BE%E3%81%A4%E3%82%8A/",
+        "title": "河北町観光物産協会 谷地どんがまつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "林家舞楽は大阪の四天王寺の舞楽が伝わったもので、今は11曲を伝える",
+      "source": {
+        "url": "https://www.yachihachimangu.jp/goyuisho/?hsLang=ja",
+        "title": "谷地八幡宮 御由緒",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "林家舞楽は1981年1月に国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.yachihachimangu.jp/goyuisho/?hsLang=ja",
+        "title": "谷地八幡宮 御由緒",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "囃子屋台は昔は担ぎ、明治は荷馬車、昭和からは車で曳くようになった",
+      "source": {
+        "url": "https://www.town.kahoku.yamagata.jp/soshiki/shoko/kankousinkou/3342/700.html",
+        "title": "河北町 谷地どんがまつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": []
+  },
+  "occurrences": [
+    {
+      "date": "2026-09-19",
+      "start": "13:30",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "1日目。前夜（18日）20:00 楽揃式。終日 谷地奴・囃子屋台の巡演、13:30 例祭祓式、14:30 林家舞楽奉奏（境内石舞台）、19:30 ごらんじょうまいり、19:45 夜遊の舞楽、20:20 神輿渡御",
+      "sources": [
+        {
+          "url": "https://benibananosato.com/kahoku/%E8%B0%B7%E5%9C%B0%E3%81%A9%E3%82%93%E3%81%8C%E3%81%BE%E3%81%A4%E3%82%8A/",
+          "title": "河北町観光物産協会 谷地どんがまつり（2026年9月19日〜21日、日ごとの予定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.town.kahoku.yamagata.jp/soshiki/shoko/kankousinkou/3342/700.html",
+          "title": "河北町 谷地どんがまつり（令和8年は9月19日から21日まで）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-20",
+      "start": "12:30",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2日目。終日 谷地奴・囃子屋台の巡演、12:30 神輿還御の行列（奴が先頭、約2km）、14:30 林家舞楽奉奏（解説付き、境内石舞台）、17:00 例大祭奉弊式",
+      "sources": [
+        {
+          "url": "https://benibananosato.com/kahoku/%E8%B0%B7%E5%9C%B0%E3%81%A9%E3%82%93%E3%81%8C%E3%81%BE%E3%81%A4%E3%82%8A/",
+          "title": "河北町観光物産協会 谷地どんがまつり（2026年9月19日〜21日、日ごとの予定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.town.kahoku.yamagata.jp/soshiki/shoko/kankousinkou/3342/700.html",
+          "title": "河北町 谷地どんがまつり（2日目の御輿還御の行列は約2km）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-21",
+      "start": "13:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "3日目。13:00 大黒舞の奉納と民謡ショー（谷地八幡宮境内）、17:00 囃子屋台競演（どんがホール）。屋台は年番により5〜9台",
+      "sources": [
+        {
+          "url": "https://benibananosato.com/kahoku/%E8%B0%B7%E5%9C%B0%E3%81%A9%E3%82%93%E3%81%8C%E3%81%BE%E3%81%A4%E3%82%8A/",
+          "title": "河北町観光物産協会 谷地どんがまつり（2026年9月19日〜21日、日ごとの予定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.town.kahoku.yamagata.jp/soshiki/shoko/kankousinkou/3342/700.html",
+          "title": "河北町 谷地どんがまつり（年番により5〜9台の屋台）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-09-18",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "1日目の見込み。町と協会の案内の「9月の敬老の日を含む土・日・月曜日」から、2027年の敬老の日（9月20日）を含む3日間と見込んだ（2027年の発表はまだない）。例年は午後に林家舞楽、夜に夜遊の舞楽と神輿渡御",
+      "sources": [
+        {
+          "url": "https://www.town.kahoku.yamagata.jp/soshiki/shoko/kankousinkou/3342/700.html",
+          "title": "河北町 谷地どんがまつり（毎秋9月の敬老の日を含む土曜日・日曜日・月曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.yachihachimangu.jp/saijiki/?hsLang=ja",
+          "title": "谷地八幡宮 祭時記（九月 敬老の日を含む3連休 谷地八幡宮例祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-09-19",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2日目の見込み（2027年の発表はまだない）。例年は昼に神輿還御の行列、午後に解説付きの林家舞楽",
+      "sources": [
+        {
+          "url": "https://www.town.kahoku.yamagata.jp/soshiki/shoko/kankousinkou/3342/700.html",
+          "title": "河北町 谷地どんがまつり（毎秋9月の敬老の日を含む土曜日・日曜日・月曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-09-20",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "3日目（敬老の日）の見込み（2027年の発表はまだない）。例年は夕方から夜に囃子屋台の競演",
+      "sources": [
+        {
+          "url": "https://www.town.kahoku.yamagata.jp/soshiki/shoko/kankousinkou/3342/700.html",
+          "title": "河北町 谷地どんがまつり（毎秋9月の敬老の日を含む土曜日・日曜日・月曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [
+      "2025年は、祭りの3日間、谷地の中心部で交通規制があった（2026年・2027年の規制の内容は確かめられていない）"
+    ],
+    "sources": [
+      {
+        "url": "https://www.yachihachimangu.jp/",
+        "title": "谷地八幡宮（JR寒河江駅から山交バス谷地行きで「谷地」下車徒歩1分、JRさくらんぼ東根駅から河北町路線バスで「役場」下車徒歩1分、どちらの駅からもタクシーで約20分、駐車場約10台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://benibananosato.com/blog/event/2391/",
+        "title": "河北町観光物産協会 令和7年谷地どんがまつり（谷地中心部は3日間交通規制）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20003179",
+        "title": "るるぶ&more. 谷地どんがまつり（駐車場100台・無料：どんがホール40台、ゆっくら30台、役場30台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "kahoku-benibana-museum",
+      "name": "河北町紅花資料館",
+      "kind": "sightseeing",
+      "summary": "紅花商人だった堀米家の屋敷を使った資料館。紅花から紅餅をつくる工程と道具、紅で染めた衣装やひな人形を展示している。第2木曜（祝日なら翌日）と年末年始が休み",
+      "location": {
+        "lat": 38.4386,
+        "lng": 140.2995
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": null,
+      "price": "大人400円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://benibananosato.com/watch/benibana_museum/",
+          "title": "河北町観光物産協会 河北町紅花資料館（3月〜10月は9:00〜17:00、第2木曜休館）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.town.kahoku.yamagata.jp/soshiki/shoko/kankousinkou/3342/700.html",
+      "title": "河北町 谷地どんがまつり（谷地八幡宮の例祭）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://benibananosato.com/kahoku/%E8%B0%B7%E5%9C%B0%E3%81%A9%E3%82%93%E3%81%8C%E3%81%BE%E3%81%A4%E3%82%8A/",
+      "title": "河北町観光物産協会 谷地どんがまつり（会場は谷地八幡宮・御旅所・どんがホール）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.yachihachimangu.jp/",
+      "title": "谷地八幡宮（山形県西村山郡河北町谷地224）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と時刻（日は町の案内の「9月の敬老の日を含む土・日・月曜日」から見込んだもの）",
+    "作法（見学の場所やルール、石舞台の舞楽の観覧のしかた、撮影、服装、持ち物、危険についての注意）が、町・協会・神社の案内に見つからない",
+    "会場は鉄道の駅から歩けない。寒河江駅・さくらんぼ東根駅からのバスの所要時間と本数、山形駅など玄関口の駅からの所要時間は確かめられていない",
+    "祭りの日の駐車場（100台はるるぶ&more.だけの情報、神社の駐車場は約10台）",
+    "2026年・2027年の交通規制の場所と時間",
+    "雨天の扱い",
+    "各日の終わりの時刻と、神輿渡御・還御の道筋",
+    "屋台・露店が出るか",
+    "会場の緯度・経度は OpenStreetMap の谷地八幡宮の位置を使った。紅花資料館の位置も OpenStreetMap のもの",
+    "紅花資料館の最終入館の時刻と、祭りの日の営業。会場から歩けるかは確かめていない",
+    "前後に寄れる食事・休憩の場所"
+  ]
+}

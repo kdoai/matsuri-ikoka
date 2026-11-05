@@ -1,0 +1,251 @@
+{
+  "id": "toyokawa-inari-shuki-taisai",
+  "name": {
+    "ja": "豊川稲荷秋季大祭",
+    "en": "Toyokawa Inari Autumn Grand Festival"
+  },
+  "category": "lantern",
+  "municipalities": [
+    {
+      "prefecture": "愛知県",
+      "name": "豊川市"
+    }
+  ],
+  "venue": {
+    "name": "豊川稲荷（豊川閣妙厳寺）境内",
+    "lat": 34.8252,
+    "lng": 137.3933
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["jalan", "rurubu"],
+  "highlights": [
+    "高さ約10m・直径約5mの大提灯が境内に掲げられる「大提灯まつり」",
+    "尊天を乗せた神輿に稚児・雅楽・僧侶が続き、境内を練り歩く渡御",
+    "夕方からは大小の提灯に灯がともり、夜の境内を照らす",
+    "2026年は72年ぶりの御開帳の期間中に重なる"
+  ],
+  "trivia": [
+    {
+      "text": "秋季大祭は鎮座祭とも呼ばれ、毎年11月の第3土曜・日曜に行う",
+      "source": {
+        "url": "https://www.toyokawainari.jp/event/year/",
+        "title": "豊川稲荷 年中行事（秋季大祭（鎮座祭）は十一月第三・土日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "豊川稲荷の正式な名は妙厳寺。1441年の創建とされる曹洞宗の寺",
+      "source": {
+        "url": "https://aichinow.pref.aichi.jp/spots/detail/44/",
+        "title": "Aichi Now 豊川稲荷（豊川閣妙厳寺）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "境内の霊狐塚には、信者が納めた狐の石像が1,000体以上並ぶ",
+      "source": {
+        "url": "https://aichinow.pref.aichi.jp/spots/detail/44/",
+        "title": "Aichi Now 豊川稲荷（豊川閣妙厳寺）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "大人は申し込みなしで参拝と見学ができる。行列に加わる稚児は、所定の申込用紙を境内の総受処（祈祷受付、8:00〜15:00）に出して申し込む。2026年は10月1日12:00から受付（費用と定員は案内に書かれていない）",
+    "rules": ["駐車場に限りがあるため、公共交通機関で来ることが勧められている"],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "境内での渡御の見学と参拝が中心で、寺と県の案内に危険についての注意が見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.toyokawainari.jp/news/%e4%bb%a4%e5%92%8c%ef%bc%98%e5%b9%b4%e3%80%80%e7%a7%8b%e5%ad%a3%e5%a4%a7%e7%a5%ad%e3%80%80%e5%be%a1%e7%a8%9a%e5%85%90%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6/",
+        "title": "豊川稲荷 令和8年 秋季大祭 御稚児について（10月1日12時から受付）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://aichinow.pref.aichi.jp/events/detail/1869/",
+        "title": "Aichi Now 豊川稲荷御開帳 秋季大祭（公共交通機関の利用のお願い）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-21",
+      "endDate": "2026-11-22",
+      "start": "09:00",
+      "end": "16:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "21日・22日とも 9:00〜16:00 大祭、14:00 御開帳大祭・開帳大祭渡御（尊天を乗せた神輿に稚児・雅楽・僧侶が続いて境内を練る）、17:00〜20:00 提灯の夜間点灯。両日とも本殿の拝観は13:00〜15:00休止、開帳祈祷の受付は13:30まで。御開帳（11/1〜23）の期間中で、境内に屋台30店が出る",
+      "sources": [
+        {
+          "url": "https://aichinow.pref.aichi.jp/events/detail/1869/",
+          "title": "Aichi Now 豊川稲荷御開帳 秋季大祭（2026年11月21日・22日、9:00〜16:00、提灯夜間点灯17:00〜20:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.toyokawainari.jp/news/%e4%bb%a4%e5%92%8c%ef%bc%98%e5%b9%b4-%e4%b8%83%e5%8d%81%e4%ba%8c%e5%b9%b4%e3%81%b6%e3%82%8a%e3%81%ae%e5%be%a1%e9%96%8b%e5%b8%b3%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6/",
+          "title": "豊川稲荷 令和8年 七十二年ぶりの御開帳について（11/21・22 14:00 御開帳大祭・開帳大祭渡御）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://aichinow.pref.aichi.jp/features/detail/467/",
+          "title": "Aichi Now 72年ぶりの御開帳！豊川稲荷で特別なご縁を結び、歴史・アート・食を満喫",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-11-20",
+      "endDate": "2027-11-21",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年11月の第3土曜・日曜（2027年の発表はまだない）。2026年は9:00〜16:00に大祭、17:00〜20:00に提灯の夜間点灯だった。2026年の14:00の渡御は御開帳の大祭としての時刻で、御開帳のない年の時刻は分からない",
+      "sources": [
+        {
+          "url": "https://www.toyokawainari.jp/event/year/",
+          "title": "豊川稲荷 年中行事（秋季大祭（鎮座祭）は十一月第三・土日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 豊川駅",
+        "walkMinutes": [5, 10],
+        "note": "JR飯田線。寺の案内で徒歩5分"
+      },
+      {
+        "name": "名鉄 豊川稲荷駅",
+        "walkMinutes": [5, 10],
+        "note": "名鉄豊川線。寺の案内で徒歩5分"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.toyokawainari.jp/access/",
+        "title": "豊川稲荷 アクセス（JR豊川駅・名鉄豊川稲荷駅から徒歩5分。名鉄名古屋本線の豊川稲荷行き急行、または国府駅で豊川線に乗り換え）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://aichinow.pref.aichi.jp/spots/detail/44/",
+        "title": "Aichi Now 豊川稲荷（豊川閣妙厳寺）（駐車場 普通車600円・350台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://aichinow.pref.aichi.jp/events/detail/1869/",
+        "title": "Aichi Now 豊川稲荷御開帳 秋季大祭（豊川稲荷大駐車場 1台600円、祈祷を受ける人は無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "豊川いなり寿司",
+        "note": "門前町の名物。飲食店やみやげ店が100店以上並ぶ門前町で食べられる",
+        "sources": [
+          {
+            "url": "https://aichinow.pref.aichi.jp/spots/detail/44/",
+            "title": "Aichi Now 豊川稲荷（豊川閣妙厳寺）（門前町の名物は豊川いなり寿司）",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "nishimoto-yuki-museum",
+      "name": "豊川稲荷 西元祐貴美術館",
+      "kind": "sightseeing",
+      "summary": "豊川稲荷の境内にある、墨絵の作品を見せる美術館。2026年は御開帳に合わせて10月31日〜11月23日に開館。御開帳のない時期の開館日は案内で確かめる",
+      "location": {
+        "lat": 34.8255,
+        "lng": 137.3925
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "16:00"
+      },
+      "closedDays": null,
+      "price": "大人1,500円、小中学生500円、未就学児無料（2026年の御開帳期間）",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://aichinow.pref.aichi.jp/features/detail/467/",
+          "title": "Aichi Now 72年ぶりの御開帳！豊川稲荷で特別なご縁を結び、歴史・アート・食を満喫（西元祐貴美術館 10:00〜16:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.toyokawainari.jp/event/year/",
+      "title": "豊川稲荷 年中行事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://aichinow.pref.aichi.jp/events/detail/1869/",
+      "title": "Aichi Now 豊川稲荷御開帳 秋季大祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20000513",
+      "title": "るるぶ&more. 豊川稲荷秋季大祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_332483/",
+      "title": "じゃらんnet 豊川稲荷秋季大祭（鎮座祭）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "雨のときの扱い",
+    "御開帳のない年（2027年）の渡御・稚児行列の時刻",
+    "見学の決まり（渡御を見る位置）、服装・持ち物、撮影の決まり",
+    "稚児の参加費と定員、装束の扱い",
+    "交通規制の有無",
+    "名古屋駅・豊橋駅から最寄り駅までの所要時間",
+    "来場者数と神輿の数",
+    "大駐車場の料金と台数（県の観光サイトは有料600円・350台、るるぶ&more.の2025年の案内は無料500台）",
+    "門前町の食事処の営業時間と定休日"
+  ]
+}

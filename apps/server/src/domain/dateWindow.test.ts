@@ -1,7 +1,9 @@
 import { DEFAULT_PREFERENCES, type Preferences } from "@matsuri-ikoka/schema";
 import { describe, expect, it } from "vitest";
 import {
+  DAY_TRIP_MAX_TRAVEL_MINUTES,
   daysFromWish,
+  dayTripTravelLimit,
   placeLabel,
   searchFestivalDates,
   searchRanges,
@@ -145,6 +147,53 @@ describe("日程のルール", () => {
   });
 });
 
+describe("日帰りの所要時間の上限", () => {
+  // 徒歩（8〜12分）を足すので、主要駅からの分に 8〜12 分が加わる
+  const festivals = [
+    testFestival({ id: "within-hour", date: "2026-08-16", fromHubMinutes: [40, 45] }),
+    testFestival({ id: "within-two", date: "2026-08-16", fromHubMinutes: [90, 100] }),
+    testFestival({ id: "unknown", date: "2026-08-16", fromHubMinutes: null }),
+  ];
+  const search = (nights: number, maxTravelMinutes?: number) =>
+    searchFestivalDates(festivals, {
+      ...base,
+      nights,
+      wish: day("2026-08-16"),
+      today: "2026-08-03",
+      ...(maxTravelMinutes === undefined ? {} : { maxTravelMinutes }),
+    });
+
+  it("泊まりの旅は絞り込まず、日帰りは言われた上限か初期値を使う", () => {
+    expect(dayTripTravelLimit(1, 60)).toBeNull();
+    expect(dayTripTravelLimit(0, 60)).toBe(60);
+    expect(dayTripTravelLimit(0, undefined)).toBe(DAY_TRIP_MAX_TRAVEL_MINUTES);
+  });
+
+  it("1時間以内なら、片道の上側の目安が60分を超える祭りを除く", () => {
+    const result = search(0, 60);
+    expect(result.matches.map((m) => m.festival.id)).toEqual(["within-hour", "unknown"]);
+    expect(result.tooFar).toEqual([{ festivalId: "within-two", travelMinutes: [98, 112] }]);
+  });
+
+  it("2時間以内なら、どちらも残し、分かっている祭りを分からない祭りより先に並べる", () => {
+    const result = search(0, 120);
+    expect(result.matches.map((m) => m.festival.id)).toEqual([
+      "within-hour",
+      "within-two",
+      "unknown",
+    ]);
+    expect(result.tooFar).toEqual([]);
+    expect(result.travelUnknown).toEqual(["unknown"]);
+  });
+
+  it("泊まりの旅では、上限を言われても絞り込まない", () => {
+    const result = search(1, 60);
+    expect(result.matches).toHaveLength(3);
+    expect(result.tooFar).toEqual([]);
+    expect(result.travelUnknown).toEqual([]);
+  });
+});
+
 describe("searchFestivalDates", () => {
   const options = { ...base, wish: day("2026-08-16"), today: "2026-08-03" };
 
@@ -263,5 +312,47 @@ describe("toCandidate", () => {
       source: festival.occurrences[0]!.sources[0],
     });
     expect(placeLabel(festival)).toBe("滋賀県鈴鳴町");
+  });
+});
+
+describe("駅の位置からの見積もり（travelFor）", () => {
+  const estimate = (minutes: [number, number]) => ({
+    minutes,
+    basis: "estimate" as const,
+    nearestStation: "鈴鳴",
+    viaHub: null,
+  });
+  const festivals = [
+    testFestival({ id: "island", date: "2026-08-16", fromHubMinutes: null }),
+    testFestival({ id: "border", date: "2026-08-16", fromHubMinutes: null }),
+    testFestival({ id: "near-later", date: "2026-08-18", fromHubMinutes: null }),
+  ];
+  const travel: Record<string, [number, number]> = {
+    island: [200, 600],
+    border: [100, 240],
+    "near-later": [40, 90],
+  };
+  const search = (maxTravelMinutes?: number) =>
+    searchFestivalDates(festivals, {
+      ...base,
+      nights: 0,
+      wish: day("2026-08-16"),
+      today: "2026-08-03",
+      travelFor: (festival) => estimate(travel[festival.id] ?? [0, 0]),
+      ...(maxTravelMinutes === undefined ? {} : { maxTravelMinutes }),
+    });
+
+  it("見積もりの下限でも上限を超える祭りは除き、境目の祭りは残して知らせる", () => {
+    const result = search(180);
+    expect(result.tooFar.map((t) => t.festivalId)).toEqual(["island"]);
+    expect(result.travelUncertain).toEqual(["border"]);
+    expect(result.matches.find((m) => m.festival.id === "border")).toMatchObject({
+      travelBasis: "estimate",
+      travelFit: "uncertain",
+    });
+  });
+
+  it("上限を言われたら、必ず守る条件なので、希望日の境目の祭りより、収まる祭りを先に並べる", () => {
+    expect(search(180).matches.map((m) => m.festival.id)).toEqual(["near-later", "border"]);
   });
 });

@@ -1,0 +1,264 @@
+{
+  "id": "yonekawa-mizukaburi",
+  "name": {
+    "ja": "米川の水かぶり",
+    "en": "Yonekawa Mizukaburi"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "宮城県",
+      "name": "登米市"
+    }
+  ],
+  "venue": {
+    "name": "大慈寺山門広場（東和町米川 五日町地区）",
+    "lat": 38.7676,
+    "lng": 141.3264
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "藁の装束をまとった男たちが、火の神の姿で町を駆け抜ける",
+    "沿道の家々の屋根に水をかけ、町じゅうの火伏せを願う",
+    "装束から抜いた藁を屋根にのせ、火よけのお守りにする",
+    "鐘を鳴らすひょっとこと、手桶を担いだおかめが家々を回る"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "国の重要無形民俗文化財に指定された行事",
+      "sources": [
+        {
+          "url": "https://www.pref.miyagi.jp/soshiki/bunkazai/03yonekawa.html",
+          "title": "宮城県 指定文化財〈重要無形民俗文化財〉米川の水かぶり",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "五日町地区に伝わる行事として受け継がれている",
+      "sources": [
+        {
+          "url": "https://www.city.tome.miyagi.jp/bunkazai/yonekawa.html",
+          "title": "登米市 米川の水かぶりの開催について",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "装束から抜き取った藁を屋根にのせると、火災よけのお守りになるとされる",
+      "source": {
+        "url": "https://www.city.tome.miyagi.jp/bunkazai/yonekawa.html",
+        "title": "登米市 米川の水かぶりの開催について",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "一行が通り過ぎるまで、色のついた食べ物を口にしない決まりが伝わる",
+      "source": {
+        "url": "https://www.pref.miyagi.jp/soshiki/bunkazai/03yonekawa.html",
+        "title": "宮城県 指定文化財〈重要無形民俗文化財〉米川の水かぶり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "水かぶりは初午の日だけ。ほかの日にはしない決まりがある",
+      "source": {
+        "url": "https://www.pref.miyagi.jp/soshiki/bunkazai/03yonekawa.html",
+        "title": "宮城県 指定文化財〈重要無形民俗文化財〉米川の水かぶり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "火伏せを願うこの行事は、ユネスコの無形文化遺産に登録されている",
+      "source": {
+        "url": "https://visitmiyagi.com/events_festivals/yonekawa-mizukaburi-festival",
+        "title": "Visit Miyagi（宮城県） Yonekawa Mizukaburi Festival",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "見学が中心で、主催者による危険の注意は見当たらない。ただし一行は家々だけでなく見物の人にも水をかける"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.tome.miyagi.jp/bunkazai/yonekawa.html",
+        "title": "登米市 米川の水かぶりの開催について",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://visitmiyagi.com/events_festivals/yonekawa-mizukaburi-festival",
+        "title": "Visit Miyagi（宮城県） Yonekawa Mizukaburi Festival",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-02-01",
+      "start": "10:30",
+      "end": "12:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績（初午）。朝に男たちが水かぶり宿に集まって藁の装束を作り、10:30 に出走。大慈寺境内の秋葉大権現に祈ってから、町内の通りを南から北へ走り、昼ごろまで",
+      "sources": [
+        {
+          "url": "https://www.city.tome.miyagi.jp/bunkazai/yonekawa.html",
+          "title": "登米市 米川の水かぶりの開催について",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://visitmiyagi.com/events_festivals/yonekawa-mizukaburi-festival",
+          "title": "Visit Miyagi（宮城県） Yonekawa Mizukaburi Festival",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.pref.miyagi.jp/soshiki/bunkazai/03yonekawa.html",
+          "title": "宮城県 指定文化財〈重要無形民俗文化財〉米川の水かぶり",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-02-08",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年2月の初午に行う決まりから見込んだ日（2027年2月最初の午の日で、月曜日）。2027年の発表はまだない。2026年は10:30 に出走した",
+      "sources": [
+        {
+          "url": "https://www.city.tome.miyagi.jp/bunkazai/yonekawa.html",
+          "title": "登米市 米川の水かぶりの開催について（毎年2月の初午）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [
+      {
+        "hub": "くりこま高原駅",
+        "minutes": [40, 50],
+        "route": "JR東北新幹線の駅から、タクシーかレンタカーで約40分（登米市の案内）"
+      },
+      {
+        "hub": "石越駅",
+        "minutes": [30, 40],
+        "route": "JR東北本線の駅から、タクシーかレンタカーで約30分（登米市の案内）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.city.tome.miyagi.jp/bunkazai/yonekawa.html",
+        "title": "登米市 米川の水かぶりの開催について",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://visitmiyagi.com/events_festivals/yonekawa-mizukaburi-festival",
+        "title": "Visit Miyagi（宮城県） Yonekawa Mizukaburi Festival",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "michi-no-eki-rinrinkan",
+      "name": "道の駅 林林館 森の茶屋",
+      "kind": "food",
+      "summary": "東和町米川の道の駅。にんにく・ごぼう・長芋・りんご・米など、地元の農産物と加工品を売る直売所がある",
+      "location": {
+        "lat": 38.7425,
+        "lng": 141.3163
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "18:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.pref.miyagi.jp/soshiki/et-tmsgsin-n/cyokubaijyo-t-morinochaya.html",
+          "title": "宮城県 道の駅「林林館 森の茶屋」",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.tome.miyagi.jp/bunkazai/yonekawa.html",
+      "title": "登米市 米川の水かぶりの開催について",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.pref.miyagi.jp/soshiki/bunkazai/03yonekawa.html",
+      "title": "宮城県 指定文化財〈重要無形民俗文化財〉米川の水かぶり",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://visitmiyagi.com/events_festivals/yonekawa-mizukaburi-festival",
+      "title": "Visit Miyagi（宮城県） Yonekawa Mizukaburi Festival",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と出走の時刻（2月8日は初午の決まりからの見込み）",
+    "見学できる場所と、見物の人が守ること（水をかけられる前提で見る場所の案内がない）",
+    "服装・持ち物（真冬に水がかかるが、公式の案内がない）",
+    "撮影の決まり",
+    "雪や荒天のときの扱い",
+    "交通規制の有無と、駐車場の場所・台数",
+    "仙台駅から高速バスで登米市役所前まで来る場合の所要時間（宮城県の観光サイトは、そこからタクシーで約20分とだけ案内）",
+    "屋台や振る舞いがあるか",
+    "加わる男たちの人数（規模の根拠になる数が見つからない）",
+    "大慈寺から五日町の通りまでの歩く時間",
+    "周辺の観光の場所（確かめられなかった）",
+    "林林館の定休日と、2027年2月8日（月）の営業（宮城県の案内に休みの記載がない）",
+    "開催日の決まりが情報源で食い違う（登米市と宮城県の文化財のページは毎年2月の初午、宮城県の観光サイトは2月の最初の週末）。上の情報源の初午を採った",
+    "仙台駅から会場までの通しの所要時間（東北新幹線でくりこま高原駅へ行き、タクシーに乗り継ぐ場合の通しの数字の案内がない）"
+  ]
+}

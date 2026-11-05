@@ -1,0 +1,344 @@
+{
+  "id": "akkeshi-kaki-matsuri",
+  "name": {
+    "ja": "あっけし牡蠣まつり",
+    "en": "Akkeshi Oyster Festival"
+  },
+  "category": "market",
+  "municipalities": [
+    {
+      "prefecture": "北海道",
+      "name": "厚岸郡厚岸町"
+    }
+  ],
+  "venue": {
+    "name": "子野日公園",
+    "lat": 43.027,
+    "lng": 144.8603
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "会場で買った厚岸の牡蠣やアサリを、その場の炭火で焼いて食べられる",
+    "焼き台・炭・網は本部テントで借りられ、手ぶらで行ける",
+    "中学生以上は牡蠣、小学生以下はアサリのつかみどりがある",
+    "厚岸湖を望む子野日公園が会場"
+  ],
+  "trivia": [
+    {
+      "text": "2026年の回で64回目になる、厚岸の秋の牡蠣の祭り",
+      "source": {
+        "url": "https://www.akkeshi-town.jp/kanko/event/kaki/",
+        "title": "厚岸町 第64回あっけし牡蠣まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "会場の子野日公園は、町が昭和37年に譲り受けた庭園が前身で、桜の名所でもある",
+      "source": {
+        "url": "https://www.akkeshi-town.jp/kanko/kanko10/sakura/",
+        "title": "厚岸町 子野日公園",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "牡蠣島は厚岸湖に浮かぶ島で、正式な名前は弁天島。小さな弁天神社が建つ",
+      "source": {
+        "url": "https://www.akkeshi-town.jp/kanko/kanko10/kakijima/",
+        "title": "厚岸町 厚岸大橋と牡蠣島",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2026年は混雑に備え、厚岸駅と会場を結ぶ無料シャトルバスを2台で走らせる",
+      "source": {
+        "url": "https://akkeshi.shop/event/single-event5/",
+        "title": "厚岸観光協会 あっけし牡蠣まつり（イベント案内）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "入場は無料。会場の販売コーナーで海産物を買い、本部テントで焼き台（炭・網・火ばさみつき、大2,500円・小2,000円）を借りて焼く",
+    "rules": [
+      "会場の周りの道路と駐車場が混むため、公共交通機関で来るよう呼びかけている",
+      "牡蠣のつかみどりは中学生以上、アサリのつかみどりは小学生以下"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://akkeshi.shop/akkeshi-kakimatsuri/",
+        "title": "厚岸観光協会 第64回あっけし牡蠣まつり（特設ページ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://akkeshi.shop/event/single-event5/",
+        "title": "厚岸観光協会 あっけし牡蠣まつり（イベント案内）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.akkeshi-town.jp/kanko/event/kaki/",
+        "title": "厚岸町 第64回あっけし牡蠣まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-14",
+      "endDate": "2026-11-15",
+      "start": "09:00",
+      "end": "15:00",
+      "status": "announced",
+      "rainPolicy": "荒天のときは中止。つかみどりなどの催しは雨天中止",
+      "note": "2日間とも9:00〜15:00。特設ページの催しの表は日付と曜日が前年のままで（11/15土・11/16日）、つかみどり（表では10:00 ちびっこあさり、10:45 牡蠣）や餅まきの今年の時刻は確かめられない。無料シャトルバスは厚岸駅発着でJRの列車に合わせて走る",
+      "sources": [
+        {
+          "url": "https://www.akkeshi-town.jp/kanko/event/kaki/",
+          "title": "厚岸町 第64回あっけし牡蠣まつり",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://akkeshi.shop/akkeshi-kakimatsuri/",
+          "title": "厚岸観光協会 第64回あっけし牡蠣まつり（特設ページ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://akkeshi.shop/news/news-1614/",
+          "title": "厚岸観光協会 第64回あっけし牡蠣まつりを開催します！",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.visit-hokkaido.jp/event/detail_11016.html",
+          "title": "北海道観光振興機構 HOKKAIDO LOVE! あっけし牡蠣まつり",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.akkeshi-town.jp/kanko/event/kaki/",
+        "title": "厚岸町 第64回あっけし牡蠣まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://akkeshi.shop/akkeshi-kakimatsuri/",
+        "title": "厚岸観光協会 第64回あっけし牡蠣まつり（特設ページ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://akkeshi.shop/event/single-event5/",
+        "title": "厚岸観光協会 あっけし牡蠣まつり（イベント案内）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.visit-hokkaido.jp/event/detail_11016.html",
+        "title": "北海道観光振興機構 HOKKAIDO LOVE! あっけし牡蠣まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.akkeshi-town.jp/syoukai/access/",
+        "title": "厚岸町 交通アクセス（釧路⇄厚岸 JR花咲線 約50分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "カキえもん・マルえもん（厚岸の牡蠣）",
+        "note": "会場で買って炭火焼きにできる",
+        "sources": [
+          {
+            "url": "https://www.visit-hokkaido.jp/event/detail_11016.html",
+            "title": "北海道観光振興機構 HOKKAIDO LOVE! あっけし牡蠣まつり",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      },
+      {
+        "name": "厚岸ウイスキー「牡蠣の子守唄2025」のハイボール",
+        "note": "特設ページで会場で売る品として案内されている",
+        "sources": [
+          {
+            "url": "https://akkeshi.shop/akkeshi-kakimatsuri/",
+            "title": "厚岸観光協会 第64回あっけし牡蠣まつり（特設ページ）",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "conchiglie-akkeshi",
+      "name": "道の駅 厚岸グルメパーク 厚岸味覚ターミナル・コンキリエ",
+      "kind": "rest",
+      "summary": "厚岸駅から歩ける道の駅。魚介市場や売店、レストランが入る。月曜（祝日なら翌日）と年末年始が休み。2026年11月は24日（火）も休み",
+      "location": {
+        "lat": 43.0587,
+        "lng": 144.8449
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "18:00"
+      },
+      "closedDays": ["mon"],
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://conchiglie.net/information",
+          "title": "厚岸味覚ターミナル コンキリエ 施設案内（各施設の営業時間）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://conchiglie.net/news/19009",
+          "title": "コンキリエ 2026年11月の定休日",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://conchiglie.net/access/",
+          "title": "厚岸味覚ターミナル コンキリエ アクセス",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "conchiglie-aburiya",
+      "name": "炭焼 炙屋（コンキリエ）",
+      "kind": "food",
+      "summary": "コンキリエの2階にある炭焼きの店。好みの魚介を炭火で焼いて食べる。コンキリエの休館日に合わせて休み",
+      "location": {
+        "lat": 43.0587,
+        "lng": 144.8449
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "18:00",
+        "lastEntry": "17:00"
+      },
+      "closedDays": ["mon"],
+      "price": null,
+      "tags": ["indoor", "local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://conchiglie.net/information",
+          "title": "厚岸味覚ターミナル コンキリエ 施設案内（各施設の営業時間）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://conchiglie.net/news/19009",
+          "title": "コンキリエ 2026年11月の定休日",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "conchiglie-escal",
+      "name": "レストラン エスカル（コンキリエ）",
+      "kind": "food",
+      "summary": "コンキリエの中のレストラン。コンキリエの休館日に合わせて休み",
+      "location": {
+        "lat": 43.0587,
+        "lng": 144.8449
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "18:00",
+        "lastEntry": "17:30"
+      },
+      "closedDays": ["mon"],
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://conchiglie.net/information",
+          "title": "厚岸味覚ターミナル コンキリエ 施設案内（各施設の営業時間）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://conchiglie.net/news/19009",
+          "title": "コンキリエ 2026年11月の定休日",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.akkeshi-town.jp/kanko/event/kaki/",
+      "title": "厚岸町 第64回あっけし牡蠣まつり",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://akkeshi.shop/akkeshi-kakimatsuri/",
+      "title": "厚岸観光協会 第64回あっけし牡蠣まつり（特設ページ）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.visit-hokkaido.jp/event/detail_11016.html",
+      "title": "北海道観光振興機構 HOKKAIDO LOVE! あっけし牡蠣まつり",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2026年のつかみどり・ステージ・餅まきの時刻（特設ページの表は前年の日付のまま）",
+    "つかみどりの料金と定員",
+    "シャトルバスの時刻（画像のみで、文字で確かめられない）",
+    "厚岸駅から会場まで歩いた場合の時間（公式はバス約20分・車約10分の案内だけ）",
+    "主要駅から会場までの通しの所要時間（厚岸町の案内では釧路駅から厚岸駅までJR花咲線で約50分、厚岸駅から子野日公園バス停までくしろバスで約20分と区間ごとだけ。札幌駅・新千歳空港からの通しの数字もない）",
+    "危険度（炭火を使うが、主催者による注意が見つからない）",
+    "服装・持ち物・撮影の決まり",
+    "来場者数の公表値",
+    "交通規制の有無",
+    "周辺の観光の場所（国泰寺と厚岸神社は住所と拝観の時間を公式で確かめられず、入れていない）",
+    "コンキリエの各店の個別の定休日と、10月〜3月の営業時間（変更の案内は画像だけで、施設案内の時間を使った）"
+  ]
+}

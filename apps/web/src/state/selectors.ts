@@ -1,6 +1,5 @@
 import {
   collectItinerarySources,
-  type Festival,
   type Itinerary,
   type ItineraryItem,
   itineraryItems,
@@ -52,18 +51,16 @@ export function usedSources(state: Pick<AppData, "itinerary" | "verify" | "candi
   return [...byUrl.values()];
 }
 
-/** 旅程の主役の祭りのデータ（読み込めていなければ null） */
-export function mainFestival(state: Pick<AppData, "itinerary" | "festivals">): Festival | null {
-  const id = state.itinerary.current?.mainFestivalId;
-  return id === undefined ? null : (state.festivals[id] ?? null);
-}
-
 /** しおりを開けるか。確定前の再確認で「予定どおり」と分かり、会話がしおりまで進んだとき */
+/**
+ * しおりを開けるか。公式で確かめられた旅程と、要事前確認（公式以外の情報源などで確かめた）の旅程
+ * （しおりに、出発の前に確かめるよう注意を出す）。変更・中止・情報が見つからないときは候補へ戻る
+ */
 export function shioriReady(state: Pick<AppData, "session" | "verify" | "itinerary">): boolean {
   return (
     state.itinerary.current !== null &&
     state.session.stage === "shiori" &&
-    state.verify.result === "as_planned"
+    (state.verify.result === "as_planned" || state.verify.result === "needs_check")
   );
 }
 
@@ -205,6 +202,27 @@ export function currentLine(state: Pick<AppData, "messages" | "session">): Dialo
   return earlier?.kind === "concierge"
     ? { kind: "concierge", id: earlier.id, text: earlier.text, streaming: false }
     : { kind: "greeting" };
+}
+
+/**
+ * 祭りの結果へ戻る操作を出すか。祭りを決めて送ったのに、旅程の段階へ進まなかったとき
+ * （中止と分かった・固定が外れた・まだ聞き返されている）に出す
+ */
+export function canReturnToFestivals(state: Pick<AppData, "consult" | "session">): boolean {
+  const { stage } = state.session;
+  return (
+    state.consult.anchor !== null &&
+    !state.consult.active &&
+    (stage === "hearing" || stage === "candidates")
+  );
+}
+
+/**
+ * 旅程の提案が出ているか。出たあとは旅程を読むことに集中できるよう、
+ * 豆知識の窓を出さず、スタッフも店の中を歩き回らない
+ */
+export function proposalShown(state: Pick<AppData, "itinerary">): boolean {
+  return state.itinerary.current !== null;
 }
 
 /** いま動いているスタッフ（待機していない人）。画面の上の「店内のようす」に出す */

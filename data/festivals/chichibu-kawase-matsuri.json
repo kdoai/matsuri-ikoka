@@ -1,0 +1,327 @@
+{
+  "id": "chichibu-kawase-matsuri",
+  "name": { "ja": "秩父川瀬祭", "en": "Chichibu Kawase Festival" },
+  "category": "float",
+  "municipalities": [{ "prefecture": "埼玉県", "name": "秩父市" }],
+  "venue": { "name": "秩父神社と秩父市街地、荒川の川瀬斎場", "lat": 35.9977, "lng": 139.0849 },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu"],
+  "highlights": [
+    "白木の神輿が荒川の清流に入り、もみ洗われる神輿洗いの儀式",
+    "曳き子や囃子手を子どもが務める、笠鉾4基・屋台4基の曳き回し",
+    "夜の秩父神社に山車が集まる天王柱立て神事と、雪洞を灯した曳行",
+    "山車どうしがすれ違い、飾り花や団扇を交わす曳き別れ"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1659年の古文書に名が見え、県の無形民俗文化財になっている",
+      "sources": [
+        {
+          "url": "http://www.chichibu-jinja.or.jp/saiten/",
+          "title": "秩父神社 祭典・神事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.pref.saitama.lg.jp/f2216/bunkazai/shitei03.html",
+          "title": "埼玉県 令和3年度に新たに県指定となった文化財",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "川瀬祭保存会が継承し、氏子17町から選ばれた担ぎ手が神輿洗いを行う",
+      "sources": [
+        {
+          "url": "https://www.pref.saitama.lg.jp/f2216/bunkazai/shitei03.html",
+          "title": "埼玉県 新たに県指定となった文化財（秩父川瀬祭）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "川瀬祭は、万治2年（1659年）の古文書にすでに名前が出てくる",
+      "source": {
+        "url": "http://www.chichibu-jinja.or.jp/saiten/",
+        "title": "秩父神社 祭典・神事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "もとは旧暦6月15日の祭りで、明治の改暦で7月19・20日になった",
+      "source": {
+        "url": "http://www.chichibu-jinja.or.jp/saiten/",
+        "title": "秩父神社 祭典・神事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "荒川に入る白木造りの神社神輿は、重さが約400kgある",
+      "source": {
+        "url": "https://navi.city.chichibu.lg.jp/p_festival/1273/",
+        "title": "秩父観光なび 秩父川瀬祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "令和3年度に「秩父川瀬祭の川瀬と屋台の行事」として県の無形民俗文化財になった",
+      "source": {
+        "url": "https://www.pref.saitama.lg.jp/f2216/bunkazai/shitei03.html",
+        "title": "埼玉県 令和3年度に新たに県指定となった文化財",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "川瀬斎場、神輿・笠鉾・屋台の曳行ルート、花火会場などでのドローン等の飛行・撮影は禁止",
+      "交通規制中の道路は車両の通行・横断ができない（番場通りと東町通りの指定の場所を除く）",
+      "規制の時間や区域の外でも笠鉾・屋台が曳き回されることがあり、迂回などへの協力が求められている"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "笠鉾・屋台が夜まで市街地を曳き回され、道路が規制される。例年の人出は約10万人とされる。主催者によるけがの注意は見当たらない"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "川瀬斎場・曳行ルート・花火会場などでのドローン等による飛行と撮影は禁止"
+    },
+    "sources": [
+      {
+        "url": "https://navi.city.chichibu.lg.jp/wp/wp-content/uploads/2025/07/838855ce74c3c25be289688875bdb68d-1.pdf",
+        "title": "秩父観光なび 令和8年 秩父川瀬祭チラシ（ドローン等の飛行・撮影の禁止）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://navi.city.chichibu.lg.jp/wp/wp-content/uploads/2025/07/fd538f39bf2ba990dc6c0acbb308d32d.pdf",
+        "title": "秩父川瀬祭交通規制図 令和8年7月19日・20日",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://summer.walkerplus.com/odekake/detail_e/ar0311e04855/data.html",
+        "title": "ウォーカープラス 秩父川瀬祭の詳細データ（例年の人出 約10万人）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-07-19",
+      "start": "11:00",
+      "end": "22:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の宵宮（秩父市の発表。時刻は予定）。11:00〜17:00 各町会の山車曳行、18:00〜 山車が秩父神社に集合、19:00 天王柱立て神事（秩父神社）、19:30〜20:00 羊山公園で奉納花火（単発、荒天中止）、19:30〜22:00 山車曳行。山車は笠鉾4基・屋台4基の8基",
+      "sources": [
+        {
+          "url": "https://navi.city.chichibu.lg.jp/info/2025/07/27873/",
+          "title": "秩父観光なび 令和8年（2026年）の秩父川瀬祭について",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://navi.city.chichibu.lg.jp/wp/wp-content/uploads/2025/07/838855ce74c3c25be289688875bdb68d-1.pdf",
+          "title": "秩父観光なび 令和8年 秩父川瀬祭チラシ（主な行事予定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-07-20",
+      "start": "09:00",
+      "end": "22:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の大祭（秩父市の発表。時刻は予定）。9:00〜 山車曳行、11:00 神社神輿が秩父神社を出発、12:15ごろ 本町交差点で五町曳き別れ、12:30ごろ 川瀬斎場（武之鼻橋の近くの荒川）で神輿洗い、13:00 川瀬斎場祭、17:00〜22:00 山車曳行、19:00 団子坂曳き上げ（東町）、20:20ごろ 三町曳き別れ、20:50ごろ 兄弟笠鉾曳き別れ（ともに旧ベスト電器の前）",
+      "sources": [
+        {
+          "url": "https://navi.city.chichibu.lg.jp/info/2025/07/27873/",
+          "title": "秩父観光なび 令和8年（2026年）の秩父川瀬祭について",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://navi.city.chichibu.lg.jp/wp/wp-content/uploads/2025/07/5f9b13ae7c818c253ee567b0a371d903.pdf",
+          "title": "秩父観光なび 神輿洗い儀式 往路案内図（2026年）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://navi.city.chichibu.lg.jp/wp/wp-content/uploads/2025/07/838855ce74c3c25be289688875bdb68d-1.pdf",
+          "title": "秩父観光なび 令和8年 秩父川瀬祭チラシ（主な行事予定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-19",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2027年の発表はまだない）。秩父市の案内の「毎年7月19日・20日」から見込んだ宵宮の日で、2027年は月曜日。2026年の宵宮は11:00から山車曳行、19:00 天王柱立て神事、19:30 奉納花火だった",
+      "sources": [
+        {
+          "url": "https://navi.city.chichibu.lg.jp/p_festival/1273/",
+          "title": "秩父観光なび 秩父川瀬祭（毎年7月19日・20日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-20",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2027年の発表はまだない）。秩父市の案内の「毎年7月19日・20日」から見込んだ大祭の日で、2027年は火曜日。2026年の大祭は11:00 神輿出発、12:30ごろ 荒川で神輿洗い、夜に曳き別れだった",
+      "sources": [
+        {
+          "url": "https://navi.city.chichibu.lg.jp/p_festival/1273/",
+          "title": "秩父観光なび 秩父川瀬祭（毎年7月19日・20日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "秩父鉄道 秩父駅",
+        "walkMinutes": [3, 8],
+        "note": "秩父神社まで徒歩3分（秩父神社の案内）"
+      },
+      {
+        "name": "西武 西武秩父駅",
+        "walkMinutes": [15, 20],
+        "note": "秩父神社まで徒歩15分（秩父神社の案内）"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "池袋駅",
+        "minutes": [80, 90],
+        "route": "西武池袋線・西武秩父線の特急ラビュー（全席指定）で西武秩父駅へ、乗り換えなし"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [
+      "19日・20日とも10:00〜22:00、本町通り（国道299号）・番場通り・東町通りなどの区域で交通規制（2026年）",
+      "19日19:30〜22:00に追加の区域で交通規制（2026年）",
+      "20日10:00〜15:30、神輿の往路（中村町から荒川の武之鼻橋の方面）で交通規制（2026年）",
+      "20日18:30〜20:30と19:00〜22:00に追加の区域で交通規制（2026年）",
+      "臨時駐車場は秩父市営宮地グラウンド（19日・20日とも9:00〜22:00、無料。2026年）"
+    ],
+    "sources": [
+      {
+        "url": "https://www.chichibu-jinja.or.jp/access/",
+        "title": "秩父神社 交通案内（秩父駅から徒歩3分、西武秩父駅から徒歩15分、池袋から特急ラビューで約80分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://navi.city.chichibu.lg.jp/wp/wp-content/uploads/2025/07/fd538f39bf2ba990dc6c0acbb308d32d.pdf",
+        "title": "秩父川瀬祭交通規制図 令和8年7月19日・20日",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://navi.city.chichibu.lg.jp/info/2025/07/27873/",
+        "title": "秩父観光なび 令和8年（2026年）の秩父川瀬祭について（臨時駐車場）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": { "stalls": "unknown", "local": [] },
+  "nearby": [
+    {
+      "id": "chichibu-matsuri-kaikan",
+      "name": "秩父まつり会館",
+      "kind": "sightseeing",
+      "summary": "秩父夜祭の笠鉾・屋台の実物や映像、囃子の実演で秩父の祭りを紹介する館。3〜11月は第4・第5火曜が休館（祝日は開館）",
+      "location": { "lat": 35.9973, "lng": 139.085 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "09:00", "close": "17:00", "lastEntry": "16:30" },
+      "closedDays": null,
+      "price": "一般500円、小中学生250円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.chichibu-matsuri.jp/riyo/",
+          "title": "秩父まつり会館 ご利用案内（4〜11月 9:00〜17:00、入館受付16:30まで）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.chichibu-matsuri.jp/",
+          "title": "秩父まつり会館（秩父市番場町2-8）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://navi.city.chichibu.lg.jp/p_festival/1273/",
+      "title": "秩父観光なび 秩父川瀬祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "http://www.chichibu-jinja.or.jp/saiten/",
+      "title": "秩父神社 祭典・神事（川瀬祭）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.pref.saitama.lg.jp/f2216/bunkazai/shitei03.html",
+      "title": "埼玉県 令和3年度に新たに県指定となった文化財（秩父川瀬祭の川瀬と屋台の行事）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%9F%BC%E7%8E%89%E7%9C%8C%E7%A7%A9%E7%88%B6%E5%B8%82%E7%95%AA%E5%A0%B4%E7%94%BA1-3",
+      "title": "国土地理院 住所検索 秩父市番場町1-3（秩父神社の緯度・経度）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、日ごとの行事・時刻",
+    "2026年が発表どおりに行われたか（中止・変更の告知は見当たらないが、終わったあとの報告を確かめていない）",
+    "雨のときの扱い（公式は奉納花火の荒天中止だけを案内。ウォーカープラスでは小雨決行・荒天中止）",
+    "服装と持ち物（主催者の案内が見つからない）",
+    "露店の有無と、祭りならではの食べもの（ウォーカープラスでは露店ありとするが、公式で確かめられない）",
+    "お水取り（19日夜）の時刻と見学できるか",
+    "神輿洗いの見学の場所の決まりと、川原での注意（往路案内図では武之鼻橋付近をおすすめの観覧場所としている）",
+    "熊谷駅から秩父駅までの所要時間（秩父鉄道の公式の時刻表で確かめていない）と、祭りの夜の帰りの列車",
+    "臨時駐車場の台数（るるぶ&more.では300台・無料）",
+    "秩父まつり会館の会場からの徒歩の時間と、知名度（じゃらんnet・トリップアドバイザーへの掲載を確かめていない）",
+    "周辺の食事の場所（確かめられた店がない）"
+  ]
+}

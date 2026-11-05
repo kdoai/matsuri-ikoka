@@ -1,5 +1,12 @@
 import type { Options, SDKMessage } from "@anthropic-ai/claude-agent-sdk";
-import type { ConversationStage, ErrorCode, Preferences, SseEvent } from "@matsuri-ikoka/schema";
+import type {
+  AgentMode,
+  ConversationStage,
+  ErrorCode,
+  Preferences,
+  SearchRetry,
+  SseEvent,
+} from "@matsuri-ikoka/schema";
 import type { Session } from "../session/sessionStore";
 import type { TurnState } from "../tools/context";
 
@@ -8,12 +15,14 @@ import type { TurnState } from "../tools/context";
 // - mock：記録したサンプルの相談を、記録した間隔で再生する（ReplayAgentRunner）
 // done は呼び出し側（routes）が、相談の状態から必ず最後に1回送る。
 
-export type AgentMode = "live" | "mock";
+export type { AgentMode };
 
 export interface TurnInput {
   session: Session;
   message: string;
   preferences: Preferences;
+  /** 候補の窓の次の手（ボタン）から送られた、変えて探し直す条件 */
+  searchRetry?: SearchRetry;
   /** 時間の上限や接続の切断で止めるための signal */
   signal: AbortSignal;
   /** 進みがあったことを知らせる（イベントを出さない作業の途中。進みのない時間の上限を数え直す） */
@@ -43,10 +52,11 @@ export class AgentError extends Error {
 
 /**
  * 発言1回のあとの会話の状態（docs/spec/agents.md の状態の移り方）。
- * - 再確認：予定どおりならしおり、変更・中止なら候補へ戻る、確認できなければ確定前の確認のまま
+ * - 再確認：予定どおり・要事前確認ならしおり（要事前確認は、しおりの表紙と画面に、出発の前に確かめるよう必ず出す）。
+ *   変更・中止・どこからも情報が取れなかったときは、候補へ戻る（行き止まりにしない）
  * - 旅程を保存した → 旅程の案
  * - 旅程係が動いたのに保存できなかった（修正の途中）→ 修正
- * - 祭りを探した → 祭りの候補
+ * - 祭りを探した・祭りの固定を外した → 祭りの候補
  * - それ以外は変わらない
  */
 export function nextStage(
@@ -56,17 +66,17 @@ export function nextStage(
 ): ConversationStage {
   switch (turn.verification) {
     case "as_planned":
+    case "needs_check":
       return "shiori";
     case "changed":
     case "cancelled":
-      return "candidates";
     case "not_found":
-      return "verifying";
+      return "candidates";
     case null:
       break;
   }
   if (turn.savedItinerary) return "itinerary";
   if (turn.startedStaff.has("planner") && hasItinerary) return "revising";
-  if (turn.searched) return "candidates";
+  if (turn.searched || turn.anchorReleased) return "candidates";
   return previous;
 }

@@ -1,7 +1,13 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { findRepoRoot, readConfig } from "./config";
+import {
+  DEFAULT_WISH_READER_MODEL,
+  findRepoRoot,
+  portInUseMessage,
+  readConfig,
+  startupNotice,
+} from "./config";
 import { ConcurrencyLimiter, clientIp, DailyLimiter } from "./routes/guard";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -53,9 +59,14 @@ describe("readConfig", () => {
     });
   });
 
-  it("旅程係と再確認のモデルは、指定があればスタッフのモデルより優先する", () => {
+  it("旅程係と再確認と評価係のモデルは、指定があればスタッフのモデルより優先する", () => {
     const config = readConfig(
-      { MODEL_STAFF: "model-b", MODEL_PLANNER: "model-c", MODEL_VERIFIER: "model-d" },
+      {
+        MODEL_STAFF: "model-b",
+        MODEL_PLANNER: "model-c",
+        MODEL_VERIFIER: "model-d",
+        MODEL_EVALUATOR: "model-e",
+      },
       here,
     );
 
@@ -64,6 +75,26 @@ describe("readConfig", () => {
       staff: "model-b",
       planner: "model-c",
       verifier: "model-d",
+      evaluator: "model-e",
+      wishReader: DEFAULT_WISH_READER_MODEL,
+    });
+  });
+
+  it("自由記述の読み取りのモデルは、指定がなければ軽いモデルの既定を使う", () => {
+    expect(readConfig({ MODEL_WISH_READER: "model-w" }, here).models.wishReader).toBe("model-w");
+    expect(readConfig({ MODEL_STAFF: "model-b" }, here).models.wishReader).toBe(
+      DEFAULT_WISH_READER_MODEL,
+    );
+  });
+
+  it("評価係のモデルは、指定がなければ旅程係のモデル、それもなければスタッフのモデル", () => {
+    expect(
+      readConfig({ MODEL_STAFF: "model-b", MODEL_PLANNER: "model-c" }, here).models,
+    ).toMatchObject({
+      evaluator: "model-c",
+    });
+    expect(readConfig({ MODEL_STAFF: "model-b" }, here).models).toMatchObject({
+      evaluator: "model-b",
     });
   });
 
@@ -172,5 +203,51 @@ describe("本番の live の設定の確認", () => {
       maxConcurrentTurns: 4,
       trustedProxyHops: 0,
     });
+  });
+});
+
+describe("起動のときの知らせ", () => {
+  it("mock では、見本を再生していることと、live にする方法を出す", () => {
+    const notice = startupNotice({
+      mode: "mock",
+      port: 8787,
+      festivals: 2,
+      festivalDirs: ["data/samples/festivals"],
+      samples: ["sample-a"],
+    });
+    expect(notice.log).toEqual({
+      kind: "server_started",
+      mode: "mock",
+      port: 8787,
+      festivals: 2,
+      festivalDirs: ["data/samples/festivals"],
+      samples: ["sample-a"],
+    });
+    expect(notice.message).toContain("[mode] mock");
+    expect(notice.message).toContain("sample-a");
+    expect(notice.message).toContain("MATSURI_AGENT_MODE=live");
+  });
+
+  it("live では、読み込んだ祭りの件数と場所を出す", () => {
+    const notice = startupNotice({
+      mode: "live",
+      port: 8787,
+      festivals: 21,
+      festivalDirs: ["data/festivals"],
+      samples: [],
+    });
+    expect(notice.log).toMatchObject({ mode: "live", festivals: 21 });
+    expect(notice.log).not.toHaveProperty("samples");
+    expect(notice.message).toBe(
+      "[mode] live：Claude が返事を作ります。祭りのデータ 21件（data/festivals）から探します",
+    );
+  });
+});
+
+describe("portInUseMessage", () => {
+  it("ふさがっているポートと、ポートを変えて起動し直す方法を示す", () => {
+    const message = portInUseMessage(8787);
+    expect(message).toContain("ポート 8787");
+    expect(message).toContain("PORT=8788 MATSURI_WEB_PORT=5174 pnpm dev");
   });
 });

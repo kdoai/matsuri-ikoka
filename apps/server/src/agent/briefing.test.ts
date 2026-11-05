@@ -2,7 +2,15 @@ import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
 import { testFestival } from "../domain/testFestivals";
 import { testToolContext } from "../tools/testContext";
-import { sanitizeMessage, shopRecord, staffBriefing, turnPrompt } from "./briefing";
+import {
+  lodgingBudgetLabel,
+  partyLabel,
+  sanitizeMessage,
+  shopRecord,
+  staffBriefing,
+  tripBudgetLabel,
+  turnPrompt,
+} from "./briefing";
 
 const ctx = () => testToolContext([testFestival({ id: "suzunari-toro" })]);
 
@@ -55,6 +63,30 @@ describe("店の記録", () => {
     );
   });
 
+  it("食べたいものと、食事で気をつけたいことを載せる", () => {
+    const context = ctx();
+    context.session.conditions = {
+      origin: "みなと中央駅",
+      foodWishes: ["noodles", "local_drinks"],
+      dietary: ["vegetarian"],
+    };
+
+    const record = shopRecord(context);
+
+    expect(record).toContain("食べたいもの 麺類・地酒・地ビール");
+    expect(record).toContain("食事で気をつけたいこと ベジタリアン");
+  });
+
+  it("想定している交通手段を載せる", () => {
+    const context = ctx();
+    context.session.conditions = {
+      origin: "みなと中央駅",
+      transport: ["shinkansen", "rental_car"],
+    };
+
+    expect(shopRecord(context)).toContain("交通手段 新幹線・レンタカー");
+  });
+
   it("旅程係には、今の旅程の全体と到着の余裕を渡す。調査係には渡さない", () => {
     const context = ctx();
     const itinerary = fictionalItinerary();
@@ -69,6 +101,37 @@ describe("店の記録", () => {
     // 架空の祭りは 8月16日 18:30 開始、規模 S（15分）
     expect(planner).toContain("8月16日（日）：18:30 開始 → 18:15 までに会場に着く");
     expect(researcher).not.toContain(JSON.stringify(itinerary));
+  });
+});
+
+describe("人数と宿の予算の書き方", () => {
+  it("内訳があるときだけ、うち何人かを添える", () => {
+    expect(partyLabel({ adults: 2, children: 0 })).toBe("大人2・子ども0");
+    expect(partyLabel({ adults: 3, children: 1, seniors: 1, infants: 1 })).toBe(
+      "大人3（うちシニア1）・子ども1（うち幼児1）",
+    );
+  });
+
+  it("宿の予算は1泊あたりか泊まり全体かを書き分ける", () => {
+    expect(lodgingBudgetLabel({ perPersonYen: 12000, per: "night" })).toBe(
+      "宿の予算 1人1泊 12,000円まで",
+    );
+    expect(lodgingBudgetLabel({ perPersonYen: 30000, per: "trip" })).toBe(
+      "宿の予算 1人あたり泊まり全体で 30,000円まで",
+    );
+  });
+
+  it("旅の予算は、言われた単位と、コードで換算したもう一方を書く", () => {
+    const party = { adults: 2, children: 1, infants: 1 };
+    expect(tripBudgetLabel({ yen: 30000, basis: "perPerson" }, party)).toBe(
+      "旅の予算 1人あたり 30,000円まで（2人で合計 60,000円）",
+    );
+    expect(tripBudgetLabel({ yen: 90000, basis: "total" }, { adults: 3, children: 0 })).toBe(
+      "旅の予算 全員で 90,000円まで（3人で1人あたり 30,000円）",
+    );
+    expect(tripBudgetLabel({ yen: 90000, basis: "total" }, undefined)).toBe(
+      "旅の予算 全員で 90,000円まで（人数が分からないので1人あたりは未計算）",
+    );
   });
 });
 

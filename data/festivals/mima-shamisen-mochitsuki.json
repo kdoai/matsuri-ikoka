@@ -1,0 +1,222 @@
+{
+  "id": "mima-shamisen-mochitsuki",
+  "name": {
+    "ja": "三味線もちつき"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "徳島県",
+      "name": "美馬市"
+    }
+  ],
+  "venue": {
+    "name": "美馬市役所本庁前駐車場",
+    "lat": 34.0533,
+    "lng": 134.1697
+  },
+  "scaleTier": "XS",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "三味線と太鼓に合わせ、餅つき唄を唄いながらつく派手でめでたい餅つき",
+    "杵を返す人とつき手が、息を合わせて速い調子でつく見せ場",
+    "藍で栄えた脇町の年の暮れの習わしを、年に一度、市役所の前で公開する"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "江戸時代の脇町に始まるとされ、昭和47年に町の文化財指定",
+      "sources": [
+        {
+          "url": "https://www.city.mima.lg.jp/kanko/map/list/11514.html",
+          "title": "美馬市観光サイト 三味線もちつき",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.mima.lg.jp/kanko/bunkazai/shishiteilist/",
+          "title": "美馬市観光サイト 市指定文化財一覧",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "井内組・北崎組・うだつの3つの組が伝えている",
+      "sources": [
+        {
+          "url": "https://www.city.mima.lg.jp/kanko/map/list/11514.html",
+          "title": "美馬市観光サイト 三味線もちつき",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "藍で栄えた江戸時代の脇町で、豪商が芸者に三味線を弾かせ正月の餅をつかせたのが始まりという",
+      "source": {
+        "url": "https://www.city.mima.lg.jp/kanko/map/list/11514.html",
+        "title": "美馬市観光サイト 三味線もちつき",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "昭和47年12月28日に旧脇町の無形民俗文化財に指定され、今は美馬市の指定文化財",
+      "source": {
+        "url": "https://www.city.mima.lg.jp/kanko/bunkazai/shishiteilist/",
+        "title": "美馬市観光サイト 市指定文化財一覧",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "今は井内組・北崎組・うだつの3つの組が伝えている",
+      "source": {
+        "url": "https://www.city.mima.lg.jp/kanko/map/list/11514.html",
+        "title": "美馬市観光サイト 三味線もちつき",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "交通安全の行事では、信号の赤・黄・青の3色の餅をドライバーに手渡すこともある",
+      "source": {
+        "url": "https://www.city.mima.lg.jp/kanko/map/list/11514.html",
+        "title": "美馬市観光サイト 三味線もちつき",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "市役所前で餅つきを見る行事で、混雑や危険についての特別な注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.awanavi.jp/archives/spot/1868",
+        "title": "阿波ナビ（徳島県観光協会） 三味線もちつき",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.mima.lg.jp/kanko/map/list/11514.html",
+        "title": "美馬市観光サイト 三味線もちつき",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-28",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年、市役所の仕事納めの日に公開する。2026年の仕事納めの日は市の発表がなく、12月28日（月）と見込んだ。例年10:00頃から1時間ほど",
+      "sources": [
+        {
+          "url": "https://www.awanavi.jp/archives/spot/1868",
+          "title": "阿波ナビ（徳島県観光協会） 三味線もちつき（12月下旬の市役所御用納めの日、10時頃〜11時頃）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.city.mima.lg.jp/kanko/map/list/11514.html",
+          "title": "美馬市観光サイト 三味線もちつき（官公庁仕事納めの日に市役所前で一般公開）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-12-28",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "市役所の仕事納めの日に公開する決まりから、12月28日（火）と見込んだ。時刻は未発表（例年10:00頃から1時間ほど）",
+      "sources": [
+        {
+          "url": "https://www.awanavi.jp/archives/spot/1868",
+          "title": "阿波ナビ（徳島県観光協会） 三味線もちつき（12月下旬の市役所御用納めの日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 穴吹駅",
+        "walkMinutes": [10, 15]
+      }
+    ],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.awanavi.jp/archives/spot/1868",
+        "title": "阿波ナビ（徳島県観光協会） 三味線もちつき（JR徳島線 穴吹駅から徒歩10分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.city.mima.lg.jp/kanko/map/list/11514.html",
+      "title": "美馬市観光サイト 三味線もちつき",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.awanavi.jp/archives/spot/1868",
+      "title": "阿波ナビ（徳島県観光協会） 三味線もちつき",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.mima.lg.jp/gyosei/docs/23796.html",
+      "title": "美馬市 美馬市役所（穴吹庁舎）（所在地と地図。地図の点は北緯34.0533・東経134.1697）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://maps.gsi.go.jp/#17/34.053800/134.169800/",
+      "title": "地理院地図（美馬市役所の記号。市の地図の点から約60m）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2026年の公開日と時刻（市の発表がない）",
+    "雨のときの扱い",
+    "公開の日に、ついた餅をふるまうか",
+    "主要駅からの路線と所要時間",
+    "駐車場の有無",
+    "撮影の決まり、服装・持ち物",
+    "見物客の数",
+    "会場の近くで公開の日に開いていると確かめられた観光地と食事の場所"
+  ]
+}

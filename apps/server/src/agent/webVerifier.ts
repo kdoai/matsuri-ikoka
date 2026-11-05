@@ -18,7 +18,8 @@ import { z } from "zod";
 import { formatMonthDayWithWeekday } from "../domain/calendar";
 import { placeLabel } from "../domain/dateWindow";
 import { occurrenceOn } from "../domain/planCheck";
-import type { VerificationReport } from "../domain/verification";
+import { bySourcePriority, verificationQueries } from "../domain/searchQueries";
+import { officialHosts, type VerificationReport, yearStatedOnPage } from "../domain/verification";
 import type { FestivalVerifier } from "../tools/verifier";
 import { checkHostAddresses, type ResolveHost, resolveHost } from "./addressGuard";
 import { deny } from "./hooks";
@@ -31,14 +32,19 @@ import type { QueryFn } from "./runner";
 // - 検索だけして本文を読まずに答えようとしたら、1回だけ続けさせる
 // - 返答の JSON は parseJsonWithSchema で取り出し、取り出せなければ道具なしで1回だけ差し戻す
 // - 出典のうち、実際に読んでいないページは捨てる。結果と確度は domain/verification.ts で決め直す
+// - 今年の開催と書かれていたかは、自己申告させない。ページの日付の文を写させ、読んだページの本文と照らして
+//   コードで決める（yearStatedOnPage）
 
 const ReportSchema = z.object({
   result: VerificationResultSchema,
   sources: z.array(z.object({ url: z.string(), title: z.string().optional() })).max(5),
+  dateText: z.string().max(120).optional(),
   note: z.string().max(200).optional(),
 });
 
 const WEB_TOOLS = ["WebSearch", "WebFetch"];
+/** 道具を使うときのターンの上限。検索を並べて呼び、言葉を変えて探し直せるだけの回数をとる（検索6回・ページ3回まで） */
+export const VERIFIER_MAX_TURNS = 10;
 /** 検索だけで答えようとしたときに、続けさせる回数の上限 */
 const MAX_READ_NUDGES = 1;
 
@@ -47,9 +53,10 @@ const ANSWER_FORMAT = [
   "",
   "最後に、次の形の JSON を1つだけ返す。",
   "",
-  '{"result":"as_planned か changed か cancelled か not_found","sources":[{"url":"読んだページの URL","title":"ページの題名"}],"note":"分かったことを1文で"}',
+  '{"result":"as_planned か changed か cancelled か not_found","sources":[{"url":"読んだページの URL","title":"ページの題名"}],"dateText":"ページに書かれている開催日の文（年も含めてそのまま）","note":"分かったことを1文で"}',
   "",
   "- sources には、WebFetch で実際に読んだページだけを入れる（検索結果に出ただけのページは入れない）",
+  "- dateText には、読んだ公式のページに書かれている開催日の文を、書き換えず、年を補わずにそのまま写す（例：「2026年8月16日（日）」「毎年8月16日」）。日付が見つからなければ入れない",
   STRICT_JSON_RULES,
 ].join("\n");
 
@@ -68,6 +75,10 @@ export function buildVerifierOptions(input: {
   withTools: boolean;
   /** 1回の呼び出しの費用の上限（米ドル） */
   maxBudgetUsd?: number | undefined;
+  /** 道具を使うときのターンの上限。省略すると VERIFIER_MAX_TURNS（寄り道の調べは多めに渡す） */
+  maxTurns?: number;
+  /** 考える深さ。省略すると low（決まった形の確かめを速く済ませる） */
+  effort?: Options["effort"];
 }): Options {
   const tools = input.withTools ? WEB_TOOLS : [];
   return {
@@ -83,8 +94,8 @@ export function buildVerifierOptions(input: {
     cwd: input.cwd,
     env: input.env,
     thinking: { type: "adaptive" },
-    effort: "low",
-    maxTurns: input.withTools ? 6 : 1,
+    effort: input.effort ?? "low",
+    maxTurns: input.withTools ? (input.maxTurns ?? VERIFIER_MAX_TURNS) : 1,
     persistSession: false,
     ...(input.maxBudgetUsd ? { maxBudgetUsd: input.maxBudgetUsd } : {}),
     abortController: input.abortController,
@@ -92,10 +103,33 @@ export function buildVerifierOptions(input: {
   };
 }
 
+/** 読んだページ（WebFetch の宛先と、エージェントが受け取った本文） */
+export interface FetchedPage {
+  url: string;
+  text: string;
+}
+
+/** WebFetch の結果から、エージェントが受け取った本文を取り出す（SDK の WebFetchOutput は result に入る） */
+function fetchedText(response: unknown): string {
+  if (typeof response === "string") return response;
+  if (response !== null && typeof response === "object") {
+    const result = (response as { result?: unknown }).result;
+    if (typeof result === "string") return result;
+  }
+  return "";
+}
+
+const READ_NUDGE =
+  "検索結果だけでは開催を確かめられません。公式のページを WebFetch で1つ読んでから、決めた形の JSON で答えてください。";
+
 /** 再確認のエージェントのフック。WebFetch の宛先の確認、読んだページの控え、1回だけ続けさせる */
 export function createVerifierHooks(
   log: WebActivityLog,
   resolve: ResolveHost = resolveHost,
+  /** 読んだページの本文を控える先 */
+  pages: FetchedPage[] = [],
+  /** 検索だけで答えようとしたときに返す文 */
+  nudge: string = READ_NUDGE,
 ): Partial<Record<HookEvent, HookCallbackMatcher[]>> {
   let nudges = 0;
   const checkFetch: HookCallback = async (input) => {
@@ -108,18 +142,19 @@ export function createVerifierHooks(
     return addresses.ok ? {} : deny(`この URL は読みません：${addresses.reason}`);
   };
   const record: HookCallback = async (input) => {
-    if (input.hook_event_name === "PostToolUse") log.record(input.tool_name, input.tool_input);
+    if (input.hook_event_name !== "PostToolUse") return {};
+    log.record(input.tool_name, input.tool_input);
+    const url = (input.tool_input as { url?: unknown } | null)?.url;
+    if (input.tool_name === "WebFetch" && typeof url === "string") {
+      pages.push({ url, text: fetchedText(input.tool_response) });
+    }
     return {};
   };
   const requireReading: HookCallback = async (input) => {
     if (input.hook_event_name !== "Stop") return {};
     if (!log.searchedWithoutReading() || nudges >= MAX_READ_NUDGES) return {};
     nudges += 1;
-    return {
-      decision: "block",
-      reason:
-        "検索結果だけでは開催を確かめられません。公式のページを WebFetch で1つ読んでから、決めた形の JSON で答えてください。",
-    };
+    return { decision: "block", reason: nudge };
   };
   return {
     PreToolUse: [{ matcher: "WebFetch", hooks: [checkFetch] }],
@@ -128,15 +163,20 @@ export function createVerifierHooks(
   };
 }
 
-/** query を最後まで回し、成功の結果の文（失敗なら null）と費用（SDK の推定）を返す */
-async function finalText(
+/**
+ * query を最後まで回し、成功の結果の文（失敗なら null）と費用（SDK の推定）を返す。
+ * onMessage は Agent SDK の知らせが届くたびに呼ぶ（呼ぶ側の進みのない時間を数え直す）
+ */
+export async function finalText(
   query: QueryFn,
   prompt: string,
   options: Options,
+  onMessage?: () => void,
 ): Promise<{ text: string | null; costUsd: number }> {
   let text: string | null = null;
   let costUsd = 0;
   for await (const message of query({ prompt, options })) {
+    onMessage?.();
     if (message.type === "result") {
       text = message.subtype === "success" && !message.is_error ? message.result : null;
       costUsd = message.total_cost_usd ?? 0;
@@ -171,15 +211,25 @@ export function createWebVerifier(deps: {
         `開催地：${placeLabel(festival)}、会場：${festival.venue.name}`,
         `確かめる日：${formatMonthDayWithWeekday(date)}（${date}）`,
         `データの時刻：${occurrence?.start ?? "不明"}〜${occurrence?.end ?? "不明"}`,
-        `データの出典：${[...festival.sources, ...(occurrence?.sources ?? [])].map((s) => s.url).join(" ")}`,
+        // データの出典は、情報源の優先順位（主催者・自治体 → 観光協会 → 広報誌の PDF → …）の順に渡す
+        `データの出典（この順に確かめる）：${[
+          ...new Set(
+            bySourcePriority(
+              [...(occurrence?.sources ?? []), ...festival.sources],
+              officialHosts(festival),
+            ).map((s) => s.url),
+          ),
+        ].join(" ")}`,
+        `検索の言葉（上から優先。いくつかを並べて検索してよい）：${verificationQueries(festival, date).join(" / ")}`,
       ].join("\n");
 
-      // 時間の上限（30秒）は、ツールの包みが signal で知らせる。差し戻しも同じ予算の中で行う
+      // 時間の上限は、ツールの包みが signal で知らせる（確定前の再確認は45秒、候補の確かめは1件30秒）。差し戻しも同じ予算の中で行う
       const controller = new AbortController();
       const abort = () => controller.abort(signal.reason);
       if (signal.aborted) abort();
       signal.addEventListener("abort", abort, { once: true });
       const log = createWebActivityLog();
+      const pages: FetchedPage[] = [];
       const options = (withTools: boolean) =>
         buildVerifierOptions({
           systemPrompt,
@@ -189,7 +239,7 @@ export function createWebVerifier(deps: {
           abortController: controller,
           maxBudgetUsd: deps.maxBudgetUsd,
           withTools,
-          ...(withTools ? { hooks: createVerifierHooks(log, deps.resolveHost) } : {}),
+          ...(withTools ? { hooks: createVerifierHooks(log, deps.resolveHost, pages) } : {}),
         });
       const started = Date.now();
       let costUsd = 0;
@@ -216,13 +266,27 @@ export function createWebVerifier(deps: {
           parsed = parseJsonWithSchema(retry, ReportSchema, "object");
           if (!parsed.ok) return NOT_CONFIRMED;
         }
-        const { result, sources, note } = parsed.value;
+        const { result, sources, dateText, note } = parsed.value;
         outcome = result;
         // 実際に読んでいないページは、出典にしない
         const unread = new Set(ungroundedSources(sources, log.fetchedUrls));
+        const read = sources.filter((s) => !unread.has(s.url));
+        // 写した日付の文は、出典に残したページの本文の中にあるときだけ使う
+        const sourcePages = pages.filter(
+          (page) =>
+            ungroundedSources(
+              [{ url: page.url }],
+              read.map((s) => s.url),
+            ).length === 0,
+        );
         return {
           result,
-          sources: sources.filter((s) => !unread.has(s.url)),
+          sources: read,
+          yearStated: yearStatedOnPage({
+            dateText,
+            pages: sourcePages.map((page) => page.text),
+            date,
+          }),
           ...(note ? { note } : {}),
         };
       } finally {

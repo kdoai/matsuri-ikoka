@@ -1,0 +1,182 @@
+{
+  "id": "niino-yuki-matsuri",
+  "name": {
+    "ja": "新野の雪祭り",
+    "en": "Niino Snow Festival"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "長野県",
+      "name": "下伊那郡阿南町"
+    }
+  ],
+  "venue": {
+    "name": "伊豆神社",
+    "lat": 35.2538,
+    "lng": 137.7443
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan"],
+  "highlights": [
+    "素朴な仮面をつけた神々が、凍える境内で夜通し次々に舞う",
+    "田楽・舞楽・神楽・猿楽・田遊びが一夜に続く芸能の絵巻",
+    "深夜に大松明へ火が入り、炎と煙の中で舞が続く",
+    "雪を豊作のしるしとし、雪がなければ峠から運んで神前に供える"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1977年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.cbr.mlit.go.jp/tenjyo/think/heritage/pdf/076.pdf",
+          "title": "国土交通省 中部地方整備局 伊那谷遺産 新野の雪まつり",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "伊豆神社雪祭り保存会が保護団体として、役の組が演じる",
+      "sources": [
+        {
+          "url": "https://kunishitei.bunka.go.jp/bsys/maindetails/302/67",
+          "title": "国指定文化財等データベース 雪祭（保護団体 伊豆神社雪祭り保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "1977年に国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.cbr.mlit.go.jp/tenjyo/think/heritage/pdf/076.pdf",
+        "title": "国土交通省 中部地方整備局 伊那谷遺産 新野の雪まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "「雪まつり」という呼び名は、国文学者で歌人の折口信夫が付けたといわれる",
+      "source": {
+        "url": "https://www.cbr.mlit.go.jp/tenjyo/think/heritage/pdf/076.pdf",
+        "title": "国土交通省 中部地方整備局 伊那谷遺産 新野の雪まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "祭りは、見物人が棒で庁屋の壁をたたき「ランジョウ」と呼びかけて始まる",
+      "source": {
+        "url": "https://www.cbr.mlit.go.jp/tenjyo/think/heritage/pdf/076.pdf",
+        "title": "国土交通省 中部地方整備局 伊那谷遺産 新野の雪まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "面形は19種あり、墨と胡粉、紅ガラという限られた顔料で彩られている",
+      "source": {
+        "url": "https://www.walkerplus.com/article/173658/",
+        "title": "ウォーカープラス 豊年を祝う雪の仮面祭！長野県下伊那郡で「新野の雪祭り」開催（2018年の記事）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "冬の夜を徹して境内で行い、深夜に大松明を燃やす（見学についての主催者の注意書きは見つからない）"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.go-nagano.net/tradition-and-culture/id22634",
+        "title": "長野県観光機構 Go! NAGANO 南信州で楽しむ民俗芸能（新野の雪祭り、深夜1時ごろ大松明に点火）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.cbr.mlit.go.jp/tenjyo/think/heritage/pdf/076.pdf",
+        "title": "国土交通省 中部地方整備局 伊那谷遺産 新野の雪まつり（伊豆神社の境内で夜通し行う）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-01-14",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年1月14日・15日に行う決まりから見込んだ日（2027年の発表はまだ見つからない）。14日の夜から15日の明け方まで夜通し舞い、深夜1時ごろに大松明に火をつける",
+      "sources": [
+        {
+          "url": "https://www.go-nagano.net/tradition-and-culture/id22634",
+          "title": "長野県観光機構 Go! NAGANO 南信州で楽しむ民俗芸能（毎年1月14日・15日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.cbr.mlit.go.jp/tenjyo/think/heritage/pdf/076.pdf",
+        "title": "国土交通省 中部地方整備局 伊那谷遺産 新野の雪まつり（天竜峡ICから約35km、車で約1時間10分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.go-nagano.net/tradition-and-culture/id22634",
+      "title": "長野県観光機構 Go! NAGANO 南信州で楽しむ民俗芸能（新野の雪祭り、伊豆神社）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.cbr.mlit.go.jp/tenjyo/think/heritage/pdf/076.pdf",
+      "title": "国土交通省 中部地方整備局 伊那谷遺産 新野の雪まつり（阿南町新野）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と開始・終了の時刻（2026年は14日21:00〜15日7:35とじゃらんnetにだけあり、阿南町の公式の案内を開けなかったため入れていない）",
+    "最寄り駅と行き方。車では天竜峡ICから約1時間10分。夜通しの行事で、公共交通での行き帰りの手段が分からない",
+    "飯田駅など玄関口の駅からの所要時間",
+    "駐車場の有無と台数",
+    "大雪のときの扱いと、道路の凍結への注意",
+    "見学の決まり（立ち位置・場所取り）、撮影の扱い、服装・持ち物（冬の夜通しの屋外の行事だが、防寒の案内は出典に見当たらない）",
+    "見物人が始まりの「ランジョウ」の呼びかけに加われるかどうか",
+    "屋台の有無と、この日だけの食べもの",
+    "周辺の観光と食の場所（道の駅 信州新野千石平は、営業時間と1〜2月の休みが情報源で食い違うため入れていない）",
+    "会場の緯度・経度は、国土地理院の住所検索で阿南町新野の地区の代表点を取ったもの（伊豆神社そのものの位置ではない）",
+    "見物客の数（規模は、1つの神社で夜通し行う行事として S にした）"
+  ]
+}

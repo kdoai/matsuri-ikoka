@@ -1,7 +1,12 @@
 import {
+  type AgentMode,
+  type AnchorPlan,
+  type AnchorPlanRequest,
   ApiErrorSchema,
   type ChatRequest,
   type Festival,
+  type FestivalSearchRequest,
+  type FestivalSearchResponse,
   type PreferencesRequest,
   type SseMessage,
 } from "@matsuri-ikoka/schema";
@@ -24,6 +29,17 @@ export interface ChatTransport {
     onMessage: OnSseMessage,
     signal: AbortSignal,
   ): Promise<void>;
+  /** 祭りから探す。モデルの文章を流さず、結果をまとめて受け取る */
+  searchFestivals(
+    request: FestivalSearchRequest,
+    signal?: AbortSignal,
+  ): Promise<FestivalSearchResponse>;
+  /** 決めた祭りを軸にした旅の組み立てを確かめる（モデルは呼ばない） */
+  previewFestivalTrip(request: AnchorPlanRequest, signal?: AbortSignal): Promise<AnchorPlan>;
+  /** 最後に始めた相談で、サーバーが知らせた動き方（知らせがなければ null） */
+  agentMode?(): AgentMode | null;
+  /** 接続が切れたあとに、サーバーが応答するかを確かめる（つながらなければ false） */
+  checkServer?(): Promise<boolean>;
   /** 接客サーバーのときだけ：合言葉を覚えて、これからの呼び出しに付ける */
   setPasscode?(passcode: string): void;
   /** 接客サーバーのときだけ：合言葉を覚えているか */

@@ -1,11 +1,18 @@
 import { randomBytes } from "node:crypto";
 import {
+  type AnchorPlan,
   type ConversationStage,
   DEFAULT_PREFERENCES,
   type FestivalCandidate,
+  type IsoDate,
   type Itinerary,
+  type LodgingSearch,
+  type NearbySpot,
   type PartialTripConditions,
   type Preferences,
+  type Source,
+  type TripAnchor,
+  type VerificationResult,
   type Weather,
 } from "@matsuri-ikoka/schema";
 
@@ -25,12 +32,30 @@ export interface Session {
   preferences: Preferences;
   /** 最後に出した祭りの候補 */
   candidates: FestivalCandidate[];
+  /** 最後の検索で、条件を1つだけ外せば出た祭り（「この祭りならやっています」） */
+  nearMisses: FestivalCandidate[];
   /** 利用者が選んだ祭り（寄り道を探した祭り） */
   selectedFestivalId: string | null;
   /** この相談の旅程の ID。保存した旅程は ItineraryStore にある */
   itineraryId: string | null;
+  /** 祭りから探して決めた、必ず行く祭りと行く日。あれば、この祭りを固定して旅程を組む */
+  anchor: TripAnchor | null;
+  /** 固定した祭りを軸にした組み立て。出発地か泊数が分からない間は null */
+  anchorPlan: AnchorPlan | null;
+  /** 固定した祭りの開催を組み始める前に確かめた結果。まだなら null */
+  anchorCheck: VerificationResult | null;
+  /** 組み始める前の確かめで中止と分かった祭り。この祭りの旅程は保存しない */
+  cancelledAnchor: (TripAnchor & { name: string; note: string | null }) | null;
   /** 調べた天気。キーは「祭りの ID@日付」 */
   weather: Map<string, Weather>;
+  /** 調べた宿の空き。キーはチェックインの日。旅程を保存するとき、その日の泊まりに付ける */
+  lodging: Map<IsoDate, LodgingSearch>;
+  /** 周辺係が Web で調べて残した場所。キーは場所の ID（web-…）。旅程を保存するとき、祭りのデータの場所と同じく照らす */
+  researchedSpots: Map<string, NearbySpot>;
+  /** 行き方の調べで実際に読んだページ。キーは URL。旅程を保存するとき、移動・帰りの最終の出典として認める */
+  researchedSources: Map<string, Source>;
+  /** 周辺係が Web で見つけた場所の名前。キーは祭りの ID。旅程を保存するとき、採否と理由がそろっているかを確かめる */
+  foundSpots: Map<string, { id: string; name: string }[]>;
   /** live：Agent SDK のセッション ID（resume に使う） */
   agentSessionId: string | null;
   /**
@@ -99,9 +124,18 @@ export class SessionStore {
       conditions: {},
       preferences: { ...(init.preferences ?? DEFAULT_PREFERENCES) },
       candidates: [],
+      nearMisses: [],
       selectedFestivalId: null,
       itineraryId: null,
+      anchor: null,
+      anchorPlan: null,
+      anchorCheck: null,
+      cancelledAnchor: null,
       weather: new Map(),
+      lodging: new Map(),
+      researchedSpots: new Map(),
+      researchedSources: new Map(),
+      foundSpots: new Map(),
       agentSessionId: null,
       replay: init.replay ?? null,
       busy: false,
@@ -112,7 +146,7 @@ export class SessionStore {
 
   /**
    * 保存の口に残した途中の状態から、相談をメモリに戻す。メモリにもうあれば、それを返す。
-   * 天気と Agent SDK の会話は戻さない（エージェントは、相談の状態の要約から続ける）
+   * 天気・宿の空き・調べた寄り道と Agent SDK の会話は戻さない（エージェントは、相談の状態の要約から続ける）
    */
   restore(
     saved: Pick<
@@ -126,15 +160,26 @@ export class SessionStore {
       | "selectedFestivalId"
       | "itineraryId"
       | "replay"
-    >,
+    > &
+      Partial<Pick<Session, "anchor" | "anchorPlan" | "anchorCheck" | "cancelledAnchor">>,
   ): Session {
     const existing = this.get(saved.id);
     if (existing !== undefined) return existing;
     this.#makeRoom();
     const session: Session = {
       ...saved,
+      // アンカーの項目がない、前の形の保存も読めるようにする
+      anchor: saved.anchor ?? null,
+      anchorPlan: saved.anchorPlan ?? null,
+      anchorCheck: saved.anchorCheck ?? null,
+      cancelledAnchor: saved.cancelledAnchor ?? null,
       lastActiveAt: this.#now(),
       weather: new Map(),
+      nearMisses: [],
+      lodging: new Map(),
+      researchedSpots: new Map(),
+      researchedSources: new Map(),
+      foundSpots: new Map(),
       agentSessionId: null,
       busy: false,
     };

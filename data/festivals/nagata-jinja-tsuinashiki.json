@@ -1,0 +1,253 @@
+{
+  "id": "nagata-jinja-tsuinashiki",
+  "name": { "ja": "長田神社古式追儺式", "en": "Nagata Shrine Tsuina-shiki" },
+  "category": "ritual",
+  "municipalities": [{ "prefecture": "兵庫県", "name": "神戸市長田区" }],
+  "venue": { "name": "長田神社", "lat": 34.6712, "lng": 135.147 },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["jalan"],
+  "highlights": [
+    "麦藁の松明と太刀を手に、7匹の鬼が舞台で舞って災いを払う",
+    "最後に鬼が斧で「影の餅」を割って締めくくる餅割行事",
+    "松明の灰をかぶって祓いを受けるという言い伝え",
+    "燃え残りの松明を束ねた授与品と餅花を、節分の日だけ授かれる"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "室町時代に遡る行事で、1970年に兵庫県の重要無形民俗文化財に指定",
+      "sources": [
+        {
+          "url": "https://nagatajinja.jp/gyouji/tsuinashiki.php",
+          "title": "長田神社 長田神社古式追儺式",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "鬼役は神社近在の昔からの氏人（旧長田村）に限られる",
+      "sources": [
+        {
+          "url": "https://nagatajinja.jp/gyouji/tsuinashiki.php",
+          "title": "長田神社 長田神社古式追儺式",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "登場する鬼は7匹。大役の餅割鬼は、ほかの鬼役を7回以上務めた人しか担えない",
+      "source": {
+        "url": "https://nagatajinja.jp/gyouji/tsuinashiki.php",
+        "title": "長田神社 長田神社古式追儺式",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "鬼役は前日から井戸水をかぶって身を清め、当日の早朝には須磨の海岸で禊をする",
+      "source": {
+        "url": "https://nagatajinja.jp/gyouji/winter.php",
+        "title": "長田神社 冬の行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "室町時代の境内の薬師堂の修正会が、今の形の元になったとみられている",
+      "source": {
+        "url": "https://nagatajinja.jp/gyouji/tsuinashiki.php",
+        "title": "長田神社 長田神社古式追儺式",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "鬼面と行事一式は、1970年（昭和45年）に兵庫県の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://nagatajinja.jp/gyouji/tsuinashiki.php",
+        "title": "長田神社 長田神社古式追儺式",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "鬼が火のついた麦藁の松明を持って舞台で舞い、参拝者はその灰をかぶって祓いを受けるとされる。見学の場所や火の粉についての主催者の注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://nagatajinja.jp/gyouji/tsuinashiki.php",
+        "title": "長田神社 長田神社古式追儺式",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://nagatajinja.jp/gyouji/winter.php",
+        "title": "長田神社 冬の行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-02-03",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "神社の年中行事では毎年2月3日（例年は12:30 節分祭、13:30〜18:00頃 追儺式）。2027年の節分は2月3日。鬼が順に登場して舞い、太刀渡しのあと、餅割鬼と尻くじり鬼が「泰平の餅」「六十四州の餅」「影の餅」を割って終わる。松明の燃え残りと餅花は当日、神門下の仮設の授与所で授かれる（初穂料500円）",
+      "sources": [
+        {
+          "url": "https://nagatajinja.jp/gyouji/winter.php",
+          "title": "長田神社 冬の行事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://nagatajinja.jp/gyouji/tsuinashiki.php",
+          "title": "長田神社 長田神社古式追儺式",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2027/rekiyou272.html",
+          "title": "国立天文台 令和9年（2027）暦要項 二十四節気および雑節",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "神戸市営地下鉄 長田（長田神社前）駅",
+        "walkMinutes": [5, 10],
+        "note": "西神・山手線。長田神社前商店街を北へ歩く"
+      },
+      {
+        "name": "神戸高速線 高速長田駅",
+        "walkMinutes": [5, 10],
+        "note": "阪急・阪神・山陽の電車が乗り入れる。長田神社前商店街を北へ歩く"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://nagatajinja.jp/access/index.php",
+        "title": "長田神社 アクセス",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "そばめし",
+        "note": "長田で働く人がお好み焼き店でご飯を温め直してもらう際に、焼きそばと混ぜたのが始まりと言われる長田の名物。お好み焼き店の多い新長田などで食べられる",
+        "sources": [
+          {
+            "url": "https://www.city.kobe.lg.jp/h53961/kuyakusho/nagataku/jyouhou/syokunomachi.html",
+            "title": "神戸市長田区 食のまち",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      },
+      {
+        "name": "ぼっかけ（すじ焼）",
+        "note": "牛すじとこんにゃくを甘辛く煮たもの。長田ではお好み焼きの「すじ焼」やそばめし、うどんに使われる",
+        "sources": [
+          {
+            "url": "https://www.city.kobe.lg.jp/h53961/kuyakusho/nagataku/jyouhou/syokunomachi.html",
+            "title": "神戸市長田区 食のまち",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "tetsujin-28-monument",
+      "name": "鉄人28号モニュメント",
+      "kind": "sightseeing",
+      "summary": "若松公園にある高さ15.3m（直立時の設定は18m）の鉄人28号の像。震災からの復興と地域の活性化の象徴として2009年に完成した。見学は無料。JR新長田駅から徒歩3分",
+      "location": { "lat": 34.6555, "lng": 135.1439 },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": "無料",
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.city.kobe.lg.jp/h53961/kuyakusho/nagataku/jyouhou/tetsujin28.html",
+          "title": "神戸市長田区 鉄人28号モニュメント",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.feel-kobe.jp/facilities/0000000126/",
+          "title": "神戸公式観光サイト Feel KOBE 鉄人28号 モニュメント",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://nagatajinja.jp/gyouji/tsuinashiki.php",
+      "title": "長田神社 長田神社古式追儺式",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://nagatajinja.jp/gyouji/winter.php",
+      "title": "長田神社 冬の行事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_353358/",
+      "title": "じゃらんnet 長田神社古式追儺式 節分祭（2026年）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年2月3日の開催と時刻の発表（2026年11月4日の時点で、神社のお知らせに節分の告知はまだない）",
+    "雨天のときの扱い",
+    "見学できる場所と、火の粉や混雑についての注意（公式の案内が見つからない）",
+    "撮影の決まり",
+    "服装と持ち物（公式の案内がない）",
+    "駐車場の有無（神社のアクセスの案内に記載がない）",
+    "大阪・三宮などの主要駅からの所要時間（神社の案内は乗り換えの駅だけで、時間がない）",
+    "屋台・露店が出るか",
+    "規模の根拠になる参拝者数の公表値",
+    "2026年2月3日の開催の公式の記録（じゃらんnetの掲載だけで確かめた）",
+    "周辺の食事処（そばめし・すじ焼の店）の営業時間と定休日（公式の案内で確かめられる店がなく、入れていない）",
+    "鉄人28号モニュメントの見学できる時間と、会場からの徒歩の時間"
+  ]
+}

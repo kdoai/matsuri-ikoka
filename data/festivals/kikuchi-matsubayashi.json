@@ -1,0 +1,297 @@
+{
+  "id": "kikuchi-matsubayashi",
+  "name": {
+    "ja": "菊池の松囃子",
+    "en": "Kikuchi Matsubayashi"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "熊本県",
+      "name": "菊池市"
+    }
+  ],
+  "venue": {
+    "name": "菊池松囃子能場",
+    "lat": 32.9843,
+    "lng": 130.8117
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "懐良親王ゆかりの将軍木（ムクの大木）に向けて建つ能舞台で奉納する",
+    "能・狂言を演じる中世の松囃子の古い形を伝える、国の重要無形民俗文化財",
+    "三段の祝言の舞に続いて、仕舞「老松」などの仕舞と狂言を演じる"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "国の重要無形民俗文化財で、少なくとも室町時代には伝承されていた",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/136974",
+          "title": "文化遺産オンライン 菊池の松囃子",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "御松囃子御能保存会が保護団体として伝える",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/136974",
+          "title": "文化遺産オンライン 菊池の松囃子",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "地元では、菊池武光が懐良親王を迎え、年頭の祝いとして正月2日に催したのが始まりと伝わる",
+      "source": {
+        "url": "https://online.bunka.go.jp/heritages/detail/136974",
+        "title": "文化遺産オンライン 菊池の松囃子",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "舞台が向く将軍木は懐良親王が植えたと伝わるムクで、樹齢650年以上といわれる県の天然記念物",
+      "source": {
+        "url": "https://kikuchikanko.ne.jp/kikuchi_spot_01/shogunboku",
+        "title": "菊池観光協会 将軍木",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "いまの能場は江戸後期に火事のあとで建て直されたもので、ふだんは扉を閉じている",
+      "source": {
+        "url": "https://kikuchikanko.ne.jp/kikuchi_spot_01/noh_stage",
+        "title": "菊池観光協会 菊池松囃子能場",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "舞人1人、裃姿の地謡、大鼓2人と太鼓1人の囃子方、介添え1人で演じる",
+      "source": {
+        "url": "https://online.bunka.go.jp/heritages/detail/136974",
+        "title": "文化遺産オンライン 菊池の松囃子",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": []
+  },
+  "occurrences": [
+    {
+      "date": "2027-10-13",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年10月13日、菊池神社の秋の大祭の初日に奉納する（2027年の発表はまだない）。菊池市に鉄道はなく、熊本駅から熊本電鉄バスの菊池プラザ行き・菊池温泉行きで約70分（菊池観光協会の案内）",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/136974",
+          "title": "文化遺産オンライン 菊池の松囃子（毎年10月13日、菊池神社の秋の大祭初日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://kikuchikanko.ne.jp/kikuchi_spot_01/noh_stage",
+          "title": "菊池観光協会 菊池松囃子能場（10月13日、菊池神社秋季例大祭の初日に奉納）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.mlit.go.jp/tagengo-db/R5-00358.html",
+          "title": "観光庁 多言語解説文データベース 菊池の松囃子（毎年10月13日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://kikuchikanko.ne.jp/kikuchi_access",
+          "title": "菊池観光協会 菊池へのアクセス（熊本駅から菊池プラザ行き・菊池温泉行きのバスで約70分）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "none",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://kikuchikanko.ne.jp/kikuchi_spot_01/noh_stage",
+        "title": "菊池観光協会 菊池松囃子能場（駐車場・トイレなし）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://kikuchikanko.ne.jp/kikuchi_access",
+        "title": "菊池観光協会 菊池へのアクセス",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "kikuchi-jinja",
+      "name": "菊池神社",
+      "kind": "sightseeing",
+      "summary": "菊池氏の12代武時・13代武重・15代武光をまつる、1870年創建の神社。境内の歴史館に菊池家の文書や能装束・能面などを展示する。歴史館の開館時間は社務所に問い合わせる",
+      "location": {
+        "lat": 32.9879,
+        "lng": 130.8162
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": "歴史館 大人500円、大学・高校生200円、小・中学生100円",
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://kikuchikanko.ne.jp/kikuchi_spot_01/kikuchi_shrine",
+          "title": "菊池観光協会 菊池神社",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kikuchi-kanko-kyokai",
+      "name": "菊池観光協会（足湯）",
+      "kind": "rest",
+      "summary": "隈府にある観光協会の案内所。足湯があり、足湯は18:00まで使える。火曜休み（祝日なら翌日）",
+      "location": {
+        "lat": 32.9854,
+        "lng": 130.8137
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "17:00"
+      },
+      "closedDays": ["tue"],
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://kikuchikanko.ne.jp/kikuchi_spot_01/noh_stage",
+          "title": "菊池観光協会（所在地・営業時間・定休日の案内）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kotobuki-kaikan-kikuchi",
+      "name": "寿会館",
+      "kind": "food",
+      "summary": "1949年創業の店。昔ながらの味の巻き寿司がいちばん人気で、手作りのアイスキャンデーや回転万十もある。木曜休み（祝日は営業）",
+      "location": {
+        "lat": 32.9827,
+        "lng": 130.8117
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "14:30"
+      },
+      "closedDays": ["thu"],
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://kikuchikanko.ne.jp/archives/gallery/store003",
+          "title": "菊池観光協会 寿会館",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "umezushi-kikuchi",
+      "name": "梅ずし",
+      "kind": "food",
+      "summary": "菊池産の米を使う寿司店。昼だけの定食や天丼もある。カウンターと座敷で40席。昼は11:30〜14:00、夜は17:00〜22:00。不定休",
+      "location": {
+        "lat": 32.9832,
+        "lng": 130.8146
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": ["seating"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://kikuchikanko.ne.jp/archives/gallery/store082",
+          "title": "菊池観光協会 梅ずし",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://online.bunka.go.jp/heritages/detail/136974",
+      "title": "文化遺産オンライン 菊池の松囃子",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://kikuchikanko.ne.jp/kikuchi_spot_01/noh_stage",
+      "title": "菊池観光協会 菊池松囃子能場（菊池市隈府216-5）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.mlit.go.jp/tagengo-db/R5-00358.html",
+      "title": "観光庁 多言語解説文データベース 菊池の松囃子",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、奉納の始まる時刻・終わる時刻（主催者・市の告知が見つからない）",
+    "見学の仕方（見学席の有無、見学だけか）、決まり、服装・持ち物・撮影の扱い、危険度",
+    "雨のときの扱い",
+    "最寄りのバス停と、バス停から能場までの徒歩の時間（菊池市に鉄道はない。観光協会は、熊本駅から熊本電鉄バスの菊池温泉行き・菊池プラザ行きで菊池市へ約70分、熊本交通センターから約60分、肥後大津駅から九州産交バスで約40分と案内するが、降りるバス停の名前がないため、所要時間は入れていない）",
+    "能場に駐車場がないときに使える駐車場",
+    "交通規制の有無",
+    "菊池神社の秋の大祭のほかの行事との関係と、当日の流れ",
+    "奉納の所要時間と見物客の数（規模は、1つの能舞台での奉納として S にした）",
+    "屋台の有無と、祭りならではの食べもの",
+    "菊池神社歴史館の開館時間と休館日"
+  ]
+}

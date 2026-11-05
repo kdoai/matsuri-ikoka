@@ -43,7 +43,7 @@ test("店の外観を見せてから入店し、店内のスタッフが持ち�
   await talkToConcierge(page);
 
   // 吹き出しは作業の間だけ出るので、出たときに書き留めて、返答のあとで確かめる
-  const bubble = 'p[data-bubble="researcher"]';
+  const bubble = '[data-testid="speech-bubble"][data-bubble="researcher"]';
   const dialogue = '[data-testid="dialogue"]';
   const activity = '[data-testid="staff-activity"]';
   await recordTexts(page, [bubble, dialogue, activity]);
@@ -54,6 +54,10 @@ test("店の外観を見せてから入店し、店内のスタッフが持ち�
   for (const selector of [bubble, dialogue, activity]) {
     expect((await seenTexts(page, selector)).join()).toContain("祭りを探しています");
   }
+  // コンシェルジュの頼みと、頭の上のようすも、店内のようすで文字として読める
+  const activities = (await seenTexts(page, activity)).join();
+  expect(activities).toContain("コンシェルジュ → 祭り調査係");
+  expect(activities).toContain("調べている");
 });
 
 /** 旅人の床の上の位置（店の要素の data-player） */
@@ -136,9 +140,8 @@ test("旅人を歩かせ、仕掛けを使い、カメラを回し、柵で止�
   await expect(prompt).toContainText("コンシェルジュと話す");
   await page.keyboard.press("e");
   await expect(page.getByTestId("dialogue")).toBeVisible();
-  await expect(page.getByRole("textbox", { name: "相談の発言" })).toBeFocused();
-  // Esc で入力欄を離れ、会話の窓をしまうと、また歩ける
-  await page.keyboard.press("Escape");
+  await expect(page.getByTestId("consult-choice").first()).toBeFocused();
+  // 会話の窓をしまうと、また歩ける
   await page.getByTestId("dialogue-close").click();
   await expect(page.getByTestId("dialogue")).toBeHidden();
   const atCounter = await playerAt(page);
@@ -161,7 +164,7 @@ test("入口で通りへ向かって進むと、のれんをくぐって店の�
   await expect(page.getByTestId("greeting-bar")).toBeVisible({ timeout: 90_000 });
 });
 
-test("会話の窓を出したら、窓のどこをクリックしても入力欄に入り、打った文字で旅人は動かない", async ({
+test("聞き取りの入力欄の段階で窓のどこをクリックしても入力欄に入り、打った文字で旅人は動かない", async ({
   page,
 }) => {
   test.setTimeout(180_000);
@@ -171,9 +174,13 @@ test("会話の窓を出したら、窓のどこをクリックしても入力�
   await talkToConcierge(page);
   const scene = page.getByTestId("shop-scene");
   const start = await playerAt(page);
-  // 会話の窓の、入力欄でないところ（話し手の一言のあたり）をクリックしてから打つ
+  // 出発の駅の段階まで答え、会話の窓の、入力欄でないところ（話し手の一言のあたり）をクリックしてから打つ
+  const consult = page.getByTestId("consult");
+  for (const name of ["旅行計画から探す", "ひとりで", "今週末", "日帰り"]) {
+    await consult.getByRole("button", { name, exact: true }).click();
+  }
   await page.getByTestId("dialogue-line").click();
-  const input = page.getByRole("textbox", { name: "相談の発言" });
+  const input = consult.getByRole("textbox", { name: "最寄りの駅" });
   await expect(input).toBeFocused();
   await page.keyboard.type("wasd sawd");
   await expect(input).toHaveValue("wasd sawd");

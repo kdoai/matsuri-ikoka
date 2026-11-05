@@ -359,3 +359,52 @@ export function fictionalWeek(): ShioriTrip {
   trip.style = { pace: "relaxed", interests: ["onsen", "food"] };
   return trip;
 }
+
+/**
+ * 予定の多い日帰り（車で朝から夜まで）。理由の文も長く、1ページに入りきらない日を確かめるのに使う。
+ * シニアと一緒の旅にして、文字をひとまわり大きくする
+ */
+export function fictionalCrowdedDay(): ShioriTrip {
+  const long =
+    "会場の近くは駐車場が少ないので、早めに町に入って車を停め、子どもが休めるよう屋根のある場所を間にはさむ";
+  const car = (minutes: [number, number]): ItineraryItem["move"] => ({
+    means: "car",
+    minutes,
+    estimate: true,
+    note: "会場の近くは夕方から交通規制",
+  });
+  const spots = ["鈴鳴和紙の館", "鈴鳴川の遊歩道", "鈴鳴の古い町並み", "鈴鳴の郷土資料館"];
+  const trip = baseTrip([
+    {
+      date: "2026-08-16",
+      weather: forecast("晴れ時々くもり", 20),
+      stay: null,
+      items: [
+        item("go", "08:30", "09:30", "move", "みなと中央市から鈴鳴町へ（車）", long, {
+          move: car([50, 60]),
+        }),
+        ...spots.map((name, i) =>
+          item(`spot-${i}`, `${10 + i}:00`, `${10 + i}:50`, "sightseeing", name, long, {
+            move: walk([5, 10]),
+            hours: { open: "09:00", close: "17:00", lastEntry: "16:30" },
+            cost: "大人 500円・子ども 200円",
+          }),
+        ),
+        item("lunch", "14:00", "15:00", "meal", "鈴鳴そば", long, { cost: "1000円前後" }),
+        item("rest", "15:10", "16:00", "rest", "川べりの休憩所", long, { move: walk([5, 10]) }),
+        item("dinner", "16:10", "17:00", "meal", "河原の屋台で夕食", long),
+        item("prep", "17:10", "18:00", "festival_prep", "観覧の場所で待つ", long, {
+          move: walk([10, 15]),
+        }),
+        festivalItem("festival", "18:30", "21:00", FICTIONAL_FESTIVAL_ID, "鈴鳴灯籠まつり"),
+        item("wait", "21:00", "21:40", "rest", "混雑が引くまで休む", long),
+        item("back", "21:40", "22:40", "move", "鈴鳴町からみなと中央市へ（車）", long, {
+          move: car([50, 60]),
+        }),
+      ],
+    },
+  ]);
+  trip.party = { adults: 2, children: 1 };
+  trip.preferences = { ...trip.preferences, party: "seniors" };
+  return trip;
+}

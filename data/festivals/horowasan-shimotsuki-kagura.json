@@ -1,0 +1,218 @@
+{
+  "id": "horowasan-shimotsuki-kagura",
+  "name": {
+    "ja": "保呂羽山の霜月神楽",
+    "en": "Horowasan Shimotsuki Kagura"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "秋田県",
+      "name": "横手市"
+    }
+  ],
+  "venue": {
+    "name": "保呂羽山波宇志別神社 里宮神殿",
+    "lat": 39.3604,
+    "lng": 140.3513
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "夜7時から翌朝まで、33番の神事と舞が夜通し続く湯立神楽",
+    "神前に釜を据えて湯を使う湯立の神事を、里宮の神殿で見られる",
+    "終盤の演目のあと、参拝した人にも朝食がふるまわれる"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1977年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/160741",
+          "title": "文化遺産オンライン 保呂羽山の霜月神楽",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "保呂羽山霜月神楽保存会が国の保護団体として受け継ぐ",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/160741",
+          "title": "文化遺産オンライン 保呂羽山の霜月神楽（保護団体 保呂羽山霜月神楽保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "保呂羽山・御岳・高岡の三つの山の神霊を招いて行う神楽とされる",
+      "source": {
+        "url": "https://online.bunka.go.jp/heritages/detail/160741",
+        "title": "文化遺産オンライン 保呂羽山の霜月神楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1977年5月17日に国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://online.bunka.go.jp/heritages/detail/160741",
+        "title": "文化遺産オンライン 保呂羽山の霜月神楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "神楽を伝える保呂羽山波宇志別神社には、1200年を超える歴史があるといわれる",
+      "source": {
+        "url": "https://yokote-kankou.jp/contents/%E9%9C%9C%E6%9C%88%E7%A5%9E%E6%A5%BD/",
+        "title": "横手市観光推進機構 霜月神楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "拝観は無料だが、神事なのでお初穂を包むのが習わし",
+      "写真は決められた場所から、ほかの人の迷惑にならないように撮る",
+      "混み合うときは、密集を避けるため参拝を控えてもらうことがある",
+      "会場で携帯電話などの充電はできない"
+    ],
+    "dress": ["深夜に及ぶので、寒くない服装（会場にストーブはある）"],
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "神殿の中で神事を見学するもので、危険についての特別な注意は見つからない（深夜の冷え込みには注意がある）"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "指定された場所で、ほかの人の迷惑にならないように撮る"
+    },
+    "sources": [
+      {
+        "url": "https://www.city.yokote.lg.jp/faq/1001676/1001679/1001827.html",
+        "title": "横手市 よくある質問 保呂羽山波宇志別神社の霜月神楽を観たいのですが。",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-07",
+      "start": "19:00",
+      "end": "08:00",
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "横手市の案内に「毎年11月7日の午後7時から8日の午前8時頃まで（途中に休憩あり）」とあることから見込んだ日時（市と主催者の2026年の発表は見つからない）。33番の神事が続き、「山之神舞」「神入舞」、終盤の演目のあとに参拝者にも朝食がふるまわれる",
+      "sources": [
+        {
+          "url": "https://www.city.yokote.lg.jp/faq/1001676/1001679/1001827.html",
+          "title": "横手市 よくある質問 保呂羽山波宇志別神社の霜月神楽を観たいのですが。（毎年11月7日19時〜8日8時頃）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000345",
+          "title": "るるぶ&more. 保呂羽山の霜月神楽（2026年11月7日〜8日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-11-07",
+      "start": "19:00",
+      "end": "08:00",
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "横手市の案内の「毎年11月7日の午後7時から8日の午前8時頃まで」から見込んだ日時（2027年の発表はまだない）",
+      "sources": [
+        {
+          "url": "https://www.city.yokote.lg.jp/faq/1001676/1001679/1001827.html",
+          "title": "横手市 よくある質問 保呂羽山波宇志別神社の霜月神楽を観たいのですが。（毎年11月7日19時〜8日8時頃）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.city.yokote.lg.jp/faq/1001676/1001679/1001827.html",
+        "title": "横手市 よくある質問 保呂羽山波宇志別神社の霜月神楽を観たいのですが。（バス路線から離れている、JR大曲駅から約30分、タクシーなどの利用を）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000345",
+        "title": "るるぶ&more. 保呂羽山の霜月神楽（駐車場30台・無料、JR大曲駅から車で約35分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "神楽のあとの朝食のふるまい",
+        "note": "終盤の演目のあと、参拝した人にも朝食がふるまわれる（会場の里宮神殿）",
+        "sources": [
+          {
+            "url": "https://www.city.yokote.lg.jp/faq/1001676/1001679/1001827.html",
+            "title": "横手市 よくある質問 保呂羽山波宇志別神社の霜月神楽を観たいのですが。",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.city.yokote.lg.jp/faq/1001676/1001679/1001827.html",
+      "title": "横手市 よくある質問 保呂羽山波宇志別神社の霜月神楽を観たいのですが。（会場は神楽殿ではなく里宮、横手市大森町八沢木字木ノ根坂200番地）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://online.bunka.go.jp/heritages/detail/160741",
+      "title": "文化遺産オンライン 保呂羽山の霜月神楽（重要無形民俗文化財）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://yokote-kankou.jp/contents/%E9%9C%9C%E6%9C%88%E7%A5%9E%E6%A5%BD/",
+      "title": "横手市観光推進機構 霜月神楽",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2026年・2027年の開催の発表（日時は市の案内の「毎年11月7日の午後7時から8日の午前8時頃まで」から見込んだもの）",
+    "会場は鉄道の駅から歩けない。JR大曲駅からタクシーなどで約30分と市は案内するが、駅からの公共の交通と、秋田駅など玄関口の駅からの所要時間は確かめられていない",
+    "駐車場の台数（30台・無料はるるぶ&more.だけの情報で、市の案内には書かれていない）",
+    "お初穂の金額の目安",
+    "持ち物（市の案内に書かれていない）",
+    "周辺には商店や休憩・食事の場所がないと市は案内している。前後に寄れる場所は確かめられていない",
+    "会場の緯度・経度は、国土地理院の住所検索で横手市大森町八沢木の代表点を取ったもの（里宮神殿そのものの位置ではない）",
+    "見学できる人数と、混み合ったときの規制の具体的な内容"
+  ]
+}

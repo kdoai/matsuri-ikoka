@@ -1,0 +1,200 @@
+{
+  "id": "koga-chochin-saomomi-matsuri",
+  "name": { "ja": "古河提灯竿もみまつり", "en": "Koga Chochin Saomomi Festival" },
+  "category": "lantern",
+  "municipalities": [{ "prefecture": "茨城県", "name": "古河市" }],
+  "venue": {
+    "name": "古河駅西口おまつり特設会場（県道三国橋大聖院線道路用地）",
+    "lat": 36.1941,
+    "lng": 139.7074
+  },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "20m近い竹竿の先の提灯を、団体どうしがもみ合って消し合う",
+    "高さ約10mの矢来で囲んだ会場で、トーナメントの競技もみ",
+    "最後は全団体がいっせいにもみ合う自由もみ",
+    "コタツに入り、古河の地酒と料理とともに見る特別観覧席"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "神事の七郷めぐりは建仁年間に始まったと伝わり、そのもみ合いが原型とされる",
+      "sources": [
+        {
+          "url": "https://www.kogakanko.jp/chochin",
+          "title": "古河市観光協会 古河提灯竿もみまつり",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "七郷めぐりから帰る野木神社の神職を迎えた人々が、寒さしのぎにもみ合ったのが原型とされる",
+      "source": {
+        "url": "https://www.kogakanko.jp/chochin",
+        "title": "古河市観光協会 古河提灯竿もみまつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "神事は11月27日の「おいで」で始まり、12月3日の「おかえり」で神社に戻った",
+      "source": {
+        "url": "https://www.kogakanko.jp/chochin",
+        "title": "古河市観光協会 古河提灯竿もみまつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "七郷めぐりは建仁年間（1201〜03年）に始まったと伝わる",
+      "source": {
+        "url": "https://www.kogakanko.jp/chochin",
+        "title": "古河市観光協会 古河提灯竿もみまつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2023年は子ども部門と自由もみが4年ぶりに戻り、市内外から約5万人が見物した",
+      "source": {
+        "url": "https://www.city.ibaraki-koga.lg.jp/material/files/group/1/koga2209.pdf",
+        "title": "広報古河（古河提灯竿もみまつりの報告）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "2023年は約5万人が見物した。主催者によるけがの注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.ibaraki-koga.lg.jp/material/files/group/1/koga2209.pdf",
+        "title": "広報古河（古河提灯竿もみまつりに約5万人）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-05",
+      "start": "16:10",
+      "end": "20:30",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "第166回（古河市観光協会の発表）。16:10 子どもパレード出発、16:40 開会式、17:20 と 17:40 子ども部門（各10分）、18:00〜19:40 大人部門の競技もみ（13団体をA・Bの2ブロックに分けたトーナメント）、19:50〜20:25 自由もみ、20:30 閉会式。特別観覧席は販売予定で、詳細は未発表",
+      "sources": [
+        {
+          "url": "https://www.kogakanko.jp/chochin",
+          "title": "古河市観光協会 第166回古河提灯竿もみまつり（令和8年12月5日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000713",
+          "title": "るるぶ&more. 第166回関東の奇祭 古河提灯竿もみまつり（2026年12月5日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR宇都宮線 古河駅",
+        "walkMinutes": [1, 6],
+        "note": "西口から徒歩約1分"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": ["当日は会場付近の道路が通行止めになる（時間と区間は未発表）"],
+    "sources": [
+      {
+        "url": "https://www.kogakanko.jp/chochin",
+        "title": "古河市観光協会 古河提灯竿もみまつり（アクセス・交通規制）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": { "stalls": "unknown", "local": [] },
+  "nearby": [
+    {
+      "id": "koga-rekishi-hakubutsukan",
+      "name": "古河歴史博物館",
+      "kind": "sightseeing",
+      "summary": "古河市の歴史を紹介する市立の博物館。月曜・祝日の翌日・毎月第4金曜・年末年始が休館で、臨時の休館もある",
+      "location": { "lat": 36.1916, "lng": 139.7002 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "09:00", "close": "17:00", "lastEntry": "16:30" },
+      "closedDays": ["mon"],
+      "price": "一般400円、小中高生100円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.ibaraki-koga.lg.jp/soshiki/rekihaku/riyouannnai/20047.html",
+          "title": "古河市 古河歴史博物館 利用案内（9:00〜17:00、入館16:30まで）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E8%8C%A8%E5%9F%8E%E7%9C%8C%E5%8F%A4%E6%B2%B3%E5%B8%82%E4%B8%AD%E5%A4%AE%E7%94%BA3%E4%B8%81%E7%9B%AE10-56",
+          "title": "国土地理院 住所検索 古河市中央町3丁目10-56（古河歴史博物館の緯度・経度）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.kogakanko.jp/chochin",
+      "title": "古河市観光協会 古河提灯竿もみまつり",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20000713",
+      "title": "るるぶ&more. 古河提灯竿もみまつり（会場：県道三国橋大聖院線道路用地、古河市本町2-4-54）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    },
+    {
+      "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E8%8C%A8%E5%9F%8E%E7%9C%8C%E5%8F%A4%E6%B2%B3%E5%B8%82%E6%9C%AC%E7%94%BA2%E4%B8%81%E7%9B%AE4",
+      "title": "国土地理院 住所検索 古河市本町二丁目4番（会場付近の緯度・経度）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "会場の正確な位置",
+    "雨のときの扱い",
+    "見物の決まり（立ち入りの範囲、場所取りなど）",
+    "写真の撮り方の決まり",
+    "服装と持ち物",
+    "交通規制の時間と区間",
+    "駐車場の場所と台数",
+    "特別観覧席の料金と申し込み方法",
+    "露店の有無と、祭りならではの食べもの",
+    "主要駅から古河駅までの所要時間",
+    "2027年の開催日（毎年の日の決まりが公式に書かれていない）",
+    "周辺の食事の場所（確かめられた店がない）"
+  ]
+}

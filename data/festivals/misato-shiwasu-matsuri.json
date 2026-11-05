@@ -1,0 +1,272 @@
+{
+  "id": "misato-shiwasu-matsuri",
+  "name": {
+    "ja": "師走祭り",
+    "en": "Shiwasu Matsuri"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "宮崎県",
+      "name": "美郷町"
+    },
+    {
+      "prefecture": "宮崎県",
+      "name": "木城町"
+    }
+  ],
+  "venue": {
+    "name": "神門神社",
+    "lat": 32.3883,
+    "lng": 131.3306
+  },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "初日の夕方、神門神社の一の鳥居の近くで約30基のやぐらが燃え上がる迎え火",
+    "2日目の夜、神門神社の御神屋で夜更けまで続く夜神楽",
+    "最終日、婦人たちが炊事道具を手に横へ3歩ずつ歩き「オサラバー」と比木の一行を見送る",
+    "百済王族の父と子が年に一度再会するという言い伝えをたどる3日間"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "国の記録作成等の措置を講ずべき無形の民俗文化財になっている",
+      "sources": [
+        {
+          "url": "https://www.town.miyazaki-misato.lg.jp/kiji003945/3_945_6310_up_46tr6ew1.pdf",
+          "title": "美郷町 令和8年師走祭りパンフレット（記録作成等の措置を講ずべき無形の民俗文化財）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "地区の自治会や青年団体などが迎え火のやぐらを設ける",
+      "sources": [
+        {
+          "url": "https://www.town.miyazaki-misato.lg.jp/kiji003945/index.html",
+          "title": "美郷町 師走祭り",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "木城町の比木神社の一行は、約90km（23里）離れた神門神社まで御神体を運ぶ",
+      "source": {
+        "url": "https://www.town.miyazaki-misato.lg.jp/kiji003945/index.html",
+        "title": "美郷町 師走祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "神門神社は養老2年（718）創建と伝わり、本殿は国の重要文化財に指定されている",
+      "source": {
+        "url": "https://www.town.miyazaki-misato.lg.jp/kiji003945/3_945_6310_up_46tr6ew1.pdf",
+        "title": "美郷町 令和8年師走祭りパンフレット",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "神門神社の銅鏡24面の中には、奈良の正倉院の御物と同じ品の鏡がある",
+      "source": {
+        "url": "https://www.town.miyazaki-misato.lg.jp/kiji003945/3_945_6310_up_46tr6ew1.pdf",
+        "title": "美郷町 令和8年師走祭りパンフレット",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "最終日に顔へヘグロを塗るのは、別れの悲しみを隠すためだったと伝わる",
+      "source": {
+        "url": "https://www.town.miyazaki-misato.lg.jp/kiji003945/3_945_6310_up_46tr6ew1.pdf",
+        "title": "美郷町 令和8年師走祭りパンフレット",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.town.miyazaki-misato.lg.jp/kiji0031108/index.html",
+        "title": "美郷町 令和9年師走祭り「迎え火やぐら」設置者募集（迎え火は毎年多くの見物客でにぎわう）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-16",
+      "start": "18:00",
+      "end": "20:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "1日目「上りまし」。8:00に比木神社を出発し、道中の神事を経て、18:00ごろ一の鳥居の近くで約30基のやぐらの迎え火、20:00ごろ神門神社の本殿に着く",
+      "sources": [
+        {
+          "url": "https://www.town.miyazaki-misato.lg.jp/kiji003945/3_945_6310_up_46tr6ew1.pdf",
+          "title": "美郷町 令和8年師走祭りパンフレット（1月16日〜18日の全行程）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-17",
+      "start": "10:30",
+      "end": "00:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2日目「祭典・舞明かし」。14:00本殿で祭典、15:00〜17:00に神社周辺で塚や川辺の神事、19:00から深夜0時ごろまで夜神楽18番",
+      "sources": [
+        {
+          "url": "https://www.town.miyazaki-misato.lg.jp/kiji003945/3_945_6310_up_46tr6ew1.pdf",
+          "title": "美郷町 令和8年師走祭りパンフレット（1月16日〜18日の全行程）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-18",
+      "start": "10:30",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "3日目「下りまし」。10:30お別れ式、11:00ヘグロ塗り、11:30最後の祭典と一の鳥居での「オサラバ」、正午ごろ塚跡地での笠付けを経て一行が比木へ帰る",
+      "sources": [
+        {
+          "url": "https://www.town.miyazaki-misato.lg.jp/kiji003945/3_945_6310_up_46tr6ew1.pdf",
+          "title": "美郷町 令和8年師走祭りパンフレット（1月16日〜18日の全行程）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-15",
+      "start": "18:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": "天候により変更することがある",
+      "note": "1日目「上りまし」。18:00ごろ、神門神社の一の鳥居の前（南郷神門小路前田）で迎え火。そのほかの時刻は未発表（例年は迎え火のあと20:00ごろ本殿に着く）",
+      "sources": [
+        {
+          "url": "https://www.town.miyazaki-misato.lg.jp/kiji0031108/index.html",
+          "title": "美郷町 令和9年師走祭り「迎え火やぐら」設置者募集（1月15日18時ごろ迎え火）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.town.miyazaki-misato.lg.jp/kiji003945/index.html",
+          "title": "美郷町 師走祭り（令和9年1月15日〜17日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-16",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": "天候により変更することがある",
+      "note": "2日目「祭典・舞明かし」。時刻は未発表。例年は14:00ごろ本殿で祭典、19:00ごろから深夜まで夜神楽",
+      "sources": [
+        {
+          "url": "https://www.town.miyazaki-misato.lg.jp/kiji003945/index.html",
+          "title": "美郷町 師走祭り（令和9年1月15日〜17日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-17",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": "天候により変更することがある",
+      "note": "3日目「下りまし」。時刻は未発表。例年は10:30ごろからお別れ式とヘグロ塗り、11:30ごろ一の鳥居で「オサラバ」",
+      "sources": [
+        {
+          "url": "https://www.town.miyazaki-misato.lg.jp/kiji003945/index.html",
+          "title": "美郷町 師走祭り（令和9年1月15日〜17日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [
+      {
+        "hub": "日向市駅",
+        "minutes": [90, 100],
+        "route": "路線バスで約90分、「百済の館前」で降りる。車なら約50分"
+      }
+    ],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.town.miyazaki-misato.lg.jp/kiji003412/index.html",
+        "title": "美郷町 西の正倉院（日向市駅から車で約50分、路線バスで約90分「百済の館前」下車）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.town.miyazaki-misato.lg.jp/kiji003945/3_945_6310_up_46tr6ew1.pdf",
+        "title": "美郷町 令和8年師走祭りパンフレット（日向市から南郷まで車で約50分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.town.miyazaki-misato.lg.jp/kiji003945/index.html",
+      "title": "美郷町 師走祭り",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.town.miyazaki-misato.lg.jp/kiji003945/3_945_6310_up_46tr6ew1.pdf",
+      "title": "美郷町 令和8年師走祭りパンフレット（記録作成等の措置を講ずべき無形の民俗文化財）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の2日目・3日目の行事の時刻（町の発表は日付と迎え火の時刻だけ）",
+    "日向市駅から神門神社までのバスの時刻と、迎え火のあとの帰りの足",
+    "祭りの日の駐車場と交通規制",
+    "見物の決まり（迎え火やぐらからの距離、立ち入りできる場所、撮影）と服装・持ち物",
+    "迎え火のそばでの危険の注意",
+    "見物客の数",
+    "屋台の有無と、祭りの日だけの食べ物",
+    "祭りの日に開いている近くの観光・食事の場所の位置と営業時間"
+  ]
+}

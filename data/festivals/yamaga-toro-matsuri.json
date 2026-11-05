@@ -1,0 +1,312 @@
+{
+  "id": "yamaga-toro-matsuri",
+  "name": {
+    "ja": "山鹿灯籠まつり",
+    "en": "Yamaga Lantern Festival"
+  },
+  "category": "lantern",
+  "municipalities": [
+    {
+      "prefecture": "熊本県",
+      "name": "山鹿市"
+    }
+  ],
+  "venue": {
+    "name": "山鹿市中心部（大宮神社・山鹿小学校グラウンド・菊池川河畔ほか）",
+    "lat": 33.013,
+    "lng": 130.6938
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu", "jnto"],
+  "highlights": [
+    "和紙と糊だけで作った宮造りや城の形の奉納灯籠が、町の辻々に飾られる",
+    "金灯籠を頭にのせた女性たちが、夜の校庭で一斉に踊る千人灯籠踊り",
+    "2日目の夜更け、灯籠を担いで大宮神社へ納める上がり灯籠",
+    "1日目の夜は、菊池川の上に花火が上がる"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "室町時代に奉納の松明が和紙の灯籠に発展したとされる",
+      "sources": [
+        {
+          "url": "https://yamagatourou.jp/about/",
+          "title": "山鹿灯籠振興会 山鹿灯籠について",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "町内や市民団体が灯籠を奉納する（2025年は約30団体）",
+      "sources": [
+        {
+          "url": "https://yamagatourou.jp/about/",
+          "title": "山鹿灯籠振興会 山鹿灯籠について",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "菊池川沿いを進むのに困った景行天皇の一行を、里の人が松明で導いた伝説が祭りの起こり",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/R5-00350.html",
+        "title": "観光庁 多言語解説文データベース 山鹿灯籠まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "山鹿灯籠は手漉き和紙と糊だけで作り、中は空洞でとても軽い",
+      "source": {
+        "url": "https://yamagatourou.jp/about/",
+        "title": "山鹿灯籠振興会 山鹿灯籠について",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "千人灯籠踊りは1957年、市役所・観光協会・婦人会が観光のために考え出した",
+      "source": {
+        "url": "https://yamagatourou.jp/about/",
+        "title": "山鹿灯籠振興会 山鹿灯籠について",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "上がり灯籠で納めた灯籠は夜中0時に燈籠殿に入り、1年間飾られる",
+      "source": {
+        "url": "https://yamagatourou.jp/about/",
+        "title": "山鹿灯籠振興会 山鹿灯籠について",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_by_application",
+    "howToJoin": "2023年に観光協会が千人灯籠踊りの市外参加者の練習会を案内し、2026年も市外の女性向けの練習会が開かれた。毎年募集するか、募集の時期・定員・費用・申し込み方法は確かめられなかった",
+    "rules": [
+      "千人灯籠踊りには有料の特別観覧席があり、前売りで販売する（2026年は6月に市民向けの先行販売、続いて一般向けに販売）",
+      "千人灯籠踊りが雨などで中止になると、特別観覧席は払い戻しになる（2025年は雷雨で中止し、払い戻した）"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "2日間で約12万人が訪れる夜の祭りで、町なかが大きく混み合う"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://yamaga-tanbou.jp/info/28595/",
+        "title": "山鹿温泉観光協会 【御礼】『2025年山鹿灯籠まつり』について（約12万人来場、雷雨で千人灯籠踊りを中止し特別観覧席を払い戻し）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://yamaga-tanbou.jp/info/19668/",
+        "title": "山鹿温泉観光協会 「千人灯籠踊り」市外参加者練習会(7/1(土)分)の中止について（2023年）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://kumanichi.com/articles/2010271",
+        "title": "熊本日日新聞 千人灯籠踊り、地元以外の参加者向け練習会開催（2026年7月5日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      },
+      {
+        "url": "https://kumanichi.com/articles/2000283",
+        "title": "熊本日日新聞 千人灯籠踊り 特別観覧席のチケット13日から販売（2026年6月9日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-15",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。7月の令和8年熊本地震を受けて規模を縮小し、大宮神社の神事とそれに関わる行事だけを行った。この日の花火大会は中止。町なかに奉納灯籠が飾られた",
+      "sources": [
+        {
+          "url": "https://kumanichi.com/articles/2020363",
+          "title": "熊本日日新聞 山鹿灯籠まつり、花火大会と千人灯籠踊り中止 神事のみ実施（2026年7月31日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar1043e509316/",
+          "title": "ウォーカープラス 山鹿灯籠まつり【規模縮小】（2026年8月15日・16日、神事と関連行事以外は中止）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://kumanichi.com/articles/2025548",
+          "title": "熊本日日新聞 街角彩る〝紙の芸術〟 山鹿灯籠まつり開幕（2026年8月15日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2026-08-16",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。千人灯籠踊りは地震のため中止。奉納灯籠を大宮神社へ納める上がり灯籠を行い、被災地の復興を願う灯籠踊りを奉納した。時刻の記載は見つからなかった",
+      "sources": [
+        {
+          "url": "https://kumanichi.com/articles/2020363",
+          "title": "熊本日日新聞 山鹿灯籠まつり、花火大会と千人灯籠踊り中止 神事のみ実施（2026年7月31日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar1043e509316/",
+          "title": "ウォーカープラス 山鹿灯籠まつり【規模縮小】",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://kumanichi.com/articles/2025944",
+          "title": "熊本日日新聞 山鹿灯籠まつり、「上がり燈籠」でフィナーレ 地震で規模縮小、踊り披露（2026年8月17日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-15",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年8月15日・16日に開く決まりから見込んだ日（日曜日）。2027年の発表はまだない。例年の1日目は、町なかに新しい奉納灯籠が飾られ、大宮神社の境内などで灯籠踊りがあり、夜に菊池川で花火が上がる。花火は例年4,000発を超える（日本政府観光局の案内）",
+      "sources": [
+        {
+          "url": "https://www.mlit.go.jp/tagengo-db/R5-00350.html",
+          "title": "観光庁 多言語解説文データベース 山鹿灯籠まつり（毎年8月15日・16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.japan.travel/en/spot/458/",
+          "title": "日本政府観光局 Yamaga Lantern Festival（花火は4,000発以上）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-16",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年8月15日・16日に開く決まりから見込んだ日（月曜日）。2027年の発表はまだない。例年の2日目は、菊池川の河畔で天皇を迎える儀式、松明の行列のあと、山鹿小学校のグラウンドで千人灯籠踊り、踊りのあとに上がり灯籠で奉納灯籠を大宮神社へ納める（納めるのは夜中0時）。2026年の千人灯籠踊りは20:00〜21:00の予定だった（旅行会社の案内）",
+      "sources": [
+        {
+          "url": "https://www.mlit.go.jp/tagengo-db/R5-00350.html",
+          "title": "観光庁 多言語解説文データベース 山鹿灯籠まつり（毎年8月15日・16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://yamagatourou.jp/about/",
+          "title": "山鹿灯籠振興会 山鹿灯籠について（上がり灯籠は8月16日の夜、0時に燈籠殿へ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.nta.co.jp/jrodekakenet/plan/n/202606_yamagatourou.htm",
+          "title": "tabiwaトラベル 2026山鹿灯籠まつり「千人灯籠踊り」観覧席付宿泊プラン（山鹿小学校グラウンド、20:00〜21:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [
+      {
+        "hub": "JR新玉名駅",
+        "minutes": [50, 60],
+        "route": "九州産交バスで山鹿バスセンターまで約50分。新玉名駅へは博多駅から九州新幹線で約40分、熊本駅から約10分（山鹿温泉観光協会の案内）"
+      },
+      {
+        "hub": "熊本桜町バスターミナル",
+        "minutes": [70, 80],
+        "route": "九州産交バスで山鹿バスセンターまで約70分（山鹿温泉観光協会の案内）"
+      }
+    ],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://yamaga-tanbou.jp/access/",
+        "title": "山鹿温泉観光協会 アクセス",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.mlit.go.jp/tagengo-db/R5-00350.html",
+      "title": "観光庁 多言語解説文データベース 山鹿灯籠まつり（山鹿市観光推進協議会）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://yamagatourou.jp/about/",
+      "title": "山鹿灯籠振興会 山鹿灯籠について",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://yamaga-tanbou.jp/info/28595/",
+      "title": "山鹿温泉観光協会 【御礼】『2025年山鹿灯籠まつり』について",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.japan.travel/en/spot/458/",
+      "title": "日本政府観光局 Yamaga Lantern Festival",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、日ごとの行事の時刻（千人灯籠踊り・花火・上がり灯籠）。2026年は地震で規模を縮小したため、2027年に通常の形へ戻るかも分からない",
+    "2026年の開催について、主催者（実行委員会・山鹿市・観光協会）の発表を見つけられなかった。2026年の開催回は新聞と観光サイトによる",
+    "千人灯籠踊りの特別観覧席の席の種類・価格・販売方法（主催者の案内が見つからない。旅行会社の案内では1席8,000円）",
+    "立ち見で見られる場所と、無料かどうか（るるぶ&more. は立ち見を無料と案内するが、主催者の案内が見つからない）",
+    "市外の人が千人灯籠踊りに加わる方法（毎年募集するか、募集の時期・定員・費用・申し込み先）",
+    "雨天・雷雨のときの扱いの決まり（2025年は雷雨で千人灯籠踊りなどを中止した）",
+    "交通規制の時間と場所、臨時駐車場とシャトルバス（観光サイトどうしで台数や時間が食い違う）",
+    "山鹿バスセンターから大宮神社・山鹿小学校までの徒歩の時間",
+    "服装・持ち物・撮影の決まり",
+    "屋台の有無と、祭りならではの食べ物",
+    "2027年の花火の打ち上げ数（例年4,000発以上という日本政府観光局の案内だけで、主催者の数が見つからない）",
+    "周辺の観光と食の場所（山鹿灯籠民芸館などは、開館時間と休館日を公式で確かめられなかった）",
+    "会場の緯度・経度は大宮神社の住所（山鹿市山鹿196）を国土地理院の住所検索で取ったもので、千人灯籠踊りの会場（山鹿小学校）ではない"
+  ]
+}

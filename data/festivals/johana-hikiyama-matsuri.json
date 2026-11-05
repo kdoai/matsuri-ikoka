@@ -1,0 +1,327 @@
+{
+  "id": "johana-hikiyama-matsuri",
+  "name": {
+    "ja": "城端曳山祭",
+    "en": "Johana Hikiyama Festival"
+  },
+  "category": "float",
+  "municipalities": [
+    {
+      "prefecture": "富山県",
+      "name": "南砺市"
+    }
+  ],
+  "venue": {
+    "name": "城端中心市街地",
+    "lat": 36.5135,
+    "lng": 136.9004
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "京都祇園の茶屋を模した庵屋台の中で、笛と三味線にのせて城端だけの庵唄が唄われる",
+    "彫りと漆、金具で飾られた6台の曳山が、御神像を乗せて町を巡る",
+    "祝儀を出した家の前に庵屋台を寄せて唄を披露する「庵唄所望」",
+    "本祭の夜は提灯をともした提灯山が町を巡る"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "享保年間に始まり、ユネスコ無形文化遺産に登録された曳山行事",
+      "sources": [
+        {
+          "url": "https://culture-archives.city.nanto.toyama.jp/heritages/unesco0001/",
+          "title": "南砺市文化芸術アーカイブズ 城端曳山祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "城端曳山祭保存会が保護団体で、各山町が曳山を出し若連中が庵唄を披露",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/215189",
+          "title": "文化遺産オンライン 城端神明宮祭の曳山行事（保護団体 城端曳山祭保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "享保2年（1717年）に神輿が作られ、享保4年に曳山が始まった",
+      "source": {
+        "url": "https://culture-archives.city.nanto.toyama.jp/heritages/unesco0001/",
+        "title": "南砺市文化芸術アーカイブズ 城端曳山祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "庵唄は江戸の端唄が源流とされる",
+      "source": {
+        "url": "https://culture-archives.city.nanto.toyama.jp/heritages/unesco0001/",
+        "title": "南砺市文化芸術アーカイブズ 城端曳山祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2016年、「城端神明宮祭の曳山行事」としてユネスコ無形文化遺産に登録された",
+      "source": {
+        "url": "https://culture-archives.city.nanto.toyama.jp/heritages/unesco0001/",
+        "title": "南砺市文化芸術アーカイブズ 城端曳山祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "明治6年に太陽暦を採り入れたのを機に、祭礼の日が5月15日に移った",
+      "source": {
+        "url": "https://culture-archives.city.nanto.toyama.jp/heritages/unesco0001/",
+        "title": "南砺市文化芸術アーカイブズ 城端曳山祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "5月5日の有料の観覧席（城端曳山会館の横）は屋根がなく、日傘は使わないよう求められている"
+    ],
+    "dress": "unknown",
+    "bring": ["有料の観覧席を使うなら、日よけの帽子"],
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.tabi-nanto.jp/archives/16772",
+        "title": "五箇山NANTO観光機構 『観覧席』で城端曳山祭をじっくりと楽しみませんか？（2026年）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.tabi-nanto.jp/archives/10503",
+        "title": "五箇山NANTO観光機構 城端曳山祭のスケジュール・みどころ",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-05-04",
+      "start": "18:00",
+      "end": "22:00",
+      "status": "announced",
+      "rainPolicy": "少雨なら曳山にビニールシートをかけて巡行、荒天なら中止。2026年の宵祭は雨のため、曳山会館前の合同披露と町内の飾り山を取りやめ、じょうはな座の披露と山宿の公開は行った",
+      "note": "2026年の実績。宵祭。観光機構の案内では、18:00からじょうはな座（御旅所）で庵唄の奉納、18:00〜21:00に各山宿の飾り山の公開、18:30〜21:00に曳山会館前で庵唄の合同披露",
+      "sources": [
+        {
+          "url": "https://www.tabi-nanto.jp/archives/10503",
+          "title": "五箇山NANTO観光機構 城端曳山祭のスケジュール・みどころ（2026年5月4日の雨天対応を含む）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.tabi-nanto.jp/archives/%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88/%E5%9F%8E%E7%AB%AF%E6%9B%B3%E5%B1%B1%E7%A5%AD",
+          "title": "五箇山NANTO観光機構 【城端】城端曳山祭（2026年5月4日〜5日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.tabi-nanto.jp/johana_hikiyama/",
+          "title": "五箇山NANTO観光機構 城端曳山祭（当日の流れ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-05-05",
+      "start": "09:00",
+      "end": "22:00",
+      "status": "announced",
+      "rainPolicy": "少雨なら曳山にビニールシートをかけて巡行、荒天なら中止",
+      "note": "2026年の実績。本祭。9:00ごろ神輿3基と子供神輿の渡御が御旅所を出て、15:00ごろ神明宮へ還御。10:00に善徳寺前から曳山と庵屋台の巡行が始まり、12:00ごろ休憩、13:00に午後の部、14:00ごろと20:00ごろに曳山会館前で庵唄の披露、18:45ごろから提灯山、21:30〜22:00ごろに各町へ戻る（時刻は目安）。有料の観覧席の披露は当日14:25ごろに変わった",
+      "sources": [
+        {
+          "url": "https://www.tabi-nanto.jp/archives/10503",
+          "title": "五箇山NANTO観光機構 城端曳山祭のスケジュール・みどころ（本祭 10:00〜22:00、神輿御巡幸 9:00〜）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.tabi-nanto.jp/johana_hikiyama/",
+          "title": "五箇山NANTO観光機構 城端曳山祭（当日の流れ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.tabi-nanto.jp/archives/16772",
+          "title": "五箇山NANTO観光機構 『観覧席』で城端曳山祭をじっくりと楽しみませんか？（2026年5月5日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-05-04",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年5月4日に宵祭を行う決まりから見込んだ日（2027年の発表はまだない）。例年は夕方から庵唄の奉納と合同披露（2026年は18:00〜22:00）",
+      "sources": [
+        {
+          "url": "https://www.tabi-nanto.jp/archives/10503",
+          "title": "五箇山NANTO観光機構 城端曳山祭のスケジュール・みどころ（毎年5月4日 宵祭・5日 本祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-05-05",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年5月5日に本祭を行う決まりから見込んだ日（2027年の発表はまだない）。例年は朝に神輿の渡御、昼から夜まで曳山の巡行（2026年は9:00〜22:00）",
+      "sources": [
+        {
+          "url": "https://www.tabi-nanto.jp/archives/10503",
+          "title": "五箇山NANTO観光機構 城端曳山祭のスケジュール・みどころ（毎年5月4日 宵祭・5日 本祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 城端駅",
+        "walkMinutes": [10, 15],
+        "note": "城端線。中心市街地まで徒歩約10分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "新高岡駅",
+        "minutes": [50, 60],
+        "route": "JR城端線、乗り換えなし"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.tabi-nanto.jp/archives/10503",
+        "title": "五箇山NANTO観光機構 城端曳山祭のスケジュール・みどころ（城端駅から徒歩約10分、駐車場 城端各所に約1,000台・無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.tabi-nanto.jp/about/area02",
+        "title": "五箇山NANTO観光機構 城端エリア（新高岡駅からJR城端線で50分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "johana-betsuin-zentokuji",
+      "name": "城端別院善徳寺",
+      "kind": "sightseeing",
+      "summary": "約530年前に蓮如上人が開いた、真宗大谷派の城端別院。本祭では寺の前に曳山がそろう。院内の拝観案内は予約が要る",
+      "location": {
+        "lat": 36.5135,
+        "lng": 136.9004
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "16:00"
+      },
+      "closedDays": [],
+      "price": "院内拝観500円",
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.tabi-nanto.jp/archives/607",
+          "title": "五箇山NANTO観光機構 城端別院善徳寺",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "johana-matsuya",
+      "name": "めん処・あじ処 松屋",
+      "kind": "food",
+      "summary": "城端新町の食堂。うどん・そば・丼・定食がそろう。昼は11:00〜14:00、夜は17:00〜22:00。休みは不定休",
+      "location": {
+        "lat": 36.5135,
+        "lng": 136.9004
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.tabi-nanto.jp/archives/1006",
+          "title": "五箇山NANTO観光機構 めん処・あじ処 松屋",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.tabi-nanto.jp/johana_hikiyama/",
+      "title": "五箇山NANTO観光機構 城端曳山祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.tabi-nanto.jp/archives/10503",
+      "title": "五箇山NANTO観光機構 城端曳山祭のスケジュール・みどころ",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://culture-archives.city.nanto.toyama.jp/heritages/unesco0001/",
+      "title": "南砺市文化芸術アーカイブズ 城端曳山祭（曳山6台、庵屋台6、神輿3基、傘鉾8本）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の日程の発表と、宵祭・本祭それぞれの時刻",
+    "見学の決まり、服装・撮影の扱い、危険度（曳山の巡行の近くで見るときの注意の案内が見つからない）",
+    "交通規制の区間と時間、臨時駐車場の場所",
+    "屋台の有無と、祭りならではの食べもの",
+    "会場と周辺の場所の緯度・経度は、国土地理院の住所検索の「南砺市城端」の代表点で、それぞれの位置ではない",
+    "主要駅から城端駅までの所要時間は観光機構の「50分」だけで、本数や乗り継ぎの案内は確かめていない",
+    "めん処・あじ処 松屋のラストオーダーと値段",
+    "規模は曳山6台・庵屋台6・神輿3基の数で M にした。見物客の数の公式の値は見つからない",
+    "城端曳山会館が祭りの日（2026年5月5日・2027年5月4日はどちらも火曜の祝日）に開館するか（火曜が休館で、祝日の扱いの案内がないため周辺の場所から外した）"
+  ]
+}

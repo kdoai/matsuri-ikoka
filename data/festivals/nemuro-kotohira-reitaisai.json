@@ -1,0 +1,251 @@
+{
+  "id": "nemuro-kotohira-reitaisai",
+  "name": {
+    "ja": "根室金刀比羅神社例大祭",
+    "en": "Nemuro Kotohira Shrine Annual Festival"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "北海道",
+      "name": "根室市"
+    }
+  ],
+  "venue": {
+    "name": "金刀比羅神社",
+    "lat": 43.3432,
+    "lng": 145.588
+  },
+  "scaleTier": "L",
+  "popularity": "local",
+  "listedIn": ["walkerplus"],
+  "highlights": [
+    "京都で作られた約1.5トンの大神輿を、約120人の若者が担いで市内を巡る",
+    "4つの祭典区の山車が続く、長さ約1km・約1,100人の神幸行列",
+    "宵宮と本祭の夜、御旅所の前で山車の囃子を競う「音と力の競演」"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "神輿の行列は明治21年に始まり、2020年に道の無形民俗文化財になった",
+      "sources": [
+        {
+          "url": "https://www.nemuro-kotohira.com/例-大-祭/",
+          "title": "根室金刀比羅神社 例大祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "神輿の行列は明治21年に始まり、いまの神輿は昭和10年に京都で作られた",
+      "source": {
+        "url": "https://www.nemuro-kotohira.com/例-大-祭/",
+        "title": "根室金刀比羅神社 例大祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "例大祭は令和2年に北海道の無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.nemuro-kotohira.com/例-大-祭/",
+        "title": "根室金刀比羅神社 例大祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2023年からの週末開催は、近くの祭りやお盆と重なるため、2027年に8月9〜11日へ戻る",
+      "source": {
+        "url": "https://www.hokkaido-np.co.jp/article/1372558/",
+        "title": "北海道新聞 根室・金刀比羅神社例大祭の日程回帰（2026年9月17日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.nemuro-kotohira.com/例-大-祭/",
+        "title": "根室金刀比羅神社 例大祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-08-09",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "宵宮祭。夕刻、4つの祭典区が御旅所の近くで「音と力の競演」を行う。神社は2027年から8月9〜11日の決まった日程に戻すと案内している（時刻はまだ発表がない）",
+      "sources": [
+        {
+          "url": "https://www.nemuro-kotohira.com/例-大-祭/",
+          "title": "根室金刀比羅神社 例大祭（令和9年から8月9日〜11日の固定の日程）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.hokkaido-np.co.jp/article/1372558/",
+          "title": "北海道新聞 根室・金刀比羅神社例大祭の日程回帰（2026年9月17日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-10",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "本祭と神幸行列の往路（行列は約1km・約1,100人）。神輿は緑町の御旅所に泊まる。例年、本祭の夜は緑町通りが歩行者天国になり、露店が並ぶ",
+      "sources": [
+        {
+          "url": "https://www.nemuro-kotohira.com/例-大-祭/",
+          "title": "根室金刀比羅神社 例大祭（令和9年から8月9日〜11日の固定の日程）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-11",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "神幸行列の復路。神輿が御旅所から神社へ戻る",
+      "sources": [
+        {
+          "url": "https://www.nemuro-kotohira.com/例-大-祭/",
+          "title": "根室金刀比羅神社 例大祭（令和9年から8月9日〜11日の固定の日程）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "路線バス（花咲線） 汐見町バス停",
+        "walkMinutes": [5, 10],
+        "note": "根室駅前ターミナルから花咲線のバスで約9分。神社まで徒歩約5分。根室駅からタクシーなら約7分"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.nemuro-kotohira.com/アクセス/",
+        "title": "根室金刀比羅神社 アクセス（根室駅からタクシー約7分、汐見町バス停から徒歩約5分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.visit-hokkaido.jp/access/in_hokkaido_1_11_8.html",
+        "title": "北海道観光振興機構 釧路からのアクセス（釧路駅〜根室駅 約2時間10分〜2時間43分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "nemuro-kotohira-mikoshiden",
+      "name": "金刀比羅神社 神輿殿・お祭り資料館",
+      "kind": "sightseeing",
+      "summary": "例大祭で担ぐ神輿や祭りの資料を見られる、神社の境内の施設。1月15日〜3月15日は16:30まで。社務の都合で時間が変わることがある",
+      "location": {
+        "lat": 43.3432,
+        "lng": 145.588
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": null,
+      "price": "無料",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.nemuro-kotohira.com/例-大-祭/",
+          "title": "根室金刀比羅神社 例大祭（神輿殿・お祭り資料館は無料、9:00〜17:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "nemuro-new-montblanc",
+      "name": "ニューモンブラン",
+      "kind": "food",
+      "summary": "根室駅から歩いて3分ほどの洋食の店。営業は昼（ラストオーダー14:20）と夕方（ラストオーダー18:40）に分かれる。不定休",
+      "location": {
+        "lat": 43.328,
+        "lng": 145.5816
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://rurubu.jp/andmore/spot/80001081",
+          "title": "るるぶ&more. ニューモンブラン",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.nemuro-kotohira.com/例-大-祭/",
+      "title": "根室金刀比羅神社 例大祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://summer.walkerplus.com/odekake/detail_e/ar0101e75771/",
+      "title": "ウォーカープラス 根室金刀比羅神社例大祭（2026年8月7日〜9日）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の行事ごとの時刻と、神幸行列の道順（まだ発表がない）",
+    "雨のときの扱い",
+    "見学の決まり（場所取り、撮影、服装、持ち物）と交通規制",
+    "根室駅から神社まで歩いた場合の時間（神社の案内はタクシーとバスだけ）と、汐見町バス停への便の数",
+    "主要駅から神社までの通しの所要時間（北海道観光振興機構の案内では釧路駅から根室駅まで約2時間10分〜2時間43分、神社の案内では根室駅からバスで約9分と徒歩約5分と区間ごとだけ。札幌駅・新千歳空港駅からの数字はない）",
+    "神社と祭りの日の駐車場の台数",
+    "根室ならではの食べ物（エスカロップなど）を公式の情報で確かめられなかった",
+    "周辺の場所が2件しか確かめられなかった（観光1件・食1件）。神輿殿の休みの日",
+    "ニューモンブランの昼と夕方の営業時間を1つにまとめられないため hours は null"
+  ]
+}

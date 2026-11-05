@@ -9,7 +9,7 @@ import {
   type SseEvent,
 } from "@matsuri-ikoka/schema";
 import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
-import { beforeAll, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { loadSampleConversations, ReplayAgentRunner } from "./agent/replayRunner";
 import { AgentError, type AgentRunner } from "./agent/runner";
 import { type AppDeps, createApp } from "./app";
@@ -325,6 +325,77 @@ describe("時間の上限と失敗", () => {
     ]);
   });
 
+  describe("返答の終わり方のログ", () => {
+    afterEach(() => vi.restoreAllMocks());
+
+    const turnEnds = (spy: { mock: { calls: unknown[][] } }) =>
+      spy.mock.calls
+        .map(([line]) => (typeof line === "string" ? JSON.parse(line) : null))
+        .filter((entry) => entry?.kind === "turn_end");
+
+    it("done で終われば ending は done。会話の本文は残さない", async () => {
+      const info = vi.spyOn(console, "info").mockImplementation(() => {});
+      const replying: AgentRunner = {
+        mode: "live",
+        async runTurn(_input, emit) {
+          emit({ type: "message.delta", data: { messageId: "m-1", text: "ようこそ。" } });
+        },
+      };
+      const { post, session } = sessionWith(replying);
+
+      await readSse(await post("/api/chat", chat(session.id, "架空の町の夏祭り")));
+
+      const [entry] = turnEnds(info);
+      expect(entry).toMatchObject({ ending: "done", doneSent: true, events: 2 });
+      expect(entry.durationMs).toBeGreaterThanOrEqual(0);
+      expect(JSON.stringify(info.mock.calls)).not.toContain("架空の町の夏祭り");
+    });
+
+    it("時間切れと失敗は、それぞれの終わり方と code を残す", async () => {
+      const info = vi.spyOn(console, "info").mockImplementation(() => {});
+      const stuck: AgentRunner = {
+        mode: "live",
+        runTurn: ({ signal }) =>
+          new Promise((_, reject) => signal.addEventListener("abort", () => reject(signal.reason))),
+      };
+      const failing: AgentRunner = {
+        mode: "live",
+        async runTurn() {
+          throw new AgentError("upstream_unavailable", "いま混み合っています。", true);
+        },
+      };
+      const timedOut = sessionWith(stuck, { turnIdleMs: 20 });
+      await readSse(await timedOut.post("/api/chat", chat(timedOut.session.id)));
+      const failed = sessionWith(failing);
+      await readSse(await failed.post("/api/chat", chat(failed.session.id)));
+
+      expect(turnEnds(info)).toMatchObject([
+        { ending: "timeout", code: "timeout", doneSent: true },
+        { ending: "error", code: "upstream_unavailable", doneSent: true },
+      ]);
+    });
+
+    it("相談の状態が done の形に合わなくても、条件を空にした done を送り、そうログに残す", async () => {
+      const info = vi.spyOn(console, "info").mockImplementation(() => {});
+      vi.spyOn(console, "error").mockImplementation(() => {});
+      const quiet: AgentRunner = { mode: "live", async runTurn() {} };
+      const { post, session } = sessionWith(quiet);
+      session.conditions = { origin: "" };
+
+      const { events } = await readSse(await post("/api/chat", chat(session.id)));
+
+      // done が届かないと、画面は接続が切れたと受け取るので、落とさない
+      expect(events).toEqual([
+        {
+          type: "done",
+          data: { stage: "hearing", conditions: {}, preferences: DEFAULT_PREFERENCES },
+        },
+      ]);
+      expect(turnEnds(info)).toMatchObject([{ ending: "done", doneSent: true, events: 1 }]);
+      expect(session.busy).toBe(false);
+    });
+  });
+
   it("形の違うイベントは送らない", async () => {
     const broken: AgentRunner = {
       mode: "live",
@@ -389,7 +460,18 @@ describe("POST /api/session", () => {
     const res = await app.request("/api/session", { method: "POST" });
 
     expect(res.status).toBe(201);
-    expect(SessionResponseSchema.safeParse(await res.json()).success).toBe(true);
+    const body = SessionResponseSchema.parse(await res.json());
+    // 記録の再生で動いていることを、画面に知らせる
+    expect(body.mode).toBe("mock");
+  });
+
+  it("live で動いているときは live と返す", async () => {
+    const live: AgentRunner = { mode: "live", async runTurn() {} };
+    const { app } = setup({ runner: live });
+
+    const res = await app.request("/api/session", { method: "POST" });
+
+    expect(SessionResponseSchema.parse(await res.json()).mode).toBe("live");
   });
 });
 

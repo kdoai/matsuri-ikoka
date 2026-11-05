@@ -1,0 +1,345 @@
+{
+  "id": "miyoshi-bondensai",
+  "name": {
+    "ja": "三吉梵天祭",
+    "en": "Miyoshi Bonden Festival"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "秋田県",
+      "name": "秋田市"
+    }
+  ],
+  "venue": {
+    "name": "太平山三吉神社総本宮",
+    "lat": 39.7262,
+    "lng": 140.1446
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu", "jnto"],
+  "highlights": [
+    "約80本の梵天が、先を争って境内へ押し寄せる",
+    "奉納する組どうしが激しくもみ合う「けんか梵天」の荒々しさ",
+    "梵天に付いた三角守を求めて、見物の人まで手を伸ばす",
+    "ほら貝と梵天唄「三吉節」を響かせながら町内から神社へ向かう"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "江戸時代ごろに始まったとされる秋田の特殊神事",
+      "sources": [
+        {
+          "url": "http://www.miyoshi.or.jp/festival/bondensai",
+          "title": "太平山三吉神社総本宮 三吉梵天祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "町内の梵天は成人を迎える若者が発起人になって作る",
+      "sources": [
+        {
+          "url": "http://www.miyoshi.or.jp/festival/bondensai",
+          "title": "太平山三吉神社総本宮 三吉梵天祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "江戸時代ごろに始まったとされる秋田ならではの特殊神事。梵天は神の依代とされる",
+      "source": {
+        "url": "http://www.miyoshi.or.jp/festival/bondensai",
+        "title": "太平山三吉神社総本宮 三吉梵天祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "奉納される梵天は毎年約80本で、数は県内でいちばん多い",
+      "source": {
+        "url": "http://www.miyoshi.or.jp/festival/bondensai",
+        "title": "太平山三吉神社総本宮 三吉梵天祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "祭神の三吉霊神は力と勝負の神。その力にあやかろうと、一番乗りを競って押し合う",
+      "source": {
+        "url": "http://www.miyoshi.or.jp/festival/bondensai/bondensai-setsumei",
+        "title": "太平山三吉神社総本宮 三吉梵天祭の説明",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "町内の梵天は、成人を迎える若者が発起人になって前の年のうちに作り、魂を入れておく",
+      "source": {
+        "url": "http://www.miyoshi.or.jp/festival/bondensai",
+        "title": "太平山三吉神社総本宮 三吉梵天祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "境内で奉納する組どうしが激しくもみ合い、見物の人も三角守に手を伸ばして加わる。人出は3万人と観光サイトで案内されている（主催者によるけがの注意は見当たらない）"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "http://www.miyoshi.or.jp/festival/bondensai",
+        "title": "太平山三吉神社総本宮 三吉梵天祭（奉納する団体と拝観者が一体になってもみ合う）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000843",
+        "title": "るるぶ&more. 太平山三吉神社 三吉ぼんでん祭（昨年の人出約3万人）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-17",
+      "start": "10:30",
+      "end": "12:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。10:30から正午ごろまで梵天を奉納した。その日に来た幼児から小学生には、梵天の三角お守りが授与された",
+      "sources": [
+        {
+          "url": "https://www.akita-yulala.jp/event/5000039002",
+          "title": "アキタッチ＋（秋田市観光・イベント情報） 三吉梵天祭（2026年1月17日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000843",
+          "title": "るるぶ&more. 太平山三吉神社 三吉ぼんでん祭（2026年1月17日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-17",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年1月17日（2027年は日曜日。神社の発表はまだない）。例年は10:30から正午ごろまでで、町内などを回った梵天が神社へ向かい、境内でもみ合いながら奉納する。梵天は毎年約80本",
+      "sources": [
+        {
+          "url": "http://www.miyoshi.or.jp/festival/bondensai",
+          "title": "太平山三吉神社総本宮 三吉梵天祭（期日 1月17日・毎年、午前10時30分〜正午）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "秋田中央交通 三吉神社入口バス停",
+        "walkMinutes": [2, 7],
+        "note": "秋田駅の正面口（西口）から太平方面行きのバスで約10分。神社の案内で、バス停から徒歩2分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "秋田駅",
+        "minutes": [10, 20],
+        "route": "正面口（西口）から秋田中央交通の太平方面行きのバスで約10分、三吉神社入口で降りる"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "http://www.miyoshi.or.jp/information/access",
+        "title": "太平山三吉神社総本宮 アクセス（バスで約10分、三吉神社入口から徒歩2分。駐車場は2か所）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "senshu-park",
+      "name": "千秋公園（久保田城跡）",
+      "kind": "sightseeing",
+      "summary": "秋田藩佐竹氏の居城だった久保田城の跡で、石垣も天守もない平山城だった。国の名勝で日本100名城の1つ。園内は終日開放。冬は御隅櫓が休館（12月〜3月）",
+      "location": {
+        "lat": 39.7221,
+        "lng": 140.1241
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": [],
+      "price": null,
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.city.akita.lg.jp/kurashi/doro-koen/1003685/1007159/1007194.html",
+          "title": "秋田市 千秋公園の概要",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.akita.lg.jp/shisetsu/hakubutukan-tpsyokan/1011113/1006563.html",
+          "title": "秋田市 施設案内 久保田城御隅櫓（12月1日〜3月31日は冬季休館）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "akita-akarenga-kyodokan",
+      "name": "秋田市立赤れんが郷土館",
+      "kind": "sightseeing",
+      "summary": "秋田市立の郷土館で、勝平得之記念館を併せ持つ。12月29日〜1月3日と不定期の展示替えの期間は休館",
+      "location": {
+        "lat": 39.7172,
+        "lng": 140.1156
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "16:30",
+        "lastEntry": "16:15"
+      },
+      "closedDays": null,
+      "price": "一般310円（高校生以下無料）",
+      "tags": ["indoor"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.city.akita.lg.jp/kanko/kanrenshisetsu/1003617/1002325.html",
+          "title": "秋田市 赤れんが郷土館 観覧のご案内",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "akita-museum-of-art",
+      "name": "秋田県立美術館",
+      "kind": "sightseeing",
+      "summary": "秋田市中通にある県立の美術館。2026年12月5日〜2027年1月17日は企画展「平野政吉コレクションの人物像」。券の販売は17:30まで。休館は不定休で、12月31日〜1月3日は休館",
+      "location": {
+        "lat": 39.7174,
+        "lng": 140.1214
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "18:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.akita-museum-of-art.jp/contents/contents_show.php?contents_id=71",
+          "title": "秋田県立美術館 利用案内",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.akita-museum-of-art.jp/index.htm",
+          "title": "秋田県立美術館 トップページ（展覧会の予定と休館日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "sato-yoske-akita",
+      "name": "佐藤養助 秋田店",
+      "kind": "food",
+      "summary": "稲庭うどんの老舗の直営店で、西武秋田店の地下1階にある。座敷やテーブル席がある。営業は昼の部11:00〜15:00と夜の部17:00〜20:00（LO19:30）。西武秋田店の休館日は休み",
+      "location": {
+        "lat": 39.7168,
+        "lng": 140.1265
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": "醤油せいろ850円",
+      "tags": ["indoor", "seating", "local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.sato-yoske.co.jp/akita/",
+          "title": "佐藤養助 秋田店 店舗情報",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "http://www.miyoshi.or.jp/festival/bondensai",
+      "title": "太平山三吉神社総本宮 三吉梵天祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "http://www.miyoshi.or.jp/festival/bondensai/bondensai-setsumei",
+      "title": "太平山三吉神社総本宮 三吉梵天祭の説明",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.akita.lg.jp/_res/projects/default_project/_page_/001/033/369/060416shiryo3-3.pdf",
+      "title": "秋田市 委員会資料 広面地区の伝統文化 太平山三吉神社 三吉梵天祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.akita-yulala.jp/event/5000039002",
+      "title": "アキタッチ＋（秋田市観光・イベント情報） 三吉梵天祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と時刻（神社の発表はまだない）",
+    "見物の場所、境内での立ち入りの決まり、けがの注意（公式の案内が見つからない）",
+    "服装・持ち物・撮影の決まり",
+    "雪や荒天のときの扱い",
+    "当日の交通規制と、祭りの日の駐車場の使い方",
+    "屋台の有無",
+    "見物の人数の公式の数（観光サイトの案内では約3万人）",
+    "規模の決め方：梵天の約80本は山車・神輿とは扱いが違うため、人出の目安から M とした",
+    "盛岡駅・仙台駅など、ほかの玄関口の駅から秋田駅までの所要時間",
+    "千秋公園・美術館・郷土館・佐藤養助から神社までの移動の時間",
+    "佐藤養助 秋田店の、2027年1月17日の西武秋田店の営業",
+    "赤れんが郷土館の展示替えの休館が2027年1月17日に当たるか"
+  ]
+}

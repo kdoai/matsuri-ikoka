@@ -1,0 +1,313 @@
+{
+  "id": "taketomi-tanadui",
+  "name": {
+    "ja": "竹富島の種子取祭",
+    "en": "Taketomi Island Tanadui Festival"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "沖縄県",
+      "name": "竹富町"
+    }
+  ],
+  "venue": {
+    "name": "世持御嶽（竹富島）",
+    "lat": 24.3318,
+    "lng": 124.0857
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["jalan", "rurubu"],
+  "highlights": [
+    "世持御嶽の庭と舞台で、2日間に70演目余りの芸能が神に奉納される",
+    "夜を徹して行う世乞い（ユークイ）",
+    "島じゅうで担う、国の重要無形民俗文化財の祭り"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "種子取祭は1977年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.mlit.go.jp/tagengo-db/common/001556082.pdf",
+          "title": "観光庁 地域観光資源の多言語解説文データベース 竹富島の暮らし",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "竹富島民俗芸能保存会が国指定の種子取の保護団体として担う",
+      "sources": [
+        {
+          "url": "https://www.town.taketomi.lg.jp/administration/bunkazai/",
+          "title": "竹富町の文化財一覧（竹富島の種子取、保護団体）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "旧暦9〜10月の戊子の日を祈願の日とし、10日間かけて執り行う",
+      "source": {
+        "url": "https://taketomijima.jp/yearlyevents/",
+        "title": "竹富島ゆがふ館 竹富島の一年間 神々と共にある暮らし",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "種子取祭は1977年に国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/common/001556082.pdf",
+        "title": "観光庁 地域観光資源の多言語解説文データベース 竹富島の暮らし",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "世持御嶽の地には、1914年から1938年まで竹富村の役場が置かれていた",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/common/001556092.pdf",
+        "title": "観光庁 地域観光資源の多言語解説文データベース 竹富島の御嶽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "島には御嶽が28か所あり、世持御嶽には火の神と農耕の神をまつる",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/common/001556092.pdf",
+        "title": "観光庁 地域観光資源の多言語解説文データベース 竹富島の御嶽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "島の御嶽（オン）はすべて神聖な場所。むやみに立ち入らない",
+      "家の石垣から内側は島の人の暮らしの場。入らない",
+      "自分で出したごみは持ち帰る",
+      "宿泊施設のほかでは泊まれない（キャンプや野宿はできない）",
+      "草花・貝・魚・蝶は採らずに眺める"
+    ],
+    "dress": ["集落の中を水着や半裸で歩かない"],
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.mlit.go.jp/tagengo-db/common/001556082.pdf",
+        "title": "観光庁 地域観光資源の多言語解説文データベース 竹富島の暮らし（竹富島で守るルール）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.mlit.go.jp/tagengo-db/common/001556092.pdf",
+        "title": "観光庁 地域観光資源の多言語解説文データベース 竹富島の御嶽（すべての御嶽は立ち入りを遠慮する）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000242",
+        "title": "るるぶ&more. 種子取祭（入場無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-12",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "奉納芸能の初日（旧暦10月4日・庚寅）。2026年の時刻の発表はない。例年は、朝の祈願のあと世持御嶽の庭の芸能、玻座間村の舞台での奉納芸能と続き、夜を徹して世乞い（ユークイ）を行う。前日の11月11日はンガソージ",
+      "sources": [
+        {
+          "url": "https://taketomijima.jp/wp/wp-content/uploads/2026/04/20260416075309_001.jpg",
+          "title": "竹富公民館 令和8年度 祭事・行事表（竹富島ゆがふ館に2026年4月16日掲載）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://painusima.com/events/event/%E7%AB%B9%E5%AF%8C%E5%B3%B6-%E7%A8%AE%E5%AD%90%E7%A5%AD/",
+          "title": "竹富町観光協会 竹富島 種子取祭（2026年11月12～13日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://taketomijima.jp/%E4%BB%A4%E5%92%8C7%E5%B9%B4%E5%BA%A6%E3%80%80%E7%AB%B9%E5%AF%8C%E5%B3%B6%E3%81%AE%E7%A8%AE%E5%AD%90%E5%8F%96%E7%A5%AD/",
+          "title": "竹富島ゆがふ館 令和7年度 竹富島の種子取祭（2025年の日程と時刻の目安）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-13",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "奉納芸能の2日目（旧暦10月5日・辛卯）。2026年の時刻の発表はない。例年は、早朝に世乞いを終え、庭の芸能と仲筋村の舞台での奉納芸能が終日続き、夕方に世持御嶽で御礼をする",
+      "sources": [
+        {
+          "url": "https://taketomijima.jp/wp/wp-content/uploads/2026/04/20260416075309_001.jpg",
+          "title": "竹富公民館 令和8年度 祭事・行事表（竹富島ゆがふ館に2026年4月16日掲載）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://painusima.com/events/event/%E7%AB%B9%E5%AF%8C%E5%B3%B6-%E7%A8%AE%E5%AD%90%E7%A5%AD/",
+          "title": "竹富町観光協会 竹富島 種子取祭（2026年11月12～13日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://taketomijima.jp/%E4%BB%A4%E5%92%8C7%E5%B9%B4%E5%BA%A6%E3%80%80%E7%AB%B9%E5%AF%8C%E5%B3%B6%E3%81%AE%E7%A8%AE%E5%AD%90%E5%8F%96%E7%A5%AD/",
+          "title": "竹富島ゆがふ館 令和7年度 竹富島の種子取祭（2025年の日程と時刻の目安）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://painusima.com/access/",
+        "title": "竹富町観光協会 島へのアクセス（那覇空港から石垣空港へ約1時間、空港から石垣港離島ターミナルへバス約30～50分、石垣港から竹富港へ高速船10～15分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "taketomijima-yugafukan",
+      "name": "竹富島ビジターセンター ゆがふ館",
+      "kind": "rest",
+      "summary": "竹富港から歩いて約2分の無料の展示施設。島の祭事を映像で見られるコーナーや約7分の映像の上映があり、休憩にも使える。休館は台風のときだけ",
+      "location": {
+        "lat": 24.3354,
+        "lng": 124.0928
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "08:00",
+        "close": "17:00"
+      },
+      "closedDays": [],
+      "price": "無料",
+      "tags": ["indoor", "seating"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://taketomijima.jp/information/",
+          "title": "竹富島ゆがふ館 ゆがふ館に行く",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "taketomi-nishi-sanbashi",
+      "name": "西桟橋（竹富島）",
+      "kind": "sightseeing",
+      "summary": "海へまっすぐ延びる白い桟橋で、2005年に国の登録有形文化財になった。夕日と、遠くの西表島を眺められる",
+      "location": {
+        "lat": 24.3315,
+        "lng": 124.0794
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://painusima.com/899/",
+          "title": "竹富町観光協会 （竹富島）西桟橋",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "taketomi-soba-takenoko",
+      "name": "そば処 竹の子",
+      "kind": "food",
+      "summary": "1975年創業のそば店で、先代からの自家製の香辛料「クチュ」をかけて食べる。昼は10:30〜15:30でそばがなくなりしだい終わり、夜の営業は不定期。休みは不定休",
+      "location": {
+        "lat": 24.3313,
+        "lng": 124.0835
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://painusima.com/197/",
+          "title": "竹富町観光協会 そば処 竹の子",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://taketomijima.jp/yearlyevents/",
+      "title": "竹富島ゆがふ館 竹富島の一年間 神々と共にある暮らし（種子取祭）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://painusima.com/events/event/%E7%AB%B9%E5%AF%8C%E5%B3%B6-%E7%A8%AE%E5%AD%90%E7%A5%AD/",
+      "title": "竹富町観光協会 竹富島 種子取祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.mlit.go.jp/tagengo-db/common/001556092.pdf",
+      "title": "観光庁 地域観光資源の多言語解説文データベース 竹富島の御嶽（世持御嶽：一年で最大の祭り）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2026年の奉納芸能の時刻（公民館の行事表は日付だけ。2025年の時刻の目安を note に書いた）",
+    "見学者が見てよい場所・座る場所と、世持御嶽の境内で見学者が入ってよい範囲（島の決まりでは御嶽への立ち入りを遠慮するよう求めている）",
+    "撮影の決まり（祭祀や神事の撮影の可否、フラッシュ・三脚・ドローン）",
+    "世乞い（ユークイ）や早朝の祈願など、奉納芸能のほかの行事を見学者が見てよいか",
+    "危険度と混雑の度合い（見学者数の公表値もない）",
+    "持ち物（日差しや雨への備えなど、公式の案内がない）",
+    "雨や台風のときの扱い（船の欠航を含む）",
+    "屋台・食べ物の販売の有無と、祭りの日に島の店が開くか（喜宝院蒐集館は種子取祭を休館日としている：おきなわ物語の2016年の掲載）",
+    "竹富港から世持御嶽までの徒歩の時間（公式の案内が見つからない）。鉄道はなく、那覇空港から石垣空港へ飛行機で約1時間、空港から石垣港離島ターミナルへバス約30～50分、石垣港から竹富港へ高速船10～15分（竹富町観光協会）",
+    "島内の駐車場と、祭りの日の島内の交通（レンタサイクル・バスなど）",
+    "そば処 竹の子の祭りの日の営業（不定休）",
+    "竹富島の中で祭りの日に営業時間を確かめられた食事の店（竹の子のほかに見つからない）"
+  ]
+}

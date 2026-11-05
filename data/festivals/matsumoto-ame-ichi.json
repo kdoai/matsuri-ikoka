@@ -1,0 +1,297 @@
+{
+  "id": "matsumoto-ame-ichi",
+  "name": {
+    "ja": "松本あめ市",
+    "en": "Matsumoto Ame-ichi (Candy Market)"
+  },
+  "category": "market",
+  "municipalities": [
+    {
+      "prefecture": "長野県",
+      "name": "松本市"
+    }
+  ],
+  "venue": {
+    "name": "松本市中心市街地（本町通り・中町・大手門枡形跡広場ほか）",
+    "lat": 36.2327,
+    "lng": 137.9694
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "上杉軍と武田軍に分かれて綱を引く「塩取合戦」",
+    "全国の名物のあめや珍しいあめが並ぶ全国あめ博覧会・即売会",
+    "七福神があめを配る時代行列が歩行者天国を練り歩く",
+    "2日目は中心市街地が歩行者天国になり、太鼓と演舞の競演が続く"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "江戸時代前期に神主が塩を売った塩市が起こりとされる",
+      "sources": [
+        {
+          "url": "https://www.city.matsumoto.nagano.jp/soshiki/75/96952.html",
+          "title": "松本市 令和9年松本あめ市",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "江戸時代前期、1月11日の市始めに宮村天神（今の深志神社）の神主が塩を売った「塩市」が起こりとされる",
+      "source": {
+        "url": "https://www.city.matsumoto.nagano.jp/soshiki/75/96952.html",
+        "title": "松本市 令和9年松本あめ市",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "江戸後期から、上杉謙信が武田信玄に塩を送った「謙信の義塩」の伝説と結びつけて語られるようになった",
+      "source": {
+        "url": "https://www.city.matsumoto.nagano.jp/soshiki/75/96952.html",
+        "title": "松本市 令和9年松本あめ市",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "塩取合戦は、上杉軍と武田軍に分かれて綱を引き合う、義塩の伝説にちなむ催し",
+      "source": {
+        "url": "https://www.city.matsumoto.nagano.jp/soshiki/75/96952.html",
+        "title": "松本市 令和9年松本あめ市",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "1月9日・10日の10:00〜15:30に中心市街地を歩き、全国あめ博覧会・即売会（中町蔵シック館）や商都大物産市（大手門枡形跡広場）で買い物をし、10日は歩行者天国の催しを見る（入場料の案内はない）",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "町なかの市と歩行者天国の催しで、混雑や危険についての主催者の注意書きは見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.matsumoto.nagano.jp/soshiki/75/96952.html",
+        "title": "松本市 令和9年松本あめ市（日時・会場・主な行事）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-01-09",
+      "start": "10:00",
+      "end": "15:30",
+      "status": "announced",
+      "rainPolicy": "天候等により変更となる場合がある",
+      "note": "1日目。全国あめ博覧会・即売会（中町蔵シック館）10:30〜15:00、商都大物産市（大手門枡形跡広場）10:30〜15:30（売り切れ次第終わり）。主な行事は市のページで「案」とされている",
+      "sources": [
+        {
+          "url": "https://www.city.matsumoto.nagano.jp/soshiki/75/96952.html",
+          "title": "松本市 令和9年松本あめ市（令和9年1月9日・10日、10:00〜15:30）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-10",
+      "start": "10:00",
+      "end": "15:30",
+      "status": "announced",
+      "rainPolicy": "天候等により変更となる場合がある",
+      "note": "2日目。10:20〜15:30 中心市街地が歩行者天国。10:40 大名町ロータリーでオープニング式典、11:00〜13:20ごろ時代行列（七福神があめを配る。数に限りがある）、11:00〜15:00 太鼓連と演舞連の競演・初春抽選会（千歳橋特設ブース）、12:20ごろから30分ほど書道パフォーマンス（本町通り）。塩取合戦の時刻は書かれていない。主な行事は市のページで「案」とされている",
+      "sources": [
+        {
+          "url": "https://www.city.matsumoto.nagano.jp/soshiki/75/96952.html",
+          "title": "松本市 令和9年松本あめ市（1月10日の主な行事と歩行者天国）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 松本駅",
+        "walkMinutes": [15, 20],
+        "note": "松本市立博物館（大手門枡形跡広場の近く）までの徒歩の目安"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [
+      "1月10日（日）10:10から中心市街地で交通規制、10:20〜15:30は歩行者天国",
+      "1月10日は規制区域を通る路線バスが運休・迂回する"
+    ],
+    "sources": [
+      {
+        "url": "https://www.city.matsumoto.nagano.jp/soshiki/75/96952.html",
+        "title": "松本市 令和9年松本あめ市（交通規制）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://matsumoto-city-museum.jp/access",
+        "title": "松本市立博物館 アクセス（JR松本駅より約15分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "松本の飴（米飴・あめせんべい）",
+        "note": "城下の老舗の飴屋（山屋御飴所の米飴、飯田屋飴店のあめせんべい）で買える",
+        "sources": [
+          {
+            "url": "https://visitmatsumoto.com/spot/detail_1252.html",
+            "title": "松本市公式観光サイト 松本旅のしらべ 山屋御飴所",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          },
+          {
+            "url": "https://visitmatsumoto.com/spot/detail_1216.html",
+            "title": "松本市公式観光サイト 松本旅のしらべ 飯田屋飴店",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "matsumoto-city-museum",
+      "name": "松本市立博物館",
+      "kind": "sightseeing",
+      "summary": "市立の博物館。常設展は2・3階。1階は9:00〜21:00で第3火曜休み。12月29日〜1月3日は休み",
+      "location": {
+        "lat": 36.2352,
+        "lng": 137.9695
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["tue"],
+      "price": "常設展 一般500円",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://matsumoto-city-museum.jp/guide",
+          "title": "松本市立博物館 利用案内",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "yamaya-oamedokoro",
+      "name": "山屋御飴所",
+      "kind": "food",
+      "summary": "1672年創業の飴屋。米と大麦だけで作る米飴が名物で、週末には予約制の飴作り体験もある",
+      "location": {
+        "lat": 36.2347,
+        "lng": 137.9652
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "17:30"
+      },
+      "closedDays": ["wed"],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://visitmatsumoto.com/spot/detail_1252.html",
+          "title": "松本市公式観光サイト 松本旅のしらべ 山屋御飴所",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "iidaya-ameten",
+      "name": "飯田屋飴店",
+      "kind": "food",
+      "summary": "約300年の歴史を持つ飴屋。沖縄の黒糖を使い、職人が二人で引いて作る軽い「あめせんべい」が名物。不定休",
+      "location": {
+        "lat": 36.2352,
+        "lng": 137.9651
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "18:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://visitmatsumoto.com/spot/detail_1216.html",
+          "title": "松本市公式観光サイト 松本旅のしらべ 飯田屋飴店",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.matsumoto.nagano.jp/soshiki/75/96952.html",
+      "title": "松本市 令和9年松本あめ市",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.walkerplus.com/event/ar0420e529652/",
+      "title": "ウォーカープラス 松本あめ市",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_335139/",
+      "title": "じゃらんnet 松本あめ市",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20000919",
+      "title": "るるぶ&more. 令和8年 松本あめ市",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "主催者（市のページは問い合わせ先が商工課で、主催の名前が書かれていない）",
+    "主な行事は「案」で、出演団体・出店の一覧と規制図・バスの案内は令和8年のものが載ったまま。2027年の確定の内容",
+    "塩取合戦の時刻と場所",
+    "福あめ・福だるまの売り場と時刻（市のページでは写真の説明にあるだけ）",
+    "会場の駐車場と、車で来る人への案内",
+    "名古屋駅・新宿駅など玄関口の駅から松本駅までの所要時間",
+    "撮影の扱い、服装・持ち物、混雑についての案内",
+    "来場者の数"
+  ]
+}

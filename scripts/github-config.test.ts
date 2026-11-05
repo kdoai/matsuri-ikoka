@@ -75,6 +75,34 @@ describe("ラベル", () => {
   });
 });
 
+describe("ワークフロー", () => {
+  const workflows = readdirSync(path.join(root, ".github/workflows"))
+    .filter((f) => f.endsWith(".yml"))
+    .map((f) => ({ file: f, text: read(`.github/workflows/${f}`) }));
+
+  it("外部のアクションは、コミットの SHA で指定する", () => {
+    for (const { file, text } of workflows) {
+      for (const [, ref] of text.matchAll(/^\s*(?:-\s+)?uses:\s*(\S+)/gm)) {
+        if (ref?.startsWith("./")) continue;
+        expect(ref, file).toMatch(/^[\w.-]+\/[\w./-]+@[0-9a-f]{40}$/);
+      }
+    }
+  });
+
+  it("祭りの確かめ直しは、調査のジョブに書き込みの権限を、PR のジョブに API キーを渡さない", () => {
+    const text = read(".github/workflows/update-festivals.yml");
+    const [research, pullRequest] = text.split(/^ {2}pull-request:$/m);
+    const researchJob = research?.split(/^ {2}research:$/m)[1] ?? "";
+    expect(researchJob).toContain("id-token: write");
+    expect(researchJob).not.toMatch(/(contents|pull-requests|issues|actions): write/);
+    expect(pullRequest).toBeDefined();
+    expect(pullRequest).not.toMatch(/id-token|ANTHROPIC_API_KEY|MATSURI_REFRESH_API_KEY_SECRET/);
+    // GITHUB_TOKEN で開いた PR でも CI を起動できるように、ci.yml は手でも起動できる
+    expect(pullRequest).toContain("gh workflow run ci.yml");
+    expect(read(".github/workflows/ci.yml")).toMatch(/^ {2}workflow_dispatch:/m);
+  });
+});
+
 describe("main の必須の検査", () => {
   it("setup-github.sh の REQUIRED_CHECKS は、ci.yml のジョブの name と同じ", () => {
     const required = read("scripts/setup-github.sh")

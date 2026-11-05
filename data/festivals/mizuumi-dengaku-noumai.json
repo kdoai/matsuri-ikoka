@@ -1,0 +1,300 @@
+{
+  "id": "mizuumi-dengaku-noumai",
+  "name": {
+    "ja": "水海の田楽能舞",
+    "en": "Mizuumi Dengaku and Noh Dances"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "福井県",
+      "name": "今立郡池田町"
+    }
+  ],
+  "venue": {
+    "name": "鵜甘神社",
+    "lat": 35.8912,
+    "lng": 136.3671
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "田楽4番と能5番を、1つの神社で同じ日に続けて奉納する",
+    "正午に、主な舞人が川でみそぎをしてから舞に入る",
+    "演目に、能楽「式三番」「羅生門」と田楽「あまじゃんごこ」がある",
+    "舞人も囃し方も水海地区の住民がつとめる、国の重要無形民俗文化財"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "国の重要無形民俗文化財で、北条時頼にまつわる由来が伝わる",
+      "sources": [
+        {
+          "url": "https://www.e-ikeda.jp/see/p004054.html",
+          "title": "いけだ観光 国指定重要無形民俗文化財 水海の田楽能舞",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "舞人も囃し方も水海の住民で、冬の間毎日稽古して受け継ぐ",
+      "sources": [
+        {
+          "url": "https://www.fuku-e.com/en/events/detail_5763.html",
+          "title": "Discover Fukui Mizuumi Dengaku and Noh Dances",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "雪で水海に足止めされた北条時頼を村人が田楽で慰め、その礼に時頼が能を教えたのが始まりと伝わる",
+      "source": {
+        "url": "https://www.e-ikeda.jp/see/p004054.html",
+        "title": "いけだ観光 国指定重要無形民俗文化財 水海の田楽能舞",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "主な舞人3人は3日前から他人の作った物を口にしない別火で身を清め、当日は川でみそぎをする",
+      "source": {
+        "url": "https://www.e-ikeda.jp/see/p004054.html",
+        "title": "いけだ観光 国指定重要無形民俗文化財 水海の田楽能舞",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "舞人と囃し方は中学生から年配の人まで水海の住民で、冬のあいだ毎日稽古を重ねる",
+      "source": {
+        "url": "https://www.fuku-e.com/en/events/detail_5763.html",
+        "title": "Discover Fukui Mizuumi Dengaku and Noh Dances",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "白山信仰でつながる岐阜県の能郷との行き来を通して、能が伝わったのではないかとされる",
+      "source": {
+        "url": "https://www.e-ikeda.jp/see/p004046.html",
+        "title": "いけだ観光 鵜甘神社と阿弥陀寺",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": [
+      "見学の場所がせまいので、報道関係者のほかは三脚・一脚・自撮り棒・脚立を使わない",
+      "フラッシュや、長いあいだ前に立ちふさがるなど、演者やほかの見学者の妨げになることをしない",
+      "車は水海しめ縄会館のまわりにとめ、交通誘導員の指示に従う"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": {
+      "policy": "restricted",
+      "note": "三脚・一脚・自撮り棒・脚立は報道関係者のほかは使わない。フラッシュも控える"
+    },
+    "sources": [
+      {
+        "url": "https://www.e-ikeda.jp/see/p004054.html",
+        "title": "いけだ観光 国指定重要無形民俗文化財 水海の田楽能舞",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.fuku-e.com/en/events/detail_5763.html",
+        "title": "Discover Fukui Mizuumi Dengaku and Noh Dances",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-02-15",
+      "start": "13:00",
+      "end": "17:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績（町の観光のページで通常どおり開催と案内）。12:00 みそぎ、13:00〜17:00ごろ 田楽4番と能5番を奉納。シャトルバスはなし",
+      "sources": [
+        {
+          "url": "https://www.e-ikeda.jp/see/p004054.html",
+          "title": "いけだ観光 国指定重要無形民俗文化財 水海の田楽能舞（2026年1月5日更新）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-02-15",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年2月15日（2027年の発表はまだない）。例年、正午にみそぎ、13:00ごろから17:00ごろまで田楽と能を奉納する",
+      "sources": [
+        {
+          "url": "https://www.e-ikeda.jp/see/p004054.html",
+          "title": "いけだ観光 国指定重要無形民俗文化財 水海の田楽能舞（毎年2月15日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.fuku-e.com/en/events/detail_5763.html",
+          "title": "Discover Fukui Mizuumi Dengaku and Noh Dances（every year on February 15th）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.e-ikeda.jp/see/p004054.html",
+        "title": "いけだ観光 国指定重要無形民俗文化財 水海の田楽能舞（水海しめ縄会館周辺に駐車、シャトルバスなし）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.fuku-e.com/en/events/detail_5763.html",
+        "title": "Discover Fukui Mizuumi Dengaku and Noh Dances（無料駐車場20台、ハピラインふくい武生駅から車で約40分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "ikeda-nomen-museum",
+      "name": "池田町能面美術館",
+      "kind": "sightseeing",
+      "summary": "能楽の里を表す町の施設で、100面を超える能面を展示する。火曜（祝日は開館）と年末年始は休館",
+      "location": {
+        "lat": 35.8616,
+        "lng": 136.3628
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "16:00"
+      },
+      "closedDays": ["tue"],
+      "price": "大人300円、小・中学生200円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.e-ikeda.jp/see/p004045.html",
+          "title": "いけだ観光 能面美術館（平日10:00〜16:00、土日祝は17:00まで）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kottekote-ikeda-mura-no-shokudo",
+      "name": "こってコテいけだ 村の食堂",
+      "kind": "food",
+      "summary": "まちの駅こってコテいけだの中の食堂で、池田町産のコシヒカリや地元の野菜を使った定食のほか、かつ丼・カレー・そばなどを出す。火曜休み（祝日は営業）",
+      "location": {
+        "lat": 35.8928,
+        "lng": 136.3448
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "13:30"
+      },
+      "closedDays": ["tue"],
+      "price": null,
+      "tags": ["indoor", "seating"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.e-ikeda.jp/eat/p004004.html",
+          "title": "いけだ観光 こってコテいけだ 村の食堂",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kottekote-ikeda",
+      "name": "まちの駅 こってコテいけだ",
+      "kind": "food",
+      "summary": "町の弁当・野菜・土産を扱う店で、漬け物（おこもじ）やヨモギ餅、町の認証米などを売る。買った弁当は隣の村の食堂で食べられる。火曜休み（祝日は営業）",
+      "location": {
+        "lat": 35.8928,
+        "lng": 136.3448
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "08:30",
+        "close": "18:30"
+      },
+      "closedDays": ["tue"],
+      "price": null,
+      "tags": ["indoor", "local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.e-ikeda.jp/eat/p004056.html",
+          "title": "いけだ観光 まちの駅 こってコテいけだ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.e-ikeda.jp/see/p004054.html",
+      "title": "いけだ観光 国指定重要無形民俗文化財 水海の田楽能舞",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.e-ikeda.jp/see/p004046.html",
+      "title": "いけだ観光 鵜甘神社と阿弥陀寺",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.fuku-e.com/en/events/detail_5763.html",
+      "title": "Discover Fukui Mizuumi Dengaku and Noh Dances",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、みそぎ・奉納の時刻",
+    "鉄道の駅からの行き方（公式の案内はハピラインふくい武生駅から車で約40分だけで、バスの案内がない。シャトルバスは運行しない）",
+    "主要駅からの所要時間（公式の数字が見つからない）",
+    "雪や雨のときの扱い",
+    "見学の場所（境内のどこから見られるか）",
+    "服装・持ち物・危険度についての案内（2月の山あいの行事だが、主催者の注意が見つからない）",
+    "一般の人が加われるかどうか",
+    "屋台や振る舞いの有無",
+    "能面美術館の冬の休館の有無（ページに記載がない）"
+  ]
+}

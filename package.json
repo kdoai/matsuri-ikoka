@@ -17,9 +17,15 @@
     "typecheck": "pnpm --recursive run typecheck && tsc -p scripts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "validate:data": "tsx scripts/validate-festivals.ts"
+    "validate:data": "tsx scripts/validate-festivals.ts",
+    "evaluate:data": "tsx scripts/evaluate-data.ts",
+    "eval:search": "tsx scripts/evaluate-search.ts",
+    "build:stations": "tsx scripts/build-stations.ts",
+    "refresh:targets": "tsx scripts/refresh-targets.ts",
+    "refresh:run": "tsx scripts/run-managed-agent.ts"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "1.3.0",
     "@biomejs/biome": "2.6.4",
     "@types/node": "^22.20.5",
     "tsx": "4.23.15",

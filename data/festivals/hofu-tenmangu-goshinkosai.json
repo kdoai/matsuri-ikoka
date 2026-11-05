@@ -1,0 +1,303 @@
+{
+  "id": "hofu-tenmangu-goshinkosai",
+  "name": {
+    "ja": "御神幸祭（裸坊祭）",
+    "en": "Goshinkosai (Hadakabo Festival) of Hofu Tenmangu"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "山口県",
+      "name": "防府市"
+    }
+  ],
+  "venue": {
+    "name": "防府天満宮",
+    "lat": 34.0634,
+    "lng": 131.5747
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "重さ500kgの御網代輿が、楼門から58段の大石段を滑り降りる",
+    "白装束の裸坊約5,000人が「兄弟ワッショイ」の掛け声で勝間の浦の御旅所まで往復する",
+    "夜の勝間の浦で行う浜殿神事"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1004年の勅使降祭が起こりとされ、2026年で第1023回を数える",
+      "sources": [
+        {
+          "url": "https://www.hofutenmangu.com/1004",
+          "title": "防府天満宮 第1023回 御神幸祭について",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "寛弘元年（1004年）10月15日の勅使降祭が、この祭りの起こりとされる",
+      "source": {
+        "url": "https://www.hofutenmangu.com/1004",
+        "title": "防府天満宮 第1023回 御神幸祭について",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2026年の御神幸祭は第1023回にあたる",
+      "source": {
+        "url": "https://www.hofutenmangu.com/1004",
+        "title": "防府天満宮 第1023回 御神幸祭について",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "勝間の浦は道真公が901年に船を寄せた地で、今は埋め立てで内陸になっている",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/H30-01050.html",
+        "title": "観光庁 地域観光資源の多言語解説文データベース 防府天満宮 裸坊祭（御神幸祭）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "御帰還の後、翌日の20時まで御網代輿の下をくぐるとご加護があるとされる",
+      "source": {
+        "url": "https://www.hofutenmangu.com/1004",
+        "title": "防府天満宮 第1023回 御神幸祭について",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_by_application",
+    "howToJoin": "裸坊として奉仕するには、神社のお問い合わせから【裸坊奉仕希望】と申し込むと申込書が届く（PDFの申込書もある）。当日は17:00までに回廊内に集まる",
+    "rules": [
+      "17:30から大石段に規制がかかる",
+      "境内でのドローンの使用は禁止（当日は関係者がドローンで撮影する）",
+      "許可のない商業目的の撮影は禁止",
+      "ペットは境内に入れない（盲導犬・介助犬を除く）",
+      "裸坊は笛を吹くのを控え、けがやけんかのないようにする"
+    ],
+    "dress": ["裸坊は白い半ズボンに上半身裸、または晒の白装束"],
+    "bring": "unknown",
+    "risk": {
+      "level": "high",
+      "reason": "大勢の裸坊が神輿を担いで石段を下り、約2.5kmを往復する荒祭で、主催者が奉仕者にけがやけんかの防止を求めている"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "個人の撮影はできるが、許可のない商業撮影と境内でのドローンは禁止"
+    },
+    "sources": [
+      {
+        "url": "https://www.hofutenmangu.com/1004",
+        "title": "防府天満宮 第1023回 御神幸祭について（奉仕者募集）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.hofutenmangu.com/10112",
+        "title": "防府天満宮 参拝における注意事項",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.mlit.go.jp/tagengo-db/H30-01050.html",
+        "title": "観光庁 地域観光資源の多言語解説文データベース 防府天満宮 裸坊祭（御神幸祭）（勝間の浦まで約2.5km）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-28",
+      "start": "18:00",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "第1023回。裸坊は17:00までに回廊内に集まり、17:30から大石段に規制。18:00ごろ御発輦、19:30ごろ勝間の浦で浜殿神事、21:00ごろ御帰還。翌29日は天神おんな神輿（別の行事）",
+      "sources": [
+        {
+          "url": "https://www.hofutenmangu.com/1004",
+          "title": "防府天満宮 第1023回 御神幸祭について（令和8年11月28日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://yamaguchi-tourism.jp/event/detail_14765.html",
+          "title": "おいでませ山口へ 防府天満宮御神幸祭（裸坊祭）（2026年11月28日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://yamaguchi-tourism.jp/event/detail_17896.html",
+          "title": "おいでませ山口へ 天神おんな神輿（2026年11月29日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-11-27",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年11月第4土曜日（決まりから計算すると2027年は11月27日。発表はまだない）。2026年は18:00ごろ御発輦、21:00ごろ御帰還",
+      "sources": [
+        {
+          "url": "https://www.mlit.go.jp/tagengo-db/H30-01050.html",
+          "title": "観光庁 地域観光資源の多言語解説文データベース 防府天満宮 裸坊祭（御神幸祭）（毎年11月第4土曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.mlit.go.jp/tagengo-db/common/001537693.docx",
+          "title": "観光庁 地域観光資源の多言語解説文データベース 御神幸祭：無実の知らせを伝えるお祭り（11月第4土曜日に毎年）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 防府駅",
+        "walkMinutes": [20, 25],
+        "note": "JR山陽本線。防府天満宮まで徒歩約20分"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": ["祭りの当日は交通規制がある（区間と時間は公式の案内に書かれていない）"],
+    "sources": [
+      {
+        "url": "https://yamaguchi-tourism.jp/event/detail_14765.html",
+        "title": "おいでませ山口へ 防府天満宮御神幸祭（裸坊祭）（JR防府駅から徒歩約20分、一般用駐車場あり、当日は交通規制あり）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "mohri-museum-garden",
+      "name": "毛利博物館・毛利氏庭園",
+      "kind": "sightseeing",
+      "summary": "旧長州藩主の毛利家の本邸と庭園。2026年10月30日〜12月7日は博物館で特別展「国宝」を開き、雪舟の四季山水図などを見せる。休館は12月22日〜31日で、庭園は年中無休",
+      "location": {
+        "lat": 34.0637,
+        "lng": 131.5874
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": [],
+      "price": "特別展「国宝」の会期中は博物館が大人1,300円、庭園との共通券が大人1,500円（小中学生はどちらも250円）",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://yamaguchi-tourism.jp/event/detail_17418.html",
+          "title": "おいでませ山口へ 毛利博物館 特別展「国宝」（2026年10月30日〜12月7日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "shiosai-ichiba-hofu-anshin-shokudo",
+      "name": "安心食堂 潮彩（道の駅 潮彩市場防府）",
+      "kind": "food",
+      "summary": "地元の漁港に揚がった魚を売る道の駅の食堂。水曜（祝日なら翌日）と毎月第3火曜、1月1日〜4日は休み",
+      "location": {
+        "lat": 34.0384,
+        "lng": 131.5932
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "15:00",
+        "lastEntry": "14:45"
+      },
+      "closedDays": ["wed"],
+      "price": null,
+      "tags": ["indoor", "local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://shiosai-hofu.com/cms/page114.html",
+          "title": "道の駅 潮彩市場防府 各店舗の営業時間",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://visit-hofu.jp/spot/%e9%81%93%e3%81%ae%e9%a7%85-%e6%bd%ae%e5%bd%a9%e5%b8%82%e5%a0%b4-%e9%98%b2%e5%ba%9c/",
+          "title": "防府市観光情報ポータルサイト たびたびほうふ 道の駅 潮彩市場 防府",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.hofutenmangu.com/",
+      "title": "防府天満宮 公式サイト（令和8年11月28日 御神幸祭）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.hofutenmangu.com/1004",
+      "title": "防府天満宮 第1023回 御神幸祭について",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://yamaguchi-tourism.jp/event/detail_14765.html",
+      "title": "おいでませ山口へ 防府天満宮御神幸祭（裸坊祭）（会場 防府市松崎町14-1、裸坊約5,000人）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.mlit.go.jp/tagengo-db/H30-01050.html",
+      "title": "観光庁 地域観光資源の多言語解説文データベース 防府天満宮 裸坊祭（御神幸祭）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20000384",
+      "title": "るるぶ&more. 防府天満宮御神幸祭（裸坊祭）（昨年の来場者数 12万5000人）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "見物する人のための見学の場所と立ち入りの決まり",
+    "交通規制の区間と時間",
+    "雨や荒天のときの扱い",
+    "見物する人の服装・持ち物",
+    "裸坊の申し込みの締め切り・費用・年齢の決まり",
+    "主要駅から防府駅までの所要時間",
+    "屋台の有無と、この祭りの日だけの食べ物",
+    "2026年の裸坊の人数（約5,000人は観光の案内の記載）",
+    "周辺の場所の、会場からの徒歩の時間"
+  ]
+}

@@ -1,35 +1,84 @@
 import {
   decodeSseEvent,
   type FestivalCandidate,
+  type FestivalSearchNext,
+  type FestivalSearchResult,
   MAX_MESSAGE_LENGTH,
   type Preferences,
+  type SearchRetry,
+  type SearchSuggestion,
   type SseEvent,
   type SseMessage,
+  type TripAnchor,
 } from "@matsuri-ikoka/schema";
 import { createStore, type StoreApi } from "zustand/vanilla";
 import { MESSAGES } from "../i18n";
 import { isSendablePasscode } from "../transport/server";
 import type { ChatTransport, FestivalSource, OnSseMessage } from "../transport/types";
 import { toClientError } from "../transport/types";
+import {
+  anchorMessage,
+  anchorPlanRequest,
+  anchorToSend,
+  applyPreview,
+  beginAnchoredHearing,
+  beginPreview,
+  failPreview,
+  leaveAnchor,
+} from "./anchorTrip";
+import {
+  type AnchorPreview,
+  type ConsultAnswers,
+  type ConsultEntry,
+  type ConsultQuestion,
+  type ConsultState,
+  type ConsultStep,
+  chooseEntry,
+  composeConsultMessage,
+  INITIAL_CONSULT,
+  leaveHearing,
+  pickAnswer,
+  setAnswerText,
+  todayInJapan,
+} from "./consult";
 import { clientError } from "./errors";
 import { applyEvent } from "./events";
+import {
+  anchorOf,
+  applySearchResponse,
+  backToResults,
+  beginMore,
+  beginNext,
+  beginSearch,
+  chooseResult,
+  editConditions,
+  type FestivalSearchAnswers,
+  type FestivalSearchState,
+  type FestivalSearchStep,
+  failSearch,
+  finishHere,
+  INITIAL_FESTIVAL_SEARCH,
+  isSearching,
+  returnToResults,
+  searchRequest,
+} from "./festivalSearch";
 import { initialData } from "./initial";
+import { quizById } from "./quizBank";
 import {
   addError,
   answerQuiz,
   beginTurn,
   changePreference,
   endTurn,
-  offerQuiz,
   passcodeAccepted,
   requirePasscode,
   resetForNewSession,
+  setCandidatesOpen,
   settleStaff,
-  shouldOfferQuiz,
   type TurnStart,
 } from "./transitions";
 import type { AppData, ClientError, Locale, PanelTab } from "./types";
-import { buildQuiz, quizFocusId } from "./waiting";
+import { shuffleDeck } from "./waiting";
 
 // 画面の正しい状態を持つストア。通信の口から届いた SSE の1件を、ここで1か所で検証し、
 // events.ts の純粋な関数でストアの更新に変える。部品はイベントを直接受けない。
@@ -48,6 +97,8 @@ export interface AppActions {
   retry(): Promise<void>;
   /** 候補カードから祭りを選ぶ */
   chooseCandidate(candidate: FestivalCandidate): Promise<void>;
+  /** 見つからなかったときの次の手を選ぶ。変えた条件で探し直す（条件を選び直すなら聞き取りに戻る） */
+  chooseSuggestion(suggestion: SearchSuggestion): Promise<void>;
   /** こだわりを切り替える。旅程があれば、旅程係が組み直す */
   setPreference<K extends keyof Preferences>(key: K, value: Preferences[K]): Promise<void>;
   /** 相談を最初からやり直す */
@@ -64,10 +115,59 @@ export interface AppActions {
   closeShiori(): void;
   /** 会話の窓を出す・しまう */
   setDialogue(open: boolean): void;
+  /** 選んで進める聞き取りの段階を移る。editing は確認の画面から直しに行くとき */
+  setConsultStep(step: ConsultStep, editing?: boolean): void;
+  /** 聞き取りの選択肢を選ぶ（いくつでも選べる項目では付け外し） */
+  pickConsult(question: ConsultQuestion, pick: string): void;
+  /** 聞き取りの「その他」の自由記述・出発の駅・ひとことを書く */
+  setConsultText(question: ConsultQuestion, text: string): void;
+  /** 聞き取りの答えを、consult.ts の関数で変える（人数・期間・金額など） */
+  editConsult(edit: (answers: ConsultAnswers) => ConsultAnswers): void;
+  /** 祭りを固定した聞き取りの状態を、anchorTrip.ts の関数で変える（行く日・泊数・期間） */
+  editAnchoredHearing(edit: (consult: ConsultState) => ConsultState): void;
+  /** いまの答えで旅の組み立てを確かめる。同じ答えの結果があれば読み直さない */
+  loadAnchorPreview(): Promise<void>;
+  /** 選んだ内容を1つの発言にまとめて送る */
+  submitConsult(): Promise<void>;
+  /** 聞き取りを選び直す */
+  reopenConsult(): void;
+  /** 相談の入口を選ぶ（祭りから探す / 旅行計画から探す） */
+  chooseConsultEntry(entry: ConsultEntry): void;
+  /** はじめからやり直す。選んだ内容を消して、入口へ戻る */
+  startConsultOver(): void;
+  /** 聞き取りの最初の段階から戻る（入口か、決めた祭りのところへ） */
+  leaveHearing(): void;
+  /** 祭りから探す相談の段階を移る */
+  setFestivalStep(step: FestivalSearchStep): void;
+  /** 祭りから探す相談の答えを、festivalSearch.ts の関数で変える */
+  editFestivalAnswers(edit: (answers: FestivalSearchAnswers) => FestivalSearchAnswers): void;
+  /** 答えた条件で祭りを探す */
+  searchFestivals(): Promise<void>;
+  /** 別の祭りを提案してもらう */
+  moreFestivals(): Promise<void>;
+  /** 次の手を選ぶ。変えた条件で探す（条件を選び直す手は聞き取りに戻る） */
+  chooseFestivalNext(next: FestivalSearchNext): Promise<void>;
+  /** 条件を選び直す。step を渡すと、その段階から */
+  editFestivalConditions(step?: FestivalSearchStep): void;
+  setFestivalResultsOpen(open: boolean): void;
+  /** 結果から祭りを選ぶ */
+  chooseFestival(result: FestivalSearchResult): void;
+  /** 「ほかの祭りを見る」 */
+  backToFestivalResults(): void;
+  /** 「ここで終わる」 */
+  finishFestivalSearch(): void;
+  /** 「旅行計画を作成する」：選んだ祭りを残して、旅行計画の聞き取りへ進む */
+  planFestivalTrip(): void;
+  /** 祭りを決めて送ったあとに、祭りの結果へ戻る（中止と分かった祭りは一覧から外す） */
+  returnToFestivalResults(): void;
+  /** はじめての操作の案内を閉じる */
+  dismissTutorial(): void;
   /** のれんをくぐって店の外へ出る（相談はそのまま残す） */
   leaveShop(): void;
   nextTrivia(): void;
-  answerQuiz(choice: 0 | 1): void;
+  prevTrivia(): void;
+  /** 豆知識のあいだに出したクイズに答える */
+  answerQuiz(quizId: string, choice: number): void;
   /** 祭りのデータを読み込む（読み込み済みのものは読まない） */
   ensureFestivals(ids: readonly string[]): Promise<void>;
 }
@@ -79,6 +179,10 @@ export interface StoreDeps {
   transport: ChatTransport;
   festivals: FestivalSource;
   locale?: Locale;
+  /** はじめての操作の案内を、前に見終えているか */
+  tutorialSeen?: boolean;
+  /** 日本の今日（YYYY-MM-DD）。「今週末」などの日付の計算に使う */
+  today?: () => string;
   random?: () => number;
   setTimer?: (callback: () => void, ms: number) => unknown;
   clearTimer?: (handle: unknown) => void;
@@ -87,12 +191,15 @@ export interface StoreDeps {
 export function createAppStore(deps: StoreDeps): AppStore {
   const { transport, festivals } = deps;
   const random = deps.random ?? Math.random;
+  const today = deps.today ?? (() => todayInJapan());
   const setTimer = deps.setTimer ?? ((callback, ms) => setTimeout(callback, ms));
   const clearTimer =
     deps.clearTimer ?? ((handle) => clearTimeout(handle as ReturnType<typeof setTimeout>));
 
   let controller: AbortController | null = null;
   let sessionController: AbortController | null = null;
+  let searchController: AbortController | null = null;
+  let previewController: AbortController | null = null;
   const timers = new Set<unknown>();
 
   return createStore<AppState>()((set, get) => {
@@ -113,17 +220,6 @@ export function createAppStore(deps: StoreDeps): AppStore {
       timers.clear();
     };
 
-    const maybeOfferQuiz = () => {
-      const state = get();
-      if (!shouldOfferQuiz(state)) {
-        return;
-      }
-      const question = buildQuiz(state.festivals, quizFocusId(state), random);
-      if (question !== null) {
-        update((current) => offerQuiz(current, question));
-      }
-    };
-
     const afterEvent = (event: SseEvent, before: AppData) => {
       if (event.type === "tool.end" && event.data.candidates !== undefined) {
         void get().actions.ensureFestivals(event.data.candidates.map((c) => c.festivalId));
@@ -139,7 +235,6 @@ export function createAppStore(deps: StoreDeps): AppStore {
           update((state) => ({ ...state, ui: { ...state.ui, celebrating: false } })),
         );
       }
-      maybeOfferQuiz();
     };
 
     /** 届いた SSE の1件を検証し、ストアの更新に変える */
@@ -152,8 +247,13 @@ export function createAppStore(deps: StoreDeps): AppStore {
         return;
       }
       const before = get();
-      update((state) => applyEvent(state, event));
-      afterEvent(event, before);
+      try {
+        update((state) => applyEvent(state, event));
+        afterEvent(event, before);
+      } catch (caught) {
+        // 画面の側の処理の失敗を、通信の切断として扱わない（ここで投げると、受け取りが止まる）
+        console.error(`[sse] ${event.type} の反映に失敗しました`, caught);
+      }
     };
 
     const runStream = async (
@@ -171,6 +271,14 @@ export function createAppStore(deps: StoreDeps): AppStore {
       }
       if (current.signal.aborted) {
         return;
+      }
+      if (!get().session.sawDone && (error === null || error.code === "connection_lost")) {
+        // done が届かないまま閉じた。サーバーが止まっているのか、接続だけが切れたのかを確かめて伝える
+        const reachable = (await transport.checkServer?.()) ?? true;
+        if (current.signal.aborted) {
+          return;
+        }
+        error = clientError(reachable ? "connection_lost" : "server_unreachable");
       }
       controller = null;
       const sawDone = get().session.sawDone;
@@ -222,8 +330,9 @@ export function createAppStore(deps: StoreDeps): AppStore {
         if (current.signal.aborted) {
           return;
         }
+        const mode = transport.agentMode?.() ?? null;
         update((state) =>
-          passcodeAccepted({ ...state, session: { ...state.session, id, status: "ready" } }),
+          passcodeAccepted({ ...state, session: { ...state.session, id, mode, status: "ready" } }),
         );
       } catch (caught) {
         if (current.signal.aborted) {
@@ -254,7 +363,12 @@ export function createAppStore(deps: StoreDeps): AppStore {
       }
     };
 
-    const sendChat = async (message: string, retry: boolean) => {
+    const sendChat = async (
+      message: string,
+      retry: boolean,
+      search?: SearchRetry,
+      anchor?: TripAnchor,
+    ) => {
       const state = get();
       const sessionId = state.session.id;
       if (state.session.streaming || sessionId === null) {
@@ -262,8 +376,14 @@ export function createAppStore(deps: StoreDeps): AppStore {
       }
       const { preferences } = state;
       if (!state.ui.dialogueOpen) setUi({ dialogueOpen: true });
-      await runStream({ kind: "chat", message, preferences, retry }, (onMessage, signal) =>
-        transport.chat({ sessionId, message, preferences }, onMessage, signal),
+      const extra = {
+        ...(search === undefined ? {} : { search }),
+        ...(anchor === undefined ? {} : { anchor }),
+      };
+      await runStream(
+        { kind: "chat", message, preferences, retry, ...extra },
+        (onMessage, signal) =>
+          transport.chat({ sessionId, message, preferences, ...extra }, onMessage, signal),
       );
     };
 
@@ -277,6 +397,59 @@ export function createAppStore(deps: StoreDeps): AppStore {
       await runStream({ kind: "preferences", preferences }, (onMessage, signal) =>
         transport.updatePreferences({ sessionId, preferences }, onMessage, signal),
       );
+    };
+
+    const updateFestivalSearch = (change: (state: FestivalSearchState) => FestivalSearchState) =>
+      update((state) => ({ ...state, festivalSearch: change(state.festivalSearch) }));
+
+    /** いまの答えで検索を送り、結果か失敗をストアに入れる。相談が切れていたら、始め直して一度だけ送り直す */
+    const runFestivalSearch = async (retried = false): Promise<void> => {
+      const state = get();
+      const sessionId = state.session.id;
+      if (sessionId === null) {
+        updateFestivalSearch((search) => failSearch(search, clientError("session_lost")));
+        return;
+      }
+      const current = new AbortController();
+      searchController = current;
+      try {
+        const response = await transport.searchFestivals(
+          searchRequest(state.festivalSearch, sessionId),
+          current.signal,
+        );
+        if (current.signal.aborted) return;
+        updateFestivalSearch((search) => applySearchResponse(search, response));
+        void actions.ensureFestivals(
+          [...response.results, ...response.nearMatches.map((near) => near.result)].map(
+            (result) => result.candidate.festivalId,
+          ),
+        );
+      } catch (caught) {
+        if (current.signal.aborted) return;
+        const error = toClientError(caught);
+        if (error.code === "session_lost" && !retried) {
+          await startSession();
+          if (current.signal.aborted) return;
+          await runFestivalSearch(true);
+          return;
+        }
+        updateFestivalSearch((search) => failSearch(search, error));
+        if (error.code === "unauthorized") {
+          update((data) => requirePasscode(data, transport.hasPasscode?.() ?? false));
+        }
+      }
+    };
+
+    /** 検索を始める。相談が始まる前や、探している最中は送らない */
+    const startFestivalSearch = async (
+      begin: (state: FestivalSearchState) => FestivalSearchState,
+    ) => {
+      const { session, festivalSearch } = get();
+      if (session.status !== "ready" || session.streaming || isSearching(festivalSearch)) {
+        return;
+      }
+      updateFestivalSearch(begin);
+      await runFestivalSearch();
     };
 
     const setUi = (patch: Partial<AppData["ui"]>) =>
@@ -294,6 +467,10 @@ export function createAppStore(deps: StoreDeps): AppStore {
         const message = text.trim();
         if (message.length === 0 || message.length > MAX_MESSAGE_LENGTH) {
           return;
+        }
+        // 自分の言葉で書いて送ったら、選んで進める聞き取りはしまう（「選び直す」でまた開ける）
+        if (get().consult.active && !get().session.streaming) {
+          update((state) => ({ ...state, consult: { ...state.consult, active: false } }));
         }
         await sendChat(message, false);
       },
@@ -318,13 +495,23 @@ export function createAppStore(deps: StoreDeps): AppStore {
           return;
         }
         if (state.session.lastRequest !== null) {
-          await sendChat(state.session.lastRequest.message, true);
+          const { message, search, anchor } = state.session.lastRequest;
+          await sendChat(message, true, search, anchor);
         }
       },
 
       async chooseCandidate(candidate) {
         setUi({ candidatesOpen: false });
         await sendChat(MESSAGES[get().ui.locale].candidates.chooseMessage(candidate.name), false);
+      },
+
+      async chooseSuggestion(suggestion) {
+        setUi({ candidatesOpen: false });
+        if (suggestion.retry === null || suggestion.message === null) {
+          actions.reopenConsult();
+          return;
+        }
+        await sendChat(suggestion.message, false, suggestion.retry);
       },
 
       async setPreference(key, value) {
@@ -347,16 +534,33 @@ export function createAppStore(deps: StoreDeps): AppStore {
           await startSession();
           return;
         }
+        const { festivalSearch, consult } = get();
+        if (consult.preview.error?.code === "unauthorized") {
+          // 組み立ての確認で断られたなら、確かめ直す
+          await actions.loadAnchorPreview();
+          return;
+        }
+        if (festivalSearch.error?.code === "unauthorized") {
+          // 祭り探しで断られたなら、探し直す
+          await startFestivalSearch(festivalSearch.phase === "asking" ? beginSearch : beginMore);
+          return;
+        }
         await actions.retry();
       },
 
       async restart() {
         controller?.abort();
         controller = null;
+        searchController?.abort();
+        previewController?.abort();
         clearTimers();
         const { ui } = get();
-        const fresh = initialData({ locale: ui.locale });
-        update(() => ({ ...fresh, ui: { ...fresh.ui, soundOn: ui.soundOn, view: "shop" } }));
+        const fresh = initialData({ locale: ui.locale, tutorialSeen: ui.tutorialSeen });
+        update(() => ({
+          ...fresh,
+          quiz: { ...fresh.quiz, deck: shuffleDeck(fresh.quiz.deck, random) },
+          ui: { ...fresh.ui, soundOn: ui.soundOn, view: "shop" },
+        }));
         await startSession();
       },
 
@@ -376,7 +580,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
         setUi({ drawerOpen: open });
       },
       setCandidatesOpen(open) {
-        setUi({ candidatesOpen: open && get().candidates.length > 0 });
+        update((state) => setCandidatesOpen(state, open));
       },
       openShiori() {
         if (get().itinerary.current !== null) {
@@ -387,7 +591,166 @@ export function createAppStore(deps: StoreDeps): AppStore {
         setUi({ view: "shop" });
       },
       setDialogue(open) {
-        setUi({ dialogueOpen: open });
+        setUi(open ? { dialogueOpen: true, tutorialSeen: true } : { dialogueOpen: false });
+      },
+      setConsultStep(step, editing = false) {
+        update((state) => ({ ...state, consult: { ...state.consult, step, editing } }));
+      },
+      pickConsult(question, pick) {
+        update((state) => ({
+          ...state,
+          consult: { ...state.consult, answers: pickAnswer(state.consult.answers, question, pick) },
+        }));
+      },
+      setConsultText(question, text) {
+        update((state) => ({
+          ...state,
+          consult: {
+            ...state.consult,
+            answers: setAnswerText(state.consult.answers, question, text),
+          },
+        }));
+      },
+      editConsult(edit) {
+        update((state) => ({
+          ...state,
+          consult: { ...state.consult, answers: edit(state.consult.answers) },
+        }));
+      },
+      async submitConsult() {
+        const state = get();
+        if (state.session.streaming || state.session.status !== "ready") {
+          return;
+        }
+        const message = composeConsultMessage(
+          state.consult.answers,
+          MESSAGES[state.ui.locale].consult.wording,
+          today(),
+          anchorMessage(
+            state.consult,
+            state.festivalSearch.chosen?.candidate ?? null,
+            state.session.id,
+          ),
+        );
+        if (message === null) {
+          return;
+        }
+        update((current) => ({ ...current, consult: { ...current.consult, active: false } }));
+        await sendChat(message, false, undefined, anchorToSend(state.consult) ?? undefined);
+      },
+      editAnchoredHearing(edit) {
+        update((state) => ({ ...state, consult: edit(state.consult) }));
+      },
+      async loadAnchorPreview() {
+        const { consult, session } = get();
+        if (session.id === null || session.status !== "ready") return;
+        const request = anchorPlanRequest(consult, session.id);
+        if (request === null) return;
+        const key = JSON.stringify(request);
+        const { preview } = consult;
+        if (preview.key === key && (preview.status === "loading" || preview.status === "ready")) {
+          return;
+        }
+        previewController?.abort();
+        const current = new AbortController();
+        previewController = current;
+        const setPreview = (next: AnchorPreview) =>
+          update((state) => ({ ...state, consult: { ...state.consult, preview: next } }));
+        setPreview(beginPreview(key));
+        try {
+          const plan = await transport.previewFestivalTrip(request, current.signal);
+          if (!current.signal.aborted) setPreview(applyPreview(key, plan));
+        } catch (caught) {
+          if (current.signal.aborted) return;
+          const error = toClientError(caught);
+          setPreview(failPreview(key, error));
+          if (error.code === "unauthorized") {
+            update((data) => requirePasscode(data, transport.hasPasscode?.() ?? false));
+          }
+        }
+      },
+      reopenConsult() {
+        update((state) => ({
+          ...state,
+          consult: { ...state.consult, active: true, entry: "trip", step: "party", editing: false },
+        }));
+      },
+      chooseConsultEntry(entry) {
+        update((state) => ({ ...state, consult: chooseEntry(state.consult, entry) }));
+      },
+      startConsultOver() {
+        searchController?.abort();
+        previewController?.abort();
+        update((state) => ({
+          ...state,
+          consult: { ...INITIAL_CONSULT, answers: {} },
+          festivalSearch: { ...INITIAL_FESTIVAL_SEARCH },
+        }));
+      },
+      leaveHearing() {
+        previewController?.abort();
+        update((state) => ({ ...state, consult: leaveHearing(state.consult) }));
+      },
+      setFestivalStep(step) {
+        updateFestivalSearch((search) => ({ ...search, step, error: null }));
+      },
+      editFestivalAnswers(edit) {
+        updateFestivalSearch((search) => ({ ...search, answers: edit(search.answers) }));
+      },
+      async searchFestivals() {
+        await startFestivalSearch(beginSearch);
+      },
+      async moreFestivals() {
+        if (get().festivalSearch.remaining > 0) await startFestivalSearch(beginMore);
+      },
+      async chooseFestivalNext(next) {
+        const { conditions } = next;
+        if (conditions === null) {
+          actions.editFestivalConditions();
+          return;
+        }
+        await startFestivalSearch((search) => beginNext(search, conditions));
+      },
+      editFestivalConditions(step) {
+        searchController?.abort();
+        updateFestivalSearch((search) => editConditions({ ...search, loadingMore: false }, step));
+      },
+      setFestivalResultsOpen(open) {
+        updateFestivalSearch((search) => ({ ...search, resultsOpen: open }));
+      },
+      chooseFestival(result) {
+        updateFestivalSearch((search) => chooseResult(search, result));
+      },
+      backToFestivalResults() {
+        updateFestivalSearch(backToResults);
+      },
+      finishFestivalSearch() {
+        updateFestivalSearch(finishHere);
+      },
+      planFestivalTrip() {
+        const { chosen } = get().festivalSearch;
+        if (chosen === null) return;
+        update((state) => ({
+          ...state,
+          consult: beginAnchoredHearing(state.consult, anchorOf(chosen)),
+        }));
+        void actions.ensureFestivals([chosen.candidate.festivalId]);
+      },
+      returnToFestivalResults() {
+        previewController?.abort();
+        update((state) => {
+          const { anchor, anchorCancelled } = state.consult;
+          const cancelledId = anchorCancelled ? (anchor?.festivalId ?? null) : null;
+          return {
+            ...state,
+            consult: leaveAnchor(state.consult),
+            festivalSearch: returnToResults(state.festivalSearch, cancelledId),
+            ui: { ...state.ui, candidatesOpen: false },
+          };
+        });
+      },
+      dismissTutorial() {
+        setUi({ tutorialSeen: true });
       },
       leaveShop() {
         setUi({
@@ -400,8 +763,12 @@ export function createAppStore(deps: StoreDeps): AppStore {
       nextTrivia() {
         update((state) => ({ ...state, trivia: { index: state.trivia.index + 1 } }));
       },
-      answerQuiz(choice) {
-        update((state) => answerQuiz(state, choice));
+      prevTrivia() {
+        update((state) => ({ ...state, trivia: { index: state.trivia.index - 1 } }));
+      },
+      answerQuiz(quizId, choice) {
+        const quiz = quizById(quizId);
+        if (quiz !== undefined) update((state) => answerQuiz(state, quiz, choice));
       },
 
       async ensureFestivals(ids) {
@@ -430,12 +797,16 @@ export function createAppStore(deps: StoreDeps): AppStore {
             }));
           }),
         );
-        maybeOfferQuiz();
       },
     };
 
+    const initial = initialData({
+      locale: deps.locale ?? "ja",
+      tutorialSeen: deps.tutorialSeen ?? false,
+    });
     return {
-      ...initialData({ locale: deps.locale ?? "ja" }),
+      ...initial,
+      quiz: { ...initial.quiz, deck: shuffleDeck(initial.quiz.deck, random) },
       actions,
     };
   });

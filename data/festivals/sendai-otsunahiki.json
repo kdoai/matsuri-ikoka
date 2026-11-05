@@ -1,0 +1,332 @@
+{
+  "id": "sendai-otsunahiki",
+  "name": { "ja": "川内大綱引", "en": "Sendai Otsunahiki (Giant Tug-of-War)" },
+  "category": "other",
+  "municipalities": [{ "prefecture": "鹿児島県", "name": "薩摩川内市" }],
+  "venue": { "name": "国道3号（川内駅前の市街地）", "lat": 31.815, "lng": 130.3057 },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["jalan", "rurubu"],
+  "highlights": [
+    "上半身裸の約3,000人が上方と下方に分かれ、国道の上で大綱を引き合う",
+    "相手の陣に押し入ろうとする押し隊どうしのぶつかり合い",
+    "朝から住民総出で、長さ365mの大綱を一から練り上げる",
+    "夜のダン木祭りのあと、太鼓の合図で本綱が始まる"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "関ヶ原のころに始まったと伝わり、2024年に国の重要無形民俗文化財",
+      "sources": [
+        {
+          "url": "https://www.city.satsumasendai.lg.jp/soshiki/1042/1/2/4/1_1/0901/11887.html",
+          "title": "薩摩川内市 令和5年9月22日 川内大綱引",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.pref.kagoshima.jp/am01/event/202408289.html",
+          "title": "鹿児島県 薩摩川内市誕生20周年記念 川内大綱引",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "川内大綱引保存会が伝え、綱練りは住民が総出で行う",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/390058",
+          "title": "文化遺産オンライン 薩摩川内の大綱引き",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "関ヶ原の戦いのころ、島津義弘が兵の士気を高めるために始めたと伝わる",
+      "source": {
+        "url": "https://www.city.satsumasendai.lg.jp/soshiki/1042/1/2/4/1_1/0901/11887.html",
+        "title": "薩摩川内市 令和5年9月22日 川内大綱引",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "綱は長さ約365m・重さ約7トン。毎年、新しく作り直す",
+      "source": {
+        "url": "https://www.city.satsumasendai.lg.jp/soshiki/1042/1/2/4/1_1/0901/11887.html",
+        "title": "薩摩川内市 令和5年9月22日 川内大綱引",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "引き合いが動かなくなると、審判が綱を切って勝ち負けを決める",
+      "source": {
+        "url": "https://online.bunka.go.jp/heritages/detail/390058",
+        "title": "文化遺産オンライン 薩摩川内の大綱引き",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2024年3月、国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.pref.kagoshima.jp/am01/event/202408289.html",
+        "title": "鹿児島県 薩摩川内市誕生20周年記念 川内大綱引",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": [
+      "観覧は歩道の上だけ",
+      "ドローンを使った撮影は禁止",
+      "ダン木祭りのあいだは、祭壇のまわりを通れない"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "夜の国道を全面通行止めにして約3,000人が押し合いながら引き合い、観覧は歩道に限られる"
+    },
+    "photo": { "policy": "restricted", "note": "ドローンでの撮影は禁止" },
+    "sources": [
+      {
+        "url": "https://www.city.satsumasendai.lg.jp/material/files/group/1/526-1823.pdf",
+        "title": "広報薩摩川内 第526号（2026年9月10日）情報掲示板 川内大綱引",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-09-22",
+      "start": "20:15",
+      "end": "22:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績（427年目）。会場は国道3号の向田側。8:00 縄出し、10:00〜14:00 綱練り、15:30〜16:00 綱の移動、19:00 ダン木祭り、20:15〜22:00 大綱引。参加は約3,000人",
+      "sources": [
+        {
+          "url": "https://www.city.satsumasendai.lg.jp/material/files/group/1/526-1823.pdf",
+          "title": "広報薩摩川内 第526号（2026年9月10日）情報掲示板 川内大綱引",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.satsumasendai.lg.jp/gyoseijoho/kocho_koho/1/0408/21097.html",
+          "title": "薩摩川内市 広報薩摩川内 第526号 9月通常版（交通規制の時間の訂正）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20003226",
+          "title": "るるぶ&more. 川内大綱引（2026年9月22日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-09-22",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（発表はまだない）。毎年、秋分の日の前日に開かれ、2027年の秋分の日は9月23日。2024〜2026年はいずれも19:00 ダン木祭り、20:15 本綱の始まり。会場は年によって国道3号の向田側と大小路側が替わる（2024・2026年は向田側、2025年は大小路側）",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/390058",
+          "title": "文化遺産オンライン 薩摩川内の大綱引き（毎年、秋分の日の前日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2027/rekiyou272.html",
+          "title": "国立天文台 暦要項 2027年 国民の祝日（秋分の日は9月23日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.pref.kagoshima.jp/am01/event/202509047.html",
+          "title": "鹿児島県 川内大綱引（2025年9月22日、国道3号大小路側）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.pref.kagoshima.jp/am01/event/202408289.html",
+          "title": "鹿児島県 薩摩川内市誕生20周年記念 川内大綱引（2024年9月22日、国道3号西向田側）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 川内駅",
+        "walkMinutes": [10, 15],
+        "note": "九州新幹線・鹿児島本線・肥薩おれんじ鉄道の駅。2026年の会場（向田側）は駅前の交差点までの国道3号。徒歩10分はるるぶ&more.の案内で、大小路側で開いた2025年はじゃらんnetが徒歩20分としていた"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "博多駅",
+        "minutes": [73, 83],
+        "route": "九州新幹線、乗り換えなし（最速で約73分という2023年の市の案内。2026年7月の熊本地震のあと、9月18日から九州新幹線のダイヤが変わっている）"
+      }
+    ],
+    "parking": "unknown",
+    "trafficRestrictions": [
+      "2026年は、綱練り会場の国道3号（向田交差点〜川内駅前交差点）が7:30〜23:00に全面通行止め（広報では7:00からと案内し、のちに7:30からに訂正）",
+      "2026年は、大綱引会場の国道3号（太平橋南口交差点〜川内駅前交差点）が15:00〜23:00に全面通行止め。コミュニティバスは回り道を走り、臨時のバス停が3か所できた"
+    ],
+    "sources": [
+      {
+        "url": "https://www.city.satsumasendai.lg.jp/material/files/group/1/526-1823.pdf",
+        "title": "広報薩摩川内 第526号（2026年9月10日）川内大綱引 交通規制案内図",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.satsumasendai.lg.jp/gyoseijoho/kocho_koho/1/0408/21097.html",
+        "title": "薩摩川内市 広報薩摩川内 第526号 9月通常版（交通規制の時間の訂正）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.satsumasendai.lg.jp/soshiki/1042/2/10/1/635.html",
+        "title": "薩摩川内市 薩摩川内市へのアクセス（2023年3月27日更新）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.satsumasendai.lg.jp/soshiki/1008/2/1/20781.html",
+        "title": "薩摩川内市 令和8年9月18日からの九州新幹線運行ダイヤ",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20003226",
+        "title": "るるぶ&more. 川内大綱引（JR川内駅から徒歩10分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      },
+      {
+        "url": "https://www.jalan.net/event/evt_346447/",
+        "title": "じゃらんnet 川内大綱引（2025年）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "sendai-history-museum",
+      "name": "川内歴史資料館",
+      "kind": "sightseeing",
+      "summary": "市の歴史と民俗、美術の資料を展示し、地域の企画展も開く資料館。年末年始（12月29日〜1月3日）は休館。土日祝は小中高生無料",
+      "location": { "lat": 31.8326, "lng": 130.3091 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "09:00", "close": "17:00" },
+      "closedDays": ["mon"],
+      "price": "大人200円、小中高100円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.satsumasendai.lg.jp/soshiki/1043/1/2/3164.html",
+          "title": "薩摩川内市 歴史資料館・文学館・文化ホール（2023年8月7日更新）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.satsumasendai.lg.jp/soshiki/1042/2/15/1/641.html",
+          "title": "薩摩川内市 公共施設案内（所在地 中郷二丁目2番6号）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "sendai-magokoro-bungakukan",
+      "name": "川内まごころ文学館",
+      "kind": "sightseeing",
+      "summary": "郷土にゆかりのある文学と芸術の資料を集めて展示する文学館。川内歴史資料館と同じ所在地。年末年始（12月29日〜1月3日）は休館。土日祝は小中高生無料",
+      "location": { "lat": 31.8326, "lng": 130.3091 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "09:00", "close": "17:00" },
+      "closedDays": ["mon"],
+      "price": "大人300円、小中高150円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.satsumasendai.lg.jp/soshiki/1043/1/2/3164.html",
+          "title": "薩摩川内市 歴史資料館・文学館・文化ホール（2023年8月7日更新）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.satsumasendai.lg.jp/soshiki/1042/2/15/1/641.html",
+          "title": "薩摩川内市 公共施設案内（所在地 中郷二丁目2番6号）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.satsumasendai.lg.jp/material/files/group/1/526-1823.pdf",
+      "title": "広報薩摩川内 第526号（2026年9月10日）情報掲示板 川内大綱引",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://online.bunka.go.jp/heritages/detail/390058",
+      "title": "文化遺産オンライン 薩摩川内の大綱引き",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.pref.kagoshima.jp/am01/event/202509047.html",
+      "title": "鹿児島県 川内大綱引（2025年）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%B9%BF%E5%85%90%E5%B3%B6%E7%9C%8C%E8%96%A9%E6%91%A9%E5%B7%9D%E5%86%85%E5%B8%82%E8%A5%BF%E5%90%91%E7%94%B0%E7%94%BA",
+      "title": "国土地理院 住所検索 薩摩川内市西向田町（会場の位置）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の会場（向田側か大小路側か）と時刻（まだ発表がない。会場が替わる決まりは公式に書かれていない）",
+    "雨天のときの扱い",
+    "外から来た人が綱引きや綱練りに加われるか、その申し込み方法",
+    "服装・持ち物",
+    "駐車場（るるぶ&more.は「なし」とするが、公式の案内が見つからない）",
+    "屋台の有無と、祭りに結びついた食べ物",
+    "周辺の食事の店（観光物産協会のサイトは取得を断られ、確かめられなかった）",
+    "会場の位置は国道3号の向田側を含む西向田町の代表点で、ダン木（綱の中心）の正確な位置ではない",
+    "鹿児島中央駅から川内駅までの所要時間と、2026年9月18日からの九州新幹線のダイヤでの博多駅からの所要時間",
+    "見物の人数（るるぶ&more.は前年の観客を約5万人とする。公式の数は見つからない）",
+    "川内歴史資料館・川内まごころ文学館の最終入館と、月曜が祝日のときの扱い（市のページに書いていない）、会場からの徒歩の時間"
+  ]
+}

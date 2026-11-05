@@ -9,7 +9,8 @@ Targets (run in this order by `--target all`):
   optimize    gltf-transform (meshopt, WebP <= 1024) out/glb -> models/, manifest.json
 
 Extra target (not part of `all`):
-  stills      staff and traveler stills for the travel booklet -> ../shiori/staff/*.webp
+  stills      staff and traveler stills for the travel booklet, and the faces -> ../shiori/staff/*.webp
+  faces       only the square face close-ups (dialogue window, booklet) -> ../shiori/staff/face_*.webp
 """
 
 import argparse
@@ -29,7 +30,7 @@ from . import util as U
 ASSETS_3D = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 TARGETS = ("textures", "characters", "motions", "interior", "exterior", "optimize")
-EXTRA_TARGETS = ("stills",)
+EXTRA_TARGETS = ("stills", "faces")
 
 
 def parse(argv):
@@ -244,6 +245,11 @@ def target_exterior(args):
 def target_stills(args):
     from . import stills
     stills.target(args, _fresh)
+
+
+def target_faces(args):
+    from . import stills
+    stills.faces(args, _fresh)
 
 
 def target_optimize(args):

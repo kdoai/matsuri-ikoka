@@ -11,6 +11,7 @@ import { createFestivalStore } from "../data/festivalStore";
 import { testFestival } from "../domain/testFestivals";
 import { ItineraryStore, SessionStore } from "../session/sessionStore";
 import type { ToolContext } from "../tools/context";
+import { createUnavailableLodging } from "../tools/lodging";
 import { searchFestivals } from "../tools/matsuriTools";
 import { createMatsuriMcpServer, runTool } from "../tools/mcpServer";
 import { unavailableVerifier } from "../tools/verifier";
@@ -27,6 +28,11 @@ const prompts: AgentPrompts = {
   scout: "s",
   planner: "p",
   verifier: "v",
+  route: "rt",
+  nearby: "nb",
+  lodging: "lg",
+  evaluator: "ev",
+  "wish-reader": "wr",
 };
 
 type Script = (api: {
@@ -74,6 +80,7 @@ function setup(scripts: Script[]) {
     festivals: createFestivalStore([testFestival({ id: "suzunari-toro" })]),
     itineraries,
     weather: { forecast: async () => ({ weather: { status: "not_yet" }, area: null }) },
+    lodging: createUnavailableLodging(),
     verifier: unavailableVerifier,
     prompts,
     models: {},

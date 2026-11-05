@@ -1,0 +1,345 @@
+{
+  "id": "sanja-matsuri",
+  "name": {
+    "ja": "三社祭",
+    "en": "Sanja Matsuri"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "東京都",
+      "name": "台東区"
+    }
+  ],
+  "venue": {
+    "name": "浅草神社（浅草の氏子44ヶ町）",
+    "lat": 35.7149,
+    "lng": 139.7977
+  },
+  "scaleTier": "L",
+  "popularity": "major",
+  "listedIn": ["walkerplus", "jalan", "rurubu", "japan-guide", "jnto"],
+  "highlights": [
+    "日曜の朝、本社神輿3基が境内から担ぎ出される宮出し",
+    "土曜は氏子44ヶ町の神輿約100基が一基ずつお祓いを受けて町へ戻る",
+    "東京都の文化財のびんざさら舞が、金曜の大行列とともに奉納される"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1312年の舟祭りを起こりとする浅草神社の例大祭で、びんざさら舞は東京都の文化財",
+      "sources": [
+        {
+          "url": "https://asakusajinja.jp/sanjamatsuri/about/",
+          "title": "浅草神社 三社祭とは（由来、44ヶ町、神輿約100基、人出 約180万人）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "浅草の氏子44ヶ町がそれぞれ神輿を出し、担いで町を巡る",
+      "sources": [
+        {
+          "url": "https://asakusajinja.jp/sanjamatsuri/about/",
+          "title": "浅草神社 三社祭とは（由来、44ヶ町、神輿約100基、人出 約180万人）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://asakusajinja.jp/sanjamatsuri/schedule/",
+          "title": "浅草神社 三社祭 日程（令和9年 5月14日〜16日。変更の可能性あり）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "1312年に始まった舟祭りが起こりで、明治の初めまで舟渡御が続いた",
+      "source": {
+        "url": "https://asakusajinja.jp/sanjamatsuri/about/",
+        "title": "浅草神社 三社祭とは（由来、44ヶ町、神輿約100基、人出 約180万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "明治5年（1872年）に5月17・18日へ移り、町内神輿の渡御が中心になった",
+      "source": {
+        "url": "https://asakusajinja.jp/sanjamatsuri/about/",
+        "title": "浅草神社 三社祭とは（由来、44ヶ町、神輿約100基、人出 約180万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "名前は、浅草神社の旧称「三社権現社」に由来する",
+      "source": {
+        "url": "https://rurubu.jp/andmore/spot/20002085",
+        "title": "るるぶ&more. 三社祭（2026年5月15日〜17日、三社権現社に由来する名前）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "3日間の人出は約180万人とされる",
+      "source": {
+        "url": "https://asakusajinja.jp/sanjamatsuri/about/",
+        "title": "浅草神社 三社祭とは（由来、44ヶ町、神輿約100基、人出 約180万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": [
+      "日曜の宮出しのころは、安全のため浅草寺の門より内側で見物できない",
+      "参拝だけの車は浅草神社の境内に止められない（一般の有料駐車場を使う）"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "3日間で約180万人が集まり、日曜の宮出しは安全のため見物の場所が制限される"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.japan.travel/en/spot/1705/",
+        "title": "日本政府観光局 Sanja Festival（日曜は安全のため門内で見物できない、屋台あり）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.japan-guide.com/e/e3063.html",
+        "title": "japan-guide.com Sanja Matsuri（2027年は5月14日〜16日）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      },
+      {
+        "url": "https://asakusajinja.jp/sanjamatsuri/about/",
+        "title": "浅草神社 三社祭とは（由来、44ヶ町、神輿約100基、人出 約180万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://asakusajinja.jp/asakusajinja/map/",
+        "title": "浅草神社 アクセス方法",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-05-15",
+      "endDate": "2026-05-17",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績",
+      "sources": [
+        {
+          "url": "https://www.gotokyo.org/jp/spot/ev030/index.html",
+          "title": "GO TOKYO 三社祭（2026年5月15日〜17日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20002085",
+          "title": "るるぶ&more. 三社祭（2026年5月15日〜17日、三社権現社に由来する名前）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-05-14",
+      "start": "13:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": "大行列と神楽殿のびんざさら舞は雨天中止",
+      "note": "13:00 大行列（柳通り→馬道通り→雷門通り→雷門→仲見世→浅草神社）、14:20 びんざさら舞（社殿）、15:00 びんざさら舞（神楽殿）、15:30 各町神輿神霊入れの儀。前夜5月13日 19:00 本社神輿神霊入れの儀。日程は変わることがある",
+      "sources": [
+        {
+          "url": "https://asakusajinja.jp/sanjamatsuri/schedule/",
+          "title": "浅草神社 三社祭 日程（令和9年 5月14日〜16日。変更の可能性あり）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.japan-guide.com/e/e3063.html",
+          "title": "japan-guide.com Sanja Matsuri（2027年は5月14日〜16日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-05-15",
+      "start": "12:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "10:00 例大祭式典、12:00 町内神輿連合渡御（44ヶ町の約100基が浅草寺本堂裏広場から一基ずつ発進）、15:30 子之宮渡御、17:00 巫女舞奉奏。日程は変わることがある",
+      "sources": [
+        {
+          "url": "https://asakusajinja.jp/sanjamatsuri/schedule/",
+          "title": "浅草神社 三社祭 日程（令和9年 5月14日〜16日。変更の可能性あり）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.japan-guide.com/e/e3063.html",
+          "title": "japan-guide.com Sanja Matsuri（2027年は5月14日〜16日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-05-16",
+      "start": "07:00",
+      "end": "20:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "7:00 宮出し（本社神輿3基）、そのあと各町渡御、14:00 巫女舞奉奏・巫女舞教室、15:00 奉納舞踊、16:00 和太鼓奉演、19:00〜20:00ごろ 宮入り。日程は変わることがある",
+      "sources": [
+        {
+          "url": "https://asakusajinja.jp/sanjamatsuri/schedule/",
+          "title": "浅草神社 三社祭 日程（令和9年 5月14日〜16日。変更の可能性あり）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.japan-guide.com/e/e3063.html",
+          "title": "japan-guide.com Sanja Matsuri（2027年は5月14日〜16日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "東京メトロ銀座線・都営浅草線・東武線 浅草駅",
+        "walkMinutes": [7, 12]
+      },
+      {
+        "name": "つくばエクスプレス 浅草駅",
+        "walkMinutes": [10, 15]
+      }
+    ],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [
+      "5月16日のお祭り広場：雷門通りは10:00〜19:00、馬道通りは10:00〜17:00に交通規制"
+    ],
+    "sources": [
+      {
+        "url": "https://asakusajinja.jp/asakusajinja/map/",
+        "title": "浅草神社 アクセス方法",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://asakusajinja.jp/sanjamatsuri/schedule/",
+        "title": "浅草神社 三社祭 日程（令和9年 5月14日〜16日。変更の可能性あり）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "sensoji",
+      "name": "浅草寺",
+      "kind": "sightseeing",
+      "summary": "隅田川で引き上げられた観音像に始まると伝わる、628年創建の寺。現在の本堂は1958年の落成。神輿の連合渡御はここの本堂裏広場から出る。4〜9月の本堂は6:00〜17:00",
+      "location": {
+        "lat": 35.7148,
+        "lng": 139.7967
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "06:00",
+        "close": "17:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.senso-ji.jp/about/",
+          "title": "浅草寺 浅草寺について（縁起、本堂の開堂時間 4〜9月は6:00〜17:00）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://asakusajinja.jp/sanjamatsuri/about/",
+      "title": "浅草神社 三社祭とは（由来、44ヶ町、神輿約100基、人出 約180万人）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://asakusajinja.jp/sanjamatsuri/schedule/",
+      "title": "浅草神社 三社祭 日程（令和9年 5月14日〜16日。変更の可能性あり）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.japan-guide.com/e/e3063.html",
+      "title": "japan-guide.com Sanja Matsuri（2027年は5月14日〜16日）",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.japan.travel/en/spot/1705/",
+      "title": "日本政府観光局 Sanja Festival（日曜は安全のため門内で見物できない、屋台あり）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20002085",
+      "title": "るるぶ&more. 三社祭（2026年5月15日〜17日、三社権現社に由来する名前）",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.walkerplus.com/event/ar0313e549158/",
+      "title": "ウォーカープラス 三社祭",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_355055/",
+      "title": "じゃらんnet 三社祭",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "よそから来た人が神輿を担げるか（担ぎ手は氏子の町会）",
+    "服装・持ち物・撮影の決まり",
+    "雨のときの神輿の扱い",
+    "主要駅から浅草駅までの所要時間",
+    "地元の味・祭りの日だけの食べ物",
+    "祭りの前後に寄れる食の店"
+  ]
+}

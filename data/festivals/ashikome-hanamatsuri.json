@@ -1,0 +1,282 @@
+{
+  "id": "ashikome-hanamatsuri",
+  "name": {
+    "ja": "足込の花祭",
+    "en": "Hanamatsuri of Ashikome"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "愛知県",
+      "name": "北設楽郡東栄町"
+    }
+  ],
+  "venue": {
+    "name": "足込集会所",
+    "lat": 35.1003,
+    "lng": 137.6967
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "七十五膳の供物を宿の2階にL字に並べる「天の祭」は、ここだけの古式",
+    "夜明けに伴鬼が大勢そろって舞庭に現れる場面",
+    "茂吉鬼が湯蓋の蜂の巣を払い落とし、落ちたお宝を見物人が拾う",
+    "釜の湯を振りまく湯ばやし。浴びると一年間健康で過ごせるという言い伝えがある"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "東栄町の花祭は国の重要無形民俗文化財で、約700年前に始まったと推定される",
+      "sources": [
+        {
+          "url": "https://www.town.toei.aichi.jp/hana_maturi/",
+          "title": "東栄町 花祭り公式サイト",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.town.toei.aichi.jp/5403.htm",
+          "title": "東栄町 花祭 Q&A",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "足込の花祭保存会が祭りの窓口を担い、地区で受け継ぐ",
+      "sources": [
+        {
+          "url": "https://www.town.toei.aichi.jp/5408.htm",
+          "title": "東栄町 足込地区の花祭",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "東栄町の花祭は1976年に国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.town.toei.aichi.jp/hana_maturi/",
+        "title": "東栄町 花祭り公式サイト",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "足込では、祭りのあと、願いがかなった人の首に「こうかずら」の切り草をかけ、神輿が釜を回る「花育て」が残る",
+      "source": {
+        "url": "https://www.town.toei.aichi.jp/5408.htm",
+        "title": "東栄町 足込地区の花祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "花祭は約700年前、吉野・熊野の修験道の影響を受けて始まったと推定されている",
+      "source": {
+        "url": "https://www.town.toei.aichi.jp/5403.htm",
+        "title": "東栄町 花祭 Q&A",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "おかめとひょっとこの面の舞「おつるひゃら」に味噌やご飯を塗られると縁起がよいとされる",
+      "source": {
+        "url": "https://www.town.toei.aichi.jp/5396.htm",
+        "title": "東栄町 花祭の流れと舞の種類",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "申し込みは要らない。舞庭で掛け声や歌ぐらに合わせて体を動かすことが勧められている。一力花は当日に申し込んで献銭すると自分のための舞を舞ってもらえ、自信があれば自分で舞ってもよい（金額は地区ごとに違う）。花見舞（のし袋に「お見舞」などと書き、一人2千円ほど）を会所に納めると、地区の品やお札、酒、けんちん汁などのお返しがある",
+    "rules": [
+      "舞手の動きを妨げない",
+      "観客（セイト衆）の場所を占領しない",
+      "車を運転する人は酒を飲まない",
+      "車で行くなら冬用タイヤを付ける"
+    ],
+    "dress": ["夜通しの祭りで冷え込むので、防寒の支度をする"],
+    "bring": ["湯ばやしで湯がかかるので着替え", "花見舞を入れたのし袋（一人2千円ほど）"],
+    "risk": {
+      "level": "medium",
+      "reason": "山あいの集落で夜通し行い、町は冷え込みへの備えと冬用タイヤを勧めている。終盤の湯ばやしでは釜の湯が見物人にもかかる"
+    },
+    "photo": {
+      "policy": "allowed",
+      "note": "撮影は禁止されていない。舞手の動きを妨げたり、観客の場所を占領したりしない"
+    },
+    "sources": [
+      {
+        "url": "https://www.town.toei.aichi.jp/5404.htm",
+        "title": "東栄町 花祭 マナーと楽しむポイント",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.town.toei.aichi.jp/5396.htm",
+        "title": "東栄町 花祭の流れと舞の種類（湯囃子で舞庭と見物人が濡れる）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-28",
+      "start": "14:00",
+      "end": "08:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "舞は11月28日（土）14:00 から翌29日（日）8:00 まで夜通し。神事は28日 8:00 に始まり、29日 10:00 ごろまで続く。見どころの伴鬼と茂吉鬼は夜明けごろ。時間は変わることがある",
+      "sources": [
+        {
+          "url": "https://www.town.toei.aichi.jp/5408.htm",
+          "title": "東栄町 足込地区の花祭（11/28 8:00 神事、14:00〜11/29 8:00 舞、10:00まで神事）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://aichinow.pref.aichi.jp/events/detail/1644/",
+          "title": "Aichi Now 花祭（東栄町 足込）（2026年11月28日・29日、8:00〜翌10:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.okuminavi.jp/search/detail.php?id=21",
+          "title": "キラッと奥三河観光ナビ 花祭（足込）（2026年は11月28日・29日、14:00ごろ〜翌8:00ごろ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-11-27",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年11月の第4土曜日から翌日まで（2027年の発表はまだない）。2026年は舞が14:00 から翌朝8:00 まで、神事は8:00 から翌10:00 ごろまでだった",
+      "sources": [
+        {
+          "url": "https://www.okuminavi.jp/search/detail.php?id=21",
+          "title": "キラッと奥三河観光ナビ 花祭（足込）（毎年11月第4土曜日から翌日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://aichinow.pref.aichi.jp/events/detail/1644/",
+        "title": "Aichi Now 花祭（東栄町 足込）（駐車場あり、鳳来峡IC・新城ICから車で約40分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.okuminavi.jp/search/detail.php?id=21",
+        "title": "キラッと奥三河観光ナビ 花祭（足込）（駐車場 約30台、東栄ICから約30分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "花見舞のお返しのけんちん汁・ご飯・漬物・酒",
+        "note": "花見舞（一人2千円以上）を会所に出すと、地区の品やお札とともにいただける。酒は売店でも売っている",
+        "sources": [
+          {
+            "url": "https://www.town.toei.aichi.jp/5404.htm",
+            "title": "東栄町 花祭 マナーと楽しむポイント",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "toei-onsen-hanamatsuri-no-yu",
+      "name": "とうえい温泉 花まつりの湯",
+      "kind": "rest",
+      "summary": "大千瀬川沿いの日帰り温泉。源泉掛け流しの湯や寝湯、サウナがある。夜通しの祭りの前後に体を温められる。水曜休み（祝日は営業）",
+      "location": {
+        "lat": 35.0745,
+        "lng": 137.7081
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "21:00",
+        "lastEntry": "20:00"
+      },
+      "closedDays": ["wed"],
+      "price": "大人800円、小人400円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://toueionsen.com/",
+          "title": "とうえい温泉 花まつりの湯（10:00〜21:00、最終受付20:00、水曜定休）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://aichinow.pref.aichi.jp/spots/detail/2158/",
+          "title": "Aichi Now とうえい温泉 花まつりの湯",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.town.toei.aichi.jp/5408.htm",
+      "title": "東栄町 足込地区の花祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.town.toei.aichi.jp/hana_maturi/",
+      "title": "東栄町 花祭り公式サイト",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://aichinow.pref.aichi.jp/events/detail/1644/",
+      "title": "Aichi Now 花祭（東栄町 足込）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "雨や雪のときの扱い",
+    "電車とバスで行く方法（最寄り駅とバス停、最終のバスの時刻）",
+    "名古屋駅・豊橋駅など玄関口の駅からの所要時間",
+    "2027年の開催の発表と時刻",
+    "会場のトイレ・休める場所と、夜通しの見学で寒さをしのげる場所",
+    "屋台・露店の有無",
+    "来場者数",
+    "会場の近くで夜に開いている食事処",
+    "とうえい温泉の最終受付と閉館の時刻（公式サイトは10:00〜21:00・最終受付20:00、県の観光サイトは最終受付19:00・営業終了20:00とも書いている）"
+  ]
+}

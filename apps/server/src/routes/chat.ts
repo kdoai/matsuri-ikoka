@@ -3,11 +3,16 @@ import {
   PreferencesRequestSchema,
   SessionRequestSchema,
   type SessionResponse,
+  type TripAnchor,
 } from "@matsuri-ikoka/schema";
 import type { Context, Hono } from "hono";
 import type { z } from "zod";
 import { preferencesLabel } from "../agent/briefing";
 import type { AgentRunner } from "../agent/runner";
+import type { FestivalStore } from "../data/festivalStore";
+import { refreshAnchorPlan, refuseAnchor } from "../domain/anchorPlan";
+import { todayInJapan } from "../domain/calendar";
+import type { StationPointIndex } from "../domain/travelEstimate";
 import type { StoragePersistence } from "../session/persistence";
 import type { Session, SessionStore } from "../session/sessionStore";
 import { apiError } from "./errors";
@@ -21,6 +26,12 @@ import { streamTurn } from "./turnStream";
 export interface ChatDeps {
   runner: AgentRunner & { sampleFor?(requested?: string): string | null };
   sessions: SessionStore;
+  /** 祭りのデータ。祭りを固定するときに、祭りと日を確かめる */
+  festivals: FestivalStore;
+  /** 駅の位置。祭りを固定した旅の組み立てで、移動を見積もる */
+  stations?: StationPointIndex;
+  /** 今日の日付。省略すると日本の今日 */
+  today?: () => string;
   /** 相談の途中の状態を保存の口に残し、別のインスタンスでも続けられるようにする */
   persistence?: StoragePersistence;
   /** 1日の相談の回数の上限（全体） */
@@ -115,6 +126,22 @@ function releasing(
   };
 }
 
+export const todayOf = (deps: Pick<ChatDeps, "today">): string => deps.today?.() ?? todayInJapan();
+
+/** 過ぎた日のアンカーを断るための今日。記録の再生は日付が記録のまま動かないので断らない */
+export const pastCheckDay = (deps: Pick<ChatDeps, "today" | "runner">): string | null =>
+  deps.runner.mode === "mock" ? null : todayOf(deps);
+
+/** 相談に必ず行く祭りを残す。祭りか日が変われば、開催の確かめからやり直す */
+function fixAnchor(session: Session, anchor: TripAnchor): void {
+  const same =
+    session.anchor?.festivalId === anchor.festivalId && session.anchor.date === anchor.date;
+  if (!same) session.anchorCheck = null;
+  session.anchor = anchor;
+  session.selectedFestivalId = anchor.festivalId;
+  session.cancelledAnchor = null;
+}
+
 function persistOf(deps: ChatDeps, session: Session): () => Promise<void> {
   return async () => {
     await deps.persistence?.saveSession(session);
@@ -144,7 +171,7 @@ export function registerChatRoutes(app: Hono, deps: ChatDeps) {
     }
     const session = deps.sessions.create({ replay });
     await deps.persistence?.saveSession(session);
-    return c.json({ sessionId: session.id } satisfies SessionResponse, 201);
+    return c.json({ sessionId: session.id, mode: deps.runner.mode } satisfies SessionResponse, 201);
   });
 
   app.post("/api/chat", async (c) => {
@@ -156,11 +183,43 @@ export function registerChatRoutes(app: Hono, deps: ChatDeps) {
     }
     // 別のインスタンスで始めた相談なら、保存の口から戻す
     await deps.persistence?.load(request.sessionId);
+    const { anchor } = request;
+    if (anchor !== undefined) {
+      const refusal = refuseAnchor(
+        deps.festivals.get(anchor.festivalId),
+        anchor.date,
+        pastCheckDay(deps),
+      );
+      if (refusal !== null) {
+        return c.json(apiError("bad_request", refusal.message, false), refusal.status);
+      }
+    }
     const opened = openSession(c, deps, request.sessionId);
     if (opened instanceof Response) return opened;
     const { session, release } = opened;
     // 画面で選んでいるこだわりを正とする。会話で切り替わったら、ツールが相談の状態を書き換える
     session.preferences = request.preferences;
+    // 次の手（ボタン）から探し直すときは、変えた条件を先に書き留める（コンシェルジュの要約にも出す）
+    const retry = request.search;
+    if (retry !== undefined) {
+      session.conditions = {
+        ...session.conditions,
+        ...(retry.when === undefined ? {} : { when: retry.when }),
+        ...(retry.nights === undefined ? {} : { nights: retry.nights }),
+        ...(retry.maxTravelMinutes === undefined
+          ? {}
+          : { maxTravelMinutes: retry.maxTravelMinutes }),
+      };
+    }
+    // 祭りを固定する。送られなかった発言でも、固定は相談の状態に残っている
+    if (anchor !== undefined) fixAnchor(session, anchor);
+    if (session.anchor !== null) {
+      refreshAnchorPlan(session, {
+        festival: deps.festivals.get(session.anchor.festivalId),
+        stations: deps.stations,
+        today: todayOf(deps),
+      });
+    }
     return streamTurn(
       c,
       session,
@@ -172,6 +231,7 @@ export function registerChatRoutes(app: Hono, deps: ChatDeps) {
               session,
               message: request.message,
               preferences: request.preferences,
+              ...(retry === undefined ? {} : { searchRetry: retry }),
               signal,
               progress,
             },

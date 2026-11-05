@@ -1,0 +1,301 @@
+{
+  "id": "hitoyama-noson-kabuki",
+  "name": {
+    "ja": "肥土山農村歌舞伎",
+    "en": "Hitoyama Rural Kabuki"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "香川県",
+      "name": "土庄町"
+    }
+  ],
+  "venue": {
+    "name": "肥土山離宮八幡神社 境内の舞台（肥土山農村歌舞伎舞台）",
+    "lat": 34.5033,
+    "lng": 134.2306
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "地元の住民が組ごとに交代で役者を務める、神社の祭りへの奉納の歌舞伎",
+    "花道・廻り舞台・奈落などの仕掛けを備えた、1900年に建て直された神社境内の舞台",
+    "上演の合間に、客席で割子弁当を広げて楽しむ",
+    "中山地区と合わせた「小豆島農村歌舞伎」は、国が記録を残すべき無形の民俗文化財に選んでいる"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1686年に始まったとされ、国の記録選択の民俗文化財になっている",
+      "sources": [
+        {
+          "url": "https://www.pref.kagawa.lg.jp/tochikai/midori_info/festival/nouson_kabuki.html",
+          "title": "香川県 小豆島の農村歌舞伎",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://online.bunka.go.jp/db/heritages/detail/262662",
+          "title": "文化遺産オンライン 小豆島農村歌舞伎",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "地区の約250戸を6組に分け、交代で役者を務める",
+      "sources": [
+        {
+          "url": "https://www.pref.kagawa.lg.jp/tochikai/midori_info/festival/nouson_kabuki.html",
+          "title": "香川県 小豆島の農村歌舞伎",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "1686年、ため池の蛙子池の完成を祝って住民が芝居を催したのが始まり",
+      "source": {
+        "url": "https://www.pref.kagawa.lg.jp/tochikai/midori_info/festival/nouson_kabuki.html",
+        "title": "香川県 小豆島の農村歌舞伎",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "役者は地区の約250戸を6つの組に分け、交代で務めている",
+      "source": {
+        "url": "https://www.pref.kagawa.lg.jp/tochikai/midori_info/festival/nouson_kabuki.html",
+        "title": "香川県 小豆島の農村歌舞伎",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "いまの舞台は、台風で壊れた前の建物を少し大きくして1900年に建てたもの",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/common/001552634.pdf",
+        "title": "観光庁 地域観光資源の多言語解説文 肥土山農村歌舞伎",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "明治の最盛期には島内約150か所で歌舞伎があり、いまは2地区の奉納だけが残る",
+      "source": {
+        "url": "https://online.bunka.go.jp/db/heritages/detail/262662",
+        "title": "文化遺産オンライン 小豆島農村歌舞伎",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": []
+  },
+  "occurrences": [
+    {
+      "date": "2025-05-03",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2025年の実績（県の観光協会の案内に日付が載る）",
+      "sources": [
+        {
+          "url": "https://travel.my-kagawa.jp/2024/summer/shoudoshima.html",
+          "title": "香川県観光協会 TRAVEL KAGAWA 讃岐の祭りと郷土芸能 小豆島エリア（肥土山 2025年5月3日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-05-03",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年5月3日に、離宮八幡神社の祭りの奉納として半日にわたり上演する（2027年の発表はまだない）。開演の時刻は未発表",
+      "sources": [
+        {
+          "url": "https://www.pref.kagawa.lg.jp/tochikai/midori_info/festival/nouson_kabuki.html",
+          "title": "香川県 小豆島の農村歌舞伎（毎年5月3日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://online.bunka.go.jp/db/heritages/detail/262662",
+          "title": "文化遺産オンライン 小豆島農村歌舞伎（肥土山は毎年5月3日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": []
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "割子弁当",
+        "note": "重ねた木箱に詰める弁当で、上演の合間に客席で食べる。会場で買えるかは分からない",
+        "sources": [
+          {
+            "url": "https://news.ksb.co.jp/article/15256948",
+            "title": "KSB瀬戸内海放送 肥土山農村歌舞伎の奉納（2024年5月6日）",
+            "checkedAt": "2026-11-04",
+            "confidence": "single"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "nakayama-senmaida",
+      "name": "中山千枚田",
+      "kind": "sightseeing",
+      "summary": "小豆島町中山の標高150〜250mの斜面に約800枚の田が連なる棚田で、日本の棚田百選に選ばれている。田や畦道は私有地で、立ち入りはできない",
+      "location": {
+        "lat": 34.5042,
+        "lng": 134.2394
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.my-kagawa.jp/course/2421/",
+          "title": "香川県観光協会 うどん県旅ネット モデルコース（中山千枚田）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://travel.my-kagawa.jp/2024/summer/shoudoshima.html",
+          "title": "香川県観光協会 TRAVEL KAGAWA 小豆島エリア（田や畦道は私有地で立入禁止）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "komame-shokudo",
+      "name": "こまめ食堂",
+      "kind": "food",
+      "summary": "中山農村歌舞伎舞台の隣の食堂。棚田の米と湧き水で炊いたおにぎりの定食や、小豆島の素麺がある。火曜定休のほか不定休がある",
+      "location": {
+        "lat": 34.5032,
+        "lng": 134.2393
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "15:30",
+        "lastEntry": "14:30"
+      },
+      "closedDays": ["tue"],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.my-kagawa.jp/course/2421/",
+          "title": "香川県観光協会 うどん県旅ネット モデルコース（こまめ食堂 11:00〜15:30、L.O.14:30、火曜定休）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.town.shodoshima.lg.jp/kanko/eat/taberu/lunch/komame_syokudou.html",
+          "title": "小豆島町 こまめ食堂（2020年の掲載。11時〜16時、L.O.15時、火曜定休）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "hoshoin-shinpaku",
+      "name": "宝生院のシンパク",
+      "kind": "sightseeing",
+      "summary": "小豆島霊場第54番・宝生院の境内にある、日本最大とされる真柏の大樹。国の特別天然記念物で、樹齢1600年以上と伝わる。幹回りは16.9m",
+      "location": {
+        "lat": 34.4933,
+        "lng": 134.1971
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.my-kagawa.jp/point/316",
+          "title": "香川県観光協会 うどん県旅ネット 宝生院のシンパク",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.town.tonosho.kagawa.jp/gyosei/soshiki/shoko/4/3/509.html",
+          "title": "土庄町 宝生院のシンパク",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.pref.kagawa.lg.jp/tochikai/midori_info/festival/nouson_kabuki.html",
+      "title": "香川県 小豆島の農村歌舞伎",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://online.bunka.go.jp/db/heritages/detail/262662",
+      "title": "文化遺産オンライン 小豆島農村歌舞伎",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://travel.my-kagawa.jp/2024/summer/shoudoshima.html",
+      "title": "香川県観光協会 TRAVEL KAGAWA 讃岐の祭りと郷土芸能 小豆島エリア",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、開演・終演の時刻、演目（主催者の告知が見つからない）",
+    "2026年の開催の実績（主催者・町の告知が見つからない）",
+    "雨のときの扱い",
+    "見学の仕方（桟敷席の使い方、席の予約や観覧料の有無）",
+    "服装・持ち物・撮影の決まり、危険度",
+    "会場への行き方（島に鉄道はない。土庄港からの路線バスの便と所要時間を公式の案内で確かめられなかった）",
+    "2027年の駐車場と交通規制",
+    "割子弁当を会場で買えるか、屋台の有無",
+    "会場から周辺の場所までの徒歩の時間",
+    "宝生院のシンパクの拝観時間と休み",
+    "こまめ食堂の営業時間（県の観光協会は11:00〜15:30、町の2020年の掲載は11時〜16時で食い違う）"
+  ]
+}

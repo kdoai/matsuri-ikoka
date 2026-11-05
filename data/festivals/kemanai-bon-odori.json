@@ -1,0 +1,389 @@
+{
+  "id": "kemanai-bon-odori",
+  "name": {
+    "ja": "毛馬内の盆踊",
+    "en": "Kemanai Bon Odori"
+  },
+  "category": "dance",
+  "municipalities": [
+    {
+      "prefecture": "秋田県",
+      "name": "鹿角市"
+    }
+  ],
+  "venue": {
+    "name": "毛馬内こもせ通り周辺",
+    "lat": 40.2715,
+    "lng": 140.7669
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu"],
+  "highlights": [
+    "かがり火を細長く囲み、踊り手が内側を向いて踊る輪踊り",
+    "大太鼓と笛で踊る「大の坂」と、唄だけで踊る「甚句」の2つ",
+    "紋付や留袖に豆絞りの手ぬぐいで頬被りをした踊り手の姿",
+    "撮影許可証があれば、決まった数分間だけ輪の中から撮影できる"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "江戸時代中ごろから踊られ、1998年に国の重要無形民俗文化財になった",
+      "sources": [
+        {
+          "url": "https://www.ink.or.jp/~kemanai09/yurai/",
+          "title": "毛馬内盆踊り 公式ホームページ 毛馬内盆踊りの由来",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "毛馬内盆踊保存会が保護団体として受け継ぐ",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/161361",
+          "title": "文化遺産オンライン 毛馬内の盆踊（保護団体 毛馬内盆踊保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "文献から、少なくとも江戸時代の中ごろには踊られていたと分かっている",
+      "source": {
+        "url": "https://www.ink.or.jp/~kemanai09/yurai/",
+        "title": "毛馬内盆踊り 公式ホームページ 毛馬内盆踊りの由来",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "甚句は約450年前、戦から戻った将兵をねぎらったのが始まりとされる",
+      "source": {
+        "url": "https://www.ink.or.jp/~kemanai09/yurai/",
+        "title": "毛馬内盆踊り 公式ホームページ 毛馬内盆踊りの由来",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "頬被りは、藩境で争いが多かった時代に女性が身を隠すための変装の名残と言われる",
+      "source": {
+        "url": "https://www.ink.or.jp/~kemanai09/yurai/",
+        "title": "毛馬内盆踊り 公式ホームページ 毛馬内盆踊りの由来",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1998年に国の重要無形民俗文化財になり、秋田県の三大盆踊りの1つに数えられる",
+      "source": {
+        "url": "https://www.ink.or.jp/~kemanai09/yurai/",
+        "title": "毛馬内盆踊り 公式ホームページ 毛馬内盆踊りの由来",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "一般の来場者も踊りの輪に加われる。衣装の貸し出しはないので浴衣などを自分で用意し、前もって練習したい人向けの講習会は主催者に相談する",
+    "rules": [
+      "踊りの輪の中で撮影するには撮影許可証（500円）が要り、係員の放送の指示に従って5分ほどの撮影時間に撮る",
+      "大太鼓に近づかない",
+      "踊り手や歌い手にポーズを頼まない",
+      "撮影許可証は、踊る人の数によって販売数が限られることがある"
+    ],
+    "dress": ["踊りに加わるなら、浴衣などを自分で用意する（衣装の貸し出しはない）"],
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": {
+      "policy": "restricted",
+      "note": "輪の中での撮影は撮影許可証（500円）を持ち、決められた数分間だけ。大太鼓に近づくことと、踊り手へのポーズの指示はできない"
+    },
+    "sources": [
+      {
+        "url": "https://www.ink.or.jp/~kemanai09/",
+        "title": "毛馬内盆踊り 公式ホームページ（観覧椅子席と撮影許可証の案内）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.ink.or.jp/~kemanai09/info/",
+        "title": "毛馬内盆踊り 公式ホームページ 総合案内（一般の参加、衣装の貸し出しなし）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://explorekazuno.jp/event/kemanaibonodori2026/",
+        "title": "旅するかづの（かづの観光物産公社） 毛馬内盆踊り 2026",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-21",
+      "start": "19:30",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": "雨のときは十和田市民センター体育館で開催（内容や時刻が変わることがある）",
+      "note": "2026年の実績。17:30〜18:30 子どもの盆踊りの合同披露、19:10 呼び太鼓、19:30 大の坂踊り、20:10 甚句踊り、20:50〜21:00 毛馬内じょんから踊り。観覧椅子席（500円、400席）と撮影許可証（500円）は当日14:00から会場で販売、立ち見は無料",
+      "sources": [
+        {
+          "url": "https://www.ink.or.jp/~kemanai09/",
+          "title": "毛馬内盆踊り 公式ホームページ（2026年8月21日〜23日の日程）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://explorekazuno.jp/event/kemanaibonodori2026/",
+          "title": "旅するかづの（かづの観光物産公社） 毛馬内盆踊り 2026年8月21日〜23日",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-08-22",
+      "start": "19:30",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": "雨のときは十和田市民センター体育館で開催（内容や時刻が変わることがある）",
+      "note": "2026年の実績。18:00〜19:00 鹿角の昔話の語り、19:00 呼び太鼓と鹿角ふるさと大太鼓の共演、19:30 大の坂踊り、20:10 甚句踊り、20:50〜21:00 じょんから踊り",
+      "sources": [
+        {
+          "url": "https://www.ink.or.jp/~kemanai09/",
+          "title": "毛馬内盆踊り 公式ホームページ（2026年8月21日〜23日の日程）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://explorekazuno.jp/event/kemanaibonodori2026/",
+          "title": "旅するかづの（かづの観光物産公社） 毛馬内盆踊り 2026年8月21日〜23日",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-08-23",
+      "start": "19:30",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": "雨のときは十和田市民センター体育館で開催（内容や時刻が変わることがある）",
+      "note": "2026年の実績。18:00〜19:00 鹿角の昔話の語り、19:10 呼び太鼓、19:30 大の坂踊り、20:10 甚句踊り、20:50〜21:00 毛馬内じょんから踊り",
+      "sources": [
+        {
+          "url": "https://www.ink.or.jp/~kemanai09/",
+          "title": "毛馬内盆踊り 公式ホームページ（2026年8月21日〜23日の日程）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://explorekazuno.jp/event/kemanaibonodori2026/",
+          "title": "旅するかづの（かづの観光物産公社） 毛馬内盆踊り 2026年8月21日〜23日",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-21",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2027年の発表はまだない）。鹿角市の案内の「毎年8月21〜23日」から見込んだ日で、2027年は土曜〜月曜。主催者の総合案内では例年19:00〜21:10ごろ（年の記載なし）。日ごとの行事は2026年は日によって違った",
+      "sources": [
+        {
+          "url": "https://www.city.kazuno.lg.jp/kanko_bunka_sports/kankojoho/9/3/3680.html",
+          "title": "鹿角市 毛馬内の盆踊（毎年8月21〜23日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.ink.or.jp/~kemanai09/info/",
+          "title": "毛馬内盆踊り 公式ホームページ 総合案内（毎年8月21日・22日・23日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-22",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2027年の発表はまだない）。鹿角市の案内の「毎年8月21〜23日」から見込んだ日で、2027年は土曜〜月曜。主催者の総合案内では例年19:00〜21:10ごろ（年の記載なし）。日ごとの行事は2026年は日によって違った",
+      "sources": [
+        {
+          "url": "https://www.city.kazuno.lg.jp/kanko_bunka_sports/kankojoho/9/3/3680.html",
+          "title": "鹿角市 毛馬内の盆踊（毎年8月21〜23日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.ink.or.jp/~kemanai09/info/",
+          "title": "毛馬内盆踊り 公式ホームページ 総合案内（毎年8月21日・22日・23日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-23",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2027年の発表はまだない）。鹿角市の案内の「毎年8月21〜23日」から見込んだ日で、2027年は土曜〜月曜。主催者の総合案内では例年19:00〜21:10ごろ（年の記載なし）。日ごとの行事は2026年は日によって違った",
+      "sources": [
+        {
+          "url": "https://www.city.kazuno.lg.jp/kanko_bunka_sports/kankojoho/9/3/3680.html",
+          "title": "鹿角市 毛馬内の盆踊（毎年8月21〜23日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.ink.or.jp/~kemanai09/info/",
+          "title": "毛馬内盆踊り 公式ホームページ 総合案内（毎年8月21日・22日・23日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 十和田南駅",
+        "walkMinutes": [20, 25],
+        "note": "鹿角市の案内では徒歩約20分。るるぶ&more.ではバスで約5分、毛馬内上町バス停から徒歩1分（便の数は分からない）"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "盛岡駅",
+        "minutes": [135, 141],
+        "route": "JR花輪線の普通列車（大館行き）、乗り換えなし（調べた列車は1923D・1925D・1935D）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.city.kazuno.lg.jp/kanko_bunka_sports/kankojoho/9/3/3680.html",
+        "title": "鹿角市 毛馬内の盆踊（JR十和田南駅から徒歩約20分、十和田ICから車で約10分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.ink.or.jp/~kemanai09/access/",
+        "title": "毛馬内盆踊り 公式ホームページ 会場までのアクセス（車での所要時間）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20003028",
+        "title": "るるぶ&more. 毛馬内の盆踊（駐車場100台・無料、十和田南駅からバス約5分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      },
+      {
+        "url": "https://timetables.jreast.co.jp/2611/train/035/038101.html",
+        "title": "JR東日本 時刻表 花輪線 普通 1923D（盛岡 5:00 発、十和田南 7:15 着）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://timetables.jreast.co.jp/2611/train/005/007831.html",
+        "title": "JR東日本 時刻表 花輪線 普通 1925D（盛岡 6:55 発、十和田南 9:14 着）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://timetables.jreast.co.jp/2611/train/035/038111.html",
+        "title": "JR東日本 時刻表 花輪線 普通 1935D（盛岡 16:39 発、十和田南 19:00 着）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "kazuno-senjin-kenshokan",
+      "name": "鹿角市先人顕彰館",
+      "kind": "sightseeing",
+      "summary": "毛馬内にある、東洋史学者の内藤湖南と十和田湖のヒメマス養殖に尽くした和井内貞行など、鹿角ゆかりの先人の資料を展示する館。月・木が祝日なら翌平日が休み",
+      "location": {
+        "lat": 40.278,
+        "lng": 140.7515
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": ["mon", "thu"],
+      "price": "一般220円、高校生110円、小中学生60円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.kazuno.lg.jp/kanko_bunka_sports/bunkazai/4/3914.html",
+          "title": "鹿角市 先人顕彰館（2026年4月から月・木休館）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.ink.or.jp/~kemanai09/",
+      "title": "毛馬内盆踊り 公式ホームページ（毛馬内北の盆実行委員会）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.kazuno.lg.jp/kanko_bunka_sports/kankojoho/9/3/3680.html",
+      "title": "鹿角市 毛馬内の盆踊",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.ink.or.jp/~kemanai09/map/",
+      "title": "毛馬内盆踊り 公式ホームページ 会場案内マップ（会場の位置）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://explorekazuno.jp/event/kemanaibonodori2026/",
+      "title": "旅するかづの（かづの観光物産公社） 毛馬内盆踊り（会場 毛馬内こもせ通り周辺）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、日ごとの行事・時刻",
+    "危険度（会場でかがり火を焚くが、火や混雑についての主催者の注意が見つからない）と持ち物",
+    "秋田駅から十和田南駅までの所要時間（大館駅で花輪線に乗り換えるが、通しの数字を確かめていない）",
+    "祭りの日の駐車場（公式の案内が見つからず、るるぶ&more.の100台・無料だけ）と交通規制の有無",
+    "十和田南駅から会場へのバスの便（祭りの夜の帰りの便）",
+    "屋台の有無と、祭りならではの食べもの",
+    "会場の近くの食事の場所",
+    "先人顕彰館の緯度・経度（国土地理院の住所検索の十和田毛馬内の代表点で、館そのものの位置ではない）と、会場からの徒歩の時間。2027年8月23日（月）は休館日に当たる",
+    "踊り手と見物客の数（規模は、1つの会場で一晩の行事を3日くり返すものとして S にした）"
+  ]
+}

@@ -1,0 +1,325 @@
+{
+  "id": "nachi-no-ogi-matsuri",
+  "name": {
+    "ja": "那智の扇祭り",
+    "en": "Nachi Fire Festival"
+  },
+  "category": "fire",
+  "municipalities": [
+    {
+      "prefecture": "和歌山県",
+      "name": "那智勝浦町"
+    }
+  ],
+  "venue": {
+    "name": "熊野那智大社・別宮飛瀧神社（那智御瀧）",
+    "lat": 33.6753,
+    "lng": 135.8884
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu", "jnto"],
+  "highlights": [
+    "12本の大松明が滝の前の参道を炎で清め、扇神輿を迎える御火行事",
+    "金扇で那智御瀧の姿を表した、高さ約6mの扇神輿12体の渡御",
+    "特設舞台で奉納される、ユネスコ無形文化遺産の那智田楽と大和舞",
+    "カラス帽の神職が打松で神輿の神鏡を打つ扇褒神事"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "2015年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.pref.wakayama.lg.jp/prefg/500700/mokuroku/d00155459.html",
+          "title": "和歌山県 国指定文化財（民俗文化財）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "白装束の氏子が12本の大たいまつを1人1本ずつ担ぐ",
+      "sources": [
+        {
+          "url": "https://kumanichi.com/articles/2013566",
+          "title": "熊本日日新聞（共同通信）那智の扇祭り、氏子ら披露（2026年7月14日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "扇神輿は高さ1丈8尺3寸（約6m）で、32本の金扇などで飾り那智御瀧を表す",
+      "source": {
+        "url": "https://kumanonachitaisha.or.jp/event/fan/",
+        "title": "熊野那智大社 那智の扇祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "道を清める大松明は全部で12体あり、いちばん重いものは約50kgになる",
+      "source": {
+        "url": "https://kumanonachitaisha.or.jp/event/fan/",
+        "title": "熊野那智大社 那智の扇祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "仁徳天皇五年（317年）に神々を那智山の中腹へ遷した故事に由来する祭り",
+      "source": {
+        "url": "https://kumanonachitaisha.or.jp/event/",
+        "title": "熊野那智大社 年間行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "平成27年（2015）3月2日に、国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.pref.wakayama.lg.jp/prefg/500700/mokuroku/d00155459.html",
+        "title": "和歌山県 国指定文化財（民俗文化財）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "御火行事の観覧エリアでは、規制線の内側に入らない",
+      "当日は混雑するので、時間に余裕をもって動く",
+      "那智山の駐車場は例年午前中に満車になるため、公共交通機関で来る",
+      "別宮飛瀧神社（那智御瀧）は、2023年7月から車椅子での参拝を受け入れていない（搬入路の勾配と落石のおそれのため）"
+    ],
+    "dress": ["帽子（熱中症対策）", "履きなれた靴（石段の上り下りが多く、滑りやすい所がある）"],
+    "bring": ["こまめに飲む水分", "日傘"],
+    "risk": {
+      "level": "medium",
+      "reason": "滝の前の石段で12本の大松明を燃やす行事を、規制線の外から見る。主催の案内では、夏の暑さと混雑、滑りやすい石段に注意を求めている"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://prtimes.jp/main/html/rd/p/000000026.000182609.html",
+        "title": "和歌山県 プレスリリース 日本三大火祭り「那智の扇祭り」を7月14日に催行（2026年6月29日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://kumanonachitaisha.or.jp/event/fan/",
+        "title": "熊野那智大社 那智の扇祭り（交通・駐車場の案内）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://kumanonachitaisha.or.jp/news/information/203/",
+        "title": "熊野那智大社 別宮 飛瀧神社（那智御瀧）への車椅子受入れ停止について",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-07-14",
+      "start": "10:00",
+      "end": "15:30",
+      "status": "announced",
+      "rainPolicy": "荒天や自然災害のときは、神事の内容を一部変えるか中止することがある（和歌山県の案内）",
+      "note": "2026年の回（和歌山県の発表。火曜日）。11:00 大和舞、11:30 那智田楽、13:00 扇神輿渡御祭、14:00ごろから御火行事・扇褒神事。神社の案内の例年の流れでは、10:00 御本社大前の儀、12:15 御田植式、13:30 伏拝扇立神事、14:20 御瀧本大前の儀、14:50 御田刈式・那瀑舞、15:30 扇神輿還御祭。前日の7月13日17:00から宵宮祭。当日に行われたことは共同通信の配信記事でも伝えられた",
+      "sources": [
+        {
+          "url": "https://prtimes.jp/main/html/rd/p/000000026.000182609.html",
+          "title": "和歌山県 プレスリリース 日本三大火祭り「那智の扇祭り」を7月14日に催行（2026年6月29日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://kumanonachitaisha.or.jp/event/fan/",
+          "title": "熊野那智大社 那智の扇祭り（当日の流れ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://kumanonachitaisha.or.jp/event/",
+          "title": "熊野那智大社 年間行事（7月13日 宵宮祭、7月14日 例大祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar0730e04756/data.html",
+          "title": "ウォーカープラス 例大祭「那智の扇祭り」詳細データ（2026年7月14日 10:00〜15:30）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        },
+        {
+          "url": "https://kumanichi.com/articles/2013566",
+          "title": "熊本日日新聞（共同通信）那智の扇祭り、氏子ら披露（2026年7月14日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-14",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2027年の発表はまだない）。熊野那智大社の案内の「毎年7月14日」から見込んだ日で、2027年は水曜日。2026年は10:00〜15:30で、14:00ごろから御火行事だった",
+      "sources": [
+        {
+          "url": "https://kumanonachitaisha.or.jp/event/fan/",
+          "title": "熊野那智大社 那智の扇祭り（毎年7月14日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "熊野御坊南海バス 那智山バス停",
+        "walkMinutes": [15, 20],
+        "note": "和歌山県の案内ではバス停から徒歩約15〜20分。神社の案内では、祭りの日の路線バスの乗り降りは「那智山」バス停だけ（例年）"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "紀伊勝浦駅",
+        "minutes": [30, 40],
+        "route": "熊野御坊南海バスの那智山行きで約30分（駅のバスのりばの表記は「勝浦駅」）。新大阪駅から紀伊勝浦駅へはJR特急くろしおで約4時間"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [
+      "那智山の有料駐車場は例年10:30ごろ満車になり、那智山の中腹の臨時駐車場（大門坂駐車場など）へ案内される。臨時駐車場からは熊野御坊南海バスの無料のシャトルバスが出る（神社の案内、例年）",
+      "路線バスはふだんどおり走るが、祭りの日の乗り降りは「那智山」バス停だけ。タクシーは「那智の滝前」バス停の近くで降りられる（神社の案内、例年）",
+      "社務所下の神社の駐車場は30台で、神社防災道路の通行料800円がかかる（ふだんの案内）"
+    ],
+    "sources": [
+      {
+        "url": "https://kumanonachitaisha.or.jp/event/fan/",
+        "title": "熊野那智大社 那智の扇祭り（交通・駐車場の案内）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://kumanonachitaisha.or.jp/access/",
+        "title": "熊野那智大社 アクセス",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://prtimes.jp/main/html/rd/p/000000026.000182609.html",
+        "title": "和歌山県 プレスリリース 那智の扇祭り（那智山バス停から徒歩約15〜20分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002541",
+        "title": "るるぶ&more. 那智の扇祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "nachisan-seigantoji",
+      "name": "那智山青岸渡寺",
+      "kind": "sightseeing",
+      "summary": "熊野那智大社の隣にある、西国三十三所の第一番札所。本堂は1590年に豊臣秀吉が再建した桃山時代の建物。境内の三重塔は1972年の再建で、8:30〜16:00に中を拝観できる",
+      "location": {
+        "lat": 33.6691,
+        "lng": 135.8899
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "07:00",
+        "close": "16:30"
+      },
+      "closedDays": null,
+      "price": "境内は無料。三重塔は大人300円、子供200円",
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://nachikan.jp/spot/581/",
+          "title": "那智勝浦観光機構 那智山青岸渡寺",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://nachikan.jp/spot/2484/",
+          "title": "那智勝浦観光機構 那智山青岸渡寺三重塔",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%9D%92%E5%B2%B8%E6%B8%A1%E5%AF%BA",
+          "title": "国土地理院 地名検索 青岸渡寺（緯度・経度）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://kumanonachitaisha.or.jp/event/fan/",
+      "title": "熊野那智大社 那智の扇祭り",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://kumanonachitaisha.or.jp/event/",
+      "title": "熊野那智大社 年間行事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.pref.wakayama.lg.jp/prefg/500700/mokuroku/d00155459.html",
+      "title": "和歌山県 国指定文化財（民俗文化財）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.japan.travel/en/spot/62/",
+      "title": "日本政府観光局 Travel Japan Nachi Fire Festival",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%82%A3%E6%99%BA%E5%A4%A7%E6%BB%9D",
+      "title": "国土地理院 地名検索 那智大滝（会場の緯度・経度）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、当日の時刻",
+    "御火行事を見られる場所と、観覧エリアの規制線の範囲",
+    "撮影の決まり（三脚・ドローンなど。主催の案内に記載がない）",
+    "雨のときの扱いの決まり（荒天時に変更・中止があるとだけ案内されている）",
+    "2026年の交通規制と臨時駐車場・シャトルバスの時間（神社の案内は年の書いていない例年の分）",
+    "祭りのあと那智山から紀伊勝浦駅へ戻る路線バスの本数と最終便（熊野御坊南海バスの公式の時刻表を確かめられていない）",
+    "那智山バス停から御瀧本（飛瀧神社）までの徒歩の時間（県の案内の徒歩約15〜20分は行き先がはっきりしない）",
+    "露店が出るか、祭りならではの食べもの",
+    "見物客の数",
+    "那智山の食事処・茶屋の営業時間と定休日（公式の案内を見つけられなかった）",
+    "青岸渡寺の休みの日と、大手の観光サイトへの掲載（知名度を確かめきれなかった）"
+  ]
+}

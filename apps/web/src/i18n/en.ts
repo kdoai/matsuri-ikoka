@@ -1,9 +1,161 @@
+import type { FestivalSearchNext, SearchSuggestion } from "@matsuri-ikoka/schema";
 import type { Messages } from "./ja";
 
 // English. Festival data and model text (names, bubbles) stay as they arrive.
 
 const range = (min: number, max: number) => (min === max ? `${min}` : `${min}–${max}`);
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+
+// Weekdays for the calendar (Sunday first). A date's weekday is counted from the calendar date
+const EN_WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+const weekdayOf = (date: string) => new Date(`${date}T00:00:00Z`).getUTCDay();
+
+// Choices for the guided consultation (used for the buttons and for the summary we send)
+const consultLabels = {
+  party: "Who",
+  schedule: "Dates",
+  origin: "Departure station",
+  destination: "Where to",
+  activities: "Besides the festival",
+  food: "Food to try",
+  pace: "Pace",
+  budget: "Budget",
+  note: "Anything else",
+};
+const consultOptions = {
+  party: {
+    solo: "Just me",
+    family: "With family",
+    friends: "With friends",
+    partner: "With a partner",
+  },
+  schedule: {
+    thisWeekend: "This weekend",
+    nextWeekend: "Next weekend",
+    thisMonth: "This month",
+    nextMonth: "Next month",
+    dates: "Pick dates",
+    undecided: "Dates not set",
+  },
+  destination: {
+    hokkaido: "Hokkaido",
+    tohoku: "Tohoku",
+    kanto: "Kanto",
+    chubu: "Chubu",
+    kinki: "Kinki",
+    chugoku: "Chugoku",
+    shikoku: "Shikoku",
+    kyushu: "Kyushu & Okinawa",
+  },
+  activities: {
+    onsen: "Hot springs",
+    sightseeing: "Sightseeing",
+    photo: "Photos",
+    experience: "Hands-on",
+    nature: "Nature",
+    history: "History",
+    shopping: "Shopping",
+  },
+  food: {
+    seafood: "Seafood",
+    meat: "Meat dishes",
+    vegetables: "Mostly vegetables",
+    noodles: "Noodles (soba, udon, ramen)",
+    local_dish: "Local dishes",
+    local_gourmet: "Local comfort food",
+    washoku: "Japanese cuisine",
+    sweets: "Sweets & cafés",
+    stalls: "Street stalls",
+    local_drinks: "Local sake & craft beer",
+  },
+  pace: { relaxed: "Relaxed", normal: "Normal", packed: "Packed" },
+  budget: {
+    under10k: "Up to ¥10,000",
+    under30k: "Up to ¥30,000",
+    under50k: "Up to ¥50,000",
+    more: "More",
+  },
+};
+const consultDietary = {
+  vegetarian: "Vegetarian",
+  vegan: "Vegan",
+  halal: "Halal",
+  allergy: "Food allergies",
+  no_raw: "No raw food",
+};
+const consultTransport = {
+  car: "Car",
+  shinkansen: "Shinkansen",
+  local_train: "Local train",
+  bus: "Bus",
+  ferry: "Ferry",
+  plane: "Plane",
+  rental_car: "Rental car",
+  walk: "Walking",
+};
+const consultStay = {
+  dayTrip: "Day trip",
+  oneNight: "1 night",
+  twoNights: "2 nights",
+  longer: "3+ nights",
+};
+const consultMembers = {
+  adults: "Adults (13+)",
+  children: "Children (6–12)",
+  infants: "Little ones (under 6)",
+  seniors: "Seniors (65+)",
+  friends: "People",
+};
+const prefectures = {
+  "01": "Hokkaido",
+  "02": "Aomori",
+  "03": "Iwate",
+  "04": "Miyagi",
+  "05": "Akita",
+  "06": "Yamagata",
+  "07": "Fukushima",
+  "08": "Ibaraki",
+  "09": "Tochigi",
+  "10": "Gunma",
+  "11": "Saitama",
+  "12": "Chiba",
+  "13": "Tokyo",
+  "14": "Kanagawa",
+  "15": "Niigata",
+  "16": "Toyama",
+  "17": "Ishikawa",
+  "18": "Fukui",
+  "19": "Yamanashi",
+  "20": "Nagano",
+  "21": "Gifu",
+  "22": "Shizuoka",
+  "23": "Aichi",
+  "24": "Mie",
+  "25": "Shiga",
+  "26": "Kyoto",
+  "27": "Osaka",
+  "28": "Hyogo",
+  "29": "Nara",
+  "30": "Wakayama",
+  "31": "Tottori",
+  "32": "Shimane",
+  "33": "Okayama",
+  "34": "Hiroshima",
+  "35": "Yamaguchi",
+  "36": "Tokushima",
+  "37": "Kagawa",
+  "38": "Ehime",
+  "39": "Kochi",
+  "40": "Fukuoka",
+  "41": "Saga",
+  "42": "Nagasaki",
+  "43": "Kumamoto",
+  "44": "Oita",
+  "45": "Miyazaki",
+  "46": "Kagoshima",
+  "47": "Okinawa",
+};
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 export const en: Messages = {
   app: {
@@ -12,12 +164,18 @@ export const en: Messages = {
     lead: "We find festivals that rarely reach visitors from outside, and turn them into a plan and a travel booklet that explains the local customs.",
     enter: "Come in",
     entering: "Stepping inside…",
+    loadingScene: (percent: number) => `Lighting up the shop  ${percent}%`,
+    preparingScene: "Getting the shop ready…",
     restart: "Start over",
     language: "Language",
     switchTo: "日本語",
     soundOn: "Sound: on",
     soundOff: "Sound: off",
-    soundHint: "Plays taiko, wooden clapper and stamp sounds",
+    soundHint: "Plays taiko background music, plus taiko, wooden clapper and stamp sounds",
+    soundChoice: "Sound",
+    soundChoiceOn: "On",
+    soundChoiceOff: "Off",
+    soundChoiceNote: "You can change this in the settings once inside",
   },
   dialogue: {
     thinking: "One moment, please",
@@ -27,12 +185,308 @@ export const en: Messages = {
     openLog: "Conversation log",
     log: "Conversation log",
     closeLog: "Close",
+    more: "Read more",
+    less: "Show less",
+    freeInput: "Write your own request",
+    replies: {
+      label: "Reply options",
+      plan: "See the plan",
+      map: "Check the map",
+      decide: "Go with this plan",
+      decideMessage: "I'll go with this plan.",
+      decideConfirm: "Decide and make the booklet",
+      decideConfirmLabel: "Confirm your decision",
+      slower: "Make it more relaxed",
+      slowerMessage: "Please make the plan a little more relaxed.",
+      adjust: "Adjust a little",
+      adjustLabel: "Ways to adjust",
+      back: "Back",
+      other: "Other",
+    },
+    waitLines: {
+      search: [
+        "Let me look into it",
+        "Hmm, which one would suit you…",
+        "I'll ask the staff",
+        "Looking for festivals that fit your dates",
+      ],
+      plan: [
+        "Let me put a plan together",
+        "Hmm, which order works best…",
+        "I'll ask the staff",
+        "Checking the travel times",
+      ],
+      shiori: [
+        "I'll start on your travel booklet",
+        "Checking the times and etiquette",
+        "I'll have the staff look it over too",
+        "Making the packing list as well",
+      ],
+    },
+  },
+  consult: {
+    title: "Trip consultation",
+    progress: (current: number, total: number) => `${current} / ${total}`,
+    steps: {
+      party: "Who",
+      schedule: "Dates",
+      origin: "From",
+      destination: "Where",
+      activities: "Fun",
+      food: "Food",
+      pace: "Pace",
+      budget: "Budget",
+      note: "Anything else",
+      confirm: "Check",
+    },
+    prompts: {
+      party: "First, who's coming along?",
+      schedule: "When would you like to go?",
+      origin: "Which station will you leave from?",
+      destination: "Which part of Japan would you like to visit?",
+      activities: "Anything you'd like to enjoy besides the festival?",
+      food: "Any food you'd like to try?",
+      pace: "What pace suits you?",
+      budget: "Roughly how much is your budget?",
+      note: "Anything else you'd like us to know?",
+      confirm: "Great, we'll look for festivals that match!",
+    },
+    labels: consultLabels,
+    options: consultOptions,
+    stay: consultStay,
+    stayLabel: "Day trip or overnight",
+    members: consultMembers,
+    prefectures,
+    travelLabel: "From your station (one way, for a day trip)",
+    travelOption: (minutes: number) => `Within ${minutes / 60} h`,
+    transportLabel: "How you'd like to travel (choose any, or leave it to us)",
+    transport: consultTransport,
+    dietaryLabel: "Dietary needs (if any, choose any)",
+    dietary: consultDietary,
+    prefecturesLabel: (region: string) => `Narrow down within ${region} (optional)`,
+    auto: "Up to you",
+    other: "Other",
+    multi: "Pick as many as you like",
+    otherPlaceholder: "Write freely",
+    otherLabel: (label: string) => `${label} (write freely)`,
+    decrease: (label: string) => `One fewer: ${label}`,
+    increase: (label: string) => `One more: ${label}`,
+    people: (count: number) => `${count}`,
+    total: (count: number) => `Total ${plural(count, "person", "people")}`,
+    calendar: {
+      label: "Going and coming back",
+      hint: "Pick the day you go and the day you come back (same day for a day trip)",
+      previous: "Previous month",
+      next: "Next month",
+      month: (month: string) =>
+        `${MONTHS[Number(month.slice(5, 7)) - 1] ?? ""} ${Number(month.slice(0, 4))}`,
+      weekdays: EN_WEEKDAYS,
+      day: (date: string) =>
+        `${MONTHS[Number(date.slice(5, 7)) - 1] ?? ""} ${Number(date.slice(8, 10))}`,
+      short: (date: string) =>
+        `${EN_WEEKDAYS[weekdayOf(date)] ?? ""}, ${MONTHS[Number(date.slice(5, 7)) - 1] ?? ""} ${Number(date.slice(8, 10))}`,
+      going: (day: string) => `Going ${day}. Now pick the day you come back`,
+    },
+    stationLabel: "Nearest station",
+    stationPlaceholder: "Type a station name (in Japanese)",
+    stationLoading: "Loading stations",
+    stationNone: "No matches. You can still use what you typed",
+    stationCount: (count: number) => `${plural(count, "match", "matches")}`,
+    stationSource:
+      "Station list: adapted from National Land Numerical Information (Railway Data), MLIT",
+    stationSourceLink: "Open the source page (new tab)",
+    station: (name: string) => `${name} Station`,
+    amountLabel: (basis: string) => `Or enter an amount (${basis})`,
+    basisLabel: "Count the budget",
+    amountUnit: "yen",
+    notePlaceholder: "e.g. Our kids get tired walking long distances",
+    decide: "OK",
+    skip: "Nothing else",
+    back: "Previous step",
+    forward: "Next step",
+    submit: "Ask with these",
+    edit: "Change",
+    unanswered: "Not answered yet",
+    needOne: "Answer at least one to ask",
+    reopen: "Choose again",
+    startOver: "Start over",
+    anchored: {
+      prompts: {
+        schedule: (name: string) =>
+          `Let's set the day you'll go to ${name}, and whether you'll stay`,
+        destination: (name: string) =>
+          `We'll definitely go to ${name}. Anywhere else you'd like to stop by?`,
+        confirm: "Here's the outline. We'll build your plan from it!",
+      },
+      dayLabel: "The day you'll go",
+      stayLabel: "Day trip or overnight",
+      pickDates: "Pick dates",
+      calendarHint: (day: string) => `Pick the days you go and come back, including ${day}`,
+      festivalDay: (day: string) => `${day} (festival day)`,
+      must: "Must go",
+      mustNote: "This is where your festival takes place, so it stays in the trip",
+      wishLabel: "Other places you'd like to stop by",
+      wishLimit: (max: number) =>
+        `We can check up to ${max} places. We'll check the first ${max} you chose`,
+      plan: {
+        title: "Trip outline",
+        festival: "Your festival",
+        dates: "Trip dates",
+        datesNote: "We set the dates to fit your stops and travel time",
+        order: "Route",
+        included: "Included",
+        maybe: "If there's time",
+        dropped: "Left out this time",
+        warnings: "Please note",
+        fixNights: (nights: number) =>
+          `Change the length of stay (${plural(nights, "night", "nights")} would be safer)`,
+        loading: "Checking the outline",
+        failed:
+          "We couldn't check the outline. If you go ahead, we'll check it when building your plan",
+        retry: "Check again",
+      },
+      submit: "Build the plan with these",
+    },
+    entry: {
+      label: "How to start",
+      prompt: "Welcome! How would you like to look today?",
+      note: "If you haven't settled on a festival yet, start from festivals. If your dates or starting point come first, start from a trip plan.",
+      festival: "Start from festivals",
+      trip: "Start from a trip plan",
+    },
+    wording: {
+      intro: "Here is what I'm looking for:",
+      outro: "Please find festivals that match.",
+      auto: "up to you",
+      separator: ", ",
+      questions: consultLabels,
+      options: consultOptions,
+      stay: consultStay,
+      prefectures,
+      adults: (count: number, seniors: number) =>
+        seniors > 0
+          ? `${plural(count, "adult", "adults")} (incl. ${plural(seniors, "senior", "seniors")})`
+          : plural(count, "adult", "adults"),
+      children: (count: number, infants: number) =>
+        infants > 0
+          ? `${plural(count, "child", "children")} (incl. ${plural(infants, "little one", "little ones")})`
+          : plural(count, "child", "children"),
+      total: (count: number) => `${plural(count, "person", "people")} in total`,
+      range: (from: string, to: string) => (from === to ? from : `${from} to ${to}`),
+      paren: (main: string, note: string) => `${main} (${note})`,
+      nights: (nights: number) =>
+        nights === 0 ? "day trip" : `${plural(nights, "night", "nights")}`,
+      amount: (yen: number) => `¥${yen.toLocaleString("en-US")}`,
+      budgetBasis: { perPerson: "per person", total: "for everyone" },
+      travel: (minutes: number) =>
+        `Within ${minutes / 60} hour${minutes === 60 ? "" : "s"} one way from your station`,
+      dietary: (needs: string[]) => `dietary needs: ${needs.join(", ")}`,
+      dietaryOptions: consultDietary,
+      transport: (modes: string[]) => `getting around by ${modes.join(", ")}`,
+      transportOptions: consultTransport,
+      line: (label: string, text: string) => `- ${label}: ${text}`,
+      anchored: {
+        intro: (name: string, date: string) =>
+          `Please build a trip to ${name} on ${date}. Here is what I chose:`,
+        outro: "Please don't look for other festivals. Build the plan around this one.",
+        mustGo: (place: string) => `must go: ${place}`,
+        wishes: (places: string) => `would like to stop by: ${places}`,
+      },
+    },
+  },
+  festivalSearch: {
+    title: "Find a festival",
+    steps: { kinds: "Kind", season: "Season", area: "Area", wish: "Anything else" },
+    prompts: {
+      kinds: "What kind of festival would you like to see?",
+      season: "Which season would you like to go?",
+      area: "Which part of Japan shall we look in?",
+      wish: "Anything else you'd like? Tell us if so",
+    },
+    labels: { kinds: "Kind of festival", season: "Season", area: "Area" },
+    kinds: {
+      fireworks: "Fireworks",
+      community: "Community festivals",
+      traditional: "Traditional festivals",
+      participatory: "Festivals you can join",
+      hidden: "Lesser-known festivals",
+      famous: "Famous festivals",
+    },
+    seasons: { spring: "Spring", summer: "Summer", autumn: "Autumn", winter: "Winter" },
+    areaAuto: "Up to you (all of Japan)",
+    wishLabel: "Anything else",
+    wishPlaceholder: "e.g. beautiful lights at night, fun with children",
+    search: "Search with these",
+    searching: "Looking for festivals that match. One moment, please",
+    retry: "Search again",
+    results: {
+      title: "Festivals we found",
+      close: "Close the list",
+      reopen: "See the festivals we found",
+      count: (count: number) => `${count}`,
+      found: (count: number) =>
+        `We found ${plural(count, "festival", "festivals")}. Compare and pick one!`,
+      more: "Suggest other festivals",
+      remaining: (count: number) => `${count} more`,
+      loadingMore: "Looking for other festivals",
+      allShown: "That's all of them",
+      allShownLine: "That's every festival that matches. You can also try another way to search",
+      none: "No festivals match your conditions",
+      noneLine: "No festivals match your conditions. You can try another way to search",
+      reading: (text: string) => `We read your wish as: "${text}"`,
+      editWish: "Rewrite your wish",
+      reasons: "Why we suggest this festival",
+      wishNone: "It meets your conditions, but we can't say it fits your wish",
+      wishPartial: "Partly fits your wish",
+      wishMatched: "Fits your wish",
+      nearTitle: "Festivals one condition away",
+      nearNote: "These miss just one of your conditions. Check what differs before choosing",
+      nextTitle: "Other ways to search",
+      nextLabel: (next: FestivalSearchNext) =>
+        ({
+          any_season: "Any season",
+          any_kind: "Any kind",
+          neighbor_area: "Include neighboring prefectures",
+          nationwide: "All of Japan",
+          edit_conditions: "Change conditions",
+        })[next.kind],
+    },
+    needsCheckNote:
+      "The date is an estimate based on past years. Check the organizer's notice before you leave.",
+    decide: {
+      prompt: (name: string) => `${name} it is! What would you like to do next?`,
+      label: "What to do with this festival",
+      plan: "Plan a trip",
+      finish: "Stop here",
+      others: "See other festivals",
+    },
+    finished: {
+      prompt: (name: string) => `Here are the key points of ${name}. Have a great time!`,
+      when: "When",
+      where: "Where",
+      etiquette: "Etiquette",
+      etiquetteNone: "We haven't been able to confirm the etiquette yet",
+      source: "Source",
+      confirm: "Check the organizer's notice before you go.",
+      restart: "Back to the start",
+    },
+  },
+  tutorial: {
+    title: "First time here?",
+    lines: [
+      { keys: "WASD / arrows / tap", action: "Walk around" },
+      { keys: "E", action: "Talk to people and use things" },
+      { keys: "X / Y / M", action: "Plan, map and menu" },
+    ],
+    talk: "Talk to the concierge to start planning your trip.",
+    later: "You can open the controls again from “How to use” at the top right.",
+    ok: "Got it",
+    marker: "Ask here",
   },
   activity: {
     title: "In the shop",
   },
   hud: {
-    sectionsLabel: "Sections",
     sections: {
       guide: "Trip guide",
       candidates: "Festivals",
@@ -40,38 +494,29 @@ export const en: Messages = {
       confirm: "Check",
     },
     notYet: "Not yet",
-    notifications: "Notices (conversation log)",
-    newNotice: "There is a new notice",
-    preferences: "Trip preferences",
+    notifications: "Conversation log",
+    newNotice: "There is a new entry",
     settings: "Settings",
     help: "How to use",
     helpTitle: "How to use",
+    helpSections: { steps: "How a consultation goes", status: "In the shop now" },
     helpLines: [
-      "Tell the concierge the date you'd like to go and your departure station.",
+      "Talk to the concierge and choose to start from festivals or from a trip plan. You can also just write freely.",
+      "Starting from festivals, pick the kind, season and area, then compare the festivals that match.",
+      "Starting from a trip plan, pick who, when and where. Choose “Other” to write freely.",
       "Pick one of the festivals, and the staff will plan your day.",
-      "Open the trip guide to see the plan, the map and the sources.",
-      "Say you've decided, and we check the official schedule and hand you the travel booklet.",
+      "Open “Plan details” (X) to see the plan, the map and the sources.",
+      "We check that the festival is on before suggesting it. Say you've decided, and we hand you the travel booklet.",
       "Walk with WASD, the arrow keys, a gamepad or a tap. Get close to the staff to talk, and press E to use things in the shop.",
     ],
-    guideTitle: "Trip guide",
-    guideOpen: "Open the plan",
-    steps: {
-      hearing: "Tell the concierge your date and departure station",
-      candidates: "Choose a festival you'd like to visit",
-      itinerary: "Check the plan and tell us what to change",
-      revising: "Re-planning your day",
-      verifying: "Checking the official schedule before confirming",
-      shiori: "Your travel booklet is ready",
-    },
-    noTrip: "Let's start planning your trip",
-    mainFestival: "Main festival",
     dateUnset: "Date not set",
+    replaying: "Playing a sample conversation",
+    replayingNote: "Replies come from a prepared sample, whatever you send.",
     from: (origin: string) => `From ${origin}`,
     hints: { talk: "Talk", details: "Plan details", map: "Map", menu: "Menu" },
-    minimap: "Small map of the plan",
-    expandMap: "Open the large map",
-    north: "N",
     menuTitle: "Menu",
+    bookletTitle: "Travel booklet",
+    opsGuide: "Controls",
     close: "Close",
   },
   festivalCard: {
@@ -97,10 +542,7 @@ export const en: Messages = {
     loading: "Loading the festival details",
   },
   panel: {
-    day: (n: number) => `Day ${n}`,
     updated: "Updated!",
-    detail: "Plan details",
-    routeMap: "Route map",
   },
   staff: {
     title: "Inside the shop",
@@ -142,11 +584,48 @@ export const en: Messages = {
       search_festivals: "Festival search",
       search_nearby: "Nearby search",
       get_access: "Access check",
+      research_route: "Transfer check",
       get_weather: "Weather check",
+      search_lodging: "Lodging search",
       update_itinerary: "Writing the plan",
-      verify_festival: "Final festival check",
+      verify_festival: "Finalizing the plan",
     },
     sceneLabel: "Floor plan of the shop: where each staff member works and what they are doing",
+  },
+  relay: {
+    title: "Requests and handoffs",
+    request: {
+      find_festivals: (name: string) => `${name}, could you find festivals that fit?`,
+      find_nearby: (name: string) => `${name}, could you find side trips near the venue?`,
+      plan_route: (name: string) => `${name}, could you work out the route and the plan?`,
+    },
+    items: {
+      find_festivals: "festival options",
+      find_nearby: "side-trip options",
+      plan_route: "the itinerary",
+    },
+    requestLine: (from: string, to: string, task: string) => `${from} → ${to}: asks for "${task}"`,
+    handoffLine: (from: string, to: string, item: string) => `${from} → ${to}: hands over ${item}`,
+    redoSubjects: {
+      lunch: "a lunch spot",
+      dinner: "a dinner spot",
+      sightseeing: "side-trip spots",
+      route: "the train route",
+      last_mile: "the way from the station to the venue",
+      lodging: "a place to stay",
+    },
+    redoRequestLine: (from: string, to: string, subject: string) =>
+      `${from} → ${to}: asks to look again for ${subject}`,
+    redoAcceptLine: (from: string, to: string, subject: string) =>
+      `${from} → ${to}: will look again for ${subject}`,
+    activities: {
+      heading: "On the way",
+      asking: "Asking",
+      researching: "Researching",
+      checking: "Checking",
+      summarizing: "Summarizing",
+      delivering: "Delivering",
+    },
   },
   chat: {
     title: "Conversation",
@@ -172,7 +651,10 @@ export const en: Messages = {
       tool_failed: "A lookup did not work.",
       upstream_unavailable: "We could not reach an outside service.",
       internal: "Something went wrong on the server.",
-      connection_lost: "The connection was lost.",
+      connection_lost:
+        "The connection dropped before the reply finished. Use “Send again” to resend your message.",
+      server_unreachable:
+        "We can't reach the shop's server. Please wait a moment, then press “Send again”.",
       invalid_event: "We received information in an unexpected form.",
       session_lost:
         "We couldn't find your earlier conversation, so we started a new one. Please send your message again.",
@@ -197,6 +679,12 @@ export const en: Messages = {
       children > 0
         ? `${plural(adults, "adult", "adults")}, ${plural(children, "child", "children")}`
         : plural(adults, "adult", "adults"),
+    budget: (basis: "perPerson" | "total", yen: number, converted: number | null) => {
+      const amount = (n: number) => `¥${n.toLocaleString("en-US")}`;
+      return basis === "perPerson"
+        ? `Budget up to ${amount(yen)} per person${converted === null ? "" : ` (${amount(converted)} for everyone)`}`
+        : `Budget up to ${amount(yen)} for everyone${converted === null ? "" : ` (${amount(converted)} per person)`}`;
+    },
     move: { train: "Train", car: "Car" },
     range: (from: string, to: string) => `${from} – ${to}`,
   },
@@ -228,8 +716,93 @@ export const en: Messages = {
           ? `${plural(days, "day", "days")} after your date`
           : `${plural(-days, "day", "days")} before your date`,
     unconfirmed: "Unconfirmed",
+    needsCheck: "Check before you go",
+    found: (place: string) => `I found an unusual festival in ${place}!`,
+    foundMany: (count: number) => `I found ${count} festivals for you!`,
+    noneFound: "No festivals match your conditions",
+    noneFoundLine: "No festivals match your conditions. Try another way to search",
+    travel: (lower: number, upper: number, estimate: boolean) => {
+      const span = (m: number) =>
+        m < 60
+          ? `${m} min`
+          : m % 60 === 0
+            ? `${m / 60} h`
+            : `${Math.floor(m / 60)} h ${m % 60} min`;
+      const range = lower === upper ? span(lower) : `${span(lower)}–${span(upper)}`;
+      return `About ${range} one way from your station${estimate ? " (estimate)" : ""}`;
+    },
+    next: {
+      nearTitle: "These festivals are on instead",
+      nearNote: "Each misses one of your conditions. Check what differs before choosing",
+      missLabel: "What differs",
+      title: "Other ways to search",
+      found: (count: number) => `${count} found`,
+      label: (suggestion: SearchSuggestion) => {
+        const retry = suggestion.retry;
+        switch (suggestion.kind) {
+          case "later_dates": {
+            const when = retry?.when;
+            const dates =
+              when === undefined
+                ? ""
+                : when.kind === "date"
+                  ? when.date
+                  : `${when.from} – ${when.to}`;
+            return `Search on later dates (${dates})`;
+          }
+          case "longer_travel":
+            return `Allow up to ${(retry?.maxTravelMinutes ?? 0) / 60} h one way`;
+          case "wider_area":
+            return retry?.widen === "nationwide"
+              ? "Search all of Japan"
+              : "Include neighboring prefectures";
+          case "stay_over":
+            return "Make it an overnight trip";
+          case "edit_conditions":
+            return "Change my conditions";
+        }
+      },
+    },
+    stillSearching: "Still searching. You can choose once the picks are ready",
+    details: "See details",
+    hideDetails: "Hide details",
+    filters: {
+      label: "Filters",
+      area: "Area",
+      month: "Month",
+      theme: "Theme",
+      all: "All",
+      reset: "Reset filters",
+      count: (count: number) => plural(count, "festival", "festivals"),
+      none: "No festivals match these filters",
+      monthName: (month: number) =>
+        new Intl.DateTimeFormat("en-US", { month: "short", timeZone: "UTC" }).format(
+          new Date(Date.UTC(2000, month - 1, 1)),
+        ),
+      option: (text: string, count: number) => `${text} (${count})`,
+    },
+    view: {
+      label: "Switch the view",
+      cards: "Cards",
+      list: "List",
+    },
+    columns: {
+      date: "Date and time",
+      place: "Place",
+      confidence: "Confidence",
+    },
+    tags: {
+      family: "Kid-friendly stops nearby",
+      night: "Night event",
+      join: "You can join",
+      hidden: "Hidden gem",
+      stalls: "Food stalls",
+      wishDay: "On your date",
+    },
     unconfirmedNote:
       "This year's date has not been confirmed yet. It will not go into a confirmed plan.",
+    needsCheckNote:
+      "This year's schedule was confirmed with non-official sources. Please check the organizer's notice before you go.",
     timeUnknown: "Time not announced",
     whyFits: "Why it fits",
     highlight: "Highlight",
@@ -249,9 +822,34 @@ export const en: Messages = {
   itinerary: {
     day: (n: number, date: string) => `Day ${n} · ${date}`,
     stay: (area: string) => `Overnight around ${area}`,
-    tabs: { itinerary: "Plan", map: "Map", sources: "Sources" },
-    panelLabel: "Plan, map and sources",
-    openPanel: "Open the plan, map and sources",
+    lodging: {
+      heading: "Places to stay",
+      fromVenueWalk: (km: number, min: number, max: number) =>
+        `About ${km} km from the venue, ${range(min, max)} min on foot (estimate)`,
+      fromVenueRide: (km: number, min: number, max: number) =>
+        `About ${km} km from the venue, ${range(min, max)} min by bus or taxi (estimate)`,
+      nightlyTotal: (yen: number) => `From ¥${yen.toLocaleString("en-US")} per night for everyone`,
+      perPersonNight: (min: number, max: number) =>
+        `¥${min === max ? min.toLocaleString("en-US") : `${min.toLocaleString("en-US")}–${max.toLocaleString("en-US")}`} per person per night (from the hotel's page)`,
+      perspectives: {
+        venue: "Near the venue",
+        station: "Near the station",
+        budget: "Fits the budget",
+        family: "Family-friendly",
+      },
+      open: "Open the hotel's page",
+      searchedAt: (date: string) => `Looked up on ${date}`,
+      notes: {
+        rakuten: "Rates and availability are as of the search and may change when you book.",
+        web: "Found on hotel pages. Availability was not checked, so confirm rooms and rates on the booking page.",
+        fictional: "Hotels marked (架空) are samples, not real places.",
+      },
+    },
+    dayHeading: (n: number, date: string) => `Day ${n} (${date})`,
+    route: "Route",
+    tabs: { itinerary: "Plan", map: "Trip guide", sources: "Packing & checks" },
+    panelLabel: "Travel booklet (plan, trip guide, packing and checks)",
+    openPanel: "Open the travel booklet to see the plan",
     closePanel: "Close the panel",
     empty: "No plan yet. Choose a festival and your plan will appear here.",
     version: (n: number) => `Version ${n}`,
@@ -289,20 +887,20 @@ export const en: Messages = {
           .join(", "),
     },
     verification: {
-      title: "Final festival check",
-      pending: "We check the official information before confirming",
-      checking: "Checking the official schedule",
+      title: "Festival check",
+      pending: "Decide, and we make your travel booklet",
+      checking: "Finalizing your plan",
       as_planned: "Going ahead as planned",
       changed: "The schedule has changed",
       cancelled: "Cancelled",
-      not_found: "Could not be confirmed",
+      needs_check: "Check before you go (confirmed with non-official sources)",
+      not_found: "No schedule information was found",
       checkedAt: (when: string) => `Checked ${when}`,
     },
     notes: "What to bring and watch for",
     alternatives: "If you can't go",
     altKinds: { rain: "Rainy day", cancelled: "If cancelled", other: "Other" },
     openShiori: "Open the travel booklet",
-    mainFestival: "Main festival",
   },
   map: {
     label: "Map of the plan",
@@ -323,14 +921,11 @@ export const en: Messages = {
   },
   quiz: {
     title: "Festival quiz",
-    prompts: {
-      highlight: (name: string) => `Which one is a highlight of "${name}"?`,
-      local_food: (name: string) => `Which local food can you try in the town of "${name}"?`,
-      category: (name: string) => `What kind of festival is "${name}"?`,
-    },
     correct: "Correct! One more stamp for your booklet",
     wrong: (answer: string) => `Close! The answer is "${answer}"`,
     note: "The conversation goes on even if you don't answer",
+    question: "Question",
+    stamps: (count: number) => `Stamps collected: ${count}`,
   },
   categories: {
     fireworks: "Fireworks",
@@ -351,6 +946,10 @@ export const en: Messages = {
   shiori: {
     title: "Travel booklet",
     print: "Print",
+    savePdf: "Save as PDF",
+    openBooklet: "Open the booklet",
+    booklet: "Travel booklet",
+    notReady: "We will hand you the booklet once the festival dates are confirmed.",
     close: "Back to the shop",
     party: "Party",
     date: "Date",
@@ -392,6 +991,8 @@ export const en: Messages = {
     festivalLoading:
       "The festival details are not available right now. Please see the plan and sources.",
     verified: (date: string) => `Schedule confirmed with official information (${date})`,
+    needsCheck:
+      "Check before you go: the schedule was confirmed with non-official sources. Please check the organizer's notice before you leave.",
     finalCheck: "On the day, please check the official website one last time.",
     share: "Booklet URL",
     shareNote: "Share this URL to show the booklet to the people coming with you.",
@@ -399,6 +1000,15 @@ export const en: Messages = {
     copied: "Copied",
     homeward: "Getting home",
     cautions: "Please note",
+    start: "Start",
+    goal: "Goal",
+    lines: {
+      main: "Don't miss these!",
+      flow: "Times are estimates. Moving early keeps it relaxed",
+      food: "Enjoy the stalls and the local flavors too",
+      firstTime: "Follow the organizers' requests and enjoy it with the locals",
+      rain: "Here is a plan for a rainy day, too",
+    },
     parking: {
       available: "Parking is available",
       limited: "Parking is limited",
@@ -436,8 +1046,6 @@ export const en: Messages = {
   },
   play: {
     controlsTitle: "Controls",
-    controlsShow: "Show the controls",
-    controlsHide: "Hide the controls",
     controls: [
       { keys: "WASD / arrows", action: "Walk" },
       { keys: "E / Enter", action: "Talk to someone or use something nearby" },
@@ -506,15 +1114,37 @@ export const en: Messages = {
     staffOnly: "That seat is behind the staff-only fence. Try the sofa or the bench out front",
     chicks: (found: number) => `Hidden chicks ${found}/3`,
     clock: (time: string) => `Shop clock ${time}`,
+    chatterSaid: (name: string, line: string) => `${name}: "${line}"`,
+    chatter: {
+      researcher: [
+        "I love reading old festival records. Every page takes me to a town I have never seen",
+        "For trip planning, please see the concierge at the counter. I'll be digging up records",
+        "Customs differ a little from town to town, so I always check the sources",
+        "Half the books on this shelf are handwritten notes. Don't tell anyone",
+      ],
+      scout: [
+        "I study the map wall every day, tracing roads I have never walked",
+        "The concierge handles trip planning. I look into the area around each festival",
+        "Finding a cozy place to rest near the festival grounds is my favorite job",
+        "The pins on the map keep growing with every place I want to visit",
+      ],
+      planner: [
+        "Just looking at a timetable makes me feel like I'm already traveling",
+        "Talk to the concierge to plan your trip. Once it's set, leave the connections to me",
+        "The last train home is always the first thing I check",
+        "A layover is part of the trip, too. I'll look for sights near the station",
+      ],
+    },
   },
   waiting: {
     title: "Festival notes while you wait",
     host: "Notes from the concierge",
     kinds: { trivia: "Fun fact", highlight: "Highlight", etiquette: "Etiquette" },
     next: "Next",
+    prev: "Previous",
+    more: "More",
     pause: "Pause",
     resume: "Resume",
-    working: "Staff at work",
     elapsed: (time: string) => `Elapsed ${time}`,
     longWait: "Building a plan can take a minute or two. Enjoy a few festival notes meanwhile.",
     from: (name: string) => `From ${name}`,

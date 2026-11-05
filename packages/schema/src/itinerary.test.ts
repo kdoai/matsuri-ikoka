@@ -5,11 +5,22 @@ import {
   ItinerarySchema,
   itineraryItems,
   itineraryNights,
+  LastReturnSchema,
+  LodgingSearchSchema,
+  MealPlanSchema,
+  MoveSchema,
   mainFestivalDay,
+  transferStations,
   VerificationSchema,
   WeatherSchema,
 } from "./itinerary";
-import { fictionalItinerary, fictionalSource } from "./testing";
+import {
+  fictionalItinerary,
+  fictionalLodgingSearch,
+  fictionalPlannedItinerary,
+  fictionalResearchedLodgingSearch,
+  fictionalSource,
+} from "./testing";
 
 describe("ItinerarySchema", () => {
   it("架空の祭りへの旅程を受け付ける", () => {
@@ -133,6 +144,23 @@ describe("WeatherSchema", () => {
 });
 
 describe("collectItinerarySources", () => {
+  it("宿の候補の出典も集める", () => {
+    const itinerary = fictionalItinerary();
+    const day = itinerary.days[0]!;
+    itinerary.days = [
+      {
+        ...day,
+        date: "2026-08-15",
+        stay: { area: "鈴鳴町", lodging: fictionalLodgingSearch() },
+        items: day.items.map((item) => ({ ...item, id: `d1-${item.id}` })),
+      },
+      { ...day, date: "2026-08-16" },
+    ];
+    expect(collectItinerarySources(itinerary).map((s) => s.url)).toContain(
+      "https://example.com/lodging",
+    );
+  });
+
   it("予定と再確認の出典を、URL の重複を除いて集める", () => {
     const itinerary = fictionalItinerary();
     itinerary.days[0]!.items[0]!.sources.push(fictionalSource("2026"));
@@ -148,6 +176,51 @@ describe("collectItinerarySources", () => {
       "https://example.com/suzunari/craft-hall",
       "https://example.com/suzunari/2026-final",
     ]);
+  });
+});
+
+describe("LodgingSearchSchema", () => {
+  it("架空の宿の空きを受け付ける。空きがなければ候補は空", () => {
+    expect(LodgingSearchSchema.safeParse(fictionalLodgingSearch()).success).toBe(true);
+    expect(LodgingSearchSchema.safeParse({ ...fictionalLodgingSearch(), offers: [] }).success).toBe(
+      true,
+    );
+  });
+
+  it("チェックアウトはチェックインより後", () => {
+    const search = { ...fictionalLodgingSearch(), checkOut: "2026-08-15" };
+    expect(LodgingSearchSchema.safeParse(search).success).toBe(false);
+  });
+
+  it("宿には予約のページ・調べた時刻・出典が要る", () => {
+    for (const key of ["bookingUrl", "checkedAt", "source"] as const) {
+      const search = fictionalLodgingSearch();
+      delete (search.offers[0] as Partial<(typeof search.offers)[number]>)[key];
+      expect(LodgingSearchSchema.safeParse(search).success).toBe(false);
+    }
+  });
+
+  it("予約のページは http(s) だけ", () => {
+    const search = fictionalLodgingSearch();
+    search.offers[0]!.bookingUrl = "javascript:alert(1)";
+    expect(LodgingSearchSchema.safeParse(search).success).toBe(false);
+  });
+
+  it("Web で調べた宿は、1泊の合計を null にし、料金の目安・会場からの目安・観点を持てる", () => {
+    expect(LodgingSearchSchema.safeParse(fictionalResearchedLodgingSearch()).success).toBe(true);
+  });
+
+  it("料金の幅は下限が上限以下で、観点と調べた方法は決まった値だけ", () => {
+    const reversed = fictionalResearchedLodgingSearch();
+    reversed.offers[0]!.perPersonNightYen = [12000, 8000];
+    expect(LodgingSearchSchema.safeParse(reversed).success).toBe(false);
+    const perspective = fictionalResearchedLodgingSearch();
+    (perspective.offers[0]!.perspectives as string[]) = ["onsen"];
+    expect(LodgingSearchSchema.safeParse(perspective).success).toBe(false);
+    expect(
+      LodgingSearchSchema.safeParse({ ...fictionalResearchedLodgingSearch(), provider: "other" })
+        .success,
+    ).toBe(false);
   });
 });
 
@@ -213,6 +286,14 @@ describe("日ごとの旅程（日帰りのお出かけから6泊7日まで）",
     expect(ItinerarySchema.safeParse(itinerary).success).toBe(false);
   });
 
+  it("泊まりには、調べた宿の候補を付けられる。チェックインはその日", () => {
+    const itinerary = twoDays();
+    itinerary.days[0]!.stay = { area: "鈴鳴町の駅の近く", lodging: fictionalLodgingSearch() };
+    expect(ItinerarySchema.safeParse(itinerary).success).toBe(true);
+    itinerary.days[0]!.stay.lodging!.checkIn = "2026-08-14";
+    expect(ItinerarySchema.safeParse(itinerary).success).toBe(false);
+  });
+
   it("最後の日は帰る日なので、泊まるところを持たない", () => {
     const itinerary = twoDays();
     itinerary.days[1]!.stay = { area: "鈴鳴町" };
@@ -266,6 +347,75 @@ describe("日ごとの旅程（日帰りのお出かけから6泊7日まで）",
     };
     expect(collectItinerarySources(itinerary).map((s) => s.url)).toContain(
       "https://example.com/suzunari/weather",
+    );
+  });
+});
+
+describe("そろっているべきもの（移動の区間・食事・帰りの最終・調べの採否）", () => {
+  it("移動の区間・乗り換え・食事・帰りの最終・採否をそろえた旅程を受け付ける", () => {
+    expect(ItinerarySchema.safeParse(fictionalPlannedItinerary()).success).toBe(true);
+  });
+
+  it("古い版の旅程（新しい項目がない）も読める", () => {
+    expect(ItinerarySchema.safeParse(fictionalItinerary()).success).toBe(true);
+  });
+
+  it("乗り換えの駅は区間の境から決まる", () => {
+    const go = fictionalPlannedItinerary().days[0]!.items[0]!;
+    expect(transferStations(go.move!)).toEqual(["川辺駅"]);
+  });
+
+  it("区間はつながった順に並べ、移動の出発・到着とそろえる", () => {
+    const broken = fictionalPlannedItinerary();
+    broken.days[0]!.items[0]!.move!.legs![1]!.from = "別の駅";
+    expect(MoveSchema.safeParse(broken.days[0]!.items[0]!.move).success).toBe(false);
+
+    const wrongEnd = fictionalPlannedItinerary();
+    wrongEnd.days[0]!.items[0]!.move!.to = "ちがう駅";
+    expect(MoveSchema.safeParse(wrongEnd.days[0]!.items[0]!.move).success).toBe(false);
+  });
+
+  it("店や屋台の食事の案には出典が要る。持っていく案には要らない", () => {
+    expect(
+      MealPlanSchema.safeParse({
+        slot: "lunch",
+        kind: "shop",
+        name: "鈴鳴そば庵",
+        itemId: null,
+        sources: [],
+      }).success,
+    ).toBe(false);
+    expect(
+      MealPlanSchema.safeParse({
+        slot: "lunch",
+        kind: "bring",
+        name: "おにぎりを持っていく",
+        itemId: null,
+        sources: [],
+      }).success,
+    ).toBe(true);
+  });
+
+  it("食事の itemId は、その日の予定を指す", () => {
+    const itinerary = fictionalPlannedItinerary();
+    itinerary.days[0]!.meals![0]!.itemId = "no-such-item";
+    expect(ItinerarySchema.safeParse(itinerary).success).toBe(false);
+  });
+
+  it("帰りの最終の時刻を書くには出典が要る。分からなければ null にできる", () => {
+    expect(
+      LastReturnSchema.safeParse({ station: "鈴鳴駅", departBy: "22:40", sources: [] }).success,
+    ).toBe(false);
+    expect(
+      LastReturnSchema.safeParse({ station: "鈴鳴駅", departBy: null, sources: [] }).success,
+    ).toBe(true);
+  });
+
+  it("食事と帰りの最終の出典も集める", () => {
+    const itinerary = fictionalPlannedItinerary();
+    itinerary.days[0]!.lastReturn!.sources = [fictionalSource("last-train")];
+    expect(collectItinerarySources(itinerary).map((s) => s.url)).toContain(
+      "https://example.com/suzunari/last-train",
     );
   });
 });

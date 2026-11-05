@@ -153,6 +153,7 @@ describe("search_festivals の候補の確かめに時間がかかるとき", ()
                 resolve({
                   result: "as_planned",
                   sources: [{ url: "https://example.com/suzunari/2026" }],
+                  yearStated: true,
                 }),
               delayMs,
             ),

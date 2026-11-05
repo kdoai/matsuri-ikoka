@@ -1,4 +1,12 @@
 import type { Itinerary, SseEvent, SseEventOf, StaffId, ToolName } from "@matsuri-ikoka/schema";
+import {
+  closeRelay,
+  conciergeSpeaks,
+  finishTool,
+  handOver,
+  requestRedo,
+  requestWork,
+} from "./relay";
 import type { AppData, ChatEntry, StaffMotion, StaffState, VerifyState } from "./types";
 
 // SSE のイベントを、ストアの更新に変える。ここだけがイベントを読み、部品はストアだけを読む。
@@ -9,10 +17,17 @@ const TOOL_MOTION: Record<ToolName, StaffMotion> = {
   search_festivals: "flip",
   search_nearby: "point",
   get_access: "look_up",
+  research_route: "look_up",
   get_weather: "look_up",
+  search_lodging: "point",
   update_itinerary: "flip",
   verify_festival: "flip",
 };
+
+/** 候補の窓に、見つからなかったときの案内（この祭りならやっています・次の手）を出すものがあるか */
+export function hasNextSteps(search: AppData["search"]): boolean {
+  return search !== null && (search.status === "none" || search.nearMisses.length > 0);
+}
 
 export function applyEvent(state: AppData, event: SseEvent): AppData {
   switch (event.type) {
@@ -22,6 +37,8 @@ export function applyEvent(state: AppData, event: SseEvent): AppData {
       return onToolStart(state, event.data);
     case "tool.end":
       return onToolEnd(state, event.data);
+    case "staff.redo":
+      return onStaffRedo(state, event.data);
     case "itinerary.updated":
       return onItineraryUpdated(state, event.data);
     case "festival.verified":
@@ -63,8 +80,9 @@ function isFinishedAtPost(staff: StaffState): boolean {
 }
 
 function onStaffStart(state: AppData, data: SseEventOf<"staff.start">["data"]): AppData {
+  // コンシェルジュが頼み、ほかのスタッフが持っている結果は旅程係かコンシェルジュへ渡る（relay.ts）
+  let next = requestWork(state, data.staff, data.task);
   // 別のスタッフが動き出したら、仕事を終えたスタッフは戻る
-  let next = state;
   for (const id of Object.keys(state.staff) as StaffId[]) {
     const staff = state.staff[id];
     if (id !== data.staff && id !== "concierge" && isFinishedAtPost(staff)) {
@@ -77,6 +95,7 @@ function onStaffStart(state: AppData, data: SseEventOf<"staff.start">["data"]): 
     task: data.task,
     tool: null,
     bubble: data.bubble,
+    detail: null,
   });
   return {
     ...next,
@@ -90,6 +109,7 @@ function onToolStart(state: AppData, data: SseEventOf<"tool.start">["data"]): Ap
     motion: TOOL_MOTION[data.tool],
     tool: data.tool,
     bubble: data.bubble,
+    detail: data.detail ?? null,
   });
   const entry: ChatEntry = {
     kind: "work",
@@ -113,11 +133,12 @@ function onToolStart(state: AppData, data: SseEventOf<"tool.start">["data"]): Ap
 }
 
 function onToolEnd(state: AppData, data: SseEventOf<"tool.end">["data"]): AppData {
-  let next = patchStaff(state, data.staff, {
+  let next = patchStaff(finishTool(state, data.staff, data.ok), data.staff, {
     phase: "working",
     motion: "nod",
     tool: null,
     bubble: data.bubble,
+    detail: data.detail ?? null,
   });
 
   const id = `w-${data.toolCallId}`;
@@ -144,10 +165,17 @@ function onToolEnd(state: AppData, data: SseEventOf<"tool.end">["data"]): AppDat
   };
 
   if (data.ok && data.candidates !== undefined) {
+    // 返答が続いている間は「この祭りにする」を押せないので、ここでは開かず、返答が終わってから開く。
+    // 見つからなかったときも、「見つかりませんでした」と次の手を見せるために開く
+    const search = data.search ?? null;
     next = {
       ...next,
       candidates: data.candidates,
-      ui: { ...next.ui, candidatesOpen: data.candidates.length > 0 },
+      search,
+      session: {
+        ...next.session,
+        newCandidates: data.candidates.length > 0 || hasNextSteps(search),
+      },
     };
   }
   if (data.ok && data.spots !== undefined) {
@@ -160,12 +188,23 @@ function onToolEnd(state: AppData, data: SseEventOf<"tool.end">["data"]): AppDat
   return next;
 }
 
+/** 調べ直しの頼みと受け。頼む人・受ける人が、その場で吹き出しを出す（持ち場は動かない） */
+function onStaffRedo(state: AppData, data: SseEventOf<"staff.redo">["data"]): AppData {
+  const next = requestRedo(state, data.kind, data.from, data.to, data.subject);
+  return patchStaff(next, data.from, {
+    motion: data.kind === "request" ? "talk" : "nod",
+    bubble: data.bubble,
+    detail: data.detail ?? null,
+  });
+}
+
 function onItineraryUpdated(
   state: AppData,
   data: SseEventOf<"itinerary.updated">["data"],
 ): AppData {
   const first = state.itinerary.current === null;
-  let next = patchStaff(state, "planner", { motion: "carry" });
+  // 旅程係は、できた旅程をカウンターのコンシェルジュへ運ぶ
+  let next = patchStaff(handOver(state, "concierge"), "planner", { motion: "carry" });
   next = {
     ...next,
     itinerary: { current: data.itinerary, previous: state.itinerary.current, diff: data.diff },
@@ -199,13 +238,25 @@ export function verifyFromItinerary(itinerary: Itinerary): VerifyState {
   };
 }
 
+/** 決めた祭りが中止と分かったことを残す。祭りの結果へ戻る操作を、いちばん前に出す */
+function noteAnchorCancelled(
+  state: AppData,
+  data: SseEventOf<"festival.verified">["data"],
+): AppData {
+  const { anchor } = state.consult;
+  if (data.result !== "cancelled" || anchor?.festivalId !== data.festivalId) return state;
+  if (data.date !== undefined && data.date !== anchor.date) return state;
+  return { ...state, consult: { ...state.consult, anchorCancelled: true } };
+}
+
 function onFestivalVerified(
   state: AppData,
   data: SseEventOf<"festival.verified">["data"],
 ): AppData {
+  const noted = noteAnchorCancelled(state, data);
   // 候補を出す前の確かめは、旅程の再確認の結果にしない
-  if (data.scope === "candidate") return state;
-  const next = patchStaff(state, "concierge", { phase: "working", motion: "stamp" });
+  if (data.scope === "candidate") return noted;
+  const next = patchStaff(noted, "concierge", { phase: "working", motion: "stamp" });
   return {
     ...next,
     verify: {
@@ -227,10 +278,11 @@ function onMessageDelta(state: AppData, data: SseEventOf<"message.delta">["data"
         entry.kind === "concierge" ? { ...entry, text: entry.text + data.text } : entry,
       )
     : [...state.messages, { kind: "concierge", id, text: data.text, streaming: true }];
+  const spoken = conciergeSpeaks(state);
   const next =
-    state.staff.concierge.motion === "talk"
-      ? state
-      : patchStaff(state, "concierge", {
+    spoken.staff.concierge.motion === "talk"
+      ? spoken
+      : patchStaff(spoken, "concierge", {
           motion: "talk",
         });
   return { ...next, messages };
@@ -255,8 +307,9 @@ function onError(state: AppData, data: SseEventOf<"error">["data"]): AppData {
  * 確かめている途中の再確認を戻す、クイズを閉じる。
  */
 export function closeTurn(state: AppData): AppData {
+  const relayed = closeRelay(state);
   let next: AppData = {
-    ...state,
+    ...relayed,
     messages: state.messages.map((entry) => {
       if (entry.kind === "concierge" && entry.streaming) {
         return { ...entry, streaming: false };
@@ -267,7 +320,6 @@ export function closeTurn(state: AppData): AppData {
       return entry;
     }),
     verify: state.verify.status === "checking" ? { ...state.verify, status: "idle" } : state.verify,
-    quiz: { ...state.quiz, question: null, answer: null },
   };
   for (const id of Object.keys(state.staff) as StaffId[]) {
     const staff = state.staff[id];
@@ -279,6 +331,7 @@ export function closeTurn(state: AppData): AppData {
           task: null,
           tool: null,
           bubble: null,
+          detail: null,
         });
       }
     } else if (staff.phase !== "idle" && staff.phase !== "returning") {
@@ -305,7 +358,7 @@ function onDone(state: AppData, data: SseEventOf<"done">["data"]): AppData {
     preferences: data.preferences,
     ui: {
       ...next.ui,
-      // 候補を開くのは候補が届いたときだけ。利用者が閉じた候補を、ここで開き直さない
+      // 候補を開くのは、返答が終わって選べるようになったとき（endTurn）。ここでは開かない
       candidatesOpen: data.stage === "candidates" && next.ui.candidatesOpen,
       celebrating: next.ui.celebrating || reachedShiori,
     },

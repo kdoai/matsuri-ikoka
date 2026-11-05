@@ -2,6 +2,7 @@ import type {
   Festival,
   IsoDate,
   ItineraryItem,
+  LastReturn,
   NearbySpot,
   Occurrence,
   Preferences,
@@ -11,8 +12,10 @@ import { formatMonthDay, fromMinutes, toMinutes } from "./calendar";
 import { isClosedOn } from "./nearby";
 import { preferenceEffects } from "./preferences";
 
-// 旅程の検証。予定の重なり、移動の時間、営業時間の外、休業日、祭りの時間とのぶつかり、到着の余裕を確かめる。
+// 旅程の検証。予定の重なり、移動の時間、営業時間の外、休業日、祭りの時間とのぶつかり、到着の余裕、
+// 帰りの最終に間に合うかを確かめる。
 // errors があれば旅程を保存しない。warnings は保存するが、旅程係に直すよう伝える。
+// 旅に要るものがそろっているか（行き・最後の移動・帰り・食事など）は planCoverage.ts で確かめる。
 
 export type PlanIssueCode =
   | "out_of_order"
@@ -26,6 +29,7 @@ export type PlanIssueCode =
   | "festival_not_on_date"
   | "festival_time_conflict"
   | "arrival_buffer"
+  | "after_last_return"
   | "rest_interval"
   | "local_meal_missing"
   | "shop_meal_unwanted"
@@ -51,6 +55,8 @@ export type PlanItem = Pick<
 export interface PlanDayToCheck {
   date: IsoDate;
   items: readonly PlanItem[];
+  /** 帰りの最終の目安。最後の予定（帰りの移動）が、最終より後に駅を出ないかを確かめる */
+  lastReturn?: LastReturn | null | undefined;
 }
 
 /** 検証する旅程。日帰り・お出かけは1日、泊まりの旅は続いた日ごと */
@@ -168,6 +174,8 @@ function checkSpot(timed: TimedItem, spot: NearbySpot, date: IsoDate, errors: Pl
 export function checkPlan(
   plan: PlanToCheck,
   findFestival: (id: string) => Festival | undefined,
+  /** 祭りのデータのほかに照らす場所（周辺係が Web で調べた場所）。キーは場所の ID */
+  extraSpots: ReadonlyMap<string, NearbySpot> = new Map(),
 ): PlanCheckResult {
   const errors: PlanIssue[] = [];
   const warnings: PlanIssue[] = [];
@@ -191,7 +199,7 @@ export function checkPlan(
       festivals.set(festival.id, festival);
     }
   }
-  const spots = new Map<string, NearbySpot>();
+  const spots = new Map<string, NearbySpot>(extraSpots);
   for (const festival of festivals.values()) {
     for (const spot of festival.nearby) spots.set(spot.id, spot);
   }
@@ -263,7 +271,7 @@ function checkDay(
       errors.push({
         code: "unknown_spot",
         itemId: item.id,
-        message: `「${item.name}」（${item.spotId}）は、祭りの周辺の場所のデータにありません`,
+        message: `「${item.name}」（${item.spotId}）は、祭りの周辺の場所のデータにも、調べた場所にもありません`,
       });
     } else {
       checkSpot(timed, spot, day.date, errors);
@@ -290,7 +298,40 @@ function checkDay(
     }
   }
 
+  checkLastReturn(day, timeline, errors);
+
   return { errors, warnings: dayWarnings(preferences, day, timeline) };
+}
+
+/**
+ * 帰りの移動が、帰りの最終（lastReturn.departBy）より後に駅を出ないか。
+ * 駅を出る時刻は、帰りの移動の始まりに、最初の電車・バスの区間までの歩き（短いほうの目安）を足して決める
+ */
+function checkLastReturn(day: PlanDayToCheck, timeline: readonly TimedItem[], errors: PlanIssue[]) {
+  const departBy = day.lastReturn?.departBy;
+  const last = timeline.at(-1);
+  if (
+    departBy == null ||
+    last === undefined ||
+    last.item.type !== "move" ||
+    last.item.move === null
+  ) {
+    return;
+  }
+  const legs = last.item.move.legs ?? [];
+  const firstRide = legs.findIndex((leg) => leg.means !== "walk");
+  const walk = legs.slice(0, Math.max(0, firstRide)).reduce((sum, leg) => sum + leg.minutes[0], 0);
+  const leaves = last.start + walk;
+  // 最終は旅の日の時刻で書く。早朝（日をまたいだあと）の時刻は、次の日の時刻として比べる
+  let limit = toMinutes(departBy);
+  if (limit < EARLY_MORNING_UNTIL) limit += 1440;
+  if (leaves > limit) {
+    errors.push({
+      code: "after_last_return",
+      itemId: last.item.id,
+      message: `「${last.item.name}」は${fromMinutes(leaves)}ごろに駅を出る組み方で、帰りの最終（${departBy}）に間に合いません`,
+    });
+  }
 }
 
 function checkFestivalTime(

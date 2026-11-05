@@ -1,0 +1,370 @@
+{
+  "id": "himeshima-bon-odori",
+  "name": {
+    "ja": "姫島盆踊り",
+    "en": "Himeshima Bon Odori"
+  },
+  "category": "dance",
+  "municipalities": [
+    {
+      "prefecture": "大分県",
+      "name": "姫島村"
+    }
+  ],
+  "venue": {
+    "name": "中央広場（姫島港フェリー広場）および各地区の盆坪",
+    "lat": 33.7194,
+    "lng": 131.646
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "狐にふんした子どもたちが踊る名物のキツネ踊り",
+    "大人の踊り手が見せるアヤ踊り、猿丸太夫、銭太鼓",
+    "地区ごとの踊りの組が、島の盆坪を順にめぐって踊る",
+    "2026年は2日間で31組が踊った"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "2012年に国の記録作成等の措置を講ずべき民俗文化財に選ばれた",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/282050",
+          "title": "文化遺産オンライン 姫島の盆踊",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "踊りの組は地区ごとの同じ世代の仲間でつくる",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/282050",
+          "title": "文化遺産オンライン 姫島の盆踊",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "2012年3月、国の「記録作成等の措置を講ずべき無形の民俗文化財」に選ばれた",
+      "source": {
+        "url": "https://online.bunka.go.jp/heritages/detail/282050",
+        "title": "文化遺産オンライン 姫島の盆踊",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "外側の踊りには、同じ足を2度ずつ運ぶ「盆足」という独特の足さばきがある",
+      "source": {
+        "url": "https://online.bunka.go.jp/heritages/detail/282050",
+        "title": "文化遺産オンライン 姫島の盆踊",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "踊りの組は地区ごとの同じ世代の仲間でつくり、毎年新しい踊りを考える",
+      "source": {
+        "url": "https://online.bunka.go.jp/heritages/detail/282050",
+        "title": "文化遺産オンライン 姫島の盆踊",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "鎌倉時代の念仏踊りから分かれたものと伝わる",
+      "source": {
+        "url": "https://rurubu.jp/andmore/spot/20002988",
+        "title": "るるぶ&more. 姫島盆踊り",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": [
+      "盆踊りの夜は帰りのフェリーの臨時便が出る。切符は当日の朝から順に売り、定員になると次の便の切符になる。便は選べない",
+      "盆踊りの期間（8月14・15日）は、伊美港から車をフェリーで運べない"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.himeshima.jp/wp-content/uploads/5cefc6350906a18b881809df2071afbb.pdf",
+        "title": "姫島村 令和8年度 姫島盆踊り実施要領",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.himeshima.jp/access/",
+        "title": "姫島村 交通アクセス",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-14",
+      "start": "19:15",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。各地区の盆坪は19:00から、中央広場（フェリー広場）は19:15〜21:00ごろ。この日は16組（キツネ踊り、アヤ踊り、猿丸太夫、銭太鼓、たぬき踊りなど）。帰りのフェリー臨時便は21:00から23:20まで6便の予定で、踊りが長引くと出航も遅れる",
+      "sources": [
+        {
+          "url": "https://www.himeshima.jp/himeshima-news/%e5%a7%ab%e5%b3%b6%e7%9b%86%e8%b8%8a%e3%82%8a%e3%81%ae%e9%96%8b%e5%82%ac%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6/",
+          "title": "姫島村 姫島盆踊りの開催について（2026年8月10日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.himeshima.jp/wp-content/uploads/5cefc6350906a18b881809df2071afbb.pdf",
+          "title": "姫島村 令和8年度 姫島盆踊り実施要領",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.himeshima.jp/wp-content/uploads/4be271fc12c3be59774fe8085cdacfad.pdf",
+          "title": "姫島村 令和8年度 盆踊り表（予定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-08-15",
+      "start": "19:15",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。各地区の盆坪は19:00から、中央広場（フェリー広場）は19:15〜21:00ごろ。この日は15組（キツネ踊り、アヤ踊り、猿丸太夫、こども銭太鼓、花笠踊りなど）で、14日と演目が一部替わる。帰りのフェリー臨時便は21:00から23:20まで6便の予定",
+      "sources": [
+        {
+          "url": "https://www.himeshima.jp/himeshima-news/%e5%a7%ab%e5%b3%b6%e7%9b%86%e8%b8%8a%e3%82%8a%e3%81%ae%e9%96%8b%e5%82%ac%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6/",
+          "title": "姫島村 姫島盆踊りの開催について（2026年8月10日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.himeshima.jp/wp-content/uploads/5cefc6350906a18b881809df2071afbb.pdf",
+          "title": "姫島村 令和8年度 姫島盆踊り実施要領",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.himeshima.jp/wp-content/uploads/4be271fc12c3be59774fe8085cdacfad.pdf",
+          "title": "姫島村 令和8年度 盆踊り表（予定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-14",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（発表はまだない）。2026年は8月14・15日の2日間に開かれ、村の案内（ジオパーク）と文化庁の解説も毎年8月14日からとしている。2026年は19:00に各地区の盆坪、19:15に中央広場で始まった",
+      "sources": [
+        {
+          "url": "https://www.himeshima.jp/himeshima-news/%e5%a7%ab%e5%b3%b6%e7%9b%86%e8%b8%8a%e3%82%8a%e3%81%ae%e9%96%8b%e5%82%ac%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6/",
+          "title": "姫島村 姫島盆踊りの開催について（2026年は8月14日・15日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.himeshima.jp/geopark/geo-site/",
+          "title": "姫島村 おおいた姫島ジオパーク 見どころ（盆踊りは毎年8月14〜16日と記載）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/282050",
+          "title": "文化遺産オンライン 姫島の盆踊（毎年8月14日から16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-15",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（発表はまだない）。2026年は8月14・15日の2日間で、2日目は1日目と演目が一部替わった",
+      "sources": [
+        {
+          "url": "https://www.himeshima.jp/himeshima-news/%e5%a7%ab%e5%b3%b6%e7%9b%86%e8%b8%8a%e3%82%8a%e3%81%ae%e9%96%8b%e5%82%ac%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6/",
+          "title": "姫島村 姫島盆踊りの開催について（2026年は8月14日・15日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.himeshima.jp/access/",
+          "title": "姫島村 交通アクセス（盆踊り期間は8月14・15日と記載）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "姫島港（村営フェリー）",
+        "walkMinutes": [0, 5],
+        "note": "中央広場は姫島港のフェリー広場で、下船してすぐ。各地区の盆坪は島内に散らばる。島に鉄道はない"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "伊美港",
+        "minutes": [20, 30],
+        "route": "国東市の伊美港から、村営フェリーで約20分、片道大人580円。伊美港へは JR 宇佐駅から大分交通のバス伊美行きで約1時間、大分空港から車で約50分"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": ["盆踊りの期間（8月14・15日）は、伊美港から車をフェリーで運べない"],
+    "sources": [
+      {
+        "url": "https://www.himeshima.jp/access/",
+        "title": "姫島村 交通アクセス（フェリー時刻表・運賃、伊美港の無料駐車場）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://summer.walkerplus.com/odekake/detail_e/ar1044e590726/map.html",
+        "title": "ウォーカープラス 姫島盆踊り 地図・アクセス（伊美港に無料の臨時駐車場）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "姫島車えび",
+        "note": "塩田の跡で始まった養殖と近海の天然ものがある島のブランド。島の和食店かのやなどで車えびの料理が食べられる（祭りの日だけのものではない）",
+        "sources": [
+          {
+            "url": "https://www.himeshima.jp/kankou/gourmet/meisan/",
+            "title": "姫島村 名産グルメ",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          },
+          {
+            "url": "https://www.himeshima.jp/kankou/gourmet/oshokujidokoro/",
+            "title": "姫島村 お食事処",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      },
+      {
+        "name": "えびたこ丼",
+        "note": "車えびとタコのぶつ切りをだしと卵でとじた丼。和食店かのやのおすすめに挙がっている",
+        "sources": [
+          {
+            "url": "https://www.himeshima.jp/kankou/gourmet/meisan/",
+            "title": "姫島村 名産グルメ",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          },
+          {
+            "url": "https://www.himeshima.jp/kankou/gourmet/oshokujidokoro/",
+            "title": "姫島村 お食事処",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "himeshima-kannonzaki",
+      "name": "観音崎（姫島の黒曜石産地）",
+      "kind": "sightseeing",
+      "summary": "黒曜石の断崖が続く島いちばんの景勝地で、国の天然記念物。海食崖と海食洞があり、馬頭観音を祀る千人堂もある",
+      "location": {
+        "lat": 33.7329,
+        "lng": 131.6427
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.himeshima.jp/geopark/geo-site/",
+          "title": "姫島村 おおいた姫島ジオパーク 見どころ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E8%A6%B3%E9%9F%B3%E5%B4%8E",
+          "title": "国土地理院 地名検索 観音崎（位置）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.himeshima.jp/himeshima-news/%e5%a7%ab%e5%b3%b6%e7%9b%86%e8%b8%8a%e3%82%8a%e3%81%ae%e9%96%8b%e5%82%ac%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6/",
+      "title": "姫島村 姫島盆踊りの開催について",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://online.bunka.go.jp/heritages/detail/282050",
+      "title": "文化遺産オンライン 姫島の盆踊",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%A7%AB%E5%B3%B6%E6%B8%AF",
+      "title": "国土地理院 地名検索 姫島港（会場の位置）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20002988",
+      "title": "るるぶ&more. 姫島盆踊り",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の日程と時刻（まだ発表がない）",
+    "雨天のときの扱い",
+    "島の外から来た人が踊りに加われるか（村の案内は来場を呼びかけるだけ）",
+    "見物の場所の決まり、服装・持ち物、危険度、撮影の決まり",
+    "各地区の盆坪の場所と、踊りの組が回る順番・時刻",
+    "屋台の有無と、盆踊りの夜に開いている食事の店（村の食事処の一覧に店の位置がない）",
+    "見物の人数",
+    "開催の期間の食い違い：2026年の村の案内は8月14・15日の2日間だが、村のジオパークの案内と文化庁の解説は8月14〜16日としている",
+    "帰りのフェリー臨時便の運賃（実施要領に切符の色はあるが運賃がない。通常の片道は大人580円）",
+    "観音崎の知名度（観光サイトでの掲載を確かめていない）と、港からの徒歩の時間",
+    "宇佐駅・大分空港から伊美港までのバスの本数と、盆踊りの夜の帰りの足"
+  ]
+}

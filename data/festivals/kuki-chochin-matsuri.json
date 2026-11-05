@@ -1,0 +1,308 @@
+{
+  "id": "kuki-chochin-matsuri",
+  "name": { "ja": "久喜提燈祭り「天王様」", "en": "Kuki Lantern Festival (Tenno-sama)" },
+  "category": "float",
+  "municipalities": [{ "prefecture": "埼玉県", "name": "久喜市" }],
+  "venue": { "name": "久喜駅西口駅前周辺", "lat": 36.0664, "lng": 139.6773 },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["walkerplus"],
+  "highlights": [
+    "約500個の提燈を四面に灯した山車が、夜の久喜駅西口に集まる",
+    "昼は神話や武将の人形を載せた山車、夕方に提燈山車へ組み替える",
+    "提燈山車を回したり、ぶつけ合ったりする勇ましい曳き回し",
+    "笛・鉦・太鼓のお囃子が町内に響く"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1783年の噴火のあと豊作を願って山車を曳いたのが始まりと伝わる",
+      "sources": [
+        {
+          "url": "https://www.city.kuki.lg.jp/miryoku/summer_fes/1002873.html",
+          "title": "久喜市 久喜提燈祭り「天王様」",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "7つの町内がそれぞれ山車を出して曳き回す",
+      "sources": [
+        {
+          "url": "https://kuki-kanko.jp/event.html",
+          "title": "久喜市観光協会 祭・イベント",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "1783年の浅間山の噴火で夏の作物が全滅し、豊作を願って山車を曳いたのが始まりと伝わる",
+      "source": {
+        "url": "https://www.city.kuki.lg.jp/miryoku/summer_fes/1002873.html",
+        "title": "久喜市 久喜提燈祭り「天王様」",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "旧久喜町の鎮守・八雲神社の祭礼で、7月12日から18日までが祭りの期間",
+      "source": {
+        "url": "https://www.city.kuki.lg.jp/_res/projects/default_project/_page_/001/002/873/080623_chirashi.pdf",
+        "title": "久喜市祭典委員会 令和8年 久喜提燈祭り「天王様」チラシ",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "昼の人形は町ごとに違い、本壱は素戔鳴尊、仲町は織田信長、東一は鍾馗様",
+      "source": {
+        "url": "https://www.city.kuki.lg.jp/miryoku/summer_fes/1002873.html",
+        "title": "久喜市 久喜提燈祭り「天王様」",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "7つの町内から7台の山車が出る。山車を回す技は「関東一」と言われる",
+      "source": {
+        "url": "https://kuki-kanko.jp/event.html",
+        "title": "久喜市観光協会 祭・イベント",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "交通規制の道路では、警備員の誘導に従う",
+      "ごみは各自で持ち帰る",
+      "規制のない道路でも山車が通るので、通行に協力する"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "駅前に見物の人が大勢集まり、夜は提燈山車を回したりぶつけ合ったりする。周辺の道路は昼から夜まで車両通行止めになる"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.kuki.lg.jp/_res/projects/default_project/_page_/001/002/873/080623_chirashi.pdf",
+        "title": "久喜市祭典委員会 令和8年 久喜提燈祭り「天王様」チラシ（交通規制・ご来場の方へのお願い）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.kuki.lg.jp/miryoku/summer_fes/1002873.html",
+        "title": "久喜市 久喜提燈祭り「天王様」（駅前は見物の人でにぎわう）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-07-12",
+      "start": "12:40",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": "雨天決行",
+      "note": "2026年の実績。12:40 八雲神社御仮屋前で式典、各町内で人形山車の巡行、16:00 提燈山車に組み替え、16:30 御神燈拝領式、19:40 提燈山車の連動、20:00〜21:00 駅西口ロータリーに提燈山車が集まる。山車の運行で時刻は前後する",
+      "sources": [
+        {
+          "url": "https://www.city.kuki.lg.jp/miryoku/summer_fes/1002873.html",
+          "title": "久喜市 久喜提燈祭り「天王様」（令和8年のスケジュール）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.kuki.lg.jp/_res/projects/default_project/_page_/001/002/873/080623_chirashi.pdf",
+          "title": "久喜市祭典委員会 令和8年 久喜提燈祭り「天王様」チラシ（雨天決行）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-07-18",
+      "start": "12:40",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": "雨天決行",
+      "note": "2026年の実績。12:40 式典、13:15 駅西口ロータリーに人形山車が集まる、13:30 人形山車の連動、16:00 提燈山車に組み替え、16:30 御神燈拝領式、20:00〜21:00 駅西口ロータリーに提燈山車が集まる。山車の運行で時刻は前後する",
+      "sources": [
+        {
+          "url": "https://www.city.kuki.lg.jp/miryoku/summer_fes/1002873.html",
+          "title": "久喜市 久喜提燈祭り「天王様」（令和8年のスケジュール）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.kuki.lg.jp/_res/projects/default_project/_page_/001/002/873/080623_chirashi.pdf",
+          "title": "久喜市祭典委員会 令和8年 久喜提燈祭り「天王様」チラシ（雨天決行）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-12",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年7月12日（2027年は月曜日。発表はまだない）。例年は昼過ぎに式典と人形山車の巡行、夕方に提燈山車へ組み替え、20時ごろから駅西口ロータリーに提燈山車が集まる。2026年は雨天決行だった",
+      "sources": [
+        {
+          "url": "https://www.city.kuki.lg.jp/miryoku/summer_fes/1002873.html",
+          "title": "久喜市 久喜提燈祭り「天王様」（毎年7月12日と18日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-18",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年7月18日（2027年は日曜日。発表はまだない）。例年は昼に人形山車が駅西口に集まり、夕方に提燈山車へ組み替え、20時ごろから駅西口ロータリーに提燈山車が集まる。2026年は雨天決行だった",
+      "sources": [
+        {
+          "url": "https://www.city.kuki.lg.jp/miryoku/summer_fes/1002873.html",
+          "title": "久喜市 久喜提燈祭り「天王様」（毎年7月12日と18日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR・東武 久喜駅",
+        "walkMinutes": [0, 5],
+        "note": "会場は駅西口のロータリーと周辺の通り（JR宇都宮線・東武伊勢崎線）"
+      }
+    ],
+    "fromHubs": [
+      { "hub": "東京駅", "minutes": [55, 65], "route": "JR上野東京ライン（宇都宮線）で約55分" },
+      { "hub": "北千住駅", "minutes": [45, 55], "route": "東武伊勢崎線で約45分" }
+    ],
+    "parking": "unknown",
+    "trafficRestrictions": [
+      "2026年は7月12日・18日の12:00〜22:00、久喜駅西口から西へ延びる通りと、それに交わる南北の道など駅西口周辺の道路が車両通行止め。規制のない道路でも山車が運行する"
+    ],
+    "sources": [
+      {
+        "url": "https://www.city.kuki.lg.jp/miryoku/summer_fes/1002873.html",
+        "title": "久喜市 久喜提燈祭り「天王様」（会場・交通規制の時間）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.kuki.lg.jp/_res/projects/default_project/_page_/001/002/873/080623_chirashi.pdf",
+        "title": "久喜市祭典委員会 令和8年 久喜提燈祭り「天王様」チラシ（交通規制の地図）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.pref.saitama.lg.jp/nouarukurashi/step/access.html",
+        "title": "埼玉県 埼玉ではじめる農ある暮らし 都心からのアクセス（久喜駅まで）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "kuki-kantoin",
+      "name": "甘棠院（足利政氏館跡及び墓）",
+      "kind": "sightseeing",
+      "summary": "古河公方2代の足利政氏が1519年に移り住んだ館を寺にした所。三方に空堀が残り、境内に政氏の五輪塔の墓がある。県指定史跡",
+      "location": { "lat": 36.0731, "lng": 139.6688 },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.kuki.lg.jp/miryoku/rekishi_bunkazai/bunkazai/1002311/1006129.html",
+          "title": "久喜市 県指定 足利政氏館跡及び墓",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kuki-cake-monica",
+      "name": "ケーキの店 モニカ",
+      "kind": "food",
+      "summary": "久喜市本町のケーキ店。久喜市観光協会がお土産の店として紹介している",
+      "location": { "lat": 36.0737, "lng": 139.6647 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "09:30", "close": "20:00" },
+      "closedDays": [],
+      "price": null,
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://kuki-kanko.jp/food.html",
+          "title": "久喜市観光協会 お土産",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.kuki.lg.jp/miryoku/summer_fes/1002873.html",
+      "title": "久喜市 久喜提燈祭り「天王様」",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.kuki.lg.jp/_res/projects/default_project/_page_/001/002/873/080623_chirashi.pdf",
+      "title": "久喜市祭典委員会 令和8年 久喜提燈祭り「天王様」チラシ",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://kuki-kanko.jp/event.html",
+      "title": "久喜市観光協会 祭・イベント",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の時刻と交通規制（まだ発表がない）",
+    "2027年の雨天の扱い（2026年は雨天決行）",
+    "見物の場所と、山車に近づくときの注意",
+    "服装・持ち物・撮影の決まり",
+    "来場者用の駐車場",
+    "屋台の有無",
+    "見物の人数の公式の数",
+    "規模の決め方：山車7台から S とした。駅前は大勢の見物の人で混み合う",
+    "大宮駅など、ほかの玄関口の駅からの所要時間",
+    "久喜駅から会場の各所までの徒歩の時間（会場は駅西口の周辺）",
+    "甘棠院の拝観の可否と時間",
+    "周辺の食事の店（観光協会の案内で営業時間まで確かめられたのは菓子店1件だけ）",
+    "周辺の場所から会場までの徒歩の時間"
+  ]
+}

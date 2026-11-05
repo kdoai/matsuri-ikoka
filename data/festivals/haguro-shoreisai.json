@@ -1,0 +1,219 @@
+{
+  "id": "haguro-shoreisai",
+  "name": {
+    "ja": "松例祭",
+    "en": "Shoreisai Festival of Mt. Haguro"
+  },
+  "category": "fire",
+  "municipalities": [
+    {
+      "prefecture": "山形県",
+      "name": "鶴岡市"
+    }
+  ],
+  "venue": {
+    "name": "出羽三山神社（羽黒山山頂）",
+    "lat": 38.7056,
+    "lng": 139.9812
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "大晦日の夜、法螺貝の合図で若者たちが大松明を引き、燃やして新年を迎える",
+    "百日の修行を終えた2人の松聖が臨む、羽黒修験の冬の峰を締めくくる神事",
+    "年が明けると、国分神事や火の打替神事で新しい火を迎える"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "大松明の行事が2014年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/db/heritages/detail/442273",
+          "title": "文化遺産オンライン 松例祭の大松明行事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "手向地区の若者が二組に分かれて大松明を作り引く",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/db/heritages/detail/442273",
+          "title": "文化遺産オンライン 松例祭の大松明行事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "大松明の行事は、2014年に国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://online.bunka.go.jp/db/heritages/detail/442273",
+        "title": "文化遺産オンライン 松例祭の大松明行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "前日の12月30日に、手向地区の若者が二組に分かれて2本の大松明を作る",
+      "source": {
+        "url": "https://online.bunka.go.jp/db/heritages/detail/442273",
+        "title": "文化遺産オンライン 松例祭の大松明行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "大松明引きの勝ち負けと燃え具合で、翌年の豊凶を占う",
+      "source": {
+        "url": "https://online.bunka.go.jp/db/heritages/detail/442273",
+        "title": "文化遺産オンライン 松例祭の大松明行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "夜を通して行うため歳夜祭とも呼ばれ、2人の松聖は9月24日から百日の修行に入る",
+      "source": {
+        "url": "https://www.tohokukanko.jp/attractions/detail_1009579.html",
+        "title": "旅東北 松例祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.tohokukanko.jp/attractions/detail_1009579.html",
+        "title": "旅東北 松例祭（行事の時程と担い手）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://online.bunka.go.jp/db/heritages/detail/442273",
+        "title": "文化遺産オンライン 松例祭の大松明行事（手向地区の若者が担う）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-31",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2026年の神社の発表は確かめられていない）。毎年12月31日から1月1日にかけて夜を通して行う。例年の時程（旅東北は、内容が変わる場合があると注記）：15:00 綱巻き・大祓式、16:00 除夜祭、18:00 松例祭（本殿祭・蜂子神社祭）、19:00〜20:00ごろ 綱さばき、21:00 験縄行事・砂はき行事、22:45 験競べ、23:00ごろ 五番法螺に合わせて大松明を引く、0:00 国分神事・火の打替神事、3:00 歳旦祭。るるぶ&more.によると昨年の来場者は約5,000人",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/db/heritages/detail/442273",
+          "title": "文化遺産オンライン 松例祭の大松明行事（毎年12月31日〜1月1日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.tohokukanko.jp/attractions/detail_1009579.html",
+          "title": "旅東北 松例祭（大晦日から元旦、時程の予定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000707",
+          "title": "るるぶ&more. 松例祭（昨年の来場者 約5,000人）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-12-31",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2027年の発表はまだない）。毎年12月31日から1月1日にかけて行う決まりから見込んだ回。例年、23:00ごろに大松明を引き、0:00に国分神事・火の打替神事",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/db/heritages/detail/442273",
+          "title": "文化遺産オンライン 松例祭の大松明行事（毎年12月31日〜1月1日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.tohokukanko.jp/attractions/detail_1009579.html",
+        "title": "旅東北 松例祭（JR鶴岡駅から庄内交通の羽黒山頂行きバスで終点下車）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000707",
+        "title": "るるぶ&more. 松例祭（鶴岡駅からバスで50分、羽黒山頂バス停から徒歩3分、駐車場300台無料・別に有料道路400円）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://online.bunka.go.jp/db/heritages/detail/442273",
+      "title": "文化遺産オンライン 松例祭の大松明行事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.tohokukanko.jp/attractions/detail_1009579.html",
+      "title": "旅東北 松例祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%87%BA%E7%BE%BD%E4%B8%89%E5%B1%B1%E7%A5%9E%E7%A4%BE",
+      "title": "国土地理院 地名検索（出羽三山神社）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2026年の開催の発表と、その年の時程",
+    "大晦日の夜から元日の朝にかけての、鶴岡駅と羽黒山頂を結ぶバスの運行と時刻",
+    "見学できる場所と見学の決まり（大松明引きの近くにどこまで寄れるか）",
+    "服装・持ち物・撮影の決まり",
+    "危険度（大松明の火のそばでの主催者の注意が見つからない）",
+    "雪や荒天のときの扱い",
+    "大晦日の夜の駐車場と有料道路の扱い（駐車場300台はるるぶの記載のみ）",
+    "露店の有無と、地元の味・祭りの日だけの食べ物",
+    "大晦日と元日に開いている、羽黒山の近くの店や施設",
+    "鶴岡駅から羽黒山頂までのバスの所要時間（公式の案内で確かめられていない）",
+    "主要駅から鶴岡駅までの所要時間",
+    "主催者が公表する見物客の数"
+  ]
+}

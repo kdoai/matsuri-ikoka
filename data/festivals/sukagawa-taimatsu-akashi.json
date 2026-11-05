@@ -1,0 +1,298 @@
+{
+  "id": "sukagawa-taimatsu-akashi",
+  "name": {
+    "ja": "松明あかし",
+    "en": "Taimatsu Akashi Fire Festival"
+  },
+  "category": "fire",
+  "municipalities": [
+    {
+      "prefecture": "福島県",
+      "name": "須賀川市"
+    }
+  ],
+  "venue": {
+    "name": "五老山山頂（翠ヶ丘公園内）",
+    "lat": 37.2923,
+    "lng": 140.3819
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["jalan", "rurubu"],
+  "highlights": [
+    "五老山の上で、約20本の本松明と大松明に次々と火をともす",
+    "長さ10mの大松明を、神輿のように担いで町を進む大松明行列",
+    "当日買った小松明を手に、五老山まで歩く小松明行列に加われる",
+    "点火の前後に響く松明太鼓の演奏"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1589年の戦の死者を弔う行事で、江戸時代にも旧暦10月に行われていた",
+      "sources": [
+        {
+          "url": "https://www.city.sukagawa.fukushima.jp/kanko_sukagawa/event/taimatsu_akashi/1003837.html",
+          "title": "須賀川市 松明あかしの由来",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "天正17年（1589）に伊達政宗の攻めで須賀川城が落ち、その戦の死者を弔う行事とされる",
+      "source": {
+        "url": "https://www.city.sukagawa.fukushima.jp/kanko_sukagawa/event/taimatsu_akashi/1003837.html",
+        "title": "須賀川市 松明あかしの由来",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "江戸時代には旧暦10月10日に、戦死者を弔って炬火を投げ合う行事が行われていた",
+      "source": {
+        "url": "https://www.city.sukagawa.fukushima.jp/kanko_sukagawa/event/taimatsu_akashi/1003837.html",
+        "title": "須賀川市 松明あかしの由来",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "「松明あかし」という名がどこから来たのかは、はっきりしていない",
+      "source": {
+        "url": "https://www.city.sukagawa.fukushima.jp/kanko_sukagawa/event/taimatsu_akashi/1003837.html",
+        "title": "須賀川市 松明あかしの由来",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "伊達・二階堂の双方の戦死者を弔い、行事を伝えてきた先人への感謝も込めている",
+      "source": {
+        "url": "https://www.city.sukagawa.fukushima.jp/kanko_sukagawa/event/taimatsu_akashi/1003837.html",
+        "title": "須賀川市 松明あかしの由来",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "当日16:00〜18:00に妙見児童公園で小松明を1本1,000円で買い（200本限定、なくなり次第終了）、16:30〜18:00に同じ公園から五老山山頂まで小松明行列で歩く。13:00〜16:00に市民交流センターtetteで小松明を作る体験（1本500円、200本限定、小学生以下は保護者の同伴）もある",
+    "rules": [
+      "観覧の経路は一方通行で、係員や看板の指示に従う",
+      "観覧の経路では三脚を使った写真・動画の撮影をしない",
+      "五老山の周りでのドローンの飛行・撮影は禁止",
+      "立ち止まらずに進む",
+      "五老山の中では飲食を控える",
+      "五老山山頂の混み具合によっては入山が規制され、列に並んでも見られないことがある",
+      "車は指定の臨時駐車場に停め、路上駐車をしない"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "high",
+      "reason": "燃える大きな松明のそばを歩いて見物し、主催者が火の粉が飛ぶことに注意を呼びかけている。小松明行列では火のついた松明を手に持って歩く"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "観覧の経路では三脚を使えない。五老山の周りではドローンでの撮影が禁止"
+    },
+    "sources": [
+      {
+        "url": "https://www.city.sukagawa.fukushima.jp/kanko_sukagawa/event/taimatsu_akashi/1015028.html",
+        "title": "須賀川市 令和8年度「松明あかし」（観覧の注意事項）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.sukagawa.fukushima.jp/kanko_sukagawa/event/taimatsu_akashi/1003832.html",
+        "title": "須賀川市 【小松明】当日販売・当日製作体験会・事前製作体験会",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-14",
+      "start": "18:30",
+      "end": "20:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の市の発表（時刻は予定）。日中は大松明行列（時刻は未発表）とおもてなしイベント広場、16:30〜18:00 小松明行列が妙見児童公園を出発、夕方に二階堂神社で御神火奉受、18:00〜点火まで 松明太鼓（1部）、18:30 五老山山頂で点火、18:45〜20:00ごろ 松明太鼓（2部）。本松明は約20本、大松明は1本。大松明行列は前年の中止から復活する",
+      "sources": [
+        {
+          "url": "https://www.city.sukagawa.fukushima.jp/kanko_sukagawa/event/taimatsu_akashi/1015028.html",
+          "title": "須賀川市 令和8年度「松明あかし」（11月14日、18時30分点火予定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.sukagawa.fukushima.jp/kanko_sukagawa/event/taimatsu_akashi/1003832.html",
+          "title": "須賀川市 【小松明】当日販売・当日製作体験会（小松明行列 16:30〜18:00出発）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000349",
+          "title": "るるぶ&more. 松明あかし（2026年11月14日、約20本の松明）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-11-13",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2027年の発表はまだない）。市の案内の「11月の第二土曜日」から見込んだ日。例年、夕方に五老山山頂で点火する",
+      "sources": [
+        {
+          "url": "https://www.city.sukagawa.fukushima.jp/kanko_sukagawa/event/taimatsu_akashi/1003837.html",
+          "title": "須賀川市 松明あかしの由来（現在は11月の第二土曜日に五老山で行う）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 須賀川駅",
+        "walkMinutes": [15, 20]
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": ["2026年11月14日、会場の周りで交通規制（区間と時間は市の周辺図で案内）"],
+    "sources": [
+      {
+        "url": "https://www.city.sukagawa.fukushima.jp/kanko_sukagawa/event/taimatsu_akashi/1003838.html",
+        "title": "須賀川市 アクセス（松明あかし）（JR須賀川駅から徒歩15分、会場周辺に約2,000台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.sukagawa.fukushima.jp/kanko_sukagawa/event/taimatsu_akashi/1015028.html",
+        "title": "須賀川市 令和8年度「松明あかし」（交通規制、無料の臨時駐車場）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "tsuburaya-eiji-museum",
+      "name": "円谷英二ミュージアム",
+      "kind": "sightseeing",
+      "summary": "須賀川出身の特撮監督・円谷英二の仕事を紹介する、市民交流センターtetteの中の展示施設。常設展は無料（企画展は有料のことがある）。年末年始も休館",
+      "location": {
+        "lat": 37.2889,
+        "lng": 140.3752
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": ["tue", "wed"],
+      "price": "常設展は無料",
+      "tags": ["indoor", "kid_friendly"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://s-tette.jp/about/005278.html",
+          "title": "須賀川市民交流センターtette 利用案内（円谷英二ミュージアム 9:00〜17:00、火・水曜休館）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://s-tette.jp/museum/index.html",
+          "title": "円谷英二ミュージアム",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.sukagawa.fukushima.jp/shisetsu/1004370/1014221/1004519.html",
+          "title": "須賀川市 須賀川市民交流センター tette（所在地と地図）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "sukagawa-flatto",
+      "name": "すかがわ観光物産館 flatto",
+      "kind": "sightseeing",
+      "summary": "tetteの隣にある市の物産館。すかがわ岩瀬きゅうりなどの農産物、伝統菓子、ウルトラヒーローや怪獣をあしらった品を売る。年末年始も休み",
+      "location": {
+        "lat": 37.2887,
+        "lng": 140.3753
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "18:00"
+      },
+      "closedDays": ["tue"],
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.sukagawa.fukushima.jp/kanko_sukagawa/omiyage/1012800/index.html",
+          "title": "須賀川市 すかがわ観光物産館flatto",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%A6%8F%E5%B3%B6%E7%9C%8C%E9%A0%88%E8%B3%80%E5%B7%9D%E5%B8%82%E4%B8%AD%E7%94%BA11",
+          "title": "国土地理院 住所検索（須賀川市中町11番地）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.sukagawa.fukushima.jp/kanko_sukagawa/event/taimatsu_akashi/1015028.html",
+      "title": "須賀川市 令和8年度「松明あかし」",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.sukagawa.fukushima.jp/kanko_sukagawa/event/taimatsu_akashi/1003837.html",
+      "title": "須賀川市 松明あかしの由来",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E7%BF%A0%E3%82%B1%E4%B8%98%E5%85%AC%E5%9C%92",
+      "title": "国土地理院 地名検索（翠ヶ丘公園）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2026年の大松明行列の時刻と道筋",
+    "2026年の交通規制の区間と時間（市の周辺図が画像だけで、文字の案内がない）",
+    "臨時駐車場の場所と、駅や駐車場からのシャトルバスの有無",
+    "雨や風のときの扱い",
+    "会場の正確な位置（点火を行う五老山山頂の点）",
+    "服装と持ち物の案内",
+    "見物客の数",
+    "地元の味・祭りの日だけの食べ物（露店が松明通りと翠ヶ丘公園南舘芝生広場に出るとだけ分かっている）",
+    "祭りの日に開いている、会場の近くの食事の店",
+    "主要駅（郡山駅など）から須賀川駅までの所要時間"
+  ]
+}

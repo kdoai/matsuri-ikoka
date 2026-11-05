@@ -1,0 +1,260 @@
+{
+  "id": "minamidaito-honensai",
+  "name": {
+    "ja": "南大東村豊年祭",
+    "en": "Minamidaito Honensai Harvest Festival"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "沖縄県",
+      "name": "南大東村"
+    }
+  ],
+  "venue": {
+    "name": "大東神社・村民の杜公園",
+    "lat": 25.8424,
+    "lng": 131.2266
+  },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": ["jalan"],
+  "highlights": [
+    "化粧まわしでの土俵入りと、江戸相撲・沖縄角力の奉納",
+    "八丈島の八丈太鼓の流れをくむ大東太鼓",
+    "法被を着た人たちが、村役場から大東神社まで神輿を担ぎ山車を曳く",
+    "島の産業であるサトウキビの豊作を願い、各字が神輿を担ぐ"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1920年の社殿の落成を機に土俵入りなどが始まった奉納の行事",
+      "sources": [
+        {
+          "url": "https://www.vill.minamidaito.okinawa.jp/page/404.html",
+          "title": "南大東村 南大東島の年中行事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "相撲は開拓のころ、江戸相撲を手本にした青年の活動として始まった",
+      "source": {
+        "url": "https://www.vill.minamidaito.okinawa.jp/page/404.html",
+        "title": "南大東村 南大東島の年中行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1920年10月に社殿ができたのを機に、化粧まわしの土俵入りと相撲甚句が始まった",
+      "source": {
+        "url": "https://www.vill.minamidaito.okinawa.jp/page/404.html",
+        "title": "南大東村 南大東島の年中行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "大東太鼓は、開拓した人たちの出身地である八丈島の太鼓の流れをくみ、太鼓の両面を打つ",
+      "source": {
+        "url": "https://www.vill.minamidaito.okinawa.jp/page/404.html",
+        "title": "南大東村 南大東島の年中行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.okinawa41.go.jp/reports/7795",
+        "title": "OKINAWA41 南大東村 9月のオススメイベント「南大東村豊年祭」（南大東村の提供、2018年6月5日。島民も観光客も法被を着て神輿を担ぎ山車を曳く、参加料はない）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-09-22",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "宵祭。2027年の発表はまだない。村は毎年9月22日と23日を祭日としている。2018年の村の案内では、宵祭は午後3時ごろから",
+      "sources": [
+        {
+          "url": "https://www.vill.minamidaito.okinawa.jp/page/404.html",
+          "title": "南大東村 南大東島の年中行事（9月22日 宵祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.minamidaito-okinawa.com/event",
+          "title": "南大東村観光協会 島の行事（豊年祭 9月22〜23日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.okinawa41.go.jp/reports/7795",
+          "title": "OKINAWA41 南大東村豊年祭（2018年。宵祭は午後3時ごろから）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-09-23",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "本祭（秋分の日）。2027年の発表はまだない。2018年の村の案内では、本祭は午前9時に始まり、大東神社の土俵で子どもの相撲、青年の土俵入り、江戸相撲、沖縄角力の順に行う。本祭の夜はふれあい広場で演芸があり、屋台が出て大東太鼓も披露される",
+      "sources": [
+        {
+          "url": "https://www.vill.minamidaito.okinawa.jp/page/404.html",
+          "title": "南大東村 南大東島の年中行事（9月23日 本祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.okinawa41.go.jp/reports/7795",
+          "title": "OKINAWA41 南大東村豊年祭（2018年。本祭は午前9時から）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.vill.minamidaito.okinawa.jp/site/iju/787.html",
+        "title": "南大東村 アクセス（琉球エアーコミューターの飛行機と大東海運の船）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "南大東寿司（大東寿司）",
+        "note": "サワラやマグロを醤油ベースのたれに漬け、甘めの酢飯にのせる島の名物。たれの味は家ごとに少しずつ違う。祭りの日に食べられる店は確かめていない",
+        "sources": [
+          {
+            "url": "https://www.vill.minamidaito.okinawa.jp/page/396.html",
+            "title": "南大東村 南大東寿司",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      },
+      {
+        "name": "大東そば",
+        "note": "ガジュマルの灰の汁で手打ちした、こしのある麺。持ち帰り用は空港の売店で1袋600円、数に限りがある",
+        "sources": [
+          {
+            "url": "https://www.vill.minamidaito.okinawa.jp/page/397.html",
+            "title": "南大東村 大東そば",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "minamidaito-hoshinodo",
+      "name": "星野洞",
+      "kind": "sightseeing",
+      "summary": "島の北にある鍾乳洞で、石柱や鍾乳石・石筍が多い。1994年に村が開いた。見学は午前9:00〜11:30と午後13:00〜16:30の受付。年末年始や台風・大雨のときは休むことがある",
+      "location": {
+        "lat": 25.8576,
+        "lng": 131.2245
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": [],
+      "price": "大人1,200円、子ども（6歳から）500円、5歳以下は無料",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.vill.minamidaito.okinawa.jp/site/iju/1655.html",
+          "title": "南大東村 星野洞",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "minamidaito-hinomaruyama-observatory",
+      "name": "日の丸山展望台",
+      "kind": "sightseeing",
+      "summary": "1980年に設けられた展望台で、島の約7割を見渡せる。戦時中は電波探知の部隊が置かれ、壕の跡が残る",
+      "location": {
+        "lat": 25.8213,
+        "lng": 131.243
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.vill.minamidaito.okinawa.jp/site/iju/664.html",
+          "title": "南大東村 日の丸山展望台",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.vill.minamidaito.okinawa.jp/page/404.html",
+      "title": "南大東村 南大東島の年中行事（豊年祭）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.minamidaito-okinawa.com/event",
+      "title": "南大東村観光協会 島の行事（豊年祭）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "外から来た人が神輿や山車に加われるか、法被を借りられるか（2018年の村の案内に「観光客も法被を着て参加」とあるが、今の案内が見つからない）",
+    "2027年の開催の発表と時刻（宵祭の午後3時ごろ・本祭の午前9時は2018年の村の案内のもの）",
+    "雨や台風のときの扱い",
+    "観光客が神輿や山車に加わる方法（法被の用意、受付）。2018年の案内のあと変わっていないか確かめていない",
+    "見学者向けの決まり（土俵のまわりで見る場所、撮影）、持ち物、危険度",
+    "村のサイトにあるという「豊年祭に来島される観光客の皆様へ」のお知らせ（ページを見つけられなかった）",
+    "アクセス（鉄道はなく、那覇空港からの飛行機と船の所要時間・便数の公式の数字を確かめていない）と駐車場。島内の公共交通",
+    "神輿・山車の数と見物客の数",
+    "会場の近くで祭りの日に開いている食事の店（村のサイトに営業時間の案内がない）",
+    "ふるさと文化センター（9:00〜17:00、昼休みあり、年中無休）は位置を確かめられず入れなかった",
+    "星野洞の受付時間（午前と午後に分かれるので hours は null）"
+  ]
+}

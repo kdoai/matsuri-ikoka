@@ -1,0 +1,268 @@
+{
+  "id": "chagu-chagu-umakko",
+  "name": {
+    "ja": "チャグチャグ馬コ",
+    "en": "Chagu Chagu Umakko"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "岩手県",
+      "name": "滝沢市"
+    },
+    {
+      "prefecture": "岩手県",
+      "name": "盛岡市"
+    }
+  ],
+  "venue": {
+    "name": "鬼越蒼前神社（出発地）",
+    "lat": 39.7476,
+    "lng": 141.068
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu"],
+  "highlights": [
+    "色とりどりの装束と鈴をまとった農耕馬が、鈴を鳴らして約14km歩く",
+    "装束を着た子どもが馬の背に乗って行進する",
+    "田園から盛岡の街なかまで、景色の移り変わりの中を行列が進む",
+    "家ごとに手作りの装束を受け継いでいる"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1978年に国の記録作成等の措置を講ずべき無形民俗文化財に選択された",
+      "sources": [
+        {
+          "url": "https://www.tohokukanko.jp/festivals/detail_1003783.html",
+          "title": "東北観光推進機構 チャグチャグ馬コ（1978年に記録作成等の措置を講ずべき無形の民俗文化財に選択）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "チャグチャグ馬コ保存会など3団体が国の保護団体になっている",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/203563",
+          "title": "文化遺産オンライン チャグチャグ馬コ（保護団体 チャグチャグ馬コ保存会ほか）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "田植えの準備を終えた馬を休ませ、端午の節句に蒼前神社へ連れて参り、無病息災を願ったのが始まり",
+      "source": {
+        "url": "https://chaguuma.com/",
+        "title": "チャグチャグ馬コ保存会",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1頭の馬が身に着ける鈴は、700個を超えると言われる",
+      "source": {
+        "url": "https://chaguuma.com/",
+        "title": "チャグチャグ馬コ保存会",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "鈴の音は1996年に環境庁の「日本の音風景100選」に選ばれた",
+      "source": {
+        "url": "https://www.tohokukanko.jp/festivals/detail_1003783.html",
+        "title": "東北観光推進機構 チャグチャグ馬コ",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2026年の出馬は66頭の予定だった。多い年には110頭ほどが歩いたという",
+      "source": {
+        "url": "https://www.city.takizawa.iwate.jp/uploads/public/pages_0000005471_00/260604定例記者会見要旨（HP）.pdf",
+        "title": "滝沢市 定例記者会見要旨（2026年6月4日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "馬は敏感な動物なので、大きな音を立てず、馬の後ろに立たない",
+      "ドローン（小型無人航空機）は使わない",
+      "行進する道路には交通規制の時間がある"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "沿道に約19万人が集まる混雑の中、生きた馬が近くを通る。主催者は事故を防ぐため馬への近づき方を注意している"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "フラッシュを使った撮影は禁止"
+    },
+    "sources": [
+      {
+        "url": "https://www.city.morioka.iwate.jp/_res/projects/default_project/_page_/001/056/053/260611kanko.pdf",
+        "title": "盛岡市 令和8年度チャグチャグ馬コ行進行事の概要（観覧の注意事項）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.tohokukanko.jp/festivals/detail_1003783.html",
+        "title": "東北観光推進機構 チャグチャグ馬コ（各道路で交通規制の時間あり）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.takizawa.iwate.jp/uploads/public/pages_0000005471_00/260604定例記者会見要旨（HP）.pdf",
+        "title": "滝沢市 定例記者会見要旨（前年の人出 18万9千人）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-06-13",
+      "start": "09:30",
+      "end": "13:55",
+      "status": "announced",
+      "rainPolicy": "雨でも基本的に行う。雷や強い雨で安全に歩けないときは当日に判断し、荒天による中止は保存会のInstagramで発表",
+      "note": "2026年の実績。66頭（予定）と役員馬7頭が、9:30に鬼越蒼前神社を出て盛岡八幡宮まで約14kmを行進。滝沢市役所前は8:00〜11:00ごろ、大通・桜山神社では12:00から手踊りなどの催し。前日に写真撮影会、当日にビッグルーフ滝沢でふれあいまつり",
+      "sources": [
+        {
+          "url": "https://www.city.morioka.iwate.jp/_res/projects/default_project/_page_/001/056/053/260611kanko.pdf",
+          "title": "盛岡市 令和8年度チャグチャグ馬コ行進行事の概要（6月13日 9:30〜13:55、66頭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.takizawa.iwate.jp/uploads/public/pages_0000005471_00/260604定例記者会見要旨（HP）.pdf",
+          "title": "滝沢市 定例記者会見要旨（9:30出発、雨天の扱い）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://chaguuma.com/marching-event/",
+          "title": "チャグチャグ馬コ保存会 行進行事（経路と見どころ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-06-12",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年6月の第2土曜日に行う決まりから見込んだ日（2027年の発表はまだない）。2026年は9:30に鬼越蒼前神社を出発し、13:55ごろまで行進した",
+      "sources": [
+        {
+          "url": "https://chaguuma.com/marching-event/",
+          "title": "チャグチャグ馬コ保存会 行進行事（毎年6月の第2土曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar0203e589724/data.html",
+          "title": "ウォーカープラス チャグチャグ馬コ（毎年6月第2土曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "岩手県交通 ビッグルーフ滝沢・滝沢市役所バス停",
+        "walkMinutes": [26, 31],
+        "note": "出発地の鬼越蒼前神社まで。盛岡駅前から岩手県交通の青山町線で約25分、バス停から徒歩約26分"
+      },
+      {
+        "name": "岩手県交通 盛岡バスセンター",
+        "walkMinutes": [10, 15],
+        "note": "到着地の盛岡八幡宮まで約600m。盛岡駅前からバスで約10分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "盛岡駅",
+        "minutes": [25, 35],
+        "route": "盛岡駅前から岩手県交通の青山町線のバスで「ビッグルーフ」または「滝沢市役所」へ"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [
+      "行進する各道路で交通規制の時間がある。滝沢市役所の周辺は行列が通り過ぎるまで規制"
+    ],
+    "sources": [
+      {
+        "url": "https://chaguuma.com/access/",
+        "title": "チャグチャグ馬コ保存会 交通アクセス",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://chaguuma.com/marching-event/",
+        "title": "チャグチャグ馬コ保存会 行進行事（神社に駐車場はなく、滝沢市役所・ビッグルーフ滝沢・滝沢総合公園の駐車場から約1.4km）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002258",
+        "title": "るるぶ&more. チャグチャグ馬コ行進行事（無料駐車場 約1,200台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://chaguuma.com/",
+      "title": "チャグチャグ馬コ保存会",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://chaguuma.com/marching-event/",
+      "title": "チャグチャグ馬コ保存会 行進行事（鬼越蒼前神社から盛岡八幡宮まで約14km）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.tohokukanko.jp/festivals/detail_1003783.html",
+      "title": "東北観光推進機構 チャグチャグ馬コ（1978年に記録作成等の措置を講ずべき無形の民俗文化財に選択）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、出発・到着の時刻",
+    "途中の各地点（盛岡駅前・材木町など）を通る時刻",
+    "当日のシャトルバスの運行（観光の案内の間で、鬼越蒼前神社に停まるかどうかが食い違う）",
+    "各道路の交通規制の時間と場所の詳細",
+    "見物の服装・持ち物、場所取りの決まり",
+    "屋台の有無と、この日だけの食べもの",
+    "周辺の観光と食の場所（営業時間を確かめられた場所がまだない）",
+    "規模は、前年の人出18万9千人と、2つの市にまたがる約14kmの行列であることから L にした。行列に加わる人の正確な人数は分からない",
+    "会場の緯度・経度は、国土地理院の地名検索で鬼越蒼前神社から取った位置"
+  ]
+}

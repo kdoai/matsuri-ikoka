@@ -2,6 +2,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { DEFAULT_PREFERENCES, type SseEvent } from "@matsuri-ikoka/schema";
 import { describe, expect, it, vi } from "vitest";
+import { findGaps } from "../domain/planCoverage";
 import { ItineraryStore, SessionStore } from "../session/sessionStore";
 import { loadSampleConversations, ReplayAgentRunner, sleep } from "./replayRunner";
 
@@ -127,5 +128,24 @@ describe("sleep", () => {
 
     expect(add).toHaveBeenCalledTimes(1);
     expect(remove).toHaveBeenCalledWith("abort", add.mock.calls[0]?.[1]);
+  });
+});
+
+describe("サンプルの相談の旅程", () => {
+  it("移動の区間・最後の移動・帰りの最終・食事がそろい、点検の不足がない", async () => {
+    const samples = await loadSampleConversations(samplesDir);
+    const itineraries = samples.flatMap((sample) =>
+      sample.turns.flatMap((turn) =>
+        turn.events.flatMap(({ event }) =>
+          event.type === "itinerary.updated" ? [event.data.itinerary] : [],
+        ),
+      ),
+    );
+    expect(itineraries.length).toBeGreaterThan(0);
+    for (const itinerary of itineraries) {
+      expect(findGaps(itinerary)).toEqual([]);
+      expect(itinerary.gaps).toEqual([]);
+      expect(itinerary.evaluation?.passed).toBe(true);
+    }
   });
 });

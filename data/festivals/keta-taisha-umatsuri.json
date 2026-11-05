@@ -1,0 +1,301 @@
+{
+  "id": "keta-taisha-umatsuri",
+  "name": {
+    "ja": "鵜祭",
+    "en": "Umatsuri Cormorant Rite of Keta Taisha"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "石川県",
+      "name": "羽咋市"
+    }
+  ],
+  "venue": {
+    "name": "氣多大社",
+    "lat": 36.9253,
+    "lng": 136.7669
+  },
+  "scaleTier": "XS",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "生け捕った1羽の鵜を「鵜様」として神前に放つ、未明の神事",
+    "灯りを目指して台に止まる鵜の動きで、来る年の吉凶を占う",
+    "七尾の鵜浦から鵜捕部が2泊3日かけて鵜を運んでくる",
+    "国の重要無形民俗文化財に指定された、能登一の宮の特殊神事"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "国の重要無形民俗文化財に指定された、氣多大社の古い神事",
+      "sources": [
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000753",
+          "title": "るるぶ&more. 氣多の鵜祭り（国の重要無形民俗文化財）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "鹿渡島の20戸の鵜捕部が3戸ずつ当番で鵜を運び、鵜浦町会も保護団体",
+      "sources": [
+        {
+          "url": "https://kunishitei.bunka.go.jp/heritage/detail/302/737",
+          "title": "国指定文化財等データベース 気多の鵜祭の習俗（保護団体 気多大社、鵜浦町会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "鵜は七尾市鵜浦町で生け捕られ、鵜捕部3人が鵜籠に入れて2泊3日で神社まで運ぶ",
+      "source": {
+        "url": "https://keta.jp/event",
+        "title": "氣多大社 祭典・神事（鵜祭）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "生け捕られた鵜は神とされ「鵜様」と呼ばれる。道中では人々が手を合わせるという",
+      "source": {
+        "url": "https://keta.jp/event",
+        "title": "氣多大社 祭典・神事（鵜祭）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2019年は主役のウミウが捕まらず、鵜祭を開けなかった",
+      "source": {
+        "url": "https://intojapanwaraku.com/rock/culture-rock/104828/",
+        "title": "和樂web 氣多大社の鵜祭についての記事（2020年6月）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "神事を終えた鵜は、神社近くの海岸で放たれる",
+      "source": {
+        "url": "https://rurubu.jp/andmore/spot/20000753",
+        "title": "るるぶ&more. 氣多の鵜祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000753",
+        "title": "るるぶ&more. 氣多の鵜祭り（料金無料、本殿の中で神職と鵜捕部が行う）",
+        "checkedAt": "2026-11-04",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://www.japan47go.travel/en/detail/734fe9f3-2dd8-42cb-9544-28bff7dec376",
+        "title": "JAPAN 47 GO（日本観光振興協会） U-matsuri Festival",
+        "checkedAt": "2026-11-04",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-16",
+      "start": "03:00",
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年12月16日の未明（神社の案内。2026年の神社の発表は見つからない）。開始は3:00ごろとする観光サイトの案内が2つある。鵜は14日の夕方ごろ神社に着き、神事の後に近くの海岸で放たれる。鵜が捕れずに開けなかった年もある",
+      "sources": [
+        {
+          "url": "https://keta.jp/event",
+          "title": "氣多大社 祭典・神事（鵜祭は12月16日未明の神事）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000753",
+          "title": "るるぶ&more. 氣多の鵜祭り（2026年12月16日 3時〜）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://www.japan47go.travel/en/detail/734fe9f3-2dd8-42cb-9544-28bff7dec376",
+          "title": "JAPAN 47 GO U-matsuri Festival（2026年12月16日 3:00〜、毎年同じ日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "corroborated"
+        }
+      ]
+    },
+    {
+      "date": "2027-12-16",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年12月16日の未明（2027年の発表はまだない）。例年の開始は3:00ごろとする観光サイトの案内がある",
+      "sources": [
+        {
+          "url": "https://keta.jp/event",
+          "title": "氣多大社 祭典・神事 年中祭事記（12月16日 鵜祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "北鉄能登バス 一の宮バス停",
+        "walkMinutes": [5, 10],
+        "note": "JR 羽咋駅から富来方面のバスで約10分（6分とする案内もある）、降りて徒歩約5分。未明の神事の時間に乗れる便があるかは確かめていない"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "金沢駅",
+        "minutes": [60, 70],
+        "route": "IRいしかわ鉄道線から JR 七尾線へ直通する七尾行きで羽咋駅まで、乗り換えなし"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.fun-japan.jp/jp/articles/10363",
+        "title": "FUN! JAPAN 氣多大社の見どころ（金沢駅から約60分、一の宮バス停から徒歩約5分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000753",
+        "title": "るるぶ&more. 氣多の鵜祭り（羽咋駅からバス6分、駐車場250台・無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      },
+      {
+        "url": "https://www.japan47go.travel/en/detail/734fe9f3-2dd8-42cb-9544-28bff7dec376",
+        "title": "JAPAN 47 GO U-matsuri Festival（羽咋駅からバス約10分、一の宮から徒歩5分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "cosmo-isle-hakui",
+      "name": "コスモアイル羽咋",
+      "kind": "sightseeing",
+      "summary": "UFO の目撃談が多い羽咋にある、UFO 形の宇宙科学博物館。米ソの宇宙開発の実物の機体や試作機を展示し、多くに英語の説明がある。火曜休館（祝日なら翌日）",
+      "location": {
+        "lat": 36.8982,
+        "lng": 136.7884
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "08:30",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["tue"],
+      "price": "大人500円から、15歳未満250円、6歳未満無料",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.ishikawatravel.jp/spots/cosmo-isle-hakui",
+          "title": "石川県 Ishikawa Travel コスモアイル羽咋",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "chirihama-nagisa-driveway",
+      "name": "千里浜なぎさドライブウェイ",
+      "kind": "sightseeing",
+      "summary": "日本海沿いの砂浜を車で走れる約8kmの道。羽咋市千里浜町から宝達志水町今浜まで続き、日没の眺めを楽しむ人が多い。通行できる時間や通行止めの条件は出典に書かれていない",
+      "location": {
+        "lat": 36.8791,
+        "lng": 136.7621
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.ishikawatravel.jp/spots/chirihama-nagisa-driveway",
+          "title": "石川県 Ishikawa Travel 千里浜なぎさドライブウェイ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://keta.jp/event",
+      "title": "氣多大社 祭典・神事（鵜祭）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.mlit.go.jp/tagengo-db/R1-01426.html",
+      "title": "観光庁 地域観光資源の多言語解説文データベース 気多大社（石川県観光連盟）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.ishikawatravel.jp/spots/keta-taisha-shrine/",
+      "title": "石川県 Ishikawa Travel 氣多大社（鵜祭）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20000753",
+      "title": "るるぶ&more. 氣多の鵜祭り（国の重要無形民俗文化財）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    },
+    {
+      "url": "https://intojapanwaraku.com/rock/culture-rock/104828/",
+      "title": "和樂web 氣多大社の鵜祭（本殿の灯火に向かって飛び、台にとまる鵜で占う）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2026年の開催の発表と開始の時刻（神社の案内は「16日未明」だけで、3:00は観光サイトの案内）",
+    "一般の人がどこから見られるか、見学できる人数や時間の決まり（本殿の中の神事で、見学の案内が見つからない）",
+    "撮影の決まり、服装・持ち物、危険や混雑の注意",
+    "未明の神事に間に合う公共交通の有無（バスの時刻を確かめていない）",
+    "駐車場の台数（250台と300台の案内があり食い違う）と、祭りの夜に使えるか",
+    "鵜が捕れなかった年の扱い（開けなかった年と、鵜なしで祝詞だけ行った年があるとされ、公式の案内がない）",
+    "雨や雪のときの扱い",
+    "屋台・露店の有無と、祭りの日だけの食べ物",
+    "神事の所要時間と見学者数の公表値",
+    "周辺の食事の場所（営業時間を公式の案内で確かめられた店がない）"
+  ]
+}

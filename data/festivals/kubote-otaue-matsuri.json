@@ -1,0 +1,255 @@
+{
+  "id": "kubote-otaue-matsuri",
+  "name": {
+    "ja": "求菩提山のお田植祭",
+    "en": "Rice Planting Festival at Mt. Kubote"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "福岡県",
+      "name": "豊前市"
+    }
+  ],
+  "venue": {
+    "name": "求菩提山 国玉神社中宮前の広場",
+    "lat": 33.5401,
+    "lng": 131.0115
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "松役と子どもたちが、田植えまでの農作業をおどけた所作で演じる",
+    "修験の山・求菩提山の中宮前で行う、県指定の無形民俗文化財",
+    "お田植のほかに神楽と神輿の巡行も行われ、山の春の始まりを祝う"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "福岡県指定の無形民俗文化財で、求菩提山の松会の田行事にあたる",
+      "sources": [
+        {
+          "url": "https://buzen-kk.jp/spot/%e6%b1%82%e8%8f%a9%e6%8f%90%e5%b1%b1%e3%81%ae%e3%81%8a%e7%94%b0%e6%a4%8d%e7%a5%ad/",
+          "title": "豊前観光まちづくり協会 求菩提山のお田植祭",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "求菩提山でいちばん大きな祭礼「松会」のうち、田の行事にあたる予祝の祭り",
+      "source": {
+        "url": "https://buzen-kk.jp/spot/%e6%b1%82%e8%8f%a9%e6%8f%90%e5%b1%b1%e3%81%ae%e3%81%8a%e7%94%b0%e6%a4%8d%e7%a5%ad/",
+        "title": "豊前観光まちづくり協会 求菩提山のお田植祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "標高782mの求菩提山は、英彦山とともに豊前の修験道の聖地だった",
+      "source": {
+        "url": "https://www.crossroadfukuoka.jp/spot/13072",
+        "title": "クロスロードふくおか 求菩提山",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "山は2001年に国の史跡となり、麓の集落は2012年に重要文化的景観に選ばれた",
+      "source": {
+        "url": "https://www.crossroadfukuoka.jp/spot/13072",
+        "title": "クロスロードふくおか 求菩提山",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "国玉神社はかつて求菩提山護国寺と呼ばれ、中腹に中宮、山頂に上宮がある",
+      "source": {
+        "url": "https://www.crossroadfukuoka.jp/spot/14791",
+        "title": "クロスロードふくおか 国玉神社",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": []
+  },
+  "occurrences": [
+    {
+      "date": "2026-03-29",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年3月29日（日）に国玉神社中宮前の広場で開催と福岡県の観光サイトが案内していた。時刻の発表は見つからない",
+      "sources": [
+        {
+          "url": "https://www.crossroadfukuoka.jp/event/10421",
+          "title": "クロスロードふくおか 求菩提山のお田植祭（2026年3月29日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-03-28",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年3月の、29日を越えない最後の日曜日に行う決まりから見込んだ日（2027年の発表はまだない）。豊前観光まちづくり協会の案内では10:00〜15:00（年の記載なし）。宇島駅から豊前市バスで求菩提資料館前まで約30〜40分、そこから会場まで徒歩約45〜60分",
+      "sources": [
+        {
+          "url": "https://buzen-kk.jp/spot/%e6%b1%82%e8%8f%a9%e6%8f%90%e5%b1%b1%e3%81%ae%e3%81%8a%e7%94%b0%e6%a4%8d%e7%a5%ad/",
+          "title": "豊前観光まちづくり協会 求菩提山のお田植祭（毎年3月の29日を越えない最終日曜日、10:00〜15:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.crossroadfukuoka.jp/spot/14791",
+          "title": "クロスロードふくおか 国玉神社（3月の最終日曜日。30日・31日に当たる年は1週前の日曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "豊前市バス 求菩提資料館前バス停",
+        "walkMinutes": [45, 50],
+        "note": "JR 宇島駅から豊前市バスで「求菩提資料館前」へ。会場まで山道を歩いて約45分（クロスロードふくおかの祭りの案内）。宇島駅からバスと徒歩で約60分とする案内もある"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.crossroadfukuoka.jp/spot/13072",
+        "title": "クロスロードふくおか 求菩提山（求菩提山公共駐車場40台、宇島駅からバスと徒歩約60分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.crossroadfukuoka.jp/spot/14791",
+        "title": "クロスロードふくおか 国玉神社（座主坊の駐車場から徒歩約20分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.crossroadfukuoka.jp/event/10421",
+        "title": "クロスロードふくおか 求菩提山のお田植祭（宇島駅から豊前市バス、求菩提資料館前から徒歩約45分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "kubote-shiryokan",
+      "name": "求菩提資料館",
+      "kind": "sightseeing",
+      "summary": "求菩提山の麓にある資料館。修験道の神仏像・古文書・山伏の道具など約5000点を収め、4〜10月には国宝の銅板法華経を展示する",
+      "location": {
+        "lat": 33.549,
+        "lng": 131.0213
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "16:30",
+        "lastEntry": "16:00"
+      },
+      "closedDays": ["mon"],
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.crossroadfukuoka.jp/spot/14793",
+          "title": "クロスロードふくおか 求菩提資料館（月曜休館、祝日なら翌日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kubote-takasho-bokusen-no-sato",
+      "name": "くぼて鷹勝 卜仙の郷",
+      "kind": "rest",
+      "summary": "求菩提山の麓の源泉100％の温泉。山を望む露天風呂やサウナがあり、日帰りで入れる。食事処と喫茶もある（食事処の時間は案内がない）",
+      "location": {
+        "lat": 33.5509,
+        "lng": 131.036
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "21:00"
+      },
+      "closedDays": [],
+      "price": "日帰り入浴 市内700円・市外800円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.crossroadfukuoka.jp/spot/13189",
+          "title": "クロスロードふくおか くぼて鷹勝 卜仙の郷",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://buzen-kk.jp/spot/%e6%b1%82%e8%8f%a9%e6%8f%90%e5%b1%b1%e3%81%ae%e3%81%8a%e7%94%b0%e6%a4%8d%e7%a5%ad/",
+      "title": "豊前観光まちづくり協会 求菩提山のお田植祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.crossroadfukuoka.jp/event/10421",
+      "title": "クロスロードふくおか 求菩提山のお田植祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.crossroadfukuoka.jp/spot/14791",
+      "title": "クロスロードふくおか 国玉神社（豊前市大字求菩提202）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、神事・お田植の演技・神輿の巡行それぞれの時刻",
+    "見学の仕方、決まり、服装・持ち物・撮影の扱い、危険度（山道を歩いて会場へ向かうが、主催者の注意書きが見つからない）",
+    "雨のときの扱い",
+    "求菩提資料館前のバス停から会場までの徒歩の時間（約45分と約60分の案内がある）と、祭りの日のバスの便",
+    "主要駅（小倉駅など）からの所要時間（宇島駅からのバスを含む通しの公式の案内が見つからない）",
+    "会場の正確な位置（緯度・経度は国土地理院の地名検索の求菩提山の位置で、中宮前の広場そのものではない）。周辺の場所の緯度・経度も、住所の大字の代表点",
+    "祭りの日の駐車場の扱いと交通規制の有無",
+    "屋台の有無と、祭りならではの食べもの",
+    "会場の近くの食事の場所（卜仙の郷の食事処の営業時間が分からない）",
+    "求菩提資料館の入館料",
+    "演者・見物客の数（規模は、1つの会場で10:00〜15:00の行事として S にした）"
+  ]
+}

@@ -1,0 +1,194 @@
+{
+  "id": "mishima-no-kasedori",
+  "name": { "ja": "見島のカセドリ", "en": "Mishima Kasedori" },
+  "category": "ritual",
+  "municipalities": [{ "prefecture": "佐賀県", "name": "佐賀市" }],
+  "venue": { "name": "熊野神社（佐賀市蓮池町見島）", "lat": 33.2532, "lng": 130.3587 },
+  "scaleTier": "XS",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "蓑と笠をまとった2人の「かせどり」が、拝殿の床に青竹を激しく打ち鳴らす",
+    "竹の音で厄を払う、佐賀県内でほかに伝わっていない小正月の来訪神の行事",
+    "神社での所作のあと、提灯・天狗・御幣を持つ一行が集落の家々を回る"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "2003年に国の重要無形民俗文化財、2018年にユネスコ無形文化遺産になった",
+      "sources": [
+        {
+          "url": "https://www.saga-otakara.jp/search/detail.html?cultureId=5346&cityId=8",
+          "title": "さがの歴史・文化お宝帳 見島のカセドリ行事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.asobo-saga.jp/files/uploads/news/%E4%BB%A4%E5%92%8C5%E5%B9%B4%EF%BC%91%E6%9C%88%EF%BD%9E3%E6%9C%88_3.pdf",
+          "title": "佐賀県観光連盟 祭り・行事一覧表（令和5年1月〜3月）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "加勢鳥保存会が熊野神社の行事を伝え、青年が務める",
+      "sources": [
+        {
+          "url": "https://www.saga-otakara.jp/search/detail.html?cultureId=5346&cityId=8",
+          "title": "さがの歴史・文化お宝帳 見島のカセドリ行事（佐賀市蓮池町大字見島 熊野神社、加勢鳥保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "寛永年間（1624〜1644年）ごろから続いていると、地元では伝えられている",
+      "source": {
+        "url": "https://www.city.saga.lg.jp/material/files/group/63/s26052_20101216042822.pdf",
+        "title": "佐賀市 見島のカセドリ行事（市報さが 平成15年1月15日号に平成22年加筆）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2003年に国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.saga-otakara.jp/search/detail.html?cultureId=5346&cityId=8",
+        "title": "さがの歴史・文化お宝帳 見島のカセドリ行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2018年、「来訪神 仮面・仮装の神々」の1つとしてユネスコの無形文化遺産に登録された",
+      "source": {
+        "url": "https://www.asobo-saga.jp/files/uploads/news/%E4%BB%A4%E5%92%8C5%E5%B9%B4%EF%BC%91%E6%9C%88%EF%BD%9E3%E6%9C%88_3.pdf",
+        "title": "佐賀県観光連盟 祭り・行事一覧表（令和5年1月〜3月）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "かせどりの青竹は長さ1.7mあまりで、3分の2ほどを細かく割ってある",
+      "source": {
+        "url": "https://www.saga-otakara.jp/search/detail.html?cultureId=5346&cityId=8",
+        "title": "さがの歴史・文化お宝帳 見島のカセドリ行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "神社での所作と家々を回る行事の見学が中心で、混雑や危険についての主催者の注意は見つからない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.saga.lg.jp/material/files/group/63/s26052_20101216042822.pdf",
+        "title": "佐賀市 見島のカセドリ行事（「一度ご覧になっては」と見学を勧める。平成22年加筆の記事）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.pref.okinawa.lg.jp/_res/projects/default_project/_page_/001/009/612/dentou_3103ver1.pdf",
+        "title": "九州・沖縄・山口の文化力プロジェクト VOL.1 お祭り（平成31年3月、祭り巡りの案内に見島のカセドリを掲載）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-02-13",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年2月の第2土曜日の夜に行う決まりから見込んだ日（2027年の発表はまだ見つからない）。例年は19時ごろから熊野神社の拝殿で、かせどり2人が竹を打ち鳴らし、酒を飲み干す所作と謡があり、そのあと一行が集落の家々（氏子）を回り、最後に神社へ戻って締めくくる。2026年は2月14日の夜に行われ、15世帯を回ったと報じられた",
+      "sources": [
+        {
+          "url": "https://www.saga-otakara.jp/search/detail.html?cultureId=5346&cityId=8",
+          "title": "さがの歴史・文化お宝帳 見島のカセドリ行事（毎年2月の第2土曜日の夜）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.city.saga.lg.jp/material/files/group/63/s26052_20101216042822.pdf",
+          "title": "佐賀市 見島のカセドリ行事（午後7時ごろから熊野神社で始まる）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.saga-s.co.jp/articles/-/1650988",
+          "title": "佐賀新聞 ユネスコ無形文化遺産「見島のカセドリ」青竹を打ち鳴らして厄払い（2026年2月15日、14日夜に15世帯を巡る）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "佐賀市営バス 芙蓉校前バス停",
+        "walkMinutes": [5, 10],
+        "note": "佐賀駅バスセンターから佐賀市営バスの橋津行きに乗り、芙蓉校前で降りて徒歩5分"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "none",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.asobo-saga.jp/files/uploads/news/%E4%BB%A4%E5%92%8C5%E5%B9%B4%EF%BC%91%E6%9C%88%EF%BD%9E3%E6%9C%88_3.pdf",
+        "title": "佐賀県観光連盟 祭り・行事一覧表（令和5年1月〜3月、芙蓉校前下車徒歩5分、駐車場なし）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": { "stalls": "unknown", "local": [] },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.saga-otakara.jp/search/detail.html?cultureId=5346&cityId=8",
+      "title": "さがの歴史・文化お宝帳 見島のカセドリ行事（佐賀市蓮池町大字見島 熊野神社、加勢鳥保存会）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.saga.lg.jp/material/files/group/63/s26052_20101216042822.pdf",
+      "title": "佐賀市 見島のカセドリ行事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://unesco-sdgs.mext.go.jp/stakeholders/raiho-shin-ritual-visits-of-deities-in-masks-and-costumes-mishima-no-kasedori",
+      "title": "ユネスコ未来共創プラットフォーム 来訪神：仮面・仮装の神々（見島のカセドリ）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と開始の時刻（日付は「毎年2月の第2土曜日」から見込んだもの。19時ごろの開始は2010年の市の記事による例年の目安）",
+    "見学の決まり（見学できる場所、家々を回る一行について行ってよいか、撮影・フラッシュの可否）。市や県の案内は見学を勧めているが、主催の保存会の注意書きは見つからない",
+    "雨天の扱い",
+    "服装・持ち物（冬の夜の屋外だが、主催者の案内は見つからない）",
+    "佐賀駅バスセンターから芙蓉校前までのバスの所要時間と、夜の帰りのバスの有無",
+    "アクセスと駐車場の情報は2023年の観光連盟の一覧によるもので、2026年以降の案内は見つからない",
+    "周辺の観光と食の場所（営業時間を公式で確かめられたものが見つかっていない）",
+    "会場の緯度・経度は、国土地理院の住所検索で蓮池町見島の代表点を取ったもの（熊野神社そのものの位置ではない）",
+    "大手の観光サイトの掲載（Web 検索では祭りを主題にしたページが見つからなかった）"
+  ]
+}

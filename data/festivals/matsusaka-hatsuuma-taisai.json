@@ -1,0 +1,299 @@
+{
+  "id": "matsusaka-hatsuuma-taisai",
+  "name": {
+    "ja": "初午大祭",
+    "en": "Okadera Hatsuuma Festival"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "三重県",
+      "name": "松阪市"
+    }
+  ],
+  "venue": {
+    "name": "岡寺山継松寺",
+    "lat": 34.5778,
+    "lng": 136.5325
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["rurubu", "jalan"],
+  "highlights": [
+    "厄年の人が集まる、春を呼ぶ厄除けの大祭",
+    "厄をはじき去るという縁起物「猿はじき」",
+    "寺の周りから中心の商店街まで、数百の露店が並ぶ",
+    "大祭の2日間は夜8時まで祈祷を受け付ける"
+  ],
+  "trivia": [
+    {
+      "text": "天平15年（743年）、聖武天皇の命で行基が開いたと伝わる",
+      "source": {
+        "url": "https://www.okadera.com/",
+        "title": "岡寺山 継松寺",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "日本で最初の厄除観音の霊場とされる",
+      "source": {
+        "url": "https://www.okadera.com/",
+        "title": "岡寺山 継松寺",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "寺の名は、洪水の後に堂を建て直した継松法師にちなむ",
+      "source": {
+        "url": "https://www.okadera.com/",
+        "title": "岡寺山 継松寺",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "県内の仏教寺院の祭礼としては最大と、寺が案内している",
+      "source": {
+        "url": "https://www.okadera.com/festival/",
+        "title": "岡寺山 継松寺 初午大祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "参拝はだれでもでき、厄除けの祈祷は大祭の両日8:00〜20:00に受け付ける。祈祷料は2027年1月から5,000円以上（5,000円・7,000円・10,000円の3段）になると寺が案内している",
+    "rules": [
+      "大祭の間は寺の参拝者用の駐車場が閉まり、周辺の駐車場も足りないので、公共交通機関で来るよう寺が案内している",
+      "宵宮と本日の2日間、周辺で交通規制がある",
+      "大祭の間の閉門は、祈祷の受付が終わった2時間後"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "参拝と祈祷が中心で、交通規制と駐車場の不足のほかに、危険についての特別な注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.okadera.com/festival/",
+        "title": "岡寺山 継松寺 初午大祭（祈祷の受付・駐車場・交通規制）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.okadera.com/",
+        "title": "岡寺山 継松寺（祈祷料の改定のお知らせ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kankomie.or.jp/event/42025",
+        "title": "観光三重 初午まつり（宵宮・本日の2日間は交通規制）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-03-07",
+      "endDate": "2026-03-08",
+      "start": "08:00",
+      "end": "20:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績の日程（3月7日 宵宮、8日 本日）。両日とも祈祷の受付は8:00〜20:00",
+      "sources": [
+        {
+          "url": "https://www.okadera.com/festival/",
+          "title": "岡寺山 継松寺 初午大祭（令和8年3月7日・8日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kankomie.or.jp/event/5035",
+          "title": "観光三重 初午大祭（2026年3月7日〜8日、祈祷 8:00〜20:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-03-06",
+      "endDate": "2027-03-07",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2027年の発表はまだない。「3月初めの午の日に近い土・日」の決まりから見込んだ日（2027年3月最初の午の日は3月4日の木曜）。例年は両日とも祈祷を8:00〜20:00に受け付ける",
+      "sources": [
+        {
+          "url": "https://www.kankomie.or.jp/event/5035",
+          "title": "観光三重 初午大祭（毎年3月初めの午の日に近い土・日曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.kankomie.or.jp/spot/3002",
+          "title": "観光三重 岡寺山継松寺（3月最初の午の日に近い土・日に初午大祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [{ "name": "JR・近鉄 松阪駅", "walkMinutes": [5, 10] }],
+    "fromHubs": [
+      {
+        "hub": "名古屋駅",
+        "minutes": [70, 80],
+        "route": "近鉄名古屋駅から近鉄特急で松阪駅まで（近鉄の案内で約70分）"
+      },
+      {
+        "hub": "大阪難波駅",
+        "minutes": [93, 103],
+        "route": "近鉄特急で松阪駅まで（近鉄の案内で約93分）"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [
+      "宵宮と本日の2日間、寺の周辺で交通規制（区間と時間は案内が見当たらない）"
+    ],
+    "sources": [
+      {
+        "url": "https://www.okadera.com/festival/",
+        "title": "岡寺山 継松寺 初午大祭（松阪駅から西北へ500m、徒歩5分。大祭中は参拝者用駐車場を閉鎖）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kankomie.or.jp/event/5035",
+        "title": "観光三重 初午大祭（JR・近鉄松阪駅下車徒歩10分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kankomie.or.jp/event/42025",
+        "title": "観光三重 初午まつり（交通規制）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kintetsu.co.jp/life/area/matsusaka.html",
+        "title": "近畿日本鉄道 松阪エリア（松阪駅から特急で近鉄名古屋駅まで約70分、大阪難波駅まで約93分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "ねじりおこし",
+        "note": "大祭の土産として人気の菓子。周りの店で売られる",
+        "sources": [
+          {
+            "url": "https://www.okadera.com/festival/",
+            "title": "岡寺山 継松寺 初午大祭（お土産）",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          },
+          {
+            "url": "https://www.kankomie.or.jp/event/5035",
+            "title": "観光三重 初午大祭",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "motoori-norinaga-kinenkan",
+      "name": "本居宣長記念館",
+      "kind": "sightseeing",
+      "summary": "国学者・本居宣長の自筆の資料や遺品を収め、企画展で見せる記念館。旧宅「鈴屋」と共通の入館券。月曜休館（祝日なら翌平日）、年末年始休み",
+      "location": {
+        "lat": 34.5761,
+        "lng": 136.5253
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["mon"],
+      "price": "大人400円、大学生300円、小学4年〜高校生200円（記念館と旧宅の共通）",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.norinagakinenkan.com/pages/3/",
+          "title": "本居宣長記念館 利用案内",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "kyu-ozu-seizaemon-ke",
+      "name": "旧小津清左衛門家（松阪商人の館）",
+      "kind": "sightseeing",
+      "summary": "松阪の商人・小津清左衛門の旧宅を公開している市の施設。水曜休館（祝日なら翌日）、12月30日〜1月2日休み",
+      "location": {
+        "lat": 34.58,
+        "lng": 136.5297
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": ["wed"],
+      "price": "一般200円、6〜18歳100円",
+      "tags": ["indoor"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.city.matsusaka.mie.jp/site/culture-info/shounin-riyou.html",
+          "title": "松阪市 旧小津清左衛門家 一般公開",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.okadera.com/festival/",
+      "title": "岡寺山 継松寺 初午大祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.kankomie.or.jp/event/5035",
+      "title": "観光三重 初午大祭（岡寺山継松寺）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表（日付は決まりからの見込み）",
+    "宵宮と本日で行事が違うか、法要などの時刻",
+    "交通規制の区間と時間",
+    "雨の日の扱い",
+    "名古屋・大阪難波からの特急で、乗り換えが要る列車があるか（近鉄の案内は所要時間だけ）",
+    "作法（服装・持ち物・撮影の決まり）",
+    "猿はじきの売り場と値段",
+    "周辺の食事処（公式の営業時間を確かめられた店が見つからなかった）"
+  ]
+}

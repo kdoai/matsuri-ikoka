@@ -1,0 +1,194 @@
+{
+  "id": "takachiho-jinja-shunki-reitaisai",
+  "name": {
+    "ja": "高千穂神社春季例大祭",
+    "en": "Takachiho Shrine Spring Grand Festival"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "宮崎県",
+      "name": "高千穂町"
+    }
+  ],
+  "venue": {
+    "name": "高千穂神社（式典）・高千穂峡おのころ池（浜下り）・高千穂町の市街地（巡幸）",
+    "lat": 32.7054,
+    "lng": 131.2999
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["walkerplus"],
+  "highlights": [
+    "神輿が高千穂峡のおのころ池に入り、池の中をまわって禊払いをする浜下りの神事",
+    "夜神楽の神面をつけた行列が、神輿とともに市街地を巡幸する",
+    "戸田流・神影流の棒術・白刃術や、余興隊・郷土舞踊隊の演舞が加わる"
+  ],
+  "trivia": [
+    {
+      "text": "高千穂神社は高千穂一帯の88社の総社とされ、春の大祭は町の春まつりでもある",
+      "source": {
+        "url": "https://iko-yo.net/events/489530",
+        "title": "いこーよ 高千穂神社春季大祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "浜下りでは、御神輿がおのころ池の中を3回まわって禊払いをする",
+      "source": {
+        "url": "https://www.walkerplus.com/event/ar1045e545039/",
+        "title": "ウォーカープラス 高千穂神社春季大祭（2025年4月16日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "神輿が池をまわる浜下りは、五穀豊穣を願う神事として行われる",
+      "source": {
+        "url": "https://www.pref.miyazaki.lg.jp/documents/87060/87060_20260611144952-1.pdf",
+        "title": "宮崎県西臼杵支庁 「高千穂郷」通信 令和8年4・5月号",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "神事と行列を見学するもので、市街地は13時から16時30分まで車両の通行が規制される。主催者の混雑・危険についての注意は見つからない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://takachiho-kanko.info/event/19/",
+        "title": "高千穂町観光協会 高千穂神社 春季例大祭（2026年のチラシ：主催 高千穂祭典奉賛会、交通規制のお知らせ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-04-16",
+      "start": "09:30",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "開催の記録。9:30 式典、12:00 御神幸が出て高千穂峡おのころ池で浜下り（御塩井）、13:30ごろから市街地を巡幸。宮交バスセンターがお旅所で棒術を公開。市街地の交通規制は16:30まで。露店は高千穂神社の駐車場に出た",
+      "sources": [
+        {
+          "url": "https://takachiho-kanko.info/event/19/",
+          "title": "高千穂町観光協会 高千穂神社 春季例大祭（2026年4月16日、チラシつき）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.pref.miyazaki.lg.jp/documents/87060/87060_20260611144952-1.pdf",
+          "title": "宮崎県西臼杵支庁 「高千穂郷」通信 令和8年4・5月号（4月16日に春季例大祭が催された）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-04-16",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "観光の案内サイトにある「毎年4月16日」から見込んだ日（2027年の発表はまだない）。2023年は日曜、2025年は水曜、2026年は木曜で、曜日にかかわらず4月16日に開かれている。例年は9:30 式典、正午に御神幸と浜下り、13:30ごろから市街地の巡幸",
+      "sources": [
+        {
+          "url": "https://www.walkerplus.com/event/ar1045e545039/",
+          "title": "ウォーカープラス 高千穂神社春季大祭（毎年4月16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://takachiho-kanko.info/event/4/",
+          "title": "高千穂町観光協会 高千穂神社 春季例大祭 開催のお知らせ（2023年4月16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "宮崎交通 高千穂バスセンター",
+        "walkMinutes": [10, 20],
+        "note": "高千穂神社まで。徒歩約10分とする案内と約15分とする案内がある（どちらも観光の案内サイト）。駅からは遠く、路線バスで来る"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [
+      "2026年は4月16日13:00〜16:30、高千穂神社前の青葉通線入口から真名井通線の荒立神社鳥居前まで、神幸と余興隊の進行に合わせて車両の進入・通行を規制"
+    ],
+    "sources": [
+      {
+        "url": "https://takachiho-kanko.info/event/19/",
+        "title": "高千穂町観光協会 高千穂神社 春季例大祭（2026年のチラシ：交通規制のお知らせ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://iko-yo.net/events/489530",
+        "title": "いこーよ 高千穂神社春季大祭（高千穂バスセンターから徒歩約10分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      },
+      {
+        "url": "https://www.gltjp.com/ja/directory/item/14677/",
+        "title": "GOOD LUCK TRIP 高千穂神社（高千穂バスセンターから徒歩約15分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://takachiho-kanko.info/event/19/",
+      "title": "高千穂町観光協会 高千穂神社 春季例大祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.pref.miyazaki.lg.jp/documents/87060/87060_20260611144952-1.pdf",
+      "title": "宮崎県西臼杵支庁 「高千穂郷」通信 令和8年4・5月号",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://iko-yo.net/events/489530",
+      "title": "いこーよ 高千穂神社春季大祭（高千穂町大字三田井1037）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と時刻",
+    "「毎年4月16日」は観光の案内サイトの記述で、神社や観光協会の決まりとしては確かめていない（観光協会の2023年・2026年の告知はどちらも4月16日）",
+    "雨天の扱い",
+    "見学の決まり（浜下りを見る場所・撮影）、服装・持ち物（主催者の案内が見つからない）",
+    "一般の人が行列に加われるか",
+    "神輿の数と行列の人数（規模は市街地を巡幸する行列から見積もった）",
+    "祭りの日の駐車場（神社の駐車場には露店が出る）",
+    "延岡駅など主要駅から高千穂バスセンターまでの所要時間",
+    "この祭りの日だけの食べもの",
+    "周辺の観光と食の場所（営業時間を確かめられたものがない）",
+    "会場の緯度・経度は、国土地理院の住所検索で神社の所在地（高千穂町三田井1037）を取ったもの。浜下りのおのころ池の位置ではない"
+  ]
+}

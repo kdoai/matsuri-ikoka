@@ -1,0 +1,271 @@
+{
+  "id": "mitsuke-imamachi-nagaoka-nakanoshima-odako-gassen",
+  "name": {
+    "ja": "見附今町・長岡中之島大凧合戦",
+    "en": "Mitsuke Imamachi and Nagaoka Nakanoshima Giant Kite Battle"
+  },
+  "category": "other",
+  "municipalities": [
+    {
+      "prefecture": "新潟県",
+      "name": "長岡市"
+    },
+    {
+      "prefecture": "新潟県",
+      "name": "見附市"
+    }
+  ],
+  "venue": {
+    "name": "刈谷田川堤防（中之島大橋の下流）",
+    "lat": 37.5472,
+    "lng": 138.8844
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "刈谷田川をはさんだ両岸から大凧を揚げ、空で糸を絡ませて引き合う",
+    "「百枚張り」と呼ばれる、畳およそ8枚分の六角の大凧",
+    "長岡市中之島と、対岸の見附市今町の2つの地区が3日間にわたって対戦する"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "360年を超える歴史があり、新潟県の無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://niigata-kankou.or.jp/event/detail_3512.html",
+          "title": "にいがた観光ナビ 見附今町・長岡中之島大凧合戦",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.nagaoka.niigata.jp/kankou/event/oodakogasen.html",
+          "title": "長岡市 見附今町・長岡中之島大凧合戦",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "見附市今町と長岡市中之島の若人が刈谷田川の両岸から凧を上げて合戦する",
+      "sources": [
+        {
+          "url": "https://www.city.mitsuke.niigata.jp/soshiki/19/2629.html",
+          "title": "見附市 大凧合戦の由来",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "360年を超える歴史があり、信州の旅人の凧揚げが起こりと伝わる",
+      "source": {
+        "url": "https://niigata-kankou.or.jp/event/detail_3512.html",
+        "title": "にいがた観光ナビ 見附今町・長岡中之島大凧合戦",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "天明年間、堤防を踏み固めるため人を集めて川の両岸で揚げたのが今の形の始まりとされる",
+      "source": {
+        "url": "https://www.city.nagaoka.niigata.jp/kankou/event/oodakogasen.html",
+        "title": "長岡市 見附今町・長岡中之島大凧合戦",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "平成27年3月に、新潟県の無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.city.nagaoka.niigata.jp/kankou/event/oodakogasen.html",
+        "title": "長岡市 見附今町・長岡中之島大凧合戦",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "堤防の上からの見学が中心で、主催者の案内に混雑や危険についての特別な注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.nagaoka.niigata.jp/kankou/event/oodakogasen.html",
+        "title": "長岡市 見附今町・長岡中之島大凧合戦（観覧についての注意の記載なし）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-06-06",
+      "endDate": "2026-06-07",
+      "start": "13:00",
+      "end": "17:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。大凧合戦は両日とも13時から17時。日曜は9時から小学生以下の凧揚げ大会（先着100名）。露店は土曜9時〜22時、日曜9時〜20時",
+      "sources": [
+        {
+          "url": "https://www.city.nagaoka.niigata.jp/kankou/event/oodakogasen.html",
+          "title": "長岡市 見附今町・長岡中之島大凧合戦（令和8年の日程と時刻）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://niigata-kankou.or.jp/event/detail_3512.html",
+          "title": "にいがた観光ナビ 見附今町・長岡中之島大凧合戦（2026年6月6日〜8日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-06-08",
+      "start": "13:00",
+      "end": "16:30",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。最終日の月曜は、大凧合戦が16時30分まで",
+      "sources": [
+        {
+          "url": "https://www.city.nagaoka.niigata.jp/kankou/event/oodakogasen.html",
+          "title": "長岡市 見附今町・長岡中之島大凧合戦（月曜は16時30分まで）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-06-05",
+      "endDate": "2027-06-06",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "長岡市と新潟県観光協会の案内にある「毎年6月第1土曜日から月曜日の3日間」から見込んだ日（2027年の発表はまだない）。例年は大凧合戦が両日とも13時から17時",
+      "sources": [
+        {
+          "url": "https://www.city.nagaoka.niigata.jp/kankou/event/oodakogasen.html",
+          "title": "長岡市 見附今町・長岡中之島大凧合戦（毎年6月第1土曜日〜月曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://niigata-kankou.or.jp/event/detail_3512.html",
+          "title": "にいがた観光ナビ 見附今町・長岡中之島大凧合戦（毎年6月第1土曜日から月曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-06-07",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "「毎年6月第1土曜日から月曜日の3日間」の最終日の月曜として見込んだ日（2027年の発表はまだない）。例年、月曜の大凧合戦は16時30分まで",
+      "sources": [
+        {
+          "url": "https://www.city.nagaoka.niigata.jp/kankou/event/oodakogasen.html",
+          "title": "長岡市 見附今町・長岡中之島大凧合戦（毎年6月第1土曜日〜月曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://niigata-kankou.or.jp/event/detail_3512.html",
+          "title": "にいがた観光ナビ 見附今町・長岡中之島大凧合戦（毎年6月第1土曜日から月曜日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.city.nagaoka.niigata.jp/kankou/event/oodakogasen.html",
+        "title": "長岡市 見附今町・長岡中之島大凧合戦（JR見附駅から見附市コミュニティバスで道の駅パティオにいがた下車、中之島支所などの駐車場、土日の臨時駐車場からのシャトルバス）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "michinoeki-patio-niigata",
+      "name": "道の駅 パティオにいがた",
+      "kind": "food",
+      "summary": "見附市今町にある道の駅で、見附駅からのバスの降り場。地元の野菜や菓子の直売所、焼肉店、ソフトクリームの甘味処がある。甘味処は12月から2月末ごろまで冬の休業",
+      "location": {
+        "lat": 37.5472,
+        "lng": 138.8844
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "19:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://niigata-kankou.or.jp/spot/detail_12043.html",
+          "title": "にいがた観光ナビ 道の駅「パティオにいがた」（施設は9時〜19時、見附市今町1丁目3358番地）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.nagaoka.niigata.jp/kankou/event/oodakogasen.html",
+      "title": "長岡市 見附今町・長岡中之島大凧合戦（中之島大橋下流、刈谷田川堤防上）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://niigata-kankou.or.jp/event/detail_3512.html",
+      "title": "にいがた観光ナビ 見附今町・長岡中之島大凧合戦",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、合戦の時刻",
+    "雨天・強風のときの扱い",
+    "見学の決まり（立ち入ってよい場所・凧糸に近づかないなど）、服装・持ち物、撮影についての決まり（主催者の案内が見つからない）",
+    "最寄り駅から歩ける経路と時間（公式の案内はJR見附駅から見附市コミュニティバスで道の駅パティオにいがた下車のみで、バスの所要時間と停留所からの徒歩が分からない）",
+    "新潟駅・長岡駅など玄関口の駅から見附駅までの所要時間",
+    "交通規制の区間と時間（長岡市の報道資料のPDFを読めなかった）",
+    "揚がる凧の数と参加する凧の組の数、来場者数",
+    "この祭りの日だけの食べもの",
+    "周辺の観光の場所（営業時間を公式で確かめられたものが見つかっていない）、道の駅パティオにいがたの定休日",
+    "会場と道の駅パティオにいがたの緯度・経度は、国土地理院の住所検索で見附市今町一丁目の代表点を取ったもの（会場そのものの位置ではない）"
+  ]
+}

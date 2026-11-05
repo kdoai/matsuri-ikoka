@@ -4,7 +4,7 @@
 
 小さな祭りと外の人をつなぐ、AI の旅行代理店です。地元の外にまだ届いていない日本の祭りを見つけ、作法まで分かる「行ける旅程」と「旅のしおり」にします。
 
-> **開発中です。** 祭りのデータの定期的な確かめ直しと、評価の結果は準備中です。
+> **開発中です。** 祭りのデータの定期的な確かめ直しと、記録した相談を使う評価は準備中です。
 
 ## なぜ作るのか
 
@@ -37,7 +37,7 @@ pnpm install
 pnpm dev
 ```
 
-`pnpm dev` で、画面（http://localhost:5173 ）と接客サーバー（http://localhost:8787 ）が一緒に立ち上がります。画面はいつも接客サーバーと話します（Vite が `/api` と `/shiori` を中継します）。
+`pnpm dev` で、画面（http://localhost:5173 ）と接客サーバー（http://localhost:8787 ）が一緒に立ち上がります。画面はいつも接客サーバーと話します（Vite が `/api` と `/shiori` を中継します）。どちらかのポートがふさがっていると、別のポートへずらさずに止まります。別の `pnpm dev` を止めるか、`PORT=8788 MATSURI_WEB_PORT=5174 pnpm dev` のようにポートを変えて起動してください（画面は `PORT` の接客サーバーへ中継します）。
 
 #### AI だけのモック（既定、キーは要りません）
 
@@ -45,7 +45,7 @@ pnpm dev
 
 #### Claude と話す（live）
 
-接客サーバーに環境変数を渡して起動します。接客サーバーは `.env` を自動では読まないので、シェルで渡してください（変数の一覧と説明は [`.env.example`](.env.example)）。
+[`.env.example`](.env.example) をリポジトリのルートに `.env` としてコピーし、値を入れて起動します。`pnpm dev` と `check:live` は、ルートの `.env` があれば読みます（`.env` は Git の対象外）。シェルで渡した環境変数は `.env` より優先します。
 
 ```bash
 MATSURI_AGENT_MODE=live MODEL_CONCIERGE=<モデル名> MODEL_STAFF=<モデル名> pnpm dev
@@ -59,10 +59,22 @@ MATSURI_AGENT_MODE=live MODEL_CONCIERGE=<モデル名> MODEL_STAFF=<モデル名
 | `MODEL_PLANNER`・`MODEL_VERIFIER` | 旅程係と、確定前の再確認のモデル名。省略すると `MODEL_STAFF`                     |
 | `AGENT_MAX_BUDGET_USD`            | 1回の発言の費用の上限（米ドル）。省略すると上限なし                              |
 
-live では、祭りのデータ（[`data/festivals/`](data/festivals)）を読み込みます。実際に Claude を呼んで、候補と旅程が返るかを確かめるには、次を実行します（架空の祭りだけを使います）。
+live では、祭りのデータ（[`data/festivals/`](data/festivals)）を読み込みます。実際に Claude を呼んで、相談が最後まで通るかを確かめるには、`check:live` を使います。段階ごとに OK / NG を出し、最後にかかった時間と費用（SDK の推定）の合計を出します。CI では走りません。
 
 ```bash
-pnpm --filter @matsuri-ikoka/server check:live
+pnpm --filter @matsuri-ikoka/server check:live                # 祭りの候補まで
+pnpm --filter @matsuri-ikoka/server check:live -- --itinerary # 祭りを選んで、旅程の保存まで
+pnpm --filter @matsuri-ikoka/server check:live -- --shiori    # 決定・確定前の再確認・しおり（HTML と PDF）まで
+```
+
+ここまでは架空の祭り（[`data/samples/festivals/`](data/samples/festivals)）を、開催日を今日の2週間後にずらして使います。架空の祭りの出典は Web で読めないので、確定前の再確認は、データの公式の出典を読んだとみなす代わりの口で行います（候補の確かめは行いません）。
+
+実在の祭りのデータに好きな発言を流すときは、`--festivals` と `--say` を渡します。候補の確かめと確定前の再確認は、本物と同じく Web で行います。段階（候補・旅程の保存・確定前の再確認・しおりの HTML と PDF）ごとに確かめます。`--itinerary` を付けると旅程の保存まで、`--no-pdf` を付けると PDF を取りません。PDF には Chromium が要ります（`pnpm --filter @matsuri-ikoka/web exec playwright install chromium`）。
+
+```bash
+pnpm --filter @matsuri-ikoka/server check:live -- --festivals "$PWD/data/festivals" \
+  --say "<日付>に、<駅>から日帰りで、大人2人で行ける祭りはありますか。" \
+  --say "<祭りの名前>にします。" --say "この旅程で決定します。"
 ```
 
 #### ログインと保存
@@ -125,10 +137,11 @@ Issue は公開されます。電話番号やメールアドレスなど、個�
 - [アーキテクチャ](docs/architecture.md)
 - [アプリの仕様](docs/spec/README.md)
 - [設計判断の記録（ADR）](docs/adr/README.md)
+- [評価](docs/evaluation.md)
 
 ## 評価
 
-祭りを見つけられた割合や、公式で確認できた割合などの測り方と結果を載せます（準備中）。
+祭りのデータについて、次の開催を公式で確認できた割合や、作法の項目が分かっている割合などを測っています。測り方と結果は [評価](docs/evaluation.md) にあります。記録した相談を使う評価（条件に合う祭りを候補に出せた割合など）は準備中です。
 
 ## 開発
 

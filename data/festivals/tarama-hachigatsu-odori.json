@@ -1,0 +1,303 @@
+{
+  "id": "tarama-hachigatsu-odori",
+  "name": {
+    "ja": "八月踊り",
+    "en": "Tarama Hachigatsu Odori"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "沖縄県",
+      "name": "多良間村"
+    }
+  ],
+  "venue": {
+    "name": "仲筋の土原御願所（ンタバルウガン）と塩川のピィトゥマタ御願所",
+    "lat": 24.6578,
+    "lng": 124.6854
+  },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": ["jalan"],
+  "highlights": [
+    "多良間村だけで演じられる組踊「忠臣仲宗根豊見親組」",
+    "仲筋と塩川の御願所で、民俗踊り・古典舞踊・組踊を奉納する",
+    "組踊の台詞の現代語訳を、舞台の横のモニターに映す",
+    "国の重要無形民俗文化財に指定された豊年祭"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1637年の人頭税の導入後に始まったとされる豊年祈願の行事",
+      "sources": [
+        {
+          "url": "https://www.vill.tarama.okinawa.jp/about/rekishi_bunka/hachigatsuodori/",
+          "title": "多良間村 八月踊り（歴史・文化）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "仲筋と塩川の両字が互いを招き、分かれて演じる",
+      "sources": [
+        {
+          "url": "https://www.vill.tarama.okinawa.jp/about/rekishi_bunka/hachigatsuodori/",
+          "title": "多良間村 八月踊り（歴史・文化）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "1637年に宮古・八重山に人頭税が課されたあと、納税を報告し豊作を祈ったことが始まりとされる",
+      "source": {
+        "url": "https://www.vill.tarama.okinawa.jp/about/rekishi_bunka/hachigatsuodori/",
+        "title": "多良間村 八月踊り（歴史・文化）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "昔は「8月お願」「皆納祝い」とも呼ばれた。明治に首里から古典舞踊と組踊が伝わった",
+      "source": {
+        "url": "https://www.vill.tarama.okinawa.jp/about/rekishi_bunka/hachigatsuodori/",
+        "title": "多良間村 八月踊り（歴史・文化）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "3日目は「わかれ」と呼ばれ、仲筋と塩川がそれぞれの場所で1・2日目の演目をくり返す",
+      "source": {
+        "url": "https://www.vill.tarama.okinawa.jp/about/rekishi_bunka/hachigatsuodori/",
+        "title": "多良間村 八月踊り（歴史・文化）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2023年は4年ぶりの開催で、初日だけで27の演目が奉納された",
+      "source": {
+        "url": "https://ryukyushimpo.jp/news/entry-2301463.html",
+        "title": "琉球新報 多良間で八月踊りが始まる 4年ぶり開催（2023年9月23日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.vill.tarama.okinawa.jp/kankou/event/hachigatsuodori/",
+        "title": "多良間村 八月踊り（観光・イベント。期間中は多くの観光客や研究者が訪れるとある）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ryukyushimpo.jp/newspaper/entry-4658767.html",
+        "title": "琉球新報 多良間島「八月踊り」豊作喜び踊り舞う 現代語訳の字幕も（2025年9月30日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-09-08",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2027年の発表はまだない。村は旧暦8月8日から10日の3日間に行うとしている。国立天文台の2027年の朔（9月1日）と秋分（9月23日）から旧暦8月1日を9月1日とし、8月8日を9月8日（水）と見込んだ。1日目は仲筋が塩川を招き、午前に御願のあと民俗踊り・古典舞踊・組踊を奉納し、午後も続く。時刻の公表は見つからない",
+      "sources": [
+        {
+          "url": "https://www.vill.tarama.okinawa.jp/kankou/event/hachigatsuodori/",
+          "title": "多良間村 八月踊り（毎年旧暦の8月8日から10日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.vill.tarama.okinawa.jp/about/rekishi_bunka/hachigatsuodori/",
+          "title": "多良間村 八月踊り（歴史・文化。日ごとの流れ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2027/rekiyou273.html",
+          "title": "国立天文台 令和9年（2027）暦要項 朔弦望",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-09-09",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2日目（旧暦8月9日と見込んだ）。塩川が仲筋を招く番になり、塩川のピィトゥマタ御願所の側で民俗踊り・古典舞踊・組踊を奉納する。時刻の公表は見つからない",
+      "sources": [
+        {
+          "url": "https://www.vill.tarama.okinawa.jp/about/rekishi_bunka/hachigatsuodori/",
+          "title": "多良間村 八月踊り（歴史・文化。日ごとの流れ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2027/rekiyou273.html",
+          "title": "国立天文台 令和9年（2027）暦要項 朔弦望",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-09-10",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "3日目（旧暦8月10日と見込んだ）。「わかれ」と呼ばれ、仲筋と塩川がそれぞれの場所で1・2日目の演目をくり返す。時刻の公表は見つからない",
+      "sources": [
+        {
+          "url": "https://www.vill.tarama.okinawa.jp/about/rekishi_bunka/hachigatsuodori/",
+          "title": "多良間村 八月踊り（歴史・文化。日ごとの流れ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2027/rekiyou273.html",
+          "title": "国立天文台 令和9年（2027）暦要項 朔弦望",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": []
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "ヤギ汁",
+        "note": "島のヤギを使った味噌仕立ての汁。村が島の名物として紹介している。祭りの日に食べられる店は確かめていない",
+        "sources": [
+          {
+            "url": "https://www.vill.tarama.okinawa.jp/kankou/kankou_guide/omiyage/",
+            "title": "多良間村 おみやげ・特産品",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      },
+      {
+        "name": "ぱなぱんびん",
+        "note": "花びらの形をした、塩味の薄い揚げ菓子。村が特産品として紹介している。売っている店は確かめていない",
+        "sources": [
+          {
+            "url": "https://www.vill.tarama.okinawa.jp/kankou/kankou_guide/omiyage/",
+            "title": "多良間村 おみやげ・特産品",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "tarama-furusato-minzoku-gakushukan",
+      "name": "多良間村ふるさと民俗学習館",
+      "kind": "sightseeing",
+      "summary": "村の歴史と民俗を学べる資料館。八月踊りの衣装や農具・漁具、古文書などを展示している。月曜のほか、祝日・慰霊の日・年末年始も休み",
+      "location": {
+        "lat": 24.6578,
+        "lng": 124.6854
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": ["mon"],
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.vill.tarama.okinawa.jp/kankou/kankou_guide/spot/",
+          "title": "多良間村 おすすめスポット（ふるさと民俗学習館 9:00〜17:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "tarama-shiokawa-utaki",
+      "name": "塩川御嶽とフクギ並木",
+      "kind": "sightseeing",
+      "summary": "集落の東にある御嶽で、赤瓦の祠がある。参道に約650mのフクギの並木が続く",
+      "location": {
+        "lat": 24.657,
+        "lng": 124.714
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.vill.tarama.okinawa.jp/kankou/kankou_guide/spot/",
+          "title": "多良間村 おすすめスポット（塩川御嶽とフクギ並木）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.vill.tarama.okinawa.jp/kankou/event/hachigatsuodori/",
+      "title": "多良間村 八月踊り（観光・イベント）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.vill.tarama.okinawa.jp/about/rekishi_bunka/hachigatsuodori/",
+      "title": "多良間村 八月踊り（歴史・文化）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、日ごとの時刻（村の案内に時刻がない）。日付は旧暦から換算した見込み",
+    "2026年の開催日（旧暦からは9月18〜20日になるが、開催を伝える出典を確かめていない）",
+    "雨や台風のときの扱い",
+    "見学者向けの決まり（見る場所、御願所への立ち入り、撮影）、服装・持ち物、危険度。村は多くの観光客が訪れるとだけ書いている",
+    "アクセス（鉄道はなく、宮古島からの飛行機と船。期間中は宮古島から日帰りのチャーター船が出るとじゃらんnetにあるが、公式の案内と所要時間を確かめていない）と駐車場",
+    "屋台・食べ物の販売の有無",
+    "見学者数と、今回の演目の数（2023年の初日は27演目と報じられた）",
+    "会場の近くで祭りの日に開いている食事の店（村は飲食店が少なく、食事は宿か予約を勧めている）",
+    "会場とふるさと民俗学習館・塩川御嶽の位置は、大字（仲筋・塩川）の代表点で、建物の正確な位置ではない"
+  ]
+}

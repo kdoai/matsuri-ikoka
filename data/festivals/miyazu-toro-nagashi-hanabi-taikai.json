@@ -1,0 +1,277 @@
+{
+  "id": "miyazu-toro-nagashi-hanabi-taikai",
+  "name": {
+    "ja": "宮津燈籠流し花火大会",
+    "en": "Miyazu Toro Nagashi Fireworks Festival"
+  },
+  "category": "fireworks",
+  "municipalities": [
+    {
+      "prefecture": "京都府",
+      "name": "宮津市"
+    }
+  ],
+  "venue": {
+    "name": "島崎公園及び宮津湾周辺",
+    "lat": 35.5377,
+    "lng": 135.1961
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "初盆の家の精霊船を約1万個の紅白の燈籠が囲んで宮津湾を漂う",
+    "燈籠流しのあと、海の上に花火が上がり、海と空がともに光る",
+    "旅の人も当日に燈籠を買える",
+    "花火のあとは21:30まで盆おどり大会"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "約400年前、城下の人々が盆の精霊送りに宮津湾へ灯籠を流したのが始まりとされる",
+      "sources": [
+        {
+          "url": "https://hanabi.walkerplus.com/detail/ar0726e00173/",
+          "title": "ウォーカープラス 宮津燈籠流し花火大会",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://www.jalan.net/event/evt_345080/",
+          "title": "じゃらんnet 宮津燈籠流し花火大会",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "燈籠流しの始まりは約400年前の城下の盆の精霊送りとされる",
+      "source": {
+        "url": "https://hanabi.walkerplus.com/detail/ar0726e00173/",
+        "title": "ウォーカープラス 宮津燈籠流し花火大会",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "日本三大灯籠流しの1つに数えられることがある",
+      "source": {
+        "url": "https://hanabi.walkerplus.com/detail/ar0726e00173/",
+        "title": "ウォーカープラス 宮津燈籠流し花火大会",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "燈籠を買う。2026年は紅白1セット1,200円（事前の販売）、当日は13:30以降に島崎会場と丹海宮津桟橋横で2,000円。19:20から流される",
+    "rules": [
+      "会場内での喫煙、テント・三脚などの使用、ドローンの飛行は禁止",
+      "他の観覧者の迷惑になることをしない。ごみは持ち帰る",
+      "有料観覧席では立ち見、通路での撮影、三脚・自撮り棒での撮影をしない",
+      "有料観覧席に動物を連れて入らない（盲導犬・介護犬を除く）",
+      "予約のない車は大会の臨時駐車場に止められない"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "約7万人が集まり、夜の海辺の公園で見る。会場周辺に交通規制があり、救護所が置かれる"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "会場で三脚は使えず、有料観覧席では自撮り棒と通路での撮影もできない。ドローンは禁止"
+    },
+    "sources": [
+      {
+        "url": "https://miyazu-cci.or.jp/hanabi",
+        "title": "宮津燈籠流し花火大会 公式（禁止事項、令和8年度は約7万人が来場）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://miyazu-cci.or.jp/hanabi/tourou",
+        "title": "宮津燈籠流し花火大会 公式 燈籠販売",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://miyazu-cci.or.jp/hanabi/kanran",
+        "title": "宮津燈籠流し花火大会 公式 有料観覧席",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://miyazu-cci.or.jp/tyuusyajyou",
+        "title": "宮津燈籠流し花火大会 公式 臨時駐車場",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://miyazu-cci.or.jp/hanabi/access",
+        "title": "宮津燈籠流し花火大会 公式 交通規制・汽船・列車・救護所",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-16",
+      "start": "19:50",
+      "end": "20:35",
+      "status": "announced",
+      "rainPolicy": "小雨決行、荒天中止",
+      "note": "18:30 御詠歌、19:20 精霊船流しと燈籠流し、19:50〜20:35 花火（約2,000発）、そのあと21:30まで盆おどり大会。府中（一の宮桟橋）から宮津への汽船は混むので16:00までの乗船が呼びかけられた",
+      "sources": [
+        {
+          "url": "https://miyazu-cci.or.jp/hanabi",
+          "title": "宮津燈籠流し花火大会 公式（令和8年8月16日、当日の流れ、約2,000発）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://miyazu-cci.or.jp/hanabi/kanran",
+          "title": "宮津燈籠流し花火大会 公式 有料観覧席（小雨決行、荒天中止）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://miyazu-cci.or.jp/hanabi/access",
+          "title": "宮津燈籠流し花火大会 公式 交通規制・汽船・列車・救護所（汽船の案内）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-16",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2025年・2026年の開催日（どちらも8月16日）から見込んだ日（2027年の発表はまだない。2025年の日付は観光サイトの記載）",
+      "sources": [
+        {
+          "url": "https://www.jalan.net/event/evt_345080/",
+          "title": "じゃらんnet 宮津燈籠流し花火大会（2025年8月16日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://miyazu-cci.or.jp/hanabi",
+          "title": "宮津燈籠流し花火大会 公式（令和8年8月16日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "京都丹後鉄道 宮津駅",
+        "walkMinutes": [10, 15]
+      }
+    ],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": ["2026年：会場周辺で交通規制（区間と時間は公式の地図に掲載）"],
+    "sources": [
+      {
+        "url": "https://miyazu-cci.or.jp/tyuusyajyou",
+        "title": "宮津燈籠流し花火大会 公式 臨時駐車場（有料の事前予約制）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://miyazu-cci.or.jp/hanabi/access",
+        "title": "宮津燈籠流し花火大会 公式 交通規制・汽船・列車・救護所",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0726e00173/data.html",
+        "title": "ウォーカープラス 宮津燈籠流し花火大会 データ（宮津駅から徒歩約10分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002791",
+        "title": "るるぶ&more. 宮津燈籠流し花火大会（宮津駅から徒歩10分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "amanohashidate",
+      "name": "天橋立",
+      "kind": "sightseeing",
+      "summary": "宮津湾にある長さ約3.6kmの砂州で、約5,400本の松が並ぶ日本三景の1つ。歩いて片道約50分、自転車で約20分。京都丹後鉄道 天橋立駅から徒歩約5分。散策は自由",
+      "location": {
+        "lat": 35.5554,
+        "lng": 135.1802
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": [],
+      "price": "無料",
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.amanohashidate.jp/spot/amanohashidate/",
+          "title": "天橋立観光協会 天橋立",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://miyazu-cci.or.jp/hanabi",
+      "title": "宮津燈籠流し花火大会 公式（主催 宮津燈籠流し花火大会実行委員会）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://hanabi.walkerplus.com/detail/ar0726e00173/",
+      "title": "ウォーカープラス 宮津燈籠流し花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20002791",
+      "title": "るるぶ&more. 宮津燈籠流し花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_345080/",
+      "title": "じゃらんnet 宮津燈籠流し花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    }
+  ],
+  "gaps": [
+    "2027年の開催日の発表と時刻",
+    "2025年の開催日の主催者の記録",
+    "買った燈籠を自分の手で海に流せるのか（郵送の分は係の人が流すとだけ書いてある）",
+    "服装・持ち物の決まり",
+    "臨時駐車場の台数と料金",
+    "主要駅からの所要時間",
+    "交通規制の区間と時間",
+    "祭りの前後に寄れる食の店",
+    "地元の味・祭りの日だけの食べ物（屋台が出ることだけ分かっている）"
+  ]
+}

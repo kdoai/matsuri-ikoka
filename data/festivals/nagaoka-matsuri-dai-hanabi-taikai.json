@@ -1,0 +1,335 @@
+{
+  "id": "nagaoka-matsuri-dai-hanabi-taikai",
+  "name": {
+    "ja": "長岡まつり大花火大会",
+    "en": "Nagaoka Fireworks Festival"
+  },
+  "category": "fireworks",
+  "municipalities": [
+    {
+      "prefecture": "新潟県",
+      "name": "長岡市"
+    }
+  ],
+  "venue": {
+    "name": "信濃川河川敷（長生橋と大手大橋の間）",
+    "lat": 37.4479,
+    "lng": 138.8325
+  },
+  "scaleTier": "L",
+  "popularity": "major",
+  "listedIn": ["walkerplus", "jalan", "rurubu", "jnto"],
+  "highlights": [
+    "開花幅約650mの正三尺玉が信濃川の上に開く",
+    "開花幅約2kmの復興祈願花火フェニックス",
+    "慰霊を込めて上げる白一色の尺玉「白菊」",
+    "両岸に観覧席があり、尺玉を多用した構成"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1945年の空襲の犠牲者を悼み、1946年の長岡復興祭に始まって受け継がれてきた",
+      "sources": [
+        {
+          "url": "https://nagaoka-navi.or.jp/feature/hanabi/top",
+          "title": "長岡観光ナビ 長岡まつり大花火大会 特集（長岡復興祭が前身）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.japan.travel/en/spot/256/",
+          "title": "JNTO Nagaoka Fireworks Festival（1946年に始まる）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "1945年8月1日の空襲で市街地の約8割が焼け、1,488人が亡くなった",
+      "source": {
+        "url": "https://nagaoka-navi.or.jp/feature/hanabi/top",
+        "title": "長岡観光ナビ 長岡まつり大花火大会 特集",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2026年は、長岡で正三尺玉の打ち上げに成功してから100年にあたる",
+      "source": {
+        "url": "https://www.city.nagaoka.niigata.jp/shityo/kaiken_i/file/20260717-2-2.pdf",
+        "title": "長岡花火財団 2026長岡まつり大花火大会情報",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "フェニックスは中越大震災からの復興を願って生まれた花火",
+      "source": {
+        "url": "https://nagaoka-navi.or.jp/feature/hanabi/top",
+        "title": "長岡観光ナビ 長岡まつり大花火大会 特集",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "「白菊」は花火師が戦友に手向けて名付けた花火で、2026年は両日の冒頭に上げた",
+      "source": {
+        "url": "https://www.city.nagaoka.niigata.jp/shityo/kaiken_i/file/20260717-2-2.pdf",
+        "title": "長岡花火財団 2026長岡まつり大花火大会情報",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "観覧会場の中は全席有料で無料席はない。チケットを持たない人は会場周辺への来場を控えるよう主催者が求めている（テレビや公式の YouTube Live で中継がある）",
+      "チケットは記名式で、入場時に購入者を確かめることがある。転売チケットは無効で入場できない",
+      "手放すときと買いたいときは公式の再販売サイトを使う",
+      "トイレは行列になりやすく、飲み過ぎに注意するよう案内がある",
+      "帰りは分散して退場するよう呼びかけがある。長岡駅へは誘導に従う"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "2日間で約34万人が集まる夜の河川敷で、主催者が雑踏事故の防止のため誘導を敷いている"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.nagaoka.niigata.jp/shityo/kaiken_i/file/20260717-2-2.pdf",
+        "title": "長岡花火財団 2026長岡まつり大花火大会情報（来場の遠慮、記名式チケット、雑踏事故の防止）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://nagaoka-navi.or.jp/feature/hanabi/top",
+        "title": "長岡観光ナビ 長岡まつり大花火大会 特集（無料席なし、トイレ、飲酒の注意）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0415e00665/data.html",
+        "title": "ウォーカープラス 長岡まつり大花火大会 データ（例年の人出 約34万人、全席有料）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002739",
+        "title": "るるぶ&more. 長岡まつり大花火大会（昨年の来場者 2日間で34万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-02",
+      "endDate": "2026-08-03",
+      "start": "19:20",
+      "end": "21:25",
+      "status": "announced",
+      "rainPolicy": "小雨決行。打ち上げ場所の冠水や強風のときは延期または中止。開催の可否は当日7:00に発表",
+      "note": "両日とも19:20〜21:25。打ち上げ数は非公開で、大型花火は各日40台。フェニックスは20:45。人出は例年2日間で約34万人",
+      "sources": [
+        {
+          "url": "https://www.city.nagaoka.niigata.jp/kurashi/cate13/chikyuhiroba/file/firework-en.pdf",
+          "title": "長岡市国際交流センター The Nagaoka Festival 2026（8月2・3日 19:20〜21:25、小雨決行）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.nagaoka.niigata.jp/shityo/kaiken_i/file/20260717-2-2.pdf",
+          "title": "長岡花火財団 2026長岡まつり大花火大会情報（大型花火 各日40台、フェニックス 20:45）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://nagaoka-navi.or.jp/pickup/nagaokahanabi",
+          "title": "長岡観光ナビ 長岡で楽しめる花火大会（2026年8月2日〜3日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://hanabi.walkerplus.com/detail/ar0415e00665/data.html",
+          "title": "ウォーカープラス 長岡まつり大花火大会 データ（可否は当日7:00に発表）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20002739",
+          "title": "るるぶ&more. 長岡まつり大花火大会（可否は当日7時に発表）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-02",
+      "endDate": "2027-08-03",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年8月2日・3日に開く決まりから見込んだ日（2027年の発表はまだない）",
+      "sources": [
+        {
+          "url": "https://www.japan.travel/en/spot/256/",
+          "title": "JNTO Nagaoka Fireworks Festival（毎年8月2・3日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://hanabi.walkerplus.com/detail/ar0415e00665/",
+          "title": "ウォーカープラス 長岡まつり大花火大会（例年8月2・3日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 長岡駅",
+        "walkMinutes": [30, 35],
+        "note": "A会場（右岸）が駅側"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "東京駅",
+        "minutes": [100, 110],
+        "route": "上越新幹線、乗り換えなし（約1時間40分）"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [
+      "長生橋（2026年）：20:00 規制開始、歩道は20:45、車道は22:15に解除",
+      "大手大橋（2026年）：18:30 規制開始、歩道は22:15、車道は22:45に解除"
+    ],
+    "sources": [
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0415e00665/data.html",
+        "title": "ウォーカープラス 長岡まつり大花火大会 データ（JR長岡駅から徒歩30分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002739",
+        "title": "るるぶ&more. 長岡まつり大花火大会（徒歩30分、公式駐車場はチケット購入者の事前予約制のみ）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://nagaoka-navi.or.jp/access",
+        "title": "長岡観光ナビ アクセス（東京から上越新幹線で1時間40分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.nagaoka.niigata.jp/shityo/kaiken_i/file/20260717-2-2.pdf",
+        "title": "長岡花火財団 2026長岡まつり大花火大会情報（橋の規制時間）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://nagaoka-navi.or.jp/feature/hanabi/top",
+        "title": "長岡観光ナビ 長岡まつり大花火大会 特集（A会場・B会場の案内）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "ponshukan-nagaoka",
+      "name": "長岡銘品の館 ぽんしゅ館",
+      "kind": "food",
+      "summary": "長岡駅の CoCoLo長岡 2階にある、新潟の酒の利き酒と土産の店。利き酒番所は10:00〜19:00（最終注文18:45）",
+      "location": {
+        "lat": 37.4479,
+        "lng": 138.8539
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "19:30"
+      },
+      "closedDays": null,
+      "price": "利き酒 1杯500円",
+      "tags": ["indoor", "local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://nagaoka-navi.or.jp/spot/42008",
+          "title": "長岡観光ナビ 長岡銘品の館『ぽんしゅ館』",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.nagaoka.niigata.jp/shityo/kaiken_i/file/20260717-2-2.pdf",
+      "title": "長岡花火財団 2026長岡まつり大花火大会情報",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.nagaoka.niigata.jp/kurashi/cate13/chikyuhiroba/file/firework-en.pdf",
+      "title": "長岡市国際交流センター The Nagaoka Festival 2026",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.japan.travel/en/spot/256/",
+      "title": "JNTO Nagaoka Fireworks Festival",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://nagaoka-navi.or.jp/feature/hanabi/top",
+      "title": "長岡観光ナビ 長岡まつり大花火大会 特集",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://hanabi.walkerplus.com/detail/ar0415e00665/",
+      "title": "ウォーカープラス 長岡まつり大花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.jalan.net/theme/hanabi/niigata/17_hanabi04.html",
+      "title": "じゃらんnet 長岡まつり大花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20002739",
+      "title": "るるぶ&more. 長岡まつり大花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "服装・持ち物・撮影の決まり",
+    "打ち上げ数（主催者は非公開）",
+    "2027年の開催時刻・雨天の扱い・チケットの販売",
+    "地元の味・祭りの日だけの食べ物",
+    "長岡駅の近くのほかに、祭りの前後に寄れる場所",
+    "周辺の場所の知名度",
+    "長岡まつりのうち8月1日の平和祭と昼の催しはこのデータに含めていない"
+  ]
+}

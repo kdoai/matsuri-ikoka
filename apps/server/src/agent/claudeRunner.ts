@@ -8,10 +8,17 @@ import {
 import { backoffMs, classifyFailure } from "@matsuri-ikoka/agent-kit";
 import type { IsoDate } from "@matsuri-ikoka/schema";
 import type { FestivalStore } from "../data/festivalStore";
+import type { StationPointIndex } from "../domain/travelEstimate";
 import type { ItineraryStore } from "../session/sessionStore";
 import type { CandidateChecker } from "../tools/candidateCheck";
 import { newTurnState, type ToolContext } from "../tools/context";
+import type { LodgingService } from "../tools/lodging";
+import type { LodgingResearcher } from "../tools/lodgingResearch";
+import { confirmAnchor } from "../tools/matsuriTools";
 import { createMatsuriMcpServer } from "../tools/mcpServer";
+import type { NearbyResearcher } from "../tools/nearbyResearch";
+import type { PlanEvaluator } from "../tools/planEvaluator";
+import type { RouteResearcher } from "../tools/routeResearch";
 import type { FestivalVerifier } from "../tools/verifier";
 import type { WeatherService } from "../tools/weather";
 import { staffBriefing, turnPrompt } from "./briefing";
@@ -28,7 +35,7 @@ import {
   type TurnInput,
 } from "./runner";
 
-// live：Agent SDK でコンシェルジュと3人のスタッフを動かす。
+// live：Agent SDK でコンシェルジュと3人のスタッフを動かす。旅程の評価係はツールの中で動く。
 // 会話は Agent SDK のセッションを resume して続ける。フックから出たイベントと、
 // コンシェルジュの返答の文（message.delta）を SSE に流す。
 
@@ -36,9 +43,19 @@ export interface ClaudeRunnerDeps {
   festivals: FestivalStore;
   itineraries: ItineraryStore;
   weather: WeatherService;
+  lodging: LodgingService;
   verifier: FestivalVerifier;
   /** 候補を出す前の開催の確かめ */
   candidateChecks?: CandidateChecker;
+  /** 駅の位置（出発の駅からの所要時間の見積もり） */
+  stations?: StationPointIndex;
+  /** 出発の駅から会場の最寄り駅までの行き方の調べ */
+  routes?: RouteResearcher;
+  nearby?: NearbyResearcher;
+  /** 会場の近くの宿の Web の調べ（観点ごとに並べて動かす） */
+  lodgingResearch?: LodgingResearcher;
+  /** 保存した旅程を観点ごとに採点する評価係 */
+  planEvaluator?: PlanEvaluator;
   prompts: AgentPrompts;
   models: AgentModels;
   /** 1回の発言の費用の上限（米ドル） */
@@ -171,9 +188,12 @@ export class ClaudeAgentRunner implements AgentRunner {
     this.#query = deps.query ?? ((params) => sdkQuery(params));
   }
 
-  async runTurn({ session, message, signal, progress }: TurnInput, emit: EmitEvent): Promise<void> {
+  async runTurn(
+    { session, message, signal, progress, searchRetry }: TurnInput,
+    emit: EmitEvent,
+  ): Promise<void> {
     const deps = this.#deps;
-    const turn = newTurnState();
+    const turn = newTurnState(searchRetry ?? null);
     const ctx: ToolContext = {
       session,
       turn,
@@ -181,8 +201,16 @@ export class ClaudeAgentRunner implements AgentRunner {
       festivals: deps.festivals,
       itineraries: deps.itineraries,
       weather: deps.weather,
+      lodging: deps.lodging,
       verifier: deps.verifier,
       ...(deps.candidateChecks ? { candidateChecks: deps.candidateChecks } : {}),
+      ...(deps.stations ? { stations: deps.stations } : {}),
+      ...(deps.routes ? { routes: deps.routes } : {}),
+      ...(deps.nearby ? { nearby: deps.nearby } : {}),
+      ...(deps.lodgingResearch ? { lodgingResearch: deps.lodgingResearch } : {}),
+      ...(deps.planEvaluator ? { planEvaluator: deps.planEvaluator } : {}),
+      // ツールの中の調べ（寄り道の調べ）の進みも、相談の進みとして数える
+      ...(progress ? { progress } : {}),
       today: deps.today,
       now: deps.now,
     };
@@ -192,6 +220,9 @@ export class ClaudeAgentRunner implements AgentRunner {
       emit(event);
     };
     ctx.emit = counted;
+    // 祭りを固定した旅程は、組み始める前に開催を確かめる（中止と分かったら店の記録で伝え、旅程を組まない）
+    await confirmAnchor(ctx);
+    progress?.();
     const prompt = turnPrompt(ctx, message);
     /** 直前の試みで、Agent SDK がセッションを名乗ったか（続きの会話を読めたか） */
     let initSeen = false;

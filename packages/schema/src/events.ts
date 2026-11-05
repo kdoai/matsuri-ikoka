@@ -11,6 +11,13 @@ import {
 import { NEARBY_KINDS } from "./festival";
 import { ItineraryDiffSchema, ItinerarySchema, VerificationResultSchema } from "./itinerary";
 import { PartialTripConditionsSchema, PreferencesSchema } from "./preferences";
+import {
+  CandidateTravelSchema,
+  MAX_SEARCH_ATTEMPTS,
+  MAX_SEARCH_SUGGESTIONS,
+  SearchMissSchema,
+  SearchSuggestionSchema,
+} from "./search";
 
 // 画面へ送る SSE のイベント。1つの発言に1本の接続で返し、最後に必ず done を送る。
 // 画面はこのイベントだけを見て、ストアを更新する（どのエージェントが動いているかは知らない）。
@@ -28,11 +35,27 @@ export const TOOL_NAMES = [
   "search_festivals",
   "search_nearby",
   "get_access",
+  "research_route",
   "get_weather",
+  "search_lodging",
   "update_itinerary",
   "verify_festival",
 ] as const;
 export const ToolNameSchema = z.enum(TOOL_NAMES);
+
+/**
+ * 調べ直しを頼む中身：lunch 昼ごはんの店 / dinner 夕ごはんの店 / sightseeing 寄り道 /
+ * route 行き方（乗り換え） / last_mile 駅から会場までの移動 / lodging 宿
+ */
+export const REDO_SUBJECTS = [
+  "lunch",
+  "dinner",
+  "sightseeing",
+  "route",
+  "last_mile",
+  "lodging",
+] as const;
+export const RedoSubjectSchema = z.enum(REDO_SUBJECTS);
 
 /**
  * 会話の状態。サーバーが持ち、画面はこれに合わせて切り替わる。
@@ -66,6 +89,8 @@ export const FestivalCandidateSchema = z.strictObject({
   confirmed: z.boolean(),
   highlight: TextSchema,
   source: SourceSchema,
+  /** 出発の駅からの片道の所要時間を、条件に照らした値（日帰りの上限と比べた結果を含む） */
+  travel: CandidateTravelSchema.optional(),
   /**
    * 候補を出す前の、公式の情報での確かめの結果（とってある結果があるときだけ）。
    * まだ確かめていなければ付けず、確かめ終わったら festival.verified（scope: candidate）で届く
@@ -87,6 +112,30 @@ export const SpotPinSchema = z.strictObject({
 });
 
 export const MAX_CANDIDATES = 3;
+
+/** 条件のどれか1つだけから外れる祭り（「この祭りならやっています」）。外れている点を添える */
+export const NearMissSchema = z.strictObject({
+  candidate: FestivalCandidateSchema,
+  miss: SearchMissSchema,
+});
+
+/** 検索の結果：found 条件に合う祭りがある / none 条件に合う祭りが見つからなかった */
+export const SEARCH_STATUSES = ["found", "none"] as const;
+
+/** search_festivals の結果のうち、条件の検査と次の手（コードで決めたもの） */
+export const SearchOutcomeSchema = z.strictObject({
+  status: z.enum(SEARCH_STATUSES),
+  /** 条件から外した祭りの数（条件ごと。いちばんはじめに外れた条件で数える） */
+  excluded: z.strictObject({
+    date: z.number().int().nonnegative(),
+    travel: z.number().int().nonnegative(),
+    area: z.number().int().nonnegative(),
+  }),
+  nearMisses: z.array(NearMissSchema).max(MAX_CANDIDATES),
+  suggestions: z.array(SearchSuggestionSchema).max(MAX_SEARCH_SUGGESTIONS),
+  /** 探した回数（はじめの検索と、条件を変えて数え直した回数） */
+  attempts: z.number().int().min(1).max(MAX_SEARCH_ATTEMPTS),
+});
 
 /** 利用者に見せるエラーの種類 */
 export const ERROR_CODES = [
@@ -122,6 +171,8 @@ export const ToolStartEventSchema = event(
     tool: ToolNameSchema,
     staff: StaffIdSchema,
     bubble: TextSchema,
+    /** 店内のようすの窓に出す、くわしい文。吹き出しより長い */
+    detail: TextSchema.optional(),
   }),
 );
 
@@ -135,9 +186,13 @@ export const ToolEndEventSchema = event(
       staff: StaffIdSchema,
       ok: z.boolean(),
       bubble: TextSchema,
+      /** 店内のようすの窓に出す、くわしい文（見つけたものの件数と代表の1件など） */
+      detail: TextSchema.optional(),
       /** 見つかった件数。件数のないツールでは null */
       count: z.number().int().nonnegative().nullable(),
       candidates: z.array(FestivalCandidateSchema).max(MAX_CANDIDATES).optional(),
+      /** 条件の検査と次の手（search_festivals の結果にだけ付く） */
+      search: SearchOutcomeSchema.optional(),
       spots: z.array(SpotPinSchema).optional(),
     })
     .superRefine((data, ctx) => {
@@ -148,6 +203,13 @@ export const ToolEndEventSchema = event(
           message: "candidates は search_festivals の結果にだけ付けます",
         });
       }
+      if (data.search !== undefined && data.tool !== "search_festivals") {
+        ctx.addIssue({
+          code: "custom",
+          path: ["search"],
+          message: "search は search_festivals の結果にだけ付けます",
+        });
+      }
       if (data.spots !== undefined && data.tool !== "search_nearby") {
         ctx.addIssue({
           code: "custom",
@@ -155,6 +217,27 @@ export const ToolEndEventSchema = event(
           message: "spots は search_nearby の結果にだけ付けます",
         });
       }
+    }),
+);
+
+/**
+ * スタッフどうしの調べ直しの頼み（request）と、その受け（accept）。
+ * 足りないもの（subject）から、サーバーが決まった型で吹き出しを作る
+ */
+export const StaffRedoEventSchema = event(
+  "staff.redo",
+  z
+    .strictObject({
+      kind: z.enum(["request", "accept"]),
+      from: StaffIdSchema,
+      to: StaffIdSchema,
+      subject: RedoSubjectSchema,
+      bubble: TextSchema,
+      detail: TextSchema.optional(),
+    })
+    .refine((data) => data.from !== data.to, {
+      path: ["to"],
+      message: "頼む相手は、頼む人と別のスタッフにしてください",
     }),
 );
 
@@ -228,6 +311,7 @@ export const SseEventSchema = z.discriminatedUnion("type", [
   StaffStartEventSchema,
   ToolStartEventSchema,
   ToolEndEventSchema,
+  StaffRedoEventSchema,
   ItineraryUpdatedEventSchema,
   FestivalVerifiedEventSchema,
   MessageDeltaEventSchema,
@@ -237,9 +321,12 @@ export const SseEventSchema = z.discriminatedUnion("type", [
 
 export type StaffId = z.infer<typeof StaffIdSchema>;
 export type ToolName = z.infer<typeof ToolNameSchema>;
+export type RedoSubject = z.infer<typeof RedoSubjectSchema>;
 export type ConversationStage = z.infer<typeof ConversationStageSchema>;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 export type FestivalCandidate = z.infer<typeof FestivalCandidateSchema>;
+export type NearMiss = z.infer<typeof NearMissSchema>;
+export type SearchOutcome = z.infer<typeof SearchOutcomeSchema>;
 export type SpotPin = z.infer<typeof SpotPinSchema>;
 export type SseEvent = z.infer<typeof SseEventSchema>;
 export type SseEventType = SseEvent["type"];
@@ -249,6 +336,7 @@ export const SSE_EVENT_TYPES = [
   "staff.start",
   "tool.start",
   "tool.end",
+  "staff.redo",
   "itinerary.updated",
   "festival.verified",
   "message.delta",

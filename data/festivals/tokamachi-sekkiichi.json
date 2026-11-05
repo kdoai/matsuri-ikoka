@@ -1,0 +1,182 @@
+{
+  "id": "tokamachi-sekkiichi",
+  "name": {
+    "ja": "節季市（チンコロ市）",
+    "en": "Tokamachi Sekki-ichi Winter Market"
+  },
+  "category": "market",
+  "municipalities": [
+    {
+      "prefecture": "新潟県",
+      "name": "十日町市"
+    }
+  ],
+  "venue": {
+    "name": "越後妻有交流館キナーレ",
+    "lat": 37.139,
+    "lng": 138.7601
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "米粉で作る子犬や干支の縁起物「チンコロ」が、この市で並ぶ",
+    "手作りのチンコロは一つずつ表情が違い、数に限りがある",
+    "江戸時代から続く雪国の冬の市で、縁起物を求める人が朝から列を作る"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "江戸時代から続く冬の市で、チンコロは140年以上売られてきた",
+      "sources": [
+        {
+          "url": "https://www.mlit.go.jp/tagengo-db/R5-00088.html",
+          "title": "観光庁 多言語解説文データベース チンコロと冬の市",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "江戸時代から続く冬の市で、旧暦では年の瀬に当たることから節季市と呼ぶ",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/R5-00088.html",
+        "title": "観光庁 多言語解説文データベース チンコロと冬の市",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "チンコロは米粉の細工で、140年以上前から市で売られてきた",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/R5-00088.html",
+        "title": "観光庁 多言語解説文データベース チンコロと冬の市",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "乾いてひびが多く入るほど、新しい年の運が良くなると地元で言われる",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/R5-00088.html",
+        "title": "観光庁 多言語解説文データベース チンコロと冬の市",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "かつては1月10・15・20・25日の4日に開いていたが、近年は日曜に開く年がある",
+      "source": {
+        "url": "https://niigata-kankou.or.jp/blog/detail_871.html",
+        "title": "新潟県観光協会 にいがた観光ナビ 節季市（チンコロ市）の記事（2023年）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "申し込みは要らず、10:00〜14:00に会場の店で買う（2026年）。チンコロは数に限りがあり、午前中に売り切れることが多い",
+    "rules": "unknown",
+    "dress": ["会場は屋外なので寒さ対策をする"],
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "屋外の市で買い物をする行事で、長い行列のほかに危険についての特別な注意はない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://niigata-kankou.or.jp/event/detail_2089.html",
+        "title": "新潟県観光協会 にいがた観光ナビ 節季市（2026年。長蛇の列、午前中の売り切れ、寒さ対策）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-11",
+      "start": "10:00",
+      "end": "14:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績（1日目、日曜）",
+      "sources": [
+        {
+          "url": "https://niigata-kankou.or.jp/event/detail_2089.html",
+          "title": "新潟県観光協会 にいがた観光ナビ 節季市（2026年1月11日・18日 10時〜14時）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-18",
+      "start": "10:00",
+      "end": "14:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績（2日目、日曜）",
+      "sources": [
+        {
+          "url": "https://niigata-kankou.or.jp/event/detail_2089.html",
+          "title": "新潟県観光協会 にいがた観光ナビ 節季市（2026年1月11日・18日 10時〜14時）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR・北越急行 十日町駅",
+        "walkMinutes": [10, 15]
+      }
+    ],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://niigata-kankou.or.jp/event/detail_2089.html",
+        "title": "新潟県観光協会 にいがた観光ナビ 節季市（十日町駅から徒歩10分、道の駅クロステンなどの駐車場は台数に限りあり）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://niigata-kankou.or.jp/event/detail_2089.html",
+      "title": "新潟県観光協会 にいがた観光ナビ 節季市（会場 越後妻有交流館キナーレの敷地内）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.mlit.go.jp/tagengo-db/R5-00088.html",
+      "title": "観光庁 多言語解説文データベース チンコロと冬の市",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催日と時刻（決まった日の公式の案内がなく、2026年は1月11日・18日、2023年は1月15日・22日の日曜に開いた）",
+    "大雪のときの扱い",
+    "チンコロの買い方（整理券の有無、1人あたりの数の制限）と値段",
+    "持ち物と撮影の扱い",
+    "店の数と、チンコロのほかに並ぶもの・食べもの",
+    "会場の場所（新潟県観光協会はキナーレの敷地内、旅行サイトは十日町駅前の諏訪町の通りとしている）",
+    "越後湯沢駅など玄関口の駅から十日町駅までの所要時間",
+    "周辺の観光と食の場所、店の営業時間",
+    "来場者の数"
+  ]
+}

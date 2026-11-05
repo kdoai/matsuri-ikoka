@@ -1,0 +1,244 @@
+{
+  "id": "kinzanji-eyo",
+  "name": {
+    "ja": "金山寺会陽",
+    "en": "Kinzanji Eyo (Naked Festival)"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "岡山県",
+      "name": "岡山市"
+    }
+  ],
+  "venue": {
+    "name": "金山寺",
+    "lat": 34.739,
+    "lng": 133.9481
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "岡山県内の会陽の先頭を切って、毎年2月第1土曜の夜に行われる",
+    "21:30に副宝木5本が投げ入れられ、22:30に陰陽2本の宝木が本堂から投下される",
+    "金山の中腹、標高約350mの境内で裸衆が宝木を奪い合う",
+    "小学生以下が加わる子ども会陽もあり、女子もシャツを着て参加できる"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "報恩大師の創建以来の行事とされ、僧が七日七晩祈る温座を受け継ぐ",
+      "sources": [
+        {
+          "url": "https://www.kinzanji.net/eyo/",
+          "title": "金山寺 会陽（裸祭り） 金山寺会陽の歴史",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "会陽のもとは、旧正月から七日七晩、僧が交代で本尊に祈り続ける「温座」の行法",
+      "source": {
+        "url": "https://www.kinzanji.net/eyo/",
+        "title": "金山寺 会陽（裸祭り） 金山寺会陽の歴史",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "寺によれば、温座の行法は江戸時代に浅草寺へ移され、今も浅草寺の大きな年中行事として残る",
+      "source": {
+        "url": "https://www.kinzanji.net/eyo/",
+        "title": "金山寺 会陽（裸祭り） 金山寺会陽の歴史",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "会陽は1月初めの宝木づくりから当日、後日の祝賀会まで、約2か月にわたる行事",
+      "source": {
+        "url": "https://www.kinzanji.net/eyo/",
+        "title": "金山寺 会陽（裸祭り） 金山寺会陽の歴史",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "金山寺は749年に報恩大師が開いた寺。本堂は2012年の火事で失われ、今は仮本堂で営まれている",
+      "source": {
+        "url": "https://www.kinzanji.net/",
+        "title": "金山寺 公式サイト（寺の歴史と復興事業）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_by_application",
+    "howToJoin": "裸で加わる大人は参加費1,000円（本堂の復興に充てる）。受付の方法・時刻・場所は寺の案内に見当たらない",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.kinzanji.net/",
+        "title": "金山寺 公式サイト（会陽参加費 裸・大人1,000円、写真の利用についてのQ&A）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kinzanji.net/eyo/",
+        "title": "金山寺 会陽（裸祭り）（子ども会陽）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-02-07",
+      "start": "21:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年2月7日（土）に行われた。県の観光サイトの案内では21:00ごろ開始、21:30ごろ副宝木5本の投げ入れ、22:30ごろ陰陽2本の宝木の投下、夜明けごろ終了。寺の報告では午後10時過ぎに宝木の投下で始まった",
+      "sources": [
+        {
+          "url": "https://www.kinzanji.net/eyo/",
+          "title": "金山寺 2026年2月7日（土） 金山寺会陽が執り行われました",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.okayama-kanko.jp/event/detail_12820.html",
+          "title": "岡山観光WEB 【2026年】金山寺会陽（2月7日、21:00頃〜）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-02-06",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "寺の案内では毎年2月の第1土曜日。2027年は2月6日（土）にあたる。2027年の時刻はまだ発表がない（例年、21:30に副宝木、22:30に宝木の投下）",
+      "sources": [
+        {
+          "url": "https://www.kinzanji.net/eyo/",
+          "title": "金山寺 会陽（裸祭り）（毎年2月の第1土曜日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.okayama-kanko.jp/event/detail_12820.html",
+          "title": "岡山観光WEB 金山寺会陽（毎年2月第1土曜日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.kinzanji.net/access/",
+        "title": "金山寺 交通案内（JR岡山駅からタクシー約20分、山陽自動車道岡山ICから約30分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.okayama-kanko.jp/event/detail_12820.html",
+        "title": "岡山観光WEB 金山寺会陽（アクセス、駐車場なし）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "kinzanji-kyakuden",
+      "name": "金山寺 客殿・庭園",
+      "kind": "sightseeing",
+      "summary": "長く非公開だった金山寺の客殿と庭園を2021年から公開し、絵画や仏像を見られる。拝観の受付は10時〜16時半、年中無休",
+      "location": {
+        "lat": 34.739,
+        "lng": 133.9481
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": [],
+      "price": "中学生以上500円、小学生以下300円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.kinzanji.net/haikan/",
+          "title": "金山寺 岡山の秘宝 金山寺拝観開始（受付10時〜16時半、年中無休）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kinzanji.net/",
+          "title": "金山寺 公式サイト（よくある質問：拝観時間と拝観料）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.kinzanji.net/eyo/",
+      "title": "金山寺 会陽（裸祭り）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.kinzanji.net/",
+      "title": "金山寺 公式サイト",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.okayama-kanko.jp/event/detail_12820.html",
+      "title": "岡山観光WEB 金山寺会陽",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.pref.okayama.jp/page/detail-59275.html",
+      "title": "岡山県 「岡山県の会陽の習俗」映像記録（金山寺会陽を収録）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開始時刻と宝木の投下の時刻（まだ発表がない）",
+    "参加の受付の方法・時刻・場所と、子ども会陽の時刻",
+    "見学の場所と決まり、撮影の決まり、参加者の服装・持ち物",
+    "危険度（寺の案内に、けがや混雑についての注意が見当たらない）",
+    "雨や雪のときの扱い",
+    "会陽の日の駐車場の扱い（寺の案内では無料の駐車場が約55台、県の観光サイトの会陽のページでは駐車場なし）",
+    "参加する裸衆と見物客の数",
+    "公共交通での行き方（駅からのバスの案内がない）",
+    "屋台が出るかと、地元の味",
+    "祭りの日の夜に開いている近くの食事の店",
+    "金山寺の客殿・庭園の閉門の時刻（案内は受付の時間だけ）"
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "id": "fujimori-no-taasobi",
+  "name": {
+    "ja": "藤守の田遊び",
+    "en": "Fujimori no Taasobi"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "静岡県",
+      "name": "焼津市"
+    }
+  ],
+  "venue": {
+    "name": "大井八幡宮",
+    "lat": 34.8107,
+    "lng": 138.2983
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "神社の前庭の仮設の舞台で、田おこしから刈り入れまでを25番の芸能で見せる",
+    "演者が紙の蓑でつくった花冠「ショッコ」をかぶる、ここならではの姿",
+    "番外に「天狗」「鯛釣」の2番が付く",
+    "国の重要無形民俗文化財の田遊びを、毎年3月17日に間近で見られる"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1977年に国の重要無形民俗文化財に指定された田遊び",
+      "sources": [
+        {
+          "url": "https://www.pref.shizuoka.jp/kankosports/bunkageijutsu/bunkazai/1002825/1041003/1041891/1004970/1020990.html",
+          "title": "静岡県 しずおか文化財ナビ 藤守の田遊び",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "藤守の田遊び保存会が保護団体として受け継ぐ",
+      "sources": [
+        {
+          "url": "https://www.pref.shizuoka.jp/kankosports/bunkageijutsu/bunkazai/1002825/1041003/1041891/1004970/1020990.html",
+          "title": "しずおか文化財ナビ 藤守の田遊び（保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "1977年5月に国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.pref.shizuoka.jp/kankosports/bunkageijutsu/bunkazai/1002825/1041003/1041891/1004970/1020990.html",
+        "title": "静岡県 しずおか文化財ナビ 藤守の田遊び",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "演目は全25番に、番外の「天狗」「鯛釣」の2番を加えた構成",
+      "source": {
+        "url": "https://www.pref.shizuoka.jp/kankosports/bunkageijutsu/bunkazai/1002825/1041003/1041891/1004970/1020990.html",
+        "title": "静岡県 しずおか文化財ナビ 藤守の田遊び",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "最も重要な役の「振取」は、宮ごもりをする人たちのまとめ役が務める",
+      "source": {
+        "url": "https://www.pref.shizuoka.jp/kankosports/bunkageijutsu/bunkazai/1002825/1041003/1041891/1004970/1020990.html",
+        "title": "静岡県 しずおか文化財ナビ 藤守の田遊び",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "平安時代に、その年の五穀豊穣を願って始まったと伝わる",
+      "source": {
+        "url": "https://www.maff.go.jp/kanto/nouson/sekkei/kokuei/nishikan/rekishi/03.html",
+        "title": "農林水産省 関東農政局 大井川用水の歴史（藤守の田遊び）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "神社の前庭の舞台で行う芸能の見学が中心で、県の案内に混雑や危険についての注意は見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.pref.shizuoka.jp/kankosports/bunkageijutsu/bunkazai/1002825/1041003/1041891/1004970/1020990.html",
+        "title": "静岡県 しずおか文化財ナビ 藤守の田遊び（一般公開、仮設の舞台で演じる）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-03-17",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年3月17日に行う決まりから見込んだ日（2027年の発表はまだ見つからない）。25番と番外2番を演じる",
+      "sources": [
+        {
+          "url": "https://www.pref.shizuoka.jp/kankosports/bunkageijutsu/bunkazai/1002825/1041003/1041891/1004970/1020990.html",
+          "title": "静岡県 しずおか文化財ナビ 藤守の田遊び（毎年3月17日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": []
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.pref.shizuoka.jp/kankosports/bunkageijutsu/bunkazai/1002825/1041003/1041891/1004970/1020990.html",
+      "title": "静岡県 しずおか文化財ナビ 藤守の田遊び（大井八幡宮、焼津市藤守）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.maff.go.jp/kanto/nouson/sekkei/kokuei/nishikan/rekishi/03.html",
+      "title": "農林水産省 関東農政局 大井川用水の歴史（藤守の田遊び）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と開始・終了の時刻（夕方6時ごろから深夜という紹介は地域メディアだけにあり、入れていない）",
+    "雨天の扱い",
+    "最寄り駅と徒歩の時間、主要駅からの行き方（出典に見当たらない）",
+    "駐車場（県のページの項目では「無」と読めるが、検索結果の要約では空欄とも出て食い違うため入れていない）",
+    "見学の決まり（立ち位置など）、撮影の扱い、服装・持ち物、夜の冷え込みへの注意（出典に見当たらない）",
+    "屋台の有無と、この日だけの食べもの",
+    "周辺の観光と食の場所（営業時間などを確かめた出典がない）",
+    "見物客の数と、舞台の広さ（規模は、1つの神社で行う行事として S にした）",
+    "会場の緯度・経度は、国土地理院の住所検索で藤守686番地の代表点を取ったもの",
+    "大手の観光サイトには掲載を確認できなかった（検索で主題のページが見つからない）"
+  ]
+}

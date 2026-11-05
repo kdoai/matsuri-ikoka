@@ -1,0 +1,186 @@
+{
+  "id": "tottori-shimin-noryo-hanabi",
+  "name": {
+    "ja": "市民納涼花火大会",
+    "en": "Tottori Citizens' Summer Fireworks Festival"
+  },
+  "category": "fireworks",
+  "municipalities": [
+    {
+      "prefecture": "鳥取県",
+      "name": "鳥取市"
+    }
+  ],
+  "venue": {
+    "name": "千代河原市民スポーツ広場",
+    "lat": 35.4975,
+    "lng": 134.2158
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "鳥取しゃんしゃん祭の最後の夜を締めくくる花火",
+    "千代川の河原で音楽に合わせて開く約1万発（2026年）"
+  ],
+  "styles": [],
+  "trivia": [
+    {
+      "text": "2026年は第73回で、5部構成の音楽花火だった",
+      "source": {
+        "url": "https://hanabi.walkerplus.com/detail/ar0831e00686/",
+        "title": "ウォーカープラス 第73回市民納涼花火大会（5部構成の音楽花火）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "鳥取しゃんしゃん祭の最終日に開かれ、祭りのフィナーレを飾る",
+      "source": {
+        "url": "https://rurubu.jp/andmore/spot/20003621",
+        "title": "るるぶ&more. 第73回市民納涼花火大会（小雨決行、荒天中止で延期なし、交通規制 18〜22時）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "夜の河原に約10万人（2025年）が集まり、会場周辺で交通規制がある"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0831e00686/data.html",
+        "title": "ウォーカープラス 第73回市民納涼花火大会 データ（約1万発、例年約10万人、駐車場なし）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20003621",
+        "title": "るるぶ&more. 第73回市民納涼花火大会（小雨決行、荒天中止で延期なし、交通規制 18〜22時）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-15",
+      "start": "19:50",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": "小雨決行、荒天のときは中止（延期なし）",
+      "note": "第73回。打ち上げは約1万発。JR鳥取駅から有料の臨時バスが出た（約5分）",
+      "sources": [
+        {
+          "url": "https://hanabi.walkerplus.com/detail/ar0831e00686/data.html",
+          "title": "ウォーカープラス 第73回市民納涼花火大会 データ（約1万発、例年約10万人、駐車場なし）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20003621",
+          "title": "るるぶ&more. 第73回市民納涼花火大会（小雨決行、荒天中止で延期なし、交通規制 18〜22時）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-15",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2027年の発表はまだない。鳥取しゃんしゃん祭は毎年8月13〜15日で、最終日に花火があるという案内から見込んだ日",
+      "sources": [
+        {
+          "url": "https://www.gltjp.com/ja/directory/item/11253/",
+          "title": "GOOD LUCK TRIP 鳥取しゃんしゃん祭（振興会事務局の監修。毎年8月13〜15日、14日に一斉傘踊り、最終日に花火）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 鳥取駅",
+        "walkMinutes": [15, 20],
+        "note": "2026年は駅から有料の臨時バス（約5分）も出た"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "none",
+    "trafficRestrictions": ["18:00〜22:00（2026年の予定）会場周辺で交通規制"],
+    "sources": [
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0831e00686/data.html",
+        "title": "ウォーカープラス 第73回市民納涼花火大会 データ（約1万発、例年約10万人、駐車場なし）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20003621",
+        "title": "るるぶ&more. 第73回市民納涼花火大会（小雨決行、荒天中止で延期なし、交通規制 18〜22時）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://hanabi.walkerplus.com/detail/ar0831e00686/data.html",
+      "title": "ウォーカープラス 第73回市民納涼花火大会 データ（約1万発、例年約10万人、駐車場なし）",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20003621",
+      "title": "るるぶ&more. 第73回市民納涼花火大会（小雨決行、荒天中止で延期なし、交通規制 18〜22時）",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://www.gltjp.com/ja/directory/item/11253/",
+      "title": "GOOD LUCK TRIP 鳥取しゃんしゃん祭（振興会事務局の監修。毎年8月13〜15日、14日に一斉傘踊り、最終日に花火）",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.jalan.net/theme/hanabi/tottori/31_hanabi08.html",
+      "title": "じゃらんnet 鳥取しゃんしゃん祭 市民納涼花火大会 花火大会情報2026",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://hanabi.walkerplus.com/detail/ar0831e00686/",
+      "title": "ウォーカープラス 第73回市民納涼花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "主催者の発表",
+    "打ち上げ開始の時刻（観光サイトは19:50。20:00とする案内もある）",
+    "観覧の決まり（場所取り、禁止事項）、服装、持ち物、撮影",
+    "一般の人が加わる手段の有無",
+    "2027年の時刻、打ち上げ数、雨天の扱い",
+    "主要駅から鳥取駅までの所要時間",
+    "屋台の有無と地元の味",
+    "祭りの前後に寄れる観光・食の場所"
+  ]
+}

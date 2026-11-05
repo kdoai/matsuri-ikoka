@@ -55,13 +55,20 @@ export function isClosedOn(spot: Pick<NearbySpot, "closedDays">, date: IsoDate):
 /**
  * 祭りの前後に寄れる場所を選ぶ。
  * 当日が休業の場所、時間帯に営業時間が合わない場所、屋台で十分なときの店を除き、こだわりに合う順に並べる。
+ * wantsShopMeals は、聞き取りで屋台のほかに食べたいものを言われたとき。こだわりが「屋台で十分」でも店を残す。
  */
 export function selectNearbySpots(
   spots: readonly NearbySpot[],
-  options: { date: IsoDate; window?: TimeWindow; preferences: Preferences },
+  options: {
+    date: IsoDate;
+    window?: TimeWindow;
+    preferences: Preferences;
+    wantsShopMeals?: boolean;
+  },
 ): NearbySelection {
   const { date, window, preferences } = options;
   const effects = preferenceEffects(preferences);
+  const includeShopMeals = effects.includeShopMeals || options.wantsShopMeals === true;
   const selected: NearbySpot[] = [];
   const excluded: NearbySelection["excluded"] = [];
 
@@ -71,7 +78,7 @@ export function selectNearbySpots(
       reason = "closed_day";
     } else if (window !== undefined && !fitsOpeningHours(spot.hours, window)) {
       reason = "outside_hours";
-    } else if (spot.kind === "food" && !effects.includeShopMeals) {
+    } else if (spot.kind === "food" && !includeShopMeals) {
       reason = "shop_meal_not_wanted";
     }
     if (reason === null) {

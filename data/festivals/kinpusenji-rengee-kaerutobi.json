@@ -1,0 +1,178 @@
+{
+  "id": "kinpusenji-rengee-kaerutobi",
+  "name": {
+    "ja": "蓮華会・蛙飛び行事",
+    "en": "Rengee and Frog-Jumping Ritual"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "奈良県",
+      "name": "吉野郡吉野町"
+    }
+  ],
+  "venue": {
+    "name": "金峯山寺 蔵王堂",
+    "lat": 34.3683,
+    "lng": 135.8563
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu"],
+  "highlights": [
+    "大きな青い蛙が蔵王堂で跳ね、導師の授戒で人の姿に戻る儀式",
+    "大青蛙を乗せた太鼓台が蔵王堂へ練り込む",
+    "大和高田市奥田の池の蓮を蔵王権現に供える法会",
+    "金峯山寺の三大行事の1つ"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "蓮華会が奈良県指定の無形民俗文化財になっている",
+      "sources": [
+        {
+          "url": "https://sitereports.nabunken.go.jp/article/47400",
+          "title": "奈良県指定無形民俗文化財 金峯山寺の蓮華会（月刊奈良の解説記事の書誌）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "蔵王権現をそしった男が大鷲に崖へ置き去りにされ、蛙の姿で救われたという伝説を演じる",
+      "source": {
+        "url": "https://rurubu.jp/andmore/spot/20002496",
+        "title": "るるぶ&more. 蓮華会 蛙飛び行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "供える蓮は、役行者が産湯をつかったと伝わる大和高田市奥田の弁天池のもの",
+      "source": {
+        "url": "https://www.kinpusen.or.jp/event/3dai.html",
+        "title": "金峯山寺 三大行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "7月7日の蓮華会に続き、9日まで蓮華奉献入峯が行われる",
+      "source": {
+        "url": "https://www.kinpusen.or.jp/event/3dai.html",
+        "title": "金峯山寺 三大行事",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": []
+  },
+  "occurrences": [
+    {
+      "date": "2026-07-07",
+      "start": "13:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績（奈良県の広報紙で13時からと案内）。蓮華会の法要のあと蛙飛びの儀式を行う。寺の三大行事のページには、10時 奥田で蓮取り、12時半 竹林院前から蛙太鼓台が出発、15時 下千本から行列、16時 蔵王堂で法要、17時 採灯大護摩供とあり、時刻が広報紙と合わない",
+      "sources": [
+        {
+          "url": "https://www.pref.nara.lg.jp/documents/23676/guide.pdf",
+          "title": "県民だより奈良 2026年6月号 催し案内（吉野町 蓮華会・蛙飛び行事 7月7日（火）13時〜）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar0729e598500/data.html",
+          "title": "ウォーカープラス 蓮華会・蛙飛び行事（2026年7月7日 13:00〜）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-07",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年7月7日（2027年の発表はまだない）。始まる時刻は、2026年の県の広報紙（13時）と寺の三大行事のページ（16時に法要）で食い違う",
+      "sources": [
+        {
+          "url": "https://www.kinpusen.or.jp/event/3dai.html",
+          "title": "金峯山寺 三大行事（毎年7月7日 蓮華会）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.kinpusen.or.jp/access/",
+        "title": "金峯山寺 アクセス（近鉄特急で大阪から約1時間15分、京都から約1時間40分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.kinpusen.or.jp/event/3dai.html",
+      "title": "金峯山寺 三大行事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.pref.nara.lg.jp/documents/23676/guide.pdf",
+      "title": "県民だより奈良 2026年6月号",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20002496",
+      "title": "るるぶ&more. 蓮華会 蛙飛び行事（会場は金峯山寺 蔵王堂境内）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    },
+    {
+      "url": "https://summer.walkerplus.com/odekake/detail_e/ar0729e598500/data.html",
+      "title": "ウォーカープラス 蓮華会・蛙飛び行事",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、法要・蛙飛びの始まる時刻（2026年の県の広報紙は13時、寺のページは16時に法要で食い違う）",
+    "主要駅から蔵王堂までの通しの所要時間（寺の案内は、大阪阿部野橋駅から近鉄特急で吉野駅まで約1時間15分、京都駅から橿原神宮前乗り換えで約1時間40分だけ。吉野駅から蔵王堂までは、旅行情報サイトにロープウェイと徒歩約10分とあるが、ロープウェイの運行日と通しの時間を公式の案内で確かめられない）",
+    "雨の日の扱い",
+    "見学の場所と、見学・撮影の決まり",
+    "服装・持ち物・危険度についての案内",
+    "一般の人が加われるかどうか",
+    "駐車場（旅行情報サイトに専用の駐車場はなく、吉野山観光駐車場から徒歩15分とあるが、寺の案内で確かめられない）",
+    "屋台の有無",
+    "周辺の観光と食の場所（営業時間と位置を公式の案内で確かめられる場所が見つからなかった）",
+    "会場の緯度・経度は、国土地理院の地名「金峯山寺」の位置で代用"
+  ]
+}

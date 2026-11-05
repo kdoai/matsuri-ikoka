@@ -1,29 +1,289 @@
 import type { StaffId } from "@matsuri-ikoka/schema";
-import { MessageCircle, X } from "lucide-react";
+import {
+  BookOpen,
+  CalendarDays,
+  CircleCheck,
+  Ellipsis,
+  Footprints,
+  Map as MapIcon,
+  MessageCircle,
+  RotateCcw,
+  Search,
+  SlidersHorizontal,
+  Sparkles,
+  Undo2,
+  X,
+} from "lucide-react";
+import { type ReactNode, useState } from "react";
+import { hasNextSteps } from "../state/events";
 import { useActions, useApp, useT } from "../state/react";
-import { currentLine, shioriReady } from "../state/selectors";
+import { canReturnToFestivals, currentLine, shioriReady } from "../state/selectors";
+import { waitLineIndex, waitPhase } from "../state/waitLines";
 import { Composer, focusComposer } from "./ChatPanel";
+import { ConsultPanel, useConsultLine } from "./Consult";
+import { openTripPanel } from "./Hud";
 import { Portrait, type Speaker } from "./Portraits";
-import { errorText } from "./text";
+import { errorText, shortLine } from "./text";
+import { useNow, useWaitClock } from "./waitClock";
 
-// 会話の窓。店の画面の下に重ねて、話し手の顔の絵と名札、いまの一言（流れてくる返答）を大きく出し、
-// その下で返事を書く。これまでのやりとりは、お知らせ（会話の記録）で開く。
+// 会話の窓。話すときだけ画面の下に出す、クリーム色のセリフの枠。
+// 左に大きな表情の絵と名札、右にいまの一言（1〜2文。全文は「つづきを読む」と会話の記録で読める）。
+// その下に、選んで進める相談か、返事の選択肢（アイコンと文字のボタン）を並べる。自分の言葉で書く欄は、いちばん下に小さく置き、
+// 書いている間だけ広げる。これまでのやりとりは、右上の会話の記録で開く。
 
 function NamePlate({ name }: { name: string }) {
   return (
-    <p className="-top-4 absolute left-24 flex items-center gap-1.5 rounded-full bg-ai-800 py-1 pr-4 pl-2.5 font-bold text-kinari-50 text-sm shadow-md ring-2 ring-kinari-50 sm:left-32">
+    <p className="-top-4 absolute left-24 flex items-center gap-1.5 rounded-full border border-kinari-50/70 bg-ai-800 py-1 pr-4 pl-2.5 font-bold text-base text-kinari-50 shadow-soft sm:left-36">
       <MessageCircle aria-hidden="true" className="size-4 text-yamabuki-400" />
       {name}
     </p>
   );
 }
 
-// 色のクラスは形のクラスと分けて持つ。同じ種類のクラスを重ねると、どちらが効くかは
-// Tailwind が出力する CSS の順で決まり、書いた順にならない
-const chipShape =
-  "inline-flex min-h-9 items-center gap-1 rounded-full border-2 px-3.5 font-bold text-sm shadow-sm transition disabled:cursor-not-allowed disabled:opacity-60";
-const actionChip = `${chipShape} border-ai-700 bg-white text-ai-800 hover:bg-ai-50`;
-const primaryChip = `${chipShape} border-shu-600 bg-shu-600 text-white hover:bg-shu-700`;
+/** 会話の窓の中で、最初に焦点を置く場所（選択肢、なければ入力欄）へ移る */
+export function focusDialogue(): void {
+  const first = document.querySelector<HTMLElement>(
+    "[data-testid='dialogue'] [data-dialogue-focus]",
+  );
+  if (first !== null) first.focus();
+  else focusComposer();
+}
+
+// 選択肢のボタンは、形（replyShape）と色（REPLY_TONE）を分けて重ねる。色のクラスはどちらか一方だけを付ける
+const replyShape =
+  "inline-flex min-h-16 min-w-[6.5rem] flex-col items-center justify-center gap-1 rounded-2xl border-2 px-3 py-2 text-center font-bold text-base leading-tight shadow-soft transition hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60";
+
+const REPLY_TONE = {
+  plain: "border-line-strong bg-white/90 text-ink hover:border-yamabuki-400",
+  primary: "border-wood-700/40 bg-yamabuki-400 text-ink hover:brightness-105",
+} as const;
+
+function Reply({
+  onClick,
+  icon,
+  primary = false,
+  disabled = false,
+  children,
+}: {
+  onClick: () => void;
+  icon: ReactNode;
+  primary?: boolean;
+  disabled?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <li>
+      <button
+        type="button"
+        className={`${replyShape} ${REPLY_TONE[primary ? "primary" : "plain"]}`}
+        disabled={disabled}
+        onClick={onClick}
+        data-dialogue-focus=""
+      >
+        {icon}
+        {children}
+      </button>
+    </li>
+  );
+}
+
+/** 返事の選択肢。相談の進み具合から、次にしそうなことを出す。最後はいつも「その他（自由に書く）」 */
+function ReplyChoices({ retry }: { retry: boolean }) {
+  const t = useT();
+  const actions = useActions();
+  const streaming = useApp((state) => state.session.streaming);
+  const stage = useApp((state) => state.session.stage);
+  const hasItinerary = useApp((state) => state.itinerary.current !== null);
+  const ready = useApp(shioriReady);
+  const canReopenCandidates = useApp(
+    (state) =>
+      !state.ui.candidatesOpen &&
+      (state.candidates.length > 0 || hasNextSteps(state.search)) &&
+      (state.session.stage === "candidates" || state.itinerary.current === null),
+  );
+  const canReturn = useApp(canReturnToFestivals);
+  const anchorCancelled = useApp((state) => state.consult.anchorCancelled);
+  const revising = hasItinerary && (stage === "itinerary" || stage === "revising");
+  // 「少し調整する」を押したら、調整の選択肢に入れ替える
+  const [adjusting, setAdjusting] = useState(false);
+  // 「この旅程で決める」は、押し間違えで再確認が始まらないよう、もう一度確かめてから送る
+  const [confirming, setConfirming] = useState(false);
+  const other = (
+    <Reply icon={<Ellipsis aria-hidden="true" className="size-5" />} onClick={focusComposer}>
+      {t.dialogue.replies.other}
+    </Reply>
+  );
+  if (revising && confirming) {
+    return (
+      <ul
+        aria-label={t.dialogue.replies.decideConfirmLabel}
+        className="flex flex-wrap gap-2"
+        data-testid="reply-choices"
+      >
+        <Reply
+          primary
+          disabled={streaming}
+          icon={<CircleCheck aria-hidden="true" className="size-5" />}
+          onClick={() => {
+            setConfirming(false);
+            void actions.send(t.dialogue.replies.decideMessage);
+          }}
+        >
+          {t.dialogue.replies.decideConfirm}
+        </Reply>
+        <Reply
+          icon={<Undo2 aria-hidden="true" className="size-5" />}
+          onClick={() => setConfirming(false)}
+        >
+          {t.dialogue.replies.back}
+        </Reply>
+      </ul>
+    );
+  }
+  if (revising && adjusting) {
+    return (
+      <ul
+        aria-label={t.dialogue.replies.adjustLabel}
+        className="flex flex-wrap gap-2"
+        data-testid="reply-choices"
+      >
+        <Reply
+          primary
+          disabled={streaming}
+          icon={<Footprints aria-hidden="true" className="size-5" />}
+          onClick={() => {
+            setAdjusting(false);
+            void actions.send(t.dialogue.replies.slowerMessage);
+          }}
+        >
+          {t.dialogue.replies.slower}
+        </Reply>
+        {other}
+        <Reply
+          icon={<Undo2 aria-hidden="true" className="size-5" />}
+          onClick={() => setAdjusting(false)}
+        >
+          {t.dialogue.replies.back}
+        </Reply>
+      </ul>
+    );
+  }
+  return (
+    <ul
+      aria-label={t.dialogue.replies.label}
+      className="flex flex-wrap gap-2"
+      data-testid="reply-choices"
+    >
+      {retry ? (
+        <Reply
+          primary
+          disabled={streaming}
+          icon={<RotateCcw aria-hidden="true" className="size-5" />}
+          onClick={() => void actions.retry()}
+        >
+          {t.chat.retry}
+        </Reply>
+      ) : null}
+      {ready ? (
+        <Reply
+          primary
+          icon={<BookOpen aria-hidden="true" className="size-5" />}
+          onClick={() => actions.openShiori()}
+        >
+          {t.itinerary.openShiori}
+        </Reply>
+      ) : null}
+      {canReopenCandidates ? (
+        <Reply
+          primary
+          icon={<Sparkles aria-hidden="true" className="size-5" />}
+          onClick={() => actions.setCandidatesOpen(true)}
+        >
+          {t.candidates.reopen}
+        </Reply>
+      ) : null}
+      {hasItinerary ? (
+        <>
+          <Reply
+            primary={revising && !retry}
+            icon={<CalendarDays aria-hidden="true" className="size-5" />}
+            onClick={() => openTripPanel(actions, "itinerary")}
+          >
+            {t.dialogue.replies.plan}
+          </Reply>
+          <Reply
+            icon={<MapIcon aria-hidden="true" className="size-5" />}
+            onClick={() => openTripPanel(actions, "map")}
+          >
+            {t.dialogue.replies.map}
+          </Reply>
+        </>
+      ) : null}
+      {revising ? (
+        <>
+          <Reply
+            disabled={streaming}
+            icon={<CircleCheck aria-hidden="true" className="size-5" />}
+            onClick={() => {
+              setConfirming(true);
+              window.requestAnimationFrame(focusDialogue);
+            }}
+          >
+            {t.dialogue.replies.decide}
+          </Reply>
+          <Reply
+            disabled={streaming}
+            icon={<SlidersHorizontal aria-hidden="true" className="size-5" />}
+            onClick={() => {
+              setAdjusting(true);
+              window.requestAnimationFrame(focusDialogue);
+            }}
+          >
+            {t.dialogue.replies.adjust}
+          </Reply>
+        </>
+      ) : null}
+      {canReturn ? (
+        <Reply
+          primary={anchorCancelled && !retry}
+          disabled={streaming}
+          icon={<Search aria-hidden="true" className="size-5" />}
+          onClick={() => actions.returnToFestivalResults()}
+        >
+          {t.festivalSearch.decide.others}
+        </Reply>
+      ) : null}
+      {/* 中止と分かった祭りの条件は選び直せない。ほかの祭りを見るか、はじめからやり直す */}
+      {(stage === "hearing" || stage === "candidates") && !anchorCancelled ? (
+        <Reply
+          disabled={streaming}
+          icon={<RotateCcw aria-hidden="true" className="size-5" />}
+          onClick={() => {
+            actions.reopenConsult();
+            window.requestAnimationFrame(focusDialogue);
+          }}
+        >
+          {t.consult.reopen}
+        </Reply>
+      ) : null}
+      {stage === "hearing" || stage === "candidates" ? (
+        <Reply
+          disabled={streaming}
+          icon={<Undo2 aria-hidden="true" className="size-5" />}
+          onClick={() => {
+            actions.startConsultOver();
+            window.requestAnimationFrame(focusDialogue);
+          }}
+        >
+          {t.consult.startOver}
+        </Reply>
+      ) : null}
+      {other}
+    </ul>
+  );
+}
+
+const NO_STAFF: readonly StaffId[] = [];
 
 export function DialogueBox() {
   const t = useT();
@@ -31,129 +291,142 @@ export function DialogueBox() {
   const locale = useApp((state) => state.ui.locale);
   const line = useApp(currentLine);
   const streaming = useApp((state) => state.session.streaming);
-  const ready = useApp(shioriReady);
-  const canReopenCandidates = useApp(
-    (state) =>
-      !state.ui.candidatesOpen &&
-      state.candidates.length > 0 &&
-      (state.session.stage === "candidates" || state.itinerary.current === null),
+  const phase = useApp(waitPhase);
+  const consultLine = useConsultLine();
+  const festivalSearching = useApp(
+    (state) => state.consult.entry === "festival" && state.festivalSearch.phase === "searching",
   );
+  const consultOpen = useApp(
+    (state) =>
+      state.consult.active &&
+      !state.session.streaming &&
+      // 片付いていないエラーがあれば、先にそれを見せる
+      currentLine(state).kind !== "error",
+  );
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const { started } = useWaitClock(streaming, NO_STAFF);
+  const now = useNow(streaming && line.kind === "waiting");
+  const waitLines = t.dialogue.waitLines[phase];
+  const waitText =
+    waitLines[waitLineIndex(started === null ? 0 : now - started, waitLines.length)] ??
+    t.dialogue.thinking;
 
   const speaker: StaffId = line.kind === "work" ? line.staff : "concierge";
   const name = t.staff.names[speaker];
 
   let text: string;
-  switch (line.kind) {
-    case "greeting":
-      text = t.chat.greeting;
-      break;
-    case "waiting":
-      text = t.dialogue.thinking;
-      break;
-    case "work":
-    case "concierge":
-      text = line.text;
-      break;
-    case "error":
-      text = errorText(line.entry, locale, t);
-      break;
+  let rest: string | null = null;
+  if (consultOpen) {
+    text = consultLine;
+  } else {
+    switch (line.kind) {
+      case "greeting":
+        text = t.chat.greeting;
+        break;
+      case "waiting":
+        // 考えている間は、いまの段階に合うひとことを5秒おきに入れ替える
+        text = waitText;
+        break;
+      case "work":
+        text = line.text;
+        break;
+      case "concierge": {
+        const short = shortLine(line.text);
+        text = expanded === line.id ? line.text : short.head;
+        rest = short.rest;
+        break;
+      }
+      case "error":
+        text = errorText(line.entry, locale, t);
+        break;
+    }
   }
-  const typing = line.kind === "waiting" || (line.kind === "concierge" && line.streaming);
-  const retry = line.kind === "error" && line.entry.retryable && !line.entry.resolved;
+  const typing = consultOpen
+    ? festivalSearching
+    : line.kind === "waiting" || (line.kind === "concierge" && line.streaming);
+  const retry =
+    !consultOpen && line.kind === "error" && line.entry.retryable && !line.entry.resolved;
+  const thinking = !consultOpen && (line.kind === "waiting" || line.kind === "work");
 
   return (
     <section
       aria-label={t.chat.title}
-      className="relative rounded-[2rem] border-[3px] border-wood-700/70 bg-gradient-to-b from-[#fffaf0] to-[#f6ead2] px-4 pt-5 pb-3 shadow-[0_12px_32px_rgb(0_0_0/0.4)] sm:px-6"
+      className="washi relative flex max-h-[calc(100dvh-var(--frame-top,0px)-2.5rem)] flex-col rounded-panel border-2 border-line-strong px-4 pt-5 pb-3 shadow-lift sm:px-6"
       data-testid="dialogue"
-      // 会話の窓のどこをクリックしても、入力欄に焦点を移す（打った文字が旅人の操作に渡らない）
+      data-thinking={thinking}
+      // 選択肢や入力欄でないところをクリックしたら、自由に書く欄へ移る（打った文字が旅人の操作に渡らない）
       onPointerUp={(event) => {
         const target = event.target as Element;
-        if (target.closest("button, a, input, textarea, select, [role='tab']") === null) {
+        if (target.closest("button, a, input, textarea, select, label, [role='tab']") === null) {
           focusComposer();
         }
       }}
     >
-      {/* 波の模様の飾り */}
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-6 bottom-1.5 h-3 bg-[radial-gradient(circle_at_50%_100%,transparent_5px,rgb(156_105_57/0.18)_6px,transparent_7px)] bg-[length:16px_12px]"
-      />
       <NamePlate name={name} />
       {/* 会話の窓をしまう（店の中を歩くとき）。コンシェルジュに話しかけると、また出る */}
       <button
         type="button"
         onClick={() => actions.setDialogue(false)}
-        className="-top-3 absolute right-4 grid size-9 place-items-center rounded-full border-2 border-wood-700/60 bg-kinari-50 text-ink shadow-md transition hover:bg-white"
+        className="-top-3 absolute right-4 grid size-9 place-items-center rounded-full border border-line-strong bg-kinari-50 text-ink shadow-soft transition hover:bg-white"
         aria-label={t.dialogue.close}
         data-testid="dialogue-close"
       >
         <X aria-hidden="true" className="size-4" />
       </button>
-      <div className="flex gap-3 sm:gap-5">
-        <Portrait speaker={speaker as Speaker} className="-mt-9 size-20 sm:size-28" />
+      <div className="flex min-h-0 gap-3 sm:gap-5">
+        <Portrait
+          speaker={speaker as Speaker}
+          className={`-mt-8 size-14 shrink-0 sm:size-20 ${thinking ? "animate-pulse" : ""}`}
+        />
+        {/* 「つづきを読む」で全文を開いても窓が画面からはみ出さないよう、せりふは高さを決めて窓の中でスクロールする */}
         <div
-          className="min-h-[4.5rem] min-w-0 flex-1"
+          className="max-h-[min(38dvh,18rem)] min-h-[3.5rem] min-w-0 flex-1 overflow-y-auto overscroll-contain pr-1"
           aria-live="polite"
           aria-busy={typing}
-          data-testid={line.kind === "error" ? "dialogue-error" : "dialogue-line"}
+          data-testid={line.kind === "error" && !consultOpen ? "dialogue-error" : "dialogue-line"}
         >
-          {line.kind === "waiting" ? (
-            <p className="text-ink-soft text-sm">
+          {line.kind === "waiting" && !consultOpen ? (
+            <p className="line-clamp-1 text-base text-ink-soft">
               <span className="sr-only">{t.chat.you}：</span>「{line.userText}」
             </p>
           ) : null}
           <p
             className={`whitespace-pre-wrap font-bold text-[1.05rem] leading-relaxed sm:text-xl ${
-              line.kind === "error" ? "text-shu-700" : "text-ink"
+              line.kind === "error" && !consultOpen ? "text-shu-700" : "text-ink"
             }`}
           >
-            {text}
+            {line.kind === "waiting" && !consultOpen ? (
+              <>
+                {/* 入れ替わるひとことは読み上げを繰り返さないよう、読み上げには最初の文だけを伝える */}
+                <span aria-hidden="true">{text}</span>
+                <span className="sr-only">{waitLines[0] ?? t.dialogue.thinking}</span>
+              </>
+            ) : (
+              text
+            )}
             {typing ? (
               <span aria-hidden="true" className="ml-1 inline-block animate-pulse text-ai-600">
                 ●●●
               </span>
             ) : null}
-            {!typing && (line.kind === "concierge" || line.kind === "greeting") ? (
-              <span
-                aria-hidden="true"
-                className="ml-2 inline-block animate-bounce align-middle text-ai-700 text-sm"
-              >
-                ▼
-              </span>
-            ) : null}
           </p>
-          {retry || ready || canReopenCandidates ? (
-            <div className="mt-2 flex flex-wrap gap-2">
-              {retry ? (
-                <button
-                  type="button"
-                  className={actionChip}
-                  disabled={streaming}
-                  onClick={() => void actions.retry()}
-                >
-                  {t.chat.retry}
-                </button>
-              ) : null}
-              {ready ? (
-                <button type="button" className={primaryChip} onClick={() => actions.openShiori()}>
-                  {t.itinerary.openShiori}
-                </button>
-              ) : null}
-              {canReopenCandidates ? (
-                <button
-                  type="button"
-                  className={actionChip}
-                  onClick={() => actions.setCandidatesOpen(true)}
-                >
-                  {t.candidates.reopen}
-                </button>
-              ) : null}
-            </div>
+          {rest !== null && line.kind === "concierge" ? (
+            <button
+              type="button"
+              className="mt-0.5 font-bold text-ai-700 text-base underline underline-offset-2"
+              aria-expanded={expanded === line.id}
+              onClick={() => setExpanded(expanded === line.id ? null : line.id)}
+            >
+              {expanded === line.id ? t.dialogue.less : t.dialogue.more}
+            </button>
           ) : null}
         </div>
       </div>
-      <div className="mt-2 border-wood-300/60 border-t border-dashed pt-2">
+      {/* 窓が高くなりすぎたら、選択肢と聞き取りの部分だけを中でスクロールする */}
+      <div className="mt-3 min-h-0 overflow-y-auto">
+        {consultOpen ? <ConsultPanel /> : thinking ? null : <ReplyChoices retry={retry} />}
+      </div>
+      <div className="mt-2 shrink-0 border-line border-t border-dashed pt-2">
         <Composer />
       </div>
     </section>

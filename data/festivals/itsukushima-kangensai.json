@@ -1,0 +1,357 @@
+{
+  "id": "itsukushima-kangensai",
+  "name": { "ja": "管絃祭", "en": "Itsukushima Kangensai" },
+  "category": "ritual",
+  "municipalities": [{ "prefecture": "広島県", "name": "廿日市市" }],
+  "venue": {
+    "name": "嚴島神社とその周辺（大鳥居沖・地御前神社前・長浜神社・大元神社・客神社前・枡形）",
+    "lat": 34.2958,
+    "lng": 132.3199
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "還御の前に、御座船が回廊の狭い枡形で三度回りながら管絃を奏でる",
+    "篝火を焚き、20数個の提灯を灯した御座船が夜の海を渡る",
+    "大鳥居沖から対岸の地御前神社、島の長浜神社・大元神社をめぐる海上の渡御",
+    "曳き船を江波と阿賀の人々が受け継いで漕ぐ"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "平清盛が都の管絃の遊びを海の神事に移したと伝わる",
+      "sources": [
+        {
+          "url": "https://www.miyajima.or.jp/event/event_kangen.html",
+          "title": "宮島観光協会 管絃祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "1701年の救助がきっかけで、阿賀と江波の人が曳き船を担う",
+      "sources": [
+        {
+          "url": "https://www.miyajima.or.jp/event/event_kangen.html",
+          "title": "宮島観光協会 管絃祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "平清盛が、都の貴族の「管絃の遊び」を宮島の海での神事に移したと伝わる",
+      "source": {
+        "url": "https://www.miyajima.or.jp/event/event_kangen.html",
+        "title": "宮島観光協会 管絃祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1701年、嵐で転覆しかけた御座船を阿賀と江波の人が救い、曳き船を担うきっかけになった",
+      "source": {
+        "url": "https://www.miyajima.or.jp/event/event_kangen.html",
+        "title": "宮島観光協会 管絃祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "旧暦6月17日は潮が高くて船が通りやすく、満月に近く夜が明るいことから選ばれた",
+      "source": {
+        "url": "https://www.miyajima.or.jp/event/event_kangen.html",
+        "title": "宮島観光協会 管絃祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "今の社殿の基礎は、仁安3年（1168年）に平清盛が寝殿造を取り入れて整えたもの",
+      "source": {
+        "url": "https://www.itsukushimajinja.jp/jp/history.html",
+        "title": "嚴島神社 由緒",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "予定の時刻は、当日の潮位や潮流で大きく変わることがある",
+      "嚴島神社の社殿に入るには昇殿料（大人300円、高校生200円、小中学生100円）が要る。周辺での見学は無料",
+      "船で宮島に渡るときに、宮島訪問税（1人1回100円）を運賃とあわせて納める"
+    ],
+    "dress": [
+      "回廊の床板にはすき間があり、ハイヒールなどは挟まるおそれがあるので、履きものに気を付ける"
+    ],
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "見学が中心で、主催者による混雑や危険についての特別な注意は見当たらない。行事は夜23時ごろまで続く"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.miyajima.or.jp/event/event_kangen.html",
+        "title": "宮島観光協会 管絃祭（潮位による時刻の変更、昇殿料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.itsukushimajinja.jp/jp/admission.html",
+        "title": "嚴島神社 参拝時間・昇殿料（回廊の床板のすき間と履きもの）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://dive-hiroshima.com/information/access-miyajima/",
+        "title": "Dive! Hiroshima（広島県観光連盟） 宮島へのアクセス（宮島訪問税100円）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://summer.walkerplus.com/odekake/detail_e/ar0834e04821/data.html",
+        "title": "ウォーカープラス 管絃祭の詳細データ（周辺での観覧は無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-07-30",
+      "start": "15:00",
+      "end": "23:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年（旧暦6月17日、木曜日）の予定（宮島観光協会）。15:00 発輦祭、16:00 御本殿出御、16:40 大鳥居前の儀、18:30 火立岩、19:20 地御前神社着、19:50 同発、20:40 長浜神社着、21:30 大元神社着、22:10 火焼前、22:30 客神社前、23:00 御本殿還御。潮位や潮流で時刻が大きく変わることがある。当日の嚴島神社の開門は6:30ごろから24:00ごろまで。前の週の7月23日に威儀物飾付、24日に御洲堀がある",
+      "sources": [
+        {
+          "url": "https://www.itsukushimajinja.jp/jp/event.html",
+          "title": "嚴島神社 年中行事（令和8年 7月30日 管絃祭、旧暦6月17日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.miyajima.or.jp/event/event_kangen.html",
+          "title": "宮島観光協会 管絃祭（令和8年7月30日の予定時刻）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2026/rekiyou263.html",
+          "title": "国立天文台 令和8年（2026）暦要項 朔弦望（7月14日が朔）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-20",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（2027年の行事の発表はまだない）。宮島観光協会は今後の日程として2027年7月20日を挙げている。国立天文台の2027年の朔（7月4日）と大暑（7月23日）から旧暦6月1日を7月4日とし、17日を7月20日（火曜日）と確かめた。観光協会は「火・祝」と書くが、2027年の海の日は7月19日で、20日は祝日ではない。2026年は15:00 発輦祭から23:00 御本殿還御までだった",
+      "sources": [
+        {
+          "url": "https://www.miyajima.or.jp/event/event_kangen.html",
+          "title": "宮島観光協会 管絃祭（今後の日程 2027年7月20日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2027/rekiyou273.html",
+          "title": "国立天文台 令和9年（2027）暦要項 朔弦望（7月4日が朔）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2027/rekiyou272.html",
+          "title": "国立天文台 令和9年（2027）暦要項 二十四節気（大暑 7月23日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html",
+          "title": "内閣府 国民の祝日について（令和9年の海の日は7月19日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "宮島桟橋（JR西日本宮島フェリー・宮島松大汽船）",
+        "walkMinutes": [12, 17],
+        "note": "JR 宮島口駅から宮島口桟橋まで徒歩約7分、フェリーで約10分。宮島桟橋から嚴島神社まで徒歩約12分（広島県観光連盟）"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "広島駅",
+        "minutes": [25, 35],
+        "route": "JR山陽本線の岩国方面で宮島口駅へ、乗り換えなし（約25分）。五日市止まりは宮島口に停まらない。宮島口からはフェリー（広島駅から宮島まで約45分・620円）"
+      }
+    ],
+    "parking": "none",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://dive-hiroshima.com/explore/4810/",
+        "title": "Dive! Hiroshima（広島県観光連盟） 管絃祭（宮島口駅から桟橋まで徒歩約7分、フェリー約10分、桟橋から徒歩約12分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.hiroshima.lg.jp/site/faq/4461.html",
+        "title": "広島市 交通案内（観光） 広島駅からJR山陽本線で宮島口駅まで約25分",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://dive-hiroshima.com/information/access-miyajima/",
+        "title": "Dive! Hiroshima（広島県観光連盟） 宮島へのアクセス（JRとフェリーで約45分・620円）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.itsukushimajinja.jp/jp/access.html",
+        "title": "嚴島神社 アクセス（宮島口桟橋から約10分、駐車場はない）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "あなごめし",
+        "note": "宮島口の「あなごめし うえの」で、食堂と持ち帰りの弁当がある",
+        "sources": [
+          {
+            "url": "https://www.anagomeshi.com/",
+            "title": "あなごめしうえの",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "itsukushima-jinja-homotsukan",
+      "name": "嚴島神社宝物館",
+      "kind": "sightseeing",
+      "summary": "平家一門が奉納した品をはじめ、嚴島神社に伝わる宝物を展示する館。神社の出口の近くにある",
+      "location": { "lat": 34.2948, "lng": 132.3186 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "08:00", "close": "17:00" },
+      "closedDays": [],
+      "price": "大人300円、高校生200円、小中学生100円（昇殿との共通券は大人500円）",
+      "tags": ["indoor"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.itsukushimajinja.jp/jp/admission.html",
+          "title": "嚴島神社 参拝時間・昇殿料（宝物館 8:00〜17:00、年中無休）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%8E%B3%E5%B3%B6%E7%A5%9E%E7%A4%BE",
+          "title": "国土地理院 地名検索 厳島神社宝物館（緯度・経度）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "anagomeshi-ueno",
+      "name": "あなごめし うえの 宮島口本店",
+      "kind": "food",
+      "summary": "JR 宮島口駅の近くで、あなごめしの食堂と弁当を出す店。水曜は18時まで。売り切れたら終わる",
+      "location": { "lat": 34.3116, "lng": 132.3035 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "10:00", "close": "19:00" },
+      "closedDays": [],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.anagomeshi.com/",
+          "title": "あなごめしうえの（宮島口本店 食堂10:00〜19:00、定休日なし）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%BA%83%E5%B3%B6%E7%9C%8C%E5%BB%BF%E6%97%A5%E5%B8%82%E5%B8%82%E5%AE%AE%E5%B3%B6%E5%8F%A31-5-11",
+          "title": "国土地理院 住所検索 廿日市市宮島口1-5-11（緯度・経度）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.itsukushimajinja.jp/jp/event.html",
+      "title": "嚴島神社 年中行事（管絃祭）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.miyajima.or.jp/event/event_kangen.html",
+      "title": "宮島観光協会 管絃祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.itsukushimajinja.jp/jp/setumatusya.html",
+      "title": "嚴島神社 摂社・末社（地御前神社・長浜神社・大元神社での管絃祭の祭事）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://dive-hiroshima.com/explore/4810/",
+      "title": "Dive! Hiroshima（広島県観光連盟） 管絃祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%8E%B3%E5%B3%B6%E7%A5%9E%E7%A4%BE",
+      "title": "国土地理院 地名検索 厳島神社（緯度・経度）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と時刻（宮島観光協会は日付だけを挙げている）",
+    "2026年が予定どおりに行われたか（終わったあとの報告を確かめていない）",
+    "雨や荒天のときの扱い（公式の記載がない。ウォーカープラスでは当日の状況を見て判断）",
+    "一般の人が見る場所の案内と、混雑・夜の帰りの注意（公式の案内は行程の地点だけ）",
+    "船から見学する観覧の催し（宮島観光協会の「あなたも平安気分」）の料金・定員・申し込み方法（2026年は6月1日から受付と検索で見えたが、告知のページを開いて確かめていない）",
+    "撮影の決まり（三脚・ドローン・フラッシュ）",
+    "持ち物",
+    "来場者数と、船の数・曳き手の人数（政府広報誌に例年約1万人とあるが、ページを開けなかった）",
+    "露店の有無（ウォーカープラスでは「なし」とするが、公式で確かめられない）",
+    "祭りの夜の宮島からの帰りのフェリーの最終便と臨時便",
+    "宮島口の駐車場（嚴島神社には駐車場がない。るるぶ&more.では宮島口周辺に有料の駐車場がある）",
+    "嚴島神社の公式サイトにある管絃祭の詳細（PDF）は、 robots.txt で取得を禁じているため読んでいない",
+    "周辺の場所が2件だけ（千畳閣・大聖院などは営業時間か位置を公式で確かめられなかった。宮島水族館は2026年の終わりから休館の案内がある）",
+    "宝物館とあなごめし うえのの、会場からの徒歩の時間"
+  ]
+}

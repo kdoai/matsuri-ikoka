@@ -57,6 +57,9 @@ function positiveNumber(name: string, value: string | undefined): number | null 
   return n;
 }
 
+/** 自由記述の読み取りのモデルの既定（別名）。短い文を決まった形に直すだけなので、軽いモデルで足りる */
+export const DEFAULT_WISH_READER_MODEL = "haiku";
+
 /** live で同時に返事を作る数の上限の既定 */
 export const DEFAULT_MAX_CONCURRENT_TURNS = 4;
 
@@ -100,6 +103,9 @@ export function readConfig(env: NodeJS.ProcessEnv, cwd: string = process.cwd()):
       staff: nonEmpty(env.MODEL_STAFF),
       planner: nonEmpty(env.MODEL_PLANNER) ?? nonEmpty(env.MODEL_STAFF),
       verifier: nonEmpty(env.MODEL_VERIFIER) ?? nonEmpty(env.MODEL_STAFF),
+      evaluator:
+        nonEmpty(env.MODEL_EVALUATOR) ?? nonEmpty(env.MODEL_PLANNER) ?? nonEmpty(env.MODEL_STAFF),
+      wishReader: nonEmpty(env.MODEL_WISH_READER) ?? DEFAULT_WISH_READER_MODEL,
     },
     accessPasscode: nonEmpty(env.ACCESS_PASSCODE) ?? null,
     dailyChatLimit: limitOf("DAILY_CHAT_LIMIT", env.DAILY_CHAT_LIMIT),
@@ -115,4 +121,43 @@ export function readConfig(env: NodeJS.ProcessEnv, cwd: string = process.cwd()):
   };
   checkProductionConfig(config, env);
   return config;
+}
+
+/** 起動のときに、どちらのモードで動いているかと、読み込んだ祭りの件数を知らせる */
+export function startupNotice(input: {
+  mode: AgentMode;
+  port: number;
+  festivals: number;
+  festivalDirs: readonly string[];
+  /** mock で再生する見本の相談の名前 */
+  samples: readonly string[];
+}): { log: Record<string, unknown>; message: string } {
+  const dirs = input.festivalDirs.join("、");
+  const log = {
+    kind: "server_started",
+    mode: input.mode,
+    port: input.port,
+    festivals: input.festivals,
+    festivalDirs: input.festivalDirs,
+    ...(input.mode === "mock" ? { samples: input.samples } : {}),
+  };
+  const message =
+    input.mode === "live"
+      ? `[mode] live：Claude が返事を作ります。祭りのデータ ${input.festivals}件（${dirs}）から探します`
+      : `[mode] mock：見本の相談（${input.samples.join("、")}）を再生しています。` +
+        `送った内容にかかわらず、記録した返答を流します（祭りのデータ ${input.festivals}件、${dirs}）。` +
+        "Claude で返事を作るには MATSURI_AGENT_MODE=live で起動してください";
+  return { log, message };
+}
+
+/**
+ * ポートがふさがっていて起動できないときの知らせ。別の pnpm dev が動いていることが多いので、
+ * 止めるか、ポートを変えて起動し直す方法を示す（画面の開発サーバーは同じ PORT へ中継する）
+ */
+export function portInUseMessage(port: number): string {
+  return (
+    `[server] ポート ${port} はほかのプロセスが使っています。` +
+    "別の pnpm dev が動いていれば止めてください。並べて動かすときは、" +
+    `PORT=${port + 1} MATSURI_WEB_PORT=5174 pnpm dev のように、ポートを変えて起動してください`
+  );
 }

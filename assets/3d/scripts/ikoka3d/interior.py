@@ -3,7 +3,7 @@
 import math
 import random
 
-from mathutils import Matrix
+from mathutils import Matrix, Vector
 
 from . import gimmicks as G
 from . import layout as L
@@ -37,6 +37,7 @@ def build(parent=None):
     _front(U.collection("interior.front", root))
     _nook(U.collection("interior.nook", root), lights)
     _decor(U.collection("interior.decor", root))
+    _festival(U.collection("interior.festival", root), lights)
     _anchors(U.collection("interior.anchors", root))
     _nav(root, U.collection("interior.nav", root))
     return root, lights
@@ -194,6 +195,14 @@ def _entrance(c, lights):
                     colors=("#E9A6C4", "#C9A6E4", "#F3C6D8"))
     props.leafy_plant("plant_street", c, loc=(L.X0 - 0.45, L.Y0 - 0.5, L.STREET_Z), size=1.5, seed=5)
 
+    # The cat sleeps outside the noren on its own cushion, beside the door, so it never hangs off a seat
+    # and does not block the way in. The player pets it from just inside the door, by the left jamb.
+    kx, ky, kyaw = L.CAT
+    U.box("cat_cushion", (L.CAT_CUSHION, L.CAT_CUSHION, 0.07), c, base=(kx, ky, L.STREET_Z), rot=(0, 0, kyaw),
+          mat=M.fabric("cushion_cat", "#B0473C", 0.6), bev=0.03, seg=3)
+    G.cat(c, (kx - 0.05, ky + 0.02, L.STREET_Z + 0.07), yaw=kyaw)
+    _INTERACT.append(("cat", (L.DOOR_X[0] + 0.25, L.Y0 + 0.25, 0), 0.0))
+
 
 # --------------------------------------------------------------------------
 # Concierge counter
@@ -215,6 +224,8 @@ def _counter(c, lights):
     U.box("counter.sign_board", (1.42, 0.03, 0.44), c, base=(0, -d / 2 + 0.035, 0.12), mat=dark, bev=0.008,
           parent=root)
     props.textured_panel("counter.sign", c, (1.34, 0.377), "counter_sign", loc=(0, -d / 2 + 0.018, 0.34), parent=root)
+    props.textured_panel("counter.kohaku", c, (w - 0.24, h - 0.1), "kohaku", loc=(0, -d / 2 + 0.065, 0.06 + (h - 0.1) / 2),
+                         rough=0.9, parent=root)
 
     top = h + 0.02
     G.bell(c, (cx - 0.9, cy - 0.14, top))
@@ -415,8 +426,6 @@ def _right_wall(c):
                   frame_w=0.02)
     props.picture("poster_lanterns", c, (0.5, 0.7), "poster_lanterns", loc=(L.X1 - 0.02, -2.5, 1.62), facing="-X",
                   frame_w=0.02)
-    props.picture("poster_snow", c, (0.46, 0.64), "poster_snow", loc=(L.X1 - 0.02, 2.2, 1.65), facing="-X",
-                  frame_w=0.02)
 
 
 # --------------------------------------------------------------------------
@@ -449,6 +458,10 @@ def _lounge(c, lights):
     rack_x, rack_y = 2.32, -2.66
     props.table("rack_table", c, size=(0.95, 0.4, 0.42), loc=(rack_x, rack_y, 0))
     props.brochure_stand("rack", c, loc=(rack_x, rack_y - 0.08, 0.42), cols=4, rows=2, w=0.17, h=0.23, seed=11)
+    # Red felt over the rack table, as on a festival stall.
+    felt = M.fabric("felt_red", "#C8302A", 0.4)
+    U.box("rack_table.felt", (1.0, 0.45, 0.012), c, base=(rack_x, rack_y, 0.42), mat=felt)
+    U.box("rack_table.felt_drop", (1.0, 0.01, 0.16), c, base=(rack_x, rack_y - 0.225, 0.27), mat=felt)
     props.floor_andon("lounge_andon", c, loc=(L.X1 - 0.3, -1.15, 0))
     lights.append(((L.X1 - 0.3, -1.15, 0.65), 18, P.LANTERN))
     props.leafy_plant("plant_lounge", c, loc=(L.X1 - 0.35, -2.8, 0), size=1.7, seed=13, leaves=18)
@@ -461,28 +474,39 @@ def _lounge(c, lights):
 
 
 def _lanterns(c, lights):
-    for x, y, yaw in [(L.SHELF_X[1] + 0.2, L.Y1 - 0.1, 0.0), (L.MAP_X[1] + 0.2, L.Y1 - 0.1, 0.0),
-                      (L.X1 - 0.1, 1.35, -math.pi / 2), (L.X1 - 0.1, -1.15, -math.pi / 2),
-                      (L.X0 + 0.1, L.WINDOW_Y[1] + 0.05, math.pi / 2)]:
-        props.wall_lantern("wall_lantern", c, loc=(x, y, 2.05), yaw=yaw)
+    for x, y, yaw, tex in [(L.SHELF_X[1] + 0.2, L.Y1 - 0.1, 0.0, "lantern_red"),
+                           (L.MAP_X[1] + 0.2, L.Y1 - 0.1, 0.0, "lantern_red"),
+                           (L.X1 - 0.1, 1.35, -math.pi / 2, "lantern_red"), (L.X1 - 0.1, -1.15, -math.pi / 2, "lantern_red"),
+                           (L.X0 + 0.1, L.WINDOW_Y[1] + 0.05, math.pi / 2, "lantern")]:
+        # Red paper washes out to white when it glows as hard as the plain lanterns.
+        props.wall_lantern("wall_lantern", c, loc=(x, y, 2.05), yaw=yaw, tex=tex,
+                           strength=0.9 if tex == "lantern_red" else 2.2)
         lx, ly = x + math.sin(yaw) * 0.3, y - math.cos(yaw) * 0.3
         lights.append(((lx, ly, 2.0), 40, P.LANTERN))
-    gx0, gx1 = L.X0 + 0.25, L.X1 - 0.25
-    n = 13
+    clock_x = sum(L.TIMETABLE_X) / 2
+    _garland(c, "garland", (L.X0 + 0.25, L.Y1 - 0.2), (L.X1 - 0.25, L.Y1 - 0.2), 16, keep_clear=(clock_x, 0.3))
+    _garland(c, "garland.right", (L.X1 - 0.25, -2.25), (L.X1 - 0.25, L.Y1 - 0.45), 11)
+
+
+def _garland(c, name, p0, p1, n, keep_clear=None, z=3.0, sag=0.16):
+    """A cord of festival lanterns swooping three times between two points along a wall."""
     pts = []
     for i in range(n + 1):
         t = i / n
-        z = 3.0 - 0.16 * math.sin(math.pi * ((t * 3) % 1.0))
-        pts.append((gx0 + (gx1 - gx0) * t, L.Y1 - 0.2, z))
+        pts.append((p0[0] + (p1[0] - p0[0]) * t, p0[1] + (p1[1] - p0[1]) * t,
+                    z - sag * math.sin(math.pi * ((t * 3) % 1.0))))
     for a, b in zip(pts[:-1], pts[1:]):
-        mid = [(a[k] + b[k]) / 2 for k in range(3)]
-        dx, dz = b[0] - a[0], b[2] - a[2]
-        U.cylinder("garland.cord", 0.005, math.hypot(dx, dz), c, loc=mid,
-                   rot=(0, math.pi / 2 - math.atan2(dz, dx), 0), mat=M.flat("cord", "#3A2A20", 0.8), verts=5)
+        mid = Vector([(a[k] + b[k]) / 2 for k in range(3)])
+        d = Vector(b) - Vector(a)
+        U.cylinder(f"{name}.cord", 0.005, d.length, c, loc=mid, rot=d.to_track_quat("Z", "Y").to_euler(),
+                   mat=M.flat("cord", "#3A2A20", 0.8), verts=5)
     for i in range(1, n):
-        x, y, z = pts[i]
-        props.chochin(f"garland.l{i}", c, loc=(x, y, z), radius=0.075, height=0.17,
-                      tex="lantern_matsuri" if i % 2 else "lantern", strength=4.0, ribs=False)
+        x, y, zz = pts[i]
+        if keep_clear and abs(x - keep_clear[0]) < keep_clear[1]:
+            continue
+        red = i % 2 == 1
+        props.chochin(f"{name}.l{i}", c, loc=(x, y, zz), radius=0.1, height=0.22,
+                      tex="lantern_red" if red else "lantern_matsuri", strength=1.0 if red else 3.0, ribs=False)
 
 
 # --------------------------------------------------------------------------
@@ -507,13 +531,11 @@ def _zones(c):
 
 
 def _front(c):
-    """Customer side in front of the counter: bench with the cat, stamp table, omikuji."""
+    """Customer side in front of the counter: bench, stamp table, omikuji."""
     bx, by = L.BENCH
     props.bench("bench", c, loc=(bx, by, 0), yaw=math.pi)
     for k, x in enumerate((bx + 0.35, bx - 0.1)):
         _SEATS.append((f"customer.bench.{k + 1}", (x, by, 0.42), math.pi))
-    G.cat(c, (bx - 0.45, by + 0.02, 0.42), yaw=0.25)
-    _INTERACT.append(("cat", (bx - 0.45, by + 0.5, 0), 0.0))
     sx, sy = L.STAMP_TABLE
     G.stamp_table(c, (sx, sy, 0))
     _INTERACT.append(("stamp", (sx, sy + 0.5, 0), math.pi))
@@ -574,8 +596,10 @@ def _decor(c):
         p.rotation_euler.y += rot
         U.sphere(f"photo{k}.pin", 0.012, c, loc=(x, L.Y1 - 0.085, z + 0.085), mat=M.flat("pin_red", "#C8473C", 0.4),
                  segs=8, rings=5)
-    props.bunting("bunting.right", c, (L.X1 - 0.06, L.Y0 + 0.1, 2.82), (L.X1 - 0.06, L.Y1 - 0.1, 2.82), n=22)
-    props.bunting("bunting.left", c, (L.X0 + 0.06, L.WINDOW_Y[0] - 0.4, 2.82), (L.X0 + 0.06, L.Y1 - 0.1, 2.82), n=12)
+    props.bunting("bunting.right", c, (L.X1 - 0.06, L.Y0 + 0.1, 2.82), (L.X1 - 0.06, L.Y1 - 0.1, 2.82), n=22,
+                  colors=FESTIVAL_COLORS)
+    props.bunting("bunting.left", c, (L.X0 + 0.06, L.WINDOW_Y[0] - 0.4, 2.82), (L.X0 + 0.06, L.Y1 - 0.1, 2.82), n=12,
+                  colors=FESTIVAL_COLORS)
     props.trailing_vine("shelf_vine", c, (L.SHELF_X[0] + 0.12, L.Y1 - 0.38, 2.27), length=1.1, seed=51)
     props.trailing_vine("shelf_vine2", c, (L.SHELF_X[0] + 0.3, L.Y1 - 0.4, 2.27), length=0.7, seed=52)
     props.leafy_plant("plant_archive", c, loc=(L.X0 + 0.35, -0.5, 0), size=1.6, seed=55, leaves=18, pot="#7E6A5A")
@@ -585,6 +609,45 @@ def _decor(c):
         props.book_row(f"floor_books{k}", c, -0.12, 0.12, 0.0, 0.12, depth=0.2, max_h=0.26, seed=90 + k,
                        stack_chance=1.0).location = (x, y, 0)
     G.hidden_chick(c, "2", (L.X0 + 0.07, L.WINDOW_Y[1] - 0.25, L.WINDOW_Z[0] - 0.06), yaw=math.pi / 2)
+
+
+FESTIVAL_COLORS = ("#D8402F", "#F2C230", "#2A3F8E", "#F7EEDC", "#E86A8A", "#3E8A5C")
+
+
+def _festival(c, lights):
+    """Festival dressing: taiko, fans, fox masks, a striped awning and a goldfish tub."""
+    # Taiko on its cradle in the staff area by the reading desk, heads turned toward the room.
+    props.taiko("taiko", c, loc=(-2.45, 0.72, 0), yaw=-0.35)
+
+    # Round fans fanned out above the posters on the right wall.
+    for k, (y, tilt) in enumerate([(-2.75, -0.25), (-2.38, -0.08), (-2.0, 0.08), (-1.63, 0.25)]):
+        props.uchiwa(f"uchiwa{k}", c, (L.X1 - 0.03, y, 2.3 - abs(tilt) * 0.2), facing="-X", r=0.17, design=k, tilt=tilt)
+
+    # Fox masks on the posts between the shelves, the map and the timetable.
+    for k, x in enumerate((L.SHELF_X[1] + 0.2, L.MAP_X[1] + 0.2)):
+        props.fox_mask(f"fox_mask{k}", c, (x, L.Y1 - 0.03, 1.42), size=0.2, red=k == 1)
+
+    # Tall festival banners on the back of the right wall, each hung from a rod.
+    for k, y in enumerate((1.82, 2.5)):
+        props.textured_panel(f"nobori{k}", c, (0.4, 1.45), "nobori", loc=(L.X1 - 0.03, y, 1.78), facing="-X",
+                             cell=(k, 2, 1), rough=0.95)
+        U.cylinder(f"nobori{k}.rod", 0.014, 0.52, c, loc=(L.X1 - 0.05, y, 2.53), rot=(math.pi / 2, 0, 0), mat=_dark(),
+                   verts=8)
+
+    # Red-and-white festival curtain over the slatted transoms along the back wall.
+    back_posts = [L.SHELF_X[1] + 0.2, L.MAP_X[1] + 0.2]
+    for k, (x0, x1) in enumerate([(L.X0 + 0.1, back_posts[0] - 0.12), (back_posts[0] + 0.12, back_posts[1] - 0.12),
+                                  (back_posts[1] + 0.12, L.X1 - 0.1)]):
+        props.textured_panel(f"kohaku_maku{k}", c, (x1 - x0, 0.3), "kohaku", loc=((x0 + x1) / 2, L.Y1 - 0.045, 2.86),
+                             rough=0.9)
+
+    # Striped stall awning over the binder desk under the timetable.
+    x0, x1 = L.TIMETABLE_X
+    props.striped_awning("awning.timetable", c, x1 - x0 + 0.1, 0.3, 0.1, loc=((x0 + x1) / 2, L.Y1 - 0.01, 1.1))
+
+    # Goldfish tub in the customer nook, against the fence and clear of the way to the souvenir shelf.
+    props.kingyo_tub("kingyo", c, (L.NOOK_X + 0.27, -0.45, 0), yaw=0.2, r=0.22, seed=7)
+    _ = lights
 
 
 # --------------------------------------------------------------------------

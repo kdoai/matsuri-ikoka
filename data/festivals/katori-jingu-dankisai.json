@@ -1,0 +1,311 @@
+{
+  "id": "katori-jingu-dankisai",
+  "name": {
+    "ja": "香取神宮の団碁祭",
+    "en": "Dankisai Dumpling Festival at Katori Jingu"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "千葉県",
+      "name": "香取市"
+    }
+  ],
+  "venue": {
+    "name": "香取神宮",
+    "lat": 35.8863,
+    "lng": 140.5277
+  },
+  "scaleTier": "XS",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "新米で作った団子を神前に供え、五穀の実りに感謝する冬の夜の神事",
+    "御神酒を供えない、香取神宮の祭事の中でも珍しい神事",
+    "祭典のあと、食べると風邪をひかないと伝わる団子が参拝者に配られる"
+  ],
+  "trivia": [
+    {
+      "text": "別名は「八石八斗団子祭」。新穀の団子を神前に供える祭りとして知られる",
+      "source": {
+        "url": "https://www.city.katori.lg.jp/sightseeing/gyoji/fuyu/s_dango.html",
+        "title": "香取市 香取神宮の団碁祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "11月30日の大饗祭でもてなし役を務めた比売神をねぎらう祭りとも言われる",
+      "source": {
+        "url": "https://www.city.katori.lg.jp/sightseeing/gyoji/fuyu/s_dango.html",
+        "title": "香取市 香取神宮の団碁祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "本殿と楼門は元禄13年（1700年）に徳川綱吉が造営し、どちらも重要文化財",
+      "source": {
+        "url": "https://www.city.katori.lg.jp/sightseeing/meisho/rekishi/s_katori.html",
+        "title": "香取市 香取神宮",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "関東を中心に約400社ある香取神社の総本宮で、下総国の一宮",
+      "source": {
+        "url": "https://maruchiba.jp/spot/detail_10175.html",
+        "title": "ちば観光ナビ 香取神宮",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "18:00からの神事を境内で見学し、終わったあとに参拝者へ配られる団子を受ける（配る数や場所の案内はない）",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "境内からの見学と団子の授与が中心で、混雑や危険についての特別な注意は案内されていない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://maruchiba.jp/event/detail_11475.html",
+        "title": "ちば観光ナビ 団碁祭／香取神宮（境内から見学できる）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.katori.lg.jp/sightseeing/gyoji/fuyu/s_dango.html",
+        "title": "香取市 香取神宮の団碁祭（団子は参拝者に配られる）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-07",
+      "start": "18:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年は12月7日（月）18:00から。市の案内では毎年12月7日。神事のあと、参拝者に団子が配られる。佐原駅からの循環バスは祭典が終わる時間には走っていない",
+      "sources": [
+        {
+          "url": "https://maruchiba.jp/event/detail_11475.html",
+          "title": "ちば観光ナビ 団碁祭／香取神宮（2026年12月7日 18:00〜）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.katori.lg.jp/sightseeing/gyoji/fuyu/s_dango.html",
+          "title": "香取市 香取神宮の団碁祭（毎年12月7日 午後6時から）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000730",
+          "title": "るるぶ&more. 団碁祭（2026年12月7日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR成田線 佐原駅",
+        "walkMinutes": [50, 55],
+        "note": "徒歩で50分（約3.5km）。タクシーで約10分。循環バスは祭典が終わる時間帯には走っていないので、帰りはタクシーなどを考えておく"
+      },
+      {
+        "name": "JR成田線 香取駅",
+        "walkMinutes": [30, 35],
+        "note": "徒歩で約30分（約2km）"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "東京駅",
+        "minutes": [93, 103],
+        "route": "バスターミナル東京八重洲から、京成バスグループの高速バス銚子東京線で佐原駅北口まで、乗り換えなし"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.city.katori.lg.jp/sightseeing/gyoji/fuyu/s_dango.html",
+        "title": "香取市 香取神宮の団碁祭（アクセス。祭事後は循環バスの運行時間外）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.katori.lg.jp/sightseeing/gyoji/fuyu/s_katori-hatsu.html",
+        "title": "香取市 香取神宮の初詣（佐原駅から徒歩50分・約3.5km）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.katori.lg.jp/living/kotsu_doro/kokyo_kotsu/bus/highway_bus.html",
+        "title": "香取市 高速バス（銚子東京線 東京駅〜佐原駅北口 約93分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.katori.lg.jp/sightseeing/meisho/rekishi/s_katori.html",
+        "title": "香取市 香取神宮（無料駐車場 普通車300台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "団碁祭の団子",
+        "note": "祭典のあとに参拝者へ配られる、新穀で作った団子。食べると風邪をひかないと伝わる",
+        "sources": [
+          {
+            "url": "https://www.city.katori.lg.jp/sightseeing/gyoji/fuyu/s_dango.html",
+            "title": "香取市 香取神宮の団碁祭",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      },
+      {
+        "name": "香取草だんご",
+        "note": "香取神宮の参道の名物の草だんご。その日についたものを、あんこときなこの2つの味で出す。参道の商店で売られる",
+        "sources": [
+          {
+            "url": "https://maruchiba.jp/feature/detail_39.html",
+            "title": "ちば観光ナビ 香取神宮ってどんなところ？",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "katori-jingu-sando-shotengai",
+      "name": "香取神宮 参道の商店街",
+      "kind": "food",
+      "summary": "第1駐車場の前に和菓子屋・土産屋・軽食店・カフェなど9軒が並ぶ参道。名物の香取草だんごが買える。各店の営業時間と休みは店ごとに違い、案内がない",
+      "location": {
+        "lat": 35.8863,
+        "lng": 140.5277
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://maruchiba.jp/feature/detail_39.html",
+          "title": "ちば観光ナビ 香取神宮ってどんなところ？（参道の商店街）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "ino-tadataka-former-residence",
+      "name": "伊能忠敬旧宅",
+      "kind": "sightseeing",
+      "summary": "伊能忠敬が17歳から49歳まで暮らした家で、国の史跡。醸造業を営んだ伊能家の土蔵造りの店舗や書院が残る。佐原駅から徒歩15分。休みは12月29日〜1月1日",
+      "location": {
+        "lat": 35.8881,
+        "lng": 140.4982
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "16:30"
+      },
+      "closedDays": [],
+      "price": "無料",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.city.katori.lg.jp/sightseeing/meisho/rekishi/s_kyutaku.html",
+          "title": "香取市 伊能忠敬旧宅",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "sawara-toyohashi",
+      "name": "樋橋（ジャージャー橋）",
+      "kind": "sightseeing",
+      "summary": "伊能忠敬旧宅の前の小野川に架かる橋。江戸時代の農業用水の樋が始まりで、9時から17時まで30分ごとに川へ水が落ちる。その音は日本の音風景100選に選ばれた",
+      "location": {
+        "lat": 35.8881,
+        "lng": 140.4982
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": [],
+      "price": "無料",
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.city.katori.lg.jp/sightseeing/meisho/kanko/toyohashi.html",
+          "title": "香取市 樋橋（ジャージャー橋）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.katori.lg.jp/sightseeing/gyoji/fuyu/s_dango.html",
+      "title": "香取市 香取神宮の団碁祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://maruchiba.jp/event/detail_11475.html",
+      "title": "ちば観光ナビ 団碁祭／香取神宮",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.katori.lg.jp/sightseeing/meisho/rekishi/s_katori.html",
+      "title": "香取市 香取神宮",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "神事が終わる時刻と、団子が配られる時刻・場所・数",
+    "主催の香取神宮による2026年の発表（神社の公式サイトは取得を断られ、確かめていない）",
+    "雨のときの扱い",
+    "境内でのルール、服装・持ち物・撮影の決まり",
+    "屋台・露店の有無",
+    "参列者・見学者の数の公表値",
+    "夜の祭典のあとの帰りの交通（循環バスは運行時間外。タクシーの予約の要否）",
+    "JRで東京駅・上野駅から佐原駅・香取駅までの所要時間（公式の案内で数字を確かめられなかった）",
+    "祭りの日（月曜）の夕食に使える近くの店（参道の店の営業時間が分からない）",
+    "参道の商店街と樋橋の緯度・経度は、香取神宮と伊能忠敬旧宅の住所からの検索で代えている"
+  ]
+}

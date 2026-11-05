@@ -1,0 +1,194 @@
+{
+  "id": "inamura-no-hi-matsuri",
+  "name": { "ja": "稲むらの火祭り", "en": "Inamura no Hi Fire Festival" },
+  "category": "fire",
+  "municipalities": [{ "prefecture": "和歌山県", "name": "有田郡広川町" }],
+  "venue": { "name": "広川町役場前 稲むらの火広場", "lat": 34.03, "lng": 135.1731 },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["jalan", "walkerplus"],
+  "highlights": [
+    "松明を手に、役場前から廣八幡宮まで夜道を歩く行列",
+    "廣八幡宮の鳥居の下で、積んだ稲わらに火を付ける「稲むら点火」",
+    "1854年の大津波で稲むらに火を放ち村人を救った故事を、防災への祈りとして伝える",
+    "到着後の廣八幡宮で、松明の奉納と巫女舞「平安の舞」"
+  ],
+  "trivia": [
+    {
+      "text": "安政元年（1854年）の大津波のとき、濱口梧陵が稲むらに火を放ち、村人を高台へ導いた故事にちなむ",
+      "source": {
+        "url": "https://www.town.hirogawa.wakayama.jp/kankou/news-event/pdf/R8fire.pdf",
+        "title": "第24回稲むらの火祭り パンフレット（広川町）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "平成15年（2003年）に始まり、2026年で24回目になった",
+      "source": {
+        "url": "https://www.town.hirogawa.wakayama.jp/kankou/news-event/inamuranohimatsuri.html",
+        "title": "広川町 稲むらの火祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "津波の後、梧陵は被災した村人を雇って、長さ約652mの広村堤防を自費で築いた",
+      "source": {
+        "url": "https://www.town.hirogawa.wakayama.jp/kankou/spot/hiromurateibou.html",
+        "title": "広川町 広村堤防",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "行列の行き先の廣八幡宮には、室町時代の本殿など国の重要文化財が6棟ある",
+      "source": {
+        "url": "https://www.town.hirogawa.wakayama.jp/kankou/spot/hirohachiman.html",
+        "title": "広川町 廣八幡宮",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_by_application",
+    "howToJoin": "松明行列は事前の申し込み制（2026年は9月7日〜10月7日に、はがき・FAX・メール・公式ホームページで1人ずつ申し込み、参加は無料・先着順、当日の受付はなし）。当日は16:00〜17:40に役場前で松明を受け取る",
+    "rules": [
+      "松明は大人用（400本）とミニ松明（赤いセロファンを巻いた電灯、300本）があり、先着順",
+      "4歳から小学生はミニ松明を持ち、保護者（2人まで）が同伴する。同伴の保護者もミニ松明を持つ",
+      "大人用松明とミニ松明は分かれて歩き、子どもは大人の松明の列に入れない",
+      "自分の不注意による事故は、主催者が責任を負わないと案内している",
+      "荒天や林野火災警報のときは延期・中止になり、前日の正午すぎに町内放送と町のホームページで知らせる"
+    ],
+    "dress": "unknown",
+    "bring": ["軍手（大人用松明を持つ人）"],
+    "risk": {
+      "level": "high",
+      "reason": "火の付いた松明を持って夜道を歩き、稲わらにも点火する。主催者は自分の不注意による事故に責任を負わないと案内している"
+    },
+    "photo": {
+      "policy": "allowed",
+      "note": "主催者がインスタグラムで写真コンテストを開いている（2026年は10月29日締め切り）"
+    },
+    "sources": [
+      {
+        "url": "https://www.town.hirogawa.wakayama.jp/kankou/news-event/pdf/R8fire.pdf",
+        "title": "第24回稲むらの火祭り パンフレット（行列参加の申し込み・注意事項）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-10-24",
+      "start": "16:30",
+      "end": "19:30",
+      "status": "announced",
+      "rainPolicy": "小雨決行。荒天のときは10月25日（日）17時からに延期。荒天・林野火災警報で延期や中止のときは、前日10月23日の12:15に町内放送と町のホームページで知らせる",
+      "note": "2026年の発表（第24回）。16:30 式典前行事（よさこい・民踊）、17:00〜18:00 役場前で式典と採火、18:00〜18:40 稲むらの火広場から廣八幡宮へ松明行列（鳥居の下で稲わらに点火）、18:40〜19:30 廣八幡宮で松明奉納・神事・巫女舞、パンとお茶の配布。19:10から廣八幡宮→役場前のシャトルバス。行列の参加は大人用松明400本・ミニ松明300本",
+      "sources": [
+        {
+          "url": "https://www.town.hirogawa.wakayama.jp/kankou/news-event/inamuranohimatsuri.html",
+          "title": "広川町 第24回稲むらの火祭り（2026年9月8日更新）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.town.hirogawa.wakayama.jp/kankou/news-event/pdf/R8fire.pdf",
+          "title": "第24回稲むらの火祭り パンフレット（時刻・延期の決まり）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "熊野御坊南海バス・中紀バス 昭和通りバス停",
+        "walkMinutes": [2, 7],
+        "note": "JR湯浅駅から湯浅線（権保橋行き・由良駅行き）。町の案内では役場周辺まで徒歩約2分"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.town.hirogawa.wakayama.jp/kankou/access/idoushudan.html",
+        "title": "広川町 アクセス情報（役場周辺へはJR湯浅駅からバスで「昭和通り」下車、徒歩約2分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.town.hirogawa.wakayama.jp/kankou/news-event/pdf/R8fire.pdf",
+        "title": "第24回稲むらの火祭り パンフレット（松明行列の参加者の駐車場は広川町民体育館前）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.town.hirogawa.wakayama.jp/kankou/access/",
+        "title": "広川町 京阪神からのアクセス（JR新大阪駅から特急で湯浅駅を経て広川ビーチ駅まで約1時間33分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": { "stalls": "unknown", "local": [] },
+  "nearby": [
+    {
+      "id": "inamura-no-hi-no-yakata",
+      "name": "稲むらの火の館",
+      "kind": "sightseeing",
+      "summary": "濱口梧陵記念館と津波防災教育センターからなる町の施設。梧陵の生涯と津波への備えを学べる。月曜休館（祝日なら翌平日）、年末年始休み",
+      "location": { "lat": 34.0259, "lng": 135.1731 },
+      "walkMinutesFromVenue": null,
+      "hours": { "open": "10:00", "close": "17:00", "lastEntry": "16:00" },
+      "closedDays": ["mon"],
+      "price": "一般500円、高校生200円、小中学生100円（濱口梧陵記念館は無料）",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.town.hirogawa.wakayama.jp/inamuranohi/kaikan.html",
+          "title": "稲むらの火の館 開館日と入館料金",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.town.hirogawa.wakayama.jp/inamuranohi/",
+          "title": "稲むらの火の館",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.town.hirogawa.wakayama.jp/kankou/news-event/inamuranohimatsuri.html",
+      "title": "広川町 稲むらの火祭り",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.town.hirogawa.wakayama.jp/kankou/news-event/pdf/R8fire.pdf",
+      "title": "第24回稲むらの火祭り パンフレット",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催日（毎年の日付の決まりが公式に見当たらない。旅行情報サイトでは2022年10月22日、2024年10月19日、2026年は10月24日と、10月の土曜で年により第3か第4）",
+    "2026年に予定どおり行われたか（延期・中止の知らせは確かめていない）",
+    "見物する人の駐車場（パンフレットにあるのは松明行列の参加者の駐車場だけ）",
+    "主要駅からバス停「昭和通り」までの通しの所要時間（町の案内は、新大阪駅から特急で湯浅駅を経て広川ビーチ駅まで約1時間33分と、湯浅駅から路線バスで「昭和通り」下車だけで、バスの所要時間がない）",
+    "当日の交通規制",
+    "服装の案内",
+    "屋台の有無",
+    "会場の緯度・経度（OpenStreetMap の広川町役場の位置で代用）",
+    "周辺の食事処（公式の営業時間を確かめられた店が見つからなかった）"
+  ]
+}

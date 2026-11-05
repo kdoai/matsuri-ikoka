@@ -5,21 +5,34 @@ import { serve } from "@hono/node-server";
 import { getConnInfo } from "@hono/node-server/conninfo";
 import { createAccount, readAccountConfig } from "./account/firebase";
 import { ClaudeAgentRunner } from "./agent/claudeRunner";
+import { createFestivalWishReader } from "./agent/festivalWishReader";
 import { agentEnv, createAgentWorkdir } from "./agent/options";
+import { createPlanEvaluator } from "./agent/planEvaluator";
 import { loadPrompts } from "./agent/prompts";
 import { loadSampleConversations, ReplayAgentRunner } from "./agent/replayRunner";
 import type { AgentRunner } from "./agent/runner";
 import { agentConfigDir, forgetTranscripts } from "./agent/transcripts";
+import { createWebLodgingResearcher } from "./agent/webLodgingResearcher";
+import { createWebNearbyResearcher } from "./agent/webNearbyResearcher";
+import { createWebRouteResearcher } from "./agent/webRouteResearcher";
 import { createWebVerifier } from "./agent/webVerifier";
 import { createApp } from "./app";
-import { readConfig } from "./config";
+import { portInUseMessage, readConfig, startupNotice } from "./config";
 import { festivalDirs, loadFestivals } from "./data/festivalStore";
+import { loadStationPoints } from "./data/stationPoints";
 import { nowInJapan, todayInJapan } from "./domain/calendar";
+import type { FestivalWishReader } from "./routes/festivalSearch";
 import { ConcurrencyLimiter, clientIp, DailyLimiter } from "./routes/guard";
 import { StoragePersistence } from "./session/persistence";
 import { ItineraryStore, SessionStore } from "./session/sessionStore";
 import { createCandidateChecker } from "./tools/candidateCheck";
+import { createLodgingService } from "./tools/lodging";
 import { createJmaWeather } from "./tools/weather";
+
+// 待たれていない Promise の失敗で、サーバーごと止めない。止まると、返答の途中の接続がすべて切れる
+process.on("unhandledRejection", (reason) => {
+  console.error("[process] 待たれていない Promise が失敗しました", reason);
+});
 
 const config = readConfig(process.env);
 const account = await createAccount(readAccountConfig(process.env));
@@ -53,7 +66,11 @@ for (const issue of festivals.issues) {
 
 const itineraries = new ItineraryStore();
 let runner: AgentRunner;
+let sampleIds: string[] = [];
 let sessions = new SessionStore();
+const stations = await loadStationPoints(config.repoRoot);
+// モックと CI ではつながず、自由記述は言葉の辞書で読む
+let readFestivalWish: FestivalWishReader | undefined;
 if (config.mode === "live") {
   const prompts = await loadPrompts();
   const cwd = createAgentWorkdir();
@@ -71,10 +88,60 @@ if (config.mode === "live") {
   // 相談が消えたら、その相談の会話の記録を消す
   sessions = new SessionStore({ onRemove: forgetTranscripts(deleteSession, cwd) });
   const env = agentEnv(process.env);
+  readFestivalWish = createFestivalWishReader({
+    prompt: prompts["wish-reader"],
+    model: config.models.wishReader,
+    cwd,
+    env,
+    query,
+    maxBudgetUsd: config.maxBudgetUsd,
+  });
   runner = new ClaudeAgentRunner({
+    ...(stations ? { stations } : {}),
+    // 旅程の評価は、旅程係が保存するたびに update_itinerary の中で動く。足りないところを見抜く力が要るので、
+    // 評価係のモデル（MODEL_EVALUATOR、省略時は旅程係のモデル）で行う
+    planEvaluator: createPlanEvaluator({
+      prompt: prompts.evaluator,
+      model: config.models.evaluator,
+      cwd,
+      env,
+      query,
+      maxBudgetUsd: config.maxBudgetUsd,
+    }),
+    // 行き方の調べは旅程係の中で行きと帰りの2回動くので、スタッフのモデルで行う
+    routes: createWebRouteResearcher({
+      prompt: prompts.route,
+      model: config.models.staff,
+      cwd,
+      env,
+      query,
+      maxBudgetUsd: config.maxBudgetUsd,
+    }),
+    // 寄り道の調べは周辺係・旅程係の search_nearby の中で動くので、スタッフのモデルで行う
+    nearby: createWebNearbyResearcher({
+      prompt: prompts.nearby,
+      model: config.models.staff,
+      cwd,
+      env,
+      query,
+      maxBudgetUsd: config.maxBudgetUsd,
+    }),
+    // 宿の調べは旅程係の search_lodging の中で観点ごとに並べて動くので、スタッフのモデルで行う
+    lodgingResearch: createWebLodgingResearcher({
+      prompt: prompts.lodging,
+      model: config.models.staff,
+      cwd,
+      env,
+      query,
+      maxBudgetUsd: config.maxBudgetUsd,
+    }),
     festivals: festivals.store,
     itineraries,
     weather: createJmaWeather(),
+    lodging: createLodgingService(process.env, {
+      production: config.production,
+      now: () => nowInJapan(),
+    }),
     verifier: createWebVerifier({
       prompt: prompts.verifier,
       model: config.models.verifier,
@@ -109,6 +176,7 @@ if (config.mode === "live") {
   const samples = await loadSampleConversations(
     path.join(config.repoRoot, "data", "samples", "conversations"),
   );
+  sampleIds = samples.map((sample) => sample.id);
   runner = new ReplayAgentRunner(samples, itineraries, { speed: config.replaySpeed });
 }
 
@@ -123,6 +191,8 @@ const app = createApp({
   verifier: account.verifier,
   authConfig: account.web,
   festivals: festivals.store,
+  ...(stations ? { stations } : {}),
+  ...(readFestivalWish ? { readFestivalWish } : {}),
   limiter: new DailyLimiter(config.dailyChatLimit, today),
   ipLimiter: new DailyLimiter(config.dailyChatLimitPerIp, today),
   concurrency: new ConcurrencyLimiter(config.maxConcurrentTurns),
@@ -151,6 +221,22 @@ setInterval(
   10 * 60 * 1000,
 ).unref();
 
-serve({ fetch: app.fetch, port: config.port }, (info) => {
+const server = serve({ fetch: app.fetch, port: config.port }, (info) => {
+  const notice = startupNotice({
+    mode: config.mode,
+    port: info.port,
+    festivals: festivals.store.size,
+    festivalDirs: dirs.map((dir) => path.relative(config.repoRoot, dir) || "."),
+    samples: sampleIds,
+  });
+  console.info(JSON.stringify(notice.log));
   console.info(`server listening on http://localhost:${info.port} (${config.mode})`);
+  // mock のままだと、何を相談しても同じ見本が流れる。気づけるように目立つ出力にする
+  (config.mode === "mock" ? console.warn : console.info)(notice.message);
+});
+// ポートがふさがっていたら、長いスタックトレースではなく、何をすればよいかを出して止まる
+server.on("error", (error: NodeJS.ErrnoException) => {
+  if (error.code !== "EADDRINUSE") throw error;
+  console.error(portInUseMessage(config.port));
+  process.exit(1);
 });

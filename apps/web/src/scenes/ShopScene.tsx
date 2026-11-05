@@ -14,9 +14,12 @@ import {
   Vector2,
   Vector3,
 } from "three";
-import { playStore, usePlay } from "../state/play";
+import { type Chatter, isConsultDesk, playStore, usePlay } from "../state/play";
+import { useT } from "../state/react";
+import { staffActivity } from "../state/relay";
 import { NO_INSETS, type ShopSceneProps } from "../state/scene";
 import type { StaffState } from "../state/types";
+import { SpeechBubble, StatusChip } from "../ui/SpeechBubble";
 import {
   exteriorOpacity,
   SCENE_MOTIONS,
@@ -45,6 +48,7 @@ import {
   type Target,
 } from "./controls";
 import { markEntryPlayed, resetEntry, shouldPlayEntry } from "./entry";
+import { Letters } from "./Letters";
 import { clipNamed, type ModelName, originalName, useModels, useSetModels } from "./models";
 import { nearestOnNavMesh } from "./navmesh";
 import { Player, type PlayerApi } from "./Player";
@@ -63,7 +67,8 @@ import { markOf, readShopWorld, type ShopWorld } from "./world";
 
 // 3D の店内。ストアの状態（ShopSceneProps）を読むだけで、SSE のイベントは受けない。
 // 旅人のペンギンは利用者が動かし、近くで使えるものと仕掛けの結果は playStore に書く。
-// 吹き出しは 3D の上に HTML で重ねる（文字はストアのものをそのまま出す）。
+// 吹き出しは 3D の上に HTML で重ねる（文字はストアのものか、辞書の決まった型）。
+// スタッフどうしの頼みと受け渡しは、コンシェルジュの向き・頼みの吹き出し・頭の上のようす・手紙で見せる。
 // 同じ情報は、画面の 2D の部品（店内のようす・会話の窓・会話の記録・店内の案内）でも文字で読める。
 
 const MOTION_MODELS = SCENE_MOTIONS.map((name) => `motion_${name}` as ModelName);
@@ -367,8 +372,19 @@ function Shop({
             model={model}
             clips={clips}
             marks={set.marks[id]}
-            plan={staffPlan(id, staff, props.celebrating)}
+            plan={staffPlan(id, staff, props.celebrating, {
+              asking: id === "concierge" && props.relay.asking !== null,
+              calm: props.calm,
+            })}
             seq={staff.seq}
+            lookAt={
+              id === "concierge" && props.relay.focus !== null && !props.celebrating
+                ? () => {
+                    const focus = callbacks.current.relay.focus;
+                    return focus === null ? null : staffHeads.current[focus];
+                  }
+                : undefined
+            }
             onHead={(x, y, z) => {
               heads.current?.[id].set(x, y, z);
               staffHeads.current[id].set(x, y, z);
@@ -387,7 +403,11 @@ function Shop({
           position={player}
           api={playerApi}
           onHead={(x, y, z) => heads.current?.player.set(x, y, z)}
-          onTalk={(staff) => callbacks.current.onTalk?.(staff)}
+          onTalk={(staff) => {
+            // 相談はコンシェルジュだけが受ける。ほかのスタッフとは、その場で短いおしゃべりをする
+            if (isConsultDesk(staff)) callbacks.current.onTalk?.(staff);
+            else playStore.getState().chat(staff);
+          }}
           onGimmick={onGimmick}
           onPad={(command) => callbacks.current.onPad?.(command)}
           onExit={() => {
@@ -404,6 +424,7 @@ function Shop({
         heads={staffHeads}
         orbit={orbit}
       />
+      <Letters log={props.relay.log} heads={staffHeads} />
       <BubbleProjector heads={heads} player={player} />
     </>
   );
@@ -763,15 +784,46 @@ function BubbleProjector({
   return null;
 }
 
+/** おしゃべりの吹き出しを出しておく時間（ms） */
+const CHATTER_MS = 4_500;
+
+/** いま出しているおしゃべり。話しかけてから数秒で消える */
+function useChatter(): Chatter | null {
+  const chatter = usePlay((state) => state.chatter);
+  const [shown, setShown] = useState<number | null>(null);
+  // 店に入り直したときは、前に話したおしゃべりを出し直さない
+  const before = useRef(playStore.getState().chatter?.seq ?? 0);
+  useEffect(() => {
+    if (chatter === null || chatter.seq <= before.current) return;
+    setShown(chatter.seq);
+    const timer = setTimeout(() => setShown(null), CHATTER_MS);
+    return () => clearTimeout(timer);
+  }, [chatter]);
+  return chatter !== null && shown === chatter.seq ? chatter : null;
+}
+
 export default function ShopScene(props: ShopSceneProps) {
+  const t = useT();
   const [ready, setReady] = useState(false);
+  const chatter = useChatter();
+  const chatterLines = chatter === null ? [] : t.play.chatter[chatter.staff];
+  const chatterText =
+    chatter === null ? null : (chatterLines[chatter.line % chatterLines.length] ?? null);
   const heads = useRef<HeadPositions>(
     Object.fromEntries([...STAFF_IDS, "player"].map((id) => [id, new Vector3()])) as HeadPositions,
   );
   // 返事を待っているときは、コンシェルジュの上に「!」を出す（話しかけられる合図）
   const entering = usePlay((state) => state.entering);
   const awaiting =
-    props.dialogueOpen && !props.talking && props.staff.concierge.bubble === null && !entering;
+    props.dialogueOpen &&
+    !props.talking &&
+    props.staff.concierge.bubble === null &&
+    props.relay.asking === null &&
+    !entering;
+  // コンシェルジュが頼んでいる間は、頼みの吹き出し（作業の種類から決まった型で作る）
+  const asking = props.relay.asking;
+  const requestText =
+    asking === null ? null : t.relay.request[asking.task](t.staff.names[asking.to]);
   return (
     <div
       className="relative h-full w-full touch-none overflow-hidden"
@@ -800,15 +852,37 @@ export default function ShopScene(props: ShopSceneProps) {
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         {STAFF_IDS.map((id) => {
           const staff = props.staff[id];
-          return ready && showsBubble(staff) ? (
-            <p
+          // 話しかけたスタッフは、作業の吹き出しの代わりに、おしゃべりを出す
+          const text =
+            chatter?.staff === id && chatterText !== null
+              ? chatterText
+              : id === "concierge" && requestText !== null
+                ? requestText
+                : showsBubble(staff)
+                  ? staff.bubble
+                  : null;
+          // 頭の上のいまのようす（調べている・確かめている・まとめている など）
+          const activity = props.celebrating ? null : staffActivity(id, staff, props.relay);
+          const status = activity === null ? undefined : t.relay.activities[activity];
+          if (!ready) return null;
+          if (text === null) {
+            return status === undefined ? null : (
+              <StatusChip key={id} speaker={id} activity={activity ?? undefined}>
+                {status}
+              </StatusChip>
+            );
+          }
+          return (
+            <SpeechBubble
               key={id}
-              data-bubble={id}
-              className="absolute top-0 left-0 max-w-52 rounded-2xl border-2 border-wood-700 bg-kinari-50 px-2.5 py-1 text-center font-bold text-ink text-xs leading-snug shadow-lg"
+              speaker={id}
+              name={t.staff.names[id]}
+              status={status}
+              chatter={chatter?.staff === id ? chatter.line : undefined}
             >
-              {staff.bubble}
-            </p>
-          ) : null;
+              {text}
+            </SpeechBubble>
+          );
         })}
         {ready && awaiting ? (
           <span
@@ -819,6 +893,12 @@ export default function ShopScene(props: ShopSceneProps) {
           </span>
         ) : null}
       </div>
+      {/* おしゃべりは、吹き出しと同じ文を読み上げにも伝える */}
+      <p role="status" className="sr-only">
+        {chatter === null || chatterText === null
+          ? ""
+          : t.play.chatterSaid(t.staff.names[chatter.staff], chatterText)}
+      </p>
     </div>
   );
 }

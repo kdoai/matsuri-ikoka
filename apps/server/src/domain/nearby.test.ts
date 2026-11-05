@@ -72,6 +72,18 @@ describe("selectNearbySpots", () => {
     ]);
   });
 
+  it("屋台で十分でも、聞き取りで屋台のほかに食べたいものがあれば店を残す", () => {
+    const spots = [spot({ id: "walk" }), spot({ id: "soba", kind: "food" })];
+
+    const result = selectNearbySpots(spots, {
+      date,
+      preferences: prefs({ food: "stalls" }),
+      wantsShopMeals: true,
+    });
+    expect(ids(result).sort()).toEqual(["soba", "walk"]);
+    expect(result.excluded).toEqual([]);
+  });
+
   it("定番どころなら知名度の高い順、穴場なら低い順", () => {
     const spots = [
       spot({ id: "major", popularity: "major" }),

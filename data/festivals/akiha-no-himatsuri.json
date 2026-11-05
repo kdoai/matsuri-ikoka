@@ -1,0 +1,272 @@
+{
+  "id": "akiha-no-himatsuri",
+  "name": {
+    "ja": "秋葉の火まつり",
+    "en": "Akiha Fire Festival"
+  },
+  "category": "fire",
+  "municipalities": [
+    {
+      "prefecture": "静岡県",
+      "name": "浜松市"
+    }
+  ],
+  "venue": {
+    "name": "秋葉山本宮秋葉神社 上社",
+    "lat": 34.9811,
+    "lng": 137.8662
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["rurubu", "jalan", "walkerplus"],
+  "highlights": [
+    "境内の明かりを消し、松明の炎だけで舞う「火の舞」",
+    "3人の神職が秘伝の弓・剣・火の三舞を奏する防火祭",
+    "火防の神の総本宮で、冬の深夜に行う一年の災い払い"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "3人の神職が秘伝の弓・剣・火の三舞を代々受け継いで奏する",
+      "sources": [
+        {
+          "url": "https://www.akihasanhongu.jp/himatsuri/index.html",
+          "title": "秋葉山本宮秋葉神社 火まつり",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "火の舞の間は境内の照明が消され、月明かりと松明の炎だけがあたりを照らす",
+      "source": {
+        "url": "https://www.city.hamamatsu.shizuoka.jp/tn-shinko/dekigoto/r31216_dekigoto.html",
+        "title": "浜松市 天竜区のできごと 秋葉の火まつり（2021年12月16日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "弓・剣・火の三舞は、3人の神職がそれぞれ秘伝として受け継いで奏する",
+      "source": {
+        "url": "https://www.akihasanhongu.jp/himatsuri/index.html",
+        "title": "秋葉山本宮秋葉神社 火まつり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "昭和27年、全国の秋葉神社の総本宮であることから今の社名に改めた",
+      "source": {
+        "url": "https://www.akihasanhongu.jp/history/index.html",
+        "title": "秋葉山本宮秋葉神社 由緒",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "徒歩の時代の参詣者は午後3時ごろ山上に着き、一晩こもって翌朝祈祷を受けた",
+      "source": {
+        "url": "https://www.akihasanhongu.jp/history/index.html",
+        "title": "秋葉山本宮秋葉神社 由緒",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": ["冬の夜の山上で行うため、防寒の服装"],
+    "bring": ["懐中電灯"],
+    "risk": {
+      "level": "medium",
+      "reason": "冬の深夜に標高約800mの山上で行い、火の舞では松明を使う（主催者によるけがの注意は見つからない）"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "撮影はできるが、フラッシュは使わない（外国人向けの祭りの案内による）"
+    },
+    "sources": [
+      {
+        "url": "https://ohmatsuri.com/en/articles/shizuoka-akiha-fire-festival",
+        "title": "OH! MATSURi Akiha Fire Festival（見学のみ、フラッシュ不可、防寒と懐中電灯）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      },
+      {
+        "url": "https://www.city.hamamatsu.shizuoka.jp/tn-shinko/dekigoto/r31216_dekigoto.html",
+        "title": "浜松市 天竜区のできごと 秋葉の火まつり（標高800mの上社、見物客は神楽殿の前で見守る）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-15",
+      "start": "14:30",
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "火まつりの1日目。例年14:30 御阿禮祭（神社の年中祭事による。2026年の神社の発表はまだない）。上社行きの臨時バスは西鹿島駅10:00発、上社13:30発の1往復で、2026年12月15日も運行する",
+      "sources": [
+        {
+          "url": "https://www.akihasanhongu.jp/saiji/index.html",
+          "title": "秋葉山本宮秋葉神社 年中祭事（12月15日 午後2時半 御阿禮祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.akihasanhongu.jp/access/index.html",
+          "title": "秋葉山本宮秋葉神社 交通のご案内（上社行き臨時バス 令和8年12月15・16日運行）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000764",
+          "title": "るるぶ&more. 秋葉の火まつり（2026年12月15日〜16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2026-12-16",
+      "start": "22:00",
+      "end": "00:00",
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "火まつりの2日目。例年13:30 例大祭、22:00 防火祭（ひぶせのまつり）で弓の舞・剣の舞・火の舞を奉納する（神社の年中祭事による。2026年の神社の発表はまだない）。浜松・浜名湖ツーリズムビューローの案内では21:30〜0:00。2021年は21:45ごろ手筒花火の奉納から神事が始まった。上社行きの臨時バスは上社13:30発が最終で、夜の防火祭のあとに帰るバスはない",
+      "sources": [
+        {
+          "url": "https://www.akihasanhongu.jp/saiji/index.html",
+          "title": "秋葉山本宮秋葉神社 年中祭事（12月16日 午後1時半 例大祭・防火祭、午後10時 火まつり）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.hamamatsu-japan.com/en/events/1627",
+          "title": "浜松・浜名湖ツーリズムビューロー Akiha Fire Festival（12/15・12/16、21:30〜0:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.akihasanhongu.jp/access/index.html",
+          "title": "秋葉山本宮秋葉神社 交通のご案内（上社行き臨時バス 令和8年12月15・16日運行、上社13:30発）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.hamamatsu.shizuoka.jp/tn-shinko/dekigoto/r31216_dekigoto.html",
+          "title": "浜松市 天竜区のできごと 秋葉の火まつり（2021年は21:45ごろ手筒花火の奉納から）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000764",
+          "title": "るるぶ&more. 秋葉の火まつり（2026年12月15日〜16日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-12-15",
+      "start": "14:30",
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年12月15日に御阿禮祭を行う決まりから見込んだ日（2027年の発表はまだない）。例年14:30 御阿禮祭",
+      "sources": [
+        {
+          "url": "https://www.akihasanhongu.jp/saiji/index.html",
+          "title": "秋葉山本宮秋葉神社 年中祭事（12月15日 午後2時半 御阿禮祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-12-16",
+      "start": "22:00",
+      "end": "00:00",
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年12月16日に例大祭と防火祭を行う決まりから見込んだ日（2027年の発表はまだない）。例年13:30 例大祭、22:00 防火祭で弓・剣・火の三舞を奉納する",
+      "sources": [
+        {
+          "url": "https://www.akihasanhongu.jp/saiji/index.html",
+          "title": "秋葉山本宮秋葉神社 年中祭事（12月16日 例大祭・防火祭、午後10時 火まつり）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.hamamatsu-japan.com/en/events/1627",
+          "title": "浜松・浜名湖ツーリズムビューロー Akiha Fire Festival（12/15・12/16、21:30〜0:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.akihasanhongu.jp/access/index.html",
+        "title": "秋葉山本宮秋葉神社 交通のご案内（西鹿島駅から遠鉄バス秋葉線、上社行き臨時バス、駐車場 普通車300台以上・大型車20台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ohmatsuri.com/en/articles/shizuoka-akiha-fire-festival",
+        "title": "OH! MATSURi Akiha Fire Festival（祭りの時間帯にバスはなく、タクシーかレンタカー）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.akihasanhongu.jp/himatsuri/index.html",
+      "title": "秋葉山本宮秋葉神社 火まつり",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.akihasanhongu.jp/saiji/index.html",
+      "title": "秋葉山本宮秋葉神社 年中祭事",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.hamamatsu.shizuoka.jp/tn-shinko/dekigoto/r31216_dekigoto.html",
+      "title": "浜松市 天竜区のできごと 秋葉の火まつり（2021年、上社）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2026年の開催の発表と、防火祭の始まりと終わりの時刻（神社は22:00、浜松・浜名湖ツーリズムビューローは21:30〜0:00と案内している）",
+    "夜の防火祭のあとに上社から帰る手段（臨時バスは上社13:30発が最終。タクシーやレンタカーを勧める案内は外国人向けの祭りの案内だけ）",
+    "西鹿島駅から上社までのバスの所要時間と、主要駅（浜松駅）からの通しの所要時間（公式の案内に分がない）",
+    "見学の決まり（立ち入りできる場所、撮影の決まり）。服装・持ち物・フラッシュの注意は外国人向けの祭りの案内だけにある",
+    "雨や雪のときの扱い",
+    "冬の夜の上社への道路の状態と、祭りの日の交通規制の有無",
+    "屋台・振る舞いの有無",
+    "見物人の数の公表値（るるぶ&more.に前年約7,000人とあるだけ）",
+    "祭りの前後に寄れる店や観光地（同じ日に火渡りを行う秋葉寺は、営業時間などを公式で確かめられていない）"
+  ]
+}

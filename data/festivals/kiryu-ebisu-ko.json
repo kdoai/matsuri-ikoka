@@ -1,0 +1,244 @@
+{
+  "id": "kiryu-ebisu-ko",
+  "name": {
+    "ja": "桐生えびす講",
+    "en": "Kiryu Ebisu-ko Festival"
+  },
+  "category": "market",
+  "municipalities": [
+    {
+      "prefecture": "群馬県",
+      "name": "桐生市"
+    }
+  ],
+  "venue": {
+    "name": "桐生西宮神社（宮本町二丁目）",
+    "lat": 36.4175,
+    "lng": 139.3402
+  },
+  "scaleTier": "L",
+  "popularity": "local",
+  "listedIn": ["rurubu"],
+  "highlights": [
+    "参道と周りの通りに、熊手やお宝などの縁起物を売る露店がずらりと並ぶ",
+    "20日の朝6時、本殿へ駆けて一番福から三番福を決める福男選び神事",
+    "福銭やえびす菓子をまく福まきが、両日の夕方から夜に何度もある",
+    "えびす講の名物として、福鯛あめと甘酒が売られる"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1901年に西宮神社の分霊を迎えた社殿の建築以来続く秋の例祭",
+      "sources": [
+        {
+          "url": "https://www.city.kiryu.lg.jp/_res/projects/default_project/_page_/001/012/273/2024-2syou1.pdf",
+          "title": "桐生市歴史的風致維持向上計画 第2章（ゑびす講の歴史）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "町衆の世話人が代々世襲で引き継いでゑびす講を運営する",
+      "sources": [
+        {
+          "url": "https://www.city.kiryu.lg.jp/_res/projects/default_project/_page_/001/012/273/2024-2syou1.pdf",
+          "title": "桐生市歴史的風致維持向上計画 第2章（ゑびす講の行程と活動）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "明治34年に兵庫の西宮神社から分霊され、関東でただ1つの直系の分社とされる",
+      "source": {
+        "url": "https://kiryu-nishinomiya-ebisu.jp/information/",
+        "title": "桐生西宮神社 桐生西宮神社とは（由緒）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "えびす様と、美和神社の大黒様を同じ格の神として一緒に祀っている",
+      "source": {
+        "url": "https://kiryu-nishinomiya-ebisu.jp/information/",
+        "title": "桐生西宮神社 桐生西宮神社とは（由緒）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "福男選び神事は令和6年に始まった、まだ新しい行事",
+      "source": {
+        "url": "https://www.city.kiryu.lg.jp/kankou/event/1010673/1001889.html",
+        "title": "桐生市 えびす講",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "前の年のえびす講には、およそ19万人が訪れたと紹介されている",
+      "source": {
+        "url": "https://rurubu.jp/andmore/spot/20000375",
+        "title": "るるぶ&more. えびす講（昨年の来場者数19万人）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "お札の頒布と昇殿参拝は18日から受けられ、19日7時から20日22時までは夜通し参拝できる。福男選び神事（20日6時）は15歳以上が対象の抽選で、事前枠は11月18日まで、えびす講枠は19日19時までに申し込む",
+    "rules": [
+      "神社に駐車場はないので、市内の駐車場を使う",
+      "山手通り・えびす参道は19日10時から20日22時まで、本町通りの一部は両日10時から22時まで歩行者用道路になる"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "神社へ続く参道は、歩くのも難しいほど混み合うと市が案内している"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.kiryu.lg.jp/kankou/event/1010673/1001889.html",
+        "title": "桐生市 えびす講（混雑、歩行者用道路の時間と区間）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://kiryu-nishinomiya-ebisu.jp/ebisukou/",
+        "title": "桐生西宮神社 えびす講（神社に駐車場はない）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://kiryu-nishinomiya-ebisu.jp/news/%e4%bb%a4%e5%92%8c%e5%85%ab%e5%b9%b4-%e8%a5%bf%e5%ae%ae%e5%a4%a7%e7%a5%ad%e3%81%ae%e3%81%94%e6%a1%88%e5%86%85/",
+        "title": "桐生西宮神社 令和八年 西宮大祭のご案内（チラシ：福男選び神事の抽選と申し込みの締め切り）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-19",
+      "start": "07:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "宵祭り。7時から夜通しで翌20日に続く。太々神楽（白瀧神楽）は15時から21時ごろ、福まきは16時・17時・18時30分・19時30分・20時30分ごろ（時間は前後することがある）",
+      "sources": [
+        {
+          "url": "https://www.city.kiryu.lg.jp/kankou/event/1010673/1001889.html",
+          "title": "桐生市 えびす講（令和8年11月19日7時から夜通し、20日22時まで）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://kiryu-nishinomiya-ebisu.jp/news/%e4%bb%a4%e5%92%8c%e5%85%ab%e5%b9%b4-%e8%a5%bf%e5%ae%ae%e5%a4%a7%e7%a5%ad%e3%81%ae%e3%81%94%e6%a1%88%e5%86%85/",
+          "title": "桐生西宮神社 令和八年 西宮大祭のご案内（チラシ：神楽と福まきの時刻）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-20",
+      "start": "00:00",
+      "end": "22:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "前日の宵祭りから夜通し続く回（0時に始まる行事はない）。本祭り。前日から夜通しで続き、22時まで。6時に福男選び神事。福まきは16時30分・17時30分・18時30分・19時30分ごろ、えびす太鼓も同じころに披露される（時間は前後することがある）",
+      "sources": [
+        {
+          "url": "https://www.city.kiryu.lg.jp/kankou/event/1010673/1001889.html",
+          "title": "桐生市 えびす講（20日6時に福男選び神事、22時まで）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://kiryu-nishinomiya-ebisu.jp/news/%e4%bb%a4%e5%92%8c%e5%85%ab%e5%b9%b4-%e8%a5%bf%e5%ae%ae%e5%a4%a7%e7%a5%ad%e3%81%ae%e3%81%94%e6%a1%88%e5%86%85/",
+          "title": "桐生西宮神社 令和八年 西宮大祭のご案内（チラシ：福まきとえびす太鼓の時刻）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR両毛線 桐生駅",
+        "walkMinutes": [10, 15],
+        "note": "神社の案内では徒歩10分、市の案内では徒歩約15分"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [
+      "山手通り・えびす参道：11月19日10時から20日22時まで歩行者用道路",
+      "本町通り（桐生信用金庫本町支店から有鄰館まで）：11月19日・20日とも10時から22時まで歩行者用道路"
+    ],
+    "sources": [
+      {
+        "url": "https://www.city.kiryu.lg.jp/kankou/event/1010673/1001889.html",
+        "title": "桐生市 えびす講（桐生駅から徒歩約15分、交通規制）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://kiryu-nishinomiya-ebisu.jp/ebisukou/",
+        "title": "桐生西宮神社 えびす講（桐生駅から徒歩10分、神社に駐車場はなく市内の駐車場を利用）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "福鯛あめ・甘酒",
+        "note": "えびす講の名物として、境内のえびす横丁あたりで売られる",
+        "sources": [
+          {
+            "url": "https://kiryu-nishinomiya-ebisu.jp/news/%e4%bb%a4%e5%92%8c%e5%85%ab%e5%b9%b4-%e8%a5%bf%e5%ae%ae%e5%a4%a7%e7%a5%ad%e3%81%ae%e3%81%94%e6%a1%88%e5%86%85/",
+            "title": "桐生西宮神社 令和八年 西宮大祭のご案内（チラシ：えびす講名物 福鯛あめ・甘酒）",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.city.kiryu.lg.jp/kankou/event/1010673/1001889.html",
+      "title": "桐生市 えびす講（主催：桐生西宮神社、会場：宮本町二丁目）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://kiryu-nishinomiya-ebisu.jp/ebisukou/",
+      "title": "桐生西宮神社 えびす講（毎年11月19日・20日、桐生市宮本町2-1-3）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "雨天の扱い",
+    "服装・持ち物、撮影についての決まり（主催者の案内が見つからない）",
+    "東京駅・浅草駅・高崎駅など玄関口の駅から桐生駅までの所要時間（公式の出典が見つからない）",
+    "市内の臨時駐車場の場所と台数（神社と市のページに書いていない）",
+    "露店の数と、来場者数の公式の値（来場者数はるるぶ&more.の19万人だけ）",
+    "からくり人形芝居の時刻（チラシには両日とも随時上演とだけある）",
+    "周辺の観光と食の場所（有鄰館などの営業時間・休館日を公式で確かめられなかった）",
+    "会場の緯度・経度は、国土地理院の住所検索で神社の住所（宮本町二丁目1番3号）を引いたもの"
+  ]
+}

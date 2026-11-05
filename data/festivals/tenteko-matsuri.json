@@ -1,0 +1,213 @@
+{
+  "id": "tenteko-matsuri",
+  "name": {
+    "ja": "てんてこ祭",
+    "en": "Tenteko Matsuri"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "愛知県",
+      "name": "西尾市"
+    }
+  ],
+  "venue": {
+    "name": "熱池八幡社",
+    "lat": 34.8398,
+    "lng": 137.0422
+  },
+  "scaleTier": "XS",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu"],
+  "highlights": [
+    "赤装束の厄男が大根の飾りを腰に下げ、太鼓に合わせて腰を振って練り歩く",
+    "境内で竹箒の藁灰がまかれ、浴びると厄除けになると伝わる",
+    "拝殿で田植え歌が歌われ、参拝者が松葉を投げ入れて締めくくる"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "愛知県の無形民俗文化財に指定されている",
+      "sources": [
+        {
+          "url": "https://www.city.nishio.aichi.jp/sportskanko/bunkazai/1001485/1001609/1001670/1002754.html",
+          "title": "西尾市 西尾のてんてこ祭（県指定・無形民俗）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "平安時代、清和天皇の大嘗会の悠紀斎田にこの地が選ばれたことにちなむと伝わる",
+      "source": {
+        "url": "https://www.city.nishio.aichi.jp/sportskanko/bunkazai/1001485/1001609/1001670/1002754.html",
+        "title": "西尾市 西尾のてんてこ祭（県指定・無形民俗）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "愛知県の無形民俗文化財に指定されている",
+      "source": {
+        "url": "https://www.city.nishio.aichi.jp/sportskanko/bunkazai/1001485/1001609/1001670/1002754.html",
+        "title": "西尾市 西尾のてんてこ祭（県指定・無形民俗）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "行列の厄男は6人で、そのうち3人が大根で作った飾りを腰に下げる",
+      "source": {
+        "url": "https://aichinow.pref.aichi.jp/events/detail/1103/",
+        "title": "愛知県観光サイト Aichi Now 西尾のてんてこ祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2021年と2022年は中止になった",
+      "source": {
+        "url": "https://nishiokanko.com/list/shop/tentekosai/",
+        "title": "西尾市観光協会 てんてこ祭（熱池八幡社）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "例年14:00ごろから参拝者が松葉を投げ入れる（受付や費用の案内は見当たらない）",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "見学と参拝が中心。境内では藁灰が見物人にまかれる（危険についての主催者の注意は見当たらない）"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://nishiokanko.com/list/shop/tentekosai/",
+        "title": "西尾市観光協会 てんてこ祭（熱池八幡社）（2026年の流れ。14:00ごろから参拝者が松葉を投げ入れる）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.nishio.aichi.jp/sportskanko/bunkazai/1001485/1001609/1001670/1002754.html",
+        "title": "西尾市 西尾のてんてこ祭（藁灰をまいて観客にかける）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-03",
+      "start": "13:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。13:00〜13:20ごろ町内を行列、13:20ごろ境内をまわる、13:25ごろ藁灰をまく、13:25〜14:00ごろ拝殿で田植え歌、14:00ごろから参拝者が松葉を投げ入れる",
+      "sources": [
+        {
+          "url": "https://nishiokanko.com/list/shop/tentekosai/",
+          "title": "西尾市観光協会 てんてこ祭（熱池八幡社）（2026年の時刻）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://aichinow.pref.aichi.jp/events/detail/1103/",
+          "title": "愛知県観光サイト Aichi Now 西尾のてんてこ祭（2026年1月3日 13:00〜）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-03",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年1月3日に行う決まりから見込んだ日（2027年の発表はまだ見つからない）。例年13:00ごろに行列が始まり、14:00ごろまで続く",
+      "sources": [
+        {
+          "url": "https://www.city.nishio.aichi.jp/sportskanko/bunkazai/1001485/1001609/1001670/1002754.html",
+          "title": "西尾市 西尾のてんてこ祭（毎年正月3日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://nishiokanko.com/list/shop/tentekosai/",
+          "title": "西尾市観光協会 てんてこ祭（熱池八幡社）（毎年1月3日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "名鉄 福地駅",
+        "walkMinutes": [13, 18],
+        "note": "名鉄東部交通バスの「熱池」から徒歩5分でも行ける"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://aichinow.pref.aichi.jp/events/detail/1103/",
+        "title": "愛知県観光サイト Aichi Now 西尾のてんてこ祭（福地駅から徒歩約13分、駐車場は福地南部小学校・福地中学校）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://nishiokanko.com/list/shop/tentekosai/",
+        "title": "西尾市観光協会 てんてこ祭（熱池八幡社）（公共交通機関の利用のお願い）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.city.nishio.aichi.jp/sportskanko/bunkazai/1001485/1001609/1001670/1002754.html",
+      "title": "西尾市 西尾のてんてこ祭（熱池町 八幡社）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://nishiokanko.com/list/shop/tentekosai/",
+      "title": "西尾市観光協会 てんてこ祭（熱池八幡社、西尾市熱池町神田103）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://maps.gsi.go.jp/#17/34.8398/137.0422/",
+      "title": "地理院地図 熱池町神田の神社の記号（会場の緯度・経度）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と時刻",
+    "見学の決まり（立ち位置・場所取り）、撮影の扱い、服装・持ち物（藁灰を浴びることへの備えを含む）",
+    "雨や雪のときの扱い",
+    "名古屋駅など玄関口の駅から福地駅までの所要時間",
+    "駐車場の台数",
+    "屋台の有無と、この日だけの食べもの",
+    "周辺の観光と食の場所",
+    "見物客の数",
+    "会場の正確な位置"
+  ]
+}

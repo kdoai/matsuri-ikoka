@@ -22,6 +22,11 @@ const prompts: AgentPrompts = {
   scout: "周辺係",
   planner: "旅程係",
   verifier: "再確認",
+  route: "行き方の調べ",
+  nearby: "寄り道の調べ",
+  lodging: "宿の調べ",
+  evaluator: "旅程の評価",
+  "wish-reader": "自由記述の読み取り",
 };
 
 function options(overrides: { models?: AgentModels; resume?: string } = {}) {
@@ -85,8 +90,11 @@ describe("接客エージェントを開発環境から切り離す", () => {
     expect(agents?.scout?.tools).toEqual(["mcp__matsuri__search_nearby"]);
     expect(agents?.planner?.tools).toEqual([
       "mcp__matsuri__get_access",
+      "mcp__matsuri__research_route",
+      "mcp__matsuri__research_trip",
       "mcp__matsuri__get_weather",
       "mcp__matsuri__search_nearby",
+      "mcp__matsuri__search_lodging",
       "mcp__matsuri__update_itinerary",
     ]);
     expect(Object.keys(agents ?? {})).toEqual(["researcher", "scout", "planner"]);
@@ -124,13 +132,15 @@ describe("接客エージェントを開発環境から切り離す", () => {
     expect(opts.agents?.scout?.model).toBe("model-b");
   });
 
-  it("考える深さはコンシェルジュ medium・スタッフ low。スタッフの指示は共通の前置きから始める", () => {
+  it("考える深さはコンシェルジュ medium・調査係と周辺係 low・旅程係 medium。スタッフの指示は共通の前置きから始める", () => {
     const opts = options();
 
     expect(opts.thinking).toEqual({ type: "adaptive" });
     expect(opts.effort).toBe("medium");
+    expect(opts.agents?.researcher?.effort).toBe("low");
+    expect(opts.agents?.scout?.effort).toBe("low");
+    expect(opts.agents?.planner?.effort).toBe("medium");
     for (const staff of ["researcher", "scout", "planner"] as const) {
-      expect(opts.agents?.[staff]?.effort).toBe("low");
       expect(opts.agents?.[staff]?.prompt.startsWith("共通の前置き\n\n")).toBe(true);
     }
   });
@@ -191,6 +201,12 @@ describe("agentEnv", () => {
 
   it("API キーの前後の改行と空白を落とす", () => {
     expect(agentEnv({ ANTHROPIC_API_KEY: " test-key\r\n" }).ANTHROPIC_API_KEY).toBe("test-key");
+  });
+
+  it("空の認証の変数は渡さない（.env に空のまま書いても、ログイン済みの資格情報で動く）", () => {
+    const env = agentEnv({ ANTHROPIC_API_KEY: "", CLAUDE_CODE_OAUTH_TOKEN: " \n" });
+    expect(env).not.toHaveProperty("ANTHROPIC_API_KEY");
+    expect(env).not.toHaveProperty("CLAUDE_CODE_OAUTH_TOKEN");
   });
 });
 

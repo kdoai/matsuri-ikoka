@@ -1,0 +1,250 @@
+{
+  "id": "henza-sangwacha",
+  "name": {
+    "ja": "平安座のサングヮチャー",
+    "en": "Henza Sangwacha"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "沖縄県",
+      "name": "うるま市"
+    }
+  ],
+  "venue": {
+    "name": "平安座島（平安座自治会館裏の広場「ちょうの浜」ほか）",
+    "lat": 26.3498,
+    "lng": 127.9543
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "魚の形のみこしを担ぎ、沖合のナンザ岩まで海を歩いて渡る行列",
+    "銛に刺したマクブやタマンをノロに捧げる「トゥダヌイュー」",
+    "豊漁と航海安全を願う、平安座島でいちばん大きな3日間の行事"
+  ],
+  "styles": [
+    {
+      "style": "community",
+      "basis": "区民が島の東のナンザ岩へ歩いて渡り、豊漁を祈る",
+      "sources": [
+        {
+          "url": "https://www.city.uruma.lg.jp/documents/1065/08kouhou05p02.pdf",
+          "title": "広報うるま 2008年5月号（平安座 サングヮチャー）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "平安座島でいちばん大きな伝統行事で、旧暦3月3日から5日までの3日間続く",
+      "source": {
+        "url": "https://www.city.uruma.lg.jp/documents/1065/08kouhou05p02.pdf",
+        "title": "広報うるま 2008年5月号（平安座 サングヮチャー）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "中日には、銛で突いたマクブとタマンをノロに捧げる「トゥダヌイュー」が行われる",
+      "source": {
+        "url": "https://www.city.uruma.lg.jp/documents/1065/08kouhou05p02.pdf",
+        "title": "広報うるま 2008年5月号（平安座 サングヮチャー）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "区民は島の東のナンザ岩へ歩いて渡り、太平洋の魚が島に寄るよう祈る",
+      "source": {
+        "url": "https://www.city.uruma.lg.jp/documents/1065/08kouhou05p02.pdf",
+        "title": "広報うるま 2008年5月号（平安座 サングヮチャー）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2026年はタマンのほか、マクブ・タコ・カメのみこしも登場した",
+      "source": {
+        "url": "https://ryukyushimpo.jp/local/entry-5202146.html",
+        "title": "琉球新報 魚のみこしで海を行進 豊漁願うサングヮチャー（2026年4月21日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.uruma.lg.jp/documents/1065/08kouhou05p02.pdf",
+        "title": "広報うるま 2008年5月号（3日間のサングヮチャーに毎年各地から多くの見学者が訪れる）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ryukyushimpo.jp/local/entry-5202146.html",
+        "title": "琉球新報 魚のみこしで海を行進 豊漁願うサングヮチャー（2026年4月21日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-04-20",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "開催の記録。旧暦3月3日に当たる4月19日から3日間行われ、20日の中日に自治会館裏の「ちょうの浜」でトゥダヌイユーがあった。彩橋小中学校の児童・生徒がタマン・マクブ・タコ・カメの4つのみこしで集落を練り歩き、タマンのみこしを担いだ中学生らがナンザまで海を行進した。時刻の記載はない",
+      "sources": [
+        {
+          "url": "https://ryukyushimpo.jp/local/entry-5202146.html",
+          "title": "琉球新報 魚のみこしで海を行進 豊漁願うサングヮチャー（2026年4月19日から3日間、中日は20日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-04-09",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "初日（旧暦3月3日）。2027年の発表はまだない。市の広報と県の観光の案内は旧暦3月3日から5日の行事としている。国立天文台の2027年の朔（4月7日）から旧暦3月1日を4月7日とし、3日を4月9日（金）と見込んだ。初日の行事の内容と時刻は公式の案内で確かめていない",
+      "sources": [
+        {
+          "url": "https://www.city.uruma.lg.jp/documents/1010/11kouhou05p02.pdf",
+          "title": "広報うるま 2011年5月号（旧暦3月3日〜5日の3日間）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.okinawastory.jp/course/600014365",
+          "title": "おきなわ物語（沖縄観光コンベンションビューロー） うるま市のモデルコース（旧暦3月3日から5日の竜宮祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2027/rekiyou273.html",
+          "title": "国立天文台 令和9年（2027）暦要項 朔弦望",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-04-10",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "中日（旧暦3月4日）で、見せ場の日。2027年の発表はまだない。市の広報では、中日に集落でトゥダヌイュー（魚を銛で突いてノロに捧げる儀式）があり、そのあと区民が魚のみこしを担いで太鼓と三線とともにナンザ岩まで渡り、豊漁を祈る。2025年の報道では、みこしが海を渡ったのは午後",
+      "sources": [
+        {
+          "url": "https://www.city.uruma.lg.jp/documents/1065/08kouhou05p02.pdf",
+          "title": "広報うるま 2008年5月号（中日の旧暦3月4日にトゥダヌイューとナンザ岩での祈願）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2027/rekiyou273.html",
+          "title": "国立天文台 令和9年（2027）暦要項 朔弦望",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://ryukyushimpo.jp/region/entry-4123443.html",
+          "title": "琉球新報 うるま・平安座島のサングヮチャー（2025年4月5日。中日の午後にみこしが海を渡った）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-04-11",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "最終日（旧暦3月5日）。2027年の発表はまだない。最終日の行事の内容と時刻は公式の案内で確かめていない",
+      "sources": [
+        {
+          "url": "https://www.city.uruma.lg.jp/documents/1010/11kouhou05p02.pdf",
+          "title": "広報うるま 2011年5月号（旧暦3月3日〜5日の3日間）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2027/rekiyou273.html",
+          "title": "国立天文台 令和9年（2027）暦要項 朔弦望",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.okinawastory.jp/course/600014365",
+        "title": "おきなわ物語（沖縄観光コンベンションビューロー） うるま市のモデルコース（平安座島は与勝半島と海中道路で結ばれる）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.city.uruma.lg.jp/documents/1065/08kouhou05p02.pdf",
+      "title": "広報うるま 2008年5月号（平安座 サングヮチャー）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.uruma.lg.jp/documents/1010/11kouhou05p02.pdf",
+      "title": "広報うるま 2011年5月号（平安座 サングヮチャー）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.okinawastory.jp/course/600014365",
+      "title": "おきなわ物語（沖縄観光コンベンションビューロー） うるま市のモデルコース",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、日ごとの行事の時刻（市の公式の案内は2008年・2011年の広報だけで、主催の自治会の発表は見つからない）。日付は旧暦から換算したもの",
+    "初日と最終日の行事の内容（公式の案内で確かめられたのは中日の行事だけ）",
+    "見学者が見てよい場所と、ナンザ岩へ海を渡る行列に見学者が近づいてよいか・ついて歩いてよいか",
+    "撮影の決まり、服装・持ち物、危険度（海の中を歩く行事だが、主催者の注意が見つからない）",
+    "雨天・荒天、潮の具合による行事の扱い",
+    "アクセス（鉄道はない。那覇からの路線バスの経路と所要時間を公式の案内で確かめていない）と駐車場",
+    "屋台や食べ物の販売の有無",
+    "ナンザ岩までの距離（報道によって約500メートル・約700メートルと違う）",
+    "見学者数",
+    "周辺の観光と食の場所（海の駅あやはし館などは公式の営業時間を確かめられず入れなかった）",
+    "会場の緯度・経度は国土地理院の住所検索で「うるま市与那城平安座」を取った大字の代表点で、自治会館やちょうの浜の正確な位置ではない"
+  ]
+}

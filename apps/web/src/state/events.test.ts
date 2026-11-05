@@ -12,7 +12,13 @@ import { clientError } from "./errors";
 import { applyEvent } from "./events";
 import { initialData } from "./initial";
 import { itemChange, shioriReady } from "./selectors";
-import { beginTurn, endTurn, resetForNewSession, settleStaff } from "./transitions";
+import {
+  beginTurn,
+  endTurn,
+  resetForNewSession,
+  setCandidatesOpen,
+  settleStaff,
+} from "./transitions";
 import type { AppData } from "./types";
 
 const sample: SampleConversation = SampleConversationSchema.parse(sampleJson);
@@ -67,10 +73,11 @@ describe("記録した相談を通す", () => {
       food: "local",
       move: "train",
     });
-    expect(state.candidates.map((c) => c.festivalId)).toEqual([
-      "suzunari-toro",
-      "kazami-bon-odori",
-    ]);
+    expect(state.candidates.map((c) => c.festivalId)).toEqual(["suzunari-toro"]);
+    // 希望日の前の日に開く祭りは、候補ではなく「この祭りならやっています」に、ずれを添えて入る
+    expect(state.search?.nearMisses.map((n) => [n.candidate.festivalId, n.miss.condition])).toEqual(
+      [["kazami-bon-odori", "date"]],
+    );
     expect(state.ui.candidatesOpen).toBe(true);
   });
 
@@ -79,7 +86,9 @@ describe("記録した相談を通す", () => {
     const replies = state.messages.filter((entry) => entry.kind === "concierge");
     expect(replies).toHaveLength(1);
     expect(replies[0]).toMatchObject({ streaming: false });
-    expect(replies[0]?.kind === "concierge" && replies[0].text).toContain("どちらにしますか。");
+    expect(replies[0]?.kind === "concierge" && replies[0].text).toContain(
+      "鈴鳴灯籠まつりで旅程を組みましょうか。",
+    );
   });
 
   it("作業の記録は、ツールの開始と終了で1行になる", () => {
@@ -92,8 +101,8 @@ describe("記録した相談を通す", () => {
         staff: "researcher",
         tool: "search_festivals",
         status: "ok",
-        bubble: "8月16日に、みなと中央駅から日帰りで行ける祭りを探しています",
-        result: "2件見つかりました",
+        bubble: "8月16日に、みなと中央駅から片道2時間以内の日帰りで行ける祭りを探しています",
+        result: "1件見つかりました。いちばん上は「鈴鳴灯籠まつり」",
       },
     ]);
   });
@@ -136,6 +145,16 @@ describe("記録した相談を通す", () => {
     expect(state.session.stage).toBe("shiori");
     expect(shioriReady(state)).toBe(true);
     expect(state.ui.celebrating).toBe(true);
+  });
+
+  it("要事前確認の旅程はしおりを開ける（変更・情報が見つからないときは開けない）", () => {
+    const state = playTurns(4);
+    const needsCheck = { ...state, verify: { ...state.verify, result: "needs_check" as const } };
+    expect(shioriReady(needsCheck)).toBe(true);
+    const notFound = { ...state, verify: { ...state.verify, result: "not_found" as const } };
+    expect(shioriReady(notFound)).toBe(false);
+    const changed = { ...state, verify: { ...state.verify, result: "changed" as const } };
+    expect(shioriReady(changed)).toBe(false);
   });
 });
 
@@ -199,6 +218,100 @@ describe("スタッフの動き", () => {
     state = settleStaff(state);
     expect(state.staff.scout).toMatchObject({ phase: "idle", motion: "idle", bubble: null });
     expect(state.staff.planner.phase).toBe("idle");
+  });
+
+  it("吹き出しは短い文、店内のようすの窓には、くわしい文を持つ", () => {
+    let state = applyEvent(fresh(), {
+      type: "tool.start",
+      data: { toolCallId: "c-1", tool: "search_nearby", staff: "scout", bubble: "探しています" },
+    });
+    expect(state.staff.scout.detail).toBeNull();
+    state = applyEvent(state, {
+      type: "tool.end",
+      data: {
+        toolCallId: "c-1",
+        tool: "search_nearby",
+        staff: "scout",
+        ok: true,
+        bubble: "食事どころ2軒を見つけました",
+        detail: "会場から歩いて10分以内に、食事どころを2軒見つけました",
+        count: 2,
+      },
+    });
+    expect(state.staff.scout).toMatchObject({
+      bubble: "食事どころ2軒を見つけました",
+      detail: "会場から歩いて10分以内に、食事どころを2軒見つけました",
+    });
+    // くわしい文のない次の吹き出しでは、前のくわしい文を残さない
+    state = applyEvent(state, {
+      type: "staff.start",
+      data: { staff: "scout", task: "find_nearby", bubble: "寄り道を探してきます" },
+    });
+    expect(state.staff.scout.detail).toBeNull();
+  });
+
+  it("経路と宿の調べは、旅程係が調べる動きになる", () => {
+    let state = applyEvent(fresh(), {
+      type: "tool.start",
+      data: {
+        toolCallId: "r-1",
+        tool: "research_route",
+        staff: "planner",
+        bubble: "みなと中央駅からの乗り換えを調べています",
+      },
+    });
+    expect(state.staff.planner).toMatchObject({ motion: "look_up", tool: "research_route" });
+    state = applyEvent(state, {
+      type: "tool.start",
+      data: {
+        toolCallId: "l-1",
+        tool: "search_lodging",
+        staff: "planner",
+        bubble: "宿を探しています",
+      },
+    });
+    expect(state.staff.planner).toMatchObject({ motion: "point", tool: "search_lodging" });
+  });
+
+  it("調べ直しの頼みと受けは、吹き出しと頼みの記録に残る", () => {
+    let state = applyEvent(fresh(), {
+      type: "staff.redo",
+      data: {
+        kind: "request",
+        from: "planner",
+        to: "scout",
+        subject: "lunch",
+        bubble: "昼ごはんの店がまだです。もう一度探してもらえますか",
+        detail: "旅程に昼ごはんの店が入っていません。周辺係に調べ直しを頼みます",
+      },
+    });
+    expect(state.staff.planner).toMatchObject({
+      motion: "talk",
+      bubble: "昼ごはんの店がまだです。もう一度探してもらえますか",
+    });
+    expect(state.relay.focus).toBe("scout");
+    state = applyEvent(state, {
+      type: "staff.redo",
+      data: {
+        kind: "accept",
+        from: "scout",
+        to: "planner",
+        subject: "lunch",
+        bubble: "昼ごはんの店ですね。もう一度探してきます",
+      },
+    });
+    expect(state.staff.scout).toMatchObject({
+      motion: "nod",
+      bubble: "昼ごはんの店ですね。もう一度探してきます",
+      detail: null,
+    });
+    expect(
+      state.relay.log.map((entry) => [entry.kind, entry.from, entry.to, entry.subject]),
+    ).toEqual([
+      ["redo_request", "planner", "scout", "lunch"],
+      ["redo_accept", "scout", "planner", "lunch"],
+    ]);
+    expect(state.relay.log[0]?.task).toBe("find_nearby");
   });
 
   it("返答を話している間、コンシェルジュは話す動きになる", () => {
@@ -379,32 +492,75 @@ describe("候補", () => {
 });
 
 describe("候補カードの開け閉め", () => {
-  it("返答の途中で利用者が候補を閉じたら、done で開き直さない", () => {
-    let state = beginTurn(fresh(), {
+  const found: SseEvent = {
+    type: "tool.end",
+    data: {
+      toolCallId: "a",
+      tool: "search_festivals",
+      staff: "researcher",
+      ok: true,
+      bubble: "1件見つかりました",
+      count: 1,
+      candidates: [candidate],
+    },
+  };
+  const done: SseEvent = {
+    type: "done",
+    data: { stage: "candidates", conditions: {}, preferences: fresh().preferences },
+  };
+  function asked(): AppData {
+    return beginTurn(fresh(), {
       kind: "chat",
       message: "8月16日に行ける祭り",
       preferences: fresh().preferences,
     });
-    state = applyEvent(state, {
-      type: "tool.end",
-      data: {
-        toolCallId: "a",
-        tool: "search_festivals",
-        staff: "researcher",
-        ok: true,
-        bubble: "1件見つかりました",
-        count: 1,
-        candidates: [candidate],
-      },
-    });
+  }
+
+  it("候補が届いても、返答が続いている間は開かない", () => {
+    let state = applyEvent(asked(), found);
+    expect(state.candidates).toHaveLength(1);
+    expect(state.ui.candidatesOpen).toBe(false);
+    state = applyEvent(state, done);
+    // done のあとも、接続が閉じるまでは「この祭りにする」を押せないので開かない
+    expect(state.ui.candidatesOpen).toBe(false);
+  });
+
+  it("返答が終わって選べるようになったら開く", () => {
+    const state = endTurn(apply(asked(), [found, done]), null);
+    expect(state.session.streaming).toBe(false);
     expect(state.ui.candidatesOpen).toBe(true);
-    state = { ...state, ui: { ...state.ui, candidatesOpen: false } };
-    state = applyEvent(state, {
-      type: "done",
-      data: { stage: "candidates", conditions: {}, preferences: state.preferences },
-    });
+  });
+
+  it("done が届かないまま閉じたら、候補は残すが開かない", () => {
+    const state = endTurn(applyEvent(asked(), found), null);
+    expect(state.candidates).toHaveLength(1);
+    expect(state.ui.candidatesOpen).toBe(false);
+  });
+
+  it("返答の途中で利用者が候補を開いて閉じたら、終わっても開き直さない", () => {
+    let state = applyEvent(asked(), found);
+    state = setCandidatesOpen(state, true);
+    expect(state.ui.candidatesOpen).toBe(true);
+    state = setCandidatesOpen(state, false);
+    state = endTurn(applyEvent(state, done), null);
     expect(state.ui.candidatesOpen).toBe(false);
     expect(state.candidates).toHaveLength(1);
+  });
+
+  it("候補がないときは、手で開こうとしても開かない", () => {
+    expect(setCandidatesOpen(fresh(), true).ui.candidatesOpen).toBe(false);
+  });
+
+  it("候補を出さなかった返答では、前の候補を開き直さない", () => {
+    let state = endTurn(apply(asked(), [found, done]), null);
+    state = setCandidatesOpen(state, false);
+    state = beginTurn(state, {
+      kind: "chat",
+      message: "もう少し",
+      preferences: fresh().preferences,
+    });
+    state = endTurn(applyEvent(state, done), null);
+    expect(state.ui.candidatesOpen).toBe(false);
   });
 });
 
@@ -529,21 +685,6 @@ describe("時間切れのあと（終わっていないツールの tool.end が
         },
       },
     ]);
-    state = {
-      ...state,
-      quiz: {
-        offeredTurn: state.session.turn,
-        question: {
-          kind: "category",
-          festivalId: "suzunari-toro",
-          festivalName: "鈴鳴灯籠まつり",
-          choices: ["lantern", "dance"],
-          correct: 0,
-          source: fictionalSource("about"),
-        },
-        answer: null,
-      },
-    };
     expect(state.verify.status).toBe("checking");
 
     state = apply(state, [
@@ -560,7 +701,6 @@ describe("時間切れのあと（終わっていないツールの tool.end が
       expect.objectContaining({ id: "w-v", status: "failed" }),
     ]);
     expect(state.verify.status).toBe("idle");
-    expect(state.quiz.question).toBeNull();
     // done は届いているので「接続が切れました」は出さない
     expect(state.messages.filter((entry) => entry.kind === "error")).toHaveLength(1);
   });

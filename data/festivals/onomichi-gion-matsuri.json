@@ -1,0 +1,369 @@
+{
+  "id": "onomichi-gion-matsuri",
+  "name": {
+    "ja": "尾道祇園祭",
+    "en": "Onomichi Gion Festival"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "広島県",
+      "name": "尾道市"
+    }
+  ],
+  "venue": {
+    "name": "尾道渡船桟橋前（渡し場通）",
+    "lat": 34.4081,
+    "lng": 133.2021
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["walkerplus"],
+  "highlights": [
+    "3体の神輿が1本の幟の周りを駆け回り、速さを競う「三体廻し」",
+    "渡船の桟橋前、海沿いの通りが三体廻しの舞台になる",
+    "三体廻しのあと、神輿を海で清めて祭りを締めくくる",
+    "前の晩には八坂神社で宵宮祭が開かれる"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1291年の疫病除けの祈りが始まりと伝わり、1978年に復活した",
+      "sources": [
+        {
+          "url": "https://tabi-mag.jp/onomichi-gion/",
+          "title": "ニッポン旅マガジン 祇園祭（尾道）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "3つの地区の氏子が神輿を担ぐ",
+      "sources": [
+        {
+          "url": "https://tabi-mag.jp/onomichi-gion/",
+          "title": "ニッポン旅マガジン 祇園祭（尾道）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "久保八坂神社の例祭で、尾道の三大夏祭りの1つに数えられる",
+      "source": {
+        "url": "https://www.ononavi.jp/sightseeing/event/detail.html?detail_id=204",
+        "title": "尾道観光協会 おのなび （6月下旬）祇園祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1291年、疫病がはやった折に鞆の祇園宮から分霊を迎え、神輿を作って祈ったのが始まりと伝わる",
+      "source": {
+        "url": "https://tabi-mag.jp/onomichi-gion/",
+        "title": "ニッポン旅マガジン 祇園祭（尾道）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "神輿を担ぐのは「一つ巴」「二つ巴」「三つ巴」と呼ばれる3つの地区の氏子。長く途絶え、1978年に復活した",
+      "source": {
+        "url": "https://tabi-mag.jp/onomichi-gion/",
+        "title": "ニッポン旅マガジン 祇園祭（尾道）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.ononavi.jp/sightseeing/event/detail.html?detail_id=204",
+        "title": "尾道観光協会 おのなび （6月下旬）祇園祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-06-26",
+      "start": "18:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。八坂神社で宵宮祭（18:00から）",
+      "sources": [
+        {
+          "url": "https://www.ononavi.jp/sightseeing/calendar/detail.html?detail_id=4407&ym=202606",
+          "title": "尾道観光協会 おのなび イベントカレンダー 祇園祭（2026年6月26日・27日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-06-27",
+      "start": "19:00",
+      "end": "20:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。18:00 八坂神社、19:00〜20:00 渡し場（尾道渡船桟橋前）で三体廻し、21:30 八坂神社",
+      "sources": [
+        {
+          "url": "https://www.ononavi.jp/sightseeing/calendar/detail.html?detail_id=4407&ym=202606",
+          "title": "尾道観光協会 おのなび イベントカレンダー 祇園祭（2026年6月26日・27日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar0834e597436/",
+          "title": "ウォーカープラス 八坂神社 祇園祭（2026年6月26日・27日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-06-25",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（発表はまだない）。観光協会の案内は「6月下旬」で、2024〜2026年はいずれも6月最終土曜日とその前の金曜日に開かれた。例年はこの日の夜に八坂神社で宵宮祭",
+      "sources": [
+        {
+          "url": "https://www.ononavi.jp/sightseeing/event/detail.html?detail_id=204",
+          "title": "尾道観光協会 おのなび （6月下旬）祇園祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.ononavi.jp/sightseeing/calendar/?ym=202506",
+          "title": "尾道観光協会 おのなび イベントカレンダー 2025年6月（祇園祭 6月27日・28日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.ononavi.jp/sightseeing/calendar/?ym=202406",
+          "title": "尾道観光協会 おのなび イベントカレンダー 2024年6月（祇園祭 6月28日・29日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-06-26",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "見込み（発表はまだない）。2024〜2026年はいずれも6月最終土曜日に三体廻しがあった。例年は夕方に八坂神社を出て、19:00ごろから1時間ほど渡し場で三体廻し、夜に八坂神社へ戻る",
+      "sources": [
+        {
+          "url": "https://www.ononavi.jp/sightseeing/event/detail.html?detail_id=204",
+          "title": "尾道観光協会 おのなび （6月下旬）祇園祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.ononavi.jp/sightseeing/calendar/?ym=202506",
+          "title": "尾道観光協会 おのなび イベントカレンダー 2025年6月（祇園祭 6月27日・28日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://tabi-mag.jp/onomichi-gion/",
+          "title": "ニッポン旅マガジン 祇園祭（尾道）（毎年6月最終土曜が三体廻し）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 尾道駅",
+        "walkMinutes": [10, 15],
+        "note": "三体廻しの会場（尾道渡船桟橋前）まで徒歩10分。久保八坂神社までは徒歩20分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "岡山駅",
+        "minutes": [84, 94],
+        "route": "JR山陽本線の普通、乗り換えなし（2026年11月4日の時刻表で、岡山9:03〜15:56発の11本は84〜94分）。新幹線で福山駅へ出て乗り換える経路もある"
+      },
+      {
+        "hub": "福山駅",
+        "minutes": [18, 21],
+        "route": "JR山陽本線の普通、乗り換えなし（2026年11月4日の時刻表で、福山9:06〜16:30発の16本は18〜21分）"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.ononavi.jp/sightseeing/event/detail.html?detail_id=204",
+        "title": "尾道観光協会 おのなび （6月下旬）祇園祭（アクセス・駐車場は近隣の有料駐車場）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://timetable.jr-odekake.net/line-timetable/2239",
+        "title": "JRおでかけネット 区間時刻表 山陽本線(岡山～広島～新山口) 下り（2026年11月4日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "尾道ラーメン",
+        "note": "会場の近く、海沿いの壱番館などで食べられる（祭りの日だけのものではない）",
+        "sources": [
+          {
+            "url": "https://www.ononavi.jp/brand/?category[]=12",
+            "title": "尾道観光協会 おのなび ラーメン・中華",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "onomichi-ramen-ichibankan",
+      "name": "尾道ラーメン 壱番館",
+      "kind": "food",
+      "summary": "海の見える尾道ラーメンの店。角煮ラーメンが人気。海辺のテラス、テーブル席とカウンター席がある。スープがなくなると早く閉まる。金曜が祝日なら営業",
+      "location": {
+        "lat": 34.4083,
+        "lng": 133.2027
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "11:00",
+        "close": "18:00"
+      },
+      "closedDays": ["fri"],
+      "price": "尾道ラーメン780円",
+      "tags": ["seating", "local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.ononavi.jp/brand/detail.html?detail_id=64",
+          "title": "尾道観光協会 おのなび 尾道ラーメン 壱番館",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "senkojiyama-ropeway",
+      "name": "千光寺山ロープウェイ",
+      "kind": "sightseeing",
+      "summary": "市街と千光寺公園の山頂駅を約3分で結ぶロープウェイ。15分おきに運行し、荒天のときは運休することがある",
+      "location": {
+        "lat": 34.4125,
+        "lng": 133.1962
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:15"
+      },
+      "closedDays": null,
+      "price": "大人 片道500円・往復700円",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.ononavi.jp/spots/detail.html?detail_id=410",
+          "title": "尾道観光協会 おのなび 千光寺山ロープウェイ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "onomichi-city-museum-of-art",
+      "name": "尾道市立美術館",
+      "kind": "sightseeing",
+      "summary": "千光寺公園の中にある市立の美術館。展示替えの期間と12月29日〜1月3日は休館。月曜が祝日なら開館",
+      "location": {
+        "lat": 34.4101,
+        "lng": 133.1957
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["mon"],
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.onomichi-museum.jp/",
+          "title": "尾道市立美術館 公式サイト（開館時間・休館日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.ononavi.jp/sightseeing/event/detail.html?detail_id=204",
+      "title": "尾道観光協会 おのなび （6月下旬）祇園祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.ononavi.jp/sightseeing/calendar/detail.html?detail_id=4407&ym=202606",
+      "title": "尾道観光協会 おのなび イベントカレンダー 祇園祭（2026年）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://tabi-mag.jp/onomichi-gion/",
+      "title": "ニッポン旅マガジン 祇園祭（尾道）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の日程と時刻（まだ発表がない。6月最終土曜日という決まりは公式には書かれていない）",
+    "雨天のときの扱い",
+    "見物の場所、立ち入りの決まり、神輿の近くでの注意（公式の案内が見つからない）",
+    "危険度（神輿が駆け回るが、主催者の注意が見つからない）",
+    "服装・持ち物・撮影の決まり",
+    "当日の交通規制",
+    "屋台の有無",
+    "見物の人数",
+    "広島駅から尾道駅までの所要時間（在来線は乗り換えなしの列車がなく、新幹線は新尾道駅に着くため、通しの公式の数字を確かめていない）",
+    "由来と復活の年の公式の出典（観光サイト1つでのみ確認）",
+    "周辺の場所から会場までの徒歩の時間",
+    "尾道市立美術館の、2027年6月下旬の展示替えの休館と観覧料",
+    "千光寺山ロープウェイの定休日の決まり（記載がない）"
+  ]
+}

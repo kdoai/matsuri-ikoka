@@ -1,0 +1,288 @@
+{
+  "id": "gotanda-hashira-matsuri",
+  "name": {
+    "ja": "五反田の柱祭",
+    "en": "Gotanda Hashira Fire Festival"
+  },
+  "category": "fire",
+  "municipalities": [
+    {
+      "prefecture": "愛媛県",
+      "name": "八幡浜市"
+    }
+  ],
+  "venue": {
+    "name": "王子の森公園",
+    "lat": 33.4492,
+    "lng": 132.434
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "高さ20m余りの柱の先のかごへ、火のついた松明を一斉に投げ上げる",
+    "各地区から集まった若者が一斉に投げ上げ、かごが燃え上がるまで続く",
+    "盆の夜空に火の玉が尾を引いて舞う、県指定無形民俗文化財の火祭り"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "戦国時代に始まったと伝わり、県の文化財として案内されている",
+      "sources": [
+        {
+          "url": "https://www.pref.ehime.jp/ehimenotakara/340.html",
+          "title": "えひめの文化財 五反田の柱祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "各地区から集まった若者が松明を投げ上げる",
+      "sources": [
+        {
+          "url": "https://www.pref.ehime.jp/ehimenotakara/340.html",
+          "title": "えひめの文化財 五反田の柱祭（各地区から集まった若者が松明を投げ上げる）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "戦国時代、夜に松明を持って城へ近づいた修験者が誤って射られ、その霊を鎮めるために始まったと伝わる",
+      "source": {
+        "url": "https://www.pref.ehime.jp/ehimenotakara/340.html",
+        "title": "えひめの文化財 五反田の柱祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "松明は麻木を束ねて約1mの細い綱を付けたもの。これに火をつけ、柱の上のかごへ投げ上げる",
+      "source": {
+        "url": "https://www.pref.ehime.jp/ehimenotakara/340.html",
+        "title": "えひめの文化財 五反田の柱祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "もとは五反田の河原で行っていたが、防災のため1975年から王子の森公園に移った",
+      "source": {
+        "url": "https://www.pref.ehime.jp/ehimenotakara/340.html",
+        "title": "えひめの文化財 五反田の柱祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.pref.ehime.jp/ehimenotakara/340.html",
+        "title": "えひめの文化財 五反田の柱祭（各地区から集まった若者が松明を投げ上げる）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-08-14",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "県と市の案内で毎年8月14日の夜（2027年の発表はまだない）。神事のあと、柱の上のかごに松明を投げ上げ、かごが燃え上がると終わる",
+      "sources": [
+        {
+          "url": "https://www.pref.ehime.jp/ehimenotakara/340.html",
+          "title": "えひめの文化財 五反田の柱祭（毎年8月14日の夜）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.yawatahama.ehime.jp/doc/2014091600047/",
+          "title": "八幡浜市 祭り一覧（五反田柱祭り 8月14日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.iyokannet.jp/event/1241",
+          "title": "いよ観ネット 五反田柱祭り（8月14日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 八幡浜駅",
+        "walkMinutes": [15, 20],
+        "note": "るるぶの案内で徒歩15分。宇和島自動車のバスなら「王子の森公園」で降りてすぐ（県の観光サイトで徒歩1分）"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "松山駅",
+        "minutes": [45, 55],
+        "route": "JR予讃線の特急、乗り換えなし"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.iyokannet.jp/event/1241",
+        "title": "いよ観ネット 五反田柱祭り（神山小学校に約100台の無料駐車場、バス停「王子の森公園」から徒歩1分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002972",
+        "title": "るるぶ&more. 五反田柱祭り（JR八幡浜駅から徒歩15分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      },
+      {
+        "url": "https://www.city.yawatahama.ehime.jp/intro/access/",
+        "title": "八幡浜市 交通アクセス（松山から特急で八幡浜まで45分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "yawatahama-minatto",
+      "name": "道の駅 みなとオアシス 八幡浜みなっと",
+      "kind": "sightseeing",
+      "summary": "港に面した道の駅。観光案内のスタッフがいるみなと交流館と、海沿いの緑地公園・ボードウォークがあり、産直市や食堂も並ぶ。交流館は12月29日〜1月3日が休み",
+      "location": {
+        "lat": 33.4581,
+        "lng": 132.4183
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "21:30"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.iyokannet.jp/spot/4517",
+          "title": "いよ観ネット 道の駅 みなとオアシス 八幡浜みなっと「みなと交流館」",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "yawatahama-doya-shokudo",
+      "name": "どーや食堂",
+      "kind": "food",
+      "summary": "道の駅 八幡浜みなっとの中にある食堂。休みは不定休",
+      "location": {
+        "lat": 33.4591,
+        "lng": 132.4188
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "08:00",
+        "close": "16:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.iyokannet.jp/spot/4517",
+          "title": "いよ観ネット 八幡浜みなっと（どーや食堂 8:00〜16:00、不定休）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "yawatahama-minatoyu",
+      "name": "八幡浜黒湯温泉 みなと湯",
+      "kind": "rest",
+      "summary": "中四国で初めて黒湯（モール泉）が湧いた温泉施設。檜風呂や岩風呂、階段状のサウナがある。お盆は繁忙期の料金になる。年中無休",
+      "location": {
+        "lat": 33.4631,
+        "lng": 132.4228
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "23:00",
+        "lastEntry": "22:30"
+      },
+      "closedDays": [],
+      "price": "土日祝・繁忙期（お盆など）大人900円、子ども300円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.iyokannet.jp/spot/4560",
+          "title": "いよ観ネット 八幡浜黒湯温泉みなと湯",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.pref.ehime.jp/ehimenotakara/340.html",
+      "title": "えひめの文化財 五反田の柱祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.iyokannet.jp/event/1241",
+      "title": "いよ観ネット 五反田柱祭り",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.yawatahama.ehime.jp/doc/2014091600047/",
+      "title": "八幡浜市 祭り一覧",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、神事・松明の投げ上げの時刻（2026年の時刻も公式で確かめられていない）",
+    "見学できる場所と、火の粉の注意・立ち入りの決まり（公式の案内が見つからない）",
+    "危険度（主催者による、けがのおそれの注意が見つからない）",
+    "服装・持ち物・撮影の決まり",
+    "雨のときの扱い",
+    "終わる時刻（かごが燃え上がるまで続く）",
+    "交通規制の有無",
+    "屋台の有無",
+    "見学者数の公表値と、投げ手の人数",
+    "主催の団体（県の文化財の案内では、所有者は柱祭保存会。いよ観ネットの問い合わせ先は神山地区公民館）",
+    "祭りの日の夜に開いている近くの食事の場所（どーや食堂は16:00まで）"
+  ]
+}

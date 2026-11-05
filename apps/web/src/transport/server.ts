@@ -1,4 +1,11 @@
-import { FestivalSchema, type SessionRequest, SessionResponseSchema } from "@matsuri-ikoka/schema";
+import {
+  type AgentMode,
+  AnchorPlanSchema,
+  FestivalSchema,
+  FestivalSearchResponseSchema,
+  type SessionRequest,
+  SessionResponseSchema,
+} from "@matsuri-ikoka/schema";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import type { ChatTransport, FestivalSource, OnSseMessage } from "./types";
 import { errorFromResponse, TransportError } from "./types";
@@ -7,6 +14,9 @@ import { errorFromResponse, TransportError } from "./types";
 // 公開している URL では、/api のすべての呼び出しに合言葉のヘッダーを付ける。合言葉は URL に入れない。
 
 const EVENT_STREAM = "text/event-stream";
+
+/** 接続が切れたあとに、サーバーが応答するかを確かめるときの待ち時間 */
+export const SERVER_CHECK_TIMEOUT_MS = 3000;
 
 /** 合言葉を送るヘッダー（接客サーバーの routes/guard.ts と同じ名前） */
 export const PASSCODE_HEADER = "x-access-passcode";
@@ -90,6 +100,7 @@ export function createServerTransport(options: ServerTransportOptions = {}): Cha
   };
 
   const sessionRequest: SessionRequest = options.sample ? { sample: options.sample } : {};
+  let mode: AgentMode | null = null;
 
   return {
     async startSession(signal) {
@@ -106,13 +117,63 @@ export function createServerTransport(options: ServerTransportOptions = {}): Cha
       if (!parsed.success) {
         throw new TransportError("invalid_event", { status: response.status });
       }
+      mode = parsed.data.mode ?? null;
       return parsed.data.sessionId;
+    },
+    agentMode() {
+      return mode;
     },
     chat(request, onMessage, signal) {
       return postStream("/api/chat", "POST", request, onMessage, signal);
     },
     updatePreferences(request, onMessage, signal) {
       return postStream("/api/preferences", "PATCH", request, onMessage, signal);
+    },
+    async searchFestivals(request, signal) {
+      const response = await fetchImpl("/api/festivals/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...authHeaders(passcode) },
+        body: JSON.stringify(request),
+        ...(signal === undefined ? {} : { signal }),
+      });
+      if (!response.ok) {
+        throw await errorFromResponse(response, true);
+      }
+      const parsed = FestivalSearchResponseSchema.safeParse(
+        await response.json().catch(() => undefined),
+      );
+      if (!parsed.success) {
+        throw new TransportError("invalid_event", { status: response.status });
+      }
+      return parsed.data;
+    },
+    async previewFestivalTrip(request, signal) {
+      const response = await fetchImpl("/api/festival-trips/preview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...authHeaders(passcode) },
+        body: JSON.stringify(request),
+        ...(signal === undefined ? {} : { signal }),
+      });
+      if (!response.ok) {
+        // 404 は相談でなく祭りが見つからないとき。本文の一文をそのまま伝える
+        throw await errorFromResponse(response, false);
+      }
+      const parsed = AnchorPlanSchema.safeParse(await response.json().catch(() => undefined));
+      if (!parsed.success) {
+        throw new TransportError("invalid_event", { status: response.status });
+      }
+      return parsed.data;
+    },
+    async checkServer() {
+      // 死活監視の口は合言葉が要らない。応答があれば、サーバーは動いている
+      try {
+        const response = await fetchImpl("/healthz", {
+          signal: AbortSignal.timeout(SERVER_CHECK_TIMEOUT_MS),
+        });
+        return response.ok;
+      } catch {
+        return false;
+      }
     },
     setPasscode(value) {
       passcode.set(value);

@@ -66,6 +66,11 @@ OMIKUJI = (X1 - 0.95, NOOK_Y - 0.28)     # in the nook, between the plant and th
 SOUVENIR = (X1 - 0.2, 0.05)                 # shelf against the right wall, under the quest board
 GACHA = (X1 - 0.3, 1.0)
 
+# The sleeping cat lies on a cushion on the street, just outside the noren, left of the door and in front
+# of the hydrangea (the storefront's welcome card covers the middle of the street). (x, y, yaw)
+CAT = (-3.72, Y0 - 1.15, -0.3)
+CAT_CUSHION = 0.74                          # square cushion, wider than the curled cat
+
 # Where the itinerary staff drops documents on the counter.
 COUNTER_DROP = (1.25, -0.95, COUNTER_S[2])
 

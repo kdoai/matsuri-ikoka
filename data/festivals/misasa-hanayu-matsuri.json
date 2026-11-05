@@ -1,0 +1,304 @@
+{
+  "id": "misasa-hanayu-matsuri",
+  "name": {
+    "ja": "花湯まつり",
+    "en": "Misasa Onsen Hanayu Festival"
+  },
+  "category": "other",
+  "municipalities": [
+    {
+      "prefecture": "鳥取県",
+      "name": "三朝町"
+    }
+  ],
+  "venue": {
+    "name": "三朝温泉本通り（三朝温泉街）",
+    "lat": 35.4103,
+    "lng": 133.8931
+  },
+  "scaleTier": "M",
+  "popularity": "major",
+  "listedIn": ["walkerplus", "jalan", "rurubu", "jnto"],
+  "highlights": [
+    "藤カズラだけで編んだ長さ80m・重さ約2トンの大綱を、東西に分かれて引き合う大綱引き「陣所」",
+    "温泉街を東西に分ける縁門で雄綱と雌綱を組み、門の上の大提灯が消えると綱引きが始まる",
+    "国の重要無形民俗文化財に指定された行事"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "三朝の陣所（大綱引き）が国の重要無形民俗文化財とされている",
+      "sources": [
+        {
+          "url": "https://misasaonsen.jp/sightseeings/sightseeing-2881/",
+          "title": "三朝温泉観光協会 花湯まつり・大綱引き「陣所」",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "東が勝てば豊作、西が勝てば商売繁盛になると伝わる",
+      "source": {
+        "url": "https://misasaonsen.jp/sightseeings/sightseeing-2881/",
+        "title": "三朝温泉観光協会 花湯まつり・大綱引き「陣所」",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "雄綱と雌綱の先の壷口を何度も絡ませ、木の栓（かせ木）を差して2本をつなぐ",
+      "source": {
+        "url": "https://misasaonsen.jp/sightseeings/sightseeing-2881/",
+        "title": "三朝温泉観光協会 花湯まつり・大綱引き「陣所」",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "綱引きが終わると、綱を縁起物として持ち帰ることができる",
+      "source": {
+        "url": "https://www.tottori-guide.jp/files/42032.pdf",
+        "title": "鳥取県観光情報 春の観光情報（2019年。伝統行事 三朝温泉「陣所」）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "綱は町の川で柔らかくした藤の根を、地元の人が編んで作る",
+      "source": {
+        "url": "https://www.japan.travel/en/japans-local-treasures/misasa-onsen-hanayu-festival-2020/",
+        "title": "日本政府観光局 Misasa Onsen Hanayu Festival",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "2本の綱が結ばれたあと、だれでも綱引きに加われる（受付や費用の案内はない）",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.japan.travel/en/japans-local-treasures/misasa-onsen-hanayu-festival-2020/",
+        "title": "日本政府観光局 Misasa Onsen Hanayu Festival（綱が結ばれたあとはだれでも参加できる）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.tottori-guide.jp/files/42032.pdf",
+        "title": "鳥取県観光情報 春の観光情報（2019年。観光客も加わって綱を引く）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-05-04",
+      "start": "20:30",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。前日5月3日8:00〜18:00ごろに綱からみ。4日は9:30 三朝神社で神事、11:00 薬師堂でお薬師供養祭、11:30 稚児行列、15:00 子どもみこし、20:10から約20分 恋谷橋上流で花火、20:30から温泉本通りで大綱引き「陣所」",
+      "sources": [
+        {
+          "url": "https://misasaonsen.jp/sightseeings/sightseeing-2881/",
+          "title": "三朝温泉観光協会 花湯まつり・大綱引き「陣所」（2026年の日程）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://misasaonsen.jp/week/",
+          "title": "三朝温泉観光協会 日本遺産ウィーク・花湯まつり 2026",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-05-04",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "観光協会の案内では陣所は毎年5月4日（2027年の発表はまだない）。例年、前日に綱からみがあり、4日の夜に花火と大綱引きがある。会場へは JR 倉吉駅から路線バスで約20分（観光協会の案内）",
+      "sources": [
+        {
+          "url": "https://misasaonsen.jp/sightseeings/sightseeing-2881/",
+          "title": "三朝温泉観光協会 花湯まつり・大綱引き「陣所」（毎年5月4日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://misasaonsen.jp/access/",
+          "title": "三朝温泉観光協会 アクセス（倉吉駅から路線バス約20分）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://misasaonsen.jp/access/",
+        "title": "三朝温泉観光協会 アクセス（多目的駐車場は1時間以内無料、以後30分ごと100円）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "misasa-kabuyu",
+      "name": "株湯（公衆浴場・足湯・飲泉場）",
+      "kind": "rest",
+      "summary": "三朝温泉の始まりとされる元湯の共同浴場で、足湯と飲泉場が隣にある。月曜は10:00から。足湯は8:00〜21:00で無料、飲泉場は24時間",
+      "location": {
+        "lat": 35.4076,
+        "lng": 133.8978
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "20:45",
+        "lastEntry": "20:15"
+      },
+      "closedDays": null,
+      "price": "浴場 大人400円、子ども（3歳〜小学生）250円。足湯・飲泉は無料",
+      "tags": ["indoor"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://misasaonsen.jp/sightseeings/sightseeing-1072/",
+          "title": "三朝温泉観光協会 公衆浴場・足湯・飲泉場「株湯」",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "misasa-kawara-buro",
+      "name": "河原風呂",
+      "kind": "sightseeing",
+      "summary": "三朝橋のたもと、三徳川の河原にある混浴の露天風呂で、三朝温泉の象徴とされる。無料で通年24時間入れるが、奇数日の午前は清掃のため入れない",
+      "location": {
+        "lat": 35.4102,
+        "lng": 133.8947
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": [],
+      "price": "無料",
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://misasaonsen.jp/sightseeings/sightseeing-1057/",
+          "title": "三朝温泉観光協会 露天風呂「河原風呂」",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "misasa-chadaya",
+      "name": "茶田屋",
+      "kind": "food",
+      "summary": "三朝川のそばの老舗の食事処。日本海の魚料理、一品料理、丼、ラーメン、うどんがある。昼12:00〜14:00、夜18:00〜22:00。昼は水・木曜、夜は水曜が休み",
+      "location": {
+        "lat": 35.4102,
+        "lng": 133.8947
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": ["wed"],
+      "price": null,
+      "tags": ["seating"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://misasaonsen.jp/sightseeings/sightseeing-767/",
+          "title": "三朝温泉観光協会 茶田屋",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "misasa-rajumuan",
+      "name": "楽寿夢庵",
+      "kind": "food",
+      "summary": "三朝の地酒や野菜を売る土産物店で喫茶を兼ね、コーヒーやとちの実のソフトクリームを出す。ほかに臨時休業がある",
+      "location": {
+        "lat": 35.4103,
+        "lng": 133.8931
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": ["wed", "sun"],
+      "price": null,
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://misasaonsen.jp/sightseeings/sightseeing-762/",
+          "title": "三朝温泉観光協会 楽寿夢庵",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://misasaonsen.jp/sightseeings/sightseeing-2881/",
+      "title": "三朝温泉観光協会 花湯まつり・大綱引き「陣所」",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://misasaonsen.jp/week/",
+      "title": "三朝温泉観光協会 日本遺産ウィーク・花湯まつり 2026",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.japan.travel/en/japans-local-treasures/misasa-onsen-hanayu-festival-2020/",
+      "title": "日本政府観光局 Misasa Onsen Hanayu Festival",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、花火・大綱引きの時刻",
+    "2027年の綱からみの日と時刻（2026年は5月3日）",
+    "雨のときの扱い",
+    "綱引きに加わるときの注意、服装、持ち物、撮影の決まり",
+    "危険度（主催者による、けがのおそれの注意が見つからない）",
+    "交通規制の時間と場所（観光協会の「花湯2026・交通規制」は画像のPDFで読み取れなかった）",
+    "最寄り駅からの徒歩（鉄道は通っていない。JR 倉吉駅から路線バスで約20分）と、主要駅から倉吉駅までの所要時間（公式の案内に駅から駅への数字がない）",
+    "祭りの日の臨時駐車場",
+    "屋台の有無",
+    "見物客の数の公表値",
+    "株湯の休みの日"
+  ]
+}

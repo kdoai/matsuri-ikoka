@@ -1,7 +1,8 @@
-import { FESTIVAL_CATEGORIES, type Festival, UNKNOWN } from "@matsuri-ikoka/schema";
-import type { AppData, QuizQuestion, WaitingTalk } from "./types";
+import { type Festival, UNKNOWN } from "@matsuri-ikoka/schema";
+import type { AppData, WaitingTalk } from "./types";
 
-// 待ち時間に出す豆知識とクイズ。どちらも祭りのデータの項目だけから作り、その場で文章を作らない。
+// 待ち時間に出す豆知識とクイズ。豆知識は祭りのデータの項目だけから作り、その場で文章を作らない。
+// クイズは出典つきの問い（data/quiz/）を、豆知識のあいだに挟んで出す。
 
 /**
  * 豆知識で話す祭り。候補が出る前は読み込んである祭りのすべて、候補が出たあとは
@@ -89,90 +90,85 @@ export function waitingTalks(
   return talks;
 }
 
-/** クイズで問う祭り。旅程の主役、候補の先頭、読み込んである祭りの順に選ぶ */
-export function quizFocusId(state: Pick<AppData, "itinerary" | "candidates">): string | null {
-  return state.itinerary.current?.mainFestivalId ?? state.candidates[0]?.festivalId ?? null;
-}
-
 type Random = () => number;
 
-function pick<T>(list: readonly T[], random: Random): T | undefined {
-  return list[Math.min(list.length - 1, Math.floor(random() * list.length))];
+/** 豆知識を何話話したら、クイズを1問挟むか */
+export const TALKS_PER_QUIZ = 3;
+
+/** 1枚を見せておく時間。クイズは考える時間を、答えたあとは解説を読む時間をとる */
+export const TALK_MS = 7_000;
+export const QUIZ_MS = 20_000;
+export const QUIZ_RESULT_MS = 10_000;
+
+/** 待ち時間の窓の1枚。豆知識の何話目か、どのクイズか */
+export type WaitingSlide = { kind: "talk"; talkIndex: number } | { kind: "quiz"; quizId: string };
+
+/** 次の1枚へ移るまでの時間 */
+export function slideDelayMs(slide: WaitingSlide, answered: boolean): number {
+  if (slide.kind === "talk") return TALK_MS;
+  return answered ? QUIZ_RESULT_MS : QUIZ_MS;
 }
 
-/** 正解とはずれを、ランダムな順に並べる */
-function arrange(
-  base: Omit<QuizQuestion, "choices" | "correct">,
-  right: string,
-  wrong: string,
-  random: Random,
-): QuizQuestion {
-  return random() < 0.5
-    ? { ...base, choices: [right, wrong], correct: 0 }
-    : { ...base, choices: [wrong, right], correct: 1 };
+/** クイズを出す順。同じ問いが2回入らないよう、ID を重ねずに混ぜる */
+export function shuffleDeck(ids: readonly string[], random: Random = Math.random): string[] {
+  const deck = [...new Set(ids)];
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.min(i, Math.floor(random() * (i + 1)));
+    [deck[i], deck[j]] = [deck[j] as string, deck[i] as string];
+  }
+  return deck;
+}
+
+type Slot = { kind: "talk"; talkIndex: number } | { kind: "quiz"; ordinal: number };
+
+/**
+ * 豆知識をひと回りするあいだの並び。TALKS_PER_QUIZ 話ごとにクイズを1問挟む。
+ * 豆知識が少なくても、クイズがあればひと回りに1問は出す
+ */
+function cycleOf(talkCount: number, hasQuiz: boolean): Slot[] {
+  const slots: Slot[] = [];
+  let ordinal = 0;
+  for (let talkIndex = 0; talkIndex < talkCount; talkIndex++) {
+    slots.push({ kind: "talk", talkIndex });
+    if (hasQuiz && (talkIndex + 1) % TALKS_PER_QUIZ === 0) {
+      slots.push({ kind: "quiz", ordinal: ordinal++ });
+    }
+  }
+  if (hasQuiz && ordinal === 0) slots.push({ kind: "quiz", ordinal: ordinal++ });
+  return slots;
+}
+
+/** 負の数も、0 以上 size 未満に収める */
+function wrap(value: number, size: number): number {
+  return ((value % size) + size) % size;
 }
 
 /**
- * 2択のクイズを1問作る。はずれの選択肢は、ほかの祭りのデータから取る。
- * 見どころ・地元の味は、ほかの祭りと重ならないものだけを使う。作れなければ null。
+ * 何枚目（step。前へ戻ると負になる）に何を見せるか。豆知識はひと回りごとに頭から、
+ * クイズはひと回りごとに deck の続きから出すので、問いは deck をひと巡りするまで重ならない。
+ * 見せるものがなければ null
  */
-export function buildQuiz(
-  festivals: Readonly<Record<string, Festival>>,
-  focusId: string | null,
-  random: Random = Math.random,
-): QuizQuestion | null {
-  const all = Object.values(festivals);
-  const focus = (focusId === null ? undefined : festivals[focusId]) ?? all[0];
-  if (focus === undefined) {
-    return null;
-  }
-  const others = all.filter((festival) => festival.id !== focus.id);
-  const base = { festivalId: focus.id, festivalName: focus.name.ja };
-  const builders: (() => QuizQuestion | null)[] = [];
+export function waitingSlide(
+  step: number,
+  talkCount: number,
+  deck: readonly string[],
+): WaitingSlide | null {
+  const cycle = cycleOf(talkCount, deck.length > 0);
+  if (cycle.length === 0) return null;
+  const round = Math.floor(step / cycle.length);
+  const slot = cycle[wrap(step, cycle.length)] as Slot;
+  if (slot.kind === "talk") return slot;
+  const quizzesPerRound = cycle.filter((s) => s.kind === "quiz").length;
+  const quizId = deck[wrap(round * quizzesPerRound + slot.ordinal, deck.length)] as string;
+  return { kind: "quiz", quizId };
+}
 
-  const otherHighlights = others.flatMap((festival) => festival.highlights);
-  const ownHighlights = focus.highlights.filter((text) => !otherHighlights.includes(text));
-  const wrongHighlight = pick(otherHighlights, random);
-  const rightHighlight = pick(ownHighlights, random);
-  const festivalSource = focus.sources[0];
-  if (wrongHighlight !== undefined && rightHighlight !== undefined && festivalSource) {
-    builders.push(() =>
-      arrange(
-        { ...base, kind: "highlight", source: festivalSource },
-        rightHighlight,
-        wrongHighlight,
-        random,
-      ),
-    );
-  }
-
-  const otherFoods = others.flatMap((festival) => festival.food.local.map((food) => food.name));
-  const ownFood = pick(
-    focus.food.local.filter((food) => !otherFoods.includes(food.name)),
-    random,
-  );
-  const wrongFood = pick(otherFoods, random);
-  if (ownFood !== undefined && wrongFood !== undefined && ownFood.sources[0]) {
-    const source = ownFood.sources[0];
-    builders.push(() =>
-      arrange({ ...base, kind: "local_food", source }, ownFood.name, wrongFood, random),
-    );
-  }
-
-  const wrongCategory = pick(
-    FESTIVAL_CATEGORIES.filter((category) => category !== focus.category && category !== "other"),
-    random,
-  );
-  if (focus.category !== "other" && wrongCategory !== undefined && festivalSource) {
-    builders.push(() =>
-      arrange(
-        { ...base, kind: "category", source: festivalSource },
-        focus.category,
-        wrongCategory,
-        random,
-      ),
-    );
-  }
-
-  return pick(builders, random)?.() ?? null;
+/** 窓の下の点の数と、いま何番目か（ひと回りの中の位置） */
+export function slidePosition(
+  step: number,
+  talkCount: number,
+  deck: readonly string[],
+): { count: number; index: number } {
+  const count = Math.max(1, cycleOf(talkCount, deck.length > 0).length);
+  return { count, index: wrap(step, count) };
 }

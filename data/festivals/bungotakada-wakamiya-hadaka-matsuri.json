@@ -1,0 +1,298 @@
+{
+  "id": "bungotakada-wakamiya-hadaka-matsuri",
+  "name": {
+    "ja": "若宮八幡神社秋季大祭・裸祭り",
+    "en": "Wakamiya Hachiman Shrine Autumn Festival (Hadaka Matsuri)"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "大分県",
+      "name": "豊後高田市"
+    }
+  ],
+  "venue": {
+    "name": "御玉橋周辺河川敷および桂川",
+    "lat": 33.5565,
+    "lng": 131.4445
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "締込み姿の川組が、重さ約1トンの神輿を担いで冬の桂川を渡る",
+    "長さ約16mの豊後大たいまつに、御玉橋の上から火矢で火が入る",
+    "川の水上ステージで太鼓が打ち鳴らされる",
+    "豊作への感謝に始まり、約940年続くとされる3日間の祭り"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "約940年の歴史があるとされる若宮八幡神社の秋の大祭",
+      "sources": [
+        {
+          "url": "https://www.city.bungotakada.oita.jp/site/showanomachi/28649.html",
+          "title": "昭和の町・豊後高田市公式観光サイト 若宮八幡神社秋季大祭・裸祭り【12月4日～6日開催】",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "豊後大たいまつは全長約16m・重さ約5tで、2025年に40周年を迎えた",
+      "source": {
+        "url": "https://www.city.bungotakada.oita.jp/site/dekigoto/38332.html",
+        "title": "豊後高田市 今日の出来事 裸祭りの開催近づく～40周年をむかえた豊後大たいまつの建て込み～",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "神輿は陸組が担いで出し、大鳥居の前で川組に引き継いで川を渡る",
+      "source": {
+        "url": "https://www.city.bungotakada.oita.jp/site/showanomachi/28649.html",
+        "title": "昭和の町・豊後高田市公式観光サイト 若宮八幡神社秋季大祭・裸祭り【12月4日～6日開催】",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "大たいまつへの火矢は、御玉橋の上から市の弓道連盟が射る",
+      "source": {
+        "url": "https://www.city.bungotakada.oita.jp/site/showanomachi/28649.html",
+        "title": "昭和の町・豊後高田市公式観光サイト 若宮八幡神社秋季大祭・裸祭り【12月4日～6日開催】",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2024年は姉妹都市の長崎県島原市の人が、初めて川組として神輿を担いだ",
+      "source": {
+        "url": "https://www.city.bungotakada.oita.jp/site/dekigoto/29622.html",
+        "title": "豊後高田市 今日の出来事 第941回「若宮八幡神社秋季大祭・裸祭り」開催",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": []
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-04",
+      "start": "14:40",
+      "end": "17:35",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "お下り（本宮から下宮へ）。14:40 本宮を出発（陸組）、15:00 大鳥居前で川組に引き継ぎ、16:00ごろ桂川に入る、16:30 川組が川を出る、16:45 陸組に引き継ぎ、17:35 下宮に着く。川に入る時刻は潮で前後する",
+      "sources": [
+        {
+          "url": "https://www.city.bungotakada.oita.jp/site/showanomachi/28649.html",
+          "title": "昭和の町・豊後高田市公式観光サイト 若宮八幡神社秋季大祭・裸祭り【12月4日～6日開催】（2026年10月21日更新）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-12-06",
+      "start": "15:55",
+      "end": "18:20",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "お上り（下宮から本宮へ）。15:55 下宮を出発（陸組）、16:55 川組に引き継ぎ、17:10ごろ桂川に入る、17:40 川組が川を出る、18:00 陸組に引き継ぎ、18:20 本宮に着く。川に入る時刻は潮で前後する。12月5日は神輿が下宮にとどまる（この日の行事の発表は見つからない）",
+      "sources": [
+        {
+          "url": "https://www.city.bungotakada.oita.jp/site/showanomachi/28649.html",
+          "title": "昭和の町・豊後高田市公式観光サイト 若宮八幡神社秋季大祭・裸祭り【12月4日～6日開催】（2026年10月21日更新）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.mlit.go.jp/tagengo-db/R1-02591.html",
+          "title": "観光庁 地域観光資源の多言語解説文データベース 若宮八幡秋季大祭・裸祭り",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "大交北部バス 豊後高田市役所（玄関前）バス停",
+        "walkMinutes": [5, 10],
+        "note": "会場は市役所前の桂川河川敷。バス停から徒歩5分はるるぶ&more.の案内。鉄道の最寄りは JR 宇佐駅で、会場まで歩ける距離ではない"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "宇佐駅",
+        "minutes": [14, 24],
+        "route": "大交北部バスの伊美行き、乗り換えなし。博多駅から宇佐駅へは JR 鹿児島本線・日豊本線の特急で約1時間35分、小倉駅からは日豊本線の特急で約50分"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.city.bungotakada.oita.jp/site/showanomachi/16527.html",
+        "title": "昭和の町・豊後高田市公式観光サイト アクセス情報まとめ（2023年5月26日更新）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000347",
+        "title": "るるぶ&more. 若宮八幡社秋季大祭・裸祭り（市役所前バス停から徒歩5分、駐車場200台・無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      },
+      {
+        "url": "https://www.walkerplus.com/event/ar1044e322553/data.html",
+        "title": "ウォーカープラス 若宮八幡秋季大祭・裸祭り（2018年の掲載。市役所駐車場ほか周辺駐車場100台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "豊後高田そば",
+        "note": "春と秋の年2回とれる市の名物のそばで、秋の新そばは11月ごろに出る。市内の認定店で食べられる",
+        "sources": [
+          {
+            "url": "https://www.city.bungotakada.oita.jp/site/showanomachi/18741.html",
+            "title": "昭和の町・豊後高田市公式観光サイト 観て・打って・食べて楽しむ！豊後高田そば",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "dagashiya-no-yume-hakubutsukan",
+      "name": "駄菓子屋の夢博物館",
+      "kind": "sightseeing",
+      "summary": "昭和初期の米蔵を使った昭和ロマン蔵の中にあり、駄菓子屋のおもちゃなど約6万点を並べる。土日祝は9時から開く。12月30・31日は休館",
+      "location": {
+        "lat": 33.5592,
+        "lng": 131.4397
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "17:00"
+      },
+      "closedDays": [],
+      "price": "2館共通券 大人900円・小中高生630円、3館共通券 大人1,200円・小中高生840円",
+      "tags": ["indoor", "kid_friendly"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.bungotakada.oita.jp/site/showanomachi/1415.html",
+          "title": "昭和の町・豊後高田市公式観光サイト 駄菓子屋の夢博物館（2025年2月6日更新）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "towari-soba-etsu",
+      "name": "十割蕎麦 ゑつ",
+      "kind": "food",
+      "summary": "古民家を直した豊後高田そばの認定店で、手打ちの十割そばを出す。粗挽きのせいろそばは数量限定。昼と夜の営業で、第4水曜も休み",
+      "location": {
+        "lat": 33.5613,
+        "lng": 131.4428
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": ["tue"],
+      "price": null,
+      "tags": ["indoor", "seating", "local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.bungotakada.oita.jp/site/showanomachi/1368.html",
+          "title": "昭和の町・豊後高田市公式観光サイト 十割蕎麦 ゑつ（2022年10月25日更新）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "takada-soba-kakeru",
+      "name": "高田そば 翔",
+      "kind": "food",
+      "summary": "昭和の町商店街の近くのそば店。細めでこしのあるそばを出す。昼はそばがなくなりしだい終わり、夜は予約のみ。月曜が祝日なら営業し翌日休み",
+      "location": {
+        "lat": 33.5583,
+        "lng": 131.4379
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": ["mon"],
+      "price": null,
+      "tags": ["indoor", "seating", "local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.bungotakada.oita.jp/site/showanomachi/1377.html",
+          "title": "昭和の町・豊後高田市公式観光サイト 高田そば 翔（2022年10月25日更新）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.bungotakada.oita.jp/site/showanomachi/28649.html",
+      "title": "昭和の町・豊後高田市公式観光サイト 若宮八幡神社秋季大祭・裸祭り【12月4日～6日開催】",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.mlit.go.jp/tagengo-db/R1-02591.html",
+      "title": "観光庁 地域観光資源の多言語解説文データベース 若宮八幡秋季大祭・裸祭り（瀬戸内海国立公園豊後高田市多言語解説協議会）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.bungotakada.oita.jp/site/dekigoto/29622.html",
+      "title": "豊後高田市 今日の出来事 第941回「若宮八幡神社秋季大祭・裸祭り」開催",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "見学の決まり（見てよい場所、立ち入り禁止の範囲、火の粉や川の近くでの注意）。市の案内に見学者向けのお願いが見つからない",
+    "一般の人が神輿の担ぎ手（陸組・川組）に加われるか。2024年は姉妹都市の人が川組に加わったが、一般の募集の案内は見つからない",
+    "危険度（主催者による、けがのおそれの注意が見つからない）",
+    "服装・持ち物・撮影の決まり",
+    "雨や荒天のときの扱い",
+    "交通規制の時間と場所",
+    "2026年の駐車場（台数は2018年のウォーカープラスで100台、るるぶ&more.で200台と食い違い、市の今年の案内がない）",
+    "2026年の大たいまつの点火時刻、ナイアガラ花火・太鼓祭り・紅白饅頭の配布の有無（2025年は実施）",
+    "12月5日（中日）の下宮での行事",
+    "屋台の有無",
+    "見学者数の公表値（規模は3日間・複数の場所をめぐることから M とした）",
+    "本宮（若宮八幡神社）の位置と、本宮・下宮から会場までの道順",
+    "博多駅・小倉駅から市役所のバス停までの通しの所要時間（市の案内は、博多駅から宇佐駅まで特急で約1時間35分、小倉駅から約50分、宇佐駅から昭和の町周辺までバスで約10分と区間ごとだけ）と、祭りの日のバスの本数",
+    "周辺のそば店の祭りの日の営業時間（昼と夜に分かれているため時刻を入れていない）"
+  ]
+}

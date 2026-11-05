@@ -1,0 +1,339 @@
+{
+  "id": "sapporo-yuki-matsuri",
+  "name": {
+    "ja": "さっぽろ雪まつり",
+    "en": "Sapporo Snow Festival"
+  },
+  "category": "other",
+  "municipalities": [
+    {
+      "prefecture": "北海道",
+      "name": "札幌市"
+    }
+  ],
+  "venue": {
+    "name": "大通会場（大通公園）",
+    "lat": 43.0596,
+    "lng": 141.3451
+  },
+  "scaleTier": "L",
+  "popularity": "major",
+  "listedIn": ["jalan", "rurubu", "japan-guide", "jnto"],
+  "highlights": [
+    "大通公園に並ぶ大雪像と、夜のプロジェクションマッピング",
+    "すすきの会場の氷像は、魚を閉じ込めたものまである",
+    "つどーむ会場で、すべり台やスノーラフトの雪遊び",
+    "市民が作る雪像と、海外のチームも競う国際雪像コンクール"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1950年に地元の中高校生が大通公園に雪像を置いたのが始まり",
+      "sources": [
+        {
+          "url": "https://www.snowfes.com/sites/odori/",
+          "title": "さっぽろ雪まつり 大通会場（第76回の内容、1950年の始まり）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "市民が作る雪像が大通公園の2丁目と9丁目に合わせて80基並ぶ（2026年）",
+      "sources": [
+        {
+          "url": "https://www.snowfes.com/sites/odori/",
+          "title": "さっぽろ雪まつり 大通会場（第76回の内容、1950年の始まり）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "1950年、地元の中高校生が6つの雪像を大通公園に置いて始まった",
+      "source": {
+        "url": "https://www.snowfes.com/sites/odori/",
+        "title": "さっぽろ雪まつり 大通会場（第76回の内容、1950年の始まり）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2026年の雪像は3会場で計210基ほどだった",
+      "source": {
+        "url": "https://www.snowfes.com/faq/",
+        "title": "さっぽろ雪まつり よくある質問（次回会期、服装、見学時間）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "雪像は安全のため、会期が終わった翌朝までに壊される",
+      "source": {
+        "url": "https://www.snowfes.com/faq/",
+        "title": "さっぽろ雪まつり よくある質問（次回会期、服装、見学時間）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "国際雪像コンクールは1974年に始まった",
+      "source": {
+        "url": "https://www.japan.travel/en/spot/473/",
+        "title": "Travel Japan Sapporo Snow Festival（札幌駅から地下鉄で2分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": ["すすきの会場の歩行者天国が終わったら、速やかに歩道へ移る"],
+    "dress": [
+      "重ね着に加えて、オーバーコートやジャンパーなどの本格的な上着",
+      "帽子・耳あて・手袋",
+      "裏に溝のある冬用の靴（路面が凍っていることが多い）"
+    ],
+    "bring": ["靴の滑り止め（靴に滑り止めがなければ。現地でも1,000円ほどで買える）"],
+    "risk": {
+      "level": "medium",
+      "reason": "凍った路面を長く歩き、会場は混雑する（公式は冬用の靴と防寒を強く勧めている）"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.snowfes.com/faq/",
+        "title": "さっぽろ雪まつり よくある質問（次回会期、服装、見学時間）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.snowfes.com/sites/susukino/",
+        "title": "さっぽろ雪まつり すすきの会場",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.snowfes.com/",
+        "title": "さっぽろ雪まつり 公式サイト（2027年2月4日〜2月11日）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-02-04",
+      "endDate": "2026-02-11",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "第76回。大通会場はいつでも見学でき、ライトアップは22:00まで。つどーむ会場は10:00〜16:00。すすきの会場のライトアップは23:00まで（最終日は22:00）",
+      "sources": [
+        {
+          "url": "https://www.snowfes.com/sites/odori/",
+          "title": "さっぽろ雪まつり 大通会場（第76回の内容、1950年の始まり）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.snowfes.com/faq/",
+          "title": "さっぽろ雪まつり よくある質問（次回会期、服装、見学時間）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20001097",
+          "title": "るるぶ&more. 2026さっぽろ雪まつり（大通駅からすぐ、駐車場なし）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-02-04",
+      "endDate": "2027-02-11",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "大通・つどーむ・すすきのの3会場。3会場とも入場は無料。2027年の内容と時間は2026年12月中旬から更新の予定（2026年は大通のライトアップが22:00まで）。市民雪像の制作とボランティアは毎年11月から公募する事前応募制で、市民雪像は抽選のあと講習会に出る",
+      "sources": [
+        {
+          "url": "https://www.snowfes.com/",
+          "title": "さっぽろ雪まつり 公式サイト（2027年2月4日〜2月11日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.snowfes.com/faq/",
+          "title": "さっぽろ雪まつり よくある質問（次回会期、服装、見学時間）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.japan-guide.com/e/e5311.html",
+          "title": "japan-guide.com Sapporo Snow Festival 2027",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "札幌市営地下鉄 大通駅",
+        "walkMinutes": [0, 5],
+        "note": "大通会場は駅からすぐ。つどーむ会場は東豊線の栄町駅から徒歩約15分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "札幌駅",
+        "minutes": [2, 12],
+        "route": "地下鉄南北線または東豊線で大通駅まで1駅。地下を歩くと約15分"
+      }
+    ],
+    "parking": "none",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.japan.travel/en/spot/473/",
+        "title": "Travel Japan Sapporo Snow Festival（札幌駅から地下鉄で2分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20001097",
+        "title": "るるぶ&more. 2026さっぽろ雪まつり（大通駅からすぐ、駐車場なし）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://www.japan-guide.com/e/e5311.html",
+        "title": "japan-guide.com Sapporo Snow Festival 2027",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "sapporo-tv-tower",
+      "name": "さっぽろテレビ塔",
+      "kind": "sightseeing",
+      "summary": "大通公園の東の端に立つ塔で、展望台から公園を見下ろせる。イベントで時間が変わることがあり、点検で全館休業の日が年に数日ある",
+      "location": {
+        "lat": 43.061,
+        "lng": 141.3564
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "22:00",
+        "lastEntry": "21:50"
+      },
+      "closedDays": [],
+      "price": "展望台 大人1,200円",
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.tv-tower.co.jp/pricetime.html",
+          "title": "さっぽろテレビ塔 料金・営業時間",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "sapporo-clock-tower",
+      "name": "札幌市時計台",
+      "kind": "sightseeing",
+      "summary": "札幌の中心部に残る時計台で、中を見学できる。地下鉄大通駅から徒歩5分。休館は1月1日〜3日で、毎月第1月曜は20:00まで開く",
+      "location": {
+        "lat": 43.0625,
+        "lng": 141.3539
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "08:45",
+        "close": "17:10",
+        "lastEntry": "17:00"
+      },
+      "closedDays": [],
+      "price": "大人350円",
+      "tags": [],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://sapporoshi-tokeidai.jp/",
+          "title": "札幌市時計台 公式サイト（開館時間・入館料・アクセス）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.snowfes.com/",
+      "title": "さっぽろ雪まつり 公式サイト（2027年2月4日〜2月11日）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.snowfes.com/faq/",
+      "title": "さっぽろ雪まつり よくある質問（次回会期、服装、見学時間）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.snowfes.com/sites/odori/",
+      "title": "さっぽろ雪まつり 大通会場（第76回の内容、1950年の始まり）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_351982/",
+      "title": "じゃらんnet 2026さっぽろ雪まつり（第76回）",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20001097",
+      "title": "るるぶ&more. 2026さっぽろ雪まつり",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.japan-guide.com/e/e5311.html",
+      "title": "japan-guide.com Sapporo Snow Festival 2027",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.japan.travel/en/spot/473/",
+      "title": "Travel Japan Sapporo Snow Festival",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の会場ごとの内容と時間（2026年12月中旬に更新の予定）",
+    "悪天候のときの扱い",
+    "撮影（三脚・ドローン）の決まりと、雪像や氷像に触ってよいか",
+    "地元の味（会場で出る店の2027年の内容）",
+    "祭りの前後に寄れる食の店と、周辺の場所の知名度"
+  ]
+}

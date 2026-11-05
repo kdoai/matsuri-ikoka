@@ -1,0 +1,187 @@
+{
+  "id": "fukuura-no-kabuki",
+  "name": {
+    "ja": "福浦の歌舞伎",
+    "en": "Fukuura Fishing-Village Kabuki"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "青森県",
+      "name": "下北郡佐井村"
+    }
+  ],
+  "venue": {
+    "name": "歌舞伎の館",
+    "lat": 41.299,
+    "lng": 140.8164
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "漁師たちが家ごとに役を受け継いで演じるの漁村歌舞伎",
+    "伴奏に石油の空き缶「ガンカラ」まで使う、素朴で力強い舞台",
+    "福浦地区の春祭りの4月10日に上演される",
+    "300人が入れる専用の「歌舞伎の館」で、地元の人と並んで観る"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1984年に青森県の無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.pref.aomori.lg.jp/soshiki/kyoiku/e-bunka/kenmukei_34.html",
+          "title": "青森県 福浦の歌舞伎",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "福浦地区の漁師が明治から地元で歌舞伎を受け継いでいる",
+      "sources": [
+        {
+          "url": "https://saikanko.sakura.ne.jp/history/kabuki",
+          "title": "佐井村観光協会 福浦の歌舞伎（一般も入場できるが有料、館が開くのは上演のときだけ）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "1984年に青森県の無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.pref.aomori.lg.jp/soshiki/kyoiku/e-bunka/kenmukei_34.html",
+        "title": "青森県 福浦の歌舞伎",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1890年、上方の役者の中村菊五郎夫妻が2年間、福浦で指導した",
+      "source": {
+        "url": "https://www.pref.aomori.lg.jp/soshiki/kyoiku/e-bunka/kenmukei_34.html",
+        "title": "青森県 福浦の歌舞伎",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "はやし方の楽器に、石油の空き缶の「ガンカラ」を使う",
+      "source": {
+        "url": "https://www.pref.aomori.lg.jp/soshiki/kyoiku/e-bunka/kenmukei_34.html",
+        "title": "青森県 福浦の歌舞伎",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "「歌舞伎の館」は、伝承100周年の1988年に作られた",
+      "source": {
+        "url": "https://aomori-tourism.com/event/detail_8012.html",
+        "title": "Amazing AOMORI 福浦歌舞伎（歌舞伎の館）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "屋内の館での観劇が中心で、混雑や危険についての注意は見つからない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://saikanko.sakura.ne.jp/history/kabuki",
+        "title": "佐井村観光協会 福浦の歌舞伎（一般も入場できるが有料、館が開くのは上演のときだけ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://itcj.or.jp/japanese-festival/pageindices/index38.html",
+        "title": "地域伝統芸能活用センター 日本の祭り総集編 福浦の歌舞伎（地域の人が見守るなかで上演）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-04-10",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年4月10日の福浦稲荷神社の例祭・春祭りに合わせて歌舞伎の館で上演する決まりから見込んだ日（2027年の発表はまだ見つからない）。演目は年ごとに違う",
+      "sources": [
+        {
+          "url": "https://www.pref.aomori.lg.jp/soshiki/kyoiku/e-bunka/kenmukei_34.html",
+          "title": "青森県 福浦の歌舞伎（毎年4月10日の福浦地区春祭りに歌舞伎の館で公開）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://itcj.or.jp/japanese-festival/pageindices/index38.html",
+        "title": "地域伝統芸能活用センター 日本の祭り総集編 福浦の歌舞伎（JR下北駅から車で約2時間）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://saikanko.sakura.ne.jp/history/kabuki",
+        "title": "佐井村観光協会 福浦の歌舞伎（駐車場は30台以上）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.pref.aomori.lg.jp/soshiki/kyoiku/e-bunka/kenmukei_34.html",
+      "title": "青森県 福浦の歌舞伎（保存団体は福浦芸能保存会、所在地は佐井村長後）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://saikanko.sakura.ne.jp/history/kabuki",
+      "title": "佐井村観光協会 福浦の歌舞伎（歌舞伎の館は佐井村長後字福浦川目70-1）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の上演の発表と開演の時刻、演目",
+    "観覧料の金額、席の取り方や当日の受け付け",
+    "雨や荒天のときの扱い",
+    "撮影の扱い、服装・持ち物、見学のマナー",
+    "公共交通での行き方（JR下北駅から車で約2時間という案内のみ。バスの時刻は未確認）と、主要駅からの所要時間",
+    "屋台の有無と、この日だけの食べもの",
+    "周辺の観光と食の場所（営業時間を公式で確かめられた場所がなかったため入れていない）",
+    "会場の緯度・経度は、国土地理院の住所検索で佐井村長後の地区の代表点を取ったもの（歌舞伎の館そのものの位置ではない）",
+    "大手の観光サイトに祭りのページがあるか（検索では見つからなかったため local とした）",
+    "規模は、1つの会場で半日の行事（館の定員300人）として S にした"
+  ]
+}

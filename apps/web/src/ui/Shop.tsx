@@ -1,38 +1,52 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  type CSSProperties,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { otherLocale } from "../i18n";
 import { playStore } from "../state/play";
-import { useActions, useApp, useT } from "../state/react";
+import { useActions, useApp, useAppStore, useT } from "../state/react";
 import { type FrameInsets, NO_INSETS } from "../state/scene";
+import { proposalShown } from "../state/selectors";
 import type { PanelTab } from "../state/types";
 import { AccountMenu } from "./AccountMenu";
 import { Backlog } from "./Backlog";
 import { CandidateCards } from "./CandidateCards";
 import { focusComposer } from "./ChatPanel";
-import { DialogueBox } from "./Dialogue";
+import { DialogueBox, focusDialogue } from "./Dialogue";
+import { FestivalResults } from "./FestivalResults";
 import {
   ButtonHints,
   DateBadge,
-  GuideCard,
   type HudPanel,
   IconButtons,
   Logo,
-  MiniMapCard,
+  ModeBadge,
   openTripPanel,
-  SectionTabs,
   useHudKeys,
 } from "./Hud";
 import { useMediaQuery } from "./hooks";
 import { ItineraryPanel } from "./ItineraryPanel";
 import { PasscodeDialog } from "./Passcode";
-import { GreetingBar, PlayGuide, PlayNoticeToast } from "./Play";
+import { GreetingBar, PlayNoticeToast, PlayStatus, Tutorial } from "./Play";
 import { GameStage } from "./SceneSlot";
 import { StaffActivity } from "./StaffPanel";
+import { saveTutorialSeen } from "./storage";
 import { WaitingCard } from "./Waiting";
 
 // ゲームの画面。いつも店（3D、使えないときは 2D の見取り図）を画面いっぱいに出し、
-// その上に HUD を重ねる：上にロゴ・場面のタブ・丸いボタン、右上に旅の案内と小さな地図、
-// 下に会話の窓、左下に日付、右下にボタンの案内。旅程のパネルは右に開く。
-// 狭い画面では、タブと案内をメニューにまとめ、会話の窓を主にする。
+// 表示を3つの場面に分けて、そのとき要るものだけを重ねる。
+// - 探索：ロゴと日付の小さな札、右上の丸いボタンとその下の小さな操作の案内、下の「話しかける」だけ。
+//   はじめてのときだけ、操作の案内を出す
+// - 会話：画面の下に会話の窓（セリフ・選択肢・自由に書く欄）
+// - 計画：旅のしおり（旅程・旅の案内・持ち物と確認）を右に大きく開き、会話の窓は左下に寄せる。
+//   祭りの候補は絵葉書のカードで重ねる
+// 操作の案内は上の段の中に置き、ほかの窓は上の段の下から始めるので、どの幅でも重ならない。
+// 広い画面でしおりを開いていないときは、店内のようすと豆知識（クイズ）の窓を右に縦に並べる。会話の窓は画面の横の真ん中に置く。
+// 旅程の提案が出たあとは、旅程を読む邪魔にならないよう豆知識（クイズ）の窓を出さない
 
 export function LanguageButton({ className = "" }: { className?: string }) {
   const t = useT();
@@ -127,10 +141,14 @@ function useAutoOpenDialogue(): void {
 
 export function Shop() {
   const actions = useActions();
+  const store = useAppStore();
   const panelOpen = useApp((state) => state.ui.drawerOpen);
   const tab = useApp((state) => state.ui.tab);
   const hasItinerary = useApp((state) => state.itinerary.current !== null);
+  const showWaiting = !useApp(proposalShown);
+  const tutorialSeen = useApp((state) => state.ui.tutorialSeen);
   const wide = useMediaQuery("(min-width: 1024px)");
+  const roomy = useMediaQuery("(min-width: 1280px)");
   const [logOpen, setLogOpen] = useState(false);
   const [menu, setMenu] = useState<HudPanel>(null);
   const unread = useUnread(logOpen);
@@ -138,7 +156,14 @@ export function Shop() {
   const dialogueRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const beside = wide && panelOpen;
-  const frame = useFrameInsets(topRef, dialogueRef, panelRef, beside);
+  /** 店内のようすと豆知識の窓を、右の列に並べるか */
+  const sideColumn = roomy && !panelOpen;
+  // 右の列としおりの窓は同時に出ないので、同じ ref で幅を測る
+  const frame = useFrameInsets(topRef, dialogueRef, panelRef, beside || sideColumn);
+
+  useEffect(() => {
+    if (tutorialSeen) saveTutorialSeen();
+  }, [tutorialSeen]);
 
   // 旅程ができたら、旅程のパネルを開いて見せる
   useEffect(() => {
@@ -165,12 +190,19 @@ export function Shop() {
   const toggleMenu = useCallback(() => setMenu((open) => (open === "menu" ? null : "menu")), []);
 
   const dialogueOpen = useApp((state) => state.ui.dialogueOpen);
-  /** コンシェルジュに話しかける：会話の窓を出して、入力欄へ移る */
+  /**
+   * コンシェルジュに話しかける：会話の窓を出して、最初の選択肢（なければ入力欄）へ移る。
+   * 会話の窓がもう出ていれば、自分の言葉で書く欄へ移る
+   */
   const talk = useCallback(() => {
+    if (store.getState().ui.dialogueOpen) {
+      focusComposer();
+      return;
+    }
     actions.setDialogue(true);
     // 窓が出てから焦点を移す
-    window.requestAnimationFrame(() => focusComposer());
-  }, [actions]);
+    window.requestAnimationFrame(() => focusDialogue());
+  }, [actions, store]);
   useAutoOpenDialogue();
 
   const onPad = useCallback(
@@ -197,48 +229,56 @@ export function Shop() {
     <div className="relative h-dvh w-full overflow-hidden bg-wood-900 text-ink">
       <GameStage frame={frame} onTalk={talk} onPad={onPad} onExit={actions.leaveShop} />
 
-      {/* 上の段：ロゴ・場面のタブ・丸いボタン */}
+      {/* 上の段：ロゴと、1段に並べた操作の案内・丸いボタン */}
       <div
         ref={topRef}
-        className="no-print pointer-events-none absolute inset-x-0 top-0 z-40 grid grid-cols-[1fr_auto] items-start gap-2 p-2 sm:p-3 lg:grid-cols-[1fr_auto_1fr] [&>*]:pointer-events-auto"
+        className="no-print pointer-events-none absolute inset-x-0 top-0 z-40 grid grid-cols-[1fr_auto] items-start gap-2 p-2 sm:p-3 [&>*]:pointer-events-auto"
       >
-        <div className="flex items-center gap-2 justify-self-start">
+        <div className="flex flex-col items-start gap-1.5 justify-self-start">
           <Logo />
+          {beside ? null : <DateBadge />}
+          <ModeBadge />
         </div>
-        <SectionTabs className="hidden lg:block" />
         <div className="flex items-center gap-1.5 justify-self-end sm:gap-2">
           <AccountMenu />
+          <ButtonHints
+            onDetails={() => togglePanel("itinerary")}
+            onMap={() => togglePanel("map")}
+            onMenu={toggleMenu}
+            menuOpen={menu === "menu"}
+          />
           <IconButtons onOpenLog={openLog} unread={unread} menu={menu} onMenu={setMenu} />
         </div>
       </div>
 
-      {/* 左：いま動いているスタッフ */}
+      {/* 左：いま動いているスタッフ（右の列がないとき）と、はじめての操作の案内。店の中のようすは読み上げにも伝える */}
       <div
         className="pointer-events-none absolute left-2 z-10 flex w-56 flex-col gap-2 sm:left-3 sm:w-64 [&>*]:pointer-events-auto"
         style={{ top: frame.top + 8 }}
       >
-        <StaffActivity />
-        <PlayGuide />
+        {sideColumn ? null : <StaffActivity />}
+        {dialogueOpen || panelOpen ? null : <Tutorial />}
+        <PlayStatus hidden />
       </div>
 
-      {/* 右上：旅の案内と小さな地図（広い画面で、旅程のパネルを開いていないとき） */}
-      {wide && !panelOpen ? (
+      {/* 右の列：店内のようすと、豆知識（クイズ）の窓。窓の札が上に出るので、間を空ける */}
+      {sideColumn ? (
         <div
-          className="pointer-events-none absolute right-3 z-10 flex w-80 flex-col gap-3 [&>*]:pointer-events-auto"
-          style={{ top: frame.top + 14 }}
-          data-testid="guide-column"
+          ref={panelRef}
+          className="pointer-events-none absolute right-3 z-10 flex w-[22rem] flex-col gap-7 [&>*]:pointer-events-auto"
+          style={{ top: frame.top + 22 }}
         >
-          <GuideCard />
-          {hasItinerary ? <MiniMapCard /> : null}
+          <StaffActivity />
+          {showWaiting ? <WaitingCard /> : null}
         </div>
       ) : null}
 
-      {/* 旅程・地図・出典の紙のパネル（広い画面は右に重ね、狭い画面は上に重ねる） */}
+      {/* 旅のしおり：旅程・旅の案内・持ち物と確認（広い画面は右に大きく重ね、狭い画面は上に重ねる） */}
       {panelOpen ? (
         <div
           ref={panelRef}
           id="trip-panel"
-          className="absolute inset-x-2 bottom-2 z-30 lg:right-3 lg:bottom-16 lg:left-auto lg:w-[min(30rem,38vw)]"
+          className="absolute inset-x-2 bottom-2 z-30 lg:right-3 lg:bottom-3 lg:left-auto lg:w-[min(44rem,48vw)]"
           style={{ top: frame.top + 6 }}
           data-testid="panel-drawer"
         >
@@ -246,26 +286,7 @@ export function Shop() {
         </div>
       ) : null}
 
-      {/* 左下：旅の日と出発の駅 */}
-      {wide && !beside ? (
-        <div className="absolute bottom-3 left-3 z-10">
-          <DateBadge />
-        </div>
-      ) : null}
-
-      {/* 右下：ボタンの案内（旅程のパネルを開いているときは、パネルの下に横に並べる） */}
-      {wide ? (
-        <div className="no-print absolute right-3 bottom-3 z-30">
-          <ButtonHints
-            onDetails={() => togglePanel("itinerary")}
-            onMap={() => togglePanel("map")}
-            onMenu={toggleMenu}
-            stacked={!beside}
-          />
-        </div>
-      ) : null}
-
-      {/* 会話の窓。最初は出さず、コンシェルジュに話しかけたら出す。待ち時間のカードは、その上に出す */}
+      {/* 会話の窓。探索の間は出さず、話しかけたら出す。待ち時間のカードは、その上に出す */}
       {dialogueOpen ? null : (
         <div className="absolute inset-x-2 bottom-3 z-20 sm:bottom-4">
           <GreetingBar onTalk={talk} />
@@ -274,20 +295,29 @@ export function Shop() {
       <div
         ref={dialogueRef}
         hidden={!dialogueOpen}
+        // 会話の窓は、上の段（丸いボタンと操作の案内）の下までに収める
+        style={{ "--frame-top": `${frame.top}px` } as CSSProperties}
         className={`absolute inset-x-2 bottom-2 z-20 sm:inset-x-3 sm:bottom-3 ${
           beside
-            ? "lg:right-[calc(min(30rem,38vw)+1.5rem)] lg:left-3"
-            : "lg:inset-x-0 lg:mx-auto lg:w-[min(50rem,calc(100vw-30rem))]"
+            ? "lg:right-[calc(min(44rem,48vw)+1.5rem)] lg:left-3"
+            : sideColumn
+              ? // 右の列と重ならない幅で、画面の横の真ん中に置く
+                "lg:inset-x-0 lg:mx-auto lg:w-[min(50rem,calc(100vw-47rem))]"
+              : "lg:inset-x-0 lg:mx-auto lg:w-[min(50rem,calc(100vw-30rem))]"
         }`}
       >
-        <div className="pointer-events-none absolute bottom-full left-0 mb-8 w-full max-w-xs [&>*]:pointer-events-auto">
-          <WaitingCard />
-        </div>
+        {/* 右の列がないときは、待ち時間の窓を会話の窓の真上の中ほどに置き、左上の店内のようすに重ねない */}
+        {sideColumn || !showWaiting ? null : (
+          <div className="pointer-events-none absolute inset-x-0 bottom-full mx-auto mb-6 w-full max-w-md [&>*]:pointer-events-auto">
+            <WaitingCard />
+          </div>
+        )}
         <DialogueBox />
       </div>
 
       <PlayNoticeToast />
       <CandidateCards />
+      <FestivalResults />
       <PasscodeDialog />
       {logOpen ? <Backlog onClose={() => setLogOpen(false)} /> : null}
     </div>

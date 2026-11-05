@@ -39,8 +39,8 @@ export async function enterShop(page: Page, query = "?scene=2d"): Promise<void> 
 }
 
 /**
- * 会話の窓は最初は出ていない。コンシェルジュに話しかけて、会話の窓を出し、入力欄へ移る
- * （3D の店では、入店のカメラが終わってから「話しかける」が出る）
+ * 会話の窓は最初は出ていない。コンシェルジュに話しかけて、会話の窓を出す。焦点は選んで進める相談の
+ * 最初の選択肢へ移る（3D の店では、入店のカメラが終わってから「話しかける」が出る）
  */
 export async function talkToConcierge(
   page: Page,
@@ -48,23 +48,100 @@ export async function talkToConcierge(
 ): Promise<void> {
   await page.getByTestId("greeting-bar").getByRole("button", { name }).click({ timeout: 60_000 });
   await expect(page.getByTestId("dialogue")).toBeVisible();
-  await expect(page.locator("#chat-input")).toBeFocused();
+  await expect(page.getByTestId("consult-choice").first()).toBeFocused();
   await sessionReady(page);
 }
 
 /** 相談が始まり、発言を送れるようになるまで待つ */
 export async function sessionReady(page: Page): Promise<void> {
-  await expect(page.locator('[data-testid="composer"][data-ready="true"]')).toBeVisible();
+  // 聞き取りの間は自分の言葉で書く欄を出さないので、聞き取りの窓の印で待つ
+  await expect(
+    page
+      .locator(
+        '[data-testid="composer"][data-ready="true"], [data-testid="consult"][data-ready="true"]',
+      )
+      .first(),
+  ).toBeVisible();
+}
+
+/** 聞き取りの選択肢の名前（日本語と英語） */
+export const HEARING_WORDS = {
+  ja: {
+    trip: "旅行計画から探す",
+    solo: "ひとりで",
+    weekend: "今週末",
+    dayTrip: "日帰り",
+    station: "最寄りの駅",
+    auto: "おまかせ",
+    note: "ひとこと",
+  },
+  en: {
+    trip: "Start from a trip plan",
+    solo: "Just me",
+    weekend: "This weekend",
+    dayTrip: "Day trip",
+    station: "Nearest station",
+    auto: "Up to you",
+    note: "Anything else",
+  },
+};
+
+/** 入口の2択で「旅行計画から探す」を選び、今までの聞き取りへ進む（入口を過ぎていれば何もしない） */
+export async function chooseTripEntry(page: Page, words = HEARING_WORDS.ja): Promise<void> {
+  const entry = page.getByTestId("consult-entry");
+  if (await entry.isVisible()) {
+    await entry.getByRole("button", { name: words.trip, exact: true }).click();
+  }
+}
+
+/**
+ * 選んで進める聞き取りに、いちばん短い道で答えて送る。note は最後の「ひとこと」に書く
+ * （聞き取りの間は自分の言葉で書く欄を出さないので、最初の発言はここで送る）
+ */
+export async function answerHearing(
+  page: Page,
+  note: string,
+  words = HEARING_WORDS.ja,
+): Promise<void> {
+  const consult = page.getByTestId("consult");
+  const choose = (name: string) => consult.getByRole("button", { name, exact: true }).click();
+  const decide = () => consult.getByTestId("consult-decide").click();
+  await chooseTripEntry(page, words);
+  await choose(words.solo);
+  await choose(words.weekend);
+  await choose(words.dayTrip);
+  const station = consult.getByRole("textbox", { name: words.station });
+  await station.fill("みなと中央駅");
+  await station.press("Enter");
+  // 行き先・楽しみ・食べたいもの（いくつでも選べる）は決定で、ペース・予算は選ぶとすぐ進む
+  for (let i = 0; i < 3; i++) {
+    await choose(words.auto);
+    await decide();
+  }
+  await choose(words.auto);
+  await choose(words.auto);
+  await consult.getByRole("textbox", { name: words.note }).fill(note);
+  await decide();
+  await consult.getByTestId("consult-submit").click();
+}
+
+/** 発言を送る。聞き取りの途中なら、聞き取りに答えて「ひとこと」に書いて送る */
+export async function say(page: Page, message: string): Promise<void> {
+  await sessionReady(page);
+  if (await page.getByTestId("consult").isVisible()) {
+    await answerHearing(page, message);
+    return;
+  }
+  const input = page.getByRole("textbox", { name: "相談の発言" });
+  await input.fill(message);
+  await input.press("Enter");
 }
 
 /** 記録の index 番目の発言を入れて送る */
 export async function sendSampleMessage(page: Page, index: number): Promise<void> {
   const message = SAMPLE.turns[index]?.request.message;
   if (message === undefined) throw new Error(`記録に ${index} 番目の発言がありません`);
-  const input = page.getByRole("textbox", { name: "相談の発言" });
-  await sessionReady(page);
-  await input.fill(message);
-  await input.press("Enter");
+  await say(page, message);
 }
 
 /** 返答が終わるまで待つ（送るボタンが「返答を待っています」から戻る） */
@@ -74,7 +151,7 @@ export async function waitForReply(page: Page): Promise<void> {
   });
 }
 
-/** 旅程・地図・出典のパネルが閉じていれば、旅程詳細から開く（狭い画面ではメニューから） */
+/** 旅のしおりの窓が閉じていれば、旅程詳細から開く（狭い画面ではメニューから） */
 export async function openPanel(page: Page): Promise<void> {
   if (await page.getByTestId("itinerary-panel").isVisible()) {
     return;
@@ -89,10 +166,26 @@ export async function openPanel(page: Page): Promise<void> {
   await expect(page.getByTestId("itinerary-panel")).toBeVisible();
 }
 
-/** 旅のこだわりの板を開く（条件と、こだわりの切り替え） */
-export async function openPreferences(page: Page): Promise<void> {
-  await page.getByRole("button", { name: "旅のこだわり" }).click();
-  await expect(page.locator("#hud-preferences")).toBeVisible();
+/** 2つの部品が画面の上で重なっていないことを確かめる（見えていない部品は数えない） */
+export async function expectNoOverlap(
+  page: Page,
+  testId: string,
+  others: readonly string[],
+): Promise<void> {
+  const box = await page.getByTestId(testId).boundingBox();
+  expect(box).not.toBeNull();
+  for (const other of others) {
+    const target = page.getByTestId(other);
+    if (box === null || !(await target.isVisible())) continue;
+    const rect = await target.boundingBox();
+    if (rect === null) continue;
+    const overlaps =
+      box.x < rect.x + rect.width &&
+      rect.x < box.x + box.width &&
+      box.y < rect.y + rect.height &&
+      rect.y < box.y + box.height;
+    expect(overlaps, `${testId} と ${other} が重なっている`).toBe(false);
+  }
 }
 
 /** 会話の記録を開く（これまでのやりとりと、スタッフ全員のようす） */
@@ -101,7 +194,10 @@ export async function openLog(page: Page): Promise<void> {
   if (await page.getByTestId("candidates").isVisible()) {
     await page.keyboard.press("Escape");
   }
-  await page.getByRole("button", { name: "お知らせ（会話の記録）" }).click();
+  await page
+    .getByTestId("icon-buttons")
+    .getByRole("button", { name: "会話の記録", exact: true })
+    .click();
   await expect(page.getByTestId("backlog")).toBeVisible();
 }
 

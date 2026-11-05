@@ -1,0 +1,287 @@
+{
+  "id": "sumidagawa-hanabi",
+  "name": {
+    "ja": "隅田川花火大会",
+    "en": "Sumidagawa Fireworks Festival"
+  },
+  "category": "fireworks",
+  "municipalities": [
+    {
+      "prefecture": "東京都",
+      "name": "墨田区"
+    }
+  ],
+  "venue": {
+    "name": "隅田川 第一会場（桜橋下流〜言問橋上流）",
+    "lat": 35.7169,
+    "lng": 139.806
+  },
+  "scaleTier": "L",
+  "popularity": "major",
+  "listedIn": ["walkerplus", "jalan", "rurubu", "jnto"],
+  "highlights": [
+    "1733年の両国の川開きにさかのぼる、記録に残る最古といわれる花火",
+    "2つの会場から合わせて約2万発が上がる",
+    "ビルに囲まれた隅田川の夜空を、川沿いの街を歩きながら見上げる"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "享保18年（1733年）の両国の川開きの花火を受け継ぐ大会と、主催者が由来を紹介している",
+      "sources": [
+        {
+          "url": "https://www.sumidagawa-hanabi.com/about/index.html",
+          "title": "隅田川花火大会 大会について（由来、7月25日 19:00〜20:30）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "飢饉と疫病の翌年の1733年、両国橋近くの料理屋に花火が許されたのが由来",
+      "source": {
+        "url": "https://www.sumidagawa-hanabi.com/about/index.html",
+        "title": "隅田川花火大会 大会について（由来、7月25日 19:00〜20:30）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "交通事情の悪化で1961年を最後に途絶え、1978年に今の名前で再開した",
+      "source": {
+        "url": "https://www.sumidagawa-hanabi.com/about/index.html",
+        "title": "隅田川花火大会 大会について（由来、7月25日 19:00〜20:30）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2025年の人出は約93万人とされる",
+      "source": {
+        "url": "https://hanabi.walkerplus.com/detail/ar0313e00858/data.html",
+        "title": "ウォーカープラス 第49回 隅田川花火大会 データ（2025年の人出 約93万人、駅からの徒歩）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "ガムテープ・チョーク・スプレーの印や場所取りは禁止で、見つかると撤去される",
+      "座れる場所は少なく、歩きながら見る。歩行者にも一方通行の規制があるので係員の指示に従う",
+      "ドローンを飛ばさない。防護柵に登ったり中へ入ったりしない",
+      "他人のマンションや敷地へ無断で入らない",
+      "指定の場所以外は禁煙。歩きたばこをしない",
+      "ごみは持ち帰るのが原則",
+      "トイレは大変混むので先に済ませる。終了後は帰る時間をずらす"
+    ],
+    "dress": ["涼しい服装"],
+    "bring": ["花火の燃えかすよけのタオルや眼鏡", "水分と塩分を補給できるもの"],
+    "risk": {
+      "level": "medium",
+      "reason": "約93万人が集まり、歩行者の一方通行の規制があり、燃えかすが降ることもある"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "混雑した場所では自撮り棒を控える。警察などの指示があればすぐに撮影をやめる"
+    },
+    "sources": [
+      {
+        "url": "https://www.sumidagawa-hanabi.com/manner/index.html",
+        "title": "隅田川花火大会 観覧時のお願い",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.sumidagawa-hanabi.com/faq/index.html",
+        "title": "隅田川花火大会 よくある問い合わせ（小雨決行、順延なし、約2万発、駐車場なし、出店なし）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.japan.travel/en/spot/385/",
+        "title": "日本政府観光局 Sumidagawa Fireworks Festival（毎年7月の最終土曜日）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0313e00858/data.html",
+        "title": "ウォーカープラス 第49回 隅田川花火大会 データ（2025年の人出 約93万人、駅からの徒歩）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-07-25",
+      "start": "19:00",
+      "end": "20:30",
+      "status": "announced",
+      "rainPolicy": "小雨決行、荒天は中止（順延なし）。判断は原則として当日8:00",
+      "note": "第49回。第一会場 19:00〜、第二会場 19:30〜、どちらも20:30ごろ終了。打ち上げは2会場で約2万発",
+      "sources": [
+        {
+          "url": "https://www.sumidagawa-hanabi.com/",
+          "title": "隅田川花火大会 公式サイト（令和8年 第49回）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.sumidagawa-hanabi.com/about/index.html",
+          "title": "隅田川花火大会 大会について（由来、7月25日 19:00〜20:30）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.sumidagawa-hanabi.com/faq/index.html",
+          "title": "隅田川花火大会 よくある問い合わせ（小雨決行、順延なし、約2万発、駐車場なし、出店なし）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-31",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年7月の最終土曜日に開く決まりから見込んだ日（2027年の発表はまだない）",
+      "sources": [
+        {
+          "url": "https://www.japan.travel/en/spot/385/",
+          "title": "日本政府観光局 Sumidagawa Fireworks Festival（毎年7月の最終土曜日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "東武・東京メトロ・都営 浅草駅",
+        "walkMinutes": [15, 20],
+        "note": "第一会場まで。第二会場へは徒歩約5分。終了後は大変混むので、他の駅の利用が勧められている"
+      },
+      {
+        "name": "都営 蔵前駅",
+        "walkMinutes": [5, 10],
+        "note": "第二会場まで"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "none",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.sumidagawa-hanabi.com/venue/index.html",
+        "title": "隅田川花火大会 会場案内（第一・第二会場の最寄り駅）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.sumidagawa-hanabi.com/faq/index.html",
+        "title": "隅田川花火大会 よくある問い合わせ（小雨決行、順延なし、約2万発、駐車場なし、出店なし）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.sumidagawa-hanabi.com/",
+        "title": "隅田川花火大会 公式サイト（令和8年 第49回）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0313e00858/data.html",
+        "title": "ウォーカープラス 第49回 隅田川花火大会 データ（2025年の人出 約93万人、駅からの徒歩）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "no",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "sensoji",
+      "name": "浅草寺",
+      "kind": "sightseeing",
+      "summary": "隅田川で引き上げられた観音像に始まると伝わる、628年創建の寺。現在の本堂は1958年の落成。4〜9月の本堂は6:00〜17:00",
+      "location": {
+        "lat": 35.7148,
+        "lng": 139.7967
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "06:00",
+        "close": "17:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.senso-ji.jp/about/",
+          "title": "浅草寺 浅草寺について（縁起、本堂の開堂時間 4〜9月は6:00〜17:00）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.sumidagawa-hanabi.com/",
+      "title": "隅田川花火大会 公式サイト（令和8年 第49回）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.sumidagawa-hanabi.com/about/index.html",
+      "title": "隅田川花火大会 大会について（由来、7月25日 19:00〜20:30）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.japan.travel/en/spot/385/",
+      "title": "日本政府観光局 Sumidagawa Fireworks Festival（毎年7月の最終土曜日）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://hanabi.walkerplus.com/detail/ar0313e00858/data.html",
+      "title": "ウォーカープラス 第49回 隅田川花火大会 データ（2025年の人出 約93万人、駅からの徒歩）",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_327857/",
+      "title": "じゃらんnet 隅田川花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20002432",
+      "title": "るるぶ&more. 第49回隅田川花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "交通規制の時間と場所",
+    "2027年の開催日の発表と時刻",
+    "三脚の決まり",
+    "主要駅から最寄り駅までの所要時間",
+    "地元の味・祭りの日だけの食べ物（会場周辺の道路に出店はない）",
+    "祭りの前後に寄れる食の店"
+  ]
+}

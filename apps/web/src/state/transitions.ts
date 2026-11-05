@@ -1,8 +1,14 @@
-import type { Preferences, StaffId } from "@matsuri-ikoka/schema";
+import type {
+  FestivalQuiz,
+  Preferences,
+  SearchRetry,
+  StaffId,
+  TripAnchor,
+} from "@matsuri-ikoka/schema";
 import { clientError } from "./errors";
-import { closeTurn, patchStaff } from "./events";
+import { closeTurn, hasNextSteps, patchStaff } from "./events";
 import { initialData } from "./initial";
-import type { AppData, ChatEntry, ClientError, QuizQuestion, StaffTask } from "./types";
+import type { AppData, ChatEntry, ClientError } from "./types";
 
 // 画面の側から起きる状態の変化（発言を送る・返答が終わる・クイズに答えるなど）。
 // イベントの変換と同じく純粋な関数にする。
@@ -58,13 +64,26 @@ export function resetForNewSession(state: AppData): AppData {
     festivalLoad: state.festivalLoad,
     auth: state.auth,
     ui: { ...state.ui, candidatesOpen: false, celebrating: false, drawerOpen: false },
+    // 祭りを決めたあとなら、送り直したあとも祭りの結果へ戻れるよう、決めたことを残す
+    ...(state.consult.anchor === null
+      ? {}
+      : { consult: state.consult, festivalSearch: state.festivalSearch }),
   };
   return addError(next, clientError("session_lost"));
 }
 
 export type TurnStart =
   /** 利用者の発言。retry のときは会話欄に同じ発言を足さない */
-  | { kind: "chat"; message: string; preferences: Preferences; retry?: boolean }
+  | {
+      kind: "chat";
+      message: string;
+      preferences: Preferences;
+      retry?: boolean;
+      /** 次の手（ボタン）から送るときの、変えて探し直す条件 */
+      search?: SearchRetry;
+      /** 祭りから探して決めた祭りと行く日 */
+      anchor?: TripAnchor;
+    }
   /** こだわりの切り替え（旅程係だけが組み直す） */
   | { kind: "preferences"; preferences: Preferences };
 
@@ -84,14 +103,19 @@ export function beginTurn(state: AppData, start: TurnStart): AppData {
       sawDone: false,
       lastRequest:
         start.kind === "chat"
-          ? { message: start.message, preferences: start.preferences }
+          ? {
+              message: start.message,
+              preferences: start.preferences,
+              ...(start.search === undefined ? {} : { search: start.search }),
+              ...(start.anchor === undefined ? {} : { anchor: start.anchor }),
+            }
           : state.session.lastRequest,
       lastWasPreferences: start.kind === "preferences",
       turnTasks: [],
       turnTools: [],
+      newCandidates: false,
     },
     messages,
-    quiz: { ...state.quiz, question: null, answer: null },
     ui: { ...state.ui, candidatesOpen: false, draft: start.kind === "chat" ? "" : state.ui.draft },
   };
 }
@@ -101,7 +125,18 @@ export function beginTurn(state: AppData, start: TurnStart): AppData {
  * done を受け取らずに閉じたら、接続が切れたものとして「もう一度送る」を出す。
  */
 export function endTurn(state: AppData, error: ClientError | null): AppData {
-  let next: AppData = { ...state, session: { ...state.session, streaming: false } };
+  // この発言で届いた候補は、返答が終わって選べるようになったここで開く
+  const showCandidates =
+    error === null &&
+    state.session.sawDone &&
+    state.session.newCandidates &&
+    state.session.stage === "candidates" &&
+    (state.candidates.length > 0 || hasNextSteps(state.search));
+  let next: AppData = {
+    ...state,
+    session: { ...state.session, streaming: false, newCandidates: false },
+    ui: showCandidates ? { ...state.ui, candidatesOpen: true } : state.ui,
+  };
   if (error !== null) {
     next = addError(next, error);
   } else if (!state.session.sawDone) {
@@ -110,12 +145,25 @@ export function endTurn(state: AppData, error: ClientError | null): AppData {
   return state.session.sawDone ? next : closeTurn(next);
 }
 
+/**
+ * 利用者が候補の窓を開け閉めする。候補がなければ開かない。
+ * 返答の途中で閉じたら、返答が終わっても開き直さない
+ */
+export function setCandidatesOpen(state: AppData, open: boolean): AppData {
+  const candidatesOpen = open && (state.candidates.length > 0 || hasNextSteps(state.search));
+  return {
+    ...state,
+    session: open ? state.session : { ...state.session, newCandidates: false },
+    ui: { ...state.ui, candidatesOpen },
+  };
+}
+
 /** 戻っているスタッフを待機にする（戻る動きが終わったころに呼ぶ） */
 export function settleStaff(state: AppData): AppData {
   let next = state;
   for (const id of Object.keys(state.staff) as StaffId[]) {
     if (state.staff[id].phase === "returning") {
-      next = patchStaff(next, id, { phase: "idle", motion: "idle", bubble: null });
+      next = patchStaff(next, id, { phase: "idle", motion: "idle", bubble: null, detail: null });
     }
   }
   return next;
@@ -146,44 +194,14 @@ export function changePreference<K extends keyof Preferences>(
 // ---------------------------------------------------------------------------
 // クイズ
 
-/** スタッフの作業の、だいたいの所要時間（ミリ秒）。クイズを出すかどうかの見込みにだけ使う */
-const TASK_EXPECTED_MS: Record<StaffTask, number> = {
-  find_festivals: 6_000,
-  find_nearby: 5_000,
-  plan_route: 7_000,
-};
-const VERIFY_EXPECTED_MS = 12_000;
-/** これ以上待ちそうなときだけクイズを出す */
-export const QUIZ_MIN_WAIT_MS = 10_000;
-
-/** この発言で、どのくらい待ちそうか。始まった作業と、再確認の有無から見込む */
-export function expectedWaitMs(state: AppData): number {
-  const taskMs = state.session.turnTasks.reduce((sum, task) => sum + TASK_EXPECTED_MS[task], 0);
-  const verifyMs = state.session.turnTools.includes("verify_festival") ? VERIFY_EXPECTED_MS : 0;
-  return taskMs + verifyMs;
-}
-
-export function shouldOfferQuiz(state: AppData): boolean {
-  return (
-    state.session.streaming &&
-    state.quiz.offeredTurn !== state.session.turn &&
-    expectedWaitMs(state) >= QUIZ_MIN_WAIT_MS
-  );
-}
-
-export function offerQuiz(state: AppData, question: QuizQuestion): AppData {
-  return { ...state, quiz: { offeredTurn: state.session.turn, question, answer: null } };
-}
-
 /** クイズに答える。正解するとスタンプが1つ増える。答え直しはできない */
-export function answerQuiz(state: AppData, choice: 0 | 1): AppData {
-  const { question, answer } = state.quiz;
-  if (question === null || answer !== null) {
+export function answerQuiz(state: AppData, quiz: FestivalQuiz, choice: number): AppData {
+  if (state.quiz.answers[quiz.id] !== undefined || choice < 0 || choice >= quiz.choices.length) {
     return state;
   }
   return {
     ...state,
-    quiz: { ...state.quiz, answer: choice },
-    stamps: state.stamps + (choice === question.correct ? 1 : 0),
+    quiz: { ...state.quiz, answers: { ...state.quiz.answers, [quiz.id]: choice } },
+    stamps: state.stamps + (choice === quiz.answer ? 1 : 0),
   };
 }

@@ -1,0 +1,252 @@
+{
+  "id": "hida-furukawa-santera-mairi",
+  "name": {
+    "ja": "三寺まいり",
+    "en": "Santera Mairi"
+  },
+  "category": "lantern",
+  "municipalities": [
+    {
+      "prefecture": "岐阜県",
+      "name": "飛騨市"
+    }
+  ],
+  "venue": {
+    "name": "古川町市街地（円光寺・真宗寺・本光寺、瀬戸川沿い、まつり広場）",
+    "lat": 36.2381,
+    "lng": 137.1862
+  },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": ["jalan"],
+  "highlights": [
+    "瀬戸川沿いに千本ろうそくが並び、白壁の土蔵と川面を照らす",
+    "高さ2mほどの雪像ろうそくが町の通りに灯る",
+    "円光寺・真宗寺・本光寺の三つの寺を夜に歩いて参る",
+    "着物を借りて参れ、門前市で飛騨の名物を食べ歩ける"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "親鸞をしのび三つの寺を参るならわしで、200年以上続くとされる",
+      "sources": [
+        {
+          "url": "https://www.hida-kankou.jp/event/407",
+          "title": "飛騨市公式観光サイト 飛騨の旅 三寺まいり",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "親鸞聖人をしのんで三つの寺を参るならわしで、200年以上続くとされる",
+      "source": {
+        "url": "https://www.hida-kankou.jp/event/407",
+        "title": "飛騨市公式観光サイト 飛騨の旅 三寺まいり",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "明治・大正のころ、信州の製糸工場から帰った娘たちが着飾って参り、縁結びの参りと呼ばれるようになった",
+      "source": {
+        "url": "https://www.hida-kankou.jp/features/85",
+        "title": "飛騨市公式観光サイト 飛騨の旅 飛騨古川三寺まいり2026【コラム】",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "千本ろうそくは白と赤があり、願うときは白、願いがかなったら赤を灯す",
+      "source": {
+        "url": "https://www.hida-kankou.jp/features/85",
+        "title": "飛騨市公式観光サイト 飛騨の旅 飛騨古川三寺まいり2026【コラム】",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "円光寺の屋根下の亀の彫り物は、明治37年の古川大火から寺を守ったと伝わる",
+      "source": {
+        "url": "https://www.hida-kankou.jp/spot/304",
+        "title": "飛騨市公式観光サイト 飛騨の旅 円光寺",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "1月15日の夜に円光寺・真宗寺・本光寺を参る。着物を借りるなら飛騨市観光協会に予約し（4,000円、着付けのみ2,000円）、麒麟会館で15:00〜17:30に着付けを受け、20:00までに返す",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "町なかの寺を参り、灯りを見て歩く行事で、混雑や危険についての主催者の注意書きは見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.hida-kankou.jp/event/407",
+        "title": "飛騨市公式観光サイト 飛騨の旅 三寺まいり（着物レンタルの案内）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.hida-kankou.jp/features/85",
+        "title": "飛騨市公式観光サイト 飛騨の旅 飛騨古川三寺まいり2026【コラム】",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-15",
+      "start": "12:00",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の予定。門前市（まつり広場）12:00〜21:00、千本ろうそく（瀬戸川沿い）16:00〜20:30、雪像ろうそく（町の目抜き通り）16:00〜21:00",
+      "sources": [
+        {
+          "url": "https://www.hida-kankou.jp/event/407",
+          "title": "飛騨市公式観光サイト 飛騨の旅 三寺まいり（2026年1月15日の予定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kankou-gifu.jp/event/detail_1286.html",
+          "title": "岐阜県観光公式サイト 岐阜の旅ガイド 三寺まいり（2026年1月15日 12:00-21:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-15",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年1月15日の夜に行う決まりから見込んだ日。観光協会のページの開催期間の欄は2027年1月15日（金）になっているが、本文と時刻は2026年のまま。例年は門前市が昼から、千本ろうそくと雪像ろうそくが16:00ごろから灯る",
+      "sources": [
+        {
+          "url": "https://www.hida-kankou.jp/event/407",
+          "title": "飛騨市公式観光サイト 飛騨の旅 三寺まいり（毎年1月15日の夜）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 飛騨古川駅",
+        "walkMinutes": [5, 10]
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "高山駅",
+        "minutes": [15, 25],
+        "route": "JR高山本線で飛騨古川駅へ"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.hida-kankou.jp/event/407",
+        "title": "飛騨市公式観光サイト 飛騨の旅 三寺まいり（JR飛騨古川駅から徒歩5分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.japan.travel/en/spot/2032/",
+        "title": "日本政府観光局 Travel Japan Hida Furukawa（高山駅から高山本線で約15分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.hida-kankou.jp/features/147",
+        "title": "飛騨市公式観光サイト 飛騨の旅 飛騨古川の駐車場（市役所駐車場は無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "門前市の飛騨の名物（ひだコロッケ、五平餅、岩魚の塩焼き など）",
+        "note": "まつり広場の門前市（市役所から歩いて1分ほど）に地元の屋台が並ぶ",
+        "sources": [
+          {
+            "url": "https://www.hida-kankou.jp/features/85",
+            "title": "飛騨市公式観光サイト 飛騨の旅 飛騨古川三寺まいり2026【コラム】（門前市）",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "mishima-warousokuten",
+      "name": "三嶋和ろうそく店",
+      "kind": "sightseeing",
+      "summary": "240年以上続く手作りの和ろうそくの店。三寺まいりで灯す特製の大ろうそくを作り、店の作業場で実演を見られることもある。1月1日〜3日は休み",
+      "location": {
+        "lat": 36.2347,
+        "lng": 137.1875
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "17:00"
+      },
+      "closedDays": ["wed"],
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.hida-kankou.jp/spot/292",
+          "title": "飛騨市公式観光サイト 飛騨の旅 三嶋和ろうそく店",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.hida-kankou.jp/event/407",
+      "title": "飛騨市公式観光サイト 飛騨の旅 三寺まいり",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.kankou-gifu.jp/event/detail_1286.html",
+      "title": "岐阜県観光公式サイト 岐阜の旅ガイド 三寺まいり",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の時刻と催しの内容（観光協会のページは開催期間の欄だけ2027年1月15日で、本文の予定は2026年のまま）",
+    "大雪や悪天候のときの扱い",
+    "当日の交通規制と、三寺まいりの日の駐車場の案内（市役所駐車場は無料と案内されているが、当日の扱いは書かれていない）",
+    "参拝の作法やお願い、撮影の扱い、服装・持ち物（冬の夜の行事だが、防寒の案内は出典に見当たらない）",
+    "三つの寺の間の徒歩の時間と、参る順の決まり",
+    "見物客の数",
+    "周辺の食事の場所（営業時間と定休日を公式の情報で確かめられた店がなかった）"
+  ]
+}

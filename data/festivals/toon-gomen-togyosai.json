@@ -1,0 +1,177 @@
+{
+  "id": "toon-gomen-togyosai",
+  "name": {
+    "ja": "御面渡御祭"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "愛媛県",
+      "name": "東温市"
+    }
+  ],
+  "venue": {
+    "name": "浮嶋神社（東温市牛渕584）と徳威三島宮（東温市野田）",
+    "lat": 33.7898,
+    "lng": 132.8503
+  },
+  "scaleTier": "XS",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "この日だけ一般に公開される、雨乞いに使われた三神御面を拝める",
+    "二つの神社が一年ごとに御面を祀り合う、約300年続く受け渡し",
+    "神職や宮総代が御面を奉じて約1キロを歩く行列"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "享保17年に寺社奉行が12月20日と定めた隔年の受け渡し",
+      "sources": [
+        {
+          "url": "https://www.city.toon.ehime.jp/soshiki/23/2007.html",
+          "title": "東温市 東温市の文化財（雨乞い三面）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "享保17年、松山藩の寺社奉行が毎年12月20日を御面渡御祭の日と定めた",
+      "source": {
+        "url": "https://www.city.toon.ehime.jp/soshiki/23/2007.html",
+        "title": "東温市 東温市の文化財（雨乞い三面）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "御面をめぐる両社の争いを寺社奉行が裁き、牛渕と野田で隔年に祀る形になった",
+      "source": {
+        "url": "https://ehime-jinjacho.jp/jinja/?p=4816",
+        "title": "愛媛県神社庁 浮嶋神社",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "御面は鎌倉・室町時代の作とみられ、平成16年に「雨乞い三面」として市の有形文化財になった",
+      "source": {
+        "url": "https://ehime-jinjacho.jp/jinja/?p=4816",
+        "title": "愛媛県神社庁 浮嶋神社",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "神社での神事と約1キロの行列を見学し、御面を拝観するもので、混雑や危険についての注意は見つからない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://ehime-jinjacho.jp/jinja/?p=4816",
+        "title": "愛媛県神社庁 浮嶋神社（御面は御面渡御祭の日に一般公開）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.iyokannet.jp/spot/4483",
+        "title": "いよ観ネット 浮嶋神社（12月の御面渡御祭の日に御面を拝観できる）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-12-20",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "市と神社の案内にある「毎年12月20日」から見込んだ日（2026年の発表は見つかっていない）。御面が祀られている神社から、受け渡す先の神社まで約1キロを行列し、着いた神社で御面を鎮める神事を行う。この日は御面が一般に公開される",
+      "sources": [
+        {
+          "url": "https://www.city.toon.ehime.jp/soshiki/23/2007.html",
+          "title": "東温市 東温市の文化財（毎年12月20日を御面渡御祭と定めた）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://ehime-jinjacho.jp/jinja/?p=4816",
+          "title": "愛媛県神社庁 浮嶋神社（12月20日 御面渡御祭・隔年鎮座）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://ehimeshinsei.net/e-traditional/",
+          "title": "愛媛県神道青年会 愛媛の伝統行事（毎年12月20日、約1キロの行列）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.iyokannet.jp/spot/4483",
+        "title": "いよ観ネット 浮嶋神社（駐車場 約10台、無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.city.toon.ehime.jp/soshiki/23/2007.html",
+      "title": "東温市 東温市の文化財（雨乞い三面、浮嶋神社と徳威三島宮）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://ehime-jinjacho.jp/jinja/?p=4816",
+      "title": "愛媛県神社庁 浮嶋神社（東温市牛渕584）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.iyokannet.jp/spot/4483",
+      "title": "いよ観ネット 浮嶋神社",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2026年の開催の発表と、行列・神事の開始時刻",
+    "2026年に御面がどちらの神社からどちらへ渡るか（隔年で向きが変わる。行列の出発地と着く先）",
+    "徳威三島宮の正確な所在地と緯度・経度（会場の緯度・経度は浮嶋神社の住所を国土地理院の住所検索で取ったもの）",
+    "御面を拝観できる時間と場所",
+    "雨天・荒天の扱い",
+    "見学の決まり（行列への近づき方・撮影）、服装・持ち物（公式の案内に記載がない）",
+    "最寄り駅（伊予鉄道横河原線の牛渕駅・牛渕団地前駅など）からの徒歩の時間と、松山市駅からの所要時間（公式の案内で確かめられていない）",
+    "祭りの日の駐車場の扱い（浮嶋神社の駐車場は約10台。徳威三島宮の駐車場は分からない）",
+    "2025年の開催の記録（毎年の決まりは公式で確かめたが、2025年に行われた報告は見つからない）",
+    "屋台やふるまいの有無",
+    "周辺の観光と食の場所（祭りの日の営業を公式で確かめたものがない）"
+  ]
+}

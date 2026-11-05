@@ -1,0 +1,318 @@
+{
+  "id": "mamada-jagamaita",
+  "name": {
+    "ja": "間々田のじゃがまいた",
+    "en": "Mamada Jagamaita"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "栃木県",
+      "name": "小山市"
+    }
+  ],
+  "venue": {
+    "name": "間々田八幡宮境内と周辺町内",
+    "lat": 36.2743,
+    "lng": 139.7657
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu"],
+  "highlights": [
+    "竹や藁で作った全長約15mの蛇（ジャ）7体が八幡宮に集まる",
+    "境内の池で蛇に水を飲ませる「水呑みの儀」",
+    "水を飲んだ蛇が各町内へ戻り、掛け声とともに練り歩く"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "国の重要無形民俗文化財で、江戸時代から続く伝統行事",
+      "sources": [
+        {
+          "url": "https://www.city.oyama.tochigi.jp/kankou-bunka/rekishi_bunka/page006686.html",
+          "title": "小山市 江戸時代から続く伝統行事！間々田のじゃがまいたが開催されます!",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.pref.tochigi.lg.jp/c05/intro/tochigiken/miryoku/kennan/012.html",
+          "title": "栃木県 間々田のじゃがまいた",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "7つの町内（自治会）が蛇を1体ずつ作って奉納する",
+      "sources": [
+        {
+          "url": "https://www.pref.tochigi.lg.jp/c05/intro/tochigiken/miryoku/kennan/012.html",
+          "title": "栃木県 間々田のじゃがまいた",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "7つの町内（自治会）が蛇を1体ずつ作り、間々田八幡宮の拝殿前に並べる",
+      "source": {
+        "url": "https://www.pref.tochigi.lg.jp/c05/intro/tochigiken/miryoku/kennan/012.html",
+        "title": "栃木県 間々田のじゃがまいた",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2019年3月28日に国の重要無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.pref.tochigi.lg.jp/c05/intro/tochigiken/miryoku/kennan/012.html",
+        "title": "栃木県 間々田のじゃがまいた",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "もとは旧暦4月8日の行事で、担い手が子どもだったため学校の休みの5月5日に移った",
+      "source": {
+        "url": "https://www.walkerplus.com/event/ar0309e338130/",
+        "title": "ウォーカープラス 間々田のジャガマイタ（間々田の蛇まつり）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "担ぎ手ごと蛇が境内の池に飛び込み、池の中を練り回ることもある",
+      "source": {
+        "url": "https://www.pref.tochigi.lg.jp/c05/intro/tochigiken/miryoku/kennan/012.html",
+        "title": "栃木県 間々田のじゃがまいた",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": [
+      "駐車場は限りがあるので、公共交通機関で来るよう求めている",
+      "間々田中学校の臨時駐車場は14:00までに出る（厳守）",
+      "蛇が通る道路には一般の車で入らないよう求めている"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.oyama.tochigi.jp/kankou-bunka/rekishi_bunka/page006686.html",
+        "title": "小山市 江戸時代から続く伝統行事！間々田のじゃがまいたが開催されます!",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.oyama.tochigi.jp/data/doc/1777257992_doc_913_0.pdf",
+        "title": "小山市 5月5日(火)間々田のじゃがまいた交通案内",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-05-05",
+      "start": "10:30",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": "雨天決行",
+      "note": "2026年の実績。10:30 蛇寄せ、11:00 修祓式、11:30 開会式、12:00 担ぎ出しと水呑みの儀（そのあと蛇は各町内へ）",
+      "sources": [
+        {
+          "url": "https://www.city.oyama.tochigi.jp/kankou-bunka/rekishi_bunka/page006686.html",
+          "title": "小山市 江戸時代から続く伝統行事！間々田のじゃがまいたが開催されます!（2026年4月27日更新）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-05-05",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年5月5日（2027年の発表はまだない）。2026年は10:30の蛇寄せに始まり、12:00ごろに水呑みの儀があった",
+      "sources": [
+        {
+          "url": "https://www.pref.tochigi.lg.jp/c05/intro/tochigiken/miryoku/kennan/012.html",
+          "title": "栃木県 間々田のじゃがまいた（毎年5月5日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 間々田駅",
+        "walkMinutes": [25, 30],
+        "note": "観光サイトの案内で徒歩約25分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "上野駅",
+        "minutes": [68, 68],
+        "route": "JR宇都宮線の普通、乗り換えなし"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [
+      "2026年は間々田八幡宮の周辺で、蛇が往来する道路に一般の車が入らないよう規制した（時間の記載はない）"
+    ],
+    "sources": [
+      {
+        "url": "https://www.city.oyama.tochigi.jp/kankou-bunka/rekishi_bunka/page006686.html",
+        "title": "小山市 間々田のじゃがまいた（駐車場は間々田中学校 約150台・しらさぎ館 約100台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.oyama.tochigi.jp/data/doc/1777257992_doc_913_0.pdf",
+        "title": "小山市 5月5日(火)間々田のじゃがまいた交通案内",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002021",
+        "title": "るるぶ&more. 間々田のじゃがまいた（JR間々田駅から徒歩25分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      },
+      {
+        "url": "https://ekitan.com/transit/route/sf-1627/st-3052",
+        "title": "駅探 乗換案内 上野→間々田（2026年11月4日の検索結果、1時間8分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "oyama-city-museum",
+      "name": "小山市立博物館",
+      "kind": "sightseeing",
+      "summary": "小山市の歴史を紹介する市立の博物館。常設展は無料。月曜（祝日は開館）、祝日の翌日（土日・祝日を除く）、第4金曜、年末年始は休館",
+      "location": {
+        "lat": 36.2613,
+        "lng": 139.7556
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["mon"],
+      "price": "常設展は無料。企画展は一般200円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.city.oyama.tochigi.jp/museum/page002377.html",
+          "title": "小山市立博物館 ご利用案内",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "mamada-himo-ten",
+      "name": "間々田ひも店",
+      "kind": "sightseeing",
+      "summary": "栃木の伝統工芸品「間々田紐」の店。見学は無料で、組紐のストラップ作りの体験もできる（材料費は実費）。月曜休み（祝日なら翌日）",
+      "location": {
+        "lat": 36.2647,
+        "lng": 139.7636
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": ["mon"],
+      "price": "見学は無料。体験は材料費の実費",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.pref.tochigi.lg.jp/f02/work/shoukougyou/dentoukougei/documents/20240227154457.pdf",
+          "title": "栃木県 とちぎの伝統工芸品 見学・体験一覧",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "asanoya-mohei",
+      "name": "浅野屋茂兵衛",
+      "kind": "food",
+      "summary": "間々田にある、開運小山うどん会の店。開運小山うどん・手打ち蕎麦・へぎ蕎麦を出す。祝日は昼と夜（17:00〜20:00、LO19:30）に分けて営業。月・火曜休み",
+      "location": {
+        "lat": 36.2675,
+        "lng": 139.767
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": ["mon", "tue"],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://asanoya.info/",
+          "title": "浅野屋茂兵衛 公式サイト",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.oyama.tochigi.jp/kankou-bunka/miryoku/udon/page003769.html",
+          "title": "小山市 開運小山うどん会 会員店舗のご紹介",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.oyama.tochigi.jp/kankou-bunka/rekishi_bunka/page006686.html",
+      "title": "小山市 江戸時代から続く伝統行事！間々田のじゃがまいたが開催されます!",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.pref.tochigi.lg.jp/c05/intro/tochigiken/miryoku/kennan/012.html",
+      "title": "栃木県 間々田のじゃがまいた",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と当日の時刻",
+    "外から来た人が担ぎに加われるか（見学だけかを含め、公式の案内が見つからない）",
+    "危険度（水呑みの儀や練り歩きでの、主催者による注意が見つからない）",
+    "服装・持ち物・撮影の決まり",
+    "交通規制の時間",
+    "公式の案内による、間々田駅から会場までの徒歩の時間とバス（観光サイトでは徒歩約25分）",
+    "屋台が出るか",
+    "終わる時刻と、町内を練り歩く道順",
+    "間々田ひも店の営業時間",
+    "浅野屋茂兵衛の祝日の営業時間は昼（10:45〜15:00）と夜（17:00〜20:00）に分かれるため、1つの時間帯で書いていない"
+  ]
+}

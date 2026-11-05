@@ -1,0 +1,217 @@
+{
+  "id": "tokashiki-otsunahiki",
+  "name": {
+    "ja": "渡嘉敷大綱引き",
+    "en": "Tokashiki Great Tug-of-War"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "沖縄県",
+      "name": "渡嘉敷村"
+    }
+  ],
+  "venue": {
+    "name": "渡嘉敷村役場前の大通り（渡嘉敷村字渡嘉敷）",
+    "lat": 26.2043,
+    "lng": 127.3613
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "太さ40〜45cmの雌綱と雄綱を木の棒でつなぎ、集落の東と西に分かれて引き合う",
+    "綱引きの前に、東西の旗頭が気勢を上げて競い合う",
+    "人数合わせで、旅行者が東西のどちらかに加わって綱を引くこともある"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "300年の伝統がある大綱引きと報じられた",
+      "sources": [
+        {
+          "url": "https://ryukyushimpo.jp/region/entry-3347527.html",
+          "title": "琉球新報 300年の伝統、渡嘉敷の大綱引き（2024年8月7日。観光客も綱をつかんで引き合いに加わった）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "集落の東西に分かれた住民が、本家・分家の由来を負って引き合う",
+      "sources": [
+        {
+          "url": "https://www.mlit.go.jp/tagengo-db/R2-00911.html",
+          "title": "観光庁 多言語解説文データベース 渡嘉敷村 渡嘉敷地区：大綱引き",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "西が勝てば翌年は豊作、東が勝てば豊漁になると言い伝えられている",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/R2-00911.html",
+        "title": "観光庁 多言語解説文データベース 渡嘉敷村 渡嘉敷地区：大綱引き",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "東西の張り合いは、島に最初に住んだ一族の本家が西に、分家が東に住んだことに由来する",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/R2-00911.html",
+        "title": "観光庁 多言語解説文データベース 渡嘉敷村 渡嘉敷地区：大綱引き",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "その年の一期作の稲わらで、当日の朝から綱をない、仕上がったその日に引き合う",
+      "source": {
+        "url": "https://www.vill.tokashiki.okinawa.jp/gyoji_event/2565.html",
+        "title": "渡嘉敷村 村内行事（大綱曳き）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "役場前の東西の境で、線から約3m引き込んだ側が勝ちになる",
+      "source": {
+        "url": "https://www.mlit.go.jp/tagengo-db/R2-00911.html",
+        "title": "観光庁 多言語解説文データベース 渡嘉敷村 渡嘉敷地区：大綱引き",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.mlit.go.jp/tagengo-db/R2-00911.html",
+        "title": "観光庁 多言語解説文データベース 渡嘉敷村 渡嘉敷地区：大綱引き（人数合わせで旅行者がチームに振り分けられることがある）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ryukyushimpo.jp/region/entry-3347527.html",
+        "title": "琉球新報 300年の伝統、渡嘉敷の大綱引き（2024年8月7日。観光客も綱をつかんで引き合いに加わった）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2025-07-19",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "開催の記録（旧暦6月25日の六月カシチー）。役場前の大通りで東西の200人余りが全長約120メートルの大綱を引き合い、東が勝った。開始の時刻の記載はない",
+      "sources": [
+        {
+          "url": "https://ryukyushimpo.jp/region/entry-4522003.html",
+          "title": "琉球新報 120メートル大綱引き200人熱戦 渡嘉敷 六月カチシー（2025年8月7日。7月19日に開催）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-28",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2027年の発表はまだない。村の行事の一覧と観光庁の解説は旧暦6月25日の行事としている。国立天文台の2027年の朔（7月4日）から旧暦6月1日を7月4日とし、25日を7月28日（水）と見込んだ。2024年の報道では、夕方5時45分ごろに大綱を役場前に運び込み、旗頭の競演のあと綱引き、終わると区の飲み物のふるまいとエイサーなどの交流会があった。夏時間の渡嘉敷港発の最終便は高速船17:30で、綱引きを見ると日帰りはできない",
+      "sources": [
+        {
+          "url": "https://www.vill.tokashiki.okinawa.jp/gyoji_event/2565.html",
+          "title": "渡嘉敷村 村内行事（大綱曳き：旧暦6月25日、渡嘉敷区。ページの表記は「6日25日」）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.mlit.go.jp/tagengo-db/R2-00911.html",
+          "title": "観光庁 多言語解説文データベース 渡嘉敷村 渡嘉敷地区：大綱引き（太陰暦の6月25日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2027/rekiyou273.html",
+          "title": "国立天文台 令和9年（2027）暦要項 朔弦望",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://ryukyushimpo.jp/region/entry-3347527.html",
+          "title": "琉球新報 300年の伝統、渡嘉敷の大綱引き（2024年7月30日の開催。午後5時45分ごろに大綱を運び込み）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [
+      {
+        "hub": "那覇 泊港（とまりん）",
+        "minutes": [40, 70],
+        "route": "渡嘉敷港まで、高速船マリンライナーとかしきで約40分、フェリーとかしきで約70分。夏時間（3月1日〜9月30日）の渡嘉敷港発の最終便は高速船17:30、フェリー16:00"
+      }
+    ],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.vill.tokashiki.okinawa.jp/sempakujoho/unchin/2781.html",
+        "title": "渡嘉敷村 時刻表 運賃表 予約連絡先（フェリー約70分、高速船約40分、夏時間の時刻）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.vill.tokashiki.okinawa.jp/gyoji_event/2565.html",
+      "title": "渡嘉敷村 村内行事（大綱曳き、字渡嘉敷）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.mlit.go.jp/tagengo-db/R2-00911.html",
+      "title": "観光庁 多言語解説文データベース 渡嘉敷村 渡嘉敷地区：大綱引き（村役場前で開催）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と時刻（村の行事の一覧は旧暦の日付だけ）。日付は旧暦から換算したもの",
+    "旅行者が綱引きに加わる方法（当日の受付の有無、どちらの組に入るかの決め方）。観光庁の解説は「振り分けられることもある」としている",
+    "見学と参加の決まり、撮影、服装・持ち物、危険度（主催者の注意が見つからない）",
+    "雨天・荒天の扱い",
+    "綱引きは夕方からで、那覇への最終便より後になるため、島での宿泊が要る。祭りの日の宿の空きは確かめていない",
+    "渡嘉敷港から役場前までの徒歩の時間と、駐車場",
+    "2026年の開催の実績（報道や村の発表を見つけられなかった）",
+    "屋台の有無と、綱引き後のふるまい・交流会に見学者が加われるか",
+    "周辺の観光と食の場所（祭りの日の夜に営業を公式で確かめられたものがない）",
+    "会場の緯度・経度は国土地理院の住所検索で「渡嘉敷村渡嘉敷」を取った大字の代表点で、役場前の正確な位置ではない"
+  ]
+}

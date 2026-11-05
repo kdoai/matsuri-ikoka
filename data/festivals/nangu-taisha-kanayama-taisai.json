@@ -1,0 +1,171 @@
+{
+  "id": "nangu-taisha-kanayama-taisai",
+  "name": {
+    "ja": "金山大祭（ふいご祭）",
+    "en": "Kanayama Grand Festival (Fuigo Festival) of Nangu Taisha"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "岐阜県",
+      "name": "不破郡垂井町"
+    }
+  ],
+  "venue": {
+    "name": "南宮大社",
+    "lat": 35.3579,
+    "lng": 136.5228
+  },
+  "scaleTier": "XS",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "鞴で火をおこした炉の鋼を、烏帽子に直垂姿の野鍛冶が槌で打って小刀に鍛える",
+    "鍛錬の間、高舞殿で舞楽「陵王舞」と雅楽が奏される",
+    "金属の神をまつる美濃国一宮に、全国の金属業の人が参る日"
+  ],
+  "trivia": [
+    {
+      "text": "鍛錬式では奉行3人がおよそ30分かけて鋼を鍛え、できた小刀を神前に納める",
+      "source": {
+        "url": "https://www.nangu-san.com/feast/fuigo.html",
+        "title": "南宮大社 十一月金山大祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "翌11月9日は、祭神が府中の地から南宮山のふもとへ移ったと伝わる鎮座の日",
+      "source": {
+        "url": "https://www.nangu-san.com/feast/fuigo.html",
+        "title": "南宮大社 十一月金山大祭",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "南宮大社は社殿を含む18棟の建物が国の重要文化財に指定されている",
+      "source": {
+        "url": "https://www.kankou-gifu.jp/spot/detail_6870.html",
+        "title": "岐阜の旅ガイド 南宮大社",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "高舞殿の上で行う鍛錬式を参拝者が見守る行事で、神社の案内に危険や混雑の注意が見当たらない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.nangu-san.com/feast/fuigo.html",
+        "title": "南宮大社 十一月金山大祭（多くの参拝者が見守る中で鍛錬式）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-08",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年11月8日の祭事（2026年の時刻の発表はまだない）。2025年は10:30に斎行した。お祓い、宮司の火打ちの所作のあと、鞴で火をおこした炉から鋼を出して奉行3人が30分ほど鍛え、小刀を神前に納める。神社の開門は6:00〜17:30（2026年10月16日から）",
+      "sources": [
+        {
+          "url": "https://www.nangu-san.com/feast/fuigo.html",
+          "title": "南宮大社 十一月金山大祭（11月8日、鍛錬式の流れ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.nangu-san.com/blog/post-2159",
+          "title": "南宮大社 金山大祭（ふいご祭）が斎行されました（2025年11月8日、10時30分）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.nangu-san.com/news/post-2436",
+          "title": "南宮大社 開門時間変更のご案内（午前6時〜午後5時30分）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-11-08",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年11月8日に行う決まりから見込んだ日（2027年の発表はまだない）。2025年は10:30に斎行した",
+      "sources": [
+        {
+          "url": "https://www.nangu-san.com/feast/fuigo.html",
+          "title": "南宮大社 十一月金山大祭（11月8日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 垂井駅",
+        "walkMinutes": [20, 25],
+        "note": "神社の交通案内で徒歩約20分。大垣駅からのバスは正月三が日だけ"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.nangu-san.com/access.html",
+        "title": "南宮大社 交通案内（垂井駅から徒歩約20分、境内の手前に駐車場）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.nangu-san.com/feast/fuigo.html",
+      "title": "南宮大社 十一月金山大祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.kankou-gifu.jp/spot/detail_6870.html",
+      "title": "岐阜の旅ガイド 南宮大社",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2026年の開始時刻（神社の発表がまだない。2025年は10:30）",
+    "見学の決まり（立ち位置）、服装・持ち物、撮影の決まり",
+    "雨のときの扱い",
+    "駐車場の台数と料金",
+    "名古屋駅・大垣駅からJR垂井駅までの所要時間",
+    "屋台・露店の有無",
+    "参拝者の数",
+    "周辺の観光と食の場所"
+  ]
+}

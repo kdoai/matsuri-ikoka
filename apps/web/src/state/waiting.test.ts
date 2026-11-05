@@ -9,9 +9,19 @@ import { applyEvent } from "./events";
 import { initialData } from "./initial";
 import { conditionChips, mapPoints } from "./selectors";
 import { soundCues } from "./sound-cues";
-import { answerQuiz, beginTurn, expectedWaitMs, offerQuiz, shouldOfferQuiz } from "./transitions";
+import { answerQuiz, beginTurn } from "./transitions";
 import type { AppData } from "./types";
-import { buildQuiz, waitingTalks } from "./waiting";
+import {
+  QUIZ_MS,
+  QUIZ_RESULT_MS,
+  shuffleDeck,
+  slideDelayMs,
+  slidePosition,
+  TALK_MS,
+  TALKS_PER_QUIZ,
+  waitingSlide,
+  waitingTalks,
+} from "./waiting";
 
 function festival(): Festival {
   return FestivalSchema.parse(fictionalFestival());
@@ -180,83 +190,105 @@ describe("待ち時間の豆知識", () => {
   });
 });
 
-describe("クイズ", () => {
-  it("ほかの祭りのデータからはずれの選択肢を作り、正解は問う祭りのもの", () => {
-    const a = festival();
-    const b = otherFestival();
-    for (const seed of [0, 0.3, 0.6, 0.9]) {
-      const question = buildQuiz({ [a.id]: a, [b.id]: b }, a.id, sequence(seed, 0.99 - seed))!;
-      expect(question.festivalId).toBe(a.id);
-      const right = question.choices[question.correct];
-      const wrong = question.choices[question.correct === 0 ? 1 : 0];
-      if (question.kind === "highlight") {
-        expect(a.highlights).toContain(right);
-        expect(b.highlights).toContain(wrong);
-      } else if (question.kind === "local_food") {
-        expect(right).toBe("鈴鳴そば");
-        expect(wrong).toBe("楓まんじゅう");
-      } else {
-        expect(right).toBe("lantern");
-        expect(wrong).not.toBe("lantern");
+describe("豆知識のあいだのクイズ", () => {
+  const deck = ["q1", "q2", "q3", "q4", "q5"];
+  const slides = (from: number, to: number, talkCount: number, ids: readonly string[] = deck) =>
+    Array.from({ length: to - from }, (_, i) => waitingSlide(from + i, talkCount, ids));
+
+  it(`豆知識を ${TALKS_PER_QUIZ} 話話すごとに、クイズを1問挟む`, () => {
+    expect(slides(0, 8, 6).map((slide) => slide?.kind)).toEqual([
+      "talk",
+      "talk",
+      "talk",
+      "quiz",
+      "talk",
+      "talk",
+      "talk",
+      "quiz",
+    ]);
+    expect(slides(0, 4, 6).filter((slide) => slide?.kind === "talk")).toEqual([
+      { kind: "talk", talkIndex: 0 },
+      { kind: "talk", talkIndex: 1 },
+      { kind: "talk", talkIndex: 2 },
+    ]);
+  });
+
+  it("同じ問いを続けて出さず、deck をひと巡りするまで問いが重ならない", () => {
+    for (const talkCount of [0, 1, 2, 3, 7, 12]) {
+      const quizzes = slides(0, 200, talkCount)
+        .filter((slide) => slide?.kind === "quiz")
+        .map((slide) => (slide?.kind === "quiz" ? slide.quizId : ""));
+      expect(quizzes.length).toBeGreaterThan(deck.length);
+      for (let i = 0; i + deck.length <= quizzes.length; i++) {
+        expect(new Set(quizzes.slice(i, i + deck.length)).size).toBe(deck.length);
       }
     }
   });
 
-  it("祭りが1つだけでも、種類のクイズは作れる", () => {
-    const a = festival();
-    const question = buildQuiz({ [a.id]: a }, a.id, sequence(0.99, 0.2, 0.7));
-    expect(question?.kind).toBe("category");
+  it("前へ戻ると、ひと回り前の並びを逆にたどる", () => {
+    // 次へ送ってから前へ戻ると、元の1枚に戻る
+    expect(waitingSlide(9 + 1 - 1, 6, deck)).toEqual(waitingSlide(9, 6, deck));
+    expect(waitingSlide(-1, 6, deck)?.kind).toBe("quiz");
+    expect(waitingSlide(-2, 6, deck)).toEqual({ kind: "talk", talkIndex: 5 });
   });
 
-  it("祭りのデータがなければ、クイズは出さない", () => {
-    expect(buildQuiz({}, null)).toBeNull();
+  it("豆知識がまだなくてもクイズは出し、豆知識が少なくてもひと回りに1問は出す", () => {
+    expect(slides(0, 3, 0).map((slide) => slide?.kind)).toEqual(["quiz", "quiz", "quiz"]);
+    expect(slides(0, 4, 1).map((slide) => slide?.kind)).toEqual(["talk", "quiz", "talk", "quiz"]);
   });
 
-  it("10秒以上待ちそうなときだけ、1つの発言に1問出す", () => {
-    let state = applyEvent(streaming(), {
-      type: "staff.start",
-      data: { staff: "researcher", task: "find_festivals", bubble: "調べます" },
-    });
-    expect(expectedWaitMs(state)).toBeLessThan(10_000);
-    expect(shouldOfferQuiz(state)).toBe(false);
-
-    state = applyEvent(state, {
-      type: "staff.start",
-      data: { staff: "planner", task: "plan_route", bubble: "道のりを調べます" },
-    });
-    expect(shouldOfferQuiz(state)).toBe(true);
-
-    const a = festival();
-    state = offerQuiz(state, buildQuiz({ [a.id]: a }, a.id, sequence(0.1))!);
-    expect(shouldOfferQuiz(state)).toBe(false);
+  it("クイズがなければ豆知識だけ、どちらもなければ何も出さない", () => {
+    expect(slides(0, 5, 3, []).every((slide) => slide?.kind === "talk")).toBe(true);
+    expect(waitingSlide(0, 0, [])).toBeNull();
   });
 
-  it("確定前の再確認は待ち時間が長いので、クイズを出す", () => {
-    const state = applyEvent(streaming(), {
-      type: "tool.start",
-      data: { toolCallId: "v", tool: "verify_festival", staff: "concierge", bubble: "確かめます" },
-    });
-    expect(shouldOfferQuiz(state)).toBe(true);
+  it("点の数はひと回りの枚数で、いまの位置は負の数でも収まる", () => {
+    expect(slidePosition(5, 6, deck)).toEqual({ count: 8, index: 5 });
+    expect(slidePosition(-1, 6, deck)).toEqual({ count: 8, index: 7 });
+    expect(slidePosition(0, 0, [])).toEqual({ count: 1, index: 0 });
+  });
+
+  it("クイズは豆知識より長く見せ、答えたら解説を読む時間をとる", () => {
+    expect(slideDelayMs({ kind: "talk", talkIndex: 0 }, false)).toBe(TALK_MS);
+    expect(slideDelayMs({ kind: "quiz", quizId: "q1" }, false)).toBe(QUIZ_MS);
+    expect(slideDelayMs({ kind: "quiz", quizId: "q1" }, true)).toBe(QUIZ_RESULT_MS);
+    expect(QUIZ_MS).toBeGreaterThan(TALK_MS);
+  });
+
+  it("混ぜた deck は、ID を重ねずにすべて含む", () => {
+    const shuffled = shuffleDeck([...deck, "q1"], sequence(0.9, 0.1, 0.5, 0.3));
+    expect([...shuffled].sort()).toEqual(deck);
+    expect(shuffleDeck([], sequence(0.5))).toEqual([]);
   });
 
   it("正解するとスタンプが1つ増え、答え直しはできない", () => {
-    const a = festival();
-    const question = buildQuiz({ [a.id]: a }, a.id, sequence(0.1))!;
-    let state = offerQuiz(streaming(), question);
-    state = answerQuiz(state, question.correct);
+    const quiz = {
+      id: "q1",
+      question: "架空の問い",
+      choices: ["A", "B", "C"],
+      answer: 2,
+      explanation: "架空の解説",
+      source: fictionalSource("quiz"),
+    };
+    let state = answerQuiz(streaming(), quiz, 2);
     expect(state.stamps).toBe(1);
-    state = answerQuiz(state, question.correct);
+    expect(state.quiz.answers).toEqual({ q1: 2 });
+    state = answerQuiz(state, quiz, 0);
     expect(state.stamps).toBe(1);
+    expect(state.quiz.answers).toEqual({ q1: 2 });
   });
 
-  it("返答が終わると、クイズは閉じる", () => {
-    const a = festival();
-    let state = offerQuiz(streaming(), buildQuiz({ [a.id]: a }, a.id, sequence(0.1))!);
-    state = applyEvent(state, {
-      type: "done",
-      data: { stage: "itinerary", conditions: {}, preferences: state.preferences },
-    });
-    expect(state.quiz.question).toBeNull();
+  it("はずれではスタンプは増えず、選択肢の外は受け付けない", () => {
+    const quiz = {
+      id: "q2",
+      question: "架空の問い",
+      choices: ["A", "B"],
+      answer: 0,
+      explanation: "架空の解説",
+      source: fictionalSource("quiz"),
+    };
+    expect(answerQuiz(streaming(), quiz, 1).stamps).toBe(0);
+    expect(answerQuiz(streaming(), quiz, 5).quiz.answers).toEqual({});
   });
 });
 

@@ -1,0 +1,240 @@
+{
+  "id": "katsuyama-sagicho-matsuri",
+  "name": {
+    "ja": "勝山左義長まつり",
+    "en": "Katsuyama Sagicho Festival"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "福井県",
+      "name": "勝山市"
+    }
+  ],
+  "venue": {
+    "name": "勝山市街地の各町内（どんど焼きは弁天河原緑地）",
+    "lat": 36.0613,
+    "lng": 136.497
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "櫓の上で赤襦袢を着た打ち手が、子どもたちと左義長ばやしの太鼓を打ち鳴らす",
+    "町内ごとに12基の櫓が立ち、町を歩いて櫓を見比べられる",
+    "世相を狂歌や絵で風刺する絵行燈が辻や櫓に掛かる",
+    "2日目の夜、御神火で一斉に火を入れるどんど焼きで締めくくる"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1748年の史料があり、それ以前から行われていたと考えられている",
+      "sources": [
+        {
+          "url": "https://www.city.katsuyama.fukui.jp/kankou/sagityo/about/about01.html",
+          "title": "勝山市 勝山左義長 勝山左義長とは",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "12の区の櫓が毎年順番に一番太鼓を受け持つ",
+      "sources": [
+        {
+          "url": "https://www.city.katsuyama.fukui.jp/kankou/sagityo/about/about10.html",
+          "title": "勝山市 勝山左義長 一番太鼓",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "記録として最も古いのは寛延元年（1748年）の史料で、それ以前から行われていたと考えられている",
+      "source": {
+        "url": "https://www.city.katsuyama.fukui.jp/kankou/sagityo/about/about01.html",
+        "title": "勝山市 勝山左義長 勝山左義長とは",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "一番太鼓は12の櫓が毎年順番に受け持ち、鳴るまで他の櫓は始められない",
+      "source": {
+        "url": "https://www.city.katsuyama.fukui.jp/kankou/sagityo/about/about10.html",
+        "title": "勝山市 勝山左義長 一番太鼓",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "赤襦袢を着て櫓に上がることは、一人前の男として認められた証だった",
+      "source": {
+        "url": "https://www.city.katsuyama.fukui.jp/kankou/sagityo/about/about07.html",
+        "title": "勝山市 勝山左義長 赤襦袢・絵行燈",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "どんど焼きの翌朝は、残り火で粥を炊いて配り、灰を体に塗って無病息災を願った",
+      "source": {
+        "url": "https://www.city.katsuyama.fukui.jp/kankou/sagityo/about/about09.html",
+        "title": "勝山市 勝山左義長 どんど焼き・後燃やし",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "数万人が訪れ、2日目の夜には河原で大きな火を焚く（見学についての主催者の注意書きは見つからない）"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.katsuyama.fukui.jp/kankou/sagityo/",
+        "title": "勝山市 勝山左義長",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20001069",
+        "title": "るるぶ&more. 勝山左義長まつり（前年の来場者数7万人）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-02-21",
+      "start": "13:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績（1日目）。13:00 一番太鼓、そのあと各櫓で囃子と太鼓が始まる。観覧は無料",
+      "sources": [
+        {
+          "url": "https://fuku-iro.jp/event/detail_11182.html",
+          "title": "福井市観光公式サイト 福いろ 勝山左義長まつり（2026年2月21日・22日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-22",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績（2日目）。昼は各櫓、19:30 神明神社で採った御神火を各区の松明で弁天河原へ運び、20:00 狼煙を合図にどんど焼きに一斉点火",
+      "sources": [
+        {
+          "url": "https://fuku-iro.jp/event/detail_11182.html",
+          "title": "福井市観光公式サイト 福いろ 勝山左義長まつり（2026年2月21日・22日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-02-27",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2月の最終土曜日・日曜日に開く決まりから出した1日目（2027年の発表はまだない）。例年13:00の一番太鼓で始まる",
+      "sources": [
+        {
+          "url": "https://www.city.katsuyama.fukui.jp/kankou/sagityo/",
+          "title": "勝山市 勝山左義長（2月の最終土曜日・日曜日に開催）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-02-28",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2月の最終土曜日・日曜日に開く決まりから出した2日目（2027年の発表はまだない）。例年、夜に御神火を弁天河原へ運び、20:00ごろどんど焼きに点火する",
+      "sources": [
+        {
+          "url": "https://www.city.katsuyama.fukui.jp/kankou/sagityo/",
+          "title": "勝山市 勝山左義長（2月の最終土曜日・日曜日に開催、20時に一斉点火）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "えちぜん鉄道 勝山駅",
+        "walkMinutes": [10, 15]
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://fuku-iro.jp/event/detail_11182.html",
+        "title": "福井市観光公式サイト 福いろ 勝山左義長まつり（勝山駅から徒歩10分、臨時駐車場あり）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.city.katsuyama.fukui.jp/kankou/sagityo/",
+      "title": "勝山市 勝山左義長（市街地の各町内に12基の櫓）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://fuku-iro.jp/event/detail_11182.html",
+      "title": "福井市観光公式サイト 福いろ 勝山左義長まつり",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.walkerplus.com/event/ar0518e214344/",
+      "title": "ウォーカープラス 勝山左義長まつり",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表",
+    "どんど焼きの点火の時刻（市のページの中で20:00と21:00の2通りがある）",
+    "櫓で囃子と太鼓が続く時間帯（各日の終わりの時刻）",
+    "雪や雨のときの扱い",
+    "交通規制の時間と場所、臨時駐車場の場所と台数、シャトルバスの有無",
+    "見学の決まり、撮影の扱い、服装・持ち物（冬の夜の屋外だが、防寒の案内は出典に見当たらない）",
+    "福井駅など玄関口の駅から勝山駅までの所要時間（えちぜん鉄道の公式の案内で確かめていない）",
+    "屋台の有無と、この祭りならではの食べもの",
+    "周辺の観光と食の場所",
+    "どんど焼き会場（弁天河原緑地）の正確な位置"
+  ]
+}

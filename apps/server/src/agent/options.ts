@@ -79,7 +79,10 @@ export function agentEnv(source: NodeJS.ProcessEnv): Record<string, string> {
   const env: Record<string, string> = {};
   for (const [key, value] of Object.entries(source)) {
     if (value === undefined || !allowed.has(key.toUpperCase())) continue;
-    env[key] = TRIMMED_ENV.has(key.toUpperCase()) ? value.trim() : value;
+    const passed = TRIMMED_ENV.has(key.toUpperCase()) ? value.trim() : value;
+    // 空の値は、設定していないのと同じに扱う（.env に空のまま書いた API キーなど）
+    if (passed === "") continue;
+    env[key] = passed;
   }
   return { ...env, ...ISOLATION_ENV };
 }
@@ -97,21 +100,31 @@ const STAFF_DESCRIPTIONS: Record<Staff, string> = {
   scout:
     "周辺係。利用者が選んだ祭りの前後に寄れる観光・食・休憩の場所を search_nearby で探して報告する。",
   planner:
-    "旅程係。移動の目安と天気を確かめ、時刻つきの旅程を組んで update_itinerary で保存する（何日かの旅は1日ずつ）。祭りのない日の行き先は search_nearby で地域から探す。旅程の修正とこだわりの切り替えも受け持つ。",
+    "旅程係。research_trip で経路（乗り換えと帰りの最終まで）と食事・寄り道を並べて調べ、天気を確かめ、移動・食事・最後の移動のそろった時刻つきの旅程を組んで update_itinerary で保存する（何日かの旅は1日ずつ）。保存のたびに評価され、基準に届かなければ調べ直して作り直す。祭りのない日の行き先は search_nearby で地域から探す。旅程の修正とこだわりの切り替えも受け持つ。",
 };
 
-// 旅程係は、何日かの旅を1日ずつ保存し、祭りのない日の行き先を地域で探すので、回数を多めにとる
-const STAFF_MAX_TURNS: Record<Staff, number> = { researcher: 4, scout: 4, planner: 30 };
+// 旅程係は、何日かの旅を1日ずつ保存し、祭りのない日の行き先を地域で探し、評価で調べ直して作り直すので、回数を多めにとる
+const STAFF_MAX_TURNS: Record<Staff, number> = { researcher: 4, scout: 4, planner: 40 };
+
+// スタッフの仕事の多くは決まった道具を呼んで報告するだけなので、浅く速く考えさせる。
+// 旅程係は、移動・食事・祭りの時間・営業時間を合わせ、評価の指摘を読んで直すので、よく考えさせる
+const STAFF_EFFORT: Record<Staff, NonNullable<AgentDefinition["effort"]>> = {
+  researcher: "low",
+  scout: "low",
+  planner: "medium",
+};
 
 /**
  * 役割ごとのモデル名（環境変数から。コードに書き込まない）。
- * staff は祭り調査係と周辺係、planner は旅程係、verifier は確定前の再確認
+ * staff は祭り調査係と周辺係、planner は旅程係、verifier は確定前の再確認、evaluator は旅程の評価係
  */
 export interface AgentModels {
   concierge?: string | undefined;
   staff?: string | undefined;
   planner?: string | undefined;
   verifier?: string | undefined;
+  evaluator?: string | undefined;
+  wishReader?: string | undefined;
 }
 
 export interface AgentOptionsInput {
@@ -137,8 +150,7 @@ function staffAgent(staff: Staff, input: AgentOptionsInput): AgentDefinition {
     model:
       (staff === "planner" ? input.models.planner : undefined) ?? input.models.staff ?? "inherit",
     maxTurns: STAFF_MAX_TURNS[staff],
-    // スタッフの仕事は決まった道具を呼んで報告するだけなので、浅く速く考えさせる
-    effort: "low",
+    effort: STAFF_EFFORT[staff],
     background: false,
   };
 }

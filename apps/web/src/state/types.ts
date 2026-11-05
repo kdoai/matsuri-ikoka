@@ -1,4 +1,5 @@
 import type {
+  AgentMode,
   ConversationStage,
   ErrorCode,
   Festival,
@@ -7,22 +8,34 @@ import type {
   ItineraryDiff,
   PartialTripConditions,
   Preferences,
+  RedoSubject,
+  SearchOutcome,
+  SearchRetry,
   Source,
   SpotPin,
   STAFF_TASKS,
   StaffId,
   ToolName,
+  TripAnchor,
   VerificationResult,
 } from "@matsuri-ikoka/schema";
+import type { ConsultState } from "./consult";
+import type { FestivalSearchState } from "./festivalSearch";
 
 // 画面の正しい状態の形。3D・会話・しおりは、どれもこの形を読むだけにする。
 
 export type StaffTask = (typeof STAFF_TASKS)[number];
 /**
  * サーバーのエラーに、画面の側で気づくエラーを足したもの。
- * connection_lost 接続が切れた / invalid_event 形が違う / session_lost サーバーが相談を覚えていない
+ * connection_lost 返答の途中で接続が切れた（サーバーは動いている） / server_unreachable サーバーにつながらない /
+ * invalid_event 形が違う / session_lost サーバーが相談を覚えていない
  */
-export type ClientErrorCode = ErrorCode | "connection_lost" | "invalid_event" | "session_lost";
+export type ClientErrorCode =
+  | ErrorCode
+  | "connection_lost"
+  | "server_unreachable"
+  | "invalid_event"
+  | "session_lost";
 
 /** 画面に出すエラー。message はサーバーが送った一文（なければ null で、辞書の文言を出す） */
 export interface ClientError {
@@ -61,9 +74,53 @@ export interface StaffState {
   tool: ToolName | null;
   /** 吹き出しの文章。サーバーが決まった型から作ったものをそのまま持つ */
   bubble: string | null;
+  /** 店内のようすの窓に出す、くわしい文（サーバーが決まった型から作る）。なければ吹き出しを出す */
+  detail: string | null;
   /** 変わるたびに1つ増える。うなずき・はんこのような1回きりの動きを出し直すのに使う */
   seq: number;
 }
+
+// ---------------------------------------------------------------------------
+// スタッフどうしの頼みと受け渡し
+
+/**
+ * 頼み（コンシェルジュがスタッフに作業を頼む）と受け渡し（作業の結果を次の人へ渡す）の1件。
+ * task は、頼みでは頼んだ作業、受け渡しでは渡すものを作った作業。文は画面の辞書の決まった型で作る
+ */
+export interface RelayEntry {
+  /** 通し番号。3D の手紙の動きを1回だけ流すのに使う */
+  id: number;
+  /** どの発言のときか */
+  turn: number;
+  kind: "request" | "handoff" | "redo_request" | "redo_accept";
+  from: StaffId;
+  to: StaffId;
+  task: StaffTask;
+  /** 調べ直し（redo_request・redo_accept）のときの、足りないもの */
+  subject?: RedoSubject;
+}
+
+export interface RelayState {
+  /** これまでの頼みと受け渡し（古いものから） */
+  log: RelayEntry[];
+  /** コンシェルジュがいま頼んでいる相手（吹き出しを出す間） */
+  asking: { to: StaffId; task: StaffTask } | null;
+  /** コンシェルジュが向いている相手（頼んだ相手・結果を受け取った相手） */
+  focus: StaffId | null;
+  /** 作業を終えて、まだ結果を渡していないスタッフ */
+  holding: StaffId[];
+}
+
+/** 頭の上に出す、いまの作業のようす */
+export const STAFF_ACTIVITIES = [
+  "heading",
+  "asking",
+  "researching",
+  "checking",
+  "summarizing",
+  "delivering",
+] as const;
+export type StaffActivity = (typeof STAFF_ACTIVITIES)[number];
 
 // ---------------------------------------------------------------------------
 // 会話欄
@@ -101,10 +158,16 @@ export type ChatEntry =
 export interface ChatRequestDraft {
   message: string;
   preferences: Preferences;
+  /** 候補の窓の次の手（ボタン）から送ったときの、変えて探し直す条件 */
+  search?: SearchRetry;
+  /** 祭りから探して決めた祭りと行く日。送り直すときも落とさない */
+  anchor?: TripAnchor;
 }
 
 export interface SessionState {
   id: string | null;
+  /** 接客サーバーの動き方。mock は見本の相談の再生で、画面にそれと出す。分からなければ null */
+  mode: AgentMode | null;
   status: "closed" | "opening" | "ready" | "failed";
   stage: ConversationStage;
   conditions: PartialTripConditions;
@@ -120,6 +183,8 @@ export interface SessionState {
   /** この発言で始まった作業と、使われたツール。待ち時間の見込みに使う */
   turnTasks: StaffTask[];
   turnTools: ToolName[];
+  /** この発言で候補が届き、まだ見せていないか。返答が終わって選べるようになったら候補を開く */
+  newCandidates: boolean;
 }
 
 export interface ItineraryState {
@@ -161,23 +226,11 @@ export interface WaitingTalk {
   source: Source;
 }
 
-export type QuizKind = "category" | "highlight" | "local_food";
-
-export interface QuizQuestion {
-  kind: QuizKind;
-  festivalId: string;
-  festivalName: string;
-  /** category のときは祭りの種類の ID、それ以外はデータの文字列 */
-  choices: [string, string];
-  correct: 0 | 1;
-  source: Source;
-}
-
 export interface QuizState {
-  /** クイズを出した発言の番号。1つの発言に1問まで */
-  offeredTurn: number | null;
-  question: QuizQuestion | null;
-  answer: 0 | 1 | null;
+  /** 出す順に並べたクイズの ID。店を開くたびに混ぜ直す */
+  deck: string[];
+  /** 答えたクイズの ID と、選んだ選択肢の位置。答え直しはできない */
+  answers: Record<string, number>;
 }
 
 export type FestivalLoad = "loading" | "loaded" | "missing";
@@ -208,15 +261,25 @@ export interface UiState {
   draft: string;
   /** 会話の窓を出しているか。最初は出さず、コンシェルジュに話しかけたら出す */
   dialogueOpen: boolean;
+  /** はじめての操作の案内を見終えたか。見終えたら、操作の案内は「使い方」から開く */
+  tutorialSeen: boolean;
 }
 
 /** ストアのデータの部分。イベントの変換はこの形からこの形への純粋な関数にする */
 export interface AppData {
   session: SessionState;
   preferences: Preferences;
+  /** 選んで進める聞き取り（誰と・いつ・どこ・泊まり・楽しみ・食・スタイル） */
+  consult: ConsultState;
+  /** 祭りから探す相談（種類・季節・地域・その他の希望と、探した結果） */
+  festivalSearch: FestivalSearchState;
   messages: ChatEntry[];
   staff: Record<StaffId, StaffState>;
+  /** スタッフどうしの頼みと受け渡し */
+  relay: RelayState;
   candidates: FestivalCandidate[];
+  /** 最後の祭り探しの、条件の検査と次の手（見つからなかったとき・3件に満たないとき） */
+  search: SearchOutcome | null;
   spots: SpotPin[];
   itinerary: ItineraryState;
   verify: VerifyState;

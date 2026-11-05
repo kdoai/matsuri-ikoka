@@ -3,22 +3,25 @@ import type {
   IsoDate,
   Itinerary,
   ItineraryItem,
+  LodgingSearch,
   Party,
   Preferences,
+  TripBudget,
   Verification,
   Weather,
 } from "@matsuri-ikoka/schema";
 
 // しおりが読む旅程の形。旅程の型（ItinerarySchema）に直接たよるのは、このファイルの toShioriTrip だけにする。
-// 日ごとの予定（days）と、その夜に泊まる地域（stay）を持つ。
+// 日ごとの予定（days）と、その夜に泊まる地域と宿の候補（stay）を持つ。
 
 /** 旅の日数の上限（6泊7日） */
 export const MAX_TRIP_DAYS = 7;
 
-/** その夜に泊まる地域。宿の名前は持たない */
+/** その夜に泊まる地域と、調べた宿の候補（宿の名前は候補の中だけに持つ） */
 export interface TripStay {
   area: string;
   note?: string;
+  lodging?: LodgingSearch;
 }
 
 export interface TripDay {
@@ -54,6 +57,8 @@ export interface ShioriTrip {
   returnTo: string;
   party: Party;
   preferences: Preferences;
+  /** 旅の予算。聞き取っていなければない */
+  budget?: TripBudget;
   mainFestivalId: string;
   verification: Verification;
   days: TripDay[];
@@ -72,6 +77,7 @@ export function toShioriTrip(itinerary: Itinerary, style: TripStyle = {}): Shior
     returnTo: itinerary.returnTo,
     party: itinerary.party,
     preferences: itinerary.preferences,
+    ...(itinerary.budget === undefined ? {} : { budget: itinerary.budget }),
     mainFestivalId: itinerary.mainFestivalId,
     verification: itinerary.verification,
     days: itinerary.days,

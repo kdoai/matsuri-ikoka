@@ -1,0 +1,224 @@
+{
+  "id": "kuroshio-kashima-jinja-taisai",
+  "name": {
+    "ja": "鹿島神社大祭",
+    "en": "Kashima Shrine Grand Festival (Kuroshio)"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "高知県",
+      "name": "黒潮町"
+    }
+  ],
+  "venue": {
+    "name": "鹿島神社（黒潮町佐賀3547）と佐賀の港町一帯",
+    "lat": 33.0723,
+    "lng": 133.1138
+  },
+  "scaleTier": "S",
+  "popularity": "local",
+  "listedIn": ["jalan"],
+  "highlights": [
+    "華やかな衣装の幼い子どもたちが、太鼓を胸に付けて踊る鼓踊りの奉納",
+    "鹿島ヶ浦の海を漁船が連なって進む、豊漁を願う船のパレード",
+    "男女2基の神輿が、漁師の町・佐賀の港のまわりを巡る"
+  ],
+  "trivia": [
+    {
+      "text": "鼓踊りの踊り手は5〜10歳の子どもで、太鼓とうちわを身に付けて踊る",
+      "source": {
+        "url": "https://www.town.kuroshio.lg.jp/pb/cont/sangyo-kankou/34502",
+        "title": "黒潮町 黒潮町の歴史・史跡を観光してみよう！（鹿島神社）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "祭神はタケミカヅチノミコト。各地の鹿島の神は、漁師の神として親しまれている",
+      "source": {
+        "url": "https://kuroshio-kanko.net/info/kashima_jinja/",
+        "title": "黒潮町観光ネットワーク 鹿島神社",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "船のパレードが進む鹿島ヶ浦は、幡多地域の名勝「幡多十景」の1つに選ばれている",
+      "source": {
+        "url": "https://www.town.kuroshio.lg.jp/pb/cont/sangyo-kankou/34502",
+        "title": "黒潮町 黒潮町の歴史・史跡を観光してみよう！（鹿島神社）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "神輿の練り歩き・踊りの奉納・船のパレードの見学が中心で、町や観光の案内に混雑や危険についての特別な注意は見つからない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.town.kuroshio.lg.jp/pb/cont/sangyo-kankou/34502",
+        "title": "黒潮町 黒潮町の歴史・史跡を観光してみよう！（鹿島神社の大祭）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://kuroshio-kanko.net/event/%E9%B9%BF%E5%B3%B6%E7%A5%9E%E7%A4%BE%E5%A4%A7%E7%A5%AD/",
+        "title": "黒潮町観光ネットワーク 鹿島神社大祭（料金無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2027-03-07",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": "天気がよければ船のパレードを行う（天候により行わないことがある）。2020年の案内では、雨天のときは内容が一部変わるとしていた",
+      "note": "町の案内にある「毎年3月第1日曜日」から見込んだ日（黒潮町観光ネットワークは2027年の回を「3月初旬ごろ、詳細未定」としている）。例年の流れ（2020年の案内）：前日の夕方に宵祭りと鼓踊りの奉納、当日8:30ごろ出御祭、神輿が港町を回り、10:30ごろと12:00ごろに御旅所で行事と鼓踊りの奉納、そのあと神輿戻し、船の巡幸、鹿島神社で還御祭。規模は、神輿2基に、御旅所での奉納と船のパレードが加わるので S とした",
+      "sources": [
+        {
+          "url": "https://www.town.kuroshio.lg.jp/pb/cont/sangyo-kankou/34502",
+          "title": "黒潮町 黒潮町の歴史・史跡を観光してみよう！（毎年3月第1日曜日に大祭）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://kuroshio-kanko.net/event/%E9%B9%BF%E5%B3%B6%E7%A5%9E%E7%A4%BE%E5%A4%A7%E7%A5%AD/",
+          "title": "黒潮町観光ネットワーク 鹿島神社大祭（2027年3月初旬ごろ、詳細未定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.asoview.com/spot/39421ba2210121378/",
+          "title": "アソビュー 鹿島神社大祭（2020年の宵宮と本祭の時刻）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "土佐くろしお鉄道 中村線 土佐佐賀駅",
+        "walkMinutes": [10, 25],
+        "note": "アソビューは徒歩約10分、オマツリジャパンは徒歩20分としている（どちらも公式ではなく、どこまでの時間かは書かれていない）。食い違うので、両方を含む幅にした"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://kuroshio-kanko.net/event/%E9%B9%BF%E5%B3%B6%E7%A5%9E%E7%A4%BE%E5%A4%A7%E7%A5%AD/",
+        "title": "黒潮町観光ネットワーク 鹿島神社大祭（明神水産の空きスペースに駐車できる）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.asoview.com/spot/39421ba2210121378/",
+        "title": "アソビュー 鹿島神社大祭（土佐佐賀駅から徒歩約10分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      },
+      {
+        "url": "https://omatsurijapan.com/search/m/1402/",
+        "title": "オマツリジャパン 黒潮町 鹿島神社大祭（土佐佐賀駅から徒歩20分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "michinoeki-nabura-tosasaga",
+      "name": "道の駅 なぶら土佐佐賀",
+      "kind": "food",
+      "summary": "佐賀の港の近くにある道の駅。一本釣りのカツオを藁で焼いたタタキが名物のフードコートと直販所がある。月に1〜2日ほど平日に休館日があり、公式サイトで告知している",
+      "location": {
+        "lat": 33.0869,
+        "lng": 133.1016
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "18:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://nabura-tosasaga.com/",
+          "title": "道の駅 なぶら土佐佐賀（フードコート9:00〜15:00、土日祝は18:00まで、直販所8:00〜18:00）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://kuroshio-kanko.net/info/michinoeki-naburatosa-saga/",
+          "title": "黒潮町観光ネットワーク 道の駅なぶら土佐佐賀（不定休、黒潮町佐賀1350）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.town.kuroshio.lg.jp/pb/cont/sangyo-kankou/34502",
+      "title": "黒潮町 黒潮町の歴史・史跡を観光してみよう！（鹿島神社の大祭、毎年3月第1日曜日）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://kuroshio-kanko.net/info/kashima_jinja/",
+      "title": "黒潮町観光ネットワーク 鹿島神社（黒潮町佐賀3547、毎年3月ごろ大祭）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://kuroshio-kanko.net/event/%E9%B9%BF%E5%B3%B6%E7%A5%9E%E7%A4%BE%E5%A4%A7%E7%A5%AD/",
+      "title": "黒潮町観光ネットワーク 鹿島神社大祭",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_338643/",
+      "title": "じゃらんnet 鹿島神社大祭（黒潮町、2025年3月2日）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催日と時刻の発表（町の「毎年3月第1日曜日」から見込んだ日で、黒潮町観光ネットワークは「3月初旬ごろ、詳細未定」としている）",
+    "2026年の開催の記録（2026年3月1日に開かれたかを公式で確かめられていない）",
+    "当日の時刻と流れの公式の案内（2020年のアソビューの案内だけ）",
+    "前日の宵宮（宵祭りと鼓踊り）の今回の日時",
+    "雨天・荒天のときの扱いの公式の案内",
+    "見学の決まり（立ち位置・撮影）、服装、持ち物（町の案内に記載がない）",
+    "一般の人が船のパレードに乗れるか、神輿に加われるか",
+    "土佐佐賀駅からの徒歩の時間（観光の案内サイトで10分と20分に分かれる）と、高知駅・中村駅など主要駅からの所要時間",
+    "駐車できる台数",
+    "屋台の有無と、祭りならではの食べもの",
+    "パレードに出る漁船の数と、鼓踊りの子どもの人数",
+    "黒潮一番館など、御旅所の周りで寄れる場所の公式の営業時間（道の駅なぶら土佐佐賀の1件だけ）",
+    "会場の緯度・経度は、黒潮町観光ネットワークの鹿島神社のページにある地図のリンクから取ったもの"
+  ]
+}

@@ -1,0 +1,426 @@
+{
+  "id": "kikonai-kanchu-misogi",
+  "name": {
+    "ja": "寒中みそぎ祭り",
+    "en": "Kikonai Kanchu Misogi Festival"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "北海道",
+      "name": "上磯郡木古内町"
+    }
+  ],
+  "venue": {
+    "name": "佐女川神社",
+    "lat": 41.6815,
+    "lng": 140.4313
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan"],
+  "highlights": [
+    "1月15日、行修者4人がご神体を抱いて真冬の津軽海峡に入り、海で清める",
+    "13日から神社にこもった若者が、境内で冷水をかぶる水ごりを重ねる",
+    "14日の夜は境内でみそぎ囃子・富まき・もちまきと冬花火が続く",
+    "北海道無形民俗文化財に指定された、天保2年から続く神事"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "天保2年（1831年）に始まり、道の無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.town.kikonai.hokkaido.jp/kanko/event/kantyu.html",
+          "title": "木古内町 第196回寒中みそぎ祭り＆寒中みそぎフェスティバル2026",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.visit-hokkaido.jp/event/detail_11179.html",
+          "title": "北海道観光振興機構 HOKKAIDO LOVE! 寒中みそぎ祭り＆寒中みそぎフェスティバル",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "氏子の長老が選んだ青年4人が行修者を務め、地元の人も加わる",
+      "sources": [
+        {
+          "url": "https://www.nippon.com/ja/guide-to-japan/gu019015/",
+          "title": "nippon.com 木古内の寒中みそぎ祭りの紹介",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "天保2年（1831年）に始まった神事で、2026年が196回目だった",
+      "source": {
+        "url": "https://www.town.kikonai.hokkaido.jp/kanko/event/kantyu.html",
+        "title": "木古内町 第196回寒中みそぎ祭り＆寒中みそぎフェスティバル2026",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2023年11月に北海道の無形民俗文化財に指定された",
+      "source": {
+        "url": "https://www.visit-hokkaido.jp/event/detail_11179.html",
+        "title": "北海道観光振興機構 HOKKAIDO LOVE! 寒中みそぎ祭り＆寒中みそぎフェスティバル",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "海に入るときに清めるご神体は4体で、行修者も4人",
+      "source": {
+        "url": "https://www.visit-hokkaido.jp/event/detail_11179.html",
+        "title": "北海道観光振興機構 HOKKAIDO LOVE! 寒中みそぎ祭り＆寒中みそぎフェスティバル",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2026年は14日の夜に約1,000発の冬花火を上げた",
+      "source": {
+        "url": "https://www.town.kikonai.hokkaido.jp/kanko/event/kantyu.html",
+        "title": "木古内町 第196回寒中みそぎ祭り＆寒中みそぎフェスティバル2026",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.town.kikonai.hokkaido.jp/kanko/event/kantyu.html",
+        "title": "木古内町 第196回寒中みそぎ祭り＆寒中みそぎフェスティバル2026",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.visit-hokkaido.jp/event/detail_11179.html",
+        "title": "北海道観光振興機構 HOKKAIDO LOVE! 寒中みそぎ祭り＆寒中みそぎフェスティバル",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-13",
+      "start": "18:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。18:00 佐女川神社で参籠報告祭。行修者はこの日から神社にこもる",
+      "sources": [
+        {
+          "url": "https://www.town.kikonai.hokkaido.jp/kanko/event/kantyu.html",
+          "title": "木古内町 第196回寒中みそぎ祭り＆寒中みそぎフェスティバル2026",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.visit-hokkaido.jp/event/detail_11179.html",
+          "title": "北海道観光振興機構 HOKKAIDO LOVE! 寒中みそぎ祭り＆寒中みそぎフェスティバル",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-14",
+      "start": "17:45",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。17:45 みそぎ公園からみそぎ行列（受付17:00）、18:00 佐女川神社で開会式、18:10 みそぎ囃子、18:30 富まき・もちまき、18:50 みそぎ口上、19:00 水ごり、19:10 冬花火の舞（約1,000発）",
+      "sources": [
+        {
+          "url": "https://www.town.kikonai.hokkaido.jp/kanko/event/kantyu.html",
+          "title": "木古内町 第196回寒中みそぎ祭り＆寒中みそぎフェスティバル2026",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.visit-hokkaido.jp/event/detail_11179.html",
+          "title": "北海道観光振興機構 HOKKAIDO LOVE! 寒中みそぎ祭り＆寒中みそぎフェスティバル",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-15",
+      "start": "10:00",
+      "end": "13:30",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年の実績。10:00 佐女川神社で出御祭、11:30 みそぎ浜で大漁旗の漁船の航行、11:50 海水沐浴・水ごり。みそぎ公園では10:00から物産フェアなど、13:30 閉会",
+      "sources": [
+        {
+          "url": "https://www.town.kikonai.hokkaido.jp/kanko/event/kantyu.html",
+          "title": "木古内町 第196回寒中みそぎ祭り＆寒中みそぎフェスティバル2026",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.visit-hokkaido.jp/event/detail_11179.html",
+          "title": "北海道観光振興機構 HOKKAIDO LOVE! 寒中みそぎ祭り＆寒中みそぎフェスティバル",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-13",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "例年、行修者が1月13日から佐女川神社にこもる（2027年の発表はまだない）。2026年はこの日の18:00に参籠報告祭",
+      "sources": [
+        {
+          "url": "https://www.town.kikonai.hokkaido.jp/kanko/event/kantyu.html",
+          "title": "木古内町 第196回寒中みそぎ祭り＆寒中みそぎフェスティバル2026",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.visit-hokkaido.jp/event/detail_11179.html",
+          "title": "北海道観光振興機構 HOKKAIDO LOVE! 寒中みそぎ祭り＆寒中みそぎフェスティバル",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-14",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "例年の中日（2027年の発表はまだない）。2026年は夜に境内で水ごりと冬花火があった",
+      "sources": [
+        {
+          "url": "https://www.town.kikonai.hokkaido.jp/kanko/event/kantyu.html",
+          "title": "木古内町 第196回寒中みそぎ祭り＆寒中みそぎフェスティバル2026",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.visit-hokkaido.jp/event/detail_11179.html",
+          "title": "北海道観光振興機構 HOKKAIDO LOVE! 寒中みそぎ祭り＆寒中みそぎフェスティバル",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-15",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "例年、15日に津軽海峡でご神体を清める（2027年の発表はまだない）。2026年はみそぎ浜で11:50から海水沐浴",
+      "sources": [
+        {
+          "url": "https://www.town.kikonai.hokkaido.jp/kanko/event/kantyu.html",
+          "title": "木古内町 第196回寒中みそぎ祭り＆寒中みそぎフェスティバル2026",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.visit-hokkaido.jp/event/detail_11179.html",
+          "title": "北海道観光振興機構 HOKKAIDO LOVE! 寒中みそぎ祭り＆寒中みそぎフェスティバル",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR北海道新幹線・道南いさりび鉄道 木古内駅",
+        "walkMinutes": [5, 10],
+        "note": "佐女川神社まで徒歩約5分（北海道の観光公式サイトの案内）。みそぎ浜・みそぎ公園までの時間は案内がない"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "函館駅",
+        "minutes": [60, 70],
+        "route": "道南いさりび鉄道の普通列車、乗り換えなし"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.visit-hokkaido.jp/event/detail_11179.html",
+        "title": "北海道観光振興機構 HOKKAIDO LOVE! 寒中みそぎ祭り＆寒中みそぎフェスティバル",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.shr-isaribi.jp/kankoutrainivent/nagamarekaikyogo/",
+        "title": "道南いさりび鉄道 観光列車「ながまれ海峡号」紹介（函館駅〜木古内駅は通常約1時間）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "はこだて和牛",
+        "note": "2026年は15日にみそぎ公園で「はこだて和牛・グルメ魅了フェア」があった",
+        "sources": [
+          {
+            "url": "https://www.town.kikonai.hokkaido.jp/kanko/event/kantyu.html",
+            "title": "木古内町 第196回寒中みそぎ祭り＆寒中みそぎフェスティバル2026",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "michi-no-eki-misogi-no-sato-kikonai",
+      "name": "道の駅 みそぎの郷きこない",
+      "kind": "rest",
+      "summary": "木古内駅前の道の駅。観光案内のコンシェルジュがいて、道南の町の特産品を売る。トイレとバス待合室は24時間使える。年末年始は休み",
+      "location": {
+        "lat": 41.6773,
+        "lng": 140.4346
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "http://kikonai.jp/about/",
+          "title": "道の駅 みそぎの郷きこない 施設案内",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "dounan-des-kikonai",
+      "name": "どうなんde's",
+      "kind": "food",
+      "summary": "道の駅みそぎの郷きこないの中にあるレストラン。昼と夜の営業で、夜は予約が要る。不定休と年末年始が休み",
+      "location": {
+        "lat": 41.6773,
+        "lng": 140.4346
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "http://kikonai.jp/",
+          "title": "道の駅 みそぎの郷きこない（テナントの営業時間）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "http://kikonai.jp/about/",
+          "title": "道の駅 みそぎの郷きこない 施設案内",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "koppen-doudo-kikonai",
+      "name": "コッペん道土",
+      "kind": "food",
+      "summary": "道の駅みそぎの郷きこないの中にあるコッペパンの店。売り切れしだい終わる。不定休と年末年始が休み",
+      "location": {
+        "lat": 41.6773,
+        "lng": 140.4346
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "17:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "http://kikonai.jp/",
+          "title": "道の駅 みそぎの郷きこない（テナントの営業時間）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "http://kikonai.jp/about/",
+          "title": "道の駅 みそぎの郷きこない 施設案内",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.town.kikonai.hokkaido.jp/kanko/event/kantyu.html",
+      "title": "木古内町 第196回寒中みそぎ祭り＆寒中みそぎフェスティバル2026",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.visit-hokkaido.jp/event/detail_11179.html",
+      "title": "北海道観光振興機構 HOKKAIDO LOVE! 寒中みそぎ祭り＆寒中みそぎフェスティバル",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "外から来た人がみそぎ行列に加われるか（町の案内では14日の行列に「受付17:00」とあるが、だれが加われるかの説明がない）",
+    "2027年の開催の発表と、各日の行事の時刻（町の発表はまだない）",
+    "見学できる場所、海に入る場面を見るときの立ち位置や立ち入りの決まり",
+    "危険度（主催者による、けがのおそれの注意が見つからない）",
+    "服装・持ち物・撮影の決まり（真冬の屋外だが、公式の案内がない）",
+    "雪や荒天のときの扱い",
+    "交通規制の有無",
+    "佐女川神社からみそぎ浜・みそぎ公園までの歩く時間",
+    "札幌駅・新千歳空港からの所要時間と、北海道新幹線で来る場合の所要時間（公式の数字が見つからない）",
+    "屋台が出るか（2026年は「ホカホカ飲食」や物産フェアがあったが、屋台の記載はない）",
+    "行修者の任期や選ばれ方（公式の案内が見つからない）",
+    "見学者数の公表値",
+    "周辺の観光の場所（郷土資料館いかりん館は位置を確かめられず、冬は臨時休館があるため入れていない）",
+    "どうなんde'sの営業時間（昼11:00〜14:30・夜17:30〜21:00で、1つの時間帯にできない）"
+  ]
+}

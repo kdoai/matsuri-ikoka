@@ -1,0 +1,147 @@
+{
+  "id": "chikatsu-jinja-nakataue",
+  "name": {
+    "ja": "近津神社の中田植",
+    "en": "Chikatsu Shrine Nakata-ue Rice Planting Ritual"
+  },
+  "category": "ritual",
+  "municipalities": [{ "prefecture": "茨城県", "name": "久慈郡大子町" }],
+  "venue": { "name": "近津神社", "lat": 36.8244, "lng": 140.3826 },
+  "scaleTier": "XS",
+  "popularity": "local",
+  "listedIn": ["walkerplus"],
+  "highlights": [
+    "夏至の日に、神田で早乙女が田植歌に合わせて苗を植える田植祭",
+    "神殿での祭礼のあと、境内の神田へ移って田植の神事を行う",
+    "太鼓や笛の音の中で、地元に伝わる田植歌が奉納される"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "町指定の無形民俗文化財で、江戸時代前中期には行われていたとされる",
+      "sources": [
+        {
+          "url": "https://www.town.daigo.ibaraki.jp/page/page008139.html",
+          "title": "大子町 近津神社の中田植",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "氏子から選ばれた男女と田植歌保存会が祭事に奉仕する",
+      "sources": [
+        {
+          "url": "https://www.town.daigo.ibaraki.jp/page/page008139.html",
+          "title": "大子町 近津神社の中田植",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "田植えは毎年、夏至の日に行われる",
+      "source": {
+        "url": "https://www.pref.ibaraki.jp/nourinsuisan/hokunourin/tochi/topics/r1/kamihankimatome.html",
+        "title": "茨城県 近津神社中田植（2023年6月21日の開催報告）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2023年は7名の早乙女が、地元に伝わる田植歌で神田に苗を植えた",
+      "source": {
+        "url": "https://www.pref.ibaraki.jp/nourinsuisan/hokunourin/tochi/topics/r1/kamihankimatome.html",
+        "title": "茨城県 近津神社中田植（2023年6月21日の開催報告）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": []
+  },
+  "occurrences": [
+    {
+      "date": "2027-06-21",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年夏至の日に行う決まりから見込んだ日（2027年の発表はまだ見つからない）。2026年は10:00に祭礼、11:00からお田植神事",
+      "sources": [
+        {
+          "url": "https://www.pref.ibaraki.jp/nourinsuisan/hokunourin/tochi/topics/r1/kamihankimatome.html",
+          "title": "茨城県 近津神社中田植（毎年夏至の日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar0308e599568/",
+          "title": "ウォーカープラス 近津神社の中田植（2026年6月21日の開催情報）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR水郡線 下野宮駅",
+        "walkMinutes": [5, 10]
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://summer.walkerplus.com/odekake/detail_e/ar0308e599568/map.html",
+        "title": "ウォーカープラス 近津神社の中田植の地図・アクセス（下野宮駅から徒歩約5分、駐車場100台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.pref.ibaraki.jp/nourinsuisan/hokunourin/tochi/topics/r1/kamihankimatome.html",
+      "title": "茨城県 近津神社中田植（大子町下野宮の神田）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://summer.walkerplus.com/odekake/detail_e/ar0308e599568/",
+      "title": "ウォーカープラス 近津神社の中田植（大子町）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と開始・終了の時刻（大子町や主催者の公式の案内を見つけられず、日付は夏至の日の決まりから見込んだ）",
+    "雨天のときの扱い",
+    "見学できるか、立ち入れる場所、撮影の決まり、服装・持ち物などの作法",
+    "屋台の有無と、この日の食べもの",
+    "駐車場は観光サイトに100台とあるだけで主催者の案内は未確認（臨時駐車場は旧下野宮小学校とある）",
+    "水戸駅など玄関口の駅からの所要時間",
+    "周辺の観光と食の場所（営業時間と定休日を公式の情報源で確かめられなかったため入れていない）",
+    "会場の緯度・経度は、国土地理院の住所検索で大子町下野宮の地区の代表点を取ったもの（近津神社そのものの位置ではない）",
+    "早乙女の人数は2023年が7名、2026年の掲載は十余名とあり一定しない。規模は、1つの神社の1時間ほどの神事として XS にした"
+  ]
+}

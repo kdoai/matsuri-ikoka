@@ -1,0 +1,292 @@
+{
+  "id": "gangarabi-matsuri",
+  "name": {
+    "ja": "がんがら火祭り",
+    "en": "Gangarabi Fire Festival"
+  },
+  "category": "fire",
+  "municipalities": [
+    {
+      "prefecture": "大阪府",
+      "name": "池田市"
+    }
+  ],
+  "venue": {
+    "name": "五月山のふもと〜阪急池田駅前〜池田市役所前（大たいまつの巡行コース）",
+    "lat": 34.8211,
+    "lng": 135.4281
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu"],
+  "highlights": [
+    "長さ約4m・重さ約100kgの大たいまつを2本1組で担ぎ、夜の町を練り歩く",
+    "五月山の斜面に「大一」と「大」の文字火が浮かぶ",
+    "半鐘と八丁鉦を「がんがら」と鳴らしながら進む",
+    "江戸時代から続く、大阪府の無形民俗文化財"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1644年に始まると伝わり、大阪府の無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.ikedashi-kanko.jp/gangara",
+          "title": "池田市観光協会 がんがら火祭り",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "城山町と建石町の人たちが大文字の点火を担う",
+      "sources": [
+        {
+          "url": "https://www.ikedashi-kanko.jp/gangara",
+          "title": "池田市観光協会 がんがら火祭り",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "1644年、町の商人4人が五月山で火をともし、愛宕の神が来たと評判になったのが始まりとされる",
+      "source": {
+        "url": "https://www.ikedashi-kanko.jp/gangara",
+        "title": "池田市観光協会 がんがら火祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "「がんがら」の名は、巡行で鳴らす半鐘や八丁鉦の音から来たといわれる",
+      "source": {
+        "url": "https://www.city.ikeda.osaka.jp/material/files/group/1/20250813_gangara.pdf",
+        "title": "池田市 報道資料「24日に伝統の『がんがら火祭り』」（2025年8月13日）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "大たいまつ1組を15〜20人で運び、補助の人を合わせると総勢約100人になる",
+      "source": {
+        "url": "https://www.ikedashi-kanko.jp/gangara",
+        "title": "池田市観光協会 がんがら火祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "たいまつの材料の肥松は1年前から予約し、本番の約2か月前から作り始める",
+      "source": {
+        "url": "https://www.ikedashi-kanko.jp/gangara",
+        "title": "池田市観光協会 がんがら火祭り",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": []
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-24",
+      "start": "19:30",
+      "end": "22:00",
+      "status": "announced",
+      "rainPolicy": "小雨決行、荒天中止",
+      "note": "2026年の実績（広報いけだ2026年8月号で告知）。19:30に五月山の大一文字と大文字に点火し、大たいまつが巡行を始める。大たいまつは五月山公園下（油かけ地蔵）から市役所前を通って22:00ごろまで、子どもたいまつは星の宮周辺を20:00〜22:00ごろに回る",
+      "sources": [
+        {
+          "url": "https://www.city.ikeda.osaka.jp/material/files/group/1/2608-urabyoushi.pdf",
+          "title": "広報いけだ 2026年8月号 裏表紙「がんがら火祭りと大一文字点灯・大文字献灯行事」（8月24日 19時30分〜22時）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.ikedashi-kanko.jp/gangara",
+          "title": "池田市観光協会 がんがら火祭り（毎年8月24日 19:30〜22:00、小雨決行）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar0727e04747/data.html",
+          "title": "ウォーカープラス がんがら火祭り 大一文字点灯 大文字献灯（2026年8月24日、小雨決行・荒天中止）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-24",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年8月24日の夜（2027年の発表はまだない）。観光協会の案内では例年19:30〜22:00。例年、大たいまつは19:30に油かけ地蔵を出て、20:45ごろ池田駅東口の交差点、21:00ごろ市役所前、22:00ごろ城山の交差点に着く。子どもたいまつは17:00に星の宮を出る。コースと時間は年により変わる",
+      "sources": [
+        {
+          "url": "https://www.ikedashi-kanko.jp/gangara",
+          "title": "池田市観光協会 がんがら火祭り（毎年8月24日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.ikeda.osaka.jp/material/files/group/1/20250813_gangara.pdf",
+          "title": "池田市 報道資料（毎年8月24日の夜に行う）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "阪急 池田駅",
+        "walkMinutes": [10, 15],
+        "note": "大たいまつの巡行コースは阪急池田駅前を通る（市の案内）。徒歩の時間は旅行情報サイトの目安"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "大阪梅田駅",
+        "minutes": [19, 26],
+        "route": "阪急宝塚線で池田駅まで、乗り換えなし（平日の時刻表：17:00発・17:10発の急行は19分、17:01発の普通は26分）"
+      }
+    ],
+    "parking": "unknown",
+    "trafficRestrictions": [
+      "18:00〜21:00ごろ、五月山ドライブウェイの上り車線は通行止め（時間帯によって下り車線も規制）",
+      "大たいまつの巡行に合わせて国道176号を規制"
+    ],
+    "sources": [
+      {
+        "url": "https://www.city.ikeda.osaka.jp/material/files/group/1/2608-urabyoushi.pdf",
+        "title": "広報いけだ 2026年8月号 裏表紙（周辺道路の交通規制）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.ikeda.osaka.jp/material/files/group/1/20250813_gangara.pdf",
+        "title": "池田市 報道資料（巡行コースは綾羽2丁目〜阪急池田駅前〜市役所前〜城山町、約3キロ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20003090",
+        "title": "るるぶ&more. がんがら火祭り・大一文字点灯・大文字献灯行事（阪急池田駅から徒歩約10分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      },
+      {
+        "url": "https://www.hankyu.co.jp/station/timetable.php?stationName=大阪梅田(阪急)&SF=4958&TX=2000100-1850-TA1701&DW=0&TM=1700",
+        "title": "阪急電鉄 列車の時刻（平日 大阪梅田17:00発 急行宝塚行、池田17:19着）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.hankyu.co.jp/station/timetable.php?stationName=大阪梅田(阪急)&SF=4958&TX=2000100-1863-TA1703&DW=0&TM=1710",
+        "title": "阪急電鉄 列車の時刻（平日 大阪梅田17:10発 急行宝塚行、池田17:29着）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.hankyu.co.jp/station/timetable.php?stationName=大阪梅田(阪急)&SF=4958&TX=2000100-1755-TA1731&DW=0&TM=1701",
+        "title": "阪急電鉄 列車の時刻（平日 大阪梅田17:01発 普通雲雀丘花屋敷行、池田17:27着）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "kobayashi-ichizo-memorial-museum",
+      "name": "小林一三記念館",
+      "kind": "sightseeing",
+      "summary": "阪急の創業者・小林一三の旧邸を中心に、その事績を紹介する施設。月曜休み（祝日なら開き、翌平日が休み）。年末年始と臨時の休みもある",
+      "location": {
+        "lat": 34.8247,
+        "lng": 135.4282
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["mon"],
+      "price": "高校生以上300円、中学生以下無料",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.hankyu-bunka.or.jp/kinenkan/guide/",
+          "title": "阪急文化財団 小林一三記念館 ご利用案内",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.ikeda.osaka.jp/material/files/group/1/2608-urabyoushi.pdf",
+      "title": "広報いけだ 2026年8月号 裏表紙「がんがら火祭りと大一文字点灯・大文字献灯行事」",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.ikeda.osaka.jp/material/files/group/1/20250813_gangara.pdf",
+      "title": "池田市 報道資料「24日に伝統の『がんがら火祭り』」（2025年8月13日）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.ikedashi-kanko.jp/gangara",
+      "title": "池田市観光協会 がんがら火祭り",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://summer.walkerplus.com/odekake/detail_e/ar0727e04747/data.html",
+      "title": "ウォーカープラス がんがら火祭り 大一文字点灯 大文字献灯",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20003090",
+      "title": "るるぶ&more. がんがら火祭り・大一文字点灯・大文字献灯行事",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、点火・巡行の時刻",
+    "見学の場所と、たいまつにどこまで近づいてよいかなど、主催者の見学の注意（火の粉の危険度を決められない）",
+    "服装・持ち物・撮影の決まり",
+    "一般の人がたいまつの担ぎ手に加われるかどうか",
+    "駐車場の有無（旅行情報サイトに駐車場なしとあるが、主催者の案内で確かめられない）",
+    "大阪駅・京都駅など、大阪梅田駅のほかの主要駅からの所要時間",
+    "大たいまつの組数（1組2本・長さ約4m・重さ約100kgとだけ分かっている）",
+    "屋台の有無",
+    "来場者数（旅行情報サイトどうしで約9,000人と約1,500人に分かれる）",
+    "会場の緯度・経度は、巡行コースが通る池田市役所の位置で代用",
+    "祭りの日（2027年は火曜）に開いている周辺の食事処と観光の場所（落語みゅーじあむと吾妻は火曜が休みのため外した）"
+  ]
+}

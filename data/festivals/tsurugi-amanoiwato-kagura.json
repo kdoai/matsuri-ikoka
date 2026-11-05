@@ -1,0 +1,218 @@
+{
+  "id": "tsurugi-amanoiwato-kagura",
+  "name": {
+    "ja": "天の岩戸神楽",
+    "en": "Ama-no-Iwato Kagura"
+  },
+  "category": "performing_arts",
+  "municipalities": [
+    {
+      "prefecture": "徳島県",
+      "name": "つるぎ町"
+    }
+  ],
+  "venue": {
+    "name": "松尾神社（つるぎ町貞光字町49）",
+    "lat": 34.0357,
+    "lng": 134.0624
+  },
+  "scaleTier": "S",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu"],
+  "highlights": [
+    "年が明けたその時に、笛と太鼓に合わせて奉納される岩戸隠れの神話の舞",
+    "徳島県内では珍しい、面を着けて舞う神楽",
+    "地元の若連がふるまう年越しそばと御神酒"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "江戸初期に始まると伝わり、昭和62年に保存会が復活させた",
+      "sources": [
+        {
+          "url": "https://www.town.tokushima-tsurugi.lg.jp/docs/3452.html",
+          "title": "つるぎ町 天の岩戸神楽",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "保存会が復活させ、若連が年越しそばをふるまう",
+      "sources": [
+        {
+          "url": "https://www.town.tokushima-tsurugi.lg.jp/docs/3452.html",
+          "title": "つるぎ町 天の岩戸神楽",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "江戸時代の初めに、神楽石という平らな大岩の上で舞ったのが始まりと伝わる",
+      "source": {
+        "url": "https://www.town.tokushima-tsurugi.lg.jp/docs/3452.html",
+        "title": "つるぎ町 天の岩戸神楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "明治25年ごろに、伊勢と出雲の神楽の型を取り入れた",
+      "source": {
+        "url": "https://www.town.tokushima-tsurugi.lg.jp/docs/3452.html",
+        "title": "つるぎ町 天の岩戸神楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "戦争で途絶えたが、昭和62年に保存会ができて復活した",
+      "source": {
+        "url": "https://www.town.tokushima-tsurugi.lg.jp/docs/3452.html",
+        "title": "つるぎ町 天の岩戸神楽",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "神社の境内で15分ほどの神楽を見学するもので、町や主催者の混雑・危険についての注意は見つからない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.town.tokushima-tsurugi.lg.jp/docs/3452.html",
+        "title": "つるぎ町 天の岩戸神楽（元旦の0時から15分ほど奉納）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-01",
+      "start": "00:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "開催の記録。年明けの0時から15分ほど奉納した。橋北若連が年越しそば（約300食）と御神酒をふるまった。るるぶ&more.は前年の人出を約2,000人としている",
+      "sources": [
+        {
+          "url": "https://www.town.tokushima-tsurugi.lg.jp/docs/3452.html",
+          "title": "つるぎ町 天の岩戸神楽（令和8年1月1日、0時から15分程度）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000962",
+          "title": "るるぶ&more. 天の岩戸神楽（2026年1月1日、前年の人出約2,000人）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-01",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "町の案内にある「毎年元旦」の奉納から見込んだ日（町の2027年の発表はまだない）。例年は年明けの0時から15分ほどで、12月31日の夜のうちに神社に着いておく",
+      "sources": [
+        {
+          "url": "https://www.town.tokushima-tsurugi.lg.jp/docs/3452.html",
+          "title": "つるぎ町 天の岩戸神楽（毎年元旦の年明けとともに奉納）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.nta.co.jp/kokunai/special/eventinfo/10620426.htm",
+          "title": "日本旅行 天の岩戸神楽（2027年1月1日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR徳島線 貞光駅",
+        "walkMinutes": [6, 11],
+        "note": "日本旅行は徒歩約6分、るるぶ&more.は徒歩5分としている（観光の案内サイトの情報）"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://www.nta.co.jp/kokunai/special/eventinfo/10620426.htm",
+        "title": "日本旅行 天の岩戸神楽（貞光駅から徒歩約6分、隣の就業改善センターと徒歩3分の町役場の駐車場）",
+        "checkedAt": "2026-11-04",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000962",
+        "title": "るるぶ&more. 天の岩戸神楽（貞光駅から徒歩5分、神社に駐車場はなく就業改善センターか町役場の駐車場を利用）",
+        "checkedAt": "2026-11-04",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": [
+      {
+        "name": "年越しそばと御神酒",
+        "note": "神楽の奉納のときに、地元の橋北若連が約300食の年越しそばと御神酒をふるまう",
+        "sources": [
+          {
+            "url": "https://www.town.tokushima-tsurugi.lg.jp/docs/3452.html",
+            "title": "つるぎ町 天の岩戸神楽",
+            "checkedAt": "2026-11-04",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.town.tokushima-tsurugi.lg.jp/docs/3452.html",
+      "title": "つるぎ町 天の岩戸神楽（松尾神社、つるぎ町貞光字町49）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.walkerplus.com/event/ar0936e569725/",
+      "title": "ウォーカープラス 天の岩戸神楽（2026年1月1日、0:00〜0:15）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と時刻（町のページは2026年の回のもの）",
+    "雨天・荒天の扱い",
+    "見学の決まり（立ち位置・撮影）、服装・持ち物（町の案内に記載がない）",
+    "年越しそばと御神酒をだれでも受けられるか、数に限りがあるか",
+    "主要駅（徳島駅など）から貞光駅までの所要時間と、深夜0時前後に使える列車があるか（公式の案内で確かめられていない）",
+    "駐車場は観光の案内サイトの情報だけ（別の案内サイトには駐車場なしとするものもある）",
+    "屋台の有無",
+    "町の無形民俗文化財の指定は観光の案内サイトにあるが、町の公式のページでは確かめていない",
+    "周辺の観光と食の場所（元旦の深夜に営業を確かめられたものがない）",
+    "会場の緯度・経度は、国土地理院の住所検索で「つるぎ町貞光町」を取ったもので、神社そのものの位置ではない"
+  ]
+}

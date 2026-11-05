@@ -1,14 +1,33 @@
 // テスト用の架空の祭り・旅程・出典。実在の祭りや場所ではない。
 // 呼ぶたびに新しいオブジェクトを返すので、テストの中で書き換えてよい。
 import type { Confidence, Source } from "../common";
+import type { FestivalCandidate } from "../events";
 import type { FestivalInput } from "../festival";
-import type { Itinerary } from "../itinerary";
+import type { Itinerary, LodgingSearch } from "../itinerary";
 
 export const FICTIONAL_FESTIVAL_ID = "suzunari-toro";
 
 /** 架空の出典。URL は例示用のドメイン（example.com）にする */
 export function fictionalSource(path: string, confidence: Confidence = "official"): Source {
   return { url: `https://example.com/suzunari/${path}`, checkedAt: "2026-04-01", confidence };
+}
+
+/** 架空の祭りの候補カード */
+export function fictionalCandidate(): FestivalCandidate {
+  return {
+    festivalId: FICTIONAL_FESTIVAL_ID,
+    name: "鈴鳴灯籠まつり",
+    date: "2026-08-15",
+    start: "18:00",
+    end: "21:00",
+    venueName: "鈴鳴川の河原",
+    place: "滋賀県鈴鳴町",
+    daysFromWish: 0,
+    confidence: "official",
+    confirmed: true,
+    highlight: "川面に浮かぶ千の灯籠",
+    source: fictionalSource("schedule"),
+  };
 }
 
 /** 架空の祭り「鈴鳴灯籠まつり」。スキーマのすべての必須項目を埋めてある */
@@ -150,5 +169,173 @@ export function fictionalItinerary(): Itinerary {
     ],
     notes: ["夜の河原は足元が暗いので、懐中電灯を持っていく"],
     alternatives: [{ kind: "rain", summary: "雨が強いときは、屋内の鈴鳴和紙の館を中心に過ごす" }],
+  };
+}
+
+/**
+ * 架空の祭りへ行く日帰りの旅程のうち、そろっているべきもの（移動の区間・乗り換え・最後の移動・帰り・
+ * 帰りの最終・夜の食事・調べた場所の採否）がそろったもの
+ */
+export function fictionalPlannedItinerary(): Itinerary {
+  const itinerary = fictionalItinerary();
+  const day = itinerary.days[0] as Itinerary["days"][number];
+  const [go, craftHall, festival] = day.items as [
+    Itinerary["days"][number]["items"][number],
+    Itinerary["days"][number]["items"][number],
+    Itinerary["days"][number]["items"][number],
+  ];
+  go.move = {
+    means: "train",
+    minutes: [40, 50],
+    estimate: true,
+    note: "鈴鳴線",
+    from: "みなと中央駅",
+    to: "鈴鳴駅",
+    purpose: "outbound",
+    legs: [
+      { means: "train", from: "みなと中央駅", to: "川辺駅", line: "みなと線", minutes: [15, 20] },
+      { means: "train", from: "川辺駅", to: "鈴鳴駅", line: "鈴鳴線", minutes: [20, 25] },
+    ],
+  };
+  craftHall.move = {
+    means: "walk",
+    minutes: [5, 10],
+    estimate: true,
+    from: "鈴鳴駅",
+    to: "鈴鳴和紙の館",
+    purpose: "between",
+  };
+  festival.move = {
+    means: "walk",
+    minutes: [10, 15],
+    estimate: true,
+    from: "鈴鳴和紙の館",
+    to: "鈴鳴川の河原",
+    purpose: "last_mile",
+  };
+  day.items.push({
+    id: "back",
+    start: "21:20",
+    end: "22:20",
+    type: "move",
+    name: "鈴鳴駅からみなと中央駅へ",
+    location: null,
+    reason: "終わってすぐの電車は混むので、20分ほどずらして乗る",
+    move: {
+      means: "train",
+      minutes: [50, 60],
+      estimate: true,
+      from: "鈴鳴川の河原",
+      to: "みなと中央駅",
+      purpose: "return",
+      legs: [
+        { means: "walk", from: "鈴鳴川の河原", to: "鈴鳴駅", line: null, minutes: [8, 12] },
+        { means: "train", from: "鈴鳴駅", to: "川辺駅", line: "鈴鳴線", minutes: [20, 25] },
+        { means: "train", from: "川辺駅", to: "みなと中央駅", line: "みなと線", minutes: [15, 20] },
+      ],
+    },
+    hours: null,
+    cost: null,
+    sources: [fictionalSource("access")],
+    changedInVersion: 1,
+  });
+  day.meals = [
+    {
+      slot: "dinner",
+      kind: "stalls",
+      name: "会場の屋台",
+      itemId: "festival",
+      sources: [fictionalSource("2026")],
+    },
+  ];
+  day.lastReturn = {
+    station: "鈴鳴駅",
+    departBy: "22:40",
+    sources: [fictionalSource("access")],
+  };
+  itinerary.considered = [
+    {
+      id: "suzunari-craft-hall",
+      name: "鈴鳴和紙の館",
+      from: "nearby",
+      adopted: true,
+      reason: "灯籠に使う和紙の作り方が分かる",
+    },
+  ];
+  return itinerary;
+}
+
+/**
+ * 架空の宿を Web で調べた結果（鈴鳴町に1泊）。空きは調べていないので1泊の合計は null にし、
+ * 宿のページの料金の目安・会場からの目安・挙がった観点を持つ。URL は example.com にする
+ */
+export function fictionalResearchedLodgingSearch(): LodgingSearch {
+  const checkedAt = "2026-08-01T10:00:00+09:00";
+  return {
+    checkIn: "2026-08-15",
+    checkOut: "2026-08-16",
+    searchedAt: checkedAt,
+    provider: "web",
+    offers: [
+      {
+        id: "web-0123456789ab",
+        name: "鈴鳴川の宿",
+        nightlyTotalYen: null,
+        perPersonNightYen: [8000, 11000],
+        summary: "河原まで歩いてすぐの、和室のある宿",
+        bookingUrl: "https://example.com/inn/kawa",
+        location: { lat: 35.121, lng: 136.081 },
+        fromVenue: { distanceKm: 0.1, mode: "walk", minutes: [1, 2] },
+        perspectives: ["venue", "station"],
+        checkedAt,
+        source: {
+          url: "https://example.com/inn/kawa",
+          title: "鈴鳴川の宿",
+          checkedAt: "2026-08-01",
+          confidence: "corroborated",
+        },
+      },
+      {
+        id: "web-ba9876543210",
+        name: "鈴鳴駅前ホテル",
+        nightlyTotalYen: null,
+        priceNote: "1室 12,000円から",
+        bookingUrl: "https://example.com/inn/ekimae",
+        location: { lat: 35.13, lng: 136.08 },
+        fromVenue: { distanceKm: 1.1, mode: "walk", minutes: [13, 22] },
+        perspectives: ["station"],
+        checkedAt,
+        source: {
+          url: "https://example.com/inn/ekimae",
+          checkedAt: "2026-08-01",
+          confidence: "single",
+        },
+      },
+    ],
+  };
+}
+
+/** 架空の宿の空き（鈴鳴町に1泊、大人2人）。宿も予約のページも架空で、URL は example.com にする */
+export function fictionalLodgingSearch(): LodgingSearch {
+  const checkedAt = "2026-08-01T10:00:00+09:00";
+  return {
+    checkIn: "2026-08-15",
+    checkOut: "2026-08-16",
+    searchedAt: checkedAt,
+    offers: [
+      {
+        id: "suzunari-kawabe-inn",
+        name: "川べりの宿 すずなり",
+        nightlyTotalYen: 24000,
+        bookingUrl: "https://example.com/lodging/suzunari-kawabe-inn",
+        location: { lat: 35.122, lng: 136.081 },
+        checkedAt,
+        source: {
+          url: "https://example.com/lodging",
+          checkedAt: "2026-08-01",
+          confidence: "single",
+        },
+      },
+    ],
   };
 }

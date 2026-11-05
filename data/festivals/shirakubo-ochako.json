@@ -1,0 +1,271 @@
+{
+  "id": "shirakubo-ochako",
+  "name": {
+    "ja": "白久保のお茶講",
+    "en": "Shirakubo Ochako Tea Tasting"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "群馬県",
+      "name": "吾妻郡中之条町"
+    }
+  ],
+  "venue": {
+    "name": "お茶講の家（白久保）",
+    "lat": 36.6191,
+    "lng": 138.8354
+  },
+  "scaleTier": "XS",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "渋茶・甘茶・チンピから作った4種の茶を飲み、名を当てる行事",
+    "白久保天満宮の宵祭りとして続く、国の重要無形民俗文化財",
+    "14世紀中ごろの闘茶とのつながりが指摘される"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1990年に国の重要無形民俗文化財になり、1799年の覚帳が残る",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/160761",
+          "title": "文化遺産オンライン 上州白久保のお茶講",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://tabi-mag.jp/nakanojyou-ochakou/",
+          "title": "ニッポン旅マガジン 白久保のお茶講",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "白久保お茶講保存会が受け継ぐ",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/160761",
+          "title": "文化遺産オンライン 上州白久保のお茶講",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "全問正解の人や、まったく当たらない人が多い年は豊作になると言い伝えられる",
+      "source": {
+        "url": "https://online.bunka.go.jp/heritages/detail/160761",
+        "title": "文化遺産オンライン 上州白久保のお茶講",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "吾妻地方に広くあったお茶講は多くが消えたが、白久保のお茶講は1990年に国の指定を受けた",
+      "source": {
+        "url": "https://online.bunka.go.jp/heritages/detail/160761",
+        "title": "文化遺産オンライン 上州白久保のお茶講",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "寛政11年（1799年）の覚帳が残り、その記録の付け方は今と同じという",
+      "source": {
+        "url": "https://tabi-mag.jp/nakanojyou-ochakou/",
+        "title": "ニッポン旅マガジン 白久保のお茶講",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "正解の数で呼び名が変わり、全問正解はハナカツギ、全問不正解はサカサッパナと呼ぶ",
+      "source": {
+        "url": "https://tabi-mag.jp/nakanojyou-ochakou/",
+        "title": "ニッポン旅マガジン 白久保のお茶講",
+        "checkedAt": "2026-11-04",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": "unknown",
+    "photo": "unknown",
+    "sources": []
+  },
+  "occurrences": [
+    {
+      "date": "2027-02-24",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "毎年2月24日、白久保天満宮の宵祭りとして行う（2027年の発表はまだない）。文化庁は、訪ねる前に町の教育委員会へ確かめるよう案内している",
+      "sources": [
+        {
+          "url": "https://nakanojo-kanko.jp/events/%E7%99%BD%E4%B9%85%E4%BF%9D%E3%81%AE%E3%81%8A%E8%8C%B6%E8%AC%9B/",
+          "title": "中之条町観光協会 白久保のお茶講（毎年2月24日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/160761",
+          "title": "文化遺産オンライン 上州白久保のお茶講（公開日 毎年2月24日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://nakanojo-kanko.jp/access/",
+        "title": "中之条町観光協会 アクセス（上野駅から特急草津・四万号で約2時間5分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "nakanojo-musee",
+      "name": "中之条町歴史と民俗の博物館「ミュゼ」",
+      "kind": "sightseeing",
+      "summary": "中之条駅の近くにある町の歴史と民俗の博物館。木曜休館（祝日は開館）、年末年始も休み",
+      "location": {
+        "lat": 36.5889,
+        "lng": 138.8424
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": ["thu"],
+      "price": "一般200円、小中学生100円、未就学児無料",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.town.nakanojo.gunma.jp/site/myuze/3222.html",
+          "title": "中之条町 利用のご案内（歴史と民俗の博物館「ミュゼ」）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "tsumuji-cafe-nakanojo",
+      "name": "tsumuji カフェ",
+      "kind": "food",
+      "summary": "ふるさと交流センター「つむじ」のカフェ。地元の食材の料理、そば粉や地粉のシフォンケーキ、とら豆のキーマカレーを出す。同じ施設に足湯がある",
+      "location": {
+        "lat": 36.5889,
+        "lng": 138.8423
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "19:00",
+        "lastEntry": "18:00"
+      },
+      "closedDays": ["thu"],
+      "price": null,
+      "tags": ["indoor", "seating", "local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://nakanojo-kanko.jp/shops/tsumuji-%E3%82%AB%E3%83%95%E3%82%A7/",
+          "title": "中之条町観光協会 tsumuji カフェ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://nakanojo-kanko.jp/spots/%E4%B8%AD%E4%B9%8B%E6%9D%A1%E7%94%BA%E3%81%B5%E3%82%8B%E3%81%95%E3%81%A8%E4%BA%A4%E6%B5%81%E3%82%BB%E3%83%B3%E3%82%BF%E3%83%BC%E3%81%A4%E3%82%80%E3%81%98/",
+          "title": "中之条町観光協会 中之条町ふるさと交流センターつむじ",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "sawatari-onsen-kyodo-yokujo",
+      "name": "沢渡温泉 共同浴場",
+      "kind": "rest",
+      "summary": "沢渡温泉の温泉街でただ1つの共同浴場。男女とも内湯で、熱い湯とぬるい湯を選べる。休みの日は案内がない",
+      "location": {
+        "lat": 36.6238,
+        "lng": 138.7642
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "20:30"
+      },
+      "closedDays": null,
+      "price": "大人300円、小人200円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://nakanojo-kanko.jp/sawatari/hotsprings/%E5%85%B1%E5%90%8C%E6%B5%B4%E5%A0%B4/",
+          "title": "沢渡温泉 共同浴場",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://nakanojo-kanko.jp/events/%E7%99%BD%E4%B9%85%E4%BF%9D%E3%81%AE%E3%81%8A%E8%8C%B6%E8%AC%9B/",
+      "title": "中之条町観光協会 白久保のお茶講",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://online.bunka.go.jp/heritages/detail/160761",
+      "title": "文化遺産オンライン 上州白久保のお茶講",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://tabi-mag.jp/nakanojyou-ochakou/",
+      "title": "ニッポン旅マガジン 白久保のお茶講（会場はお茶講の家）",
+      "checkedAt": "2026-11-04",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、始まる時刻・終わる時刻",
+    "外から来た人が見学できるか、飲み当てに加われるか（旅行情報サイトに事前予約で体験できるとあるが、2月24日の行事のことか公式の案内で確かめられない）",
+    "会場「お茶講の家」の正確な位置（観光協会の住所は大字五反田3795-2。緯度・経度は国土地理院の地名「白久保」の位置で代用）",
+    "主要駅から会場までの通しの所要時間（観光協会の案内は、上野駅から特急「草津・四万」で中之条駅まで約2時間5分だけ。中之条駅から会場までは、旅行情報サイトにバスで15分とあるが、公式の案内と停留所が見つからない）",
+    "駐車場の有無",
+    "作法（ルール・服装・持ち物・危険度・撮影の決まり）",
+    "雪の日の扱い",
+    "参加者の人数",
+    "沢渡温泉 共同浴場の休みの日"
+  ]
+}

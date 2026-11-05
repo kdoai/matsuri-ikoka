@@ -1,0 +1,250 @@
+{
+  "id": "yuza-torisaki-amahage",
+  "name": {
+    "ja": "遊佐の小正月行事 鳥崎のアマハゲ",
+    "en": "Amahage of Torisaki, Yuza"
+  },
+  "category": "ritual",
+  "municipalities": [
+    {
+      "prefecture": "山形県",
+      "name": "遊佐町"
+    }
+  ],
+  "venue": {
+    "name": "鳥崎集落（三上神社から出発）",
+    "lat": 39.0921,
+    "lng": 139.8784
+  },
+  "scaleTier": "XS",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "ケンダンという藁の蓑をまとい、鬼や翁の面をつけた若者が家々を回る",
+    "集落の三上神社で祈祷を受けたアマハゲが、18:30ごろに出発して集落を巡る",
+    "国の重要無形民俗文化財で、ユネスコ無形文化遺産の来訪神行事の一つ"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "遊佐の小正月行事として国の重要無形民俗文化財に指定",
+      "sources": [
+        {
+          "url": "https://bunka.nii.ac.jp/heritages/detail/170765",
+          "title": "文化遺産オンライン 遊佐の小正月行事（重要無形民俗文化財）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "女鹿・滝ノ浦・鳥崎の3集落が各集落で伝えてきた",
+      "sources": [
+        {
+          "url": "https://www.town.yuza.yamagata.jp/ou/kyoiku/bunka/8207.html",
+          "title": "遊佐町 遊佐の小正月行事（アマハゲ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "囲炉裏にあたりすぎてできる火斑を方言でアマミと呼び、それを剥ぐのが名の由来とされる",
+      "source": {
+        "url": "https://www.town.yuza.yamagata.jp/ou/kyoiku/bunka/8207.html",
+        "title": "遊佐町 遊佐の小正月行事（アマハゲ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "女鹿・滝ノ浦・鳥崎の3集落に伝わり、面の表情や家での振る舞いに集落ごとの違いがある",
+      "source": {
+        "url": "https://www.town.yuza.yamagata.jp/ou/kyoiku/bunka/8207.html",
+        "title": "遊佐町 遊佐の小正月行事（アマハゲ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "鳥追いやホンデ焼きも同じ文化財に含まれるが、少子化で今は行わない集落もある",
+      "source": {
+        "url": "https://www.town.yuza.yamagata.jp/ou/kyoiku/bunka/8207.html",
+        "title": "遊佐町 遊佐の小正月行事（アマハゲ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2018年、アマハゲを含む全国10件の来訪神行事がユネスコ無形文化遺産になった",
+      "source": {
+        "url": "https://www.town.yuza.yamagata.jp/ou/kyoiku/bunka/8207.html",
+        "title": "遊佐町 遊佐の小正月行事（アマハゲ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "アマハゲは集落の民俗行事で、舞台は一般の家庭。家の中は公開していない",
+      "一般の家への出入りはできない。集落の中を巡る様子は見てよい",
+      "アマハゲは神様で、行事は神事であることを心得て見る"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "集落を巡る様子を見る行事で、町の注意事項に混雑や危険についての注意はない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.town.yuza.yamagata.jp/archive/contents-288",
+        "title": "遊佐町 アマハゲ行事に関する注意事項について",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://mokkedano.net/event/30712",
+        "title": "やまがた庄内観光サイト 遊佐の小正月行事（アマハゲ）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-06",
+      "start": "18:30",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "2026年は1月6日（火）18:30に三上神社を出発し、鳥崎集落の家々を巡る予定だった",
+      "sources": [
+        {
+          "url": "https://www.city.tsuruoka.lg.jp/shisei/kohojigyou/koho/kohor7/koho202601.files/20260101-20.pdf",
+          "title": "広報つるおか 2026年1月号 庄内のイベント 遊佐町の「アマハゲ」（1月6日午後6時30分、三上神社出発）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-06",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "鳥崎は毎年1月6日（遊佐町）。2027年の発表はまだない。町は、例年、集落の三上神社で祈祷を済ませてケンダンをまとい、18時30分ごろに出発すると案内している（天候などで前後する）",
+      "sources": [
+        {
+          "url": "https://www.town.yuza.yamagata.jp/ou/kyoiku/bunka/8207.html",
+          "title": "遊佐町 遊佐の小正月行事（アマハゲ）実施日（鳥崎 1月6日、三上神社を18時30分頃出発）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://mokkedano.net/event/30712",
+          "title": "やまがた庄内観光サイト 遊佐の小正月行事（アマハゲ）（毎年1月6日 鳥崎集落）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "unknown",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://mokkedano.net/event/30712",
+        "title": "やまがた庄内観光サイト 遊佐の小正月行事（JR羽越本線吹浦駅から車で10分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "yuza-juroku-rakan-iwa",
+      "name": "十六羅漢岩",
+      "kind": "sightseeing",
+      "summary": "吹浦の海岸の岩に、海で亡くなった漁師の供養と海上安全を願って刻まれた22体の磨崖仏。1864年に彫り始め明治元年に完成。見学無料。JR吹浦駅から徒歩15分",
+      "location": {
+        "lat": 39.0729,
+        "lng": 139.868
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": null,
+      "price": "無料",
+      "tags": [],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.yuzachokai.jp/spot/jurokurakaniwa/",
+          "title": "遊佐鳥海観光協会 十六羅漢岩",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%8D%81%E5%85%AD%E7%BE%85%E6%BC%A2",
+          "title": "国土地理院 地名検索「十六羅漢岩」の位置",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.town.yuza.yamagata.jp/ou/kyoiku/bunka/8207.html",
+      "title": "遊佐町 遊佐の小正月行事（アマハゲ）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://bunka.nii.ac.jp/heritages/detail/170765",
+      "title": "文化遺産オンライン 遊佐の小正月行事（重要無形民俗文化財）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.tsuruoka.lg.jp/shisei/kohojigyou/koho/kohor7/koho202601.files/20260101-20.pdf",
+      "title": "広報つるおか 2026年1月号 遊佐町の「アマハゲ」（鳥崎集落の巡行を見ることができる）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E9%B3%A5%E5%B4%8E",
+      "title": "国土地理院 地名検索「鳥崎」（遊佐町の地名の位置）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "会場（三上神社）の正確な位置",
+    "2027年の出発時刻の発表",
+    "巡行の終わる時刻と、集落の中で見てよい場所",
+    "撮影の決まり",
+    "服装・持ち物",
+    "雪や荒天のときの扱い",
+    "駐車場の場所と台数",
+    "吹浦駅から鳥崎集落までの公共交通と徒歩の時間",
+    "主要駅から吹浦駅までの所要時間",
+    "見物人の数",
+    "祭りの夜に開いている周辺の食事の場所"
+  ]
+}

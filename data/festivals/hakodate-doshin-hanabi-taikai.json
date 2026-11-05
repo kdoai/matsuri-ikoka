@@ -1,0 +1,271 @@
+{
+  "id": "hakodate-doshin-hanabi-taikai",
+  "name": {
+    "ja": "函館港まつり協賛 道新花火大会",
+    "en": "Hakodate Port Festival Doshin Fireworks"
+  },
+  "category": "fireworks",
+  "municipalities": [
+    {
+      "prefecture": "北海道",
+      "name": "函館市"
+    }
+  ],
+  "venue": {
+    "name": "緑の島（打ち上げ）・函館港の岸壁周辺（観覧）",
+    "lat": 41.7704,
+    "lng": 140.7141
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "函館山に上がれば、夜景と花火を同時に見られる",
+    "港の岸壁の広い範囲から見られる",
+    "尺玉や仕掛け花火、水中花火を音楽に合わせて上げる5部構成"
+  ],
+  "styles": [],
+  "trivia": [
+    {
+      "text": "函館で最大の催しとされる函館港まつりの幕開けを飾る花火",
+      "source": {
+        "url": "https://rurubu.jp/andmore/spot/20002801",
+        "title": "るるぶ&more. 函館港まつり協賛 第71回道新花火大会",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "2026年の第71回は、函館出身のGLAYの楽曲と花火が共演した",
+      "source": {
+        "url": "https://www.hokkaido-np.co.jp/article/1339072/",
+        "title": "北海道新聞 第71回道新花火大会の案内の記事",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "ドローンの飛行は禁止",
+      "会場に駐車場はないので、公共交通機関で行く",
+      "津波警報・注意報が出たら大会はすぐ中止になり、係の案内に従って車を使わず徒歩で高台などへ避難する"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "例年約7万人が集まり、夜の岸壁で見る。18:00から周辺で交通規制がある"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "ドローンでの撮影はできない"
+    },
+    "sources": [
+      {
+        "url": "https://www.hokkaido-np.co.jp/hanabi2026/hakodate/",
+        "title": "北海道新聞 花火特集 2026 第71回道新花火大会（ドローン禁止、駐車場なし）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.hokkaido-np.co.jp/hanabi2025/hakodate/",
+        "title": "北海道新聞 花火特集 2025 第70回道新花火大会（津波のときの避難の案内）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0101e00710/data.html",
+        "title": "ウォーカープラス 第71回 道新花火大会 データ（例年の人出 約7万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-01",
+      "start": "19:45",
+      "end": "20:50",
+      "status": "announced",
+      "rainPolicy": "小雨決行、荒天は8月5日に延期（当日11:00に判断し、難しければ13:00に最終判断）",
+      "note": "第71回。5部構成で、最大は10号玉。打ち上げ数は非公開で、例年の人出は約7万人",
+      "sources": [
+        {
+          "url": "https://www.hokkaido-np.co.jp/hanabi2026/hakodate/",
+          "title": "北海道新聞 花火特集 2026 第71回道新花火大会（8月1日 19:45〜20:50ごろ、荒天は8月5日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://hanabi.walkerplus.com/detail/ar0101e00710/data.html",
+          "title": "ウォーカープラス 第71回 道新花火大会 データ（打ち上げ数は非公開、例年の人出 約7万人）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20002801",
+          "title": "るるぶ&more. 函館港まつり協賛 第71回道新花火大会（最大10号玉、5部構成）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-01",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2025年・2026年の開催日（どちらも8月1日）から見込んだ日（2027年の発表はまだない）",
+      "sources": [
+        {
+          "url": "https://www.hokkaido-np.co.jp/hanabi2025/hakodate/",
+          "title": "北海道新聞 花火特集 2025 第70回道新花火大会（2025年8月1日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.hokkaido-np.co.jp/hanabi2026/hakodate/",
+          "title": "北海道新聞 花火特集 2026 第71回道新花火大会（2026年8月1日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 函館駅",
+        "walkMinutes": [5, 10]
+      }
+    ],
+    "fromHubs": [],
+    "parking": "none",
+    "trafficRestrictions": ["2026年：当日18:00から22:30ごろまで、会場周辺で車両の通行規制"],
+    "sources": [
+      {
+        "url": "https://www.hokkaido-np.co.jp/hanabi2026/hakodate/",
+        "title": "北海道新聞 花火特集 2026 第71回道新花火大会（JR函館駅から徒歩5分、駐車場なし、18:00から交通規制）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002801",
+        "title": "るるぶ&more. 函館港まつり協賛 第71回道新花火大会（18:00〜22:30 交通規制）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "kanemori-red-brick-warehouse",
+      "name": "金森赤レンガ倉庫",
+      "kind": "sightseeing",
+      "summary": "函館のベイエリアにある赤レンガの倉庫群で、BAYはこだてや金森洋物館などの店が集まる。店の営業は9:30〜19:00で、函館ビヤホールは21:30まで",
+      "location": {
+        "lat": 41.7663,
+        "lng": 140.7155
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:30",
+        "close": "19:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://hakodate-kanemori.com/",
+          "title": "金森赤レンガ倉庫 公式サイト（営業時間）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.hakodate-kanemori.com/access/",
+          "title": "金森赤レンガ倉庫 アクセス（函館市末広町14番12号、JR函館駅から徒歩約15分）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "hakodate-asaichi",
+      "name": "函館朝市",
+      "kind": "food",
+      "summary": "JR函館駅から徒歩約1分の朝市。5月〜12月は5:00から14:00すぎまでで、営業時間と休みは店ごとに違う。花火の翌朝に寄りやすい",
+      "location": {
+        "lat": 41.7725,
+        "lng": 140.7258
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "05:00",
+        "close": "14:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://www.hakodate-asaichi.com/",
+          "title": "函館朝市 公式サイト（営業時間、年中無休。店ごとに異なる）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.hakodate-asaichi.com/access/",
+          "title": "函館朝市 アクセス（JR函館駅から徒歩約1分）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.hokkaido-np.co.jp/hanabi2026/hakodate/",
+      "title": "北海道新聞 花火特集 2026 第71回道新花火大会（主催 函館港まつり実行委員会、北海道新聞函館支社）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://hanabi.walkerplus.com/detail/ar0101e00710/",
+      "title": "ウォーカープラス 第71回 道新花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20002801",
+      "title": "るるぶ&more. 函館港まつり協賛 第71回道新花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_342788/",
+      "title": "じゃらんnet 函館港まつり協賛 道新花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催日の発表と時刻",
+    "有料席があるか",
+    "打ち上げ数（主催者が公開していない）",
+    "服装・持ち物の決まり",
+    "主要駅からの所要時間",
+    "地元の味・祭りの日だけの食べ物（屋台が出ることだけ分かっている）",
+    "周辺の場所の知名度"
+  ]
+}

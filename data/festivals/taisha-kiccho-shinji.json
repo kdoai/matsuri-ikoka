@@ -1,0 +1,194 @@
+{
+  "id": "taisha-kiccho-shinji",
+  "name": {
+    "ja": "吉兆神事（吉兆さんと番内さん）",
+    "en": "Kiccho Shinji (Kiccho-san and Bannai-san)"
+  },
+  "category": "mikoshi",
+  "municipalities": [
+    {
+      "prefecture": "島根県",
+      "name": "出雲市"
+    }
+  ],
+  "venue": {
+    "name": "出雲大社周辺（勢溜・本殿前・神楽殿前・出雲教神殿前など）",
+    "lat": 35.4073,
+    "lng": 132.6872
+  },
+  "scaleTier": "M",
+  "popularity": "local",
+  "listedIn": [],
+  "highlights": [
+    "「歳徳神」と縫い取った高さ約10mの大幟が、囃子とともに大社の町を練り歩く",
+    "鬼のような大きな面の番内さんが家々を回り、青竹で地面を叩いて厄を払う",
+    "出雲大社の本殿前で、吉兆の一行が大社神謡を詠う"
+  ],
+  "styles": [
+    {
+      "style": "community",
+      "basis": "番内は大社地域の住民が担う正月行事とされる",
+      "sources": [
+        {
+          "url": "https://www.city.izumo.shimane.jp/www/contents/1347411393274/html/common/5d146ac1008.html",
+          "title": "出雲市の伝統芸能（伴内・番内）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "「吉兆さん」は「歳徳神」と縫い取った高さ約10mの大幟のこと",
+      "source": {
+        "url": "https://izumo-kankou.gr.jp/10059",
+        "title": "出雲観光協会 吉兆神事（吉兆さんと番内さん）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "番内さんを務めるのは42歳の厄男で、吉兆さんの先導役を担う",
+      "source": {
+        "url": "https://izumo-kankou.gr.jp/10059",
+        "title": "出雲観光協会 吉兆神事（吉兆さんと番内さん）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "出雲市の伝統芸能の一覧では、番内は大社地域の住民が担う正月行事とされている",
+      "source": {
+        "url": "https://www.city.izumo.shimane.jp/www/contents/1347411393274/html/common/5d146ac1008.html",
+        "title": "出雲市の伝統芸能（伴内・番内）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "low",
+      "reason": "町を練り歩く行列と厄払いを沿道や境内で見学するもので、主催者や観光協会の混雑・危険についての注意は見つからない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://izumo-kankou.gr.jp/10059",
+        "title": "出雲観光協会 吉兆神事（吉兆さんと番内さん）（観覧無料）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-01-03",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "開催の記録。出雲観光協会の案内では2026年1月3日（土）の午前中、出雲大社周辺で行われた。観覧無料",
+      "sources": [
+        {
+          "url": "https://izumo-kankou.gr.jp/10059",
+          "title": "出雲観光協会 吉兆神事（吉兆さんと番内さん）（2026年1月3日、午前中、出雲大社周辺）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-03",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "島根県観光連盟の案内にある時期「1月3日」から見込んだ日（2027年の発表はまだない）。例年は午前中に、吉兆の一行が町内を練り歩いて出雲大社の本殿前などで大社神謡を詠い、番内さんが家々を回って厄を払う",
+      "sources": [
+        {
+          "url": "https://www.kankou-shimane.com/destination/20916",
+          "title": "島根県観光連盟 吉兆さんと番内（時期：1月3日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://izumo-kankou.gr.jp/10059",
+          "title": "出雲観光協会 吉兆神事（吉兆さんと番内さん）（午前中、出雲大社周辺）",
+          "checkedAt": "2026-11-04",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "一畑電車 出雲大社前駅",
+        "walkMinutes": [10, 15],
+        "note": "出雲大社まで徒歩約10分。電鉄出雲市駅から一畑電車で、川跡駅で乗り換える"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "available",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://izumo-kankou.gr.jp/676",
+        "title": "出雲観光協会 出雲大社（出雲大社前駅から徒歩約10分、駐車場385台）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.kankou-shimane.com/pickup/28022.html",
+        "title": "島根県観光連盟 出雲大社へのアクセス＆周辺の駐車場情報（川跡駅で乗り換え、出雲大社前駅から徒歩約10分）",
+        "checkedAt": "2026-11-04",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://izumo-kankou.gr.jp/10059",
+      "title": "出雲観光協会 吉兆神事（吉兆さんと番内さん）（出雲大社周辺）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.kankou-shimane.com/destination/20916",
+      "title": "島根県観光連盟 吉兆さんと番内（出雲市大社町）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.izumo.shimane.jp/www/contents/1347411393274/html/common/5d146ac1008.html",
+      "title": "出雲市の伝統芸能（番内：大社地域住民、正月行事）",
+      "checkedAt": "2026-11-04",
+      "confidence": "official"
+    }
+  ],
+  "gaps": [
+    "2027年の開催の発表と、練り歩きの始まり・本殿前での奉納の時刻（案内は「午前中」だけ）",
+    "吉兆の一行の道順と、本殿前・神楽殿前などに来る時刻",
+    "雨天の扱い",
+    "見学の決まり（立ち位置・撮影）、服装・持ち物（主催者の案内が見つからない）",
+    "番内さんの厄払いを見物の人が受けられるか",
+    "主催・運営の団体と問い合わせの窓口（観光協会の案内のほかに見つからない）",
+    "主要駅（出雲市駅・松江駅）から出雲大社前駅までの所要時間（公式の案内に時間の記載がない）",
+    "正月三が日の交通規制と駐車場の混雑（島根県観光連盟は渋滞の情報を別のサイトで確かめるよう案内している）",
+    "屋台の有無と、この行事ならではの食べもの",
+    "周辺の観光と食の場所（正月の営業時間を確かめられたものがない）",
+    "会場の緯度・経度は、国土地理院の住所検索で出雲大社の所在地（大社町杵築東195）を取ったもので、練り歩きの道筋そのものではない"
+  ]
+}

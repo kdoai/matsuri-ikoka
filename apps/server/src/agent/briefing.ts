@@ -1,8 +1,13 @@
-import type {
-  ConversationStage,
-  DateWish,
-  PartialTripConditions,
-  Preferences,
+import {
+  type AnchorVisit,
+  type ConversationStage,
+  type DateWish,
+  type LodgingBudget,
+  type PartialTripConditions,
+  type Party,
+  type Preferences,
+  type TripBudget,
+  tripBudgetAmounts,
 } from "@matsuri-ikoka/schema";
 import { arrivalBufferMinutes } from "../domain/arrivalBuffer";
 import {
@@ -11,7 +16,9 @@ import {
   fromMinutes,
   toMinutes,
 } from "../domain/calendar";
+import { DIETARY_LABELS, FOOD_WISH_LABELS } from "../domain/food";
 import { preferenceEffects } from "../domain/preferences";
+import { TRANSPORT_LABELS } from "../domain/transport";
 import type { ToolContext } from "../tools/context";
 import { hearingReport } from "../tools/matsuriTools";
 import type { Staff } from "./bubbles";
@@ -34,6 +41,34 @@ const PREFERENCE_LABELS = {
   food: { stalls: "屋台で十分", local: "地元の店も楽しむ" },
   move: { train: "電車", car: "車" },
 } as const;
+
+/** 人数と内訳（例：大人3（うちシニア1）・子ども1（うち幼児1）） */
+export function partyLabel(party: Party): string {
+  const of = (label: string, n: number | undefined) => (n ? `（うち${label}${n}）` : "");
+  return `大人${party.adults}${of("シニア", party.seniors)}・子ども${party.children}${of("幼児", party.infants)}`;
+}
+
+/** 宿の予算（例：宿の予算 1人1泊 12,000円まで） */
+export function lodgingBudgetLabel(budget: LodgingBudget): string {
+  const yen = budget.perPersonYen.toLocaleString("ja-JP");
+  return `宿の予算 ${budget.per === "night" ? "1人1泊" : "1人あたり泊まり全体で"} ${yen}円まで`;
+}
+
+/** 旅の予算（例：旅の予算 全員で 90,000円まで（3人で1人あたり 30,000円）） */
+export function tripBudgetLabel(budget: TripBudget, party: Party | undefined): string {
+  const yen = (n: number) => `${n.toLocaleString("ja-JP")}円`;
+  const amounts = tripBudgetAmounts(budget, party);
+  if (budget.basis === "perPerson") {
+    const total =
+      amounts.totalYen === null ? "" : `（${amounts.payers}人で合計 ${yen(amounts.totalYen)}）`;
+    return `旅の予算 1人あたり ${yen(budget.yen)}まで${total}`;
+  }
+  const each =
+    amounts.perPersonYen === null
+      ? "（人数が分からないので1人あたりは未計算）"
+      : `（${amounts.payers}人で1人あたり ${yen(amounts.perPersonYen)}）`;
+  return `旅の予算 全員で ${yen(budget.yen)}まで${each}`;
+}
 
 export function preferencesLabel(p: Preferences): string {
   const labels = [
@@ -82,6 +117,15 @@ function tripStyleLabels(conditions: PartialTripConditions): string[] {
     conditions.interests
       ? `楽しみ ${conditions.interests.length === 0 ? "特になし" : conditions.interests.map((i) => INTEREST_LABELS[i]).join("・")}`
       : null,
+    conditions.foodWishes
+      ? `食べたいもの ${conditions.foodWishes.length === 0 ? "こだわらない" : conditions.foodWishes.map((w) => FOOD_WISH_LABELS[w]).join("・")}`
+      : null,
+    conditions.dietary && conditions.dietary.length > 0
+      ? `食事で気をつけたいこと ${conditions.dietary.map((d) => DIETARY_LABELS[d]).join("・")}`
+      : null,
+    conditions.transport && conditions.transport.length > 0
+      ? `交通手段 ${conditions.transport.map((m) => TRANSPORT_LABELS[m]).join("・")}`
+      : null,
     conditions.leaveToStaff ? "あとはおまかせ" : null,
   ].filter((v): v is string => v !== null);
 }
@@ -90,6 +134,41 @@ function wishLabel(wish: DateWish): string {
   return wish.kind === "date"
     ? formatMonthDayWithWeekday(wish.date)
     : `${formatMonthDayWithWeekday(wish.from)}〜${formatMonthDayWithWeekday(wish.to)}`;
+}
+
+const visitLabel = (v: AnchorVisit) =>
+  `${v.name}${v.prefecture !== null && v.prefecture !== v.name ? `（${v.prefecture}）` : ""}${v.reason ? `：${v.reason}` : ""}`;
+
+/** 祭りを固定した旅程の記録。すべてコードで計算したものをそのまま渡す */
+function anchorLines(ctx: ToolContext): string[] {
+  const { anchor, anchorPlan: plan, anchorCheck, cancelledAnchor } = ctx.session;
+  const lines: string[] = [];
+  if (cancelledAnchor !== null) {
+    lines.push(
+      `中止と分かった祭り：${cancelledAnchor.name}（${cancelledAnchor.festivalId}）${formatMonthDay(cancelledAnchor.date)}${cancelledAnchor.note ? `（${cancelledAnchor.note}）` : ""}。この祭りの旅程は組みません。中止と分かったことを伝え、祭りの結果に戻ってほかの祭りを選んでもらいます`,
+    );
+  }
+  if (anchor === null) return lines;
+  const name = ctx.festivals.get(anchor.festivalId)?.name.ja ?? anchor.festivalId;
+  lines.push(
+    `必ず行く祭り：${name}（${anchor.festivalId}）。行く日 ${formatMonthDayWithWeekday(anchor.date)}（${anchor.date}）。変えられません。祭り調査係は呼びません`,
+  );
+  if (anchorCheck !== null) lines.push(`必ず行く祭りの開催の確かめ：${anchorCheck}`);
+  if (plan === null) return lines;
+  const of = (status: AnchorVisit["status"]) =>
+    plan.visits.filter((v) => v.status === status).map(visitLabel);
+  lines.push(
+    `旅の日付：${plan.startDate}〜${plan.endDate}`,
+    `回る順：${plan.order.join("→")}`,
+    `入れる場所：${[...plan.mustPrefectures, ...of("included")].join("、")}`,
+  );
+  const maybe = of("maybe");
+  if (maybe.length > 0) lines.push(`余裕があれば入れる場所：${maybe.join("、")}`);
+  const dropped = of("dropped");
+  if (dropped.length > 0) lines.push(`今回は外す場所と理由：${dropped.join("、")}`);
+  if (plan.minNights !== null) lines.push(`無理なく行くのに要る泊数の目安：${plan.minNights}泊`);
+  for (const warning of plan.warnings) lines.push(`注意：${warning}`);
+  return lines;
 }
 
 /** 店の記録（コンシェルジュとスタッフに共通） */
@@ -105,12 +184,17 @@ export function shopRecord(ctx: ToolContext): string {
       ? `希望日 ${wishLabel(conditions.when)}（${JSON.stringify(conditions.when)}）`
       : null,
     conditions.origin ? `出発地 ${conditions.origin}` : null,
+    conditions.destinations
+      ? `行き先 ${conditions.destinations.length === 0 ? "おまかせ（どこでも）" : conditions.destinations.join("・")}`
+      : null,
     conditions.nights === undefined
       ? null
       : conditions.nights === 0
         ? "日帰り・お出かけ（0泊）"
         : `${conditions.nights}泊${conditions.nights + 1}日`,
-    conditions.party ? `大人${conditions.party.adults}・子ども${conditions.party.children}` : null,
+    conditions.party ? partyLabel(conditions.party) : null,
+    conditions.lodgingBudget ? lodgingBudgetLabel(conditions.lodgingBudget) : null,
+    conditions.budget ? tripBudgetLabel(conditions.budget, conditions.party) : null,
     ...tripStyleLabels(conditions),
   ].filter((v): v is string => v !== null);
   lines.push(`聞き取れた条件：${known.length === 0 ? "まだありません" : known.join(" / ")}`);
@@ -133,7 +217,14 @@ export function shopRecord(ctx: ToolContext): string {
       );
     }
   }
+  if (session.candidates.length === 0 && session.nearMisses.length > 0) {
+    lines.push("条件に合う祭りは見つかりませんでした。条件を1つだけ外せば出る祭り：");
+    for (const c of session.nearMisses) {
+      lines.push(`- ${c.festivalId}：${c.name} ${formatMonthDay(c.date)}`);
+    }
+  }
   if (session.selectedFestivalId) lines.push(`選んだ祭り：${session.selectedFestivalId}`);
+  lines.push(...anchorLines(ctx));
 
   const itinerary = session.itineraryId ? ctx.itineraries.get(session.itineraryId) : undefined;
   if (itinerary === undefined) {

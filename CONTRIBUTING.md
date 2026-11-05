@@ -14,7 +14,7 @@ pnpm install
 pnpm dev
 ```
 
-画面は http://localhost:5173 、接客サーバーは http://localhost:8787 で開きます。API キーは要りません。Claude と実際に話して試すときは、[`.env.example`](.env.example) にある変数をシェルの環境変数で渡します（接客サーバーは `.env` を自動では読みません。手順は README の「Claude と話す（live）」）。
+画面は http://localhost:5173 、接客サーバーは http://localhost:8787 で開きます。API キーは要りません。Claude と実際に話して試すときは、[`.env.example`](.env.example) をルートの `.env` にコピーして値を入れます（`pnpm dev` と `check:live` が読みます。本番のイメージは読みません。手順は README の「Claude と話す（live）」）。
 
 ## コマンド
 
