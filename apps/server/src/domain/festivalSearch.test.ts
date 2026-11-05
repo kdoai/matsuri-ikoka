@@ -480,6 +480,42 @@ describe("種類の判定", () => {
 });
 
 describe("偏りを抑えて選ぶ", () => {
+  it("種類に強く合う祭りが残っているなら、同じ category が3件を超えても弱く合う祭りを混ぜない", () => {
+    const fireworks = PREFECTURES.flatMap((prefecture, i) =>
+      [0, 1].map((n) => festival(`hanabi-${i}-${n}`, { category: "fireworks", prefecture })),
+    );
+    const weak = PREFECTURES.map((prefecture, i) =>
+      festival(`mikoshi-${i}`, {
+        category: "mikoshi",
+        prefecture,
+        highlights: ["夜に上がる花火と神輿"],
+      }),
+    );
+
+    const { results, remaining } = searchFestivalsByConditions([...weak, ...fireworks], {
+      conditions: { kinds: ["fireworks"], season: null, prefectures: [] },
+      sessionId: SESSION,
+      today: TODAY,
+    });
+
+    expect(results).toHaveLength(6);
+    expect(results.every((r) => r.candidate.festivalId.startsWith("hanabi-"))).toBe(true);
+    expect(remaining).toBe(fireworks.length + weak.length - 6);
+  });
+
+  it("強く合う祭りを見終えたら、弱く合う祭りを続けて出す", () => {
+    const fireworks = [festival("hanabi", { category: "fireworks" })];
+    const weak = [festival("mikoshi", { category: "mikoshi", highlights: ["夜に上がる花火"] })];
+
+    const { results } = searchFestivalsByConditions([...weak, ...fireworks], {
+      conditions: { kinds: ["fireworks"], season: null, prefectures: [] },
+      sessionId: SESSION,
+      today: TODAY,
+    });
+
+    expect(results.map((r) => r.candidate.festivalId)).toEqual(["hanabi", "mikoshi"]);
+  });
+
   it("全国の6件で、同じ県は2件まで、同じ category は3件まで", () => {
     const list = PREFECTURES.flatMap((prefecture, p) =>
       CATEGORIES.slice(0, 4).flatMap((category, c) =>

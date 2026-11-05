@@ -32,6 +32,7 @@ const prompts: AgentPrompts = {
   nearby: "nb",
   lodging: "lg",
   evaluator: "ev",
+  "wish-reader": "wr",
 };
 
 type Script = (api: {

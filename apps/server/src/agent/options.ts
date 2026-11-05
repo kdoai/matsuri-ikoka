@@ -124,6 +124,7 @@ export interface AgentModels {
   planner?: string | undefined;
   verifier?: string | undefined;
   evaluator?: string | undefined;
+  wishReader?: string | undefined;
 }
 
 export interface AgentOptionsInput {
