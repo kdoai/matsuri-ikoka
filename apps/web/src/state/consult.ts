@@ -156,6 +156,8 @@ export interface ConsultAnswer {
   counts?: PartyCounts;
   range?: DateRange;
   stay?: StayOption;
+  /** 祭りを固定した聞き取りで、カレンダーで期間を選んだか（初日を変えないようにサーバーへ伝える） */
+  fixedStart?: boolean;
   amount?: number;
   travel?: TravelLimit;
   dietary?: DietaryNeed[];

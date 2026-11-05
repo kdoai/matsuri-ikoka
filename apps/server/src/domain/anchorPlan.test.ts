@@ -175,6 +175,55 @@ describe("computeAnchorPlan", () => {
     expect(result.warnings).toEqual([]);
   });
 
+  describe("利用者が初日を決めたとき", () => {
+    const fixed = (startDate: string) => ({ ...ANCHOR, startDate });
+
+    it("回る順で前に寄れるときも、決めた日程を変えない", () => {
+      const result = plan({ anchor: fixed("2026-08-15"), nights: 2 });
+
+      expect(result.startDate).toBe("2026-08-15");
+      expect(result.endDate).toBe("2026-08-17");
+    });
+
+    it("祭りの日を初日にしたら、遠い場所は祭りのあとに回すか外し、前にずらさない", () => {
+      const result = plan({ anchor: fixed(ANCHOR.date), nights: 1, wishes: ["京都府"] });
+
+      expect(result.startDate).toBe(ANCHOR.date);
+      expect(result.order.indexOf("滋賀県鈴鳴町")).toBe(1);
+    });
+
+    it("決めた日程では祭りに間に合わないとき、日程を変えずに注意を出す", () => {
+      const morning = festival({ start: "08:00", end: "11:00" });
+      const result = plan({
+        festival: morning,
+        anchor: fixed(ANCHOR.date),
+        origin: "東の都駅",
+        nights: 1,
+      });
+
+      expect(result.startDate).toBe(ANCHOR.date);
+      expect(result.warnings.join()).toContain("開始に間に合わない");
+    });
+
+    it("祭りの日を最後の日にして帰れないとき、注意を出す", () => {
+      const evening = festival({ start: "18:00", end: "21:00" });
+      const result = plan({
+        festival: evening,
+        anchor: fixed("2026-08-15"),
+        origin: "東の都駅",
+        nights: 1,
+      });
+
+      expect(result.endDate).toBe(ANCHOR.date);
+      expect(result.warnings.join()).toContain("帰り着けない");
+    });
+
+    it("過ぎた日や、泊数に祭りの日が入らない初日は使わない", () => {
+      expect(plan({ anchor: fixed("2026-08-01"), nights: 1 }).startDate).toBe(ANCHOR.date);
+      expect(plan({ anchor: fixed("2026-08-10"), nights: 1 }).startDate).toBe(ANCHOR.date);
+    });
+  });
+
   it("朝に始まる祭りに遠くから行くときは、初日を前にずらす", () => {
     const result = plan({
       festival: festival({ start: "08:00", end: "11:00" }),

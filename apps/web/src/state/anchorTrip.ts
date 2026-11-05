@@ -13,6 +13,7 @@ import {
   type AnchorPreview,
   addDays,
   anchoredAnswers,
+  type ConsultAnswer,
   type ConsultAnswers,
   type ConsultState,
   chooseEntry,
@@ -123,7 +124,8 @@ export function setAnchorNights(state: ConsultState, nights: number): ConsultSta
   if (state.anchor === null) return state;
   const { date } = state.anchor;
   const answers = setRange(state.answers, date, addDays(date, Math.min(nights, MAX_NIGHTS)));
-  return { ...state, answers };
+  const { fixedStart: _chosenByCalendar, ...schedule } = answers.schedule as ConsultAnswer;
+  return { ...state, answers: { ...answers, schedule } };
 }
 
 /** カレンダーで期間を選ぶ。行く日を含まない期間と、泊数の上限を超える期間は受けない */
@@ -133,7 +135,22 @@ export function setAnchorRange(state: ConsultState, a: string, b: string): Consu
   if (!includesDay({ from, to }, state.anchor.date) || nightsBetween(from, to) > MAX_NIGHTS) {
     return state;
   }
-  return { ...state, answers: setRange(state.answers, from, to) };
+  const answers = setRange(state.answers, from, to);
+  return {
+    ...state,
+    answers: { ...answers, schedule: { ...(answers.schedule as ConsultAnswer), fixedStart: true } },
+  };
+}
+
+/** 送るアンカー。カレンダーで期間を選んでいたら、その初日を添える（サーバーが日程を変えないように） */
+export function anchorToSend(state: Pick<ConsultState, "anchor" | "answers">): TripAnchor | null {
+  const { anchor, answers } = state;
+  if (anchor === null) return null;
+  const { startDate: _previous, ...base } = anchor;
+  const schedule = answers.schedule;
+  return schedule?.fixedStart === true && schedule.range !== undefined
+    ? { ...base, startDate: schedule.range.from }
+    : base;
 }
 
 /**
@@ -214,7 +231,8 @@ export function anchorPlanRequest(
   state: Pick<ConsultState, "anchor" | "answers">,
   sessionId: string,
 ): AnchorPlanRequest | null {
-  const { anchor, answers } = state;
+  const { answers } = state;
+  const anchor = anchorToSend(state);
   const origin = answers.origin?.text.trim().slice(0, 50) ?? "";
   const nights = selectedNights(answers);
   if (anchor === null || origin === "" || nights === null) return null;

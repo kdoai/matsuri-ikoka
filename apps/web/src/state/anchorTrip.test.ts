@@ -7,6 +7,7 @@ import {
   anchorMessage,
   anchorPlanRequest,
   anchorPreviewKey,
+  anchorToSend,
   anchorWishes,
   applyPreview,
   beginAnchoredHearing,
@@ -342,6 +343,20 @@ describe("確認の要求", () => {
     expect(anchorPlanRequest(auto, "s")?.pace).toBe("auto");
     const other = { ...base, answers: pickAnswer(base.answers, "pace", "other") };
     expect(anchorPlanRequest(other, "s")).not.toHaveProperty("pace");
+  });
+
+  it("カレンダーで選んだ期間は初日を添え、泊数のボタンでは添えない", () => {
+    const base = answered();
+    const calendar = setAnchorRange(base, "2030-08-15", "2030-08-17");
+    expect(anchorPlanRequest(calendar, "s")?.anchor).toEqual({
+      ...ANCHOR,
+      startDate: "2030-08-15",
+    });
+    expect(anchorToSend(calendar)).toEqual({ ...ANCHOR, startDate: "2030-08-15" });
+
+    const buttons = setAnchorNights(calendar, 2);
+    expect(anchorPlanRequest(buttons, "s")?.anchor).toEqual(ANCHOR);
+    expect(anchorToSend(buttons)).toEqual(ANCHOR);
   });
 
   it("出発地か泊数がなければ作らない", () => {

@@ -19,6 +19,7 @@ import { toClientError } from "../transport/types";
 import {
   anchorMessage,
   anchorPlanRequest,
+  anchorToSend,
   applyPreview,
   beginAnchoredHearing,
   beginPreview,
@@ -635,7 +636,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
           return;
         }
         update((current) => ({ ...current, consult: { ...current.consult, active: false } }));
-        await sendChat(message, false, undefined, state.consult.anchor ?? undefined);
+        await sendChat(message, false, undefined, anchorToSend(state.consult) ?? undefined);
       },
       editAnchoredHearing(edit) {
         update((state) => ({ ...state, consult: edit(state.consult) }));
