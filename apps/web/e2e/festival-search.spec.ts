@@ -18,6 +18,8 @@ import {
 
 // 祭りから探す相談を、入口から祭りを決めるまで通す。検索の応答は架空の祭りの偽の応答で返す。
 
+const SOURCE = fictionalSource("kasou");
+
 function result(index: number, overrides: Partial<FestivalSearchResult> = {}) {
   return {
     candidate: {
@@ -32,7 +34,7 @@ function result(index: number, overrides: Partial<FestivalSearchResult> = {}) {
       confidence: "official",
       confirmed: index !== 1,
       highlight: "灯籠が川を流れる",
-      source: fictionalSource("kasou"),
+      source: SOURCE,
     },
     matchedKinds: ["traditional"],
     reasons: [`合う理由その${index}`],
@@ -163,11 +165,8 @@ test("入口の2択から祭りを探し、続きを見て、選んでここで�
   await expect(cards.first()).toContainText("合う理由その1");
   await expect(cards.first()).toContainText("要事前確認");
   await expect(
-    cards
-      .first()
-      .getByRole("link", { name: /example\.com/ })
-      .first(),
-  ).toHaveAttribute("href", /example\.com/);
+    cards.first().getByRole("link", { name: "example.com/suzunari/kasou" }).first(),
+  ).toHaveAttribute("href", SOURCE.url);
   // ご希望の日を聞いていないので、日付の札は出さない
   await expect(cards.first()).not.toContainText("ご希望の日");
   await snap(page, info, "51-results");
@@ -212,10 +211,9 @@ test("入口の2択から祭りを探し、続きを見て、選んでここで�
   await expect(finished).toContainText("架空県架空町・架空の広場");
   await expect(finished).toContainText("18:00〜21:00");
   await expect(finished).toContainText("主催者の案内で確かめて");
-  await expect(finished.getByRole("link", { name: /example\.com/ }).first()).toHaveAttribute(
-    "href",
-    /example\.com/,
-  );
+  await expect(
+    finished.getByRole("link", { name: "example.com/suzunari/kasou" }).first(),
+  ).toHaveAttribute("href", SOURCE.url);
   await expect(finished).toContainText("作法の要点");
   await snap(page, info, "53-finished");
   await finished.getByRole("button", { name: "はじめに戻る" }).click();
