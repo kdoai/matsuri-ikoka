@@ -19,6 +19,7 @@
     "test:watch": "vitest",
     "validate:data": "tsx scripts/validate-festivals.ts",
     "evaluate:data": "tsx scripts/evaluate-data.ts",
+    "eval:search": "tsx scripts/evaluate-search.ts",
     "build:stations": "tsx scripts/build-stations.ts",
     "refresh:targets": "tsx scripts/refresh-targets.ts",
     "refresh:run": "tsx scripts/run-managed-agent.ts"

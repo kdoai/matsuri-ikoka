@@ -5,6 +5,7 @@ import type { IdTokenVerifier } from "./account/idToken";
 import type { FestivalStore } from "./data/festivalStore";
 import { type ChatDeps, registerChatRoutes } from "./routes/chat";
 import { apiError } from "./routes/errors";
+import { type FestivalSearchOptions, registerFestivalSearchRoutes } from "./routes/festivalSearch";
 import { registerFestivalRoutes } from "./routes/festivals";
 import { passcodeGuard } from "./routes/guard";
 import { registerItineraryRoutes } from "./routes/itinerary";
@@ -15,7 +16,7 @@ import type { ItineraryStore } from "./session/sessionStore";
 import { MemoryTripStorage } from "./storage/memory";
 import type { TripStorage } from "./storage/types";
 
-export interface AppDeps extends ChatDeps {
+export interface AppDeps extends ChatDeps, FestivalSearchOptions {
   itineraries: ItineraryStore;
   festivals: FestivalStore;
   /** 公開している URL の合言葉。null なら確かめない */
@@ -60,6 +61,7 @@ export function createApp(appDeps: AppDeps) {
   );
   app.use("/api/*", passcodeGuard(deps.accessPasscode));
   registerChatRoutes(app, deps);
+  registerFestivalSearchRoutes(app, deps);
   registerFestivalRoutes(app, deps);
   registerItineraryRoutes(app, deps);
   registerTripRoutes(app, {
