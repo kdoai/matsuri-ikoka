@@ -1,7 +1,13 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { findRepoRoot, portInUseMessage, readConfig, startupNotice } from "./config";
+import {
+  DEFAULT_WISH_READER_MODEL,
+  findRepoRoot,
+  portInUseMessage,
+  readConfig,
+  startupNotice,
+} from "./config";
 import { ConcurrencyLimiter, clientIp, DailyLimiter } from "./routes/guard";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -70,7 +76,15 @@ describe("readConfig", () => {
       planner: "model-c",
       verifier: "model-d",
       evaluator: "model-e",
+      wishReader: DEFAULT_WISH_READER_MODEL,
     });
+  });
+
+  it("自由記述の読み取りのモデルは、指定がなければ軽いモデルの既定を使う", () => {
+    expect(readConfig({ MODEL_WISH_READER: "model-w" }, here).models.wishReader).toBe("model-w");
+    expect(readConfig({ MODEL_STAFF: "model-b" }, here).models.wishReader).toBe(
+      DEFAULT_WISH_READER_MODEL,
+    );
   });
 
   it("評価係のモデルは、指定がなければ旅程係のモデル、それもなければスタッフのモデル", () => {

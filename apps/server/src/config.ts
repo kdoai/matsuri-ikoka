@@ -57,6 +57,9 @@ function positiveNumber(name: string, value: string | undefined): number | null 
   return n;
 }
 
+/** 自由記述の読み取りのモデルの既定（別名）。短い文を決まった形に直すだけなので、軽いモデルで足りる */
+export const DEFAULT_WISH_READER_MODEL = "haiku";
+
 /** live で同時に返事を作る数の上限の既定 */
 export const DEFAULT_MAX_CONCURRENT_TURNS = 4;
 
@@ -102,6 +105,7 @@ export function readConfig(env: NodeJS.ProcessEnv, cwd: string = process.cwd()):
       verifier: nonEmpty(env.MODEL_VERIFIER) ?? nonEmpty(env.MODEL_STAFF),
       evaluator:
         nonEmpty(env.MODEL_EVALUATOR) ?? nonEmpty(env.MODEL_PLANNER) ?? nonEmpty(env.MODEL_STAFF),
+      wishReader: nonEmpty(env.MODEL_WISH_READER) ?? DEFAULT_WISH_READER_MODEL,
     },
     accessPasscode: nonEmpty(env.ACCESS_PASSCODE) ?? null,
     dailyChatLimit: limitOf("DAILY_CHAT_LIMIT", env.DAILY_CHAT_LIMIT),

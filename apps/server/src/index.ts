@@ -5,6 +5,7 @@ import { serve } from "@hono/node-server";
 import { getConnInfo } from "@hono/node-server/conninfo";
 import { createAccount, readAccountConfig } from "./account/firebase";
 import { ClaudeAgentRunner } from "./agent/claudeRunner";
+import { createFestivalWishReader } from "./agent/festivalWishReader";
 import { agentEnv, createAgentWorkdir } from "./agent/options";
 import { createPlanEvaluator } from "./agent/planEvaluator";
 import { loadPrompts } from "./agent/prompts";
@@ -20,6 +21,7 @@ import { portInUseMessage, readConfig, startupNotice } from "./config";
 import { festivalDirs, loadFestivals } from "./data/festivalStore";
 import { loadStationPoints } from "./data/stationPoints";
 import { nowInJapan, todayInJapan } from "./domain/calendar";
+import type { FestivalWishReader } from "./routes/festivalSearch";
 import { ConcurrencyLimiter, clientIp, DailyLimiter } from "./routes/guard";
 import { StoragePersistence } from "./session/persistence";
 import { ItineraryStore, SessionStore } from "./session/sessionStore";
@@ -67,6 +69,8 @@ let runner: AgentRunner;
 let sampleIds: string[] = [];
 let sessions = new SessionStore();
 const stations = await loadStationPoints(config.repoRoot);
+// モックと CI ではつながず、自由記述は言葉の辞書で読む
+let readFestivalWish: FestivalWishReader | undefined;
 if (config.mode === "live") {
   const prompts = await loadPrompts();
   const cwd = createAgentWorkdir();
@@ -84,6 +88,14 @@ if (config.mode === "live") {
   // 相談が消えたら、その相談の会話の記録を消す
   sessions = new SessionStore({ onRemove: forgetTranscripts(deleteSession, cwd) });
   const env = agentEnv(process.env);
+  readFestivalWish = createFestivalWishReader({
+    prompt: prompts["wish-reader"],
+    model: config.models.wishReader,
+    cwd,
+    env,
+    query,
+    maxBudgetUsd: config.maxBudgetUsd,
+  });
   runner = new ClaudeAgentRunner({
     ...(stations ? { stations } : {}),
     // 旅程の評価は、旅程係が保存するたびに update_itinerary の中で動く。足りないところを見抜く力が要るので、
@@ -180,6 +192,7 @@ const app = createApp({
   authConfig: account.web,
   festivals: festivals.store,
   ...(stations ? { stations } : {}),
+  ...(readFestivalWish ? { readFestivalWish } : {}),
   limiter: new DailyLimiter(config.dailyChatLimit, today),
   ipLimiter: new DailyLimiter(config.dailyChatLimitPerIp, today),
   concurrency: new ConcurrencyLimiter(config.maxConcurrentTurns),

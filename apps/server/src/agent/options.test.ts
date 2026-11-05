@@ -26,6 +26,7 @@ const prompts: AgentPrompts = {
   nearby: "寄り道の調べ",
   lodging: "宿の調べ",
   evaluator: "旅程の評価",
+  "wish-reader": "自由記述の読み取り",
 };
 
 function options(overrides: { models?: AgentModels; resume?: string } = {}) {

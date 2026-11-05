@@ -44,7 +44,7 @@ export interface FestivalSearchDeps extends FestivalSearchOptions {
   clientIp?: (c: Context) => string;
 }
 
-const DEFAULT_WISH_TIMEOUT_MS = 8000;
+const DEFAULT_WISH_TIMEOUT_MS = 12000;
 /** とっておく読み取りの数の上限 */
 const MAX_CACHED_READINGS = 500;
 
