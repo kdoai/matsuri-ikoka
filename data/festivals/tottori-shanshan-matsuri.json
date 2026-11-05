@@ -1,0 +1,258 @@
+{
+  "id": "tottori-shanshan-matsuri",
+  "name": {
+    "ja": "鳥取しゃんしゃん祭",
+    "en": "Tottori Shan-Shan Festival"
+  },
+  "category": "dance",
+  "municipalities": [
+    {
+      "prefecture": "鳥取県",
+      "name": "鳥取市"
+    }
+  ],
+  "venue": {
+    "name": "鳥取市中心市街地（若桜街道ほか）",
+    "lat": 35.4967,
+    "lng": 134.2282
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "rurubu"],
+  "highlights": [
+    "約3,400人（2026年）の踊り子が街道を踊り歩く一斉傘踊り",
+    "鈴の付いた色鮮やかなしゃんしゃん傘と、その音",
+    "傘を持たずに踊るすずっこ踊り"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "県東部の伝統舞踊「因幡の傘踊り」を、だれでも踊れるようにアレンジした祭り",
+      "sources": [
+        {
+          "url": "https://www.gltjp.com/ja/directory/item/11253/",
+          "title": "GOOD LUCK TRIP 鳥取しゃんしゃん祭（振興会事務局の監修。毎年8月13〜15日、14日に一斉傘踊り、最終日に花火）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        },
+        {
+          "url": "https://kumanichi.com/articles/2025353",
+          "title": "熊本日日新聞（共同通信）鳥取で一斉傘踊り 2026年8月14日（約3400人、2014年にギネス記録）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "もとになった因幡の傘踊りは、雨乞いが起源とされる",
+      "source": {
+        "url": "https://kumanichi.com/articles/2025353",
+        "title": "熊本日日新聞（共同通信）鳥取で一斉傘踊り 2026年8月14日（約3400人、2014年にギネス記録）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "第50回の2014年に「最大の傘踊り」としてギネス世界記録に認定された",
+      "source": {
+        "url": "https://discoverjapan-web.com/article/28563",
+        "title": "Discover Japan 鳥取の民藝としゃんしゃん祭（第50回でギネス世界記録）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "2006年から、傘の代わりにすずっこを持つすずっこ踊りも始まった",
+      "source": {
+        "url": "https://www.gltjp.com/ja/directory/item/11253/",
+        "title": "GOOD LUCK TRIP 鳥取しゃんしゃん祭（振興会事務局の監修。毎年8月13〜15日、14日に一斉傘踊り、最終日に花火）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": "unknown",
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "例年20万人ほどが中心市街地に集まる（3日間で35万人余りとする案内もある）"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://summer.walkerplus.com/odekake/detail_e/ar0831e511367/data.html",
+        "title": "ウォーカープラス 第62回 鳥取しゃんしゃん祭 詳細データ（雨天の扱い、例年20万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20003000",
+        "title": "るるぶ&more. 第62回鳥取しゃんしゃん祭（会場ごとのアクセス、駐車場なし）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-13",
+      "start": "18:00",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": "小雨決行、荒天のときは内容の変更や中止がある",
+      "note": "第62回の前夜祭。風紋広場ですずっこ踊りと傘踊り",
+      "sources": [
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar0831e603253/data.html",
+          "title": "ウォーカープラス 第62回鳥取しゃんしゃん祭 データ（各日の時刻、踊り子参加費用あり）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar0831e511367/data.html",
+          "title": "ウォーカープラス 第62回 鳥取しゃんしゃん祭 詳細データ（雨天の扱い、例年20万人）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20003000",
+          "title": "るるぶ&more. 第62回鳥取しゃんしゃん祭（会場ごとのアクセス、駐車場なし）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        }
+      ]
+    },
+    {
+      "date": "2026-08-14",
+      "start": "17:00",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": "雨天のとき一斉傘踊りは中止",
+      "note": "一斉傘踊り。第1部 17:00〜18:50、第2部 19:00〜21:00。踊り子は約3,400人。翌15日は別に市民納涼花火大会",
+      "sources": [
+        {
+          "url": "https://www.pref.tottori.lg.jp/item/1435250.htm",
+          "title": "鳥取県 知事日誌 2026年8月14日（第62回鳥取しゃんしゃん祭一斉傘踊り）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar0831e603253/data.html",
+          "title": "ウォーカープラス 第62回鳥取しゃんしゃん祭 データ（各日の時刻、踊り子参加費用あり）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        },
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar0831e511367/data.html",
+          "title": "ウォーカープラス 第62回 鳥取しゃんしゃん祭 詳細データ（雨天の扱い、例年20万人）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        },
+        {
+          "url": "https://kumanichi.com/articles/2025353",
+          "title": "熊本日日新聞（共同通信）鳥取で一斉傘踊り 2026年8月14日（約3400人、2014年にギネス記録）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-13",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2027年の発表はまだない。毎年8月13〜15日の3日間に開くという案内から見込んだ日",
+      "sources": [
+        {
+          "url": "https://www.gltjp.com/ja/directory/item/11253/",
+          "title": "GOOD LUCK TRIP 鳥取しゃんしゃん祭（振興会事務局の監修。毎年8月13〜15日、14日に一斉傘踊り、最終日に花火）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-14",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2027年の発表はまだない。一斉傘踊りは14日に行うという案内から見込んだ日",
+      "sources": [
+        {
+          "url": "https://www.gltjp.com/ja/directory/item/11253/",
+          "title": "GOOD LUCK TRIP 鳥取しゃんしゃん祭（振興会事務局の監修。毎年8月13〜15日、14日に一斉傘踊り、最終日に花火）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 鳥取駅",
+        "walkMinutes": [5, 10],
+        "note": "中心市街地まで。前夜祭の風紋広場は北口を出てすぐ"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "none",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://rurubu.jp/andmore/spot/20003000",
+        "title": "るるぶ&more. 第62回鳥取しゃんしゃん祭（会場ごとのアクセス、駐車場なし）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [],
+  "sources": [
+    {
+      "url": "https://www.gltjp.com/ja/directory/item/11253/",
+      "title": "GOOD LUCK TRIP 鳥取しゃんしゃん祭（振興会事務局の監修。毎年8月13〜15日、14日に一斉傘踊り、最終日に花火）",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.pref.tottori.lg.jp/item/1435250.htm",
+      "title": "鳥取県 知事日誌 2026年8月14日（第62回鳥取しゃんしゃん祭一斉傘踊り）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://summer.walkerplus.com/odekake/detail_e/ar0831e511367/",
+      "title": "ウォーカープラス 第62回 鳥取しゃんしゃん祭（因幡の傘踊りの傘を小さくしたしゃんしゃん傘）",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20003000",
+      "title": "るるぶ&more. 第62回鳥取しゃんしゃん祭（会場ごとのアクセス、駐車場なし）",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "個人で踊りに加わる枠や飛び入りの可否、連の募集の条件と参加費の金額（職場の連が加わる例や、首都圏に住む鳥取ゆかりの人を県が募った例はある）",
+    "観覧の決まり、服装、持ち物、撮影",
+    "交通規制の時間と場所",
+    "2027年の時刻と雨天の扱い",
+    "主要駅から鳥取駅までの所要時間",
+    "屋台の有無と地元の味",
+    "祭りの前後に寄れる観光・食の場所"
+  ]
+}

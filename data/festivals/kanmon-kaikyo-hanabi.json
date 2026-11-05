@@ -1,0 +1,344 @@
+{
+  "id": "kanmon-kaikyo-hanabi",
+  "name": {
+    "ja": "関門海峡花火大会",
+    "en": "Kanmon Strait Fireworks Festival"
+  },
+  "category": "fireworks",
+  "municipalities": [
+    {
+      "prefecture": "山口県",
+      "name": "下関市"
+    },
+    {
+      "prefecture": "福岡県",
+      "name": "北九州市"
+    }
+  ],
+  "venue": {
+    "name": "関門海峡沿岸（下関側の主会場は岬之町埠頭）",
+    "lat": 33.9516,
+    "lng": 130.9352
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "海峡の両岸から同時に上がる約18,000発",
+    "下関側の一尺玉40連発と水中花火",
+    "花火の前の海峡ドローンショー"
+  ],
+  "styles": [],
+  "trivia": [
+    {
+      "text": "下関の花火は昭和60年に始まり、昭和63年から門司側が加わった",
+      "source": {
+        "url": "https://yamaguchi-tourism.jp/feature/kanmonhanabi",
+        "title": "おいでませ山口へ 関門海峡花火大会2026 ガイド（毎年8月13日、下関側の会場と注意）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "1988年、門司と下関の合同で「ふるさと関門は元気です」を掲げて始まった",
+      "source": {
+        "url": "https://www.city.kitakyushu.lg.jp/moji/w1100625.html",
+        "title": "北九州市 門司区 関門海峡花火大会（令和8年、門司側の時刻と交通規制）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2026年の打ち上げは下関側が約10,500発、門司側が約7,500発",
+      "source": {
+        "url": "https://www.crossroadfukuoka.jp/event/13302",
+        "title": "クロスロードふくおか 関門海峡花火大会（門司港駅から徒歩約5分、両岸で約18,000発）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "門司側には無料の観覧席がなく、6歳以上は観覧券が要る。門司側と下関側の券は共通ではない",
+      "下関側の当日券は現金のみで、前売りが売り切れると当日券の販売はない",
+      "ペットを有料エリアに連れて入らない",
+      "会場内は禁煙で、喫煙は指定のコーナーのみ",
+      "会場の内外で火気（バーベキューなど）を使わない。ごみは持ち帰る",
+      "両会場とも周辺に駐車場はなく、公共交通機関で来る"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "両岸で例年約80万人が集まり、夜の海沿いで交通規制や横断歩道の封鎖もある"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://yamaguchi-tourism.jp/feature/kanmonhanabi",
+        "title": "おいでませ山口へ 関門海峡花火大会2026 ガイド（毎年8月13日、下関側の会場と注意）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.crossroadfukuoka.jp/feature/kanmonhanabi",
+        "title": "クロスロードふくおか 関門海峡花火大会 ガイド（毎年8月13日、門司側の注意）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.kitakyushu.lg.jp/moji/w1100625.html",
+        "title": "北九州市 門司区 関門海峡花火大会（令和8年、門司側の時刻と交通規制）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0835e00700/data.html",
+        "title": "ウォーカープラス 第42回 関門海峡花火大会 データ（下関駅東口から徒歩20分、例年80万人、屋台あり）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002778",
+        "title": "るるぶ&more. 関門海峡花火大会（雨天決行、荒天中止）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-13",
+      "start": "20:00",
+      "end": "20:50",
+      "status": "announced",
+      "rainPolicy": "雨天決行。荒天や強風のときは中止で順延なし（下関側の最終決定は当日15:00）",
+      "note": "19:35 開会式、19:45 海峡ドローンショー、20:00 花火開始。下関側は20:50まで、門司側は20:30まで。打ち上げは両岸で約18,000発",
+      "sources": [
+        {
+          "url": "https://yamaguchi-tourism.jp/feature/kanmonhanabi",
+          "title": "おいでませ山口へ 関門海峡花火大会2026 ガイド（毎年8月13日、下関側の会場と注意）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://yamaguchi-tourism.jp/feature/detail_110.html",
+          "title": "おいでませ山口へ 第42回 関門海峡花火大会2026",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.kitakyushu.lg.jp/moji/w1100625.html",
+          "title": "北九州市 門司区 関門海峡花火大会（令和8年、門司側の時刻と交通規制）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.crossroadfukuoka.jp/feature/kanmonhanabi",
+          "title": "クロスロードふくおか 関門海峡花火大会 ガイド（毎年8月13日、門司側の注意）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.crossroadfukuoka.jp/event/13302",
+          "title": "クロスロードふくおか 関門海峡花火大会（門司港駅から徒歩約5分、両岸で約18,000発）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://hanabi.walkerplus.com/detail/ar0835e00700/data.html",
+          "title": "ウォーカープラス 第42回 関門海峡花火大会 データ（下関駅東口から徒歩20分、例年80万人、屋台あり）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20002778",
+          "title": "るるぶ&more. 関門海峡花火大会（雨天決行、荒天中止）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-13",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2027年の発表はまだない。山口県と福岡県の観光の案内に毎年8月13日とあることから見込んだ日",
+      "sources": [
+        {
+          "url": "https://yamaguchi-tourism.jp/feature/kanmonhanabi",
+          "title": "おいでませ山口へ 関門海峡花火大会2026 ガイド（毎年8月13日、下関側の会場と注意）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.crossroadfukuoka.jp/feature/kanmonhanabi",
+          "title": "クロスロードふくおか 関門海峡花火大会 ガイド（毎年8月13日、門司側の注意）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 下関駅",
+        "walkMinutes": [20, 25],
+        "note": "東口から岬之町埠頭まで徒歩。バスなら海響館前か三百目で降りてすぐ"
+      },
+      {
+        "name": "JR 門司港駅",
+        "walkMinutes": [5, 10],
+        "note": "門司側の会場まで。出典により約5分・約10分と分かれる"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "小倉駅",
+        "minutes": [15, 25],
+        "route": "JR鹿児島本線で門司港駅へ（17:00〜23:00は約5分おき、約15分）"
+      }
+    ],
+    "parking": "none",
+    "trafficRestrictions": [
+      "下関側：15:00〜23:00 会場周辺で車両進入禁止。唐戸交差点の横断歩道は19:00〜20:45に封鎖",
+      "門司側：17:00（一部13:00）〜24:00ごろ 門司西海岸周辺、門司港レトロ地区などで規制"
+    ],
+    "sources": [
+      {
+        "url": "https://yamaguchi-tourism.jp/feature/kanmonhanabi",
+        "title": "おいでませ山口へ 関門海峡花火大会2026 ガイド（毎年8月13日、下関側の会場と注意）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.kitakyushu.lg.jp/moji/w1100625.html",
+        "title": "北九州市 門司区 関門海峡花火大会（令和8年、門司側の時刻と交通規制）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.crossroadfukuoka.jp/feature/kanmonhanabi",
+        "title": "クロスロードふくおか 関門海峡花火大会 ガイド（毎年8月13日、門司側の注意）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.crossroadfukuoka.jp/event/13302",
+        "title": "クロスロードふくおか 関門海峡花火大会（門司港駅から徒歩約5分、両岸で約18,000発）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0835e00700/data.html",
+        "title": "ウォーカープラス 第42回 関門海峡花火大会 データ（下関駅東口から徒歩20分、例年80万人、屋台あり）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002778",
+        "title": "るるぶ&more. 関門海峡花火大会（雨天決行、荒天中止）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "karato-ichiba",
+      "name": "唐戸市場",
+      "kind": "food",
+      "summary": "下関の魚市場で、鮮魚や鯨、蒲鉾の店と市場食堂が並ぶ。週末と祝日の活きいき馬関街では寿司を買える。金土は8:00、日祝は7:00から。平日の月〜木は休場（祝日を除く）",
+      "location": {
+        "lat": 33.9566,
+        "lng": 130.9436
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "08:00",
+        "close": "15:00"
+      },
+      "closedDays": ["mon", "tue", "wed", "thu"],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.karatoichiba.com/",
+          "title": "唐戸市場 公式サイト（営業日と時間）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.karatoichiba.com/access/",
+          "title": "唐戸市場 アクセス（下関駅から唐戸までバスで約10分）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://yamaguchi-tourism.jp/feature/kanmonhanabi",
+      "title": "おいでませ山口へ 関門海峡花火大会2026 ガイド（毎年8月13日、下関側の会場と注意）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.kitakyushu.lg.jp/moji/w1100625.html",
+      "title": "北九州市 門司区 関門海峡花火大会（令和8年、門司側の時刻と交通規制）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.crossroadfukuoka.jp/event/13302",
+      "title": "クロスロードふくおか 関門海峡花火大会（門司港駅から徒歩約5分、両岸で約18,000発）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://hanabi.walkerplus.com/detail/ar0835e00700/data.html",
+      "title": "ウォーカープラス 第42回 関門海峡花火大会 データ",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_345899/",
+      "title": "じゃらんnet アジアポートフェスティバル in KANMON 関門海峡花火大会（下関）",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_346177/",
+      "title": "じゃらんnet 第38回関門海峡花火大会（門司）",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20002778",
+      "title": "るるぶ&more. 関門海峡花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "主催者の発表",
+    "大会の回数（下関側は第42回、門司側は第39回と、案内により分かれる）",
+    "服装・持ち物・撮影の決まり",
+    "2027年の開始時刻と雨天の扱い",
+    "主要駅から下関駅までの所要時間",
+    "祭りの前後に寄れる観光の場所",
+    "周辺の場所の知名度"
+  ]
+}
