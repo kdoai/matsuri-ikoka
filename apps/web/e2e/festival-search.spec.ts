@@ -425,7 +425,7 @@ test("祭りから探して固定の聞き取りを進め、組み立てを確�
   await expect(plan.getByText("架空の岬")).toBeVisible();
   await snap(page, info, "56-anchor-plan");
   expect(previews.at(-1)).toMatchObject({
-    anchor: { festivalId: "suzunari-toro", date: "2026-08-16" },
+    anchor: { festivalId: "suzunari-toro", date: "2026-08-16", startDate: "2026-08-15" },
     origin: "みなと中央駅",
     nights: 2,
     wishes: ["四国", "架空の岬"],
@@ -436,7 +436,12 @@ test("祭りから探して固定の聞き取りを進め、組み立てを確�
   await consult.getByTestId("consult-submit").click();
   await waitForReply(page);
   await expect(page.getByTestId("itinerary-panel")).toContainText("第1版");
-  expect(chats[0]?.anchor).toEqual({ festivalId: "suzunari-toro", date: "2026-08-16" });
+  // カレンダーで選んだ初日も届く（組み立てが日程を変えないように）
+  expect(chats[0]?.anchor).toEqual({
+    festivalId: "suzunari-toro",
+    date: "2026-08-16",
+    startDate: "2026-08-15",
+  });
   expect(chats[0]?.message).toContain("祭りは探し直さず");
   expect(chats[0]?.message).toContain("四国");
 });
