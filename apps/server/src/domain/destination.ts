@@ -157,7 +157,7 @@ function normalizeName(name: string): string {
 }
 
 /** 「富山」「東京」「京都」のような、都道府県の名前の「県・都・府」を除いた呼び方 */
-function shortPrefectureName(prefecture: Prefecture): string {
+export function shortPrefectureName(prefecture: Prefecture): string {
   return prefecture === "北海道" ? prefecture : prefecture.replace(/[都府県]$/, "");
 }
 
