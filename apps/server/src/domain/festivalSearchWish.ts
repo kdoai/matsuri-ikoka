@@ -185,7 +185,7 @@ const WISH_CONCEPTS: readonly WishConcept[] = [
     label: "駅から近い",
     // 「駅から徒歩」は遠くても書かれるので文に当てず、歩く時間の値で決める
     words: ["駅前"],
-    triggers: ["駅から徒歩", "駅近", "駅から近", "電車で"],
+    triggers: ["駅から徒歩", "駅から歩", "駅近", "駅から近", "電車で"],
     fact: (f) => {
       const station = f.access.stations[0];
       if (station === undefined) return null;
@@ -632,6 +632,15 @@ const NAME_POINTS = 100;
 const AGAINST_POINTS = -10;
 const AVOID_POINTS = -15;
 
+/**
+ * 中身の広い種類と、その種類全体を指す言葉。芸能には神楽も太鼓も歌舞伎も入るので、「神楽」と言われて
+ * 太鼓の祭りを合うとはしない。ほかの言葉で言われたら、その言葉が祭りの文にあるときだけ合うとする
+ */
+const BROAD_CATEGORY_WORDS: Readonly<Partial<Record<FestivalCategory, ReadonlySet<string>>>> = {
+  performing_arts: new Set(["芸能", "伝統芸能", "舞"].map(normalizeText)),
+  market: new Set(["市場"].map(normalizeText)),
+};
+
 /** 1つの希望。同じ意味の言葉はまとめる */
 interface WishGroup {
   key: string;
@@ -774,6 +783,17 @@ function checkGroup(group: WishGroup, festival: Festival, occurrence: Occurrence
   const fact = group.concept?.fact?.(festival, occurrence) ?? null;
   if (fact === "against") return { points: AGAINST_POINTS, against: true };
 
+  const literal = group.literal?.some((w) =>
+    [...texts.primary, ...texts.secondary, ...texts.places].some((t) => hitsText(t, w)),
+  );
+  const broad = group.category === undefined ? undefined : BROAD_CATEGORY_WORDS[group.category];
+  const namesPart =
+    broad !== undefined &&
+    (group.literal?.length ?? 0) > 0 &&
+    group.literal?.every((w) => !broad.has(w));
+  // 種類の一部を名指しされたのに、その言葉が祭りの文にない
+  if (namesPart && !literal) return { points: 0, against: false };
+
   let points = 0;
   if (group.category !== undefined && festival.category === group.category) {
     points = CATEGORY_POINTS;
@@ -784,9 +804,6 @@ function checkGroup(group: WishGroup, festival: Festival, occurrence: Occurrence
   } else if (inSecondary) {
     points = SECONDARY_TEXT_POINTS;
   }
-  const literal = group.literal?.some((w) =>
-    [...texts.primary, ...texts.secondary, ...texts.places].some((t) => hitsText(t, w)),
-  );
   if (points > 0 && literal) points += LITERAL_TERM_BONUS;
   const name = texts.primary[0] as string;
   if (points > 0 && [...group.words, ...(group.literal ?? [])].some((w) => hitsText(name, w))) {
