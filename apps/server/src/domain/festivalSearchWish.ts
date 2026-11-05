@@ -191,8 +191,10 @@ export function mentions(texts: readonly string[], word: string): boolean {
 interface FestivalTexts {
   /** 名前と見どころ（重く数える） */
   primary: string[];
-  /** 小話・作法・地元の味・性格の根拠・会場 */
+  /** 小話・作法・地元の味・性格の根拠 */
   secondary: string[];
+  /** 会場と市町村の名前（1字の言葉は当てない。「馬」が「相馬市」に当たらないように） */
+  places: string[];
 }
 
 const textsCache = new WeakMap<Festival, FestivalTexts>();
@@ -220,9 +222,8 @@ function festivalTexts(festival: Festival): FestivalTexts {
       ...etiquetteTexts(festival),
       ...festival.food.local.flatMap((food) => [food.name, ...(food.note ? [food.note] : [])]),
       ...festival.styles.map((s) => s.basis),
-      festival.venue.name,
-      ...festival.municipalities.map((m) => m.name),
     ].map(normalizeText),
+    places: [festival.venue.name, ...festival.municipalities.map((m) => m.name)].map(normalizeText),
   };
   textsCache.set(festival, texts);
   return texts;
@@ -301,13 +302,24 @@ const PERIOD_WORDS: readonly (readonly [RegExp, readonly number[]])[] = [
 
 /** 自由記述に出ても、祭りの違いを表さない言葉 */
 const STOP_WORDS = new Set(
-  `祭り 祭典 希望 今年 来年 今月 来月 今週 来週 週末 土日 休日 平日 連休 友達 友人 恋人 夫婦 両親 祖父母 家内 主人
+  `祭 お祭り まつり 祭り 祭典 希望 今年 来年 今月 来月 今週 来週 週末 土日 休日 平日 連休 友達 友人 恋人 夫婦 両親 祖父母 家内 主人
   旅行 観光 一緒 初心者 大人 場所 時間 日程 予定 計画 雰囲気 感じ 気分 最高 素敵 日本 全国 地域 地方 地元 近く 遠く
   行事 体験 参加 参加型 見物 季節 開催 会場 検索 提案 紹介 条件 特に 以外 程度 大丈夫 必要 問題 興味 関心 おすすめ
   苦手 無理 不要 遠慮`
     .split(/\s+/)
     .filter(Boolean),
 );
+
+/** モデルに渡す言葉の一覧。この呼び方で terms を返すと、言い換えと祭りのデータの値まで含めて照らし合わせる */
+export function wishVocabulary(): {
+  concepts: readonly string[];
+  categories: readonly (readonly [string, readonly string[]])[];
+} {
+  return {
+    concepts: WISH_CONCEPTS.map((c) => c.label),
+    categories: Object.entries(CATEGORY_WORDS),
+  };
+}
 
 /** 読み取りの terms の上限（FestivalWishIntentSchema と同じ） */
 const MAX_TERMS = 16;
@@ -453,10 +465,40 @@ interface WishGroup {
   category?: FestivalCategory;
   /** 利用者やモデルの言った、そのままの言葉（種類の中で、その言葉に当たる祭りを上にする） */
   literal?: string[];
+  /** 自由記述にない言い換え（モデルが足した言葉）の、元の書き方 */
+  paraphrases?: string[];
 }
 
-function groupsOf(terms: readonly string[], categories: readonly FestivalCategory[]): WishGroup[] {
+const PARAPHRASE_KEY = "paraphrase";
+const FREE_TERM_PREFIX = "term:";
+const STOP_TERMS = new Set([...STOP_WORDS].map(normalizeText));
+
+/**
+ * 言葉を、辞書の概念や種類に当てる。「子ども向け」「人が少ない」のように概念の言葉を含む言い方も当てる。
+ * 「混雑しない」は混雑の希望ではないので当てない。1字の言葉は含むだけでは当てない（「夜行」は夜の希望ではない）。
+ * 種類は含むだけでは当てない（言い換えの「船渡御」で、神輿という希望を増やさない。種類は categories で受け取る）
+ */
+function dictionaryEntryOf(word: string): { entry: DictionaryEntry; exact: boolean } | null {
+  const exact = ENTRY_BY_WORD.get(word);
+  if (exact !== undefined) return { entry: exact, exact: true };
+  for (const entry of DICTIONARY) {
+    if (entry.concept === undefined || entry.word.length < 2) continue;
+    const at = word.indexOf(entry.word);
+    if (at === -1) continue;
+    const tail = word.slice(at + entry.word.length);
+    if (AVOID_AFTER.test(tail) || INDIFFERENT_AFTER.test(tail)) continue;
+    return { entry, exact: false };
+  }
+  return null;
+}
+
+function groupsOf(
+  terms: readonly string[],
+  categories: readonly FestivalCategory[],
+  wish: string,
+): WishGroup[] {
   const groups = new Map<string, WishGroup>();
+  const wishText = normalizeText(wish);
   const categoryGroup = (category: FestivalCategory): WishGroup => {
     const key = `category:${category}`;
     const existing = groups.get(key);
@@ -472,22 +514,70 @@ function groupsOf(terms: readonly string[], categories: readonly FestivalCategor
     groups.set(key, group);
     return group;
   };
+  const conceptGroup = (concept: WishConcept): WishGroup => {
+    const key = `concept:${concept.label}`;
+    const existing = groups.get(key);
+    if (existing !== undefined) return existing;
+    const group: WishGroup = {
+      key,
+      label: concept.label,
+      words: concept.words.map(normalizeText),
+      concept,
+    };
+    groups.set(key, group);
+    return group;
+  };
   for (const category of categories) categoryGroup(category);
   for (const term of terms) {
     const word = normalizeText(term);
-    const concept = CONCEPT_BY_LABEL.get(word) ?? ENTRY_BY_WORD.get(word)?.concept;
-    const category = ENTRY_BY_WORD.get(word)?.category;
-    if (concept !== undefined) {
-      groups.set(`concept:${concept.label}`, {
-        key: `concept:${concept.label}`,
-        label: concept.label,
-        words: concept.words.map(normalizeText),
-        concept,
+    const labeled = CONCEPT_BY_LABEL.get(word);
+    if (labeled !== undefined) {
+      conceptGroup(labeled);
+      continue;
+    }
+    const found = dictionaryEntryOf(word);
+    if (found?.entry.concept !== undefined) {
+      const group = conceptGroup(found.entry.concept);
+      // 辞書の言葉より長い言い方（「海辺の灯り」など）は、その言い方でも文に当てる
+      if (!found.exact && !group.words.includes(word)) group.words.push(word);
+      continue;
+    }
+    if (found?.entry.category !== undefined) {
+      categoryGroup(found.entry.category).literal?.push(word);
+      continue;
+    }
+    // 1字は漢字だけ（鬼・船・馬など、祭りを表す言葉がある）
+    if (word.length < 2 && !/^[一-龥々]$/.test(word)) continue;
+    if (STOP_TERMS.has(word)) continue;
+    if (wishText.includes(word)) {
+      groups.set(`${FREE_TERM_PREFIX}${word}`, {
+        key: `${FREE_TERM_PREFIX}${word}`,
+        label: term,
+        words: [word],
       });
-    } else if (category !== undefined) {
-      categoryGroup(category).literal?.push(word);
-    } else if (word.length >= 2) {
-      groups.set(`term:${word}`, { key: `term:${word}`, label: term, words: [word] });
+      continue;
+    }
+    // 自由記述にない言葉は、モデルの足した言い換え。いくつあっても1つの希望として数える
+    const paraphrase = groups.get(PARAPHRASE_KEY);
+    if (paraphrase === undefined) {
+      groups.set(PARAPHRASE_KEY, {
+        key: PARAPHRASE_KEY,
+        label: term,
+        words: [word],
+        paraphrases: [term],
+      });
+    } else {
+      paraphrase.words.push(word);
+      paraphrase.paraphrases?.push(term);
+    }
+  }
+  // 「鬼が出てくる」と「鬼」のように、ほかの言葉を含むだけの長い言い方は、別の希望にしない
+  const ownWords = [...groups.keys()]
+    .filter((key) => key.startsWith(FREE_TERM_PREFIX))
+    .map((key) => key.slice(FREE_TERM_PREFIX.length));
+  for (const word of ownWords) {
+    if (ownWords.some((other) => other !== word && word.includes(other))) {
+      groups.delete(`${FREE_TERM_PREFIX}${word}`);
     }
   }
   return [...groups.values()];
@@ -501,7 +591,11 @@ interface GroupCheck {
 function checkGroup(group: WishGroup, festival: Festival, occurrence: Occurrence): GroupCheck {
   const texts = festivalTexts(festival);
   const inPrimary = group.words.some((w) => texts.primary.some((t) => hitsText(t, w)));
-  const inSecondary = group.words.some((w) => texts.secondary.some((t) => hitsText(t, w)));
+  const inSecondary = group.words.some(
+    (w) =>
+      texts.secondary.some((t) => hitsText(t, w)) ||
+      (w.length >= 2 && texts.places.some((t) => hitsText(t, w))),
+  );
   const fact = group.concept?.fact?.(festival, occurrence) ?? null;
   if (fact === "against") return { points: AGAINST_POINTS, against: true };
 
@@ -516,7 +610,7 @@ function checkGroup(group: WishGroup, festival: Festival, occurrence: Occurrence
     points = SECONDARY_TEXT_POINTS;
   }
   const literal = group.literal?.some((w) =>
-    [...texts.primary, ...texts.secondary].some((t) => hitsText(t, w)),
+    [...texts.primary, ...texts.secondary, ...texts.places].some((t) => hitsText(t, w)),
   );
   if (points > 0 && literal) points += LITERAL_TERM_BONUS;
   const name = texts.primary[0] as string;
@@ -524,6 +618,16 @@ function checkGroup(group: WishGroup, festival: Festival, occurrence: Occurrence
     points += NAME_WORD_BONUS;
   }
   return { points, against: false };
+}
+
+/** 画面に出す呼び方。言い換えは、祭りの文に実際に当たった言葉を出す */
+function hitLabel(group: WishGroup, festival: Festival): string {
+  const texts = festivalTexts(festival);
+  const all = [...texts.primary, ...texts.secondary, ...texts.places];
+  const hit = group.paraphrases?.find((term) =>
+    all.some((text) => hitsText(text, normalizeText(term))),
+  );
+  return hit ?? group.label;
 }
 
 /** 開催回の日が、その月のどれかに入るか */
@@ -562,7 +666,12 @@ export function scoreWish(
   intent: FestivalWishIntent,
   wish: string,
 ): WishScore {
-  const groups = groupsOf(intent.terms, intent.categories);
+  const groups = groupsOf(intent.terms, intent.categories, wish);
+  // ほかに希望があれば、言い換えは希望の数に足さない（モデルの足した言葉で matched が出なくならないように）。
+  // 言い換えに当たれば点を足し、自由記述の言葉に当たらなかったときは、その言葉の代わりとして数える
+  const hasOtherWish = groups.some((g) => g.key !== PARAPHRASE_KEY);
+  let ownWordMissed = false;
+  let paraphraseHit = false;
   const hits: string[] = [];
   let points = 0;
   let wanted = 0;
@@ -570,15 +679,25 @@ export function scoreWish(
   let against = false;
 
   for (const group of groups) {
-    wanted += 1;
     const check = checkGroup(group, festival, occurrence);
     points += check.points;
     if (check.against) against = true;
+    if (group.key === PARAPHRASE_KEY && hasOtherWish) {
+      if (check.points > 0) {
+        paraphraseHit = true;
+        hits.push(hitLabel(group, festival));
+      }
+      continue;
+    }
+    wanted += 1;
     if (check.points > 0) {
       satisfied += 1;
-      hits.push(group.label);
+      hits.push(hitLabel(group, festival));
+    } else if (group.key.startsWith(FREE_TERM_PREFIX)) {
+      ownWordMissed = true;
     }
   }
+  if (paraphraseHit && ownWordMissed) satisfied += 1;
   if (intent.months.length > 0) {
     wanted += 1;
     if (occurrenceInMonths(occurrence, intent.months)) {
@@ -612,16 +731,15 @@ export function scoreWish(
   }
 
   let avoided = false;
-  for (const group of groupsOf(intent.avoidTerms, [])) {
+  for (const group of groupsOf(intent.avoidTerms, [], wish)) {
     if (checkGroup(group, festival, occurrence).points > 0) {
       avoided = true;
       points += AVOID_POINTS;
     }
   }
 
-  const name = normalizeText(festival.name.ja);
-  const named =
-    normalizeText(wish).includes(name) || intent.terms.some((t) => normalizeText(t) === name);
+  // 名前の一致は、自由記述に書かれているときだけ。読み取りの terms だけにある名前では上げない
+  const named = normalizeText(wish).includes(normalizeText(festival.name.ja));
   if (named) points += NAME_POINTS;
 
   const hasAvoid = intent.avoidTerms.length > 0;
