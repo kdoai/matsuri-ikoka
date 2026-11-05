@@ -7,6 +7,7 @@ import { type ChatDeps, registerChatRoutes } from "./routes/chat";
 import { apiError } from "./routes/errors";
 import { type FestivalSearchOptions, registerFestivalSearchRoutes } from "./routes/festivalSearch";
 import { registerFestivalRoutes } from "./routes/festivals";
+import { registerFestivalTripRoutes } from "./routes/festivalTrips";
 import { passcodeGuard } from "./routes/guard";
 import { registerItineraryRoutes } from "./routes/itinerary";
 import { registerTripRoutes } from "./routes/trips";
@@ -63,6 +64,7 @@ export function createApp(appDeps: AppDeps) {
   registerChatRoutes(app, deps);
   registerFestivalSearchRoutes(app, deps);
   registerFestivalRoutes(app, deps);
+  registerFestivalTripRoutes(app, deps);
   registerItineraryRoutes(app, deps);
   registerTripRoutes(app, {
     persistence,

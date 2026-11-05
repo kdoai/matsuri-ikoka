@@ -2,19 +2,20 @@
 
 ## API
 
-| メソッド | パス                    | 本文                                 | 返すもの                                                                                                                                            |
-| -------- | ----------------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| POST     | `/api/session`          | `SessionRequestSchema`（省略できる） | 201 `SessionResponseSchema`（`{ "sessionId": "…", "mode": "live" }`）。`mode` は `live` か `mock`（見本の相談の再生）。画面は mock のときに札を出す |
-| POST     | `/api/chat`             | `ChatRequestSchema`                  | 返答を SSE のイベントで返す                                                                                                                         |
-| PATCH    | `/api/preferences`      | `PreferencesRequestSchema`           | SSE。旅程があり live のときは旅程係だけを動かして組み直す。それ以外（旅程がない、mock）はこだわりを変えて `done` だけを返す                         |
-| POST     | `/api/festivals/search` | `FestivalSearchRequestSchema`        | 種類・季節・地域で祭りを探す（`FestivalSearchResponseSchema`）。[POST /api/festivals/search](#post-apifestivalssearch)                              |
-| GET      | `/api/festivals`        | —                                    | 祭りのデータの一覧（`FestivalsResponseSchema`、`{ "festivals": [...] }`）。候補が出る前の豆知識に使う                                               |
-| GET      | `/api/festivals/:id`    | —                                    | 祭りのデータ（`FestivalSchema`）。しおりの作法・地元の味・アクセス、待ち時間の小話に使う                                                            |
-| GET      | `/api/itinerary/:id`    | —                                    | 旅程（`ItinerarySchema`）。`:id` は旅程の ID（ログインして残していなければ、最後の保存から30日）か共有の ID（`sh-…`、作ってから30日）               |
-| GET      | `/shiori/:id`           | —                                    | 旅のしおり（画面で見る HTML）。公式の情報で開催予定を確かめた旅程だけ（[しおり](shiori.md)）                                                        |
-| GET      | `/shiori/:id.pdf`       | —                                    | 同じしおりの A4 の PDF。混み合っていたら 503（`upstream_unavailable`）と `Retry-After`                                                              |
-| GET      | `/shiori/assets/*`      | —                                    | しおりのフォントとスタッフの静止画                                                                                                                  |
-| GET      | `/healthz`・`/health`   | —                                    | 死活監視。`{ "status": "ok" }`。Cloud Run の既定の URL では `/healthz` が外に出ないので、外からは `/health` を使う                                  |
+| メソッド | パス                          | 本文                                 | 返すもの                                                                                                                                            |
+| -------- | ----------------------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| POST     | `/api/session`                | `SessionRequestSchema`（省略できる） | 201 `SessionResponseSchema`（`{ "sessionId": "…", "mode": "live" }`）。`mode` は `live` か `mock`（見本の相談の再生）。画面は mock のときに札を出す |
+| POST     | `/api/chat`                   | `ChatRequestSchema`                  | 返答を SSE のイベントで返す                                                                                                                         |
+| POST     | `/api/festival-trips/preview` | `AnchorPlanRequestSchema`            | 祭りを決めたあとの旅の組み立て（`AnchorPlanSchema`）。下の節を参照                                                                                  |
+| PATCH    | `/api/preferences`            | `PreferencesRequestSchema`           | SSE。旅程があり live のときは旅程係だけを動かして組み直す。それ以外（旅程がない、mock）はこだわりを変えて `done` だけを返す                         |
+| POST     | `/api/festivals/search`       | `FestivalSearchRequestSchema`        | 種類・季節・地域で祭りを探す（`FestivalSearchResponseSchema`）。[POST /api/festivals/search](#post-apifestivalssearch)                              |
+| GET      | `/api/festivals`              | —                                    | 祭りのデータの一覧（`FestivalsResponseSchema`、`{ "festivals": [...] }`）。候補が出る前の豆知識に使う                                               |
+| GET      | `/api/festivals/:id`          | —                                    | 祭りのデータ（`FestivalSchema`）。しおりの作法・地元の味・アクセス、待ち時間の小話に使う                                                            |
+| GET      | `/api/itinerary/:id`          | —                                    | 旅程（`ItinerarySchema`）。`:id` は旅程の ID（ログインして残していなければ、最後の保存から30日）か共有の ID（`sh-…`、作ってから30日）               |
+| GET      | `/shiori/:id`                 | —                                    | 旅のしおり（画面で見る HTML）。公式の情報で開催予定を確かめた旅程だけ（[しおり](shiori.md)）                                                        |
+| GET      | `/shiori/:id.pdf`             | —                                    | 同じしおりの A4 の PDF。混み合っていたら 503（`upstream_unavailable`）と `Retry-After`                                                              |
+| GET      | `/shiori/assets/*`            | —                                    | しおりのフォントとスタッフの静止画                                                                                                                  |
+| GET      | `/healthz`・`/health`         | —                                    | 死活監視。`{ "status": "ok" }`。Cloud Run の既定の URL では `/healthz` が外に出ないので、外からは `/health` を使う                                  |
 
 ログインと自分の旅の API（`/api/auth/config`・`/api/trips`・`/api/me/trips`）は [ログインと保存の仕様](account.md#api) にあります。
 
@@ -48,6 +49,14 @@ SSE を始める前に断るときと、JSON を返す API が失敗したとき
 - 回数の上限・混雑・モデルの失敗・時間切れのときは、断らずに言葉の辞書で読みます。どちらで読んだかは `reading.by` で分かります
 - モックモードでも動きます（読むのは言葉の辞書だけ）
 
+### POST /api/festival-trips/preview
+
+祭りから探して決めた祭りを軸に、旅の組み立てを計算して返します（モデルは呼びません）。本文は `AnchorPlanRequestSchema`、応答は `AnchorPlanSchema` です。計算の手順は [祭りから探す](festival-search.md#祭りを固定した旅程) にあります。
+
+- 祭りがない・掲載停止は 404。データにない日、中止や延期の回、過ぎた日は 400（どちらも `bad_request`）
+- 相談が見つかれば、選んだ出発地・泊数・ペース・寄りたい場所を、その相談の条件に残す（祭りは固定しない）
+- 祭りの固定は、次の `POST /api/chat` の `anchor` で行う
+
 ### POST /api/chat
 
 本文は `ChatRequestSchema` です。
@@ -67,6 +76,7 @@ SSE を始める前に断るときと、JSON を返す API が失敗したとき
 
 - `message` は前後の空白を除いて1〜1000字
 - `preferences` は画面で選んでいるこだわり（[旅程の仕様](itinerary.md#こだわりの効果)）
+- `anchor`（任意）は、祭りから探して決めた祭りと行く日（`TripAnchorSchema`）。あれば、祭りを固定して旅程を組む。祭りと日を確かめ（断り方は上の `POST /api/festival-trips/preview` と同じ）、相談の状態に残すので、次の発言からは送らなくてよい。固定を外すのはコンシェルジュ（ほかの祭りに変えたいと言われたとき）か、中止と分かったときで、そのあとに同じ `anchor` を送ると固定し直す
 - `search`（任意）は、候補の窓の次の手（ボタン）から送るときの、変えて探し直す条件（`SearchRetrySchema`：`when`・`maxTravelMinutes`・`nights`・`widen` のうち1つ以上）。サーバーは聞き取った条件に書き足し、その発言の `search_festivals` はこの条件を正として使う（[条件の守り方](agents.md#条件の守り方)）
 
 ## SSE イベント
