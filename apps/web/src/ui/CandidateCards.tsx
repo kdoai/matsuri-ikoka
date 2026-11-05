@@ -1,4 +1,4 @@
-import type { Festival, FestivalCandidate, SearchMiss, SearchOutcome } from "@matsuri-ikoka/schema";
+import type { Festival, FestivalCandidate, SearchOutcome } from "@matsuri-ikoka/schema";
 import {
   Baby,
   BookOpen,
@@ -152,8 +152,18 @@ function Features({ festival }: { festival: Festival }) {
   );
 }
 
+/**
+ * 祭りから探す相談で出すときの選ぶ操作。探す段階では開催を Web で確かめない（旅行計画を作るときに確かめる）ので、
+ * 開催が見込みの祭りも選べて、「要事前確認」と出す
+ */
+type PickCandidate = (candidate: FestivalCandidate) => void;
+
 /** カードとリストの行で共通に使う、候補の材料 */
-function useCandidateFacts(candidate: FestivalCandidate, festival: Festival | null) {
+function useCandidateFacts(
+  candidate: FestivalCandidate,
+  festival: Festival | null,
+  pick: PickCandidate | undefined,
+) {
   const t = useT();
   const locale = useApp((state) => state.ui.locale);
   const streaming = useApp((state) => state.session.streaming);
@@ -165,7 +175,7 @@ function useCandidateFacts(candidate: FestivalCandidate, festival: Festival | nu
     place: `${candidate.place}・${candidate.venueName}`,
     category,
     categoryLabel: festival === null ? null : t.categories[category],
-    block: chooseBlock(candidate, streaming),
+    block: pick === undefined ? chooseBlock(candidate, streaming) : null,
     ids: {
       heading: `candidate-${candidate.festivalId}`,
       details: `candidate-details-${candidate.festivalId}`,
@@ -188,14 +198,14 @@ function TravelLine({ candidate }: { candidate: FestivalCandidate }) {
 }
 
 /** 条件から外れている点（「この祭りならやっています」の祭り） */
-function MissNote({ miss }: { miss: SearchMiss }) {
+function MissNote({ detail }: { detail: string }) {
   const t = useT();
   return (
     <p className="mt-1.5 flex items-start gap-1.5 rounded-lg bg-shu-500/10 px-2 py-1 font-bold text-shu-700 text-sm">
       <CircleAlert aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
       <span>
         <span className="sr-only">{t.candidates.next.missLabel}：</span>
-        {miss.detail}
+        {detail}
       </span>
     </p>
   );
@@ -221,7 +231,15 @@ function DayStamp({ days }: { days: number }) {
  * 開催が確認できていないことの知らせ。「この祭りにする」を押せない理由も兼ねる。
  * 要事前確認の祭りは、選べることと、出発の前に確かめることを知らせる
  */
-function UnconfirmedNote({ id, candidate }: { id: string; candidate: FestivalCandidate }) {
+function UnconfirmedNote({
+  id,
+  candidate,
+  searched,
+}: {
+  id: string;
+  candidate: FestivalCandidate;
+  searched: boolean;
+}) {
   const t = useT();
   return (
     <p
@@ -229,18 +247,22 @@ function UnconfirmedNote({ id, candidate }: { id: string; candidate: FestivalCan
       className="flex items-start gap-1.5 rounded-lg bg-shu-500/10 px-2 py-1 font-medium text-shu-700 text-sm"
     >
       <CircleAlert aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
-      {needsCheck(candidate) ? t.candidates.needsCheckNote : t.candidates.unconfirmedNote}
+      {searched
+        ? t.festivalSearch.needsCheckNote
+        : needsCheck(candidate)
+          ? t.candidates.needsCheckNote
+          : t.candidates.unconfirmedNote}
     </p>
   );
 }
 
 /** 確認済みでない候補の札：要事前確認か未確認 */
-function StatusPill({ candidate }: { candidate: FestivalCandidate }) {
+function StatusPill({ candidate, searched }: { candidate: FestivalCandidate; searched: boolean }) {
   const t = useT();
   if (candidate.confirmed) return null;
   return (
     <Pill tone="shu">
-      {needsCheck(candidate) ? t.candidates.needsCheck : t.candidates.unconfirmed}
+      {searched || needsCheck(candidate) ? t.candidates.needsCheck : t.candidates.unconfirmed}
     </Pill>
   );
 }
@@ -249,11 +271,13 @@ function ChooseButton({
   candidate,
   block,
   noteId,
+  pick,
   compact = false,
 }: {
   candidate: FestivalCandidate;
   block: ReturnType<typeof chooseBlock>;
   noteId: string;
+  pick: PickCandidate | undefined;
   compact?: boolean;
 }) {
   const t = useT();
@@ -282,7 +306,9 @@ function ChooseButton({
       }`}
       disabled={block !== null}
       aria-describedby={block === "unconfirmed" ? noteId : undefined}
-      onClick={() => void actions.chooseCandidate(candidate)}
+      onClick={() =>
+        pick === undefined ? void actions.chooseCandidate(candidate) : pick(candidate)
+      }
     >
       <MapPin aria-hidden="true" className={compact ? "size-4" : "size-5"} />
       {t.candidates.choose}
@@ -356,18 +382,21 @@ function Details({
   open,
   candidate,
   festival,
+  searched,
   children,
 }: {
   id: string;
   open: boolean;
   candidate: FestivalCandidate;
   festival: Festival | null;
+  /** 祭りから探した結果か。合った理由はカードの面に出すので、ここでは出さない */
+  searched: boolean;
   children?: React.ReactNode;
 }) {
   const t = useT();
   const conditions = useApp((state) => state.session.conditions);
   const preferences = useApp((state) => state.preferences);
-  const reasons = fitReasons(candidate, festival, conditions, preferences);
+  const reasons = searched ? [] : fitReasons(candidate, festival, conditions, preferences);
   const onlyHere = festival?.trivia[0] ?? null;
   const highlights = festival?.highlights.slice(0, 3) ?? [candidate.highlight];
   return (
@@ -432,25 +461,31 @@ function SourceLine({ candidate }: { candidate: FestivalCandidate }) {
   );
 }
 
-/** カード表示の1枚（横長） */
-function Card({
+/** カード表示の1枚（横長）。pick を渡すと祭りから探した結果として出し、note を面に添える */
+export function Card({
   candidate,
   festival,
   index,
+  pick,
+  note,
 }: {
   candidate: FestivalCandidate;
   festival: Festival | null;
   index: number;
+  pick?: PickCandidate;
+  note?: React.ReactNode;
 }) {
   const t = useT();
   const [open, setOpen] = useState(false);
-  const facts = useCandidateFacts(candidate, festival);
+  const facts = useCandidateFacts(candidate, festival, pick);
+  const searched = pick !== undefined;
   const tags = faceTags(candidateTags(candidate, festival));
 
   return (
     <article
       aria-labelledby={facts.ids.heading}
-      className={`washi w-full animate-pop rounded-card border-2 p-3 shadow-lift ${
+      tabIndex={-1}
+      className={`washi w-full animate-pop rounded-card border-2 p-3 shadow-lift outline-none ${
         candidate.confirmed ? "border-shu-500/60" : "border-line-strong"
       }`}
       style={{ animationDelay: `${index * 120}ms` }}
@@ -464,7 +499,7 @@ function Card({
             <h3 id={facts.ids.heading} className="font-black text-2xl text-ink leading-tight">
               {candidate.name}
             </h3>
-            <DayStamp days={candidate.daysFromWish} />
+            {searched ? null : <DayStamp days={candidate.daysFromWish} />}
           </div>
           <p className="flex items-center gap-1.5 text-ink text-sm sm:text-base">
             <MapPin aria-hidden="true" className="size-4 shrink-0 text-ink-soft" />
@@ -477,8 +512,9 @@ function Card({
           </p>
           <TravelLine candidate={candidate} />
           <p className="font-medium text-ink-soft text-sm">{candidate.highlight}</p>
+          {note}
           {candidate.confirmed ? null : (
-            <UnconfirmedNote id={facts.ids.note} candidate={candidate} />
+            <UnconfirmedNote id={facts.ids.note} candidate={candidate} searched={searched} />
           )}
           {tags.length > 0 ? (
             <ul className="flex flex-wrap gap-1.5" aria-label={t.festivalCard.features}>
@@ -501,14 +537,25 @@ function Card({
         <div className="flex flex-col gap-2 md:w-56 md:shrink-0">
           <span className="flex flex-wrap justify-end gap-1">
             <ConfidenceBadge confidence={candidate.confidence} />
-            <StatusPill candidate={candidate} />
+            <StatusPill candidate={candidate} searched={searched} />
           </span>
-          <ChooseButton candidate={candidate} block={facts.block} noteId={facts.ids.note} />
+          <ChooseButton
+            candidate={candidate}
+            block={facts.block}
+            noteId={facts.ids.note}
+            pick={pick}
+          />
           <DetailsToggle open={open} controls={facts.ids.details} onToggle={() => setOpen(!open)} />
         </div>
       </div>
 
-      <Details id={facts.ids.details} open={open} candidate={candidate} festival={festival} />
+      <Details
+        id={facts.ids.details}
+        open={open}
+        candidate={candidate}
+        festival={festival}
+        searched={searched}
+      />
 
       <div className="mt-2 flex flex-wrap items-end justify-between gap-2">
         <SourceLine candidate={candidate} />
@@ -518,26 +565,32 @@ function Card({
   );
 }
 
-/** リスト表示の1行：名前・日時・場所・確度と、選ぶボタン */
-function Row({
+/** リスト表示の1行：名前・日時・場所・確度と、選ぶボタン。pick と note はカードと同じ */
+export function Row({
   candidate,
   festival,
   miss,
+  pick,
+  note,
 }: {
   candidate: FestivalCandidate;
   festival: Festival | null;
   /** 「この祭りならやっています」の祭りなら、条件から外れている点 */
-  miss?: SearchMiss;
+  miss?: string;
+  pick?: PickCandidate;
+  note?: React.ReactNode;
 }) {
   const t = useT();
   const [open, setOpen] = useState(false);
-  const facts = useCandidateFacts(candidate, festival);
+  const facts = useCandidateFacts(candidate, festival, pick);
+  const searched = pick !== undefined;
   const cell = "flex min-w-0 items-center gap-1.5";
   return (
     <li>
       <article
         aria-labelledby={facts.ids.heading}
-        className="washi rounded-card border border-line-strong px-3 py-2 shadow-soft"
+        tabIndex={-1}
+        className="washi rounded-card border border-line-strong px-3 py-2 shadow-soft outline-none"
         data-testid="candidate-row"
       >
         <div className="grid items-center gap-x-3 gap-y-1 md:grid-cols-[minmax(0,2fr)_minmax(0,1.3fr)_minmax(0,1.6fr)_auto_auto]">
@@ -564,13 +617,14 @@ function Row({
           <span className="flex flex-wrap items-center gap-1">
             <span className="sr-only">{t.candidates.columns.confidence}</span>
             <ConfidenceBadge confidence={candidate.confidence} />
-            <StatusPill candidate={candidate} />
+            <StatusPill candidate={candidate} searched={searched} />
           </span>
           <span className="flex gap-1.5 md:justify-end">
             <ChooseButton
               candidate={candidate}
               block={facts.block}
               noteId={facts.ids.note}
+              pick={pick}
               compact
             />
             <DetailsToggle
@@ -581,14 +635,21 @@ function Row({
             />
           </span>
         </div>
-        {miss === undefined ? null : <MissNote miss={miss} />}
+        {miss === undefined ? null : <MissNote detail={miss} />}
+        {note}
         <TravelLine candidate={candidate} />
         {candidate.confirmed ? null : (
           <div className="mt-1.5">
-            <UnconfirmedNote id={facts.ids.note} candidate={candidate} />
+            <UnconfirmedNote id={facts.ids.note} candidate={candidate} searched={searched} />
           </div>
         )}
-        <Details id={facts.ids.details} open={open} candidate={candidate} festival={festival}>
+        <Details
+          id={facts.ids.details}
+          open={open}
+          candidate={candidate}
+          festival={festival}
+          searched={searched}
+        >
           <div className="flex flex-wrap items-end justify-between gap-2">
             <SourceLine candidate={candidate} />
             <IssueLinks candidate={candidate} />
@@ -714,7 +775,7 @@ function Filters({
 }
 
 /** カード表示とリスト表示の切り替え */
-function ViewSwitch({
+export function ViewSwitch({
   view,
   onChange,
 }: {
@@ -903,7 +964,7 @@ function NextSteps({ search }: { search: SearchOutcome }) {
                 key={candidate.festivalId}
                 candidate={candidate}
                 festival={festivals[candidate.festivalId] ?? null}
-                miss={miss}
+                miss={miss.detail}
               />
             ))}
           </ul>

@@ -1,6 +1,7 @@
 import {
   type AgentMode,
   FestivalSchema,
+  FestivalSearchResponseSchema,
   type SessionRequest,
   SessionResponseSchema,
 } from "@matsuri-ikoka/schema";
@@ -126,6 +127,24 @@ export function createServerTransport(options: ServerTransportOptions = {}): Cha
     },
     updatePreferences(request, onMessage, signal) {
       return postStream("/api/preferences", "PATCH", request, onMessage, signal);
+    },
+    async searchFestivals(request, signal) {
+      const response = await fetchImpl("/api/festivals/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...authHeaders(passcode) },
+        body: JSON.stringify(request),
+        ...(signal === undefined ? {} : { signal }),
+      });
+      if (!response.ok) {
+        throw await errorFromResponse(response, true);
+      }
+      const parsed = FestivalSearchResponseSchema.safeParse(
+        await response.json().catch(() => undefined),
+      );
+      if (!parsed.success) {
+        throw new TransportError("invalid_event", { status: response.status });
+      }
+      return parsed.data;
     },
     async checkServer() {
       // 死活監視の口は合言葉が要らない。応答があれば、サーバーは動いている

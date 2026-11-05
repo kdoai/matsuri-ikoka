@@ -100,6 +100,51 @@ describe("接客サーバーとの通信", () => {
     expect(String(fetchMock.mock.calls[1]?.[0])).toBe("/api/session");
   });
 
+  describe("祭りから探す", () => {
+    const request = {
+      sessionId: "s-1",
+      kinds: ["fireworks" as const],
+      season: "summer" as const,
+      prefectures: [],
+      excludeIds: [],
+    };
+    const empty = { results: [], remaining: 0, nearMatches: [], next: [], reading: null };
+
+    it("POST で条件を送り、合言葉をヘッダーで付け、応答をスキーマで確かめて返す", async () => {
+      const fetchMock = vi.fn<typeof fetch>(async () => json(empty, 200));
+      const transport = createServerTransport({ fetch: fetchMock });
+      transport.setPasscode?.("matsuri");
+      await expect(transport.searchFestivals(request)).resolves.toEqual(empty);
+      const [url, init] = fetchMock.mock.calls[0] ?? [];
+      expect(String(url)).toBe("/api/festivals/search");
+      expect(init?.method).toBe("POST");
+      expect(JSON.parse(String(init?.body))).toEqual(request);
+      expect(headerOf(init, PASSCODE_HEADER)).toBe("matsuri");
+    });
+
+    it("形の違う応答は受け取らない", async () => {
+      const transport = createServerTransport({
+        fetch: async () => json({ ...empty, remaining: "たくさん" }, 200),
+      });
+      await expect(transport.searchFestivals(request)).rejects.toMatchObject({
+        code: "invalid_event",
+      });
+    });
+
+    it("断られたら本文のエラーを読み、404 は相談が切れたものとして扱う", async () => {
+      const refused = createServerTransport({
+        fetch: async () =>
+          json({ code: "rate_limited", message: "今日はここまでです", retryable: false }, 429),
+      });
+      await expect(refused.searchFestivals(request)).rejects.toMatchObject({
+        code: "rate_limited",
+        serverMessage: "今日はここまでです",
+      });
+      const lost = createServerTransport({ fetch: async () => json({}, 404) });
+      await expect(lost.searchFestivals(request)).rejects.toMatchObject({ code: "session_lost" });
+    });
+  });
+
   it("サーバーが知らせた動き方（mock・live）を覚える", async () => {
     const replies = [
       json({ sessionId: "s-1", mode: "mock" }, 201),

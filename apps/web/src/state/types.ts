@@ -19,6 +19,7 @@ import type {
   VerificationResult,
 } from "@matsuri-ikoka/schema";
 import type { ConsultState } from "./consult";
+import type { FestivalSearchState } from "./festivalSearch";
 
 // 画面の正しい状態の形。3D・会話・しおりは、どれもこの形を読むだけにする。
 
@@ -267,6 +268,8 @@ export interface AppData {
   preferences: Preferences;
   /** 選んで進める聞き取り（誰と・いつ・どこ・泊まり・楽しみ・食・スタイル） */
   consult: ConsultState;
+  /** 祭りから探す相談（種類・季節・地域・その他の希望と、探した結果） */
+  festivalSearch: FestivalSearchState;
   messages: ChatEntry[];
   staff: Record<StaffId, StaffState>;
   /** スタッフどうしの頼みと受け渡し */

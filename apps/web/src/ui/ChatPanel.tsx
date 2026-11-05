@@ -183,10 +183,14 @@ export function Composer() {
   const tooLong = draft.trim().length > MAX_MESSAGE_LENGTH;
   const canSend = ready && !streaming && draft.trim().length > 0 && !tooLong;
   const wide = draft.length > 0;
-  // 選んで進める聞き取りの間は出さない（自由に書くのは「その他」と「ひとこと」の欄で）
+  // 選んで進める聞き取りの間は出さない（自由に書くのは「その他」と「ひとこと」の欄で）。
+  // 入口の2択の間は出す（選ばずに書いて送れば、今までの相談として受ける）
   const hearing = useApp(
     (state) =>
-      state.consult.active && !state.session.streaming && currentLine(state).kind !== "error",
+      state.consult.active &&
+      state.consult.entry !== null &&
+      !state.session.streaming &&
+      currentLine(state).kind !== "error",
   );
 
   const submit = (event?: FormEvent) => {

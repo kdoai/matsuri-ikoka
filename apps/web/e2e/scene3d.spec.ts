@@ -176,7 +176,7 @@ test("聞き取りの入力欄の段階で窓のどこをクリックしても�
   const start = await playerAt(page);
   // 出発の駅の段階まで答え、会話の窓の、入力欄でないところ（話し手の一言のあたり）をクリックしてから打つ
   const consult = page.getByTestId("consult");
-  for (const name of ["ひとりで", "今週末", "日帰り"]) {
+  for (const name of ["旅行計画から探す", "ひとりで", "今週末", "日帰り"]) {
     await consult.getByRole("button", { name, exact: true }).click();
   }
   await page.getByTestId("dialogue-line").click();

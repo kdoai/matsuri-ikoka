@@ -1,5 +1,6 @@
 import { DEFAULT_PREFERENCES, STAFF_IDS, type StaffId } from "@matsuri-ikoka/schema";
 import { INITIAL_CONSULT } from "./consult";
+import { INITIAL_FESTIVAL_SEARCH } from "./festivalSearch";
 import { QUIZ_BANK } from "./quizBank";
 import type { AppData, Locale, StaffState } from "./types";
 
@@ -43,6 +44,7 @@ export function initialData({ locale = "ja", tutorialSeen = false }: InitialOpti
     },
     preferences: { ...DEFAULT_PREFERENCES },
     consult: { ...INITIAL_CONSULT, answers: {} },
+    festivalSearch: { ...INITIAL_FESTIVAL_SEARCH },
     messages: [],
     staff: byStaff(IDLE_STAFF),
     relay: { log: [], asking: null, focus: null, holding: [] },

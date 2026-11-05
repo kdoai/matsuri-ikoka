@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import {
   blockMapTiles,
+  chooseTripEntry,
   closeLog,
   enterShop,
   expectNoOverlap,
@@ -35,6 +36,8 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   await expect(page.getByTestId("dialogue")).toBeHidden();
   await talkToConcierge(page);
   await expect(page.getByTestId("dialogue")).toContainText("いらっしゃいませ");
+  await expect(page.getByTestId("consult-entry")).toContainText("祭りから探す");
+  await expect(page.getByTestId("consult-entry")).toContainText("旅行計画から探す");
 
   // 1. 相談 → 候補
   await sendSampleMessage(page, 0);
@@ -321,6 +324,7 @@ test("キーボードだけで、入店から相談・候補選び・しおり�
     await tabTo(page, consult.getByRole("button", { name, exact: true }));
     await page.keyboard.press("Enter");
   };
+  await press("旅行計画から探す");
   const decide = async () => {
     await tabTo(page, consult.getByTestId("consult-decide"));
     await page.keyboard.press("Enter");
@@ -413,6 +417,7 @@ test("文章を書かずに、選択肢を選ぶだけで相談を始められ�
   const consult = page.getByTestId("consult");
   const progress = page.getByTestId("consult-progress");
   const decide = () => consult.getByTestId("consult-decide").click();
+  await chooseTripEntry(page);
   // 聞き取りの窓が高くなっても、上の段（丸いボタンと操作の案内）とは重ならない
   const noOverlap = async () => {
     for (const top of ["icon-buttons", "button-hints"]) {

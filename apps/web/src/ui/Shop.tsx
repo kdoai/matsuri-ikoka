@@ -17,6 +17,7 @@ import { Backlog } from "./Backlog";
 import { CandidateCards } from "./CandidateCards";
 import { focusComposer } from "./ChatPanel";
 import { DialogueBox, focusDialogue } from "./Dialogue";
+import { FestivalResults } from "./FestivalResults";
 import {
   ButtonHints,
   DateBadge,
@@ -316,6 +317,7 @@ export function Shop() {
 
       <PlayNoticeToast />
       <CandidateCards />
+      <FestivalResults />
       <PasscodeDialog />
       {logOpen ? <Backlog onClose={() => setLogOpen(false)} /> : null}
     </div>

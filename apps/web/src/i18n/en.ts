@@ -1,4 +1,4 @@
-import type { SearchSuggestion } from "@matsuri-ikoka/schema";
+import type { FestivalSearchNext, SearchSuggestion } from "@matsuri-ikoka/schema";
 import type { Messages } from "./ja";
 
 // English. Festival data and model text (names, bubbles) stay as they arrive.
@@ -240,7 +240,7 @@ export const en: Messages = {
       confirm: "Check",
     },
     prompts: {
-      party: "Welcome! What kind of trip shall we plan? First, who's coming along?",
+      party: "First, who's coming along?",
       schedule: "When would you like to go?",
       origin: "Which station will you leave from?",
       destination: "Which part of Japan would you like to visit?",
@@ -309,6 +309,14 @@ export const en: Messages = {
     unanswered: "Not answered yet",
     needOne: "Answer at least one to ask",
     reopen: "Choose again",
+    startOver: "Start over",
+    entry: {
+      label: "How to start",
+      prompt: "Welcome! How would you like to look today?",
+      note: "If you haven't settled on a festival yet, start from festivals. If your dates or starting point come first, start from a trip plan.",
+      festival: "Start from festivals",
+      trip: "Start from a trip plan",
+    },
     wording: {
       intro: "Here is what I'm looking for:",
       outro: "Please find festivals that match.",
@@ -342,6 +350,83 @@ export const en: Messages = {
       line: (label: string, text: string) => `- ${label}: ${text}`,
     },
   },
+  festivalSearch: {
+    title: "Find a festival",
+    steps: { kinds: "Kind", season: "Season", area: "Area", wish: "Anything else" },
+    prompts: {
+      kinds: "What kind of festival would you like to see?",
+      season: "Which season would you like to go?",
+      area: "Which part of Japan shall we look in?",
+      wish: "Anything else you'd like? Tell us if so",
+    },
+    labels: { kinds: "Kind of festival", season: "Season", area: "Area" },
+    kinds: {
+      fireworks: "Fireworks",
+      community: "Community festivals",
+      traditional: "Traditional festivals",
+      participatory: "Festivals you can join",
+      hidden: "Lesser-known festivals",
+      famous: "Famous festivals",
+    },
+    seasons: { spring: "Spring", summer: "Summer", autumn: "Autumn", winter: "Winter" },
+    areaAuto: "Up to you (all of Japan)",
+    wishLabel: "Anything else",
+    wishPlaceholder: "e.g. beautiful lights at night, fun with children",
+    search: "Search with these",
+    searching: "Looking for festivals that match. One moment, please",
+    retry: "Search again",
+    results: {
+      title: "Festivals we found",
+      close: "Close the list",
+      reopen: "See the festivals we found",
+      count: (count: number) => `${count}`,
+      found: (count: number) =>
+        `We found ${plural(count, "festival", "festivals")}. Compare and pick one!`,
+      more: "Suggest other festivals",
+      remaining: (count: number) => `${count} more`,
+      loadingMore: "Looking for other festivals",
+      allShown: "That's all of them",
+      allShownLine: "That's every festival that matches. You can also try another way to search",
+      none: "No festivals match your conditions",
+      noneLine: "No festivals match your conditions. You can try another way to search",
+      reading: (text: string) => `We read your wish as: "${text}"`,
+      editWish: "Rewrite your wish",
+      reasons: "Why we suggest this festival",
+      wishNone: "It meets your conditions, but we can't say it fits your wish",
+      wishPartial: "Partly fits your wish",
+      wishMatched: "Fits your wish",
+      nearTitle: "Festivals one condition away",
+      nearNote: "These miss just one of your conditions. Check what differs before choosing",
+      nextTitle: "Other ways to search",
+      nextLabel: (next: FestivalSearchNext) =>
+        ({
+          any_season: "Any season",
+          any_kind: "Any kind",
+          neighbor_area: "Include neighboring prefectures",
+          nationwide: "All of Japan",
+          edit_conditions: "Change conditions",
+        })[next.kind],
+    },
+    needsCheckNote:
+      "The date is an estimate based on past years. Check the organizer's notice before you leave.",
+    decide: {
+      prompt: (name: string) => `${name} it is! What would you like to do next?`,
+      label: "What to do with this festival",
+      plan: "Plan a trip",
+      finish: "Stop here",
+      others: "See other festivals",
+    },
+    finished: {
+      prompt: (name: string) => `Here are the key points of ${name}. Have a great time!`,
+      when: "When",
+      where: "Where",
+      etiquette: "Etiquette",
+      etiquetteNone: "We haven't been able to confirm the etiquette yet",
+      source: "Source",
+      confirm: "Check the organizer's notice before you go.",
+      restart: "Back to the start",
+    },
+  },
   tutorial: {
     title: "First time here?",
     lines: [
@@ -372,7 +457,9 @@ export const en: Messages = {
     helpTitle: "How to use",
     helpSections: { steps: "How a consultation goes", status: "In the shop now" },
     helpLines: [
-      "Talk to the concierge and pick who, when and where. Choose “Other” to write freely.",
+      "Talk to the concierge and choose to start from festivals or from a trip plan. You can also just write freely.",
+      "Starting from festivals, pick the kind, season and area, then compare the festivals that match.",
+      "Starting from a trip plan, pick who, when and where. Choose “Other” to write freely.",
       "Pick one of the festivals, and the staff will plan your day.",
       "Open “Plan details” (X) to see the plan, the map and the sources.",
       "We check that the festival is on before suggesting it. Say you've decided, and we hand you the travel booklet.",

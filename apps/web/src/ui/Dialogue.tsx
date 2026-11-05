@@ -19,7 +19,7 @@ import { useActions, useApp, useT } from "../state/react";
 import { currentLine, shioriReady } from "../state/selectors";
 import { waitLineIndex, waitPhase } from "../state/waitLines";
 import { Composer, focusComposer } from "./ChatPanel";
-import { ConsultPanel } from "./Consult";
+import { ConsultPanel, useConsultLine } from "./Consult";
 import { openTripPanel } from "./Hud";
 import { Portrait, type Speaker } from "./Portraits";
 import { errorText, shortLine } from "./text";
@@ -252,6 +252,18 @@ function ReplyChoices({ retry }: { retry: boolean }) {
           {t.consult.reopen}
         </Reply>
       ) : null}
+      {stage === "hearing" || stage === "candidates" ? (
+        <Reply
+          disabled={streaming}
+          icon={<Undo2 aria-hidden="true" className="size-5" />}
+          onClick={() => {
+            actions.startConsultOver();
+            window.requestAnimationFrame(focusDialogue);
+          }}
+        >
+          {t.consult.startOver}
+        </Reply>
+      ) : null}
       {other}
     </ul>
   );
@@ -266,7 +278,10 @@ export function DialogueBox() {
   const line = useApp(currentLine);
   const streaming = useApp((state) => state.session.streaming);
   const phase = useApp(waitPhase);
-  const consultStep = useApp((state) => state.consult.step);
+  const consultLine = useConsultLine();
+  const festivalSearching = useApp(
+    (state) => state.consult.entry === "festival" && state.festivalSearch.phase === "searching",
+  );
   const consultOpen = useApp(
     (state) =>
       state.consult.active &&
@@ -288,7 +303,7 @@ export function DialogueBox() {
   let text: string;
   let rest: string | null = null;
   if (consultOpen) {
-    text = t.consult.prompts[consultStep];
+    text = consultLine;
   } else {
     switch (line.kind) {
       case "greeting":
@@ -312,8 +327,9 @@ export function DialogueBox() {
         break;
     }
   }
-  const typing =
-    !consultOpen && (line.kind === "waiting" || (line.kind === "concierge" && line.streaming));
+  const typing = consultOpen
+    ? festivalSearching
+    : line.kind === "waiting" || (line.kind === "concierge" && line.streaming);
   const retry =
     !consultOpen && line.kind === "error" && line.entry.retryable && !line.entry.resolved;
   const thinking = !consultOpen && (line.kind === "waiting" || line.kind === "work");
