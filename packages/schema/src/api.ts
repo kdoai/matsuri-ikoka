@@ -2,6 +2,7 @@ import { z } from "zod";
 import { SlugSchema } from "./common";
 import { ErrorEventSchema } from "./events";
 import { FestivalSchema } from "./festival";
+import { TripAnchorSchema } from "./festivalSearch";
 import { PreferencesSchema } from "./preferences";
 import { SearchRetrySchema } from "./search";
 
@@ -40,6 +41,8 @@ export const ChatRequestSchema = z.strictObject({
   preferences: PreferencesSchema,
   /** 候補の窓の次の手（ボタン）から送るとき、変えて探し直す条件 */
   search: SearchRetrySchema.optional(),
+  /** 祭りから探して決めた祭り。あれば、この祭りを必ず行く場所にして旅程を組む */
+  anchor: TripAnchorSchema.optional(),
 });
 export type ChatRequest = z.infer<typeof ChatRequestSchema>;
 

@@ -1,6 +1,7 @@
 // テスト用の架空の祭り・旅程・出典。実在の祭りや場所ではない。
 // 呼ぶたびに新しいオブジェクトを返すので、テストの中で書き換えてよい。
 import type { Confidence, Source } from "../common";
+import type { FestivalCandidate } from "../events";
 import type { FestivalInput } from "../festival";
 import type { Itinerary, LodgingSearch } from "../itinerary";
 
@@ -9,6 +10,24 @@ export const FICTIONAL_FESTIVAL_ID = "suzunari-toro";
 /** 架空の出典。URL は例示用のドメイン（example.com）にする */
 export function fictionalSource(path: string, confidence: Confidence = "official"): Source {
   return { url: `https://example.com/suzunari/${path}`, checkedAt: "2026-04-01", confidence };
+}
+
+/** 架空の祭りの候補カード */
+export function fictionalCandidate(): FestivalCandidate {
+  return {
+    festivalId: FICTIONAL_FESTIVAL_ID,
+    name: "鈴鳴灯籠まつり",
+    date: "2026-08-15",
+    start: "18:00",
+    end: "21:00",
+    venueName: "鈴鳴川の河原",
+    place: "滋賀県鈴鳴町",
+    daysFromWish: 0,
+    confidence: "official",
+    confirmed: true,
+    highlight: "川面に浮かぶ千の灯籠",
+    source: fictionalSource("schedule"),
+  };
 }
 
 /** 架空の祭り「鈴鳴灯籠まつり」。スキーマのすべての必須項目を埋めてある */

@@ -293,6 +293,21 @@ export const TriviaSchema = z.strictObject({
   source: SourceSchema,
 });
 
+/**
+ * 祭りの性格（祭りから探すときの種類に使う）。
+ * traditional 由来や文化財の指定など、受け継がれてきたことが出典で分かる /
+ * community 氏子や町内など、地元の人が担っていることが出典で分かる
+ */
+export const FESTIVAL_STYLES = ["traditional", "community"] as const;
+
+/** 祭りの性格と、そう言える根拠。出典で確かめられるものだけを書き、分からなければ書かない */
+export const FestivalStyleSchema = z.strictObject({
+  style: z.enum(FESTIVAL_STYLES),
+  /** 根拠の要約（60字まで）。画面の理由にも使う */
+  basis: TextSchema.max(60),
+  sources: z.array(SourceSchema).min(1),
+});
+
 // ---------------------------------------------------------------------------
 // 祭り（1件1ファイル：data/festivals/{id}.json）
 
@@ -308,6 +323,8 @@ export const FestivalSchema = z
     /** 載っている大手の観光サイト（例：walkerplus） */
     listedIn: z.array(SlugSchema),
     highlights: TextListSchema,
+    /** 祭りの性格。まだ調べていなければ空の並び */
+    styles: z.array(FestivalStyleSchema).default([]),
     trivia: z.array(TriviaSchema),
     etiquette: EtiquetteSchema,
     occurrences: z.array(OccurrenceSchema).min(1),
@@ -349,6 +366,7 @@ export type Access = z.infer<typeof AccessSchema>;
 export type Food = z.infer<typeof FoodSchema>;
 export type NearbySpot = z.infer<typeof NearbySpotSchema>;
 export type Trivia = z.infer<typeof TriviaSchema>;
+export type FestivalStyle = z.infer<typeof FestivalStyleSchema>;
 export type Festival = z.infer<typeof FestivalSchema>;
 /** JSON ファイルに書く形（optOut を省略できる） */
 export type FestivalInput = z.input<typeof FestivalSchema>;
