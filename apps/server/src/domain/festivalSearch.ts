@@ -260,12 +260,11 @@ function prefecturesOf(festival: Festival): Prefecture[] {
 /**
  * 並べた祭りから1回分を選ぶ。同じ県は2件まで（地域が1県のときは数えない）、同じ category は3件まで。
  * 足りないときは、上限を1つずつ緩めて埋める。
- * 自由記述に合う度合いが上の祭りが残っているのに、下の祭りを出さない（偏りより希望を先にする）
+ * 自由記述に合う度合いが上の祭りや、種類に強く合う祭りが残っているのに、下の祭りを出さない（偏りより条件を先にする）
  */
-export function pickBatch<T extends { match: FestivalMatch; wish: WishScore }>(
-  ranked: readonly T[],
-  options: { limitPrefectures: boolean; size?: number },
-): T[] {
+export function pickBatch<
+  T extends { match: FestivalMatch; wish: WishScore; kinds: Pick<KindCheck, "weakAxes"> },
+>(ranked: readonly T[], options: { limitPrefectures: boolean; size?: number }): T[] {
   const size = options.size ?? MAX_FESTIVAL_RESULTS;
   const picked = new Set<T>();
   const perPrefecture = new Map<Prefecture, number>();
@@ -289,14 +288,18 @@ export function pickBatch<T extends { match: FestivalMatch; wish: WishScore }>(
   };
 
   for (const fit of FIT_ORDER) {
-    let rest = ranked.filter((item) => item.wish.fit === fit);
-    for (let slack = 0; rest.length > 0 && picked.size < size; slack += 1) {
-      const skipped: T[] = [];
-      for (const item of rest) {
-        if (picked.size < size && fits(item, slack)) take(item);
-        else skipped.push(item);
+    const sameFit = ranked.filter((item) => item.wish.fit === fit);
+    const tiers = [...new Set(sameFit.map((item) => item.kinds.weakAxes))].sort((a, b) => a - b);
+    for (const tier of tiers) {
+      let rest = sameFit.filter((item) => item.kinds.weakAxes === tier);
+      for (let slack = 0; rest.length > 0 && picked.size < size; slack += 1) {
+        const skipped: T[] = [];
+        for (const item of rest) {
+          if (picked.size < size && fits(item, slack)) take(item);
+          else skipped.push(item);
+        }
+        rest = skipped;
       }
-      rest = skipped;
     }
   }
   // 選んだ順ではなく、点の順で見せる
