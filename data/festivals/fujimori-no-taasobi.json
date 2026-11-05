@@ -25,6 +25,32 @@
     "番外に「天狗」「鯛釣」の2番が付く",
     "国の重要無形民俗文化財の田遊びを、毎年3月17日に間近で見られる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1977年に国の重要無形民俗文化財に指定された田遊び",
+      "sources": [
+        {
+          "url": "https://www.pref.shizuoka.jp/kankosports/bunkageijutsu/bunkazai/1002825/1041003/1041891/1004970/1020990.html",
+          "title": "静岡県 しずおか文化財ナビ 藤守の田遊び",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "藤守の田遊び保存会が保護団体として受け継ぐ",
+      "sources": [
+        {
+          "url": "https://www.pref.shizuoka.jp/kankosports/bunkageijutsu/bunkazai/1002825/1041003/1041891/1004970/1020990.html",
+          "title": "しずおか文化財ナビ 藤守の田遊び（保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "1977年5月に国の重要無形民俗文化財に指定された",

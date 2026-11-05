@@ -25,6 +25,32 @@
     "組踊の台詞の現代語訳を、舞台の横のモニターに映す",
     "国の重要無形民俗文化財に指定された豊年祭"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1637年の人頭税の導入後に始まったとされる豊年祈願の行事",
+      "sources": [
+        {
+          "url": "https://www.vill.tarama.okinawa.jp/about/rekishi_bunka/hachigatsuodori/",
+          "title": "多良間村 八月踊り（歴史・文化）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "仲筋と塩川の両字が互いを招き、分かれて演じる",
+      "sources": [
+        {
+          "url": "https://www.vill.tarama.okinawa.jp/about/rekishi_bunka/hachigatsuodori/",
+          "title": "多良間村 八月踊り（歴史・文化）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "1637年に宮古・八重山に人頭税が課されたあと、納税を報告し豊作を祈ったことが始まりとされる",

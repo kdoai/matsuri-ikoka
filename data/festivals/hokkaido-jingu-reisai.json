@@ -25,6 +25,32 @@
     "円山の北海道神宮を出て、市の中心部へ下りていく行列",
     "神宮の境内では伝統の奉納行事が行われる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "札幌観光協会が100年を超える歴史がある例祭と紹介している",
+      "sources": [
+        {
+          "url": "https://www.sapporo.travel/event/summer/hokkaido_shrine_festival/",
+          "title": "ようこそさっぽろ（札幌観光協会） 北海道神宮例祭（札幌まつり）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "祭典区が輪番で祭りを仕切り、氏子らが装束で行列を歩く",
+      "sources": [
+        {
+          "url": "https://www.hokkaido-np.co.jp/movies/detail/5473402674001/",
+          "title": "北海道新聞 札幌まつりのみこし渡御で祭典区と氏子が行列",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "「札幌まつり」の名で親しまれ、100年を超える歴史がある",

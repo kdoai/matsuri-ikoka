@@ -25,6 +25,32 @@
     "火の粉を浴びると無病息災になると伝わる",
     "年越しから7日まで続く鬼会の締めくくりの夜の行事"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "368年の言い伝えに始まり、1994年に国の重要無形民俗文化財になった",
+      "sources": [
+        {
+          "url": "https://www.tamataregu.or.jp/oniyo/",
+          "title": "大善寺玉垂宮 鬼夜",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "神社のまわりの6つの地区がそれぞれ大松明を作る",
+      "sources": [
+        {
+          "url": "https://www.japan.travel/en/spot/2266/",
+          "title": "日本政府観光局 Oniyo Fire Festival",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "368年1月7日、賊の首領を松明で焼き討ちしたという言い伝えが始まりとされる",

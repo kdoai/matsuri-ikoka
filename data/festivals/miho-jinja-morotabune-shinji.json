@@ -24,6 +24,38 @@
     "国譲り神話で使いの神が船で美保を訪れた場面を再び演じる、毎年12月3日の神事",
     "神事に使う諸手船は国の重要有形民俗文化財"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "古くは八百穂祭と呼ばれ、神事の諸手船は国の重要有形民俗文化財",
+      "sources": [
+        {
+          "url": "http://mihojinja.or.jp/sinji/",
+          "title": "美保神社 特殊神事（青柴垣神事・諸手船神事）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "http://mihojinja.or.jp/saiji/",
+          "title": "美保神社 年間祭事（所在地 松江市美保関町美保関608、国重要有形民俗文化財の諸手船）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "氏子の祭祀組織が役割を担って神事に奉仕する",
+      "sources": [
+        {
+          "url": "http://mihojinja.or.jp/sinji/",
+          "title": "美保神社 特殊神事（神事は氏子の祭祀組織が役割を担って奉仕する）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "かつては旧暦11月の初午の日に行われていた",

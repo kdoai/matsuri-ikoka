@@ -25,6 +25,32 @@
     "88羽の烏で描かれた、熊野三山だけの御神符・熊野牛王神符",
     "全国4,700社以上ある熊野神社の総本宮での年頭の神事"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1965年に和歌山県の無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.pref.wakayama.lg.jp/prefg/500700/mokuroku/d00155461.html",
+          "title": "和歌山県 県指定文化財（民俗文化財）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "熊野本宮大社神事保存会が県指定神事の保護団体として受け継ぐ",
+      "sources": [
+        {
+          "url": "https://www.pref.wakayama.lg.jp/prefg/500700/mokuroku/d00155461.html",
+          "title": "和歌山県の指定文化財目録 八咫烏神事（保護団体 熊野本宮大社神事保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "本宮の熊野牛王神符は、88羽の烏を組み合わせて文字の形にした図柄",

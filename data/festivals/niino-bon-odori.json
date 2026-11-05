@@ -25,6 +25,32 @@
     "地元で手作りされた切り子灯籠が櫓を飾り、最後に火で送られる",
     "扇子を持つ踊りと手踊り、合わせて7種の踊りが伝わる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "国の重要無形民俗文化財で、ユネスコ無形文化遺産にも記載",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/204003",
+          "title": "文化遺産オンライン 新野の盆踊（重要無形民俗文化財）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "地域の人びとが踊り歌い継ぎ、新野高原踊りの会が保存する",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/159878",
+          "title": "文化遺産オンライン 新野の盆踊（本町と東町の商店の通りが会場）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "楽器の伴奏はなく、櫓から歌い出す声に踊り手が歌で返し、それだけで踊りが続く",

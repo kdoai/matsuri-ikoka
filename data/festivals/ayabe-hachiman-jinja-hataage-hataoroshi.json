@@ -24,6 +24,32 @@
     "秋分の日の翌日に旗を下ろし、巻き具合から宮司が風雨と作物の出来を占って伝える",
     "旗を掲げている間、宮司が毎日朝夕に旗のなびき方を記録し続ける"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "951年に始まったと伝わり、2017年に佐賀県の重要無形民俗文化財になった",
+      "sources": [
+        {
+          "url": "https://www.town.miyaki.lg.jp/kanko/_5532.html",
+          "title": "みやき町 綾部八幡神社の旗上げ・旗下ろし行事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "身を清めた氏子の男衆が神木に登って神旗を掲げる",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/region/41/41346",
+          "title": "文化遺産オンライン 綾部八幡神社の旗上げ・旗下ろし行事",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "951年に始まったと伝わる行事で、2017年に佐賀県の重要無形民俗文化財に指定された",

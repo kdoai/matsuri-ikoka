@@ -13,6 +13,38 @@
     "朝から住民総出で、長さ365mの大綱を一から練り上げる",
     "夜のダン木祭りのあと、太鼓の合図で本綱が始まる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "関ヶ原のころに始まったと伝わり、2024年に国の重要無形民俗文化財",
+      "sources": [
+        {
+          "url": "https://www.city.satsumasendai.lg.jp/soshiki/1042/1/2/4/1_1/0901/11887.html",
+          "title": "薩摩川内市 令和5年9月22日 川内大綱引",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.pref.kagoshima.jp/am01/event/202408289.html",
+          "title": "鹿児島県 薩摩川内市誕生20周年記念 川内大綱引",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "川内大綱引保存会が伝え、綱練りは住民が総出で行う",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/390058",
+          "title": "文化遺産オンライン 薩摩川内の大綱引き",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "関ヶ原の戦いのころ、島津義弘が兵の士気を高めるために始めたと伝わる",

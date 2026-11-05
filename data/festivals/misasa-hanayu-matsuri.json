@@ -24,6 +24,20 @@
     "温泉街を東西に分ける縁門で雄綱と雌綱を組み、門の上の大提灯が消えると綱引きが始まる",
     "国の重要無形民俗文化財に指定された行事"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "三朝の陣所（大綱引き）が国の重要無形民俗文化財とされている",
+      "sources": [
+        {
+          "url": "https://misasaonsen.jp/sightseeings/sightseeing-2881/",
+          "title": "三朝温泉観光協会 花湯まつり・大綱引き「陣所」",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "東が勝てば豊作、西が勝てば商売繁盛になると伝わる",

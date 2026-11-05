@@ -24,6 +24,38 @@
     "3度の笑いに、今年の豊作の感謝・来年の豊作の祈り・1年の苦労を忘れる願いを込める",
     "鎌倉時代から大道小俣の地区で受け継がれてきたとされる、年の瀬の「年忘れの神事」"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "防府市の無形民俗文化財で、1199年に始まった神事とされる",
+      "sources": [
+        {
+          "url": "https://visit-hofu.jp/event/%e7%ac%91%e3%81%84%e8%ac%9b/",
+          "title": "防府市観光情報ポータルサイト たびたびほうふ 笑い講",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.walkerplus.com/article/170211/",
+          "title": "ウォーカープラス 山口県・小俣八幡宮で笑いの神事「笑い講」が開催（2018年11月29日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "地区の21戸の農家に始まり、今も頭屋から頭屋へ引き継ぐ",
+      "sources": [
+        {
+          "url": "https://www.walkerplus.com/article/170211/",
+          "title": "ウォーカープラス 山口県・小俣八幡宮で笑いの神事「笑い講」が開催（2018年11月29日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "神社の記録では、1199年（正治元年）に始まった神事とされる",

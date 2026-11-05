@@ -15,6 +15,32 @@
     "旅名の羯鼓舞も伝わる",
     "杉並木の参道を進んで参拝する"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1962年に千葉県の無形民俗文化財になった",
+      "sources": [
+        {
+          "url": "https://www.pref.chiba.lg.jp/kyouiku/bunkazai/shitei/shichouson/kimitsu-minzoku.html",
+          "title": "千葉県 君津市の民俗・無形文化財",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "氏子連が棒術と羯鼓舞を奉納する",
+      "sources": [
+        {
+          "url": "https://www.city.kimitsu.lg.jp/site/kanko/2224.html",
+          "title": "君津市 三島神社（秋の祭礼で棒術・羯鼓舞を奉納）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "1962年（昭和37年）に千葉県の無形民俗文化財に指定された",

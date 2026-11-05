@@ -25,6 +25,32 @@
     "初日、屋台が鳥居をくぐって今宮神社の境内に勢ぞろいする繰り込み",
     "2日目は古峯原宮通りで屋台の揃い曳きと一斉きりん"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1608年の雨乞いに始まると伝わり、国の重要無形民俗文化財",
+      "sources": [
+        {
+          "url": "https://www.buttsuke.com/origin/",
+          "title": "鹿沼秋まつり公式サイト 祭りの起源",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "氏子34か町のうち27か町が屋台を持つ",
+      "sources": [
+        {
+          "url": "https://www.buttsuke.com/origin/",
+          "title": "鹿沼秋まつり公式サイト 祭りの起源",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "1608年の大干ばつで雨乞いを続けたら雷雨が来たことが、今宮の例祭の始まりと伝わる",

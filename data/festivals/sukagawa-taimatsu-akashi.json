@@ -25,6 +25,20 @@
     "当日買った小松明を手に、五老山まで歩く小松明行列に加われる",
     "点火の前後に響く松明太鼓の演奏"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1589年の戦の死者を弔う行事で、江戸時代にも旧暦10月に行われていた",
+      "sources": [
+        {
+          "url": "https://www.city.sukagawa.fukushima.jp/kanko_sukagawa/event/taimatsu_akashi/1003837.html",
+          "title": "須賀川市 松明あかしの由来",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "天正17年（1589）に伊達政宗の攻めで須賀川城が落ち、その戦の死者を弔う行事とされる",

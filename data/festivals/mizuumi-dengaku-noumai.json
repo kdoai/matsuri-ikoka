@@ -25,6 +25,32 @@
     "演目に、能楽「式三番」「羅生門」と田楽「あまじゃんごこ」がある",
     "舞人も囃し方も水海地区の住民がつとめる、国の重要無形民俗文化財"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "国の重要無形民俗文化財で、北条時頼にまつわる由来が伝わる",
+      "sources": [
+        {
+          "url": "https://www.e-ikeda.jp/see/p004054.html",
+          "title": "いけだ観光 国指定重要無形民俗文化財 水海の田楽能舞",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "舞人も囃し方も水海の住民で、冬の間毎日稽古して受け継ぐ",
+      "sources": [
+        {
+          "url": "https://www.fuku-e.com/en/events/detail_5763.html",
+          "title": "Discover Fukui Mizuumi Dengaku and Noh Dances",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "雪で水海に足止めされた北条時頼を村人が田楽で慰め、その礼に時頼が能を教えたのが始まりと伝わる",

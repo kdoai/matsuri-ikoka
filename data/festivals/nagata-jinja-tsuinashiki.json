@@ -13,6 +13,32 @@
     "松明の灰をかぶって祓いを受けるという言い伝え",
     "燃え残りの松明を束ねた授与品と餅花を、節分の日だけ授かれる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "室町時代に遡る行事で、1970年に兵庫県の重要無形民俗文化財に指定",
+      "sources": [
+        {
+          "url": "https://nagatajinja.jp/gyouji/tsuinashiki.php",
+          "title": "長田神社 長田神社古式追儺式",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "鬼役は神社近在の昔からの氏人（旧長田村）に限られる",
+      "sources": [
+        {
+          "url": "https://nagatajinja.jp/gyouji/tsuinashiki.php",
+          "title": "長田神社 長田神社古式追儺式",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "登場する鬼は7匹。大役の餅割鬼は、ほかの鬼役を7回以上務めた人しか担えない",

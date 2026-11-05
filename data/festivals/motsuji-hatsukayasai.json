@@ -25,6 +25,44 @@
     "大根や白菜など、冬の野菜を宝前に供えて無病息災を祈る",
     "新春の祈祷が7日間続いた、結願の夜だけの行事"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "祭りで演じる延年の舞が1977年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/203373",
+          "title": "文化遺産オンライン 毛越寺の延年（1977年指定）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://hiraizumi.or.jp/event/hatsuka.html",
+          "title": "平泉観光協会 ひらいずみナビ 毛越寺二十日夜祭",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "祭りで演じる延年の舞を毛越寺延年の舞保存会が保護団体として受け継ぐ",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/203373",
+          "title": "文化遺産オンライン 毛越寺の延年（保護団体 毛越寺延年の舞保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://hiraizumi.or.jp/event/hatsuka.html",
+          "title": "平泉観光協会 ひらいずみナビ 毛越寺二十日夜祭",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "正月14日から20日まで常行堂で摩多羅神の祭りが続き、結願の20日の夜を二十日夜祭と呼ぶ",

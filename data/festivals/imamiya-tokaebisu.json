@@ -24,6 +24,20 @@
     "芸者衆の参詣に始まる宝恵駕行列（2027年は1月9日）",
     "3日間とも福笹の授与は朝7時から翌1時まで"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "江戸時代から魚市場が大鯛を奉献する習わしが続く",
+      "sources": [
+        {
+          "url": "https://www.imamiya-ebisu.jp/tokaebisu",
+          "title": "今宮戎神社 十日戎",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "宝恵駕行列はミナミの芸者衆の参詣が起こりで、最盛期には百挺もの駕が並んだ",

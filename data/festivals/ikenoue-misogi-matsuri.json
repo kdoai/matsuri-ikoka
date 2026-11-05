@@ -25,6 +25,32 @@
     "出雲から戻る神を迎える支度として続いてきた、八百年の祭り",
     "当日は予約なしで一般のご祈祷を受けられる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "大正のころには「ハダカ祭り」とも呼ばれていた",
+      "sources": [
+        {
+          "url": "https://www.ikenouemisogi.jp/history/name-history/",
+          "title": "池ノ上みそぎ祭 名称の変化と戦時",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "氏子と関係者が夜のみそぎを担い、奉賛会が祭りを運営する",
+      "sources": [
+        {
+          "url": "https://www.ikenouemisogi.jp/2026-12-12/",
+          "title": "池ノ上みそぎ祭 2026年みそぎ祭り（一般参加は先着50名、撮影とドローンの注意）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "大正のころは「ハダカ祭り」とも「蕎麦切祭り」とも呼ばれた。蕎麦切りは祭りのごちそうだった",

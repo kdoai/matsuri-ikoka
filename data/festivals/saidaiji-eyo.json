@@ -23,6 +23,26 @@
     "本堂の御福窓から夜10時に投げ込まれる2本の宝木を、まわし姿の男たちが奪い合う",
     "2週間の修正会の結びの日に行う、寺の新年の祈りが元の裸祭り"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "奈良時代に始まった修正会に由来し、国の重要無形民俗文化財",
+      "sources": [
+        {
+          "url": "https://www.saidaiji.jp/eyou/",
+          "title": "西大寺観音院 会陽裸祭り",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.okayama.jp/higashiku/0000017681.html",
+          "title": "岡山市東区 西大寺会陽（はだか祭り）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "奈良時代に始まった修正会で、1510年に守護札を投げ与えたら奪い合いになったのが今の形の始まりと伝わる",

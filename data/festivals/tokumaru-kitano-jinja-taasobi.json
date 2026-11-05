@@ -24,6 +24,32 @@
     "早乙女役の子どもを太鼓の上で胴上げし、苗と子の育ちを願う",
     "締めくくりに田遊びの道具を太鼓へ積み上げ、稲むらをたたえる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "板橋の田遊びとして1976年に国の重要無形民俗文化財になった",
+      "sources": [
+        {
+          "url": "https://www.city.itabashi.tokyo.jp/bunka/kanko/jyukei/1006825.html",
+          "title": "板橋区 板橋十景 田遊び",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "徳丸の田遊び保存会が保護団体で、氏子が唱え言の掛け合いに加わる",
+      "sources": [
+        {
+          "url": "https://kunishitei.bunka.go.jp/heritage/detail/302/42",
+          "title": "国指定文化財等データベース 板橋の田遊び",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "神社の縁起では、長徳元年（995）に北野天満宮から分霊した際の祭りが田遊びの始まり",

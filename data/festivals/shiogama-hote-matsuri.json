@@ -24,6 +24,20 @@
     "500人を超えるお供と稚児行列を従えて、神輿が塩竈の町を一日かけて巡る",
     "夜7時ごろ、町を巡った神輿が表坂の下へ帰ってくる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "市の案内では、江戸時代から続く火伏せの祭りとされる",
+      "sources": [
+        {
+          "url": "https://www.city.shiogama.miyagi.jp/soshiki/48/56010.html",
+          "title": "塩竈市 塩竈の歳時記",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "もとは正月の神輿洗いの神事で、火伏せの祭りとして始まったとされる",

@@ -25,6 +25,20 @@
     "七媛女・ゆり姫・稚児の行列が奈良の町を約2時間めぐる",
     "神饌を柏の葉のふたの折櫃に納める、古い形の供え方"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "701年に国の祭りと定められ、1881年に古い形で復活した",
+      "sources": [
+        {
+          "url": "https://isagawa-jinja.jp/omatsuri/saikusa/",
+          "title": "率川神社 三枝祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "701年の大宝令で国の祭りと定められ、大神神社の鎮花祭とともに疫病を鎮めることを祈ってきた",

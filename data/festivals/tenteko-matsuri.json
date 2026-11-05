@@ -24,6 +24,20 @@
     "境内で竹箒の藁灰がまかれ、浴びると厄除けになると伝わる",
     "拝殿で田植え歌が歌われ、参拝者が松葉を投げ入れて締めくくる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "愛知県の無形民俗文化財に指定されている",
+      "sources": [
+        {
+          "url": "https://www.city.nishio.aichi.jp/sportskanko/bunkazai/1001485/1001609/1001670/1002754.html",
+          "title": "西尾市 西尾のてんてこ祭（県指定・無形民俗）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "平安時代、清和天皇の大嘗会の悠紀斎田にこの地が選ばれたことにちなむと伝わる",

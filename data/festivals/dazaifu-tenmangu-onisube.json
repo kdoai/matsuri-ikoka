@@ -25,6 +25,38 @@
     "同じ夜の鷽かえ神事では、木鷽を「かえましょ」の声で取り替え合う",
     "氏子約300人の「鬼じゃ、鬼じゃ」の掛け声が境内に響く"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "986年に始まったと伝わり、福岡県の無形民俗文化財に指定されている",
+      "sources": [
+        {
+          "url": "https://www.dazaifutenmangu.or.jp/omatsuri/usokae-onisube",
+          "title": "太宰府天満宮 鷽かえ・鬼すべ神事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.crossroadfukuoka.jp/event/13582",
+          "title": "クロスロードふくおか 鬼すべ神事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "氏子およそ300人が燻手・鬼警固などに分かれて務める",
+      "sources": [
+        {
+          "url": "https://www.dazaifutenmangu.or.jp/omatsuri/usokae-onisube",
+          "title": "太宰府天満宮 鷽かえ・鬼すべ神事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "寛和2年（986）、道真公のひ孫にあたる菅原輔正が始めたと伝わる",

@@ -29,6 +29,32 @@
     "田園から盛岡の街なかまで、景色の移り変わりの中を行列が進む",
     "家ごとに手作りの装束を受け継いでいる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1978年に国の記録作成等の措置を講ずべき無形民俗文化財に選択された",
+      "sources": [
+        {
+          "url": "https://www.tohokukanko.jp/festivals/detail_1003783.html",
+          "title": "東北観光推進機構 チャグチャグ馬コ（1978年に記録作成等の措置を講ずべき無形の民俗文化財に選択）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "チャグチャグ馬コ保存会など3団体が国の保護団体になっている",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/203563",
+          "title": "文化遺産オンライン チャグチャグ馬コ（保護団体 チャグチャグ馬コ保存会ほか）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "田植えの準備を終えた馬を休ませ、端午の節句に蒼前神社へ連れて参り、無病息災を願ったのが始まり",

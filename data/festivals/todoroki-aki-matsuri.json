@@ -25,6 +25,20 @@
     "担ぎ手は前日から神社に泊まり、夜通し滝で禊ぎをして臨む",
     "健康・安全・平和を祈る、400年以上続く山あいの祭り"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "400年以上継承されてきた祭りと案内されている",
+      "sources": [
+        {
+          "url": "https://todorokijinja.jp/reitaisai/",
+          "title": "轟神社 秋季例大祭",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "轟神社は1591年の創建で、初代の阿波藩主が朝鮮出兵の前に海上の安全を祈ったと伝わる",

@@ -24,6 +24,32 @@
     "夜を徹して行う世乞い（ユークイ）",
     "島じゅうで担う、国の重要無形民俗文化財の祭り"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "種子取祭は1977年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.mlit.go.jp/tagengo-db/common/001556082.pdf",
+          "title": "観光庁 地域観光資源の多言語解説文データベース 竹富島の暮らし",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "竹富島民俗芸能保存会が国指定の種子取の保護団体として担う",
+      "sources": [
+        {
+          "url": "https://www.town.taketomi.lg.jp/administration/bunkazai/",
+          "title": "竹富町の文化財一覧（竹富島の種子取、保護団体）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "旧暦9〜10月の戊子の日を祈願の日とし、10日間かけて執り行う",

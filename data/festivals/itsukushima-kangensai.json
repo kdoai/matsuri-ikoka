@@ -17,6 +17,32 @@
     "大鳥居沖から対岸の地御前神社、島の長浜神社・大元神社をめぐる海上の渡御",
     "曳き船を江波と阿賀の人々が受け継いで漕ぐ"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "平清盛が都の管絃の遊びを海の神事に移したと伝わる",
+      "sources": [
+        {
+          "url": "https://www.miyajima.or.jp/event/event_kangen.html",
+          "title": "宮島観光協会 管絃祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "1701年の救助がきっかけで、阿賀と江波の人が曳き船を担う",
+      "sources": [
+        {
+          "url": "https://www.miyajima.or.jp/event/event_kangen.html",
+          "title": "宮島観光協会 管絃祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "平清盛が、都の貴族の「管絃の遊び」を宮島の海での神事に移したと伝わる",

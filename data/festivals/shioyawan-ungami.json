@@ -25,6 +25,32 @@
     "兼久浜（ナガリ）で、海に向かって豊作と豊漁を祈る",
     "国の重要無形民俗文化財に指定された、やんばるの海神祭"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1997年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.vill.ogimi.okinawa.jp/kanko_bunka_sports/rekishi_bunkazai/bunkazai/534.html",
+          "title": "大宜味村 国指定文化財等（塩屋湾のウンガミ）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "田港・屋古・塩屋・白浜の各区が保護団体として受け継ぐ",
+      "sources": [
+        {
+          "url": "https://www.vill.ogimi.okinawa.jp/kanko_bunka_sports/rekishi_bunkazai/bunkazai/534.html",
+          "title": "大宜味村 国指定文化財等（塩屋湾のウンガミ）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "祈願や供え物の多い御願年と、塩屋で踊りを行う踊り年が1年ごとに入れ替わる",

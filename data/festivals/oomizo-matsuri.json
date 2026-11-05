@@ -13,6 +13,26 @@
     "本祭の神輿の「馬場三回返し」と、花山からの紅白の餅まき",
     "夕方、神輿かきが石段を担ぎ上げて神社へ戻す還御"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1983年に滋賀県の選択無形民俗文化財に選定。江戸中期の帳簿が残る",
+      "sources": [
+        {
+          "url": "https://oomizomatsuri.jp/about.html",
+          "title": "大溝祭オフィシャルサイト 大溝祭とは（1983年に滋賀県の選択無形民俗文化財）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://oomizomatsuri.jp/about.html",
+          "title": "大溝祭オフィシャルサイト 大溝祭とは",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "大溝藩に入った分部光信が、前の領地の伊勢上野の曳山祭を移したと伝わる",

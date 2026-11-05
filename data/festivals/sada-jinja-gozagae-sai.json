@@ -24,6 +24,32 @@
     "神事と並んで舞殿で素顔の舞手が剣などを手に舞う「七座」",
     "翌日の夜、能を取り入れた「式三番」と神話の劇舞「神能」が奉納される"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "佐陀神能が1976年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.city.matsue.lg.jp/material/files/group/32/rekimachikeikaku_sadasinnnou.pdf",
+          "title": "松江市歴史的風致維持向上計画（第2期） 神在祭と佐陀神能に見られる歴史的風致",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "氏子の有志が関わる佐陀神能保存会が神能を受け継ぐ",
+      "sources": [
+        {
+          "url": "https://itcj.or.jp/japanese-festival/pageindices/index250.html",
+          "title": "地域伝統芸能活用センター 日本の祭り 佐陀神能（佐陀神能保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "敷き替えるのは本殿3社と境内・境外の社を合わせた23の神座の茣蓙",

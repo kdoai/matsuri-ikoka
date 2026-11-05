@@ -25,6 +25,38 @@
     "福地と乾地の勝ち負けと燃え方で、その年の天候と豊凶を占う",
     "燃え残りの竹は持ち帰れ、箸にすると歯の病気を防ぐと伝わる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "国指定の無形民俗文化財で、大同年間から続くと伝わる",
+      "sources": [
+        {
+          "url": "https://www.city.nishio.aichi.jp/sportskanko/bunkazai/1001485/1001608/1001663/1002716.html",
+          "title": "西尾市 鳥羽の火祭り（国指定の無形民俗文化財）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.nishio.aichi.jp/sportskanko/bunkazai/1001485/1001608/1001663/1002716.html",
+          "title": "西尾市 鳥羽の火祭り",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "地元の鳥羽火祭り保存会が神男の選出など祭りを受け継ぐ",
+      "sources": [
+        {
+          "url": "https://tetsudo-ch.com/10091326.html",
+          "title": "鉄道チャンネル 鳥羽の火祭りを継ぐ保存会の取り組み",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "鳥羽神明社ができた大同年間（806〜809年）から続くと伝わる",

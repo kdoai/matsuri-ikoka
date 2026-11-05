@@ -24,6 +24,32 @@
     "鼻高面を先頭に、約200人の行列が約3kmの山道を一日かけて練る",
     "立ち寄る家や寺ごとに太刀踊りとお神楽を奉納する"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1794年に祭神を移した由緒があり、県の無形民俗文化財",
+      "sources": [
+        {
+          "url": "https://www.town.niyodogawa.lg.jp/kanko/life_dtl.php?hdnKey=776",
+          "title": "仁淀川町 秋葉まつり",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "本村・霧之窪・沢渡の3集落から役者が集まる",
+      "sources": [
+        {
+          "url": "https://www.town.niyodogawa.lg.jp/kanko/life_dtl.php?hdnKey=776",
+          "title": "仁淀川町 秋葉まつり",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "1794年に、祭神を今の秋葉神社へ移したと町が伝えている",

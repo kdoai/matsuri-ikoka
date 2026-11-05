@@ -25,6 +25,32 @@
     "半鐘と八丁鉦を「がんがら」と鳴らしながら進む",
     "江戸時代から続く、大阪府の無形民俗文化財"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1644年に始まると伝わり、大阪府の無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.ikedashi-kanko.jp/gangara",
+          "title": "池田市観光協会 がんがら火祭り",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "城山町と建石町の人たちが大文字の点火を担う",
+      "sources": [
+        {
+          "url": "https://www.ikedashi-kanko.jp/gangara",
+          "title": "池田市観光協会 がんがら火祭り",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "1644年、町の商人4人が五月山で火をともし、愛宕の神が来たと評判になったのが始まりとされる",

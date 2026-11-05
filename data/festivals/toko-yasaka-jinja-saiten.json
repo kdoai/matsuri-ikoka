@@ -16,6 +16,32 @@
     "潟上市天王と男鹿市船越の2つの地区が、大蛇退治の神話を再現する",
     "祭りを仕切る両地区の統人が、1年をかけて祭事を務める"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1986年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.city.oga.akita.jp/soshik/bunkasportska/bunkazai/2/1515.html",
+          "title": "男鹿市 東湖八坂神社祭のトウニン（統人）行事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "天王と船越それぞれでトウニンを1年交代で務め、船越町内連合会も保護団体",
+      "sources": [
+        {
+          "url": "https://kunishitei.bunka.go.jp/heritage/detail/302/22",
+          "title": "国指定文化財等データベース 東湖八坂神社のトウニン行事",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "1986年1月14日に、国の重要無形民俗文化財に指定された",

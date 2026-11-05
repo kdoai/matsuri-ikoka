@@ -25,6 +25,32 @@
     "例年、道修町の沿道に露店が並ぶ",
     "大阪市の無形民俗文化財「少彦名神社の薬祖講行事」の中心の祭り"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1822年の由来が伝わり、大阪市の無形文化財（民俗行事）に指定された",
+      "sources": [
+        {
+          "url": "https://www.sinnosan.jp/shinnousai/",
+          "title": "少彦名神社 神農祭",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "問屋街に受け継がれ、薬業の約400社でつくる薬祖講が祭りを支える",
+      "sources": [
+        {
+          "url": "https://www.city.osaka.lg.jp/kyoiku/cmsfiles/contents/0000673/673968/13.pdf",
+          "title": "大阪市 無形民俗文化財 少彦名神社の薬祖講行事",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "1822年にコレラがはやった折、薬種仲間が丸薬と張子の虎の御守を神前で祈って配ったのが由来とされる",

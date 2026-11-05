@@ -24,6 +24,26 @@
     "13通りの演目を、昼から約4時間かけて奉納する",
     "国の重要無形民俗文化財の神楽を、秋季大祭の日に地元の神社で見られる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1593年の記録があり、国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.town.niyodogawa.lg.jp/life/life_dtl.php?hdnKey=300",
+          "title": "仁淀川町 池川神楽",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://yosakoi-kochi-bunkasai2026.pref.kochi.lg.jp/event.html?id=271",
+          "title": "よさこい高知文化祭2026 池川神楽",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "文禄2年（1593）の記録に名があり、少なくとも400年の歴史を持つ",

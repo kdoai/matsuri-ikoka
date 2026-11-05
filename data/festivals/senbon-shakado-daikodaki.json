@@ -25,6 +25,26 @@
     "中風・諸病除けを祈る法要が営まれる",
     "京都市内に残る鎌倉初期の建物で最古の、国宝の本堂"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "鎌倉時代に寺の上人が始めたと伝わる大根焚きを続ける",
+      "sources": [
+        {
+          "url": "https://daihoonji.jp/annual-events",
+          "title": "大報恩寺 年中行事",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://kyo-tsunagu.city.kyoto.lg.jp/gyoji/tsunagu300/12-2/daikodaki/",
+          "title": "京都をつなぐ無形文化遺産 大根焚き",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "大根の切り口に書く梵字は、釈迦如来を表す種字「バク」とされる",

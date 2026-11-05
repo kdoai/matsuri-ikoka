@@ -25,6 +25,32 @@
     "特設舞台で奉納される、ユネスコ無形文化遺産の那智田楽と大和舞",
     "カラス帽の神職が打松で神輿の神鏡を打つ扇褒神事"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "2015年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.pref.wakayama.lg.jp/prefg/500700/mokuroku/d00155459.html",
+          "title": "和歌山県 国指定文化財（民俗文化財）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "白装束の氏子が12本の大たいまつを1人1本ずつ担ぐ",
+      "sources": [
+        {
+          "url": "https://kumanichi.com/articles/2013566",
+          "title": "熊本日日新聞（共同通信）那智の扇祭り、氏子ら披露（2026年7月14日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "扇神輿は高さ1丈8尺3寸（約6m）で、32本の金扇などで飾り那智御瀧を表す",

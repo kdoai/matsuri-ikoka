@@ -25,6 +25,32 @@
     "梵天に付いた三角守を求めて、見物の人まで手を伸ばす",
     "ほら貝と梵天唄「三吉節」を響かせながら町内から神社へ向かう"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "江戸時代ごろに始まったとされる秋田の特殊神事",
+      "sources": [
+        {
+          "url": "http://www.miyoshi.or.jp/festival/bondensai",
+          "title": "太平山三吉神社総本宮 三吉梵天祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "町内の梵天は成人を迎える若者が発起人になって作る",
+      "sources": [
+        {
+          "url": "http://www.miyoshi.or.jp/festival/bondensai",
+          "title": "太平山三吉神社総本宮 三吉梵天祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "江戸時代ごろに始まったとされる秋田ならではの特殊神事。梵天は神の依代とされる",

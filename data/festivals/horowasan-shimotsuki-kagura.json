@@ -24,6 +24,32 @@
     "神前に釜を据えて湯を使う湯立の神事を、里宮の神殿で見られる",
     "終盤の演目のあと、参拝した人にも朝食がふるまわれる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1977年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/160741",
+          "title": "文化遺産オンライン 保呂羽山の霜月神楽",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "保呂羽山霜月神楽保存会が国の保護団体として受け継ぐ",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/160741",
+          "title": "文化遺産オンライン 保呂羽山の霜月神楽（保護団体 保呂羽山霜月神楽保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "保呂羽山・御岳・高岡の三つの山の神霊を招いて行う神楽とされる",

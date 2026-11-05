@@ -25,6 +25,32 @@
     "2日目の夜更け、灯籠を担いで大宮神社へ納める上がり灯籠",
     "1日目の夜は、菊池川の上に花火が上がる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "室町時代に奉納の松明が和紙の灯籠に発展したとされる",
+      "sources": [
+        {
+          "url": "https://yamagatourou.jp/about/",
+          "title": "山鹿灯籠振興会 山鹿灯籠について",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "町内や市民団体が灯籠を奉納する（2025年は約30団体）",
+      "sources": [
+        {
+          "url": "https://yamagatourou.jp/about/",
+          "title": "山鹿灯籠振興会 山鹿灯籠について",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "菊池川沿いを進むのに困った景行天皇の一行を、里の人が松明で導いた伝説が祭りの起こり",

@@ -24,6 +24,20 @@
     "3人の神職が秘伝の弓・剣・火の三舞を奏する防火祭",
     "火防の神の総本宮で、冬の深夜に行う一年の災い払い"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "3人の神職が秘伝の弓・剣・火の三舞を代々受け継いで奏する",
+      "sources": [
+        {
+          "url": "https://www.akihasanhongu.jp/himatsuri/index.html",
+          "title": "秋葉山本宮秋葉神社 火まつり",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "火の舞の間は境内の照明が消され、月明かりと松明の炎だけがあたりを照らす",

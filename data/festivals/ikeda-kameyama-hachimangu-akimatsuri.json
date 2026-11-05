@@ -25,6 +25,32 @@
     "国の重要有形民俗文化財「池田の桟敷」（高さ18m・長さ80mの石垣の野天桟敷）",
     "拍子木の先導に薙刀12人などが唄に合わせて練る「オオネリ」"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1812年の奉納絵額に太鼓台が描かれ、昔から続く祭りと分かる",
+      "sources": [
+        {
+          "url": "https://www.pref.kagawa.lg.jp/kmuseum/setorekishi/maturi-gyouji-minnzokugeinou/kameyamahatimannguunoakimaturi.html",
+          "title": "香川県立瀬戸内海歴史民俗資料館 亀山八幡宮の秋祭（小豆島町）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "池田本町の5つの組が年ごとに交代でオオネリを受け持つ",
+      "sources": [
+        {
+          "url": "https://www.pref.kagawa.lg.jp/kmuseum/setorekishi/maturi-gyouji-minnzokugeinou/kameyamahatimannguunoakimaturi.html",
+          "title": "香川県立瀬戸内海歴史民俗資料館 亀山八幡宮の秋祭（小豆島町）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "1812年の奉納絵額に太鼓台やだんじりが描かれ、19世紀前半には今に近い祭りだったと分かる",

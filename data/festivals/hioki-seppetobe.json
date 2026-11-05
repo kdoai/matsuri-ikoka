@@ -25,6 +25,32 @@
     "子どもたちを中心に、虚無僧踊・棒踊・鎌踊・笹踊などのお田植え踊が奉納される",
     "同じ朝に吉利の鬼丸神社でも行われ、2つの神社で見られる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1595年ごろ、八幡神社が日置郷の総鎮守となった頃に始まったとされる",
+      "sources": [
+        {
+          "url": "http://www.pref.kagoshima.jp/ab10/kyoiku-bunka/bunka/museum/shichoson/hioki/yahata.html",
+          "title": "鹿児島県 かごしま地域伝統芸能ミュージアム お田植え祭「せっぺとべ」",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "15〜35歳の二才衆が担い手を務める",
+      "sources": [
+        {
+          "url": "http://www.pref.kagoshima.jp/ab10/kyoiku-bunka/bunka/museum/shichoson/hioki/yahata.html",
+          "title": "鹿児島県 かごしま地域伝統芸能ミュージアム お田植え祭「せっぺとべ」",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "「せっぺとべ」は鹿児島の言葉で「精一杯跳べ」。足で田を耕した名残とされる",

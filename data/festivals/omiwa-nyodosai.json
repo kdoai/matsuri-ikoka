@@ -25,6 +25,20 @@
     "奈良県内で最初の年中行事で「ご神火まつり」とも呼ばれる",
     "本殿を持たず、三輪山そのものを拝む社で迎える元日の未明"
   ],
+  "styles": [
+    {
+      "style": "community",
+      "basis": "氏子の若者が大松明を担いで摂社・末社を巡る",
+      "sources": [
+        {
+          "url": "https://oomiwa.or.jp/saiten/01-nyoudousai/",
+          "title": "大神神社 【1月】繞道祭",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "ご神火は新年の午前0時、拝殿の東にある禁足地の中で宮司が切り出す",

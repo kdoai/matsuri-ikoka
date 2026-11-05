@@ -12,6 +12,38 @@
     "鬼婆に赤ちゃんを抱いてもらい、子の健やかな育ちを願う",
     "毎年8月16日の1日だけ演じられる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "鎌倉時代の始まりとされ、国の重要無形民俗文化財",
+      "sources": [
+        {
+          "url": "https://www.town.yokoshibahikari.chiba.jp/site/yokoshibahikari-navi/8715.html",
+          "title": "横芝光町 横芝光町を知る！歴史めぐり7選",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.pref.chiba.lg.jp/kyouiku/bunkazai/shitei/shichouson/yokoshibahikari.html",
+          "title": "千葉県 横芝光町の国・県指定文化財",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "鬼来迎保存会が受け継ぎ、演じ続けている",
+      "sources": [
+        {
+          "url": "https://www.pref.chiba.lg.jp/kyouiku/bunkazai/shitei/shichouson/yokoshibahikari.html",
+          "title": "千葉県 横芝光町の国・県指定文化財",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "全7段のうち、今は地獄の責め苦と救いを描く大序・賽の河原・釜入れ・死出の山の4段を演じる",

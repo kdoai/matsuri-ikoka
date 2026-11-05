@@ -24,6 +24,32 @@
     "12基に火が入り、褌姿の若者が掛け声を上げて火の前で乱舞する",
     "鎌倉時代の言い伝えに始まる、県選択無形民俗文化財の火まつり"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "800年続くとされ、滋賀県の選択無形民俗文化財になっている",
+      "sources": [
+        {
+          "url": "https://www.pref.shiga.lg.jp/ab00/23243.html",
+          "title": "滋賀県 広報レポート 800年続く「火まつり」守山2神社で催行（勝部・住吉の火まつり）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "地元の若者でつくる松明組が1年がかりで準備して担う",
+      "sources": [
+        {
+          "url": "https://www.pref.shiga.lg.jp/ab00/23243.html",
+          "title": "滋賀県 広報レポート 800年続く「火まつり」守山2神社で催行（勝部・住吉の火まつり）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "天皇の病の元とされた竜を退治した言い伝えから、浮気では竜の頭、勝部では胴に見立てた松明を燃やす",

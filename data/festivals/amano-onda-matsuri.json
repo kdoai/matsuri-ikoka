@@ -25,6 +25,38 @@
     "この日だけ刷られる天野宮生土宝印や福の種を、参拝した人だけが受けられる",
     "高野山のふもと、標高約450mの天野盆地にある世界遺産の社で行われる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "平安時代に起源があるとされ、和歌山県の無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://niutsuhime.or.jp/information/ondamatsuri/",
+          "title": "丹生都比売神社 御田祭（おんだまつり）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.pref.wakayama.lg.jp/prefg/500700/mokuroku/d00155461.html",
+          "title": "和歌山県教育委員会 県指定文化財・民俗文化財",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "天野の御田祭保存会が県指定の保護団体として受け継ぐ",
+      "sources": [
+        {
+          "url": "https://www.pref.wakayama.lg.jp/prefg/500700/mokuroku/d00155461.html",
+          "title": "和歌山県 天野の御田祭（県指定無形民俗、保護団体 天野の御田祭保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "起源は平安時代にさかのぼり、室町時代に神事と神賑が一体になって狂言の形になったとされる",

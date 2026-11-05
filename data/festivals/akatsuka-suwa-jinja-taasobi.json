@@ -24,6 +24,32 @@
     "天狗が土地を鎮める舞を踊る",
     "お篝りの火で前の年の災厄を焼き払い、家内安全と子孫繁栄を願う"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "板橋の田遊びとして1976年に国の重要無形民俗文化財になった",
+      "sources": [
+        {
+          "url": "https://www.city.itabashi.tokyo.jp/bunka/kanko/jyukei/1006825.html",
+          "title": "板橋区 板橋十景 田遊び",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "下赤塚の田遊び保存会が保護団体で、氏子が唱え言の掛け合いに加わる",
+      "sources": [
+        {
+          "url": "https://kunishitei.bunka.go.jp/heritage/detail/302/42",
+          "title": "国指定文化財等データベース 板橋の田遊び",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "神社は長禄年間（1457〜1460）、赤塚城主の千葉自胤が信州の諏訪大社から分霊したと伝わる",

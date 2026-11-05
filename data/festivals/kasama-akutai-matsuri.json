@@ -12,6 +12,20 @@
     "山中の祠に納められた供え物を、参拝者どうしが奪い合う",
     "白装束で天狗の姿をした13人が16か所の祠を巡る"
   ],
+  "styles": [
+    {
+      "style": "community",
+      "basis": "愛宕神社の総代の人たちが催行する",
+      "sources": [
+        {
+          "url": "https://www.city.kasama.lg.jp/page/page000154.html",
+          "title": "笠間市 悪態まつり",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "天狗の姿の13人が、16か所の祠に供え物を納めて回る",

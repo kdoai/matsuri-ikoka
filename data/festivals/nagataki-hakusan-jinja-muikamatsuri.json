@@ -24,6 +24,38 @@
     "国の重要無形民俗文化財「長滝の延年」の舞が拝殿で奉納される",
     "白山信仰の中心だった長滝白山神社・長瀧寺の古い社殿で行う"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "長滝の延年は約1000年の歴史がある芸能で、国の重要無形民俗文化財",
+      "sources": [
+        {
+          "url": "https://shirotori-gujo.com/html/kanko/nagatakihakusan.htm",
+          "title": "白鳥観光協会 長滝白山神社",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kankou-gifu.jp/event/detail_3146.html",
+          "title": "岐阜県観光公式サイト 岐阜の旅ガイド 六日祭（花奪い祭り）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "長滝の延年保存会が保護団体として受け継ぐ",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/214809",
+          "title": "文化遺産オンライン 長滝の延年（保護団体 長滝の延年保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "延年は、大晦日から7日間の修正会の最終日に、若い僧や稚児が芸能で僧や神主を労ったもの",

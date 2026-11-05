@@ -25,6 +25,26 @@
     "日が暮れて奉燈に明かりがともると、太い墨の文字と武者の絵が闇に映える",
     "地区ごとに違う大文字と町内カラーを掲げた7基の大奉燈"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "明治22年に再び始めたのが今の形の起こり。日本遺産の一つ",
+      "sources": [
+        {
+          "url": "https://www.city.nanao.lg.jp/koryu-s/event/8gatsu/documents/panfret.pdf",
+          "title": "石崎奉燈祭奉賛会 石崎奉燈祭パンフレット 2026（石崎奉燈祭の紹介）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.nanao.lg.jp/koryu-s/event/8gatsu/documents/panfret.pdf",
+          "title": "石崎奉燈祭奉賛会 石崎奉燈祭パンフレット 2026（日本遺産の認定）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "明治22年、網大工の口添えで奥能登から古いキリコを移し、祭りを再び始めたのが今の形の起こり",

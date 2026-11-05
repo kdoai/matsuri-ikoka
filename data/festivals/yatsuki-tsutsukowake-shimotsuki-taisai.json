@@ -24,6 +24,20 @@
     "名物のゆずやしょうがを売る市が、祭りに合わせて立つ",
     "奥州一宮とされる古社で、国の重要文化財の銅鉢を伝える"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "霜月大祭で奉納される御神楽が福島県の重要無形民俗文化財",
+      "sources": [
+        {
+          "url": "https://www.town.tanagura.fukushima.jp/kasseika-kannkoubussann/event/page000338.html",
+          "title": "棚倉町 霜月大祭（八槻都々古別神社）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "この社の太々神楽は36座あり、八岐大蛇退治のような神話の場面を舞う",

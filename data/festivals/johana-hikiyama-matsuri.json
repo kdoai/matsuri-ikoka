@@ -25,6 +25,32 @@
     "祝儀を出した家の前に庵屋台を寄せて唄を披露する「庵唄所望」",
     "本祭の夜は提灯をともした提灯山が町を巡る"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "享保年間に始まり、ユネスコ無形文化遺産に登録された曳山行事",
+      "sources": [
+        {
+          "url": "https://culture-archives.city.nanto.toyama.jp/heritages/unesco0001/",
+          "title": "南砺市文化芸術アーカイブズ 城端曳山祭",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "城端曳山祭保存会が保護団体で、各山町が曳山を出し若連中が庵唄を披露",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/215189",
+          "title": "文化遺産オンライン 城端神明宮祭の曳山行事（保護団体 城端曳山祭保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "享保2年（1717年）に神輿が作られ、享保4年に曳山が始まった",

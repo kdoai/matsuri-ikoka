@@ -24,6 +24,32 @@
     "天岩戸の神話を舞う終盤の岩戸五番（手力雄・鈿女・戸取など）",
     "入場無料で出入り自由。毎晩の高千穂神楽では4番しか舞わない"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "奉納される夜神楽は1978年に国の重要無形民俗文化財に指定",
+      "sources": [
+        {
+          "url": "https://takachiho-kanko.info/kagura/yokagura/",
+          "title": "高千穂町観光協会 高千穂の夜神楽",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "町内の約20の集落がそれぞれの例祭日に夜神楽を奉納する",
+      "sources": [
+        {
+          "url": "https://takachiho-kanko.info/kagura/yokagura/",
+          "title": "高千穂町観光協会 高千穂の夜神楽",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "高千穂の夜神楽は、1978年に国の重要無形民俗文化財に指定された",

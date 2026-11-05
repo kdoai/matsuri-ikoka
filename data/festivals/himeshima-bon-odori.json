@@ -25,6 +25,32 @@
     "地区ごとの踊りの組が、島の盆坪を順にめぐって踊る",
     "2026年は2日間で31組が踊った"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "2012年に国の記録作成等の措置を講ずべき民俗文化財に選ばれた",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/282050",
+          "title": "文化遺産オンライン 姫島の盆踊",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "踊りの組は地区ごとの同じ世代の仲間でつくる",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/282050",
+          "title": "文化遺産オンライン 姫島の盆踊",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "2012年3月、国の「記録作成等の措置を講ずべき無形の民俗文化財」に選ばれた",

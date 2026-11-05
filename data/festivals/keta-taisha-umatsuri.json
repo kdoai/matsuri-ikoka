@@ -25,6 +25,32 @@
     "七尾の鵜浦から鵜捕部が2泊3日かけて鵜を運んでくる",
     "国の重要無形民俗文化財に指定された、能登一の宮の特殊神事"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "国の重要無形民俗文化財に指定された、氣多大社の古い神事",
+      "sources": [
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000753",
+          "title": "るるぶ&more. 氣多の鵜祭り（国の重要無形民俗文化財）",
+          "checkedAt": "2026-11-04",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "鹿渡島の20戸の鵜捕部が3戸ずつ当番で鵜を運び、鵜浦町会も保護団体",
+      "sources": [
+        {
+          "url": "https://kunishitei.bunka.go.jp/heritage/detail/302/737",
+          "title": "国指定文化財等データベース 気多の鵜祭の習俗（保護団体 気多大社、鵜浦町会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "鵜は七尾市鵜浦町で生け捕られ、鵜捕部3人が鵜籠に入れて2泊3日で神社まで運ぶ",

@@ -23,6 +23,38 @@
     "杵を返す人とつき手が、息を合わせて速い調子でつく見せ場",
     "藍で栄えた脇町の年の暮れの習わしを、年に一度、市役所の前で公開する"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "江戸時代の脇町に始まるとされ、昭和47年に町の文化財指定",
+      "sources": [
+        {
+          "url": "https://www.city.mima.lg.jp/kanko/map/list/11514.html",
+          "title": "美馬市観光サイト 三味線もちつき",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.mima.lg.jp/kanko/bunkazai/shishiteilist/",
+          "title": "美馬市観光サイト 市指定文化財一覧",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "井内組・北崎組・うだつの3つの組が伝えている",
+      "sources": [
+        {
+          "url": "https://www.city.mima.lg.jp/kanko/map/list/11514.html",
+          "title": "美馬市観光サイト 三味線もちつき",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "藍で栄えた江戸時代の脇町で、豪商が芸者に三味線を弾かせ正月の餅をつかせたのが始まりという",

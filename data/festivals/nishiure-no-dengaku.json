@@ -24,6 +24,32 @@
     "地能33番とはね能12番、獅子舞、しずめの舞までを一夜で演じる",
     "豊作と無病息災を願う、旧暦の正月の神事芸能"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1976年に国の重要無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.city.hamamatsu.shizuoka.jp/bunkazai/shitei/misakubo/misakubo/nishiuredengaku.html",
+          "title": "浜松市 西浦の田楽",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "西浦田楽保存会が保護団体として受け継ぐ",
+      "sources": [
+        {
+          "url": "https://online.bunka.go.jp/heritages/detail/136414",
+          "title": "文化遺産オンライン 西浦の田楽（保護団体 西浦田楽保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "1976年5月4日に国の重要無形民俗文化財に指定された",

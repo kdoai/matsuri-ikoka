@@ -24,6 +24,32 @@
     "塞の神の灰と雪で作った墨を、見物人も一緒に顔へ塗り合う",
     "雪深い温泉街で行う小正月の奇祭。終わったら温泉で温まれる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "むこ投げとすみ塗りは、それぞれ十日町市の指定文化財",
+      "sources": [
+        {
+          "url": "https://www.city.tokamachi.lg.jp/yukiguni/nihonisan/5479.html",
+          "title": "十日町市 日本遺産 構成文化財一覧表",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "村の若者が婿を運び、住民が持ち寄ってサイノカミを焚く",
+      "sources": [
+        {
+          "url": "https://www.city.tokamachi.lg.jp/yukiguni/nihonisan/5479.html",
+          "title": "十日町市 日本二位の文化財（婿投げ・スミぬり）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "投げられるのは前年に結ばれた婿で、薬師堂の下およそ5mの雪の斜面へ落とされる",

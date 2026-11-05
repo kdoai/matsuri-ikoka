@@ -23,6 +23,20 @@
     "二つの神社が一年ごとに御面を祀り合う、約300年続く受け渡し",
     "神職や宮総代が御面を奉じて約1キロを歩く行列"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "享保17年に寺社奉行が12月20日と定めた隔年の受け渡し",
+      "sources": [
+        {
+          "url": "https://www.city.toon.ehime.jp/soshiki/23/2007.html",
+          "title": "東温市 東温市の文化財（雨乞い三面）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "享保17年、松山藩の寺社奉行が毎年12月20日を御面渡御祭の日と定めた",

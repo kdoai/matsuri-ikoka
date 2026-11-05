@@ -25,6 +25,38 @@
     "14日の夜は境内でみそぎ囃子・富まき・もちまきと冬花火が続く",
     "北海道無形民俗文化財に指定された、天保2年から続く神事"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "天保2年（1831年）に始まり、道の無形民俗文化財に指定された",
+      "sources": [
+        {
+          "url": "https://www.town.kikonai.hokkaido.jp/kanko/event/kantyu.html",
+          "title": "木古内町 第196回寒中みそぎ祭り＆寒中みそぎフェスティバル2026",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.visit-hokkaido.jp/event/detail_11179.html",
+          "title": "北海道観光振興機構 HOKKAIDO LOVE! 寒中みそぎ祭り＆寒中みそぎフェスティバル",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "氏子の長老が選んだ青年4人が行修者を務め、地元の人も加わる",
+      "sources": [
+        {
+          "url": "https://www.nippon.com/ja/guide-to-japan/gu019015/",
+          "title": "nippon.com 木古内の寒中みそぎ祭りの紹介",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "天保2年（1831年）に始まった神事で、2026年が196回目だった",

@@ -25,6 +25,20 @@
     "法被を着た人たちが、村役場から大東神社まで神輿を担ぎ山車を曳く",
     "島の産業であるサトウキビの豊作を願い、各字が神輿を担ぐ"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1920年の社殿の落成を機に土俵入りなどが始まった奉納の行事",
+      "sources": [
+        {
+          "url": "https://www.vill.minamidaito.okinawa.jp/page/404.html",
+          "title": "南大東村 南大東島の年中行事",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "相撲は開拓のころ、江戸相撲を手本にした青年の活動として始まった",

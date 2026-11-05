@@ -25,6 +25,32 @@
     "重さ約4トンの大鏡餅が奉納され、翌朝から切り分けて授けられる",
     "もみ合いの最後に手桶隊が裸男へ水を浴びせる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "767年に悪疫を払う祈りをしたのが始まりと伝わる",
+      "sources": [
+        {
+          "url": "https://www.konomiya.or.jp/hadakamatsuri",
+          "title": "尾張大國霊神社 はだか祭のご案内",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "近隣の地区ごとの裸男の集団が参り、奉賛会が大鏡餅を支える",
+      "sources": [
+        {
+          "url": "https://www.konomiya.or.jp/hadakamatsuri",
+          "title": "尾張大國霊神社 はだか祭のご案内（見学の注意・はだか男の心得・笹用布）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "767年、称徳天皇の命で全国の国分寺が悪疫を払う祈りをし、尾張の国司もこの社で祈ったのが始まりと伝わる",

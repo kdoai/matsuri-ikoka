@@ -24,6 +24,20 @@
     "烏帽子・狩衣の神官と弓道家が、中禅寺湖の上を赤城山の方へ次々に矢を射る",
     "射られた矢を見つけて持ち帰ると、その年は良いことがあると言われる"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "室町時代から続く神事とされる",
+      "sources": [
+        {
+          "url": "https://www.city.nikko.lg.jp/material/files/group/25/kankougeppou20260101.pdf",
+          "title": "日光市 祭り・イベント情報（2026年1月1日）",
+          "checkedAt": "2026-11-04",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "二荒山の神が赤城山の神と争い、弓の名人の子孫の助けで勝ったという神戦伝説に基づく",

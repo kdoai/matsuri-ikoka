@@ -25,6 +25,32 @@
     "男たちが松明を建物の石の土台にたたきつけ、競って火の粉を飛ばす",
     "寺の前の川の真ん中に、不動明王を刻んだ巨石がある"
   ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "国の重要無形民俗文化財で、養老年間に僧が始めたと伝わる",
+      "sources": [
+        {
+          "url": "https://www.pref.oita.jp/site/archive/200690.html",
+          "title": "大分県 修正鬼会（重要無形民俗文化財）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "長岩屋地区の修正鬼会保存会が保存・伝承に取り組む",
+      "sources": [
+        {
+          "url": "https://www.city.bungotakada.oita.jp/site/bunkazai/2831.html",
+          "title": "豊後高田市 天念寺修正鬼会の世界（長岩屋修正鬼会保存会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
   "trivia": [
     {
       "text": "鬼は追い払う相手ではなく仏の化身とされ、火の粉を浴びた人に幸運を授けると考えられている",
