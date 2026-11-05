@@ -1,8 +1,9 @@
 import {
-  ChevronLeft,
+  CalendarDays,
   ChevronRight,
   Heart,
   Pencil,
+  Search,
   Send,
   User,
   Users,
@@ -20,6 +21,7 @@ import {
   CONSULT_QUESTIONS,
   CONSULT_STEPS,
   COUNT_LIMITS,
+  type ConsultEntry,
   type ConsultQuestion,
   type ConsultStep,
   canReach,
@@ -36,10 +38,7 @@ import {
   type PartyMember,
   partyCounts,
   partySize,
-  prefecturePick,
   previousStep,
-  REGIONS,
-  type Region,
   STAY_OPTIONS,
   setAmount,
   setBudgetBasis,
@@ -59,14 +58,20 @@ import {
   Choice,
   ChoiceGroup,
   Counter,
+  DecideRow,
   decideButton,
+  focusStep,
   OtherField,
+  PrefecturePicks,
+  StepProgress,
   textField,
 } from "./consult/Choices";
+import { FestivalSearchPanel, useFestivalSearchLine } from "./consult/FestivalSearch";
 import { RangeCalendar } from "./consult/RangeCalendar";
 import { StationInput } from "./consult/StationInput";
 
-// 選んで進める相談。会話の窓の中で、上から順に1つずつ答える一本道の聞き取り。
+// 選んで進める相談。最初に入口の2択（祭りから探す / 旅行計画から探す）を出す。
+// 旅行計画は、会話の窓の中で、上から順に1つずつ答える一本道の聞き取り。祭りから探す相談は consult/FestivalSearch.tsx。
 // 1つだけ選ぶ項目は、選ぶとすぐ次の段階へ進む。いくつでも選べる項目・人数・期間・自由記述は「決定」で進む。
 // 上の ＜ ＞ で、答えた段階までを行き来できる。最後の「確認」で、選んだ内容を1つの発言にまとめて送る。
 
@@ -76,13 +81,6 @@ const PARTY_ICON: Record<string, ReactNode> = {
   friends: <UsersRound aria-hidden="true" className="size-4" />,
   partner: <Heart aria-hidden="true" className="size-4" />,
 };
-
-/** 段階を移ったあと、その段階の最初の場所へ焦点を移す */
-function focusStep(): void {
-  window.requestAnimationFrame(() =>
-    document.querySelector<HTMLElement>("[data-testid='consult'] [data-dialogue-focus]")?.focus(),
-  );
-}
 
 /** 聞き取りの操作をまとめたもの（段階の部品で使う） */
 function useConsult() {
@@ -97,24 +95,6 @@ function useConsult() {
       focusStep();
     },
   };
-}
-
-function DecideRow({ disabled, onClick }: { disabled: boolean; onClick: () => void }) {
-  const t = useT();
-  return (
-    <div className="mt-2 flex justify-end">
-      <button
-        type="button"
-        className={decideButton}
-        disabled={disabled}
-        onClick={onClick}
-        data-testid="consult-decide"
-      >
-        {t.consult.decide}
-        <ChevronRight aria-hidden="true" className="size-4" />
-      </button>
-    </div>
-  );
 }
 
 /** 選択肢で答える項目（だれと・行き先・楽しみ・食べたいもの・ペース・予算） */
@@ -176,7 +156,7 @@ function ChoiceStep({ question }: { question: ChoiceQuestion & ConsultQuestion }
       </ChoiceGroup>
       {question === "party" ? <PartyCounts /> : null}
       {question === "destination" ? <TravelPicks /> : null}
-      {question === "destination" ? <PrefecturePicks /> : null}
+      {question === "destination" ? <DestinationPrefectures /> : null}
       {question === "food" ? <DietaryPicks /> : null}
       {showOther ? (
         <OtherField
@@ -281,36 +261,11 @@ function DietaryPicks() {
 }
 
 /** 行き先で地方を選んだら、その中の都道府県でもしぼれる */
-function PrefecturePicks() {
-  const t = useT();
+function DestinationPrefectures() {
   const { actions } = useConsult();
   const picks = useApp((state) => state.consult.answers.destination?.picks ?? []);
-  const regions = (Object.keys(REGIONS) as Region[]).filter(
-    (region) => picks.includes(region) && REGIONS[region].length > 1,
-  );
-  if (regions.length === 0) return null;
   return (
-    <div className="mt-2 animate-fade space-y-2">
-      {regions.map((region) => (
-        <ChoiceGroup
-          key={region}
-          label={t.consult.prefecturesLabel(t.consult.options.destination[region])}
-        >
-          {REGIONS[region].map((code) => {
-            const value = prefecturePick(code);
-            return (
-              <Choice
-                key={code}
-                pressed={picks.includes(value)}
-                onClick={() => actions.pickConsult("destination", value)}
-              >
-                {t.consult.prefectures[code]}
-              </Choice>
-            );
-          })}
-        </ChoiceGroup>
-      ))}
-    </div>
+    <PrefecturePicks picks={picks} onPick={(value) => actions.pickConsult("destination", value)} />
   );
 }
 
@@ -557,7 +512,7 @@ function Summary() {
   );
 }
 
-/** 上の段：＜ 進み具合 ＞ */
+/** 上の段：＜ 進み具合 ＞。最初の段階の ＜ は、入口（決めた祭りがあれば、祭りの結果の側）へ戻る */
 function Progress() {
   const t = useT();
   const actions = useActions();
@@ -565,58 +520,29 @@ function Progress() {
   const answers = useApp((state) => state.consult.answers);
   const index = CONSULT_STEPS.indexOf(step);
   const next = nextStep(step);
-  const canForward = step !== "confirm" && canReach(next, answers);
   const go = (target: ConsultStep) => {
     actions.setConsultStep(target);
     focusStep();
   };
-  const arrow =
-    "grid size-10 shrink-0 place-items-center rounded-full border-2 border-line-strong bg-white text-ink shadow-soft transition hover:border-yamabuki-400 disabled:cursor-not-allowed disabled:opacity-30";
   return (
-    <div className="flex items-center gap-2">
-      <button
-        type="button"
-        className={arrow}
-        aria-label={t.consult.back}
-        disabled={index === 0}
-        onClick={() => go(previousStep(step))}
-        data-testid="consult-back"
-      >
-        <ChevronLeft aria-hidden="true" className="size-5" />
-      </button>
-      <div className="min-w-0 flex-1">
-        <p className="flex items-baseline justify-between gap-2 font-bold text-sm">
-          <span className="text-ink">{t.consult.steps[step]}</span>
-          <span className="text-ink-soft text-xs" data-testid="consult-progress">
-            {t.consult.progress(index + 1, CONSULT_STEPS.length)}
-          </span>
-        </p>
-        <ol aria-hidden="true" className="mt-1 flex gap-1">
-          {CONSULT_STEPS.map((id, at) => (
-            <li
-              key={id}
-              className={`h-1.5 flex-1 rounded-full ${
-                at === index
-                  ? "bg-yamabuki-400"
-                  : at < index || (id !== "confirm" && id !== "note" && isAnswered(answers[id], id))
-                    ? "bg-ai-700"
-                    : "bg-wood-200"
-              }`}
-            />
-          ))}
-        </ol>
-      </div>
-      <button
-        type="button"
-        className={arrow}
-        aria-label={t.consult.forward}
-        disabled={!canForward}
-        onClick={() => go(next)}
-        data-testid="consult-forward"
-      >
-        <ChevronRight aria-hidden="true" className="size-5" />
-      </button>
-    </div>
+    <StepProgress
+      label={t.consult.steps[step]}
+      index={index}
+      done={CONSULT_STEPS.map(
+        (id, at) =>
+          at < index || (id !== "confirm" && id !== "note" && isAnswered(answers[id], id)),
+      )}
+      forwardDisabled={step === "confirm" || !canReach(next, answers)}
+      onBack={() => {
+        if (index === 0) {
+          actions.leaveHearing();
+          focusStep();
+        } else {
+          go(previousStep(step));
+        }
+      }}
+      onForward={() => go(next)}
+    />
   );
 }
 
@@ -635,8 +561,40 @@ function StepBody({ step }: { step: ConsultStep }) {
   }
 }
 
-/** 選んで進める相談の本体（会話の窓の中に出す） */
-export function ConsultPanel() {
+/** 入口の2択。選ばずに下の欄へ書いて送ると、今までの相談として受ける */
+function EntryChoices() {
+  const t = useT();
+  const actions = useActions();
+  const choose = (entry: ConsultEntry) => {
+    actions.chooseConsultEntry(entry);
+    focusStep();
+  };
+  return (
+    <div data-testid="consult-entry">
+      <ChoiceGroup label={t.consult.entry.label} hideLabel>
+        <Choice
+          pressed={false}
+          focusFirst
+          icon={<Search aria-hidden="true" className="size-4" />}
+          onClick={() => choose("festival")}
+        >
+          {t.consult.entry.festival}
+        </Choice>
+        <Choice
+          pressed={false}
+          icon={<CalendarDays aria-hidden="true" className="size-4" />}
+          onClick={() => choose("trip")}
+        >
+          {t.consult.entry.trip}
+        </Choice>
+      </ChoiceGroup>
+      <p className="mt-1 text-ink-soft text-sm">{t.consult.entry.note}</p>
+    </div>
+  );
+}
+
+/** 旅行計画から探す：今までの聞き取り */
+function TripHearing() {
   const t = useT();
   const actions = useActions();
   const step = useApp((state) => state.consult.step);
@@ -645,12 +603,7 @@ export function ConsultPanel() {
   const canSend = ready && hasAnyAnswer(answers);
 
   return (
-    <section
-      aria-label={t.consult.title}
-      className="space-y-3"
-      data-testid="consult"
-      data-ready={ready}
-    >
+    <>
       <Progress />
       <div className="min-h-24" key={step}>
         <StepBody step={step} />
@@ -672,6 +625,40 @@ export function ConsultPanel() {
           )}
         </div>
       ) : null}
+    </>
+  );
+}
+
+/** 会話の窓の、聞き取りの間の一言 */
+export function useConsultLine(): string {
+  const t = useT();
+  const entry = useApp((state) => state.consult.entry);
+  const step = useApp((state) => state.consult.step);
+  const festivalLine = useFestivalSearchLine();
+  if (entry === null) return t.consult.entry.prompt;
+  return entry === "festival" ? festivalLine : t.consult.prompts[step];
+}
+
+/** 選んで進める相談の本体（会話の窓の中に出す） */
+export function ConsultPanel() {
+  const t = useT();
+  const entry = useApp((state) => state.consult.entry);
+  const ready = useApp((state) => state.session.status === "ready" && !state.session.streaming);
+
+  return (
+    <section
+      aria-label={t.consult.title}
+      className="space-y-3"
+      data-testid="consult"
+      data-ready={ready}
+    >
+      {entry === null ? (
+        <EntryChoices />
+      ) : entry === "festival" ? (
+        <FestivalSearchPanel />
+      ) : (
+        <TripHearing />
+      )}
     </section>
   );
 }

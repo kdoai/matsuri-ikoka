@@ -67,6 +67,7 @@ export async function sessionReady(page: Page): Promise<void> {
 /** 聞き取りの選択肢の名前（日本語と英語） */
 export const HEARING_WORDS = {
   ja: {
+    trip: "旅行計画から探す",
     solo: "ひとりで",
     weekend: "今週末",
     dayTrip: "日帰り",
@@ -75,6 +76,7 @@ export const HEARING_WORDS = {
     note: "ひとこと",
   },
   en: {
+    trip: "Start from a trip plan",
     solo: "Just me",
     weekend: "This weekend",
     dayTrip: "Day trip",
@@ -83,6 +85,14 @@ export const HEARING_WORDS = {
     note: "Anything else",
   },
 };
+
+/** 入口の2択で「旅行計画から探す」を選び、今までの聞き取りへ進む（入口を過ぎていれば何もしない） */
+export async function chooseTripEntry(page: Page, words = HEARING_WORDS.ja): Promise<void> {
+  const entry = page.getByTestId("consult-entry");
+  if (await entry.isVisible()) {
+    await entry.getByRole("button", { name: words.trip, exact: true }).click();
+  }
+}
 
 /**
  * 選んで進める聞き取りに、いちばん短い道で答えて送る。note は最後の「ひとこと」に書く
@@ -96,6 +106,7 @@ export async function answerHearing(
   const consult = page.getByTestId("consult");
   const choose = (name: string) => consult.getByRole("button", { name, exact: true }).click();
   const decide = () => consult.getByTestId("consult-decide").click();
+  await chooseTripEntry(page, words);
   await choose(words.solo);
   await choose(words.weekend);
   await choose(words.dayTrip);

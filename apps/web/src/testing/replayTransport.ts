@@ -88,6 +88,10 @@ export function createReplayTransport(
       lastDone = null;
       return `replay-${sample.id}`;
     },
+    async searchFestivals() {
+      // 記録した相談に祭り探しは入っていないので、いつも見つからない形で返す
+      return { results: [], remaining: 0, nearMatches: [], next: [], reading: null };
+    },
     async chat(_request, onMessage, signal) {
       const turn = sample.turns[next];
       if (turn === undefined) {

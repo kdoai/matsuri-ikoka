@@ -8,7 +8,7 @@ import type { ChatEntry, Locale } from "../state/types";
  * 英語の画面や、サーバーの一文がないときは辞書の文言を出す。
  */
 export function errorText(
-  entry: Extract<ChatEntry, { kind: "error" }>,
+  entry: Pick<Extract<ChatEntry, { kind: "error" }>, "code" | "message">,
   locale: Locale,
   t: Messages,
 ): string {

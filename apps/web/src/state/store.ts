@@ -1,6 +1,8 @@
 import {
   decodeSseEvent,
   type FestivalCandidate,
+  type FestivalSearchNext,
+  type FestivalSearchResult,
   MAX_MESSAGE_LENGTH,
   type Preferences,
   type SearchRetry,
@@ -15,15 +17,37 @@ import type { ChatTransport, FestivalSource, OnSseMessage } from "../transport/t
 import { toClientError } from "../transport/types";
 import {
   type ConsultAnswers,
+  type ConsultEntry,
   type ConsultQuestion,
   type ConsultStep,
+  chooseEntry,
   composeConsultMessage,
+  INITIAL_CONSULT,
+  leaveHearing,
   pickAnswer,
   setAnswerText,
   todayInJapan,
 } from "./consult";
 import { clientError } from "./errors";
 import { applyEvent } from "./events";
+import {
+  anchorOf,
+  applySearchResponse,
+  backToResults,
+  beginMore,
+  beginNext,
+  beginSearch,
+  chooseResult,
+  editConditions,
+  type FestivalSearchAnswers,
+  type FestivalSearchState,
+  type FestivalSearchStep,
+  failSearch,
+  finishHere,
+  INITIAL_FESTIVAL_SEARCH,
+  isSearching,
+  searchRequest,
+} from "./festivalSearch";
 import { initialData } from "./initial";
 import { quizById } from "./quizBank";
 import {
@@ -89,6 +113,33 @@ export interface AppActions {
   submitConsult(): Promise<void>;
   /** 聞き取りを選び直す */
   reopenConsult(): void;
+  /** 相談の入口を選ぶ（祭りから探す / 旅行計画から探す） */
+  chooseConsultEntry(entry: ConsultEntry): void;
+  /** はじめからやり直す。選んだ内容を消して、入口へ戻る */
+  startConsultOver(): void;
+  /** 聞き取りの最初の段階から戻る（入口か、決めた祭りのところへ） */
+  leaveHearing(): void;
+  /** 祭りから探す相談の段階を移る */
+  setFestivalStep(step: FestivalSearchStep): void;
+  /** 祭りから探す相談の答えを、festivalSearch.ts の関数で変える */
+  editFestivalAnswers(edit: (answers: FestivalSearchAnswers) => FestivalSearchAnswers): void;
+  /** 答えた条件で祭りを探す */
+  searchFestivals(): Promise<void>;
+  /** 別の祭りを提案してもらう */
+  moreFestivals(): Promise<void>;
+  /** 次の手を選ぶ。変えた条件で探す（条件を選び直す手は聞き取りに戻る） */
+  chooseFestivalNext(next: FestivalSearchNext): Promise<void>;
+  /** 条件を選び直す。step を渡すと、その段階から */
+  editFestivalConditions(step?: FestivalSearchStep): void;
+  setFestivalResultsOpen(open: boolean): void;
+  /** 結果から祭りを選ぶ */
+  chooseFestival(result: FestivalSearchResult): void;
+  /** 「ほかの祭りを見る」 */
+  backToFestivalResults(): void;
+  /** 「ここで終わる」 */
+  finishFestivalSearch(): void;
+  /** 「旅行計画を作成する」：選んだ祭りを残して、旅行計画の聞き取りへ進む */
+  planFestivalTrip(): void;
   /** はじめての操作の案内を閉じる */
   dismissTutorial(): void;
   /** のれんをくぐって店の外へ出る（相談はそのまま残す） */
@@ -127,6 +178,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
 
   let controller: AbortController | null = null;
   let sessionController: AbortController | null = null;
+  let searchController: AbortController | null = null;
   const timers = new Set<unknown>();
 
   return createStore<AppState>()((set, get) => {
@@ -318,6 +370,59 @@ export function createAppStore(deps: StoreDeps): AppStore {
       );
     };
 
+    const updateFestivalSearch = (change: (state: FestivalSearchState) => FestivalSearchState) =>
+      update((state) => ({ ...state, festivalSearch: change(state.festivalSearch) }));
+
+    /** いまの答えで検索を送り、結果か失敗をストアに入れる。相談が切れていたら、始め直して一度だけ送り直す */
+    const runFestivalSearch = async (retried = false): Promise<void> => {
+      const state = get();
+      const sessionId = state.session.id;
+      if (sessionId === null) {
+        updateFestivalSearch((search) => failSearch(search, clientError("session_lost")));
+        return;
+      }
+      const current = new AbortController();
+      searchController = current;
+      try {
+        const response = await transport.searchFestivals(
+          searchRequest(state.festivalSearch, sessionId),
+          current.signal,
+        );
+        if (current.signal.aborted) return;
+        updateFestivalSearch((search) => applySearchResponse(search, response));
+        void actions.ensureFestivals(
+          [...response.results, ...response.nearMatches.map((near) => near.result)].map(
+            (result) => result.candidate.festivalId,
+          ),
+        );
+      } catch (caught) {
+        if (current.signal.aborted) return;
+        const error = toClientError(caught);
+        if (error.code === "session_lost" && !retried) {
+          await startSession();
+          if (current.signal.aborted) return;
+          await runFestivalSearch(true);
+          return;
+        }
+        updateFestivalSearch((search) => failSearch(search, error));
+        if (error.code === "unauthorized") {
+          update((data) => requirePasscode(data, transport.hasPasscode?.() ?? false));
+        }
+      }
+    };
+
+    /** 検索を始める。相談が始まる前や、探している最中は送らない */
+    const startFestivalSearch = async (
+      begin: (state: FestivalSearchState) => FestivalSearchState,
+    ) => {
+      const { session, festivalSearch } = get();
+      if (session.status !== "ready" || session.streaming || isSearching(festivalSearch)) {
+        return;
+      }
+      updateFestivalSearch(begin);
+      await runFestivalSearch();
+    };
+
     const setUi = (patch: Partial<AppData["ui"]>) =>
       update((state) => ({ ...state, ui: { ...state.ui, ...patch } }));
 
@@ -399,12 +504,19 @@ export function createAppStore(deps: StoreDeps): AppStore {
           await startSession();
           return;
         }
+        const { festivalSearch } = get();
+        if (festivalSearch.error?.code === "unauthorized") {
+          // 祭り探しで断られたなら、探し直す
+          await startFestivalSearch(festivalSearch.phase === "asking" ? beginSearch : beginMore);
+          return;
+        }
         await actions.retry();
       },
 
       async restart() {
         controller?.abort();
         controller = null;
+        searchController?.abort();
         clearTimers();
         const { ui } = get();
         const fresh = initialData({ locale: ui.locale, tutorialSeen: ui.tutorialSeen });
@@ -488,7 +600,65 @@ export function createAppStore(deps: StoreDeps): AppStore {
       reopenConsult() {
         update((state) => ({
           ...state,
-          consult: { ...state.consult, active: true, step: "party", editing: false },
+          consult: { ...state.consult, active: true, entry: "trip", step: "party", editing: false },
+        }));
+      },
+      chooseConsultEntry(entry) {
+        update((state) => ({ ...state, consult: chooseEntry(state.consult, entry) }));
+      },
+      startConsultOver() {
+        searchController?.abort();
+        update((state) => ({
+          ...state,
+          consult: { ...INITIAL_CONSULT, answers: {} },
+          festivalSearch: { ...INITIAL_FESTIVAL_SEARCH },
+        }));
+      },
+      leaveHearing() {
+        update((state) => ({ ...state, consult: leaveHearing(state.consult) }));
+      },
+      setFestivalStep(step) {
+        updateFestivalSearch((search) => ({ ...search, step, error: null }));
+      },
+      editFestivalAnswers(edit) {
+        updateFestivalSearch((search) => ({ ...search, answers: edit(search.answers) }));
+      },
+      async searchFestivals() {
+        await startFestivalSearch(beginSearch);
+      },
+      async moreFestivals() {
+        if (get().festivalSearch.remaining > 0) await startFestivalSearch(beginMore);
+      },
+      async chooseFestivalNext(next) {
+        const { conditions } = next;
+        if (conditions === null) {
+          actions.editFestivalConditions();
+          return;
+        }
+        await startFestivalSearch((search) => beginNext(search, conditions));
+      },
+      editFestivalConditions(step) {
+        searchController?.abort();
+        updateFestivalSearch((search) => editConditions({ ...search, loadingMore: false }, step));
+      },
+      setFestivalResultsOpen(open) {
+        updateFestivalSearch((search) => ({ ...search, resultsOpen: open }));
+      },
+      chooseFestival(result) {
+        updateFestivalSearch((search) => chooseResult(search, result));
+      },
+      backToFestivalResults() {
+        updateFestivalSearch(backToResults);
+      },
+      finishFestivalSearch() {
+        updateFestivalSearch(finishHere);
+      },
+      planFestivalTrip() {
+        const { chosen } = get().festivalSearch;
+        if (chosen === null) return;
+        update((state) => ({
+          ...state,
+          consult: { ...chooseEntry(state.consult, "trip"), anchor: anchorOf(chosen) },
         }));
       },
       dismissTutorial() {

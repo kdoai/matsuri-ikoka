@@ -8,6 +8,7 @@ import {
   MAX_MESSAGE_LENGTH,
   TRANSPORT_MODES,
   type TransportMode,
+  type TripAnchor,
 } from "@matsuri-ikoka/schema";
 
 // 選んで進める相談（聞き取り）。文章を書かなくても、選択肢を選ぶだけで旅の好みを伝えられる。
@@ -162,9 +163,17 @@ export interface ConsultAnswer {
 
 export type ConsultAnswers = Partial<Record<ConsultQuestion, ConsultAnswer>>;
 
+/** 相談の入口：祭りから探す / 旅行計画から探す */
+export const CONSULT_ENTRIES = ["festival", "trip"] as const;
+export type ConsultEntry = (typeof CONSULT_ENTRIES)[number];
+
 export interface ConsultState {
   /** 選んで進める聞き取りを出しているか。まとめて送ったら閉じ、「選び直す」でまた開く */
   active: boolean;
+  /** 選んだ入口。null はまだ選んでいない（入口の2択を出す） */
+  entry: ConsultEntry | null;
+  /** 祭りから探して決めた祭りと行く日。旅行計画の聞き取りに進むときに残す */
+  anchor: TripAnchor | null;
   step: ConsultStep;
   /** 確認の画面から直しに来たか。答えたら、確認の画面へ戻る */
   editing: boolean;
@@ -173,6 +182,8 @@ export interface ConsultState {
 
 export const INITIAL_CONSULT: ConsultState = Object.freeze({
   active: true,
+  entry: null,
+  anchor: null,
   step: "party",
   editing: false,
   answers: {},
@@ -187,33 +198,48 @@ function regionOf(prefecture: string): Region | undefined {
 }
 
 /**
- * 選択肢を選ぶ。1つだけの項目は入れ替え、いくつでも選べる項目は付け外しする。
- * 「おまかせ」は、ほかの選択肢と同時には選ばない（選ぶとほかを外し、ほかを選ぶと外す）。
- * 行き先で地方を外すと、その中の都道府県も外す
+ * いくつでも選べる項目の付け外し。「おまかせ」は、ほかの選択肢と同時には選ばない
+ * （選ぶとほかを外し、ほかを選ぶと外す）。地方を外すと、その中の都道府県も外す
  */
+export function togglePick(picks: readonly string[], pick: string): string[] {
+  if (picks.includes(pick)) {
+    const region = pick in REGIONS ? (pick as Region) : undefined;
+    return picks.filter(
+      (value) => value !== pick && (region === undefined || regionOf(value) !== region),
+    );
+  }
+  if (pick === AUTO) return [AUTO];
+  return [...picks.filter((value) => value !== AUTO), pick];
+}
+
+/** 選択肢を選ぶ。1つだけの項目は入れ替え、いくつでも選べる項目は付け外しする */
 export function pickAnswer(
   answers: ConsultAnswers,
   question: ConsultQuestion,
   pick: string,
 ): ConsultAnswers {
   const current = answers[question] ?? EMPTY;
-  let picks: string[];
-  if (!MULTI_QUESTIONS.includes(question)) {
-    picks = current.picks.includes(pick) ? [] : [pick];
-  } else if (current.picks.includes(pick)) {
-    const region = pick in REGIONS ? (pick as Region) : undefined;
-    picks = current.picks.filter(
-      (value) => value !== pick && (region === undefined || regionOf(value) !== region),
-    );
-  } else if (pick === AUTO) {
-    picks = [AUTO];
-  } else {
-    picks = [...current.picks.filter((value) => value !== AUTO), pick];
-  }
+  const picks = MULTI_QUESTIONS.includes(question)
+    ? togglePick(current.picks, pick)
+    : current.picks.includes(pick)
+      ? []
+      : [pick];
   const next: ConsultAnswer = { ...current, picks };
   // 予算は、選択肢と金額のどちらか一方
   if (question === "budget" && picks.length > 0) delete next.amount;
   return { ...answers, [question]: next };
+}
+
+/** 入口を選ぶ。旅行計画なら聞き取りの最初の段階から始める */
+export function chooseEntry(state: ConsultState, entry: ConsultEntry): ConsultState {
+  return { ...state, entry, step: "party", editing: false };
+}
+
+/** 聞き取りの最初の段階から戻る。決めた祭りがあれば祭りの結果の側へ、なければ入口へ */
+export function leaveHearing(state: ConsultState): ConsultState {
+  return state.anchor === null
+    ? { ...state, entry: null, step: "party", editing: false }
+    : { ...state, entry: "festival", anchor: null, step: "party", editing: false };
 }
 
 export function setAnswerText(

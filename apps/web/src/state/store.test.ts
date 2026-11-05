@@ -4,10 +4,13 @@ import {
   encodeSseEvent,
   type Festival,
   FestivalSchema,
+  type FestivalSearchResponse,
+  type FestivalSearchResult,
   type SampleConversation,
   SampleConversationSchema,
   type SearchOutcome,
 } from "@matsuri-ikoka/schema";
+import { fictionalSource } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it, vi } from "vitest";
 import sampleJson from "../../../../data/samples/conversations/suzunari-day-trip.json";
 import kazamiJson from "../../../../data/samples/festivals/kazami-bon-odori.json";
@@ -16,6 +19,7 @@ import { createReplayTransport } from "../testing/replayTransport";
 import type { ChatTransport, FestivalSource } from "../transport/types";
 import { TransportError } from "../transport/types";
 import { setStay } from "./consult";
+import { setSeason, toggleArea, toggleKind } from "./festivalSearch";
 import { QUIZ_BANK } from "./quizBank";
 import { createAppStore, type StoreDeps } from "./store";
 
@@ -33,6 +37,14 @@ const festivalSource: FestivalSource = {
     return sampleFestivals;
   },
 };
+
+const noSearch: ChatTransport["searchFestivals"] = async () => ({
+  results: [],
+  remaining: 0,
+  nearMatches: [],
+  next: [],
+  reading: null,
+});
 
 /** 時間を待たずに、記録した相談を再生する通信の口 */
 function instantReplay(): ChatTransport {
@@ -133,6 +145,7 @@ describe("ストア：通信のエラー", () => {
       startSession: async () => "s-1",
       chat,
       updatePreferences: async () => {},
+      searchFestivals: noSearch,
     };
   }
 
@@ -280,6 +293,7 @@ describe("ストア：通信のエラー", () => {
       startSession,
       chat: async () => {},
       updatePreferences: async () => {},
+      searchFestivals: noSearch,
     });
     await store.getState().actions.enterShop();
     expect(store.getState().session.status).toBe("failed");
@@ -347,6 +361,7 @@ describe("ストア：通信のエラー", () => {
       startSession,
       chat,
       updatePreferences: async () => {},
+      searchFestivals: noSearch,
     });
     const { actions } = store.getState();
     await actions.enterShop();
@@ -386,6 +401,7 @@ describe("ストア：合言葉", () => {
       },
       chat: options.chat ?? (async () => {}),
       updatePreferences: async () => {},
+      searchFestivals: noSearch,
       setPasscode,
       hasPasscode: () => passcode !== null,
     };
@@ -447,6 +463,226 @@ describe("ストア：合言葉", () => {
   });
 });
 
+function festivalResult(index: number): FestivalSearchResult {
+  const id = `kasou-matsuri-${index}`;
+  return {
+    candidate: {
+      festivalId: id,
+      name: `架空の祭り${index}`,
+      date: "2030-08-16",
+      start: null,
+      end: null,
+      venueName: "架空の広場",
+      place: "架空県架空町",
+      daysFromWish: 0,
+      confidence: "official",
+      confirmed: true,
+      highlight: "灯籠が川を流れる",
+      source: fictionalSource("kasou"),
+    },
+    matchedKinds: ["traditional"],
+    reasons: ["伝統的な祭りです"],
+    wishFit: null,
+  };
+}
+
+function searchReply(overrides: Partial<FestivalSearchResponse> = {}): FestivalSearchResponse {
+  return { results: [], remaining: 0, nearMatches: [], next: [], reading: null, ...overrides };
+}
+
+describe("ストア：祭りから探す相談", () => {
+  async function ready(searchFestivals: ChatTransport["searchFestivals"]) {
+    const store = makeStore({ ...instantReplay(), searchFestivals });
+    await store.getState().actions.enterShop();
+    await flush();
+    const { actions } = store.getState();
+    actions.chooseConsultEntry("festival");
+    actions.editFestivalAnswers((answers) =>
+      toggleArea(setSeason(toggleKind(answers, "traditional"), "summer"), "shikoku"),
+    );
+    return { store, actions };
+  }
+
+  it("答えた条件で探し、見せた祭りを除いて続きを足し、見終えたら閉じる", async () => {
+    const search = vi
+      .fn<ChatTransport["searchFestivals"]>()
+      .mockResolvedValueOnce(
+        searchReply({ results: [festivalResult(1), festivalResult(2)], remaining: 1 }),
+      )
+      .mockResolvedValueOnce(searchReply({ results: [festivalResult(3)] }));
+    const { store, actions } = await ready(search);
+
+    await actions.searchFestivals();
+    expect(search.mock.calls[0]?.[0]).toEqual({
+      sessionId: "replay-suzunari-day-trip",
+      kinds: ["traditional"],
+      season: "summer",
+      prefectures: ["徳島県", "香川県", "愛媛県", "高知県"],
+      excludeIds: [],
+    });
+    expect(store.getState().festivalSearch).toMatchObject({
+      phase: "results",
+      resultsOpen: true,
+      remaining: 1,
+    });
+
+    await actions.moreFestivals();
+    expect(search.mock.calls[1]?.[0].excludeIds).toEqual(["kasou-matsuri-1", "kasou-matsuri-2"]);
+    expect(store.getState().festivalSearch.results).toHaveLength(3);
+    expect(store.getState().festivalSearch.remaining).toBe(0);
+
+    // 見終えたら、もう送らない
+    await actions.moreFestivals();
+    expect(search).toHaveBeenCalledTimes(2);
+  });
+
+  it("相談を始める前は送らない", async () => {
+    const search = vi.fn<ChatTransport["searchFestivals"]>(noSearch);
+    const store = makeStore({ ...instantReplay(), searchFestivals: search });
+    await store.getState().actions.searchFestivals();
+    expect(search).not.toHaveBeenCalled();
+    expect(store.getState().festivalSearch.phase).toBe("asking");
+  });
+
+  it("次の手は変えた条件で探し、見せた祭りは残す。条件を選び直す手は聞き取りに戻る", async () => {
+    const search = vi
+      .fn<ChatTransport["searchFestivals"]>()
+      .mockResolvedValueOnce(searchReply({ results: [festivalResult(1)] }))
+      .mockResolvedValueOnce(searchReply({ results: [festivalResult(2)] }));
+    const { store, actions } = await ready(search);
+    await actions.searchFestivals();
+    await actions.chooseFestivalNext({
+      kind: "any_season",
+      label: "季節を問わない",
+      conditions: { kinds: ["traditional"], season: null, prefectures: ["徳島県"] },
+      found: 1,
+    });
+    expect(search.mock.calls[1]?.[0]).toMatchObject({
+      season: null,
+      prefectures: ["徳島県"],
+      excludeIds: ["kasou-matsuri-1"],
+    });
+    expect(store.getState().festivalSearch.results).toHaveLength(2);
+
+    await actions.chooseFestivalNext({
+      kind: "edit_conditions",
+      label: "条件を選び直す",
+      conditions: null,
+      found: null,
+    });
+    expect(search).toHaveBeenCalledTimes(2);
+    expect(store.getState().festivalSearch).toMatchObject({ phase: "asking", step: "kinds" });
+    // 変えた条件が答えに残っている
+    expect(store.getState().festivalSearch.answers.season).toBe("auto");
+  });
+
+  it("探すのに失敗したら最後の段階へ戻してエラーを持ち、続きの失敗では結果を残す", async () => {
+    const search = vi
+      .fn<ChatTransport["searchFestivals"]>()
+      .mockRejectedValueOnce(new TransportError("rate_limited", { status: 429 }))
+      .mockResolvedValueOnce(searchReply({ results: [festivalResult(1)], remaining: 3 }))
+      .mockRejectedValueOnce(new TransportError("internal", { status: 500 }));
+    const { store, actions } = await ready(search);
+    await actions.searchFestivals();
+    expect(store.getState().festivalSearch).toMatchObject({
+      phase: "asking",
+      step: "wish",
+      error: { code: "rate_limited" },
+    });
+
+    await actions.searchFestivals();
+    expect(store.getState().festivalSearch.error).toBeNull();
+    await actions.moreFestivals();
+    expect(store.getState().festivalSearch).toMatchObject({
+      phase: "results",
+      loadingMore: false,
+      error: { code: "internal" },
+    });
+    expect(store.getState().festivalSearch.results).toHaveLength(1);
+    // 会話の記録には積まない（「もう一度送る」は前の発言を送り直す口なので）
+    expect(store.getState().messages.some((entry) => entry.kind === "error")).toBe(false);
+  });
+
+  it("相談が切れていたら、始め直して一度だけ送り直す", async () => {
+    const search = vi
+      .fn<ChatTransport["searchFestivals"]>()
+      .mockRejectedValueOnce(new TransportError("session_lost", { status: 404 }))
+      .mockResolvedValueOnce(searchReply({ results: [festivalResult(1)] }));
+    const { store, actions } = await ready(search);
+    await actions.searchFestivals();
+    expect(search).toHaveBeenCalledTimes(2);
+    expect(store.getState().festivalSearch.phase).toBe("results");
+  });
+
+  it("合言葉で断られたら聞き直し、入れたら探し直す", async () => {
+    const search = vi
+      .fn<ChatTransport["searchFestivals"]>()
+      .mockRejectedValueOnce(new TransportError("unauthorized", { status: 401 }))
+      .mockResolvedValueOnce(searchReply({ results: [festivalResult(1)] }));
+    const { store, actions } = await ready(search);
+    await actions.searchFestivals();
+    expect(store.getState().auth.needed).toBe(true);
+
+    await actions.submitPasscode("matsuri");
+    expect(store.getState().auth.needed).toBe(false);
+    expect(store.getState().festivalSearch).toMatchObject({ phase: "results", error: null });
+  });
+
+  it("旅行計画を作成すると、祭りと行く日を残して聞き取りへ進み、＜ で決めるところへ戻る", async () => {
+    const { store, actions } = await ready(async () =>
+      searchReply({ results: [festivalResult(1)] }),
+    );
+    await actions.searchFestivals();
+    const chosen = store.getState().festivalSearch.results[0];
+    if (chosen === undefined) throw new Error("結果がありません");
+    actions.chooseFestival(chosen);
+    expect(store.getState().festivalSearch).toMatchObject({ phase: "decide", resultsOpen: false });
+
+    actions.planFestivalTrip();
+    expect(store.getState().consult).toMatchObject({
+      active: true,
+      entry: "trip",
+      step: "party",
+      anchor: { festivalId: "kasou-matsuri-1", date: "2030-08-16" },
+    });
+
+    actions.leaveHearing();
+    expect(store.getState().consult).toMatchObject({ entry: "festival", anchor: null });
+    expect(store.getState().festivalSearch.phase).toBe("decide");
+  });
+
+  it("ここで終えてもモデルを呼ばず、はじめに戻ると入口へ戻る", async () => {
+    const chat = vi.fn<ChatTransport["chat"]>(async () => {});
+    const store = makeStore({
+      ...instantReplay(),
+      chat,
+      searchFestivals: async () => searchReply({ results: [festivalResult(1)] }),
+    });
+    const { actions } = store.getState();
+    await actions.enterShop();
+    await flush();
+    actions.chooseConsultEntry("festival");
+    await actions.searchFestivals();
+    const chosen = store.getState().festivalSearch.results[0];
+    if (chosen === undefined) throw new Error("結果がありません");
+    actions.chooseFestival(chosen);
+    actions.finishFestivalSearch();
+    expect(store.getState().festivalSearch.phase).toBe("finished");
+    expect(chat).not.toHaveBeenCalled();
+
+    actions.startConsultOver();
+    expect(store.getState().consult).toMatchObject({ active: true, entry: null, anchor: null });
+    expect(store.getState().festivalSearch.phase).toBe("asking");
+    expect(store.getState().festivalSearch.results).toEqual([]);
+  });
+
+  it("「最初から」でも入口へ戻る", async () => {
+    const { store, actions } = await ready(noSearch);
+    await actions.restart();
+    expect(store.getState().consult.entry).toBeNull();
+  });
+});
+
 describe("ストア：選んで進める相談", () => {
   it("選んだ内容を1つの発言にまとめて送り、聞き取りをしまう", async () => {
     const chat = vi.fn<ChatTransport["chat"]>(async () => {});
@@ -455,8 +691,10 @@ describe("ストア：選んで進める相談", () => {
     const { actions } = store.getState();
     await actions.enterShop();
     await flush();
-    expect(store.getState().consult.active).toBe(true);
+    expect(store.getState().consult).toMatchObject({ active: true, entry: null });
 
+    actions.chooseConsultEntry("trip");
+    expect(store.getState().consult).toMatchObject({ entry: "trip", step: "party" });
     actions.pickConsult("party", "family");
     actions.setConsultText("origin", "みなと中央駅");
     actions.pickConsult("schedule", "nextWeekend");
@@ -474,8 +712,21 @@ describe("ストア：選んで進める相談", () => {
 
     // 選び直すと、最初の段階から開き、選んだ内容は残る
     actions.reopenConsult();
-    expect(store.getState().consult).toMatchObject({ active: true, step: "party" });
+    expect(store.getState().consult).toMatchObject({ active: true, entry: "trip", step: "party" });
     expect(store.getState().consult.answers.party?.picks).toEqual(["family"]);
+  });
+
+  it("入口を選ばずに書いて送ると、今までの相談として受ける。選び直すと旅行計画の聞き取りを開く", async () => {
+    const chat = vi.fn<ChatTransport["chat"]>(async () => {});
+    const store = makeStore({ ...instantReplay(), chat });
+    const { actions } = store.getState();
+    await actions.enterShop();
+    await flush();
+    await actions.send("来週末に、みなと中央駅から日帰りで");
+    expect(chat).toHaveBeenCalledTimes(1);
+    expect(store.getState().consult).toMatchObject({ active: false, entry: null });
+    actions.reopenConsult();
+    expect(store.getState().consult).toMatchObject({ active: true, entry: "trip" });
   });
 
   it("何も選んでいなければ送らない。自分の言葉で送ったら聞き取りをしまう", async () => {
@@ -554,6 +805,7 @@ describe("ストア：条件に合う祭りが見つからないとき", () => {
         onMessage(done);
       },
       updatePreferences: async () => {},
+      searchFestivals: noSearch,
     };
   }
 
