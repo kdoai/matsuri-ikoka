@@ -1,0 +1,500 @@
+{
+  "id": "karatsu-kunchi",
+  "name": {
+    "ja": "唐津くんち",
+    "en": "Karatsu Kunchi Festival"
+  },
+  "category": "float",
+  "municipalities": [
+    {
+      "prefecture": "佐賀県",
+      "name": "唐津市"
+    }
+  ],
+  "venue": {
+    "name": "唐津神社と旧城下町",
+    "lat": 33.4514,
+    "lng": 129.9694
+  },
+  "scaleTier": "M",
+  "popularity": "major",
+  "listedIn": ["walkerplus", "jalan", "rurubu", "jnto"],
+  "highlights": [
+    "獅子や鯛、兜をかたどった14台の曳山が町を巡る",
+    "11月3日、西ノ浜の砂地へ曳山を力ずくで曳き込む",
+    "11月2日の夜、灯りをともした曳山が神社前にそろう宵曳山",
+    "各家で巨大魚アラの姿煮を囲む、くんち料理のもてなし"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1819年から奉納された曳山が残り、国の重要無形民俗文化財に指定されている",
+      "sources": [
+        {
+          "url": "https://www.karatsu-kankou.jp/feature/karatsukunchi/",
+          "title": "唐津観光協会 唐津くんち特集（毎年11月2、3、4日に開催）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.karatsu-kankou.jp/feature/karatsukunchi/sketches/",
+          "title": "唐津観光協会 唐津くんち歳時記",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "曳山を奉納した14町の人が曳子を務め、町ごとに曳山を受け継ぐ",
+      "sources": [
+        {
+          "url": "https://www.karatsu-kankou.jp/feature/karatsukunchi/sketches/",
+          "title": "唐津観光協会 唐津くんち歳時記",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "1819年から1876年の57年間に15台が奉納され、14台が今も残る",
+      "source": {
+        "url": "https://www.karatsu-kankou.jp/feature/karatsukunchi/sketches/",
+        "title": "唐津観光協会 唐津くんち歳時記",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "「供日」とも書き、収穫への感謝が込められている",
+      "source": {
+        "url": "https://www.karatsu-kankou.jp/feature/karatsukunchi/",
+        "title": "唐津観光協会 唐津くんち特集（毎年11月2、3、4日に開催）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "くんちのアラの姿煮は60cmを超えることも珍しくなく、1日かけて煮込む",
+      "source": {
+        "url": "https://www.karatsu-kankou.jp/feature/karatsukunchi/",
+        "title": "唐津観光協会 唐津くんち特集（毎年11月2、3、4日に開催）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "西ノ浜の曳き込みでは、重さ2〜3トンの曳山が砂地で進みにくくなる",
+      "source": {
+        "url": "https://www.asobo-saga.jp/articles/detail/b6085502-e646-4fc4-ae4c-92f6437159eb",
+        "title": "あそぼーさが 秋の大祭「唐津くんち」完全ガイド（2026年）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "警察官や曳山関係者の指示に従う",
+      "曳山や綱に近づかず、曳山のすぐ後ろや横について歩かない",
+      "曲がり角では道を広く空け、歩道から身を乗り出さない",
+      "巡行路への立ち入りと路上の座り込みは禁止",
+      "自撮り棒は禁止。巡行ルートと唐津神社周辺でドローンは飛ばせない",
+      "路上駐車をせず、公共交通か有料・臨時無料の駐車場を使う"
+    ],
+    "dress": ["歩きやすい靴", "朝晩の冷え込みに備える上着"],
+    "bring": ["水分", "現金（屋台で要ることがある）", "絆創膏や常備薬"],
+    "risk": {
+      "level": "high",
+      "reason": "曳き回しの曳山や綱の近く、とくに曲がり角は危険だと主催側が注意している"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "自撮り棒とドローンは禁止"
+    },
+    "sources": [
+      {
+        "url": "https://www.karatsu-kankou.jp/feature/karatsukunchi/",
+        "title": "唐津観光協会 唐津くんち特集（毎年11月2、3、4日に開催）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.karatsu-kankou.jp/feature/karatsukunchi/course/",
+        "title": "唐津観光協会 曳山巡行コース・駐車場（2026年版）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.karatsu-kankou.jp/feature/karatsukunchi/sketches/",
+        "title": "唐津観光協会 唐津くんち歳時記",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.karatsu.lg.jp/page/26467.html",
+        "title": "唐津市 唐津くんちの案内情報（令和8年）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.asobo-saga.jp/articles/detail/b6085502-e646-4fc4-ae4c-92f6437159eb",
+        "title": "あそぼーさが 秋の大祭「唐津くんち」完全ガイド（2026年）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-11-02",
+      "start": "19:00",
+      "end": "21:30",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "宵曳山。今年から30分早くなった。曳山は14台。昨年の人出は57万人",
+      "sources": [
+        {
+          "url": "https://www.city.karatsu.lg.jp/page/26467.html",
+          "title": "唐津市 唐津くんちの案内情報（令和8年）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.karatsu-kankou.jp/feature/karatsukunchi/course/",
+          "title": "唐津観光協会 曳山巡行コース・駐車場（2026年版）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.asobo-saga.jp/articles/detail/b6085502-e646-4fc4-ae4c-92f6437159eb",
+          "title": "あそぼーさが 秋の大祭「唐津くんち」完全ガイド（2026年）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20000337",
+          "title": "るるぶ&more. 唐津くんち（2026年11月2日〜4日、昨年の人出57万人）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-03",
+      "start": "09:30",
+      "end": "16:30",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "御旅所神幸。12:00 ごろ西ノ浜へ曳き込み、15:00 ごろ曳き出し",
+      "sources": [
+        {
+          "url": "https://www.city.karatsu.lg.jp/page/26467.html",
+          "title": "唐津市 唐津くんちの案内情報（令和8年）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.asobo-saga.jp/articles/detail/b6085502-e646-4fc4-ae4c-92f6437159eb",
+          "title": "あそぼーさが 秋の大祭「唐津くんち」完全ガイド（2026年）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-04",
+      "start": "10:00",
+      "end": "16:40",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "翌日祭（町廻り）。昼ごろ米屋町通りに集まり、夕方に曳山展示場へ納める",
+      "sources": [
+        {
+          "url": "https://www.city.karatsu.lg.jp/page/26467.html",
+          "title": "唐津市 唐津くんちの案内情報（令和8年）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.asobo-saga.jp/articles/detail/b6085502-e646-4fc4-ae4c-92f6437159eb",
+          "title": "あそぼーさが 秋の大祭「唐津くんち」完全ガイド（2026年）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-11-02",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "宵曳山の見込み。毎年11月2〜4日の決まりから見込んだ日（2027年の発表はまだない）",
+      "sources": [
+        {
+          "url": "https://www.karatsu-kankou.jp/feature/karatsukunchi/",
+          "title": "唐津観光協会 唐津くんち特集（毎年11月2、3、4日に開催）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-11-03",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "御旅所神幸の見込み。毎年11月2〜4日の決まりから見込んだ日（2027年の発表はまだない）",
+      "sources": [
+        {
+          "url": "https://www.karatsu-kankou.jp/feature/karatsukunchi/",
+          "title": "唐津観光協会 唐津くんち特集（毎年11月2、3、4日に開催）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    },
+    {
+      "date": "2027-11-04",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "翌日祭の見込み。毎年11月2〜4日の決まりから見込んだ日（2027年の発表はまだない）",
+      "sources": [
+        {
+          "url": "https://www.karatsu-kankou.jp/feature/karatsukunchi/",
+          "title": "唐津観光協会 唐津くんち特集（毎年11月2、3、4日に開催）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 唐津駅",
+        "walkMinutes": [10, 15],
+        "note": "唐津神社まで"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "博多駅",
+        "minutes": [80, 90],
+        "route": "福岡市地下鉄空港線からJR筑肥線へ直通（JNTOは約80分、japan-guideは約90分）"
+      }
+    ],
+    "parking": "limited",
+    "trafficRestrictions": [
+      "曳山巡行コース周辺で大規模な規制：11月2日 18:00〜23:30、3日 7:00〜18:00、4日 8:30〜18:30（2026年）",
+      "臨時無料駐車場は2日 17:00〜22:30、3・4日 9:00〜17:00（2026年）。シャトルバスはなし"
+    ],
+    "sources": [
+      {
+        "url": "https://www.asobo-saga.jp/articles/detail/b6085502-e646-4fc4-ae4c-92f6437159eb",
+        "title": "あそぼーさが 秋の大祭「唐津くんち」完全ガイド（2026年）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.karatsu-kankou.jp/feature/karatsukunchi/course/",
+        "title": "唐津観光協会 曳山巡行コース・駐車場（2026年版）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.karatsu.lg.jp/page/26467.html",
+        "title": "唐津市 唐津くんちの案内情報（令和8年）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.japan.travel/en/spot/326/",
+        "title": "日本政府観光局 Karatsu Kunchi Festival",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.japan-guide.com/e/e8375.html",
+        "title": "japan-guide.com Karatsu Travel Guide（曳山展示場、博多駅から約90分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "アラの姿煮",
+        "note": "くんちの日に各家庭で親しい人をもてなす料理",
+        "sources": [
+          {
+            "url": "https://www.karatsu-kankou.jp/feature/karatsukunchi/",
+            "title": "唐津観光協会 唐津くんち特集（毎年11月2、3、4日に開催）",
+            "checkedAt": "2026-11-05",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "karatsu-castle",
+      "name": "唐津城",
+      "kind": "sightseeing",
+      "summary": "唐津湾に面した丘の上の城。JR唐津駅から徒歩約20分。季節で時間が変わることがあり、12月29日〜31日は休み",
+      "location": {
+        "lat": 33.4529,
+        "lng": 129.9777
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:40"
+      },
+      "closedDays": [],
+      "price": "一般500円、小中学生250円（エレベーターは別料金）",
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "http://www.karatsu-kankou.jp/spots/detail/181/",
+          "title": "唐津観光協会 唐津城",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.japan-guide.com/e/e8375.html",
+          "title": "japan-guide.com Karatsu Travel Guide（曳山展示場、博多駅から約90分）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "id": "karatsu-hikiyama-exhibition-hall",
+      "name": "唐津市曳山展示場",
+      "kind": "sightseeing",
+      "summary": "くんちの14台の曳山を間近で見られる。建て替えのためアルピノの旧多目的ホールに一時移転中。11月3・4日は巡行で休みで、4日夕方に曳山を納める。12月29〜31日も休み",
+      "location": {
+        "lat": 33.446,
+        "lng": 129.9701
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:40"
+      },
+      "closedDays": [],
+      "price": "一般310円、小中学生150円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.karatsu-kankou.jp/spots/detail/188/",
+          "title": "唐津観光協会 曳山展示場（一時移転先、開館時間、料金、休館日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.asobo-saga.jp/articles/detail/b6085502-e646-4fc4-ae4c-92f6437159eb",
+          "title": "あそぼーさが 秋の大祭「唐津くんち」完全ガイド（2026年）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "uodokoro-yamashige",
+      "name": "魚処 山茂",
+      "kind": "food",
+      "summary": "いかの活造り定食や刺身の定食の店。JR唐津駅から徒歩約2分。三連休は日曜に開け月曜に休むことがある",
+      "location": {
+        "lat": 33.4473,
+        "lng": 129.9682
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "17:00",
+        "close": "22:00",
+        "lastEntry": "21:30"
+      },
+      "closedDays": ["sun"],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.karatsu-kankou.jp/gourmet/detail/118/Gourmet",
+          "title": "唐津観光協会 魚処 山茂",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.karatsu-kankou.jp/feature/karatsukunchi/",
+      "title": "唐津観光協会 唐津くんち特集（毎年11月2、3、4日に開催）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.karatsu.lg.jp/page/26467.html",
+      "title": "唐津市 唐津くんちの案内情報（令和8年）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.asobo-saga.jp/articles/detail/b6085502-e646-4fc4-ae4c-92f6437159eb",
+      "title": "あそぼーさが 秋の大祭「唐津くんち」完全ガイド（2026年）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.japan.travel/en/spot/326/",
+      "title": "日本政府観光局 Karatsu Kunchi Festival",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20000337",
+      "title": "るるぶ&more. 唐津くんち（2026年11月2日〜4日、昨年の人出57万人）",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.walkerplus.com/event/ar1041e504645/",
+      "title": "ウォーカープラス 唐津くんち",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_349428/",
+      "title": "じゃらんnet 唐津くんち",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "曳山を曳く一般向けの募集があるか",
+    "雨天のときの扱い",
+    "巡行コースの道順（公式の案内は PDF の図）",
+    "くんち料理を旅行者が食べられる店",
+    "周辺の場所の知名度",
+    "2027年の時刻と交通規制の発表"
+  ]
+}
