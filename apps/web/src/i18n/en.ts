@@ -310,6 +310,43 @@ export const en: Messages = {
     needOne: "Answer at least one to ask",
     reopen: "Choose again",
     startOver: "Start over",
+    anchored: {
+      prompts: {
+        schedule: (name: string) =>
+          `Let's set the day you'll go to ${name}, and whether you'll stay`,
+        destination: (name: string) =>
+          `We'll definitely go to ${name}. Anywhere else you'd like to stop by?`,
+        confirm: "Here's the outline. We'll build your plan from it!",
+      },
+      dayLabel: "The day you'll go",
+      stayLabel: "Day trip or overnight",
+      pickDates: "Pick dates",
+      calendarHint: (day: string) => `Pick the days you go and come back, including ${day}`,
+      festivalDay: (day: string) => `${day} (festival day)`,
+      must: "Must go",
+      mustNote: "This is where your festival takes place, so it stays in the trip",
+      wishLabel: "Other places you'd like to stop by",
+      wishLimit: (max: number) =>
+        `We can check up to ${max} places. We'll check the first ${max} you chose`,
+      plan: {
+        title: "Trip outline",
+        festival: "Your festival",
+        dates: "Trip dates",
+        datesNote: "We set the dates to fit your stops and travel time",
+        order: "Route",
+        included: "Included",
+        maybe: "If there's time",
+        dropped: "Left out this time",
+        warnings: "Please note",
+        fixNights: (nights: number) =>
+          `Change the length of stay (${plural(nights, "night", "nights")} would be safer)`,
+        loading: "Checking the outline",
+        failed:
+          "We couldn't check the outline. If you go ahead, we'll check it when building your plan",
+        retry: "Check again",
+      },
+      submit: "Build the plan with these",
+    },
     entry: {
       label: "How to start",
       prompt: "Welcome! How would you like to look today?",
@@ -348,6 +385,13 @@ export const en: Messages = {
       transport: (modes: string[]) => `getting around by ${modes.join(", ")}`,
       transportOptions: consultTransport,
       line: (label: string, text: string) => `- ${label}: ${text}`,
+      anchored: {
+        intro: (name: string, date: string) =>
+          `Please build a trip to ${name} on ${date}. Here is what I chose:`,
+        outro: "Please don't look for other festivals. Build the plan around this one.",
+        mustGo: (place: string) => `must go: ${place}`,
+        wishes: (places: string) => `would like to stop by: ${places}`,
+      },
     },
   },
   festivalSearch: {

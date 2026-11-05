@@ -4,7 +4,7 @@ import {
   type SampleConversation,
   type SseEventOf,
 } from "@matsuri-ikoka/schema";
-import type { ChatTransport, OnSseMessage } from "../transport/types";
+import { type ChatTransport, type OnSseMessage, TransportError } from "../transport/types";
 
 // テストで使う通信の口の代わり。記録した相談（data/samples/conversations）を、記録した間隔のとおりに
 // 再生する。ストアのテストだけが使い、画面のビルドには含めない（画面はいつも接客サーバーと話す）。
@@ -91,6 +91,10 @@ export function createReplayTransport(
     async searchFestivals() {
       // 記録した相談に祭り探しは入っていないので、いつも見つからない形で返す
       return { results: [], remaining: 0, nearMatches: [], next: [], reading: null };
+    },
+    async previewFestivalTrip() {
+      // 記録した相談に組み立ての確認は入っていないので、確かめられなかった形で返す
+      throw new TransportError("internal");
     },
     async chat(_request, onMessage, signal) {
       const turn = sample.turns[next];

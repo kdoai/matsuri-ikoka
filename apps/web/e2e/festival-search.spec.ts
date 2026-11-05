@@ -1,4 +1,7 @@
 import type {
+  AnchorPlan,
+  AnchorPlanRequest,
+  ChatRequest,
   FestivalSearchRequest,
   FestivalSearchResponse,
   FestivalSearchResult,
@@ -285,6 +288,294 @@ test("旅行計画を作成すると今の聞き取りへ進み、＜ で決め�
 
   await page.getByTestId("consult-back").click();
   await expect(page.getByTestId("festival-decide")).toBeVisible();
+});
+
+// ---------------------------------------------------------------------------
+// 祭りを固定した聞き取り。祭りは架空の記録（data/samples）で、接客サーバーの mock に通す
+
+/** 記録の祭りの開催日より前の今日。画面の「今日」をこの日にする */
+const SAMPLE_TODAY = "2026-08-03T10:00:00+09:00";
+
+const FIXED_FESTIVAL: FestivalSearchResult = {
+  ...result(1),
+  candidate: {
+    ...result(1).candidate,
+    festivalId: "suzunari-toro",
+    name: "鈴鳴灯籠まつり",
+    date: "2026-08-16",
+    place: "架空県鈴鳴町",
+    venueName: "鈴鳴川の河原",
+    confirmed: true,
+  },
+};
+
+/** 祭りから探して決め、「旅行計画を作成する」まで進める */
+async function planFixedFestival(page: Page, sample: string | null = "suzunari-fixed-festival") {
+  await page.clock.setFixedTime(new Date(SAMPLE_TODAY));
+  await fakeSearch(page, [reply({ results: [FIXED_FESTIVAL, result(2)] })]);
+  await page.goto(`/?scene=2d${sample === null ? "" : `&sample=${sample}`}`);
+  await page.getByRole("button", { name: "入店する" }).click();
+  await talkToConcierge(page);
+  await answerAll(page);
+  await page
+    .getByTestId("festival-results")
+    .getByRole("button", { name: "この祭りにする" })
+    .first()
+    .click();
+  const consult = page.getByTestId("consult");
+  await consult.getByRole("button", { name: "旅行計画を作成する", exact: true }).click();
+  return consult;
+}
+
+/** だれと → 日程（泊数） → 出発地 まで答える */
+async function answerUpToOrigin(page: Page, nights: string) {
+  const consult = page.getByTestId("consult");
+  await consult.getByRole("button", { name: "友人と", exact: true }).click();
+  await consult.getByTestId("consult-decide").click();
+  await expect(page.getByTestId("dialogue")).toContainText("鈴鳴灯籠まつり");
+  await consult.getByRole("button", { name: nights, exact: true }).click();
+  const station = consult.getByRole("textbox", { name: "最寄りの駅" });
+  await station.fill("みなと中央駅");
+  await station.press("Enter");
+}
+
+/** 楽しみ → 食べたいもの → ペース → 予算 → ひとこと（書かない）と進め、確認の画面まで */
+async function answerRest(page: Page) {
+  const consult = page.getByTestId("consult");
+  const choose = (name: string) => consult.getByRole("button", { name, exact: true }).click();
+  for (let i = 0; i < 2; i++) {
+    await choose("おまかせ");
+    await consult.getByTestId("consult-decide").click();
+  }
+  await choose("おまかせ");
+  await choose("おまかせ");
+  await consult.getByTestId("consult-decide").click();
+}
+
+const planOf = (overrides: Partial<AnchorPlan> = {}): AnchorPlan => ({
+  anchor: { festivalId: "suzunari-toro", date: "2026-08-16" },
+  festivalName: "鈴鳴灯籠まつり",
+  mustPrefectures: ["香川県"],
+  visits: [],
+  order: ["みなと中央駅", "鈴鳴灯籠まつり", "みなと中央駅"],
+  startDate: "2026-08-16",
+  endDate: "2026-08-17",
+  minNights: null,
+  warnings: [],
+  ...overrides,
+});
+
+test("祭りから探して固定の聞き取りを進め、組み立てを確かめて旅程まで届く", async ({
+  page,
+}, info) => {
+  const previews: AnchorPlanRequest[] = [];
+  page.on("request", (request) => {
+    if (request.url().includes("/api/festival-trips/preview")) {
+      previews.push(request.postDataJSON() as AnchorPlanRequest);
+    }
+  });
+  const chats: ChatRequest[] = [];
+  page.on("request", (request) => {
+    if (request.url().endsWith("/api/chat")) chats.push(request.postDataJSON() as ChatRequest);
+  });
+  const consult = await planFixedFestival(page);
+  await expect(page.getByTestId("consult-progress")).toHaveText("1 / 10");
+  await consult.getByRole("button", { name: "友人と", exact: true }).click();
+  await consult.getByTestId("consult-decide").click();
+
+  // 日程：開催回が1つなら確かめるだけ。行く日を含まない期間は選べない
+  await expect(page.getByTestId("anchor-day-fixed")).toContainText("18:30〜21:00");
+  await consult.getByRole("button", { name: "日付を指定", exact: true }).click();
+  const calendar = page.getByTestId("consult-calendar");
+  await expect(calendar.locator('[data-date="2026-08-16"]')).toBeEnabled();
+  await expect(calendar.locator('[data-date="2026-08-15"]')).toBeEnabled();
+  await expect(calendar.locator('[data-date="2026-08-17"]')).toBeDisabled();
+  await calendar.locator('[data-date="2026-08-15"]').click();
+  // 行きを選んだあとは、祭りの日より前を帰りにできない
+  await expect(calendar.locator('[data-date="2026-08-16"]')).toBeFocused();
+  await expect(calendar.locator('[data-date="2026-08-17"]')).toBeEnabled();
+  await snap(page, info, "54-anchor-schedule");
+  await calendar.locator('[data-date="2026-08-17"]').click();
+  await expect(page.getByTestId("consult-nights")).toContainText("2泊3日");
+  await calendar.getByTestId("consult-decide").click();
+
+  const station = consult.getByRole("textbox", { name: "最寄りの駅" });
+  await station.fill("みなと中央駅");
+  await station.press("Enter");
+
+  // 行き先：祭りの開催地は外せない形で出る。寄りたい場所は選ばなくてもよい
+  const must = page.getByTestId("anchor-must-go");
+  await expect(must).toContainText("必ず行く");
+  await expect(must).toContainText("鈴鳴灯籠まつり");
+  await expect(must.getByRole("button")).toHaveCount(0);
+  await expect(consult.getByTestId("consult-decide")).toBeEnabled();
+  await consult.getByRole("button", { name: "四国", exact: true }).click();
+  await consult.getByRole("button", { name: "その他", exact: true }).click();
+  await consult.getByRole("textbox", { name: /寄りたい場所/ }).fill("架空の岬");
+  await snap(page, info, "55-anchor-destination");
+  await consult.getByTestId("consult-decide").click();
+  await answerRest(page);
+
+  // 確認で組み立てを出す
+  const plan = page.getByTestId("anchor-plan");
+  await expect(plan).toHaveAttribute("data-status", "ready");
+  await expect(page.getByTestId("anchor-plan-dates")).toBeVisible();
+  await expect(page.getByTestId("anchor-plan-order")).toContainText("鈴鳴町");
+  await expect(plan.getByTestId("anchor-must-go")).toBeVisible();
+  await expect(plan.getByText("架空の岬")).toBeVisible();
+  await snap(page, info, "56-anchor-plan");
+  expect(previews.at(-1)).toMatchObject({
+    anchor: { festivalId: "suzunari-toro", date: "2026-08-16" },
+    origin: "みなと中央駅",
+    nights: 2,
+    wishes: ["四国", "架空の岬"],
+    pace: "auto",
+  });
+
+  // 送ると、祭りを固定して旅程まで届く
+  await consult.getByTestId("consult-submit").click();
+  await waitForReply(page);
+  await expect(page.getByTestId("itinerary-panel")).toContainText("第1版");
+  expect(chats[0]?.anchor).toEqual({ festivalId: "suzunari-toro", date: "2026-08-16" });
+  expect(chats[0]?.message).toContain("祭りは探し直さず");
+  expect(chats[0]?.message).toContain("四国");
+});
+
+test("日帰りでは行き先を聞かず、泊数が足りなければ日程へ戻って直せる", async ({ page }) => {
+  const dropped = {
+    name: "B県",
+    prefecture: null,
+    status: "dropped",
+    reason: "<b>遠い</b>ので今回は外します",
+  } as const;
+  const bodies: AnchorPlanRequest[] = [];
+  await page.route("**/api/festival-trips/preview", (route) => {
+    const body = route.request().postDataJSON() as AnchorPlanRequest;
+    bodies.push(body);
+    return route.fulfill({
+      json:
+        body.nights === 0
+          ? planOf({
+              endDate: "2026-08-16",
+              minNights: 1,
+              warnings: ["日帰りでは、この祭りに無理なく行けません"],
+            })
+          : planOf({
+              visits: [
+                { name: "A県", prefecture: null, status: "included", reason: null },
+                { name: "C県", prefecture: null, status: "maybe", reason: "余裕があれば" },
+                dropped,
+              ],
+            }),
+    });
+  });
+  const consult = await planFixedFestival(page);
+  await answerUpToOrigin(page, "日帰り");
+
+  // 行き先を飛ばして、楽しみへ進む。段階の数も1つ減る
+  await expect(page.getByTestId("dialogue")).toContainText("楽しみたいこと");
+  await expect(page.getByTestId("consult-progress")).toHaveText("4 / 9");
+  await page.getByTestId("consult-back").click();
+  await expect(consult.getByRole("textbox", { name: "最寄りの駅" })).toBeVisible();
+  await page.getByTestId("consult-forward").click();
+  await answerRest(page);
+
+  await expect(page.getByTestId("anchor-plan-warnings")).toContainText("無理なく行けません");
+  await expect(page.getByTestId("anchor-plan").getByTestId("anchor-must-go")).toContainText(
+    "必ず行く",
+  );
+  const fix = page.getByTestId("anchor-fix-nights");
+  await expect(fix).toContainText("1泊あると安心");
+
+  // 泊数を直すと、確認へ戻り、確かめ直す
+  await fix.click();
+  await consult.getByRole("button", { name: "1泊2日", exact: true }).click();
+  await expect(page.getByTestId("anchor-plan-warnings")).toHaveCount(0);
+  await expect(page.getByTestId("anchor-fix-nights")).toHaveCount(0);
+  expect(bodies.map((body) => body.nights)).toEqual([0, 1]);
+
+  // 入れる・余裕があれば入れる・今回は外すと理由が読める。サーバーの文は文字として出す
+  await expect(page.getByTestId("anchor-visits-included")).toContainText("A県");
+  await expect(page.getByTestId("anchor-visits-maybe")).toContainText("余裕があれば");
+  const left = page.getByTestId("anchor-visits-dropped");
+  await expect(left).toContainText("B県");
+  await expect(left).toContainText("<b>遠い</b>ので今回は外します");
+  await expect(left.locator("b")).toHaveCount(0);
+});
+
+test("組み立てを確かめられなくても理由を出し、確かめ直しも、そのまま送ることもできる", async ({
+  page,
+}) => {
+  let attempts = 0;
+  await page.route("**/api/festival-trips/preview", (route) => {
+    attempts += 1;
+    return attempts === 1
+      ? route.fulfill({
+          status: 400,
+          json: { code: "bad_request", message: "確かめられませんでした。", retryable: false },
+        })
+      : route.fulfill({
+          status: 500,
+          json: { code: "internal", message: "失敗", retryable: true },
+        });
+  });
+  const consult = await planFixedFestival(page);
+  await answerUpToOrigin(page, "1泊2日");
+  await consult.getByTestId("consult-decide").click();
+  await answerRest(page);
+
+  const error = page.getByTestId("anchor-plan-error");
+  await expect(error).toContainText("確かめられませんでした。");
+  await page.getByTestId("anchor-plan-retry").click();
+  await expect(error).toContainText("失敗");
+  await expect(page.getByTestId("anchor-must-go")).toBeVisible();
+
+  await consult.getByTestId("consult-submit").click();
+  await waitForReply(page);
+  await expect(page.getByTestId("itinerary-panel")).toContainText("第1版");
+});
+
+test("中止と分かって旅程が組めなければ、祭りの結果へ戻れる", async ({ page }) => {
+  await page.route("**/api/festival-trips/preview", (route) => route.fulfill({ json: planOf() }));
+  const sse = (type: string, data: unknown) => `event: ${type}\ndata: ${JSON.stringify(data)}\n\n`;
+  await page.route("**/api/chat", (route) =>
+    route.fulfill({
+      status: 200,
+      headers: { "content-type": "text/event-stream" },
+      body: [
+        sse("festival.verified", {
+          festivalId: "suzunari-toro",
+          date: "2026-08-16",
+          scope: "candidate",
+          result: "cancelled",
+          checkedAt: "2026-08-03T10:00:00+09:00",
+          sources: [],
+        }),
+        sse("message.delta", {
+          messageId: "m-1",
+          text: "今年は中止と分かりました。ほかの祭りを選んでください。",
+        }),
+        sse("done", {
+          stage: "candidates",
+          conditions: {},
+          preferences: { party: "adults", spot: "hidden", food: "local", move: "train" },
+        }),
+      ].join(""),
+    }),
+  );
+  const consult = await planFixedFestival(page);
+  await answerUpToOrigin(page, "1泊2日");
+  await consult.getByTestId("consult-decide").click();
+  await answerRest(page);
+  await expect(page.getByTestId("anchor-plan")).toHaveAttribute("data-status", "ready");
+  await consult.getByTestId("consult-submit").click();
+
+  const replies = page.getByTestId("reply-choices");
+  await expect(replies.getByRole("button", { name: "条件を選び直す" })).toHaveCount(0);
+  await replies.getByRole("button", { name: "ほかの祭りを見る" }).click();
+  const cards = page.getByTestId("festival-results").getByTestId("candidate-card");
+  await expect(cards).toHaveCount(1);
+  await expect(cards.first()).toContainText("架空の祭り2");
 });
 
 test("探すのに失敗したら理由を出し、もう一度探せる", async ({ page }) => {

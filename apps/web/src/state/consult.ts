@@ -1,4 +1,5 @@
 import {
+  type AnchorPlan,
   BUDGET_BASES,
   type BudgetBasis,
   DAY_TRIP_TRAVEL_LIMITS,
@@ -10,6 +11,7 @@ import {
   type TransportMode,
   type TripAnchor,
 } from "@matsuri-ikoka/schema";
+import type { ClientError } from "./types";
 
 // 選んで進める相談（聞き取り）。文章を書かなくても、選択肢を選ぶだけで旅の好みを伝えられる。
 // 段階は上から順に答える一本道で、答えると次の段階へ進む。選んだ内容は1つの発言にまとめ、
@@ -167,6 +169,21 @@ export type ConsultAnswers = Partial<Record<ConsultQuestion, ConsultAnswer>>;
 export const CONSULT_ENTRIES = ["festival", "trip"] as const;
 export type ConsultEntry = (typeof CONSULT_ENTRIES)[number];
 
+/** 祭りを固定した聞き取りの確認（POST /api/festival-trips/preview）の結果。key は要求の印 */
+export interface AnchorPreview {
+  status: "idle" | "loading" | "ready" | "failed";
+  key: string | null;
+  plan: AnchorPlan | null;
+  error: ClientError | null;
+}
+
+export const INITIAL_ANCHOR_PREVIEW: AnchorPreview = Object.freeze({
+  status: "idle",
+  key: null,
+  plan: null,
+  error: null,
+}) as AnchorPreview;
+
 export interface ConsultState {
   /** 選んで進める聞き取りを出しているか。まとめて送ったら閉じ、「選び直す」でまた開く */
   active: boolean;
@@ -174,6 +191,10 @@ export interface ConsultState {
   entry: ConsultEntry | null;
   /** 祭りから探して決めた祭りと行く日。旅行計画の聞き取りに進むときに残す */
   anchor: TripAnchor | null;
+  /** 決めた祭りが、旅程を組む前の確かめで中止と分かったか */
+  anchorCancelled: boolean;
+  /** 祭りを固定した聞き取りの確認の結果 */
+  preview: AnchorPreview;
   step: ConsultStep;
   /** 確認の画面から直しに来たか。答えたら、確認の画面へ戻る */
   editing: boolean;
@@ -184,6 +205,8 @@ export const INITIAL_CONSULT: ConsultState = Object.freeze({
   active: true,
   entry: null,
   anchor: null,
+  anchorCancelled: false,
+  preview: INITIAL_ANCHOR_PREVIEW,
   step: "party",
   editing: false,
   answers: {},
@@ -239,7 +262,15 @@ export function chooseEntry(state: ConsultState, entry: ConsultEntry): ConsultSt
 export function leaveHearing(state: ConsultState): ConsultState {
   return state.anchor === null
     ? { ...state, entry: null, step: "party", editing: false }
-    : { ...state, entry: "festival", anchor: null, step: "party", editing: false };
+    : {
+        ...state,
+        entry: "festival",
+        anchor: null,
+        anchorCancelled: false,
+        preview: INITIAL_ANCHOR_PREVIEW,
+        step: "party",
+        editing: false,
+      };
 }
 
 export function setAnswerText(
@@ -438,37 +469,74 @@ export function hasAnyAnswer(answers: ConsultAnswers): boolean {
   return CONSULT_QUESTIONS.some((question) => isAnswered(answers[question], question));
 }
 
+/** 段階の並びを決める答え。祭りを固定していなければ anchor は null */
+export type HearingFlow = Pick<ConsultState, "answers" | "anchor">;
+
+const OPEN_FLOW: HearingFlow = { answers: {}, anchor: null };
+
+/** いま聞く段階の並び。祭りを固定した日帰りでは、行き先を聞かない */
+export function hearingSteps(flow: HearingFlow = OPEN_FLOW): readonly ConsultStep[] {
+  return flow.anchor !== null && isDayTrip(flow.answers)
+    ? CONSULT_STEPS.filter((step) => step !== "destination")
+    : CONSULT_STEPS;
+}
+
 /** その段階を終えたか。「ひとこと」は書かなくても先へ進める */
-function stepDone(step: ConsultStep, answers: ConsultAnswers): boolean {
+function stepDone(step: ConsultStep, { answers, anchor }: HearingFlow): boolean {
   if (step === "confirm") return false;
   if (step === "note") return true;
+  // 祭りを固定しているとき、行き先は決まっている（寄りたい場所は選ばなくてもよい）。
+  // 日程は、行く日を含む期間を選んではじめて答えになる
+  if (anchor !== null && step === "destination") return true;
+  if (anchor !== null && step === "schedule") {
+    const range = answers.schedule?.range;
+    return range !== undefined && range.from <= anchor.date && anchor.date <= range.to;
+  }
   // 交通手段だけでは進めない。祭りを探すのに出発の駅が要る
   if (step === "origin") return (answers.origin?.text.trim().length ?? 0) > 0;
   return isAnswered(answers[step], step);
 }
 
 /** 進める段階の終わり（最初のまだ答えていない段階）。そこまでは ＜＞ で行き来できる */
-export function furthestStep(answers: ConsultAnswers): ConsultStep {
-  return CONSULT_STEPS.find((step) => !stepDone(step, answers)) ?? "confirm";
+export function furthestStep(
+  answers: ConsultAnswers,
+  anchor: TripAnchor | null = null,
+): ConsultStep {
+  const flow = { answers, anchor };
+  return hearingSteps(flow).find((step) => !stepDone(step, flow)) ?? "confirm";
 }
 
-export function canReach(step: ConsultStep, answers: ConsultAnswers): boolean {
-  return CONSULT_STEPS.indexOf(step) <= CONSULT_STEPS.indexOf(furthestStep(answers));
+export function canReach(
+  step: ConsultStep,
+  answers: ConsultAnswers,
+  anchor: TripAnchor | null = null,
+): boolean {
+  const steps = hearingSteps({ answers, anchor });
+  return steps.indexOf(step) <= steps.indexOf(furthestStep(answers, anchor));
 }
 
-export function nextStep(step: ConsultStep): ConsultStep {
-  const index = CONSULT_STEPS.indexOf(step);
-  return CONSULT_STEPS[Math.min(index + 1, CONSULT_STEPS.length - 1)] ?? "confirm";
+export function nextStep(step: ConsultStep, flow: HearingFlow = OPEN_FLOW): ConsultStep {
+  const steps = hearingSteps(flow);
+  return (
+    CONSULT_STEPS.slice(CONSULT_STEPS.indexOf(step) + 1).find((id) => steps.includes(id)) ??
+    "confirm"
+  );
 }
 
-export function previousStep(step: ConsultStep): ConsultStep {
-  const index = CONSULT_STEPS.indexOf(step);
-  return CONSULT_STEPS[Math.max(index - 1, 0)] ?? "party";
+export function previousStep(step: ConsultStep, flow: HearingFlow = OPEN_FLOW): ConsultStep {
+  const steps = hearingSteps(flow);
+  return (
+    CONSULT_STEPS.slice(0, CONSULT_STEPS.indexOf(step)).findLast((id) => steps.includes(id)) ??
+    "party"
+  );
 }
 
 /** 答えたあとに移る段階。確認の画面から直しに来たときは確認へ戻る */
-export function stepAfterAnswer(state: Pick<ConsultState, "step" | "editing">): ConsultStep {
-  return state.editing ? "confirm" : nextStep(state.step);
+export function stepAfterAnswer(
+  state: Pick<ConsultState, "step" | "editing">,
+  flow: HearingFlow = OPEN_FLOW,
+): ConsultStep {
+  return state.editing ? "confirm" : nextStep(state.step, flow);
 }
 
 // ---------------------------------------------------------------------------
@@ -606,6 +674,13 @@ export interface ConsultWording {
   transportOptions: Record<TransportMode, string>;
   /** 1項目の行（例：「・だれと：家族で」） */
   line: (label: string, text: string) => string;
+  /** 祭りを決めて旅程を組むときの言葉 */
+  anchored: {
+    intro: (name: string, date: string) => string;
+    outro: string;
+    mustGo: (place: string) => string;
+    wishes: (places: string) => string;
+  };
 }
 
 function partyText(answer: ConsultAnswer, wording: ConsultWording): string[] {
@@ -655,6 +730,27 @@ function destinationText(answer: ConsultAnswer, wording: ConsultWording): string
     return [prefectures.length === 0 ? label : wording.paren(label, prefectures.join("・"))];
   });
   return [...travel, ...places];
+}
+
+/** 祭りを固定した相談で、送る・確かめる答え。日帰りでは行き先を聞かないので、残っていても使わない */
+export function anchoredAnswers(answers: ConsultAnswers): ConsultAnswers {
+  if (!isDayTrip(answers)) return answers;
+  const { destination: _removed, ...rest } = answers;
+  return rest;
+}
+
+/** 祭りを固定した相談の行き先：必ず行く場所と、寄りたい場所 */
+export function anchoredDestinationText(
+  answer: ConsultAnswer | undefined,
+  wording: ConsultWording,
+  place: string,
+): string {
+  const wishes = answer === undefined ? [] : destinationText(answer, wording);
+  const parts = [
+    ...(place === "" ? [] : [wording.anchored.mustGo(place)]),
+    ...(wishes.length === 0 ? [] : [wording.anchored.wishes(wishes.join("・"))]),
+  ];
+  return parts.join(wording.separator);
 }
 
 /** 1つの項目の答えを言葉にする。答えていなければ null */
@@ -723,22 +819,53 @@ export function answerText(
   return filtered.length === 0 ? null : filtered.join(wording.separator);
 }
 
+/** 祭りを固定した相談で、まとめて送る一文に入れること。plan は確かめられた組み立て（なければ null） */
+export interface AnchorMessage {
+  name: string;
+  date: string;
+  place: string;
+  plan: Pick<AnchorPlan, "startDate" | "endDate"> | null;
+}
+
+/** 組み立ての日付があれば、日程の答えをその日付にする（旅程はこの日付の中で組む） */
+export function withPlanDates(
+  answers: ConsultAnswers,
+  plan: AnchorMessage["plan"],
+): ConsultAnswers {
+  const { schedule } = answers;
+  if (plan === null || schedule === undefined) return answers;
+  const range = { from: plan.startDate, to: plan.endDate };
+  return { ...answers, schedule: { ...schedule, range } };
+}
+
 /**
  * 選んだ内容を1つの発言にまとめる。答えていない項目は書かない（推測で埋めない）。
- * 何も答えていなければ null。長すぎるときは、発言の上限に収まるよう切る
+ * 何も答えていなければ null。長すぎるときは、発言の上限に収まるよう切る。
+ * anchored があれば、決めた祭りで旅程を組む発言にする（祭りを探し直さない）
  */
 export function composeConsultMessage(
   answers: ConsultAnswers,
   wording: ConsultWording,
   today: string,
+  anchored: AnchorMessage | null = null,
 ): string | null {
   const lines: string[] = [];
-  const effective = effectiveAnswers(answers);
+  const effective =
+    anchored === null
+      ? effectiveAnswers(answers)
+      : withPlanDates(anchoredAnswers(effectiveAnswers(answers)), anchored.plan);
   for (const question of CONSULT_QUESTIONS) {
-    const text = answerText(question, effective[question], wording, today);
-    if (text !== null) lines.push(wording.line(wording.questions[question], text));
+    const text =
+      anchored !== null && question === "destination"
+        ? anchoredDestinationText(effective.destination, wording, anchored.place)
+        : answerText(question, effective[question], wording, today);
+    if (text !== null && text !== "") lines.push(wording.line(wording.questions[question], text));
   }
   if (lines.length === 0) return null;
-  const message = [wording.intro, ...lines, wording.outro].join("\n");
+  const message = [
+    anchored === null ? wording.intro : wording.anchored.intro(anchored.name, anchored.date),
+    ...lines,
+    anchored === null ? wording.outro : wording.anchored.outro,
+  ].join("\n");
   return message.length > MAX_MESSAGE_LENGTH ? message.slice(0, MAX_MESSAGE_LENGTH) : message;
 }

@@ -10,16 +10,17 @@ import {
   UsersRound,
 } from "lucide-react";
 import { type ReactNode, useState } from "react";
+import { anchorPlace, currentPreview } from "../state/anchorTrip";
 import {
   AUTO,
   AUTO_QUESTIONS,
+  anchoredAnswers,
+  anchoredDestinationText,
   answerText,
   BUDGET_BASES,
   budgetBasis,
   type ChoiceQuestion,
   CONSULT_OPTIONS,
-  CONSULT_QUESTIONS,
-  CONSULT_STEPS,
   COUNT_LIMITS,
   type ConsultEntry,
   type ConsultQuestion,
@@ -29,6 +30,7 @@ import {
   effectiveAnswers,
   FAMILY_MEMBERS,
   hasAnyAnswer,
+  hearingSteps,
   isAnswered,
   isDayTrip,
   MULTI_QUESTIONS,
@@ -45,15 +47,16 @@ import {
   setRange,
   setStay,
   setTravel,
-  stepAfterAnswer,
   stepCount,
   TRANSPORT_OPTIONS,
   TRAVEL_LIMITS,
   todayInJapan,
   toggleDietary,
   toggleTransport,
+  withPlanDates,
 } from "../state/consult";
 import { useActions, useApp, useT } from "../state/react";
+import { AnchorConfirm, AnchorDestinationStep, AnchorScheduleStep } from "./consult/AnchorSteps";
 import {
   Choice,
   ChoiceGroup,
@@ -69,6 +72,7 @@ import {
 import { FestivalSearchPanel, useFestivalSearchLine } from "./consult/FestivalSearch";
 import { RangeCalendar } from "./consult/RangeCalendar";
 import { StationInput } from "./consult/StationInput";
+import { useConsult } from "./consult/useConsult";
 
 // 選んで進める相談。最初に入口の2択（祭りから探す / 旅行計画から探す）を出す。
 // 旅行計画は、会話の窓の中で、上から順に1つずつ答える一本道の聞き取り。祭りから探す相談は consult/FestivalSearch.tsx。
@@ -81,21 +85,6 @@ const PARTY_ICON: Record<string, ReactNode> = {
   friends: <UsersRound aria-hidden="true" className="size-4" />,
   partner: <Heart aria-hidden="true" className="size-4" />,
 };
-
-/** 聞き取りの操作をまとめたもの（段階の部品で使う） */
-function useConsult() {
-  const actions = useActions();
-  const step = useApp((state) => state.consult.step);
-  const editing = useApp((state) => state.consult.editing);
-  return {
-    actions,
-    /** 答えたので次へ（確認から直しに来たときは確認へ） */
-    advance() {
-      actions.setConsultStep(stepAfterAnswer({ step, editing }));
-      focusStep();
-    },
-  };
-}
 
 /** 選択肢で答える項目（だれと・行き先・楽しみ・食べたいもの・ペース・予算） */
 function ChoiceStep({ question }: { question: ChoiceQuestion & ConsultQuestion }) {
@@ -477,12 +466,30 @@ function NoteStep() {
 function Summary() {
   const t = useT();
   const actions = useActions();
-  const answers = effectiveAnswers(useApp((state) => state.consult.answers));
+  const raw = useApp((state) => state.consult.answers);
+  const anchor = useApp((state) => state.consult.anchor);
+  const chosen = useApp((state) => state.festivalSearch.chosen);
+  // 確かめられた組み立てがあれば、送る一文と同じ日付を見せる
+  const plan = useApp((state) => currentPreview(state.consult, state.session.id).plan);
+  const answers =
+    anchor === null
+      ? effectiveAnswers(raw)
+      : withPlanDates(anchoredAnswers(effectiveAnswers(raw)), plan);
   const today = todayInJapan();
+  const questions = hearingSteps({ answers: raw, anchor }).filter(
+    (step): step is ConsultQuestion => step !== "confirm",
+  );
   return (
     <dl className="grid gap-1 sm:grid-cols-2" data-testid="consult-summary">
-      {CONSULT_QUESTIONS.map((question, index) => {
-        const text = answerText(question, answers[question], t.consult.wording, today);
+      {questions.map((question, index) => {
+        const text =
+          anchor !== null && question === "destination"
+            ? anchoredDestinationText(
+                answers.destination,
+                t.consult.wording,
+                chosen === null ? "" : anchorPlace(chosen.candidate),
+              )
+            : answerText(question, answers[question], t.consult.wording, today);
         return (
           <div
             key={question}
@@ -518,8 +525,11 @@ function Progress() {
   const actions = useActions();
   const step = useApp((state) => state.consult.step);
   const answers = useApp((state) => state.consult.answers);
-  const index = CONSULT_STEPS.indexOf(step);
-  const next = nextStep(step);
+  const anchor = useApp((state) => state.consult.anchor);
+  const flow = { answers, anchor };
+  const steps = hearingSteps(flow);
+  const index = steps.indexOf(step);
+  const next = nextStep(step, flow);
   const go = (target: ConsultStep) => {
     actions.setConsultStep(target);
     focusStep();
@@ -528,17 +538,17 @@ function Progress() {
     <StepProgress
       label={t.consult.steps[step]}
       index={index}
-      done={CONSULT_STEPS.map(
+      done={steps.map(
         (id, at) =>
           at < index || (id !== "confirm" && id !== "note" && isAnswered(answers[id], id)),
       )}
-      forwardDisabled={step === "confirm" || !canReach(next, answers)}
+      forwardDisabled={step === "confirm" || !canReach(next, answers, anchor)}
       onBack={() => {
         if (index === 0) {
           actions.leaveHearing();
           focusStep();
         } else {
-          go(previousStep(step));
+          go(previousStep(step, flow));
         }
       }}
       onForward={() => go(next)}
@@ -547,15 +557,25 @@ function Progress() {
 }
 
 function StepBody({ step }: { step: ConsultStep }) {
+  const anchored = useApp((state) => state.consult.anchor !== null);
   switch (step) {
     case "schedule":
-      return <ScheduleStep />;
+      return anchored ? <AnchorScheduleStep /> : <ScheduleStep />;
     case "origin":
       return <OriginStep />;
     case "note":
       return <NoteStep />;
     case "confirm":
-      return <Summary />;
+      return anchored ? (
+        <div className="space-y-2">
+          <AnchorConfirm />
+          <Summary />
+        </div>
+      ) : (
+        <Summary />
+      );
+    case "destination":
+      return anchored ? <AnchorDestinationStep /> : <ChoiceStep question={step} />;
     default:
       return <ChoiceStep question={step} />;
   }
@@ -600,7 +620,12 @@ function TripHearing() {
   const step = useApp((state) => state.consult.step);
   const answers = useApp((state) => state.consult.answers);
   const ready = useApp((state) => state.session.status === "ready" && !state.session.streaming);
-  const canSend = ready && hasAnyAnswer(answers);
+  const anchored = useApp((state) => state.consult.anchor !== null);
+  // 組み立てを確かめている間は送らない（確かめられなかったときは送れる）
+  const previewing = useApp(
+    (state) => currentPreview(state.consult, state.session.id).status === "loading",
+  );
+  const canSend = ready && hasAnyAnswer(answers) && !previewing;
 
   return (
     <>
@@ -618,7 +643,7 @@ function TripHearing() {
             data-testid="consult-submit"
           >
             <Send aria-hidden="true" className="size-4" />
-            {t.consult.submit}
+            {anchored ? t.consult.anchored.submit : t.consult.submit}
           </button>
           {hasAnyAnswer(answers) ? null : (
             <p className="text-ink-soft text-xs">{t.consult.needOne}</p>
@@ -635,8 +660,17 @@ export function useConsultLine(): string {
   const entry = useApp((state) => state.consult.entry);
   const step = useApp((state) => state.consult.step);
   const festivalLine = useFestivalSearchLine();
+  const anchored = useApp((state) => state.consult.anchor !== null);
+  const name = useApp((state) => state.festivalSearch.chosen?.candidate.name ?? "");
   if (entry === null) return t.consult.entry.prompt;
-  return entry === "festival" ? festivalLine : t.consult.prompts[step];
+  if (entry === "festival") return festivalLine;
+  if (anchored) {
+    const words = t.consult.anchored.prompts;
+    if (step === "schedule") return words.schedule(name);
+    if (step === "destination") return words.destination(name);
+    if (step === "confirm") return words.confirm;
+  }
+  return t.consult.prompts[step];
 }
 
 /** 選んで進める相談の本体（会話の窓の中に出す） */

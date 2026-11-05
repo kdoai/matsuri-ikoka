@@ -16,6 +16,7 @@ import type {
   STAFF_TASKS,
   StaffId,
   ToolName,
+  TripAnchor,
   VerificationResult,
 } from "@matsuri-ikoka/schema";
 import type { ConsultState } from "./consult";
@@ -159,6 +160,8 @@ export interface ChatRequestDraft {
   preferences: Preferences;
   /** 候補の窓の次の手（ボタン）から送ったときの、変えて探し直す条件 */
   search?: SearchRetry;
+  /** 祭りから探して決めた祭りと行く日。送り直すときも落とさない */
+  anchor?: TripAnchor;
 }
 
 export interface SessionState {

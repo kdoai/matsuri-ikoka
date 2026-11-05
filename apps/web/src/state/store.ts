@@ -9,6 +9,7 @@ import {
   type SearchSuggestion,
   type SseEvent,
   type SseMessage,
+  type TripAnchor,
 } from "@matsuri-ikoka/schema";
 import { createStore, type StoreApi } from "zustand/vanilla";
 import { MESSAGES } from "../i18n";
@@ -16,9 +17,20 @@ import { isSendablePasscode } from "../transport/server";
 import type { ChatTransport, FestivalSource, OnSseMessage } from "../transport/types";
 import { toClientError } from "../transport/types";
 import {
+  anchorMessage,
+  anchorPlanRequest,
+  applyPreview,
+  beginAnchoredHearing,
+  beginPreview,
+  failPreview,
+  leaveAnchor,
+} from "./anchorTrip";
+import {
+  type AnchorPreview,
   type ConsultAnswers,
   type ConsultEntry,
   type ConsultQuestion,
+  type ConsultState,
   type ConsultStep,
   chooseEntry,
   composeConsultMessage,
@@ -46,6 +58,7 @@ import {
   finishHere,
   INITIAL_FESTIVAL_SEARCH,
   isSearching,
+  returnToResults,
   searchRequest,
 } from "./festivalSearch";
 import { initialData } from "./initial";
@@ -109,6 +122,10 @@ export interface AppActions {
   setConsultText(question: ConsultQuestion, text: string): void;
   /** 聞き取りの答えを、consult.ts の関数で変える（人数・期間・金額など） */
   editConsult(edit: (answers: ConsultAnswers) => ConsultAnswers): void;
+  /** 祭りを固定した聞き取りの状態を、anchorTrip.ts の関数で変える（行く日・泊数・期間） */
+  editAnchoredHearing(edit: (consult: ConsultState) => ConsultState): void;
+  /** いまの答えで旅の組み立てを確かめる。同じ答えの結果があれば読み直さない */
+  loadAnchorPreview(): Promise<void>;
   /** 選んだ内容を1つの発言にまとめて送る */
   submitConsult(): Promise<void>;
   /** 聞き取りを選び直す */
@@ -140,6 +157,8 @@ export interface AppActions {
   finishFestivalSearch(): void;
   /** 「旅行計画を作成する」：選んだ祭りを残して、旅行計画の聞き取りへ進む */
   planFestivalTrip(): void;
+  /** 祭りを決めて送ったあとに、祭りの結果へ戻る（中止と分かった祭りは一覧から外す） */
+  returnToFestivalResults(): void;
   /** はじめての操作の案内を閉じる */
   dismissTutorial(): void;
   /** のれんをくぐって店の外へ出る（相談はそのまま残す） */
@@ -179,6 +198,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
   let controller: AbortController | null = null;
   let sessionController: AbortController | null = null;
   let searchController: AbortController | null = null;
+  let previewController: AbortController | null = null;
   const timers = new Set<unknown>();
 
   return createStore<AppState>()((set, get) => {
@@ -342,7 +362,12 @@ export function createAppStore(deps: StoreDeps): AppStore {
       }
     };
 
-    const sendChat = async (message: string, retry: boolean, search?: SearchRetry) => {
+    const sendChat = async (
+      message: string,
+      retry: boolean,
+      search?: SearchRetry,
+      anchor?: TripAnchor,
+    ) => {
       const state = get();
       const sessionId = state.session.id;
       if (state.session.streaming || sessionId === null) {
@@ -350,11 +375,14 @@ export function createAppStore(deps: StoreDeps): AppStore {
       }
       const { preferences } = state;
       if (!state.ui.dialogueOpen) setUi({ dialogueOpen: true });
-      const withSearch = search === undefined ? {} : { search };
+      const extra = {
+        ...(search === undefined ? {} : { search }),
+        ...(anchor === undefined ? {} : { anchor }),
+      };
       await runStream(
-        { kind: "chat", message, preferences, retry, ...withSearch },
+        { kind: "chat", message, preferences, retry, ...extra },
         (onMessage, signal) =>
-          transport.chat({ sessionId, message, preferences, ...withSearch }, onMessage, signal),
+          transport.chat({ sessionId, message, preferences, ...extra }, onMessage, signal),
       );
     };
 
@@ -466,7 +494,8 @@ export function createAppStore(deps: StoreDeps): AppStore {
           return;
         }
         if (state.session.lastRequest !== null) {
-          await sendChat(state.session.lastRequest.message, true, state.session.lastRequest.search);
+          const { message, search, anchor } = state.session.lastRequest;
+          await sendChat(message, true, search, anchor);
         }
       },
 
@@ -504,7 +533,12 @@ export function createAppStore(deps: StoreDeps): AppStore {
           await startSession();
           return;
         }
-        const { festivalSearch } = get();
+        const { festivalSearch, consult } = get();
+        if (consult.preview.error?.code === "unauthorized") {
+          // 組み立ての確認で断られたなら、確かめ直す
+          await actions.loadAnchorPreview();
+          return;
+        }
         if (festivalSearch.error?.code === "unauthorized") {
           // 祭り探しで断られたなら、探し直す
           await startFestivalSearch(festivalSearch.phase === "asking" ? beginSearch : beginMore);
@@ -517,6 +551,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
         controller?.abort();
         controller = null;
         searchController?.abort();
+        previewController?.abort();
         clearTimers();
         const { ui } = get();
         const fresh = initialData({ locale: ui.locale, tutorialSeen: ui.tutorialSeen });
@@ -590,12 +625,48 @@ export function createAppStore(deps: StoreDeps): AppStore {
           state.consult.answers,
           MESSAGES[state.ui.locale].consult.wording,
           today(),
+          anchorMessage(
+            state.consult,
+            state.festivalSearch.chosen?.candidate ?? null,
+            state.session.id,
+          ),
         );
         if (message === null) {
           return;
         }
         update((current) => ({ ...current, consult: { ...current.consult, active: false } }));
-        await sendChat(message, false);
+        await sendChat(message, false, undefined, state.consult.anchor ?? undefined);
+      },
+      editAnchoredHearing(edit) {
+        update((state) => ({ ...state, consult: edit(state.consult) }));
+      },
+      async loadAnchorPreview() {
+        const { consult, session } = get();
+        if (session.id === null || session.status !== "ready") return;
+        const request = anchorPlanRequest(consult, session.id);
+        if (request === null) return;
+        const key = JSON.stringify(request);
+        const { preview } = consult;
+        if (preview.key === key && (preview.status === "loading" || preview.status === "ready")) {
+          return;
+        }
+        previewController?.abort();
+        const current = new AbortController();
+        previewController = current;
+        const setPreview = (next: AnchorPreview) =>
+          update((state) => ({ ...state, consult: { ...state.consult, preview: next } }));
+        setPreview(beginPreview(key));
+        try {
+          const plan = await transport.previewFestivalTrip(request, current.signal);
+          if (!current.signal.aborted) setPreview(applyPreview(key, plan));
+        } catch (caught) {
+          if (current.signal.aborted) return;
+          const error = toClientError(caught);
+          setPreview(failPreview(key, error));
+          if (error.code === "unauthorized") {
+            update((data) => requirePasscode(data, transport.hasPasscode?.() ?? false));
+          }
+        }
       },
       reopenConsult() {
         update((state) => ({
@@ -608,6 +679,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
       },
       startConsultOver() {
         searchController?.abort();
+        previewController?.abort();
         update((state) => ({
           ...state,
           consult: { ...INITIAL_CONSULT, answers: {} },
@@ -615,6 +687,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
         }));
       },
       leaveHearing() {
+        previewController?.abort();
         update((state) => ({ ...state, consult: leaveHearing(state.consult) }));
       },
       setFestivalStep(step) {
@@ -658,8 +731,22 @@ export function createAppStore(deps: StoreDeps): AppStore {
         if (chosen === null) return;
         update((state) => ({
           ...state,
-          consult: { ...chooseEntry(state.consult, "trip"), anchor: anchorOf(chosen) },
+          consult: beginAnchoredHearing(state.consult, anchorOf(chosen)),
         }));
+        void actions.ensureFestivals([chosen.candidate.festivalId]);
+      },
+      returnToFestivalResults() {
+        previewController?.abort();
+        update((state) => {
+          const { anchor, anchorCancelled } = state.consult;
+          const cancelledId = anchorCancelled ? (anchor?.festivalId ?? null) : null;
+          return {
+            ...state,
+            consult: leaveAnchor(state.consult),
+            festivalSearch: returnToResults(state.festivalSearch, cancelledId),
+            ui: { ...state.ui, candidatesOpen: false },
+          };
+        });
       },
       dismissTutorial() {
         setUi({ tutorialSeen: true });

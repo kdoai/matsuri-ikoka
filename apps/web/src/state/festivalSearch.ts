@@ -298,6 +298,22 @@ export function backToResults(state: FestivalSearchState): FestivalSearchState {
   return { ...state, phase: "results", chosen: null, resultsOpen: true };
 }
 
+/** 旅行計画の聞き取りや相談から、結果の一覧へ戻る。中止と分かった祭りは、もう選べないよう外す */
+export function returnToResults(
+  state: FestivalSearchState,
+  cancelledId: string | null,
+): FestivalSearchState {
+  const opened = backToResults(state);
+  if (cancelledId === null) return opened;
+  return {
+    ...opened,
+    results: opened.results.filter((result) => result.candidate.festivalId !== cancelledId),
+    nearMatches: opened.nearMatches.filter(
+      (near) => near.result.candidate.festivalId !== cancelledId,
+    ),
+  };
+}
+
 /** 「ここで終わる」：モデルを呼ばず、祭りの要点を出して終える */
 export function finishHere(state: FestivalSearchState): FestivalSearchState {
   return state.chosen === null ? state : { ...state, phase: "finished" };
