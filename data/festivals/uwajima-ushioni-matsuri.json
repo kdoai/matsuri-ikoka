@@ -1,0 +1,403 @@
+{
+  "id": "uwajima-ushioni-matsuri",
+  "name": {
+    "ja": "うわじま牛鬼まつり",
+    "en": "Uwajima Ushioni Festival"
+  },
+  "category": "float",
+  "municipalities": [
+    {
+      "prefecture": "愛媛県",
+      "name": "宇和島市"
+    }
+  ],
+  "venue": {
+    "name": "きさいやロード・牛鬼すとりーとほか 宇和島市内一円",
+    "lat": 33.2203,
+    "lng": 132.5679
+  },
+  "scaleTier": "M",
+  "popularity": "major",
+  "listedIn": ["walkerplus", "jalan", "rurubu", "jnto"],
+  "highlights": [
+    "全長5〜6mの牛鬼が竹ぼら「ブーヤレ」の音で街を練り歩く親牛鬼パレード",
+    "牛鬼が商店街の店先に頭を突っ込みながら進み、悪魔を払う",
+    "夜の須賀川で神輿が御神竹を巡り、御幣を奪い合う和霊大祭の走り込み",
+    "狭い宇和島湾の海上から上がる花火を、間近で見られる"
+  ],
+  "styles": [
+    {
+      "style": "community",
+      "basis": "実行委員会が開き、牛鬼は数十人で担ぎ、子どもも竹ぼらで加わる",
+      "sources": [
+        {
+          "url": "https://ushioni.gaina.ne.jp/ushioni-festival/",
+          "title": "うわじま牛鬼まつり公式 牛鬼まつりの紹介",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "牛鬼は鬼のような顔に長い首、赤い布やシュロで覆った牛の胴、剣に似た尾をもつ",
+      "source": {
+        "url": "https://ushioni.gaina.ne.jp/ushioni-festival/",
+        "title": "うわじま牛鬼まつり公式 牛鬼まつりの紹介",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "和霊大祭は山家清兵衛をまつり、霊を鎮める御霊信仰にもとづく祭り",
+      "source": {
+        "url": "https://ushioni.gaina.ne.jp/wareitaisai",
+        "title": "うわじま牛鬼まつり公式 和霊大祭とは",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "2026年の回は第60回で、仙台すずめ踊りなどの記念の企画があった",
+      "source": {
+        "url": "https://rurubu.jp/andmore/spot/20002609",
+        "title": "るるぶ&more. うわじま牛鬼まつり",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": [
+      "7月23・24日は宇和島市内が全面駐車禁止で、巡行の道には車両通行禁止の規制が出る。公共交通を使い、標識と警察官の指示に従う",
+      "路上や無断の駐車をしない。無料駐車場は最盛期には止められないことがある",
+      "海岸沿いで花火を見るときは海への転落に注意する。船での花火見物は危険なので控える",
+      "ドローンを飛ばして撮影しない"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "3日間で延べ約8万人が集まり、夜の海岸での花火見物には転落の注意が出ている"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "ドローン撮影は禁止。SNSに投稿するときは、写っている人の了承を得て、子どもや私的な場面に配慮するよう呼びかけられている"
+    },
+    "sources": [
+      {
+        "url": "https://ushioni.gaina.ne.jp/",
+        "title": "うわじま牛鬼まつり公式サイト（写真と動画の投稿の注意）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ushioni.gaina.ne.jp/traffic-regulation/",
+        "title": "うわじま牛鬼まつり公式 交通規制",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ushioni.gaina.ne.jp/free-parking/",
+        "title": "うわじま牛鬼まつり公式 無料駐車場",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ushioni.gaina.ne.jp/kaizyouhanabi/",
+        "title": "うわじま牛鬼まつり公式 海上打上花火（観覧の注意）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002609",
+        "title": "るるぶ&more. うわじま牛鬼まつり（前年の来場者 延べ8万3000人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://summer.walkerplus.com/odekake/detail_e/ar0938e04826/data.html",
+        "title": "ウォーカープラス 第60回 うわじま牛鬼まつり データ（例年8万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-07-22",
+      "start": "16:00",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": "警報・荒天は中止。雨の場合は縮小して開催",
+      "note": "第60回の初日。16:00〜21:00 オールカマーフェスタ（道の駅きさいや広場）、20:00〜20:30ごろ 海上打上花火（宇和島湾、約7,000発）",
+      "sources": [
+        {
+          "url": "https://ushioni.gaina.ne.jp/event-schedule/",
+          "title": "うわじま牛鬼まつり公式 行事表（令和8年）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.walkerplus.com/event/ar0938e04826/",
+          "title": "ウォーカープラス 第60回 うわじま牛鬼まつり（約7,000発）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        },
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar0938e04826/data.html",
+          "title": "ウォーカープラス 第60回 うわじま牛鬼まつり データ（雨天の扱い）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2026-07-23",
+      "start": "10:00",
+      "end": "21:40",
+      "status": "announced",
+      "rainPolicy": "警報・荒天は中止。雨の場合は縮小して開催",
+      "note": "10:00 和霊大祭 例祭、12:00〜14:00ごろ 闘牛 和霊大祭場所（市営闘牛場）、13:40〜16:25 ガイヤカーニバル子供の部、17:30〜21:40 ガイヤカーニバル一般の部（きさいやロード・牛鬼すとりーと）、19:00 宵宮祭",
+      "sources": [
+        {
+          "url": "https://ushioni.gaina.ne.jp/event-schedule/",
+          "title": "うわじま牛鬼まつり公式 行事表（令和8年）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar0938e04826/data.html",
+          "title": "ウォーカープラス 第60回 うわじま牛鬼まつり データ（雨天の扱い）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2026-07-24",
+      "start": "10:00",
+      "end": null,
+      "status": "announced",
+      "rainPolicy": "警報・荒天は中止。雨の場合は縮小して開催",
+      "note": "10:00〜12:00 子ども牛鬼パレード、12:00〜15:30ごろ 親牛鬼パレード、16:30〜19:20 宇和島おどり大会、17:30 神輿出御、20:15 海上渡御、20:50ごろ 走り込み（須賀川）、御幣争奪の後に打上花火",
+      "sources": [
+        {
+          "url": "https://ushioni.gaina.ne.jp/event-schedule/",
+          "title": "うわじま牛鬼まつり公式 行事表（令和8年）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail_e/ar0938e04826/data.html",
+          "title": "ウォーカープラス 第60回 うわじま牛鬼まつり データ（雨天の扱い）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-07-22",
+      "endDate": "2027-07-24",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2027年の発表はまだない。公式が7月22〜24日の3日間の祭りと案内し、日本政府観光局も同じ日付で紹介しているので見込んだ日",
+      "sources": [
+        {
+          "url": "https://ushioni.gaina.ne.jp/ushioni-festival/",
+          "title": "うわじま牛鬼まつり公式 牛鬼まつりの紹介（7月22〜24日の3日間）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        },
+        {
+          "url": "https://www.japan.travel/en/spot/813/",
+          "title": "日本政府観光局 Warei Taisai Uwajima Ushioni Festival（7月22〜24日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 宇和島駅",
+        "walkMinutes": [10, 15],
+        "note": "きさいやロードまで。7月23・24日は駅2番乗り場から無料シャトルバス（30分おき）"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "松山駅",
+        "minutes": [80, 90],
+        "route": "JR の特急で宇和島駅まで、乗り換えなし（約80分）"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [
+      "7月22日 18:00〜21:00：花火の打ち上げ場所の付近は車両通行禁止（市内中心部の規制はなし）",
+      "7月23日 11:00〜23:00：南予文化会館前（牛鬼すとりーと）通行止め",
+      "7月24日 9:00〜13:30ごろと16:45〜19:30ごろ：南予文化会館前（牛鬼すとりーと）通行止め",
+      "7月23・24日：宇和島市内は全面駐車禁止。巡行の道と周辺の商店街でも規制あり（いずれも2026年）"
+    ],
+    "sources": [
+      {
+        "url": "https://ushioni.gaina.ne.jp/traffic-regulation/",
+        "title": "うわじま牛鬼まつり公式 交通規制（令和8年）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ushioni.gaina.ne.jp/free-parking/",
+        "title": "うわじま牛鬼まつり公式 無料駐車場",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://ushioni.gaina.ne.jp/transport-taxi/",
+        "title": "うわじま牛鬼まつり公式 無料シャトルバス",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.japan.travel/en/spot/813/",
+        "title": "日本政府観光局 Warei Taisai Uwajima Ushioni Festival（松山から特急で約80分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002609",
+        "title": "るるぶ&more. うわじま牛鬼まつり（JR宇和島駅から徒歩10分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": [
+      {
+        "name": "鯛めし・じゃこ天",
+        "note": "宇和島の名物。道の駅きさいや広場のレストランで味わえる",
+        "sources": [
+          {
+            "url": "https://www.kisaiyahiroba.com/",
+            "title": "道の駅 うわじま きさいや広場 公式サイト",
+            "checkedAt": "2026-11-05",
+            "confidence": "official"
+          }
+        ]
+      }
+    ]
+  },
+  "nearby": [
+    {
+      "id": "uwajima-castle",
+      "name": "宇和島城",
+      "kind": "sightseeing",
+      "summary": "JR宇和島駅から歩いて約15分の城山に建つ城。天守までは駅から約35分。台風などの荒天では臨時に閉めることがある",
+      "location": {
+        "lat": 33.2193,
+        "lng": 132.5652
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": [],
+      "popularity": "regional",
+      "sources": [
+        {
+          "url": "https://www.city.uwajima.ehime.jp/site/uwajima-jo/ujouannnai3.html",
+          "title": "宇和島市 宇和島城 各種案内（3〜10月の天守は9:00〜17:00、無休）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "uwajima-kisaiya-hiroba",
+      "name": "道の駅 うわじま きさいや広場",
+      "kind": "food",
+      "summary": "特産品の売り場と食事処がある道の駅で、祭りの会場の1つ。レストランは10:30〜16:30（L.O.16:00）。JR宇和島駅から約1km。元日は休み",
+      "location": {
+        "lat": 33.2237,
+        "lng": 132.5584
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "18:00"
+      },
+      "closedDays": [],
+      "price": null,
+      "tags": ["local_food"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.kisaiyahiroba.com/",
+          "title": "道の駅 うわじま きさいや広場 公式サイト（営業時間、休業日、所在地）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://ushioni.gaina.ne.jp/",
+      "title": "うわじま牛鬼まつり公式サイト",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://ushioni.gaina.ne.jp/ushioni-festival/",
+      "title": "うわじま牛鬼まつり公式 牛鬼まつりの紹介",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.japan.travel/en/spot/813/",
+      "title": "日本政府観光局 Warei Taisai Uwajima Ushioni Festival",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.walkerplus.com/event/ar0938e04826/",
+      "title": "ウォーカープラス 第60回 うわじま牛鬼まつり",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20002609",
+      "title": "るるぶ&more. うわじま牛鬼まつり",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_330355/",
+      "title": "じゃらんnet うわじま牛鬼まつり（2024年の回のページ）",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の開催日の発表と行事の時刻",
+    "主催者の出す雨天の扱い（観光サイトの記載だけ）",
+    "牛鬼の体数",
+    "ガイヤカーニバルへの参加の方法",
+    "服装・持ち物の決まり",
+    "宇和島城の3〜10月の天守の観覧料",
+    "祭りの日に開く周辺の店の追加",
+    "宇和島おどり大会（実行委員会が参加者を募る。2026年は5月22日に募集を開始）に旅の人が加われるか",
+    "周辺の場所の知名度"
+  ]
+}

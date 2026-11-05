@@ -1,0 +1,346 @@
+{
+  "id": "yosakoi-matsuri",
+  "name": {
+    "ja": "よさこい祭り",
+    "en": "Yosakoi Festival"
+  },
+  "category": "dance",
+  "municipalities": [
+    {
+      "prefecture": "高知県",
+      "name": "高知市"
+    }
+  ],
+  "venue": {
+    "name": "追手筋本部競演場ほか 高知市内の競演場・演舞場",
+    "lat": 33.5618,
+    "lng": 133.54
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "鳴子を手に、地方車を先頭に街を踊り進むチームの競演",
+    "振り付けも衣装もチームごとに違う、よさこいの本家の4日間",
+    "追手筋の本部競演場は桟敷席から昼も夜も見られる",
+    "市内の多くの会場は無料の立ち見で、街じゅうで踊りに出会える"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "1954年に始まり、毎年8月9〜12日に開かれて第73回を数える",
+      "sources": [
+        {
+          "url": "https://welcome-kochi.jp/yosakoi/",
+          "title": "高知市観光協会 よさこい祭りとは（昭和29年に開始）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://welcome-kochi.jp/yosakoi/schedule.html",
+          "title": "高知市観光協会 第73回よさこい祭り 日程",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "地域の団体や学生など、地元と全国のチームが踊り手になる",
+      "sources": [
+        {
+          "url": "https://www.japan.travel/en/sg/story/japanfestival-shikoku/",
+          "title": "日本政府観光局 Japan Festival Shikoku（参加するチーム）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "1954年、当時の不景気を吹き飛ばし市民を元気づけようと始まった",
+      "source": {
+        "url": "https://welcome-kochi.jp/yosakoi/",
+        "title": "高知市観光協会 よさこい祭りとは",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "決まりは鳴子を持って前へ進むことと、よさこい節の一節を入れること",
+      "source": {
+        "url": "https://visitkochijapan.com/en/highlights/yosakoi",
+        "title": "高知県観光サイト VISIT KOCHI JAPAN Yosakoi（踊りの決まり）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "会場は全16か所で、内訳は競演場が9か所、演舞場が7か所",
+      "source": {
+        "url": "https://visitkochijapan.com/en/highlights/yosakoi",
+        "title": "高知県観光サイト VISIT KOCHI JAPAN Yosakoi（会場の内訳）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "本番の踊り手は約200チーム・約1万8000人にのぼる",
+      "source": {
+        "url": "https://welcome-kochi.jp/yosakoi/",
+        "title": "高知市観光協会 よさこい祭りとは（約200団体、約1万8000人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": [
+      "追手筋本部競演場の桟敷席はチケットが要る（2026年の一般席は昼1,000〜2,000円、夜2,000〜3,000円）。ほかの多くの会場は無料の立ち見",
+      "桟敷席に傘を差さない（屋根がないので雨はカッパで）",
+      "ドローン・喫煙・ペットの同伴は禁止（桟敷席）",
+      "自撮り棒や三脚の使用、通路での撮影など、周りの迷惑になることをしない（桟敷席）",
+      "チケットの高額転売に注意が呼びかけられている。購入後の変更・払い戻しは、豪雨等で中止のときを除きできない"
+    ],
+    "dress": ["桟敷席は屋根がないので、雨の日はカッパを着る"],
+    "bring": ["カッパ（雨の日）", "暑さ対策の用意"],
+    "risk": {
+      "level": "medium",
+      "reason": "4日間で約100万人が集まる街なかの祭りで、桟敷席には屋根がなく、暑さへの注意が呼びかけられている"
+    },
+    "photo": {
+      "policy": "restricted",
+      "note": "桟敷席では自撮り棒・三脚の使用と通路での撮影ができない。ドローンも禁止"
+    },
+    "sources": [
+      {
+        "url": "https://welcome-kochi.jp/yosakoi/sajikiseki.html",
+        "title": "高知市観光協会 第73回よさこい祭り 桟敷席（席種と料金、禁止事項、雨と暑さの注意）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://summer.walkerplus.com/odekake/detail_e/ar0939e04827/data.html",
+        "title": "ウォーカープラス 第73回 よさこい祭り データ（4日間で約100万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002917",
+        "title": "るるぶ&more. よさこい祭り（昨年の来場者約97万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-09",
+      "start": "17:00",
+      "end": "21:30",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "第73回の前夜。17:00 祈願祭、18:00〜21:30 前夜祭（東洋電化中央公園）、19:45〜21:00 高知市納涼花火大会（鏡川河畔）。昼は土佐学生よさこい大会",
+      "sources": [
+        {
+          "url": "https://welcome-kochi.jp/yosakoi/schedule.html",
+          "title": "高知市観光協会 第73回よさこい祭り 日程（8月9日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "endDate": "2026-08-11",
+      "start": "11:00",
+      "end": "22:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "本番の2日間。帯屋町は11:00〜22:00、多くの会場は12:30〜21:30、追手筋本部競演場は昼13:15〜17:15と夜17:45〜21:30",
+      "sources": [
+        {
+          "url": "https://welcome-kochi.jp/yosakoi/schedule.html",
+          "title": "高知市観光協会 第73回よさこい祭り 日程（8月10・11日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://welcome-kochi.jp/yosakoi/sajikiseki.html",
+          "title": "高知市観光協会 第73回よさこい祭り 桟敷席（時間帯）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "start": "12:30",
+      "end": "22:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "よさこい全国大会と後夜祭。12:30 開会式（高知城）、13:15〜22:00 追手筋・帯屋町・高知城で演舞、18:30〜22:00 表彰と後夜祭（東洋電化中央公園）",
+      "sources": [
+        {
+          "url": "https://welcome-kochi.jp/yosakoi/schedule.html",
+          "title": "高知市観光協会 第73回よさこい祭り 日程（8月12日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-09",
+      "endDate": "2027-08-12",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2027年の発表はまだない。毎年8月9〜12日に開くという高知県の観光の案内から見込んだ日",
+      "sources": [
+        {
+          "url": "https://visitkochijapan.com/en/highlights/yosakoi",
+          "title": "高知県観光サイト VISIT KOCHI JAPAN Yosakoi（毎年8月9〜12日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 高知駅",
+        "walkMinutes": [15, 20],
+        "note": "追手筋本部競演場まで"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [],
+    "sources": [
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002917",
+        "title": "るるぶ&more. よさこい祭り（JR高知駅から徒歩15分、専用の駐車場なし、周辺の民間駐車場）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "kochi-castle",
+      "name": "高知城",
+      "kind": "sightseeing",
+      "summary": "天守と懐徳館に入れる高知の城。よさこい祭りの期間は開館が延びることがある。12月26日〜1月1日は休館",
+      "location": {
+        "lat": 33.5608,
+        "lng": 133.5308
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": [],
+      "price": "18歳以上500円（18歳未満は無料）",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://kochipark.jp/kochijyo/",
+          "title": "高知城 公式の案内（開館時間、休館日、入場料）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "hirome-ichiba",
+      "name": "ひろめ市場",
+      "kind": "food",
+      "summary": "高知の食が集まる屋内の市場。日曜は9:00から。店ごとに時間が違い、休館日は公式のお知らせで案内される。館内は全面禁煙",
+      "location": {
+        "lat": 33.56,
+        "lng": 133.536
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "23:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": ["indoor", "local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://hirome.co.jp/",
+          "title": "ひろめ市場 公式サイト（営業時間、所在地、由来）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://welcome-kochi.jp/yosakoi/",
+      "title": "高知市観光協会 よさこい祭りとは",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://welcome-kochi.jp/yosakoi/schedule.html",
+      "title": "高知市観光協会 第73回よさこい祭り 日程",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.kochi.kochi.jp/site/kanko/yosakoimatsuri.html",
+      "title": "高知市 観光情報サイト よさこい祭り",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://visitkochijapan.com/en/highlights/yosakoi",
+      "title": "高知県観光サイト VISIT KOCHI JAPAN Yosakoi",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_346081/",
+      "title": "じゃらんnet よさこい祭り",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20002917",
+      "title": "るるぶ&more. よさこい祭り",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://summer.walkerplus.com/odekake/detail_e/ar0939e04827/data.html",
+      "title": "ウォーカープラス 第73回 よさこい祭り データ（屋台の紹介）",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    }
+  ],
+  "gaps": [
+    "2027年の日程・時刻・桟敷の料金（まだ発表がない）",
+    "一般の人が踊りに加われるか、その受付と料金（2019年の案内には、あったか高知踊り子隊と市民憲章よさこい踊り子隊があった）",
+    "雨のときの扱い（桟敷席は豪雨等で中止になることがある）",
+    "交通規制の時間と場所",
+    "主要駅（岡山駅など）からの所要時間",
+    "地元の味・祭りの日だけの食べ物"
+  ]
+}

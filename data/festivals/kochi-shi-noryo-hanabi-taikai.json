@@ -1,0 +1,270 @@
+{
+  "id": "kochi-shi-noryo-hanabi-taikai",
+  "name": {
+    "ja": "高知市納涼花火大会",
+    "en": "Kochi City Noryo Fireworks"
+  },
+  "category": "fireworks",
+  "municipalities": [
+    {
+      "prefecture": "高知県",
+      "name": "高知市"
+    }
+  ],
+  "venue": {
+    "name": "鏡川河畔（みどりの広場）",
+    "lat": 33.5559,
+    "lng": 133.5345
+  },
+  "scaleTier": "M",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "よさこい祭りの前夜に鏡川で上がる花火",
+    "全長約650メートルのナイアガラ",
+    "筆山など高さの違う4か所からの打ち上げと、山に響く音"
+  ],
+  "styles": [],
+  "trivia": [
+    {
+      "text": "よさこい祭りの前夜祭の8月9日に、鏡川河畔で開かれる",
+      "source": {
+        "url": "https://welcome-kochi.jp/yosakoi/",
+        "title": "高知市観光協会 よさこい祭りとは（8月9日に花火大会）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "打ち上げは市のシンボルの筆山など4か所から",
+      "source": {
+        "url": "https://hanabi.walkerplus.com/detail/ar0939e00705/",
+        "title": "ウォーカープラス 第76回 高知市納涼花火大会",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "観覧の会場は全席有料で、無料の席はない",
+      "source": {
+        "url": "https://welcome-kochi.jp/event/hanabi/index.html",
+        "title": "高知市観光協会 高知市納涼花火大会",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "watch_only",
+    "howToJoin": null,
+    "rules": [
+      "観覧の会場は全席有料で、チケットを持つ人だけが入れる（無料の席はない）",
+      "路上駐車をしない（住民の迷惑と緊急車両の妨げになる）",
+      "会場に駐車場はない。近くの有料駐車場か公共交通を使う",
+      "中止・延期の知らせは公式のページで確かめる"
+    ],
+    "dress": "unknown",
+    "bring": "unknown",
+    "risk": {
+      "level": "medium",
+      "reason": "夜の河川敷の会場で、周辺に混雑を避けるための通行規制がある"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://welcome-kochi.jp/event/hanabi/index.html",
+        "title": "高知市観光協会 高知市納涼花火大会（全席有料、路上駐車の禁止、通行規制）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-09",
+      "start": "19:45",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": "小雨決行、荒天は8月13日の同じ時間に延期（13日も荒天なら中止）",
+      "note": "第76回。打ち上げは約4,000発。チケットを持つ人だけが入場できる",
+      "sources": [
+        {
+          "url": "https://welcome-kochi.jp/event/hanabi/index.html",
+          "title": "高知市観光協会 高知市納涼花火大会（2026年8月9日、荒天は8月13日に延期）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://welcome-kochi.jp/yosakoi/schedule.html",
+          "title": "高知市観光協会 第73回よさこい祭り 日程（第76回高知市納涼花火大会 19:45〜21:00）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://hanabi.walkerplus.com/detail/ar0939e00705/data.html",
+          "title": "ウォーカープラス 第76回 高知市納涼花火大会 データ（約4,000発、小雨決行）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20002779",
+          "title": "るるぶ&more. 第76回高知市納涼花火大会（小雨決行）",
+          "checkedAt": "2026-11-05",
+          "confidence": "corroborated"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-09",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2027年の発表はまだない。よさこい祭りの8月9日の前夜祭に花火大会を開くという高知市観光協会の案内から見込んだ日",
+      "sources": [
+        {
+          "url": "https://welcome-kochi.jp/yosakoi/",
+          "title": "高知市観光協会 よさこい祭りとは（8月9日 前夜祭、鏡川河畔で花火大会）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "とさでん交通 県庁前電停",
+        "walkMinutes": [3, 8],
+        "note": "JR高知駅から路面電車で"
+      }
+    ],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [
+      "混雑を避けるため、会場の周辺で通行規制がある（時間と場所は公式の別ページ）",
+      "会場周辺に臨時の駐輪場がある"
+    ],
+    "sources": [
+      {
+        "url": "https://welcome-kochi.jp/event/hanabi/index.html",
+        "title": "高知市観光協会 高知市納涼花火大会（駐車場なし、通行規制、臨時駐輪場）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://hanabi.walkerplus.com/detail/ar0939e00705/data.html",
+        "title": "ウォーカープラス 第76回 高知市納涼花火大会 データ（県庁前から徒歩3分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002779",
+        "title": "るるぶ&more. 第76回高知市納涼花火大会（県庁前電停から徒歩3分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "corroborated"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "yes",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "kochi-castle",
+      "name": "高知城",
+      "kind": "sightseeing",
+      "summary": "天守と懐徳館に入れる高知の城。よさこい祭りの期間は開館が延びることがある。12月26日〜1月1日は休館",
+      "location": {
+        "lat": 33.5608,
+        "lng": 133.5308
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "17:00",
+        "lastEntry": "16:30"
+      },
+      "closedDays": [],
+      "price": "18歳以上500円（18歳未満は無料）",
+      "tags": ["indoor"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://kochipark.jp/kochijyo/",
+          "title": "高知城 公式の案内（開館時間、休館日、入場料）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "id": "hirome-ichiba",
+      "name": "ひろめ市場",
+      "kind": "food",
+      "summary": "高知の食が集まる屋内の市場。日曜は9:00から。店ごとに時間が違い、休館日は公式のお知らせで案内される。館内は全面禁煙",
+      "location": {
+        "lat": 33.56,
+        "lng": 133.536
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "10:00",
+        "close": "23:00"
+      },
+      "closedDays": null,
+      "price": null,
+      "tags": ["indoor", "local_food"],
+      "popularity": "major",
+      "sources": [
+        {
+          "url": "https://hirome.co.jp/",
+          "title": "ひろめ市場 公式サイト（営業時間、所在地、由来）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://welcome-kochi.jp/event/hanabi/index.html",
+      "title": "高知市観光協会 高知市納涼花火大会（主催 公益社団法人高知市観光協会）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_330397/",
+      "title": "じゃらんnet 第74回高知市納涼花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20002779",
+      "title": "るるぶ&more. 第76回高知市納涼花火大会",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://hanabi.walkerplus.com/detail/ar0939e00705/data.html",
+      "title": "ウォーカープラス 第76回 高知市納涼花火大会 データ（屋台あり）",
+      "checkedAt": "2026-11-05",
+      "confidence": "corroborated"
+    },
+    {
+      "url": "https://hanabi.walkerplus.com/detail/ar0939e00705/",
+      "title": "ウォーカープラス 第76回 高知市納涼花火大会（ナイアガラ、打ち上げ場所）",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の時刻・席の料金・雨天の扱い（まだ発表がない）",
+    "通行規制の時間と場所",
+    "服装・持ち物・撮影の決まり",
+    "会場の正確な位置（緯度・経度は近くの町の住所検索の値）",
+    "JR高知駅から県庁前電停までの所要時間",
+    "地元の味・祭りの日だけの食べ物"
+  ]
+}

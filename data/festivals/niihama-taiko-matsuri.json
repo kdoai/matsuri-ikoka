@@ -1,0 +1,342 @@
+{
+  "id": "niihama-taiko-matsuri",
+  "name": {
+    "ja": "新居浜太鼓祭り",
+    "en": "Niihama Taiko Festival"
+  },
+  "category": "float",
+  "municipalities": [
+    {
+      "prefecture": "愛媛県",
+      "name": "新居浜市"
+    }
+  ],
+  "venue": {
+    "name": "山根グラウンドほか 新居浜市内の各地区",
+    "lat": 33.9192,
+    "lng": 133.3004
+  },
+  "scaleTier": "L",
+  "popularity": "regional",
+  "listedIn": ["walkerplus", "jalan", "rurubu"],
+  "highlights": [
+    "重さ約3トンの太鼓台を男衆の力で持ち上げる「かきくらべ」",
+    "山根グラウンドに上部地区の20台が集まる統一寄せを石段の観覧席から",
+    "市内の太鼓台54台が地区ごとに、未明から夜まで動く3日間",
+    "夜太鼓では日が暮れてからの太鼓台が見られる"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "世代を超えて受け継がれてきた歴史と伝統をもつ行事だと、市が位置づけている",
+      "sources": [
+        {
+          "url": "https://www.city.niihama.lg.jp/uploaded/life/169858_799304_misc.pdf",
+          "title": "新居浜市 平和祭典実施に向けての要請書（令和8年）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "style": "community",
+      "basis": "各地区の太鼓台運営委員会（協議会）が太鼓台を運行している",
+      "sources": [
+        {
+          "url": "https://www.city.niihama.lg.jp/uploaded/attachment/77476.pdf",
+          "title": "新居浜市 広報 2025年10月号 太鼓台の主な運行予定",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "市内の太鼓台は54台あり、地区ごとに祭りを担っている",
+      "source": {
+        "url": "https://www.city.niihama.lg.jp/uploaded/life/169858_799304_misc.pdf",
+        "title": "新居浜市 平和祭典実施に向けての要請書（太鼓台54台）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "太鼓台は重さ約3トン、高さ約5.5m、長さ約12mで最大150人ほどが担ぐ",
+      "source": {
+        "url": "https://www.walkerplus.com/event/ar0938e617556/",
+        "title": "ウォーカープラス 新居浜太鼓祭り",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    },
+    {
+      "text": "祭りのもとの趣旨は、実りの秋に感謝することだと市が伝えている",
+      "source": {
+        "url": "https://www.city.niihama.lg.jp/uploaded/attachment/77476.pdf",
+        "title": "新居浜市 広報 2025年10月号 秋祭りのお願い",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "内宮神社の宮出しでは、太鼓台が約100段の石段を掛け声とともに登る",
+      "source": {
+        "url": "https://www.iyokannet.jp/blog/34",
+        "title": "いよ観ネット 新居浜太鼓祭りのおすすめスポット",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "unknown",
+    "howToJoin": "unknown",
+    "rules": [
+      "太鼓台や人同士のけんかをあおる挑発・ヤジ・書き込みをしない",
+      "私有地に入らない。塀などによじ登らない",
+      "会場周辺の店や施設への迷惑駐車、道路への違法駐車をしない。かきくらべの会場へは車を避け、歩きや自転車で",
+      "ごみはポイ捨てせず持ち帰る",
+      "山根グラウンドの観覧席の場所取りは統一寄せの前日18:00から。それより前の敷物は撤去される。階段と通路に座り込まない",
+      "山根グラウンド南側の大山積神社の境内には入らない（玉垣が倒れるおそれがある）",
+      "一宮の杜には有料の桟敷席がある。いよ観ネットで予約を受ける年がある（2026年は9月30日まで）"
+    ],
+    "dress": "unknown",
+    "bring": ["ごみ袋"],
+    "risk": {
+      "level": "high",
+      "reason": "3トンの太鼓台を担ぎ合う祭りで、市が太鼓台同士の衝突やけんか、負傷者の出ない祭りを呼びかけている"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.city.niihama.lg.jp/uploaded/attachment/77476.pdf",
+        "title": "新居浜市 広報 2025年10月号 秋祭りについてのお願い（2025年の案内）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.niihama.lg.jp/uploaded/life/169858_799304_misc.pdf",
+        "title": "新居浜市 平和祭典実施に向けての要請書（令和8年）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.iyokannet.jp/event/2553",
+        "title": "いよ観ネット 【2026】新居浜太鼓祭り（桟敷席の予約）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.walkerplus.com/event/ar0938e617556/",
+        "title": "ウォーカープラス 新居浜太鼓祭り（太鼓台の重さ）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-10-15",
+      "start": "18:00",
+      "end": "19:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "大生院地区だけ。18:00〜19:00 渦井広場太鼓寄せ（4台）",
+      "sources": [
+        {
+          "url": "https://www.city.niihama.lg.jp/uploaded/attachment/83878.pdf",
+          "title": "新居浜市 令和8年 太鼓台の主な運行予定（9月7日時点）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "start": "03:00",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "3:00〜6:30 内宮神社かきあげ（4台）、18:00〜19:20 天神浜通りかきくらべ（9台）、18:00〜21:00 大生院・中萩地区夜太鼓（11台）ほか",
+      "sources": [
+        {
+          "url": "https://www.city.niihama.lg.jp/uploaded/attachment/83878.pdf",
+          "title": "新居浜市 令和8年 太鼓台の主な運行予定（9月7日時点）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-17",
+      "start": "08:30",
+      "end": "21:00",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "10:00〜12:30 河川敷公園かきくらべ（17台）、10:00〜12:00 一宮の杜（11台）、12:30〜17:00 山根グラウンド統一寄せ（20台・子供1台）、17:20〜20:00 多喜浜駅前かきくらべ（17台）ほか",
+      "sources": [
+        {
+          "url": "https://www.city.niihama.lg.jp/uploaded/attachment/83878.pdf",
+          "title": "新居浜市 令和8年 太鼓台の主な運行予定（9月7日時点）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-18",
+      "start": "08:30",
+      "end": "19:40",
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "8:30〜10:00 大江浜かきくらべ（11台）、10:00〜12:00 船御幸（4台）、14:10〜19:40 八旛神社かきくらべ（17台）、15:00〜18:00 一宮神社かきくらべ（11台）ほか",
+      "sources": [
+        {
+          "url": "https://www.city.niihama.lg.jp/uploaded/attachment/83878.pdf",
+          "title": "新居浜市 令和8年 太鼓台の主な運行予定（9月7日時点）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-10-15",
+      "endDate": "2027-10-18",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "2027年の発表はまだない。いよ観ネットの例年10月15〜18日の記載から見込んだ日（2025年と2026年も同じ日付。15日は大生院地区だけ）",
+      "sources": [
+        {
+          "url": "https://www.iyokannet.jp/event/2553",
+          "title": "いよ観ネット 【2026】新居浜太鼓祭り（例年10月15〜18日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [],
+    "fromHubs": [],
+    "parking": "limited",
+    "trafficRestrictions": [
+      "かきくらべの会場の周辺で交通規制があり、道路が混む",
+      "山根公園の中は一般の車が入れない。JR新居浜駅南口から山根グラウンド付近まで無料のシャトルバス（10:30〜17:30、統一寄せの日）"
+    ],
+    "sources": [
+      {
+        "url": "https://www.iyokannet.jp/event/2553",
+        "title": "いよ観ネット 【2026】新居浜太鼓祭り（JR新居浜駅からバスかタクシーで約30分、専用の駐車場なし、交通規制）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.niihama.lg.jp/soshiki/kankou/taikomatsuri.html",
+        "title": "新居浜市 新居浜太鼓祭り（シャトルバス、令和8年）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.city.niihama.lg.jp/uploaded/attachment/77476.pdf",
+        "title": "新居浜市 広報 2025年10月号（山根公園内の車の進入）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20000195",
+        "title": "るるぶ&more. 新居浜太鼓祭り（会場によって臨時駐車場あり）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "akagane-museum",
+      "name": "あかがねミュージアム",
+      "kind": "sightseeing",
+      "summary": "JR新居浜駅から歩いて1分の文化施設。月曜と年末年始が休み（月曜が祝日や第1月曜のときは翌火曜が休み）。2027年10月18日は月曜で休み",
+      "location": {
+        "lat": 33.9487,
+        "lng": 133.2935
+      },
+      "walkMinutesFromVenue": null,
+      "hours": null,
+      "closedDays": ["mon"],
+      "price": null,
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://akaganemuseum.jp/",
+          "title": "あかがねミュージアム 公式サイト（休館日、JR新居浜駅から徒歩1分）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.city.niihama.lg.jp/soshiki/kankou/taikomatsuri.html",
+      "title": "新居浜市 新居浜太鼓祭り",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.city.niihama.lg.jp/uploaded/attachment/83878.pdf",
+      "title": "新居浜市 令和8年 太鼓台の主な運行予定（9月7日時点）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.iyokannet.jp/event/2553",
+      "title": "いよ観ネット 【2026】新居浜太鼓祭り",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.iyokannet.jp/blog/34",
+      "title": "いよ観ネット 新居浜太鼓祭りのおすすめスポット",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_349291/",
+      "title": "じゃらんnet 新居浜太鼓祭り（主催 8地区太鼓台運営委員会）",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.walkerplus.com/event/ar0938e617556/",
+      "title": "ウォーカープラス 新居浜太鼓祭り",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20000195",
+      "title": "るるぶ&more. 新居浜太鼓祭り",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の日程と運行予定（まだ発表がない。2025年と2026年は9月に市が運行予定を出した）",
+    "一般の人が太鼓台の担ぎ手に加わる手段があるか",
+    "雨のときの扱い",
+    "服装の決まり・撮影の決まり",
+    "2026年の秋祭りのお願いの内容（分かっているのは2025年の広報の内容）",
+    "主要駅（JR新居浜駅）から各会場までの徒歩の時間",
+    "屋台の有無、地元の味",
+    "祭りの前後に寄れる食の店",
+    "あかがねミュージアムの開館時間",
+    "周辺の場所の知名度"
+  ]
+}
