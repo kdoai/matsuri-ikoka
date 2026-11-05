@@ -193,7 +193,7 @@ systemPrompt: [
 1. `POST /api/festivals/search` の中で、道具を持たない1回きりの `query()` を動かす（`apps/server/src/agent/festivalWishReader.ts`、指示は `prompts/wish-reader.md`）。動かし方（開発環境から切り離す・JSON の差し戻し）は評価係と同じで、考える深さは low。モデルは `MODEL_WISH_READER`（省略時は軽いモデルの別名 `haiku`）、費用は `AGENT_MAX_BUDGET_USD` を上限にする
 2. 自由記述はタグ（`<自由記述>`）で分け、中の山かっこを全角にして、タグを作れないようにする。中の指示には従わせない。祭りの名前や日時は作らせない
 3. 返答は `parseJsonWithSchema` と `FestivalWishIntentSchema` で確かめる。崩れていれば1回だけ差し戻す。知らない項目（祭りの ID など）のある返答は使わない
-4. 時間の上限は8秒で、差し戻しも含めた全体の予算として扱う。やり直しはしない。読めないとき（形の崩れ・失敗・時間切れ・回数の上限・混雑）は、断らずに言葉の辞書で読み、結果の `reading.by` を `words` にする
+4. 時間の上限は12秒で、差し戻しも含めた全体の予算として扱う。やり直しはしない。読めないとき（形の崩れ・失敗・時間切れ・回数の上限・混雑）は、断らずに言葉の辞書で読み、結果の `reading.by` を `words` にする
 5. 読み取りは相談と自由記述の組ごとにとっておき、「別の祭りを提案してもらう」でモデルを呼び直さない。読めなかったことも残し、途中で順が変わらないようにする
 6. 呼ぶたびに相談の回数（`DAILY_CHAT_LIMIT`・`DAILY_CHAT_LIMIT_PER_IP`）を1回使い、同時に呼ぶ枠（`MAX_CONCURRENT_TURNS`）を使う
 7. live のときだけつなぐ。mock と CI ではモデルを呼ばず、言葉の辞書で読む

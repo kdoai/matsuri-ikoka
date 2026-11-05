@@ -31,20 +31,76 @@ interface WishConcept {
 const isSmall = (f: Festival) => f.scaleTier === "XS" || f.scaleTier === "S";
 const isCrowded = (f: Festival) => f.popularity === "major" || f.scaleTier === "L";
 
+/** 名前か見どころにこの言葉があれば、荒い祭りか、夜遅くまで続く祭りとみなす（子連れ・静かに合わない） */
+const ROUGH_WORDS = [
+  "裸",
+  "はだか",
+  "奪い合",
+  "喧嘩",
+  "けんか",
+  "火の粉",
+  "深夜",
+  "夜通し",
+  "徹夜",
+  "未明",
+];
+/** 名前か見どころにこの言葉があれば、静かな祭りとは言えない */
+const LOUD_WORDS = ["勇壮", "熱気", "迫力", "爆竹", "大歓声"];
+
+/** 名前か見どころに言葉があるか。文字の形だけ同じ別の言葉は除く（「裸足」は裸の祭りではない） */
+function primaryMentions(festival: Festival, words: readonly string[]): boolean {
+  const { primary } = festivalTexts(festival);
+  const texts = primary.map((text) => text.replaceAll("裸足", ""));
+  return words.some((word) => texts.some((text) => hitsText(text, normalizeText(word))));
+}
+
+/** 夜遅くに終わるか（目安は21時以降。日をまたぐものを含む）、未明に始まる開催回か */
+function isLateOrPredawn(o: Occurrence): boolean {
+  if (o.start !== null && o.start < "05:00") return true;
+  if (o.end === null) return false;
+  return o.end >= "21:00" || (o.start !== null && o.end < o.start);
+}
+
 const WISH_CONCEPTS: readonly WishConcept[] = [
   {
     label: "子連れ",
-    words: ["子連れ", "子ども", "子供", "こども", "キッズ", "親子", "家族", "ファミリー"],
-    triggers: ["ベビーカー", "小学生", "幼児", "赤ちゃん"],
-    fact: (f) => {
+    // 文に当てるのは、子連れに向くことを表す言い方だけ。「子ども」「家族」の文字は、子どもが担い手の行事にも出てくる
+    words: [
+      "子連れ",
+      "親子",
+      "ファミリー",
+      "ベビーカー",
+      "子ども向け",
+      "子供向け",
+      "こども向け",
+      "家族連れ",
+      "キッズ",
+    ],
+    triggers: ["子ども", "子供", "こども", "家族", "小学生", "幼児", "赤ちゃん"],
+    fact: (f, o) => {
       if (f.etiquette.risk !== UNKNOWN && f.etiquette.risk.level === "high") return "against";
-      return f.nearby.some((spot) => spot.tags.includes("kid_friendly")) ? "for" : null;
+      if (isLateOrPredawn(o) || primaryMentions(f, ROUGH_WORDS)) return "against";
+      if (f.nearby.some((spot) => spot.tags.includes("kid_friendly"))) return "for";
+      return f.etiquette.risk !== UNKNOWN && f.etiquette.risk.level === "low" ? "for" : null;
     },
   },
   {
     label: "夜",
-    words: ["夜", "宵", "夕暮れ", "夕方", "日没", "日が暮れ", "ライトアップ"],
-    triggers: ["夜景", "ナイト"],
+    // 「夜」1字（夜明け）と「夕方」（朝から夕方まで）は文に当てない。開催の時刻がいちばん確かな根拠
+    words: [
+      "夜祭",
+      "夜店",
+      "夜空",
+      "夜間",
+      "夜の",
+      "夜に",
+      "夜まで",
+      "宵",
+      "夕暮れ",
+      "日没",
+      "日が暮れ",
+    ],
+    triggers: ["夜", "夕方", "夜景", "ナイト"],
     fact: (_f, o) => {
       if ((o.start !== null && o.start >= "16:00") || (o.end !== null && o.end >= "19:00")) {
         return "for";
@@ -54,8 +110,8 @@ const WISH_CONCEPTS: readonly WishConcept[] = [
   },
   {
     label: "昼",
-    words: ["昼", "日中", "午前"],
-    triggers: ["朝", "明るいうち"],
+    words: ["昼間", "日中", "午前"],
+    triggers: ["昼", "朝", "明るいうち"],
     fact: (_f, o) => {
       if (o.start !== null && o.start < "15:00") return "for";
       return o.start !== null && o.start >= "17:00" ? "against" : null;
@@ -63,21 +119,25 @@ const WISH_CONCEPTS: readonly WishConcept[] = [
   },
   {
     label: "屋台",
-    words: ["屋台", "露店", "出店", "縁日"],
-    triggers: ["食べ歩き", "買い食い"],
+    // 「屋台」だけでは山車を指す土地もあるので、出店と分かる言い方に絞る（出店があるかは food.stalls でも分かる）
+    words: ["屋台が並", "屋台が出", "露店", "出店", "縁日"],
+    triggers: ["屋台", "食べ歩き", "買い食い"],
     fact: (f) => (f.food.stalls === "yes" ? "for" : f.food.stalls === "no" ? "against" : null),
   },
   {
     label: "地元の味",
-    words: ["郷土料理", "地元の味", "名物", "ご当地"],
-    triggers: ["グルメ", "食べ物", "美味しい", "おいしい"],
+    words: ["郷土料理", "地元の味", "ご当地グルメ"],
+    triggers: ["名物", "ご当地", "グルメ", "食べ物", "美味しい", "おいしい"],
     fact: (f) => (f.food.local.length > 0 ? "for" : null),
   },
   {
     label: "静か",
     words: ["静か", "厳か", "ひっそり", "穴場"],
     triggers: ["のんびり", "ゆったり", "落ち着", "人が少な", "混まない", "混んでいない"],
-    fact: (f) => (isCrowded(f) ? "against" : f.popularity === "local" && isSmall(f) ? "for" : null),
+    fact: (f) => {
+      if (isCrowded(f) || primaryMentions(f, [...ROUGH_WORDS, ...LOUD_WORDS])) return "against";
+      return f.popularity === "local" && isSmall(f) ? "for" : null;
+    },
   },
   {
     label: "混雑",
@@ -93,8 +153,9 @@ const WISH_CONCEPTS: readonly WishConcept[] = [
   },
   {
     label: "写真",
-    words: ["写真", "撮影", "絶景", "フォト"],
-    triggers: ["映え", "カメラ", "インスタ", "撮りたい"],
+    // 「撮影」「写真」は作法の文（撮影の決まり）に多く、撮りたい祭りの根拠にならない
+    words: ["絶景", "フォト", "撮影スポット", "写真映え"],
+    triggers: ["写真", "撮影", "映え", "カメラ", "インスタ", "撮りたい"],
     fact: (f) => {
       if (f.etiquette.photo === UNKNOWN) return null;
       if (f.etiquette.photo.policy === "prohibited") return "against";
@@ -103,8 +164,9 @@ const WISH_CONCEPTS: readonly WishConcept[] = [
   },
   {
     label: "歴史",
-    words: ["歴史", "由来", "文化財", "無形民俗", "古式", "伝統"],
-    triggers: ["昔ながら", "古い"],
+    // 「由来」は小話の多くに出てくる
+    words: ["歴史", "文化財", "無形民俗", "古式", "伝統"],
+    triggers: ["由来", "昔ながら", "古い"],
     fact: (f) => (f.styles.some((s) => s.style === "traditional") ? "for" : null),
   },
   {
@@ -121,8 +183,9 @@ const WISH_CONCEPTS: readonly WishConcept[] = [
   },
   {
     label: "駅から近い",
-    words: ["駅前", "駅から徒歩"],
-    triggers: ["駅近", "駅から近", "電車で"],
+    // 「駅から徒歩」は遠くても書かれるので文に当てず、歩く時間の値で決める
+    words: ["駅前"],
+    triggers: ["駅から徒歩", "駅近", "駅から近", "電車で"],
     fact: (f) => {
       const station = f.access.stations[0];
       if (station === undefined) return null;
@@ -136,25 +199,138 @@ const WISH_CONCEPTS: readonly WishConcept[] = [
     fact: (f) =>
       f.access.parking === "available" ? "for" : f.access.parking === "none" ? "against" : null,
   },
-  { label: "海", words: ["海上", "海辺", "海岸", "海沿い", "浜辺", "砂浜", "漁港", "港町"] },
-  { label: "川", words: ["河原", "川面", "川沿い", "川辺", "川原", "河川敷"] },
-  { label: "山", words: ["山里", "山間", "山あい", "山中", "山頂", "山上"] },
+  {
+    label: "海",
+    words: ["海上", "海辺", "海岸", "海沿い", "浜辺", "砂浜", "漁港", "港町"],
+    triggers: ["海"],
+  },
+  // 「川原」「河原」「山中」「山上」は地名や名字にもあるので、会場の名前と合わせて誤らないよう呼び方を絞る
+  {
+    label: "川",
+    words: ["川面", "川沿い", "川辺", "河川敷", "河原で", "河原に"],
+    triggers: ["川", "河原", "川原"],
+  },
+  { label: "山", words: ["山里", "山間", "山あい", "山頂"], triggers: ["山", "山中", "山上"] },
   { label: "温泉", words: ["温泉"] },
-  { label: "雪", words: ["雪", "かまくら"] },
-  { label: "桜", words: ["桜", "花見"] },
+  // 1字は文に当てない（雪駄・桜井）
+  {
+    label: "雪",
+    words: ["雪の", "雪祭", "雪まつり", "雪景色", "雪中", "雪上", "雪原", "積雪", "かまくら"],
+    triggers: ["雪"],
+  },
+  { label: "桜", words: ["桜の", "桜祭", "桜まつり", "夜桜", "花見", "満開"], triggers: ["桜"] },
   { label: "紅葉", words: ["紅葉"] },
 ];
 
 const CATEGORY_WORDS: Readonly<Record<Exclude<FestivalCategory, "other">, readonly string[]>> = {
-  fireworks: ["花火", "はなび"],
-  float: ["山車", "曳山", "だんじり", "山鉾", "屋台囃子"],
-  mikoshi: ["神輿", "みこし", "行列", "渡御"],
-  dance: ["踊り", "盆踊り", "ダンス", "舞踊"],
-  fire: ["火祭", "火まつり", "松明", "たいまつ", "炎", "どんど焼き"],
-  lantern: ["灯籠", "灯篭", "灯ろう", "提灯", "ちょうちん", "ランタン", "竿燈"],
-  performing_arts: ["神楽", "獅子舞", "太鼓", "芸能", "歌舞伎", "人形芝居"],
-  ritual: ["神事", "儀式", "奉納"],
-  market: ["朝市", "蚤の市", "市が立"],
+  fireworks: ["花火", "はなび", "尺玉", "打ち上げ"],
+  float: [
+    "山車",
+    "曳山",
+    "ひきやま",
+    "だんじり",
+    "地車",
+    "山鉾",
+    "山笠",
+    "傘鉾",
+    "屋台囃子",
+    "屋台を曳",
+  ],
+  mikoshi: ["神輿", "御輿", "みこし", "行列", "渡御", "神幸", "練り歩"],
+  dance: [
+    "踊り",
+    "おどり",
+    "踊る",
+    "盆踊り",
+    "輪踊り",
+    "総踊り",
+    "念仏踊",
+    "風流踊",
+    "よさこい",
+    "ダンス",
+    "舞踊",
+  ],
+  fire: [
+    "火祭",
+    "火まつり",
+    "火の祭",
+    "火渡り",
+    "火の粉",
+    "松明",
+    "たいまつ",
+    "炎",
+    "どんど焼き",
+    "とんど",
+    "左義長",
+    "送り火",
+    "迎え火",
+    "鬼火",
+  ],
+  lantern: [
+    "灯り",
+    "あかり",
+    "灯籠",
+    "灯篭",
+    "灯ろう",
+    "提灯",
+    "ちょうちん",
+    "行灯",
+    "あんどん",
+    "万灯",
+    "まんとう",
+    "灯明",
+    "灯火",
+    "キャンドル",
+    "ろうそく",
+    "蝋燭",
+    "ランタン",
+    "竿燈",
+    "ライトアップ",
+    "幻想的",
+    "幻想",
+  ],
+  performing_arts: [
+    "神楽",
+    "かぐら",
+    "獅子舞",
+    "獅子",
+    "太鼓",
+    "芸能",
+    "歌舞伎",
+    "人形芝居",
+    "人形浄瑠璃",
+    "能楽",
+    "薪能",
+    "狂言",
+    "田楽",
+    "舞楽",
+    "雅楽",
+    "囃子",
+  ],
+  ritual: ["神事", "儀式", "奉納", "祈願", "祈祷", "例大祭", "お祓い", "修正会", "修二会"],
+  market: [
+    "朝市",
+    "蚤の市",
+    "市が立",
+    "骨董市",
+    "植木市",
+    "陶器市",
+    "だるま市",
+    "酉の市",
+    "年の市",
+    "歳の市",
+    "羽子板市",
+  ],
+};
+
+/** 自由記述の読み取りにだけ使う種類の言葉（祭りのデータの文に当てると誤って当たるもの） */
+const CATEGORY_TRIGGERS: Readonly<Partial<Record<FestivalCategory, readonly string[]>>> = {
+  fire: ["火"],
+  lantern: ["灯"],
+  mikoshi: ["担ぎたい", "かつぎたい"],
+  float: ["曳きたい"],
+  performing_arts: ["伝統芸能", "舞"],
+  market: ["市場"],
 };
 
 /** 比べる形にする（全角半角・大文字小文字・カタカナとひらがなをそろえる。長さは変えない） */
@@ -168,7 +344,7 @@ function normalizeText(text: string): string {
 
 /** 言葉のあとにこれが続くと、その言葉は「そうではない」という意味になる */
 const NEGATION_IN_DATA =
-  /禁止|禁じ|不可|遠慮|控え|できな|ません|(?<!て)なし|無し|しない|ない[。、]?$/;
+  /^[をが]消|禁止|禁じ|不可|遠慮|控え|できな|ません|(?<!て)なし|無し|しない|ない[。、]?$/;
 
 /** 文の中で言葉に当たるか。「屋台はありません」「写真は禁止」のように否定している文は当たらないとする */
 function hitsText(text: string, word: string): boolean {
@@ -246,7 +422,7 @@ const DICTIONARY: readonly DictionaryEntry[] = [
     })),
   ),
   ...Object.entries(CATEGORY_WORDS).flatMap(([category, words]) =>
-    words.map((word) => ({
+    [...words, ...(CATEGORY_TRIGGERS[category as FestivalCategory] ?? [])].map((word) => ({
       word: normalizeText(word),
       category: category as FestivalCategory,
     })),
@@ -444,7 +620,8 @@ export function readWishByWords(wish: string): FestivalWishIntent {
 const PRIMARY_TEXT_POINTS = 12;
 const SECONDARY_TEXT_POINTS = 8;
 const FACT_POINTS = 10;
-const CATEGORY_POINTS = 14;
+/** 種類の一致は、文の一致（名前に言葉があるときと、言ったとおりの言葉の点を足しても）より高くする */
+const CATEGORY_POINTS = 24;
 const LITERAL_TERM_BONUS = 4;
 /** 祭りの名前に言葉があるときに足す点（「神楽」と言われたら、名前に神楽のある祭りを上にする） */
 const NAME_WORD_BONUS = 6;
@@ -478,16 +655,16 @@ const STOP_TERMS = new Set([...STOP_WORDS].map(normalizeText));
  * 「混雑しない」は混雑の希望ではないので当てない。1字の言葉は含むだけでは当てない（「夜行」は夜の希望ではない）。
  * 種類は含むだけでは当てない（言い換えの「船渡御」で、神輿という希望を増やさない。種類は categories で受け取る）
  */
-function dictionaryEntryOf(word: string): { entry: DictionaryEntry; exact: boolean } | null {
+function dictionaryEntryOf(word: string): DictionaryEntry | null {
   const exact = ENTRY_BY_WORD.get(word);
-  if (exact !== undefined) return { entry: exact, exact: true };
+  if (exact !== undefined) return exact;
   for (const entry of DICTIONARY) {
     if (entry.concept === undefined || entry.word.length < 2) continue;
     const at = word.indexOf(entry.word);
     if (at === -1) continue;
     const tail = word.slice(at + entry.word.length);
     if (AVOID_AFTER.test(tail) || INDIFFERENT_AFTER.test(tail)) continue;
-    return { entry, exact: false };
+    return entry;
   }
   return null;
 }
@@ -536,14 +713,12 @@ function groupsOf(
       continue;
     }
     const found = dictionaryEntryOf(word);
-    if (found?.entry.concept !== undefined) {
-      const group = conceptGroup(found.entry.concept);
-      // 辞書の言葉より長い言い方（「海辺の灯り」など）は、その言い方でも文に当てる
-      if (!found.exact && !group.words.includes(word)) group.words.push(word);
+    if (found?.concept !== undefined) {
+      conceptGroup(found.concept);
       continue;
     }
-    if (found?.entry.category !== undefined) {
-      categoryGroup(found.entry.category).literal?.push(word);
+    if (found?.category !== undefined) {
+      categoryGroup(found.category).literal?.push(word);
       continue;
     }
     // 1字は漢字だけ（鬼・船・馬など、祭りを表す言葉がある）

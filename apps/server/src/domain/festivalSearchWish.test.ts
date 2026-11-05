@@ -145,6 +145,7 @@ const CATALOG: Festival[] = [
     },
   }),
   plain("kagura", {
+    category: "performing_arts",
     edit: (f) => {
       f.name = { ja: "里神楽祭" };
     },
@@ -567,6 +568,188 @@ describe("モデルの terms の点の付け方", () => {
   it("否定している文には、言い換えも当たらない", () => {
     const none = textFestival("nofood", "酒蔵の見学はありません");
     expect(scoreOf(none, reading({ terms: ["酒蔵"] }), "酒蔵を見たい").fit).toBe("none");
+  });
+});
+
+describe("文字の一致だけで誤って合うとしない", () => {
+  const kidsAndQuiet = reading({ terms: ["子連れ", "静か"] });
+  const quietSmall = { popularity: "local", scaleTier: "XS" } as const;
+  const wish = "子どもと静かに見たい";
+  const kidHits = (festival: Festival) => scoreOf(festival, kidsAndQuiet, wish).hits;
+
+  it("「子ども」「家族」の文字があるだけでは、子連れに合うとしない", () => {
+    expect(kidHits(textFestival("door", "子どもたちが各戸を回る", quietSmall))).not.toContain(
+      "子連れ",
+    );
+    expect(kidHits(textFestival("clan", "家族ごとに供え物を持ち寄る", quietSmall))).not.toContain(
+      "子連れ",
+    );
+  });
+
+  it("向いていることを表す言い方と、データの事実なら子連れに合う", () => {
+    expect(kidHits(textFestival("stroller", "ベビーカーで回れる", quietSmall))).toContain("子連れ");
+    expect(kidHits(textFestival("oyako", "親子で楽しめる", quietSmall))).toContain("子連れ");
+    const safe = textFestival("safe", "町を回る", {
+      ...quietSmall,
+      edit: (f) => {
+        f.etiquette.risk = { level: "low", reason: "見学だけ" };
+      },
+    });
+    expect(kidHits(safe)).toContain("子連れ");
+  });
+
+  const AGAINST_CHILDREN: readonly [string, Festival][] = [
+    [
+      "危険の度合いが high",
+      textFestival("risk", "親子で楽しめる", {
+        edit: (f) => {
+          f.etiquette.risk = { level: "high", reason: "人が押し合う" };
+        },
+      }),
+    ],
+    ["21時以降に終わる", textFestival("late", "親子で楽しめる", { start: "18:00", end: "21:00" })],
+    ["日をまたぐ", textFestival("over", "親子で楽しめる", { start: "22:00", end: "01:00" })],
+    ["未明に始まる", textFestival("dawn2", "親子で楽しめる", { start: "03:00", end: "07:00" })],
+    ["裸の祭り", textFestival("bare", "小学生以下が加わる子ども部門もある裸の祭り")],
+    ["奪い合い", textFestival("grab", "福を奪い合う")],
+    ["喧嘩", textFestival("fight", "山車をぶつける喧嘩祭")],
+    ["火の粉", textFestival("sparks", "火の粉を浴びる")],
+    ["深夜", textFestival("midnight", "深夜に神輿が出る")],
+  ];
+
+  for (const [label, festival] of AGAINST_CHILDREN) {
+    it(`${label}の祭りは、子連れの希望で matched にしない`, () => {
+      const score = scoreOf(festival, kidsAndQuiet, wish);
+      expect(score.fit).not.toBe("matched");
+      expect(score.hits).not.toContain("子連れ");
+    });
+  }
+
+  it("「裸足」は裸の祭りとしない", () => {
+    const barefoot = textFestival("barefoot", "裸足で親子が歩く", quietSmall);
+    expect(kidHits(barefoot)).toContain("子連れ");
+  });
+
+  it("荒い祭りや勇壮な祭りは、静かの希望で matched にしない", () => {
+    const quiet = reading({ terms: ["静か"] });
+    for (const highlight of ["厳かな神事のあと裸で駆ける", "厳かに始まり、勇壮な山車が進む"]) {
+      const festival = textFestival("rough", highlight, quietSmall);
+      expect(scoreOf(festival, quiet, "静かに見たい").fit).not.toBe("matched");
+    }
+  });
+
+  // 希望の言葉と、文字の形だけ同じで合わない祭り
+  const NOT_MATCHED: readonly [string, string, Festival][] = [
+    ["夜", "夜がいい", textFestival("dawnrite", "夜明けに始まる")],
+    ["屋台", "屋台がいい", textFestival("floatstall", "彫刻の屋台を曳く", { category: "float" })],
+    ["写真", "写真を撮りたい", textFestival("rule", "撮影の決まりを守って見る")],
+    ["雪", "雪が見たい", textFestival("sandal", "雪駄を履いて歩く")],
+    ["灯り", "灯りを見たい", textFestival("dark", "灯りを消した闇の中を進む")],
+    ["夜", "夜がいい", textFestival("dusk", "朝から夕方まで町を回る")],
+    ["名物", "名物を食べたい", textFestival("meibutsu", "名物の山車が進む")],
+    [
+      "駅から近い",
+      "駅から近いところ",
+      textFestival("farstation", "駅から徒歩40分の山奥", {
+        edit: (f) => {
+          f.access.stations = [];
+        },
+      }),
+    ],
+    [
+      "桜",
+      "桜が見たい",
+      textFestival("sakuraplace", "町を回る", {
+        edit: (f) => {
+          f.venue.name = "桜山公園";
+        },
+      }),
+    ],
+    [
+      "川",
+      "川がいい",
+      textFestival("kawaraplace", "町を回る", {
+        edit: (f) => {
+          f.municipalities = [{ prefecture: "滋賀県", name: "河原町" }];
+        },
+      }),
+    ],
+  ];
+
+  for (const [label, text, festival] of NOT_MATCHED) {
+    it(`${label}：「${festival.highlights[0]}」は「${text}」に合うとしない`, () => {
+      expect(scoreOf(festival, readWishByWords(text), text).fit).toBe("none");
+    });
+  }
+});
+
+describe("灯りと種類の言い方", () => {
+  it.each([
+    ["灯りを見たい", "lantern"],
+    ["幻想的なところ", "lantern"],
+    ["キャンドルが見たい", "lantern"],
+    ["行灯が並ぶところ", "lantern"],
+    ["万灯を見たい", "lantern"],
+    ["ライトアップ", "lantern"],
+    ["火が見たい", "fire"],
+    ["送り火を見たい", "fire"],
+    ["踊りたい", "dance"],
+    ["よさこいが見たい", "dance"],
+    ["地車が見たい", "float"],
+    ["山笠を見たい", "float"],
+    ["御輿を見たい", "mikoshi"],
+    ["かぐらが見たい", "performing_arts"],
+    ["田楽を見たい", "performing_arts"],
+    ["祈願の行事", "ritual"],
+    ["骨董市に行きたい", "market"],
+  ])("「%s」を %s に読む", (wish, category) => {
+    expect(readWishByWords(wish).categories).toContain(category);
+  });
+
+  it("「夜の幻想的な灯りを見たい」を、夜と灯りの2つの希望に読み、灯籠の祭りを上にする", () => {
+    const wish = "夜の幻想的な灯りを見たい";
+    const lantern = textFestival("toro", "町の辻々に飾る", {
+      category: "lantern",
+      start: "18:00",
+      end: "20:30",
+    });
+    const fireworksAtNight = textFestival("night2", "広場で餅をつく", {
+      start: "18:00",
+      end: "20:30",
+    });
+    const dayLantern = textFestival("day", "町の辻々に飾る", {
+      category: "lantern",
+      start: "09:00",
+      end: "12:00",
+    });
+    const byModel = reading({
+      categories: ["lantern"],
+      terms: ["夜", "灯り", "灯籠", "幻想的", "幻想", "夜祭"],
+    });
+    for (const intent of [undefined, byModel]) {
+      const results = searchFestivalsByConditions([fireworksAtNight, dayLantern, lantern], {
+        conditions: { kinds: [], season: null, prefectures: [] },
+        sessionId: "s",
+        wish,
+        wishIntent: intent,
+        today: TODAY,
+      }).results;
+      expect(results[0]?.candidate.festivalId).toBe("toro");
+      expect(results[0]?.wishFit).toBe("matched");
+    }
+  });
+
+  it("種類が一致した祭りは、名前に言葉がある祭りより上にする", () => {
+    const intent = reading({ terms: ["神楽"] });
+    const sameKind = textFestival("kinds", "舞を奉じる", { category: "performing_arts" });
+    const nameOnly = plain("textonly", {
+      edit: (f) => {
+        f.name = { ja: "架空神楽の市" };
+      },
+    });
+    expect(scoreOf(sameKind, intent, "神楽").points).toBeGreaterThan(
+      scoreOf(nameOnly, intent, "神楽").points,
+    );
   });
 });
 
