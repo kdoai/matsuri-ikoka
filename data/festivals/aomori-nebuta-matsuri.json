@@ -1,0 +1,371 @@
+{
+  "id": "aomori-nebuta-matsuri",
+  "name": {
+    "ja": "青森ねぶた祭",
+    "en": "Aomori Nebuta Festival"
+  },
+  "category": "float",
+  "municipalities": [
+    {
+      "prefecture": "青森県",
+      "name": "青森市"
+    }
+  ],
+  "venue": {
+    "name": "青森市中心市街地の運行コース（新町通り・国道など）",
+    "lat": 40.8257,
+    "lng": 140.7426
+  },
+  "scaleTier": "M",
+  "popularity": "major",
+  "listedIn": ["walkerplus", "jalan", "rurubu", "japan-guide", "jnto"],
+  "highlights": [
+    "武者や神仏を描いた大型ねぶたが夜の街を進む",
+    "衣装を着ればだれでも跳人として加われる",
+    "最終日の夜はねぶたの海上運行と花火で締めくくる"
+  ],
+  "styles": [
+    {
+      "style": "traditional",
+      "basis": "七夕の灯籠流しが形を変えたものとされ、国の重要無形民俗文化財に指定されている",
+      "sources": [
+        {
+          "url": "https://www.nebuta.jp/know/origin/origin.html",
+          "title": "青森ねぶた祭 ねぶたの由来",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20002842",
+          "title": "るるぶ&more. 青森ねぶた祭（国指定重要無形民俗文化財、昨年の来場者数101万人）",
+          "checkedAt": "2026-11-05",
+          "confidence": "single"
+        }
+      ]
+    }
+  ],
+  "trivia": [
+    {
+      "text": "七夕の灯籠流しが形を変えたものと考えられ、起源ははっきりしていない",
+      "source": {
+        "url": "https://www.nebuta.jp/know/origin/origin.html",
+        "title": "青森ねぶた祭 ねぶたの由来",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "名前は、眠りを意味する「ねむりながし」がなまったものと考えられている",
+      "source": {
+        "url": "https://www.nebuta.jp/know/origin/origin.html",
+        "title": "青森ねぶた祭 ねぶたの由来",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "穢れを川や海に流した「ねぶた流し」の名残が、今の海上運行に表れている",
+      "source": {
+        "url": "https://www.nebuta.jp/know/origin/origin.html",
+        "title": "青森ねぶた祭 ねぶたの由来",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    },
+    {
+      "text": "雨でも大きなビニールをかけて運行し、雨で中止したことはないとされる",
+      "source": {
+        "url": "https://www.nebuta.jp/qa/",
+        "title": "青森ねぶた祭 よくある質問",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    }
+  ],
+  "etiquette": {
+    "participation": "join_open",
+    "howToJoin": "跳人の衣装を着て、出発前に待機している団体に加わる。申し込みや受付は要らない（衣装はレンタルと着付けで約4,000円、購入で約1万円）",
+    "rules": [
+      "跳人は運行の出発前に加わる。途中からの参加は混雑しているとき断られることがある",
+      "跳人は逆走しない。係員の指示に従い、消防車や救急車が来たら道をあける",
+      "ねぶた囃子と関係のない笛、花火、爆竹、一升瓶を持ち込まない。缶を投げない",
+      "跳人は団体がコースを1周したら速やかに解散する",
+      "ねぶたは車道を進むので、見物は歩道から。何日も前からの場所取りや、道路へのガムテープ貼りはしない",
+      "観覧席では傘をさすと後ろの人の視界をさえぎるので控える"
+    ],
+    "dress": [
+      "跳人の衣装：花笠、たすき、しごき、白い浴衣（裾を膝まで上げる）、白足袋とぞうり（豆絞りの手ぬぐいで結ぶ）"
+    ],
+    "bring": ["雨具（レインコート。観覧席では傘を控える）"],
+    "risk": {
+      "level": "medium",
+      "reason": "昨年の来場者数が約101万人の混雑で、運行中はコースの道路に車両が入れない"
+    },
+    "photo": "unknown",
+    "sources": [
+      {
+        "url": "https://www.nebuta.jp/info/haneto/sanka.html",
+        "title": "青森ねぶた祭 跳人参加方法・ルール",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.nebuta.jp/qa/",
+        "title": "青森ねぶた祭 よくある質問",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.nebuta.jp/useful/traffic/control.html",
+        "title": "青森ねぶた祭 交通規制（令和8年度）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://rurubu.jp/andmore/spot/20002842",
+        "title": "るるぶ&more. 青森ねぶた祭（国指定重要無形民俗文化財、昨年の来場者数101万人）",
+        "checkedAt": "2026-11-05",
+        "confidence": "single"
+      }
+    ]
+  },
+  "occurrences": [
+    {
+      "date": "2026-08-02",
+      "endDate": "2026-08-03",
+      "start": "19:00",
+      "end": "21:30",
+      "status": "announced",
+      "rainPolicy": "雨天でもビニールをかけて運行する",
+      "note": "子どもねぶた約10台のあとに大型ねぶた約15台が運行",
+      "sources": [
+        {
+          "url": "https://www.nebuta.jp/info/schedule/schedule.html",
+          "title": "青森ねぶた祭 スケジュールと運行コース（2026年）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.nebuta.jp/useful/traffic/control.html",
+          "title": "青森ねぶた祭 交通規制（令和8年度）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.nebuta.jp/qa/",
+          "title": "青森ねぶた祭 よくある質問",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-08-04",
+      "endDate": "2026-08-06",
+      "start": "18:45",
+      "end": "21:30",
+      "status": "announced",
+      "rainPolicy": "雨天でもビニールをかけて運行する",
+      "note": "大型ねぶた約20台が運行",
+      "sources": [
+        {
+          "url": "https://www.nebuta.jp/info/schedule/schedule.html",
+          "title": "青森ねぶた祭 スケジュールと運行コース（2026年）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.nebuta.jp/useful/traffic/control.html",
+          "title": "青森ねぶた祭 交通規制（令和8年度）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.nebuta.jp/qa/",
+          "title": "青森ねぶた祭 よくある質問",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2026-08-07",
+      "start": "13:00",
+      "end": "15:00",
+      "status": "announced",
+      "rainPolicy": "雨天でもビニールをかけて運行する",
+      "note": "昼に大型ねぶた約20台が運行。夜は19:15〜21:00ごろ青森港で第72回青森花火大会とねぶた海上運行（大型ねぶた4台の予定）",
+      "sources": [
+        {
+          "url": "https://www.nebuta.jp/info/schedule/schedule.html",
+          "title": "青森ねぶた祭 スケジュールと運行コース（2026年）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.nebuta.jp/useful/traffic/control.html",
+          "title": "青森ねぶた祭 交通規制（令和8年度）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.nebuta.jp/qa/",
+          "title": "青森ねぶた祭 よくある質問",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    },
+    {
+      "date": "2027-08-02",
+      "endDate": "2027-08-07",
+      "start": null,
+      "end": null,
+      "status": "expected",
+      "rainPolicy": null,
+      "note": "公式サイトの「毎年8月2日から7日」の決まりから見込んだ日（2027年の発表はまだない）。例年は2〜6日が夜、7日が昼の運行で、7日の夜に海上運行と花火。2026年は1日あたり約20〜25台（大型約15〜20台と、8月2・3日は子どもねぶた約10台）",
+      "sources": [
+        {
+          "url": "https://www.nebuta.jp/",
+          "title": "青森ねぶた祭 オフィシャルサイト（毎年8月2日から7日）",
+          "checkedAt": "2026-11-05",
+          "confidence": "inferred"
+        }
+      ]
+    }
+  ],
+  "access": {
+    "stations": [
+      {
+        "name": "JR 青森駅",
+        "walkMinutes": [10, 15],
+        "note": "運行コースまで徒歩約10分"
+      }
+    ],
+    "fromHubs": [
+      {
+        "hub": "新青森駅",
+        "minutes": [5, 15],
+        "route": "JR奥羽本線で5分。東京駅から新青森駅までは東北新幹線はやぶさで約3時間"
+      }
+    ],
+    "parking": "available",
+    "trafficRestrictions": [
+      "8月2〜6日：18:00ごろ〜21:40ごろ、運行コースのエリア内は車両の出入りができない（道路により異なる。2026年の案内）",
+      "8月7日：12:50ごろ〜15:30ごろ、同じく運行コースのエリア内で規制（2026年の案内）"
+    ],
+    "sources": [
+      {
+        "url": "https://www.nebuta.jp/qa/",
+        "title": "青森ねぶた祭 よくある質問",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.nebuta.jp/useful/traffic/control.html",
+        "title": "青森ねぶた祭 交通規制（令和8年度）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      },
+      {
+        "url": "https://www.atca.info/access_jr/",
+        "title": "あおもり案内名人 鉄道（東京〜新青森 約3時間、新青森〜青森 5分）",
+        "checkedAt": "2026-11-05",
+        "confidence": "official"
+      }
+    ]
+  },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
+  "nearby": [
+    {
+      "id": "nebuta-no-ie-wa-rasse",
+      "name": "ねぶたの家 ワ・ラッセ",
+      "kind": "sightseeing",
+      "summary": "ねぶたの展示を見られる青森駅前の施設。食事処と店もある。JR青森駅から徒歩1分。8月9・10日と12月31日・1月1日は全館休み",
+      "location": {
+        "lat": 40.8294,
+        "lng": 140.7353
+      },
+      "walkMinutesFromVenue": null,
+      "hours": {
+        "open": "09:00",
+        "close": "19:00",
+        "lastEntry": "18:30"
+      },
+      "closedDays": [],
+      "price": "一般620円、高校生460円、小・中学生260円",
+      "tags": ["indoor"],
+      "popularity": "local",
+      "sources": [
+        {
+          "url": "https://www.nebuta.jp/warasse/shisetsu/business-day.html",
+          "title": "ねぶたの家ワ・ラッセ 営業時間・休館日（5〜8月は9:00〜19:00）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.nebuta.jp/warasse/shisetsu/pay.html",
+          "title": "ねぶたの家ワ・ラッセ 料金案内",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.nebuta.jp/warasse/access.html",
+          "title": "ねぶたの家ワ・ラッセ アクセス（JR青森駅から徒歩1分）",
+          "checkedAt": "2026-11-05",
+          "confidence": "official"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.nebuta.jp/",
+      "title": "青森ねぶた祭 オフィシャルサイト（毎年8月2日から7日）",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.japan.travel/en/spot/465/",
+      "title": "Travel Japan（日本政府観光局） Aomori Nebuta Festival",
+      "checkedAt": "2026-11-05",
+      "confidence": "official"
+    },
+    {
+      "url": "https://www.japan-guide.com/e/e3755.html",
+      "title": "japan-guide.com Nebuta Matsuri",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://rurubu.jp/andmore/spot/20002842",
+      "title": "るるぶ&more. 青森ねぶた祭（国指定重要無形民俗文化財、昨年の来場者数101万人）",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://summer.walkerplus.com/odekake/detail_e/ar0202e4763/",
+      "title": "ウォーカープラス 青森ねぶた祭 青森市中心市街地運行コース",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    },
+    {
+      "url": "https://www.jalan.net/event/evt_342952/",
+      "title": "じゃらんnet 青森ねぶた祭",
+      "checkedAt": "2026-11-05",
+      "confidence": "single"
+    }
+  ],
+  "gaps": [
+    "2027年の運行時刻と交通規制",
+    "写真・撮影の決まり",
+    "見物の服装の案内",
+    "屋台が出るかどうか、祭りの日だけの食べ物",
+    "祭りの前後に寄れる食の店",
+    "周辺の場所の知名度",
+    "東京駅から青森駅までの乗り継ぎを含めた所要時間"
+  ]
+}
