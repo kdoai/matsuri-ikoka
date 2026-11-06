@@ -6,7 +6,7 @@
 
 > いま動くのは、既存の祭りの開催情報を確かめる週に1回の調査です。新しい祭りの発見と追加は、手元の Claude Code で調査のスキルを使って調べ、PR で取り込みます。データの検証（`pnpm validate:data`）は CI で走り、確かめた日が古い情報を警告します。
 >
-> 調査のチームの定義は [`scripts/research-team.ts`](../../scripts/research-team.ts)、調べる祭りの選び方と台帳は [`scripts/research-schedule.ts`](../../scripts/research-schedule.ts)、報告の検査は [`scripts/research-report.ts`](../../scripts/research-report.ts)、準備と回収は [`scripts/research-run.ts`](../../scripts/research-run.ts)、差分の分け方と PR の本文の作り方は [`scripts/festival-refresh.ts`](../../scripts/festival-refresh.ts) にあります。`pnpm refresh:targets` で、今週調べる祭りと理由を一覧にできます（調査はしない空実行）。`--issues` に `gh issue list --json number,body,labels` の出力を渡すと、依頼の Issue も対象に加えます。判断の理由は [ADR 0009](../adr/0009-weekly-research-on-managed-agents.md) にあります。
+> エージェント・環境・定期実行の定義は [`managed-agents/`](../../managed-agents/README.md)、調べる祭りの選び方と台帳は [`scripts/research-schedule.ts`](../../scripts/research-schedule.ts)、報告の検査は [`scripts/research-report.ts`](../../scripts/research-report.ts)、準備と回収は [`scripts/research-run.ts`](../../scripts/research-run.ts)、差分の分け方と PR の本文の作り方は [`scripts/festival-refresh.ts`](../../scripts/festival-refresh.ts) にあります。`pnpm refresh:targets` で、今週調べる祭りと理由を一覧にできます（調査はしない空実行）。`--issues` に `gh issue list --json number,body,labels` の出力を渡すと、依頼の Issue も対象に加えます。判断の理由は [ADR 0009](../adr/0009-weekly-research-on-managed-agents.md) にあります。
 
 ### 調べる祭りの選び方
 
@@ -61,12 +61,12 @@
 
 調査のチームは次のように分けます。
 
-| 役                        | モデル                  | 使える道具                 | 仕事                                                                   |
-| ------------------------- | ----------------------- | -------------------------- | ---------------------------------------------------------------------- |
-| リード                    | `MODEL_RESEARCH_LEAD`   | 読み取り、書き込み         | 調査リストを読み、仕事を任せ、報告を書く。4件以上なら並列に進める      |
-| 調査員                    | `MODEL_RESEARCH_WORKER` | Web の検索と取得、読み取り | 1つの祭りを調べ、決まった形の JSON で報告する                          |
-| 確認役                    | `MODEL_RESEARCH_WORKER` | Web の検索と取得、読み取り | `found` の報告の根拠のページを開いて確かめる                           |
-| 採点役（Outcomes の機能） | リードと別の文脈        | 成果物の読み取り           | 報告がそろい、形が合っているかを基準で確かめ、足りなければやり直させる |
+| 役                        | モデル           | 使える道具                 | 仕事                                                                   |
+| ------------------------- | ---------------- | -------------------------- | ---------------------------------------------------------------------- |
+| リード                    | Sonnet           | 読み取り、書き込み         | 調査リストを読み、仕事を任せ、報告を書く。4件以上なら並列に進める      |
+| 調査員                    | Haiku            | Web の検索と取得、読み取り | 1つの祭りを調べ、決まった形の JSON で報告する                          |
+| 確認役                    | Sonnet           | ページの取得、読み取り     | `found` の報告の根拠のページを開いて確かめる                           |
+| 採点役（Outcomes の機能） | リードと別の文脈 | 成果物の読み取り           | 報告がそろい、形が合っているかを基準で確かめ、足りなければやり直させる |
 
 調査員と確認役には、調査のスキル（`.claude/skills/festival-research`）だけを渡します。`.claude/` のほかのスキル・エージェント・フックや `CLAUDE.md` は渡しません。
 
@@ -86,12 +86,13 @@
 
 GitHub の Actions の画面で `update-festivals.yml` を main で起動し、行うことを選びます。
 
-| 行うこと  | 内容                                                                                |
-| --------- | ----------------------------------------------------------------------------------- |
-| `setup`   | エージェント・環境・Store・定期実行を作る、更新する。定義やスキルを変えたら実行する |
-| `prepare` | 今週の調査リストを置く。`limit` で件数を絞れる                                      |
-| `trigger` | 定期実行を待たずに1回起動する                                                       |
-| `collect` | 終わったセッションの報告を回収する                                                  |
+| 行うこと  | 内容                                                                                                                      |
+| --------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `plan`    | `ant apply --dry-run` で、`managed-agents/` のファイルと API の資源の差分を見る                                           |
+| `setup`   | `ant apply` で適用し、`MATSURI_REFRESH_ENABLED` に合わせて定期実行を動かすか止める。`claude-lock.json` の更新は PR で届く |
+| `prepare` | 今週の調査リストを置く。`limit` で件数を絞れる                                                                            |
+| `trigger` | 定期実行を待たずに1回起動する                                                                                             |
+| `collect` | 終わったセッションの報告を回収する                                                                                        |
 
 ### 認証
 
@@ -105,14 +106,24 @@ API キーを置かず、Workload Identity Federation で、GitHub の ID トー
 
 ワークフローは、次の GitHub Actions の変数（`vars`）を読みます。どれも秘密情報ではありません。
 
-| 変数                                                                                                                  | 内容                                                                      |
-| --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `MATSURI_REFRESH_ENABLED`                                                                                             | `true` のときだけ定期の調査を動かす                                       |
-| `ANTHROPIC_FEDERATION_RULE_ID`・`ANTHROPIC_ORGANIZATION_ID`・`ANTHROPIC_SERVICE_ACCOUNT_ID`・`ANTHROPIC_WORKSPACE_ID` | Workload Identity Federation の設定                                       |
-| `MODEL_RESEARCH_LEAD`・`MODEL_RESEARCH_WORKER`                                                                        | リードと、調査員・確認役のモデル名                                        |
-| `MATSURI_RESEARCH_BUDGET_USD`                                                                                         | 1回の実行の費用の上限（米ドル、既定は 30.00）。件数の上限ではなく暴走止め |
+| 変数                                                                                                                  | 内容                                |
+| --------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| `MATSURI_REFRESH_ENABLED`                                                                                             | `true` のときだけ定期の調査を動かす |
+| `ANTHROPIC_FEDERATION_RULE_ID`・`ANTHROPIC_ORGANIZATION_ID`・`ANTHROPIC_SERVICE_ACCOUNT_ID`・`ANTHROPIC_WORKSPACE_ID` | Workload Identity Federation の設定 |
 
-GitHub Actions に PR の作成を許す設定も要ります。
+GitHub Actions に PR の作成を許す設定も要ります。モデル名と費用の上限は、変数ではなく `managed-agents/` の定義ファイルで管理します。
+
+### 費用
+
+1回の実行の目安は 20 米ドル以下です。定期実行の `budget` が上限で、届くとセッションが止まり、調べ残した祭りは翌週に調べ直します。件数の上限は設けず、次のように読む量を減らして抑えます。
+
+- 読む量の多い調査員に、いちばん軽いモデルを使う
+- 調査員は分かっている出典から開き、検索は3回、ページは5件までにする
+- 確認役は `found` の報告だけを、根拠のページだけ見る
+- 採点のやり直しは1回までにする
+- 確定した開催回や待ちのフラグが立っている祭りを調べない
+
+費用はモデルのトークン、検索（1,000回で10米ドル）、セッションの動いている時間（1時間で0.08米ドル）の合計です。回収のログに、実行ごとの費用を出します。
 
 ### 報告の検査
 

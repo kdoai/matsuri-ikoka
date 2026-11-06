@@ -22,6 +22,8 @@ ADR 0007 では、GitHub Actions が祭りごとにセッションを起動し�
 - 認証は Workload Identity Federation にし、API キーを置かない。連携のルールは、このリポジトリの main の `update-festivals.yml` の `schedule` と `workflow_dispatch` だけを受け付け、専用のワークスペースの中でだけ使える
 - 調べる祭りは、開催の近い順に、節目（開催の30日前・14日前・7日前）で選ぶ。確定した開催回は終わるまで調べない。結果はコードだけが書く台帳（`data/research-ledger.json`）に残す。選び方は [運用の仕様](../spec/operations.md#調べる祭りの選び方) にある
 - 祭りのデータの正は Git のままにする（[ADR 0002](0002-festival-data-as-json-in-git.md)）。エージェントはデータベースにも GitHub にも書き込まない
+- エージェント・環境・Store・定期実行の定義は、`managed-agents/` に1資源1ファイルで置いて Git で管理し、`ant apply` で適用する。資源の ID の記録（`claude-lock.json`）もコミットする。モデル名と費用の上限も、この定義の中で版として管理する
+- 1回の実行の費用の目安は 20 米ドル以下にする。読む量の多い調査員に軽いモデルを使い、検索とページの数を絞り、確認役は `found` の報告だけを見て、採点のやり直しは1回までにする。定期実行の `budget` で 20 米ドルを上限にする
 
 ### ページの中の指示への備え
 

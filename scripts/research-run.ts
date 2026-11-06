@@ -1,6 +1,7 @@
 // 週次の調査を GitHub Actions から動かす。モデルは呼ばず、Managed Agents の準備と結果の回収だけを行う。
+// エージェントや定期実行の定義は managed-agents/ のファイルにあり、ant apply で適用する。
 //
-//   pnpm research setup                    エージェント・環境・Store・定期実行を作る、更新する
+//   pnpm research schedule                 定期実行を MATSURI_REFRESH_ENABLED に合わせて動かす、止める
 //   pnpm research prepare [--limit 3]      今週の調査リストを Store に置く
 //       --issues issues.json               依頼の Issue（gh issue list --json number,body,labels）
 //       --under-review ids.txt             確認待ちの PR にある祭りの ID（1行に1つ）
@@ -9,16 +10,14 @@
 //
 // 環境変数：
 //   ANTHROPIC_FEDERATION_RULE_ID ほか      Workload Identity Federation の設定（SDK が読む）
-//   MODEL_RESEARCH_LEAD・MODEL_RESEARCH_WORKER  setup で使うモデル
-//   MATSURI_RESEARCH_BUDGET_USD            setup で付ける1回の実行の費用の上限（既定は 30.00）
-//   MATSURI_REFRESH_ENABLED                setup で true なら定期実行を動かし、それ以外は止める
+//   MATSURI_REFRESH_ENABLED                schedule で true なら定期実行を動かし、それ以外は止める
 //
 // ログには件数・費用・ID だけを出し、調べた語やページの中身は出さない。
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
-import Anthropic, { toFile } from "@anthropic-ai/sdk";
+import Anthropic from "@anthropic-ai/sdk";
 import {
   checkPublicWebUrl,
   createWebActivityLog,
@@ -42,6 +41,7 @@ import {
   refreshPullRequestBody,
   requestsFromIssues,
 } from "./festival-refresh";
+import { RESEARCH_NAMES, researchBrief } from "./research-brief";
 import { applyResearchReport, checkQuote } from "./research-report";
 import {
   recordResearchResult,
@@ -49,21 +49,10 @@ import {
   selectRefreshTargets,
   serializeResearchLedger,
 } from "./research-schedule";
-import {
-  centsOf,
-  leadAgent,
-  RESEARCH_ENVIRONMENT,
-  RESEARCH_NAMES,
-  readerAgent,
-  researchBrief,
-  researchDeployment,
-  reviewerAgent,
-} from "./research-team";
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 const FESTIVALS_DIR = join(ROOT, "data/festivals");
 const LEDGER_PATH = join(ROOT, "data/research-ledger.json");
-const SKILL_DIR = join(ROOT, ".claude/skills/festival-research");
 const QUEUE_PATH = "/queue.json";
 const TARGETS_PREFIX = "/targets/";
 const FILE_BETA = "managed-agents-2026-04-01";
@@ -89,13 +78,7 @@ function readLedger(): ResearchLedger {
   return ResearchLedgerSchema.parse(JSON.parse(readFileSync(LEDGER_PATH, "utf8")));
 }
 
-function requireEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) throw new Error(`環境変数 ${name} を設定してください`);
-  return value;
-}
-
-/** 名前で探す。作り直さず更新して、ID を変えないため */
+/** 名前で探す。ID は ant apply が管理するので、コードには持たない */
 async function findByName<T extends { name: string; archived_at?: string | null }>(
   items: AsyncIterable<T>,
   name: string,
@@ -107,93 +90,22 @@ async function findByName<T extends { name: string; archived_at?: string | null 
 }
 
 // ---------------------------------------------------------------------------
-// setup
+// schedule
 
-async function uploadSkill(client: Anthropic): Promise<string> {
-  const files = await Promise.all(
-    ["SKILL.md", "fields.md"].map((name) =>
-      toFile(readFileSync(join(SKILL_DIR, name)), `${RESEARCH_NAMES.skill}/${name}`),
-    ),
-  );
-  for await (const skill of client.beta.skills.list()) {
-    if (skill.display_name === RESEARCH_NAMES.skill) {
-      await client.beta.skills.versions.create(skill.id, { files });
-      return skill.id;
-    }
-  }
-  const skill = await client.beta.skills.create({ display_name: RESEARCH_NAMES.skill, files });
-  return skill.id;
-}
-
-async function upsertAgent<P extends { name: string }>(client: Anthropic, params: P) {
-  const existing = await findByName(client.beta.agents.list(), params.name);
-  // 型は SDK が確かめる。定義は as const で持っているので、ここでだけ広げる
-  const body = params as unknown as Anthropic.Beta.AgentCreateParams;
-  if (existing === null) return client.beta.agents.create(body);
-  return client.beta.agents.update(existing.id, { ...body, version: existing.version });
-}
-
-async function setup(client: Anthropic): Promise<number> {
-  const models = {
-    lead: requireEnv("MODEL_RESEARCH_LEAD"),
-    worker: requireEnv("MODEL_RESEARCH_WORKER"),
-  };
-  const budgetCents = centsOf(process.env.MATSURI_RESEARCH_BUDGET_USD || "30.00");
-  if (budgetCents === null)
-    throw new Error("MATSURI_RESEARCH_BUDGET_USD は 30.00 のように書きます");
-
-  const skillId = await uploadSkill(client);
-  const reader = await upsertAgent(client, readerAgent(models.worker, skillId));
-  const reviewer = await upsertAgent(client, reviewerAgent(models.worker, skillId));
-  const lead = await upsertAgent(client, leadAgent(models.lead, reader.id, reviewer.id));
-
-  const environment =
-    (await findByName(client.beta.environments.list(), RESEARCH_ENVIRONMENT.name)) ??
-    (await client.beta.environments.create(RESEARCH_ENVIRONMENT));
-
-  const store =
-    (await findByName(client.beta.memoryStores.list(), RESEARCH_NAMES.queueStore)) ??
-    (await client.beta.memoryStores.create({
-      name: RESEARCH_NAMES.queueStore,
-      description: "今週の祭りの調査リスト。コードだけが書き、セッションは読むだけ",
-    }));
-
-  const params = researchDeployment({
-    leadId: lead.id,
-    environmentId: environment.id,
-    storeId: store.id,
-    budgetCents,
-  }) as unknown as Anthropic.Beta.DeploymentCreateParams;
-  const existing = await findByName(client.beta.deployments.list(), RESEARCH_NAMES.deployment);
-  const deployment =
-    existing === null
-      ? await client.beta.deployments.create(params)
-      : await client.beta.deployments.update(existing.id, params);
-
-  // 定期実行は MATSURI_REFRESH_ENABLED が true のときだけ動かす。手での起動は止めていても使える
+/**
+ * 定期実行は MATSURI_REFRESH_ENABLED が true のときだけ動かす。
+ * ant apply は作るだけで動き始めるので、適用の直後に呼ぶ。手での起動は止めていても使える
+ */
+async function schedule(client: Anthropic): Promise<number> {
+  const deployment = await requireDeployment(client);
   const enabled = process.env.MATSURI_REFRESH_ENABLED === "true";
-  if (enabled && deployment.status !== "active")
+  if (enabled && deployment.status !== "active") {
     await client.beta.deployments.unpause(deployment.id);
-  if (!enabled && deployment.status === "active")
+  }
+  if (!enabled && deployment.status === "active") {
     await client.beta.deployments.pause(deployment.id);
-
-  console.log(
-    JSON.stringify(
-      {
-        skill: skillId,
-        reader: reader.id,
-        reviewer: reviewer.id,
-        lead: lead.id,
-        environment: environment.id,
-        store: store.id,
-        deployment: deployment.id,
-        scheduled: enabled,
-        upcomingRunsAt: deployment.schedule?.upcoming_runs_at ?? [],
-      },
-      null,
-      2,
-    ),
-  );
+  }
+  console.log(`定期実行 ${deployment.id}：${enabled ? "動かす" : "止める"}`);
   return 0;
 }
 
@@ -510,8 +422,8 @@ async function main(): Promise<number> {
   });
   const client = new Anthropic();
   switch (positionals[0]) {
-    case "setup":
-      return setup(client);
+    case "schedule":
+      return schedule(client);
     case "prepare":
       return prepare(client, {
         ...(values.limit === undefined ? {} : { limit: values.limit }),
@@ -524,7 +436,7 @@ async function main(): Promise<number> {
       if (values.out === undefined) throw new Error("--out を指定してください");
       return collect(client, values.out);
     default:
-      console.error("setup・prepare・trigger・collect のどれかを指定してください");
+      console.error("schedule・prepare・trigger・collect のどれかを指定してください");
       return 1;
   }
 }

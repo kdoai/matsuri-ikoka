@@ -4,6 +4,7 @@ name: 祭りのデータの週次の調査
 # このワークフローはモデルを使わず、その前後の短い仕事だけを行う（scripts/research-run.ts）。
 # - 準備：今週の調査リストをコードで選び、セッションが読むだけの Store に置く
 # - 回収：終わったセッションの報告をコードで確かめ、変える祭りと調査の台帳を PR にする
+# - 適用：managed-agents/ のファイルを ant apply で API に反映し、claude-lock.json を PR にする
 # 認証は Workload Identity Federation で、API キーを置かない。連携のルールはこのファイルの main からの
 # schedule と workflow_dispatch だけを受け付けるので、ファイル名を変えるときはルールも直す。
 # 変数 MATSURI_REFRESH_ENABLED が true でないあいだは、定期のきっかけでは何もしない。
@@ -26,6 +27,7 @@ on:
           - collect
           - prepare
           - trigger
+          - plan
           - setup
         default: collect
       limit:
@@ -61,9 +63,6 @@ jobs:
       ANTHROPIC_ORGANIZATION_ID: ${{ vars.ANTHROPIC_ORGANIZATION_ID }}
       ANTHROPIC_SERVICE_ACCOUNT_ID: ${{ vars.ANTHROPIC_SERVICE_ACCOUNT_ID }}
       ANTHROPIC_WORKSPACE_ID: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
-      MODEL_RESEARCH_LEAD: ${{ vars.MODEL_RESEARCH_LEAD }}
-      MODEL_RESEARCH_WORKER: ${{ vars.MODEL_RESEARCH_WORKER }}
-      MATSURI_RESEARCH_BUDGET_USD: ${{ vars.MATSURI_RESEARCH_BUDGET_USD }}
       MATSURI_REFRESH_ENABLED: ${{ vars.MATSURI_REFRESH_ENABLED }}
       # 定期のきっかけは、どの cron かで仕事を決める
       MODE: ${{ inputs.mode || (github.event.schedule == '0 12 * * 0' && 'prepare') || 'collect' }}
@@ -87,6 +86,21 @@ jobs:
             --jq '.[] | select(.headRefName | startswith("chore/refresh-festivals-")) | .files[].path' \
             | sed -n 's|^data/festivals/\([a-z0-9-]*\)\.json$|\1|p' > "$RUNNER_TEMP/under-review.txt"
 
+      # ant は版とチェックサムで固定して入れる
+      - name: ant を入れる
+        if: env.MODE == 'setup' || env.MODE == 'plan'
+        env:
+          ANT_VERSION: 2.7.1
+          ANT_SHA256: 7c4bf5081532d994201bc3678657c8f314e487c521ec53937d15c0aca25c2bf0
+        run: |
+          archive="$RUNNER_TEMP/ant.tar.gz"
+          curl -fsSL -o "$archive" \
+            "https://github.com/anthropics/anthropic-cli/releases/download/v${ANT_VERSION}/ant_${ANT_VERSION}_linux_amd64.tar.gz"
+          echo "$ANT_SHA256  $archive" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/bin"
+          tar -xzf "$archive" -C "$RUNNER_TEMP/bin" ant
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+
       - name: 実行する
         id: run
         run: |
@@ -102,7 +116,26 @@ jobs:
           refresher=$!
           trap 'kill "$refresher"' EXIT
           case "$MODE" in
-            setup) pnpm --silent research setup ;;
+            plan)
+              (cd managed-agents && ant apply --dry-run -v .)
+              ;;
+            setup)
+              # GitHub の ID トークンは1回しか換えられないので、コマンドごとに取り直す
+              applied=0
+              (cd managed-agents && ant apply --yes .) || applied=$?
+              # 途中で失敗しても、作れた資源の記録を残す
+              mkdir -p "$RUNNER_TEMP/refresh"
+              if ! git diff --quiet -- managed-agents/claude-lock.json \
+                || [[ -n "$(git ls-files --others --exclude-standard managed-agents/claude-lock.json)" ]]; then
+                cp managed-agents/claude-lock.json "$RUNNER_TEMP/refresh/"
+                echo "Managed Agents の資源の ID の記録を更新します。" > "$RUNNER_TEMP/refresh/body.md"
+                echo "changed=true" >> "$GITHUB_OUTPUT"
+                echo "review=auto" >> "$GITHUB_OUTPUT"
+              fi
+              (( applied == 0 )) || exit "$applied"
+              fetch_token
+              pnpm --silent research schedule
+              ;;
             trigger) pnpm --silent research trigger ;;
             prepare)
               args=(--issues "$RUNNER_TEMP/issues.json" --under-review "$RUNNER_TEMP/under-review.txt")
@@ -117,7 +150,8 @@ jobs:
           esac
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        if: steps.run.outputs.changed == 'true'
+        # 適用が途中で失敗しても、作れた資源の記録は PR にする
+        if: always() && steps.run.outputs.changed == 'true'
         with:
           name: refresh
           path: ${{ runner.temp }}/refresh
@@ -126,7 +160,7 @@ jobs:
   pull-request:
     name: PR を開く
     needs: research
-    if: needs.research.outputs.changed == 'true'
+    if: always() && needs.research.outputs.changed == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
@@ -151,24 +185,33 @@ jobs:
           REVIEW: ${{ needs.research.outputs.review }}
         run: |
           today="$(TZ=Asia/Tokyo date +%F)"
-          # 確かめた祭りのファイルと台帳だけを置く（ファイル名はデータの ID）
-          shopt -s nullglob
-          for file in "$RUNNER_TEMP"/refresh/festivals/*.json; do
-            name="$(basename "$file")"
-            [[ "$name" =~ ^[a-z0-9-]+\.json$ ]] || { echo "想定しないファイル名：$name" >&2; exit 1; }
-            cp "$file" "data/festivals/$name"
-          done
-          cp "$RUNNER_TEMP/refresh/research-ledger.json" data/research-ledger.json
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$BRANCH"
-          git add data/festivals data/research-ledger.json
-          git commit -m "chore(data): 祭りのデータの週次の調査の結果（${today}）"
-          git push origin "$BRANCH"
-          labels=(--label type:data --label area:data)
+          if [[ -f "$RUNNER_TEMP/refresh/claude-lock.json" ]]; then
+            # 適用の記録だけを置く
+            cp "$RUNNER_TEMP/refresh/claude-lock.json" managed-agents/claude-lock.json
+            git add managed-agents/claude-lock.json
+            title="chore(infra): Managed Agents の資源の ID の記録を更新する（${today}）"
+            labels=(--label type:task --label area:infra)
+          else
+            # 確かめた祭りのファイルと台帳だけを置く（ファイル名はデータの ID）
+            shopt -s nullglob
+            for file in "$RUNNER_TEMP"/refresh/festivals/*.json; do
+              name="$(basename "$file")"
+              [[ "$name" =~ ^[a-z0-9-]+\.json$ ]] || { echo "想定しないファイル名：$name" >&2; exit 1; }
+              cp "$file" "data/festivals/$name"
+            done
+            cp "$RUNNER_TEMP/refresh/research-ledger.json" data/research-ledger.json
+            git add data/festivals data/research-ledger.json
+            title="chore(data): 祭りのデータの週次の調査の結果（${today}）"
+            labels=(--label type:data --label area:data)
+          fi
           [[ "$REVIEW" == "human" ]] && labels+=(--label status:manual)
+          git commit -m "$title"
+          git push origin "$BRANCH"
           gh pr create -R "$GITHUB_REPOSITORY" --base main --head "$BRANCH" \
-            --title "chore(data): 祭りのデータの週次の調査の結果（${today}）" \
+            --title "$title" \
             --body-file "$RUNNER_TEMP/refresh/body.md" \
             "${labels[@]}"
           gh workflow run ci.yml -R "$GITHUB_REPOSITORY" --ref "$BRANCH"

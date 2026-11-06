@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=https://platform.claude.com/schemas/ant/beta/environment.json
+name: matsuri-research
+description: 週次の祭りの調査。秘密の値を置かない
+# 祭りの公式サイトは前もって列挙できないので、ネットワークは絞らない（出典のサイトは 648 あり、許可リストの上限は 64）。
+# コマンドを実行できるエージェントはなく、セッションに秘密の値もない
+config:
+  type: cloud
+  networking:
+    type: unrestricted
