@@ -10,38 +10,39 @@
       "kind": "skill",
       "id": "skill_01BFLz5rUVqrCKu2ZqoFHCFe",
       "version": "skver_01Jg9DhkjA279E6hfgzYtXAz",
-      "hash": "b44a495810ec2b8cb22fb6edac7a2656"
+      "hash": "b44a495810ec2b8cb22fb6edac7a2656",
+      "stamp": "skver_01Jg9DhkjA279E6hfgzYtXAz"
     },
     "./agents/research-lead.md": {
       "kind": "agent",
       "id": "agent_018fnE7254DszWYrea8R4UzX",
-      "version": "1",
-      "hash": "bf1aab393ad6cf757d005d34fd77e3a9",
-      "remote_hash": "961b56de734bce35e105287b9254de99",
-      "stamp": "1"
+      "version": "2",
+      "hash": "79fef2bd72957db0bf1643ee3e7d01b2",
+      "remote_hash": "199c75dac6db7d3fd24310afeb626dc4",
+      "stamp": "2"
     },
     "./agents/research-reader.md": {
       "kind": "agent",
       "id": "agent_01Qbgxr4gdBJGkZFSmY6LG3M",
-      "version": "1",
-      "hash": "d173ca475902af6f7433288cd69aa2f3",
-      "remote_hash": "41da4124674ec2e6d36c9caba9de2462",
-      "stamp": "1"
+      "version": "2",
+      "hash": "0d3543fd6e62edb52022281c0ebc2260",
+      "remote_hash": "92d66f37c5b96d460d46d69d2adabcd6",
+      "stamp": "2"
     },
     "./agents/research-reviewer.md": {
       "kind": "agent",
       "id": "agent_015xDQMG1bbQ6muVVD5vhA7X",
-      "version": "1",
-      "hash": "41fda94ab5944790b4fbc86a95fe6530",
-      "remote_hash": "55c62bfe7ff8ae17d490f8b704ddb58e",
-      "stamp": "1"
+      "version": "2",
+      "hash": "53b2f0d027fd41f03acca5f88dc4073a",
+      "remote_hash": "9de45a67be02f77cf93960bb089cfbf3",
+      "stamp": "2"
     },
     "./deployments/weekly-research.yaml": {
       "kind": "deployment",
       "id": "depl_01GhKJ78LQ5N4Vghp4dWcCwW",
-      "hash": "2dc8412d85e2c6cc153577c26c0774ed",
-      "remote_hash": "2dc8412d85e2c6cc153577c26c0774ed",
-      "stamp": "2026-11-06T06:17:16.713553Z"
+      "hash": "57183b4320a839268b217c5e3bf98bee",
+      "remote_hash": "57183b4320a839268b217c5e3bf98bee",
+      "stamp": "2026-11-06T06:56:25.798003Z"
     },
     "./environments/research.yaml": {
       "kind": "environment",
