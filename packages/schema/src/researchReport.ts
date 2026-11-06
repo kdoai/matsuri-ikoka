@@ -2,10 +2,13 @@ import { z } from "zod";
 import { IsoDateSchema, LocalTimeSchema, SlugSchema } from "./common";
 import { OCCURRENCE_STATUSES } from "./festival";
 
+/** モデルは「値がない」を null や空文字でも書くので、省略と同じに受け取る */
+const blankToUndefined = (value: unknown) => (value === null || value === "" ? undefined : value);
+
 /** 調査員が開催を確かめた根拠。quote はページにそのまま書いてある短い引用 */
 export const ResearchEvidenceSchema = z.strictObject({
   url: z.url({ protocol: /^https?$/ }),
-  title: z.string().min(1).max(120).optional(),
+  title: z.preprocess(blankToUndefined, z.string().min(1).max(120).optional()),
   quote: z.string().min(1).max(300),
   /** 確度。意見は持たず、調査のスキルの情報源の順位で決める */
   confidence: z.enum(["official", "corroborated", "single"]),
@@ -15,12 +18,15 @@ export type ResearchEvidence = z.infer<typeof ResearchEvidenceSchema>;
 /** 調査で変えてよい項目だけを持つ開催回。ほかの項目はこの報告では変えられない */
 export const ResearchOccurrencePatchSchema = z.strictObject({
   date: IsoDateSchema,
-  endDate: IsoDateSchema.optional(),
+  endDate: z.preprocess(blankToUndefined, IsoDateSchema.optional()),
   start: LocalTimeSchema.nullable(),
   end: LocalTimeSchema.nullable(),
   status: z.enum(OCCURRENCE_STATUSES),
-  rainPolicy: z.string().min(1).max(200).nullable(),
-  note: z.string().min(1).max(200).optional(),
+  rainPolicy: z.preprocess(
+    (value) => (value === "" ? null : value),
+    z.string().min(1).max(200).nullable(),
+  ),
+  note: z.preprocess(blankToUndefined, z.string().min(1).max(200).optional()),
 });
 export type ResearchOccurrencePatch = z.infer<typeof ResearchOccurrencePatchSchema>;
 

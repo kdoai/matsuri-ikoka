@@ -69,6 +69,30 @@ describe("ResearchReportSchema", () => {
     expect(() => reportOf({ evidence: [] })).toThrow();
   });
 
+  it("null や空文字の任意の項目は、省略と同じに受け取る", () => {
+    const parsed = ResearchReportSchema.parse({
+      festivalId: "suzunari-toro",
+      occurrenceDate: DATE,
+      outcome: "found",
+      occurrence: {
+        date: DATE,
+        endDate: null,
+        start: null,
+        end: null,
+        status: "announced",
+        rainPolicy: "",
+        note: null,
+      },
+      evidence: [{ url: URL_A, title: "", quote: "8月16日に開催", confidence: "official" }],
+    });
+    expect(parsed.occurrence?.note).toBeUndefined();
+    expect(parsed.occurrence?.endDate).toBeUndefined();
+    expect(parsed.occurrence?.rainPolicy).toBeNull();
+    expect(parsed.evidence[0]?.title).toBeUndefined();
+    const result = apply(parsed);
+    expect(result.ok).toBe(true);
+  });
+
   it("決まった項目のほかは受け取らない", () => {
     expect(ResearchReportSchema.safeParse({ ...reportOf(), optOut: true }).success).toBe(false);
   });

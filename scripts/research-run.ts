@@ -261,8 +261,16 @@ async function readReports(client: Anthropic, sessionId: string) {
     }
     const response = await client.beta.files.download(file.id, { betas: [FILE_BETA] });
     const parsed = parseJsonWithSchema(await response.text(), ResearchReportSchema, "object");
-    if (parsed.ok && parsed.value.festivalId === name) reports.set(name, parsed.value);
-    else invalid.add(name);
+    if (parsed.ok && parsed.value.festivalId === name) {
+      reports.set(name, parsed.value);
+      continue;
+    }
+    invalid.add(name);
+    // 本文は信用しない入力なので、ログには項目の名前と理由だけを出す
+    const issues = parsed.ok
+      ? ["festivalId：ファイル名と合わない"]
+      : (parsed.issues ?? [parsed.reason]);
+    console.log(`報告の形が合わない ${name}：${issues.join(" / ")}`);
   }
   return { reports, invalid };
 }
