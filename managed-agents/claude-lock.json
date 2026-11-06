@@ -16,33 +16,33 @@
     "./agents/research-lead.md": {
       "kind": "agent",
       "id": "agent_018fnE7254DszWYrea8R4UzX",
-      "version": "2",
-      "hash": "79fef2bd72957db0bf1643ee3e7d01b2",
-      "remote_hash": "199c75dac6db7d3fd24310afeb626dc4",
-      "stamp": "2"
+      "version": "3",
+      "hash": "d08ed06a26029fe514b5c7154f6cc37e",
+      "remote_hash": "fcd1f5700c91b904bf647e3921e7b225",
+      "stamp": "3"
     },
     "./agents/research-reader.md": {
       "kind": "agent",
       "id": "agent_01Qbgxr4gdBJGkZFSmY6LG3M",
-      "version": "2",
-      "hash": "0d3543fd6e62edb52022281c0ebc2260",
-      "remote_hash": "92d66f37c5b96d460d46d69d2adabcd6",
-      "stamp": "2"
+      "version": "3",
+      "hash": "68a371482415f8f6cd916f2405ca6ca4",
+      "remote_hash": "e7522edf52966227da8801571c7132d1",
+      "stamp": "3"
     },
     "./agents/research-reviewer.md": {
       "kind": "agent",
       "id": "agent_015xDQMG1bbQ6muVVD5vhA7X",
-      "version": "2",
-      "hash": "53b2f0d027fd41f03acca5f88dc4073a",
-      "remote_hash": "9de45a67be02f77cf93960bb089cfbf3",
-      "stamp": "2"
+      "version": "3",
+      "hash": "dcd5077fe14985adb27864590fa31295",
+      "remote_hash": "315f84b73d21da156cc7568af9045371",
+      "stamp": "3"
     },
     "./deployments/weekly-research.yaml": {
       "kind": "deployment",
       "id": "depl_01GhKJ78LQ5N4Vghp4dWcCwW",
-      "hash": "57183b4320a839268b217c5e3bf98bee",
-      "remote_hash": "57183b4320a839268b217c5e3bf98bee",
-      "stamp": "2026-11-06T06:56:25.798003Z"
+      "hash": "5309bf6ad6fa239cd1ba240bc8057b3e",
+      "remote_hash": "5309bf6ad6fa239cd1ba240bc8057b3e",
+      "stamp": "2026-11-06T07:23:37.689413Z"
     },
     "./environments/research.yaml": {
       "kind": "environment",
