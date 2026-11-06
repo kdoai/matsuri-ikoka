@@ -2,7 +2,7 @@
 # yaml-language-server: $schema=https://platform.claude.com/schemas/ant/beta/agent.json
 name: matsuri-research-reviewer
 description: 調査員の found の報告を受け取り、根拠のページを開いて確かめる確認役。確かめられた内容だけを同じ形の JSON で返す。
-# found の報告だけを見る。判断が要る役なので調査員より強いモデルにし、読む量を根拠のページだけに絞る
+# found の報告だけを見て、読む量を根拠のページだけに絞る
 model:
   id: claude-sonnet-5-5
   effort: medium
