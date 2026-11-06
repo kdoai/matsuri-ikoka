@@ -149,8 +149,7 @@ jobs:
               shopt -s nullglob
               for file in "$RUNNER_TEMP"/refresh/festivals/*.json; do
                 formatted="$(pnpm --silent exec biome format --stdin-file-path="data/festivals/$(basename "$file")" < "$file")"
-                printf '%s
-' "$formatted" > "$file"
+                echo "$formatted" > "$file"
               done
               ;;
             *) echo "想定しない仕事：$MODE" >&2; exit 1 ;;
