@@ -82,6 +82,18 @@
       "note": "毎年11月20日の行事（主催者・観光協会の2026年の発表は見つからない。るるぶ&more.は2026年11月20日と案内）。時刻の案内はない",
       "sources": [
         {
+          "url": "https://tsuruga-kanko.jp/event/senbeiyaki/",
+          "title": "せんべい焼き（天満神社） 〈11月〉 - 旅する港町つるが 敦賀観光公式サイト",
+          "checkedAt": "2026-11-06",
+          "confidence": "official"
+        },
+        {
+          "url": "https://info.pref.fukui.lg.jp/furusato/shiawase/topics/entry.php?eid=25",
+          "title": "今から見られる伝統行事を見に行こう！【11～12月編】 | ふくい四季のしあわせ綴り",
+          "checkedAt": "2026-11-06",
+          "confidence": "official"
+        },
+        {
           "url": "https://tsuruga-kanko.jp/event/senbeiyaki",
           "title": "港都つるが観光協会 せんべい焼き（天満神社）（毎年11月20日）",
           "checkedAt": "2026-11-04",
@@ -273,5 +285,6 @@
     "神社の境内のどの社で行うか（るるぶ&more.は境内の恵美須神社とし、観光協会は天満神社とだけ書く）",
     "敦賀駅より遠くの主要駅（京都駅・名古屋駅・金沢駅など）からの所要時間",
     "金崎宮の参拝時間と、周辺の場所の会場からの徒歩の時間"
-  ]
+  ],
+  "optOut": false
 }
