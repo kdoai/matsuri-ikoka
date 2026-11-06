@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { type Festival, type FestivalInput, FestivalSchema } from "../packages/schema/src";
 import { fictionalFestival, fictionalSource } from "../packages/schema/src/testing";
-import type { RefreshTarget } from "./festival-refresh";
 import { checkRefreshOutput, refreshPrompt, type ToolCall } from "./festival-refresh-agent";
+import type { RefreshTarget } from "./research-schedule";
 
 // 架空の祭りの出典は 2026-04-01 に確認、開催は 2026-08-16（announced）
 function festivalOf(edit: (festival: FestivalInput) => void = () => {}): Festival {
@@ -13,7 +13,7 @@ function festivalOf(edit: (festival: FestivalInput) => void = () => {}): Festiva
 
 const target: RefreshTarget = {
   id: "suzunari-toro",
-  reasons: ["expected", "upcoming"],
+  reasons: ["due_soon"],
   nextDate: "2026-08-16",
   notes: ["開催回 2026-08-16 の出典の確認日が古い"],
 };
@@ -28,7 +28,7 @@ describe("refreshPrompt", () => {
       guides: [{ path: ".claude/skills/festival-research/SKILL.md", content: "# 祭りの調査\n" }],
     });
     expect(prompt).toContain("今日は 2026-07-20");
-    expect(prompt).toContain("見込み（expected）のまま");
+    expect(prompt).toContain("開催が近いのに、まだ確定していない");
     expect(prompt).toContain("開催回 2026-08-16 の出典の確認日が古い");
     expect(prompt).toContain(`"id": "${festival.id}"`);
     expect(prompt).toContain("### .claude/skills/festival-research/SKILL.md");

@@ -21,17 +21,19 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import Anthropic from "@anthropic-ai/sdk";
-import { type Festival, FestivalSchema, IsoDateSchema } from "../packages/schema/src";
 import {
-  DEFAULT_UPCOMING_WITHIN_DAYS,
+  type Festival,
+  FestivalSchema,
+  IsoDateSchema,
+  ResearchLedgerSchema,
+} from "../packages/schema/src";
+import {
   type IssueRequests,
   type RefreshIssue,
   type RefreshResult,
-  type RefreshTarget,
   type RejectedRefresh,
   refreshPullRequestBody,
   requestsFromIssues,
-  selectRefreshTargets,
 } from "./festival-refresh";
 import {
   checkRefreshOutput,
@@ -39,9 +41,11 @@ import {
   refreshPrompt,
   type ToolCall,
 } from "./festival-refresh-agent";
+import { type RefreshTarget, selectRefreshTargets } from "./research-schedule";
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 const DIR = join(ROOT, "data/festivals");
+const LEDGER_PATH = join(ROOT, "data/research-ledger.json");
 
 /** 調査の決まりとして渡す文書。.claude/ のほかのスキル・エージェント・フックや CLAUDE.md は渡さない */
 const GUIDE_PATHS = [
@@ -147,7 +151,6 @@ async function main(): Promise<number> {
   const { values } = parseArgs({
     options: {
       today: { type: "string" },
-      within: { type: "string" },
       issues: { type: "string" },
       limit: { type: "string" },
       "max-cost": { type: "string" },
@@ -157,13 +160,8 @@ async function main(): Promise<number> {
     },
   });
   const today = IsoDateSchema.parse(values.today ?? todayInJapan());
-  const upcomingWithinDays = Number(values.within ?? DEFAULT_UPCOMING_WITHIN_DAYS);
   const limit = Number(values.limit ?? DEFAULT_LIMIT);
   const maxCostCents = centsOf(values["max-cost"] ?? DEFAULT_MAX_COST_USD);
-  if (!Number.isInteger(upcomingWithinDays) || upcomingWithinDays < 0) {
-    console.error("--within には0以上の整数を指定してください");
-    return 1;
-  }
   if (!Number.isInteger(limit) || limit < 1) {
     console.error("--limit には1以上の整数を指定してください");
     return 1;
@@ -185,7 +183,7 @@ async function main(): Promise<number> {
     : { requests: [], unresolved: [] };
   const targets: RefreshTarget[] = selectRefreshTargets([...festivals.values()], {
     today,
-    upcomingWithinDays,
+    ledger: ResearchLedgerSchema.parse(JSON.parse(readFileSync(LEDGER_PATH, "utf8"))),
     requests,
   }).slice(0, limit);
   const guides: GuideFile[] = GUIDE_PATHS.map((path) => ({

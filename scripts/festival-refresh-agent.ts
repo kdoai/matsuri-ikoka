@@ -6,13 +6,9 @@ import {
   ungroundedSources,
 } from "../packages/agent-kit/src";
 import { type Festival, FestivalSchema, type IsoDate } from "../packages/schema/src";
-import {
-  changedSources,
-  type RefreshResult,
-  type RefreshTarget,
-  type RejectedRefresh,
-} from "./festival-refresh";
+import { changedSources, type RefreshResult, type RejectedRefresh } from "./festival-refresh";
 import { validateFestivalFiles } from "./festival-validation";
+import type { RefreshTarget } from "./research-schedule";
 
 /** 調査の決まりとして渡す文書（調査のスキルと、スキーマの定義） */
 export interface GuideFile {
@@ -22,9 +18,10 @@ export interface GuideFile {
 
 const REASON_TEXT: Record<RefreshTarget["reasons"][number], string> = {
   request: "掲載・訂正・掲載停止の依頼か、公式情報との食い違いの記録がある",
-  expected: "これから先の開催回が見込み（expected）のまま",
-  upcoming: "開催が近い",
-  stale: "確認した日が期限を過ぎた項目がある",
+  due_soon: "開催が近いのに、まだ確定していない",
+  checkpoint: "前に調べたときは確かめられず、開催が近づいた",
+  retry: "前回は調査を最後まで進められなかった",
+  fill: "これから先の開催回がまだ確定していない",
 };
 
 const DATA_OPEN = "<<<いまのデータ";

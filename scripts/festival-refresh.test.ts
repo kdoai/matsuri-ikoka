@@ -8,7 +8,6 @@ import {
   refreshPullRequestBody,
   refreshReview,
   requestsFromIssues,
-  selectRefreshTargets,
 } from "./festival-refresh";
 
 // 架空の祭りの出典は 2026-04-01 に確認、開催は 2026-08-16（announced）
@@ -17,89 +16,6 @@ function festivalOf(edit: (festival: FestivalInput) => void = () => {}): Festiva
   edit(festival);
   return FestivalSchema.parse(festival);
 }
-
-describe("selectRefreshTargets", () => {
-  it("確認が新しく、開催が先で、発表済みなら選ばない", () => {
-    expect(selectRefreshTargets([festivalOf()], { today: "2026-04-02" })).toEqual([]);
-  });
-
-  it("開催回が見込み（expected）のままなら選ぶ", () => {
-    const festival = festivalOf((f) => {
-      f.occurrences[0] = { ...f.occurrences[0]!, status: "expected" };
-    });
-    const [target] = selectRefreshTargets([festival], { today: "2026-04-02" });
-    expect(target).toMatchObject({ id: "suzunari-toro", reasons: ["expected"] });
-    expect(target?.nextDate).toBe("2026-08-16");
-  });
-
-  it("終わった開催回が見込みのままでも、それだけでは選ばない", () => {
-    const festival = festivalOf((f) => {
-      f.occurrences = [
-        { ...f.occurrences[0]!, date: "2026-03-01", status: "expected" },
-        f.occurrences[0]!,
-      ];
-    });
-    expect(selectRefreshTargets([festival], { today: "2026-04-02" })).toEqual([]);
-  });
-
-  it("開催が近ければ選ぶ（日数は変えられる）", () => {
-    // すべての出典を開催の直前に確かめ直した状態にする
-    const festival = FestivalSchema.parse(
-      JSON.parse(JSON.stringify(fictionalFestival()).replaceAll("2026-04-01", "2026-07-30")),
-    );
-    const options = { today: "2026-08-01" } as const;
-    expect(selectRefreshTargets([festival], options)[0]?.reasons).toEqual(["upcoming"]);
-    expect(selectRefreshTargets([festival], { ...options, upcomingWithinDays: 7 })).toEqual([]);
-  });
-
-  it("確認日が期限を過ぎた項目があれば、その項目を手がかりに付けて選ぶ", () => {
-    // 周辺の場所の期限は30日
-    const [target] = selectRefreshTargets([festivalOf()], { today: "2026-05-15" });
-    expect(target?.reasons).toEqual(["stale"]);
-    expect(target?.notes.some((note) => note.startsWith("nearby.0"))).toBe(true);
-  });
-
-  it("依頼のある祭りを選び、依頼の種類を手がかりに付ける", () => {
-    const [target] = selectRefreshTargets([festivalOf()], {
-      today: "2026-04-02",
-      requests: [{ festivalId: "suzunari-toro", kind: "correction" }],
-    });
-    expect(target).toMatchObject({ reasons: ["request"], notes: ["依頼：訂正"] });
-  });
-
-  it("データにない祭りへの依頼は、対象を増やさない", () => {
-    const targets = selectRefreshTargets([festivalOf()], {
-      today: "2026-04-02",
-      requests: [{ festivalId: "unknown-festival", kind: "discrepancy" }],
-    });
-    expect(targets).toEqual([]);
-  });
-
-  it("掲載停止の祭りは、依頼や見込みがあっても選ばない", () => {
-    const festival = festivalOf((f) => {
-      f.optOut = true;
-      f.occurrences[0] = { ...f.occurrences[0]!, status: "expected" };
-    });
-    const targets = selectRefreshTargets([festival], {
-      today: "2026-05-15",
-      requests: [{ festivalId: "suzunari-toro", kind: "correction" }],
-    });
-    expect(targets).toEqual([]);
-  });
-
-  it("依頼のあるもの、開催が近いもの、id の順に並べる", () => {
-    const at = (id: string, date: string) =>
-      festivalOf((f) => {
-        f.id = id;
-        f.occurrences[0] = { ...f.occurrences[0]!, date, status: "expected" };
-      });
-    const targets = selectRefreshTargets(
-      [at("b-matsuri", "2026-09-01"), at("c-matsuri", "2026-08-20"), at("a-matsuri", "2026-09-01")],
-      { today: "2026-04-02", requests: [{ festivalId: "b-matsuri", kind: "listing" }] },
-    );
-    expect(targets.map((t) => t.id)).toEqual(["b-matsuri", "c-matsuri", "a-matsuri"]);
-  });
-});
 
 describe("classifyFestivalChange", () => {
   const before = festivalOf();
@@ -304,14 +220,6 @@ describe("requestsFromIssues", () => {
   it("依頼のラベルのない Issue は見ない", () => {
     const issues = [{ number: 1, body: bodyOf("suzunari-toro"), labels: ["bug"] }];
     expect(requestsFromIssues(issues, [festivalOf()])).toEqual({ requests: [], unresolved: [] });
-  });
-
-  it("決めた依頼は、調べ直す対象の先頭に並ぶ", () => {
-    const issues = [{ number: 1, body: bodyOf("kazane-odori"), labels: ["data-correction"] }];
-    const festivals = [festivalOf(), other()];
-    const { requests } = requestsFromIssues(issues, festivals);
-    const [first] = selectRefreshTargets(festivals, { today: "2026-05-15", requests });
-    expect(first).toMatchObject({ id: "kazane-odori", reasons: ["request", "stale"] });
   });
 });
 

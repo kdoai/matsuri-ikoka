@@ -1,5 +1,6 @@
 // 祭りのデータの定期の確かめ直しで使う、コードの規則の部分。
-// どの祭りを調べ直すかを選ぶことと、調べ直した結果の差分を変更の種類で分けることの2つ。
+// 調べ直した結果の差分を変更の種類で分けることと、依頼の Issue から祭りの ID を決めること。
+// どの祭りを調べるかを選ぶ規則は research-schedule.ts にある。
 // ファイルの読み込みも調査もしない（呼ぶ側が渡す）ので、テストではファイルなしで使える。
 import {
   CONFIDENCE_LEVELS,
@@ -7,21 +8,6 @@ import {
   type Festival,
   type IsoDate,
 } from "../packages/schema/src";
-import { staleMessages } from "./festival-validation";
-
-// ---------------------------------------------------------------------------
-// 調べ直す祭りを選ぶ
-
-/** 開催が近いとみなす日数の既定値 */
-export const DEFAULT_UPCOMING_WITHIN_DAYS = 30;
-
-/**
- * 調べ直す理由。
- * request 掲載・訂正・掲載停止の依頼や、接客中に見つかった公式情報との食い違い /
- * expected これから先の開催回が「見込み」のまま / upcoming 開催が近い / stale 確認日が期限を過ぎた
- */
-export const REFRESH_REASONS = ["request", "expected", "upcoming", "stale"] as const;
-export type RefreshReason = (typeof REFRESH_REASONS)[number];
 
 export const REFRESH_REQUEST_KINDS = ["correction", "listing", "opt_out", "discrepancy"] as const;
 
@@ -29,82 +15,6 @@ export const REFRESH_REQUEST_KINDS = ["correction", "listing", "opt_out", "discr
 export interface RefreshRequest {
   festivalId: string;
   kind: (typeof REFRESH_REQUEST_KINDS)[number];
-}
-
-export interface RefreshTarget {
-  id: string;
-  reasons: RefreshReason[];
-  /** これから先でいちばん近い開催回の初日。なければ null */
-  nextDate: IsoDate | null;
-  /** 調べる人に渡す手がかり（期限を過ぎた項目、依頼の種類など） */
-  notes: string[];
-}
-
-export interface SelectOptions {
-  today: IsoDate;
-  upcomingWithinDays?: number;
-  requests?: readonly RefreshRequest[];
-}
-
-/**
- * 調べ直す祭りを選ぶ。掲載停止（optOut）の祭りは、どの理由があっても選ばない。
- * 並びは、依頼のあるもの → 開催が近いもの → id の順（費用の上限で途中までにするときに、先頭から調べる）
- */
-export function selectRefreshTargets(
-  festivals: readonly Festival[],
-  { today, upcomingWithinDays = DEFAULT_UPCOMING_WITHIN_DAYS, requests = [] }: SelectOptions,
-): RefreshTarget[] {
-  const targets: RefreshTarget[] = [];
-  for (const festival of festivals) {
-    if (festival.optOut) continue;
-    const reasons = new Set<RefreshReason>();
-    const notes: string[] = [];
-
-    for (const request of requests) {
-      if (request.festivalId !== festival.id) continue;
-      reasons.add("request");
-      notes.push(`依頼：${REQUEST_LABELS[request.kind]}`);
-    }
-
-    const ahead = festival.occurrences.filter((o) => (o.endDate ?? o.date) >= today);
-    if (ahead.some((o) => o.status === "expected")) reasons.add("expected");
-    if (ahead.some((o) => daysBetween(today, o.date) <= upcomingWithinDays)) {
-      reasons.add("upcoming");
-    }
-    const stale = staleMessages(festival, today);
-    if (stale.length > 0) {
-      reasons.add("stale");
-      notes.push(...stale);
-    }
-
-    if (reasons.size === 0) continue;
-    const nextDate = ahead.map((o) => o.date).sort()[0] ?? null;
-    targets.push({
-      id: festival.id,
-      reasons: REFRESH_REASONS.filter((reason) => reasons.has(reason)),
-      nextDate,
-      notes,
-    });
-  }
-  return targets.sort(compareTargets);
-}
-
-const REQUEST_LABELS: Record<RefreshRequest["kind"], string> = {
-  correction: "訂正",
-  listing: "掲載・情報提供",
-  opt_out: "掲載停止",
-  discrepancy: "公式情報との食い違い",
-};
-
-function compareTargets(a: RefreshTarget, b: RefreshTarget): number {
-  const requested = Number(b.reasons.includes("request")) - Number(a.reasons.includes("request"));
-  if (requested !== 0) return requested;
-  if (a.nextDate !== b.nextDate) {
-    if (a.nextDate === null) return 1;
-    if (b.nextDate === null) return -1;
-    return a.nextDate < b.nextDate ? -1 : 1;
-  }
-  return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
 }
 
 // ---------------------------------------------------------------------------
@@ -329,11 +239,6 @@ function sortKeys(value: unknown): unknown {
     );
   }
   return value;
-}
-
-/** from から to までの日数（to が前なら負） */
-function daysBetween(from: IsoDate, to: IsoDate): number {
-  return Math.round((Date.parse(to) - Date.parse(from)) / 86_400_000);
 }
 
 // ---------------------------------------------------------------------------

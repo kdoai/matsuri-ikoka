@@ -1,8 +1,7 @@
-// data/festivals/*.json から、確かめ直す祭りと理由を一覧にする。調査はしない（空実行）。
+// data/festivals/*.json と調査の台帳から、今週調べる祭りと理由を一覧にする。調査はしない（空実行）。
 //
 //   pnpm refresh:targets                        今日（日本の日付）を基準に選ぶ
 //   pnpm refresh:targets --today 2026-11-01  基準の日を指定する
-//   pnpm refresh:targets --within 14         開催が近いとみなす日数（既定は30）
 //   pnpm refresh:targets --json              JSON で出す
 //   pnpm refresh:targets --issues issues.json  依頼の Issue を足す
 //
@@ -11,22 +10,19 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
-import { FestivalSchema, IsoDateSchema } from "../packages/schema/src";
-import {
-  DEFAULT_UPCOMING_WITHIN_DAYS,
-  type IssueRequests,
-  type RefreshIssue,
-  requestsFromIssues,
-  selectRefreshTargets,
-} from "./festival-refresh";
+import { FestivalSchema, IsoDateSchema, ResearchLedgerSchema } from "../packages/schema/src";
+import { type IssueRequests, type RefreshIssue, requestsFromIssues } from "./festival-refresh";
+import { selectRefreshTargets } from "./research-schedule";
 
 const DIR = fileURLToPath(new URL("../data/festivals/", import.meta.url));
+const LEDGER_PATH = fileURLToPath(new URL("../data/research-ledger.json", import.meta.url));
 
 const REASON_LABELS = {
   request: "依頼",
-  expected: "見込みのまま",
-  upcoming: "開催が近い",
-  stale: "確認日が古い",
+  due_soon: "開催が近い",
+  checkpoint: "節目が来た",
+  retry: "前回は調べ切れなかった",
+  fill: "最低の件数を満たす",
 } as const;
 
 const UNRESOLVED_LABELS = {
@@ -56,17 +52,12 @@ function main(): number {
   const { values } = parseArgs({
     options: {
       today: { type: "string" },
-      within: { type: "string" },
       json: { type: "boolean", default: false },
       issues: { type: "string" },
     },
   });
   const today = IsoDateSchema.parse(values.today ?? todayInJapan());
-  const upcomingWithinDays = Number(values.within ?? DEFAULT_UPCOMING_WITHIN_DAYS);
-  if (!Number.isInteger(upcomingWithinDays) || upcomingWithinDays < 0) {
-    console.error("--within には0以上の整数を指定してください");
-    return 1;
-  }
+  const ledger = ResearchLedgerSchema.parse(JSON.parse(readFileSync(LEDGER_PATH, "utf8")));
 
   // 検証に落ちるファイルは pnpm validate:data で直すので、ここでは読める祭りだけを使う
   const festivals = readdirSync(DIR)
@@ -79,7 +70,7 @@ function main(): number {
   const { requests, unresolved }: IssueRequests = values.issues
     ? requestsFromIssues(readIssues(values.issues), festivals)
     : { requests: [], unresolved: [] };
-  const targets = selectRefreshTargets(festivals, { today, upcomingWithinDays, requests });
+  const targets = selectRefreshTargets(festivals, { today, ledger, requests });
 
   if (values.json) {
     console.log(JSON.stringify(values.issues ? { targets, unresolved } : targets, null, 2));
@@ -87,14 +78,15 @@ function main(): number {
   }
   for (const target of targets) {
     const reasons = target.reasons.map((reason) => REASON_LABELS[reason]).join("・");
-    console.log(`${target.id}（次の開催 ${target.nextDate ?? "未定"}）：${reasons}`);
+    console.log(`${target.id}（次の開催 ${target.nextDate}）：${reasons}`);
     for (const note of target.notes) console.log(`  ${note}`);
   }
   for (const { number, reason } of unresolved) {
     console.log(`#${number}：祭りの ID を決められない（${UNRESOLVED_LABELS[reason]}）`);
   }
+  const filled = targets.filter((target) => target.reasons.includes("fill")).length;
   console.log(
-    `\n祭り ${festivals.length} 件のうち、確かめ直す対象 ${targets.length} 件（基準日 ${today}）`,
+    `\n祭り ${festivals.length} 件のうち、今週調べる祭り ${targets.length} 件（最低の件数を満たすために足した祭り ${filled} 件、基準日 ${today}）`,
   );
   return 0;
 }

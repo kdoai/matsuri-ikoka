@@ -1,6 +1,14 @@
 // 祭りのデータのファイルを検証する。スキーマに加えて、ファイルをまたぐ決まりと確認日の古さを見る。
 // ファイルの読み込みはしない（呼ぶ側が渡す）ので、テストではファイルなしで使える。
-import { type Festival, FestivalSchema, type IsoDate, type Source } from "../packages/schema/src";
+import {
+  type Festival,
+  FestivalSchema,
+  type IsoDate,
+  ResearchLedgerSchema,
+  type Source,
+} from "../packages/schema/src";
+
+export const RESEARCH_LEDGER_FILE = "research-ledger.json";
 
 export type FindingLevel = "error" | "warning";
 
@@ -231,7 +239,32 @@ function latestCheckedAt(sources: readonly Source[]): IsoDate | null {
   return latest;
 }
 
+/** 調査の台帳を検証する。形が崩れていればエラー、データにない祭りの記録は警告にする */
+export function validateResearchLedger(
+  content: string,
+  festivalIds: ReadonlySet<string>,
+): Finding[] {
+  const file = RESEARCH_LEDGER_FILE;
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(content);
+  } catch {
+    return [{ file, level: "error", message: "JSON として読めません" }];
+  }
+  const ledger = ResearchLedgerSchema.safeParse(parsed);
+  if (!ledger.success) {
+    return ledger.error.issues.map((issue) => ({
+      file,
+      level: "error",
+      message: `${issue.path.join(".")}: ${issue.message}`,
+    }));
+  }
+  return Object.keys(ledger.data.festivals)
+    .filter((id) => !festivalIds.has(id))
+    .map((id) => ({ file, level: "warning", message: `データにない祭りの記録があります：${id}` }));
+}
+
 /** from から to までの日数（to が前なら負） */
-function daysBetween(from: IsoDate, to: IsoDate): number {
+export function daysBetween(from: IsoDate, to: IsoDate): number {
   return Math.round((Date.parse(to) - Date.parse(from)) / 86_400_000);
 }
