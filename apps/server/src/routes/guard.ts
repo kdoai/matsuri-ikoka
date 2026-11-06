@@ -3,7 +3,7 @@ import type { IsoDate } from "@matsuri-ikoka/schema";
 import type { MiddlewareHandler } from "hono";
 import { apiError } from "./errors";
 
-// 公開している URL の入口：合言葉と、1日の相談の回数と同時に返事を作る数の上限（ADR 0004・ADR 0011）。
+// 公開している URL の入口：合言葉と、1日の相談の回数の上限（ADR 0004）。
 
 export const PASSCODE_HEADER = "x-access-passcode";
 
