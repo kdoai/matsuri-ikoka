@@ -13,8 +13,11 @@ tools:
       permission_policy:
         type: always_allow
     configs:
+      # 開く URL に載せて外へ送れるので、呼び出しごとにサーバーが判断する
       - name: web_fetch
         enabled: true
+        permission_policy:
+          type: auto
       - name: read
         enabled: true
 skills:

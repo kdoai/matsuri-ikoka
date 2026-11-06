@@ -226,19 +226,26 @@ async function trigger(client: Anthropic): Promise<number> {
 // ---------------------------------------------------------------------------
 // collect
 
-/** Web の取得の道具で開いた URL を、すべてのスレッドから集める */
-async function fetchedUrlsOf(client: Anthropic, sessionId: string): Promise<readonly string[]> {
+/**
+ * Web の取得の道具で実際に開いた URL と、サーバーが止めた呼び出しの数を、すべてのスレッドから集める。
+ * 拒否や確認待ちの呼び出しもイベントに残るので、許されたものだけを開いたページとして数える
+ */
+async function toolActivityOf(client: Anthropic, sessionId: string) {
   const log = createWebActivityLog();
+  const held = { ask: 0, deny: 0 };
   for await (const thread of client.beta.sessions.threads.list(sessionId)) {
     for await (const event of client.beta.sessions.threads.events.list(thread.id, {
       session_id: sessionId,
     })) {
-      if (event.type === "agent.tool_use" && event.name === "web_fetch") {
+      if (event.type !== "agent.tool_use") continue;
+      if (event.evaluated_permission === "ask") held.ask += 1;
+      if (event.evaluated_permission === "deny") held.deny += 1;
+      if (event.name === "web_fetch" && event.evaluated_permission === "allow") {
         log.record("WebFetch", event.input);
       }
     }
   }
-  return log.fetchedUrls;
+  return { fetchedUrls: log.fetchedUrls, held };
 }
 
 /** 報告のファイルを、祭りの ID ごとに読む。形の合わないものは入れない */
@@ -335,7 +342,7 @@ async function collect(client: Anthropic, out: string): Promise<number> {
 
   const festivals = new Map(readFestivals().map((festival) => [festival.id, festival]));
   const reports = await readReports(client, session.id);
-  const fetchedUrls = await fetchedUrlsOf(client, session.id);
+  const { fetchedUrls, held } = await toolActivityOf(client, session.id);
 
   let ledger = retireEndedOccurrences([...festivals.values()], readLedger(), today);
   const results: RefreshResult[] = [];
@@ -403,7 +410,7 @@ async function collect(client: Anthropic, out: string): Promise<number> {
   setOutput("changed", "true");
   setOutput("review", results.length > 0 || rejected.length > 0 ? "human" : "auto");
   console.log(
-    `調べた祭り ${queue.targets.length} 件（見つかった ${counts.found}、見つからない ${counts.not_found}、失敗 ${counts.failed}）、費用 $${(Number(session.usage?.list_cost?.amount ?? 0) / 100).toFixed(2)}`,
+    `調べた祭り ${queue.targets.length} 件（見つかった ${counts.found}、見つからない ${counts.not_found}、失敗 ${counts.failed}）、止まった呼び出し（確認待ち ${held.ask}、拒否 ${held.deny}）、費用 $${(Number(session.usage?.list_cost?.amount ?? 0) / 100).toFixed(2)}`,
   );
   return 0;
 }
