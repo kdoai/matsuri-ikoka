@@ -46,14 +46,14 @@ Web を読む役に利用者の情報を持たせず、利用者の情報を持�
 
 文書の約束だけにせず、型で持てないようにします。どれも `z.strictObject` なので、決まった項目のほかは受け付けません。
 
-| 渡すところ           | 型                              | 持たないもの                                                                      |
-| -------------------- | ------------------------------- | --------------------------------------------------------------------------------- |
-| 見回り係へ           | `PatrolRequest`・`PatrolTarget` | 利用者の ID・旅の ID・相談の ID・出発地・同行者                                   |
-| 見回り係から         | `PatrolReport`                  | 説明の文・調べた時刻・確度（時刻と確度はコードが決める）                          |
-| 検問のあと           | `CheckedChange`                 | 利用者の情報・ページの文章（ページの題名も持たない）                              |
-| 旅へ                 | `GuideNotice`                   | ページの文章。一覧の短い文（`summary`）は、通知の中身からコードが決まった型で作る |
-| 続きの要約           | `GuideResumeSummary`            | 会話の文（回数・話題・承認待ちの提案・時刻だけ）                                  |
-| ガイドとの会話の本文 | `GuideChatRequest`              | 旅の ID・利用者の ID。旅はサーバーが相談から決める                                |
+| 渡すところ           | 型                              | 持たないもの                                                                                                                |
+| -------------------- | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| 見回り係へ           | `PatrolRequest`・`PatrolTarget` | 利用者の ID・旅の ID・相談の ID・出発地・同行者。`patrolId` は `patrol-` と16桁の16進の乱数だけで、ほかの ID を入れられない |
+| 見回り係から         | `PatrolReport`                  | 説明の文・調べた時刻・確度（時刻と確度はコードが決める）                                                                    |
+| 検問のあと           | `CheckedChange`                 | 利用者の情報・ページの文章（ページの題名も持たない）                                                                        |
+| 旅へ                 | `GuideNotice`                   | ページの文章。一覧の短い文（`summary`）は、通知の中身からコードが決まった型で作る                                           |
+| 続きの要約           | `GuideResumeSummary`            | 会話の文（回数・話題・承認待ちの提案・時刻だけ）                                                                            |
+| ガイドとの会話の本文 | `GuideChatRequest`              | 旅の ID・利用者の ID。旅はサーバーが相談から決める                                                                          |
 
 ## 見回り
 
@@ -96,6 +96,8 @@ Web を読む役に利用者の情報を持たせず、利用者の情報を持�
 - 同じ承認が2回届いても、同じ結果を返し、版は1つしか増えない
 - 適用できたか確かめられないときは自動でやり直さず、いまの版を見せる（`unknown`）
 - 断ると旅程は変わらない。同じ変化から提案を重ねて作らない
+- 承認を待てる提案は1つの旅に `MAX_PENDING_PROPOSALS` 件まで。上限に達したら新しい提案を作らず、先に決めてもらうよう案内する
+- `POST /api/guide/state` は承認待ちの提案だけを返す（提案は旅程をまるごと持つので、応答を大きくしない）。通知の `proposalId` の提案が一覧になければ、もう決まったか無効になった提案として扱い、作り直しを案内する
 - 承認したあとでも前の版に戻せる。戻す操作も新しい版として残し、差分を見せる（`POST /api/guide/revert`）
 
 ## ガイドの手帳
@@ -111,7 +113,7 @@ Web を読む役に利用者の情報を持たせず、利用者の情報を持�
 
 | 残すもの                                               | 置き場                                       | 消える時期                                                                 |
 | ------------------------------------------------------ | -------------------------------------------- | -------------------------------------------------------------------------- |
-| 見回りの依頼                                           | `users/{uid}/trips/{旅の ID}/watch`          | 旅を消すとき。旅が終わると止まる                                           |
+| 見回りの依頼                                           | `users/{uid}/trips/{旅の ID}/watch/current`  | 旅を消すとき。旅が終わると止まる                                           |
 | 通知                                                   | `users/{uid}/trips/{旅の ID}/notices/{ID}`   | 旅を消すとき。旅の最終日から30日                                           |
 | 提案                                                   | `users/{uid}/trips/{旅の ID}/proposals/{ID}` | 旅を消すとき。旅の最終日から30日                                           |
 | 手帳                                                   | `users/{uid}/trips/{旅の ID}/memo/{ID}`      | 旅を消すとき                                                               |
@@ -132,19 +134,21 @@ Web を読む役に利用者の情報を持たせず、利用者の情報を持�
 
 旅は相談から決めるので、本文に旅の ID や利用者の ID を持ちません。相談の ID を URL に載せず本文で送るのは、ログインなしの相談では、相談の ID を知っていれば読めるからです。他の人の相談・通知・提案は、あるかどうかも見せず 404 にします。
 
-| メソッド | パス                                | 決まり             | 本文                             | 返すもの                                                                |
-| -------- | ----------------------------------- | ------------------ | -------------------------------- | ----------------------------------------------------------------------- |
-| POST     | `/api/guide/open`                   | ログインした持ち主 | `GuideOpenRequestSchema`         | 201 `SessionResponseSchema`。残した旅を開いて、ガイドと話す相談を作る   |
-| POST     | `/api/guide/state`                  | 相談の持ち主       | `GuideSessionRefSchema`          | `GuideStateResponseSchema`（時期・見回り・通知・提案・手帳）            |
-| POST     | `/api/guide/chat`                   | 相談の持ち主       | `GuideChatRequestSchema`         | 返答を SSE（`GuideSseEventSchema`）で返す                               |
-| POST     | `/api/guide/notices/read`           | 相談の持ち主       | `MarkNoticesReadRequestSchema`   | `MarkNoticesReadResponseSchema`（未読の数）                             |
-| POST     | `/api/guide/watch`                  | 相談の持ち主       | `SetTripWatchRequestSchema`      | `TripWatchSchema`。始めるときはログインが要る（用意している環境だけ）   |
-| POST     | `/api/guide/proposals/:id/decision` | 相談の持ち主       | `DecideProposalRequestSchema`    | `DecideProposalResponseSchema`                                          |
-| POST     | `/api/guide/revert`                 | 相談の持ち主       | `RevertTripRequestSchema`        | `TripChangeSchema`（新しい版の旅程と差分）                              |
-| POST     | `/api/guide/memo/:id`               | 相談の持ち主       | `UpdateGuideMemoRequestSchema`   | `GuideMemoItemSchema`                                                   |
-| POST     | `/api/guide/memo/:id/delete`        | 相談の持ち主       | `GuideSessionRefSchema`          | 204                                                                     |
-| POST     | `/internal/patrol/start`            | 内部（OIDC）       | なし                             | 受け付けた対象の数。確かめられなければ断る                              |
-| POST     | `/internal/patrol/webhook`          | 内部（署名）       | Managed Agents の Webhook の本文 | 2xx。署名を確かめてから本文を読む。鍵が設定されていなければ受け付けない |
+| メソッド | パス                                | 決まり              | 本文                             | 返すもの                                                               |
+| -------- | ----------------------------------- | ------------------- | -------------------------------- | ---------------------------------------------------------------------- |
+| POST     | `/api/guide/open`                   | ログインした持ち主  | `GuideOpenRequestSchema`         | 201 `SessionResponseSchema`。残した旅を開いて、ガイドと話す相談を作る  |
+| POST     | `/api/guide/state`                  | 相談の持ち主        | `GuideSessionRefSchema`          | `GuideStateResponseSchema`（時期・見回り・通知・承認待ちの提案・手帳） |
+| POST     | `/api/guide/chat`                   | 相談の持ち主        | `GuideChatRequestSchema`         | 返答を SSE（`GuideSseEventSchema`）で返す                              |
+| POST     | `/api/guide/notices/read`           | 相談の持ち主        | `MarkNoticesReadRequestSchema`   | `MarkNoticesReadResponseSchema`（未読の数）                            |
+| POST     | `/api/guide/watch`                  | 相談の持ち主        | `SetTripWatchRequestSchema`      | `TripWatchSchema`。始めるときはログインが要る（用意している環境だけ）  |
+| POST     | `/api/guide/proposals/:id/decision` | 相談の持ち主        | `DecideProposalRequestSchema`    | `DecideProposalResponseSchema`                                         |
+| POST     | `/api/guide/revert`                 | 相談の持ち主        | `RevertTripRequestSchema`        | `TripChangeSchema`（新しい版の旅程と差分）                             |
+| POST     | `/api/guide/memo/:id`               | 相談の持ち主        | `UpdateGuideMemoRequestSchema`   | `GuideMemoItemSchema`                                                  |
+| POST     | `/api/guide/memo/:id/delete`        | 相談の持ち主        | `GuideSessionRefSchema`          | 204                                                                    |
+| POST     | `/internal/patrol/start`            | 内部（`oidc`）      | なし                             | 受け付けた対象の数                                                     |
+| POST     | `/internal/patrol/webhook`          | 内部（`signature`） | Managed Agents の Webhook の本文 | 2xx                                                                    |
+
+内部の経路は `routes.internal` で足し、呼び出し元の確かめは [内部の入口](api.md#内部の入口) の検証（`oidc`・`signature`）だけで行います。確かめられなければ 401、検証の設定がなければその入口だけ 404 で、ハンドラーには届きません。
 
 断るときの応答は [API の仕様](api.md#断るときの応答) と同じ `ApiErrorSchema` です。
 
@@ -189,7 +193,7 @@ Web を読む役に利用者の情報を持たせず、利用者の情報を持�
 | 見回り係が失敗した・報告が崩れていた | 通知を作らず、次の回に調べ直す。失敗が続くページは間隔を空ける                                                    |
 | 検問を通らなかった                   | 捨てて、分類だけをログに残す。利用者には知らせない                                                                |
 | 定期の起動や Webhook が2回届いた     | 実行権と ID で重複を除き、同じ作業を二重に走らせない                                                              |
-| 署名の鍵や検証の設定がない           | 受け付けない。設定がないから通す、という動きにしない                                                              |
+| 署名の鍵や検証の設定がない           | その入口だけ 404 で断る。設定がないから通す、という動きにしない                                                   |
 | 組み直しの案が検証を通らなかった     | 案を見せず、通知だけを届ける                                                                                      |
 | 承認のときに版かハッシュが違う       | `stale`。適用せず、作り直しを案内する                                                                             |
 | 適用できたか確かめられない           | `unknown`。自動でやり直さず、いまの版を見せる                                                                     |
