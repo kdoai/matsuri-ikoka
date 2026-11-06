@@ -1,60 +1,47 @@
+// managed-agents/ の定義ファイルで、道具の分け方と費用の上限が崩れていないことを確かめる。
+// 形そのものは ant apply と公式のスキーマが確かめるので、ここでは決まりごとだけを文字で見る。
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { parse } from "yaml";
 import { FestivalSchema } from "../packages/schema/src";
 import { fictionalFestival } from "../packages/schema/src/testing";
 import { RESEARCH_NAMES, researchBrief } from "./research-brief";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../managed-agents");
 
-interface AgentConfig {
-  name: string;
-  model: { id: string; effort: string };
-  tools: {
-    type: string;
-    default_config: { enabled: boolean };
-    configs: { name: string; enabled: boolean }[];
-  }[];
-  skills?: string[];
-  mcp_servers?: unknown[];
-  multiagent?: {
-    subagents: { predefined_agents: string[]; inline_agents: { type: string } };
-    workflows: { predefined_agents: string[]; inline_agents: { type: string } };
-  };
+function read(path: string): string {
+  return readFileSync(join(ROOT, path), "utf8").replace(/\r\n/g, "\n");
 }
 
-function agent(file: string): AgentConfig & { system: string } {
-  const text = readFileSync(join(ROOT, "agents", file), "utf8").replace(/\r\n/g, "\n");
-  const match = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/.exec(text);
+interface AgentFile {
+  frontmatter: string;
+  system: string;
+}
+
+function agent(file: string): AgentFile {
+  const match = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/.exec(read(join("agents", file)));
   if (match === null) throw new Error(`${file} に前書きがありません`);
-  return { ...(parse(match[1] ?? "") as AgentConfig), system: match[2] ?? "" };
+  return { frontmatter: match[1] ?? "", system: match[2] ?? "" };
 }
 
-function yamlFile<T>(path: string): T {
-  return parse(readFileSync(join(ROOT, path), "utf8")) as T;
+function enabledTools({ frontmatter }: AgentFile): string[] {
+  return [...frontmatter.matchAll(/^ {6}- name: (\w+)\n {8}enabled: true$/gm)]
+    .map((match) => match[1] ?? "")
+    .sort();
 }
 
-function enabledTools(config: AgentConfig): string[] {
-  return config.tools.flatMap((tools) => tools.configs.map((c) => c.name)).sort();
+function field(text: string, pattern: RegExp): string {
+  const value = pattern.exec(text)?.[1];
+  if (value === undefined) throw new Error(`${pattern} に当たりません`);
+  return value;
 }
 
 const lead = agent("research-lead.md");
 const reader = agent("research-reader.md");
 const reviewer = agent("research-reviewer.md");
-
-interface Deployment {
-  name: string;
-  agent: string;
-  environment_id: string;
-  vault_ids?: string[];
-  resources: { path: string; access: string }[];
-  schedule: { expression: string; timezone: string };
-  budget: { max_list_cost: { amount: string; currency: string } };
-  initial_events: { type: string; max_iterations: number; rubric: { content: string } }[];
-}
-const deployment = yamlFile<Deployment>("deployments/weekly-research.yaml");
+const all = [lead, reader, reviewer];
+const deployment = read("deployments/weekly-research.yaml");
 
 describe("エージェントの道具", () => {
   it("調査員は Web と読み取りだけで、書き込めない", () => {
@@ -70,33 +57,32 @@ describe("エージェントの道具", () => {
   });
 
   it("どの道具も、明示したもののほかは使えない", () => {
-    for (const config of [lead, reader, reviewer]) {
-      expect(config.tools).toHaveLength(1);
-      expect(config.tools[0]?.default_config.enabled).toBe(false);
-      expect(config.tools[0]?.configs.every((c) => c.enabled)).toBe(true);
-      expect(config.mcp_servers).toBeUndefined();
+    for (const config of all) {
+      expect(config.frontmatter).toContain("default_config:\n      enabled: false");
+      expect(config.frontmatter).not.toContain("enabled: true\n      - name: bash");
+      expect(config.frontmatter).not.toContain("mcp_servers");
+      expect(config.frontmatter.match(/- type: /g)).toHaveLength(1);
     }
   });
 
   it("コマンドを実行できるエージェントはない", () => {
-    for (const config of [lead, reader, reviewer]) {
+    for (const config of all) {
       expect(enabledTools(config)).not.toContain("bash");
     }
   });
 
   it("リードは決めたエージェントだけに任せる", () => {
-    const paths = ["./research-reader.md", "./research-reviewer.md"];
-    for (const member of [lead.multiagent?.subagents, lead.multiagent?.workflows]) {
-      expect(member?.predefined_agents).toEqual(paths);
-      expect(member?.inline_agents).toEqual({ type: "disabled" });
-    }
+    const roster = "      - ./research-reader.md\n      - ./research-reviewer.md\n";
+    expect(lead.frontmatter.split(roster)).toHaveLength(3);
+    expect(lead.frontmatter.match(/inline_agents:\n {6}type: disabled/g)).toHaveLength(2);
+    expect(lead.frontmatter).toContain("type: multiagent_20261001");
   });
 
   it("スキルは調査のスキルだけを渡す", () => {
     const skill = "../../.claude/skills/festival-research";
-    expect(reader.skills).toEqual([skill]);
-    expect(reviewer.skills).toEqual([skill]);
-    expect(lead.skills).toBeUndefined();
+    expect(reader.frontmatter).toContain(`skills:\n  - ${skill}`);
+    expect(reviewer.frontmatter).toContain(`skills:\n  - ${skill}`);
+    expect(lead.frontmatter).not.toContain("skills:");
     expect(existsSync(join(ROOT, "agents", skill, "SKILL.md"))).toBe(true);
   });
 });
@@ -109,33 +95,33 @@ describe("プロンプト", () => {
   });
 
   it("名前と置き場所が、ほかのファイルと合っている", () => {
-    const store = yamlFile<{ name: string }>("memory_stores/research-queue.yaml");
-    expect(store.name).toBe(RESEARCH_NAMES.queueStore);
-    expect(deployment.name).toBe(RESEARCH_NAMES.deployment);
+    expect(read("memory_stores/research-queue.yaml")).toContain(
+      `name: ${RESEARCH_NAMES.queueStore}\n`,
+    );
+    expect(deployment).toContain(`name: ${RESEARCH_NAMES.deployment}\n`);
     const mount = `/mnt/memory/${RESEARCH_NAMES.queueStore}/`;
-    for (const text of [lead.system, reader.system, reviewer.system]) {
-      expect(text).toContain(mount);
-    }
-    expect(lead.system).toContain(reader.name);
-    expect(lead.system).toContain(reviewer.name);
+    for (const { system } of all) expect(system).toContain(mount);
+    expect(lead.system).toContain(field(reader.frontmatter, /^name: (\S+)$/m));
+    expect(lead.system).toContain(field(reviewer.frontmatter, /^name: (\S+)$/m));
   });
 });
 
 describe("費用", () => {
+  const modelOf = ({ frontmatter }: AgentFile) => field(frontmatter, /^model:\n {2}id: (\S+)$/m);
+
   it("読む量の多い調査員に、いちばん軽いモデルを使う", () => {
-    expect(reader.model.id).toContain("haiku");
-    expect(lead.model.id).not.toContain("opus");
-    expect(reviewer.model.id).not.toContain("opus");
+    expect(modelOf(reader)).toContain("haiku");
+    expect(modelOf(lead)).not.toContain("opus");
+    expect(modelOf(reviewer)).not.toContain("opus");
   });
 
   it("1回の実行の上限は 20 米ドル以下にする", () => {
-    const { amount, currency } = deployment.budget.max_list_cost;
-    expect(currency).toBe("USD");
-    expect(Number(amount)).toBeLessThanOrEqual(2000);
+    expect(Number(field(deployment, /amount: "(\d+)"/))).toBeLessThanOrEqual(2000);
+    expect(deployment).toContain("currency: USD");
   });
 
   it("採点のやり直しは1回までにする", () => {
-    expect(deployment.initial_events[0]?.max_iterations).toBe(1);
+    expect(field(deployment, /max_iterations: (\d+)/)).toBe("1");
   });
 
   it("調査員の検索とページの数に上限を書いてある", () => {
@@ -145,32 +131,30 @@ describe("費用", () => {
 
 describe("定期実行", () => {
   it("調査リストは読み取り専用で付け、秘密の値を持つ資源を付けない", () => {
-    expect(deployment.resources).toHaveLength(1);
-    expect(deployment.resources[0]?.access).toBe("read_only");
-    expect(deployment.vault_ids).toBeUndefined();
+    expect(deployment.match(/^ {2}- path: /gm)).toHaveLength(1);
+    expect(deployment).toContain("access: read_only");
+    expect(deployment).not.toContain("vault_ids");
+    expect(deployment).not.toContain("github_repository");
   });
 
   it("週に1回、日本時間で起動する", () => {
-    expect(deployment.schedule).toMatchObject({
-      expression: "0 6 * * 1",
-      timezone: "Asia/Tokyo",
-    });
+    expect(deployment).toContain('expression: "0 6 * * 1"');
+    expect(deployment).toContain("timezone: Asia/Tokyo");
   });
 
   it("採点の基準つきの成果物として起動する", () => {
-    expect(deployment.initial_events[0]?.type).toBe("user.define_outcome");
-    expect(deployment.initial_events[0]?.rubric.content).toContain("targets");
+    expect(deployment).toContain("type: user.define_outcome");
+    expect(deployment).toContain("rubric:");
   });
 
   it("参照先のファイルがある", () => {
     const dir = join(ROOT, "deployments");
-    for (const path of [
-      deployment.agent,
-      deployment.environment_id,
-      deployment.resources[0]?.path ?? "",
-    ]) {
-      expect(existsSync(join(dir, path))).toBe(true);
-    }
+    const paths = [
+      field(deployment, /^agent: (\S+)$/m),
+      field(deployment, /^environment_id: (\S+)$/m),
+      field(deployment, /^ {2}- path: (\S+)$/m),
+    ];
+    for (const path of paths) expect(existsSync(join(dir, path))).toBe(true);
   });
 });
 
