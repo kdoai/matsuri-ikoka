@@ -8,9 +8,15 @@ import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import { IsoDateSchema } from "../packages/schema/src";
-import { type FestivalFile, validateFestivalFiles } from "./festival-validation";
+import {
+  type FestivalFile,
+  RESEARCH_LEDGER_FILE,
+  validateFestivalFiles,
+  validateResearchLedger,
+} from "./festival-validation";
 
 const DEFAULT_DIR = fileURLToPath(new URL("../data/festivals/", import.meta.url));
+const LEDGER_PATH = fileURLToPath(new URL(`../data/${RESEARCH_LEDGER_FILE}`, import.meta.url));
 
 function todayInJapan(): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Tokyo" }).format(new Date());
@@ -47,10 +53,15 @@ function main(): number {
   }
 
   const findings = validateFestivalFiles(files, { today });
-  for (const file of files) {
-    const own = findings.filter((f) => f.file === file.name);
+  // 調査の台帳は、既定のデータを検証するときだけ見る
+  if (values.dir === undefined) {
+    const ids = new Set(files.map((file) => file.name.replace(/\.json$/, "")));
+    findings.push(...validateResearchLedger(readFileSync(LEDGER_PATH, "utf8"), ids));
+  }
+  for (const name of [...files.map((file) => file.name), RESEARCH_LEDGER_FILE]) {
+    const own = findings.filter((f) => f.file === name);
     if (own.length === 0) continue;
-    console.log(`\n${file.name}`);
+    console.log(`\n${name}`);
     for (const { level, message } of own) {
       console.log(`  ${level === "error" ? "エラー" : "警告"}  ${message}`);
     }
