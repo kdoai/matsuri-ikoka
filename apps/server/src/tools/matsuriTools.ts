@@ -127,7 +127,13 @@ import { randomId } from "../session/sessionStore";
 import type { CandidateCheck } from "./candidateCheck";
 import { type AgentToolName, TOOL_TIMEOUT_MS, type ToolContext } from "./context";
 import { type LodgingOutcome, MAX_SEARCH_RADIUS_KM, RAKUTEN_CREDIT } from "./lodging";
-import { nextStepAfter, redoAcceptEvent, redoRequestEvents, reviewPlan } from "./planReview";
+import {
+  canRedoPlan,
+  nextStepAfter,
+  redoAcceptEvent,
+  redoRequestEvents,
+  reviewPlan,
+} from "./planReview";
 import type { RouteDirection } from "./routeResearch";
 
 // 接客エージェントに渡すツール。入出力は Zod で決め、計算と絞り込みは domain の関数で行う。
@@ -1712,8 +1718,8 @@ export const updateItinerary = defineTool({
       gaps: result.gaps,
       evaluation,
       next: result.unchanged
-        ? `前の版と同じ旅程です。${nextStepAfter(evaluation)}`
-        : nextStepAfter(evaluation),
+        ? `前の版と同じ旅程です。${nextStepAfter(evaluation, canRedoPlan(ctx.turn.startedAt))}`
+        : nextStepAfter(evaluation, canRedoPlan(ctx.turn.startedAt)),
       itinerary,
     };
   },

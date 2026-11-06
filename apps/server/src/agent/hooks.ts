@@ -22,7 +22,7 @@ import {
 } from "../tools/context";
 import { spotPins } from "../tools/matsuriTools";
 import { MCP_TOOL_PREFIX } from "../tools/mcpServer";
-import { nextStepAfter } from "../tools/planReview";
+import { canRedoPlan, nextStepAfter } from "../tools/planReview";
 import {
   isStaff,
   STAFF_NAMES,
@@ -273,6 +273,8 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
       return {};
     }
     if (sentBack >= evaluation.maxRounds - 1 || ctx.signal.aborted) return {};
+    // 時間の残りが少なければ、作り直しに戻さず、保存した旅程で報告してもらう
+    if (!canRedoPlan(turn.startedAt)) return {};
     sentBack += 1;
     return { decision: "block", reason: nextStepAfter(evaluation) };
   };

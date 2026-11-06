@@ -41,6 +41,8 @@ export function isVisibleTool(name: AgentToolName): name is ToolName {
 
 /** 1回の発言の間に起きたこと。会話の状態（done の stage）を決めるのに使う */
 export interface TurnState {
+  /** この発言が始まった時刻（ミリ秒）。時間の残りを見て、調べ直しをやめる */
+  startedAt: number;
   startedStaff: Set<StaffId>;
   /** 呼んだツール（呼んだ順）。ログに残す */
   toolCalls: AgentToolName[];
@@ -59,6 +61,7 @@ export interface TurnState {
 
 export function newTurnState(searchRetry: SearchRetry | null = null): TurnState {
   return {
+    startedAt: Date.now(),
     startedStaff: new Set(),
     toolCalls: [],
     searched: false,
