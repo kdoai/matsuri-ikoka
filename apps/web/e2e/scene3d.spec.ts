@@ -22,7 +22,7 @@ test("店の外観を見せてから入店し、店内のスタッフが持ち�
   page,
 }, info) => {
   // GPU のない環境では 3D の読み込みと描画が遅いので、余裕を持たせる
-  test.setTimeout(180_000);
+  test.setTimeout(300_000);
   await page.goto("/");
   await expect(page.locator('[data-testid="storefront-scene"][data-ready="true"]')).toBeVisible({
     timeout: 60_000,
@@ -150,7 +150,7 @@ test("旅人を歩かせ、仕掛けを使い、カメラを回し、柵で止�
 });
 
 test("入口で通りへ向かって進むと、のれんをくぐって店の外へ出て、また入れる", async ({ page }) => {
-  test.setTimeout(180_000);
+  test.setTimeout(300_000);
   await page.goto("/");
   await page.getByRole("button", { name: "入店する" }).click();
   await expect(page.getByTestId("greeting-bar")).toBeVisible({ timeout: 90_000 });
@@ -167,7 +167,7 @@ test("入口で通りへ向かって進むと、のれんをくぐって店の�
 test("聞き取りの入力欄の段階で窓のどこをクリックしても入力欄に入り、打った文字で旅人は動かない", async ({
   page,
 }) => {
-  test.setTimeout(180_000);
+  test.setTimeout(300_000);
   await page.goto("/");
   await page.getByRole("button", { name: "入店する" }).click();
   // 入店の直後（相談を始める途中でも）に話しかける
