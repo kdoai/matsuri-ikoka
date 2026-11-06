@@ -251,6 +251,18 @@ GitHub Actions から Workload Identity 連携でデプロイ用のサービス�
 | `GCP_WORKLOAD_IDENTITY_PROVIDER` | Workload Identity 連携のプロバイダの完全な名前  |
 | `GCP_DEPLOY_SERVICE_ACCOUNT`     | デプロイ用のサービスアカウントのメールアドレス  |
 
+#### 出し直す
+
+デプロイは、順番が来た時点で main の先頭のコミットだけを出します。先頭でないコミットは飛ばすので、本番が前のコードに戻りません。
+
+失敗したデプロイを出し直すときは、古い実行の再実行（`gh run rerun`）ではなく、次のコマンドで main の先頭を出します。古い実行を再実行すると、順番を待っている新しいデプロイが取り消されることがあります。
+
+```bash
+gh workflow run deploy.yml --ref main
+```
+
+前のコードに戻したいときは、[前の版に戻す](#前の版に戻す)の手順を使います。
+
 #### デプロイで確かめること
 
 | いつ                           | どこに                         | 確かめること                                                                                                                                                                                                              |

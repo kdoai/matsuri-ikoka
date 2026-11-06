@@ -23,9 +23,33 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # 順番が来た時点で main の先頭でなければ出さない。古いコミットの再実行で、本番が前のコードに戻らないようにする
+  latest:
+    name: main の先頭かを確かめる
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      tip: ${{ steps.check.outputs.tip }}
+    steps:
+      - id: check
+        run: |
+          head="$(git ls-remote "https://github.com/${GITHUB_REPOSITORY}" refs/heads/main | cut -f1)"
+          if [[ -z "$head" ]]; then
+            echo "main の先頭を読めませんでした" >&2
+            exit 1
+          fi
+          if [[ "$head" == "$GITHUB_SHA" ]]; then
+            echo "tip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "tip=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::${GITHUB_SHA} は main の先頭（${head}）ではないので、デプロイを飛ばします"
+          fi
+
   deploy:
     name: Cloud Run に出す
-    if: github.ref == 'refs/heads/main'
+    needs: latest
+    if: needs.latest.outputs.tip == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     permissions:
