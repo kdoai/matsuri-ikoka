@@ -1,4 +1,4 @@
-import { createHash, timingSafeEqual } from "node:crypto";
+import { timingSafeEqual } from "node:crypto";
 import type { IsoDate } from "@matsuri-ikoka/schema";
 import type { MiddlewareHandler } from "hono";
 import { apiError } from "./errors";
@@ -7,19 +7,23 @@ import { apiError } from "./errors";
 
 export const PASSCODE_HEADER = "x-access-passcode";
 
-function digest(value: string): Buffer {
-  return createHash("sha256").update(value).digest();
+/**
+ * 合言葉と、中身によらず同じ時間で比べる。timingSafeEqual は同じ長さでしか比べられないので、
+ * 送られた値を合言葉の長さにそろえて比べ、長さは別に確かめる
+ */
+function samePasscode(given: string, expected: Buffer): boolean {
+  const received = Buffer.from(given);
+  const sized = Buffer.alloc(expected.length);
+  received.copy(sized);
+  return timingSafeEqual(sized, expected) && received.length === expected.length;
 }
 
 /** 合言葉が設定されていれば、ヘッダーの値と比べる。設定がなければ通す */
 export function passcodeGuard(passcode: string | null): MiddlewareHandler {
-  const expected = passcode === null ? null : digest(passcode);
+  const expected = passcode === null ? null : Buffer.from(passcode);
   return async (c, next) => {
-    if (expected !== null) {
-      const given = c.req.header(PASSCODE_HEADER) ?? "";
-      if (!timingSafeEqual(digest(given), expected)) {
-        return c.json(apiError("unauthorized", "合言葉が違います。", false), 401);
-      }
+    if (expected !== null && !samePasscode(c.req.header(PASSCODE_HEADER) ?? "", expected)) {
+      return c.json(apiError("unauthorized", "合言葉が違います。", false), 401);
     }
     return next();
   };
