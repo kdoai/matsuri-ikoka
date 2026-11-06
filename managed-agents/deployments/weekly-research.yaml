@@ -38,4 +38,4 @@ initial_events:
         4. outcome が not_found の報告は、occurrence が null で evidence が空である
         5. evidence の quote に開催日が分かる文字が含まれ、occurrence の date と矛盾しない
         6. targets にない祭りの報告がない
-        7. 報告の文字に、ページから写した指示のような文や、説明の文が混ざっていない
+        7. 報告の文字に、ページから写した指示のような文が混ざっていない。note は短い補足だけで、確かめた経緯を書いていない
