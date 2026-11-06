@@ -7,6 +7,7 @@ import {
 } from "@matsuri-ikoka/agent-kit";
 import { z } from "zod";
 import { formatMonthDayWithWeekday } from "../domain/calendar";
+import { sameStationName } from "../domain/travelEstimate";
 import type { RouteReport, RouteResearcher } from "../tools/routeResearch";
 import type { ResolveHost } from "./addressGuard";
 import type { QueryFn } from "./runner";
@@ -56,7 +57,7 @@ const ANSWER_FORMAT = [
     '"legs":[{"from":"乗る駅","to":"降りる駅","line":"路線の名前","minutes":[最短の分, 長くかかるときの分]}],' +
     '"lastDeparture":"HH:MM","sources":[{"url":"読んだページの URL","title":"ページの題名"}]}',
   "",
-  "- 分からなければ found を false にし、minutes と summary は入れない",
+  "- 路線と所要時間が分からなければ found を false にし、minutes と summary は入れない。最終の時刻だけが分からないときは found を true にし、lastDeparture を null にする",
   "- legs は乗り換えごとの区間を乗る順に並べる。最初の区間は出発の駅から、最後の区間は着く駅で終える。区間の境の駅が乗り換えの駅になる。読んだページで分からなければ null",
   "- lastDeparture は、帰りの調べのときだけ、その日のうちに着く駅まで帰れる、出発の駅を出る最終の時刻。読んだページで分からなければ null（推測で書かない）",
   "- sources には、WebFetch で実際に読んだページだけを入れる",
@@ -69,10 +70,13 @@ function connectedLegs(
   from: string,
   to: string,
 ): boolean {
-  if (legs[0]?.from !== from || legs.at(-1)?.to !== to) return false;
+  const [first] = legs;
+  const last = legs.at(-1);
+  if (first === undefined || last === undefined) return false;
+  if (!sameStationName(first.from, from) || !sameStationName(last.to, to)) return false;
   return legs.every((leg, index) => {
     const next = legs[index + 1];
-    return next === undefined || next.from === leg.to;
+    return next === undefined || sameStationName(next.from, leg.to);
   });
 }
 
@@ -166,7 +170,14 @@ export function createWebRouteResearcher(deps: {
         found = true;
         // 区間は、出発の駅から着く駅までつながっているときだけ使う（つながらない区間は取り違えのおそれがある）
         const legs =
-          report.legs != null && connectedLegs(report.legs, from, to) ? report.legs : undefined;
+          report.legs != null && connectedLegs(report.legs, from, to)
+            ? // 区間の両端の駅は、頼んだ駅の名前にそろえる
+              report.legs.map((leg, index, all) => ({
+                ...leg,
+                ...(index === 0 ? { from } : {}),
+                ...(index === all.length - 1 ? { to } : {}),
+              }))
+            : undefined;
         const value: RouteReport = {
           minutes: report.minutes,
           summary: report.summary ?? "",

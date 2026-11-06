@@ -87,6 +87,7 @@ import {
   type ResearchedSpotReport,
   researchedSpotsInItinerary,
   screenResearchedSpots,
+  shopFoodWishes,
 } from "../domain/nearbyResearch";
 import {
   maxSpotKm,
@@ -100,7 +101,7 @@ import {
   searchRadiusKm,
   WALK_SPOT_KM,
 } from "../domain/nearbySearch";
-import { osmLodgingOffers, osmSpotReport } from "../domain/osmPlaces";
+import { OSM_ATTRIBUTION, osmLodgingOffers, osmSpotReport } from "../domain/osmPlaces";
 import { occurrenceOn } from "../domain/planCheck";
 import { MEAL_WINDOWS, type ResearchedPlace } from "../domain/planCoverage";
 import { preferenceEffects } from "../domain/preferences";
@@ -125,7 +126,13 @@ import {
 import { decideVerification } from "../domain/verification";
 import { randomId } from "../session/sessionStore";
 import type { CandidateCheck } from "./candidateCheck";
-import { type AgentToolName, TOOL_TIMEOUT_MS, type ToolContext } from "./context";
+import {
+  type AgentToolName,
+  type Settled,
+  TOOL_TIMEOUT_MS,
+  type ToolContext,
+  type TripPrefetch,
+} from "./context";
 import { type LodgingOutcome, MAX_SEARCH_RADIUS_KM, RAKUTEN_CREDIT } from "./lodging";
 import {
   canRedoPlan,
@@ -875,7 +882,13 @@ function findOsmSpots(
     near.length >= SPARSE_SHOP_COUNT
       ? near
       : ctx.osmPlaces.find("food", festival.venue, Math.max(radiusKm, SPARSE_SPOT_KM));
-  return places.slice(0, MAX_OSM_SPOTS).map((place) => osmSpotReport(place, date));
+  // 食べたいものに合う店を先に拾う。Web の調べで当たらなくても、希望の料理の店を候補に残せる
+  const wanted = shopFoodWishes(ctx.session.conditions.foodWishes ?? []);
+  const reports = places.map((place) => osmSpotReport(place, date));
+  return [
+    ...reports.filter((report) => report.foods.some((food) => wanted.includes(food))),
+    ...reports.filter((report) => !report.foods.some((food) => wanted.includes(food))),
+  ].slice(0, MAX_OSM_SPOTS);
 }
 
 /** 会場の周りを Web で1回調べる。調べる手段がない・上限を超えた・失敗したときは null */
@@ -1011,6 +1024,8 @@ export const searchNearby = defineTool({
     const date = visitDate(ctx, festival, args.date);
     // 祭りを固定しているときは、ほかの祭りの周りを探しても、選んだ祭りを変えない
     if (ctx.session.anchor === null) ctx.session.selectedFestivalId = festival.id;
+    // 周辺を調べ始めたら、旅程に要る経路と宿も並べて調べ始める（調べ直しのときは始めない）
+    if (args.focus === undefined) startTripPrefetch(ctx, festival, date);
     const food = foodEffects(ctx.session.conditions);
     // 屋台で昼を済ませられない日（夜の祭りなど）は、こだわりが「屋台で十分」でも昼の店を探す
     const wantsShopMeals =
@@ -1115,7 +1130,12 @@ export const searchNearby = defineTool({
     const found = new Map(
       (ctx.session.foundSpots.get(festival.id) ?? []).map((spot) => [spot.id, spot]),
     );
-    for (const spot of screened.spots) found.set(spot.id, { id: spot.id, name: spot.name });
+    // 地図のデータだけで営業を確かめていない店は候補の一覧なので、採らなかった理由までは求めない
+    for (const spot of screened.spots) {
+      if (spot.sources.some((source) => source.title !== OSM_ATTRIBUTION)) {
+        found.set(spot.id, { id: spot.id, name: spot.name });
+      }
+    }
     ctx.session.foundSpots.set(festival.id, [...found.values()]);
     // 祭りのデータの店は、出す料理が分からないので、食べたいものに合う店が調べて見つかったときは調べた店だけにする
     const researchedNames = new Set(screened.spots.map((spot) => sameName(spot.name)));
@@ -1315,7 +1335,7 @@ async function researchRouteOnce(
   }
   if (signal.aborted) throw new ToolError("止められたので、行き方の結果は使いません");
   if (report === null) return { ...base, status: "not_found" as const, researched: null };
-  const checked = checkResearchedMinutes(report.minutes, estimate);
+  const checked = checkResearchedMinutes(report.minutes, estimate, walk);
   if (!checked.ok) {
     return { ...base, status: "rejected" as const, reason: checked.reason, researched: null };
   }
@@ -1395,9 +1415,7 @@ function mealWindow(meals: readonly MealSlot[] | undefined): TimeWindow | undefi
 }
 
 /** 並べた調べの1つ。失敗しても、ほかの調べの結果は使う */
-async function settle<T>(
-  task: () => Promise<T>,
-): Promise<{ ok: true; value: T } | { ok: false; error: string }> {
+async function settle<T>(task: () => Promise<T>): Promise<Settled<T>> {
   try {
     return { ok: true, value: await task() };
   } catch (error) {
@@ -1458,12 +1476,19 @@ export const researchTrip = defineTool({
       }
       if (only.has("route")) ctx.emit?.(redoAcceptEvent("route", "route"));
     }
+    // 同じ祭りと日の経路は、先に始めた調べの結果を使う（同じ調べを2回動かさない）
+    const prefetched =
+      args.focus === undefined && args.arriveBy === undefined
+        ? startTripPrefetch(ctx, festival, visitDate(ctx, festival, args.date))
+        : null;
     const [outbound, inbound, nearby] = await Promise.all([
       only.has("route")
-        ? settle(() => researchRouteOnce(ctx, festival, routeOptions("outbound"), signal))
+        ? (prefetched?.outbound ??
+          settle(() => researchRouteOnce(ctx, festival, routeOptions("outbound"), signal)))
         : null,
       only.has("route")
-        ? settle(() => researchRouteOnce(ctx, festival, routeOptions("return"), signal))
+        ? (prefetched?.inbound ??
+          settle(() => researchRouteOnce(ctx, festival, routeOptions("return"), signal)))
         : null,
       only.has("nearby")
         ? settle(() =>
@@ -1515,6 +1540,94 @@ export const researchTrip = defineTool({
   },
 });
 
+/** 先に始める調べを打ち切る時間（ミリ秒）。ツールの上限より短くする */
+const PREFETCH_MS = 80_000;
+/** 旅程係を動かす前に、先に始めた調べを待つ時間（ミリ秒） */
+export const PREFETCH_WAIT_MS = 60_000;
+
+/**
+ * 旅程に要る調べ（行き・帰りの経路と、泊まりなら祭りの夜の宿）を、先に並べて始める。同じ祭りと日なら1回だけ。
+ * すでに旅程があるとき（修正）や、調べる手段や出発の駅がないときは始めない
+ */
+export function startTripPrefetch(
+  ctx: ToolContext,
+  festival: Festival,
+  date: IsoDate,
+): TripPrefetch | null {
+  const key = `${festival.id}:${date}`;
+  const current = ctx.turn.prefetch;
+  if (current !== null) return current.key === key ? current : null;
+  if (ctx.routes === undefined || ctx.session.itineraryId !== null) return null;
+  if (ctx.session.conditions.origin === undefined) return null;
+  const signal = AbortSignal.any([ctx.signal, AbortSignal.timeout(PREFETCH_MS)]);
+  const route = (direction: RouteDirection) =>
+    settle<unknown>(() => researchRouteOnce(ctx, festival, { date, direction }, signal));
+  const prefetch: TripPrefetch = {
+    key,
+    outbound: route("outbound"),
+    inbound: route("return"),
+    lodging:
+      (ctx.session.conditions.nights ?? 0) > 0 && ctx.session.conditions.stayNear !== "town"
+        ? settle<unknown>(() =>
+            searchLodging.run({ festivalId: festival.id, checkIn: date, nights: 1 }, ctx, signal),
+          )
+        : null,
+  };
+  ctx.turn.prefetch = prefetch;
+  return prefetch;
+}
+
+/** 旅程係に渡す、先に調べた結果の文。調べを始めていなければ空。待ち切れなかった調べは名前だけを伝える */
+export async function prefetchBriefing(
+  ctx: ToolContext,
+  waitMs: number = PREFETCH_WAIT_MS,
+): Promise<string> {
+  const { session } = ctx;
+  const festivalId = session.anchor?.festivalId ?? session.selectedFestivalId;
+  const festival = festivalId === null ? undefined : ctx.festivals.get(festivalId);
+  if (festival !== undefined) {
+    try {
+      startTripPrefetch(ctx, festival, session.anchor?.date ?? visitDate(ctx, festival, undefined));
+    } catch {
+      // 行く日が決まらなければ、旅程係が調べる
+    }
+  }
+  const prefetch = ctx.turn.prefetch;
+  if (prefetch === null) return "";
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timedOut = new Promise<null>((resolve) => {
+    timer = setTimeout(() => resolve(null), waitMs);
+  });
+  const finished = async (task: Promise<Settled<unknown>> | null) =>
+    task === null ? null : Promise.race([task, timedOut]);
+  const [outbound, inbound, lodging] = await Promise.all([
+    finished(prefetch.outbound),
+    finished(prefetch.inbound),
+    finished(prefetch.lodging),
+  ]);
+  clearTimeout(timer);
+  const section = (label: string, result: Settled<unknown> | null, then: string) => {
+    if (result === null) return `${label}：まだ調べています。${then}`;
+    return result.ok
+      ? `${label}：\n${JSON.stringify(result.value)}`
+      : `${label}：調べられませんでした。推測で埋めず、${then}`;
+  };
+  return [
+    "先にサーバーが調べた結果です。同じ調べを呼び直さず、これを使って組みます。",
+    section("行きの経路", outbound, "research_trip（only: route）で確かめてください"),
+    section("帰りの経路", inbound, "research_trip（only: route）で確かめてください"),
+    ...(prefetch.lodging === null
+      ? []
+      : [
+          section(
+            "祭りの夜の宿（調べた候補は保存のときにサーバーが付ける）",
+            lodging,
+            "必要なら search_lodging を呼んでください",
+          ),
+        ]),
+  ].join("\n");
+}
+
 export const getWeather = defineTool({
   name: "get_weather",
   description:
@@ -1543,7 +1656,7 @@ export const updateItinerary = defineTool({
     "祭りの時間を先に固定し、前後の予定を時刻順に並べて渡す。泊まる日は stay に泊まる地域を書き、最後の日は stay を null にする。" +
     "場所・営業時間・出典は祭りのデータで入れ直す。予定の重なり、営業時間の外、休業日、祭りの時間とのぶつかり、" +
     "到着の余裕の不足があれば保存せず errors を返すので、直してもう一度呼ぶ。修正のときも全体を渡す（予定の id は版をまたいで同じにする）。" +
-    "何日かの旅は1日ずつ書く：はじめに主役の祭りの日だけの旅程を itinerary で保存し、そのあと addDay で1日ずつ足す（同じ日付なら置き換える）。" +
+    "2泊までの旅はすべての日を1回で保存する。3泊からの旅は1日ずつ書く：はじめに主役の祭りの日だけの旅程を itinerary で保存し、そのあと addDay で1日ずつ足す（同じ日付なら置き換える）。" +
     "後ろに足すときは、それまでの最後の日の夜に泊まる地域を stayBefore に書く。保存のたびに画面の旅程が更新される。" +
     "stay に宿の名前は書かない。search_lodging で調べた宿の候補は、チェックインの日の stay にサーバーが付ける。" +
     "移動には from・to・purpose（outbound・last_mile・between・return）と、電車・バスなら legs（乗り換えごとの区間）と出典を書く。" +

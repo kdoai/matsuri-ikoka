@@ -90,7 +90,8 @@ export interface ResearchedSelection {
 /** 調べた場所の ID。祭りのデータの場所と重ならないよう web- を付け、名前と位置から決める */
 export function researchedSpotId(name: string, location: LatLng): string {
   const hash = createHash("sha256")
-    .update(`${name}@${location.lat.toFixed(4)},${location.lng.toFixed(4)}`)
+    // 調べるたびに位置の報告が少し揺れても、同じ店が同じ ID になるよう、約1km の粗さにする
+    .update(`${name}@${location.lat.toFixed(2)},${location.lng.toFixed(2)}`)
     .digest("hex")
     .slice(0, 10);
   return `web-${hash}`;

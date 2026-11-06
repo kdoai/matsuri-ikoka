@@ -58,6 +58,18 @@ export function normalizeStationName(name: string): string {
     .replace(/駅$/, "");
 }
 
+/** 「阪急 池田駅」と「池田」のような、会社の名前や「駅」の有無の違いを除いて、同じ駅か */
+export function sameStationName(a: string, b: string): boolean {
+  const left = normalizeStationName(a);
+  const right = normalizeStationName(b);
+  return (
+    left === right ||
+    withoutOperator(left) === right ||
+    withoutOperator(right) === left ||
+    (withoutOperator(left) !== null && withoutOperator(left) === withoutOperator(right))
+  );
+}
+
 function withoutOperator(name: string): string | null {
   const prefix = OPERATOR_PREFIXES.find((p) => name.startsWith(p) && name.length > p.length);
   return prefix === undefined ? null : name.slice(prefix.length);
@@ -257,6 +269,11 @@ export type RouteCheck =
 export function checkResearchedMinutes(
   researched: MinuteRange,
   estimate: TravelEstimate | null,
+  /**
+   * 見積もりに入っている、駅から会場までの歩きの分。調べた行き方は駅から駅までなので、下限を比べるときに除く。
+   * 除かないと、歩きの長い会場で、正しい所要時間を「短すぎる」と捨ててしまう
+   */
+  lastMile: MinuteRange | null = null,
 ): RouteCheck {
   const [lower, upper] = researched;
   const fallback = estimate?.minutes ?? null;
@@ -264,7 +281,7 @@ export function checkResearchedMinutes(
     return { ok: false, reason: "所要時間の幅の形が正しくありません", minutes: fallback };
   }
   if (estimate === null) return { ok: true, minutes: [lower, upper] };
-  if (lower < estimate.minutes[0] * 0.7) {
+  if (lower < Math.max(0, estimate.minutes[0] - (lastMile?.[1] ?? 0)) * 0.7) {
     return {
       ok: false,
       reason: "駅の位置からの見積もりより短すぎます（区間を取り違えたおそれ）",

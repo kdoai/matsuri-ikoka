@@ -75,7 +75,6 @@ const CUISINE_FOODS: Readonly<Record<string, FoodWish>> = {
   steak_house: "meat",
   steak: "meat",
   barbecue: "meat",
-  burger: "meat",
   tonkatsu: "meat",
   yakitori: "meat",
   meat: "meat",

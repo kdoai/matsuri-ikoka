@@ -672,6 +672,47 @@ describe("search_nearby と OpenStreetMap", () => {
     expect(candidates.lunch.map((c) => c.name)).toEqual(["山あいの食堂"]);
   });
 
+  it("地図のデータだけの店には、採らなかった理由を求めない", async () => {
+    const ctx = testToolContext([suzunari()], {
+      nearby: fakeNearby(async () => ({ spots: [grill()] })),
+      osmPlaces: createOsmPlaceIndex([osmSoba]),
+    });
+    await searchNearby.run({ festivalId: "suzunari-toro", date: "2026-08-16" }, ctx, signal);
+    expect((ctx.session.foundSpots.get("suzunari-toro") ?? []).map((s) => s.name)).toEqual([
+      "鈴鳴グリル",
+    ]);
+  });
+
+  it("希望の料理の店は、近い店で枠が埋まっていても候補に残す", async () => {
+    const near = Array.from({ length: 15 }, (_, i) => ({
+      ...osmSoba,
+      id: 100 + i,
+      name: `近い店${i}`,
+      tags: { amenity: "restaurant" },
+      location: { lat: 35.1201 + i * 0.0001, lng: 136.08 },
+    }));
+    const grillPlace = {
+      ...osmSoba,
+      id: 200,
+      name: "鈴鳴の焼肉",
+      tags: { amenity: "restaurant", cuisine: "yakiniku" },
+      location: { lat: 35.13, lng: 136.08 },
+    };
+    const ctx = testToolContext([suzunari()], {
+      nearby: fakeNearby(async () => null),
+      osmPlaces: createOsmPlaceIndex([...near, grillPlace]),
+    });
+    ctx.session.conditions = { foodWishes: ["meat"] };
+    const output = await searchNearby.run(
+      { festivalId: "suzunari-toro", date: "2026-08-16" },
+      ctx,
+      signal,
+    );
+    expect(output.research).toMatchObject({ foodFound: true });
+    const candidates = output.mealCandidates as { lunch: { name: string }[] };
+    expect(candidates.lunch[0]?.name).toBe("鈴鳴の焼肉");
+  });
+
   it("OpenStreetMap の店を、Web の調べに確かめる店として渡す", async () => {
     const nearby = fakeNearby(async () => ({ spots: [] }));
     const ctx = testToolContext([suzunari()], {

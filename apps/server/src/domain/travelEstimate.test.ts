@@ -10,6 +10,7 @@ import {
   normalizeStationName,
   railMinutes,
   type StationPoint,
+  sameStationName,
   type TravelEstimate,
   travelFit,
 } from "./travelEstimate";
@@ -152,6 +153,18 @@ describe("travelFit", () => {
   });
 });
 
+describe("sameStationName", () => {
+  it("「駅」の有無と、会社の名前の違いを除いて比べる", () => {
+    expect(sameStationName("鈴鳴駅", "鈴鳴")).toBe(true);
+    expect(sameStationName("阪急 鈴鳴駅", "鈴鳴駅")).toBe(true);
+    expect(sameStationName("阪急鈴鳴", "JR鈴鳴")).toBe(true);
+  });
+
+  it("名前の一部だけが同じ別の駅は、同じとしない", () => {
+    expect(sameStationName("北鈴鳴", "鈴鳴")).toBe(false);
+  });
+});
+
 describe("checkResearchedMinutes", () => {
   const estimate: TravelEstimate = {
     minutes: [40, 90],
@@ -170,6 +183,17 @@ describe("checkResearchedMinutes", () => {
       minutes: [40, 90],
     });
     expect(checkResearchedMinutes([60, 400], estimate)).toMatchObject({ ok: false });
+  });
+
+  it("見積もりに入っている駅からの歩きを除いて、短すぎるかを比べる", () => {
+    const withWalk: TravelEstimate = { ...estimate, minutes: [31, 36], basis: "data" };
+    expect(checkResearchedMinutes([19, 21], withWalk)).toMatchObject({ ok: false });
+    expect(checkResearchedMinutes([19, 21], withWalk, [10, 15])).toEqual({
+      ok: true,
+      minutes: [19, 21],
+    });
+    // 歩きを除いても明らかに短いものは使わない
+    expect(checkResearchedMinutes([5, 8], withWalk, [10, 15])).toMatchObject({ ok: false });
   });
 
   it("幅の形が正しくないものは使わない", () => {

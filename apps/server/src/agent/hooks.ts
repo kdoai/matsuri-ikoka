@@ -115,7 +115,7 @@ export interface HookDeps {
   ctx: ToolContext;
   emit: (event: SseEvent) => void;
   /** サブエージェントの開始時に足す文脈 */
-  briefing: (staff: Staff) => string;
+  briefing: (staff: Staff) => string | Promise<string>;
 }
 
 type Hooks = Partial<Record<HookEvent, HookCallbackMatcher[]>>;
@@ -260,7 +260,10 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
       },
     });
     return {
-      hookSpecificOutput: { hookEventName: "SubagentStart", additionalContext: briefing(staff) },
+      hookSpecificOutput: {
+        hookEventName: "SubagentStart",
+        additionalContext: await briefing(staff),
+      },
     };
   };
 
@@ -283,7 +286,8 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
     PreToolUse: [{ hooks: [preToolUse] }],
     PostToolUse: [{ matcher: `^${MCP_TOOL_PREFIX}`, hooks: [postToolUse] }],
     PostToolUseFailure: [{ matcher: `^${MCP_TOOL_PREFIX}`, hooks: [postToolUseFailure] }],
-    SubagentStart: [{ hooks: [subagentStart] }],
+    // 旅程係の前に先の調べを待つことがあるので、時間の枠を広げる（秒）
+    SubagentStart: [{ hooks: [subagentStart], timeout: 90 }],
     SubagentStop: [{ hooks: [subagentStop] }],
   };
 }
