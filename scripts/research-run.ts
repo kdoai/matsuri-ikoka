@@ -120,7 +120,7 @@ async function requireStore(client: Anthropic) {
 
 async function storeMemories(client: Anthropic, storeId: string) {
   const memories = new Map<string, string>();
-  for await (const item of client.beta.memoryStores.memories.list(storeId, { depth: 10 })) {
+  for await (const item of client.beta.memoryStores.memories.list(storeId)) {
     if (item.type === "memory") memories.set(item.path, item.id);
   }
   return memories;
