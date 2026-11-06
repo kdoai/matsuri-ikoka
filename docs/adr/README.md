@@ -14,3 +14,4 @@
 | [0008](0008-plan-check-and-evaluation-loop.md)    | 旅程にそろうべきものを型とコードで確かめ、評価係の採点が届くまで調べ直して作り直す | 採用             |
 | [0009](0009-weekly-research-on-managed-agents.md) | 祭りの週次の調査を Managed Agents の定期実行で進め、API キーなしで回収する         | 採用             |
 | [0010](0010-place-data-sources.md)                | 店と宿の一覧は OpenStreetMap で探し、公式のページで確かめる                        | 採用             |
+| [0011](0011-owner-isolation.md)                   | 相談と旅を利用者ごとに分け、経路ごとの決まりで既定で断る                           | 採用             |
