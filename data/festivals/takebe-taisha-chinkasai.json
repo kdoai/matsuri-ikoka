@@ -18,9 +18,7 @@
   },
   "scaleTier": "XS",
   "popularity": "local",
-  "listedIn": [
-    "rurubu"
-  ],
+  "listedIn": ["rurubu"],
   "highlights": [
     "本殿前で焚いた火の炎を、剣で斬って鎮める神事",
     "日本武尊が向火で火攻めを逃れた故事にちなむ",
@@ -117,44 +115,29 @@
     "stations": [
       {
         "name": "JR 石山駅",
-        "walkMinutes": [
-          25,
-          30
-        ],
+        "walkMinutes": [25, 30],
         "note": "JR琵琶湖線。京阪石山駅と隣り合う"
       },
       {
         "name": "京阪 唐橋前駅",
-        "walkMinutes": [
-          10,
-          15
-        ],
+        "walkMinutes": [10, 15],
         "note": "京阪石山坂本線。びわ湖大津観光協会の案内では徒歩約15分"
       },
       {
         "name": "近江鉄道バス・帝産バス 建部大社前バス停",
-        "walkMinutes": [
-          1,
-          6
-        ],
+        "walkMinutes": [1, 6],
         "note": "JR・京阪石山駅の2のりば（近江鉄道バス：瀬田駅・野郷原ゆき）か3のりば（帝産バス：龍谷大学・牧口ゆき）から。バスは約10分"
       }
     ],
     "fromHubs": [
       {
         "hub": "京都駅",
-        "minutes": [
-          15,
-          15
-        ],
+        "minutes": [15, 15],
         "route": "JR琵琶湖線の快速で石山駅まで（乗り換えなし）"
       },
       {
         "hub": "大阪駅",
-        "minutes": [
-          44,
-          44
-        ],
+        "minutes": [44, 44],
         "route": "JR京都線・琵琶湖線の新快速で石山駅まで（乗り換えなし）"
       }
     ],
@@ -275,11 +258,7 @@
       "hours": null,
       "closedDays": [],
       "price": "昼4,980円から、夜6,980円から",
-      "tags": [
-        "indoor",
-        "seating",
-        "local_food"
-      ],
+      "tags": ["indoor", "seating", "local_food"],
       "popularity": "regional",
       "sources": [
         {
@@ -311,15 +290,9 @@
         "close": "16:30",
         "lastEntry": "16:00"
       },
-      "closedDays": [
-        "wed"
-      ],
+      "closedDays": ["wed"],
       "price": "石餅（2個・お茶付き）400円",
-      "tags": [
-        "indoor",
-        "seating",
-        "local_food"
-      ],
+      "tags": ["indoor", "seating", "local_food"],
       "popularity": "regional",
       "sources": [
         {
@@ -353,11 +326,7 @@
       },
       "closedDays": null,
       "price": "近江の膳「湖国『夕照』」1,620円から",
-      "tags": [
-        "indoor",
-        "seating",
-        "local_food"
-      ],
+      "tags": ["indoor", "seating", "local_food"],
       "popularity": "major",
       "sources": [
         {

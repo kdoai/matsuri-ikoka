@@ -18,9 +18,7 @@
   },
   "scaleTier": "XS",
   "popularity": "local",
-  "listedIn": [
-    "rurubu"
-  ],
+  "listedIn": ["rurubu"],
   "highlights": [
     "境内のかがり火の神火に、青竹で挟んだ生せんべいをかざして自分で焼く",
     "焼いたせんべいを食べると病を払い、1年を元気に過ごせると伝わる",
@@ -130,20 +128,14 @@
     "stations": [
       {
         "name": "ぐるっと敦賀周遊バス 金崎宮停留所",
-        "walkMinutes": [
-          5,
-          10
-        ],
+        "walkMinutes": [5, 10],
         "note": "観光協会の案内で停留所から徒歩5分。るるぶ&more.は、敦賀駅からバスで約6分の栄新町で降り、徒歩2分と案内している"
       }
     ],
     "fromHubs": [
       {
         "hub": "JR 敦賀駅",
-        "minutes": [
-          8,
-          18
-        ],
+        "minutes": [8, 18],
         "route": "ぐるっと敦賀周遊バスで約8分、金崎宮停留所下車。タクシーなら約8分"
       }
     ],
@@ -221,13 +213,9 @@
         "close": "17:30",
         "lastEntry": "17:00"
       },
-      "closedDays": [
-        "wed"
-      ],
+      "closedDays": ["wed"],
       "price": "ジオラマ館 大人400円、小学生以下200円",
-      "tags": [
-        "indoor"
-      ],
+      "tags": ["indoor"],
       "popularity": "major",
       "sources": [
         {
@@ -254,10 +242,7 @@
       },
       "closedDays": [],
       "price": null,
-      "tags": [
-        "indoor",
-        "local_food"
-      ],
+      "tags": ["indoor", "local_food"],
       "popularity": "major",
       "sources": [
         {
