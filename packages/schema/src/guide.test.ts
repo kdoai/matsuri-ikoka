@@ -9,6 +9,7 @@ import {
   DecideProposalResponseSchema,
   decodeGuideSseEvent,
   EMERGENCY_CONTACTS,
+  EmergencyContactSchema,
   encodeGuideSseEvent,
   GUIDE_SSE_EVENT_TYPES,
   type GUIDE_STALLS,
@@ -20,9 +21,11 @@ import {
   type GuideSseEvent,
   GuideSseEventSchema,
   GuideStateResponseSchema,
+  MAX_PENDING_PROPOSALS,
   type NoticeContent,
   NoticeContentSchema,
   noticeStall,
+  PatrolIdSchema,
   PatrolPageSchema,
   PatrolReportSchema,
   PatrolRequestSchema,
@@ -165,6 +168,25 @@ describe("見回り係へ渡すもの", () => {
       }).success,
     ).toBe(false);
   });
+
+  it.each([
+    "patrol-suzunari-sample",
+    "trip-suzunari",
+    "uid-0123456789abcdef",
+    "patrol-0123456789ABCDEF",
+    "patrol-0123456789abcde",
+    "patrol-0123456789abcdef0",
+    "patrol-0123456789abcdef\n",
+    "",
+  ])("見回りの ID は決まった乱数の形だけで、依頼でも報告でも断る（%j）", (patrolId) => {
+    expect(PatrolIdSchema.safeParse(patrolId).success).toBe(false);
+    expect(PatrolRequestSchema.safeParse({ ...fictionalPatrolRequest(), patrolId }).success).toBe(
+      false,
+    );
+    expect(PatrolReportSchema.safeParse({ ...fictionalPatrolReport(), patrolId }).success).toBe(
+      false,
+    );
+  });
 });
 
 describe("見回り係から受け取るもの", () => {
@@ -265,6 +287,29 @@ describe("検問を通った変化", () => {
       NoticeContentSchema.safeParse({
         ...content,
         changes: [{ field: "date", before: "2026-08-16", after: null }],
+      }).success,
+    ).toBe(true);
+  });
+
+  it("開催の変更は、同じ項目を重ねて書けない", () => {
+    const content = { kind: "schedule_change", festivalId: "suzunari-toro", date: "2026-08-16" };
+    expect(
+      NoticeContentSchema.safeParse({
+        ...content,
+        changes: [
+          { field: "start", before: "18:30", after: "19:30" },
+          { field: "start", before: "18:30", after: "20:00" },
+        ],
+      }).success,
+    ).toBe(false);
+    expect(
+      NoticeContentSchema.safeParse({
+        ...content,
+        changes: [
+          { field: "date", before: "2026-08-16", after: "2026-08-17" },
+          { field: "start", before: "18:30", after: "19:30" },
+          { field: "end", before: "21:00", after: "21:30" },
+        ],
       }).success,
     ).toBe(true);
   });
@@ -484,18 +529,47 @@ describe("ガイドの手帳と、会話の続き", () => {
 });
 
 describe("GuideStateResponseSchema", () => {
+  const state = () => ({
+    tripId: "trip-suzunari",
+    version: 1,
+    phase: "before",
+    watch: fictionalTripWatch(),
+    notices: [fictionalNotice()],
+    proposals: [fictionalProposal()],
+    memo: [fictionalMemoItem()],
+  });
+
   it("架空の旅の状態を受け付ける", () => {
+    expect(GuideStateResponseSchema.safeParse(state()).success).toBe(true);
+  });
+
+  it.each([
+    ["approved", "2026-08-11T09:00:00+09:00"],
+    ["rejected", "2026-08-11T09:00:00+09:00"],
+    ["expired", null],
+    ["stale", null],
+  ])("提案は承認待ちだけを返し、%s は返さない", (status, decidedAt) => {
+    const proposal = { ...fictionalProposal(), status, decidedAt };
+    expect(GuideProposalSchema.safeParse(proposal).success).toBe(true);
+    expect(GuideStateResponseSchema.safeParse({ ...state(), proposals: [proposal] }).success).toBe(
+      false,
+    );
+  });
+
+  it("承認待ちの提案の数に上限がある", () => {
+    const proposals = (count: number) => Array.from({ length: count }, () => fictionalProposal());
     expect(
       GuideStateResponseSchema.safeParse({
-        tripId: "trip-suzunari",
-        version: 1,
-        phase: "before",
-        watch: fictionalTripWatch(),
-        notices: [fictionalNotice()],
-        proposals: [fictionalProposal()],
-        memo: [fictionalMemoItem()],
+        ...state(),
+        proposals: proposals(MAX_PENDING_PROPOSALS),
       }).success,
     ).toBe(true);
+    expect(
+      GuideStateResponseSchema.safeParse({
+        ...state(),
+        proposals: proposals(MAX_PENDING_PROPOSALS + 1),
+      }).success,
+    ).toBe(false);
   });
 });
 
@@ -577,6 +651,25 @@ describe("GuideSseEventSchema", () => {
     expect(EMERGENCY_CONTACTS.map((contact) => contact.number)).toEqual(["119", "110"]);
     expect(
       GuideSseEventSchema.safeParse({ type: "guide.emergency", data: { contacts: [] } }).success,
+    ).toBe(false);
+  });
+
+  it("決まった連絡先は、サービスと番号の組が合う", () => {
+    for (const contact of EMERGENCY_CONTACTS) {
+      expect(EmergencyContactSchema.safeParse(contact).success).toBe(true);
+    }
+  });
+
+  it.each([
+    { service: "ambulance_fire", number: "110" },
+    { service: "police", number: "119" },
+    { service: "ambulance_fire", number: "118" },
+    { service: "coast_guard", number: "118" },
+  ])("サービスと番号の誤った組は送らない（%j）", (contact) => {
+    expect(EmergencyContactSchema.safeParse(contact).success).toBe(false);
+    expect(
+      GuideSseEventSchema.safeParse({ type: "guide.emergency", data: { contacts: [contact] } })
+        .success,
     ).toBe(false);
   });
 

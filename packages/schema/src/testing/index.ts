@@ -339,7 +339,7 @@ export function fictionalTripWatch(): TripWatch {
 /** 架空の祭りの見回りの依頼。公式のページの開始の時刻の行が変わった */
 export function fictionalPatrolRequest(): PatrolRequest {
   return {
-    patrolId: "patrol-0123456789ab",
+    patrolId: "patrol-0123456789abcdef",
     requestedAt: "2026-08-10T06:00:00+09:00",
     targets: [
       {
@@ -361,7 +361,7 @@ export function fictionalPatrolRequest(): PatrolRequest {
 /** 架空の祭りの見回りの報告。公式のページで開始と終了の時刻が変わっていた */
 export function fictionalPatrolReport(): PatrolReport {
   return {
-    patrolId: "patrol-0123456789ab",
+    patrolId: "patrol-0123456789abcdef",
     findings: [
       {
         festivalId: FICTIONAL_FESTIVAL_ID,

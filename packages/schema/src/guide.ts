@@ -81,6 +81,11 @@ export const MAX_PATROL_PAGES_PER_TARGET = 5;
 export const MAX_PATROL_CHANGED_LINES = 40;
 export const MAX_PATROL_LINE_LENGTH = 300;
 
+/** 見回りの ID（`patrol-` と16桁の16進）。乱数で作り、旅や利用者の ID を入れられない形にする */
+export const PatrolIdSchema = z
+  .string()
+  .regex(/^patrol-[a-f0-9]{16}$/, "patrol- と16桁の16進で書いてください");
+
 /** 見回り係に読ませる理由。changed コードの比較で変わった行がある / unreadable コードでは読めなかった */
 export const PATROL_PAGE_REASONS = ["changed", "unreadable"] as const;
 
@@ -112,8 +117,7 @@ export type PatrolTarget = z.infer<typeof PatrolTargetSchema>;
 /** 見回り係のセッションへの依頼 */
 export const PatrolRequestSchema = z
   .strictObject({
-    /** この見回りの ID。乱数で作り、旅や利用者から作らない */
-    patrolId: IdSchema,
+    patrolId: PatrolIdSchema,
     requestedAt: IsoDateTimeSchema,
     targets: z.array(PatrolTargetSchema).min(1).max(MAX_PATROL_TARGETS),
   })
@@ -166,7 +170,7 @@ export const PatrolFindingSchema = z.strictObject({
 export type PatrolFinding = z.infer<typeof PatrolFindingSchema>;
 
 export const PatrolReportSchema = z.strictObject({
-  patrolId: IdSchema,
+  patrolId: PatrolIdSchema,
   findings: z.array(PatrolFindingSchema).max(MAX_PATROL_TARGETS),
 });
 export type PatrolReport = z.infer<typeof PatrolReportSchema>;
@@ -220,6 +224,9 @@ export const NoticeContentSchema = z.discriminatedUnion("kind", [
       .min(1)
       .refine((changes) => changes.every((change) => change.before !== change.after), {
         message: "変わっていない項目は書かないでください",
+      })
+      .refine((changes) => new Set(changes.map((change) => change.field)).size === changes.length, {
+        message: "同じ項目を重ねて書かないでください",
       }),
   }),
   z.strictObject({
@@ -373,6 +380,9 @@ export type GuideNotice = z.infer<typeof GuideNoticeSchema>;
 export const PROPOSAL_STATUSES = ["pending", "approved", "rejected", "expired", "stale"] as const;
 export type ProposalStatus = (typeof PROPOSAL_STATUSES)[number];
 
+/** 1つの旅で承認を待てる提案の数の上限 */
+export const MAX_PENDING_PROPOSALS = 10;
+
 /** 提案した旅程の内容のハッシュ（SHA-256）。コードが計算し、承認のときに照らし合わせる */
 export const ContentHashSchema = z
   .string()
@@ -482,7 +492,7 @@ export const GuideResumeSummarySchema = z.strictObject({
   turns: z.number().int().nonnegative(),
   topics: z.array(z.enum(GUIDE_TOPICS)).max(GUIDE_TOPICS.length),
   /** 承認を待っている提案 */
-  pendingProposalIds: z.array(IdSchema).max(10),
+  pendingProposalIds: z.array(IdSchema).max(MAX_PENDING_PROPOSALS),
   lastTurnAt: IsoDateTimeSchema.nullable(),
 });
 export type GuideResumeSummary = z.infer<typeof GuideResumeSummarySchema>;
@@ -517,7 +527,15 @@ export const GuideStateResponseSchema = z.strictObject({
   watch: TripWatchSchema.nullable(),
   /** 新しい順 */
   notices: z.array(GuideNoticeSchema).max(MAX_NOTICES_PER_TRIP),
-  proposals: z.array(GuideProposalSchema),
+  /** 承認を待っている提案だけ。提案は旅程をまるごと持つので、決まったものは返さない */
+  proposals: z
+    .array(
+      GuideProposalSchema.refine((proposal) => proposal.status === "pending", {
+        path: ["status"],
+        message: "承認を待っている提案だけを返してください",
+      }),
+    )
+    .max(MAX_PENDING_PROPOSALS),
   memo: z.array(GuideMemoItemSchema).max(MAX_MEMO_ITEMS),
 });
 export type GuideStateResponse = z.infer<typeof GuideStateResponseSchema>;
@@ -605,10 +623,10 @@ export const GuideToolNameSchema = z.enum(GUIDE_TOOL_NAMES);
 export type GuideToolName = z.infer<typeof GuideToolNameSchema>;
 
 /** 緊急のときに先に出す、公的な連絡先。ambulance_fire 救急・火事 / police 警察 */
-export const EmergencyContactSchema = z.strictObject({
-  service: z.enum(["ambulance_fire", "police"]),
-  number: z.enum(["119", "110"]),
-});
+export const EmergencyContactSchema = z.discriminatedUnion("service", [
+  z.strictObject({ service: z.literal("ambulance_fire"), number: z.literal("119") }),
+  z.strictObject({ service: z.literal("police"), number: z.literal("110") }),
+]);
 export type EmergencyContact = z.infer<typeof EmergencyContactSchema>;
 
 export const EMERGENCY_CONTACTS = [

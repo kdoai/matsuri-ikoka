@@ -14,7 +14,7 @@
   },
   "patrol": {
     "request": {
-      "patrolId": "patrol-suzunari-sample",
+      "patrolId": "patrol-5f3a9c1e7b2d4860",
       "requestedAt": "2026-08-10T06:00:00+09:00",
       "targets": [
         {
@@ -35,7 +35,7 @@
       ]
     },
     "report": {
-      "patrolId": "patrol-suzunari-sample",
+      "patrolId": "patrol-5f3a9c1e7b2d4860",
       "findings": [
         {
           "festivalId": "suzunari-toro",

@@ -237,8 +237,10 @@ describe("SamplePatrolSchema", () => {
     };
     expect(SamplePatrolSchema.safeParse(patrol).success).toBe(true);
     expect(
-      SamplePatrolSchema.safeParse({ ...patrol, report: { patrolId: "other", findings: [] } })
-        .success,
+      SamplePatrolSchema.safeParse({
+        ...patrol,
+        report: { patrolId: "patrol-ffffffffffffffff", findings: [] },
+      }).success,
     ).toBe(false);
   });
 });
