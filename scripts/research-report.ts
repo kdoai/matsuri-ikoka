@@ -60,6 +60,7 @@ export function applyResearchReport(input: {
   if (unread.length > 0) return reject(`開いていないページを根拠にした（${unread.length} 件）`);
 
   const previous = before.occurrences.find((occurrence) => occurrence.date === occurrenceDate);
+  const note = patch.note ?? previous?.note;
   const next = {
     date: patch.date,
     ...(patch.endDate === undefined ? {} : { endDate: patch.endDate }),
@@ -67,13 +68,19 @@ export function applyResearchReport(input: {
     end: patch.end ?? previous?.end ?? null,
     status: patch.status,
     rainPolicy: patch.rainPolicy ?? previous?.rainPolicy ?? null,
-    ...(patch.note === undefined ? {} : { note: patch.note }),
-    sources: report.evidence.map((evidence) => ({
-      url: evidence.url,
-      ...(evidence.title === undefined ? {} : { title: evidence.title }),
-      checkedAt: today,
-      confidence: evidence.confidence,
-    })),
+    ...(note === undefined ? {} : { note }),
+    sources: [
+      ...report.evidence.map((evidence) => ({
+        url: evidence.url,
+        ...(evidence.title === undefined ? {} : { title: evidence.title }),
+        checkedAt: today,
+        confidence: evidence.confidence,
+      })),
+      // 残した時刻や備考の根拠なので、前の出典も残す
+      ...(previous?.sources ?? []).filter(
+        (source) => !report.evidence.some((evidence) => evidence.url === source.url),
+      ),
+    ],
   };
   const occurrences = [
     ...before.occurrences.filter((occurrence) => occurrence.date !== occurrenceDate),

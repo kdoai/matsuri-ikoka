@@ -248,17 +248,23 @@ async function toolActivityOf(client: Anthropic, sessionId: string) {
   return { fetchedUrls: log.fetchedUrls, held };
 }
 
-/** 報告のファイルを、祭りの ID ごとに読む。形の合わないものは入れない */
+/** 報告のファイルを、祭りの ID ごとに読む。形の合わないものは、中身を使わず ID だけを残す */
 async function readReports(client: Anthropic, sessionId: string) {
   const reports = new Map<string, ResearchReport>();
+  const invalid = new Set<string>();
   for await (const file of client.beta.files.list({ scope_id: sessionId, betas: [FILE_BETA] })) {
     const name = /([a-z0-9-]+)\.json$/.exec(file.filename)?.[1];
-    if (name === undefined || file.size_bytes > MAX_REPORT_BYTES) continue;
+    if (name === undefined) continue;
+    if (file.size_bytes > MAX_REPORT_BYTES) {
+      invalid.add(name);
+      continue;
+    }
     const response = await client.beta.files.download(file.id, { betas: [FILE_BETA] });
     const parsed = parseJsonWithSchema(await response.text(), ResearchReportSchema, "object");
     if (parsed.ok && parsed.value.festivalId === name) reports.set(name, parsed.value);
+    else invalid.add(name);
   }
-  return reports;
+  return { reports, invalid };
 }
 
 /** 根拠のページを取り直して、引用が本文にあるかを確かめる。比べられないときは unverifiable */
@@ -341,7 +347,7 @@ async function collect(client: Anthropic, out: string): Promise<number> {
   }
 
   const festivals = new Map(readFestivals().map((festival) => [festival.id, festival]));
-  const reports = await readReports(client, session.id);
+  const { reports, invalid } = await readReports(client, session.id);
   const { fetchedUrls, held } = await toolActivityOf(client, session.id);
 
   let ledger = retireEndedOccurrences([...festivals.values()], readLedger(), today);
@@ -357,7 +363,10 @@ async function collect(client: Anthropic, out: string): Promise<number> {
     const report = reports.get(target.id);
     let result: "found" | "not_found" | "failed" = "failed";
     if (report === undefined) {
-      rejected.push({ id: target.id, reason: "報告がなかった" });
+      rejected.push({
+        id: target.id,
+        reason: invalid.has(target.id) ? "報告の形が合わなかった" : "報告がなかった",
+      });
     } else if (report.occurrenceDate !== target.occurrenceDate) {
       rejected.push({ id: target.id, reason: "別の開催回の報告" });
     } else if (report.outcome === "not_found") {

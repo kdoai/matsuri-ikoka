@@ -75,7 +75,7 @@ describe("ResearchReportSchema", () => {
 });
 
 describe("applyResearchReport", () => {
-  it("任された開催回だけを変え、出典は今日の確認日で作る", () => {
+  it("任された開催回だけを変え、根拠は今日の確認日で出典の先頭に置く", () => {
     const before = festivalOf();
     const result = apply(reportOf(), before);
     if (!result.ok) throw new Error(result.reason);
@@ -84,9 +84,12 @@ describe("applyResearchReport", () => {
       start: "18:00",
       status: "announced",
     });
-    expect(result.after.occurrences[0]?.sources).toEqual([
-      { url: URL_A, title: "開催案内", checkedAt: TODAY, confidence: "official" },
-    ]);
+    expect(result.after.occurrences[0]?.sources[0]).toEqual({
+      url: URL_A,
+      title: "開催案内",
+      checkedAt: TODAY,
+      confidence: "official",
+    });
     expect(result.after.etiquette).toEqual(before.etiquette);
     expect(result.after.name).toEqual(before.name);
     expect(result.after.optOut).toBe(before.optOut);
@@ -98,6 +101,32 @@ describe("applyResearchReport", () => {
     });
     const result = apply(reportOf(), before);
     expect(result.ok && result.after.occurrences[0]?.end).toBe("21:00");
+  });
+
+  it("備考のない報告は、前の備考を消さない", () => {
+    const before = festivalOf((f) => {
+      f.occurrences[0]!.note = "灯籠を流す順番は町内ごとに決まっている";
+    });
+    const result = apply(reportOf(), before);
+    expect(result.ok && result.after.occurrences[0]?.note).toBe(
+      "灯籠を流す順番は町内ごとに決まっている",
+    );
+  });
+
+  it("前の出典を残し、同じ URL は今回の確認で置き換える", () => {
+    const old = "https://example.com/suzunari/guide";
+    const before = festivalOf((f) => {
+      f.occurrences[0]!.sources = [
+        { url: old, checkedAt: "2026-01-01", confidence: "single" },
+        { url: URL_A, checkedAt: "2026-01-01", confidence: "single" },
+      ];
+    });
+    const result = apply(reportOf(), before);
+    if (!result.ok) throw new Error(result.reason);
+    expect(result.after.occurrences[0]?.sources.map((s) => [s.url, s.checkedAt])).toEqual([
+      [URL_A, TODAY],
+      [old, "2026-01-01"],
+    ]);
   });
 
   it("日付が直されたら、その回を置き換える", () => {
