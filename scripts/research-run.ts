@@ -269,7 +269,9 @@ async function readReports(client: Anthropic, sessionId: string) {
     // 本文は信用しない入力なので、ログには項目の名前と理由だけを出す
     const issues = parsed.ok
       ? ["festivalId：ファイル名と合わない"]
-      : (parsed.issues ?? [parsed.reason]);
+      : parsed.reason === "shape"
+        ? parsed.issues
+        : ["JSON として読めない"];
     console.log(`報告の形が合わない ${name}：${issues.join(" / ")}`);
   }
   return { reports, invalid };
