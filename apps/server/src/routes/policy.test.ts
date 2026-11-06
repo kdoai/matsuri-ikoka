@@ -91,14 +91,24 @@ describe("経路と認可の決まり", () => {
 
   it("文書の表と、宣言した経路がそろっている", async () => {
     const doc = await readFile(root("docs/spec/api.md"), "utf8");
+    // 表の行のはじめの3列（メソッド・パス・決まり）
+    const rows = new Set(
+      doc
+        .split(/\r?\n/)
+        .filter((line) => line.startsWith("|"))
+        .map((line) =>
+          line
+            .split("|")
+            .slice(1, 4)
+            .map((cell) => cell.trim())
+            .join(" "),
+        ),
+    );
     const pathOf = (path: string) =>
       path.replace("{[^/]+\\.pdf}", ".pdf").replace("{[0-9]{1,6}}", "");
     for (const [method, path, policy] of ROUTES) {
-      const row = new RegExp(
-        `^\\| ${method} +\\| \`${pathOf(path).replace(/[*.]/g, "\\$&")}\` +\\| ${POLICY_LABELS[policy]} +\\|`,
-        "m",
-      );
-      expect(doc, `${method} ${path}`).toMatch(row);
+      const row = `${method} \`${pathOf(path)}\` ${POLICY_LABELS[policy]}`;
+      expect(rows.has(row), row).toBe(true);
     }
   });
 
