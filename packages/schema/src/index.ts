@@ -9,5 +9,6 @@ export * from "./itinerary";
 export * from "./preferences";
 export * from "./quiz";
 export * from "./researchLedger";
+export * from "./researchReport";
 export * from "./sample";
 export * from "./search";
