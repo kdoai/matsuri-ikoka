@@ -100,6 +100,8 @@ describe("ワークフロー", () => {
     // GITHUB_TOKEN で開いた PR の CI は承認待ちで止まるので、PR のジョブが承認する
     expect(pullRequest).toContain("/approve");
     expect(pullRequest).toContain("status=action_required");
+    // 調査の結果の JSON は、PR の lint に通るように整形してから渡す
+    expect(researchJob).toContain("biome format --stdin-file-path");
   });
 });
 
