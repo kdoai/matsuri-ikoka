@@ -167,7 +167,7 @@ jobs:
       # ブランチを push する
       contents: write
       pull-requests: write
-      # PR のブランチで CI を起動する（GITHUB_TOKEN で開いた PR では、CI は自動では始まらない）
+      # PR の CI を承認する（GITHUB_TOKEN で開いた PR の CI は、承認されるまで動かない）
       actions: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -214,4 +214,18 @@ jobs:
             --title "$title" \
             --body-file "$RUNNER_TEMP/refresh/body.md" \
             "${labels[@]}"
-          gh workflow run ci.yml -R "$GITHUB_REPOSITORY" --ref "$BRANCH"
+          # 必須の検査になるのは PR に結びついた CI だけなので、承認待ちの実行を動かす。
+          # ブランチにあるのは、このジョブが置いたファイルだけ。実行が現れるまで少しかかる
+          head="$(git rev-parse HEAD)"
+          ci_approved=false
+          for _ in {1..12}; do
+            sleep 5
+            while read -r id name; do
+              [[ -n "$id" ]] || continue
+              gh api -X POST "repos/$GITHUB_REPOSITORY/actions/runs/$id/approve" > /dev/null
+              if [[ "$name" == "CI" ]]; then ci_approved=true; fi
+            done < <(gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$head&event=pull_request&status=action_required" \
+              --jq '.workflow_runs[] | "\(.id) \(.name)"')
+            if [[ "$ci_approved" == true ]]; then break; fi
+          done
+          [[ "$ci_approved" == true ]] || { echo "承認待ちの CI が見つかりません" >&2; exit 1; }

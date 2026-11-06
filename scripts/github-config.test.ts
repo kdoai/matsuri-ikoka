@@ -97,9 +97,9 @@ describe("ワークフロー", () => {
     expect(researchJob).not.toMatch(/(contents|pull-requests|issues|actions): write/);
     expect(pullRequest).toBeDefined();
     expect(pullRequest).not.toMatch(/id-token|ANTHROPIC_API_KEY|MATSURI_REFRESH_API_KEY_SECRET/);
-    // GITHUB_TOKEN で開いた PR でも CI を起動できるように、ci.yml は手でも起動できる
-    expect(pullRequest).toContain("gh workflow run ci.yml");
-    expect(read(".github/workflows/ci.yml")).toMatch(/^ {2}workflow_dispatch:/m);
+    // GITHUB_TOKEN で開いた PR の CI は承認待ちで止まるので、PR のジョブが承認する
+    expect(pullRequest).toContain("/approve");
+    expect(pullRequest).toContain("status=action_required");
   });
 });
 
