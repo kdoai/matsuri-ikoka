@@ -13,7 +13,7 @@ export interface NearbyResearchRequest {
   perPersonBudgetYen: number | null;
   party: Party | null;
   /** 祭りのデータにある周辺の場所（参考として渡す） */
-  references: { name: string; kind: string; summary: string }[];
+  references: { name: string; kind: string; summary: string; url?: string }[];
   /** 調べ方（検索の言葉・確かめる観点・範囲）。コードで決め、毎回の調べに必ず渡す（domain/nearbySearch.ts） */
   plan: NearbySearchPlan;
   signal: AbortSignal;

@@ -9,6 +9,7 @@ import {
   type VerificationResult,
 } from "@matsuri-ikoka/schema";
 import type { FestivalStore } from "../data/festivalStore";
+import type { OsmPlaceIndex } from "../domain/osmPlaces";
 import type { StationPointIndex } from "../domain/travelEstimate";
 import type { ItineraryStore, Session } from "../session/sessionStore";
 import type { CandidateChecker } from "./candidateCheck";
@@ -40,6 +41,8 @@ export function isVisibleTool(name: AgentToolName): name is ToolName {
 
 /** 1回の発言の間に起きたこと。会話の状態（done の stage）を決めるのに使う */
 export interface TurnState {
+  /** この発言が始まった時刻（ミリ秒）。時間の残りを見て、調べ直しをやめる */
+  startedAt: number;
   startedStaff: Set<StaffId>;
   /** 呼んだツール（呼んだ順）。ログに残す */
   toolCalls: AgentToolName[];
@@ -58,6 +61,7 @@ export interface TurnState {
 
 export function newTurnState(searchRetry: SearchRetry | null = null): TurnState {
   return {
+    startedAt: Date.now(),
     startedStaff: new Set(),
     toolCalls: [],
     searched: false,
@@ -92,6 +96,8 @@ export interface ToolContext {
   routes?: RouteResearcher;
   /** 会場の周りの店・寄り道を Web で調べる。ないとき（mock やテスト）は祭りのデータの周辺の場所だけから選ぶ */
   nearby?: NearbyResearcher;
+  /** 会場の周りの店と宿の OpenStreetMap の一覧。ないとき（mock やテスト）は使わない */
+  osmPlaces?: OsmPlaceIndex;
   /** 会場の近くの宿を Web で調べる（観点ごとに並べて）。ないとき（mock やテスト）は宿の空きの調べ方の結果だけを使う */
   lodgingResearch?: LodgingResearcher;
   /** 保存した旅程を観点ごとに採点する評価係。ないとき（mock やテスト）は点検の点だけで決める */

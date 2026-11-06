@@ -19,8 +19,16 @@ import {
   type Weather,
 } from "@matsuri-ikoka/schema";
 import { addDays } from "./calendar";
+import { mealCandidates } from "./nearby";
 import { checkPlan, occurrenceOn, type PlanIssue } from "./planCheck";
-import { findGaps, type ResearchedPlace, reconcileConsidered } from "./planCoverage";
+import {
+  findGaps,
+  MIN_MEAL_MINUTES,
+  mealSlotLabel,
+  missingMeals,
+  type ResearchedPlace,
+  reconcileConsidered,
+} from "./planCoverage";
 
 // 旅程係が書いた下書きから、保存する旅程を作る。
 // 場所・営業時間・出典は祭りのデータから入れ直し、天気を日ごとに付け、版と差分を付け、
@@ -47,7 +55,7 @@ export type ItineraryDraft = Omit<
 };
 
 export interface ItineraryIssue {
-  code: PlanIssue["code"] | "invalid" | "unknown_source";
+  code: PlanIssue["code"] | "invalid" | "unknown_source" | "meal_missing";
   itemId: string | null;
   message: string;
 }
@@ -233,6 +241,9 @@ export function enrichDraft(
           ? host.sources
           : knownOnly(meal.sources, `食事の案「${meal.name}」`);
     if ((meal.kind === "shop" || meal.kind === "stalls") && mealSources.length === 0) return [];
+    // 屋台がないと分かっている祭りでは、屋台で食べる案を認めない
+    const hostFestival = festivals.find((f) => f.id === host?.festivalId);
+    if (meal.kind === "stalls" && hostFestival?.food.stalls === "no") return [];
     return [{ ...meal, sources: mealSources }];
   };
   const enrichLastReturn = (last: LastReturn): LastReturn => {
@@ -328,14 +339,48 @@ export function buildItinerary(
 
   const check = checkPlan(parsed.data, options.findFestival, options.extraSpots);
   warnings.push(...check.warnings);
-  if (check.errors.length > 0) {
-    return { ok: false, errors: check.errors, warnings };
+  const errors = [
+    ...check.errors,
+    ...mealIssues(parsed.data, options.findFestival, options.extraSpots),
+  ];
+  if (errors.length > 0) {
+    return { ok: false, errors, warnings };
   }
 
   if (previous !== null && isSameItinerary(previous, parsed.data, diff)) {
     return { ok: true, unchanged: true, itinerary: previous, diff, warnings, gaps };
   }
   return { ok: true, unchanged: false, itinerary: parsed.data, diff, warnings, gaps };
+}
+
+/**
+ * 食事の抜けた旅程は保存しない。文には、その時間帯に入れられる店の候補を添える。
+ * 店がなくても「駅の周りでお昼（店は当日選ぶ）」のように時間は取れるので、いつでも直せる
+ */
+function mealIssues(
+  itinerary: Itinerary,
+  findFestival: (id: string) => Festival | undefined,
+  extraSpots: ReadonlyMap<string, NearbySpot> = new Map(),
+): ItineraryIssue[] {
+  const { days } = itinerary;
+  const spots = [...extraSpots.values(), ...(findFestival(itinerary.mainFestivalId)?.nearby ?? [])];
+  return days.flatMap((day, index) =>
+    missingMeals(day, index === 0, index === days.length - 1).map((slot): ItineraryIssue => {
+      const candidates = mealCandidates(spots, day.date, slot)
+        .map((spot) => `${spot.name}（${spot.id}）`)
+        .join("、");
+      const label = days.length > 1 ? `${index + 1}日目：` : "";
+      return {
+        code: "meal_missing",
+        itemId: null,
+        message:
+          `${label}${mealSlotLabel(slot)}が時間割に入っていません。その時間帯に${MIN_MEAL_MINUTES}分以上の type: meal の予定を入れてください。` +
+          (candidates === ""
+            ? "店の候補がないので、research_trip（only: nearby）で探してください。それでも店がなければ、spotId なしで「駅の周りで昼ごはん（店は当日選ぶ）」のように時間を取ってください"
+            : `候補：${candidates}`),
+      };
+    }),
+  );
 }
 
 function isSameItinerary(previous: Itinerary, next: Itinerary, diff: ItineraryDiff): boolean {

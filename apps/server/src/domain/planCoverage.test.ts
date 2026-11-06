@@ -1,5 +1,10 @@
 import type { Itinerary } from "@matsuri-ikoka/schema";
-import { fictionalItinerary, fictionalPlannedItinerary } from "@matsuri-ikoka/schema/testing";
+import {
+  fictionalItinerary,
+  fictionalLodgingSearch,
+  fictionalPlannedItinerary,
+  fictionalSource,
+} from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
 import {
   findGaps,
@@ -33,7 +38,6 @@ describe("findGaps：旅に要るものがそろっているか", () => {
         ["return_missing", null],
         ["move_endpoints_missing", "go"],
         ["transfer_unknown", "go"],
-        ["meal_missing", null],
       ]),
     );
   });
@@ -90,6 +94,52 @@ describe("findGaps：旅に要るものがそろっているか", () => {
     expect(codes(itinerary)).toContainEqual(["move_unsourced", "go"]);
   });
 
+  it("夜の祭りの屋台や、店の名前だけの案では、昼の食事に数えない", () => {
+    const itinerary = fictionalPlannedItinerary();
+    const day = itinerary.days[0]!;
+    day.items[0]!.start = "09:30";
+    day.items[0]!.end = "10:20";
+    const lunchPlan = {
+      slot: "lunch" as const,
+      name: "昼の案",
+      sources: [fictionalSource("2026")],
+    };
+    day.meals!.push({ ...lunchPlan, kind: "stalls", itemId: "festival" });
+    expect(codes(itinerary)).toContainEqual(["meal_missing", null]);
+    day.meals![1] = { ...lunchPlan, kind: "shop", itemId: null };
+    expect(codes(itinerary)).toContainEqual(["meal_missing", null]);
+  });
+
+  it("短すぎる食事の予定は、昼の食事に数えない", () => {
+    const itinerary = fictionalPlannedItinerary();
+    const day = itinerary.days[0]!;
+    day.items[0]!.start = "09:30";
+    day.items[0]!.end = "10:20";
+    const meal = {
+      ...day.items[1]!,
+      id: "lunch",
+      type: "meal" as const,
+      start: "12:00",
+      end: "12:15",
+      sources: [fictionalSource("2026")],
+    };
+    day.items.splice(1, 0, meal);
+    expect(codes(itinerary)).toContainEqual(["meal_missing", null]);
+    meal.end = "12:45";
+    expect(codes(itinerary).filter(([code]) => code === "meal_missing")).toEqual([]);
+  });
+
+  it("泊まる夜があるのに宿の候補が1つもなければ足りない", () => {
+    const itinerary = fictionalPlannedItinerary();
+    const day = itinerary.days[0]!;
+    const next = { ...day, date: "2026-08-17", stay: null };
+    day.stay = { area: "鈴鳴町" };
+    itinerary.days.push(next);
+    expect(codes(itinerary)).toContainEqual(["lodging_missing", null]);
+    day.stay = { area: "鈴鳴町", lodging: fictionalLodgingSearch() };
+    expect(codes(itinerary).filter(([code]) => code === "lodging_missing")).toEqual([]);
+  });
+
   it("滞在の時間帯が昼にかかれば昼の、夜にかかれば夜の食事の案が要る", () => {
     const itinerary = fictionalPlannedItinerary();
     const day = itinerary.days[0]!;
@@ -99,13 +149,21 @@ describe("findGaps：旅に要るものがそろっているか", () => {
     expect(mealsNeeded(day, true, true)).toEqual(["lunch", "dinner"]);
     expect(codes(itinerary)).toContainEqual(["meal_missing", null]);
 
-    day.meals!.push({
-      slot: "lunch",
-      kind: "bring",
+    // 時間割の予定に結びつかない案は、時間が取れていないので数えない
+    const bring = {
+      slot: "lunch" as const,
+      kind: "bring" as const,
       name: "駅でおにぎりを買っていく",
-      itemId: null,
+      itemId: null as string | null,
       sources: [],
-    });
+    };
+    day.meals!.push(bring);
+    expect(codes(itinerary)).toContainEqual(["meal_missing", null]);
+
+    // 昼の時間帯にかかる予定の中でとる案なら、数える
+    day.items[1]!.start = "12:00";
+    day.items[1]!.end = "13:00";
+    bring.itemId = day.items[1]!.id;
     expect(codes(itinerary).filter(([code]) => code === "meal_missing")).toEqual([]);
   });
 

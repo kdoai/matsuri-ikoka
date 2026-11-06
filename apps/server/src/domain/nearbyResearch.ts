@@ -15,12 +15,14 @@ import type {
 } from "@matsuri-ikoka/schema";
 import { distanceKm } from "./lodging";
 import { fitsOpeningHours, isClosedOn, type TimeWindow } from "./nearby";
+import { distinctSourceSites } from "./nearbySearch";
 import { preferenceEffects } from "./preferences";
 import { lastMileMinutes } from "./travelEstimate";
 
 // 周辺係が Web で調べた店・寄り道を、聞き取った条件と行く日の営業でコードが最後に絞る。
 // 調べた報告は信用しない入力なので、合うかどうかはモデルの言い分ではなく、報告の値とこの決まりで決める。
-// 合うものがなければ、合わないもので埋めずに「見つからなかった」と返す。
+// 食べたいものは順位に使う。合う店がなければ foodFound で「見つからなかった」と伝えつつ、食事に入れられる近くの店は残す
+// （食事の制限・定休日・距離など、守る条件に合わない店は残さない）。
 
 /** 会場からこれより遠い場所は、祭りの前後の寄り道にしない（km、直線）。車で回るときは ScreenOptions.maxKm で広げる */
 export const MAX_RESEARCHED_SPOT_KM = 3;
@@ -56,6 +58,8 @@ export interface ResearchedSpotReport {
   openOnDate: "open" | "closed" | "unconfirmed";
   /** 実際に読んだページだけ */
   sources: { url: string; title?: string }[];
+  /** 店の公式のページの候補（地図のデータにあるもの。まだ読んでいない） */
+  website?: string | undefined;
 }
 
 export type ResearchedExclusionReason =
@@ -63,7 +67,6 @@ export type ResearchedExclusionReason =
   | "closed_on_date"
   | "outside_hours"
   | "shop_meal_not_wanted"
-  | "food_not_wished"
   | "dietary_unconfirmed"
   | "over_budget"
   | "adults_only";
@@ -73,6 +76,8 @@ export interface ResearchedSpot extends NearbySpot {
   /** confirmed：行く日の営業を確かめた / needs_check：確かめられなかった（行く前に要確認） */
   openStatus: "confirmed" | "needs_check";
   matchedFoods: FoodWish[];
+  /** 出典のサイトの数。多いほど、別々の情報源で裏が取れている */
+  sourceSites: number;
 }
 
 export interface ResearchedSelection {
@@ -119,13 +124,11 @@ function exclusionReason(
   }
   if (report.kind !== "food") return null;
 
-  const wanted = shopFoodWishes(options.foodWishes);
   const includeShopMeals =
-    preferenceEffects(options.preferences).includeShopMeals || wanted.length > 0;
+    preferenceEffects(options.preferences).includeShopMeals ||
+    options.wantsShopMeals === true ||
+    shopFoodWishes(options.foodWishes).length > 0;
   if (!includeShopMeals) return "shop_meal_not_wanted";
-  if (wanted.length > 0 && !report.foods.some((food) => wanted.includes(food))) {
-    return "food_not_wished";
-  }
   for (const need of options.dietary) {
     if (STRICT_DIETARY.includes(need) && !report.dietaryOk.includes(need)) {
       return "dietary_unconfirmed";
@@ -152,6 +155,8 @@ export interface ScreenOptions {
   /** 確かめた日（出典の checkedAt） */
   today: IsoDate;
   preferences: Preferences;
+  /** こだわりが「屋台で十分」でも店を残す（屋台で昼を済ませられない日など） */
+  wantsShopMeals?: boolean;
   foodWishes: readonly FoodWish[];
   dietary: readonly DietaryNeed[];
   perPersonBudgetYen: number | null;
@@ -159,8 +164,8 @@ export interface ScreenOptions {
 }
 
 /**
- * 調べた場所を、行く日の営業・距離・同行者・予算・食べたいもの・食事の制限で絞り、祭りのデータの場所と同じ形にする。
- * 出典のない場所は入れない。確度は、読んだページが2つ以上なら corroborated、1つなら single にする
+ * 調べた場所を、行く日の営業・距離・同行者・予算・食事の制限で絞り、食べたいものに合う順に並べて、祭りのデータの場所と同じ形にする。
+ * 出典のない場所は入れない。確度は、別のサイトの出典が2つ以上なら corroborated、1つなら single にする
  */
 export function screenResearchedSpots(
   reports: readonly ResearchedSpotReport[],
@@ -181,7 +186,9 @@ export function screenResearchedSpots(
       excluded.push({ name: report.name, reason });
       continue;
     }
-    const confidence = report.sources.length >= 2 ? "corroborated" : "single";
+    // 同じサイトのページが増えても裏が取れたことにはしない。別のサイトで2つ以上なら corroborated
+    const sourceSites = distinctSourceSites(report.sources);
+    const confidence = sourceSites >= 2 ? "corroborated" : "single";
     const sources: Source[] = report.sources.map((s) => ({
       url: s.url,
       ...(s.title ? { title: s.title } : {}),
@@ -206,6 +213,7 @@ export function screenResearchedSpots(
       openStatus:
         report.openOnDate === "open" && report.hours !== null ? "confirmed" : "needs_check",
       matchedFoods: report.foods.filter((food) => wanted.includes(food)),
+      sourceSites,
     });
   }
 
@@ -213,6 +221,7 @@ export function screenResearchedSpots(
     const byMatch = b.matchedFoods.length - a.matchedFoods.length;
     if (byMatch !== 0) return byMatch;
     if (a.openStatus !== b.openStatus) return a.openStatus === "confirmed" ? -1 : 1;
+    if (a.sourceSites !== b.sourceSites) return b.sourceSites - a.sourceSites;
     return (a.walkMinutesFromVenue?.[1] ?? 0) - (b.walkMinutesFromVenue?.[1] ?? 0);
   });
 
@@ -226,7 +235,7 @@ export function screenResearchedSpots(
 
 /** 旅程に入れる形（祭りのデータの場所と同じ形）に戻す */
 export function asNearbySpot(spot: ResearchedSpot): NearbySpot {
-  const { openStatus: _status, matchedFoods: _foods, ...rest } = spot;
+  const { openStatus: _status, matchedFoods: _foods, sourceSites: _sites, ...rest } = spot;
   return rest;
 }
 

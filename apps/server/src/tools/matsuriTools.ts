@@ -23,6 +23,7 @@ import {
   type MealSlot,
   MOVE_MODES,
   mainFestivalDay,
+  type NearbySpot,
   type NearMiss,
   NightsSchema,
   PartialTripConditionsSchema,
@@ -53,12 +54,7 @@ import {
   resolveDestination,
 } from "../domain/destination";
 import { foodEffects } from "../domain/food";
-import {
-  festivalOpenDaysAround,
-  type HearingSituation,
-  hearingFieldLabel,
-  planHearing,
-} from "../domain/hearing";
+import { type HearingSituation, hearingFieldLabel, planHearing } from "../domain/hearing";
 import {
   buildItinerary,
   draftFromItinerary,
@@ -66,20 +62,31 @@ import {
   type ItineraryDraft,
   mergeDay,
 } from "../domain/itinerary";
-import { attachLodging, checkLodgingBudget, perPersonNightLimitYen } from "../domain/lodging";
+import {
+  attachLodging,
+  checkLodgingBudget,
+  distanceKm,
+  perPersonNightLimitYen,
+} from "../domain/lodging";
 import {
   lodgingFromVenue,
   lodgingSearchPlans,
   screenResearchedLodging,
+  VENUE_LODGING_KM,
 } from "../domain/lodgingResearch";
-import { festivalInArea, selectNearbySpots, type TimeWindow } from "../domain/nearby";
+import {
+  festivalInArea,
+  mealCandidates,
+  selectNearbySpots,
+  stallsServeLunch,
+  type TimeWindow,
+} from "../domain/nearby";
 import {
   asNearbySpot,
   type ResearchedSpot,
   type ResearchedSpotReport,
   researchedSpotsInItinerary,
   screenResearchedSpots,
-  shopFoodWishes,
 } from "../domain/nearbyResearch";
 import {
   maxSpotKm,
@@ -87,7 +94,13 @@ import {
   type NearbySearchInput,
   type NearbySearchRound,
   nearbySearchPlan,
+  nearbySearchPlans,
+  SPARSE_SHOP_COUNT,
+  SPARSE_SPOT_KM,
+  searchRadiusKm,
+  WALK_SPOT_KM,
 } from "../domain/nearbySearch";
+import { osmLodgingOffers, osmSpotReport } from "../domain/osmPlaces";
 import { occurrenceOn } from "../domain/planCheck";
 import { MEAL_WINDOWS, type ResearchedPlace } from "../domain/planCoverage";
 import { preferenceEffects } from "../domain/preferences";
@@ -114,7 +127,13 @@ import { randomId } from "../session/sessionStore";
 import type { CandidateCheck } from "./candidateCheck";
 import { type AgentToolName, TOOL_TIMEOUT_MS, type ToolContext } from "./context";
 import { type LodgingOutcome, MAX_SEARCH_RADIUS_KM, RAKUTEN_CREDIT } from "./lodging";
-import { nextStepAfter, redoAcceptEvent, redoRequestEvents, reviewPlan } from "./planReview";
+import {
+  canRedoPlan,
+  nextStepAfter,
+  redoAcceptEvent,
+  redoRequestEvents,
+  reviewPlan,
+} from "./planReview";
 import type { RouteDirection } from "./routeResearch";
 
 // 接客エージェントに渡すツール。入出力は Zod で決め、計算と絞り込みは domain の関数で行う。
@@ -250,25 +269,11 @@ export const ItineraryDraftSchema = z
       .describe("周辺係・宿の係が見つけた場所の採否の理由。採ったかと名前はサーバーが決める"),
   });
 
-/** 聞き取りの場面（祭りを選んだか、その祭りが旅の間に何日も開かれるか）を、相談の状態から決める */
+/** 聞き取りの場面（祭りを選んだか、祭りを固定しているか）を、相談の状態から決める */
 export function hearingSituation(ctx: ToolContext): HearingSituation {
   const { session } = ctx;
-  const festivalId = session.selectedFestivalId;
-  if (festivalId === null) return {};
-  const festival = ctx.festivals.get(festivalId);
-  const date =
-    session.anchor?.festivalId === festivalId
-      ? session.anchor.date
-      : knownCandidate(ctx, festivalId)?.date;
-  const nights = session.conditions.nights ?? 0;
-  return {
-    festivalChosen: true,
-    anchored: session.anchor !== null,
-    multiDayFestival:
-      festival !== undefined &&
-      date !== undefined &&
-      festivalOpenDaysAround(festival, date, nights) > 1,
-  };
+  if (session.selectedFestivalId === null) return {};
+  return { festivalChosen: true, anchored: session.anchor !== null };
 }
 
 /** 次に聞くことを、エージェントが読める形にする */
@@ -822,7 +827,7 @@ function searchArea(
  */
 export const NEARBY_RESEARCH_MS = 85_000;
 /** 1回目の調べを打ち切る時間（ミリ秒）。2回目に回す時間を残す */
-export const NEARBY_FIRST_ROUND_MS = 55_000;
+export const NEARBY_FIRST_ROUND_MS = 60_000;
 /** 残りがこれより短ければ、広げた2回目の調べはしない（ミリ秒） */
 export const NEARBY_WIDEN_MIN_MS = 25_000;
 
@@ -853,6 +858,26 @@ function nearbySearchInput(
   };
 }
 
+/** 店の報告に入れる、OpenStreetMap の店の数の上限（会場に近い順） */
+const MAX_OSM_SPOTS = 12;
+
+/** 会場の周りの店を、OpenStreetMap の一覧から近い順に引く。Web の調べに、確かめる店として渡す */
+function findOsmSpots(
+  ctx: ToolContext,
+  festival: Festival,
+  date: IsoDate,
+  radiusKm: number,
+): ResearchedSpotReport[] {
+  if (ctx.osmPlaces === undefined) return [];
+  const near = ctx.osmPlaces.find("food", festival.venue, radiusKm);
+  // 会場の近くに店の少ない地域では、少し遠い店まで候補にする
+  const places =
+    near.length >= SPARSE_SHOP_COUNT
+      ? near
+      : ctx.osmPlaces.find("food", festival.venue, Math.max(radiusKm, SPARSE_SPOT_KM));
+  return places.slice(0, MAX_OSM_SPOTS).map((place) => osmSpotReport(place, date));
+}
+
 /** 会場の周りを Web で1回調べる。調べる手段がない・上限を超えた・失敗したときは null */
 async function researchNearby(
   ctx: ToolContext,
@@ -862,12 +887,14 @@ async function researchNearby(
   round: NearbySearchRound,
   timeoutMs: number,
   signal: AbortSignal,
+  /** 公式のページを確かめてほしい店（OpenStreetMap で見つけた店など） */
+  leads: readonly ResearchedSpotReport[] = [],
 ): Promise<ResearchedSpotReport[] | null> {
   if (ctx.nearby === undefined) return null;
   const { conditions } = ctx.session;
   try {
     const nearby = ctx.nearby;
-    const request = {
+    const shared = {
       festival: {
         id: festival.id,
         name: festival.name.ja,
@@ -882,14 +909,31 @@ async function researchNearby(
           ? null
           : tripBudgetAmounts(conditions.budget, conditions.party).perPersonYen,
       party: conditions.party ?? null,
-      references: festival.nearby.map((s) => ({ name: s.name, kind: s.kind, summary: s.summary })),
-      plan: nearbySearchPlan(search, round),
+      references: [
+        ...festival.nearby.map((s) => ({ name: s.name, kind: s.kind, summary: s.summary })),
+        ...leads.map((s) => ({
+          name: s.name,
+          kind: s.kind,
+          summary: s.summary,
+          ...(s.website === undefined ? {} : { url: s.website }),
+        })),
+      ],
       signal: AbortSignal.any([signal, AbortSignal.timeout(timeoutMs)]),
       ...(ctx.progress ? { onActivity: ctx.progress } : {}),
     };
+    // 1回目は観点ごとの調べ役を並べて動かす。1つが失敗しても、ほかの観点の結果は使う
+    const plans =
+      round === "first" ? nearbySearchPlans(search, leads) : [nearbySearchPlan(search, "widened")];
     // 混雑や通信の失敗は、1回だけやり直す
-    const report = await retryOnce(() => nearby.research(request), { signal: request.signal });
-    return report?.spots ?? null;
+    const settled = await Promise.allSettled(
+      plans.map((plan) =>
+        retryOnce(() => nearby.research({ ...shared, plan }), { signal: shared.signal }),
+      ),
+    );
+    const reports = settled.flatMap((result) =>
+      result.status === "fulfilled" && result.value !== null ? [result.value.spots] : [],
+    );
+    return reports.length === 0 ? null : mergeResearchedReports(...reports);
   } catch {
     return null;
   }
@@ -899,10 +943,19 @@ function researchedSpotOutput(s: ResearchedSpot) {
   return {
     ...spotOutput(s),
     origin: "web" as const,
+    // 出典のサイトの数。同じ条件なら、裏の取れた店を先に選ぶ
+    sourceSites: s.sourceSites,
     // confirmed：行く日の営業を確かめた / needs_check：確かめられなかった（行く前に要確認）
     openStatus: s.openStatus,
     matchedFoods: s.matchedFoods,
   };
+}
+
+/** 昼・夜それぞれに入れられる店の候補。旅程係はここから食事の予定を選ぶ */
+function mealOptions(spots: readonly NearbySpot[], date: IsoDate) {
+  const list = (slot: MealSlot) =>
+    mealCandidates(spots, date, slot).map((spot) => ({ spotId: spot.id, name: spot.name }));
+  return { lunch: list("lunch"), dinner: list("dinner") };
 }
 
 /** 名前を比べる形にする（空白を除く） */
@@ -912,11 +965,13 @@ export const searchNearby = defineTool({
   name: "search_nearby",
   description:
     "祭りの前後に寄れる観光・食・休憩の場所を探す。周辺係が会場の周りを Web で調べ（祭りのデータの周辺の場所は参考にする）、" +
-    "食べたいもの・食事で気をつけたいこと・予算・同行者に合い、行く日に営業している場所だけを返す（origin: web）。" +
+    "OpenStreetMap の店（出典が OpenStreetMap。営業は確かめていないので openStatus: needs_check）も合わせて、" +
+    "食べたいもの・食事で気をつけたいこと・予算・同行者に合い、行く日に休みでない場所を返す（origin: web）。" +
     "行く日の営業を確かめられなかった場所は openStatus: needs_check になる。調べられなかったときは、祭りのデータの周辺の場所から選ぶ（research.status: fallback）。" +
-    "当日が休業の場所、使える時間帯に営業時間が合わない場所、「屋台で十分」のときの店は除き、こだわりに合う順に返す。" +
+    "当日が休業の場所、使える時間帯に営業時間が合わない場所は除き、こだわりに合う順に返す。「屋台で十分」のときの店は、屋台で昼を済ませられる祭りの日だけ除く。" +
     "食べたいものに合う店が1回目の調べで見つからなければ、場所と言葉を広げてもう1回調べる（research.rounds: 2）。" +
-    "それでも見つからなければ research.foodFound が false になり、合わない店は返さない。車で回るときは、会場から遠い店も返す。" +
+    "それでも見つからなければ research.foodFound が false になる。そのときも、昼・夜の食事に入れられる近くの店は返す（matchedFoods が空）。" +
+    "mealCandidates に昼・夜それぞれの店の候補を返す。車で回るときは、会場から遠い店も返す。" +
     "祭りのない日の行き先は、festivalId の代わりに area（都道府県や市町村の名前）と date で探す。" +
     "その地域のほかの祭りの周辺の場所と、その日にその地域で開かれる祭りを返す（場所には持ち主の祭りの festivalId が付く）。",
   input: {
@@ -957,10 +1012,13 @@ export const searchNearby = defineTool({
     // 祭りを固定しているときは、ほかの祭りの周りを探しても、選んだ祭りを変えない
     if (ctx.session.anchor === null) ctx.session.selectedFestivalId = festival.id;
     const food = foodEffects(ctx.session.conditions);
+    // 屋台で昼を済ませられない日（夜の祭りなど）は、こだわりが「屋台で十分」でも昼の店を探す
+    const wantsShopMeals =
+      food.wantsShopMeals || !stallsServeLunch(festival, occurrenceOn(festival, date));
     const selection = selectNearbySpots(festival.nearby, {
       date,
       preferences: ctx.session.preferences,
-      wantsShopMeals: food.wantsShopMeals,
+      wantsShopMeals,
       ...(args.window === undefined ? {} : { window: args.window }),
     });
     const base = {
@@ -972,7 +1030,9 @@ export const searchNearby = defineTool({
     };
     const search = nearbySearchInput(ctx, festival, args.window, args.focus);
     const started = Date.now();
-    const first = await researchNearby(
+    // 営業まで確かめる Web の調べに、OpenStreetMap の店を、確かめる店として渡す
+    const osmSpots = findOsmSpots(ctx, festival, date, searchRadiusKm(search.byCar, "first"));
+    const webFirst = await researchNearby(
       ctx,
       festival,
       date,
@@ -980,8 +1040,11 @@ export const searchNearby = defineTool({
       "first",
       NEARBY_FIRST_ROUND_MS,
       signal,
+      osmSpots,
     );
     if (signal.aborted) throw new ToolError("止められたので、寄り道の結果は使いません");
+    // Web で調べた店を先に置く（同じ店なら、営業を確かめた Web の報告を残す）
+    const first = webFirst === null && osmSpots.length === 0 ? null : (webFirst ?? []);
     if (first === null) {
       return {
         ...base,
@@ -991,6 +1054,7 @@ export const searchNearby = defineTool({
           rounds: ctx.nearby === undefined ? 0 : 1,
         },
         spots: selection.spots.map((spot) => ({ ...spotOutput(spot), origin: "data" as const })),
+        mealCandidates: mealOptions(selection.spots, date),
         excluded: selection.excluded,
         notes:
           ctx.nearby === undefined
@@ -1000,14 +1064,23 @@ export const searchNearby = defineTool({
     }
 
     const { conditions } = ctx.session;
+    // 店の少ない地域では、距離の上限を広げる（昼の店を入れられるように）
+    const sparse =
+      osmSpots.filter((spot) => distanceKm(festival.venue, spot.location) <= WALK_SPOT_KM).length <
+      SPARSE_SHOP_COUNT;
+    const maxKm = Math.max(
+      maxSpotKm(search.byCar),
+      ctx.osmPlaces !== undefined && sparse ? SPARSE_SPOT_KM : 0,
+    );
     const screen = (reports: readonly ResearchedSpotReport[]) =>
       screenResearchedSpots(reports, {
         date,
         ...(args.window === undefined ? {} : { window: args.window }),
         venue: festival.venue,
-        maxKm: maxSpotKm(search.byCar),
+        maxKm,
         today: ctx.today(),
         preferences: ctx.session.preferences,
+        wantsShopMeals,
         foodWishes: conditions.foodWishes ?? [],
         dietary: conditions.dietary ?? [],
         perPersonBudgetYen:
@@ -1016,11 +1089,12 @@ export const searchNearby = defineTool({
             : tripBudgetAmounts(conditions.budget, conditions.party).perPersonYen,
         party: conditions.party ?? null,
       });
-    let screened = screen(first);
+    let screened = screen(mergeResearchedReports(first, osmSpots));
     let rounds = 1;
-    // 食べたいものに合う店が1つもなければ、時間の残りがあるときだけ、場所と言葉を広げてもう1回調べる
+    // 食べたいものに合う店か、食事に入れられる店が1つもなければ、時間の残りがあるときだけ、場所と言葉を広げてもう1回調べる
     const remaining = NEARBY_RESEARCH_MS - (Date.now() - started);
-    if (screened.foodFound === false && remaining >= NEARBY_WIDEN_MIN_MS) {
+    const noShop = wantsShopMeals && !screened.spots.some((spot) => spot.kind === "food");
+    if ((screened.foodFound === false || noShop) && remaining >= NEARBY_WIDEN_MIN_MS) {
       const widened = await researchNearby(
         ctx,
         festival,
@@ -1029,10 +1103,11 @@ export const searchNearby = defineTool({
         "widened",
         remaining,
         signal,
+        osmSpots,
       );
       if (signal.aborted) throw new ToolError("止められたので、寄り道の結果は使いません");
       rounds = 2;
-      if (widened !== null) screened = screen(mergeResearchedReports(first, widened));
+      if (widened !== null) screened = screen(mergeResearchedReports(first, widened, osmSpots));
     }
     // 旅程を保存するとき、祭りのデータの場所と同じく照らせるよう、調べた場所を相談に残す
     for (const spot of screened.spots) ctx.session.researchedSpots.set(spot.id, asNearbySpot(spot));
@@ -1042,17 +1117,17 @@ export const searchNearby = defineTool({
     );
     for (const spot of screened.spots) found.set(spot.id, { id: spot.id, name: spot.name });
     ctx.session.foundSpots.set(festival.id, [...found.values()]);
-    // 祭りのデータの店は、出す料理が分からないので、食べたいものがあるときは調べた店だけにする
-    const wanted = shopFoodWishes(conditions.foodWishes ?? []);
+    // 祭りのデータの店は、出す料理が分からないので、食べたいものに合う店が調べて見つかったときは調べた店だけにする
     const researchedNames = new Set(screened.spots.map((spot) => sameName(spot.name)));
     const dataSpots = selection.spots.filter(
       (spot) =>
-        !(wanted.length > 0 && spot.kind === "food") && !researchedNames.has(sameName(spot.name)),
+        !(screened.foodFound === true && spot.kind === "food") &&
+        !researchedNames.has(sameName(spot.name)),
     );
     const notes: string[] = [];
     if (screened.foodFound === false) {
       notes.push(
-        "食べたいものに合う店は、調べても見つかりませんでした。合わない店で埋めず、見つからなかったと伝えてください（屋台と地元の味は localFood・stalls にあります）",
+        "食べたいものに合う店は、調べても見つかりませんでした。昼・夜の食事は mealCandidates の近くの店で案を作り、希望の料理の店は見つからなかったと報告してください（合う料理を出すとは書かない）",
       );
     }
     if (screened.spots.some((spot) => spot.openStatus === "needs_check")) {
@@ -1067,6 +1142,7 @@ export const searchNearby = defineTool({
         ...screened.spots.map(researchedSpotOutput),
         ...dataSpots.map((spot) => ({ ...spotOutput(spot), origin: "data" as const })),
       ],
+      mealCandidates: mealOptions([...screened.spots, ...dataSpots], date),
       excluded: [...selection.excluded, ...screened.excluded],
       notes,
     };
@@ -1411,7 +1487,8 @@ export const researchTrip = defineTool({
       ...(nearby?.ok === false ? ["nearby"] : []),
     ];
     const notes = [
-      "経路と食事の結果から、行き・最後の移動・帰りの move（from・to・purpose・legs）と出典、帰りの最終（lastReturn）、滞在の時間帯の昼・夜の食事（meals か食事の予定）を書いてください",
+      "経路と食事の結果から、行き・最後の移動・帰りの move（from・to・purpose・legs）と出典、帰りの最終（lastReturn）を書いてください",
+      "滞在の時間帯にかかる昼・夜の食事は、時間を取って予定に入れてください（nearby.mealCandidates の店の type: meal の予定か、その時間帯の祭りの予定の中の屋台）。入っていない旅程は保存できません",
       "見つけた場所（nearby.spots の origin: web）は、使うか使わないかと理由を considered に書いてください",
       ...(only.has("lodging")
         ? ["宿の調べ直しは search_lodging で行ってください（同じ条件で呼び直さない）"]
@@ -1470,7 +1547,8 @@ export const updateItinerary = defineTool({
     "後ろに足すときは、それまでの最後の日の夜に泊まる地域を stayBefore に書く。保存のたびに画面の旅程が更新される。" +
     "stay に宿の名前は書かない。search_lodging で調べた宿の候補は、チェックインの日の stay にサーバーが付ける。" +
     "移動には from・to・purpose（outbound・last_mile・between・return）と、電車・バスなら legs（乗り換えごとの区間）と出典を書く。" +
-    "日ごとに、滞在の時間帯にかかる昼・夜の食事の案（meals）と、その日のうちに帰る日は帰りの最終（lastReturn）を書く。" +
+    "滞在の時間帯にかかる昼（11:30〜13:30）・夜（17:30〜19:30）の食事は、その時間帯に30分以上の type: meal の予定を入れるか、その時間帯の予定の中でとる案（meals の itemId にその予定の id）を書く。" +
+    "食事が足りない旅程は保存せず errors を返す。その日のうちに帰る日は帰りの最終（lastReturn）を書く。" +
     "周辺係・宿の係が見つけた場所は、採否の理由を considered に書く（採ったかはサーバーが決める）。" +
     "保存すると、そろっていないもの（gaps）と評価（evaluation：網羅・具体さ・無理のなさ・出典の点）を返す。" +
     "基準に届かなければ next に従って research_trip で調べ直し、作り直して呼び直す（評価は1回の発言で3回まで）。",
@@ -1640,8 +1718,8 @@ export const updateItinerary = defineTool({
       gaps: result.gaps,
       evaluation,
       next: result.unchanged
-        ? `前の版と同じ旅程です。${nextStepAfter(evaluation)}`
-        : nextStepAfter(evaluation),
+        ? `前の版と同じ旅程です。${nextStepAfter(evaluation, canRedoPlan(ctx.turn.startedAt))}`
+        : nextStepAfter(evaluation, canRedoPlan(ctx.turn.startedAt)),
       itinerary,
     };
   },
@@ -1797,6 +1875,27 @@ async function findLodging(
     radiusKm: args.radiusKm ?? MAX_SEARCH_RADIUS_KM,
   };
   let fallback: LodgingOutcome | null = null;
+  /** OpenStreetMap の宿を候補にする。空きは調べていないので、Web で調べた宿と同じ注意を添える */
+  const osmLodging = (): LodgingOutcome | null => {
+    const places = ctx.osmPlaces?.find("lodging", venue, VENUE_LODGING_KM);
+    const searchedAt = ctx.now();
+    const offers = osmLodgingOffers(places ?? [], {
+      venue,
+      checkedAt: searchedAt,
+      today: ctx.today(),
+    });
+    if (offers.length === 0) return null;
+    return {
+      status: "ok",
+      search: {
+        checkIn: args.checkIn,
+        checkOut: addDays(args.checkIn, args.nights),
+        searchedAt,
+        provider: "web",
+        offers,
+      },
+    };
+  };
   if (ctx.lodging.provider === "rakuten") {
     fallback = await ctx.lodging.search(query, signal);
     if (fallback.status === "ok" && fallback.search.offers.length > 0) return fallback;
@@ -1856,15 +1955,20 @@ async function findLodging(
       }
     }
   }
+  const fromOsm = osmLodging();
+  if (fromOsm !== null) return fromOsm;
   return fallback ?? (await ctx.lodging.search(query, signal));
 }
+
+/** 人数を聞いていないときに、宿の候補を調べる人数 */
+export const ASSUMED_LODGING_PARTY: Party = { adults: 2, children: 0 };
 
 export const searchLodging = defineTool({
   name: "search_lodging",
   description:
     "泊まりの旅で、祭りの会場の近くに泊まる宿を調べて提案する。宿泊予約の API で空きと1泊の料金を調べ（安い順に5件まで）、" +
     "使えないときや空きがないときは、Web で観点（会場の近く・駅の近く・予算・家族向け）ごとに並べて調べ、突き合わせて1〜3件を選ぶ（provider が web）。" +
-    "人数と宿の予算は聞き取った条件を使う（渡せば上書き）。予算の合計と上限を超えるかは budget に計算して返す。" +
+    "人数と宿の予算は聞き取った条件を使う（渡せば上書き）。人数を聞いていなければ大人2人として調べる（partyAssumed: true）。予算の合計と上限を超えるかは budget に計算して返す。" +
     "会場からの距離と移動の目安は fromVenue に計算して返す。" +
     "宿の名前・料金・予約のページは結果にあるものだけを使い、調べた時刻（searchedAt）と notice を必ず添えて伝える。" +
     "status が unavailable のときは宿の名前を出さず、泊まる地域だけを案内する。" +
@@ -1886,10 +1990,9 @@ export const searchLodging = defineTool({
   },
   async run(args, ctx, signal) {
     const festival = festivalOf(ctx, args.festivalId);
-    const party = args.party ?? ctx.session.conditions.party;
-    if (party === undefined) {
-      throw new ToolError("人数が分かりません。大人と子どもの人数を聞いてから調べてください");
-    }
+    // 人数を聞き止めずに案を出す。聞いていなければ大人2人として調べ、そう伝える
+    const heardParty = args.party ?? ctx.session.conditions.party;
+    const party = heardParty ?? ASSUMED_LODGING_PARTY;
     const budget = args.budget ?? ctx.session.conditions.lodgingBudget;
     if (args.checkIn < ctx.today()) throw new ToolError("今日より前の日の宿は調べられません");
     const venue = { lat: festival.venue.lat, lng: festival.venue.lng };
@@ -1911,6 +2014,7 @@ export const searchLodging = defineTool({
       notice: provider === "web" ? RESEARCHED_LODGING_NOTICE : LODGING_NOTICE,
       credit: provider === "rakuten" ? RAKUTEN_CREDIT : null,
       party,
+      partyAssumed: heardParty === undefined,
       budget: budget ?? null,
       tripBudget:
         ctx.session.conditions.budget === undefined

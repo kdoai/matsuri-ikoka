@@ -17,6 +17,7 @@ import type {
 import type { LodgingResearcher, LodgingResearchRequest } from "../tools/lodgingResearch";
 import type { ResolveHost } from "./addressGuard";
 import { partyLabel } from "./briefing";
+import type { RobotsChecker } from "./robots";
 import type { QueryFn } from "./runner";
 import { buildVerifierOptions, createVerifierHooks, finalText } from "./webVerifier";
 
@@ -127,6 +128,7 @@ export function createWebLodgingResearcher(deps: {
   env: Record<string, string>;
   query: QueryFn;
   resolveHost?: ResolveHost;
+  robots?: RobotsChecker;
   maxBudgetUsd?: number | undefined;
   clock?: () => number;
 }): LodgingResearcher {
@@ -181,6 +183,7 @@ export function createWebLodgingResearcher(deps: {
                 deps.resolveHost,
                 [],
                 "検索結果だけでは宿を確かめられません。宿のページを WebFetch で読んでから、決めた形の JSON で答えてください。",
+                deps.robots,
               ),
             }
           : {}),

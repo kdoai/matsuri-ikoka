@@ -858,6 +858,7 @@ export const en: Messages = {
     removed: "Removed from the plan",
     reason: "Why it's here",
     cost: "Cost",
+    openInGoogleMaps: "Open in Google Maps",
     hours: (open: string, close: string, lastEntry?: string) =>
       `Open ${open}–${close}${lastEntry ? ` (last entry ${lastEntry})` : ""}`,
     move: (means: string, min: number, max: number) =>

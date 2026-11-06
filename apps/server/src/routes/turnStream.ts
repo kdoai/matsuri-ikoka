@@ -83,6 +83,7 @@ export function streamTurn(
   return streamSSE(c, async (stream) => {
     const started = Date.now();
     let events = 0;
+    let itineraryUpdated = false;
     const controller = new AbortController();
     const timeout = () => controller.abort(new TurnTimeoutError());
     const idleMs = options.idleMs ?? TURN_IDLE_MS;
@@ -117,6 +118,7 @@ export function streamTurn(
       }
       progress();
       events += 1;
+      if (event.type === "itinerary.updated") itineraryUpdated = true;
       write(() => stream.writeSSE(message));
       return true;
     };
@@ -126,6 +128,15 @@ export function streamTurn(
       await run(controller.signal, emit, progress);
     } catch (error) {
       errorBody = toErrorBody(error, controller.signal);
+      // 旅程の案は届いているので、送り直しを求めず、案を見てもらう
+      if (errorBody?.code === "timeout" && itineraryUpdated) {
+        errorBody = {
+          ...errorBody,
+          retryable: false,
+          message:
+            "旅程の案はできています。説明の途中で時間がかかったので、ここで止めました。変えたいところがあれば教えてください。",
+        };
+      }
       if (errorBody !== null) emit({ type: "error", data: errorBody });
     } finally {
       clearTimeout(idle);

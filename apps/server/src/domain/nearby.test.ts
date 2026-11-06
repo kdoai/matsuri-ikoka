@@ -1,6 +1,55 @@
 import { DEFAULT_PREFERENCES, type NearbySpot, type Preferences } from "@matsuri-ikoka/schema";
 import { describe, expect, it } from "vitest";
-import { festivalInArea, fitsOpeningHours, selectNearbySpots } from "./nearby";
+import {
+  festivalInArea,
+  fitsOpeningHours,
+  mealCandidates,
+  selectNearbySpots,
+  stallsServeLunch,
+} from "./nearby";
+
+describe("mealCandidates", () => {
+  it("その時間帯に開いていて、行く日が定休日でない食事の店だけを、渡した順に返す", () => {
+    const list = [
+      spot({ id: "dinner-only", kind: "food", hours: { open: "17:00", close: "22:00" } }),
+      spot({
+        id: "closed",
+        kind: "food",
+        hours: { open: "11:00", close: "15:00" },
+        closedDays: ["sun"],
+      }),
+      spot({ id: "hall", kind: "sightseeing" }),
+      spot({ id: "soba", kind: "food", hours: { open: "11:00", close: "15:00" } }),
+      spot({ id: "unknown-hours", kind: "food", hours: null }),
+    ];
+    // 2026-08-16 は日曜
+    const ids = (slot: "lunch" | "dinner") =>
+      mealCandidates(list, "2026-08-16", slot).map((s) => s.id);
+    expect(ids("lunch")).toEqual(["soba", "unknown-hours"]);
+    expect(ids("dinner")).toEqual(["dinner-only", "unknown-hours"]);
+  });
+});
+
+describe("stallsServeLunch", () => {
+  const withStalls = { food: { local: [], stalls: "yes" as const } };
+
+  it("開催時間が昼にかかり、屋台があるときだけ、屋台で昼を済ませられる", () => {
+    expect(stallsServeLunch(withStalls, { start: "10:00", end: "16:00" })).toBe(true);
+    expect(stallsServeLunch(withStalls, { start: "18:30", end: "21:00" })).toBe(false);
+    expect(stallsServeLunch(withStalls, { start: "13:15", end: "20:00" })).toBe(false);
+  });
+
+  it("屋台の有無や開催時間が分からなければ、済ませられるとしない", () => {
+    expect(
+      stallsServeLunch(
+        { food: { local: [], stalls: "unknown" } },
+        { start: "10:00", end: "16:00" },
+      ),
+    ).toBe(false);
+    expect(stallsServeLunch(withStalls, { start: null, end: null })).toBe(false);
+    expect(stallsServeLunch(withStalls, null)).toBe(false);
+  });
+});
 
 function spot(overrides: Partial<NearbySpot> & Pick<NearbySpot, "id">): NearbySpot {
   return {

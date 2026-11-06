@@ -94,11 +94,11 @@ const allFours = async (): Promise<ModelScore[]> =>
   }));
 
 describe("評価して、点が届くまで調べ直して作り直す", () => {
-  it("昼の食事が足りなければ周辺係に調べ直しを頼み、作り直した旅程で基準に届く", async () => {
+  it("昼の食事が足りなければ保存せず、調べた店を昼に入れて作り直すと基準に届く", async () => {
     const nearby = fakeNearby();
     const evaluator = fakeEvaluator(allFours);
     const ctx = testToolContext([suzunari()], { nearby, planEvaluator: evaluator });
-    // 地元の店も楽しむ（屋台で十分のときは、店を食事の候補にしない）
+    // 地元の店も楽しむ
     ctx.session.preferences = { ...ctx.session.preferences, food: "local" };
     const events: SseEvent[] = [];
     ctx.emit = (event) => events.push(event);
@@ -107,23 +107,15 @@ describe("評価して、点が届くまで調べ直して作り直す", () => {
         e.type === "staff.redo" ? [[e.data.kind, e.data.from, e.data.to, e.data.subject]] : [],
       );
 
-    // 1回目：保存はするが、昼の食事がないので網羅が基準に届かない
+    // 1回目：昼の食事がないので保存せず、評価もしない
     const first = await updateItinerary.run({ itinerary: draftOf(morningPlan()) }, ctx, signal);
-    expect(first).toMatchObject({ saved: true, version: 1 });
-    const firstEvaluation = first.evaluation as Itinerary["evaluation"] & {};
-    expect(firstEvaluation).toMatchObject({ round: 1, passed: false, judgedBy: "code+model" });
-    expect(firstEvaluation.redo).toEqual([
-      expect.objectContaining({ target: "nearby", criterion: "coverage" }),
-    ]);
-    expect(first.next).toContain("research_trip");
-    expect((first.gaps as { code: string }[]).map((g) => g.code)).toEqual(["meal_missing"]);
-    // 評価係には、点検の結果と旅程を渡す
-    expect(evaluator.requests[0]?.gaps.map((g) => g.code)).toEqual(["meal_missing"]);
-    // 保存した旅程にも評価が付く
-    expect(ctx.itineraries.get(first.itineraryId as string)?.evaluation?.passed).toBe(false);
+    expect(first).toMatchObject({ saved: false });
+    expect((first.errors as { code: string }[]).map((e) => e.code)).toEqual(["meal_missing"]);
+    expect(evaluator.requests).toEqual([]);
+    expect(ctx.session.itineraryId ?? null).toBeNull();
 
-    // 調べ直し：周辺係に、評価の頼みを観点として渡して、昼の時間帯で探してもらう
-    const ask = firstEvaluation.redo[0]!.ask;
+    // 調べる：周辺係に、昼の時間帯で探してもらう
+    const ask = "昼の食事の店を探す";
     const research = await researchTrip.run(
       { festivalId: "suzunari-toro", only: ["nearby"], focus: ask, meals: ["lunch"] },
       ctx,
@@ -133,14 +125,14 @@ describe("評価して、点が届くまで調べ直して作り直す", () => {
     expect(research.route).toBeNull();
     expect(nearby.requests[0]?.plan.checkpoints[0]).toBe(`調べ直し：${ask}`);
     expect(nearby.requests[0]?.plan.queries.join(" ")).toContain("ランチ");
-    // 店内では、旅程係が周辺係に昼ごはんの店の調べ直しを頼み、周辺係が受ける
-    expect(redo()).toEqual([
-      ["request", "planner", "scout", "lunch"],
-      ["accept", "scout", "planner", "lunch"],
-    ]);
+    expect(redo()).toEqual([["accept", "scout", "planner", "lunch"]]);
+    expect(
+      (research.nearby as { mealCandidates: { lunch: { name: string }[] } }).mealCandidates.lunch[0]
+        ?.name,
+    ).toBe(soba.name);
 
     // 作り直し：調べた店を昼に入れる
-    const revised = draftOf(first.itinerary as Itinerary);
+    const revised = draftOf(morningPlan());
     const spotId = researchedSpotId(soba.name, soba.location);
     revised.days[0]!.items.splice(1, 0, {
       id: "lunch",
@@ -157,8 +149,8 @@ describe("評価して、点が届くまで調べ直して作り直す", () => {
       sources: [],
     });
     const second = await updateItinerary.run({ itinerary: revised }, ctx, signal);
-    expect(second).toMatchObject({ saved: true, version: 2, gaps: [] });
-    expect(second.evaluation).toMatchObject({ round: 2, passed: true, redo: [] });
+    expect(second).toMatchObject({ saved: true, version: 1, gaps: [] });
+    expect(second.evaluation).toMatchObject({ round: 1, passed: true, redo: [] });
     expect(second.next).toContain("基準に届きました");
     // 調べた店は採った場所として残り、出典は読んだページになる
     const saved = second.itinerary as Itinerary;
@@ -207,7 +199,10 @@ describe("評価して、点が届くまで調べ直して作り直す", () => {
   it("評価の回数が上限に届いたら、作り直しを頼まず、足りない点をそのまま報告させる", async () => {
     const ctx = testToolContext([suzunari()]);
     ctx.turn.planRounds = 2;
-    const output = await updateItinerary.run({ itinerary: draftOf(morningPlan()) }, ctx, signal);
+    // 乗り換えが分からない旅程（具体さが基準に届かない）
+    const plan = fictionalPlannedItinerary();
+    delete plan.days[0]!.items[0]!.move!.legs;
+    const output = await updateItinerary.run({ itinerary: draftOf(plan) }, ctx, signal);
     expect(output.evaluation).toMatchObject({ round: 3, maxRounds: 3, passed: false });
     expect(output.next).toContain("評価は3回まで");
     expect(output.next).not.toContain("research_trip");
@@ -259,7 +254,11 @@ describe("評価して、点が届くまで調べ直して作り直す", () => {
 
   it("今の旅程を写して評価や不足を付けたまま渡されても、サーバーが付け直す", async () => {
     const ctx = testToolContext([suzunari()]);
-    const first = await updateItinerary.run({ itinerary: draftOf(morningPlan()) }, ctx, signal);
+    const first = await updateItinerary.run(
+      { itinerary: draftOf(fictionalPlannedItinerary()) },
+      ctx,
+      signal,
+    );
     const copied = { ...draftOf(first.itinerary as Itinerary) };
     expect(copied).toHaveProperty("evaluation");
     const again = await updateItinerary.run({ itinerary: copied }, ctx, signal);
@@ -338,7 +337,7 @@ describe("research_trip：経路と食事・寄り道を並べて調べる", () 
     const output = await researchTrip.run({ festivalId: "suzunari-toro" }, ctx, signal);
 
     expect(routes.calls.sort()).toEqual(["outbound:こがね台→鈴鳴駅", "return:鈴鳴駅→こがね台"]);
-    expect(nearby.requests).toHaveLength(1);
+    expect(nearby.requests.map((r) => r.plan.perspective)).toEqual(["lunch", "local"]);
     expect(output.failed).toEqual([]);
     const route = output.route as {
       outbound: { status: string; researched: { legs: unknown[] } };

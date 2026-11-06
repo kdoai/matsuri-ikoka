@@ -784,6 +784,7 @@ export const ja = {
     removed: "なくなった予定",
     reason: "ここに入れた理由",
     cost: "費用",
+    openInGoogleMaps: "Google マップで開く",
     hours: (open: string, close: string, lastEntry?: string) =>
       `営業 ${open}〜${close}${lastEntry ? `（最終入場 ${lastEntry}）` : ""}`,
     move: (means: string, min: number, max: number) => `${means} ${range(min, max)}分（目安）`,

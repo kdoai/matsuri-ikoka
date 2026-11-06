@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 import { testFestival } from "../domain/testFestivals";
 import { searchFestivals, updateItinerary } from "../tools/matsuriTools";
 import { runTool } from "../tools/mcpServer";
+import { canRedoPlan, PLAN_REDO_DEADLINE_MS } from "../tools/planReview";
 import { testToolContext } from "../tools/testContext";
 import { createAgentHooks, extractToolOutput } from "./hooks";
 
@@ -249,6 +250,12 @@ describe("extractToolOutput", () => {
 });
 
 describe("評価の基準に届かないまま旅程係が終えようとしたとき", () => {
+  it("時間の残りが少なければ、作り直しに戻さない", () => {
+    const now = 1_000_000;
+    expect(canRedoPlan(now - PLAN_REDO_DEADLINE_MS + 1, now)).toBe(true);
+    expect(canRedoPlan(now - PLAN_REDO_DEADLINE_MS, now)).toBe(false);
+  });
+
   const evaluation = (round: number, passed: boolean) => ({
     round,
     maxRounds: 3,

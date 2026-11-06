@@ -11,7 +11,8 @@ import { toMinutes } from "./calendar";
 
 // 旅程の点検のうち「そろっているか」を確かめる。予定の矛盾（planCheck.ts）とは別に、
 // 旅に出るのに要るもの（行き・最後の移動・帰り・乗り換え・帰りの最終・食事・調べた場所の採否）が
-// そろっているかを見て、足りないものを不足（gaps）として返す。保存は止めず、評価の点に入れる。
+// そろっているかを見て、足りないものを不足（gaps）として返し、評価の点に入れる。
+// 食事の不足（meal_missing）だけは、旅程の保存（itinerary.ts）でも止める。
 // 分からないところは推測で埋めず、不足として残す。
 
 export type CoverageItem = Pick<
@@ -32,6 +33,10 @@ export interface CoveragePlan {
   considered?: readonly ConsideredPlace[] | undefined;
 }
 
+interface StayLike {
+  lodging?: unknown;
+}
+
 /** 周辺係・宿の係が見つけた場所 */
 export interface ResearchedPlace {
   id: string;
@@ -45,6 +50,8 @@ export const MEAL_WINDOWS: Readonly<Record<MealSlot, readonly [string, string]>>
   dinner: ["17:30", "19:30"],
 };
 export const MEAL_OVERLAP_MINUTES = 30;
+/** 食事の予定として数える、いちばん短い時間（分） */
+export const MIN_MEAL_MINUTES = 30;
 
 const MEAL_LABELS: Record<MealSlot, string> = { lunch: "昼", dinner: "夜" };
 
@@ -102,14 +109,42 @@ export function mealsNeeded(day: CoverageDay, isFirstDay: boolean, isLastDay: bo
   });
 }
 
-/** その食事の時間帯に、食事の案（meals）か食事の予定があるか */
+/**
+ * その食事を、その日の時間割の中でとれるか。どれかに当たればよい
+ * - その時間帯にかかる、MIN_MEAL_MINUTES 以上の食事の予定（type: meal）
+ * - その時間帯にかかる予定の中でとる案（meals の itemId）。屋台は祭りの予定かその準備の中だけ。
+ * 予定に結びつかない案（店の名前だけ、夜の祭りの屋台で昼を済ませるなど）は、時間が取れていないので数えない
+ */
 function mealCovered(day: CoverageDay, slot: MealSlot): boolean {
-  if (day.meals?.some((meal) => meal.slot === slot)) return true;
   const [start, end] = MEAL_WINDOWS[slot];
   const window = span(start, end);
-  return day.items.some(
-    (item) => item.type === "meal" && overlap(span(item.start, item.end), window) > 0,
-  );
+  const inWindow = (item: CoverageItem) => overlap(span(item.start, item.end), window) > 0;
+  const isMealBlock = (item: CoverageItem) => {
+    const [from, to] = span(item.start, item.end);
+    return item.type === "meal" && inWindow(item) && to - from >= MIN_MEAL_MINUTES;
+  };
+  if (day.items.some(isMealBlock)) return true;
+  return (day.meals ?? []).some((meal) => {
+    if (meal.slot !== slot || meal.kind === "shop") return false;
+    const host = day.items.find((item) => item.id === meal.itemId);
+    if (host === undefined || !inWindow(host)) return false;
+    return meal.kind !== "stalls" || host.type === "festival" || host.type === "festival_prep";
+  });
+}
+
+/** その日に足りない食事 */
+export function missingMeals(
+  day: CoverageDay,
+  isFirstDay: boolean,
+  isLastDay: boolean,
+): MealSlot[] {
+  return mealsNeeded(day, isFirstDay, isLastDay).filter((slot) => !mealCovered(day, slot));
+}
+
+/** 食事の時間帯の文（不足の文と、保存を止めるときの文に使う） */
+export function mealSlotLabel(slot: MealSlot): string {
+  const [start, end] = MEAL_WINDOWS[slot];
+  return `${MEAL_LABELS[slot]}の食事（${start}〜${end}ごろ）`;
 }
 
 /** 祭りの予定の前に、会場までの最後の移動があるか */
@@ -199,15 +234,12 @@ function dayGaps(day: CoverageDay, index: number, days: number): PlanGap[] {
     }
   });
 
-  for (const slot of mealsNeeded(day, isFirst, isLast)) {
-    if (!mealCovered(day, slot)) {
-      const [start, end] = MEAL_WINDOWS[slot];
-      gaps.push({
-        code: "meal_missing",
-        itemId: null,
-        message: `${label}${MEAL_LABELS[slot]}の食事（${start}〜${end}ごろ）の店か案がありません`,
-      });
-    }
+  for (const slot of missingMeals(day, isFirst, isLast)) {
+    gaps.push({
+      code: "meal_missing",
+      itemId: null,
+      message: `${label}${mealSlotLabel(slot)}の店か案がありません`,
+    });
   }
   return gaps;
 }
@@ -221,6 +253,15 @@ export function findGaps(
   researched: readonly ResearchedPlace[] = [],
 ): PlanGap[] {
   const gaps = plan.days.flatMap((day, index) => dayGaps(day, index, plan.days.length));
+  // 泊まる夜があるのに、宿の候補が1つもない。続けて泊まる夜はチェックインの日にだけ候補が付くので、旅全体で見る
+  const stays = plan.days.flatMap((day) => (day.stay == null ? [] : [day.stay as StayLike]));
+  if (stays.length > 0 && !stays.some((stay) => stay.lodging !== undefined)) {
+    gaps.push({
+      code: "lodging_missing",
+      itemId: null,
+      message: "泊まる夜の宿の候補がありません",
+    });
+  }
   const reviewed = new Set((plan.considered ?? []).map((place) => place.id));
   const unreviewed = researched.filter((place) => !reviewed.has(place.id));
   if (unreviewed.length > 0) {

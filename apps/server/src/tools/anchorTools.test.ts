@@ -201,7 +201,7 @@ describe("聞き取り（祭りを固定した旅程）", () => {
     expect(plan.readyToSearch).toBe(false);
     expect(plan.missing).not.toContain("when");
     expect(plan.missing).not.toContain("route");
-    expect(plan.ask).toEqual(["returnTo", "pace"]);
+    expect(plan.ask).toEqual([]);
   });
 
   it("出発地と泊数は聞く", () => {

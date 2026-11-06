@@ -23,6 +23,7 @@ import { officialHosts, type VerificationReport, yearStatedOnPage } from "../dom
 import type { FestivalVerifier } from "../tools/verifier";
 import { checkHostAddresses, type ResolveHost, resolveHost } from "./addressGuard";
 import { deny } from "./hooks";
+import type { RobotsChecker } from "./robots";
 import type { QueryFn } from "./runner";
 
 // verify_festival の中で、Web の検索と取得だけを許した1回きりのエージェントに開催予定を確かめさせる
@@ -123,6 +124,17 @@ const READ_NUDGE =
   "検索結果だけでは開催を確かめられません。公式のページを WebFetch で1つ読んでから、決めた形の JSON で答えてください。";
 
 /** 再確認のエージェントのフック。WebFetch の宛先の確認、読んだページの控え、1回だけ続けさせる */
+/**
+ * 読みに行かないサイト。利用規約が営利目的の利用や情報の複製を禁じているグルメの案内サイトと、
+ * 確かめられないサイトを、安全のために並べる（docs/adr/0010-place-data-sources.md）
+ */
+const RESTRICTED_SITES = ["tabelog.com", "retty.me", "hotpepper.jp", "gnavi.co.jp"] as const;
+
+export function isRestrictedSite(hostname: string): boolean {
+  const host = hostname.toLowerCase();
+  return RESTRICTED_SITES.some((site) => host === site || host.endsWith(`.${site}`));
+}
+
 export function createVerifierHooks(
   log: WebActivityLog,
   resolve: ResolveHost = resolveHost,
@@ -130,6 +142,8 @@ export function createVerifierHooks(
   pages: FetchedPage[] = [],
   /** 検索だけで答えようとしたときに返す文 */
   nudge: string = READ_NUDGE,
+  /** サイトの robots.txt を確かめる。省略すると確かめない */
+  robots?: RobotsChecker,
 ): Partial<Record<HookEvent, HookCallbackMatcher[]>> {
   let nudges = 0;
   const checkFetch: HookCallback = async (input) => {
@@ -137,9 +151,18 @@ export function createVerifierHooks(
     const url = (input.tool_input as { url?: unknown } | null)?.url;
     const check = checkPublicWebUrl(url);
     if (!check.ok) return deny(`この URL は読みません：${check.reason}`);
+    if (isRestrictedSite(check.url.hostname)) {
+      return deny("このサイトは利用規約の都合で読みません。店や施設の公式のページを探してください");
+    }
     // 名前の文字列だけでなく、解決した先のアドレスも外の Web かを確かめる
     const addresses = await checkHostAddresses(check.url.hostname, resolve);
-    return addresses.ok ? {} : deny(`この URL は読みません：${addresses.reason}`);
+    if (!addresses.ok) return deny(`この URL は読みません：${addresses.reason}`);
+    if (robots !== undefined && !(await robots.allowed(check.url))) {
+      return deny(
+        "このページはサイトの robots.txt で断られているので読みません。ほかのページを探してください",
+      );
+    }
+    return {};
   };
   const record: HookCallback = async (input) => {
     if (input.hook_event_name !== "PostToolUse") return {};

@@ -106,7 +106,18 @@ export async function reviewPlan(input: {
 }
 
 /** 評価のあとに旅程係がすること（ツールの結果の next に入れる） */
-export function nextStepAfter(evaluation: PlanEvaluation): string {
+/**
+ * 発言の始まりからこれだけたったら、基準に届かなくても調べ直さず、保存した旅程で報告する。
+ * 相談1回の上限（TURN_MAX_MS）の前に、旅程係とコンシェルジュが報告を書き終える時間を残す
+ */
+export const PLAN_REDO_DEADLINE_MS = 210_000;
+
+/** 調べ直して作り直す時間が残っているか */
+export function canRedoPlan(startedAt: number, now: number = Date.now()): boolean {
+  return now - startedAt < PLAN_REDO_DEADLINE_MS;
+}
+
+export function nextStepAfter(evaluation: PlanEvaluation, canRedo = true): string {
   if (evaluation.passed) {
     return "評価の基準に届きました。保存した旅程の要点を報告してください";
   }
@@ -117,6 +128,9 @@ export function nextStepAfter(evaluation: PlanEvaluation): string {
     .join("・");
   if (evaluation.round >= evaluation.maxRounds) {
     return `評価は${evaluation.maxRounds}回までです。基準に届かなかった観点（${failing}）の足りない点（scores の findings）を、推測で埋めずに、そのままコンシェルジュに報告してください`;
+  }
+  if (!canRedo) {
+    return `時間の残りが少ないので、調べ直しません。保存した旅程の要点と、基準に届かなかった観点（${failing}）の足りない点を報告してください`;
   }
   const targets = [...new Set(evaluation.redo.map((r) => r.target))];
   const research =

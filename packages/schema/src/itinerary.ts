@@ -519,6 +519,18 @@ export type ItineraryDay = z.infer<typeof ItineraryDaySchema>;
 export type Itinerary = z.infer<typeof ItinerarySchema>;
 export type ItineraryDiff = z.infer<typeof ItineraryDiffSchema>;
 
+/**
+ * 場所を Google マップで開く URL。店や宿の名前と位置から作る（Google のデータは使わず、キーも要らない）。
+ * 名前だけでは同じ名前の別の店に当たることがあるので、位置を添える
+ */
+export function googleMapsUrl(place: {
+  name: string;
+  location: { lat: number; lng: number };
+}): string {
+  const query = `${place.name} ${place.location.lat},${place.location.lng}`;
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+}
+
 /** 旅程で使った出典（予定・天気・再確認・宿の候補・食事・帰りの最終）を、URL の重複を除いて集める（しおりの「出典」に出す） */
 export function collectItinerarySources(itinerary: Itinerary): Source[] {
   const all = [

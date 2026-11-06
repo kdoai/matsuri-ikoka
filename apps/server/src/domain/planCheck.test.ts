@@ -409,8 +409,13 @@ describe("checkPlan のこだわりの確認（warnings）", () => {
 
     expect(localWithout.warnings.map((w) => w.code)).toEqual(["local_meal_missing"]);
     expect(localWith.warnings).toEqual([]);
-    expect(stallsWith.warnings.map((w) => [w.code, w.itemId])).toEqual([
-      ["shop_meal_unwanted", "lunch"],
+    // 祭りの前の昼は屋台で食べられないので、店を入れてよい
+    expect(stallsWith.warnings).toEqual([]);
+    // 祭りの開催中の店は、屋台で十分なら入れない
+    const during = item({ ...fest, id: "during", type: "meal", spotId: "soba" });
+    const stallsDuring = checkPlan(plan([during, fest], { food: "stalls" }), lookup(withSoba));
+    expect(stallsDuring.warnings.map((w) => [w.code, w.itemId])).toEqual([
+      ["shop_meal_unwanted", "during"],
     ]);
   });
 

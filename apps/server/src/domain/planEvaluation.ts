@@ -33,6 +33,7 @@ const GAP_PENALTY: Readonly<
   last_return_unknown: { criterion: "coverage", points: 20 },
   meal_missing: { criterion: "coverage", points: 35 },
   research_unreviewed: { criterion: "coverage", points: 20 },
+  lodging_missing: { criterion: "coverage", points: 20 },
   move_endpoints_missing: { criterion: "specificity", points: 10 },
   transfer_unknown: { criterion: "specificity", points: 35 },
   move_unsourced: { criterion: "grounding", points: 35 },
@@ -50,6 +51,7 @@ const GAP_TARGET: Readonly<Partial<Record<PlanGapCode, ResearchTarget>>> = {
   move_unsourced: "route",
   meal_missing: "nearby",
   meal_unsourced: "nearby",
+  lodging_missing: "lodging",
 };
 
 /** 注意（planCheck の warnings）1つで下げる無理のなさの点 */

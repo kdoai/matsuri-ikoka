@@ -75,14 +75,35 @@ describe("screenResearchedSpots", () => {
     expect(asNearbySpot(spot!)).not.toHaveProperty("openStatus");
   });
 
-  it("食べたいものに合わない店は、ほかに店がなくても残さず、見つからなかったと返す", () => {
+  it("食べたいものに合う店がなければ、見つからなかったと返しつつ、食事に入れられる店は残す", () => {
     const udon = report({ name: "鈴鳴うどん", foods: ["noodles", "washoku"] });
 
     const result = screenResearchedSpots([udon], options());
 
-    expect(result.spots).toEqual([]);
+    expect(result.spots.map((s) => [s.name, s.matchedFoods])).toEqual([["鈴鳴うどん", []]]);
     expect(result.foodFound).toBe(false);
-    expect(result.excluded).toEqual([{ name: "鈴鳴うどん", reason: "food_not_wished" }]);
+    expect(result.excluded).toEqual([]);
+  });
+
+  it("食べたいものに合う店を、合わない店より先に並べる", () => {
+    const udon = report({ name: "鈴鳴うどん", foods: ["noodles"] });
+    const grill = report({ name: "鈴鳴グリル", foods: ["meat"] });
+
+    const result = screenResearchedSpots([udon, grill], options());
+
+    expect(result.spots.map((s) => s.name)).toEqual(["鈴鳴グリル", "鈴鳴うどん"]);
+    expect(result.foodFound).toBe(true);
+  });
+
+  it("屋台で十分のこだわりでも、屋台で昼を済ませられない日（wantsShopMeals）は店を残す", () => {
+    const shop = report({ foods: ["noodles"] });
+    const stallsOnly = options({ foodWishes: [], preferences: DEFAULT_PREFERENCES });
+    expect(screenResearchedSpots([shop], stallsOnly).spots).toEqual([]);
+    expect(
+      screenResearchedSpots([shop], { ...stallsOnly, wantsShopMeals: true }).spots.map(
+        (s) => s.name,
+      ),
+    ).toEqual([shop.name]);
   });
 
   it("屋台だけを望むときは、食べたいもので店を絞らない", () => {
@@ -193,9 +214,31 @@ describe("screenResearchedSpots", () => {
     expect(result.foodFound).toBe(false);
   });
 
-  it("読んだページが2つ以上ある場所は、確度を corroborated にする。同じ場所は1つにする", () => {
-    const twice = report({
+  it("同じサイトのページが増えても、裏が取れたことにしない", () => {
+    const sameSite = report({
       sources: [{ url: "https://example.com/a" }, { url: "https://example.com/b" }],
+    });
+    const [spot] = screenResearchedSpots([sameSite], options()).spots;
+    expect(spot?.sourceSites).toBe(1);
+    expect(spot?.sources.map((s) => s.confidence)).toEqual(["single", "single"]);
+  });
+
+  it("別々のサイトで裏が取れた店を、同じ条件の店より先に並べる", () => {
+    const one = report({ name: "鈴鳴一号店", sources: [{ url: "https://example.com/one" }] });
+    const two = report({
+      name: "鈴鳴二号店",
+      sources: [{ url: "https://example.com/two" }, { url: "https://example.org/two" }],
+    });
+    const { spots } = screenResearchedSpots([one, two], options());
+    expect(spots.map((s) => [s.name, s.sourceSites])).toEqual([
+      ["鈴鳴二号店", 2],
+      ["鈴鳴一号店", 1],
+    ]);
+  });
+
+  it("別のサイトの出典が2つ以上ある場所は、確度を corroborated にする。同じ場所は1つにする", () => {
+    const twice = report({
+      sources: [{ url: "https://example.com/a" }, { url: "https://example.org/b" }],
     });
 
     const result = screenResearchedSpots([twice, twice], options());

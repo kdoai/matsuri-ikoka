@@ -9,6 +9,7 @@ import {
   type NearbySearchInput,
   nearbyCheckpoints,
   nearbySearchPlan,
+  nearbySearchPlans,
   nearbySearchQueries,
   searchRadiusKm,
   stationWord,
@@ -33,13 +34,13 @@ describe("nearbySearchQueries", () => {
   it("1回目は、肉料理を料理の名前に言い換え、最寄り駅・市町村・時間帯・グルメの案内サイトと組む", () => {
     expect(nearbySearchQueries(input({ withChildren: true }), "first")).toEqual([
       "鈴鳴駅 焼肉 ランチ",
+      "鈴鳴駅 ランチ",
       "鈴鳴町 ステーキ",
-      "鈴鳴駅 焼肉 食べログ",
+      "鈴鳴駅 焼肉 公式",
       "鈴鳴駅 焼肉 子連れ",
       "鈴鳴駅 ハンバーグ",
       "鈴鳴町 焼肉 ディナー",
-      "鈴鳴町 とんかつ ホットペッパーグルメ",
-      "鈴鳴駅 ステーキ",
+      "鈴鳴町 観光協会 とんかつ",
     ]);
   });
 
@@ -51,7 +52,7 @@ describe("nearbySearchQueries", () => {
       "鈴鳴町 焼き鳥",
       "滋賀県 鈴鳴町 肉料理 おすすめ",
       "鈴鳴町 鉄板焼き ランチ",
-      "鈴鳴町 肉料理 Retty",
+      "鈴鳴町 肉料理 公式サイト",
       "鈴鳴町 肉料理 子連れ",
       "鈴鳴駅 肉料理",
     ]);
@@ -163,6 +164,28 @@ describe("nearbySearchPlan の調べ直し", () => {
   });
 });
 
+describe("nearbySearchPlans", () => {
+  it("食べたいもの・食事に入れられる店・地元の案内・見つけた店の公式のページの観点に分ける", () => {
+    const plans = nearbySearchPlans(input(), [{ name: "鈴鳴食堂" }, { name: "鈴鳴亭" }]);
+    expect(plans.map((p) => p.perspective)).toEqual(["wish", "lunch", "local", "official"]);
+    expect(plans[0]?.queries[0]).toBe("鈴鳴駅 焼肉 ランチ");
+    expect(plans[1]?.queries.join(" ")).not.toContain("焼肉");
+    expect(plans[2]?.queries).toContain("鈴鳴町 観光協会 グルメ");
+    expect(plans[3]?.queries).toEqual(["鈴鳴食堂 鈴鳴町", "鈴鳴亭 鈴鳴町"]);
+  });
+
+  it("食べたいものがなければ観点を減らし、見つけた店がなければ公式のページの観点を出さない", () => {
+    const plans = nearbySearchPlans(input({ foodWishes: [] }));
+    expect(plans.map((p) => p.perspective)).toEqual(["lunch", "local"]);
+  });
+
+  it("評価の頼みで調べ直すときは、頼まれたことを1つの調べで確かめる", () => {
+    const plans = nearbySearchPlans(input({ focus: ["昼の店"] }), [{ name: "鈴鳴食堂" }]);
+    expect(plans).toHaveLength(1);
+    expect(plans[0]?.checkpoints[0]).toBe("調べ直し：昼の店");
+  });
+});
+
 describe("mergeResearchedReports", () => {
   const report = (name: string, lat: number): ResearchedSpotReport => ({
     name,
@@ -178,6 +201,54 @@ describe("mergeResearchedReports", () => {
     closedDays: null,
     openOnDate: "unconfirmed",
     sources: [{ url: `https://example.com/${encodeURIComponent(name)}` }],
+  });
+
+  it("同じ店の出典と料理を合わせ、位置は地図のデータを使い、分からない値を埋める", () => {
+    const web = {
+      ...report("鈴鳴 食堂", 35.12),
+      hours: { open: "11:00", close: "15:00" },
+      sources: [{ url: "https://example.com/shop" }],
+    };
+    const map = {
+      ...report("鈴鳴食堂", 35.1205),
+      foods: ["noodles" as const],
+      price: "千円ほど",
+      sources: [{ url: "https://www.openstreetmap.org/node/1" }],
+    };
+    const [merged, ...rest] = mergeResearchedReports([web], [map]);
+    expect(rest).toEqual([]);
+    expect(merged?.sources.map((s) => s.url)).toEqual([
+      "https://example.com/shop",
+      "https://www.openstreetmap.org/node/1",
+    ]);
+    expect(merged?.foods).toEqual(["meat", "noodles"]);
+    expect(merged?.location.lat).toBe(35.1205);
+    expect(merged?.hours?.open).toBe("11:00");
+    expect(merged?.price).toBe("千円ほど");
+  });
+
+  it("営業は安全なほうに寄せる。どれかが休みと言えば休みで、定休日は合わせる", () => {
+    const open = {
+      ...report("鈴鳴食堂", 35.12),
+      openOnDate: "open" as const,
+      closedDays: ["mon" as const],
+    };
+    const closed = {
+      ...report("鈴鳴食堂", 35.12),
+      openOnDate: "closed" as const,
+      closedDays: ["tue" as const],
+    };
+    const unknown = { ...report("鈴鳴食堂", 35.12), openOnDate: "unconfirmed" as const };
+    expect(mergeResearchedReports([open], [closed])[0]).toMatchObject({
+      openOnDate: "closed",
+      closedDays: ["mon", "tue"],
+    });
+    expect(mergeResearchedReports([unknown], [open])[0]?.openOnDate).toBe("open");
+  });
+
+  it("同じ名前でも離れていれば、チェーンの別の店として分ける", () => {
+    const merged = mergeResearchedReports([report("鈴鳴そば", 35.12)], [report("鈴鳴そば", 35.2)]);
+    expect(merged).toHaveLength(2);
   });
 
   it("2回の結果をまとめ、同じ場所は先に見つけたものを残す", () => {

@@ -5,10 +5,12 @@ import type {
   Options,
   SDKMessage,
 } from "@anthropic-ai/claude-agent-sdk";
+import { createWebActivityLog } from "@matsuri-ikoka/agent-kit";
 import { describe, expect, it } from "vitest";
 import { testFestival } from "../domain/testFestivals";
+import type { RobotsChecker } from "./robots";
 import type { QueryFn } from "./runner";
-import { createWebVerifier } from "./webVerifier";
+import { createVerifierHooks, createWebVerifier, isRestrictedSite } from "./webVerifier";
 
 // Agent SDK の代わりに、フックを呼んで決まった返答を返す偽物の query で確かめる。URL はすべて架空
 
@@ -85,6 +87,43 @@ const read = (hook: Parameters<Script>[0], url: string, text = "") =>
 
 /** 架空の祭りの、年の書かれた開催の知らせ */
 const NOTICE_2026 = "鈴鳴灯籠まつり　２０２６年８月１６日（日）18時30分から。雨天決行。";
+
+describe("isRestrictedSite", () => {
+  it("読まないサイトは、サブドメインも止め、似た名前のサイトは止めない", () => {
+    expect(isRestrictedSite("tabelog.com")).toBe(true);
+    expect(isRestrictedSite("s.tabelog.com")).toBe(true);
+    expect(isRestrictedSite("WWW.HOTPEPPER.JP")).toBe(true);
+    expect(isRestrictedSite("example.com")).toBe(false);
+    expect(isRestrictedSite("nottabelog.com")).toBe(false);
+  });
+});
+
+describe("createVerifierHooks と robots.txt", () => {
+  const preFetch = async (robots: RobotsChecker) => {
+    const hooks = createVerifierHooks(
+      createWebActivityLog(),
+      async () => ["8.8.8.8"],
+      [],
+      "読んでください",
+      robots,
+    );
+    const hook = hooks.PreToolUse?.[0]?.hooks[0];
+    return hook?.(
+      {
+        hook_event_name: "PreToolUse",
+        tool_name: "WebFetch",
+        tool_input: { url: "https://example.com/shop" },
+      } as unknown as HookInput,
+      undefined,
+      { signal: new AbortController().signal },
+    );
+  };
+
+  it("robots.txt が断るページは読まず、許すページは読む", async () => {
+    expect(JSON.stringify(await preFetch({ allowed: async () => false }))).toContain("robots.txt");
+    expect(await preFetch({ allowed: async () => true })).toEqual({});
+  });
+});
 
 describe("createWebVerifier", () => {
   it("返答の JSON を取り出し、実際に読んだページだけを出典に残す", async () => {
