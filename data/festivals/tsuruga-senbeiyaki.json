@@ -18,7 +18,9 @@
   },
   "scaleTier": "XS",
   "popularity": "local",
-  "listedIn": ["rurubu"],
+  "listedIn": [
+    "rurubu"
+  ],
   "highlights": [
     "境内のかがり火の神火に、青竹で挟んだ生せんべいをかざして自分で焼く",
     "焼いたせんべいを食べると病を払い、1年を元気に過ごせると伝わる",
@@ -82,6 +84,18 @@
       "note": "毎年11月20日の行事（主催者・観光協会の2026年の発表は見つからない。るるぶ&more.は2026年11月20日と案内）。時刻の案内はない",
       "sources": [
         {
+          "url": "https://tsuruga-kanko.jp/event/senbeiyaki/",
+          "title": "せんべい焼き（天満神社） 〈11月〉 - 旅する港町つるが 敦賀観光公式サイト",
+          "checkedAt": "2026-11-06",
+          "confidence": "official"
+        },
+        {
+          "url": "https://info.pref.fukui.lg.jp/furusato/shiawase/topics/entry.php?eid=25",
+          "title": "今から見られる伝統行事を見に行こう！【11～12月編】 | ふくい四季のしあわせ綴り",
+          "checkedAt": "2026-11-06",
+          "confidence": "official"
+        },
+        {
           "url": "https://tsuruga-kanko.jp/event/senbeiyaki",
           "title": "港都つるが観光協会 せんべい焼き（天満神社）（毎年11月20日）",
           "checkedAt": "2026-11-04",
@@ -116,14 +130,20 @@
     "stations": [
       {
         "name": "ぐるっと敦賀周遊バス 金崎宮停留所",
-        "walkMinutes": [5, 10],
+        "walkMinutes": [
+          5,
+          10
+        ],
         "note": "観光協会の案内で停留所から徒歩5分。るるぶ&more.は、敦賀駅からバスで約6分の栄新町で降り、徒歩2分と案内している"
       }
     ],
     "fromHubs": [
       {
         "hub": "JR 敦賀駅",
-        "minutes": [8, 18],
+        "minutes": [
+          8,
+          18
+        ],
         "route": "ぐるっと敦賀周遊バスで約8分、金崎宮停留所下車。タクシーなら約8分"
       }
     ],
@@ -201,9 +221,13 @@
         "close": "17:30",
         "lastEntry": "17:00"
       },
-      "closedDays": ["wed"],
+      "closedDays": [
+        "wed"
+      ],
       "price": "ジオラマ館 大人400円、小学生以下200円",
-      "tags": ["indoor"],
+      "tags": [
+        "indoor"
+      ],
       "popularity": "major",
       "sources": [
         {
@@ -230,7 +254,10 @@
       },
       "closedDays": [],
       "price": null,
-      "tags": ["indoor", "local_food"],
+      "tags": [
+        "indoor",
+        "local_food"
+      ],
       "popularity": "major",
       "sources": [
         {
@@ -273,5 +300,6 @@
     "神社の境内のどの社で行うか（るるぶ&more.は境内の恵美須神社とし、観光協会は天満神社とだけ書く）",
     "敦賀駅より遠くの主要駅（京都駅・名古屋駅・金沢駅など）からの所要時間",
     "金崎宮の参拝時間と、周辺の場所の会場からの徒歩の時間"
-  ]
+  ],
+  "optOut": false
 }

@@ -18,13 +18,16 @@
   },
   "scaleTier": "XS",
   "popularity": "local",
-  "listedIn": ["rurubu"],
+  "listedIn": [
+    "rurubu"
+  ],
   "highlights": [
     "本殿前で焚いた火の炎を、剣で斬って鎮める神事",
     "日本武尊が向火で火攻めを逃れた故事にちなむ",
     "1年の防火と火難除けを祈る",
     "日本武尊を祀る近江国一之宮で行われる"
   ],
+  "styles": [],
   "trivia": [
     {
       "text": "日本武尊が東征の途中で火攻めにあい、刈草に火を付けた向火で難を逃れた故事にちなむ神事",
@@ -91,20 +94,20 @@
       "date": "2026-11-26",
       "start": null,
       "end": null,
-      "status": "expected",
+      "status": "announced",
       "rainPolicy": null,
       "note": "例年11月26日（2026年は木曜）。本殿前で実際に火を焚き、その炎を剣で斬って鎮め、1年の防火と火難除けを祈る。始まる時刻は公式の案内に書かれていない",
       "sources": [
         {
           "url": "https://takebetaisha.jp/events/",
-          "title": "建部大社 主な行事（11月26日 鎮火祭。年の記載なし）",
-          "checkedAt": "2026-11-02",
+          "title": "建部大社 - 主な行事",
+          "checkedAt": "2026-11-06",
           "confidence": "official"
         },
         {
           "url": "https://rurubu.jp/andmore/spot/20000311",
-          "title": "るるぶ&more. 鎮火祭・火の神事（2026年11月26日）",
-          "checkedAt": "2026-11-02",
+          "title": "鎮火祭・火の神事（滋賀県／大津市）｜開催期間・アクセス｜るるぶ&more.",
+          "checkedAt": "2026-11-06",
           "confidence": "single"
         }
       ]
@@ -114,29 +117,44 @@
     "stations": [
       {
         "name": "JR 石山駅",
-        "walkMinutes": [25, 30],
+        "walkMinutes": [
+          25,
+          30
+        ],
         "note": "JR琵琶湖線。京阪石山駅と隣り合う"
       },
       {
         "name": "京阪 唐橋前駅",
-        "walkMinutes": [10, 15],
+        "walkMinutes": [
+          10,
+          15
+        ],
         "note": "京阪石山坂本線。びわ湖大津観光協会の案内では徒歩約15分"
       },
       {
         "name": "近江鉄道バス・帝産バス 建部大社前バス停",
-        "walkMinutes": [1, 6],
+        "walkMinutes": [
+          1,
+          6
+        ],
         "note": "JR・京阪石山駅の2のりば（近江鉄道バス：瀬田駅・野郷原ゆき）か3のりば（帝産バス：龍谷大学・牧口ゆき）から。バスは約10分"
       }
     ],
     "fromHubs": [
       {
         "hub": "京都駅",
-        "minutes": [15, 15],
+        "minutes": [
+          15,
+          15
+        ],
         "route": "JR琵琶湖線の快速で石山駅まで（乗り換えなし）"
       },
       {
         "hub": "大阪駅",
-        "minutes": [44, 44],
+        "minutes": [
+          44,
+          44
+        ],
         "route": "JR京都線・琵琶湖線の新快速で石山駅まで（乗り換えなし）"
       }
     ],
@@ -257,7 +275,11 @@
       "hours": null,
       "closedDays": [],
       "price": "昼4,980円から、夜6,980円から",
-      "tags": ["indoor", "seating", "local_food"],
+      "tags": [
+        "indoor",
+        "seating",
+        "local_food"
+      ],
       "popularity": "regional",
       "sources": [
         {
@@ -289,9 +311,15 @@
         "close": "16:30",
         "lastEntry": "16:00"
       },
-      "closedDays": ["wed"],
+      "closedDays": [
+        "wed"
+      ],
       "price": "石餅（2個・お茶付き）400円",
-      "tags": ["indoor", "seating", "local_food"],
+      "tags": [
+        "indoor",
+        "seating",
+        "local_food"
+      ],
       "popularity": "regional",
       "sources": [
         {
@@ -325,7 +353,11 @@
       },
       "closedDays": null,
       "price": "近江の膳「湖国『夕照』」1,620円から",
-      "tags": ["indoor", "seating", "local_food"],
+      "tags": [
+        "indoor",
+        "seating",
+        "local_food"
+      ],
       "popularity": "major",
       "sources": [
         {
@@ -388,5 +420,6 @@
     "囲炉裏 あみ定の営業時間が昼と夜に分かれること（12:00〜14:00、18:00〜20:30）と、11月26日に開いているか（店の案内は定休日なし、観光協会の案内は不定休）",
     "洗心寮が11月26日に開いているか（定休日が不定休）",
     "叶 匠壽庵 石山寺店の正確な位置（番地まで地図で引けず、東大門の位置で置いた）"
-  ]
+  ],
+  "optOut": false
 }
