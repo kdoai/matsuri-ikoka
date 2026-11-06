@@ -50,6 +50,46 @@ describe("readInternalAuthConfig", () => {
   });
 });
 
+describe("空の署名の鍵", () => {
+  it.each(["whsec_", "whsec_!!!!", "!!!!"])("「%s」では検証を作らず、知らせる", (key) => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    const verifiers = createInternalVerifiers(
+      readInternalAuthConfig({ ANTHROPIC_WEBHOOK_SIGNING_KEY: key }),
+    );
+
+    expect(verifiers.signature).toBeUndefined();
+    expect(warn.mock.calls.flat().join(" ")).toContain("internal_auth_key_unusable");
+    warn.mockRestore();
+  });
+
+  it("空の鍵の HMAC では、署名の検証を作れない", () => {
+    expect(() => createSignatureVerifier("whsec_")).toThrow();
+  });
+
+  it("使える鍵なら、検証を作る", () => {
+    const verifiers = createInternalVerifiers(
+      readInternalAuthConfig({ ANTHROPIC_WEBHOOK_SIGNING_KEY: "whsec_a2V5" }),
+    );
+    expect(verifiers.signature).toBeDefined();
+  });
+
+  it("OIDC の設定があれば、署名の鍵が空でも OIDC の検証は作る", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    const verifiers = createInternalVerifiers(
+      readInternalAuthConfig({
+        INTERNAL_OIDC_AUDIENCE: "https://example.com",
+        INTERNAL_OIDC_CALLER_EMAIL: "tick@example.com",
+        ANTHROPIC_WEBHOOK_SIGNING_KEY: "whsec_",
+      }),
+    );
+
+    expect(Object.keys(verifiers)).toEqual(["oidc"]);
+    warn.mockRestore();
+  });
+});
+
 describe("createOidcVerifier", () => {
   const config = { audience: "https://example.com/internal", callerEmail: "tick@example.com" };
   const bearer = { headers: { authorization: "Bearer token-abc" } };

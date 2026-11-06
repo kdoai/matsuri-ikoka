@@ -77,6 +77,11 @@ export function createOidcVerifier(
   };
 }
 
+/** 署名の鍵を戻す。`whsec_` を除いて base64 で読む */
+function signingKeyBytes(signingKey: string): Buffer {
+  return Buffer.from(signingKey.replace(/^whsec_/, ""), "base64");
+}
+
 /** 署名の時刻と今のずれの上限（秒）。古い配信の使い回しを防ぐ */
 const SIGNATURE_TOLERANCE_SECONDS = 5 * 60;
 
@@ -93,7 +98,9 @@ export function createSignatureVerifier(
   signingKey: string,
   options: { now?: () => number } = {},
 ): InternalVerifier {
-  const key = Buffer.from(signingKey.replace(/^whsec_/, ""), "base64");
+  const key = signingKeyBytes(signingKey);
+  // 空の鍵の HMAC は、だれでも作れる
+  if (key.length === 0) throw new Error("署名の鍵が空です");
   const now = options.now ?? Date.now;
   return {
     async verify(c) {
@@ -115,12 +122,15 @@ export function createSignatureVerifier(
   };
 }
 
-/** 設定のある検証だけを作る */
+/** 設定のある検証だけを作る。空の署名の鍵では検証を作らず、その入口だけが断る */
 export function createInternalVerifiers(config: InternalAuthConfig): InternalVerifiers {
+  const { webhookSigningKey } = config;
+  const usableKey = webhookSigningKey !== null && signingKeyBytes(webhookSigningKey).length > 0;
+  if (webhookSigningKey !== null && !usableKey) {
+    console.warn(JSON.stringify({ kind: "internal_auth_key_unusable" }));
+  }
   return {
     ...(config.oidc === null ? {} : { oidc: createOidcVerifier(config.oidc) }),
-    ...(config.webhookSigningKey === null
-      ? {}
-      : { signature: createSignatureVerifier(config.webhookSigningKey) }),
+    ...(usableKey ? { signature: createSignatureVerifier(webhookSigningKey) } : {}),
   };
 }
