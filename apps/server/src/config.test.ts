@@ -42,6 +42,7 @@ describe("readConfig", () => {
         DAILY_CHAT_LIMIT: "100",
         AGENT_MAX_BUDGET_USD: "0.5",
         ANTHROPIC_API_KEY: "test-key",
+        MATSURI_STORAGE: "firestore",
         NODE_ENV: "production",
       },
       here,
@@ -169,9 +170,10 @@ describe("本番の live の設定の確認", () => {
     DAILY_CHAT_LIMIT: "100",
     AGENT_MAX_BUDGET_USD: "0.5",
     ANTHROPIC_API_KEY: "test-key",
+    MATSURI_STORAGE: "firestore",
   };
 
-  it("合言葉・回数の上限・費用の上限・API キーがそろっていれば起動する", () => {
+  it("合言葉・回数の上限・費用の上限・API キー・保存先がそろっていれば起動する", () => {
     expect(() => readConfig(complete, here)).not.toThrow();
   });
 
@@ -181,6 +183,15 @@ describe("本番の live の設定の確認", () => {
     expect(() => readConfig(partial, here)).toThrow("ACCESS_PASSCODE、AGENT_MAX_BUDGET_USD");
     expect(() => readConfig({ ...complete, DAILY_CHAT_LIMIT: "0" }, here)).toThrow(
       "DAILY_CHAT_LIMIT",
+    );
+  });
+
+  it("保存先が Firestore でなければ、メモリと明示していても起動を止める", () => {
+    const { MATSURI_STORAGE: _, ...unset } = complete;
+
+    expect(() => readConfig(unset, here)).toThrow("MATSURI_STORAGE=firestore");
+    expect(() => readConfig({ ...complete, MATSURI_STORAGE: "memory" }, here)).toThrow(
+      "MATSURI_STORAGE=firestore",
     );
   });
 
