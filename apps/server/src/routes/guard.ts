@@ -1,4 +1,4 @@
-import { createHash, timingSafeEqual } from "node:crypto";
+import { timingSafeEqual } from "node:crypto";
 import type { IsoDate } from "@matsuri-ikoka/schema";
 import type { MiddlewareHandler } from "hono";
 import { apiError } from "./errors";
@@ -7,26 +7,30 @@ import { apiError } from "./errors";
 
 export const PASSCODE_HEADER = "x-access-passcode";
 
-function digest(value: string): Buffer {
-  return createHash("sha256").update(value).digest();
+/**
+ * 合言葉と、中身によらず同じ時間で比べる。timingSafeEqual は同じ長さでしか比べられないので、
+ * 送られた値を合言葉の長さにそろえて比べ、長さは別に確かめる
+ */
+function samePasscode(given: string, expected: Buffer): boolean {
+  const received = Buffer.from(given);
+  const sized = Buffer.alloc(expected.length);
+  received.copy(sized);
+  return timingSafeEqual(sized, expected) && received.length === expected.length;
 }
 
 /** 合言葉が設定されていれば、ヘッダーの値と比べる。設定がなければ通す */
 export function passcodeGuard(passcode: string | null): MiddlewareHandler {
-  const expected = passcode === null ? null : digest(passcode);
+  const expected = passcode === null ? null : Buffer.from(passcode);
   return async (c, next) => {
-    if (expected !== null) {
-      const given = c.req.header(PASSCODE_HEADER) ?? "";
-      if (!timingSafeEqual(digest(given), expected)) {
-        return c.json(apiError("unauthorized", "合言葉が違います。", false), 401);
-      }
+    if (expected !== null && !samePasscode(c.req.header(PASSCODE_HEADER) ?? "", expected)) {
+      return c.json(apiError("unauthorized", "合言葉が違います。", false), 401);
     }
     return next();
   };
 }
 
 /**
- * 1日（日本の日付）の相談の回数を、キー（全体、または IP）ごとに数える。上限がなければ数えるだけ。
+ * 1日（日本の日付）の相談の回数を、キー（全体、または limitKey）ごとに数える。上限がなければ数えるだけ。
  * 日付が変わったら数え直す（前の日の数は捨てるので、キーの数だけメモリが増え続けることはない）
  */
 export class DailyLimiter {
@@ -62,13 +66,25 @@ export class DailyLimiter {
   }
 }
 
-/** 同時に動かせる数を数える。live で同時に返事を作る数（Claude を呼ぶ数）を抑える */
+/** 上限を数える単位。ログインしていれば利用者、していなければ IP */
+export function limitKey(viewer: string | null, ip: string): string {
+  return viewer === null ? ip : `uid:${viewer}`;
+}
+
+/**
+ * 同時に動かせる数を数える。live で同時に返事を作る数（Claude を呼ぶ数）を抑える。
+ * 全体の上限と、1人（limitKey）の上限を持ち、1人が枠を使い切らないようにする
+ */
 export class ConcurrencyLimiter {
   readonly #max: number;
+  readonly #maxPerClient: number;
+  readonly #byClient = new Map<string, number>();
   #running = 0;
 
-  constructor(max: number) {
+  /** maxPerClient を省くと、1人の上限は全体の上限と同じ */
+  constructor(max: number, maxPerClient: number = max) {
     this.#max = max;
+    this.#maxPerClient = maxPerClient;
   }
 
   get running(): number {
@@ -76,14 +92,22 @@ export class ConcurrencyLimiter {
   }
 
   /** 1つ分を取る。空きがなければ null。取れたら、終わったときに返す関数を返す */
-  tryAcquire(): (() => void) | null {
-    if (this.#running >= this.#max) return null;
+  tryAcquire(client = "*"): (() => void) | null {
+    const mine = this.#byClient.get(client) ?? 0;
+    if (this.#running >= this.#max || mine >= this.#maxPerClient) return null;
     this.#running += 1;
+    this.#byClient.set(client, mine + 1);
     let released = false;
     return () => {
       if (released) return;
       released = true;
       this.#running -= 1;
+      const left = (this.#byClient.get(client) ?? 1) - 1;
+      if (left > 0) {
+        this.#byClient.set(client, left);
+      } else {
+        this.#byClient.delete(client);
+      }
     };
   }
 }

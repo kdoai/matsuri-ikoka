@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+import { useAccountClient } from "../account/context";
 import { useActions, useApp, useT } from "../state/react";
 import { shioriReady } from "../state/selectors";
 import { buttonPrimary, buttonSecondary } from "./common";
-import { shioriShareUrl } from "./links";
+import { resolveShioriUrl } from "./links";
 
 // 旅のしおり。サーバーが作る冊子のしおり（GET /shiori/:id。PDF と同じ A4 の紙）を、そのまま埋め込んで見せる。
 // しおりの中は見開きで2ページずつ並び、左右の矢印でめくる。印刷と PDF も同じ紙になる。
@@ -46,17 +47,42 @@ export function ShioriPage() {
   const actions = useActions();
   const itinerary = useApp((state) => state.itinerary.current);
   const ready = useApp(shioriReady);
+  const checkedAt = useApp((state) => state.verify.checkedAt);
+  const account = useAccountClient();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const frameRef = useRef<HTMLIFrameElement>(null);
+  const [resolved, setResolved] = useState<{ key: string; url: string | null } | null>(null);
+  const [attempt, setAttempt] = useState(0);
+  const itineraryId = itinerary?.id ?? null;
+  // 版が同じでも、開催の確かめ直しで内容が変わるので、確かめた時刻もいっしょに見る
+  const key = `${itineraryId}@${itinerary?.version}@${checkedAt}#${attempt}`;
 
   useEffect(() => {
     headingRef.current?.focus();
   }, []);
 
+  // 自分の旅程は共有の ID で開く。ログインしていなければ、旅程の ID のまま
+  useEffect(() => {
+    if (!ready || itineraryId === null) return;
+    let active = true;
+    void resolveShioriUrl(account, itineraryId, window.location.origin).then(
+      (url) => {
+        if (active) setResolved({ key, url });
+      },
+      () => {
+        if (active) setResolved({ key, url: null });
+      },
+    );
+    return () => {
+      active = false;
+    };
+  }, [account, ready, itineraryId, key]);
+
   if (itinerary === null) {
     return null;
   }
-  const shareUrl = ready ? shioriShareUrl(itinerary.id, window.location.origin) : null;
+  const settled = resolved?.key === key;
+  const shareUrl = ready && settled ? resolved.url : null;
 
   return (
     <div className="flex h-dvh flex-col bg-wood-800" data-testid="shiori">
@@ -98,8 +124,26 @@ export function ShioriPage() {
         )}
         {shareUrl === null ? null : <ShareBox url={shareUrl} />}
       </div>
-      {shareUrl === null ? (
+      {!ready ? (
         <p className="m-4 rounded-xl bg-kinari-50 p-4 text-ink">{t.shiori.notReady}</p>
+      ) : !settled ? (
+        <p role="status" className="m-4 rounded-xl bg-kinari-50 p-4 text-ink">
+          {t.shiori.preparing}
+        </p>
+      ) : shareUrl === null ? (
+        <div
+          role="alert"
+          className="m-4 grid justify-items-start gap-3 rounded-xl bg-kinari-50 p-4 text-ink"
+        >
+          <p>{t.shiori.prepareFailed}</p>
+          <button
+            type="button"
+            className={buttonSecondary}
+            onClick={() => setAttempt((count) => count + 1)}
+          >
+            {t.shiori.retry}
+          </button>
+        </div>
       ) : (
         <iframe
           ref={frameRef}

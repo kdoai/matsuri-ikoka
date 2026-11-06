@@ -95,14 +95,14 @@ describe("POST /api/festivals/search", () => {
 describe("自由記述をモデルで読む口", () => {
   it("読み取りの結果で探し、回数を1回使う", async () => {
     const limiter = new DailyLimiter(5, today);
-    const ipLimiter = new DailyLimiter(1, today);
+    const clientLimiter = new DailyLimiter(1, today);
     const readFestivalWish = vi.fn(async () => INTENT);
-    const { search, request } = setup({ limiter, ipLimiter, readFestivalWish });
+    const { search, request } = setup({ limiter, clientLimiter, readFestivalWish });
     const res = await search({ ...request, wish: "夕涼み" });
     const body = (await res.json()) as { reading: unknown };
     expect(body.reading).toEqual({ text: "夜の祭り", by: "model" });
     expect(readFestivalWish).toHaveBeenCalledTimes(1);
-    expect(ipLimiter.allows("unknown")).toBe(false);
+    expect(clientLimiter.allows("unknown")).toBe(false);
   });
 
   it("同じ相談の同じ自由記述は読み直さず、「別の祭り」で順がずれない", async () => {
@@ -159,7 +159,7 @@ describe("自由記述をモデルで読む口", () => {
     expect(await readingBy({ readFestivalWish, limiter: new DailyLimiter(0, today) })).toBe(
       "words",
     );
-    expect(await readingBy({ readFestivalWish, ipLimiter: new DailyLimiter(0, today) })).toBe(
+    expect(await readingBy({ readFestivalWish, clientLimiter: new DailyLimiter(0, today) })).toBe(
       "words",
     );
     const concurrency = new ConcurrencyLimiter(1);

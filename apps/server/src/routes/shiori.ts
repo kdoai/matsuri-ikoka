@@ -1,5 +1,4 @@
 import type { Itinerary } from "@matsuri-ikoka/schema";
-import type { Hono } from "hono";
 import { html } from "hono/html";
 import type { HtmlEscapedString } from "hono/utils/html";
 import type { FestivalStore } from "../data/festivalStore";
@@ -12,10 +11,13 @@ import {
   toShioriTrip,
 } from "../shiori";
 import type { ShioriTrip } from "../shiori/trip";
+import type { OwnerId } from "../storage/owner";
 import { apiError } from "./errors";
+import { routeParam, type SecureRoutes } from "./policy";
 
 // 旅のしおり。GET /shiori/:id は画面で見る HTML、GET /shiori/:id.pdf は同じテンプレートから作る A4 の PDF。
 // しおりは URL で共有するので、合言葉はいらない（ID は推測されにくい乱数）。
+// 開けるのは、共有の ID と、持ち主のない旅程の ID だけ。持ち主のある旅程の ID では、ないものとして断る。
 // 祭りのデータとモデルの文章は、すべて文字列として埋め込む（エスケープする）。スクリプトは使わず、
 // Content-Security-Policy で読み込める先を、このサーバーのフォントと画像だけに絞る。
 // 店内の画面は、しおりをそのまま埋め込んで見せる（?embed=1。同じオリジンからだけ埋め込める）。
@@ -26,8 +28,8 @@ export const SHIORI_CSP =
 type Html = HtmlEscapedString | Promise<HtmlEscapedString>;
 
 export interface ShioriDeps {
-  /** 共有の URL の ID（旅程の ID か共有の ID）から旅程を読む。期限を過ぎた・消した旅程は undefined */
-  readItinerary: (id: string) => Promise<Itinerary | undefined>;
+  /** ID（共有の ID か、持ち主のない旅程の ID）から旅程を読む。期限を過ぎた・消した・ほかの人の旅程は undefined */
+  readItinerary: (id: string, viewer: OwnerId | null) => Promise<Itinerary | undefined>;
   festivals: FestivalStore;
   /** 省略すると、assets/shiori と Chromium を使うものを作る */
   shiori?: Shiori;
@@ -50,22 +52,26 @@ export function renderShioriNotice(title: string, message: string): Html {
 </html>`;
 }
 
-export function registerShioriRoutes(app: Hono, deps: ShioriDeps) {
+export function registerShioriRoutes(routes: SecureRoutes, deps: ShioriDeps) {
   const shiori = deps.shiori ?? createShiori();
   const lookup = (id: string) => deps.festivals.get(id);
 
   // フォントとスタッフの静止画。ファイル名は決まった一覧から引くので、ほかのファイルは読めない
-  app.get("/shiori/assets/*", (c) => {
+  routes.public("GET", "/shiori/assets/*", (c) => {
     const file = shiori.asset(c.req.path.slice("/shiori/assets/".length));
     if (file === undefined) return c.text("Not Found", 404);
     c.header("Cache-Control", "public, max-age=86400");
     return c.body(new Uint8Array(file.body), 200, { "Content-Type": file.contentType });
   });
 
-  app.get("/shiori/:id{[^/]+\\.pdf}", async (c) => {
+  routes.public("GET", "/shiori/:id{[^/]+\\.pdf}", async (c, { viewer }) => {
     c.header("Content-Security-Policy", SHIORI_CSP);
     c.header("Referrer-Policy", "no-referrer");
-    const found = await confirmedTrip(deps, c.req.param("id").slice(0, -".pdf".length));
+    const found = await confirmedTrip(
+      deps,
+      routeParam(c, "id").slice(0, -".pdf".length),
+      await viewer(),
+    );
     if (!found.ok) return c.html(found.notice, found.status);
     try {
       const pdf = await shiori.pdf(found.trip, lookup);
@@ -91,11 +97,11 @@ export function registerShioriRoutes(app: Hono, deps: ShioriDeps) {
     }
   });
 
-  app.get("/shiori/:id", async (c) => {
+  routes.public("GET", "/shiori/:id", async (c, { viewer }) => {
     c.header("Content-Security-Policy", SHIORI_CSP);
     c.header("Referrer-Policy", "no-referrer");
-    const id = c.req.param("id");
-    const found = await confirmedTrip(deps, id);
+    const id = routeParam(c, "id");
+    const found = await confirmedTrip(deps, id, await viewer());
     if (!found.ok) return c.html(found.notice, found.status);
     // 店内の画面に埋め込むときは、画面の側に「PDF で保存」があるので、しおりの上の帯を出さない
     const embedded = c.req.query("embed") === "1";
@@ -113,8 +119,8 @@ type Found = { ok: true; trip: ShioriTrip } | { ok: false; notice: Html; status:
  * 確定した旅程を、しおりとして出す。公式の情報で開催予定を確かめられた旅程と、
  * 要事前確認（公式以外の情報源で確かめた）の旅程（表紙に注意を出す）。それ以外は出さない
  */
-async function confirmedTrip(deps: ShioriDeps, id: string): Promise<Found> {
-  const itinerary = await deps.readItinerary(id);
+async function confirmedTrip(deps: ShioriDeps, id: string, viewer: OwnerId | null): Promise<Found> {
+  const itinerary = await deps.readItinerary(id, viewer);
   if (itinerary === undefined) {
     return {
       ok: false,

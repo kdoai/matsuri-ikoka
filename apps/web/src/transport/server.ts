@@ -12,6 +12,7 @@ import { errorFromResponse, TransportError } from "./types";
 
 // 接客サーバーとの通信。返答は POST で送りながら SSE で受け取る（docs/spec/api.md）。
 // 公開している URL では、/api のすべての呼び出しに合言葉のヘッダーを付ける。合言葉は URL に入れない。
+// ログインしていれば、相談の呼び出しに ID トークンを付ける。サーバーは相談をその人に結びつける。
 
 const EVENT_STREAM = "text/event-stream";
 
@@ -52,11 +53,31 @@ export interface ServerTransportOptions {
   /** 接客サーバーが記録の再生（mock）で動いているとき、再生する記録の名前 */
   sample?: string | null;
   fetch?: typeof fetch;
+  /** ログインしていれば ID トークンを返す。していなければ null。ログイン中に取れなければ例外 */
+  idToken?: () => Promise<string | null>;
 }
 
 export function createServerTransport(options: ServerTransportOptions = {}): ChatTransport {
   const passcode = options.passcode ?? createPasscodeHolder();
   const fetchImpl: typeof fetch = options.fetch ?? ((input, init) => globalThis.fetch(input, init));
+
+  /**
+   * 相談の呼び出しのヘッダー。ログイン中にトークンを取れなければ、送らずに再試行できるエラーにする。
+   * ログインなしとして送ると、持ち主のある相談が 404 になり、画面が相談を作り直してしまう
+   */
+  const consultHeaders = async (): Promise<Record<string, string>> => {
+    let token: string | null;
+    try {
+      token = (await options.idToken?.()) ?? null;
+    } catch (error) {
+      throw error instanceof TransportError ? error : new TransportError("connection_lost");
+    }
+    return {
+      "Content-Type": "application/json",
+      ...authHeaders(passcode),
+      ...(token === null ? {} : { Authorization: `Bearer ${token}` }),
+    };
+  };
 
   const postStream = async (
     path: string,
@@ -67,11 +88,7 @@ export function createServerTransport(options: ServerTransportOptions = {}): Cha
   ): Promise<void> => {
     await fetchEventSource(path, {
       method,
-      headers: {
-        "Content-Type": "application/json",
-        Accept: EVENT_STREAM,
-        ...authHeaders(passcode),
-      },
+      headers: { ...(await consultHeaders()), Accept: EVENT_STREAM },
       body: JSON.stringify(body),
       signal,
       fetch: fetchImpl,
@@ -106,7 +123,7 @@ export function createServerTransport(options: ServerTransportOptions = {}): Cha
     async startSession(signal) {
       const response = await fetchImpl("/api/session", {
         method: "POST",
-        headers: { "Content-Type": "application/json", ...authHeaders(passcode) },
+        headers: await consultHeaders(),
         body: JSON.stringify(sessionRequest),
         ...(signal === undefined ? {} : { signal }),
       });
@@ -132,7 +149,7 @@ export function createServerTransport(options: ServerTransportOptions = {}): Cha
     async searchFestivals(request, signal) {
       const response = await fetchImpl("/api/festivals/search", {
         method: "POST",
-        headers: { "Content-Type": "application/json", ...authHeaders(passcode) },
+        headers: await consultHeaders(),
         body: JSON.stringify(request),
         ...(signal === undefined ? {} : { signal }),
       });
@@ -150,7 +167,7 @@ export function createServerTransport(options: ServerTransportOptions = {}): Cha
     async previewFestivalTrip(request, signal) {
       const response = await fetchImpl("/api/festival-trips/preview", {
         method: "POST",
-        headers: { "Content-Type": "application/json", ...authHeaders(passcode) },
+        headers: await consultHeaders(),
         body: JSON.stringify(request),
         ...(signal === undefined ? {} : { signal }),
       });

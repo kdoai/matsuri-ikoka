@@ -2,42 +2,88 @@
 
 ## API
 
-| メソッド | パス                          | 本文                                 | 返すもの                                                                                                                                            |
-| -------- | ----------------------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| POST     | `/api/session`                | `SessionRequestSchema`（省略できる） | 201 `SessionResponseSchema`（`{ "sessionId": "…", "mode": "live" }`）。`mode` は `live` か `mock`（見本の相談の再生）。画面は mock のときに札を出す |
-| POST     | `/api/chat`                   | `ChatRequestSchema`                  | 返答を SSE のイベントで返す                                                                                                                         |
-| POST     | `/api/festival-trips/preview` | `AnchorPlanRequestSchema`            | 祭りを決めたあとの旅の組み立て（`AnchorPlanSchema`）。下の節を参照                                                                                  |
-| PATCH    | `/api/preferences`            | `PreferencesRequestSchema`           | SSE。旅程があり live のときは旅程係だけを動かして組み直す。それ以外（旅程がない、mock）はこだわりを変えて `done` だけを返す                         |
-| POST     | `/api/festivals/search`       | `FestivalSearchRequestSchema`        | 種類・季節・地域で祭りを探す（`FestivalSearchResponseSchema`）。[POST /api/festivals/search](#post-apifestivalssearch)                              |
-| GET      | `/api/festivals`              | —                                    | 祭りのデータの一覧（`FestivalsResponseSchema`、`{ "festivals": [...] }`）。候補が出る前の豆知識に使う                                               |
-| GET      | `/api/festivals/:id`          | —                                    | 祭りのデータ（`FestivalSchema`）。しおりの作法・地元の味・アクセス、待ち時間の小話に使う                                                            |
-| GET      | `/api/itinerary/:id`          | —                                    | 旅程（`ItinerarySchema`）。`:id` は旅程の ID（ログインして残していなければ、最後の保存から30日）か共有の ID（`sh-…`、作ってから30日）               |
-| GET      | `/shiori/:id`                 | —                                    | 旅のしおり（画面で見る HTML）。公式の情報で開催予定を確かめた旅程だけ（[しおり](shiori.md)）                                                        |
-| GET      | `/shiori/:id.pdf`             | —                                    | 同じしおりの A4 の PDF。混み合っていたら 503（`upstream_unavailable`）と `Retry-After`                                                              |
-| GET      | `/shiori/assets/*`            | —                                    | しおりのフォントとスタッフの静止画                                                                                                                  |
-| GET      | `/healthz`・`/health`         | —                                    | 死活監視。`{ "status": "ok" }`。Cloud Run の既定の URL では `/healthz` が外に出ないので、外からは `/health` を使う                                  |
+| メソッド | パス                          | 本文                                 | 返すもの                                                                                                                                                                          |
+| -------- | ----------------------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| POST     | `/api/session`                | `SessionRequestSchema`（省略できる） | 201 `SessionResponseSchema`（`{ "sessionId": "…", "mode": "live" }`）。`mode` は `live` か `mock`（見本の相談の再生）。画面は mock のときに札を出す                               |
+| POST     | `/api/chat`                   | `ChatRequestSchema`                  | 返答を SSE のイベントで返す                                                                                                                                                       |
+| POST     | `/api/festival-trips/preview` | `AnchorPlanRequestSchema`            | 祭りを決めたあとの旅の組み立て（`AnchorPlanSchema`）。下の節を参照                                                                                                                |
+| PATCH    | `/api/preferences`            | `PreferencesRequestSchema`           | SSE。旅程があり live のときは旅程係だけを動かして組み直す。それ以外（旅程がない、mock）はこだわりを変えて `done` だけを返す                                                       |
+| POST     | `/api/festivals/search`       | `FestivalSearchRequestSchema`        | 種類・季節・地域で祭りを探す（`FestivalSearchResponseSchema`）。[POST /api/festivals/search](#post-apifestivalssearch)                                                            |
+| GET      | `/api/festivals`              | —                                    | 祭りのデータの一覧（`FestivalsResponseSchema`、`{ "festivals": [...] }`）。候補が出る前の豆知識に使う                                                                             |
+| GET      | `/api/festivals/:id`          | —                                    | 祭りのデータ（`FestivalSchema`）。しおりの作法・地元の味・アクセス、待ち時間の小話に使う                                                                                          |
+| GET      | `/api/itinerary/:id`          | —                                    | 旅程（`ItinerarySchema`）。`:id` は持ち主のない旅程の ID（最後の保存から30日）か、共有の ID（`sh-…`、作ってから30日）。持ち主自身は ID トークンを付けて自分の旅程の ID でも読める |
+| GET      | `/shiori/:id`                 | —                                    | 旅のしおり（画面で見る HTML）。公式の情報で開催予定を確かめた旅程だけ（[しおり](shiori.md)）。`:id` は `/api/itinerary/:id` と同じ                                                |
+| GET      | `/shiori/:id.pdf`             | —                                    | 同じしおりの A4 の PDF。混み合っていたら 503（`upstream_unavailable`）と `Retry-After`                                                                                            |
+| GET      | `/shiori/assets/*`            | —                                    | しおりのフォントとスタッフの静止画                                                                                                                                                |
+| GET      | `/healthz`・`/health`         | —                                    | 死活監視。`{ "status": "ok" }`。Cloud Run の既定の URL では `/healthz` が外に出ないので、外からは `/health` を使う                                                                |
 
 ログインと自分の旅の API（`/api/auth/config`・`/api/trips`・`/api/me/trips`）は [ログインと保存の仕様](account.md#api) にあります。
 
 - 型はどれも `packages/schema`（`api.ts`）にある
-- 合言葉（`ACCESS_PASSCODE`）を設定しているときは、`/api/*` にヘッダー `x-access-passcode` が要る。しおりと死活監視には要らない
+- 合言葉（`ACCESS_PASSCODE`）を設定しているときは、`/api/*` にヘッダー `x-access-passcode` が要る。しおり・死活監視・内部の入口には要らない
 - 掲載停止の祭りは、`/api/festivals` の一覧に含めず、`/api/festivals/:id` でも 404 にする
 - 本番では、同じオリジンから画面（`apps/web` のビルド）も配る
+
+### 経路と認可の決まり
+
+すべての経路に、次の4つの決まりのどれかを宣言します。経路は宣言しないと足せません（`apps/server/src/routes/policy.ts`）。宣言のない経路があるとサーバーは起動せず、テストとデプロイの前の確かめで見つかります。
+
+| 決まり             | 通る人                                              | ハンドラが受け取るもの                                 | 断るとき                                                       |
+| ------------------ | --------------------------------------------------- | ------------------------------------------------------ | -------------------------------------------------------------- |
+| だれでも           | だれでも                                            | 必要なときに確かめる利用者                             | —                                                              |
+| 相談の持ち主       | 相談の持ち主。持ち主のない相談は、ID を知っている人 | 確かめた利用者と、持ち主を確かめて相談を開く口         | ない相談とほかの人の相談は、同じ 404                           |
+| ログインした持ち主 | ID トークンを確かめた利用者                         | その人に絞った保存の口と、持ち主を確かめて相談を開く口 | ログインなしは 401。ログインを用意していなければ 404           |
+| 内部               | 検証（OIDC か署名）を通った呼び出し元               | 確かめた呼び出し元                                     | 確かめられなければ 401。検証の設定がなければ、その入口だけ 404 |
+
+| メソッド | パス                               | 決まり             | 触れる範囲                                                                                                       |
+| -------- | ---------------------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| GET      | `/healthz`                         | だれでも           | 死活監視                                                                                                         |
+| GET      | `/health`                          | だれでも           | 死活監視                                                                                                         |
+| POST     | `/api/session`                     | だれでも           | 新しい相談を始める。ログインしていれば、はじめからその人の相談にする                                             |
+| POST     | `/api/chat`                        | 相談の持ち主       | その相談                                                                                                         |
+| PATCH    | `/api/preferences`                 | 相談の持ち主       | その相談                                                                                                         |
+| POST     | `/api/festivals/search`            | 相談の持ち主       | その相談（検索は公開の祭りのデータだけ）                                                                         |
+| GET      | `/api/festivals`                   | だれでも           | 公開の祭りのデータ                                                                                               |
+| GET      | `/api/festivals/:id`               | だれでも           | 公開の祭りのデータ                                                                                               |
+| POST     | `/api/festival-trips/preview`      | 相談の持ち主       | 計算は公開の祭りのデータだけで、相談がなくても返す。選んだ条件を残すのは、持ち主のときだけ                       |
+| GET      | `/api/itinerary/:id`               | だれでも           | 共有の ID と持ち主のない旅程の ID だけ。持ち主自身は ID トークンを付けて自分の旅程も読める。ほかの人の旅程は 404 |
+| GET      | `/shiori/assets/*`                 | だれでも           | しおりのフォントと静止画                                                                                         |
+| GET      | `/shiori/:id.pdf`                  | だれでも           | `/api/itinerary/:id` と同じ                                                                                      |
+| GET      | `/shiori/:id`                      | だれでも           | `/api/itinerary/:id` と同じ                                                                                      |
+| GET      | `/api/auth/config`                 | だれでも           | ログインの公開の設定                                                                                             |
+| GET      | `/api/trips`                       | ログインした持ち主 | 自分の残した旅                                                                                                   |
+| POST     | `/api/trips`                       | ログインした持ち主 | 自分の相談（持ち主のない相談は自分のものになる）の旅程                                                           |
+| GET      | `/api/trips/:id`                   | ログインした持ち主 | 自分の旅程                                                                                                       |
+| GET      | `/api/trips/:id/versions/:version` | ログインした持ち主 | 自分の旅程                                                                                                       |
+| POST     | `/api/trips/:id/share`             | ログインした持ち主 | 自分の旅程                                                                                                       |
+| DELETE   | `/api/trips/:id`                   | ログインした持ち主 | 自分の旅程                                                                                                       |
+| DELETE   | `/api/me/trips`                    | ログインした持ち主 | 自分の旅程のすべて                                                                                               |
+| GET      | `*`                                | だれでも           | 画面のファイル（画面のビルドを配るときだけ）                                                                     |
+
+利用者 A のデータを、利用者 B とログインなしの人が読めず変えられないことは、この表の経路ごとに自動テストで確かめます（`apps/server/src/routes/isolation.test.ts`）。経路を足すと、表に足すまでテストが落ちます。
+
+### 内部の入口
+
+定期実行と Webhook のための入口は `/internal/…` に置き（経路はこれから足す）、合言葉やログインとは別の検証を通します。検証の設定は省略でき、なければその入口だけが断り、サーバーは起動して相談はそのまま動きます。署名の鍵が空（`whsec_` だけなど）のときは、設定がないものとして扱います。
+
+| 検証        | 呼び出し元                  | 確かめること                                                                                                                                                         | 設定                                                   |
+| ----------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `oidc`      | 定期実行（Cloud Scheduler） | `Authorization: Bearer` の Google の OIDC トークンの署名・期限・宛先（audience）と、決めたサービスアカウントのメールアドレス                                         | `INTERNAL_OIDC_AUDIENCE`・`INTERNAL_OIDC_CALLER_EMAIL` |
+| `signature` | Managed Agents の Webhook   | `webhook-id`・`webhook-timestamp`・`webhook-signature`（Standard Webhooks の形）。`{id}.{timestamp}.{本文}` の HMAC-SHA256 が合うこと、時刻のずれが5分以内であること | `ANTHROPIC_WEBHOOK_SIGNING_KEY`                        |
 
 ### 断るときの応答
 
 SSE を始める前に断るときと、JSON を返す API が失敗したときは、HTTP の状態コードと `ApiErrorSchema` の本文（`error` イベントの data と同じ `{ code, message, retryable }`）で返します。
 
-| 状態 | `code`                 | いつ                                                                                |
-| ---- | ---------------------- | ----------------------------------------------------------------------------------- |
-| 400  | `bad_request`          | 本文の形が正しくない                                                                |
-| 401  | `unauthorized`         | 合言葉が違う。ログインが要る API で、ID トークンがない・確かめられない              |
-| 403  | `unauthorized`         | ほかの利用者が残した旅を残そうとした                                                |
-| 404  | `bad_request`          | 相談・旅程・祭りが見つからない。ログインを用意していないのに旅の API を呼んだ       |
-| 409  | `bad_request`          | 同じ相談の前の返事を作っている途中（retryable）。旅程がまだないのに旅を残そうとした |
-| 413  | `bad_request`          | 本文が大きすぎる                                                                    |
-| 429  | `rate_limited`         | 1日の相談の回数の上限（全体、または IP ごと）                                       |
-| 503  | `upstream_unavailable` | 同時に返事を作れる数を超えた（retryable）                                           |
+| 状態 | `code`                 | いつ                                                                                                                                                      |
+| ---- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 400  | `bad_request`          | 本文の形が正しくない                                                                                                                                      |
+| 401  | `unauthorized`         | 合言葉が違う。ログインが要る API で、ID トークンがない・確かめられない。内部の入口で、呼び出し元を確かめられない                                          |
+| 404  | `bad_request`          | 相談・旅程・祭りが見つからない。相談や旅程がほかの人のもの（ないときと同じ応答で、あるかどうかを見せない）。ログインを用意していないのに旅の API を呼んだ |
+| 409  | `bad_request`          | 同じ相談の前の返事を作っている途中（retryable）。旅程がまだないのに旅を残そうとした                                                                       |
+| 413  | `bad_request`          | 本文が大きすぎる                                                                                                                                          |
+| 429  | `rate_limited`         | 1日の相談の回数の上限（全体、または利用者ごと。ログインしていなければ IP ごと）                                                                           |
+| 503  | `upstream_unavailable` | 同時に返事を作れる数を超えた。全体、または利用者ごと（ログインしていなければ IP ごと）（retryable）                                                       |
 
 ### POST /api/festivals/search
 
@@ -54,7 +100,7 @@ SSE を始める前に断るときと、JSON を返す API が失敗したとき
 祭りから探して決めた祭りを軸に、旅の組み立てを計算して返します（モデルは呼びません）。本文は `AnchorPlanRequestSchema`、応答は `AnchorPlanSchema` です。計算の手順は [祭りから探す](festival-search.md#祭りを固定した旅程) にあります。
 
 - 祭りがない・掲載停止は 404。データにない日、中止や延期の回、過ぎた日は 400（どちらも `bad_request`）
-- 相談が見つかれば、選んだ出発地・泊数・ペース・寄りたい場所を、その相談の条件に残す（祭りは固定しない）
+- 相談が見つかれば、選んだ出発地・泊数・ペース・寄りたい場所を、その相談の条件に残す（祭りは固定しない）。ほかの人の相談は見つからないものと同じに扱い、何も残さない
 - 祭りの固定は、次の `POST /api/chat` の `anchor` で行う
 
 ### POST /api/chat

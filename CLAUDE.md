@@ -78,6 +78,9 @@ pnpm build            # 画面と接客サーバーのビルド
   - 法令・条例・公的な様式
   - 利用規約で転載を認めている資料。出典（URL・確認した日）を必ず書く
 - Blender の作業ファイル（`.blend`）はコミットしない
+- 経路は `SecureRoutes`（`apps/server/src/routes/policy.ts`）で認可の決まりを宣言して足す。足したら `policy.test.ts`・`isolation.test.ts`・`docs/spec/api.md` の表にも足す（[経路と認可の決まり](docs/spec/api.md#経路と認可の決まり)）
+- 利用者のデータは `forOwner(持ち主)` の口を通して読み書きし、新しい種類のデータは持ち主を含むパス（`ownerTripPath`）に置く。ほかの人のものは、ないときと同じ 404 で断る（[利用者ごとの分離](docs/spec/account.md#利用者ごとの分離)）
+- 発言の本文・位置・トークンをログに残さない。例外は `errorForLog` を通して残す
 
 ### コミット
 

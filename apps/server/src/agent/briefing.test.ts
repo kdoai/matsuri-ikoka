@@ -88,7 +88,7 @@ describe("店の記録", () => {
   it("旅程係には、今の旅程の全体と到着の余裕を渡す。調査係には渡さない", () => {
     const context = ctx();
     const itinerary = fictionalItinerary();
-    context.itineraries.save(itinerary);
+    context.itineraries.save(itinerary, null);
     context.session.itineraryId = itinerary.id;
 
     const planner = staffBriefing(context, "planner");

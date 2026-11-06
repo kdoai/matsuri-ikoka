@@ -9,7 +9,7 @@ import { DEFAULT_PREFERENCES, type SseEvent } from "@matsuri-ikoka/schema";
 import { describe, expect, it } from "vitest";
 import { createFestivalStore } from "../data/festivalStore";
 import { testFestival } from "../domain/testFestivals";
-import { ItineraryStore, SessionStore } from "../session/sessionStore";
+import { ItineraryStore, type Session, SessionStore } from "../session/sessionStore";
 import type { ToolContext } from "../tools/context";
 import { createUnavailableLodging } from "../tools/lodging";
 import { searchFestivals } from "../tools/matsuriTools";
@@ -94,16 +94,23 @@ function setup(scripts: Script[]) {
       return createMatsuriMcpServer(context);
     },
   });
-  const session = new SessionStore().create();
-  const run = async (message: string) => {
+  const sessions = new SessionStore();
+  const session = sessions.create();
+  const runIn = async (target: Session, message: string) => {
     const events: SseEvent[] = [];
     await runner.runTurn(
-      { session, message, preferences: DEFAULT_PREFERENCES, signal: new AbortController().signal },
+      {
+        session: target,
+        message,
+        preferences: DEFAULT_PREFERENCES,
+        signal: new AbortController().signal,
+      },
       (e) => events.push(e),
     );
     return events;
   };
-  return { calls, session, run };
+  const run = (message: string) => runIn(session, message);
+  return { calls, session, sessions, run, runIn };
 }
 
 const init = (sessionId = "sdk-1") =>
@@ -194,6 +201,73 @@ describe("ClaudeAgentRunner", () => {
 
     await run("鈴鳴灯籠まつりにします");
     expect(calls[1]?.options.resume).toBe("sdk-1");
+  });
+
+  it("会話の記録は、その相談が名乗った記録だけから続け、別の相談の記録からは続けない", async () => {
+    const replying = (sdkSession: string, reply: string): Script =>
+      async function* () {
+        yield init(sdkSession);
+        yield text(reply);
+        yield blockStop();
+        yield success();
+      };
+    const { calls, sessions, runIn } = setup([
+      replying("sdk-a", "A への返事。"),
+      replying("sdk-b", "B への返事。"),
+      replying("sdk-a", "A への続きの返事。"),
+      replying("sdk-b", "B への続きの返事。"),
+    ]);
+    const a = sessions.create();
+    const b = sessions.create();
+
+    const firstA = await runIn(a, "A の発言");
+    const firstB = await runIn(b, "B の発言");
+    await runIn(a, "A の続きの発言");
+    await runIn(b, "B の続きの発言");
+
+    expect(calls.map((call) => call.options.resume)).toEqual([
+      undefined,
+      undefined,
+      "sdk-a",
+      "sdk-b",
+    ]);
+    expect(a.agentSessionId).toBe("sdk-a");
+    expect(b.agentSessionId).toBe("sdk-b");
+    expect(JSON.stringify(firstA)).not.toContain("B への返事");
+    expect(JSON.stringify(firstB)).not.toContain("A への返事");
+    expect(calls[1]?.prompt).not.toContain("A の発言");
+  });
+
+  it("同時に返事を作っても、相談どうしで返答の文が混ざらない", async () => {
+    let arrived = 0;
+    let open = () => {};
+    const gate = new Promise<void>((resolve) => {
+      open = resolve;
+    });
+    const overlapping = (sdkSession: string, reply: string): Script =>
+      async function* () {
+        yield init(sdkSession);
+        yield text(`${reply}のはじめ。`);
+        yield blockStop();
+        arrived += 1;
+        if (arrived === 2) open();
+        await gate;
+        yield text(`${reply}のおわり。`);
+        yield blockStop();
+        yield success();
+      };
+    const { sessions, runIn } = setup([overlapping("sdk-a", "A"), overlapping("sdk-b", "B")]);
+    const a = sessions.create();
+    const b = sessions.create();
+
+    const [eventsA, eventsB] = await Promise.all([runIn(a, "発言"), runIn(b, "発言")]);
+
+    const texts = (events: SseEvent[]) =>
+      events.flatMap((event) => (event.type === "message.delta" ? [event.data.text] : []));
+    expect(texts(eventsA)).toEqual(["Aのはじめ。", "Aのおわり。"]);
+    expect(texts(eventsB)).toEqual(["Bのはじめ。", "Bのおわり。"]);
+    expect(a.agentSessionId).toBe("sdk-a");
+    expect(b.agentSessionId).toBe("sdk-b");
   });
 
   it("何も送る前の一時的な失敗は、1回だけやり直す", async () => {
