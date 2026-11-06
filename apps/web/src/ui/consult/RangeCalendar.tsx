@@ -75,6 +75,8 @@ export function RangeCalendar({
       setStart(date);
       // 行きと祭りの日の間は帰りにできないので、祭りの日へ焦点を移す
       if (mustInclude !== undefined && date < mustInclude) moveTo(mustInclude);
+      // 帰りを選ぶ前に ＞ で進んでも、前に選んだ期間のまま進まないよう、ひとまず日帰りにしておく
+      if (mustInclude === undefined) onRange(date, date);
       return;
     }
     setStart(null);

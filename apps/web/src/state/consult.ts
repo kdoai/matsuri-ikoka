@@ -364,6 +364,18 @@ export function isDayTrip(answers: ConsultAnswers): boolean {
   return schedule.stay === "dayTrip";
 }
 
+/**
+ * 確認から日程を直して、泊まりを日帰りにしたか。
+ * このときは片道の所要時間を選べるよう、行き先に寄ってから確認へ戻る
+ */
+export function becameDayTripWhileEditing(
+  editing: boolean,
+  wasDayTrip: boolean,
+  answers: ConsultAnswers,
+): boolean {
+  return editing && !wasDayTrip && isDayTrip(answers);
+}
+
 /** 日帰りの片道の所要時間の上限を選ぶ。選んである上限を押し直すと外す */
 export function setTravel(answers: ConsultAnswers, travel: TravelLimit): ConsultAnswers {
   const current = answers.destination ?? EMPTY;
