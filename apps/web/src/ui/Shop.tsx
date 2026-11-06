@@ -45,7 +45,8 @@ import { WaitingCard } from "./Waiting";
 // - 計画：旅のしおり（旅程・旅の案内・持ち物と確認）を右に大きく開き、会話の窓は左下に寄せる。
 //   祭りの候補は絵葉書のカードで重ねる
 // 操作の案内は上の段の中に置き、ほかの窓は上の段の下から始めるので、どの幅でも重ならない。
-// 広い画面でしおりを開いていないときは、店内のようすと豆知識（クイズ）の窓を右に縦に並べる。会話の窓は画面の横の真ん中に置く。
+// 幅 1024px 以上でしおりを開いていないときは、店内のようすと豆知識（クイズ）の窓を右に縦に並べる。
+// 会話の窓は、幅 1280px 以上なら画面の横の真ん中に、それより狭ければ右の列の左の空いたところに置く。
 // 旅程の提案が出たあとは、旅程を読む邪魔にならないよう豆知識（クイズ）の窓を出さない
 
 export function LanguageButton({ className = "" }: { className?: string }) {
@@ -157,7 +158,7 @@ export function Shop() {
   const panelRef = useRef<HTMLDivElement>(null);
   const beside = wide && panelOpen;
   /** 店内のようすと豆知識の窓を、右の列に並べるか */
-  const sideColumn = roomy && !panelOpen;
+  const sideColumn = wide && !panelOpen;
   // 右の列としおりの窓は同時に出ないので、同じ ref で幅を測る
   const frame = useFrameInsets(topRef, dialogueRef, panelRef, beside || sideColumn);
 
@@ -300,10 +301,13 @@ export function Shop() {
         className={`absolute inset-x-2 bottom-2 z-20 sm:inset-x-3 sm:bottom-3 ${
           beside
             ? "lg:right-[calc(min(44rem,48vw)+1.5rem)] lg:left-3"
-            : sideColumn
-              ? // 右の列と重ならない幅で、画面の横の真ん中に置く
-                "lg:inset-x-0 lg:mx-auto lg:w-[min(50rem,calc(100vw-47rem))]"
-              : "lg:inset-x-0 lg:mx-auto lg:w-[min(50rem,calc(100vw-30rem))]"
+            : !sideColumn
+              ? "lg:inset-x-0 lg:mx-auto lg:w-[min(50rem,calc(100vw-30rem))]"
+              : roomy
+                ? // 右の列と重ならない幅で、画面の横の真ん中に置く
+                  "lg:inset-x-0 lg:mx-auto lg:w-[min(50rem,calc(100vw-47rem))]"
+                : // 真ん中に置くと狭くなりすぎる幅では、右の列の左の空いたところに置く
+                  "lg:right-[24rem] lg:left-3 lg:mx-auto lg:max-w-[50rem]"
         }`}
       >
         {/* 右の列がないときは、待ち時間の窓を会話の窓の真上の中ほどに置き、左上の店内のようすに重ねない */}

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { MESSAGES } from "../i18n";
 import {
+  becameDayTripWhileEditing,
   budgetBasis,
   type ConsultAnswers,
   canReach,
@@ -306,6 +307,15 @@ describe("日付", () => {
 });
 
 describe("日帰りの所要時間の上限", () => {
+  it("確認から日程を直して泊まりを日帰りにしたときだけ、行き先に寄る", () => {
+    const dayTrip = setStay(pickAnswer({}, "schedule", "nextWeekend"), "dayTrip");
+    const oneNight = setStay(pickAnswer({}, "schedule", "nextWeekend"), "oneNight");
+    expect(becameDayTripWhileEditing(true, false, dayTrip)).toBe(true);
+    expect(becameDayTripWhileEditing(true, true, dayTrip)).toBe(false);
+    expect(becameDayTripWhileEditing(false, false, dayTrip)).toBe(false);
+    expect(becameDayTripWhileEditing(true, false, oneNight)).toBe(false);
+  });
+
   it("日帰りか：日帰りを選んだか、行きと帰りが同じ日", () => {
     expect(isDayTrip({})).toBe(false);
     expect(isDayTrip(setStay(pickAnswer({}, "schedule", "nextWeekend"), "dayTrip"))).toBe(true);

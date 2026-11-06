@@ -18,10 +18,12 @@ import {
   anchoredDestinationText,
   answerText,
   BUDGET_BASES,
+  becameDayTripWhileEditing,
   budgetBasis,
   type ChoiceQuestion,
   CONSULT_OPTIONS,
   COUNT_LIMITS,
+  type ConsultAnswers,
   type ConsultEntry,
   type ConsultQuestion,
   type ConsultStep,
@@ -332,9 +334,21 @@ function BudgetAmount() {
 function ScheduleStep() {
   const t = useT();
   const { actions, advance } = useConsult();
-  const answer = useApp((state) => state.consult.answers.schedule);
+  const answers = useApp((state) => state.consult.answers);
+  const editing = useApp((state) => state.consult.editing);
+  const answer = answers.schedule;
   const pick = answer?.picks[0];
   const today = todayInJapan();
+  // この段階を開いたときに日帰りだったか
+  const [wasDayTrip] = useState(() => isDayTrip(answers));
+  const finish = (next: ConsultAnswers) => {
+    if (becameDayTripWhileEditing(editing, wasDayTrip, next)) {
+      actions.setConsultStep("destination", true);
+      focusStep();
+    } else {
+      advance();
+    }
+  };
   // 「日付を指定」を押したときだけ、開いたカレンダーへ焦点を移す（戻ってきたときは移さない）
   const [justOpened, setJustOpened] = useState(false);
   const options = t.consult.options.schedule;
@@ -361,8 +375,8 @@ function ScheduleStep() {
           today={today}
           range={answer?.range}
           autoFocus={justOpened}
-          onRange={(from, to) => actions.editConsult((answers) => setRange(answers, from, to))}
-          onDecide={advance}
+          onRange={(from, to) => actions.editConsult((current) => setRange(current, from, to))}
+          onDecide={() => finish(answers)}
         />
       ) : pick !== undefined ? (
         <div className="mt-2 animate-fade">
@@ -372,8 +386,8 @@ function ScheduleStep() {
                 key={stay}
                 pressed={answer?.stay === stay}
                 onClick={() => {
-                  actions.editConsult((answers) => setStay(answers, stay));
-                  advance();
+                  actions.editConsult((current) => setStay(current, stay));
+                  finish(setStay(answers, stay));
                 }}
               >
                 {t.consult.stay[stay]}

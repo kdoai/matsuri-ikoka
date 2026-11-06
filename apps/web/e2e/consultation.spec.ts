@@ -293,6 +293,23 @@ test("待ち時間には豆知識係が祭りの話と出典を出し、送る�
   await expect(guide).toHaveCount(0);
 });
 
+test("幅 1024px 以上 1280px 未満でも、豆知識の窓を右に寄せ、会話の窓と重ねない", async ({
+  page,
+}, info) => {
+  test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
+  await page.setViewportSize({ width: 1190, height: 800 });
+  await enterShop(page);
+  await sendSampleMessage(page, 0);
+  const guide = page.getByTestId("waiting-guide");
+  await expect(guide).toBeVisible();
+  await expectNoOverlap(page, "waiting-guide", ["dialogue"]);
+  const box = await guide.boundingBox();
+  const dialogue = await page.getByTestId("dialogue").boundingBox();
+  expect(box?.x ?? 0).toBeGreaterThanOrEqual(1190 / 2);
+  // 会話の窓が右の列に押されて狭くなりすぎない
+  expect(dialogue?.width ?? 0).toBeGreaterThanOrEqual(640);
+});
+
 test("キーボードだけで、候補を閉じ、タブを移れる", async ({ page }, info) => {
   test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
   await enterShop(page);
