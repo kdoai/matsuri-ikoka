@@ -3,6 +3,15 @@
 import type { Confidence, Source } from "../common";
 import type { FestivalCandidate } from "../events";
 import type { FestivalInput } from "../festival";
+import type {
+  CheckedChange,
+  GuideMemoItem,
+  GuideNotice,
+  GuideProposal,
+  PatrolReport,
+  PatrolRequest,
+  TripWatch,
+} from "../guide";
 import type { Itinerary, LodgingSearch } from "../itinerary";
 
 export const FICTIONAL_FESTIVAL_ID = "suzunari-toro";
@@ -312,6 +321,129 @@ export function fictionalResearchedLodgingSearch(): LodgingSearch {
         },
       },
     ],
+  };
+}
+
+/** 架空の旅の見回りの依頼（旅の翌日に止まる） */
+export function fictionalTripWatch(): TripWatch {
+  return {
+    tripId: "trip-suzunari",
+    status: "active",
+    startedAt: "2026-08-01T10:00:00+09:00",
+    endsOn: "2026-08-17",
+    stoppedAt: null,
+    lastCheckedAt: "2026-08-10T06:00:00+09:00",
+  };
+}
+
+/** 架空の祭りの見回りの依頼。公式のページの開始の時刻の行が変わった */
+export function fictionalPatrolRequest(): PatrolRequest {
+  return {
+    patrolId: "patrol-0123456789ab",
+    requestedAt: "2026-08-10T06:00:00+09:00",
+    targets: [
+      {
+        festivalId: FICTIONAL_FESTIVAL_ID,
+        festivalName: "鈴鳴灯籠まつり",
+        date: "2026-08-16",
+        pages: [
+          {
+            url: "https://example.com/suzunari/2026",
+            reason: "changed",
+            changedLines: ["開始 19:30 / 終了 21:30"],
+          },
+        ],
+      },
+    ],
+  };
+}
+
+/** 架空の祭りの見回りの報告。公式のページで開始と終了の時刻が変わっていた */
+export function fictionalPatrolReport(): PatrolReport {
+  return {
+    patrolId: "patrol-0123456789ab",
+    findings: [
+      {
+        festivalId: FICTIONAL_FESTIVAL_ID,
+        date: "2026-08-16",
+        result: "changed",
+        observed: { date: "2026-08-16", start: "19:30", end: "21:30" },
+        topics: [],
+        dateText: "令和8年8月16日 19時30分から",
+        pages: ["https://example.com/suzunari/2026"],
+      },
+    ],
+  };
+}
+
+/** 検問を通った架空の変化：開始と終了の時刻が1時間遅くなった */
+export function fictionalCheckedChange(): CheckedChange {
+  return {
+    fingerprint: "0123456789abcdef",
+    content: {
+      kind: "schedule_change",
+      festivalId: FICTIONAL_FESTIVAL_ID,
+      date: "2026-08-16",
+      changes: [
+        { field: "start", before: "18:30", after: "19:30" },
+        { field: "end", before: "21:00", after: "21:30" },
+      ],
+    },
+    sources: [
+      { url: "https://example.com/suzunari/2026", checkedAt: "2026-08-10", confidence: "official" },
+    ],
+    checkedAt: "2026-08-10T06:05:00+09:00",
+  };
+}
+
+/** 架空の旅に届いた未読の通知 */
+export function fictionalNotice(): GuideNotice {
+  return {
+    ...fictionalCheckedChange(),
+    id: "notice-suzunari-1",
+    tripId: "trip-suzunari",
+    summary: "鈴鳴灯籠まつりの開始が 18:30 から 19:30 に変わりました",
+    affectedItemIds: ["festival"],
+    proposalId: "proposal-suzunari-1",
+    createdAt: "2026-08-10T06:06:00+09:00",
+    readAt: null,
+  };
+}
+
+/** 架空の旅の組み直しの提案（第1版を、開始の時刻に合わせて第2版にする案）。承認を待っている */
+export function fictionalProposal(): GuideProposal {
+  const itinerary = fictionalItinerary();
+  itinerary.version = 2;
+  const festival = itinerary.days[0]?.items.find((item) => item.id === "festival");
+  if (festival !== undefined) {
+    festival.start = "19:30";
+    festival.end = "21:30";
+    festival.changedInVersion = 2;
+  }
+  return {
+    id: "proposal-suzunari-1",
+    tripId: itinerary.id,
+    status: "pending",
+    noticeIds: ["notice-suzunari-1"],
+    summary: "祭りの時刻に合わせて、会場に着く時間を1時間遅らせます",
+    baseVersion: 1,
+    contentHash: "0123456789abcdef".repeat(4),
+    itinerary,
+    diff: { fromVersion: 1, toVersion: 2, added: [], changed: ["festival"], removed: [] },
+    createdAt: "2026-08-10T06:06:00+09:00",
+    expiresAt: "2026-08-16T00:00:00+09:00",
+    decidedAt: null,
+  };
+}
+
+/** ガイドの手帳の架空の項目 */
+export function fictionalMemoItem(): GuideMemoItem {
+  return {
+    id: "memo-suzunari-1",
+    kind: "pace",
+    text: "連れは歩くのがゆっくり",
+    createdAt: "2026-08-10T20:00:00+09:00",
+    updatedAt: "2026-08-10T20:00:00+09:00",
   };
 }
 

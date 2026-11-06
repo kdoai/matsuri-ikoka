@@ -5,6 +5,7 @@ export * from "./evaluation";
 export * from "./events";
 export * from "./festival";
 export * from "./festivalSearch";
+export * from "./guide";
 export * from "./itinerary";
 export * from "./preferences";
 export * from "./quiz";
