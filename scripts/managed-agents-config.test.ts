@@ -123,8 +123,8 @@ describe("プロンプト", () => {
 describe("費用", () => {
   const modelOf = ({ frontmatter }: AgentFile) => field(frontmatter, /^model:\n {2}id: (\S+)$/m);
 
-  it("読む量の多い調査員に、いちばん軽いモデルを使う", () => {
-    expect(modelOf(reader)).toContain("haiku");
+  it("調査員は調べ方を工夫できるモデルにし、いちばん大きいモデルは使わない", () => {
+    expect(modelOf(reader)).toContain("sonnet");
     expect(modelOf(lead)).not.toContain("opus");
     expect(modelOf(reviewer)).not.toContain("opus");
   });
@@ -134,12 +134,17 @@ describe("費用", () => {
     expect(deployment).toContain("currency: USD");
   });
 
-  it("採点のやり直しは1回までにする", () => {
-    expect(field(deployment, /max_iterations: (\d+)/)).toBe("1");
+  it("採点のやり直しは2回までにする", () => {
+    expect(field(deployment, /max_iterations: (\d+)/)).toBe("2");
   });
 
   it("調査員の検索とページの数に上限を書いてある", () => {
-    expect(reader.system).toContain("検索は3回まで");
+    expect(reader.system).toContain("検索は12回まで");
+  });
+
+  it("not_found は、たどった情報源を採点で確かめる", () => {
+    expect(reader.system).toContain('"tried"');
+    expect(deployment).toContain("organizer・municipality・tourism・news・sns");
   });
 });
 

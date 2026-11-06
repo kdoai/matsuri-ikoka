@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { IsoDateSchema, LocalTimeSchema, SlugSchema } from "./common";
+import { OCCURRENCE_STATUSES } from "./festival";
 
 /** 調査員が開催を確かめた根拠。quote はページにそのまま書いてある短い引用 */
 export const ResearchEvidenceSchema = z.strictObject({
@@ -17,7 +18,7 @@ export const ResearchOccurrencePatchSchema = z.strictObject({
   endDate: IsoDateSchema.optional(),
   start: LocalTimeSchema.nullable(),
   end: LocalTimeSchema.nullable(),
-  status: z.enum(["announced", "postponed", "cancelled"]),
+  status: z.enum(OCCURRENCE_STATUSES),
   rainPolicy: z.string().min(1).max(200).nullable(),
   note: z.string().min(1).max(200).optional(),
 });
@@ -34,6 +35,11 @@ export const ResearchReportSchema = z
     outcome: z.enum(["found", "not_found"]),
     occurrence: ResearchOccurrencePatchSchema.nullable(),
     evidence: z.array(ResearchEvidenceSchema).max(8),
+    /** たどった情報源の種類。not_found の調べ方が足りているかを採点で見る */
+    tried: z
+      .array(z.enum(["organizer", "municipality", "tourism", "news", "sns", "travel"]))
+      .max(6)
+      .optional(),
   })
   .refine(
     (report) =>

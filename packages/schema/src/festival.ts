@@ -181,7 +181,8 @@ export function unknownEtiquetteItems(
 
 /**
  * 開催の状態。
- * announced 主催者が今回の開催を発表した / expected 例年の傾向からの見込み（未発表）/
+ * announced 今回の日付が年つきで発表されている（確かさは出典の確度で見る）/
+ * expected 例年の決まりや傾向からの見込み（今回の日付の発表は未確認）/
  * postponed 延期 / cancelled 中止
  */
 export const OCCURRENCE_STATUSES = ["announced", "expected", "postponed", "cancelled"] as const;
