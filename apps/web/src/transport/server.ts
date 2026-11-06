@@ -53,7 +53,7 @@ export interface ServerTransportOptions {
   /** 接客サーバーが記録の再生（mock）で動いているとき、再生する記録の名前 */
   sample?: string | null;
   fetch?: typeof fetch;
-  /** ログインしていれば ID トークンを返す。していなければ null */
+  /** ログインしていれば ID トークンを返す。していなければ null。ログイン中に取れなければ例外 */
   idToken?: () => Promise<string | null>;
 }
 
@@ -61,9 +61,17 @@ export function createServerTransport(options: ServerTransportOptions = {}): Cha
   const passcode = options.passcode ?? createPasscodeHolder();
   const fetchImpl: typeof fetch = options.fetch ?? ((input, init) => globalThis.fetch(input, init));
 
-  /** 相談の呼び出しのヘッダー。トークンを取れなければ、ログインなしとして送る */
+  /**
+   * 相談の呼び出しのヘッダー。ログイン中にトークンを取れなければ、送らずに再試行できるエラーにする。
+   * ログインなしとして送ると、持ち主のある相談が 404 になり、画面が相談を作り直してしまう
+   */
   const consultHeaders = async (): Promise<Record<string, string>> => {
-    const token = (await options.idToken?.().catch(() => null)) ?? null;
+    let token: string | null;
+    try {
+      token = (await options.idToken?.()) ?? null;
+    } catch (error) {
+      throw error instanceof TransportError ? error : new TransportError("connection_lost");
+    }
     return {
       "Content-Type": "application/json",
       ...authHeaders(passcode),

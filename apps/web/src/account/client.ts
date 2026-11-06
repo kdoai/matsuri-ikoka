@@ -33,14 +33,16 @@ export interface AccountClient {
   shareTrip(itineraryId: string): Promise<string>;
   /**
    * ログインしていれば ID トークン。していなければ null。
-   * 相談をログインした人に結びつけるのに使う。ログインの部品を読み込んでいなければ、読み込まずに null を返す
+   * 相談をログインした人に結びつけるのに使う。ログインの部品を読み込んでいなければ、読み込まずに null を返す。
+   * ログイン中に取れないときは、再試行できるエラーにする（ログインなしとして送ると、持ち主のある相談が 404 になる）
    */
   idToken(): Promise<string | null>;
   /**
-   * 自分の旅程のしおりを開くパス。自分の旅程は旅程の ID では開けないので、共有を作って開く。
-   * 同じ版では作り直さない。ログインしていない・自分の旅程でなければ null（旅程の ID のまま開ける）
+   * 自分の旅程のしおりを開くパス。自分の旅程は旅程の ID では開けないので、共有で開く。
+   * 同じ内容の共有があれば、サーバーがそれを返す。
+   * ログインしていない・自分の旅程でなければ null（旅程の ID のまま開ける）
    */
-  ownShioriPath(itineraryId: string, version: number): Promise<string | null>;
+  ownShioriPath(itineraryId: string): Promise<string | null>;
   deleteTrip(itineraryId: string): Promise<void>;
   /** 自分の旅をすべて消し、ログインの記録（Firebase のアカウント）も消してログアウトする */
   deleteEverything(): Promise<void>;
@@ -103,8 +105,6 @@ export function createAccountClient(
   const fetchImpl: typeof fetch = options.fetch ?? ((input, init) => globalThis.fetch(input, init));
   let configPromise: Promise<AuthConfig> | null = null;
   let firebasePromise: Promise<FirebaseAuthPart> | null = null;
-  /** 旅程と版 → 作った共有のパス */
-  const ownPaths = new Map<string, string>();
 
   const passcodeHeaders = (): Record<string, string> => {
     const value = options.passcode?.get() ?? null;
@@ -160,11 +160,19 @@ export function createAccountClient(
 
   const idToken = async (): Promise<string | null> => {
     if (firebasePromise === null) return null;
+    let part: FirebaseAuthPart;
     try {
-      const user = (await firebasePromise).currentUser;
-      return user === null ? null : await user.getIdToken();
+      part = await firebasePromise;
     } catch {
+      // ログインの部品を読み込めなければ、ログインしていない
       return null;
+    }
+    const user = part.currentUser;
+    if (user === null) return null;
+    try {
+      return await user.getIdToken();
+    } catch {
+      throw new TransportError("connection_lost");
     }
   };
 
@@ -188,11 +196,9 @@ export function createAccountClient(
     async signIn() {
       const part = await firebase();
       if (part === null) throw new TransportError("unauthorized");
-      ownPaths.clear();
       await part.signIn();
     },
     async signOut() {
-      ownPaths.clear();
       await (await firebase())?.signOut();
     },
     async listTrips() {
@@ -205,15 +211,10 @@ export function createAccountClient(
     },
     shareTrip,
     idToken,
-    async ownShioriPath(itineraryId, version) {
+    async ownShioriPath(itineraryId) {
       if ((await idToken()) === null) return null;
-      const key = `${itineraryId}@${version}`;
-      const known = ownPaths.get(key);
-      if (known !== undefined) return known;
       try {
-        const path = await shareTrip(itineraryId);
-        ownPaths.set(key, path);
-        return path;
+        return await shareTrip(itineraryId);
       } catch (error) {
         // ログインする前に組んだ、持ち主のない旅程は、旅程の ID のまま開ける
         if (error instanceof TransportError && error.status === 404) return null;
@@ -222,11 +223,9 @@ export function createAccountClient(
     },
     async deleteTrip(itineraryId) {
       await call(`/api/trips/${encodeURIComponent(itineraryId)}`, { method: "DELETE" });
-      ownPaths.clear();
     },
     async deleteEverything() {
       await call("/api/me/trips", { method: "DELETE" });
-      ownPaths.clear();
       await (await firebase())?.deleteUser();
     },
   };

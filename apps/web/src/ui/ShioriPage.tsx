@@ -47,13 +47,15 @@ export function ShioriPage() {
   const actions = useActions();
   const itinerary = useApp((state) => state.itinerary.current);
   const ready = useApp(shioriReady);
+  const checkedAt = useApp((state) => state.verify.checkedAt);
   const account = useAccountClient();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const frameRef = useRef<HTMLIFrameElement>(null);
-  const [resolved, setResolved] = useState<{ key: string; url: string } | null>(null);
+  const [resolved, setResolved] = useState<{ key: string; url: string | null } | null>(null);
+  const [attempt, setAttempt] = useState(0);
   const itineraryId = itinerary?.id ?? null;
-  const version = itinerary?.version ?? null;
-  const key = `${itineraryId}@${version}`;
+  // 版が同じでも、開催の確かめ直しで内容が変わるので、確かめた時刻もいっしょに見る
+  const key = `${itineraryId}@${itinerary?.version}@${checkedAt}#${attempt}`;
 
   useEffect(() => {
     headingRef.current?.focus();
@@ -61,22 +63,26 @@ export function ShioriPage() {
 
   // 自分の旅程は共有の ID で開く。ログインしていなければ、旅程の ID のまま
   useEffect(() => {
-    if (!ready || itineraryId === null || version === null) return;
+    if (!ready || itineraryId === null) return;
     let active = true;
-    void resolveShioriUrl(account, { id: itineraryId, version }, window.location.origin).then(
+    void resolveShioriUrl(account, itineraryId, window.location.origin).then(
       (url) => {
         if (active) setResolved({ key, url });
+      },
+      () => {
+        if (active) setResolved({ key, url: null });
       },
     );
     return () => {
       active = false;
     };
-  }, [account, ready, itineraryId, version, key]);
+  }, [account, ready, itineraryId, key]);
 
   if (itinerary === null) {
     return null;
   }
-  const shareUrl = ready && resolved?.key === key ? resolved.url : null;
+  const settled = resolved?.key === key;
+  const shareUrl = ready && settled ? resolved.url : null;
 
   return (
     <div className="flex h-dvh flex-col bg-wood-800" data-testid="shiori">
@@ -120,7 +126,25 @@ export function ShioriPage() {
       </div>
       {!ready ? (
         <p className="m-4 rounded-xl bg-kinari-50 p-4 text-ink">{t.shiori.notReady}</p>
-      ) : shareUrl === null ? null : (
+      ) : !settled ? (
+        <p role="status" className="m-4 rounded-xl bg-kinari-50 p-4 text-ink">
+          {t.shiori.preparing}
+        </p>
+      ) : shareUrl === null ? (
+        <div
+          role="alert"
+          className="m-4 grid justify-items-start gap-3 rounded-xl bg-kinari-50 p-4 text-ink"
+        >
+          <p>{t.shiori.prepareFailed}</p>
+          <button
+            type="button"
+            className={buttonSecondary}
+            onClick={() => setAttempt((count) => count + 1)}
+          >
+            {t.shiori.retry}
+          </button>
+        </div>
+      ) : (
         <iframe
           ref={frameRef}
           src={`${shareUrl}?embed=1`}

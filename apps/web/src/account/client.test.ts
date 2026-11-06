@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createPasscodeHolder, PASSCODE_HEADER } from "../transport/server";
-import { TransportError } from "../transport/types";
+import { TransportError, toClientError } from "../transport/types";
 import { createAccountClient } from "./client";
 
 // Firebase の部品の代わり。ネットワークに出ない
@@ -66,7 +66,7 @@ describe("createAccountClient", () => {
     const client = createAccountClient({ fetch });
 
     expect(await client.idToken()).toBeNull();
-    expect(await client.ownShioriPath("trip-1", 1)).toBeNull();
+    expect(await client.ownShioriPath("trip-1")).toBeNull();
     expect(fetch).not.toHaveBeenCalled();
   });
 });
@@ -108,7 +108,7 @@ describe("ログインしているとき", () => {
     expect(await client.idToken()).toBeNull();
   });
 
-  it("トークンを取れなければ、ログインなしとして扱う", async () => {
+  it("ログイン中にトークンを取れなければ、再試行できるエラーにする", async () => {
     const { client } = await signedIn(() => json({}));
     firebaseAuth.currentUser = {
       displayName: null,
@@ -117,19 +117,20 @@ describe("ログインしているとき", () => {
       },
     };
 
-    expect(await client.idToken()).toBeNull();
+    await expect(client.idToken()).rejects.toMatchObject({ code: "connection_lost" });
+    expect(toClientError(await client.idToken().catch((error) => error)).retryable).toBe(true);
   });
 
-  it("自分の旅程のしおりは共有を作って開き、同じ版では作り直さない", async () => {
+  it("自分の旅程のしおりは、サーバーに頼んで受け取った共有で開く", async () => {
     let made = 0;
     const { client, calls } = await signedIn(() => {
       made += 1;
       return share(`sh-${made}`);
     });
 
-    expect(await client.ownShioriPath("trip-1", 1)).toBe("/shiori/sh-1");
-    expect(await client.ownShioriPath("trip-1", 1)).toBe("/shiori/sh-1");
-    expect(await client.ownShioriPath("trip-1", 2)).toBe("/shiori/sh-2");
+    expect(await client.ownShioriPath("trip-1")).toBe("/shiori/sh-1");
+    expect(await client.ownShioriPath("trip-1")).toBe("/shiori/sh-2");
+    // 使い回すかどうかはサーバーが決めるので、控えを持たずに毎回頼む
     expect(calls()).toEqual(["/api/trips/trip-1/share", "/api/trips/trip-1/share"]);
   });
 
@@ -138,21 +139,22 @@ describe("ログインしているとき", () => {
       json({ code: "bad_request", message: "旅が見つかりません。", retryable: false }, 404),
     );
 
-    expect(await client.ownShioriPath("trip-1", 1)).toBeNull();
+    expect(await client.ownShioriPath("trip-1")).toBeNull();
   });
 
-  it("ログアウトと旅を消すと、作った共有を忘れる", async () => {
-    let made = 0;
-    const { client } = await signedIn((path) => {
-      if (path === "/api/trips/trip-1") return new Response(null, { status: 204 });
-      made += 1;
-      return share(`sh-${made}`);
-    });
+  it("共有を作れなければ、エラーにする（旅程の ID で開くと「見つかりません」になる）", async () => {
+    const { client } = await signedIn(() =>
+      json({ code: "internal", message: "サーバーでエラーが起きました。", retryable: true }, 500),
+    );
 
-    expect(await client.ownShioriPath("trip-1", 1)).toBe("/shiori/sh-1");
-    await client.deleteTrip("trip-1");
-    expect(await client.ownShioriPath("trip-1", 1)).toBe("/shiori/sh-2");
-    await client.signOut();
-    expect(await client.ownShioriPath("trip-1", 1)).toBe("/shiori/sh-3");
+    await expect(client.ownShioriPath("trip-1")).rejects.toBeInstanceOf(TransportError);
+  });
+
+  it("ログインしていなければ、共有を頼まない", async () => {
+    const { client, calls } = await signedIn(() => share("sh-1"));
+    firebaseAuth.currentUser = null;
+
+    expect(await client.ownShioriPath("trip-1")).toBeNull();
+    expect(calls()).toEqual([]);
   });
 });
