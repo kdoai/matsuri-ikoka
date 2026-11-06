@@ -6,7 +6,8 @@ name: デプロイ
 # 切り替える前に失敗したら、通信は前の版のまま。切り替えたあとの確かめに失敗したら、通信を前の版に戻す。
 # 手で前の版に戻すときは rollback.yml を使う（docs/spec/operations.md の「前の版に戻す」）。
 # サービスの設定（環境変数・シークレット・CPU とメモリ）は Cloud Run の側にあり、ここではイメージを差し替える。
-# インスタンスの数（最小 0・最大 1）だけは、コンソールで変わっていても版ごとにここで決め直す。
+# インスタンスの数（最小 0・最大 1）と、live で動くことと保存先（Firestore）は、
+# コンソールで変わっていても版ごとにここで決め直す。
 # 使う GitHub Actions の変数は docs/spec/operations.md の「デプロイ」にある。
 
 on:
@@ -105,6 +106,7 @@ jobs:
             --project "$PROJECT_ID" --region "$REGION" \
             --image "${IMAGE}@${DIGEST}" \
             --min-instances 0 --max-instances 1 \
+            --update-env-vars "MATSURI_AGENT_MODE=live,MATSURI_STORAGE=firestore,FIREBASE_PROJECT_ID=${PROJECT_ID}" \
             --no-traffic --tag candidate --quiet
 
       # 合言葉（ACCESS_PASSCODE）をサービスに設定しているときだけ、相談の API が守られていることを求める
