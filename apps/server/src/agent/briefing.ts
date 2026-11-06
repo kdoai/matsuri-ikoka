@@ -291,11 +291,11 @@ export function staffBriefing(ctx: ToolContext, staff: Staff): string {
       // 組み直しを減らすため、行く日ごとの「会場に着く締め切り」をコードで出して渡す
       const deadlines = festival.occurrences
         .filter((o) => o.status !== "cancelled" && (o.endDate ?? o.date) >= ctx.today())
-        .flatMap((o) => (o.start === null ? [] : [{ date: o.date, start: o.start }]))
+        .flatMap((o) => (o.start === null ? [] : [{ date: o.date, start: o.start, end: o.end }]))
         .slice(0, 8)
         .map(
-          ({ date, start }) =>
-            `- ${formatMonthDayWithWeekday(date)}：${start} 開始 → ${fromMinutes(toMinutes(start) - buffer)} までに会場に着く（祭りの前の最後の予定の終わりと、会場までの移動の目安の長いほうを足して、この時刻より前にする）`,
+          ({ date, start, end }) =>
+            `- ${formatMonthDayWithWeekday(date)}：${start} 開始 → ${fromMinutes(toMinutes(start) - buffer)} までに会場に着く。祭りの予定（type: festival）は ${start}〜${end ?? "終わりの時刻は不明"} の中に収める（祭りの前の最後の予定の終わりと、会場までの移動の目安の長いほうを足して、この時刻より前にする）`,
         );
       if (deadlines.length > 0) parts.push(`日ごとの到着の締め切り：\n${deadlines.join("\n")}`);
     }

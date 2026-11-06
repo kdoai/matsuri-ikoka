@@ -15,7 +15,7 @@ import type { CandidateChecker } from "../tools/candidateCheck";
 import { newTurnState, type ToolContext } from "../tools/context";
 import type { LodgingService } from "../tools/lodging";
 import type { LodgingResearcher } from "../tools/lodgingResearch";
-import { confirmAnchor } from "../tools/matsuriTools";
+import { confirmAnchor, prefetchBriefing } from "../tools/matsuriTools";
 import { createMatsuriMcpServer } from "../tools/mcpServer";
 import type { NearbyResearcher } from "../tools/nearbyResearch";
 import type { PlanEvaluator } from "../tools/planEvaluator";
@@ -249,7 +249,12 @@ export class ClaudeAgentRunner implements AgentRunner {
           hooks: createAgentHooks({
             ctx,
             emit: counted,
-            briefing: (staff) => staffBriefing(ctx, staff),
+            briefing: async (staff) => {
+              const record = staffBriefing(ctx, staff);
+              if (staff !== "planner") return record;
+              const research = await prefetchBriefing(ctx);
+              return research === "" ? record : `${record}\n${research}`;
+            },
           }),
           cwd: deps.cwd,
           env: deps.env,

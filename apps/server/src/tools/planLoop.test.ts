@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { researchedSpotId } from "../domain/nearbyResearch";
 import { testFestival } from "../domain/testFestivals";
 import { createStationPointIndex } from "../domain/travelEstimate";
-import { researchTrip, updateItinerary } from "./matsuriTools";
+import { prefetchBriefing, researchTrip, searchNearby, updateItinerary } from "./matsuriTools";
 import type {
   NearbyResearcher,
   NearbyResearchRequest,
@@ -327,6 +327,68 @@ describe("research_trip：経路と食事・寄り道を並べて調べる", () 
     };
     return fake;
   }
+
+  it("周辺を調べ始めると経路も並べて始め、旅程係に結果を渡し、同じ経路を2回調べない", async () => {
+    const routes = fakeRoutes(false);
+    const ctx = testToolContext([suzunari()], { stations, routes, nearby: fakeNearby() });
+    ctx.session.conditions = { origin: "こがね台駅" };
+
+    await searchNearby.run({ festivalId: "suzunari-toro", date: "2026-08-16" }, ctx, signal);
+    expect(ctx.turn.prefetch).not.toBeNull();
+
+    const briefing = await prefetchBriefing(ctx);
+    expect(briefing).toContain("先にサーバーが調べた結果");
+    expect(briefing).toContain("行きの経路");
+    expect(briefing).toContain("帰りの経路");
+    expect(briefing).not.toContain("祭りの夜の宿");
+
+    await researchTrip.run(
+      { festivalId: "suzunari-toro", date: "2026-08-16", only: ["route"] },
+      ctx,
+      signal,
+    );
+    expect(routes.calls).toHaveLength(2);
+  });
+
+  it("泊まりなら祭りの夜の宿も先に調べ、候補を相談に残す", async () => {
+    const routes = fakeRoutes(false);
+    const ctx = testToolContext([suzunari()], { stations, routes, nearby: fakeNearby() });
+    ctx.session.conditions = { origin: "こがね台駅", nights: 1 };
+
+    await searchNearby.run({ festivalId: "suzunari-toro", date: "2026-08-16" }, ctx, signal);
+    const briefing = await prefetchBriefing(ctx);
+
+    expect(briefing).toContain("祭りの夜の宿");
+    expect(ctx.session.lodging.has("2026-08-16")).toBe(true);
+  });
+
+  it("調べが待ち切れなければ、まだ調べていると伝えて先へ進む", async () => {
+    const routes = fakeRoutes(false);
+    routes.research = () => new Promise(() => {});
+    const ctx = testToolContext([suzunari()], { stations, routes, nearby: fakeNearby() });
+    ctx.session.conditions = { origin: "こがね台駅" };
+    await searchNearby.run({ festivalId: "suzunari-toro", date: "2026-08-16" }, ctx, signal);
+
+    expect(await prefetchBriefing(ctx, 1)).toContain("まだ調べています");
+  });
+
+  it("旅程があるとき（修正）や、調べ直しのときは、先の調べを始めない", async () => {
+    const routes = fakeRoutes(false);
+    const editing = testToolContext([suzunari()], { stations, routes, nearby: fakeNearby() });
+    editing.session.conditions = { origin: "こがね台駅" };
+    editing.session.itineraryId = "trip-1";
+    await searchNearby.run({ festivalId: "suzunari-toro", date: "2026-08-16" }, editing, signal);
+    expect(editing.turn.prefetch).toBeNull();
+
+    const redo = testToolContext([suzunari()], { stations, routes, nearby: fakeNearby() });
+    redo.session.conditions = { origin: "こがね台駅" };
+    await searchNearby.run(
+      { festivalId: "suzunari-toro", date: "2026-08-16", focus: "昼の店" },
+      redo,
+      signal,
+    );
+    expect(redo.turn.prefetch).toBeNull();
+  });
 
   it("行き・帰り・食事を並べて調べ、乗り換えの区間と帰りの最終を返し、読んだページを出典に残す", async () => {
     const routes = fakeRoutes(false);

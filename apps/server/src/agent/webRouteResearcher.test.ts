@@ -161,6 +161,19 @@ describe("乗り換えの区間と帰りの最終", () => {
     expect(report).not.toHaveProperty("legs");
   });
 
+  it("区間の駅の名前の書き方が違っても使い、両端を頼んだ駅の名前にそろえる", async () => {
+    const { research } = setup([
+      async (hook) => {
+        await read(hook, "https://example.com/route");
+        return JSON.stringify({
+          ...JSON.parse(ANSWER),
+          legs: [{ ...legs[0], from: `${legs[0]?.from}駅` }, ...legs.slice(1)],
+        });
+      },
+    ]);
+    expect((await research())?.legs?.[0]?.from).toBe(legs[0]?.from);
+  });
+
   it("帰りは最終の時刻も調べる。分からなければ null にし、行きとは別にとっておく", async () => {
     const { calls, researcher } = setup([
       async (hook) => {

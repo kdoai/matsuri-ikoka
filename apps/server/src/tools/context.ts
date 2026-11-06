@@ -40,7 +40,23 @@ export function isVisibleTool(name: AgentToolName): name is ToolName {
 }
 
 /** 1回の発言の間に起きたこと。会話の状態（done の stage）を決めるのに使う */
+/** 成否の分かる調べの結果（失敗しても投げない） */
+export type Settled<T> = { ok: true; value: T } | { ok: false; error: string };
+
+/**
+ * 旅程を組む前に、サーバーが先に並べて始める調べ（行き・帰りの経路と、祭りの夜の宿）。
+ * 調べを旅程係が呼ぶかどうかに任せず、組むときに結果を渡す
+ */
+export interface TripPrefetch {
+  key: string;
+  outbound: Promise<Settled<unknown>>;
+  inbound: Promise<Settled<unknown>>;
+  lodging: Promise<Settled<unknown>> | null;
+}
+
 export interface TurnState {
+  /** 先に始めた調べ。まだ始めていなければ null */
+  prefetch: TripPrefetch | null;
   /** この発言が始まった時刻（ミリ秒）。時間の残りを見て、調べ直しをやめる */
   startedAt: number;
   startedStaff: Set<StaffId>;
@@ -61,6 +77,7 @@ export interface TurnState {
 
 export function newTurnState(searchRetry: SearchRetry | null = null): TurnState {
   return {
+    prefetch: null,
     startedAt: Date.now(),
     startedStaff: new Set(),
     toolCalls: [],
