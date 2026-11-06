@@ -18,6 +18,11 @@ on:
     - cron: "0 3 * * 1"
     - cron: "0 9 * * 1"
     - cron: "0 21 * * 1"
+    # 臨時の調査：11/7 と 11/8 の 6:00（日本時間）に起動する。前の晩の 21:00 に準備し、当日の 12:00 と 18:00 に回収する。11/8 が過ぎたら消す
+    - cron: "0 12 6,7 11 *"
+    - cron: "0 21 6,7 11 *"
+    - cron: "0 3 7,8 11 *"
+    - cron: "0 9 7,8 11 *"
   workflow_dispatch:
     inputs:
       mode:
@@ -65,7 +70,7 @@ jobs:
       ANTHROPIC_WORKSPACE_ID: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
       MATSURI_REFRESH_ENABLED: ${{ vars.MATSURI_REFRESH_ENABLED }}
       # 定期のきっかけは、どの cron かで仕事を決める
-      MODE: ${{ inputs.mode || (github.event.schedule == '0 12 * * 0' && 'prepare') || 'collect' }}
+      MODE: ${{ inputs.mode || ((github.event.schedule == '0 12 * * 0' || github.event.schedule == '0 12 6,7 11 *') && 'prepare') || (github.event.schedule == '0 21 6,7 11 *' && 'trigger') || 'collect' }}
       LIMIT: ${{ inputs.limit }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
