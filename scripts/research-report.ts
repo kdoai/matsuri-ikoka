@@ -66,7 +66,11 @@ export function applyResearchReport(input: {
     ...(patch.endDate === undefined ? {} : { endDate: patch.endDate }),
     start: patch.start ?? previous?.start ?? null,
     end: patch.end ?? previous?.end ?? null,
-    status: patch.status,
+    // 見込みの報告で、発表済みの開催回を見込みに戻さない
+    status:
+      patch.status === "expected" && previous?.status === "announced"
+        ? previous.status
+        : patch.status,
     rainPolicy: patch.rainPolicy ?? previous?.rainPolicy ?? null,
     ...(note === undefined ? {} : { note }),
     sources: [

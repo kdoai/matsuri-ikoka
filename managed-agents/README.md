@@ -30,8 +30,7 @@ managed-agents/
 
 | 工夫                                              | ファイル                       |
 | ------------------------------------------------- | ------------------------------ |
-| 読む量の多い調査員に、いちばん軽いモデル          | `research-reader.md`           |
-| 検索は3回、ページは5件まで                        | `research-reader.md`           |
+| 検索は12回、ページは15件まで                      | `research-reader.md`           |
 | 確認役は found の報告だけを、根拠のページだけ見る | `research-reviewer.md`         |
-| 採点のやり直しは1回まで                           | `weekly-research.yaml`         |
+| 採点のやり直しは2回まで                           | `weekly-research.yaml`         |
 | 調べる祭りを絞る（確定した回は調べない）          | `scripts/research-schedule.ts` |

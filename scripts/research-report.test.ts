@@ -103,6 +103,39 @@ describe("applyResearchReport", () => {
     expect(result.ok && result.after.occurrences[0]?.end).toBe("21:00");
   });
 
+  it("公式でない情報源や見込みの報告も、形が合えば取り込む", () => {
+    const report = reportOf({
+      occurrence: {
+        date: DATE,
+        start: null,
+        end: null,
+        status: "expected",
+        rainPolicy: null,
+      },
+      evidence: [{ url: URL_A, quote: "毎年8月16日に開催", confidence: "single" }],
+      tried: ["organizer", "news"],
+    });
+    const result = apply(report);
+    expect(result.ok && result.after.occurrences[0]?.status).toBe("expected");
+  });
+
+  it("見込みの報告で、発表済みの開催回を見込みに戻さない", () => {
+    const before = festivalOf((f) => {
+      f.occurrences[0]!.status = "announced";
+    });
+    const report = reportOf({
+      occurrence: {
+        date: DATE,
+        start: null,
+        end: null,
+        status: "expected",
+        rainPolicy: null,
+      },
+    });
+    const result = apply(report, before);
+    expect(result.ok && result.after.occurrences[0]?.status).toBe("announced");
+  });
+
   it("備考のない報告は、前の備考を消さない", () => {
     const before = festivalOf((f) => {
       f.occurrences[0]!.note = "灯籠を流す順番は町内ごとに決まっている";
