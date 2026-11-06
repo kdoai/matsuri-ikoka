@@ -2,6 +2,7 @@ import type { FestivalCandidate, Itinerary, SearchOutcome, SseEvent } from "@mat
 import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
 import type { NearbySearchRound } from "../domain/nearbySearch";
+import { createOsmPlaceIndex } from "../domain/osmPlaces";
 import { testFestival } from "../domain/testFestivals";
 import { createStationPointIndex } from "../domain/travelEstimate";
 import { YEAR_NOT_STATED_NOTE } from "../domain/verification";
@@ -64,9 +65,8 @@ describe("note_conditions", () => {
       ctx,
       signal,
     );
-    // 4泊の旅なので、探しながら、組む前に要ることを2つずつ聞く
-    expect(second).toMatchObject({ readyToSearch: true });
-    expect((second.askNext as string[]).length).toBe(2);
+    // 探してよければ、それ以上は聞かない（宿やペースは案を見てから変えてもらう）
+    expect(second).toMatchObject({ readyToSearch: true, askNext: [] });
     expect(ctx.session.conditions).toMatchObject({ origin: "みなと中央駅", nights: 4 });
   });
 
@@ -599,8 +599,140 @@ function fakeNearby(
   return fake;
 }
 
+describe("search_nearby と OpenStreetMap", () => {
+  const osmSoba = {
+    type: "node" as const,
+    id: 7,
+    name: "鈴鳴そば庵",
+    location: { lat: 35.1221, lng: 136.0786 },
+    tags: { amenity: "restaurant", cuisine: "soba" },
+  };
+
+  it("Web の調べが失敗しても、OpenStreetMap の店を、営業は要確認として候補に出す", async () => {
+    const nearby = fakeNearby(async () => null);
+    const ctx = testToolContext([suzunari()], {
+      nearby,
+      osmPlaces: createOsmPlaceIndex([osmSoba]),
+    });
+
+    const output = await searchNearby.run(
+      { festivalId: "suzunari-toro", date: "2026-08-16" },
+      ctx,
+      signal,
+    );
+
+    expect(output.research).toMatchObject({ status: "researched" });
+    const spots = output.spots as {
+      name: string;
+      openStatus?: string;
+      sources: { title?: string }[];
+    }[];
+    const soba = spots.find((s) => s.name === "鈴鳴そば庵");
+    expect(soba?.openStatus).toBe("needs_check");
+    expect(soba?.sources[0]?.title).toContain("OpenStreetMap");
+    const candidates = output.mealCandidates as { lunch: { name: string }[] };
+    expect(candidates.lunch.map((c) => c.name)).toContain("鈴鳴そば庵");
+  });
+
+  it("同じ店は、営業を確かめた Web の報告を残す", async () => {
+    const nearby = fakeNearby(async () => ({
+      spots: [grill({ name: "鈴鳴 そば庵", location: { lat: 35.1222, lng: 136.0787 } })],
+    }));
+    const ctx = testToolContext([suzunari()], {
+      nearby,
+      osmPlaces: createOsmPlaceIndex([osmSoba]),
+    });
+    ctx.session.preferences = { ...ctx.session.preferences, food: "local" };
+
+    const output = await searchNearby.run(
+      { festivalId: "suzunari-toro", date: "2026-08-16" },
+      ctx,
+      signal,
+    );
+
+    const spots = output.spots as { name: string; openStatus?: string }[];
+    const sobas = spots.filter((s) => s.name.includes("そば庵"));
+    expect(sobas).toHaveLength(1);
+    expect(sobas[0]?.openStatus).toBe("confirmed");
+  });
+
+  it("会場の近くに店の少ない地域では、少し遠い店まで候補にする", async () => {
+    // 会場から北へ約4.4km
+    const far = { ...osmSoba, id: 8, name: "山あいの食堂", location: { lat: 35.16, lng: 136.08 } };
+    const ctx = testToolContext([suzunari()], {
+      osmPlaces: createOsmPlaceIndex([far]),
+      nearby: fakeNearby(async () => null),
+    });
+    const output = await searchNearby.run(
+      { festivalId: "suzunari-toro", date: "2026-08-16" },
+      ctx,
+      signal,
+    );
+    const candidates = output.mealCandidates as { lunch: { name: string }[] };
+    expect(candidates.lunch.map((c) => c.name)).toEqual(["山あいの食堂"]);
+  });
+
+  it("OpenStreetMap の店を、Web の調べに確かめる店として渡す", async () => {
+    const nearby = fakeNearby(async () => ({ spots: [] }));
+    const ctx = testToolContext([suzunari()], {
+      nearby,
+      osmPlaces: createOsmPlaceIndex([osmSoba]),
+    });
+    await searchNearby.run({ festivalId: "suzunari-toro", date: "2026-08-16" }, ctx, signal);
+    expect(nearby.requests[0]?.references.map((r) => r.name)).toContain("鈴鳴そば庵");
+  });
+});
+
+describe("search_lodging と OpenStreetMap", () => {
+  it("ほかの調べで宿がなければ、OpenStreetMap の宿を、空きは未確認の注意つきで出す", async () => {
+    const ctx = testToolContext([suzunari()], {
+      lodging: createUnavailableLodging(),
+      osmPlaces: createOsmPlaceIndex([
+        {
+          type: "way",
+          id: 9,
+          name: "鈴鳴の宿",
+          location: { lat: 35.1221, lng: 136.0786 },
+          tags: { tourism: "guest_house", website: "https://example.com/inn" },
+        },
+      ]),
+    });
+    const result = await searchLodging.run(
+      {
+        festivalId: "suzunari-toro",
+        checkIn: "2026-08-16",
+        nights: 1,
+        party: { adults: 2, children: 0 },
+      },
+      ctx,
+      signal,
+    );
+    expect(result).toMatchObject({ status: "ok", provider: "web" });
+    expect(result.notice).toContain("空きは調べていません");
+    expect((result.offers as { name: string; nightlyTotalYen: number | null }[])[0]).toMatchObject({
+      name: "鈴鳴の宿",
+      nightlyTotalYen: null,
+    });
+  });
+});
+
 describe("search_nearby と周辺係の Web の調べ", () => {
-  it("調べた店のうち、食べたいものに合い行く日に営業する店を返し、相談に残す", async () => {
+  it("屋台で十分のこだわりでも、夜の祭りの日は、昼に入れる店を返す", async () => {
+    const nearby = fakeNearby(async () => ({ spots: [grill()] }));
+    const ctx = testToolContext([suzunari()], { nearby });
+    expect(ctx.session.preferences.food).toBe("stalls");
+
+    const output = await searchNearby.run(
+      { festivalId: "suzunari-toro", date: "2026-08-16" },
+      ctx,
+      signal,
+    );
+
+    const candidates = output.mealCandidates as { lunch: { name: string }[] };
+    expect(candidates.lunch.map((c) => c.name)).toEqual(["鈴鳴グリル"]);
+  });
+
+  it("調べた店を、食べたいものに合う順に返し、相談に残す", async () => {
     const nearby = fakeNearby(async () => ({
       spots: [grill(), grill({ name: "鈴鳴うどん", foods: ["noodles"] })],
     }));
@@ -617,14 +749,19 @@ describe("search_nearby と周辺係の Web の調べ", () => {
     const spots = output.spots as { name: string; origin: string; openStatus?: string }[];
     expect(spots.map((s) => [s.name, s.origin])).toEqual([
       ["鈴鳴グリル", "web"],
+      ["鈴鳴うどん", "web"],
       ["鈴鳴和紙の館", "data"],
     ]);
     expect(spots[0]?.openStatus).toBe("confirmed");
-    expect(output.excluded).toContainEqual({ name: "鈴鳴うどん", reason: "food_not_wished" });
-    expect([...ctx.session.researchedSpots.values()].map((s) => s.name)).toEqual(["鈴鳴グリル"]);
+    expect([...ctx.session.researchedSpots.values()].map((s) => s.name)).toEqual([
+      "鈴鳴グリル",
+      "鈴鳴うどん",
+    ]);
+    const candidates = output.mealCandidates as { lunch: { name: string }[] };
+    expect(candidates.lunch.map((c) => c.name)).toEqual(["鈴鳴グリル", "鈴鳴うどん"]);
   });
 
-  it("食べたいものに合う店がなければ、合わない店で埋めず、見つからなかったと返す", async () => {
+  it("食べたいものに合う店がなければ、見つからなかったと返しつつ、食事に入れられる店は候補に残す", async () => {
     const nearby = fakeNearby(async () => ({
       spots: [grill({ name: "鈴鳴うどん", foods: ["noodles"] })],
     }));
@@ -639,9 +776,40 @@ describe("search_nearby と周辺係の Web の調べ", () => {
 
     expect(output.research).toEqual({ status: "researched", foodFound: false, rounds: 2 });
     // 1回目で見つからなければ、広げた言葉でもう1回調べる
-    expect(nearby.requests.map((r) => r.plan.round)).toEqual(["first", "widened"]);
-    expect((output.spots as { kind: string }[]).filter((s) => s.kind === "food")).toEqual([]);
+    expect(nearby.requests.map((r) => r.plan.round).at(-1)).toBe("widened");
+    // 1回目は、観点ごとの調べ役を並べて動かす
+    expect(nearby.requests.flatMap((r) => r.plan.perspective ?? [])).toEqual([
+      "wish",
+      "lunch",
+      "local",
+    ]);
+    const candidates = output.mealCandidates as { lunch: { name: string }[] };
+    expect(candidates.lunch.map((c) => c.name)).toEqual(["鈴鳴うどん"]);
     expect((output.notes as string[]).join("\n")).toContain("見つかりませんでした");
+  });
+
+  it("観点の1つが失敗しても、ほかの観点の結果を使い、別のサイトの出典を突き合わせる", async () => {
+    let call = 0;
+    const nearby = fakeNearby(async () => {
+      call += 1;
+      if (call === 1) throw new Error("調べられない");
+      return {
+        spots: [grill({ sources: [{ url: `https://site${call}.example.com/grill` }] })],
+      };
+    });
+    const ctx = testToolContext([suzunari()], { nearby });
+    ctx.session.conditions = { foodWishes: ["meat"] };
+
+    const output = await searchNearby.run(
+      { festivalId: "suzunari-toro", date: "2026-08-16" },
+      ctx,
+      signal,
+    );
+
+    const spots = output.spots as { name: string; sourceSites?: number }[];
+    expect(spots.filter((s) => s.name === "鈴鳴グリル")).toEqual([
+      expect.objectContaining({ sourceSites: 2 }),
+    ]);
   });
 
   it("1回目で合う店がなく、広げた2回目で見つかれば、2回の結果をまとめて返す", async () => {
@@ -673,7 +841,8 @@ describe("search_nearby と周辺係の Web の調べ", () => {
       expect.stringContaining("見つかりませんでした"),
     );
     // 調べ方は祭りのデータの駅・市町村と、相談の条件（子ども連れ・時間帯）から組んで、毎回渡す
-    const [first, widened] = nearby.requests;
+    const first = nearby.requests[0];
+    const widened = nearby.requests.at(-1);
     expect(first?.plan.queries[0]).toBe("鈴鳴駅 焼肉 ランチ");
     expect(first?.plan.queries).toContain("鈴鳴駅 焼肉 子連れ");
     expect(widened?.plan.widening.length).toBeGreaterThan(0);
@@ -726,7 +895,8 @@ describe("search_nearby と周辺係の Web の調べ", () => {
       expect((output.spots as { spotId: string }[]).map((s) => s.spotId)).toEqual([
         "suzunari-craft-hall",
       ]);
-      expect(nearby.calls).toBe(1);
+      // 観点ごとに1回ずつ調べて、やり直さない
+      expect(nearby.calls).toBe(2);
     }
   });
 
@@ -1214,9 +1384,14 @@ describe("search_lodging", () => {
     expect(result).toMatchObject({ status: "unavailable" });
   });
 
-  it("人数が分からなければ調べない", async () => {
+  it("人数を聞いていなくても止まらず、大人2人として調べて、そう返す", async () => {
     const ctx = testToolContext([suzunari()]);
-    await expect(searchLodging.run(args, ctx, signal)).rejects.toThrow("人数");
+    const result = await searchLodging.run(args, ctx, signal);
+    expect(result).toMatchObject({
+      status: "ok",
+      party: { adults: 2, children: 0 },
+      partyAssumed: true,
+    });
   });
 
   it("調べられないときは宿の名前を返さず、相談にも残さない", async () => {

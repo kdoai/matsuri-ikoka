@@ -1,18 +1,18 @@
 import type { DietaryNeed, FoodWish } from "@matsuri-ikoka/schema";
 import { toMinutes } from "./calendar";
 import { FOOD_WISH_LABELS } from "./food";
+import { distanceKm } from "./lodging";
 import type { TimeWindow } from "./nearby";
 import {
   MAX_RESEARCHED_SPOT_KM,
   type ResearchedSpotReport,
-  researchedSpotId,
   shopFoodWishes,
 } from "./nearbyResearch";
 
 // 会場の周りの店を Web で探すときの「調べ方」（検索の言葉の作り方と、確かめる観点）をコードで決める。
 // 料理の種類の大きな言葉（肉料理）のままでは、店の一覧のページに当たりにくい。店は「焼肉」「ステーキ」のような
-// 料理の名前と、駅や市町村の名前で探される。グルメの案内サイトの一覧のページには、近くの店がまとまって載る。
-// そこで、言葉の言い換え・場所・時間帯・同行者・案内サイトの名前を組み合わせた検索の言葉を、毎回コードで渡す。
+// 料理の名前と、駅や市町村の名前で探される。店の公式のページと観光協会の案内に当たるよう、
+// 言葉の言い換え・場所・時間帯・同行者を組み合わせた検索の言葉を、毎回コードで渡す。
 
 /** 1回の調べで渡す検索の言葉の上限（並べて呼ぶ前提） */
 export const MAX_NEARBY_QUERIES = 8;
@@ -55,10 +55,12 @@ const DIETARY_KEYWORDS: Partial<Record<DietaryNeed, string>> = {
   allergy: "アレルギー対応",
 };
 
-/** 近くの店がまとまって載る、グルメの案内サイトの名前（一覧のページを狙う） */
-export const GOURMET_GUIDES = ["食べログ", "ホットペッパーグルメ", "Retty"] as const;
-
 export type NearbySearchRound = "first" | "widened";
+/**
+ * 調べる観点。別の言葉と別の種類のページから探すと、1つの調べでは当たらない店が見つかり、突き合わせもできる。
+ * wish 食べたいもの / lunch 食事に入れられる店 / local 観光協会・自治体・商店街の案内 / official 見つけた店の公式のページ
+ */
+export type NearbyPerspective = "wish" | "lunch" | "local" | "official";
 export type MealTime = "lunch" | "dinner";
 
 const MEAL_WORDS: Record<MealTime, string> = { lunch: "ランチ", dinner: "ディナー" };
@@ -82,6 +84,8 @@ export interface NearbySearchInput {
 
 export interface NearbySearchPlan {
   round: NearbySearchRound;
+  /** 観点。省略すると観点を分けない調べ */
+  perspective?: NearbyPerspective;
   /** 検索の言葉（上から優先。並べて呼ぶ） */
   queries: string[];
   /** 店や施設のページで確かめる観点 */
@@ -109,6 +113,11 @@ export function mealTimes(window: TimeWindow | undefined): MealTime[] {
   if (overlaps(17 * 60, 21 * 60)) times.push("dinner");
   return times;
 }
+
+/** 会場の近くの店がこれより少なければ、店の少ない地域として探す範囲を広げる */
+export const SPARSE_SHOP_COUNT = 3;
+/** 店の少ない地域で、歩いて回るときの距離の上限（km、直線）。バスやタクシーで寄る距離 */
+export const SPARSE_SPOT_KM = 5;
 
 /** 調べた場所の会場からの距離の上限（km）。車で回るなら遠い店も選べる */
 export function maxSpotKm(byCar: boolean): number {
@@ -143,12 +152,12 @@ const FIRST_ROUND_KEYWORDS = 4;
  * 1回目（first）：いちばん近い駅と会場の市町村を、言い換えの上位（料理の名前）と組む
  *   1. 最寄り駅 × 言い換え × 時間帯（ランチ・ディナー）
  *   2. 市町村 × 言い換え
- *   3. 最寄り駅 × 言い換え × グルメの案内サイトの名前（一覧のページを狙う）
+ *   3. 最寄り駅 × 言い換え × 公式（店のページを狙う）
  *   4. 子ども連れなら「子連れ」、車なら「駐車場」、食事の制限があればその言葉を足したもの
  * 2回目（widened）：1回目で合う店がなかったときに、場所と言葉を広げる
  *   1. 隣の駅（2番目より先の最寄り駅）・会場の名前の「周辺」・都道府県と市町村
  *   2. 言い換えの残りと、料理の種類の大きな言葉（肉料理）
- *   3. ほかのグルメの案内サイトの名前
+ *   3. 公式サイト
  */
 export function nearbySearchQueries(input: NearbySearchInput, round: NearbySearchRound): string[] {
   const wishes = shopFoodWishes(input.foodWishes);
@@ -175,12 +184,14 @@ export function nearbySearchQueries(input: NearbySearchInput, round: NearbySearc
     const [k1 = "", k2 = k1, k3 = k2, k4 = k3] = top;
     queries = [
       join(nearest, k1, firstMeal),
+      // 食べたいものに合う店がなくても食事の予定を入れられるよう、料理を問わない店も探す
+      join(nearest, firstMeal === "" ? "ランチ" : firstMeal),
       join(city, k2),
-      join(nearest, k1, GOURMET_GUIDES[0]),
+      join(nearest, k1, "公式"),
       ...extras.map((extra, i) => join(nearest, top[i % top.length] ?? "", extra)),
       join(nearest, k3),
       join(city, k1, meal[1] ?? firstMeal),
-      join(city, k4, GOURMET_GUIDES[1]),
+      join(city, "観光協会", k4),
       join(nearest, k2),
     ];
   } else {
@@ -195,7 +206,7 @@ export function nearbySearchQueries(input: NearbySearchInput, round: NearbySearc
       join(city, r1),
       join(prefecture, city, broad, "おすすめ"),
       join(city, r2, firstMeal),
-      join(city, broad, GOURMET_GUIDES[2]),
+      join(city, broad, "公式サイト"),
       ...extras.map((extra) => join(city, broad, extra)),
       join(nearest, broad),
     ];
@@ -210,6 +221,7 @@ export function nearbyCheckpoints(input: NearbySearchInput): string[] {
     wishes.length > 0
       ? `出す料理：食べたいもの（${wishes.map((w) => FOOD_WISH_LABELS[w]).join("・")}）に当たるか。言い換え（${interleavedKeywords(wishes).slice(0, 6).join("・")}など）の店も当たる`
       : "出す料理：地元の味か、休憩に向くか",
+    "昼・夜の食事に入れられる店を、時間帯ごとに少なくとも2つ（食べたいものに合う店を先に。なければ料理を問わず近くの店）",
     "営業時間とラストオーダー（行く日の曜日のもの）",
     "定休日",
     "臨時休業・休業日・貸し切りの告知（店のページのお知らせ、SNS の告知）",
@@ -257,17 +269,137 @@ export function nearbySearchPlan(
   };
 }
 
-/** 2回の調べの結果をまとめる。同じ場所（名前と位置で決まる ID が同じ）は、先に見つけたものを残す */
+/** 観点ごとの検索の言葉の数の上限。並べて動かすので、1つの調べは短く済ませる */
+export const MAX_PERSPECTIVE_QUERIES = 5;
+/** 公式のページで確かめる店の数の上限 */
+const MAX_OFFICIAL_LEADS = 6;
+
+/**
+ * 1回目の調べ方を、観点ごとに決める。観点ごとに1つの調べ役を並べて動かす。
+ * 評価の頼み（focus）で調べ直すときは、頼まれたことだけを1つの調べで確かめる
+ */
+export function nearbySearchPlans(
+  input: NearbySearchInput,
+  /** 公式のページを確かめたい店（OpenStreetMap で見つけた店など） */
+  leads: readonly { name: string }[] = [],
+): NearbySearchPlan[] {
+  if ((input.focus ?? []).length > 0) return [nearbySearchPlan(input, "first")];
+  const hasWishes = shopFoodWishes(input.foodWishes).length > 0;
+  const base = nearbySearchPlan(input, "first");
+  const plans: NearbySearchPlan[] = [{ ...base, perspective: hasWishes ? "wish" : "lunch" }];
+  if (hasWishes) {
+    plans.push({
+      ...nearbySearchPlan({ ...input, foodWishes: [] }, "first"),
+      perspective: "lunch",
+    });
+  }
+  const city = input.municipalities[0]?.name ?? "";
+  plans.push({
+    ...base,
+    perspective: "local",
+    queries: [
+      `${city} 観光協会 グルメ`,
+      `${city} 名物 食事 店`,
+      `${city} 商店街 飲食店`,
+      `${input.venueName} 周辺 食事`,
+    ],
+    checkpoints: [
+      "自治体・観光協会・商店街の案内に載っている店と見どころを拾い、店のページで確かめる",
+      ...base.checkpoints,
+    ],
+  });
+  if (leads.length > 0) {
+    plans.push({
+      ...base,
+      perspective: "official",
+      queries: leads.slice(0, MAX_OFFICIAL_LEADS).map((lead) => `${lead.name} ${city}`),
+      checkpoints: [
+        "「参考」の店が今も営業しているかを、店の公式のページで確かめる。公式のページの候補があれば、まずそれを読む",
+        ...base.checkpoints,
+      ],
+    });
+  }
+  return plans.map((plan) => ({
+    ...plan,
+    queries: plan.queries.slice(0, MAX_PERSPECTIVE_QUERIES),
+  }));
+}
+
+/** 同じ店とみなす距離（km）。同じ名前のチェーンの別の店を、まとめないため */
+const SAME_PLACE_KM = 1;
+
+const nameKey = (name: string) => name.normalize("NFKC").replace(/\s+/g, "").toLowerCase();
+const isMapSource = (url: string) => /(^|\.)openstreetmap\.org$/.test(hostOf(url));
+
+function hostOf(url: string): string {
+  try {
+    return new URL(url).hostname.toLowerCase();
+  } catch {
+    return url;
+  }
+}
+
+/** 出典のサイトの数。同じサイトのページがいくつあっても1つと数える */
+export function distinctSourceSites(sources: readonly { url: string }[]): number {
+  return new Set(sources.map((source) => hostOf(source.url))).size;
+}
+
+/**
+ * 同じ店の報告を1つにまとめる。営業は安全なほうに寄せる（どれかが休みと言えば休み）。
+ * 位置は地図のデータを、そのほかの分からない値は、先の報告を優先して埋める
+ */
+function combineReports(a: ResearchedSpotReport, b: ResearchedSpotReport): ResearchedSpotReport {
+  const sources = [...a.sources];
+  for (const source of b.sources) {
+    if (!sources.some((known) => known.url === source.url)) sources.push(source);
+  }
+  const openOnDate =
+    a.openOnDate === "closed" || b.openOnDate === "closed"
+      ? "closed"
+      : a.openOnDate === "open" || b.openOnDate === "open"
+        ? "open"
+        : "unconfirmed";
+  const closedDays =
+    a.closedDays === null
+      ? b.closedDays
+      : b.closedDays === null
+        ? a.closedDays
+        : [...new Set([...a.closedDays, ...b.closedDays])];
+  const fromMap = (report: ResearchedSpotReport) =>
+    report.sources.some((source) => isMapSource(source.url));
+  return {
+    ...a,
+    location: fromMap(b) && !fromMap(a) ? b.location : a.location,
+    foods: [...new Set([...a.foods, ...b.foods])],
+    dietaryOk: [...new Set([...a.dietaryOk, ...b.dietaryOk])],
+    adultsOnly: a.adultsOnly || b.adultsOnly,
+    pricePerPersonYen: a.pricePerPersonYen ?? b.pricePerPersonYen,
+    price: a.price ?? b.price,
+    hours: a.hours ?? b.hours,
+    closedDays,
+    openOnDate,
+    sources,
+    ...((a.website ?? b.website) ? { website: a.website ?? b.website } : {}),
+  };
+}
+
+/**
+ * いくつかの調べの結果を、店ごとに突き合わせてまとめる。
+ * 名前（空白と全角半角の違いを除く）が同じで近くにある報告を、同じ店として1つにする
+ */
 export function mergeResearchedReports(
   ...rounds: readonly (readonly ResearchedSpotReport[])[]
 ): ResearchedSpotReport[] {
-  const seen = new Set<string>();
   const merged: ResearchedSpotReport[] = [];
   for (const report of rounds.flat()) {
-    const id = researchedSpotId(report.name, report.location);
-    if (seen.has(id)) continue;
-    seen.add(id);
-    merged.push(report);
+    const index = merged.findIndex(
+      (known) =>
+        nameKey(known.name) === nameKey(report.name) &&
+        distanceKm(known.location, report.location) <= SAME_PLACE_KM,
+    );
+    const known = merged[index];
+    if (known === undefined) merged.push(report);
+    else merged[index] = combineReports(known, report);
   }
   return merged;
 }

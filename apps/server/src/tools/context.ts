@@ -9,6 +9,7 @@ import {
   type VerificationResult,
 } from "@matsuri-ikoka/schema";
 import type { FestivalStore } from "../data/festivalStore";
+import type { OsmPlaceIndex } from "../domain/osmPlaces";
 import type { StationPointIndex } from "../domain/travelEstimate";
 import type { ItineraryStore, Session } from "../session/sessionStore";
 import type { CandidateChecker } from "./candidateCheck";
@@ -92,6 +93,8 @@ export interface ToolContext {
   routes?: RouteResearcher;
   /** 会場の周りの店・寄り道を Web で調べる。ないとき（mock やテスト）は祭りのデータの周辺の場所だけから選ぶ */
   nearby?: NearbyResearcher;
+  /** 会場の周りの店と宿の OpenStreetMap の一覧。ないとき（mock やテスト）は使わない */
+  osmPlaces?: OsmPlaceIndex;
   /** 会場の近くの宿を Web で調べる（観点ごとに並べて）。ないとき（mock やテスト）は宿の空きの調べ方の結果だけを使う */
   lodgingResearch?: LodgingResearcher;
   /** 保存した旅程を観点ごとに採点する評価係。ないとき（mock やテスト）は点検の点だけで決める */

@@ -119,6 +119,15 @@ export function fictionalItinerary(): Itinerary {
         date: "2026-08-16",
         weather: { status: "not_yet" },
         stay: null,
+        meals: [
+          {
+            slot: "dinner",
+            kind: "stalls",
+            name: "会場の屋台",
+            itemId: "festival",
+            sources: [fictionalSource("2026")],
+          },
+        ],
         items: [
           {
             id: "go",
@@ -239,15 +248,6 @@ export function fictionalPlannedItinerary(): Itinerary {
     sources: [fictionalSource("access")],
     changedInVersion: 1,
   });
-  day.meals = [
-    {
-      slot: "dinner",
-      kind: "stalls",
-      name: "会場の屋台",
-      itemId: "festival",
-      sources: [fictionalSource("2026")],
-    },
-  ];
   day.lastReturn = {
     station: "鈴鳴駅",
     departBy: "22:40",

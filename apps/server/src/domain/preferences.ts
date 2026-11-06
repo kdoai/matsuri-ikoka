@@ -15,7 +15,7 @@ export interface PreferenceEffects {
   maxWalkMinutes: number | null;
   /** 周辺の場所で優先するタグ */
   preferTags: NearbyTag[];
-  /** 店での食事の予定を入れるか（屋台で十分なら入れない） */
+  /** 屋台が使える時間帯でも、店での食事の予定を入れるか（屋台で十分なら入れない） */
   includeShopMeals: boolean;
   /** 地元の店での食事を予定に入れる */
   requireLocalMeal: boolean;
@@ -58,7 +58,9 @@ export function preferenceEffects(preferences: Preferences): PreferenceEffects {
     preferTags.push("local_food");
     rules.push("祭りの前後に、郷土料理や地元の店での食事を予定として入れる");
   } else {
-    rules.push("屋台を食事の時間として扱い、店の予定は入れない");
+    rules.push(
+      "祭りの開催中の食事は屋台を食事の時間として扱う。祭りの前の昼など、屋台で食べられない時間帯の食事は店の予定を入れる",
+    );
   }
 
   const checkParkingFirst = preferences.move === "car";

@@ -213,7 +213,7 @@ export function checkPlan(
     warnings.push(...result.warnings.map(withDay));
   });
 
-  warnings.push(...tripWarnings(plan.preferences, allItems, spots));
+  warnings.push(...tripWarnings(plan.preferences, plan.days, spots));
   return { errors, warnings };
 }
 
@@ -424,14 +424,14 @@ function dayWarnings(
 /** 旅全体のこだわりの確認（ごはんの選び方）。何日かの旅でも1回だけ確かめる */
 function tripWarnings(
   preferences: Preferences,
-  items: readonly PlanItem[],
+  days: readonly PlanDayToCheck[],
   spots: ReadonlyMap<string, NearbySpot>,
 ): PlanIssue[] {
   const warnings: PlanIssue[] = [];
   const effects = preferenceEffects(preferences);
+  const items = days.flatMap((day) => day.items);
   const spotOf = (item: PlanItem) =>
     item.spotId === undefined ? undefined : spots.get(item.spotId);
-  const shopMeals = items.filter((item) => item.type === "meal" && spotOf(item)?.kind === "food");
   if (effects.requireLocalMeal) {
     const hasLocalMeal = items.some((item) => {
       const spot = spotOf(item);
@@ -445,12 +445,22 @@ function tripWarnings(
       });
     }
   } else {
-    for (const item of shopMeals) {
-      warnings.push({
-        code: "shop_meal_unwanted",
-        itemId: item.id,
-        message: `「屋台で十分」なので、店の予定（「${item.name}」）は入れず、屋台を食事の時間にしてください`,
-      });
+    // 屋台で食べられるのは祭りの開催中だけ。祭りの前の昼の店は、屋台の代わりにならないので注意しない
+    for (const day of days) {
+      const festivalTimes = day.items
+        .filter((item) => item.type === "festival")
+        .map((item) => clockRange(item.start, item.end));
+      for (const item of day.items) {
+        if (item.type !== "meal" || spotOf(item)?.kind !== "food") continue;
+        const [start, end] = clockRange(item.start, item.end);
+        if (festivalTimes.some(([from, to]) => start < to && from < end)) {
+          warnings.push({
+            code: "shop_meal_unwanted",
+            itemId: item.id,
+            message: `「屋台で十分」なので、祭りの開催中の店の予定（「${item.name}」）は入れず、屋台を食事の時間にしてください`,
+          });
+        }
+      }
     }
   }
 

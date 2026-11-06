@@ -1,4 +1,5 @@
 import {
+  googleMapsUrl,
   type ItineraryDay,
   type ItineraryItem,
   type LodgingOffer,
@@ -218,6 +219,19 @@ function ItemRow({ item, main }: { item: ItineraryItem; main: boolean }) {
                 {t.itinerary.cost}：{item.cost}
               </p>
             )}
+            {item.location === null || item.type === "move" ? null : (
+              <p>
+                <a
+                  href={googleMapsUrl({ name: item.name, location: item.location })}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-ai-700 underline decoration-ai-200 underline-offset-2 hover:decoration-ai-600"
+                  data-testid="open-google-maps"
+                >
+                  {t.itinerary.openInGoogleMaps}
+                </a>
+              </p>
+            )}
             {item.sources.length > 0 ? (
               <ul className="space-y-0.5">
                 {item.sources.map((source) => (
@@ -320,6 +334,16 @@ function StayLodging({ search }: { search: LodgingSearch }) {
             >
               {offer.name}
             </a>
+            {offer.location === null ? null : (
+              <a
+                href={googleMapsUrl({ name: offer.name, location: offer.location })}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ml-2 text-ai-700 underline decoration-ai-200 underline-offset-2 hover:decoration-ai-600"
+              >
+                {t.itinerary.openInGoogleMaps}
+              </a>
+            )}
             {offer.perspectives !== undefined && offer.perspectives.length > 0 ? (
               <span className="ml-2 inline-flex flex-wrap gap-1 align-middle">
                 {offer.perspectives.map((p) => (

@@ -18,7 +18,9 @@ describe("preferenceEffects", () => {
       requireLocalMeal: false,
       checkParkingFirst: false,
     });
-    expect(effects.rules).toContain("屋台を食事の時間として扱い、店の予定は入れない");
+    expect(effects.rules).toContain(
+      "祭りの開催中の食事は屋台を食事の時間として扱う。祭りの前の昼など、屋台で食べられない時間帯の食事は店の予定を入れる",
+    );
   });
 
   it("子連れは2時間ごとの休憩、トイレ、冷え込みと帰りの混雑", () => {

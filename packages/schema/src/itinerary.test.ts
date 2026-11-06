@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   collectItinerarySources,
+  googleMapsUrl,
   ItineraryDiffSchema,
   ItinerarySchema,
   itineraryItems,
@@ -224,6 +225,17 @@ describe("LodgingSearchSchema", () => {
   });
 });
 
+describe("googleMapsUrl", () => {
+  it("名前と位置を、エンコードして検索の言葉にする", () => {
+    const url = new URL(
+      googleMapsUrl({ name: "鈴鳴そば庵 本店", location: { lat: 35.1221, lng: 136.0786 } }),
+    );
+    expect(url.origin + url.pathname).toBe("https://www.google.com/maps/search/");
+    expect(url.searchParams.get("api")).toBe("1");
+    expect(url.searchParams.get("query")).toBe("鈴鳴そば庵 本店 35.1221,136.0786");
+  });
+});
+
 describe("日ごとの旅程（日帰りのお出かけから6泊7日まで）", () => {
   /** 架空の旅程を、主役の祭りの前に1泊する2日の旅程にする */
   function twoDays() {
@@ -314,6 +326,7 @@ describe("日ごとの旅程（日帰りのお出かけから6泊7日まで）",
         ...base,
         date: `2026-08-${String(10 + i).padStart(2, "0")}`,
         stay: i === count - 1 ? null : { area: "鈴鳴町" },
+        meals: [],
         items: base.items.map((item) => ({ ...item, id: `${item.id}-${i}` })),
       }));
     expect(ItinerarySchema.safeParse({ ...itinerary, days: make(7) }).success).toBe(true);

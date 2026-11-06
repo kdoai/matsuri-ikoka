@@ -26,6 +26,7 @@ export function testToolContext(
     stations?: StationPointIndex;
     routes?: RouteResearcher;
     nearby?: NearbyResearcher;
+    osmPlaces?: ToolContext["osmPlaces"];
     lodgingResearch?: LodgingResearcher;
     planEvaluator?: PlanEvaluator;
   } = {},
@@ -55,6 +56,7 @@ export function testToolContext(
     ...(options.stations ? { stations: options.stations } : {}),
     ...(options.routes ? { routes: options.routes } : {}),
     ...(options.nearby ? { nearby: options.nearby } : {}),
+    ...(options.osmPlaces ? { osmPlaces: options.osmPlaces } : {}),
     ...(options.lodgingResearch ? { lodgingResearch: options.lodgingResearch } : {}),
     ...(options.planEvaluator ? { planEvaluator: options.planEvaluator } : {}),
     today: () => options.today ?? "2026-08-03",

@@ -224,7 +224,7 @@ describe("buildItinerary", () => {
 
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.errors.map((e) => e.code)).toEqual(["outside_hours"]);
+    expect(result.errors.map((e) => e.code)).toContain("outside_hours");
   });
 
   it("スキーマに合わなければ保存しない（主役の祭りの予定がない）", () => {
@@ -380,6 +380,51 @@ describe("buildItinerary：そろっているか・調べた場所の採否", ()
     ]);
   });
 
+  it("滞在の時間帯にかかる食事が時間割にない旅程は、店の候補を添えて保存しない", () => {
+    const soba = {
+      ...festival.nearby[0]!,
+      id: "web-soba",
+      name: "鈴鳴そば庵",
+      kind: "food" as const,
+      hours: { open: "11:00", close: "15:00" },
+      closedDays: [],
+    };
+    const draft = draftOf(fictionalPlannedItinerary());
+    itemsOf(draft)[0] = { ...itemsOf(draft)[0]!, start: "09:30", end: "10:20" };
+
+    const result = buildItinerary(draft, {
+      id: "trip-1",
+      previous: null,
+      weatherFor: () => ({ status: "not_yet" }),
+      findFestival: find,
+      extraSpots: new Map([[soba.id, soba]]),
+    });
+
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.errors.map((e) => e.code)).toEqual(["meal_missing"]);
+    expect(result.errors[0]?.message).toContain("昼の食事");
+    expect(result.errors[0]?.message).toContain("鈴鳴そば庵（web-soba）");
+  });
+
+  it("屋台がないと分かっている祭りでは、屋台で食べる案を食事に数えない", () => {
+    const noStalls = testFestival({
+      id: "suzunari-toro",
+      edit: (f) => {
+        f.food.stalls = "no";
+      },
+    });
+    const result = buildItinerary(draftOf(fictionalPlannedItinerary()), {
+      id: "trip-1",
+      previous: null,
+      weatherFor: () => ({ status: "not_yet" }),
+      findFestival: lookup(noStalls),
+    });
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.errors.map((e) => e.code)).toEqual(["meal_missing"]);
+  });
+
   it("足りないものは保存を止めずに不足に書く", () => {
     const result = buildItinerary(draftOf(fictionalItinerary()), {
       id: "trip-1",
@@ -391,7 +436,7 @@ describe("buildItinerary：そろっているか・調べた場所の採否", ()
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.gaps.map((gap) => gap.code)).toEqual(
-      expect.arrayContaining(["return_missing", "meal_missing", "research_unreviewed"]),
+      expect.arrayContaining(["return_missing", "research_unreviewed"]),
     );
     expect(result.itinerary.gaps).toEqual(result.gaps);
   });
@@ -411,8 +456,9 @@ describe("buildItinerary：そろっているか・調べた場所の採否", ()
       sources: [{ ...routePage, url: "https://example.org/made-up" }],
     };
     day.meals = [
+      ...day.meals!,
       {
-        slot: "dinner",
+        slot: "lunch",
         kind: "shop",
         name: "作った店",
         itemId: null,
@@ -434,10 +480,8 @@ describe("buildItinerary：そろっているか・調べた場所の採否", ()
     expect(saved.items[0]?.sources).toEqual([routePage]);
     // 出典の残らない最終の時刻と店の案は使わず、不足にする
     expect(saved.lastReturn).toEqual({ station: "鈴鳴駅", departBy: null, sources: [] });
-    expect(saved.meals).toEqual([]);
-    expect(result.gaps.map((gap) => gap.code)).toEqual(
-      expect.arrayContaining(["last_return_unknown", "meal_missing"]),
-    );
+    expect(saved.meals?.map((meal) => meal.slot)).toEqual(["dinner"]);
+    expect(result.gaps.map((gap) => gap.code)).toContain("last_return_unknown");
   });
 
   it("帰りの最終に間に合わない旅程は保存しない", () => {

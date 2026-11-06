@@ -8,6 +8,7 @@ import {
 import { backoffMs, classifyFailure } from "@matsuri-ikoka/agent-kit";
 import type { IsoDate } from "@matsuri-ikoka/schema";
 import type { FestivalStore } from "../data/festivalStore";
+import type { OsmPlaceIndex } from "../domain/osmPlaces";
 import type { StationPointIndex } from "../domain/travelEstimate";
 import type { ItineraryStore } from "../session/sessionStore";
 import type { CandidateChecker } from "../tools/candidateCheck";
@@ -52,6 +53,8 @@ export interface ClaudeRunnerDeps {
   /** 出発の駅から会場の最寄り駅までの行き方の調べ */
   routes?: RouteResearcher;
   nearby?: NearbyResearcher;
+  /** 会場の周りの店と宿の OpenStreetMap の一覧 */
+  osmPlaces?: OsmPlaceIndex;
   /** 会場の近くの宿の Web の調べ（観点ごとに並べて動かす） */
   lodgingResearch?: LodgingResearcher;
   /** 保存した旅程を観点ごとに採点する評価係 */
@@ -207,6 +210,7 @@ export class ClaudeAgentRunner implements AgentRunner {
       ...(deps.stations ? { stations: deps.stations } : {}),
       ...(deps.routes ? { routes: deps.routes } : {}),
       ...(deps.nearby ? { nearby: deps.nearby } : {}),
+      ...(deps.osmPlaces ? { osmPlaces: deps.osmPlaces } : {}),
       ...(deps.lodgingResearch ? { lodgingResearch: deps.lodgingResearch } : {}),
       ...(deps.planEvaluator ? { planEvaluator: deps.planEvaluator } : {}),
       // ツールの中の調べ（寄り道の調べ）の進みも、相談の進みとして数える

@@ -12,7 +12,8 @@ const TextSchema = z.string().min(1);
  * last_mile_missing 祭りの会場までの最後の移動がない / last_return_unknown 帰りの最終の目安が分からない /
  * move_endpoints_missing 移動の出発・到着の場所がない / transfer_unknown 電車・バスの乗り換えの区間が分からない /
  * move_unsourced 電車・バスの移動に出典がない / meal_missing 滞在の時間帯にかかる食事の案がない /
- * meal_unsourced 店や屋台の食事の案に出典がない / research_unreviewed 調べた場所の採否と理由がない
+ * meal_unsourced 店や屋台の食事の案に出典がない / research_unreviewed 調べた場所の採否と理由がない /
+ * lodging_missing 泊まる夜があるのに宿の候補がない
  */
 export const PLAN_GAP_CODES = [
   "outbound_missing",
@@ -25,6 +26,7 @@ export const PLAN_GAP_CODES = [
   "meal_missing",
   "meal_unsourced",
   "research_unreviewed",
+  "lodging_missing",
 ] as const;
 
 export const PlanGapSchema = z.strictObject({

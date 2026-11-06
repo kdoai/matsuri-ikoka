@@ -17,9 +17,10 @@ import { z } from "zod";
 import { formatMonthDayWithWeekday } from "../domain/calendar";
 import { DIETARY_LABELS, FOOD_WISH_LABELS } from "../domain/food";
 import type { ResearchedSpotReport } from "../domain/nearbyResearch";
-import type { NearbySearchPlan } from "../domain/nearbySearch";
+import type { NearbyPerspective, NearbySearchPlan } from "../domain/nearbySearch";
 import type { NearbyResearcher } from "../tools/nearbyResearch";
 import type { ResolveHost } from "./addressGuard";
+import type { RobotsChecker } from "./robots";
 import type { QueryFn } from "./runner";
 import {
   buildVerifierOptions,
@@ -83,11 +84,19 @@ const ANSWER_FORMAT = [
  */
 export const NEARBY_MAX_TURNS = 16;
 
+const PERSPECTIVE_LABELS: Record<NearbyPerspective, string> = {
+  wish: "食べたいものに合う店",
+  lunch: "昼と夜の食事に入れられる店（料理は問わない）",
+  local: "観光協会・自治体・商店街が案内している店と見どころ",
+  official: "「参考」の店が今も営業しているか（公式のページで確かめる）",
+};
+
 /** 調べ方を、依頼文に入れる形にする（毎回の調べに必ず入れる） */
 export function searchPlanLines(plan: NearbySearchPlan): string[] {
   return [
     "",
     `## 調べ方（${plan.round === "first" ? "1回目" : "2回目：広げて探し直す"}）`,
+    ...(plan.perspective === undefined ? [] : [`観点：${PERSPECTIVE_LABELS[plan.perspective]}`]),
     "",
     "検索の言葉（上から優先。いくつかを並べて検索する。合う店が少なければ、言葉を変えて探し直してよい）：",
     ...plan.queries.map((q) => `- ${q}`),
@@ -103,7 +112,30 @@ export function searchPlanLines(plan: NearbySearchPlan): string[] {
 /** 調べた結果をとっておく時間（営業の告知が変わりうるので短めにする） */
 export const NEARBY_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 
-function parseSpots(items: unknown[], fetched: readonly string[]): ResearchedSpotReport[] {
+const pageText = (text: string) => text.normalize("NFKC").replace(/\s+/g, "");
+
+/** 店の名前が、読んだページのどれかに出てくるか。本文を受け取れなかったページがあれば、判断しない */
+function nameInPages(
+  name: string,
+  sources: readonly { url: string }[],
+  pages: readonly FetchedPage[],
+): boolean {
+  const read = pages.filter(
+    (page) =>
+      ungroundedSources(
+        [{ url: page.url }],
+        sources.map((source) => source.url),
+      ).length === 0,
+  );
+  if (read.length === 0 || read.some((page) => page.text.trim() === "")) return true;
+  return read.some((page) => pageText(page.text).includes(pageText(name)));
+}
+
+function parseSpots(
+  items: unknown[],
+  fetched: readonly string[],
+  pages: readonly FetchedPage[],
+): ResearchedSpotReport[] {
   return items.flatMap((item) => {
     const parsed = SpotSchema.safeParse(item);
     if (!parsed.success) return [];
@@ -112,6 +144,8 @@ function parseSpots(items: unknown[], fetched: readonly string[]): ResearchedSpo
     const unread = new Set(ungroundedSources(sources, fetched));
     const read = sources.filter((s) => !unread.has(s.url));
     if (read.length === 0) return [];
+    // 読んだページに名前のない店は、作り話かもしれないので入れない
+    if (!nameInPages(rest.name, read, pages)) return [];
     return [{ ...rest, location: { lat, lng }, sources: read }];
   });
 }
@@ -123,6 +157,7 @@ export function createWebNearbyResearcher(deps: {
   env: Record<string, string>;
   query: QueryFn;
   resolveHost?: ResolveHost;
+  robots?: RobotsChecker;
   maxBudgetUsd?: number | undefined;
   clock?: () => number;
 }): NearbyResearcher {
@@ -166,7 +201,10 @@ export function createWebNearbyResearcher(deps: {
           ? [
               "",
               "参考：祭りのデータにある周辺の場所（営業と料理は、改めて確かめる）",
-              ...input.references.map((r) => `- ${r.name}（${r.kind}）：${r.summary}`),
+              ...input.references.map(
+                (r) =>
+                  `- ${r.name}（${r.kind}）：${r.summary}${r.url === undefined ? "" : `（公式のページの候補：${r.url}）`}`,
+              ),
             ]
           : []),
         // 調べ方（検索の言葉と確かめる観点）は、コードで決めたものを毎回必ず入れる
@@ -195,6 +233,7 @@ export function createWebNearbyResearcher(deps: {
                   deps.resolveHost,
                   pages,
                   "検索結果だけでは営業を確かめられません。店や施設のページを WebFetch で読んでから、決めた形の JSON で答えてください。",
+                  deps.robots,
                 ),
               }
             : {}),
@@ -226,7 +265,7 @@ export function createWebNearbyResearcher(deps: {
         }
         // 1つもページを読んでいなければ、調べたことにしない（祭りのデータの場所に戻す）
         if (log.fetchedUrls.length === 0) return null;
-        const value = { spots: parseSpots(parsed.value.spots, log.fetchedUrls) };
+        const value = { spots: parseSpots(parsed.value.spots, log.fetchedUrls, pages) };
         found = value.spots.length;
         cache.set(key, { value, expiresAt: clock() + NEARBY_CACHE_TTL_MS });
         return value;
@@ -237,6 +276,7 @@ export function createWebNearbyResearcher(deps: {
           JSON.stringify({
             kind: "nearby_research",
             round: input.plan.round,
+            perspective: input.plan.perspective ?? null,
             found,
             totalCostUsd: costUsd,
             elapsedMs: Date.now() - started,

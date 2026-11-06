@@ -10,6 +10,7 @@ import { agentEnv, createAgentWorkdir } from "./agent/options";
 import { createPlanEvaluator } from "./agent/planEvaluator";
 import { loadPrompts } from "./agent/prompts";
 import { loadSampleConversations, ReplayAgentRunner } from "./agent/replayRunner";
+import { createRobotsChecker } from "./agent/robots";
 import type { AgentRunner } from "./agent/runner";
 import { agentConfigDir, forgetTranscripts } from "./agent/transcripts";
 import { createWebLodgingResearcher } from "./agent/webLodgingResearcher";
@@ -19,6 +20,7 @@ import { createWebVerifier } from "./agent/webVerifier";
 import { createApp } from "./app";
 import { portInUseMessage, readConfig, startupNotice } from "./config";
 import { festivalDirs, loadFestivals } from "./data/festivalStore";
+import { loadOsmPlaces } from "./data/osmPlaces";
 import { loadStationPoints } from "./data/stationPoints";
 import { nowInJapan, todayInJapan } from "./domain/calendar";
 import type { FestivalWishReader } from "./routes/festivalSearch";
@@ -96,6 +98,8 @@ if (config.mode === "live") {
     query,
     maxBudgetUsd: config.maxBudgetUsd,
   });
+  const robots = createRobotsChecker();
+  const osmPlaces = await loadOsmPlaces(config.repoRoot);
   runner = new ClaudeAgentRunner({
     ...(stations ? { stations } : {}),
     // 旅程の評価は、旅程係が保存するたびに update_itinerary の中で動く。足りないところを見抜く力が要るので、
@@ -119,6 +123,7 @@ if (config.mode === "live") {
     }),
     // 寄り道の調べは周辺係・旅程係の search_nearby の中で動くので、スタッフのモデルで行う
     nearby: createWebNearbyResearcher({
+      robots,
       prompt: prompts.nearby,
       model: config.models.staff,
       cwd,
@@ -126,8 +131,11 @@ if (config.mode === "live") {
       query,
       maxBudgetUsd: config.maxBudgetUsd,
     }),
+    // 店と宿の一覧は、OpenStreetMap から作った手元のデータで引く（docs/adr/0010-place-data-sources.md）
+    ...(osmPlaces ? { osmPlaces } : {}),
     // 宿の調べは旅程係の search_lodging の中で観点ごとに並べて動くので、スタッフのモデルで行う
     lodgingResearch: createWebLodgingResearcher({
+      robots,
       prompt: prompts.lodging,
       model: config.models.staff,
       cwd,

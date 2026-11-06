@@ -184,7 +184,7 @@ describe("createWebNearbyResearcher", () => {
     const first = calls[0]?.prompt ?? "";
     expect(first).toContain("## 調べ方（1回目）");
     expect(first).toContain("- 鈴鳴駅 焼肉 ランチ");
-    expect(first).toContain("食べログ");
+    expect(first).toContain("公式");
     expect(first).toContain("子ども連れで入れるか");
     expect(first).toContain("会場からおおむね 2km 以内");
     // 調べの間は、Agent SDK の知らせのたびに進みを知らせる
@@ -205,6 +205,35 @@ describe("createWebNearbyResearcher", () => {
 
     const failed = setup([async () => null]);
     expect(await failed.research()).toBeNull();
+  });
+
+  it("読んだページに名前のない店は、作り話として捨てる", async () => {
+    const { research } = setup([
+      async (hook) => {
+        await hook("PostToolUse", {
+          tool_name: "WebFetch",
+          tool_input: { url: "https://example.com/grill", prompt: "店の名前" },
+          tool_response: {
+            result: "このページは別の店の案内です",
+            url: "https://example.com/grill",
+          },
+        });
+        return ANSWER;
+      },
+    ]);
+    expect(await research()).toEqual({ spots: [] });
+
+    const named = setup([
+      async (hook) => {
+        await hook("PostToolUse", {
+          tool_name: "WebFetch",
+          tool_input: { url: "https://example.com/grill", prompt: "店の名前" },
+          tool_response: { result: "鈴鳴 グリルの案内", url: "https://example.com/grill" },
+        });
+        return ANSWER;
+      },
+    ]);
+    expect((await named.research())?.spots.map((s) => s.name)).toEqual(["鈴鳴グリル"]);
   });
 
   it("見つからなければ、空の場所の並びを返す（合わない店で埋めない）", async () => {

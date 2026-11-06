@@ -43,7 +43,7 @@ describe("店の記録", () => {
     expect(shopRecord(context)).toContain("聞き取り：祭りを探してよい・聞くことはない");
   });
 
-  it("泊まりの旅は、聞き取った好みと、コードで決めた次に聞くことを載せる", () => {
+  it("泊まりの旅は、聞き取った好みと、コードで決めた聞き取りの状態を載せる", () => {
     const context = ctx();
     context.session.conditions = {
       when: { kind: "range", from: "2026-08-14", to: "2026-08-19" },
@@ -58,9 +58,7 @@ describe("店の記録", () => {
     expect(record).toContain("5泊6日");
     expect(record).toContain("旅のかたち いくつかの地域を巡る（鈴鳴町→かざみ温泉）");
     expect(record).toContain("楽しみ 温泉");
-    expect(record).toMatch(
-      /聞き取り：祭りを探してよい・次に聞くこと 旅の終わりの場所.*、旅のペース/,
-    );
+    expect(record).toContain("聞き取り：祭りを探してよい・聞くことはない");
   });
 
   it("食べたいものと、食事で気をつけたいことを載せる", () => {

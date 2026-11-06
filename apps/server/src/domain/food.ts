@@ -43,7 +43,7 @@ export function foodEffects(
   if (wishes.length > 0) {
     rules.push(
       `食べたいもの（${wishes.map((w) => FOOD_WISH_LABELS[w]).join("・")}）に合う店と地元の味を先に挙げる。` +
-        "合うかは場所の説明と地元の味から判断し、データにない料理を出すとは書かない。合う場所がなければそう伝える",
+        "合うかは場所の説明と地元の味から判断し、データにない料理を出すとは書かない。合う場所がなければそう伝え、昼・夜の食事は近くのほかの店で案を出す",
     );
   }
   if (dietary.length > 0) {

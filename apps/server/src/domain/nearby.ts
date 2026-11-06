@@ -2,11 +2,14 @@ import type {
   Festival,
   IsoDate,
   LocalTime,
+  MealSlot,
   NearbySpot,
+  Occurrence,
   OpeningHours,
   Preferences,
 } from "@matsuri-ikoka/schema";
 import { toMinutes, weekdayOf } from "./calendar";
+import { MEAL_OVERLAP_MINUTES, MEAL_WINDOWS } from "./planCoverage";
 import { popularityRank, preferenceEffects } from "./preferences";
 
 /** 予定に入れられる時間帯 */
@@ -104,6 +107,45 @@ export function selectNearbySpots(
   });
 
   return { spots: selected, excluded };
+}
+
+/** 1つの食事に出す店の候補の数 */
+export const MAX_MEAL_CANDIDATES = 5;
+
+/** その食事の時間帯に入れられる店（行く日が定休日でなく、時間帯に営業時間が合う）。渡した順のまま返す */
+export function mealCandidates(
+  spots: readonly NearbySpot[],
+  date: IsoDate,
+  slot: MealSlot,
+): NearbySpot[] {
+  const [from, to] = MEAL_WINDOWS[slot];
+  return spots
+    .filter(
+      (spot) =>
+        spot.kind === "food" &&
+        !isClosedOn(spot, date) &&
+        fitsOpeningHours(spot.hours, { from, to }),
+    )
+    .slice(0, MAX_MEAL_CANDIDATES);
+}
+
+/**
+ * その日の祭りの屋台で、昼を済ませられるか。屋台があると分かっていて、開催時間が昼の時間帯にかかるときだけ。
+ * 夜の祭りや、開催時間・屋台の有無が分からない祭りでは、昼の店を探す
+ */
+export function stallsServeLunch(
+  festival: Pick<Festival, "food">,
+  occurrence: Pick<Occurrence, "start" | "end"> | null,
+): boolean {
+  if (festival.food.stalls !== "yes" || occurrence === null) return false;
+  if (occurrence.start === null || occurrence.end === null) return false;
+  const [lunchFrom, lunchTo] = MEAL_WINDOWS.lunch;
+  const start = toMinutes(occurrence.start);
+  const end = toMinutes(occurrence.end);
+  const shared =
+    Math.min(end < start ? end + 1440 : end, toMinutes(lunchTo)) -
+    Math.max(start, toMinutes(lunchFrom));
+  return shared >= MEAL_OVERLAP_MINUTES;
 }
 
 /** 地域の名前を比べる形にする（空白を除く） */
