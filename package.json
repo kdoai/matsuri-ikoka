@@ -23,7 +23,7 @@
     "eval:search": "tsx scripts/evaluate-search.ts",
     "build:stations": "tsx scripts/build-stations.ts",
     "refresh:targets": "tsx scripts/refresh-targets.ts",
-    "refresh:run": "tsx scripts/run-managed-agent.ts"
+    "research": "tsx scripts/research-run.ts"
   },
   "devDependencies": {
     "@anthropic-ai/sdk": "1.3.0",

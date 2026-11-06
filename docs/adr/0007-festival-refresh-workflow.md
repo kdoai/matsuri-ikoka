@@ -1,6 +1,6 @@
 # ADR 0007：祭りのデータを、GitHub Actions から Managed Agents で確かめ直し、PR で届ける
 
-- 状態：採用
+- 状態：置き換え（[ADR 0009](0009-weekly-research-on-managed-agents.md)）
 
 ## 背景
 

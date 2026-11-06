@@ -1,29 +1,39 @@
-name: 祭りのデータの確かめ直し
+name: 祭りのデータの週次の調査
 
-# 確かめ直す祭りを選び、祭りごとに Claude Managed Agents の調査のセッションを起動して、
-# 取り込める結果を PR にする（scripts/run-managed-agent.ts）。データは直接書き換えず、必ず PR を通す。
-# 調査のジョブ（API キーを読む）と PR のジョブ（GitHub に書き込む）を分け、調査する側に GitHub の書き込みの権限を渡さない。
-# 変数 MATSURI_REFRESH_ENABLED が true でないあいだは、対象を一覧にする空実行だけを行う。
-# 使う GitHub Actions の変数は docs/spec/operations.md の「祭りのデータの更新」にある。
+# 調査そのものは Claude Managed Agents の定期実行（毎週月曜 6:00、日本時間）が行う。
+# このワークフローはモデルを使わず、その前後の短い仕事だけを行う（scripts/research-run.ts）。
+# - 準備：今週の調査リストをコードで選び、セッションが読むだけの Store に置く
+# - 回収：終わったセッションの報告をコードで確かめ、変える祭りと調査の台帳を PR にする
+# - 適用：managed-agents/ のファイルを ant apply で API に反映し、claude-lock.json を PR にする
+# 認証は Workload Identity Federation で、API キーを置かない。連携のルールはこのファイルの main からの
+# schedule と workflow_dispatch だけを受け付けるので、ファイル名を変えるときはルールも直す。
+# 変数 MATSURI_REFRESH_ENABLED が true でないあいだは、定期のきっかけでは何もしない。
+# 使う変数は docs/spec/operations.md の「祭りのデータの更新」にある。
 
 on:
   schedule:
-    # 毎週月曜の 6:00（日本時間）
-    - cron: "0 21 * * 0"
+    # 準備：日曜 21:00（日本時間）
+    - cron: "0 12 * * 0"
+    # 回収：月曜 12:00、18:00、火曜 6:00（日本時間）。動いている途中なら次の回で確かめる
+    - cron: "0 3 * * 1"
+    - cron: "0 9 * * 1"
+    - cron: "0 21 * * 1"
   workflow_dispatch:
     inputs:
-      run:
-        description: 調査する（オフなら空実行）
-        type: boolean
-        default: false
+      mode:
+        description: 行うこと
+        type: choice
+        options:
+          - collect
+          - prepare
+          - trigger
+          - plan
+          - setup
+        default: collect
       limit:
-        description: 調べる祭りの数の上限
+        description: 調査リストの件数の上限（prepare のとき。空なら上限なし）
         type: string
-        default: "5"
-      max_cost:
-        description: 1つのセッションの費用の上限（米ドル）
-        type: string
-        default: "2.00"
+        default: ""
 
 permissions:
   contents: read
@@ -34,24 +44,29 @@ concurrency:
 
 jobs:
   research:
-    name: 調査
-    if: github.ref == 'refs/heads/main'
+    name: 準備と回収
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || vars.MATSURI_REFRESH_ENABLED == 'true')
     runs-on: ubuntu-24.04
-    # セッションごとの時間の上限（30分）× 既定の件数の上限に、準備の時間を足す
-    timeout-minutes: 180
+    timeout-minutes: 30
     permissions:
       contents: read
-      # 依頼の Issue（訂正・掲載・掲載停止）を読む
+      # 依頼の Issue と確認待ちの PR を読む
       issues: read
-      # Workload Identity 連携で、鍵のファイルなしに Secret Manager から API キーを読む
+      pull-requests: read
+      # GitHub の ID トークンを短い Anthropic のトークンに換える
       id-token: write
     outputs:
-      changed: ${{ steps.collect.outputs.changed }}
+      changed: ${{ steps.run.outputs.changed }}
+      review: ${{ steps.run.outputs.review }}
     env:
-      LIMIT: ${{ inputs.limit || '5' }}
-      MAX_COST: ${{ inputs.max_cost || '2.00' }}
-      # 定期の実行と、手で「調査する」を選んだ実行だけを調査にする。変数が true でなければ空実行
-      RUN: ${{ vars.MATSURI_REFRESH_ENABLED == 'true' && (github.event_name == 'schedule' || inputs.run) }}
+      ANTHROPIC_FEDERATION_RULE_ID: ${{ vars.ANTHROPIC_FEDERATION_RULE_ID }}
+      ANTHROPIC_ORGANIZATION_ID: ${{ vars.ANTHROPIC_ORGANIZATION_ID }}
+      ANTHROPIC_SERVICE_ACCOUNT_ID: ${{ vars.ANTHROPIC_SERVICE_ACCOUNT_ID }}
+      ANTHROPIC_WORKSPACE_ID: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
+      MATSURI_REFRESH_ENABLED: ${{ vars.MATSURI_REFRESH_ENABLED }}
+      # 定期のきっかけは、どの cron かで仕事を決める
+      MODE: ${{ inputs.mode || (github.event.schedule == '0 12 * * 0' && 'prepare') || 'collect' }}
+      LIMIT: ${{ inputs.limit }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -59,85 +74,84 @@ jobs:
 
       - uses: ./.github/actions/setup
 
-      - name: 依頼の Issue を集める
+      - name: 依頼の Issue と確認待ちの祭りを集める
+        if: env.MODE == 'prepare'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh issue list -R "$GITHUB_REPOSITORY" --state open --limit 200 \
             --json number,body,labels > "$RUNNER_TEMP/issues.json"
+          # ブランチは自動の更新だけが作る。ファイル名は祭りの ID
+          gh pr list -R "$GITHUB_REPOSITORY" --state open --limit 50 --json headRefName,files \
+            --jq '.[] | select(.headRefName | startswith("chore/refresh-festivals-")) | .files[].path' \
+            | sed -n 's|^data/festivals/\([a-z0-9-]*\)\.json$|\1|p' > "$RUNNER_TEMP/under-review.txt"
 
-      - name: 確かめ直す祭りを一覧にする（空実行）
-        run: pnpm refresh:run --issues "$RUNNER_TEMP/issues.json" --limit "$LIMIT"
-
-      - name: 変数がそろっているか確かめる
-        if: env.RUN == 'true'
+      # ant は版とチェックサムで固定して入れる
+      - name: ant を入れる
+        if: env.MODE == 'setup' || env.MODE == 'plan'
         env:
-          PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
-          WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          REFRESH_SERVICE_ACCOUNT: ${{ vars.GCP_REFRESH_SERVICE_ACCOUNT }}
-          REFRESH_API_KEY_SECRET: ${{ vars.MATSURI_REFRESH_API_KEY_SECRET }}
-          MATSURI_REFRESH_AGENT_ID: ${{ vars.MATSURI_REFRESH_AGENT_ID }}
-          MATSURI_REFRESH_ENVIRONMENT_ID: ${{ vars.MATSURI_REFRESH_ENVIRONMENT_ID }}
+          ANT_VERSION: 2.7.1
+          ANT_SHA256: 7c4bf5081532d994201bc3678657c8f314e487c521ec53937d15c0aca25c2bf0
         run: |
-          missing=()
-          for name in PROJECT_ID WORKLOAD_IDENTITY_PROVIDER REFRESH_SERVICE_ACCOUNT REFRESH_API_KEY_SECRET \
-            MATSURI_REFRESH_AGENT_ID MATSURI_REFRESH_ENVIRONMENT_ID; do
-            [[ -n "${!name}" ]] || missing+=("$name")
-          done
-          if (( ${#missing[@]} > 0 )); then
-            echo "GitHub Actions の変数が足りません：${missing[*]}" >&2
-            exit 1
-          fi
+          archive="$RUNNER_TEMP/ant.tar.gz"
+          curl -fsSL -o "$archive" \
+            "https://github.com/anthropics/anthropic-cli/releases/download/v${ANT_VERSION}/ant_${ANT_VERSION}_linux_amd64.tar.gz"
+          echo "$ANT_SHA256  $archive" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/bin"
+          tar -xzf "$archive" -C "$RUNNER_TEMP/bin" ant
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
 
-      # 確かめ直し専用のサービスアカウントで入る。デプロイ用のアカウントは使わない
-      - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
-        if: env.RUN == 'true'
-        with:
-          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ vars.GCP_REFRESH_SERVICE_ACCOUNT }}
-
-      - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
-        if: env.RUN == 'true'
-
-      # API キーはこのステップの中だけで読み、ほかのステップやファイルに残さない
-      - name: 調査する
-        if: env.RUN == 'true'
-        env:
-          PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
-          REFRESH_API_KEY_SECRET: ${{ vars.MATSURI_REFRESH_API_KEY_SECRET }}
-          MATSURI_REFRESH_AGENT_ID: ${{ vars.MATSURI_REFRESH_AGENT_ID }}
-          MATSURI_REFRESH_ENVIRONMENT_ID: ${{ vars.MATSURI_REFRESH_ENVIRONMENT_ID }}
+      - name: 実行する
+        id: run
         run: |
-          ANTHROPIC_API_KEY="$(gcloud secrets versions access latest \
-            --secret "$REFRESH_API_KEY_SECRET" --project "$PROJECT_ID")"
-          echo "::add-mask::${ANTHROPIC_API_KEY}"
-          export ANTHROPIC_API_KEY
-          mkdir -p "$RUNNER_TEMP/refresh"
-          pnpm refresh:run --run --write \
-            --issues "$RUNNER_TEMP/issues.json" \
-            --limit "$LIMIT" --max-cost "$MAX_COST" \
-            --body "$RUNNER_TEMP/refresh/body.md"
-
-      - name: 変わった祭りのデータを集める
-        id: collect
-        if: env.RUN == 'true'
-        run: |
-          # 本文の祭りの名前や理由は、記号を打ち消してから書かれている（refreshPullRequestBody）
-          cat "$RUNNER_TEMP/refresh/body.md" >> "$GITHUB_STEP_SUMMARY"
-          mkdir -p "$RUNNER_TEMP/refresh/festivals"
-          changed="$(git status --porcelain -- data/festivals | awk '{ print $2 }')"
-          if [[ -z "$changed" ]]; then
-            echo "変わった祭りはありません"
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          while IFS= read -r file; do
-            cp "$file" "$RUNNER_TEMP/refresh/festivals/"
-          done <<< "$changed"
-          echo "changed=true" >> "$GITHUB_OUTPUT"
+          export ANTHROPIC_IDENTITY_TOKEN_FILE="$RUNNER_TEMP/identity-token"
+          fetch_token() {
+            curl -sS --fail -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+              "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://api.anthropic.com" \
+              | jq -r .value > "$ANTHROPIC_IDENTITY_TOKEN_FILE"
+          }
+          fetch_token
+          # GitHub の ID トークンは約5分で切れるので、SDK が換え直せるよう更新し続ける
+          ( while sleep 240; do fetch_token; done ) &
+          refresher=$!
+          trap 'kill "$refresher"' EXIT
+          case "$MODE" in
+            plan)
+              (cd managed-agents && ant apply --dry-run -v .)
+              ;;
+            setup)
+              # GitHub の ID トークンは1回しか換えられないので、コマンドごとに取り直す
+              applied=0
+              (cd managed-agents && ant apply --yes .) || applied=$?
+              # 途中で失敗しても、作れた資源の記録を残す
+              mkdir -p "$RUNNER_TEMP/refresh"
+              if ! git diff --quiet -- managed-agents/claude-lock.json \
+                || [[ -n "$(git ls-files --others --exclude-standard managed-agents/claude-lock.json)" ]]; then
+                cp managed-agents/claude-lock.json "$RUNNER_TEMP/refresh/"
+                echo "Managed Agents の資源の ID の記録を更新します。" > "$RUNNER_TEMP/refresh/body.md"
+                echo "changed=true" >> "$GITHUB_OUTPUT"
+                echo "review=auto" >> "$GITHUB_OUTPUT"
+              fi
+              (( applied == 0 )) || exit "$applied"
+              fetch_token
+              pnpm --silent research schedule
+              ;;
+            trigger) pnpm --silent research trigger ;;
+            prepare)
+              args=(--issues "$RUNNER_TEMP/issues.json" --under-review "$RUNNER_TEMP/under-review.txt")
+              [[ -n "$LIMIT" ]] && args+=(--limit "$LIMIT")
+              pnpm --silent research prepare "${args[@]}"
+              ;;
+            collect)
+              mkdir -p "$RUNNER_TEMP/refresh"
+              pnpm --silent research collect --out "$RUNNER_TEMP/refresh"
+              ;;
+            *) echo "想定しない仕事：$MODE" >&2; exit 1 ;;
+          esac
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        if: steps.collect.outputs.changed == 'true'
+        # 適用が途中で失敗しても、作れた資源の記録は PR にする
+        if: always() && steps.run.outputs.changed == 'true'
         with:
           name: refresh
           path: ${{ runner.temp }}/refresh
@@ -146,7 +160,7 @@ jobs:
   pull-request:
     name: PR を開く
     needs: research
-    if: needs.research.outputs.changed == 'true'
+    if: always() && needs.research.outputs.changed == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
@@ -167,22 +181,37 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           BRANCH: chore/refresh-festivals-${{ github.run_id }}
+          # 祭りの中身が変わる PR は人が確かめる。status:manual の PR は自動ではマージしない
+          REVIEW: ${{ needs.research.outputs.review }}
         run: |
           today="$(TZ=Asia/Tokyo date +%F)"
-          # 取り込めると確かめた祭りのファイルだけを置く（ファイル名はデータの ID）
-          for file in "$RUNNER_TEMP"/refresh/festivals/*.json; do
-            name="$(basename "$file")"
-            [[ "$name" =~ ^[a-z0-9-]+\.json$ ]] || { echo "想定しないファイル名：$name" >&2; exit 1; }
-            cp "$file" "data/festivals/$name"
-          done
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$BRANCH"
-          git add data/festivals
-          git commit -m "chore(data): 祭りのデータを確かめ直す（${today}）"
+          if [[ -f "$RUNNER_TEMP/refresh/claude-lock.json" ]]; then
+            # 適用の記録だけを置く
+            cp "$RUNNER_TEMP/refresh/claude-lock.json" managed-agents/claude-lock.json
+            git add managed-agents/claude-lock.json
+            title="chore(infra): Managed Agents の資源の ID の記録を更新する（${today}）"
+            labels=(--label type:task --label area:infra)
+          else
+            # 確かめた祭りのファイルと台帳だけを置く（ファイル名はデータの ID）
+            shopt -s nullglob
+            for file in "$RUNNER_TEMP"/refresh/festivals/*.json; do
+              name="$(basename "$file")"
+              [[ "$name" =~ ^[a-z0-9-]+\.json$ ]] || { echo "想定しないファイル名：$name" >&2; exit 1; }
+              cp "$file" "data/festivals/$name"
+            done
+            cp "$RUNNER_TEMP/refresh/research-ledger.json" data/research-ledger.json
+            git add data/festivals data/research-ledger.json
+            title="chore(data): 祭りのデータの週次の調査の結果（${today}）"
+            labels=(--label type:data --label area:data)
+          fi
+          [[ "$REVIEW" == "human" ]] && labels+=(--label status:manual)
+          git commit -m "$title"
           git push origin "$BRANCH"
           gh pr create -R "$GITHUB_REPOSITORY" --base main --head "$BRANCH" \
-            --title "chore(data): 祭りのデータを確かめ直す（${today}）" \
+            --title "$title" \
             --body-file "$RUNNER_TEMP/refresh/body.md" \
-            --label type:data --label area:data
+            "${labels[@]}"
           gh workflow run ci.yml -R "$GITHUB_REPOSITORY" --ref "$BRANCH"
