@@ -255,18 +255,25 @@ export function Shop() {
       {/* 左：いま動いているスタッフ（右の列がないとき）と、はじめての操作の案内。店の中のようすは読み上げにも伝える */}
       <div
         className="pointer-events-none absolute left-2 z-10 flex w-56 flex-col gap-2 sm:left-3 sm:w-64 [&>*]:pointer-events-auto"
-        style={{ top: frame.top + 8 }}
+        // 上の段と会話の窓の間に収める
+        style={{
+          top: frame.top + 8,
+          maxHeight: `max(8rem, calc(100dvh - ${frame.top + frame.bottom + 16}px))`,
+        }}
       >
         {sideColumn ? null : <StaffActivity />}
         {dialogueOpen || panelOpen ? null : <Tutorial />}
         <PlayStatus hidden />
       </div>
 
-      {/* 右の列：店内のようすと、豆知識（クイズ）の窓。窓の札が上に出るので、間を空ける */}
+      {/*
+        右の列：店内のようすと、豆知識（クイズ）の窓。窓の札が上に出るので、間を空ける。
+        上の段から画面の下までに収め、高さが足りない分は窓の中でスクロールする
+      */}
       {sideColumn ? (
         <div
           ref={panelRef}
-          className="pointer-events-none absolute right-3 z-10 flex w-[22rem] flex-col gap-7 [&>*]:pointer-events-auto"
+          className="pointer-events-none absolute right-3 bottom-3 z-10 flex w-[22rem] flex-col gap-7 [&>*]:pointer-events-auto"
           style={{ top: frame.top + 22 }}
         >
           <StaffActivity />
@@ -312,7 +319,11 @@ export function Shop() {
       >
         {/* 右の列がないときは、待ち時間の窓を会話の窓の真上の中ほどに置き、左上の店内のようすに重ねない */}
         {sideColumn || !showWaiting ? null : (
-          <div className="pointer-events-none absolute inset-x-0 bottom-full mx-auto mb-6 w-full max-w-md [&>*]:pointer-events-auto">
+          <div
+            className="pointer-events-none absolute inset-x-0 bottom-full mx-auto mb-6 flex w-full max-w-md flex-col [&>*]:pointer-events-auto"
+            // 上へ伸びても、上の段にかからない高さまでにする（札の分と、会話の窓との間を除く）
+            style={{ maxHeight: `max(10rem, calc(100dvh - ${frame.top + frame.bottom + 48}px))` }}
+          >
             <WaitingCard />
           </div>
         )}

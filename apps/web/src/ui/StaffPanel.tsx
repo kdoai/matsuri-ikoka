@@ -3,7 +3,7 @@ import { ArrowRight, ClipboardList, Clock, Mail } from "lucide-react";
 import { useApp, useT } from "../state/react";
 import { staffActivity, turnRelays } from "../state/relay";
 import type { RelayEntry, StaffState } from "../state/types";
-import { GameWindow } from "./GameWindow";
+import { GameWindow, windowScroll } from "./GameWindow";
 import { formatElapsed, useNow, useWaitClock } from "./waitClock";
 
 // スタッフの状態（待機・移動・作業・戻る）と吹き出しを 2D で出す。
@@ -278,6 +278,8 @@ export function StaffActivity() {
     <GameWindow
       ariaLabel={t.activity.title}
       testId="staff-activity"
+      // 高さが足りないときは、豆知識（クイズ）の窓より先にこちらを縮めて、中でスクロールする
+      className="min-h-[7.5rem] shrink-[100]"
       title={
         <>
           <ClipboardList className="size-4" aria-hidden="true" />
@@ -285,61 +287,65 @@ export function StaffActivity() {
         </>
       }
     >
-      <ul className="space-y-2">
-        {busy.map((id) => {
-          const state = staff[id];
-          const since = clock.staffStarted[id];
-          const activity = staffActivity(id, state, relay);
-          const phase =
-            activity === null ? t.staff.phases[state.phase] : t.relay.activities[activity];
-          // 吹き出しより、くわしい文があればそれを出す。
-          // 吹き出しがなく、ようすが札と同じ言葉だけなら、下の行は出さない
-          const detail = showsBubble(state) ? (state.detail ?? state.bubble) : summarize(id, state);
-          return (
-            <li
-              key={id}
-              className="rounded-xl bg-white px-2 py-1.5 shadow-sm ring-1 ring-wood-300/60"
-            >
-              <div className="flex items-center gap-2">
-                <Badge id={id} size="sm" />
-                <span className="min-w-0 flex-1 truncate font-bold text-base text-ink">
-                  {t.staff.names[id]}
-                </span>
-                {since === undefined ? null : (
-                  <span className="shrink-0 font-mono text-ink-soft text-xs tabular-nums">
-                    {formatElapsed(now - since)}
+      <div className={windowScroll}>
+        <ul className="space-y-2">
+          {busy.map((id) => {
+            const state = staff[id];
+            const since = clock.staffStarted[id];
+            const activity = staffActivity(id, state, relay);
+            const phase =
+              activity === null ? t.staff.phases[state.phase] : t.relay.activities[activity];
+            // 吹き出しより、くわしい文があればそれを出す。
+            // 吹き出しがなく、ようすが札と同じ言葉だけなら、下の行は出さない
+            const detail = showsBubble(state)
+              ? (state.detail ?? state.bubble)
+              : summarize(id, state);
+            return (
+              <li
+                key={id}
+                className="rounded-xl bg-white px-2 py-1.5 shadow-sm ring-1 ring-wood-300/60"
+              >
+                <div className="flex items-center gap-2">
+                  <Badge id={id} size="sm" />
+                  <span className="min-w-0 flex-1 truncate font-bold text-base text-ink">
+                    {t.staff.names[id]}
                   </span>
+                  {since === undefined ? null : (
+                    <span className="shrink-0 font-mono text-ink-soft text-xs tabular-nums">
+                      {formatElapsed(now - since)}
+                    </span>
+                  )}
+                  <span className="shrink-0 whitespace-nowrap rounded-full bg-yamabuki-400 px-2 py-0.5 font-bold text-ink text-xs">
+                    {phase}
+                  </span>
+                </div>
+                {detail === null || detail === phase ? null : (
+                  <p
+                    className={`mt-1 line-clamp-4 border-yamabuki-400 border-l-4 pl-2 text-xs leading-snug ${
+                      showsBubble(state) ? "font-medium text-ink" : "text-ink-soft"
+                    }`}
+                  >
+                    {detail}
+                  </p>
                 )}
-                <span className="shrink-0 whitespace-nowrap rounded-full bg-yamabuki-400 px-2 py-0.5 font-bold text-ink text-xs">
-                  {phase}
-                </span>
-              </div>
-              {detail === null || detail === phase ? null : (
-                <p
-                  className={`mt-1 line-clamp-4 border-yamabuki-400 border-l-4 pl-2 text-xs leading-snug ${
-                    showsBubble(state) ? "font-medium text-ink" : "text-ink-soft"
-                  }`}
-                >
-                  {detail}
-                </p>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-      {streaming ? <RelayLog entries={relays} limit={4} /> : null}
-      {elapsed === null ? null : (
-        <p
-          className="mt-2 inline-flex items-center gap-1 rounded-full border-2 border-wood-300 bg-white px-2.5 py-0.5 font-mono text-ink-soft text-xs tabular-nums"
-          data-testid="waiting-elapsed"
-        >
-          <Clock className="size-3" aria-hidden="true" />
-          {t.waiting.elapsed(formatElapsed(elapsed))}
-        </p>
-      )}
-      {elapsed !== null && elapsed >= LONG_WAIT_MS ? (
-        <p className="mt-1.5 text-ink-soft text-xs">{t.waiting.longWait}</p>
-      ) : null}
+              </li>
+            );
+          })}
+        </ul>
+        {streaming ? <RelayLog entries={relays} limit={4} /> : null}
+        {elapsed === null ? null : (
+          <p
+            className="mt-2 inline-flex items-center gap-1 rounded-full border-2 border-wood-300 bg-white px-2.5 py-0.5 font-mono text-ink-soft text-xs tabular-nums"
+            data-testid="waiting-elapsed"
+          >
+            <Clock className="size-3" aria-hidden="true" />
+            {t.waiting.elapsed(formatElapsed(elapsed))}
+          </p>
+        )}
+        {elapsed !== null && elapsed >= LONG_WAIT_MS ? (
+          <p className="mt-1.5 text-ink-soft text-xs">{t.waiting.longWait}</p>
+        ) : null}
+      </div>
     </GameWindow>
   );
 }

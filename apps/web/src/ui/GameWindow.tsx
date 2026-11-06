@@ -3,6 +3,13 @@ import type { ReactNode } from "react";
 // 店の画面の右に重ねる窓の枠。木の縁に生成りの紙を張り、頭の中ほどに見出しの札を下げる。
 // 店内のようすと、コンシェルジュの豆知識（クイズ）の窓で同じ枠を使う。
 
+/**
+ * 窓の高さが足りないとき、中でスクロールする部分に付ける。
+ * 枠は縦に並べて縮められるようにしてあるので、見出しの札は切らずに、中身だけを動かせる
+ */
+export const windowScroll =
+  "-mx-1 min-h-0 overflow-x-hidden overflow-y-auto overscroll-contain px-1 py-0.5";
+
 /** 札を吊る金具（飾りなので読み上げない） */
 function Hook({ side }: { side: "left" | "right" }) {
   return (
@@ -42,7 +49,7 @@ export function GameWindow({
     <section
       aria-label={ariaLabel}
       aria-labelledby={ariaLabel === undefined ? titleId : undefined}
-      className={`relative w-full rounded-[1.4rem] border-4 border-wood-300 bg-kinari-50/95 px-3 pt-6 pb-3 text-sm shadow-xl ring-2 ring-wood-700/40 backdrop-blur-sm ${className}`}
+      className={`relative flex min-h-0 w-full flex-col rounded-[1.4rem] border-4 border-wood-300 bg-kinari-50/95 px-3 pt-6 pb-3 text-sm shadow-xl ring-2 ring-wood-700/40 backdrop-blur-sm ${className}`}
       data-testid={testId}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
