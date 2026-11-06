@@ -148,7 +148,8 @@ jobs:
               # リポジトリの整形に合わせる。合わないと PR の lint で止まる
               shopt -s nullglob
               for file in "$RUNNER_TEMP"/refresh/festivals/*.json; do
-                formatted="$(pnpm --silent exec biome format --stdin-file-path="data/festivals/$(basename "$file")" < "$file")"
+                name="$(basename "$file")"
+                formatted="$(pnpm --silent exec biome format --stdin-file-path="data/festivals/$name" < "$file")"
                 echo "$formatted" > "$file"
               done
               ;;
