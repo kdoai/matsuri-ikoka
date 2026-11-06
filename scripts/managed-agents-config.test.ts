@@ -31,6 +31,14 @@ function enabledTools({ frontmatter }: AgentFile): string[] {
     .sort();
 }
 
+function policyOf({ frontmatter }: AgentFile, tool: string): string {
+  const pattern = new RegExp(
+    `^ {6}- name: ${tool}\\n {8}enabled: true\\n {8}permission_policy:\\n {10}type: (\\w+)$`,
+    "m",
+  );
+  return pattern.exec(frontmatter)?.[1] ?? "default";
+}
+
 function field(text: string, pattern: RegExp): string {
   const value = pattern.exec(text)?.[1];
   if (value === undefined) throw new Error(`${pattern} に当たりません`);
@@ -69,6 +77,12 @@ describe("エージェントの道具", () => {
     for (const config of all) {
       expect(enabledTools(config)).not.toContain("bash");
     }
+  });
+
+  it("外へ送れる道具と書く道具は、呼び出しごとにサーバーが判断する", () => {
+    expect(policyOf(reader, "web_fetch")).toBe("auto");
+    expect(policyOf(reviewer, "web_fetch")).toBe("auto");
+    expect(policyOf(lead, "write")).toBe("auto");
   });
 
   it("リードは決めたエージェントだけに任せる", () => {

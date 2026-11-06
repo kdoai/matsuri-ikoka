@@ -8,7 +8,6 @@ model:
   effort: medium
 tools:
   - type: agent_toolset_20260401
-    # 書けるのはセッションの中だけで、外に出るのは回収のコードの検査を通ったものだけ
     default_config:
       enabled: false
       permission_policy:
@@ -16,8 +15,12 @@ tools:
     configs:
       - name: read
         enabled: true
+      # ページから作られた報告を受け取る役なので、呼び出しごとにサーバーが判断する。
+      # 書けるのはセッションの中だけで、外に出るのは回収のコードの検査を通ったものだけ
       - name: write
         enabled: true
+        permission_policy:
+          type: auto
 multiagent:
   type: multiagent_20261001
   subagents:

@@ -8,7 +8,7 @@ model:
   effort: medium
 tools:
   - type: agent_toolset_20260401
-    # 見ている人がいないので、確認を待つ設定にすると止まったままになる。書き込みや実行の道具は持たせない
+    # 書き込みや実行の道具は持たせない。検索の問い合わせに載る秘密の値もセッションにない
     default_config:
       enabled: false
       permission_policy:
@@ -16,8 +16,12 @@ tools:
     configs:
       - name: web_search
         enabled: true
+      # 開く URL に載せて外へ送れるので、呼び出しごとにサーバーが判断する。
+      # 確認待ちに答える人はいないので、止まった祭りは報告なしになり、翌週に調べ直す
       - name: web_fetch
         enabled: true
+        permission_policy:
+          type: auto
       - name: read
         enabled: true
 skills:
@@ -35,7 +39,7 @@ skills:
 
 費用を抑えるため、次を守ります。
 
-- まず knownSources のページを開きます。そこで分かれば検索しません
+- ページの取得の道具は、検索結果に出た URL か、開いたページに書かれた URL しか開けません。knownSources の URL はそのままでは開けないので、祭りの名前と knownSources のサイトの名前で検索し、結果に出たページから開きます
 - 検索は3回まで、ページを開くのは5件までにします。それで分からなければ not_found にします
 - 開催日に関係のない項目は調べません
 
