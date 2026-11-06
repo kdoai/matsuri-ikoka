@@ -4,6 +4,7 @@ import { deleteSession, query } from "@anthropic-ai/claude-agent-sdk";
 import { serve } from "@hono/node-server";
 import { getConnInfo } from "@hono/node-server/conninfo";
 import { createAccount, readAccountConfig } from "./account/firebase";
+import { createInternalVerifiers, readInternalAuthConfig } from "./account/internalAuth";
 import { ClaudeAgentRunner } from "./agent/claudeRunner";
 import { createFestivalWishReader } from "./agent/festivalWishReader";
 import { agentEnv, createAgentWorkdir } from "./agent/options";
@@ -23,6 +24,7 @@ import { festivalDirs, loadFestivals } from "./data/festivalStore";
 import { loadOsmPlaces } from "./data/osmPlaces";
 import { loadStationPoints } from "./data/stationPoints";
 import { nowInJapan, todayInJapan } from "./domain/calendar";
+import { errorForLog } from "./log";
 import type { FestivalWishReader } from "./routes/festivalSearch";
 import { ConcurrencyLimiter, clientIp, DailyLimiter } from "./routes/guard";
 import { StoragePersistence } from "./session/persistence";
@@ -33,7 +35,7 @@ import { createJmaWeather } from "./tools/weather";
 
 // 待たれていない Promise の失敗で、サーバーごと止めない。止まると、返答の途中の接続がすべて切れる
 process.on("unhandledRejection", (reason) => {
-  console.error("[process] 待たれていない Promise が失敗しました", reason);
+  console.error(JSON.stringify({ kind: "unhandled_rejection", ...errorForLog(reason) }));
 });
 
 const config = readConfig(process.env);
@@ -198,12 +200,16 @@ const app = createApp({
   persistence,
   verifier: account.verifier,
   authConfig: account.web,
+  internal: createInternalVerifiers(readInternalAuthConfig(process.env)),
   festivals: festivals.store,
   ...(stations ? { stations } : {}),
   ...(readFestivalWish ? { readFestivalWish } : {}),
   limiter: new DailyLimiter(config.dailyChatLimit, today),
-  ipLimiter: new DailyLimiter(config.dailyChatLimitPerIp, today),
-  concurrency: new ConcurrencyLimiter(config.maxConcurrentTurns),
+  clientLimiter: new DailyLimiter(config.dailyChatLimitPerIp, today),
+  concurrency: new ConcurrencyLimiter(
+    config.maxConcurrentTurns,
+    config.maxConcurrentTurnsPerClient,
+  ),
   clientIp: (c) => {
     let remote: string | undefined;
     try {

@@ -105,6 +105,13 @@ describe("画面のビルドを同じオリジンから配る", () => {
     expect(pageCsp("evil.example.com; script-src *")).not.toContain("evil");
   });
 
+  it("内部の入口のパスには、画面のページを返さない", async () => {
+    const res = await app(dist).request("/internal/none");
+
+    expect(res.status).toBe(404);
+    expect(await res.text()).not.toContain("<title>画面</title>");
+  });
+
   it("画面のビルドを指定しなければ配らない", async () => {
     expect((await app(null).request("/")).status).toBe(404);
   });

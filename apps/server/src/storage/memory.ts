@@ -1,9 +1,11 @@
 import { randomBytes } from "node:crypto";
 import type { Itinerary } from "@matsuri-ikoka/schema";
+import type { OwnerId } from "./owner";
 import {
   type ClaimResult,
   type CreatedShare,
   MAX_VERSIONS,
+  type OwnerTripStorage,
   SESSION_STATE_TTL_MS,
   type SessionSnapshot,
   SHARE_TTL_MS,
@@ -12,6 +14,7 @@ import {
   type StoredTripDetail,
   summarize,
   type TripStorage,
+  tripOwner,
 } from "./types";
 
 // メモリの保存の口。テストと、Firestore を用意していない手元で使う。
@@ -51,7 +54,10 @@ export class MemoryTripStorage implements TripStorage {
   readonly kind = "memory";
   readonly #itineraries = new Map<string, ItineraryEntry>();
   readonly #shares = new Map<string, ShareEntry>();
-  readonly #sessions = new Map<string, { json: string; updatedAt: number }>();
+  readonly #sessions = new Map<
+    string,
+    { json: string; updatedAt: number; ownerUid: string | null }
+  >();
   readonly #now: () => number;
   readonly #max: number;
 
@@ -60,7 +66,7 @@ export class MemoryTripStorage implements TripStorage {
     this.#max = options.max ?? MAX_MEMORY_ENTRIES;
   }
 
-  /** 持ち主のない旅程は、最後の保存から30日で消える */
+  /** 残されていない旅程は、最後の保存から30日で消える */
   #alive(entry: ItineraryEntry | undefined): ItineraryEntry | undefined {
     if (entry === undefined) return undefined;
     if (entry.head.ownerUid === null && this.#now() - entry.head.updatedAt > SHARE_TTL_MS) {
@@ -72,16 +78,29 @@ export class MemoryTripStorage implements TripStorage {
 
   #owned(uid: string, itineraryId: string): ItineraryEntry | undefined {
     const entry = this.#alive(this.#itineraries.get(itineraryId));
-    return entry?.head.ownerUid === uid ? entry : undefined;
+    return entry !== undefined && tripOwner(entry.head) === uid ? entry : undefined;
   }
 
-  async saveItinerary(itinerary: Itinerary): Promise<void> {
+  forOwner(owner: OwnerId): OwnerTripStorage {
+    return {
+      owner,
+      claimTrip: (itineraryId) => this.#claimTrip(owner, itineraryId),
+      listTrips: () => this.#listTrips(owner),
+      getTrip: (itineraryId, version) => this.#getTrip(owner, itineraryId, version),
+      deleteTrip: (itineraryId) => this.#deleteTrip(owner, itineraryId),
+      deleteAllTrips: () => this.#deleteAllTrips(owner),
+      createShare: (itineraryId) => this.#createShare(owner, itineraryId),
+    };
+  }
+
+  async saveItinerary(itinerary: Itinerary, consultOwner: OwnerId | null): Promise<void> {
     const now = this.#now();
     const existing = this.#alive(this.#itineraries.get(itinerary.id));
     const entry: ItineraryEntry = existing ?? {
       head: {
         itineraryId: itinerary.id,
         ownerUid: null,
+        consultOwnerUid: null,
         title: "",
         date: null,
         version: itinerary.version,
@@ -99,50 +118,53 @@ export class MemoryTripStorage implements TripStorage {
       entry.head = { ...entry.head, ...summarize(itinerary), version: itinerary.version };
     }
     entry.head.updatedAt = now;
+    entry.head.consultOwnerUid ??= consultOwner;
     // 保存した順を保つ（上限で消すのは、いちばん長く保存されていない旅程から）
     this.#itineraries.delete(itinerary.id);
     this.#itineraries.set(itinerary.id, entry);
     trim(this.#itineraries, this.#max);
   }
 
-  async getShared(id: string): Promise<SharedItinerary | null> {
-    const now = this.#now();
-    if (id.startsWith("sh-")) {
-      const share = this.#shares.get(id);
-      if (share === undefined) return null;
-      if (now > share.expiresAt) {
-        this.#shares.delete(id);
-        return null;
-      }
-      return {
-        itineraryId: share.itineraryId,
-        version: share.version,
-        itinerary: JSON.parse(share.json),
-      };
+  async readShare(shareId: string): Promise<SharedItinerary | null> {
+    const share = this.#shares.get(shareId);
+    if (share === undefined) return null;
+    if (this.#now() > share.expiresAt) {
+      this.#shares.delete(shareId);
+      return null;
     }
-    const entry = this.#alive(this.#itineraries.get(id));
-    if (entry === undefined || now - entry.head.updatedAt > SHARE_TTL_MS) return null;
-    const json = entry.versions.get(entry.head.version);
-    if (json === undefined) return null;
-    return { itineraryId: id, version: entry.head.version, itinerary: JSON.parse(json) };
+    return {
+      itineraryId: share.itineraryId,
+      version: share.version,
+      itinerary: JSON.parse(share.json),
+    };
   }
 
-  async claimTrip(uid: string, itineraryId: string): Promise<ClaimResult> {
+  async readUnowned(itineraryId: string): Promise<SharedItinerary | null> {
+    const entry = this.#alive(this.#itineraries.get(itineraryId));
+    if (entry === undefined || tripOwner(entry.head) !== null) return null;
+    if (this.#now() - entry.head.updatedAt > SHARE_TTL_MS) return null;
+    const json = entry.versions.get(entry.head.version);
+    if (json === undefined) return null;
+    return { itineraryId, version: entry.head.version, itinerary: JSON.parse(json) };
+  }
+
+  async #claimTrip(uid: string, itineraryId: string): Promise<ClaimResult> {
     const entry = this.#alive(this.#itineraries.get(itineraryId));
     if (entry === undefined) return { status: "not_found" };
-    if (entry.head.ownerUid !== null && entry.head.ownerUid !== uid) return { status: "forbidden" };
+    const owner = tripOwner(entry.head);
+    if (owner !== null && owner !== uid) return { status: "not_found" };
     entry.head.ownerUid = uid;
     return { status: "saved", trip: { ...entry.head } };
   }
 
-  async listTrips(uid: string): Promise<StoredTrip[]> {
+  async #listTrips(uid: string): Promise<StoredTrip[]> {
     return [...this.#itineraries.values()]
       .filter((entry) => entry.head.ownerUid === uid)
       .map((entry) => ({ ...entry.head }))
       .sort((a, b) => b.updatedAt - a.updatedAt);
   }
 
-  async getTrip(
+  async #getTrip(
     uid: string,
     itineraryId: string,
     version?: number,
@@ -160,7 +182,7 @@ export class MemoryTripStorage implements TripStorage {
     };
   }
 
-  async deleteTrip(uid: string, itineraryId: string): Promise<boolean> {
+  async #deleteTrip(uid: string, itineraryId: string): Promise<boolean> {
     if (this.#owned(uid, itineraryId) === undefined) return false;
     this.#itineraries.delete(itineraryId);
     for (const [id, share] of this.#shares) {
@@ -169,17 +191,19 @@ export class MemoryTripStorage implements TripStorage {
     return true;
   }
 
-  async deleteAllTrips(uid: string): Promise<number> {
-    const trips = await this.listTrips(uid);
-    for (const trip of trips) await this.deleteTrip(uid, trip.itineraryId);
+  async #deleteAllTrips(uid: string): Promise<number> {
+    const kept = (await this.#listTrips(uid)).length;
+    for (const entry of [...this.#itineraries.values()]) {
+      if (tripOwner(entry.head) === uid) await this.#deleteTrip(uid, entry.head.itineraryId);
+    }
     // 旅を消したあとに残った、この利用者の共有も消す
     for (const [id, share] of this.#shares) {
       if (share.ownerUid === uid) this.#shares.delete(id);
     }
-    return trips.length;
+    return kept;
   }
 
-  async createShare(uid: string, itineraryId: string): Promise<CreatedShare | null> {
+  async #createShare(uid: string, itineraryId: string): Promise<CreatedShare | null> {
     const entry = this.#owned(uid, itineraryId);
     const json = entry?.versions.get(entry.head.version);
     if (entry === undefined || json === undefined) return null;
@@ -197,10 +221,12 @@ export class MemoryTripStorage implements TripStorage {
   }
 
   async saveSession(snapshot: SessionSnapshot): Promise<void> {
+    const ownerUid = this.#sessions.get(snapshot.id)?.ownerUid ?? snapshot.ownerUid ?? null;
     this.#sessions.delete(snapshot.id);
     this.#sessions.set(snapshot.id, {
-      json: JSON.stringify(snapshot),
+      json: JSON.stringify({ ...snapshot, ownerUid }),
       updatedAt: snapshot.updatedAt,
+      ownerUid,
     });
     trim(this.#sessions, this.#max);
   }

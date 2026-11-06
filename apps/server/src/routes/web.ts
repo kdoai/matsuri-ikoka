@@ -1,12 +1,13 @@
 import { serveStatic } from "@hono/node-server/serve-static";
-import type { Hono, MiddlewareHandler } from "hono";
+import type { MiddlewareHandler } from "hono";
+import type { SecureRoutes } from "./policy";
 
 // 画面のビルド（apps/web/dist）を、API と同じオリジンから配る（docs/architecture.md）。
 // API・しおり・死活監視の経路を先に通し、それ以外の GET で画面のファイルを返す。
 // 見つからない経路は、画面の中の経路として index.html を返す。
 
 /** API など、画面のファイルを返さない経路 */
-const SERVER_PATHS = /^\/(?:api|shiori)(?:\/|$)|^\/healthz?$/;
+const SERVER_PATHS = /^\/(?:api|shiori|internal)(?:\/|$)|^\/healthz?$/;
 
 /**
  * 画面のページの CSP。本番のビルドを配って、3D・地図・相談・しおりまで通して確かめた最小の許可。
@@ -61,18 +62,22 @@ function withHeaders(files: MiddlewareHandler, authDomain: string | null): Middl
 }
 
 export function registerWebRoutes(
-  app: Hono,
+  routes: SecureRoutes,
   deps: { webDist: string; authDomain?: string | null },
 ) {
   const authDomain = deps.authDomain ?? null;
   // ビルドで作った圧縮済みのファイル（.br・.gz）があれば、ブラウザが受け取れる方を返す
-  app.use("*", withHeaders(serveStatic({ root: deps.webDist, precompressed: true }), authDomain));
+  routes.files(
+    "*",
+    withHeaders(serveStatic({ root: deps.webDist, precompressed: true }), authDomain),
+  );
   // 画面の中の経路（例：/trip/…）は index.html を返す
-  app.get(
+  routes.files(
     "*",
     withHeaders(
       serveStatic({ root: deps.webDist, path: "index.html", precompressed: true }),
       authDomain,
     ),
+    "GET",
   );
 }

@@ -3,7 +3,7 @@ import type { IsoDate } from "@matsuri-ikoka/schema";
 import type { MiddlewareHandler } from "hono";
 import { apiError } from "./errors";
 
-// 公開している URL の入口：合言葉と、1日の相談の回数の上限（ADR 0004）。
+// 公開している URL の入口：合言葉と、1日の相談の回数と同時に返事を作る数の上限（ADR 0004・ADR 0011）。
 
 export const PASSCODE_HEADER = "x-access-passcode";
 
@@ -26,7 +26,7 @@ export function passcodeGuard(passcode: string | null): MiddlewareHandler {
 }
 
 /**
- * 1日（日本の日付）の相談の回数を、キー（全体、または IP）ごとに数える。上限がなければ数えるだけ。
+ * 1日（日本の日付）の相談の回数を、キー（全体、または limitKey）ごとに数える。上限がなければ数えるだけ。
  * 日付が変わったら数え直す（前の日の数は捨てるので、キーの数だけメモリが増え続けることはない）
  */
 export class DailyLimiter {
@@ -62,13 +62,25 @@ export class DailyLimiter {
   }
 }
 
-/** 同時に動かせる数を数える。live で同時に返事を作る数（Claude を呼ぶ数）を抑える */
+/** 上限を数える単位。ログインしていれば利用者、していなければ IP */
+export function limitKey(viewer: string | null, ip: string): string {
+  return viewer === null ? ip : `uid:${viewer}`;
+}
+
+/**
+ * 同時に動かせる数を数える。live で同時に返事を作る数（Claude を呼ぶ数）を抑える。
+ * 全体の上限と、1人（limitKey）の上限を持ち、1人が枠を使い切らないようにする
+ */
 export class ConcurrencyLimiter {
   readonly #max: number;
+  readonly #maxPerClient: number;
+  readonly #byClient = new Map<string, number>();
   #running = 0;
 
-  constructor(max: number) {
+  /** maxPerClient を省くと、1人の上限は全体の上限と同じ */
+  constructor(max: number, maxPerClient: number = max) {
     this.#max = max;
+    this.#maxPerClient = maxPerClient;
   }
 
   get running(): number {
@@ -76,14 +88,22 @@ export class ConcurrencyLimiter {
   }
 
   /** 1つ分を取る。空きがなければ null。取れたら、終わったときに返す関数を返す */
-  tryAcquire(): (() => void) | null {
-    if (this.#running >= this.#max) return null;
+  tryAcquire(client = "*"): (() => void) | null {
+    const mine = this.#byClient.get(client) ?? 0;
+    if (this.#running >= this.#max || mine >= this.#maxPerClient) return null;
     this.#running += 1;
+    this.#byClient.set(client, mine + 1);
     let released = false;
     return () => {
       if (released) return;
       released = true;
       this.#running -= 1;
+      const left = (this.#byClient.get(client) ?? 1) - 1;
+      if (left > 0) {
+        this.#byClient.set(client, left);
+      } else {
+        this.#byClient.delete(client);
+      }
     };
   }
 }

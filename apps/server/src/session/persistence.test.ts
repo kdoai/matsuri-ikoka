@@ -21,11 +21,11 @@ describe("StoragePersistence", () => {
     const { storage, a } = instances();
     const itinerary = fictionalItinerary();
 
-    a.itineraries.save(itinerary);
-    a.itineraries.save({ ...itinerary, version: 2 });
+    a.itineraries.save(itinerary, null);
+    a.itineraries.save({ ...itinerary, version: 2 }, null);
     await a.persistence.flush();
 
-    expect((await storage.getShared(itinerary.id))?.version).toBe(2);
+    expect((await storage.readUnowned(itinerary.id))?.version).toBe(2);
   });
 
   it("別のインスタンスに届いた相談を、条件・段階・旅程ごと戻す", async () => {
@@ -36,7 +36,7 @@ describe("StoragePersistence", () => {
     session.conditions = { origin: "みなと中央駅" };
     session.itineraryId = itinerary.id;
     session.agentSessionId = "agent-1";
-    a.itineraries.save(itinerary);
+    a.itineraries.save(itinerary, null);
     await a.persistence.saveSession(session);
 
     const restored = await b.persistence.load(session.id);
@@ -58,9 +58,9 @@ describe("StoragePersistence", () => {
   it("前の形で保存した旅程は、共有の URL から読めない", async () => {
     const { storage, a } = instances();
     const itinerary = fictionalItinerary();
-    await storage.saveItinerary({ ...itinerary, items: [] } as never);
+    await storage.saveItinerary({ ...itinerary, items: [] } as never, null);
 
-    expect(await a.persistence.readShared(itinerary.id)).toBeUndefined();
+    expect(await a.persistence.readItinerary(itinerary.id, null)).toBeUndefined();
   });
 
   it("保存の口に書けなくても、相談は止めない", async () => {
@@ -75,7 +75,7 @@ describe("StoragePersistence", () => {
     const itineraries = new ItineraryStore();
     const persistence = new StoragePersistence({ storage, sessions, itineraries });
     const session = sessions.create();
-    itineraries.save(fictionalItinerary());
+    itineraries.save(fictionalItinerary(), null);
 
     await expect(persistence.flush()).resolves.toBeUndefined();
     await expect(persistence.saveSession(session)).resolves.toBeUndefined();

@@ -2,6 +2,7 @@ import { DoneEventSchema, encodeSseEvent, type SseEvent } from "@matsuri-ikoka/s
 import type { Context } from "hono";
 import { streamSSE } from "hono/streaming";
 import { AgentError, type EmitEvent } from "../agent/runner";
+import { errorForLog } from "../log";
 import type { Session } from "../session/sessionStore";
 import type { ErrorBody } from "./errors";
 
@@ -45,7 +46,7 @@ export function toErrorBody(error: unknown, signal: AbortSignal): ErrorBody | nu
   if (error instanceof AgentError) {
     return { code: error.code, message: error.message, retryable: error.retryable };
   }
-  console.error("[turn] failed", error);
+  console.error(JSON.stringify({ kind: "turn_failed", ...errorForLog(error) }));
   return {
     code: "internal",
     message: "うまく返事を作れませんでした。もう一度送ってください。",
@@ -113,7 +114,9 @@ export function streamTurn(
         message = encodeSseEvent(event);
       } catch (error) {
         // 形の違うイベントは送らない（画面のストアを壊さない）
-        console.error(`[sse] invalid ${event.type} event`, error);
+        console.error(
+          JSON.stringify({ kind: "sse_invalid", event: event.type, ...errorForLog(error) }),
+        );
         return false;
       }
       progress();

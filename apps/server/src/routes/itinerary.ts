@@ -1,8 +1,8 @@
-import type { Hono } from "hono";
 import type { FestivalStore } from "../data/festivalStore";
 import type { StoragePersistence } from "../session/persistence";
 import type { Shiori } from "../shiori";
 import { apiError } from "./errors";
+import { routeParam, type SecureRoutes } from "./policy";
 import { registerShioriRoutes } from "./shiori";
 
 export interface ItineraryDeps {
@@ -13,16 +13,20 @@ export interface ItineraryDeps {
   shiori?: Shiori;
 }
 
-export function registerItineraryRoutes(app: Hono, deps: ItineraryDeps) {
-  const readItinerary = (id: string) => deps.persistence.readShared(id);
+// 旅程の読み取り。読めるのは、共有の ID、持ち主のない旅程の ID、ログインした持ち主自身の旅程の ID だけ。
+// ほかの人の旅程は、ない旅程と同じ 404 にする。
 
-  app.get("/api/itinerary/:id", async (c) => {
-    const itinerary = await readItinerary(c.req.param("id"));
+export function registerItineraryRoutes(routes: SecureRoutes, deps: ItineraryDeps) {
+  routes.public("GET", "/api/itinerary/:id", async (c, { viewer }) => {
+    const itinerary = await deps.persistence.readItinerary(routeParam(c, "id"), await viewer());
     if (itinerary === undefined) {
       return c.json(apiError("bad_request", "旅程が見つかりません。", false), 404);
     }
     return c.json(itinerary);
   });
 
-  registerShioriRoutes(app, { ...deps, readItinerary });
+  registerShioriRoutes(routes, {
+    ...deps,
+    readItinerary: (id, viewer) => deps.persistence.readItinerary(id, viewer),
+  });
 }

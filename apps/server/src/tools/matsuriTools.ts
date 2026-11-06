@@ -1815,7 +1815,7 @@ export const updateItinerary = defineTool({
       for (const event of redoRequestEvents(evaluation, result.gaps)) ctx.emit?.(event);
     }
     if (!result.unchanged) {
-      ctx.itineraries.save(itinerary);
+      ctx.itineraries.save(itinerary, ctx.session.ownerUid);
       session.itineraryId = itinerary.id;
       session.selectedFestivalId = itinerary.mainFestivalId;
     }
@@ -2183,7 +2183,7 @@ export const verifyFestival = defineTool({
     // 開催は候補を出す前に確かめてある。その結果（か前の決定の結果）があれば、調べ直さずに確定する
     const known = matches ? knownVerification(ctx, current, festival.id, date) : null;
     if (matches && known !== null) {
-      ctx.itineraries.save({ ...current, verification: known });
+      ctx.itineraries.save({ ...current, verification: known }, ctx.session.ownerUid);
       ctx.turn.verification = known.status;
       return {
         festivalId: festival.id,
@@ -2219,7 +2219,7 @@ export const verifyFestival = defineTool({
 
     const applied = matches;
     if (applied) {
-      ctx.itineraries.save({ ...current, verification });
+      ctx.itineraries.save({ ...current, verification }, ctx.session.ownerUid);
       // 会話の状態（しおりへ進むか）は、旅程の再確認の結果を実際に書き換えたときだけ変える
       ctx.turn.verification = decision.result;
     }

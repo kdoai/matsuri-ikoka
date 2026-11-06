@@ -1,10 +1,12 @@
 import type { Itinerary } from "@matsuri-ikoka/schema";
 import type { DocumentData, DocumentSnapshot, Firestore } from "firebase-admin/firestore";
 import { newShareId } from "./memory";
+import { isDocumentId, type OwnerId } from "./owner";
 import {
   type ClaimResult,
   type CreatedShare,
   MAX_VERSIONS,
+  type OwnerTripStorage,
   SESSION_STATE_TTL_MS,
   type SessionSnapshot,
   SHARE_TTL_MS,
@@ -13,17 +15,19 @@ import {
   type StoredTripDetail,
   summarize,
   type TripStorage,
+  tripOwner,
 } from "./types";
 
 // Firestore の保存の口。読み書きはサーバーだけが Admin SDK で行い、ブラウザからは読み書きさせない（firestore.rules）。
 //
-//   itineraries/{旅程の ID}                 一覧の見出し・持ち主・最新の版・expiresAt
+//   itineraries/{旅程の ID}                 一覧の見出し・持ち主（残した人・組んだ相談の人）・最新の版・expiresAt
 //   itineraries/{旅程の ID}/versions/{版}   旅程の JSON（版ごと）・expiresAt
 //   shares/{共有の ID}                      共有したときの版の JSON・expiresAt
-//   sessions/{相談の ID}                    相談の途中の状態の JSON・expiresAt
+//   sessions/{相談の ID}                    相談の途中の状態の JSON・持ち主・expiresAt
 //
-// expiresAt は TTL ポリシーで消す時刻。持ち主のある旅程とその版は null（消さない）。
+// expiresAt は TTL ポリシーで消す時刻。残した旅程とその版は null（消さない）。
 // TTL で消えるまでには時間がかかるので、読むときにも期限を確かめる。
+// 新しい種類のデータは、持ち主を含むパス（owner.ts の ownerTripPath）に置く。
 
 const ITINERARIES = "itineraries";
 const VERSIONS = "versions";
@@ -54,6 +58,7 @@ function tripOf(snapshot: DocumentSnapshot): StoredTrip | null {
   return {
     itineraryId: snapshot.id,
     ownerUid: typeof data.ownerUid === "string" ? data.ownerUid : null,
+    consultOwnerUid: typeof data.consultOwnerUid === "string" ? data.consultOwnerUid : null,
     title: typeof data.title === "string" ? data.title : "",
     date: typeof data.date === "string" ? data.date : null,
     version: typeof data.version === "number" ? data.version : 1,
@@ -81,19 +86,37 @@ export class FirestoreTripStorage implements TripStorage {
     return this.#db.collection(ITINERARIES).doc(itineraryId);
   }
 
-  /** 持ち主のない旅程は、最後の保存から30日で消えたものとして扱う */
+  /** 残されていない旅程は、最後の保存から30日で消えたものとして扱う */
   #alive(trip: StoredTrip | null): StoredTrip | null {
     if (trip === null) return null;
     if (trip.ownerUid === null && this.#now() - trip.updatedAt > SHARE_TTL_MS) return null;
     return trip;
   }
 
-  async #owned(uid: string, itineraryId: string): Promise<StoredTrip | null> {
-    const trip = this.#alive(tripOf(await this.#head(itineraryId).get()));
-    return trip?.ownerUid === uid ? trip : null;
+  /** 旅程の見出しを読む。外から届いた ID が文書の ID の形でなければ、ないものとして扱う */
+  async #readHead(itineraryId: string): Promise<StoredTrip | null> {
+    if (!isDocumentId(itineraryId)) return null;
+    return this.#alive(tripOf(await this.#head(itineraryId).get()));
   }
 
-  async saveItinerary(itinerary: Itinerary): Promise<void> {
+  async #owned(uid: string, itineraryId: string): Promise<StoredTrip | null> {
+    const trip = await this.#readHead(itineraryId);
+    return trip !== null && tripOwner(trip) === uid ? trip : null;
+  }
+
+  forOwner(owner: OwnerId): OwnerTripStorage {
+    return {
+      owner,
+      claimTrip: (itineraryId) => this.#claimTrip(owner, itineraryId),
+      listTrips: () => this.#listTrips(owner),
+      getTrip: (itineraryId, version) => this.#getTrip(owner, itineraryId, version),
+      deleteTrip: (itineraryId) => this.#deleteTrip(owner, itineraryId),
+      deleteAllTrips: () => this.#deleteAllTrips(owner),
+      createShare: (itineraryId) => this.#createShare(owner, itineraryId),
+    };
+  }
+
+  async saveItinerary(itinerary: Itinerary, consultOwner: OwnerId | null): Promise<void> {
     const head = this.#head(itinerary.id);
     const json = JSON.stringify(itinerary);
     await this.#db.runTransaction(async (tx) => {
@@ -104,6 +127,7 @@ export class FirestoreTripStorage implements TripStorage {
       const newest = existing === null || itinerary.version >= existing.version;
       tx.set(head, {
         ownerUid,
+        consultOwnerUid: existing?.consultOwnerUid ?? consultOwner,
         ...(newest
           ? { ...summarize(itinerary), version: itinerary.version }
           : { title: existing.title, date: existing.date, version: existing.version }),
@@ -132,31 +156,38 @@ export class FirestoreTripStorage implements TripStorage {
     }
   }
 
-  async getShared(id: string): Promise<SharedItinerary | null> {
-    const now = this.#now();
-    if (id.startsWith("sh-")) {
-      const share = await this.#db.collection(SHARES).doc(id).get();
-      const data = share.data();
-      if (data === undefined || now > millis(data.expiresAt)) return null;
-      return {
-        itineraryId: String(data.itineraryId),
-        version: Number(data.version),
-        itinerary: parseJson(data),
-      };
-    }
-    const trip = this.#alive(tripOf(await this.#head(id).get()));
-    if (trip === null || now - trip.updatedAt > SHARE_TTL_MS) return null;
-    const version = await this.#head(id).collection(VERSIONS).doc(versionDocId(trip.version)).get();
-    if (!version.exists) return null;
-    return { itineraryId: id, version: trip.version, itinerary: parseJson(version.data()) };
+  async readShare(shareId: string): Promise<SharedItinerary | null> {
+    if (!isDocumentId(shareId)) return null;
+    const share = await this.#db.collection(SHARES).doc(shareId).get();
+    const data = share.data();
+    if (data === undefined || this.#now() > millis(data.expiresAt)) return null;
+    return {
+      itineraryId: String(data.itineraryId),
+      version: Number(data.version),
+      itinerary: parseJson(data),
+    };
   }
 
-  async claimTrip(uid: string, itineraryId: string): Promise<ClaimResult> {
+  async readUnowned(itineraryId: string): Promise<SharedItinerary | null> {
+    const trip = await this.#readHead(itineraryId);
+    if (trip === null || tripOwner(trip) !== null) return null;
+    if (this.#now() - trip.updatedAt > SHARE_TTL_MS) return null;
+    const version = await this.#head(itineraryId)
+      .collection(VERSIONS)
+      .doc(versionDocId(trip.version))
+      .get();
+    if (!version.exists) return null;
+    return { itineraryId, version: trip.version, itinerary: parseJson(version.data()) };
+  }
+
+  async #claimTrip(uid: string, itineraryId: string): Promise<ClaimResult> {
+    if (!isDocumentId(itineraryId)) return { status: "not_found" };
     const head = this.#head(itineraryId);
     const result = await this.#db.runTransaction(async (tx): Promise<ClaimResult> => {
       const trip = this.#alive(tripOf(await tx.get(head)));
       if (trip === null) return { status: "not_found" };
-      if (trip.ownerUid !== null && trip.ownerUid !== uid) return { status: "forbidden" };
+      const owner = tripOwner(trip);
+      if (owner !== null && owner !== uid) return { status: "not_found" };
       tx.update(head, { ownerUid: uid, expiresAt: null });
       return { status: "saved", trip: { ...trip, ownerUid: uid } };
     });
@@ -170,7 +201,7 @@ export class FirestoreTripStorage implements TripStorage {
     return result;
   }
 
-  async listTrips(uid: string): Promise<StoredTrip[]> {
+  async #listTrips(uid: string): Promise<StoredTrip[]> {
     // 持ち主の1項目だけで絞る（複合インデックスを作らずに済むよう、並べ替えはここでする）
     const snapshot = await this.#db
       .collection(ITINERARIES)
@@ -183,7 +214,7 @@ export class FirestoreTripStorage implements TripStorage {
       .sort((a, b) => b.updatedAt - a.updatedAt);
   }
 
-  async getTrip(
+  async #getTrip(
     uid: string,
     itineraryId: string,
     version?: number,
@@ -213,7 +244,7 @@ export class FirestoreTripStorage implements TripStorage {
     await writer.close();
   }
 
-  async deleteTrip(uid: string, itineraryId: string): Promise<boolean> {
+  async #deleteTrip(uid: string, itineraryId: string): Promise<boolean> {
     if ((await this.#owned(uid, itineraryId)) === null) return false;
     await this.#deleteShares("itineraryId", itineraryId);
     // 版（サブコレクション）ごと消す
@@ -221,14 +252,19 @@ export class FirestoreTripStorage implements TripStorage {
     return true;
   }
 
-  async deleteAllTrips(uid: string): Promise<number> {
-    const trips = await this.listTrips(uid);
-    for (const trip of trips) await this.deleteTrip(uid, trip.itineraryId);
+  async #deleteAllTrips(uid: string): Promise<number> {
+    const itineraries = this.#db.collection(ITINERARIES);
+    const [kept, consulted] = await Promise.all([
+      itineraries.where("ownerUid", "==", uid).select().get(),
+      itineraries.where("consultOwnerUid", "==", uid).select().get(),
+    ]);
+    const ids = new Set([...kept.docs, ...consulted.docs].map((doc) => doc.id));
+    for (const id of ids) await this.#deleteTrip(uid, id);
     await this.#deleteShares("ownerUid", uid);
-    return trips.length;
+    return kept.size;
   }
 
-  async createShare(uid: string, itineraryId: string): Promise<CreatedShare | null> {
+  async #createShare(uid: string, itineraryId: string): Promise<CreatedShare | null> {
     const trip = await this.#owned(uid, itineraryId);
     if (trip === null) return null;
     const version = await this.#head(itineraryId)
@@ -255,21 +291,29 @@ export class FirestoreTripStorage implements TripStorage {
   }
 
   async saveSession(snapshot: SessionSnapshot): Promise<void> {
+    // 持ち主は状態の JSON の外にも置き、merge で残す（持ち主のない書き込みで消えないように）
+    const ownerUid = snapshot.ownerUid ?? null;
     await this.#db
       .collection(SESSIONS)
       .doc(snapshot.id)
-      .set({
-        state: JSON.stringify(snapshot),
-        updatedAt: at(snapshot.updatedAt),
-        expiresAt: at(snapshot.updatedAt + SESSION_STATE_TTL_MS),
-      });
+      .set(
+        {
+          state: JSON.stringify(snapshot),
+          updatedAt: at(snapshot.updatedAt),
+          expiresAt: at(snapshot.updatedAt + SESSION_STATE_TTL_MS),
+          ...(ownerUid === null ? {} : { ownerUid }),
+        },
+        { merge: true },
+      );
   }
 
   async getSession(id: string): Promise<SessionSnapshot | null> {
+    if (!isDocumentId(id)) return null;
     const doc = await this.#db.collection(SESSIONS).doc(id).get();
     const data = doc.data();
     if (data === undefined || typeof data.state !== "string") return null;
     if (this.#now() - millis(data.updatedAt) > SESSION_STATE_TTL_MS) return null;
-    return JSON.parse(data.state) as SessionSnapshot;
+    const ownerUid = typeof data.ownerUid === "string" ? data.ownerUid : null;
+    return { ...(JSON.parse(data.state) as SessionSnapshot), ownerUid };
   }
 }

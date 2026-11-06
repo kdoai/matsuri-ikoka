@@ -19,10 +19,12 @@ export interface ServerConfig {
   accessPasscode: string | null;
   /** 1日の相談の回数の上限。なければ上限なし */
   dailyChatLimit: number | null;
-  /** 1日の相談の回数の、IP ごとの上限。なければ上限なし */
+  /** 1日の相談の回数の、利用者ごと（ログインしていなければ IP ごと）の上限。なければ上限なし */
   dailyChatLimitPerIp: number | null;
   /** live で同時に返事を作る数の上限 */
   maxConcurrentTurns: number;
+  /** live で同時に返事を作る数の、利用者ごと（ログインしていなければ IP ごと）の上限 */
+  maxConcurrentTurnsPerClient: number;
   /** 利用者との間に置いたプロキシの数。X-Forwarded-For の右から数えて利用者の IP を決める */
   trustedProxyHops: number;
   /** mock の再生の速さ（1 で記録どおり） */
@@ -63,6 +65,11 @@ export const DEFAULT_WISH_READER_MODEL = "haiku";
 /** live で同時に返事を作る数の上限の既定 */
 export const DEFAULT_MAX_CONCURRENT_TURNS = 4;
 
+/** 1人が同時に使える枠の既定。全体の半分（切り上げ）で、1人が枠を使い切らないようにする */
+export function defaultConcurrentTurnsPerClient(maxConcurrentTurns: number): number {
+  return Math.max(1, Math.ceil(maxConcurrentTurns / 2));
+}
+
 /** 0 や空は「上限なし」 */
 function limitOf(name: string, value: string | undefined): number | null {
   const n = positiveNumber(name, value);
@@ -94,6 +101,8 @@ export function readConfig(env: NodeJS.ProcessEnv, cwd: string = process.cwd()):
   }
   const repoRoot = findRepoRoot(cwd);
   const production = env.NODE_ENV === "production";
+  const maxConcurrentTurns =
+    limitOf("MAX_CONCURRENT_TURNS", env.MAX_CONCURRENT_TURNS) ?? DEFAULT_MAX_CONCURRENT_TURNS;
   const config: ServerConfig = {
     port: positiveNumber("PORT", env.PORT) ?? 8787,
     mode,
@@ -112,8 +121,10 @@ export function readConfig(env: NodeJS.ProcessEnv, cwd: string = process.cwd()):
     accessPasscode: nonEmpty(env.ACCESS_PASSCODE) ?? null,
     dailyChatLimit: limitOf("DAILY_CHAT_LIMIT", env.DAILY_CHAT_LIMIT),
     dailyChatLimitPerIp: limitOf("DAILY_CHAT_LIMIT_PER_IP", env.DAILY_CHAT_LIMIT_PER_IP),
-    maxConcurrentTurns:
-      limitOf("MAX_CONCURRENT_TURNS", env.MAX_CONCURRENT_TURNS) ?? DEFAULT_MAX_CONCURRENT_TURNS,
+    maxConcurrentTurns,
+    maxConcurrentTurnsPerClient:
+      limitOf("MAX_CONCURRENT_TURNS_PER_CLIENT", env.MAX_CONCURRENT_TURNS_PER_CLIENT) ??
+      defaultConcurrentTurnsPerClient(maxConcurrentTurns),
     trustedProxyHops: Math.floor(positiveNumber("TRUSTED_PROXY_HOPS", env.TRUSTED_PROXY_HOPS) ?? 0),
     replaySpeed: positiveNumber("MATSURI_REPLAY_SPEED", env.MATSURI_REPLAY_SPEED) ?? 1,
     maxBudgetUsd: positiveNumber("AGENT_MAX_BUDGET_USD", env.AGENT_MAX_BUDGET_USD) || undefined,
