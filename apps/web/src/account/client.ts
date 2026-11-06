@@ -31,6 +31,16 @@ export interface AccountClient {
   saveTrip(sessionId: string): Promise<TripSummary>;
   /** しおりを30日だけ共有する URL のパス */
   shareTrip(itineraryId: string): Promise<string>;
+  /**
+   * ログインしていれば ID トークン。していなければ null。
+   * 相談をログインした人に結びつけるのに使う。ログインの部品を読み込んでいなければ、読み込まずに null を返す
+   */
+  idToken(): Promise<string | null>;
+  /**
+   * 自分の旅程のしおりを開くパス。自分の旅程は旅程の ID では開けないので、共有を作って開く。
+   * 同じ版では作り直さない。ログインしていない・自分の旅程でなければ null（旅程の ID のまま開ける）
+   */
+  ownShioriPath(itineraryId: string, version: number): Promise<string | null>;
   deleteTrip(itineraryId: string): Promise<void>;
   /** 自分の旅をすべて消し、ログインの記録（Firebase のアカウント）も消してログアウトする */
   deleteEverything(): Promise<void>;
@@ -93,6 +103,8 @@ export function createAccountClient(
   const fetchImpl: typeof fetch = options.fetch ?? ((input, init) => globalThis.fetch(input, init));
   let configPromise: Promise<AuthConfig> | null = null;
   let firebasePromise: Promise<FirebaseAuthPart> | null = null;
+  /** 旅程と版 → 作った共有のパス */
+  const ownPaths = new Map<string, string>();
 
   const passcodeHeaders = (): Record<string, string> => {
     const value = options.passcode?.get() ?? null;
@@ -139,6 +151,23 @@ export function createAccountClient(
     return response;
   };
 
+  const shareTrip = async (itineraryId: string) => {
+    const response = await call(`/api/trips/${encodeURIComponent(itineraryId)}/share`, {
+      method: "POST",
+    });
+    return ShareResponseSchema.parse(await response.json()).path;
+  };
+
+  const idToken = async (): Promise<string | null> => {
+    if (firebasePromise === null) return null;
+    try {
+      const user = (await firebasePromise).currentUser;
+      return user === null ? null : await user.getIdToken();
+    } catch {
+      return null;
+    }
+  };
+
   return {
     enabled: async () => (await config()).enabled,
     onUser(listener) {
@@ -159,9 +188,11 @@ export function createAccountClient(
     async signIn() {
       const part = await firebase();
       if (part === null) throw new TransportError("unauthorized");
+      ownPaths.clear();
       await part.signIn();
     },
     async signOut() {
+      ownPaths.clear();
       await (await firebase())?.signOut();
     },
     async listTrips() {
@@ -172,17 +203,30 @@ export function createAccountClient(
       const response = await call("/api/trips", { method: "POST", body: { sessionId } });
       return TripSummarySchema.parse(await response.json());
     },
-    async shareTrip(itineraryId) {
-      const response = await call(`/api/trips/${encodeURIComponent(itineraryId)}/share`, {
-        method: "POST",
-      });
-      return ShareResponseSchema.parse(await response.json()).path;
+    shareTrip,
+    idToken,
+    async ownShioriPath(itineraryId, version) {
+      if ((await idToken()) === null) return null;
+      const key = `${itineraryId}@${version}`;
+      const known = ownPaths.get(key);
+      if (known !== undefined) return known;
+      try {
+        const path = await shareTrip(itineraryId);
+        ownPaths.set(key, path);
+        return path;
+      } catch (error) {
+        // ログインする前に組んだ、持ち主のない旅程は、旅程の ID のまま開ける
+        if (error instanceof TransportError && error.status === 404) return null;
+        throw error;
+      }
     },
     async deleteTrip(itineraryId) {
       await call(`/api/trips/${encodeURIComponent(itineraryId)}`, { method: "DELETE" });
+      ownPaths.clear();
     },
     async deleteEverything() {
       await call("/api/me/trips", { method: "DELETE" });
+      ownPaths.clear();
       await (await firebase())?.deleteUser();
     },
   };

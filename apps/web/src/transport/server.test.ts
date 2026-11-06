@@ -75,6 +75,62 @@ describe("合言葉の形", () => {
   });
 });
 
+describe("相談の呼び出しの ID トークン", () => {
+  const session = async () => json({ sessionId: "s-1" }, 201);
+
+  it("ログインしていれば、相談の呼び出しに ID トークンを付ける", async () => {
+    const fetchMock = vi.fn<typeof fetch>(session);
+    const transport = createServerTransport({
+      fetch: fetchMock,
+      idToken: async () => "id-token",
+    });
+
+    await transport.startSession();
+    await transport
+      .searchFestivals({
+        sessionId: "s-1",
+        kinds: [],
+        season: null,
+        prefectures: [],
+        excludeIds: [],
+      })
+      .catch(() => {});
+
+    for (const call of fetchMock.mock.calls) {
+      expect(headerOf(call[1], "authorization")).toBe("Bearer id-token");
+    }
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("ログインしていない・トークンを取れないときは、付けずに送る", async () => {
+    const fetchMock = vi.fn<typeof fetch>(session);
+
+    await createServerTransport({ fetch: fetchMock }).startSession();
+    await createServerTransport({ fetch: fetchMock, idToken: async () => null }).startSession();
+    await createServerTransport({
+      fetch: fetchMock,
+      idToken: () => Promise.reject(new Error("つながらない")),
+    }).startSession();
+
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+    for (const call of fetchMock.mock.calls) {
+      expect(headerOf(call[1], "authorization")).toBeNull();
+    }
+  });
+
+  it("祭りのデータと死活監視には付けない", async () => {
+    const fetchMock = vi.fn<typeof fetch>(async () => json({ status: "ok" }, 200));
+    const transport = createServerTransport({
+      fetch: fetchMock,
+      idToken: async () => "id-token",
+    });
+
+    await transport.checkServer?.();
+
+    expect(headerOf(fetchMock.mock.calls[0]?.[1], "authorization")).toBeNull();
+  });
+});
+
 describe("接客サーバーとの通信", () => {
   it("合言葉を入れたら、相談を始める呼び出しにヘッダーで付け、記録の名前を本文で送る", async () => {
     const fetchMock = vi.fn<typeof fetch>(async () => json({ sessionId: "s-1" }, 201));

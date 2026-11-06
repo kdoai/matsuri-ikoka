@@ -2,7 +2,7 @@ import { fictionalSource } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
 import { MESSAGES } from "../i18n";
 import type { ChatEntry } from "../state/types";
-import { shioriShareUrl } from "./links";
+import { resolveShioriUrl, shioriShareUrl } from "./links";
 import { errorText, printedUrl, shortLine } from "./text";
 
 const fromServer: Extract<ChatEntry, { kind: "error" }> = {
@@ -39,10 +39,36 @@ describe("印刷したときの出典", () => {
 });
 
 describe("しおりの共有の URL", () => {
+  const origin = "https://example.com";
+  const itinerary = { id: "trip 1", version: 2 };
+
   it("接客サーバーのしおりの経路を指す", () => {
-    expect(shioriShareUrl("trip 1", "https://example.com")).toBe(
-      "https://example.com/shiori/trip%201",
+    expect(shioriShareUrl("trip 1", origin)).toBe("https://example.com/shiori/trip%201");
+  });
+
+  it("自分の旅程は共有の ID で開く", async () => {
+    const ownShioriPath = async (id: string, version: number) =>
+      id === "trip 1" && version === 2 ? "/shiori/sh-abc" : null;
+
+    expect(await resolveShioriUrl({ ownShioriPath }, itinerary, origin)).toBe(
+      "https://example.com/shiori/sh-abc",
     );
+  });
+
+  it("ログインしていない・自分の旅程でない・共有を作れないときは、旅程の ID で開く", async () => {
+    const direct = "https://example.com/shiori/trip%201";
+
+    expect(await resolveShioriUrl(null, itinerary, origin)).toBe(direct);
+    expect(await resolveShioriUrl({ ownShioriPath: async () => null }, itinerary, origin)).toBe(
+      direct,
+    );
+    expect(
+      await resolveShioriUrl(
+        { ownShioriPath: () => Promise.reject(new Error("つながらない")) },
+        itinerary,
+        origin,
+      ),
+    ).toBe(direct);
   });
 });
 

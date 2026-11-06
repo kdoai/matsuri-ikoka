@@ -25,13 +25,13 @@ const sample = new URLSearchParams(window.location.search).get("sample");
 
 // 合言葉は、相談の通信・祭りのデータの読み込み・ログインと自分の旅で共有する（メモリにだけ持つ）
 const passcode = createPasscodeHolder();
+const account = createAccountClient({ passcode });
 const store = createAppStore({
-  transport: createServerTransport({ passcode, sample }),
+  transport: createServerTransport({ passcode, sample, idToken: () => account.idToken() }),
   festivals: createServerFestivalSource({ passcode }),
   locale: detectLocale(navigator.languages),
   tutorialSeen: loadTutorialSeen(),
 });
-const account = createAccountClient({ passcode });
 
 const root = document.getElementById("root");
 if (!root) {

@@ -26,7 +26,21 @@ export function sourceLabel(source: { url: string; title?: string }): string {
 /**
  * しおりを共有する URL。接客サーバーが保存した旅程を指す。
  * サーバーは、公式の情報で開催予定を確かめた旅程だけを、しおりとして出す。
+ * 旅程の ID で開けるのは、持ち主のない旅程（ログインせずに組んだ旅程）だけ
  */
 export function shioriShareUrl(itineraryId: string, origin: string): string {
   return `${origin}/shiori/${encodeURIComponent(itineraryId)}`;
+}
+
+/**
+ * 開くしおりの URL を決める。自分の旅程は共有の ID で開き、そうでなければ旅程の ID で開く。
+ * 共有を作れなかったときも旅程の ID で開く（開けなければ、しおりの側が「見つかりません」と出す）
+ */
+export async function resolveShioriUrl(
+  account: { ownShioriPath(itineraryId: string, version: number): Promise<string | null> } | null,
+  itinerary: { id: string; version: number },
+  origin: string,
+): Promise<string> {
+  const own = await account?.ownShioriPath(itinerary.id, itinerary.version).catch(() => null);
+  return own ? `${origin}${own}` : shioriShareUrl(itinerary.id, origin);
 }
