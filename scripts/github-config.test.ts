@@ -89,17 +89,19 @@ describe("ワークフロー", () => {
     }
   });
 
-  it("祭りの確かめ直しは、調査のジョブに書き込みの権限を、PR のジョブに API キーを渡さない", () => {
+  it("週次の調査は、準備と回収のジョブに書き込みの権限を、PR のジョブに Anthropic の認証を渡さない", () => {
     const text = read(".github/workflows/update-festivals.yml");
     const [research, pullRequest] = text.split(/^ {2}pull-request:$/m);
     const researchJob = research?.split(/^ {2}research:$/m)[1] ?? "";
     expect(researchJob).toContain("id-token: write");
     expect(researchJob).not.toMatch(/(contents|pull-requests|issues|actions): write/);
     expect(pullRequest).toBeDefined();
-    expect(pullRequest).not.toMatch(/id-token|ANTHROPIC_API_KEY|MATSURI_REFRESH_API_KEY_SECRET/);
+    expect(pullRequest).not.toMatch(/id-token|ANTHROPIC_/);
     // GITHUB_TOKEN で開いた PR の CI は承認待ちで止まるので、PR のジョブが承認する
     expect(pullRequest).toContain("/approve");
     expect(pullRequest).toContain("status=action_required");
+    // 調査の結果の JSON は、PR の lint に通るように整形してから渡す
+    expect(researchJob).toContain("biome format --stdin-file-path");
   });
 });
 

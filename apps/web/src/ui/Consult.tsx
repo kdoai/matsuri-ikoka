@@ -404,7 +404,8 @@ function OriginStep() {
   const { actions, advance } = useConsult();
   const text = useApp((state) => state.consult.answers.origin?.text ?? "");
   return (
-    <div>
+    // 駅の候補が入力欄の下に開いても収まる高さを、はじめから取っておく。窓の高さが変わらず、入力欄も隠れない
+    <div className="min-h-[calc(4.5rem+min(11rem,22dvh))]">
       <StationInput
         value={text}
         onChange={(value) => actions.setConsultText("origin", value)}

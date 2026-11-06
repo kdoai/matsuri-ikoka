@@ -70,7 +70,8 @@ function limitOf(name: string, value: string | undefined): number | null {
 }
 
 /**
- * 本番の live（API キーで、公開している URL）では、使いすぎを防ぐ設定が欠けていたら起動しない（ADR 0004）
+ * 本番の live（API キーで、公開している URL）では、使いすぎを防ぐ設定が欠けていたら起動しない（ADR 0004）。
+ * 保存先も Firestore に限る。メモリのままだと、デプロイや停止のたびに相談の途中の状態と共有のしおりが消える
  */
 export function checkProductionConfig(config: ServerConfig, env: NodeJS.ProcessEnv): void {
   if (!config.production || config.mode !== "live") return;
@@ -79,6 +80,7 @@ export function checkProductionConfig(config: ServerConfig, env: NodeJS.ProcessE
     config.dailyChatLimit === null ? "DAILY_CHAT_LIMIT" : null,
     config.maxBudgetUsd === undefined ? "AGENT_MAX_BUDGET_USD" : null,
     nonEmpty(env.ANTHROPIC_API_KEY) === undefined ? "ANTHROPIC_API_KEY" : null,
+    nonEmpty(env.MATSURI_STORAGE) === "firestore" ? null : "MATSURI_STORAGE=firestore",
   ].filter((name): name is string => name !== null);
   if (missing.length > 0) {
     throw new Error(`本番の live では、次の設定が要ります：${missing.join("、")}`);

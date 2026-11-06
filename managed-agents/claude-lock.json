@@ -9,39 +9,39 @@
     "../.claude/skills/festival-research": {
       "kind": "skill",
       "id": "skill_01BFLz5rUVqrCKu2ZqoFHCFe",
-      "version": "skver_01SApq4F7qFMNtpCr8HYkyoZ",
-      "hash": "d1854b148ca1e34230818c5c74a070c4"
+      "version": "skver_01218a2JSgxYHrhQizcQ9TDL",
+      "hash": "3d0cf4c3c2cd0793e6b4d8a697c44850"
     },
     "./agents/research-lead.md": {
       "kind": "agent",
       "id": "agent_018fnE7254DszWYrea8R4UzX",
-      "version": "4",
-      "hash": "aa75771cf235f99285aa327d230cea37",
-      "remote_hash": "770b6788bf7276a3b8e1f36542991797",
-      "stamp": "4"
+      "version": "5",
+      "hash": "193a51a8b1ca67965f91521ea054212c",
+      "remote_hash": "fbfaa4e5839495bbe619b551697f3100",
+      "stamp": "5"
     },
     "./agents/research-reader.md": {
       "kind": "agent",
       "id": "agent_01Qbgxr4gdBJGkZFSmY6LG3M",
-      "version": "4",
-      "hash": "dfd14a230fbbd664b30470191dea2679",
-      "remote_hash": "54a74f6b30670aea7a6959363120e5fa",
-      "stamp": "4"
+      "version": "5",
+      "hash": "38aa8c15751db5410bffe97b80ff0d3e",
+      "remote_hash": "267af950edcf523b2e6255eae095330b",
+      "stamp": "5"
     },
     "./agents/research-reviewer.md": {
       "kind": "agent",
       "id": "agent_015xDQMG1bbQ6muVVD5vhA7X",
-      "version": "4",
-      "hash": "c000c140da9ab48e34074222aa6609f3",
-      "remote_hash": "8158c4b7feba546dc6456b0176ca2004",
-      "stamp": "4"
+      "version": "5",
+      "hash": "a858f4b6c329235384f4694a753f02c7",
+      "remote_hash": "02917dd6d3dbdbe63af05621329dff59",
+      "stamp": "5"
     },
     "./deployments/weekly-research.yaml": {
       "kind": "deployment",
       "id": "depl_01GhKJ78LQ5N4Vghp4dWcCwW",
-      "hash": "2048c26b16052ab4a77801da8e629f3b",
-      "remote_hash": "2048c26b16052ab4a77801da8e629f3b",
-      "stamp": "2026-11-06T08:24:23.163546Z"
+      "hash": "1b83d033e253769346c0ca01cf513e96",
+      "remote_hash": "1b83d033e253769346c0ca01cf513e96",
+      "stamp": "2026-11-06T09:42:52.300632Z"
     },
     "./environments/research.yaml": {
       "kind": "environment",

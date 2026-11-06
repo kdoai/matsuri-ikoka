@@ -24,6 +24,7 @@
     "神社から商売の元手を借りる、珍しい「資本金貸し」",
     "標高約800mの山腹で、五穀豊穣と商売繁昌を祈る秋の祭り"
   ],
+  "styles": [],
   "trivia": [
     {
       "text": "11月22日に奉納する太々神楽は、南アルプス市の無形民俗文化財になっている",
@@ -85,6 +86,7 @@
   "occurrences": [
     {
       "date": "2026-11-22",
+      "endDate": "2026-11-23",
       "start": null,
       "end": null,
       "status": "expected",
@@ -93,8 +95,14 @@
       "sources": [
         {
           "url": "https://www.yamanashi-kankou.jp/kankou/spot/p1_3966.html",
-          "title": "富士の国やまなし観光ネット 高尾穂見神社（毎年11月22日〜23日の夜祭り、22日に太々神楽）",
-          "checkedAt": "2026-11-04",
+          "title": "高尾穂見神社／富士の国やまなし観光ネット 山梨県公式観光情報",
+          "checkedAt": "2026-11-06",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.minami-alps.yamanashi.jp/docs/takao-homijinjya-daikagura.html",
+          "title": "高尾穂見神社太太神楽 - 山梨県 南アルプス市",
+          "checkedAt": "2026-11-06",
           "confidence": "official"
         },
         {
@@ -229,5 +237,6 @@
     "交通規制の有無と、祭りの日の駐車場の扱い",
     "見物人の数",
     "祭りの前後に寄れる店や観光地（営業時間を公式で確かめられた場所がない）"
-  ]
+  ],
+  "optOut": false
 }

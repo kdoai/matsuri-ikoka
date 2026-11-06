@@ -148,7 +148,8 @@ export function StepProgress({
   const arrow =
     "grid size-10 shrink-0 place-items-center rounded-full border-2 border-line-strong bg-white text-ink shadow-soft transition hover:border-yamabuki-400 disabled:cursor-not-allowed disabled:opacity-30";
   return (
-    <div className="flex items-center gap-2">
+    // 中身をスクロールしても ＜ ＞ が見えたまま残るよう、窓の上に留める
+    <div className="sticky top-0 z-20 flex items-center gap-2 bg-washi py-0.5">
       <button
         type="button"
         className={arrow}

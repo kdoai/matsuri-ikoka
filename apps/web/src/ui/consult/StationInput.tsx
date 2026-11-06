@@ -1,11 +1,12 @@
 import { TrainFront } from "lucide-react";
-import { type KeyboardEvent, useEffect, useId, useMemo, useState } from "react";
+import { type KeyboardEvent, useEffect, useId, useMemo, useRef, useState } from "react";
 import stationsUrl from "../../../../../data/stations/stations.json?url";
 import { useT } from "../../state/react";
 import { decideButton, textField } from "./Choices";
 import { type Station, type StationList, searchStations } from "./stations";
 
-// 出発の駅の入力。打ちはじめたら、駅の一覧から候補を出す（↑↓で選び、Enter で決める。選んでいる候補は読み上げる）。
+// 出発の駅の入力。打ちはじめたら、駅の一覧から候補を入力欄の下に出す（↑↓で選び、Enter で決める。選んでいる候補は読み上げる）。
+// 候補は窓の高さを変えずに下へ重ねて開く（上の段の ＜ ＞ を隠さず、閉じてもボタンが動いて押し損なわない）。
 // 一覧にない駅名も、そのまま決められる。駅の一覧は、この段階を開いたときに初めて読む。
 
 /** 駅の一覧の出典（公式のページ。作り方は docs/stations.md） */
@@ -58,6 +59,12 @@ export function StationInput({
   const listId = `${id}-list`;
   const showList = open && value.trim() !== "" && matches.length > 0;
 
+  // 低い画面では候補が窓の下に隠れるので、開いたら見える位置まで動かす
+  const listRef = useRef<HTMLUListElement>(null);
+  useEffect(() => {
+    if (showList) listRef.current?.scrollIntoView({ block: "nearest" });
+  }, [showList]);
+
   const pick = (station: Station) => {
     const text = t.consult.station(station[0]);
     onChange(text);
@@ -98,82 +105,87 @@ export function StationInput({
   }
 
   return (
-    <div className="relative">
+    <div>
       <label htmlFor={id} className="mb-1 block font-bold text-ink-soft text-sm">
         {t.consult.stationLabel}
       </label>
-      <div className="flex items-center gap-2">
-        <div className="relative min-w-0 flex-1">
-          <TrainFront
-            aria-hidden="true"
-            className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-3 size-5 text-wood-500"
-          />
-          <input
-            id={id}
-            type="text"
-            autoComplete="off"
-            maxLength={50}
-            value={value}
-            placeholder={t.consult.stationPlaceholder}
-            aria-controls={listId}
-            aria-describedby={`${id}-status`}
-            onChange={(event) => {
-              onChange(event.target.value);
-              setOpen(true);
-              setHighlight(-1);
-            }}
-            onFocus={() => setOpen(true)}
-            onBlur={() => setOpen(false)}
-            onKeyDown={onKeyDown}
-            className={`${textField} pl-10`}
-            data-dialogue-focus=""
-            data-testid="consult-station"
-          />
+      <div className="relative">
+        <div className="flex items-center gap-2">
+          <div className="relative min-w-0 flex-1">
+            <TrainFront
+              aria-hidden="true"
+              className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-3 size-5 text-wood-500"
+            />
+            <input
+              id={id}
+              type="text"
+              autoComplete="off"
+              maxLength={50}
+              value={value}
+              placeholder={t.consult.stationPlaceholder}
+              aria-controls={listId}
+              aria-describedby={`${id}-status`}
+              onChange={(event) => {
+                onChange(event.target.value);
+                setOpen(true);
+                setHighlight(-1);
+              }}
+              onFocus={() => setOpen(true)}
+              onBlur={() => setOpen(false)}
+              onKeyDown={onKeyDown}
+              className={`${textField} pl-10`}
+              data-dialogue-focus=""
+              data-testid="consult-station"
+            />
+          </div>
+          <button
+            type="button"
+            className={decideButton}
+            disabled={value.trim() === ""}
+            onClick={() => onDecide(value.trim())}
+          >
+            {t.consult.decide}
+          </button>
         </div>
-        <button
-          type="button"
-          className={decideButton}
-          disabled={value.trim() === ""}
-          onClick={() => onDecide(value.trim())}
-        >
-          {t.consult.decide}
-        </button>
+        {showList ? (
+          <ul
+            ref={listRef}
+            id={listId}
+            aria-label={t.consult.stationLabel}
+            className="absolute inset-x-0 top-full z-10 mt-1 max-h-[min(11rem,22dvh)] overflow-y-auto overscroll-contain rounded-card border-2 border-wood-300 bg-washi p-1 shadow-soft"
+            data-testid="consult-station-list"
+          >
+            {matches.map((station, index) => (
+              <li key={`${station[0]}-${station[1]}`}>
+                <button
+                  type="button"
+                  // 候補は ↑↓ で選ぶので、Tab では止まらない。入力欄の焦点を外さずに選ぶ
+                  tabIndex={-1}
+                  aria-current={index === highlight ? "true" : undefined}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => pick(station)}
+                  className={`flex w-full items-baseline gap-2 rounded-xl px-3 py-2 text-left ${
+                    index === highlight ? "bg-ai-800 text-kinari-50" : "text-ink hover:bg-white"
+                  }`}
+                >
+                  <span className="shrink-0 font-bold">{t.consult.station(station[0])}</span>
+                  <span
+                    className={`min-w-0 truncate text-xs ${
+                      index === highlight ? "text-kinari-100" : "text-ink-soft"
+                    }`}
+                  >
+                    {station[1]}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : null}
       </div>
       <p id={`${id}-status`} aria-live="polite" className="sr-only">
         {status}
       </p>
-      {showList ? (
-        <ul
-          id={listId}
-          aria-label={t.consult.stationLabel}
-          className="absolute inset-x-0 bottom-full z-10 mb-1 max-h-64 overflow-y-auto rounded-card border-2 border-wood-300 bg-washi p-1 shadow-soft"
-        >
-          {matches.map((station, index) => (
-            <li key={`${station[0]}-${station[1]}`}>
-              <button
-                type="button"
-                // 候補は ↑↓ で選ぶので、Tab では止まらない。入力欄の焦点を外さずに選ぶ
-                tabIndex={-1}
-                aria-current={index === highlight ? "true" : undefined}
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={() => pick(station)}
-                className={`flex w-full items-baseline gap-2 rounded-xl px-3 py-2 text-left ${
-                  index === highlight ? "bg-ai-800 text-kinari-50" : "text-ink hover:bg-white"
-                }`}
-              >
-                <span className="font-bold">{t.consult.station(station[0])}</span>
-                <span
-                  className={`min-w-0 truncate text-xs ${
-                    index === highlight ? "text-kinari-100" : "text-ink-soft"
-                  }`}
-                >
-                  {station[1]}
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      ) : value.trim() !== "" && stations !== null && matches.length === 0 ? (
+      {value.trim() !== "" && stations !== null && matches.length === 0 ? (
         <p className="mt-1 text-ink-soft text-xs">{t.consult.stationNone}</p>
       ) : null}
       <p className="mt-1 text-[0.7rem] text-ink-soft" data-testid="consult-station-source">

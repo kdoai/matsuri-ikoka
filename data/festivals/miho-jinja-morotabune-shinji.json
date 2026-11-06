@@ -131,8 +131,20 @@
       "sources": [
         {
           "url": "http://mihojinja.or.jp/saiji/",
-          "title": "美保神社 年間祭事（12月3日 13:30 諸手船神事）",
-          "checkedAt": "2026-11-04",
+          "title": "年間祭事 | 美保神社 | えびす様の総本宮 | 島根県松江市美保関町",
+          "checkedAt": "2026-11-06",
+          "confidence": "official"
+        },
+        {
+          "url": "http://mihojinja.or.jp/sinji/01.php",
+          "title": "諸手船神事 | 特殊神事 | 美保神社 | えびす様の総本宮 | 島根県松江市美保関町",
+          "checkedAt": "2026-11-06",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.mihonoseki-kankou.jp/event/1268/",
+          "title": "諸手船神事 | News | 美保関公式観光ガイド",
+          "checkedAt": "2026-11-06",
           "confidence": "official"
         },
         {
@@ -241,5 +253,6 @@
     "見学者数の公式の数字（るるぶ&more.では前年の来場者数が1,500〜2,000人）",
     "神社の近くで、2026年12月3日（木曜日）に開いていると公式で確かめられた食事の店",
     "祭りの前後に寄れる周辺の観光の場所と、その営業時間"
-  ]
+  ],
+  "optOut": false
 }

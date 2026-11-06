@@ -21,7 +21,7 @@ import {
 } from "../state/waiting";
 import { focusComposer } from "./ChatPanel";
 import { buttonQuiet, SourceLink } from "./common";
-import { GameWindow } from "./GameWindow";
+import { GameWindow, windowScroll } from "./GameWindow";
 import { useReducedMotion } from "./hooks";
 import { CATEGORY_ICON, CATEGORY_TONE, LanternIcon } from "./icons";
 import { Portrait } from "./Portraits";
@@ -157,12 +157,12 @@ function TalkSlide({
         <div className="min-w-0 flex-1 rounded-xl bg-white px-2.5 py-2 shadow-sm ring-1 ring-wood-300/60">
           <p
             key={`${talk.festivalId}-${slideKey}`}
-            className="line-clamp-4 font-bold text-ink leading-snug motion-safe:animate-fade"
+            className="font-bold text-ink leading-snug motion-safe:animate-fade"
             data-testid="waiting-talk"
           >
             {line.text}
           </p>
-          <p className="mt-0.5 truncate text-ink-soft text-xs">
+          <p className="mt-0.5 text-ink-soft text-xs">
             <span className="font-bold text-shu-700">{line.label}</span>・
             {t.waiting.from(talk.festivalName)}
           </p>
@@ -224,7 +224,7 @@ function QuizSlide({ quiz }: { quiz: FestivalQuiz }) {
               {quiz.question}
             </span>
           </p>
-          <p className="mt-0.5 truncate text-ink-soft text-xs">
+          <p className="mt-0.5 text-ink-soft text-xs">
             <span className="font-bold text-shu-700">{t.quiz.title}</span>
             {festivalName === null ? null : `・${t.waiting.from(festivalName)}`}
           </p>
@@ -327,17 +327,21 @@ function WaitingBody() {
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: 指を乗せている間は送りを止めるだけで、操作はボタンで行う
     <div
+      className="flex min-h-0 flex-col"
       data-testid="trivia-card"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {current.kind === "talk" ? (
-        <TalkSlide talk={current.talk} slideKey={index} open={open} detailsId={detailsId} />
-      ) : (
-        <QuizSlide key={current.quiz.id} quiz={current.quiz} />
-      )}
+      {/* 収まらないときは1枚の中身だけをスクロールし、送るボタンは見えたまま残す。送ったら先頭から読む */}
+      <div className={windowScroll} key={index} data-testid="waiting-slide">
+        {current.kind === "talk" ? (
+          <TalkSlide talk={current.talk} slideKey={index} open={open} detailsId={detailsId} />
+        ) : (
+          <QuizSlide key={current.quiz.id} quiz={current.quiz} />
+        )}
+      </div>
 
-      <div className="mt-2 flex items-center justify-between gap-2">
+      <div className="mt-2 flex shrink-0 items-center justify-between gap-2">
         <button
           type="button"
           className={roundButton}
@@ -379,7 +383,7 @@ function WaitingBody() {
         </button>
       </div>
 
-      <div className="relative mt-2">
+      <div className="relative mt-2 shrink-0">
         <Dots count={dotCount} active={position.index % dotCount} />
         {canMove && !reducedMotion ? (
           <button

@@ -310,6 +310,85 @@ test("幅 1024px 以上 1280px 未満でも、豆知識の窓を右に寄せ、�
   expect(dialogue?.width ?? 0).toBeGreaterThanOrEqual(640);
 });
 
+test("低い画面でも、店内のようすと豆知識（クイズ）の窓は画面に収まり、選択肢まで読める", async ({
+  page,
+}, info) => {
+  test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
+  const height = 600;
+  await page.setViewportSize({ width: 1440, height });
+  await enterShop(page);
+  await sendSampleMessage(page, 0);
+  const guide = page.getByTestId("waiting-guide");
+  const quiz = page.getByTestId("quiz-card");
+  await expect(guide).toBeVisible();
+  for (let i = 0; i < 4 && (await quiz.count()) === 0; i++) {
+    await guide.getByRole("button", { name: "次の話" }).click();
+  }
+  await expect(quiz).toBeVisible();
+
+  const box = await guide.boundingBox();
+  if (box === null) throw new Error("豆知識の窓が見えません");
+  expect(box.y + box.height).toBeLessThanOrEqual(height);
+  const staff = await page.getByTestId("staff-activity").boundingBox();
+  if (staff === null) throw new Error("店内のようすが見えません");
+  expect(staff.y + staff.height).toBeLessThanOrEqual(box.y);
+  // 送るボタンは見えたまま、選択肢は窓の中でスクロールすれば読める
+  await expect(guide.getByRole("button", { name: "次の話" })).toBeInViewport({ ratio: 0.95 });
+  const choices = quiz.getByRole("button");
+  const last = choices.last();
+  await last.scrollIntoViewIfNeeded();
+  await expect(last).toBeInViewport({ ratio: 0.95 });
+  await snap(page, info, "12-quiz-low-height");
+});
+
+test("狭い画面でも、豆知識の窓は上の段にかからず、送るボタンが見えたまま残る", async ({
+  page,
+}, info) => {
+  test.skip(info.project.name !== "mobile", "狭い画面だけで確かめる");
+  await enterShop(page);
+  await sendSampleMessage(page, 0);
+  const guide = page.getByTestId("waiting-guide");
+  await expect(guide).toBeVisible();
+  const box = await guide.boundingBox();
+  if (box === null) throw new Error("豆知識の窓が見えません");
+  expect(box.y).toBeGreaterThanOrEqual(0);
+  await expectNoOverlap(page, "waiting-guide", ["dialogue"]);
+  await expect(guide.getByRole("button", { name: "次の話" })).toBeInViewport({ ratio: 0.95 });
+  await snap(page, info, "12-waiting-narrow");
+});
+
+test("駅の候補が出ていても、前の段階へ戻るボタンは隠れずに押せる", async ({ page }, info) => {
+  for (const height of [info.project.name === "desktop" ? 900 : 700, 560]) {
+    const width = page.viewportSize()?.width ?? 1440;
+    await page.setViewportSize({ width, height });
+    await enterShop(page);
+    const consult = page.getByTestId("consult");
+    await chooseTripEntry(page);
+    await consult.getByRole("button", { name: "ひとりで", exact: true }).click();
+    await consult.getByRole("button", { name: "今週末", exact: true }).click();
+    await consult.getByRole("button", { name: "日帰り", exact: true }).click();
+    const progress = page.getByTestId("consult-progress");
+    const before = await progress.textContent();
+    const station = consult.getByRole("textbox", { name: "最寄りの駅" });
+    await station.fill("東京");
+    const list = page.getByTestId("consult-station-list");
+    await expect(list).toBeVisible();
+    await expect(list.getByRole("button").first()).toBeInViewport();
+    // 候補を開いても、入力欄は戻るボタンの段の下に隠れない
+    const hit = await station.evaluate((input) => {
+      const rect = input.getBoundingClientRect();
+      return (
+        document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2) === input
+      );
+    });
+    expect(hit).toBe(true);
+    await snap(page, info, `13-station-list-${height}`);
+    // ほかの部品に隠れていれば、クリックは失敗する
+    await page.getByTestId("consult-back").click({ timeout: 5_000 });
+    await expect(progress).not.toHaveText(before ?? "");
+  }
+});
+
 test("キーボードだけで、候補を閉じ、タブを移れる", async ({ page }, info) => {
   test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
   await enterShop(page);
