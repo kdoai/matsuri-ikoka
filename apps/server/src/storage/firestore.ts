@@ -9,6 +9,7 @@ import {
   type OwnerTripStorage,
   SESSION_STATE_TTL_MS,
   type SessionSnapshot,
+  SHARE_REUSE_MIN_REMAINING_MS,
   SHARE_TTL_MS,
   type SharedItinerary,
   type StoredTrip,
@@ -244,24 +245,58 @@ export class FirestoreTripStorage implements TripStorage {
     await writer.close();
   }
 
-  async #deleteTrip(uid: string, itineraryId: string): Promise<boolean> {
-    if ((await this.#owned(uid, itineraryId)) === null) return false;
+  async #removeTrip(itineraryId: string): Promise<void> {
     await this.#deleteShares("itineraryId", itineraryId);
     // 版（サブコレクション）ごと消す
     await this.#db.recursiveDelete(this.#head(itineraryId));
+  }
+
+  async #deleteTrip(uid: string, itineraryId: string): Promise<boolean> {
+    if ((await this.#owned(uid, itineraryId)) === null) return false;
+    await this.#removeTrip(itineraryId);
     return true;
   }
 
   async #deleteAllTrips(uid: string): Promise<number> {
     const itineraries = this.#db.collection(ITINERARIES);
     const [kept, consulted] = await Promise.all([
-      itineraries.where("ownerUid", "==", uid).select().get(),
-      itineraries.where("consultOwnerUid", "==", uid).select().get(),
+      itineraries.where("ownerUid", "==", uid).select("ownerUid", "consultOwnerUid").get(),
+      itineraries.where("consultOwnerUid", "==", uid).select("ownerUid", "consultOwnerUid").get(),
     ]);
-    const ids = new Set([...kept.docs, ...consulted.docs].map((doc) => doc.id));
-    for (const id of ids) await this.#deleteTrip(uid, id);
+    // 期限を過ぎた残す前の旅程も消すので、期限は見ず、見出しの持ち主で選ぶ
+    const ids = new Set(
+      [...kept.docs, ...consulted.docs]
+        .filter((doc) => {
+          const trip = tripOf(doc);
+          return trip !== null && tripOwner(trip) === uid;
+        })
+        .map((doc) => doc.id),
+    );
+    for (const id of ids) await this.#removeTrip(id);
     await this.#deleteShares("ownerUid", uid);
     return kept.size;
+  }
+
+  /** 同じ内容で、期限に余裕のある自分の共有。なければ null */
+  async #reusableShare(
+    uid: string,
+    itineraryId: string,
+    json: string,
+    now: number,
+  ): Promise<CreatedShare | null> {
+    const shares = await this.#db
+      .collection(SHARES)
+      .where("itineraryId", "==", itineraryId)
+      .select("ownerUid", "itinerary", "expiresAt")
+      .get();
+    for (const doc of shares.docs) {
+      const expiresAt = millis(doc.get("expiresAt"));
+      const same = doc.get("ownerUid") === uid && doc.get("itinerary") === json;
+      if (same && expiresAt - now >= SHARE_REUSE_MIN_REMAINING_MS) {
+        return { shareId: doc.id, expiresAt };
+      }
+    }
+    return null;
   }
 
   async #createShare(uid: string, itineraryId: string): Promise<CreatedShare | null> {
@@ -273,8 +308,10 @@ export class FirestoreTripStorage implements TripStorage {
       .get();
     const data = version.data();
     if (typeof data?.itinerary !== "string") return null;
-    const shareId = newShareId();
     const now = this.#now();
+    const reusable = await this.#reusableShare(uid, itineraryId, data.itinerary, now);
+    if (reusable !== null) return reusable;
+    const shareId = newShareId();
     const expiresAt = now + SHARE_TTL_MS;
     await this.#db
       .collection(SHARES)
@@ -291,20 +328,18 @@ export class FirestoreTripStorage implements TripStorage {
   }
 
   async saveSession(snapshot: SessionSnapshot): Promise<void> {
-    // 持ち主は状態の JSON の外にも置き、merge で残す（持ち主のない書き込みで消えないように）
-    const ownerUid = snapshot.ownerUid ?? null;
-    await this.#db
-      .collection(SESSIONS)
-      .doc(snapshot.id)
-      .set(
-        {
-          state: JSON.stringify(snapshot),
-          updatedAt: at(snapshot.updatedAt),
-          expiresAt: at(snapshot.updatedAt + SESSION_STATE_TTL_MS),
-          ...(ownerUid === null ? {} : { ownerUid }),
-        },
-        { merge: true },
-      );
+    const doc = this.#db.collection(SESSIONS).doc(snapshot.id);
+    // 持ち主は状態の JSON の外にも置き、最初に決まった持ち主を保つ
+    await this.#db.runTransaction(async (tx) => {
+      const saved = (await tx.get(doc)).get("ownerUid");
+      const ownerUid = typeof saved === "string" ? saved : (snapshot.ownerUid ?? null);
+      tx.set(doc, {
+        state: JSON.stringify({ ...snapshot, ownerUid }),
+        updatedAt: at(snapshot.updatedAt),
+        expiresAt: at(snapshot.updatedAt + SESSION_STATE_TTL_MS),
+        ...(ownerUid === null ? {} : { ownerUid }),
+      });
+    });
   }
 
   async getSession(id: string): Promise<SessionSnapshot | null> {

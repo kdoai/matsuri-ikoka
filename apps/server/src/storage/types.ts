@@ -17,6 +17,8 @@ import type { OwnerId } from "./owner";
 
 /** 共有の URL で読める期間と、持ち主のない旅程を残す期間（最後の保存から） */
 export const SHARE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+/** 共有を使い回すときに残っているべき期間。これより短ければ、受け取った人がすぐ開けなくなるので新しく作る */
+export const SHARE_REUSE_MIN_REMAINING_MS = SHARE_TTL_MS / 2;
 /** 相談の途中の状態を残す期間（最後に使ってから） */
 export const SESSION_STATE_TTL_MS = 6 * 60 * 60 * 1000;
 /** 1つの旅程に残す版の数。超えたら古い版から消す */
@@ -110,7 +112,10 @@ export interface OwnerTripStorage {
   deleteTrip(itineraryId: string): Promise<boolean>;
   /** 自分の旅程をすべて（残す前のものも）消す。消した、残した旅の数を返す */
   deleteAllTrips(): Promise<number>;
-  /** 自分の旅程の最新の版を、推測できない ID で30日だけ共有する。自分のものでなければ null */
+  /**
+   * 自分の旅程の最新の版を、推測できない ID で30日だけ共有する。自分のものでなければ null。
+   * 同じ内容で、期限に余裕のある自分の共有があれば、それを返す。内容が変われば別の共有になる
+   */
   createShare(itineraryId: string): Promise<CreatedShare | null>;
 }
 
@@ -129,7 +134,7 @@ export interface TripStorage {
   /** 持ち主のない旅程の最新の版を、最後の保存から30日以内なら読む。持ち主のある旅程は null */
   readUnowned(itineraryId: string): Promise<SharedItinerary | null>;
 
-  /** 一度書いた持ち主は、持ち主のない書き込みでは消えない */
+  /** 一度書いた持ち主は、持ち主のない書き込みでも、別の持ち主の書き込みでも変わらない */
   saveSession(snapshot: SessionSnapshot): Promise<void>;
   /** 最後に使ってから6時間を過ぎた相談は null */
   getSession(id: string): Promise<SessionSnapshot | null>;

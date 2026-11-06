@@ -1,5 +1,6 @@
 import {
   AnchorPlanSchema,
+  type ConversationStage,
   type Itinerary,
   ItinerarySchema,
   TripAnchorSchema,
@@ -44,6 +45,12 @@ export function snapshotOf(session: Session, now: number): SessionSnapshot {
     cancelledAnchor: session.cancelledAnchor,
     replay: session.replay,
   };
+}
+
+/** 旅程を読めない相談の段階。旅程がある前提の段階からは、聞き取りか候補へ戻す */
+function stageWithoutItinerary(saved: SessionSnapshot): ConversationStage {
+  if (saved.stage === "hearing" || saved.stage === "candidates") return saved.stage;
+  return saved.candidates.length > 0 ? "candidates" : "hearing";
 }
 
 /** 保存の口から読んだアンカーを、いまの形で確かめる。前の形のものは捨てる（組み立ては次の発言で計算し直す） */
@@ -126,9 +133,10 @@ export class StoragePersistence {
 
   /**
    * 相談を引く。メモリになければ保存の口から戻し、その相談の旅程も手元の写しに置く。
-   * 見つからなければ undefined
+   * 見つからなければ undefined。viewer は持ち主のない相談を開いた利用者で、その人の旅程なら戻せる。
+   * 読めない旅程（消した・ほかの人の・前の形）は相談から外し、相談は旅程のないものとして続ける
    */
-  async load(sessionId: string): Promise<Session | undefined> {
+  async load(sessionId: string, viewer: OwnerId | null = null): Promise<Session | undefined> {
     if (this.#sessions === undefined) return undefined;
     const inMemory = this.#sessions.get(sessionId);
     if (inMemory !== undefined) return inMemory;
@@ -145,12 +153,30 @@ export class StoragePersistence {
     // 保存した相談の持ち主は、書くときに確かめた利用者なので、そのまま持ち主に戻す
     const ownerUid = saved.ownerUid ? ownerIdOf(saved.ownerUid) : null;
     if (saved.itineraryId !== null && this.#itineraries.get(saved.itineraryId) === undefined) {
-      const itinerary = await this.readItinerary(saved.itineraryId, ownerUid).catch(
-        () => undefined,
-      );
-      if (itinerary !== undefined) this.#itineraries.remember(itinerary);
+      const itinerary = await this.#readForRestore(saved.itineraryId, ownerUid ?? viewer);
+      if (itinerary === undefined) {
+        return this.#sessions.restore({
+          ...currentAnchorState(saved),
+          ownerUid,
+          itineraryId: null,
+          stage: stageWithoutItinerary(saved),
+        });
+      }
+      this.#itineraries.remember(itinerary);
     }
     return this.#sessions.restore({ ...currentAnchorState(saved), ownerUid });
+  }
+
+  /** 戻す相談の旅程を読む。読みに失敗したら、読めない旅程と同じに扱う（相談は止めない） */
+  async #readForRestore(id: string, viewer: OwnerId | null): Promise<Itinerary | undefined> {
+    try {
+      return await this.readItinerary(id, viewer);
+    } catch (error) {
+      console.error(
+        JSON.stringify({ kind: "storage_failed", what: "itinerary_read", ...errorForLog(error) }),
+      );
+      return undefined;
+    }
   }
 
   /**

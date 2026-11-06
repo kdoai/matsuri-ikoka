@@ -7,6 +7,7 @@ import {
   MAX_VERSIONS,
   SESSION_STATE_TTL_MS,
   type SessionSnapshot,
+  SHARE_REUSE_MIN_REMAINING_MS,
   SHARE_TTL_MS,
   type TripStorage,
 } from "./types";
@@ -177,6 +178,61 @@ export function tripStorageContract(make: (clock: Clock) => TripStorage): void {
     expect(await storage.readShare(share?.shareId ?? "")).toBeNull();
   });
 
+  it("同じ内容の共有は使い回す", async () => {
+    const { storage, itinerary, owner, mine } = setup();
+    const v1 = itinerary();
+    await storage.saveItinerary(v1, owner);
+
+    const first = await mine.createShare(v1.id);
+    const second = await mine.createShare(v1.id);
+
+    expect(second).toEqual(first);
+  });
+
+  it("版が同じでも内容が変われば、別の共有になり、前の共有は前の内容のまま", async () => {
+    const { storage, itinerary, owner, mine } = setup();
+    const v1 = itinerary();
+    await storage.saveItinerary(v1, owner);
+    const first = await mine.createShare(v1.id);
+
+    const rechecked = { ...v1, title: "確かめ直したあとの旅" };
+    await storage.saveItinerary(rechecked, owner);
+    const second = await mine.createShare(v1.id);
+
+    expect(second?.shareId).not.toBe(first?.shareId);
+    const before = await storage.readShare(first?.shareId ?? "");
+    const after = await storage.readShare(second?.shareId ?? "");
+    expect((before?.itinerary as Itinerary | undefined)?.title).toBe(v1.title);
+    expect((after?.itinerary as Itinerary | undefined)?.title).toBe(rechecked.title);
+  });
+
+  it("新しい版の共有は別になる", async () => {
+    const { storage, itinerary, owner, mine } = setup();
+    const v1 = itinerary(1);
+    await storage.saveItinerary(v1, owner);
+    const first = await mine.createShare(v1.id);
+
+    await storage.saveItinerary({ ...v1, version: 2 }, owner);
+
+    expect((await mine.createShare(v1.id))?.shareId).not.toBe(first?.shareId);
+  });
+
+  it("残りが短くなった共有は使い回さず、新しく作る", async () => {
+    const { clock, storage, itinerary, mine } = setup();
+    const v1 = itinerary();
+    await storage.saveItinerary(v1, null);
+    await mine.claimTrip(v1.id);
+    const first = await mine.createShare(v1.id);
+
+    clock.now += SHARE_TTL_MS - SHARE_REUSE_MIN_REMAINING_MS;
+    expect((await mine.createShare(v1.id))?.shareId).toBe(first?.shareId);
+    clock.now += 1;
+    const renewed = await mine.createShare(v1.id);
+
+    expect(renewed?.shareId).not.toBe(first?.shareId);
+    expect(renewed?.expiresAt).toBe(clock.now + SHARE_TTL_MS);
+  });
+
   it("共有の口では旅程の ID を読めない", async () => {
     const { storage, itinerary } = setup();
     const v1 = itinerary();
@@ -217,6 +273,20 @@ export function tripStorageContract(make: (clock: Clock) => TripStorage): void {
     expect(await mine.listTrips()).toEqual([]);
     expect(await mine.getTrip(draft.id)).toBeNull();
     expect(await storage.readShare(share?.shareId ?? "")).toBeNull();
+  });
+
+  it("期限を過ぎた残す前の旅程も、すべて消すと消える", async () => {
+    const { clock, storage, itinerary, owner, mine } = setup();
+    const savedAt = clock.now;
+    const draft = itinerary();
+    await storage.saveItinerary(draft, owner);
+
+    clock.now += SHARE_TTL_MS + 1;
+    await mine.deleteAllTrips();
+
+    // TTL で消えるまでは文書が残るので、時計を戻して、本当に消えたことを確かめる
+    clock.now = savedAt;
+    expect(await mine.getTrip(draft.id)).toBeNull();
   });
 
   it("すべて消しても、ほかの利用者の旅には届かない", async () => {
@@ -297,6 +367,16 @@ export function tripStorageContract(make: (clock: Clock) => TripStorage): void {
     const saved = await storage.getSession(snapshot.id);
     expect(saved?.ownerUid).toBe(owner satisfies OwnerId);
     expect(saved?.stage).toBe("shiori");
+  });
+
+  it("相談の持ち主は、別の持ち主の書き込みでも変わらない", async () => {
+    const { clock, storage, owner } = setup();
+    const snapshot = snapshotAt(clock.now);
+    await storage.saveSession({ ...snapshot, ownerUid: owner });
+
+    await storage.saveSession({ ...snapshot, ownerUid: `other-${randomUUID()}` });
+
+    expect((await storage.getSession(snapshot.id))?.ownerUid).toBe(owner);
   });
 
   it("持ち主の項目のない、前の形の相談は、持ち主のない相談として読む", async () => {

@@ -8,6 +8,7 @@ import {
   type OwnerTripStorage,
   SESSION_STATE_TTL_MS,
   type SessionSnapshot,
+  SHARE_REUSE_MIN_REMAINING_MS,
   SHARE_TTL_MS,
   type SharedItinerary,
   type StoredTrip,
@@ -182,19 +183,24 @@ export class MemoryTripStorage implements TripStorage {
     };
   }
 
-  async #deleteTrip(uid: string, itineraryId: string): Promise<boolean> {
-    if (this.#owned(uid, itineraryId) === undefined) return false;
+  #removeTrip(itineraryId: string): void {
     this.#itineraries.delete(itineraryId);
     for (const [id, share] of this.#shares) {
       if (share.itineraryId === itineraryId) this.#shares.delete(id);
     }
+  }
+
+  async #deleteTrip(uid: string, itineraryId: string): Promise<boolean> {
+    if (this.#owned(uid, itineraryId) === undefined) return false;
+    this.#removeTrip(itineraryId);
     return true;
   }
 
   async #deleteAllTrips(uid: string): Promise<number> {
     const kept = (await this.#listTrips(uid)).length;
+    // 期限を過ぎた残す前の旅程も消すので、期限は見ず、見出しの持ち主で選ぶ
     for (const entry of [...this.#itineraries.values()]) {
-      if (tripOwner(entry.head) === uid) await this.#deleteTrip(uid, entry.head.itineraryId);
+      if (tripOwner(entry.head) === uid) this.#removeTrip(entry.head.itineraryId);
     }
     // 旅を消したあとに残った、この利用者の共有も消す
     for (const [id, share] of this.#shares) {
@@ -207,8 +213,16 @@ export class MemoryTripStorage implements TripStorage {
     const entry = this.#owned(uid, itineraryId);
     const json = entry?.versions.get(entry.head.version);
     if (entry === undefined || json === undefined) return null;
+    const now = this.#now();
+    for (const [shareId, share] of this.#shares) {
+      const same =
+        share.itineraryId === itineraryId && share.ownerUid === uid && share.json === json;
+      if (same && share.expiresAt - now >= SHARE_REUSE_MIN_REMAINING_MS) {
+        return { shareId, expiresAt: share.expiresAt };
+      }
+    }
     const shareId = newShareId();
-    const expiresAt = this.#now() + SHARE_TTL_MS;
+    const expiresAt = now + SHARE_TTL_MS;
     this.#shares.set(shareId, {
       itineraryId,
       ownerUid: uid,

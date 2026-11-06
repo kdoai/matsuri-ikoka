@@ -27,7 +27,7 @@ export class Consultations {
    * 持ち主のない相談をログインした人が使ったら、その人の相談にする
    */
   async open(sessionId: string, viewer: OwnerId | null): Promise<Session | undefined> {
-    const session = await this.#persistence.load(sessionId);
+    const session = await this.#persistence.load(sessionId, viewer);
     if (session === undefined) return undefined;
     if (session.ownerUid === null) {
       if (viewer !== null) {

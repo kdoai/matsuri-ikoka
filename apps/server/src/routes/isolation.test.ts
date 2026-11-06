@@ -16,6 +16,7 @@ import { snapshotOf } from "../session/persistence";
 import { ItineraryStore, SessionStore } from "../session/sessionStore";
 import { createShiori } from "../shiori";
 import { MemoryTripStorage } from "../storage/memory";
+import { ownerIdOf } from "../storage/owner";
 import { ConcurrencyLimiter, DailyLimiter } from "./guard";
 
 // 利用者ごとの分離。利用者 A の相談・旅・共有していない旅程に、利用者 B とログインなしの人が触れないことを、
@@ -458,6 +459,55 @@ describe("ログインなしの相談は、いままでどおり", () => {
     expect(sessions.get(sessionId)?.ownerUid).toBe(ALICE);
     expect((await save(BOB)).status).toBe(404);
     expect((await call(`/shiori/${itineraryId}`)).status).toBe(404);
+  });
+});
+
+describe("持ち主のない前の形の相談が、残した旅程を指しているとき", () => {
+  const legacySession = async () => {
+    const storage = new MemoryTripStorage();
+    const earlier = setup({ storage });
+    const { sessionId, itineraryId } = await earlier.consult();
+    await earlier.call("/api/trips", { method: "POST", user: ALICE, body: { sessionId } });
+    const saved = await storage.getSession(sessionId);
+    if (saved === null) throw new Error("相談がありません");
+    // 前の形の相談には持ち主の項目がない
+    const { ownerUid: _ownerUid, ...legacy } = saved;
+    const older = new MemoryTripStorage();
+    const itinerary = earlier.itineraries.get(itineraryId);
+    if (itinerary === undefined) throw new Error("旅程がありません");
+    await older.saveItinerary(itinerary, null);
+    await older.forOwner(ownerIdOf(ALICE)).claimTrip(itineraryId);
+    await older.saveSession(legacy);
+    return { storage: older, sessionId, itineraryId };
+  };
+
+  it("ログインなしで開いても、相談は壊れずに続けられ、旅程は読めない", async () => {
+    const { storage, sessionId, itineraryId } = await legacySession();
+    const { chat, call, sessions } = setup({ storage });
+
+    const res = await chat(sessionId);
+    const events = await readEvents(res);
+
+    expect(res.status).toBe(200);
+    expect(events.filter((event) => event.type === "done")).toHaveLength(1);
+    expect(sessions.get(sessionId)?.ownerUid).toBeNull();
+    expect((await call(`/api/itinerary/${itineraryId}`)).status).toBe(404);
+  });
+
+  it("旅程の持ち主がログインして開けば、相談が結びつき、旅程も戻る", async () => {
+    const { storage, sessionId, itineraryId } = await legacySession();
+    const { call, chat, sessions, itineraries } = setup({ storage });
+
+    const res = await chat(sessionId, ALICE);
+    await res.text();
+
+    expect(res.status).toBe(200);
+    expect(sessions.get(sessionId)?.ownerUid).toBe(ALICE);
+    expect(sessions.get(sessionId)?.itineraryId).toBe(itineraryId);
+    expect(itineraries.get(itineraryId)?.id).toBe(itineraryId);
+    expect(
+      (await call("/api/trips", { method: "POST", user: ALICE, body: { sessionId } })).status,
+    ).toBe(201);
   });
 });
 
