@@ -1,8 +1,6 @@
-import http from "node:http";
-import https from "node:https";
 import { isIP } from "node:net";
-import { Readable } from "node:stream";
 import { checkPublicWebUrl } from "@matsuri-ikoka/agent-kit";
+import { Agent, fetch as undiciFetch } from "undici";
 import { checkHostAddresses, type ResolveHost, resolveHost } from "../agent/addressGuard";
 import { createRobotsChecker, ROBOTS_USER_AGENT, type RobotsChecker } from "../agent/robots";
 import { pageLines } from "./lines";
@@ -20,17 +18,84 @@ const MAX_REDIRECTS = 3;
 const MIN_HOST_INTERVAL_MS = 1_000;
 /** 本文がこれより短いページは、スクリプトで描かれていて比べられないとみなす */
 const MIN_READABLE_CHARS = 200;
+/** 本文がこれだけあれば、noscript の案内があっても読めるページとして扱う */
+const ENOUGH_STATIC_CHARS = 1_000;
+/** スクリプトで描くページかを調べる範囲（先頭から）。ページの文字を前から1度だけ読む */
+const SCAN_LIMIT_CHARS = 300_000;
+/** タグの属性を読む長さの上限 */
+const MAX_TAG_CHARS = 500;
+const MAX_COMMENT_CHARS = 2_000;
 
-/** スクリプトで中身を描くページの、空の入れ物 */
-const EMPTY_APP_ROOT =
-  /<(?:div|main|section)\b[^>]*\bid\s*=\s*["']?(?:app|root|__next|__nuxt)["']?[^>]*>\s*<\/(?:div|main|section)>/i;
-/** スクリプトを有効にするよう案内するページ */
-const NOSCRIPT_NOTICE =
-  /<noscript\b[^>]*>(?=[^<]{0,600}(?:javascript|スクリプト))(?=[^<]{0,600}(?:有効|オン|enable|required|必要))/i;
+const APP_ROOT_ELEMENTS = ["div", "main", "section"];
+const APP_ROOT_ID = /(?:^|\s)id\s*=\s*["']?(?:app|root|__next|__nuxt)(?:["'\s/]|$)/;
 
-/** スクリプトで描くページか。迷うときは読めないページに倒す（ナビだけ読んで変化なしとしない） */
-export function looksScriptRendered(html: string): boolean {
-  return EMPTY_APP_ROOT.test(html) || NOSCRIPT_NOTICE.test(html);
+/** 空白とコメントを飛ばした位置 */
+function skipBlank(lower: string, from: number): number {
+  let at = from;
+  while (at < lower.length) {
+    const ch = lower[at] ?? "";
+    if (ch === " " || ch === "\n" || ch === "\r" || ch === "\t") {
+      at += 1;
+    } else if (lower.startsWith("<!--", at)) {
+      const end = lower.slice(at, at + MAX_COMMENT_CHARS).indexOf("-->");
+      if (end < 0) return at;
+      at += end + 3;
+    } else {
+      return at;
+    }
+  }
+  return at;
+}
+
+/**
+ * スクリプトで中身を描く空の入れ物があるか。タグを前から1度だけ読む。
+ * サイトが書いた文字列なので、タグの中を広く読む正規表現にしない（「<div 」の繰り返しで時間が爆発する）
+ */
+function hasEmptyAppRoot(html: string): boolean {
+  const lower = html.slice(0, SCAN_LIMIT_CHARS).toLowerCase();
+  let at = lower.indexOf("<");
+  while (at >= 0) {
+    const name = APP_ROOT_ELEMENTS.find((element) => lower.startsWith(element, at + 1));
+    if (name !== undefined) {
+      const tag = lower.slice(at + 1 + name.length, at + 1 + name.length + MAX_TAG_CHARS);
+      const close = tag.indexOf(">");
+      const inner = close < 0 ? "" : tag.slice(0, close);
+      if (close >= 0 && !inner.includes("<") && APP_ROOT_ID.test(inner)) {
+        const body = skipBlank(lower, at + 1 + name.length + close + 1);
+        if (lower.startsWith(`</${name}`, body)) return true;
+      }
+    }
+    at = lower.indexOf("<", at + 1);
+  }
+  return false;
+}
+
+/** スクリプトを有効にするよう案内しているか */
+function hasScriptNotice(html: string): boolean {
+  const lower = html.slice(0, SCAN_LIMIT_CHARS).toLowerCase();
+  let at = lower.indexOf("<noscript");
+  while (at >= 0) {
+    const part = lower.slice(at, at + MAX_TAG_CHARS + 600);
+    const close = part.indexOf(">");
+    if (close >= 0) {
+      const end = part.indexOf("<", close);
+      const text = part.slice(close + 1, end < 0 ? undefined : end);
+      if (/javascript|スクリプト/.test(text) && /有効|オン|enable|required|必要/.test(text)) {
+        return true;
+      }
+    }
+    at = lower.indexOf("<noscript", at + 1);
+  }
+  return false;
+}
+
+/**
+ * スクリプトで描くページか。空の入れ物があれば、本文が長くても読めないページにする。
+ * noscript の案内だけなら、本文が十分にあれば読めるページとして扱う（静的なページにもよくあるため）
+ */
+export function looksScriptRendered(html: string, bodyChars: number): boolean {
+  if (hasEmptyAppRoot(html)) return true;
+  return bodyChars < ENOUGH_STATIC_CHARS && hasScriptNotice(html);
 }
 
 export type PageRead =
@@ -59,46 +124,44 @@ export type PinnedFetch = (
   init: PinnedRequest,
 ) => Promise<Response>;
 
-/** 名前を解決し直さず、渡したアドレスにつなぐ。TLS の確認は URL の名前で行う */
-export const pinnedFetch: PinnedFetch = (url, addresses, init) =>
-  new Promise((resolve, reject) => {
-    const entries = addresses.map((address) => ({ address, family: isIP(address) }));
-    const first = entries[0];
-    if (first === undefined) {
-      reject(new Error("つなぐ先のアドレスがありません"));
-      return;
-    }
-    const request = (url.protocol === "https:" ? https : http).request(
-      url,
-      {
-        method: "GET",
-        headers: init.headers,
-        signal: init.signal,
-        lookup: (_host, options, done) => {
-          if (options.all) done(null, entries);
-          else done(null, first.address, first.family);
-        },
+type LookupDone = (
+  error: Error | null,
+  address: string | { address: string; family: number }[],
+  family?: number,
+) => void;
+
+/**
+ * 名前を解決し直さず、渡したアドレスにつなぐ。TLS の確認は URL の名前で行う。
+ * HTTP の処理（解凍・101 の扱い・打ち切り）は undici に任せる
+ */
+export const pinnedFetch: PinnedFetch = async (url, addresses, init) => {
+  const entries = addresses.map((address) => ({ address, family: isIP(address) }));
+  const first = entries[0];
+  if (first === undefined) throw new Error("つなぐ先のアドレスがありません");
+  const dispatcher = new Agent({
+    pipelining: 0,
+    connect: {
+      lookup: (_host: string, options: { all?: boolean }, done: LookupDone) => {
+        if (options.all) done(null, entries);
+        else done(null, first.address, first.family);
       },
-      (response) => {
-        const status = response.statusCode ?? 502;
-        const headers = new Headers();
-        for (const [name, value] of Object.entries(response.headers)) {
-          if (typeof value === "string") headers.set(name, value);
-          else if (Array.isArray(value)) headers.set(name, value.join(", "));
-        }
-        const empty = status === 204 || status === 205 || status === 304;
-        if (empty) response.resume();
-        resolve(
-          new Response(
-            empty ? null : (Readable.toWeb(response) as unknown as ReadableStream<Uint8Array>),
-            { status: status < 200 || status > 599 ? 502 : status, headers },
-          ),
-        );
-      },
-    );
-    request.on("error", reject);
-    request.end();
+    },
   });
+  try {
+    const response = await undiciFetch(url, {
+      redirect: "manual",
+      headers: init.headers,
+      signal: init.signal,
+      dispatcher,
+    });
+    // 本文を読み終えたら閉じる
+    void dispatcher.close().catch(() => {});
+    return response as unknown as Response;
+  } catch (error) {
+    void dispatcher.destroy().catch(() => {});
+    throw error;
+  }
+};
 
 export interface PageFetcherOptions {
   /** テストで差し替える。省略すると確かめたアドレスにつなぐ */
@@ -138,7 +201,7 @@ function decode(bytes: Uint8Array, contentType: string): string {
   const head = new TextDecoder("latin1").decode(bytes.subarray(0, 4096));
   const label =
     /charset=["']?([\w-]+)/i.exec(contentType)?.[1] ??
-    /<meta[^>]+charset=["']?([\w-]+)/i.exec(head)?.[1] ??
+    /<meta[^<>]{0,300}charset=["']?([\w-]+)/i.exec(head)?.[1] ??
     "utf-8";
   try {
     return new TextDecoder(label).decode(bytes);
@@ -234,10 +297,11 @@ export function createPageFetcher(options: PageFetcherOptions = {}): PageFetcher
         }
         try {
           const html = decode(await readBytes(response, maxBytes), type);
-          if (looksScriptRendered(html)) return { status: "unreadable" };
           const lines = pageLines(html);
           const chars = lines.reduce((total, line) => total + line.length, 0);
-          return chars < MIN_READABLE_CHARS ? { status: "unreadable" } : { status: "ok", lines };
+          return chars < MIN_READABLE_CHARS || looksScriptRendered(html, chars)
+            ? { status: "unreadable" }
+            : { status: "ok", lines };
         } catch {
           return { status: "failed" };
         }

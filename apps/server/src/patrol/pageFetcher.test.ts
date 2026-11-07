@@ -1,5 +1,6 @@
 import http from "node:http";
-import type { AddressInfo } from "node:net";
+import net, { type AddressInfo } from "node:net";
+import { gzipSync } from "node:zlib";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import type { ResolveHost } from "../agent/addressGuard";
 import {
@@ -214,10 +215,12 @@ describe("looksScriptRendered", () => {
     "<div id='root'>  </div>",
     '<div class="a" id="__nuxt"></div>',
     "<main id=app></main>",
+    '<div id="app"><!-- --></div>',
+    '<div id="__next"><!-- app --> <!-- shell --></div>',
     "<noscript>JavaScript を有効にしてご覧ください</noscript>",
     "<noscript>You need to enable JavaScript to run this app.</noscript>",
   ])("%s は、スクリプトで描くページ", (html) => {
-    expect(looksScriptRendered(html)).toBe(true);
+    expect(looksScriptRendered(html, 10)).toBe(true);
   });
 
   it.each([
@@ -225,8 +228,34 @@ describe("looksScriptRendered", () => {
     '<div id="root"><h1>鈴鳴灯籠まつり</h1></div>',
     "<noscript><img src='/pixel.gif'></noscript>",
     '<div id="content"></div>',
+    '<div data-id="app"></div>',
   ])("%s は、スクリプトで描くページではない", (html) => {
-    expect(looksScriptRendered(html)).toBe(false);
+    expect(looksScriptRendered(html, 10)).toBe(false);
+  });
+
+  it("本文が十分にあれば、noscript の案内だけでは読めないとしない", () => {
+    const notice = "<noscript>JavaScript を有効にしてご覧ください</noscript>";
+
+    expect(looksScriptRendered(notice, 100)).toBe(true);
+    expect(looksScriptRendered(notice, 5_000)).toBe(false);
+  });
+
+  it("本文が長くても、空の入れ物があれば読めないページにする", () => {
+    expect(looksScriptRendered('<div id="app"></div>', 5_000)).toBe(true);
+  });
+
+  it.each([
+    ["「<div 」の繰り返し", "<div ".repeat(400_000)],
+    ["「<div id=app 」の繰り返し", "<div id=app ".repeat(200_000)],
+    ["「<div id=app>」の繰り返し", "<div id=app>".repeat(200_000)],
+    ["閉じないコメントの繰り返し", "<div id=app><!-- ".repeat(100_000)],
+    ["「<noscript 」の繰り返し", "<noscript ".repeat(200_000)],
+  ])("%sでも、すぐに終わる", (_name, html) => {
+    const started = performance.now();
+
+    expect(looksScriptRendered(html, 10)).toBe(false);
+
+    expect(performance.now() - started).toBeLessThan(1_000);
   });
 });
 
@@ -279,5 +308,67 @@ describe("pinnedFetch", () => {
 
   it("アドレスがなければ、つながない", async () => {
     await expect(pinnedFetch(new URL("http://example.com/"), [], init())).rejects.toThrow();
+  });
+
+  it("交渉を無視して gzip を返すサーバーのページも、文字化けせずに読める", async () => {
+    const zipped = http.createServer((_request, response) => {
+      response.writeHead(200, {
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "gzip",
+      });
+      response.end(gzipSync("<p>開催日 8月23日</p>"));
+    });
+    await new Promise<void>((done) => zipped.listen(0, "127.0.0.1", done));
+    const { port: zippedPort } = zipped.address() as AddressInfo;
+
+    const response = await pinnedFetch(
+      new URL(`http://festival.example.com:${zippedPort}/`),
+      ["127.0.0.1"],
+      init(),
+    );
+
+    expect(await response.text()).toBe("<p>開催日 8月23日</p>");
+    await new Promise((done) => zipped.close(done));
+  });
+
+  it("101 を返すサーバーでも、返らなくなることがない", async () => {
+    const upgrading = net.createServer((socket) => {
+      socket.on("error", () => {});
+      socket.once("data", () => {
+        socket.write(
+          "HTTP/1.1 101 Switching Protocols\r\nConnection: Upgrade\r\nUpgrade: websocket\r\n\r\n",
+        );
+      });
+    });
+    await new Promise<void>((done) => upgrading.listen(0, "127.0.0.1", done));
+    const { port: upgradingPort } = upgrading.address() as AddressInfo;
+
+    await expect(
+      pinnedFetch(new URL(`http://festival.example.com:${upgradingPort}/`), ["127.0.0.1"], {
+        headers: {},
+        signal: AbortSignal.timeout(1_000),
+      }),
+    ).rejects.toThrow();
+
+    await new Promise((done) => upgrading.close(done));
+  });
+
+  it("応答を返さないサーバーは、打ち切りで止める", async () => {
+    const silent = net.createServer((socket) => {
+      socket.on("error", () => {});
+      // 読み続けるので、相手が切ったことに気づいて閉じられる
+      socket.resume();
+    });
+    await new Promise<void>((done) => silent.listen(0, "127.0.0.1", done));
+    const { port: silentPort } = silent.address() as AddressInfo;
+
+    await expect(
+      pinnedFetch(new URL(`http://festival.example.com:${silentPort}/`), ["127.0.0.1"], {
+        headers: {},
+        signal: AbortSignal.timeout(200),
+      }),
+    ).rejects.toThrow();
+
+    await new Promise((done) => silent.close(done));
   });
 });
