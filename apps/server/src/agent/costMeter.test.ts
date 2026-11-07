@@ -77,7 +77,7 @@ describe("finalText の費用の上限", () => {
 
     const reply = await withCostMeter(meter, () => finalText(query, "問い", {}));
 
-    expect(reply).toEqual({ text: null, costUsd: 0 });
+    expect(reply).toEqual({ text: null, costUsd: 0, salvaged: false });
     expect(query).not.toHaveBeenCalled();
   });
 });

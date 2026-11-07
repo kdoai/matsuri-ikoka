@@ -6,21 +6,30 @@ import type {
   SDKMessage,
 } from "@anthropic-ai/claude-agent-sdk";
 import { createWebActivityLog } from "@matsuri-ikoka/agent-kit";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { testFestival } from "../domain/testFestivals";
 import type { RobotsChecker } from "./robots";
 import type { QueryFn } from "./runner";
-import { createVerifierHooks, createWebVerifier, isRestrictedSite } from "./webVerifier";
+import {
+  createVerifierHooks,
+  createWebVerifier,
+  isRestrictedSite,
+  SALVAGE_PROMPT,
+} from "./webVerifier";
 
 // Agent SDK の代わりに、フックを呼んで決まった返答を返す偽物の query で確かめる。URL はすべて架空
 
 const festival = testFestival({ id: "suzunari-toro" });
 
+/** 台本がこれを返すと、ターンの上限（error_max_turns）で終わったことにする */
+const MAX_TURNS = Symbol("max_turns");
+
 type Script = (
   hook: (event: HookEvent, input: Record<string, unknown>) => Promise<unknown>,
-) => Promise<string | null>;
+) => Promise<string | null | typeof MAX_TURNS>;
 
-function setup(scripts: Script[]) {
+function setup(scripts: Script[], options: { forget?: boolean } = {}) {
+  const forgotten: string[] = [];
   const calls: { prompt: string; options: Options }[] = [];
   const query: QueryFn = (params) => {
     calls.push(params);
@@ -49,16 +58,29 @@ function setup(scripts: Script[]) {
       }
       return output;
     };
+    // resume した会話は同じセッションを名乗り、費用は前の累計から続けて届く
+    const sessionId = params.options.resume ?? `v-${calls.length}`;
+    const cost = params.options.resume === undefined ? 0.3 : 0.35;
     return (async function* () {
+      yield { type: "system", subtype: "init", session_id: sessionId } as unknown as SDKMessage;
       const text = await script(hook);
-      yield (text === null
-        ? { type: "result", subtype: "error_during_execution", is_error: true, errors: [] }
-        : {
+      yield (text === MAX_TURNS
+        ? {
             type: "result",
-            subtype: "success",
-            is_error: false,
-            result: text,
-          }) as unknown as SDKMessage;
+            subtype: "error_max_turns",
+            is_error: true,
+            errors: [],
+            total_cost_usd: cost,
+          }
+        : text === null
+          ? { type: "result", subtype: "error_during_execution", is_error: true, errors: [] }
+          : {
+              type: "result",
+              subtype: "success",
+              is_error: false,
+              result: text,
+              total_cost_usd: cost,
+            }) as unknown as SDKMessage;
     })();
   };
   const verifier = createWebVerifier({
@@ -71,10 +93,11 @@ function setup(scripts: Script[]) {
       const ip = host.match(/^(\d+\.\d+\.\d+\.\d+)\.nip\.io$/)?.[1];
       return [ip ?? "8.8.8.8"];
     },
+    ...(options.forget === false ? {} : { forgetSession: (id: string) => forgotten.push(id) }),
   });
   const verify = () =>
     verifier.verify({ festival, date: "2026-08-16", signal: new AbortController().signal });
-  return { calls, verify };
+  return { calls, verify, forgotten };
 }
 
 /** WebFetch で読んだことにする。text はエージェントが受け取る本文（SDK の WebFetchOutput の result） */
@@ -329,5 +352,80 @@ describe("createWebVerifier", () => {
 
     expect((await broken.verify()).result).toBe("not_found");
     expect((await failed.verify()).result).toBe("not_found");
+  });
+
+  describe("ターンの上限で終わったとき", () => {
+    const answer = JSON.stringify({
+      result: "as_planned",
+      sources: [
+        { url: "https://example.com/suzunari/2026" },
+        { url: "https://example.net/not-read" },
+      ],
+      dateText: "２０２６年８月１６日（日）",
+    });
+
+    it("同じ会話を resume し、道具なし・1ターンで読んだ分から答えさせる。出典は読んだページだけ", async () => {
+      const logs: string[] = [];
+      const spy = vi.spyOn(console, "info").mockImplementation((line) => {
+        logs.push(String(line));
+      });
+      const { calls, verify, forgotten } = setup([
+        async (hook) => {
+          await read(hook, "https://example.com/suzunari/2026", NOTICE_2026);
+          return MAX_TURNS;
+        },
+        async () => answer,
+      ]);
+
+      const report = await verify();
+      spy.mockRestore();
+
+      expect(calls).toHaveLength(2);
+      expect(calls[0]?.options.persistSession).toBe(true);
+      expect(calls[1]?.prompt).toBe(SALVAGE_PROMPT);
+      expect(calls[1]?.options).toMatchObject({ resume: "v-1", tools: [], maxTurns: 1 });
+      expect(calls[1]?.options.hooks).toBeUndefined();
+      expect(report).toMatchObject({
+        result: "as_planned",
+        sources: [{ url: "https://example.com/suzunari/2026" }],
+        yearStated: true,
+      });
+      // 調べ役の会話の記録は、終わったら消す
+      expect(forgotten).toEqual(["v-1"]);
+      // 救ったことと、resume の累計から引いた費用をログに残す
+      const log = JSON.parse(logs.find((line) => line.includes('"verify"')) ?? "{}");
+      expect(log).toMatchObject({ kind: "verify", salvaged: true, fetched: 1 });
+      expect(log.totalCostUsd).toBeCloseTo(0.35);
+    });
+
+    it("救えなかったときだけ、確かめられなかったことにする", async () => {
+      const { calls, verify, forgotten } = setup([
+        async (hook) => {
+          await read(hook, "https://example.com/suzunari/2026", NOTICE_2026);
+          return MAX_TURNS;
+        },
+        async () => null,
+      ]);
+
+      expect((await verify()).result).toBe("not_found");
+      expect(calls).toHaveLength(2);
+      expect(forgotten).toEqual(["v-1"]);
+    });
+
+    it("記録を消す口がなければ、記録を残さず、救いもしない", async () => {
+      const { calls, verify } = setup(
+        [
+          async (hook) => {
+            await read(hook, "https://example.com/suzunari/2026", NOTICE_2026);
+            return MAX_TURNS;
+          },
+        ],
+        { forget: false },
+      );
+
+      expect((await verify()).result).toBe("not_found");
+      expect(calls).toHaveLength(1);
+      expect(calls[0]?.options.persistSession).toBe(false);
+    });
   });
 });
