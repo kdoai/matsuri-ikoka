@@ -30,7 +30,10 @@ export function passcodeGuard(passcode: string | null): MiddlewareHandler {
   };
 }
 
-/** 数えるキーを、残してよい形にする。IP や利用者の ID そのものは残さない */
+/**
+ * 数えるキーを、仮名のキーにする（塩のない SHA-256 の先頭）。塩がないので IPv4 は総当たりで戻せる。
+ * 残す先では TTL で数日のうちに消える
+ */
 export function countKey(key: string): string {
   return createHash("sha256").update(key).digest("hex").slice(0, 32);
 }
@@ -99,13 +102,14 @@ export class DailyLimiter {
 
   /**
    * その日の数を、残す先から読み戻す。読んだ数とメモリの数の多いほうを使う。
-   * 残す先がなければ何もしない。読めなければ例外にする（呼ぶ側が、ログに残して続ける）
+   * 残す先がなければ何もしない。読めなければ例外にする（呼ぶ側が、ログに残して続ける）。
+   * signal が止まったあとに読めた数は足さない（時間切れのあとは、その日の数を0から数える）
    */
-  async restore(): Promise<void> {
+  async restore(signal?: AbortSignal): Promise<void> {
     if (this.#persistence === null) return;
     const day = this.#roll();
     const saved = await this.#persistence.store.load(this.#persistence.scope, day);
-    if (this.#day !== day) return;
+    if (signal?.aborted || this.#day !== day) return;
     for (const [key, count] of saved) {
       this.#counts.set(key, Math.max(count, this.#counts.get(key) ?? 0));
     }
@@ -114,7 +118,8 @@ export class DailyLimiter {
 
 /**
  * 起動のときに、1日の回数の数えを読み戻す。待つのは timeoutMs まで。
- * 読めなくても、間に合わなくても、起動は止めない（読み戻せなかった枠を返す。呼ぶ側がログに残す）
+ * 読めなくても、間に合わなくても、起動は止めない（読み戻せなかった枠を返す。呼ぶ側がログに残す）。
+ * 間に合わなかった枠は、あとで読めても足さず、その日の数を0から数える
  */
 export async function restoreDailyLimits(
   limiters: Readonly<Record<string, DailyLimiter>>,
@@ -123,12 +128,16 @@ export async function restoreDailyLimits(
   const failed: string[] = [];
   await Promise.all(
     Object.entries(limiters).map(async ([name, limiter]) => {
+      const late = new AbortController();
       let timer: NodeJS.Timeout | undefined;
-      const late = new Promise<never>((_, reject) => {
-        timer = setTimeout(() => reject(new Error("timeout")), timeoutMs);
+      const timedOut = new Promise<never>((_, reject) => {
+        timer = setTimeout(() => {
+          late.abort();
+          reject(new Error("timeout"));
+        }, timeoutMs);
       });
       try {
-        await Promise.race([limiter.restore(), late]);
+        await Promise.race([limiter.restore(late.signal), timedOut]);
       } catch {
         failed.push(name);
       } finally {

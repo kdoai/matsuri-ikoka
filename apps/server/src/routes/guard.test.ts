@@ -201,6 +201,23 @@ describe("DailyLimiter（数えを残す）", () => {
     expect(limiter.allows()).toBe(false);
   });
 
+  it("間に合わなかった枠は、あとで読めても足さず、0から数える", async () => {
+    let finish: (counts: Map<string, number>) => void = () => {};
+    const slow = {
+      load: () =>
+        new Promise<Map<string, number>>((resolve) => {
+          finish = resolve;
+        }),
+      add: async () => {},
+    };
+    const limiter = new DailyLimiter(1, day, { store: slow, scope: "chat" });
+
+    expect(await restoreDailyLimits({ limiter }, 10)).toEqual({ failed: ["limiter"] });
+    finish(new Map([[countKey("*"), 1]]));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(limiter.allows()).toBe(true);
+  });
+
   it("残す先がなければ、読み戻しは何もしない", async () => {
     const limiter = new DailyLimiter(1, day);
     await limiter.restore();
