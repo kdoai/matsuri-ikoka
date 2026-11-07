@@ -422,7 +422,7 @@ main ブランチには直接 push しません。人の変更も自動の更新
 | 秘密情報           | Secret Manager から環境変数として渡す                                                                                                                                                                                                      | 値をイメージ・リポジトリ・ログに出さない                                                                                                                                               |
 | イメージ           | Artifact Registry。最新の10版を残し、1日より古いものは消す                                                                                                                                                                                 |                                                                                                                                                                                        |
 
-- 本番の環境変数：`NODE_ENV=production`・`MATSURI_AGENT_MODE=live`・`MODEL_CONCIERGE`・`MODEL_STAFF`・`MODEL_PLANNER`・`MODEL_EVALUATOR`・`MODEL_VERIFIER`・`MODEL_WISH_READER`（省略可）・`MODEL_GUIDE`（省略するとガイドの入口だけが断る）・`DAILY_CHAT_LIMIT`・`DAILY_CHAT_LIMIT_PER_IP`・`DAILY_TRIAL_CHAT_LIMIT`（省略可）・`AGENT_MAX_BUDGET_USD`（デプロイが付ける）・`MAX_CONCURRENT_TURNS`・`TRUSTED_PROXY_HOPS=1`（デプロイが付ける）・`MATSURI_STORAGE=firestore`・`FIREBASE_PROJECT_ID`・`FIREBASE_WEB_API_KEY`・`FIREBASE_AUTH_DOMAIN`。`PORT` は Cloud Run が渡す
+- 本番の環境変数：`NODE_ENV=production`・`MATSURI_AGENT_MODE=live`・`MODEL_CONCIERGE`・`MODEL_STAFF`・`MODEL_PLANNER`・`MODEL_EVALUATOR`・`MODEL_VERIFIER`・`MODEL_WISH_READER`（省略可）・`MODEL_GUIDE`（省略すると `MODEL_CONCIERGE` で動く）・`DAILY_CHAT_LIMIT`・`DAILY_CHAT_LIMIT_PER_IP`・`DAILY_TRIAL_CHAT_LIMIT`（省略可）・`AGENT_MAX_BUDGET_USD`（デプロイが付ける）・`MAX_CONCURRENT_TURNS`・`TRUSTED_PROXY_HOPS=1`（デプロイが付ける）・`MATSURI_STORAGE=firestore`・`FIREBASE_PROJECT_ID`・`FIREBASE_WEB_API_KEY`・`FIREBASE_AUTH_DOMAIN`。`PORT` は Cloud Run が渡す
 - Firestore・TTL・セキュリティルール・Firebase Authentication・実行用のアカウントの権限は、[`scripts/setup-firestore.sh`](../../scripts/setup-firestore.sh) で入れて確かめる（[ログインと保存の仕様](account.md#google-cloud-の設定)）
 - お試し用のアカウントは [`apps/server/scripts/trial-account.ts`](../../apps/server/scripts/trial-account.ts) で作り、初期の状態に戻し、パスワードを作り直す（[ログインと保存の仕様](account.md#お試し用のアカウント)）。パスワードは実行した端末の画面にだけ出る
 - Cloud Run の既定の URL（`run.app`）では、末尾が `z` のパスが外から届かない。外からの死活監視には `/health` を使う
@@ -515,7 +515,7 @@ Cloud Run の既定の URL（前にロードバランサーを置かない）で
 | `ANTHROPIC_API_KEY`                                                                    | Claude の API キー（live のとき）                                                                                                                                                    |
 | `MODEL_CONCIERGE`・`MODEL_STAFF`・`MODEL_PLANNER`・`MODEL_EVALUATOR`・`MODEL_VERIFIER` | 役割ごとのモデル名（[モデルの割り当て](agents.md#モデルの割り当て)）                                                                                                                 |
 | `MODEL_WISH_READER`                                                                    | 祭りから探すときの自由記述の読み取りのモデル名。省略時は軽いモデルの別名 `haiku`（[自由記述の読み取り](agent-runtime.md#自由記述の読み取り)）                                        |
-| `MODEL_GUIDE`                                                                          | しおりのあとのガイドのモデル名。live で空なら、ガイドの入口だけが 404 で断る（[旅のガイドの仕様](guide.md)）                                                                         |
+| `MODEL_GUIDE`                                                                          | しおりのあとのガイドのモデル名。空なら `MODEL_CONCIERGE` を使い、それも空なら、ガイドの入口だけが 404 で断る（[旅のガイドの仕様](guide.md)）                                         |
 | `ACCESS_PASSCODE`                                                                      | 公開している URL の合言葉。画面からはヘッダー `x-access-passcode` で送る                                                                                                             |
 | `DAILY_CHAT_LIMIT`                                                                     | 1日（日本の日付）の相談の回数の上限。空か 0 なら上限なし                                                                                                                             |
 | `AGENT_MAX_BUDGET_USD`                                                                 | live の1回の発言の費用の上限（米ドル、Agent SDK の推定で判定）。本番は `deploy.yml` で 1 にする。旅程の調べ直しと作り直しを最後まで回せる額にする                                    |
@@ -552,7 +552,7 @@ Cloud Run の既定の URL（前にロードバランサーを置かない）で
 | ------------------------- | ------------------------------------------------------------------------------------- |
 | `MODEL_CONCIERGE`         | コンシェルジュが Agent SDK の既定のモデルで動く                                       |
 | `MODEL_STAFF`             | スタッフ（と、指定のない旅程係・再確認・評価係）が Agent SDK の既定のモデルで動く     |
-| `MODEL_GUIDE`             | ガイドの入口が断る                                                                    |
+| `MODEL_GUIDE`             | コンシェルジュのモデルで動く（それもなければ、ガイドの入口が断る）                    |
 | `DAILY_CHAT_LIMIT_PER_IP` | 1人の回数の上限がなく、1人で全体の枠を使い切れる                                      |
 | `TRUSTED_PROXY_HOPS`      | 全員が同じ IP になり、IP ごとの上限と同時の数が全員にまとめて効く（デプロイが付ける） |
 

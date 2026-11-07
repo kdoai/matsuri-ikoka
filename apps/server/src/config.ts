@@ -118,7 +118,7 @@ export const REQUIRED_PRODUCTION_ENV = [
 /**
  * 本番の live で、欠けていても起動するが、黙って効かなくなる設定。scripts/lib/production-env.json と同じ。
  * - MODEL_CONCIERGE・MODEL_STAFF：省くと、Agent SDK の既定のモデルで動く
- * - MODEL_GUIDE：省くと、ガイドの入口が断る
+ * - MODEL_GUIDE：省くと、コンシェルジュのモデル（MODEL_CONCIERGE）で動く。どちらもなければ、ガイドの入口が断る
  * - DAILY_CHAT_LIMIT_PER_IP：省くと、1人の回数の上限がなく、1人で全体の枠を使い切れる
  * - TRUSTED_PROXY_HOPS：省くと、Cloud Run では全員が同じ IP になり、IP ごとの上限と同時の数が全員にまとめて効く
  */
@@ -162,7 +162,8 @@ export function readConfig(env: NodeJS.ProcessEnv, cwd: string = process.cwd()):
       evaluator:
         nonEmpty(env.MODEL_EVALUATOR) ?? nonEmpty(env.MODEL_PLANNER) ?? nonEmpty(env.MODEL_STAFF),
       wishReader: nonEmpty(env.MODEL_WISH_READER) ?? DEFAULT_WISH_READER_MODEL,
-      guide: nonEmpty(env.MODEL_GUIDE),
+      // ガイドは店のコンシェルジュと同じ人。指定がなければ、コンシェルジュのモデルで動かす
+      guide: nonEmpty(env.MODEL_GUIDE) ?? nonEmpty(env.MODEL_CONCIERGE),
     },
     accessPasscode: nonEmpty(env.ACCESS_PASSCODE) ?? null,
     dailyChatLimit: limitOf("DAILY_CHAT_LIMIT", env.DAILY_CHAT_LIMIT),

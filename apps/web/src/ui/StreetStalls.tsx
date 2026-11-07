@@ -1,34 +1,17 @@
-import { GUIDE_STALLS, type GuideStall } from "@matsuri-ikoka/schema";
-import {
-  BedDouble,
-  CloudSun,
-  Landmark,
-  type LucideIcon,
-  MessageCircle,
-  Tent,
-  TrainFront,
-  UtensilsCrossed,
-  X,
-} from "lucide-react";
+import type { GuideStall } from "@matsuri-ikoka/schema";
+import { MessageCircle, Tent, X } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 import { useAccountUser } from "../account/useAccountUser";
 import { formatDateTime } from "../i18n";
-import { litStalls, noticesOfStall } from "../state/guide";
+import { unreadNotices } from "../state/guide";
 import { useActions, useApp, useT } from "../state/react";
 import { buttonPrimary, buttonSecondary, SourceLink } from "./common";
-import { stallFacts } from "./stallFacts";
+import { KeyCap } from "./Hud";
+import { Portrait } from "./Portraits";
 
-// 屋台の一覧と、屋台の窓。3D に出ること（提灯が灯っているか・屋台の中身）を、ここですべて文字で読める。
-// 3D を使わない画面では、この一覧が通りの主役になる。
-
-const STALL_ICONS: Record<GuideStall, LucideIcon> = {
-  lodging: BedDouble,
-  access: TrainFront,
-  etiquette: Landmark,
-  food: UtensilsCrossed,
-  weather: CloudSun,
-  headquarters: Tent,
-};
+// 縁日の通りの、ガイドの屋台。旅のことは、すべてこのガイド1人に尋ねればよく、屋台を種類で分けない。
+// 3D に出ること（提灯が灯っているか＝新しい知らせ）は、ここですべて文字で読める。
+// 3D を使わない画面では、この屋台の正面が通りの主役になる。
 
 /**
  * 見回りを頼む・止める。旅が終わったら出さない。
@@ -49,7 +32,7 @@ export function WatchControl() {
   if (user === null) {
     return loginOffered ? (
       <p
-        className="mt-3 rounded-xl border border-line bg-white/80 px-3 py-2 text-sm"
+        className="rounded-xl border border-line bg-white/80 px-3 py-2 text-sm"
         data-testid="watch-login"
       >
         {t.street.watchNeedsLogin}
@@ -59,7 +42,7 @@ export function WatchControl() {
   const on = watch?.status === "active";
   return (
     <div
-      className="mt-3 flex flex-wrap items-center gap-2 rounded-xl border border-line bg-white/80 px-3 py-2"
+      className="flex flex-wrap items-center gap-2 rounded-xl border border-line bg-white/80 px-3 py-2"
       data-testid="watch-control"
       data-watching={on}
     >
@@ -154,7 +137,7 @@ function ProposalActions({ proposalId }: { proposalId: string }) {
 }
 
 /**
- * 知らせに結びつかない組み直しの案（会話で頼んだ変更など）。どの屋台の窓でも、知らせの上に出す。
+ * 知らせに結びつかない組み直しの案（会話で頼んだ変更など）。知らせの上に出す。
  * 知らせに結びつく案は、その知らせの下に出す
  */
 function UnlinkedProposals() {
@@ -186,83 +169,165 @@ function UnlinkedProposals() {
   );
 }
 
-/** 屋台の一覧。提灯の絵は飾りで、灯っているかは「新しい知らせ」の文字でも分かる */
-export function StallList() {
+/** 届いた知らせ・組み直しの案・見回り。どこから開いても、同じ1つの中身を出す */
+function GuideBoardBody() {
   const t = useT();
-  const actions = useActions();
+  const locale = useApp((state) => state.ui.locale);
   const notices = useApp((state) => state.guide.notices);
-  const lit = useMemo(() => litStalls({ notices }), [notices]);
+  const proposals = useApp((state) => state.guide.proposals);
   return (
-    <>
-      <ul className="grid gap-2 sm:grid-cols-2" data-testid="stall-list">
-        {GUIDE_STALLS.map((stall) => {
-          const Icon = STALL_ICONS[stall];
-          const on = lit.includes(stall);
-          return (
-            <li key={stall}>
-              <button
-                type="button"
-                data-testid={`stall-${stall}`}
-                data-lit={on}
-                onClick={() => actions.openStall(stall)}
-                className={`flex min-h-16 w-full items-center gap-3 rounded-2xl border-2 bg-white/90 px-3 py-2 text-left text-ink shadow-soft transition hover:border-yamabuki-400 ${
-                  on ? "border-shu-600" : "border-line-strong"
-                }`}
-              >
-                <span
-                  aria-hidden="true"
-                  className={`grid size-10 shrink-0 place-items-center rounded-full ${
-                    on
-                      ? "bg-shu-500 text-kinari-50 shadow-[0_0_16px_4px_rgb(233_181_40/0.55)]"
-                      : "bg-kinari-200 text-wood-700"
-                  }`}
+    <div className="space-y-3">
+      <GuideOutcomeNote />
+      <UnlinkedProposals />
+      {notices.length > 0 ? (
+        <section data-testid="stall-notices" aria-label={t.street.noticesTitle}>
+          <h3 className="mb-1 font-bold text-shu-700">{t.street.noticesTitle}</h3>
+          <ul className="space-y-2">
+            {notices.map((notice) => {
+              const proposal = proposals.find((item) => item.id === notice.proposalId);
+              return (
+                <li
+                  key={notice.id}
+                  className="rounded-xl border-2 border-shu-600/50 bg-white/80 px-3 py-2"
                 >
-                  <Icon className="size-5" />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block font-bold">{t.street.stalls[stall].title}</span>
-                  <span className="block text-ink-soft text-sm">{t.street.stalls[stall].lead}</span>
-                </span>
-                {on ? (
-                  <span className="shrink-0 rounded-full bg-shu-600 px-2 py-0.5 font-bold text-white text-xs">
-                    {t.street.lit}
-                  </span>
-                ) : null}
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+                  <p className="font-bold">{notice.summary}</p>
+                  <p className="text-ink-soft text-sm">
+                    {t.street.noticeChecked(formatDateTime(notice.checkedAt, locale))}
+                  </p>
+                  {proposal === undefined ? null : (
+                    <div className="mt-1" data-testid="stall-proposal">
+                      <p className="text-sm">{t.street.proposalNote(proposal.summary)}</p>
+                      <ProposalActions proposalId={proposal.id} />
+                    </div>
+                  )}
+                  <ul className="mt-1 space-y-0.5">
+                    {notice.sources.map((source) => (
+                      <li key={source.url}>
+                        <SourceLink source={source} />
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ) : (
+        <p className="text-ink-soft text-sm" data-testid="stall-no-notices">
+          {t.street.noNotices}
+        </p>
+      )}
       <WatchControl />
-    </>
+    </div>
   );
 }
 
-/** 開いている屋台の窓。旅程と祭りのデータから出し、届いた知らせを上に出す */
-export function StallWindow({ stall }: { stall: GuideStall }) {
+/** 提灯の列。灯っているのは新しい知らせがあるとき。同じことを文字でも出すので、飾りは読み上げない */
+function Lanterns({ lit }: { lit: boolean }) {
+  return (
+    <div aria-hidden="true" className="relative flex justify-around px-4">
+      <span className="absolute inset-x-2 top-0 h-0.5 bg-wood-700" />
+      {[0, 1, 2, 3, 4].map((index) => (
+        <span key={index} className="relative flex flex-col items-center">
+          <span className="h-2 w-px bg-wood-700" />
+          <span
+            className={`h-10 w-7 rounded-[45%] border-wood-800 border-y-4 sm:h-12 sm:w-9 ${
+              lit
+                ? "bg-shu-500 shadow-[0_0_22px_8px_rgb(233_181_40/0.6)]"
+                : "bg-shu-600 shadow-[0_0_14px_3px_rgb(233_181_40/0.3)]"
+            }`}
+          />
+        </span>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * ガイドの屋台の正面（3D を使わない画面の主役）。提灯と紅白の幕の下に、ガイドが立っている。
+ * 話しかけると会話の窓が開き、旅のことは何でもここで尋ねられる。知らせはカウンターの上に並べる
+ */
+export function GuideStallFront({ onTalk }: { onTalk: () => void }) {
+  const t = useT();
+  const notices = useApp((state) => state.guide.notices);
+  const unread = useMemo(() => unreadNotices({ notices }).length, [notices]);
+  return (
+    <section aria-labelledby="guide-stall-title" data-testid="guide-stall" className="text-ink">
+      <Lanterns lit={unread > 0} />
+      {/* 屋根の紅白の幕。下の縁は波の形にする */}
+      <div
+        aria-hidden="true"
+        className="mt-2 h-12 rounded-t-2xl border-2 border-wood-800 sm:h-14"
+        style={{
+          background:
+            "repeating-linear-gradient(90deg, var(--color-shu-500) 0 36px, var(--color-kinari-50) 36px 72px)",
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="h-4"
+        style={{
+          background:
+            "radial-gradient(circle at 18px 0, var(--color-shu-500) 17px, transparent 18px) 0 0 / 72px 16px repeat-x, radial-gradient(circle at 18px 0, var(--color-kinari-50) 17px, transparent 18px) 36px 0 / 72px 16px repeat-x",
+        }}
+      />
+      {/* 看板 */}
+      <div className="-mt-2 relative z-10 mx-auto w-fit rounded-lg border-2 border-wood-800 bg-wood-700 px-5 py-1.5 shadow-soft">
+        <h2
+          id="guide-stall-title"
+          className="flex items-center gap-2 font-bold text-kinari-50 text-lg tracking-widest sm:text-xl"
+        >
+          <Tent aria-hidden="true" className="size-5 text-yamabuki-400" />
+          {t.street.stallName}
+        </h2>
+      </div>
+      {/* 屋台の中：柱のあいだにガイドが立つ */}
+      <div className="-mt-4 grid grid-cols-[0.75rem_1fr_0.75rem] sm:grid-cols-[1rem_1fr_1rem]">
+        <span aria-hidden="true" className="bg-wood-700" />
+        <div className="bg-wood-800/60 px-3 pt-8 pb-3 sm:px-6">
+          <div className="flex items-end gap-3 sm:gap-5">
+            <Portrait speaker="concierge" className="size-20 shrink-0 sm:size-28" />
+            <div className="washi mb-2 min-w-0 flex-1 rounded-2xl border-2 border-line-strong px-3 py-2 shadow-soft">
+              <p className="font-bold leading-relaxed sm:text-lg">{t.street.stallGreeting}</p>
+              {unread > 0 ? (
+                <p className="mt-0.5 font-bold text-shu-700 text-sm" data-testid="street-unread">
+                  {t.street.unreadNotices(unread)}
+                </p>
+              ) : null}
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onTalk}
+            data-testid="guide-stall-talk"
+            className={`${buttonPrimary} mt-3 w-full`}
+          >
+            <MessageCircle aria-hidden="true" className="size-5" />
+            {t.street.talk}
+            <KeyCap small>E</KeyCap>
+          </button>
+        </div>
+        <span aria-hidden="true" className="bg-wood-700" />
+      </div>
+      {/* カウンター：知らせと案を並べる */}
+      <div className="rounded-b-2xl border-2 border-wood-800 border-t-8 bg-kinari-50 px-4 py-3 shadow-lift">
+        <GuideBoardBody />
+      </div>
+    </section>
+  );
+}
+
+/** ガイドの屋台の窓（3D の通りで屋台に触れたとき・案内されたとき・知らせを開いたとき） */
+export function GuideBoard({
+  stall,
+  onClose,
+}: {
+  /** 3D の通りで触れた・案内された屋台（どの屋台でも中身は同じ）。上の段から開いたときは null */
+  stall: GuideStall | null;
+  onClose: () => void;
+}) {
   const t = useT();
   const actions = useActions();
-  const locale = useApp((state) => state.ui.locale);
-  const itinerary = useApp((state) => state.itinerary.current);
-  const festivalId = itinerary?.mainFestivalId ?? null;
-  const festival = useApp((state) =>
-    festivalId === null ? null : (state.festivals[festivalId] ?? null),
-  );
-  const festivalLoading = useApp(
-    (state) => festivalId !== null && state.festivalLoad[festivalId] === "loading",
-  );
-  const verify = useApp((state) => state.verify);
-  const allNotices = useApp((state) => state.guide.notices);
-  const proposals = useApp((state) => state.guide.proposals);
-  const availability = useApp((state) => state.guide.availability);
-  const notices = useMemo(
-    () => noticesOfStall({ notices: allNotices }, stall),
-    [allNotices, stall],
-  );
-  const facts = useMemo(
-    () => stallFacts(stall, { itinerary, festival, festivalLoading, verify }, t, locale),
-    [stall, itinerary, festival, festivalLoading, verify, t, locale],
-  );
   const heading = useRef<HTMLHeadingElement>(null);
 
   // 開いたら見出しへ、閉じたら開く前の場所へ焦点を移す
@@ -270,7 +335,7 @@ export function StallWindow({ stall }: { stall: GuideStall }) {
     const before = document.activeElement;
     heading.current?.focus();
     return () => {
-      // 開くのに使ったボタンが消えていたら（一覧から開いたとき）、一覧のボタンか話しかけるボタンへ
+      // 開くのに使ったボタンが消えていたら、知らせのボタンか話しかけるボタンへ
       const back =
         before instanceof HTMLElement && before.isConnected
           ? before
@@ -282,118 +347,51 @@ export function StallWindow({ stall }: { stall: GuideStall }) {
   }, []);
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") actions.closeStall();
+      if (event.key === "Escape") onClose();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [actions]);
+  }, [onClose]);
 
-  const Icon = STALL_ICONS[stall];
   return (
     <section
       aria-labelledby="stall-title"
       className="washi flex h-full max-h-full animate-pop flex-col rounded-panel border-2 border-line-strong text-ink shadow-lift"
       data-testid="stall-window"
-      data-stall={stall}
+      data-stall={stall ?? "board"}
     >
       <header className="flex items-center gap-2 border-line border-b border-dashed px-4 py-3">
-        <Icon aria-hidden="true" className="size-6 shrink-0 text-wood-700" />
+        <Tent aria-hidden="true" className="size-6 shrink-0 text-wood-700" />
         <h2
           id="stall-title"
           ref={heading}
           tabIndex={-1}
           className="min-w-0 flex-1 font-bold text-lg outline-none"
         >
-          {t.street.stalls[stall].title}
+          {t.street.stallName}
         </h2>
         <button
           type="button"
-          onClick={actions.closeStall}
+          onClick={onClose}
           aria-label={t.street.closeStall}
           className="grid size-10 shrink-0 place-items-center rounded-full border border-line-strong bg-kinari-50 shadow-soft hover:bg-white"
         >
           <X aria-hidden="true" className="size-4" />
         </button>
       </header>
-      <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain px-4 py-3">
-        <GuideOutcomeNote />
-        <UnlinkedProposals />
-        {notices.length > 0 ? (
-          <section data-testid="stall-notices" aria-label={t.street.noticesTitle}>
-            <h3 className="mb-1 font-bold text-shu-700">{t.street.noticesTitle}</h3>
-            <ul className="space-y-2">
-              {notices.map((notice) => {
-                const proposal = proposals.find((item) => item.id === notice.proposalId);
-                return (
-                  <li
-                    key={notice.id}
-                    className="rounded-xl border-2 border-shu-600/50 bg-white/80 px-3 py-2"
-                  >
-                    <p className="font-bold">{notice.summary}</p>
-                    <p className="text-ink-soft text-sm">
-                      {t.street.noticeChecked(formatDateTime(notice.checkedAt, locale))}
-                    </p>
-                    {proposal === undefined ? null : (
-                      <div className="mt-1" data-testid="stall-proposal">
-                        <p className="text-sm">{t.street.proposalNote(proposal.summary)}</p>
-                        <ProposalActions proposalId={proposal.id} />
-                      </div>
-                    )}
-                    <ul className="mt-1 space-y-0.5">
-                      {notice.sources.map((source) => (
-                        <li key={source.url}>
-                          <SourceLink source={source} />
-                        </li>
-                      ))}
-                    </ul>
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
-        ) : null}
-        <dl className="space-y-3">
-          {facts.map((item) => (
-            <div key={item.label}>
-              <dt className="font-bold text-wood-700">{item.label}</dt>
-              {item.lines.map((line) => (
-                <dd key={line} className="whitespace-pre-wrap">
-                  {line}
-                </dd>
-              ))}
-              {item.links.map((link) => (
-                <dd key={link.url}>
-                  <a
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="break-all font-medium text-ai-700 underline underline-offset-2"
-                  >
-                    {link.label}
-                  </a>
-                </dd>
-              ))}
-              {item.sources.map((source) => (
-                <dd key={source.url} className="mt-0.5">
-                  <SourceLink source={source} compact />
-                </dd>
-              ))}
-            </div>
-          ))}
-        </dl>
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3">
+        <GuideBoardBody />
       </div>
-      {availability === "unavailable" ? null : (
-        <footer className="border-line border-t border-dashed px-4 py-2">
-          <button
-            type="button"
-            className={`${buttonPrimary} w-full`}
-            onClick={() => actions.setGuideDialogue(true)}
-          >
-            <MessageCircle aria-hidden="true" className="size-4" />
-            {t.street.askGuide}
-          </button>
-        </footer>
-      )}
+      <footer className="border-line border-t border-dashed px-4 py-2">
+        <button
+          type="button"
+          className={`${buttonPrimary} w-full`}
+          onClick={() => actions.setGuideDialogue(true)}
+        >
+          <MessageCircle aria-hidden="true" className="size-4" />
+          {t.street.askGuide}
+        </button>
+      </footer>
     </section>
   );
 }

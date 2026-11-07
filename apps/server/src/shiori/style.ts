@@ -37,7 +37,6 @@ b, strong, h1, h2, h3, h4 { font-weight: 900; }
 .flow { flex: 1; min-height: 0; }
 .folio { position: absolute; left: 0; right: 0; bottom: 2.5mm; text-align: center; font-size: 8.5pt; color: var(--sub); }
 .turn, .where { display: none; }
-.guide-note { margin-top: 3mm; font-size: 9pt; }
 .highlights-block { margin-top: 6mm; }
 .keep { break-inside: avoid; }
 
@@ -257,15 +256,6 @@ b, strong, h1, h2, h3, h4 { font-weight: 900; }
 .festival-day .head .kicker { background: var(--accent); }
 .calm-day .head .kicker { background: #fff; color: var(--ink); border: 0.5mm solid var(--ink); }
 .calm-day .step.g-fest .dot .ic { color: var(--on-accent); }
-
-/* ---- はじめての方へ ---- */
-.guide { width: 100%; border-collapse: collapse; margin-top: 3mm; }
-.guide th, .guide td { border-bottom: 0.4mm solid var(--line); padding: 2mm 1.5mm; vertical-align: top; text-align: left; }
-.guide th { width: 40mm; }
-.guide th .lbl { display: flex; align-items: center; gap: 1.5mm; font-weight: 900; }
-.guide th .en { display: block; padding-left: 6.8mm; }
-.guide td .en { display: block; }
-.guide tr { break-inside: avoid; }
 
 /* ---- 持ち物 ---- */
 .checks { columns: 2; column-gap: 6mm; }
