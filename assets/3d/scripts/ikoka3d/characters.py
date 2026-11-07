@@ -463,7 +463,9 @@ def _guide_cap(c):
 # Where the wing tip closes on the pole, at rest (the pole runs straight up through this point).
 GUIDE_GRIP = (-0.3475, -0.012, 0.233)
 GUIDE_CAP_CENTER = (0.0, 0.03, 0.98)
-FLAG_ABOVE, FLAG_BELOW = 1.12, 0.17     # pole length above and below the grip
+FLAG_ABOVE = 1.12                       # pole length above the grip
+FLAG_BELOW = 0.08                       # and below it: any longer and the foot comes out through the sleeve in wave_flag
+FLAG_POLE_R = 0.013
 FLAG_SIZE = (0.56, 0.34)
 FLAG_LEAN = 0.13                        # radians away from the head, at rest
 
@@ -473,7 +475,7 @@ def _guide_flag(c):
     gx, gy, gz = GUIDE_GRIP
     lacquer = M.flat("flag_pole", "#6A3D21", 0.4)
     gold = M.flat("brass", P.GOLD, 0.25, metal=1.0)
-    pole = U.cylinder("flag.pole", 0.013, FLAG_ABOVE + FLAG_BELOW, c, base=(gx, gy, gz - FLAG_BELOW), mat=lacquer, verts=8)
+    pole = U.cylinder("flag.pole", FLAG_POLE_R, FLAG_ABOVE + FLAG_BELOW, c, base=(gx, gy, gz - FLAG_BELOW), mat=lacquer, verts=8)
     tip = U.sphere("flag.tip", 0.03, c, loc=(gx, gy, gz + FLAG_ABOVE + 0.015), mat=gold, segs=10, rings=6)
     grip = U.cylinder("flag.grip", 0.02, 0.1, c, base=(gx, gy, gz - 0.05), mat=M.flat("flag_grip", "#2B2220", 0.6), verts=8)
     length, height = FLAG_SIZE
