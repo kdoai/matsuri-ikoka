@@ -387,7 +387,7 @@ export const guideResearchRoute = defineGuideTool({
   description:
     "駅から祭りの会場の最寄り駅までの電車の行き方（路線・乗り換え・所要時間の幅）を公開の情報で調べる。" +
     "direction: return では帰りの行き方と、その日のうちに帰れる最終の時刻を調べる。" +
-    "当日の遅れや、いまいる駅からの相談では origin に駅の名前を渡す。調べた所要時間は駅の位置からの見積もりと照らし、食い違うものは使わない。",
+    "当日の遅れや、いまいる駅からの相談では origin に駅の名前を渡す（現在地の座標は渡さない）。調べた所要時間は駅の位置からの見積もりと照らし、食い違うものは使わない。",
   input: {
     origin: z.string().trim().min(1).max(50).optional().describe("出発の駅。省略すると旅の出発地"),
     date: IsoDateSchema.optional().describe("行く日。省略すると主役の祭りの日"),

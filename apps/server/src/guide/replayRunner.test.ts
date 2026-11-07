@@ -101,6 +101,39 @@ describe("ReplayGuideRunner", () => {
     expect(await data.watch()).toBeNull();
   });
 
+  it("主役の祭りや旅の日が違う旅には、再生でも記録の通知と提案を流さない", async () => {
+    const { runner, session, itinerary, data } = setup();
+    const events: GuideSseEvent[] = [];
+
+    await runner.runTurn(
+      {
+        session,
+        trip: { data, itinerary: { ...itinerary, mainFestivalId: "kazami-bon-odori" } },
+        message: "留守の間に、何か変わったことはありましたか",
+        emergency: false,
+        budgetUsd: 1,
+        turn: newGuideTurn(),
+        meter: new CostMeter(),
+        signal: new AbortController().signal,
+      },
+      (event) => events.push(event),
+    );
+
+    const types = events.map((event) => event.type);
+    expect(types).toContain("message.delta");
+    expect(types).not.toContain("guide.notice");
+    expect(types).not.toContain("guide.proposal");
+  });
+
+  it("当てられる旅には、記録の通知を、この旅に置き換えて流す", async () => {
+    const { say, itinerary } = setup();
+
+    const { events } = await say("留守の間に、何か変わったことはありましたか");
+
+    const notice = events.find((event) => event.type === "guide.notice");
+    expect(notice?.type === "guide.notice" && notice.data.notice.tripId).toBe(itinerary.id);
+  });
+
   it("発言が記録と同じならその返答を流し、連絡先と終わりのイベントは流さない", async () => {
     const { say, data } = setup();
 

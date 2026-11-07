@@ -48,7 +48,7 @@ export function guideTurnPrompt(input: {
   }
   if (input.location !== undefined) {
     record.push(
-      `利用者の現在地（この発言のときだけ使う。手帳に残さず、調べる文にも入れない）：緯度 ${input.location.lat}、経度 ${input.location.lng}`,
+      `利用者の現在地（この発言のときだけ使う。手帳に残さない。座標は調べる文に入れず、調べるときは駅や場所の名前で渡す）：緯度 ${input.location.lat}、経度 ${input.location.lng}`,
     );
   }
   if (input.emergency) {

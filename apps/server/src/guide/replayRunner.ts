@@ -150,6 +150,8 @@ export class ReplayGuideRunner implements GuideRunner {
         case "guide.done":
           break;
         case "guide.notice":
+          // 記録の通知は、当てられる旅にだけ届ける（prepare と同じ）
+          if (!this.#sample.proposals.some((proposal) => fitsTrip(proposal, itinerary))) break;
           emit({
             type: "guide.notice",
             data: { notice: localizeNotice(event.data.notice, itinerary) },
