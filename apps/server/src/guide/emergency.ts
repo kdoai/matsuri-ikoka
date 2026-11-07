@@ -2,25 +2,22 @@ import { EMERGENCY_CONTACTS, type GuideSseEventOf } from "@matsuri-ikoka/schema"
 
 // 緊急の相談を、発言の言葉からコードで見分ける（docs/spec/guide.md の「話せること・できないこと」）。
 // モデルを待たずに公的な連絡先を出すためのもので、診断や判断はしない。
-// 緊急でない発言に当たっても、連絡先の案内が1つ増えるだけで、ガイドはそのまま答える。
-// 見逃しの害のほうが大きいので、広く取る。
+// 当たると、連絡先を先に出し、モデルにも知らせ、続きの要約の話題に trouble を付ける。モックでは緊急の案内の記録を流す。
+// 返事を作れないときは、決まった文に加えて、いつもの案内（新しく始める、もう一度送るなど）も添えるので、
+// 緊急でない発言に当たっても案内は失わない。
+// 見逃しの害のほうが大きいので広く取るが、ふつうの相談に出る言い方には当てないよう、紛らわしい言葉は形で見る。
 
-/** 体の急変・大きなけが（漢字とかな） */
+/** 体の急変・大きなけが（漢字とかな）。そのまま含まれていれば当てる */
 const BODY_WORDS = [
   "倒れ",
   "たおれ",
-  "意識",
-  "いしき",
   "気を失",
   "きをうしな",
   "失神",
-  "呼吸",
-  "こきゅう",
   "息ができ",
   "いきができ",
   "息をして",
-  "苦し",
-  "くるし",
+  "いきぐるし",
   "胸が痛",
   "胸の痛み",
   "激痛",
@@ -29,29 +26,24 @@ const BODY_WORDS = [
   "けいれん",
   "痙攣",
   "出血",
-  "血が",
-  "ちがで",
-  "ちがとま",
   "血まみれ",
   "吐血",
   "骨折",
   "こっせつ",
+  "捻挫",
+  "ねんざ",
   "頭を打",
-  "あたまをう",
-  "やけど",
+  "あたまをうっ",
+  "あたまをうち",
   "火傷",
-  "熱中症",
-  "ねっちゅうしょう",
   "高熱",
   "アナフィラキシー",
-  "救急",
-  "きゅうきゅう",
   "動けな",
   "うごけな",
-  "立てな",
-  "立てま",
-  "たてな",
-  "たてま",
+  "立てなくな",
+  "たてなくな",
+  "立ち上がれな",
+  "たちあがれな",
   "溺れ",
   "おぼれ",
   "怪我",
@@ -67,11 +59,53 @@ const BODY_WORDS = [
   "はきそう",
   "嘔吐",
   "ぐったり",
-  "刺され",
-  "さされ",
+  "めまい",
+  "目まい",
+  "眩暈",
+  "立ちくらみ",
+  "ふらつ",
 ];
 
-/** 事故・事件・災害・命にかかわること */
+/** 体のことで、ほかの言葉の一部やふつうの相談に当たりやすいものは、形で見る */
+const BODY_PATTERNS = [
+  // 「歴史を意識した」「意識が高い」には当てない
+  /意識(?:不明|なし|を失|が(?!高|低|向))/,
+  /いしき(?:ふめい|なし|をうしな|が(?!たか|ひく))/,
+  // 「深呼吸」「胡弓（こきゅう）」には当てない
+  /(?<!深)呼吸/,
+  /(?<!しん)こきゅう(?:が|を|でき|して|こんなん)/,
+  // 「堅苦しい」「暑苦しい」「見苦しい」などには当てない
+  /(?<![堅固暑見寝重聞狭心さ])苦し/,
+  /(?<![たつさもま])くるし/,
+  // 「血が騒ぐ」「友だちが出かける」「友だちが泊まる」には当てない
+  /血が(?!騒|さわ)/,
+  /(?<![だっうこそどあた])ちが(?:でて|でま|とまらな|とまりませ)/,
+  // 「救急箱」には当てない
+  /救急(?!箱|セット|バッグ|用品)/,
+  /きゅうきゅう(?!ばこ|せっと)/,
+  // 「熱中症の対策」「熱中症が心配」には当てない
+  /熱中症(?!の?(?:対策|予防)|が心配|にならな|に気を|に注意)/,
+  /ねっちゅうしょう(?!の?(?:たいさく|よぼう)|がしんぱい|にならな|にきを|にちゅうい)/,
+  // 「雨やけど」のような言い方には当てない
+  /やけど(?:を|した|して|しま|が|です)/,
+  // 「計画を立てます」には当てない。足や腰のことか、転んだあとに立てない形を見る
+  /(?:足|脚|腰|膝|ひざ|あし|こし)[^。、]{0,6}(?:立てな|立てま|たてな|たてま)/,
+  // 「連れはあまり歩けない」には当てない。転んだ・ひねったあとに歩けない形を見る
+  /(?:転ん|ころん|ひね|捻|くじ|痛|打っ|ぶつけ)[^。、]{0,8}(?:歩けな|歩けま|あるけな|あるけま|立てな|立てま|たてな|たてま)/,
+  /(?:足|足首|腰)を?(?:ひねっ|ひねり|捻っ|捻り|くじ)/,
+  // 「人をひきつける魅力」には当てない
+  /(?:ひきつけ|引きつけ|引き付け)を?(?:起こ|おこ)/,
+  // 「街をふらふらしたい」には当てない
+  /ふらふら(?:です|して(?:い|歩|立))/,
+  // 「宿から返事がない」には当てない。人の返事や反応がない形を見る
+  /(?:連れ|友人|友達|友だち|ともだち|子ども|子供|こども|息子|娘|父|母|夫|妻|主人|家族|同行者|彼)[^。、から]{0,6}(?:返事|反応|へんじ|はんのう)が(?:ありません|ない|なく)/,
+  /(?:呼びかけ|よびかけ|呼ん|よん)[てで]?も(?:返事|反応|へんじ|はんのう|起きな|おきな)/,
+  // 「蚊に刺される」「虫刺され」には当てない
+  /(?<!(?:蚊|虫|か|むし)に)(?<!虫)刺され/,
+  /(?<!(?:蚊|虫|か|むし)に)(?<!むし)さされ/,
+];
+
+/** 事故・事件・災害・命にかかわること。そのまま含まれていれば当てる */
 const INCIDENT_WORDS = [
   "事故",
   "火事",
@@ -83,14 +117,15 @@ const INCIDENT_WORDS = [
   "殴られ",
   "なぐられ",
   "蹴られ",
-  "けられ",
   "暴行",
   "脅され",
   "おどされ",
   "痴漢",
-  "ちかん",
   "ストーカー",
-  "つけられて",
+  "つきまとわれ",
+  "付きまとわれ",
+  "付け回され",
+  "つけまわされ",
   "盗まれ",
   "ぬすまれ",
   "ひったくり",
@@ -112,6 +147,19 @@ const INCIDENT_WORDS = [
   "きえたい",
 ];
 
+const INCIDENT_PATTERNS = [
+  // 「預けられる」「見つけられる」「避けられる」「声をかけられた」には当てない
+  /(?:に|を)けられ(?:た|まし|て)/,
+  // 「見つけられて」には当てない
+  /(?:あと|後|跡)を?つけられ/,
+  /(?:誰か|だれか|変な人|へんなひと|知らない人|しらないひと)に?つけられ/,
+  // 「こすられ」「スリル」「スリッパ」には当てない
+  /(?<![こゆさくかやわ])すられ/,
+  /スられ|スリ(?:に|です|だ|被害)|すり(?:に(?:あ|遭)|ひがい)/,
+  // 「まちかんこう（町観光）」には当てない
+  /(?<![まいうみ])ちかん/,
+];
+
 /** 短いかな書きは、ほかの言葉の一部に当たりやすいので、形で見る */
 const KANA_PATTERNS = [
   // 「だけが」「おでかけが」には当てない
@@ -122,12 +170,25 @@ const KANA_PATTERNS = [
   /(?:子|こ|子ども|子供|こども|息子|娘)が(?:迷子|まいご)/,
 ];
 
-/** 119 番・110 番。金額や品番の一部（1190円など）には当てない */
-const EMERGENCY_NUMBERS = /(?<![0-9])(?:119|110)(?![0-9])/;
+/** 119 番・110 番。「110年の歴史」「第110回」「110円」のような数には当てない */
+const EMERGENCY_NUMBERS = /(?<![0-9])(?:119|110)(?=番|に|へ|を|で|$|[。!?、.,])|call(?:119|110)/;
 
-/** 英語の言い方。語の切れ目で見る（fireworks に fire は当てない） */
-const ENGLISH =
-  /\b(?:help|sos|emergency|ambulance|police|unconscious|collapsed?|faint(?:ed|ing)?|bleeding|injured|hurt|accident|heart attack|stroke|seizure|can'?t breathe|cannot breathe|not breathing|choking|attacked|assaulted|robbed|stolen|suicide|kill myself|want to die|fire|drowning|overdose|lost child|missing child)\b/;
+/** 英語の言い方。語の切れ目と句で見る（fireworks・fire festival・help me plan には当てない） */
+const ENGLISH = [
+  /\b(?:sos|ambulance|police|unconscious|collapsed?|passed out|fainted|fainting|feel faint|bleeding|injured|heart attack|seizure|can'?t breathe|cannot breathe|not breathing|choking|attacked|assaulted|robbed|stolen|suicide|kill myself|want to die|drowning|overdose|lost child|missing child|on fire|caught fire|fire broke out)\b/,
+  /\bemergency\b(?!\s+(?:exit|stair))/,
+  /(?<!by\s)\baccident\b/,
+  /\bstroke\b(?!\s+of)/,
+  /\b(?:is|am|are|was|were|got|been|badly|i'm|he's|she's|they're)\s+hurt\b|\bhurt\s+(?:my|his|her|their|our)\b/,
+  // 発言がそれだけのときと、感嘆符のついたとき。「Can you help me plan」には当てない
+  /^\W*(?:please\s+)?help(?:\s+(?:me|us))?(?:\s+please)?\W*$/,
+  /\bhelp(?:\s+(?:me|us))?\s*!/,
+  /\bneed\s+(?:\w+\s+)?help\b(?!\s+(?:planning|choosing|finding|with\s+(?:my|the|our)\s+(?:trip|plan|itinerary|schedule)))/,
+  /\bthere(?:'s|\s+is)\s+a\s+fire\b(?!\s+(?:festival|show|ritual|dance|event|parade))/,
+];
+
+const WORDS = [...BODY_WORDS, ...INCIDENT_WORDS].map((word) => word.toLowerCase());
+const PATTERNS = [...BODY_PATTERNS, ...INCIDENT_PATTERNS, ...KANA_PATTERNS];
 
 /** 全角の数字やかなの揺れをならす。英語の語の切れ目を見るので、空白は残す */
 function spaced(message: string): string {
@@ -137,11 +198,11 @@ function spaced(message: string): string {
 /** 発言に、緊急かもしれない言葉があるか */
 export function isEmergencyMessage(message: string): boolean {
   const value = spaced(message);
-  if (ENGLISH.test(value)) return true;
+  if (ENGLISH.some((pattern) => pattern.test(value))) return true;
   const text = value.replaceAll(/\s+/g, "");
   if (EMERGENCY_NUMBERS.test(text)) return true;
-  if (KANA_PATTERNS.some((pattern) => pattern.test(text))) return true;
-  return [...BODY_WORDS, ...INCIDENT_WORDS].some((word) => text.includes(word.toLowerCase()));
+  if (PATTERNS.some((pattern) => pattern.test(text))) return true;
+  return WORDS.some((word) => text.includes(word));
 }
 
 /** 公的な連絡先のイベント。返答の文より先に送る */

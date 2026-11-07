@@ -53,7 +53,7 @@ export function guideTurnPrompt(input: {
   }
   if (input.emergency) {
     record.push(
-      "この発言には緊急かもしれない言葉があります。公的な連絡先（119・110）は画面に出してあります。診断も判断もしないでください",
+      "この発言には緊急かもしれない言葉があります。公的な連絡先（119・110）は画面に出してあります。診断も判断もしないでください。旅のふつうの相談だと分かるときは、そのまま答えてください",
     );
   }
   const memo = input.memo.map((item) => `- ${sanitizeMessage(item.text)}`);
