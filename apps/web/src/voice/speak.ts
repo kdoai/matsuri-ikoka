@@ -111,9 +111,11 @@ export function createSpeaker(
   if (synth === null || makeUtterance === null) {
     return { say: () => undefined, stop: () => undefined };
   }
+  let spoke = false;
   return {
     say(text, lang) {
       synth.cancel();
+      spoke = true;
       const voice = pickVoice(synth.getVoices(), lang);
       for (const chunk of utteranceChunks(speakableText(text))) {
         const utterance = makeUtterance(chunk);
@@ -123,6 +125,9 @@ export function createSpeaker(
       }
     },
     stop() {
+      // 読んでいないときは、ブラウザの読み上げに触らない（ほかの音のじゃまをしない）
+      if (!spoke) return;
+      spoke = false;
       synth.cancel();
     },
   };

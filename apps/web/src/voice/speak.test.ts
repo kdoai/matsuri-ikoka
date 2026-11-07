@@ -106,6 +106,17 @@ describe("createSpeaker", () => {
     expect(fake.spoken).toEqual([]);
   });
 
+  it("読んでいないときに止めても、ブラウザの読み上げに触らない", () => {
+    const fake = fakeSynth();
+    const speaker = createSpeaker(fake.synth, fake.make);
+    speaker.stop();
+    expect(fake.cancels()).toBe(0);
+    speaker.say("こんにちは", "ja-JP");
+    speaker.stop();
+    speaker.stop();
+    expect(fake.cancels()).toBe(2);
+  });
+
   it("読み上げの機能がなければ、何もせずに壊れない", () => {
     const speaker = createSpeaker(null, null);
     expect(() => {
