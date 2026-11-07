@@ -18,7 +18,10 @@ export interface ItineraryDeps {
 
 export function registerItineraryRoutes(routes: SecureRoutes, deps: ItineraryDeps) {
   routes.public("GET", "/api/itinerary/:id", async (c, { viewer }) => {
-    const itinerary = await deps.persistence.readItinerary(routeParam(c, "id"), await viewer());
+    const owner = await viewer();
+    // ログインした人には、その人の旅程を返すことがある。ブラウザや途中のキャッシュに残さない
+    if (owner !== null) c.header("Cache-Control", "private, no-store");
+    const itinerary = await deps.persistence.readItinerary(routeParam(c, "id"), owner);
     if (itinerary === undefined) {
       return c.json(apiError("bad_request", "旅程が見つかりません。", false), 404);
     }

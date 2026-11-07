@@ -211,6 +211,30 @@ describe("POST /api/chat（mock）", () => {
     expect(concurrency.running).toBe(0);
   });
 
+  it("流し始める前に失敗しても、同時に返事を作る枠を返す", async () => {
+    const quiet = vi.spyOn(console, "error").mockImplementation(() => {});
+    const runner: AgentRunner = { mode: "live", runTurn: async () => {} };
+    const sessions = new SessionStore();
+    const session = sessions.create();
+    session.anchor = { festivalId: "suzunari-toro", date: "2026-08-16" };
+    const concurrency = new ConcurrencyLimiter(1);
+    const { post } = setup({
+      runner,
+      sessions,
+      concurrency,
+      today: () => {
+        throw new Error("今日が分からない");
+      },
+    });
+
+    const res = await post("/api/chat", chat(session.id));
+
+    expect(res.status).toBe(500);
+    expect(concurrency.running).toBe(0);
+    expect(session.busy).toBe(false);
+    quiet.mockRestore();
+  });
+
   it("返事を作っている途中の相談には 409", async () => {
     const { post, newSession, sessions } = setup();
     const sessionId = await newSession();
@@ -491,6 +515,21 @@ describe("POST /api/session", () => {
     const body = SessionResponseSchema.parse(await res.json());
     // 記録の再生で動いていることを、画面に知らせる
     expect(body.mode).toBe("mock");
+  });
+
+  it("IP ごとの1日の上限を超えたら、その IP だけ 429", async () => {
+    const { post } = setup({
+      sessionLimiter: new DailyLimiter(2, () => "2026-08-03"),
+      clientIp: (c) => c.req.header("x-test-ip") ?? "unknown",
+    });
+    const start = (ip: string) => post("/api/session", {}, { "x-test-ip": ip });
+
+    expect((await start("192.0.2.1")).status).toBe(201);
+    expect((await start("192.0.2.1")).status).toBe(201);
+    const refused = await start("192.0.2.1");
+    expect(refused.status).toBe(429);
+    expect(await refused.json()).toMatchObject({ code: "rate_limited", retryable: false });
+    expect((await start("192.0.2.2")).status).toBe(201);
   });
 
   it("live で動いているときは live と返す", async () => {

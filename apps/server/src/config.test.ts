@@ -2,6 +2,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import {
+  DEFAULT_DAILY_SESSION_LIMIT_PER_IP,
   DEFAULT_WISH_READER_MODEL,
   findRepoRoot,
   missingRecommendedConfig,
@@ -309,6 +310,15 @@ describe("本番の live の設定の確認", () => {
       maxConcurrentTurns: 4,
       trustedProxyHops: 0,
     });
+  });
+
+  it("相談を始める回数の IP ごとの上限は、本番では既定の上限を使う", () => {
+    expect(readConfig({ DAILY_SESSION_LIMIT_PER_IP: "50" }, here).dailySessionLimitPerIp).toBe(50);
+    expect(readConfig({}, here).dailySessionLimitPerIp).toBeNull();
+    const production = { NODE_ENV: "production", MATSURI_AGENT_MODE: "mock" };
+    expect(readConfig(production, here).dailySessionLimitPerIp).toBe(
+      DEFAULT_DAILY_SESSION_LIMIT_PER_IP,
+    );
   });
 });
 
