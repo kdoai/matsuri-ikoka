@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { IsoDateTimeSchema } from "./common";
+import { IsoDateTimeSchema, SessionIdSchema } from "./common";
 import { ItinerarySchema } from "./itinerary";
 
 // ログインと、自分の旅の保存・共有の API（docs/spec/account.md）。
@@ -28,7 +28,7 @@ export type TripListResponse = z.infer<typeof TripListResponseSchema>;
  * POST /api/trips の本文。相談の旅程を、自分の旅として残す。
  * 旅程の ID ではなく相談の ID で指す（しおりの URL を受け取っただけの人が、他人の旅程を自分のものにできないように）
  */
-export const SaveTripRequestSchema = z.strictObject({ sessionId: z.string().min(1) });
+export const SaveTripRequestSchema = z.strictObject({ sessionId: SessionIdSchema });
 export type SaveTripRequest = z.infer<typeof SaveTripRequestSchema>;
 
 /** GET /api/trips/:id と GET /api/trips/:id/versions/:version の応答 */

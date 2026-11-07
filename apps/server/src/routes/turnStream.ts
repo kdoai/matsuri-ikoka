@@ -5,7 +5,7 @@ import {
   type SseMessage,
 } from "@matsuri-ikoka/schema";
 import type { Context } from "hono";
-import { streamSSE } from "hono/streaming";
+import { type SSEStreamingApi, streamSSE } from "hono/streaming";
 import { AgentError, type EmitEvent } from "../agent/runner";
 import { errorForLog } from "../log";
 import type { Session } from "../session/sessionStore";
@@ -152,18 +152,32 @@ export function streamEvents<E extends { type: string }>(
   kinds: TurnEvents<E>,
 ): Response {
   session.busy = true;
-  return openEventStream(c, run, options, {
-    ...kinds,
-    started: (stop) => {
-      session.stopTurn = stop;
-      // 受け付けてから流し始めるまでの間に消されていたら、すぐ止める
-      if (session.discarded || session.tripDeleted) stop();
-    },
-    finished: () => {
-      session.stopTurn = null;
-      session.busy = false;
-    },
-  });
+  try {
+    return openEventStream(c, run, options, {
+      ...kinds,
+      started: (stop) => {
+        session.stopTurn = stop;
+        // 受け付けてから流し始めるまでの間に消されていたら、すぐ止める
+        if (session.discarded || session.tripDeleted) stop();
+      },
+      finished: () => {
+        session.stopTurn = null;
+        session.busy = false;
+      },
+    });
+  } catch (error) {
+    // 流し始められなければ、相談を返事の途中のままにしない
+    session.busy = false;
+    throw error;
+  }
+}
+
+/**
+ * 流している途中の、受け止めきれなかった失敗を残す。例外の文には入力が入ることがあるので、種類と場所だけを残す。
+ * Hono はこのあと例外の文を error イベントとして送るので、ここまで届かないよう、流す処理の中で受け止めている
+ */
+async function logStreamError(error: Error): Promise<void> {
+  console.error(JSON.stringify({ kind: "sse_failed", ...errorForLog(error) }));
 }
 
 /** SSE を開く */
@@ -173,7 +187,7 @@ export function openEventStream<E extends { type: string }>(
   options: TurnTiming,
   kinds: TurnEvents<E>,
 ): Response {
-  return streamSSE(c, async (stream) => {
+  const send = async (stream: SSEStreamingApi) => {
     const started = Date.now();
     let events = 0;
     const sent = new Set<string>();
@@ -233,9 +247,16 @@ export function openEventStream<E extends { type: string }>(
       clearTimeout(overall);
       clearInterval(heartbeat);
       // done を送れないと、画面は「接続が切れた」と受け取る。送れなかったこともログに残す
-      const doneSent = emit(await kinds.done());
-      await writes;
-      kinds.finished?.();
+      let doneSent = false;
+      try {
+        doneSent = emit(await kinds.done());
+        await writes;
+      } catch (error) {
+        console.error(JSON.stringify({ kind: "sse_done_failed", ...errorForLog(error) }));
+      } finally {
+        // done を作れなくても、相談を返事の途中のままにしない
+        kinds.finished?.();
+      }
       console.info(
         JSON.stringify({
           kind: "turn_end",
@@ -247,5 +268,6 @@ export function openEventStream<E extends { type: string }>(
         }),
       );
     }
-  });
+  };
+  return streamSSE(c, send, logStreamError);
 }

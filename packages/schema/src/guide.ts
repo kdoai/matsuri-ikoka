@@ -6,6 +6,7 @@ import {
   type LatLng,
   LatLngSchema,
   LocalTimeSchema,
+  SessionIdSchema,
   SlugSchema,
   SourceSchema,
 } from "./common";
@@ -27,7 +28,6 @@ import { ItineraryDiffSchema, ItinerarySchema, VerificationResultSchema } from "
 const TextSchema = z.string().min(1);
 const IdSchema = z.string().min(1).max(100);
 const VersionSchema = z.number().int().min(1);
-const SessionIdSchema = z.string().min(1);
 const WebUrlSchema = z.url({ protocol: /^https?$/ });
 
 // ---------------------------------------------------------------------------

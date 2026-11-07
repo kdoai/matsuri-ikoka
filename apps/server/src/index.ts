@@ -307,6 +307,8 @@ const limiters = {
   clientLimiter: new DailyLimiter(config.dailyChatLimitPerIp, today, persisted("client")),
   trialLimiter: new DailyLimiter(config.dailyTrialChatLimit, today, persisted("trial")),
 };
+// 相談を始める回数は、インスタンスのメモリだけで数える（始めるたびに書き込みを増やさない）
+const sessionLimiter = new DailyLimiter(config.dailySessionLimitPerIp, today);
 // 読み戻せなくても起動する（その日の数は0から数える）
 const restored = await restoreDailyLimits(limiters, DAILY_LIMIT_RESTORE_TIMEOUT_MS);
 if (restored.failed.length > 0) {
@@ -327,6 +329,7 @@ const app = createApp({
   ...(stations ? { stations } : {}),
   ...(readFestivalWish ? { readFestivalWish } : {}),
   ...limiters,
+  sessionLimiter,
   concurrency: new ConcurrencyLimiter(
     config.maxConcurrentTurns,
     config.maxConcurrentTurnsPerClient,

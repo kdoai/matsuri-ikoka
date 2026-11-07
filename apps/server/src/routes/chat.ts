@@ -38,6 +38,8 @@ export interface ChatOptions {
   limiter: DailyLimiter;
   /** 1日の相談の回数の上限（IP ごとと、ログインしていれば利用者ごと） */
   clientLimiter?: DailyLimiter;
+  /** 1日に相談を始められる回数の上限（IP ごと）。なければ数えない */
+  sessionLimiter?: DailyLimiter;
   /** お試し用のアカウントの、1日の相談の回数の上限（全体）。なければ全体の枠で数える */
   trialLimiter?: DailyLimiter;
   /** live で同時に返事を作る数の上限（全体と、利用者ごと） */
@@ -181,6 +183,17 @@ export function registerChatRoutes(routes: SecureRoutes, deps: ChatDeps) {
       if (sampleId === null) return badRequest(c, "そのサンプルの相談はありません。");
       replay = { sampleId, nextTurn: 0 };
     }
+    // 始めた相談はメモリと保存の口に残るので、IP ごとに回数を抑える
+    if (deps.sessionLimiter?.consume(deps.clientIp?.(c) ?? "unknown") === false) {
+      return c.json(
+        apiError(
+          "rate_limited",
+          "今日はこれ以上、新しい相談を始められません。また明日お越しください。",
+          false,
+        ),
+        429,
+      );
+    }
     const session = await deps.consultations.start(await viewer(), replay);
     return c.json({ sessionId: session.id, mode: deps.runner.mode } satisfies SessionResponse, 201);
   });
@@ -209,51 +222,57 @@ export function registerChatRoutes(routes: SecureRoutes, deps: ChatDeps) {
     const opened = reserveTurn(c, deps, found, viewer);
     if (opened instanceof Response) return opened;
     const { session, release } = opened;
-    // 画面で選んでいるこだわりを正とする。会話で切り替わったら、ツールが相談の状態を書き換える
-    session.preferences = request.preferences;
-    // 次の手（ボタン）から探し直すときは、変えた条件を先に書き留める（コンシェルジュの要約にも出す）
-    const retry = request.search;
-    if (retry !== undefined) {
-      session.conditions = {
-        ...session.conditions,
-        ...(retry.when === undefined ? {} : { when: retry.when }),
-        ...(retry.nights === undefined ? {} : { nights: retry.nights }),
-        ...(retry.maxTravelMinutes === undefined
-          ? {}
-          : { maxTravelMinutes: retry.maxTravelMinutes }),
-        ...(retry.widen === undefined ? {} : { widen: retry.widen }),
-      };
+    // 流し始める前に失敗しても、同時に返事を作る枠を返す（流し始めたら、終わったときに返す）
+    try {
+      // 画面で選んでいるこだわりを正とする。会話で切り替わったら、ツールが相談の状態を書き換える
+      session.preferences = request.preferences;
+      // 次の手（ボタン）から探し直すときは、変えた条件を先に書き留める（コンシェルジュの要約にも出す）
+      const retry = request.search;
+      if (retry !== undefined) {
+        session.conditions = {
+          ...session.conditions,
+          ...(retry.when === undefined ? {} : { when: retry.when }),
+          ...(retry.nights === undefined ? {} : { nights: retry.nights }),
+          ...(retry.maxTravelMinutes === undefined
+            ? {}
+            : { maxTravelMinutes: retry.maxTravelMinutes }),
+          ...(retry.widen === undefined ? {} : { widen: retry.widen }),
+        };
+      }
+      // 祭りを固定する。送られなかった発言でも、固定は相談の状態に残っている
+      if (anchor !== undefined) fixAnchor(session, anchor);
+      if (session.anchor !== null) {
+        refreshAnchorPlan(session, {
+          festival: deps.festivals.get(session.anchor.festivalId),
+          stations: deps.stations,
+          today: todayOf(deps),
+        });
+      }
+      return streamTurn(
+        c,
+        session,
+        releasing(
+          release,
+          (signal, emit, progress) =>
+            deps.runner.runTurn(
+              {
+                session,
+                message: request.message,
+                preferences: request.preferences,
+                ...(retry === undefined ? {} : { searchRetry: retry }),
+                signal,
+                progress,
+              },
+              emit,
+            ),
+          persistOf(deps, session),
+        ),
+        timing,
+      );
+    } catch (error) {
+      release();
+      throw error;
     }
-    // 祭りを固定する。送られなかった発言でも、固定は相談の状態に残っている
-    if (anchor !== undefined) fixAnchor(session, anchor);
-    if (session.anchor !== null) {
-      refreshAnchorPlan(session, {
-        festival: deps.festivals.get(session.anchor.festivalId),
-        stations: deps.stations,
-        today: todayOf(deps),
-      });
-    }
-    return streamTurn(
-      c,
-      session,
-      releasing(
-        release,
-        (signal, emit, progress) =>
-          deps.runner.runTurn(
-            {
-              session,
-              message: request.message,
-              preferences: request.preferences,
-              ...(retry === undefined ? {} : { searchRetry: retry }),
-              signal,
-              progress,
-            },
-            emit,
-          ),
-        persistOf(deps, session),
-      ),
-      timing,
-    );
   });
 
   routes.consultation("PATCH", "/api/preferences", async (c, { viewer, open }) => {

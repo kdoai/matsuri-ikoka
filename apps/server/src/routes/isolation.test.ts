@@ -610,6 +610,18 @@ describe("ログインなしの相談は、いままでどおり", () => {
     expect((await call(`/api/itinerary/${itineraryId}`, { user: ALICE })).status).toBe(200);
   });
 
+  it("ログインした人への旅程の応答は、ブラウザや途中のキャッシュに残さない", async () => {
+    const { call, consult } = setup();
+    const { itineraryId } = await consult(ALICE);
+
+    const own = await call(`/api/itinerary/${itineraryId}`, { user: ALICE });
+    expect(own.status).toBe(200);
+    expect(own.headers.get("cache-control")).toBe("private, no-store");
+    const other = await call(`/api/itinerary/${itineraryId}`, { user: BOB });
+    expect(other.status).toBe(404);
+    expect(other.headers.get("cache-control")).toBe("private, no-store");
+  });
+
   it("持ち主のない相談の旅程を残すと、その人の相談と旅になる。あとから別の人は残せない", async () => {
     const { call, consult, sessions } = setup();
     const { sessionId, itineraryId } = await consult();

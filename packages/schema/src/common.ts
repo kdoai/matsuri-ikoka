@@ -5,6 +5,9 @@ export const SlugSchema = z
   .string()
   .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "小文字の英数字とハイフンで書いてください");
 
+/** 相談の ID。外から届く値なので、ほかの ID と同じく長さに上限を付ける */
+export const SessionIdSchema = z.string().min(1).max(100);
+
 /** 日付（YYYY-MM-DD） */
 export const IsoDateSchema = z.iso.date();
 

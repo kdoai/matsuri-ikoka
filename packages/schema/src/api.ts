@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { SlugSchema } from "./common";
+import { SessionIdSchema, SlugSchema } from "./common";
 import { ErrorEventSchema } from "./events";
 import { FestivalSchema } from "./festival";
 import { TripAnchorSchema } from "./festivalSearch";
@@ -11,8 +11,6 @@ import { SearchRetrySchema } from "./search";
 
 /** 発言の長さの上限（文字） */
 export const MAX_MESSAGE_LENGTH = 1000;
-
-const SessionIdSchema = z.string().min(1);
 
 /** POST /api/session の本文（省略できる）。記録の再生（mock）のときだけ、再生するサンプルの相談を選べる */
 export const SessionRequestSchema = z.strictObject({ sample: SlugSchema.optional() });

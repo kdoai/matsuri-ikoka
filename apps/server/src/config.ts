@@ -11,6 +11,9 @@ import {
 /** お試し用のアカウントの、1日の相談の回数の上限（全体）の既定 */
 export const DEFAULT_DAILY_TRIAL_CHAT_LIMIT = 100;
 
+/** 本番で、1日に相談を始められる回数の、IP ごとの上限の既定 */
+export const DEFAULT_DAILY_SESSION_LIMIT_PER_IP = 300;
+
 // 接客サーバーの設定。値は環境変数から読む（.env.example に名前と説明がある）。
 
 export interface ServerConfig {
@@ -31,6 +34,8 @@ export interface ServerConfig {
   dailyChatLimitPerIp: number | null;
   /** お試し用のアカウントの、1日の相談の回数の上限（全体） */
   dailyTrialChatLimit: number;
+  /** 1日に相談を始められる回数の、IP ごとの上限。なければ上限なし（本番では既定の上限を使う） */
+  dailySessionLimitPerIp: number | null;
   /** live で同時に返事を作る数の上限 */
   maxConcurrentTurns: number;
   /** live で同時に返事を作る数の、利用者ごと（ログインしていなければ IP ごと）の上限 */
@@ -171,6 +176,9 @@ export function readConfig(env: NodeJS.ProcessEnv, cwd: string = process.cwd()):
     dailyTrialChatLimit:
       limitOf("DAILY_TRIAL_CHAT_LIMIT", env.DAILY_TRIAL_CHAT_LIMIT) ??
       DEFAULT_DAILY_TRIAL_CHAT_LIMIT,
+    dailySessionLimitPerIp:
+      limitOf("DAILY_SESSION_LIMIT_PER_IP", env.DAILY_SESSION_LIMIT_PER_IP) ??
+      (production ? DEFAULT_DAILY_SESSION_LIMIT_PER_IP : null),
     maxConcurrentTurns,
     maxConcurrentTurnsPerClient:
       limitOf("MAX_CONCURRENT_TURNS_PER_CLIENT", env.MAX_CONCURRENT_TURNS_PER_CLIENT) ??
