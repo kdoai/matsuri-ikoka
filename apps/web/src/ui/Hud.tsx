@@ -19,6 +19,7 @@ import { hasNextSteps } from "../state/events";
 import { useActions, useApp, useT } from "../state/react";
 import { shioriReady } from "../state/selectors";
 import type { PanelTab } from "../state/types";
+import { ReadAloudToggle } from "../voice/ReadAloudToggle";
 import { YaguraIcon } from "./icons";
 import { ControlsList, PlayStatus } from "./Play";
 import { playSound } from "./sound";
@@ -294,6 +295,7 @@ export function IconButtons({
               {soundOn ? <Volume2 className="size-4" /> : <VolumeX className="size-4" />}
               {soundOn ? t.app.soundOn : t.app.soundOff}
             </button>
+            <ReadAloudToggle />
             <button
               type="button"
               className="min-h-11 rounded-xl border-2 border-shu-500/60 bg-white px-3 font-bold text-shu-700"
