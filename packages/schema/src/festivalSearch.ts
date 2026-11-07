@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { IsoDateSchema, SlugSchema } from "./common";
+import { IsoDateSchema, SessionIdSchema, SlugSchema } from "./common";
 import { FestivalCandidateSchema } from "./events";
 import { FESTIVAL_CATEGORIES, PrefectureSchema } from "./festival";
 import { MAX_ROUTE_AREAS, NightsSchema, PACES } from "./preferences";
@@ -9,7 +9,6 @@ import { MAX_ROUTE_AREAS, NightsSchema, PACES } from "./preferences";
 // 祭りを決めて旅程を組むときは、選んだ祭りを必ず行く場所（アンカー）として固定する。
 
 const TextSchema = z.string().min(1);
-const SessionIdSchema = z.string().min(1);
 
 /**
  * 祭りの探し方の種類。
