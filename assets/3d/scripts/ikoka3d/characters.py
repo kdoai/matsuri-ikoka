@@ -402,7 +402,7 @@ def _props(kind, c):
                  U.cylinder("stamp.face", 0.03, 0.006, c, base=(0, 0, -0.004), mat=M.flat("ink_red", "#B8302A", 0.5),
                             verts=16)]
         stamp = U.join(parts, "prop.stamp")
-        stamp.location = (-0.35, -0.06, 0.12)
+        stamp.matrix_world = Matrix.Translation((-0.35, -0.06, 0.12))
         out.append((stamp, "hand.R"))
         out.append((_guide_cap(c), "head"))
         out.append((_guide_flag(c), "hand.R"))
@@ -502,8 +502,11 @@ def _guide_flag(c):
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
     cloth = U.mesh_object("flag.cloth", bm, c, M.textured("guide_flag", "guide_flag", rough=0.85, sheen=0.2), smooth=True)
     flag = U.join([pole, tip, grip, cloth], "prop.guide_flag")
-    # Lean the pole away from the head; the hand keeps it there through the motions.
-    flag.data.transform(Matrix.Translation(GUIDE_GRIP) @ Matrix.Rotation(-FLAG_LEAN, 4, "Y") @ Matrix.Translation(-Vector(GUIDE_GRIP)))
+    # Lean the pole away from the head, about the grip; the hand keeps it there through the motions.
+    # The mesh is in the coordinates of the pole's foot, where the joined object's origin is.
+    pivot = Vector(GUIDE_GRIP) - flag.location
+    flag.data.transform(Matrix.Translation(pivot) @ Matrix.Rotation(-FLAG_LEAN, 4, "Y") @ Matrix.Translation(-pivot))
+    flag.matrix_world = Matrix.Translation(flag.location)
     return flag
 
 
