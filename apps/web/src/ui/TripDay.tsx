@@ -1,8 +1,9 @@
 import type { LatLng } from "@matsuri-ikoka/schema";
 import { Clock, MapPin, TrainFront } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
+import { useTripDayGlance } from "../state/clock";
+import { readLocationOnce } from "../state/location";
 import { useActions, useApp, useT } from "../state/react";
-import { japanClock, tripDayGlance } from "../state/tripDay";
 import { buttonSecondary } from "./common";
 import { focusGuideDialogue } from "./GuideDialogue";
 
@@ -10,45 +11,16 @@ import { focusGuideDialogue } from "./GuideDialogue";
 // 旅程は手元にあるものだけを使うので、電波がなくても読める。
 // 現在地は、利用者が「いる場所から相談する」を押したときだけ、その場で1回読む。保存しない。
 
-/** 現在地を1回だけ読む。断られた・読めない・時間切れなら null（推測で埋めない） */
-function readLocationOnce(): Promise<LatLng | null> {
-  const geolocation = typeof navigator === "undefined" ? undefined : navigator.geolocation;
-  if (geolocation === undefined) return Promise.resolve(null);
-  return new Promise((resolve) => {
-    geolocation.getCurrentPosition(
-      (position) => resolve({ lat: position.coords.latitude, lng: position.coords.longitude }),
-      () => resolve(null),
-      // 細かさは要らない（丸めて送る）。古い位置は使わない
-      { enableHighAccuracy: false, timeout: 10_000, maximumAge: 0 },
-    );
-  });
-}
-
-/** 分ごとに今の時刻を読み直す */
-function useJapanClock(): { date: string; time: string } {
-  const [clock, setClock] = useState(() => japanClock());
-  useEffect(() => {
-    const timer = window.setInterval(() => setClock(japanClock()), 60_000);
-    return () => window.clearInterval(timer);
-  }, []);
-  return clock;
-}
-
+/** 旅の日の札。旅の日かどうかは、サーバーの返事を待たず、手元の旅程と時計だけで決める */
 export function TripDayCard() {
   const t = useT();
   const actions = useActions();
-  const itinerary = useApp((state) => state.itinerary.current);
-  const phase = useApp((state) => state.guide.phase);
   const availability = useApp((state) => state.guide.availability);
   const streaming = useApp((state) => state.guide.streaming);
-  const clock = useJapanClock();
+  const glance = useTripDayGlance();
   const [note, setNote] = useState<string | null>(null);
   const [locating, setLocating] = useState(false);
-  const glance = useMemo(
-    () => (itinerary === null ? null : tripDayGlance(itinerary, clock)),
-    [itinerary, clock],
-  );
-  if (phase !== "during" || glance === null) return null;
+  if (glance === null) return null;
   const m = t.street.tripDay;
   const canTalk = availability === "ready" && !streaming && !locating;
 
@@ -117,7 +89,9 @@ export function TripDayCard() {
               <dd>
                 {lastReturn.status === "known"
                   ? m.lastReturnAt(lastReturn.station, lastReturn.departBy)
-                  : m.lastReturnUnknown}
+                  : lastReturn.status === "passed"
+                    ? m.lastReturnPassed(lastReturn.station, lastReturn.departBy)
+                    : m.lastReturnUnknown}
               </dd>
             </div>
           </div>

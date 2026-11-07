@@ -1122,6 +1122,8 @@ export const ja = {
       lastReturn: "帰りの最終",
       lastReturnUnknown: "帰りの最終は分かっていません。ガイドに確かめてください。",
       lastReturnAt: (station: string, time: string) => `${station}を ${time} までに`,
+      lastReturnPassed: (station: string, time: string) =>
+        `${station}の最終（${time}）は過ぎています。帰り方をガイドに相談してください。`,
       fromTo: (from: string, to: string) => `${from} → ${to}`,
       offline: "電波がなくても、この内容は読めます（いま開いている画面の旅程から出しています）。",
       where: "いる場所から相談する",

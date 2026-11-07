@@ -195,8 +195,6 @@ function GuideBoardBody() {
   const proposals = useApp((state) => state.guide.proposals);
   return (
     <div className="space-y-3">
-      {/* 旅の当日は、次の予定・出発・帰りの最終を最初に見せる */}
-      <TripDayCard />
       <GuideOutcomeNote />
       <UnlinkedProposals />
       {notices.length > 0 ? (
@@ -400,6 +398,8 @@ export function GuideBoard({
         </button>
       </header>
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3">
+        {/* 3D の通りでも、旅の当日は次の予定・出発・帰りの最終を最初に見せる */}
+        <TripDayCard />
         <GuideBoardBody />
       </div>
       <footer className="border-line border-t border-dashed px-4 py-2">

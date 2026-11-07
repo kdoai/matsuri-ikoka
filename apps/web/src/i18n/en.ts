@@ -1212,6 +1212,8 @@ export const en: Messages = {
       lastReturn: "Last train home",
       lastReturnUnknown: "The last train home is not known. Ask your guide to check.",
       lastReturnAt: (station: string, time: string) => `From ${station} by ${time}`,
+      lastReturnPassed: (station: string, time: string) =>
+        `The last train from ${station} (${time}) has left. Ask your guide how to get back.`,
       fromTo: (from: string, to: string) => `${from} → ${to}`,
       offline:
         "You can read this without a signal (it comes from the plan already on this screen).",
