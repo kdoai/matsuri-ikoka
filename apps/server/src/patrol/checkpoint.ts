@@ -27,6 +27,7 @@ import {
   normalizeLine,
   saysCancelled,
   saysPostponed,
+  talksOnlyAboutPast,
 } from "./lines";
 import type { RunPage, RunTarget, ScheduleBaseline } from "./types";
 
@@ -35,8 +36,8 @@ import type { RunPage, RunTarget, ScheduleBaseline } from "./types";
 // ページの文章は次へ渡さない。ここから出るのは、決まった形の値と出典だけ。
 //
 // 最も避けたいのは、本物の中止や変更を黙って失うこと。決まったと言い切れるものだけを開催の変更や中止にし、
-// 新しい行に中止・延期・日時の語があるのに言い切れないものは、値を持たないお知らせにする。
-// 語がないときだけ、黙って比べる元を進める。
+// 新しい行に中止・延期・日時の語があるのに言い切れないものと、報告が中止や日付なしの変更と言っているのに
+// ページの言葉で読み取れないものは、値を持たないお知らせにする。どちらでもないときだけ、黙って比べる元を進める。
 
 export type ReportParse =
   | { ok: true; report: PatrolReport }
@@ -230,13 +231,18 @@ function checked(
 const uniquePages = (pages: readonly RunPage[]): RunPage[] =>
   pages.filter((page, index) => pages.indexOf(page) === index);
 
+const isTrusted = (page: RunPage) =>
+  page.confidence === "official" || page.confidence === "corroborated";
+
 /**
  * 1つの対象の報告を確かめる。
  * - 読んだページは、依頼にあり、実際に開いたものだけを数える。1つもなければ not_read
  * - 変化は、値がコードで読んだ新しい行に書いてあるときだけ認める。指示に見える行は根拠にしない
  * - 開催の変更と中止は、主張ごとに、公式か2つのサイトで確かめられたときだけ。足りなければ値を持たないお知らせにする
- * - それ以外で新しい行に開催に関わる語があれば、公式か確かな出典のページなら、値を持たないお知らせにする
- * - 語がなければ通知にしない。ここだけが黙って比べる元を進める道になる
+ * - それ以外で新しい行に開催に関わる語があるか、報告が中止や日付なしの変更と言っていれば、
+ *   公式か確かな出典のページなら、値を持たないお知らせにする
+ * - 中止と知らせたあとに確かなページが予定どおりと言っていれば、中止の状態を戻し、撤回を知らせる
+ * - どれでもなければ通知にしない。ここだけが黙って比べる元を進める道になる
  */
 export function checkFinding(input: {
   finding: PatrolFinding;
@@ -307,12 +313,15 @@ export function checkFinding(input: {
 
   /**
    * 値を持たないお知らせ。出典の確度はページごとに決め、別々の話を合わせて上げない。
-   * 指紋は、基準と比べて決めた主張と新しい行から作る（見立ての揺れで、読んだお知らせを未読に戻さない）
+   * 指紋は、基準と比べて決めた主張とページと、知らせる理由（reason）から作る。
+   * 見立ての揺れや、関係のない行が増えただけでは変わらないので、読んだお知らせが未読に戻らない
    */
-  const announcements = (topics: readonly NoticeTopic[], pages: readonly RunPage[]) => {
-    const marks = pages.flatMap((page) =>
-      evidenceOf(page)?.verifiable === true ? addedOf(page).map(lineHash) : [page.url],
-    );
+  const announcements = (
+    topics: readonly NoticeTopic[],
+    pages: readonly RunPage[],
+    reason: unknown = null,
+  ) => {
+    const urls = pages.map((page) => page.url).sort();
     const sources = pages.map((page) => ({
       url: page.url,
       checkedAt: checkedOn,
@@ -321,7 +330,7 @@ export function checkFinding(input: {
     return topics.flatMap((topic) => {
       const change = checked(
         { kind: "announcement", festivalId: target.festivalId, date: target.date, topic },
-        ["announcement", target.key, topic, claims, [...marks].sort()],
+        ["announcement", target.key, topic, claims, urls, reason],
         sources,
         checkedAt,
       );
@@ -422,6 +431,20 @@ export function checkFinding(input: {
   if (firm) {
     return result(cancellation !== undefined ? "cancellation" : "schedule_change", changes, state);
   }
+
+  // 中止と知らせた祭りを、確かなページが予定どおりと言っている。新しい行に決まった中止がなければ、撤回として知らせる
+  if (known.cancelled && finding.result === "as_planned") {
+    const stillCancelled = verifiable.some((page) =>
+      addedOf(page).some((line) => saysCancelled(line, target.date)),
+    );
+    const pages = verifiable.filter(isTrusted);
+    if (!stillCancelled && pages.length > 0) {
+      changes.push(
+        ...announcements(topicsOr("other"), pages, ["withdrawn", baseline.date, sequence]),
+      );
+      return result("announcement", changes, { cancelled: false });
+    }
+  }
   if (changes.length > 0) return result("announcement", changes);
 
   // 主張で決まらなかった。新しい行に開催に関わる語があれば、黙って捨てない
@@ -433,15 +456,25 @@ export function checkFinding(input: {
     cancelled: known.cancelled,
     postponed: known.postponed || baseline.date !== target.date,
   };
+  // 「予定どおり」の報告では、日付や時刻だけの行で知らせない（更新の記録や別の案内がほとんどのため）
+  const wordsOnly = finding.result === "as_planned";
+  const signalLines = (page: RunPage) =>
+    addedOf(page).filter((line) => hasScheduleSignal(line, signalKnown, { wordsOnly }));
+  // 中止や日付なしの変更の報告は、言い回しを読み取れなくても捨てない。言い換えは尽きないため
+  const reportsChange = claims.some(
+    (claim) => claim.kind === "cancelled" || claim.kind === "postponed",
+  );
   const signalPages = verifiable.filter(
     (page) =>
-      addedOf(page).some((line) => hasScheduleSignal(line, signalKnown)) ||
-      (evidenceOf(page)?.suspiciousSchedule ?? 0) > 0,
+      signalLines(page).length > 0 ||
+      (evidenceOf(page)?.suspiciousSchedule ?? 0) > 0 ||
+      (reportsChange && addedOf(page).some((line) => !talksOnlyAboutPast(line, target.date))),
   );
-  const trusted = signalPages.filter(
-    (page) => page.confidence === "official" || page.confidence === "corroborated",
-  );
-  if (trusted.length > 0) return result("announcement", announcements(topicsOr("other"), trusted));
+  const trusted = signalPages.filter(isTrusted);
+  if (trusted.length > 0) {
+    const reason = trusted.flatMap((page) => signalLines(page).map(lineHash)).sort();
+    return result("announcement", announcements(topicsOr("other"), trusted, reason));
+  }
 
   // お知らせは、読めるページなら新しい行があるときだけ、読めないページならそのまま受ける
   const topicPages = [...verifiable.filter((page) => addedOf(page).length > 0), ...unverifiable];

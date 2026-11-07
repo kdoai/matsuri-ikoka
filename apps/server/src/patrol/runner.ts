@@ -539,6 +539,8 @@ async function acceptReport(
     // 日程が前の値に戻ったら順番の値を増やす。同じ内容の変更をもう一度知らせられるように
     const seen = new Set(record.seenBaselines);
     let changeCount = record.changeCount;
+    // 中止を戻したときも同じ。再び中止になったら、もう一度知らせる
+    if (record.cancelled && check.cancelled === false) changeCount += 1;
     if (check.baseline !== null) {
       const after = JSON.stringify(check.baseline);
       if (seen.has(after)) changeCount += 1;

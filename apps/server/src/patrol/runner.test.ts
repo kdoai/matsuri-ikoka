@@ -248,6 +248,99 @@ describe("架空の祭りのページの変更（順延）", () => {
   });
 });
 
+describe("中止と撤回", () => {
+  const asPlanned: Omit<PatrolFinding, "festivalId" | "date"> = {
+    result: "as_planned",
+    observed: { date: PATROL_DATE, start: "18:30", end: "21:00" },
+    topics: [],
+    dateText: null,
+    pages: [PAGE_URL],
+  };
+  const cancelReport: Omit<PatrolFinding, "festivalId" | "date"> = {
+    result: "cancelled",
+    observed: { date: null, start: null, end: null },
+    topics: [],
+    dateText: null,
+    pages: [PAGE_URL],
+  };
+  const step = async (line: string, report: typeof asPlanned, session: string) => {
+    setPage(line);
+    agentReports(report);
+    await startPatrol(harness.deps);
+    await collectSession(harness.deps, session);
+    harness.clock.now += 7 * HOUR;
+  };
+
+  it("中止→予定どおり→再び中止で、撤回も再度の中止も届く", async () => {
+    const trip = addTrip("a");
+    await baselined();
+    const kinds = () => harness.store.noticesOf(trip.ref).map((notice) => notice.content.kind);
+
+    await step("今年の開催は中止します", cancelReport, "session-1");
+    expect(kinds()).toEqual(["cancellation"]);
+    expect((await harness.store.readRecord(KEY))?.cancelled).toBe(true);
+
+    await step("予定どおり開催します", asPlanned, "session-2");
+    expect(kinds().sort()).toEqual(["announcement", "cancellation"]);
+    expect((await harness.store.readRecord(KEY))?.cancelled).toBe(false);
+
+    await step("今年の開催は中止します", cancelReport, "session-3");
+    expect(kinds().filter((kind) => kind === "cancellation")).toHaveLength(2);
+    expect((await harness.store.readRecord(KEY))?.cancelled).toBe(true);
+
+    // 2度目の撤回も届く（お知らせは1つに畳まれ、新しい内容に置き換わる）
+    const before = harness.store
+      .noticesOf(trip.ref)
+      .find((notice) => notice.content.kind === "announcement")?.fingerprint;
+    await step("予定どおり開催します", asPlanned, "session-4");
+    const after = harness.store
+      .noticesOf(trip.ref)
+      .find((notice) => notice.content.kind === "announcement")?.fingerprint;
+    expect(after).not.toBe(before);
+  });
+});
+
+describe("読んだお知らせ", () => {
+  const withTopic: Omit<PatrolFinding, "festivalId" | "date"> = {
+    result: "as_planned",
+    observed: { date: PATROL_DATE, start: "18:30", end: "21:00" },
+    topics: ["traffic"],
+    dateText: null,
+    pages: [PAGE_URL],
+  };
+
+  it("同じページの同じ種類なら、ページが更新されても置き換えない", async () => {
+    const trip = addTrip("a");
+    await baselined();
+    setPage("通行止めのお知らせ");
+    agentReports(withTopic);
+    await startPatrol(harness.deps);
+    await collectSession(harness.deps, "session-1");
+    const [first] = harness.store.noticesOf(trip.ref);
+
+    harness.clock.now += 7 * HOUR;
+    setPage("通行止めのお知らせ", "協賛企業の一覧を載せました");
+    agentReports(withTopic);
+    await startPatrol(harness.deps);
+    await collectSession(harness.deps, "session-2");
+
+    // 置き換わると作った時刻が新しくなり、読んだ印も消える
+    expect(harness.store.noticesOf(trip.ref)).toEqual([first]);
+  });
+
+  it("開催と関係のない更新だけなら、お知らせを作らない", async () => {
+    const trip = addTrip("a");
+    await baselined();
+    setPage("最終更新日:2026年8月9日");
+    agentReports({ ...withTopic, topics: [] });
+    await startPatrol(harness.deps);
+    await collectSession(harness.deps, "session-1");
+
+    expect(harness.store.noticesOf(trip.ref)).toEqual([]);
+    expect(await firstRun()).toMatchObject({ counts: { no_change: 1 } });
+  });
+});
+
 describe("日付のない延期", () => {
   const noDate: Omit<PatrolFinding, "festivalId" | "date"> = {
     result: "changed",
