@@ -40,6 +40,8 @@ export const LOGIN_MESSAGES = {
       other_method:
         "このメールアドレスは別の方法で登録されています。その方法でログインしてください。",
       trial: "お試し用のアカウントでは、この操作はできません。",
+      account_remains:
+        "旅は消しましたが、ログインの記録を消せませんでした。少し待ってから、もう一度お試しください。",
       failed: "うまくいきませんでした。少し待ってから、もう一度お試しください。",
     } satisfies Record<Exclude<LoginFailure, "cancelled">, string>,
   },
@@ -69,6 +71,8 @@ export const LOGIN_MESSAGES = {
       other_method:
         "This email is registered with another method. Please sign in with that method.",
       trial: "This action isn't available on the trial account.",
+      account_remains:
+        "Your trips were deleted, but we couldn't delete your sign-in record. Please try again in a moment.",
       failed: "Something went wrong. Please try again in a moment.",
     } satisfies Record<Exclude<LoginFailure, "cancelled">, string>,
   },
@@ -118,7 +122,7 @@ export function LoginForm({ client, locale }: { client: AccountClient; locale: L
       if (mode === "signIn") await client.signInWithPassword(email.trim(), password);
       if (mode === "signUp") await client.signUpWithPassword(email.trim(), password);
       if (mode === "reset") {
-        await client.sendPasswordReset(email.trim());
+        await client.sendPasswordReset(email.trim(), locale);
         setNotice(m.resetSent);
       }
     });

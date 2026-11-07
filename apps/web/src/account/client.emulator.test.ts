@@ -50,7 +50,7 @@ describe.skipIf(host === undefined)("Auth のエミュレーターでのログ�
     await client.signInWithPassword(email, PASSWORD);
     await vi.waitFor(() => expect(users.at(-1)).not.toBeNull());
 
-    await expect(client.sendPasswordReset(email)).resolves.toBeUndefined();
+    await expect(client.sendPasswordReset(email, "ja")).resolves.toBeUndefined();
 
     await expect(client.deleteEverything("wrong-password")).rejects.toMatchObject({
       failure: "credentials",
@@ -75,6 +75,6 @@ describe.skipIf(host === undefined)("Auth のエミュレーターでのログ�
     await expect(client.signUpWithPassword(email, PASSWORD)).rejects.toMatchObject({
       failure: "sign_up_refused",
     });
-    await expect(client.sendPasswordReset(`nobody-${email}`)).resolves.toBeUndefined();
+    await expect(client.sendPasswordReset(`nobody-${email}`, "ja")).resolves.toBeUndefined();
   });
 });

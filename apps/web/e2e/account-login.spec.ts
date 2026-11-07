@@ -1,4 +1,4 @@
-import { expect, type Page, test } from "@playwright/test";
+import { expect, type Locator, type Page, test } from "@playwright/test";
 import { enterShop } from "./helpers";
 
 // ログインの窓を、本物の Firebase の部品で通す。Firebase の通信だけを偽物に置き換え、外には出ない。
@@ -29,14 +29,40 @@ function fakeIdToken(uid: string): string {
   return `${base64Url({ alg: "none" })}.${base64Url(payload)}.signature`;
 }
 
-async function fakeFirebase(page: Page, uid: string) {
+const TRIP = (index: number) => ({
+  itineraryId: `trip-${index}`,
+  title: `架空の旅 ${index}`,
+  date: "2026-08-03",
+  version: 1,
+  updatedAt: "2026-08-01T00:00:00.000Z",
+});
+
+async function fakeFirebase(
+  page: Page,
+  uid: string,
+  options: { trips?: number; deleteFails?: boolean } = {},
+) {
   const posted: string[] = [];
   await page.route("**/api/auth/config", (route) => route.fulfill({ json: CONFIG }));
+  await page.route("**/api/trips", (route) =>
+    route.fulfill({
+      json: { trips: Array.from({ length: options.trips ?? 0 }, (_, index) => TRIP(index + 1)) },
+    }),
+  );
+  await page.route("**/api/me/trips", (route) => {
+    posted.push("DELETE /api/me/trips");
+    return route.fulfill({ json: { deleted: options.trips ?? 0 } });
+  });
   await page.route("https://identitytoolkit.googleapis.com/**", async (route) => {
     const url = new URL(route.request().url());
     const action = url.pathname.split("/").at(-1) ?? "";
     posted.push(action);
     const body = route.request().postDataJSON() as { email?: string; password?: string };
+    if (action === "accounts:delete") {
+      return options.deleteFails
+        ? route.fulfill({ status: 400, json: { error: { code: 400, message: "INTERNAL_ERROR" } } })
+        : route.fulfill({ json: {} });
+    }
     if (action === "accounts:signInWithPassword" && body.password !== "right-password") {
       return route.fulfill({
         status: 400,
@@ -151,4 +177,121 @@ test("お試し用のアカウントには、パスワードの変更とアカ�
   await expect(menu.getByRole("button", { name: "ログアウト" })).toBeVisible();
   await expect(menu.getByRole("button", { name: "パスワードを変える" })).toHaveCount(0);
   await expect(menu.getByRole("button", { name: /すべて消す/ })).toHaveCount(0);
+});
+
+/** パスワードでログインする */
+async function signIn(menu: Locator) {
+  await menu.getByLabel("メールアドレス").fill("person@example.com");
+  await menu.getByLabel("パスワード").fill("right-password");
+  await menu.getByRole("button", { name: "ログイン", exact: true }).click();
+  await expect(menu.getByRole("button", { name: "ログアウト" })).toBeVisible();
+}
+
+/** 要素が、いまの窓の中に収まっていることを測る（fill と click は overflow の中でも通るので、位置を見る） */
+async function expectInsideWindow(page: Page, target: Locator) {
+  const box = await target.boundingBox();
+  const size = page.viewportSize();
+  expect(box).not.toBeNull();
+  expect(size).not.toBeNull();
+  if (box === null || size === null) return;
+  expect(box.x, "左").toBeGreaterThanOrEqual(0);
+  expect(box.y, "上").toBeGreaterThanOrEqual(0);
+  expect(box.x + box.width, "右").toBeLessThanOrEqual(size.width);
+  expect(box.y + box.height, "下").toBeLessThanOrEqual(size.height);
+}
+
+/** 窓の中の要素まで送ると、画面の中に見える */
+async function expectReachable(page: Page, target: Locator) {
+  await target.scrollIntoViewIfNeeded();
+  await expectInsideWindow(page, target);
+}
+
+for (const [width, height] of [
+  [375, 812],
+  [320, 568],
+  [812, 375],
+  [1280, 600],
+] as const) {
+  test(`${width}×${height} でも、ログインの窓と旅の一覧が画面に収まる`, async ({ page }) => {
+    await page.setViewportSize({ width, height });
+    await fakeFirebase(page, "user-1", { trips: 5 });
+    await enterShop(page);
+    const menu = await openMenu(page);
+
+    await expectInsideWindow(page, menu);
+    await expectReachable(page, menu.getByRole("button", { name: "閉じる" }));
+    await expectReachable(page, menu.getByLabel("メールアドレス"));
+    await expectReachable(page, menu.getByLabel("パスワード"));
+    await expectReachable(page, menu.getByRole("button", { name: "パスワードを忘れたとき" }));
+
+    await signIn(menu);
+    await expectInsideWindow(page, menu);
+    await menu.getByRole("button", { name: "旅とログインの記録をすべて消す" }).click();
+    await expectInsideWindow(page, menu);
+    await expectReachable(page, menu.getByRole("button", { name: "やめる" }));
+    await expectReachable(page, menu.getByLabel(/パスワードを入れてください/));
+  });
+}
+
+test("パスワードの人は、確かめ直してから旅とアカウントを消し、新しい相談を始める", async ({
+  page,
+}) => {
+  const posted = await fakeFirebase(page, "user-1", { trips: 1 });
+  let sessions = 0;
+  page.on("request", (request) => {
+    if (request.method() === "POST" && new URL(request.url()).pathname === "/api/session") {
+      sessions += 1;
+    }
+  });
+  await enterShop(page);
+  const menu = await openMenu(page);
+  await signIn(menu);
+  const started = sessions;
+  posted.length = 0;
+
+  await menu.getByRole("button", { name: "旅とログインの記録をすべて消す" }).click();
+  const confirm = menu.getByRole("button", { name: "すべて消す", exact: true });
+  await expect(confirm).toBeDisabled();
+  await menu.getByLabel(/パスワードを入れてください/).fill("wrong-password");
+  await confirm.click();
+  await expect(menu.getByRole("alert")).toHaveText("メールアドレスかパスワードが違います。");
+  expect(posted).not.toContain("DELETE /api/me/trips");
+
+  await menu.getByLabel(/パスワードを入れてください/).fill("right-password");
+  await confirm.click();
+  await expect(menu.getByLabel("メールアドレス")).toBeVisible();
+  await expect(menu.getByRole("alert")).toHaveCount(0);
+
+  const order = posted.filter((step) =>
+    ["accounts:signInWithPassword", "DELETE /api/me/trips", "accounts:delete"].includes(step),
+  );
+  expect(order.slice(-3)).toEqual([
+    "accounts:signInWithPassword",
+    "DELETE /api/me/trips",
+    "accounts:delete",
+  ]);
+  await expect.poll(() => sessions).toBe(started + 1);
+});
+
+test("旅を消したあとにアカウントを消せなければ、そう伝え、前の旅程を残さず新しい相談を始める", async ({
+  page,
+}) => {
+  await fakeFirebase(page, "user-1", { deleteFails: true });
+  let sessions = 0;
+  page.on("request", (request) => {
+    if (request.method() === "POST" && new URL(request.url()).pathname === "/api/session") {
+      sessions += 1;
+    }
+  });
+  await enterShop(page);
+  const menu = await openMenu(page);
+  await signIn(menu);
+  const started = sessions;
+
+  await menu.getByRole("button", { name: "旅とログインの記録をすべて消す" }).click();
+  await menu.getByLabel(/パスワードを入れてください/).fill("right-password");
+  await menu.getByRole("button", { name: "すべて消す", exact: true }).click();
+
+  await expect(menu.getByRole("alert")).toContainText("ログインの記録を消せませんでした");
+  await expect.poll(() => sessions).toBe(started + 1);
 });

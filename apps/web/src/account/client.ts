@@ -7,6 +7,7 @@ import {
   type TripSummary,
   TripSummarySchema,
 } from "@matsuri-ikoka/schema";
+import type { Locale } from "../state/types";
 import { PASSCODE_HEADER, type PasscodeHolder } from "../transport/server";
 import { errorFromResponse, TransportError } from "../transport/types";
 
@@ -36,6 +37,8 @@ export type LoginFailure =
   | "popup_blocked"
   | "other_method"
   | "trial"
+  /** 旅は消したが、ログインの記録を消せなかった。もう一度消せる */
+  | "account_remains"
   /** 利用者がログインの窓を閉じた。文は出さない */
   | "cancelled"
   | "failed";
@@ -95,10 +98,10 @@ export interface AccountClient {
   signInWithPassword(email: string, password: string): Promise<void>;
   /** メールアドレスとパスワードで登録し、そのままログインする */
   signUpWithPassword(email: string, password: string): Promise<void>;
-  /** 再設定のメールを頼む。登録があってもなくても同じように終わる */
-  sendPasswordReset(email: string): Promise<void>;
-  /** ログイン中の人のパスワードを変えるメールを送る。お試し用のアカウントは断る */
-  changePassword(): Promise<void>;
+  /** 再設定のメールを、画面の言語で頼む。登録があってもなくても同じように終わる */
+  sendPasswordReset(email: string, locale: Locale): Promise<void>;
+  /** ログイン中の人のパスワードを変えるメールを、画面の言語で送る。お試し用のアカウントは断る */
+  changePassword(locale: Locale): Promise<void>;
   signOut(): Promise<void>;
   listTrips(): Promise<TripSummary[]>;
   /** 相談の旅程を、自分の旅として残す */
@@ -133,8 +136,8 @@ interface FirebaseAuthPart {
   signInWithGoogle(): Promise<void>;
   signInWithPassword(email: string, password: string): Promise<void>;
   signUpWithPassword(email: string, password: string): Promise<void>;
-  sendPasswordReset(email: string): Promise<void>;
-  changePassword(): Promise<void>;
+  sendPasswordReset(email: string, locale: Locale): Promise<void>;
+  changePassword(locale: Locale): Promise<void>;
   signOut(): Promise<void>;
   reauthenticate(password: string | undefined): Promise<void>;
   deleteUser(): Promise<void>;
@@ -167,8 +170,6 @@ async function loadFirebase(config: Extract<AuthConfig, { enabled: true }>) {
     projectId: config.projectId,
   });
   const instance = auth.getAuth(app);
-  // 再設定のメールを、ブラウザの言語で送る
-  instance.languageCode = globalThis.navigator?.language ?? null;
   if (config.emulatorUrl !== undefined) {
     auth.connectAuthEmulator(instance, config.emulatorUrl, { disableWarnings: true });
   }
@@ -189,7 +190,8 @@ async function loadFirebase(config: Extract<AuthConfig, { enabled: true }>) {
     signUpWithPassword: async (email, password) => {
       await auth.createUserWithEmailAndPassword(instance, email, password);
     },
-    sendPasswordReset: async (email) => {
+    sendPasswordReset: async (email, locale) => {
+      instance.languageCode = locale;
       try {
         await auth.sendPasswordResetEmail(instance, email);
       } catch (error) {
@@ -197,9 +199,10 @@ async function loadFirebase(config: Extract<AuthConfig, { enabled: true }>) {
         if ((error as { code?: string }).code !== "auth/user-not-found") throw error;
       }
     },
-    changePassword: async () => {
+    changePassword: async (locale) => {
       const email = instance.currentUser?.email;
       if (!email) throw new LoginError("failed");
+      instance.languageCode = locale;
       await auth.sendPasswordResetEmail(instance, email);
     },
     signOut: () => auth.signOut(instance),
@@ -348,11 +351,12 @@ export function createAccountClient(
       withFirebase((part) => part.signInWithPassword(email, password)),
     signUpWithPassword: (email, password) =>
       withFirebase((part) => part.signUpWithPassword(email, password)),
-    sendPasswordReset: (email) => withFirebase((part) => part.sendPasswordReset(email)),
-    changePassword: () =>
+    sendPasswordReset: (email, locale) =>
+      withFirebase((part) => part.sendPasswordReset(email, locale)),
+    changePassword: (locale) =>
       withFirebase(async (part) => {
         refuseTrial(part);
-        await part.changePassword();
+        await part.changePassword(locale);
       }),
     async signOut() {
       await (await firebase())?.signOut();
@@ -386,7 +390,11 @@ export function createAccountClient(
         // 先に確かめ直す。通信のあとに窓を開くとブラウザに止められ、旅だけが消えてアカウントが残ることがある
         await part.reauthenticate(password);
         await call("/api/me/trips", { method: "DELETE" });
-        await part.deleteUser();
+        try {
+          await part.deleteUser();
+        } catch {
+          throw new LoginError("account_remains");
+        }
       }),
   };
 }

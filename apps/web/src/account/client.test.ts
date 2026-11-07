@@ -27,6 +27,8 @@ const firebaseAuth = vi.hoisted(() => ({
   steps: [] as string[],
   /** 次の呼び出しで投げるエラーのコード */
   failWith: {} as Record<string, string>,
+  /** メールの言語（Firebase の Auth の languageCode） */
+  languageCode: null as string | null,
 }));
 
 /** 呼ばれたことを記録し、頼まれていればエラーを投げる */
@@ -320,13 +322,13 @@ describe("ログインの方法", () => {
 
   it("再設定は、登録がなくても同じように終わる", async () => {
     const { client } = setup();
-    await expect(client.sendPasswordReset("a@example.com")).resolves.toBeUndefined();
+    await expect(client.sendPasswordReset("a@example.com", "ja")).resolves.toBeUndefined();
 
     firebaseAuth.failWith = { sendPasswordResetEmail: "auth/user-not-found" };
-    await expect(client.sendPasswordReset("nobody@example.com")).resolves.toBeUndefined();
+    await expect(client.sendPasswordReset("nobody@example.com", "ja")).resolves.toBeUndefined();
 
     firebaseAuth.failWith = { sendPasswordResetEmail: "auth/too-many-requests" };
-    await expect(client.sendPasswordReset("a@example.com")).rejects.toMatchObject({
+    await expect(client.sendPasswordReset("a@example.com", "ja")).rejects.toMatchObject({
       failure: "too_many",
     });
   });
@@ -403,6 +405,32 @@ describe("ログインの方法", () => {
     expect(firebaseAuth.steps).toEqual([]);
   });
 
+  it("再設定のメールは、画面の言語で送る", async () => {
+    const { client } = setup();
+
+    await client.sendPasswordReset("a@example.com", "ja");
+    expect(firebaseAuth.languageCode).toBe("ja");
+    await client.sendPasswordReset("a@example.com", "en");
+    expect(firebaseAuth.languageCode).toBe("en");
+  });
+
+  it("旅を消したあとにアカウントを消せなければ、分かる失敗にする", async () => {
+    firebaseAuth.currentUser = passwordUser("user-1");
+    firebaseAuth.failWith = { deleteUser: "auth/network-request-failed" };
+    const { client, ready } = setup();
+    await ready();
+
+    await expect(client.deleteEverything("long-password")).rejects.toMatchObject({
+      failure: "account_remains",
+    });
+
+    expect(firebaseAuth.steps).toEqual([
+      "reauthenticateWithCredential",
+      "/api/me/trips",
+      "deleteUser",
+    ]);
+  });
+
   it("サーバーが旅を消せなければ、アカウントは消さない", async () => {
     firebaseAuth.currentUser = passwordUser("user-1");
     const { client, ready } = setup(() =>
@@ -421,7 +449,7 @@ describe("ログインの方法", () => {
     await ready();
 
     expect(users.at(-1)).toMatchObject({ trial: true });
-    await expect(client.changePassword()).rejects.toMatchObject({ failure: "trial" });
+    await expect(client.changePassword("ja")).rejects.toMatchObject({ failure: "trial" });
     await expect(client.deleteEverything("long-password")).rejects.toMatchObject({
       failure: "trial",
     });
@@ -434,9 +462,10 @@ describe("ログインの方法", () => {
     const { client, ready } = setup();
     await ready();
 
-    await client.changePassword();
+    await client.changePassword("en");
 
     expect(firebaseAuth.steps).toEqual(["sendPasswordResetEmail"]);
+    expect(firebaseAuth.languageCode).toBe("en");
   });
 });
 

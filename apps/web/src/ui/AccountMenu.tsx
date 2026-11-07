@@ -1,8 +1,9 @@
 import type { TripSummary } from "@matsuri-ikoka/schema";
 import { BookOpen, Trash2, UserRound } from "lucide-react";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
-import { type AccountUser, watchUserLeaving } from "../account/client";
+import { LoginError } from "../account/client";
 import { useAccountClient } from "../account/context";
+import { useAccountUser } from "../account/useAccountUser";
 import { formatDate } from "../i18n";
 import { useActions, useApp } from "../state/react";
 import type { Locale } from "../state/types";
@@ -93,8 +94,8 @@ export function AccountMenu() {
   const sessionId = useApp((state) => state.session.id);
   const itineraryId = useApp((state) => state.itinerary.current?.id ?? null);
   const m = MESSAGES[locale];
-  const [enabled, setEnabled] = useState(false);
-  const [user, setUser] = useState<AccountUser | null>(null);
+  const { enabled, user } = useAccountUser();
+  const userId = user?.id ?? null;
   const [open, setOpen] = useState(false);
   const [trips, setTrips] = useState<TripSummary[] | null>(null);
   const [busy, setBusy] = useState(false);
@@ -104,32 +105,16 @@ export function AccountMenu() {
   const [password, setPassword] = useState("");
   const passwordId = useId();
   const ref = useRef<HTMLDivElement>(null);
-  // 合言葉が要るサーバーでは、合言葉を入れて相談が始まるまで設定を読めないので、そのあとに読み直す
-  const sessionReady = sessionId !== null;
-  // 前の人の旅程と会話を画面に残さない。いなくなった人の相談は続けられないので、新しい相談を始める
-  const onUserChange = useRef(watchUserLeaving(() => void restart()));
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: sessionReady は読み直しのきっかけとして見る
+  // 利用者が変わったら、前の人の一覧・入力・文を残さない
+  // biome-ignore lint/correctness/useExhaustiveDependencies: userId は片付けのきっかけとして見る
   useEffect(() => {
-    if (client === null) return;
-    let active = true;
-    void client.enabled().then((value) => {
-      if (active) setEnabled(value);
-    });
-    const stop = client.onUser((next) => {
-      if (!active) return;
-      onUserChange.current(next);
-      setUser(next);
-      setTrips(null);
-      setConfirmingDelete(false);
-      setPassword("");
-      setNotice(null);
-    });
-    return () => {
-      active = false;
-      stop();
-    };
-  }, [client, sessionReady]);
+    setTrips(null);
+    setConfirmingDelete(false);
+    setPassword("");
+    setNotice(null);
+    setError(null);
+  }, [userId]);
 
   const run = useCallback(
     async (task: () => Promise<void>) => {
@@ -197,7 +182,8 @@ export function AccountMenu() {
           id="account-panel"
           role="dialog"
           aria-label={m.title}
-          className={`${card} absolute top-full right-0 z-50 mt-2 w-[min(22rem,calc(100vw-1.5rem))] p-4 text-ink`}
+          // ボタンは右の列の途中にあるので、ボタンに合わせず画面に合わせて置く（狭い画面でも左にはみ出さない）
+          className={`${card} fixed top-14 right-3 z-50 max-h-[calc(100dvh-4.5rem)] w-[min(22rem,calc(100vw-1.5rem))] overflow-y-auto p-4 text-ink sm:top-16 sm:max-h-[calc(100dvh-5rem)]`}
         >
           <div className="mb-2 flex items-center justify-between gap-2">
             <p className="font-bold">{m.title}</p>
@@ -265,9 +251,9 @@ export function AccountMenu() {
                             if (!window.confirm(m.confirmDelete(trip.title || m.untitled))) return;
                             void run(async () => {
                               await client.deleteTrip(trip.itineraryId);
-                              await refresh();
-                              // 消した旅を画面に残さない
+                              // 消した旅を画面に残さない。一覧を読めなくても残さないよう、先に行う
                               if (trip.itineraryId === itineraryId) await restart();
+                              await refresh();
                             });
                           }}
                         >
@@ -296,7 +282,7 @@ export function AccountMenu() {
                     disabled={busy}
                     onClick={() =>
                       void run(async () => {
-                        await client.changePassword();
+                        await client.changePassword(locale);
                         setNotice(m.changePasswordSent);
                       })
                     }
@@ -322,9 +308,18 @@ export function AccountMenu() {
                   onSubmit={(event) => {
                     event.preventDefault();
                     // Google の確かめ直しの窓は、この押した操作の中で開く
-                    void run(() =>
-                      client.deleteEverything(user.usesPassword ? password : undefined),
-                    );
+                    void run(async () => {
+                      try {
+                        await client.deleteEverything(user.usesPassword ? password : undefined);
+                      } catch (caught) {
+                        // 旅はもう消えているので、前の旅程を画面に残さない。もう一度消せるようにする
+                        if (caught instanceof LoginError && caught.failure === "account_remains") {
+                          setTrips(null);
+                          await restart();
+                        }
+                        throw caught;
+                      }
+                    });
                   }}
                 >
                   <p className="text-sm leading-relaxed">{m.confirmDeleteAll}</p>
