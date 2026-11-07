@@ -1101,6 +1101,8 @@ export const ja = {
     watchOff: "見回りは止まっています。頼むと、留守の間の祭りの変化をお知らせします。",
     watchStart: "見回りを頼む",
     watchStop: "見回りを止める",
+    watchNeedsLogin: "ログインして旅を残すと、留守の間の祭りの変化を見回って、お知らせできます。",
+    proposalsTitle: "ガイドからの組み直しの案",
     outcome: {
       applied: (version: number) =>
         `旅程を直しました（第${version}版）。変わった予定は、しおりで確かめられます。`,

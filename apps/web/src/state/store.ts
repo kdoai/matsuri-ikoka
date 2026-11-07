@@ -607,21 +607,29 @@ export function createAppStore(deps: StoreDeps): AppStore {
 
     /**
      * ガイドの決める操作を送る。送っている間は、ほかの決める操作を重ねない。
-     * 送れなければ結果に出して、もう一度押せるようにする（自動ではやり直さない）
+     * 送れなければ結果に出して、もう一度押せるようにする（自動ではやり直さない）。
+     * send は応答を受けて、ストアに入れる関数を返す。送っている間に別の旅や相談へ移っていたら、入れない
      */
-    const runGuideAction = async (busy: GuideBusy, send: (sessionId: string) => Promise<void>) => {
+    const runGuideAction = async (
+      busy: GuideBusy,
+      send: (sessionId: string) => Promise<() => void>,
+    ) => {
       const { session, guide } = get();
       if (session.id === null || guide.busy !== null) return;
+      const sessionId = session.id;
+      const here = () => get().session.id === sessionId;
       updateGuide((state) => beginGuideAction(state, busy));
+      let apply: () => void;
       try {
-        await send(session.id);
-      } catch (caught) {
-        if (get().session.id !== session.id) return;
-        const message = caught instanceof TransportError ? caught.serverMessage : null;
-        updateGuide((state) => failGuideAction(state, message));
+        apply = await send(sessionId);
+      } catch {
+        if (!here()) return;
+        updateGuide(failGuideAction);
         // 提案や版の状態が変わっているかもしれないので、読み直す
         void get().actions.loadGuide(true);
+        return;
       }
+      if (here()) apply();
     };
 
     /** ガイドとの通信を止める */
@@ -1114,7 +1122,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
         if (setTripWatch === undefined) return;
         await runGuideAction({ kind: "watch" }, async (sessionId) => {
           const watch = await setTripWatch({ sessionId, action });
-          updateGuide((state) => applyWatch(state, watch));
+          return () => updateGuide((state) => applyWatch(state, watch));
         });
       },
       async decideProposal(proposalId, decision) {
@@ -1133,10 +1141,12 @@ export function createAppStore(deps: StoreDeps): AppStore {
                 }
               : { decision, sessionId },
           );
-          if (response.outcome === "applied") applyTripChange(response.change);
-          updateGuide((state) => applyDecision(state, proposalId, response));
-          // 承認で新しい版になったときと、当てられなかったときは、提案と版を読み直す
-          if (response.outcome !== "rejected") void get().actions.loadGuide(true);
+          return () => {
+            if (response.outcome === "applied") applyTripChange(response.change);
+            updateGuide((state) => applyDecision(state, proposalId, response));
+            // 承認で新しい版になったときと、当てられなかったときは、提案と版を読み直す
+            if (response.outcome !== "rejected") void get().actions.loadGuide(true);
+          };
         });
       },
       async revertGuideChange() {
@@ -1145,9 +1155,11 @@ export function createAppStore(deps: StoreDeps): AppStore {
         if (revertTrip === undefined || toVersion === null) return;
         await runGuideAction({ kind: "revert" }, async (sessionId) => {
           const change = await revertTrip({ sessionId, toVersion });
-          applyTripChange(change);
-          updateGuide((state) => applyRevert(state, change));
-          void get().actions.loadGuide(true);
+          return () => {
+            applyTripChange(change);
+            updateGuide((state) => applyRevert(state, change));
+            void get().actions.loadGuide(true);
+          };
         });
       },
       async openSavedTrip(tripId) {

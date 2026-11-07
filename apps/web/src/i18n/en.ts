@@ -1209,6 +1209,9 @@ export const en: Messages = {
     watchOff: "Watching is off. Turn it on to hear about festival changes while you are away.",
     watchStart: "Watch this trip",
     watchStop: "Stop watching",
+    watchNeedsLogin:
+      "Sign in and save this trip, and we can watch the festival for changes while you are away.",
+    proposalsTitle: "Suggested changes from your guide",
     outcome: {
       applied: (version: number) =>
         `Your plan is updated (version ${version}). You can see what changed in your trip guide.`,

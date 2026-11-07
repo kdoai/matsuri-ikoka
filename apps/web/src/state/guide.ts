@@ -73,7 +73,7 @@ export type GuideOutcome =
   | { kind: "stale" }
   | { kind: "expired" }
   | { kind: "unknown" }
-  | { kind: "failed"; message: string | null };
+  | { kind: "failed" };
 
 /** いま送っている決める操作。提案は、その ID */
 export type GuideBusy = { kind: "watch" } | { kind: "revert" } | { kind: "proposal"; id: string };
@@ -292,9 +292,9 @@ export function applyRevert(guide: GuideState, change: TripChange): GuideState {
   };
 }
 
-/** 決める操作を送れなかった */
-export function failGuideAction(guide: GuideState, message: string | null): GuideState {
-  return { ...guide, busy: null, outcome: { kind: "failed", message } };
+/** 決める操作を送れなかった。文はサーバーの文でなく、画面の辞書の文を出す（画面の言葉に合わせる） */
+export function failGuideAction(guide: GuideState): GuideState {
+  return { ...guide, busy: null, outcome: { kind: "failed" } };
 }
 
 /** 発言を送り始める。送り直しのときは、自分の発言を重ねない。報告は閉じて、返事を見せる */

@@ -11,6 +11,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
+import { useAccountUser } from "../account/useAccountUser";
 import { formatDateTime } from "../i18n";
 import { litStalls, noticesOfStall } from "../state/guide";
 import { useActions, useApp, useT } from "../state/react";
@@ -29,15 +30,30 @@ const STALL_ICONS: Record<GuideStall, LucideIcon> = {
   headquarters: Tent,
 };
 
-/** 見回りを頼む・止める。旅が終わったら出さない */
+/**
+ * 見回りを頼む・止める。旅が終わったら出さない。
+ * 見回りはログインして残した旅だけを探すので、ログインしていなければボタンを出さず、ログインすれば頼めることを出す
+ * （ログインを用意していない環境では、頼めないので出さない）
+ */
 export function WatchControl() {
   const t = useT();
   const actions = useActions();
+  const { enabled: loginOffered, user } = useAccountUser();
   const availability = useApp((state) => state.guide.availability);
   const phase = useApp((state) => state.guide.phase);
   const watch = useApp((state) => state.guide.watch);
   const busy = useApp((state) => state.guide.busy);
   if (availability !== "ready" || phase === "after") return null;
+  if (user === null) {
+    return loginOffered ? (
+      <p
+        className="mt-3 rounded-xl border border-line bg-white/80 px-3 py-2 text-sm"
+        data-testid="watch-login"
+      >
+        {t.street.watchNeedsLogin}
+      </p>
+    ) : null;
+  }
   const on = watch?.status === "active";
   return (
     <div
@@ -58,22 +74,24 @@ export function WatchControl() {
   );
 }
 
-/** 最後の決める操作の結果。承認のあとは、直す前の旅程に戻せる */
+/**
+ * 最後の決める操作の結果と、直す前の旅程に戻すボタン。
+ * 戻すボタンは、結果の文を閉じたあとも、戻せる版があるあいだは出す
+ */
 export function GuideOutcomeNote() {
   const t = useT();
   const actions = useActions();
   const outcome = useApp((state) => state.guide.outcome);
   const revertTo = useApp((state) => state.guide.revertTo);
   const busy = useApp((state) => state.guide.busy);
-  if (outcome === null) return null;
+  if (outcome === null && revertTo === null) return null;
   const text = (() => {
+    if (outcome === null) return null;
     switch (outcome.kind) {
       case "applied":
         return t.street.outcome.applied(outcome.diff.toVersion);
       case "reverted":
         return t.street.outcome.reverted(outcome.diff.toVersion);
-      case "failed":
-        return outcome.message ?? t.street.outcome.failed;
       default:
         return t.street.outcome[outcome.kind];
     }
@@ -82,22 +100,87 @@ export function GuideOutcomeNote() {
     <div
       className="rounded-xl border-2 border-ai-700/40 bg-white/80 px-3 py-2"
       data-testid="guide-outcome"
-      data-outcome={outcome.kind}
+      data-outcome={outcome?.kind ?? "none"}
     >
-      <p role="status" className="text-sm">
-        {text}
-      </p>
-      {outcome.kind === "applied" && revertTo !== null ? (
+      {text === null ? null : (
+        <p role="status" className="text-sm">
+          {text}
+        </p>
+      )}
+      {revertTo === null ? null : (
         <button
           type="button"
-          className={`${buttonSecondary} mt-2`}
+          className={`${buttonSecondary} ${text === null ? "" : "mt-2"}`}
           disabled={busy !== null}
+          data-testid="guide-revert"
           onClick={() => void actions.revertGuideChange()}
         >
           {t.street.revert}
         </button>
-      ) : null}
+      )}
     </div>
+  );
+}
+
+/** 組み直しの案の、承認と却下のボタン */
+function ProposalActions({ proposalId }: { proposalId: string }) {
+  const t = useT();
+  const actions = useActions();
+  const busy = useApp((state) => state.guide.busy);
+  return (
+    <div className="mt-2 flex flex-wrap gap-2">
+      <button
+        type="button"
+        className={buttonPrimary}
+        disabled={busy !== null}
+        data-testid="proposal-approve"
+        onClick={() => void actions.decideProposal(proposalId, "approve")}
+      >
+        {t.street.approve}
+      </button>
+      <button
+        type="button"
+        className={buttonSecondary}
+        disabled={busy !== null}
+        data-testid="proposal-reject"
+        onClick={() => void actions.decideProposal(proposalId, "reject")}
+      >
+        {t.street.reject}
+      </button>
+    </div>
+  );
+}
+
+/**
+ * 知らせに結びつかない組み直しの案（会話で頼んだ変更など）。どの屋台の窓でも、知らせの上に出す。
+ * 知らせに結びつく案は、その知らせの下に出す
+ */
+function UnlinkedProposals() {
+  const t = useT();
+  const proposals = useApp((state) => state.guide.proposals);
+  const notices = useApp((state) => state.guide.notices);
+  const unlinked = useMemo(
+    () =>
+      proposals.filter((proposal) => !notices.some((notice) => notice.proposalId === proposal.id)),
+    [proposals, notices],
+  );
+  if (unlinked.length === 0) return null;
+  return (
+    <section data-testid="stall-proposals" aria-label={t.street.proposalsTitle}>
+      <h3 className="mb-1 font-bold text-ai-800">{t.street.proposalsTitle}</h3>
+      <ul className="space-y-2">
+        {unlinked.map((proposal) => (
+          <li
+            key={proposal.id}
+            className="rounded-xl border-2 border-ai-700/40 bg-white/80 px-3 py-2"
+            data-testid="stall-proposal"
+          >
+            <p className="text-sm">{t.street.proposalNote(proposal.summary)}</p>
+            <ProposalActions proposalId={proposal.id} />
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 
@@ -170,7 +253,6 @@ export function StallWindow({ stall }: { stall: GuideStall }) {
   const allNotices = useApp((state) => state.guide.notices);
   const proposals = useApp((state) => state.guide.proposals);
   const availability = useApp((state) => state.guide.availability);
-  const busy = useApp((state) => state.guide.busy);
   const notices = useMemo(
     () => noticesOfStall({ notices: allNotices }, stall),
     [allNotices, stall],
@@ -233,6 +315,7 @@ export function StallWindow({ stall }: { stall: GuideStall }) {
       </header>
       <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain px-4 py-3">
         <GuideOutcomeNote />
+        <UnlinkedProposals />
         {notices.length > 0 ? (
           <section data-testid="stall-notices" aria-label={t.street.noticesTitle}>
             <h3 className="mb-1 font-bold text-shu-700">{t.street.noticesTitle}</h3>
@@ -251,26 +334,7 @@ export function StallWindow({ stall }: { stall: GuideStall }) {
                     {proposal === undefined ? null : (
                       <div className="mt-1" data-testid="stall-proposal">
                         <p className="text-sm">{t.street.proposalNote(proposal.summary)}</p>
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          <button
-                            type="button"
-                            className={buttonPrimary}
-                            disabled={busy !== null}
-                            data-testid="proposal-approve"
-                            onClick={() => void actions.decideProposal(proposal.id, "approve")}
-                          >
-                            {t.street.approve}
-                          </button>
-                          <button
-                            type="button"
-                            className={buttonSecondary}
-                            disabled={busy !== null}
-                            data-testid="proposal-reject"
-                            onClick={() => void actions.decideProposal(proposal.id, "reject")}
-                          >
-                            {t.street.reject}
-                          </button>
-                        </div>
+                        <ProposalActions proposalId={proposal.id} />
                       </div>
                     )}
                     <ul className="mt-1 space-y-0.5">

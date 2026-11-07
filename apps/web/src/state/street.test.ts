@@ -711,6 +711,10 @@ describe("通知・見回り・提案の決定", () => {
       outcome: { kind: "applied" },
       revertTo: itinerary.version,
     });
+    // 屋台の窓を閉じて結果の文が消えても、戻せる版は残る
+    store.getState().actions.openStall("headquarters");
+    store.getState().actions.closeStall();
+    expect(store.getState().guide).toMatchObject({ outcome: null, revertTo: itinerary.version });
 
     await store.getState().actions.revertGuideChange();
 
@@ -749,7 +753,7 @@ describe("通知・見回り・提案の決定", () => {
     await store.getState().actions.decideProposal("proposal-1", "reject");
     expect(store.getState().guide).toMatchObject({
       busy: null,
-      outcome: { kind: "failed", message: null },
+      outcome: { kind: "failed" },
     });
     await flush();
 
@@ -759,6 +763,25 @@ describe("通知・見回り・提案の決定", () => {
       sessionId: "session-1",
     });
     expect(store.getState().guide).toMatchObject({ proposals: [], outcome: { kind: "rejected" } });
+  });
+
+  it("送っている間に別の相談へ移ったら、届いた応答の旅程を入れない", async () => {
+    let answer: (value: unknown) => void = () => undefined;
+    const decideProposal = vi.fn(
+      () =>
+        new Promise((resolve) => {
+          answer = resolve;
+        }),
+    ) as unknown as NonNullable<ChatTransport["decideProposal"]>;
+    const { store } = makeStore({ guideState: async () => stateWith(), decideProposal });
+    await store.getState().actions.loadGuide(true);
+
+    const pending = store.getState().actions.decideProposal("proposal-1", "approve");
+    store.setState((state) => ({ ...state, session: { ...state.session, id: "session-2" } }));
+    answer({ outcome: "applied", change: { itinerary: next, diff: proposal.diff } });
+    await pending;
+
+    expect(store.getState().itinerary.current?.version).toBe(itinerary.version);
   });
 
   it("見回りを止めると、依頼の状態を入れる", async () => {
