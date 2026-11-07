@@ -20,6 +20,7 @@ import {
   type StoredTrip,
   type StoredTripDetail,
   summarize,
+  type TripDocKind,
   type TripStorage,
   tripOwner,
 } from "./types";
@@ -30,7 +31,10 @@ import {
 //   itineraries/{旅程の ID}/versions/{版}   旅程の JSON（版ごと）・expiresAt
 //   shares/{共有の ID}                      共有したときの版の JSON・expiresAt
 //   sessions/{相談の ID}                    相談の途中の状態の JSON・持ち主・expiresAt
-//   users/{利用者}/trips/{旅}/{種類}/{ID}   ガイドのデータの JSON（手帳・通知・提案・見回りの依頼）・expiresAt
+//   users/{利用者}/trips/{旅}/memo/{ID}     手帳の JSON・expiresAt
+//   users/{利用者}/trips/{旅}/proposals/{ID} 提案の JSON（旅程をまるごと持つ）・expiresAt
+//   users/{利用者}/trips/{旅}/notices/{ID}  通知の項目を平らに置く・expiresAt
+//   users/{利用者}/trips/{旅}/watch/current 見回りの依頼の項目を平らに置く・expiresAt
 //   users/{利用者}/guideUsage/{日}          ガイドのその日の使った量（利用者全体と旅ごと）・expiresAt
 //
 // expiresAt は TTL ポリシーで消す時刻。残した旅程とその版は null（消さない）。
@@ -43,6 +47,11 @@ const SHARES = "shares";
 const SESSIONS = "sessions";
 const USERS = "users";
 const GUIDE_USAGE = "guideUsage";
+/**
+ * 項目を平らに置く種類。見回りが、頼まれた旅を項目（status）で探し、通知を足せるようにする。
+ * 提案は旅程をまるごと持ち、自分の期限の項目（expiresAt）もあるので、JSON の文字列のまま持つ
+ */
+const FLAT_DOC_KINDS: ReadonlySet<TripDocKind> = new Set<TripDocKind>(["watch", "notices"]);
 /** 1人の旅の一覧に出す数の上限 */
 const MAX_TRIPS_PER_USER = 200;
 
@@ -140,11 +149,13 @@ export class FirestoreTripStorage implements TripStorage {
 
   #docsOf(owner: OwnerId, tripId: string): OwnerTripDocs {
     const trip = this.#db.doc(ownerTripPath(owner, tripId));
-    /** 期限のある文書は、TTL で消える前でも読まない。読めるものは保存した JSON を戻す */
+    /** 期限のある文書は、TTL で消える前でも読まない。読めるものは、置いた値だけを戻す（期限の項目は除く） */
     const readValue = (data: DocumentData | undefined): unknown => {
-      if (data === undefined || typeof data.json !== "string") return null;
+      if (data === undefined) return null;
       if (data.expiresAt != null && this.#now() > millis(data.expiresAt)) return null;
-      return JSON.parse(data.json);
+      if (typeof data.json === "string") return JSON.parse(data.json);
+      const { expiresAt: _expiresAt, ...fields } = data;
+      return fields;
     };
     return {
       get: async (kind, id) => {
@@ -157,14 +168,17 @@ export class FirestoreTripStorage implements TripStorage {
       },
       put: async (kind, id, value, options = {}) => {
         if (!isDocumentId(id)) throw new Error("保存の置き場の ID の形が正しくありません");
+        const expiresAt = options.expiresAt === undefined ? null : at(options.expiresAt);
+        // undefined の項目は Firestore に書けないので、JSON にして落とす
+        const json = JSON.stringify(value);
         await trip
           .collection(kind)
           .doc(id)
-          .set({
-            json: JSON.stringify(value),
-            updatedAt: at(this.#now()),
-            expiresAt: options.expiresAt === undefined ? null : at(options.expiresAt),
-          });
+          .set(
+            FLAT_DOC_KINDS.has(kind)
+              ? { ...JSON.parse(json), expiresAt }
+              : { json, updatedAt: at(this.#now()), expiresAt },
+          );
       },
       delete: async (kind, id) => {
         if (!isDocumentId(id)) return false;
