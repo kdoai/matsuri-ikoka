@@ -221,6 +221,7 @@ export function registerChatRoutes(routes: SecureRoutes, deps: ChatDeps) {
         ...(retry.maxTravelMinutes === undefined
           ? {}
           : { maxTravelMinutes: retry.maxTravelMinutes }),
+        ...(retry.widen === undefined ? {} : { widen: retry.widen }),
       };
     }
     // 祭りを固定する。送られなかった発言でも、固定は相談の状態に残っている
