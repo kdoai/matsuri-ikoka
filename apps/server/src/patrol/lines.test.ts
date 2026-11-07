@@ -15,7 +15,9 @@ import {
   normalizeLine,
   pageLines,
   saysCancelled,
+  saysNotHeld,
   saysPostponed,
+  saysWithdrawn,
 } from "./lines";
 
 describe("pageLines", () => {
@@ -320,6 +322,10 @@ describe("中止と延期の文", () => {
     // 別の年を述べていても、今回の決定を見失わない
     "2025年に続き、本年も開催を中止いたします",
     "今年の祭りは中止します。次回は2027年に開催の予定です",
+    // 前と同じように今回も中止になる
+    "昨年と同様、中止となりました",
+    "前回と同様に中止となりました",
+    "2025年同様、中止となりました",
   ])("「%s」は中止が決まった文", (line) => {
     expect(saysCancelled(line, "2026-08-16")).toBe(true);
   });
@@ -354,6 +360,11 @@ describe("中止と延期の文", () => {
     "令和元年は中止しました",
     "二〇二五年の開催は中止",
     "令和6年度の開催は中止します",
+    // 後の年のことで、今回の開催の決定とは言えない
+    "2027年の祭りは中止します",
+    "来年の祭りは中止します",
+    "令和9年度の開催は中止します",
+    "中止を撤回し、予定どおり開催します",
   ])("「%s」は中止が決まった文ではない", (line) => {
     expect(saysCancelled(line, "2026-08-16")).toBe(false);
   });
@@ -383,6 +394,51 @@ describe("中止と延期の文", () => {
       expect(saysPostponed(line, "2026-08-16")).toBe(false);
     },
   );
+});
+
+describe("今回は開催しないと言い切れる文", () => {
+  it.each([
+    "今年の祭りは中止します",
+    "今年の開催は見合わせます",
+    "本年の開催は見送ります",
+    "本年は休止いたします",
+    "開催見送りとなりました",
+    "今年は開催しないことになりました",
+  ])("「%s」は言い切っている", (line) => {
+    expect(saysNotHeld(line, "2026-08-16")).toBe(true);
+  });
+
+  it.each([
+    "荒天の場合は開催を見合わせます",
+    "雨天の場合は中止します",
+    "昨年は開催を見合わせました",
+    "2027年は開催を見合わせます",
+    "シャトルバスの運転を見合わせます",
+    "お見送りは本部の前で行います",
+    "中止を撤回し、予定どおり開催します",
+    "予定どおり開催します",
+  ])("「%s」は言い切っていない", (line) => {
+    expect(saysNotHeld(line, "2026-08-16")).toBe(false);
+  });
+
+  it.each([
+    "中止を撤回し、予定どおり開催します",
+    "中止の決定を撤回しました",
+    "開催の見合わせを取り消します",
+    "中止を取り消します",
+    "中止を取りやめ、開催します",
+  ])("「%s」は撤回を述べている", (line) => {
+    expect(saysWithdrawn(line)).toBe(true);
+  });
+
+  it.each([
+    "今年の祭りは中止します",
+    "予定どおり開催します",
+    "申込を取り消す場合は受付へ",
+    "中止の場合は予約を取り消します",
+  ])("「%s」は撤回を述べていない", (line) => {
+    expect(saysWithdrawn(line)).toBe(false);
+  });
 });
 
 describe("開催の根拠にできる行", () => {
@@ -436,6 +492,10 @@ describe("長い行の読み取り", () => {
     ["括弧の繰り返し", "(".repeat(10_000)],
     ["数字と点の繰り返し", "1.".repeat(5_000)],
     ["区切りの繰り返し", "・".repeat(10_000)],
+    ["更新のラベルの繰り返し", "更新日:".repeat(5_000)],
+    ["更新の日付の繰り返し", "更新2026年8月9日".repeat(1_000)],
+    ["残りの日数の繰り返し", "あと1日".repeat(5_000)],
+    ["いまの時刻の繰り返し", "14:05 現在".repeat(2_000)],
   ])("%sでも、すぐに終わる", (_name, text) => {
     const line = normalizeLine(text);
     const started = performance.now();
@@ -486,8 +546,79 @@ describe("hasScheduleSignal", () => {
     expect(hasScheduleSignal(line, known)).toBe(false);
   });
 
+  it.each([
+    "今年の開催は見合わせます",
+    "本年の開催を見合わせることといたしました",
+    "本年の開催は見送ります",
+    "開催見送りとなりました",
+    "今年は開催しないことになりました",
+    "本年は休止いたします",
+    "本年度は休催です",
+    "本年は開催を断念しました",
+    "開催をとりやめました",
+    "開催を当面見合わせます",
+    "開催を秋に繰り下げます",
+  ])("言い換えの「%s」も、報告に関わらず新しい語に数える", (line) => {
+    expect(hasScheduleSignal(line, known)).toBe(true);
+    expect(hasScheduleSignal(line, known, { wordsOnly: true })).toBe(true);
+  });
+
+  it.each([
+    "昨年は開催を見合わせました",
+    "2019年は開催を見送りました",
+    "お見送りは本部の前で行います",
+  ])("「%s」は言い換えとして数えない", (line) => {
+    expect(hasScheduleSignal(line, known, { wordsOnly: true })).toBe(false);
+  });
+
+  it.each([
+    "最終更新日:2026年8月9日",
+    "更新:8月9日 10:00",
+    "掲載日 2026.8.9",
+    "8月9日更新",
+    "8月9日に更新しました",
+    "2026年8月9日 公開",
+    "開催まであと6日",
+    "開催日まであと6日",
+    "残り6日",
+    "本日の天気 晴れ 14:05 現在",
+    "8月9日 14:05 現在",
+    "十四時五分現在",
+  ])("「%s」の日付や時刻は開催の日時でないので、語に数えない", (line) => {
+    expect(hasScheduleSignal(line, known)).toBe(false);
+    expect(hasScheduleSignal(line, known, { wordsOnly: true })).toBe(false);
+  });
+
+  it.each([
+    "開催日 8月23日",
+    "8月23日に開催します",
+    "8月23日に変更します",
+    "開始 19:30",
+    "日時 8月23日(日)",
+    "日程が変わりました",
+    "19時に開演します",
+    "今年の祭りは8月23日です",
+    "8月23日(日)",
+    "まつり 8月23日",
+    "当日は19:00から",
+  ])("予定どおりの報告でも、開催の文脈と違う値がある「%s」は数える", (line) => {
+    expect(hasScheduleSignal(line, known, { wordsOnly: true })).toBe(true);
+  });
+
+  it.each([
+    "8月5日 協賛企業の一覧を載せました",
+    "ボランティア説明会 8月1日 10:00",
+    "午後7時半から",
+    "屋台は16時から出ます",
+    "開催日 8月16日",
+  ])("予定どおりの報告なら、日付や時刻だけの「%s」は数えない", (line) => {
+    expect(hasScheduleSignal(line, known, { wordsOnly: true })).toBe(false);
+  });
+
   it("すでに知らせた中止や延期の語は、新しい語に数えない", () => {
     expect(hasScheduleSignal("中止の払い戻しのご案内", { ...known, cancelled: true })).toBe(false);
     expect(hasScheduleSignal("延期のご案内", { ...known, postponed: true })).toBe(false);
+    expect(hasScheduleSignal("開催を見合わせます", { ...known, cancelled: true })).toBe(false);
+    expect(hasScheduleSignal("秋に繰り下げます", { ...known, postponed: true })).toBe(false);
   });
 });

@@ -194,7 +194,7 @@ export function isInstructionLine(line: string): boolean {
 
 /** 開催の変更に関わりそうな行 */
 const SCHEDULE_LIKE =
-  /\d{1,2}月\d{1,2}日|\d{1,2}\/\d{1,2}|\d{1,2}:\d{2}|\d{1,2}時|中止|延期|順延|変更|日程|開催/;
+  /\d{1,2}月\d{1,2}日|\d{1,2}\/\d{1,2}|\d{1,2}:\d{2}|\d{1,2}時|中止|延期|順延|変更|日程|開催|見合わせ|見送|休止|休催|断念|とりやめ|繰り?下げ|繰り?上げ/;
 
 export interface LineDiff {
   /** 前回になかった行（指示に見える行を除く） */
@@ -472,7 +472,19 @@ type ChangeLevel = "decided" | "mentioned" | "none";
 
 const CANCEL_WORDS = /中止|取りやめ|取り止め|開催(?:いた|致)?しません|開催を見送/;
 const POSTPONE_WORDS = /延期|順延/;
-const CHANGE = "(?:中止|順延|延期|取りやめ|取り止め)";
+/**
+ * 中止や延期の言い換え。言い換えは尽きないので、これだけでは決まった変更にせず、
+ * 値を持たないお知らせの理由にする
+ */
+const CANCEL_LIKE =
+  /見合わせ|(?<!お)見送|休止|休催|断念|とりやめ|開催しない|開催(?:でき|いたしかね|致しかね)(?:ませ|ない|なく|ます)|自粛/;
+const POSTPONE_LIKE = /繰り?下げ|繰り?上げ/;
+const CHANGE =
+  "(?:中止|順延|延期|取りやめ|取り止め|とりやめ|見合わせ|見送|休止|休催|断念|開催しない)";
+/** 中止の撤回を述べる文（「中止を撤回し」「中止の決定を取り消します」） */
+const WITHDRAWAL = new RegExp(
+  `${CHANGE}(?:の(?:決定|判断|発表|予定))?[はをの]?(?:撤回|取り消|取消|取りやめ|とりやめ)`,
+);
 
 /** 決まった文の印。雨天などの語があっても、決まったことを述べている */
 const DECIDED_MARK = /となりました|決定(?:いた)?しました|決定です|決定$|決まりました/;
@@ -481,6 +493,7 @@ const NOT_ABOUT_FESTIVAL: readonly RegExp[] = [
   new RegExp(
     `${CHANGE}(?:は|に|の)?(?:なし|予定はあ|予定はご|ありません|ございません|しません|いたしません|致しません|なりません)`,
   ),
+  WITHDRAWAL,
   new RegExp(`(?:${OTHER_EVENT_WORDS}|一部|のみ|だけ|の部)[はをがのも]?[^。、]{0,6}${CHANGE}`),
 ];
 /** 条件や見込みの文（「雨天の場合は中止」「中止の際はお知らせします」） */
@@ -495,19 +508,20 @@ const CONDITIONAL: readonly RegExp[] = [
 ];
 
 const LAST_YEAR = /昨年|去年|前年|前回/;
-const THIS_YEAR = /本年|今年|今回|今季|に続き|に引き続き/;
+const THIS_YEAR = /本年|今年|今回|今季|に続き|に引き続き|同様|同じく/;
+const NEXT_TIME = /来年|来季|翌年|次回/;
 const PAST_TENSE = /でした|ました|となった|だった|なった/;
 
-/** 文の年が、開催回より前か。年度は4月から翌年3月までの幅で見る */
-function yearRelation(sentence: string, date: string): "earlier" | "current" | "none" {
+/** 文の年と開催回の年の関係。年度は4月から翌年3月までの幅で見る */
+function yearRelation(sentence: string, date: string): "earlier" | "later" | "current" | "none" {
   const text = withArabicDigits(sentence);
   const year = Number(date.slice(0, 4));
   const fiscal = Number(date.slice(5, 7)) >= 4 ? year : year - 1;
-  let relation: "earlier" | "current" | "none" = "none";
+  let relation: "earlier" | "later" | "current" | "none" = "none";
   const see = (stated: number, isFiscal: boolean) => {
     const target = isFiscal ? fiscal : year;
     if (stated === target) relation = "current";
-    else if (stated < target && relation === "none") relation = "earlier";
+    else if (relation === "none") relation = stated < target ? "earlier" : "later";
   };
   for (const match of text.matchAll(/(?<!\d)((?:19|20)\d{2})\s*年(度)?/g)) {
     see(Number(match[1]), match[2] !== undefined);
@@ -527,11 +541,28 @@ function pastState(sentence: string, date?: string): "past" | "earlier" | null {
   return PAST_TENSE.test(sentence) ? "past" : "earlier";
 }
 
+/** 後の年のことを述べている文か（「2027年の祭りは中止します」）。今回の開催の決定とは言えない */
+function aboutLaterYear(sentence: string, date?: string): boolean {
+  if (THIS_YEAR.test(sentence)) return false;
+  return (
+    NEXT_TIME.test(sentence) || (date !== undefined && yearRelation(sentence, date) === "later")
+  );
+}
+
+/** 行のどの文も、前の年のことを過去の形で述べているだけか */
+export function talksOnlyAboutPast(line: string, date: string): boolean {
+  return sentencesOf(line).every((sentence) => pastState(sentence, date) === "past");
+}
+
 function sentenceLevel(sentence: string, words: RegExp, date?: string): ChangeLevel {
   if (!words.test(sentence)) return "none";
   const past = pastState(sentence, date);
   if (past === "past") return "none";
   if (past === "earlier") return "mentioned";
+  // 延期は後の年へ移ることがあるので、中止だけを見る（「来年(2027年)に延期します」は決まった延期）
+  if ((words === CANCEL_WORDS || words === CANCEL_LIKE) && aboutLaterYear(sentence, date)) {
+    return "mentioned";
+  }
   if (NOT_ABOUT_FESTIVAL.some((pattern) => pattern.test(sentence))) return "mentioned";
   if (DECIDED_MARK.test(sentence)) return "decided";
   return CONDITIONAL.some((pattern) => pattern.test(sentence)) ? "mentioned" : "decided";
@@ -552,6 +583,16 @@ export function saysCancelled(line: string, date?: string): boolean {
   return lineLevel(line, CANCEL_WORDS, date) === "decided";
 }
 
+/** 行に、今回は開催しないと言い切る文があるか（中止とその言い換え）。中止の撤回を認めるときに見る */
+export function saysNotHeld(line: string, date: string): boolean {
+  return saysCancelled(line, date) || lineLevel(line, CANCEL_LIKE, date) === "decided";
+}
+
+/** 行に、中止の撤回が書いてあるか */
+export function saysWithdrawn(line: string): boolean {
+  return WITHDRAWAL.test(line.normalize("NFKC"));
+}
+
 /** 行に、延期が決まったと書いてあるか */
 export function saysPostponed(line: string, date?: string): boolean {
   return lineLevel(line, POSTPONE_WORDS, date) === "decided";
@@ -570,20 +611,48 @@ export interface KnownSchedule {
 
 const SCHEDULE_WORD = /日程|日時|期日|開催日|開始時刻|開始時間/;
 
+const DATE_TEXT =
+  "(?:(?:令和\\s*(?:\\d{1,2}|元)|\\d{4})\\s*年\\s*)?(?:\\d{1,2}\\s*月\\s*)?\\d{1,2}\\s*日(?:\\s*\\([^)]{1,4}\\))?|\\d{4}\\s*[-./]\\s*\\d{1,2}\\s*[-./]\\s*\\d{1,2}|\\d{1,2}/\\d{1,2}";
+const TIME_TEXT = "\\d{1,2}\\s*(?::\\s*\\d{2}|時(?:\\s*\\d{1,2}\\s*分)?)";
+const STAMP = `(?:${DATE_TEXT})(?:\\s*(?:${TIME_TEXT}))?`;
+const STAMP_LABEL = "更新|掲載|公開|投稿|作成|修正|発行";
+/** 開催の日時でない日付と時刻。ページの更新の記録、残りの日数、いまの時刻 */
+const NOT_SCHEDULE_VALUES: readonly RegExp[] = [
+  new RegExp(`(?:${STAMP_LABEL})(?:日時?|時刻)?\\s*:?\\s*(?:${STAMP})`, "g"),
+  new RegExp(`(?:${STAMP})\\s*に?\\s*(?:${STAMP_LABEL})`, "g"),
+  new RegExp(`(?:${STAMP}|${TIME_TEXT})\\s*(?:現在|時点)`, "g"),
+  /(?:あと|残り|まで)\s*\d{1,3}\s*日/g,
+];
+
 /**
- * 行に、開催に関わる新しい語があるか（中止・延期・順延・日時）。決定と言い切れなくても true にする。
- * 検問はこれが true の行を黙って捨てず、値を持たないお知らせにする
+ * 行に、開催に関わる新しい語があるか（中止・延期とその言い換え、日時）。決定と言い切れなくても true にする。
+ * 検問はこれが true の行を黙って捨てず、値を持たないお知らせにする。
+ * wordsOnly は報告が「予定どおり」のとき。日付や時刻だけでは数えず、開催の文脈のある文と、日付だけの文を数える
  */
-export function hasScheduleSignal(line: string, known: KnownSchedule): boolean {
+export function hasScheduleSignal(
+  line: string,
+  known: KnownSchedule,
+  options: { wordsOnly?: boolean } = {},
+): boolean {
   const [, month, day] = known.date.split("-").map(Number);
   return sentencesOf(line).some((sentence) => {
     if (pastState(sentence, known.occurrence) === "past") return false;
-    if (CANCEL_WORDS.test(sentence) && !known.cancelled) return true;
-    if (POSTPONE_WORDS.test(sentence) && !known.postponed) return true;
-    const dates = datesIn(sentence);
-    const times = timesIn(sentence);
-    if (dates.some((found) => found.day !== day || (found.month ?? month) !== month)) return true;
-    if (times.some((time) => time !== known.start && time !== known.end)) return true;
-    return dates.length === 0 && times.length === 0 && SCHEDULE_WORD.test(sentence);
+    if ((CANCEL_WORDS.test(sentence) || CANCEL_LIKE.test(sentence)) && !known.cancelled)
+      return true;
+    if ((POSTPONE_WORDS.test(sentence) || POSTPONE_LIKE.test(sentence)) && !known.postponed) {
+      return true;
+    }
+    const digits = withArabicDigits(sentence);
+    const text = NOT_SCHEDULE_VALUES.reduce((rest, pattern) => rest.replace(pattern, " "), digits);
+    const dates = datesIn(text);
+    const times = timesIn(text);
+    const differs =
+      dates.some((found) => found.day !== day || (found.month ?? month) !== month) ||
+      times.some((time) => time !== known.start && time !== known.end);
+    const inContext = !OTHER_EVENT.test(text) && (SCHEDULE_CONTEXT.test(text) || isBareDate(text));
+    if (differs && (!options.wordsOnly || inContext)) return true;
+    return (
+      dates.length === 0 && times.length === 0 && text === digits && SCHEDULE_WORD.test(digits)
+    );
   });
 }

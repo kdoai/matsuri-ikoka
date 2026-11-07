@@ -84,6 +84,7 @@ export function newRecord(
     date: seed.date,
     observed: null,
     cancelled: false,
+    cancelledBy: [],
     postponed: false,
     changeCount: 0,
     seenBaselines: [],
