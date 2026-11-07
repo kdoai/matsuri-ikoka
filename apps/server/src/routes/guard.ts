@@ -1,6 +1,7 @@
-import { timingSafeEqual } from "node:crypto";
+import { createHash, timingSafeEqual } from "node:crypto";
 import { type IsoDate, isTrialAccount } from "@matsuri-ikoka/schema";
 import type { MiddlewareHandler } from "hono";
+import type { DailyCountStore } from "../storage/dailyCounts";
 import { apiError } from "./errors";
 
 // 公開している URL の入口：合言葉と、1日の相談の回数の上限（ADR 0004）。
@@ -29,41 +30,113 @@ export function passcodeGuard(passcode: string | null): MiddlewareHandler {
   };
 }
 
+/** 数えるキーを、残してよい形にする。IP や利用者の ID そのものは残さない */
+export function countKey(key: string): string {
+  return createHash("sha256").update(key).digest("hex").slice(0, 32);
+}
+
+/** 数えを残す先。scope は枠の名前（全体・利用者ごと・お試し用）で、置き場を分ける */
+export interface DailyLimiterPersistence {
+  store: DailyCountStore;
+  scope: string;
+  /** 残すのに失敗したとき。相談は止めない */
+  onError?: (error: unknown) => void;
+}
+
 /**
  * 1日（日本の日付）の相談の回数を、キー（全体、または limitKey）ごとに数える。上限がなければ数えるだけ。
- * 日付が変わったら数え直す（前の日の数は捨てるので、キーの数だけメモリが増え続けることはない）
+ * 日付が変わったら数え直す（前の日の数は捨てるので、キーの数だけメモリが増え続けることはない）。
+ * 残す先（persistence）があれば、数えるたびに書き足し、起動のときに restore でその日の数を読み戻す。
+ * 使えるかどうかはメモリの数で決め、書き足しを待たない（保存の口が失敗しても相談は止めない）
  */
 export class DailyLimiter {
   readonly #limit: number | null;
   readonly #today: () => IsoDate;
+  readonly #persistence: DailyLimiterPersistence | null;
   #day: IsoDate | null = null;
   #counts = new Map<string, number>();
 
-  constructor(limit: number | null, today: () => IsoDate) {
+  constructor(
+    limit: number | null,
+    today: () => IsoDate,
+    persistence: DailyLimiterPersistence | null = null,
+  ) {
     this.#limit = limit;
     this.#today = today;
+    // 上限のない枠は、数えを残しても使い道がないので残さない
+    this.#persistence = limit === null ? null : persistence;
   }
 
-  #roll(): void {
+  #roll(): IsoDate {
     const today = this.#today();
     if (this.#day !== today) {
       this.#day = today;
       this.#counts = new Map();
     }
+    return today;
   }
 
   /** まだ使えるか（数えない） */
   allows(key = "*"): boolean {
     this.#roll();
-    return this.#limit === null || (this.#counts.get(key) ?? 0) < this.#limit;
+    return this.#limit === null || (this.#counts.get(countKey(key)) ?? 0) < this.#limit;
   }
 
   /** 1回分を使う。上限に達していれば false */
   consume(key = "*"): boolean {
     if (!this.allows(key)) return false;
-    this.#counts.set(key, (this.#counts.get(key) ?? 0) + 1);
+    const day = this.#roll();
+    const stored = countKey(key);
+    this.#counts.set(stored, (this.#counts.get(stored) ?? 0) + 1);
+    const persistence = this.#persistence;
+    if (persistence !== null) {
+      persistence.store.add(persistence.scope, day, stored).catch((error: unknown) => {
+        persistence.onError?.(error);
+      });
+    }
     return true;
   }
+
+  /**
+   * その日の数を、残す先から読み戻す。読んだ数とメモリの数の多いほうを使う。
+   * 残す先がなければ何もしない。読めなければ例外にする（呼ぶ側が、ログに残して続ける）
+   */
+  async restore(): Promise<void> {
+    if (this.#persistence === null) return;
+    const day = this.#roll();
+    const saved = await this.#persistence.store.load(this.#persistence.scope, day);
+    if (this.#day !== day) return;
+    for (const [key, count] of saved) {
+      this.#counts.set(key, Math.max(count, this.#counts.get(key) ?? 0));
+    }
+  }
+}
+
+/**
+ * 起動のときに、1日の回数の数えを読み戻す。待つのは timeoutMs まで。
+ * 読めなくても、間に合わなくても、起動は止めない（読み戻せなかった枠を返す。呼ぶ側がログに残す）
+ */
+export async function restoreDailyLimits(
+  limiters: Readonly<Record<string, DailyLimiter>>,
+  timeoutMs: number,
+): Promise<{ failed: string[] }> {
+  const failed: string[] = [];
+  await Promise.all(
+    Object.entries(limiters).map(async ([name, limiter]) => {
+      let timer: NodeJS.Timeout | undefined;
+      const late = new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error("timeout")), timeoutMs);
+      });
+      try {
+        await Promise.race([limiter.restore(), late]);
+      } catch {
+        failed.push(name);
+      } finally {
+        clearTimeout(timer);
+      }
+    }),
+  );
+  return { failed: failed.sort() };
 }
 
 /** 上限を数える単位。ログインしていれば利用者、していなければ IP */

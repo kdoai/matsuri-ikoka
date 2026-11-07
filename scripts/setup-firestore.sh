@@ -43,7 +43,7 @@ APIS=(firestore.googleapis.com identitytoolkit.googleapis.com securetoken.google
   firebase.googleapis.com firebaserules.googleapis.com)
 # expiresAt で消す集まり（コレクショングループ）。apps/server/src/storage/firestore.ts と
 # apps/server/src/patrol/firestoreStore.ts と同じにする
-TTL_GROUPS=(itineraries versions shares sessions notices proposals guideUsage patrolRuns patrolDeliveries)
+TTL_GROUPS=(itineraries versions shares sessions notices proposals guideUsage dailyLimits patrolRuns patrolDeliveries)
 # 見回りが、頼まれた旅を集まりをまたいで探す索引（watch.status のコレクショングループ）。
 # gcloud の --index は範囲を指定できず、書かなかった索引を消すので、REST で入れる
 WATCH_INDEX_URL="https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/collectionGroups/watch/fields/status?updateMask=indexConfig"

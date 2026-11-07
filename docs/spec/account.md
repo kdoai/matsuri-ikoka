@@ -40,6 +40,7 @@
 - メールアドレスの有無を隠す設定（`emailPrivacyConfig.enableImprovedEmailPrivacy`）を `scripts/setup-firestore.sh apply` で入れる
 - 登録の数は、Firebase の IP ごとの上限（既定）で抑える。一時的に下げたいときは Firebase のコンソールで変える
 - 登録し直しても相談の上限を回避できないよう、1日の回数はログインしていても IP で数える（`DAILY_CHAT_LIMIT_PER_IP`）。同じ IP の人は枠を分け合う
+- 1日の回数は Firestore（`dailyLimits`）にも残し、インスタンスが止まって起動し直しても、その日の数を読み戻す（[1日の回数の数え](operations.md#1日の回数の数え)）
 - reCAPTCHA を有効にするときは、ページの CSP（`routes/web.ts`）に読み込み先を足す。いまの CSP のままでは読み込みが止まる
 - 試した回数が多すぎるときは「しばらく待って」と出す（`auth/too-many-requests`）
 
@@ -82,6 +83,7 @@ FIREBASE_PROJECT_ID=<プロジェクト ID> TRIAL_ACCOUNT_EMAIL=<メールアド
 | `itineraries/{旅程の ID}/versions/{版}` | 旅程の JSON（版ごと、新しいものから20版まで）                                                                                                       | 旅程と同じ                                               |
 | `shares/{共有の ID}`                    | 共有したときの版の旅程の JSON、旅程の ID、持ち主                                                                                                    | 作ってから30日                                           |
 | `sessions/{相談の ID}`                  | 相談の途中の状態（条件・こだわり・候補・選んだ祭り・旅程の ID・段階、記録の再生の位置）、持ち主（`ownerUid`）                                       | 最後に使ってから6時間                                    |
+| `dailyLimits/{枠}-{日}`                 | 1日の相談の回数の数え（枠は全体 `chat`・利用者と IP ごと `client`・お試し用 `trial`）。キーは IP と利用者の ID のハッシュで、そのものは残さない     | 最後に数えてから2日                                      |
 
 - 旅程は形が変わっても保存の側を直さずに済むよう、丸ごと JSON の文字列で持つ。読むときに `ItinerarySchema` を通し、読めない古い版は「見つからない」として扱う
 - 会話の文章と、Agent SDK の会話の記録は残さない
@@ -237,7 +239,7 @@ CI では、ルールの書かれた内容（すべてを断る決まりが1つ�
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | API                | Firestore、Identity Toolkit、Security Token、Firebase、Firebase Rules                                                                                                                                                            |
 | データベース       | Firestore の `(default)`。ネイティブモード、`asia-northeast1`、削除の保護つき                                                                                                                                                    |
-| TTL ポリシー       | コレクショングループ `itineraries`・`versions`・`shares`・`sessions`・`notices`・`proposals`・`guideUsage`・`patrolRuns`・`patrolDeliveries` の `expiresAt`                                                                      |
+| TTL ポリシー       | コレクショングループ `itineraries`・`versions`・`shares`・`sessions`・`notices`・`proposals`・`guideUsage`・`dailyLimits`・`patrolRuns`・`patrolDeliveries` の `expiresAt`                                                       |
 | 索引               | コレクショングループ `watch` の `status`（コレクショングループの範囲）。見回りが、頼まれた旅を探すのに使う                                                                                                                       |
 | セキュリティルール | [`firestore.rules`](../../firestore.rules)（ブラウザからはすべて断る）を `firebase deploy --only firestore:rules` で入れる                                                                                                       |
 | 権限               | Cloud Run の実行用のサービスアカウントに `roles/datastore.user` だけを足す。ID トークンの確認には権限が要らない（`checkRevoked` は権限が要るので使わない）                                                                       |
