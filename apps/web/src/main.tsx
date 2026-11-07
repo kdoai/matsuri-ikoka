@@ -8,6 +8,7 @@ import { AccountProvider } from "./account/context";
 import { detectLocale } from "./i18n";
 import { StoreProvider } from "./state/react";
 import { createAppStore } from "./state/store";
+import { withGuideActions } from "./transport/guideActions";
 import {
   createPasscodeHolder,
   createServerFestivalSource,
@@ -28,7 +29,10 @@ const sample = new URLSearchParams(window.location.search).get("sample");
 const passcode = createPasscodeHolder();
 const account = createAccountClient({ passcode });
 const store = createAppStore({
-  transport: createServerTransport({ passcode, sample, idToken: () => account.idToken() }),
+  transport: withGuideActions(
+    createServerTransport({ passcode, sample, idToken: () => account.idToken() }),
+    { passcode, idToken: () => account.idToken() },
+  ),
   festivals: createServerFestivalSource({ passcode }),
   locale: detectLocale(navigator.languages),
   tutorialSeen: loadTutorialSeen(),

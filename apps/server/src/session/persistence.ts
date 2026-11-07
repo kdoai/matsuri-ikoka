@@ -261,6 +261,26 @@ export class StoragePersistence {
   }
 
   /**
+   * ガイドが前の版に戻すときに、旅の版を指して読む。読めるのは readGuideTrip と同じく、
+   * viewer 自身の旅程と、持ち主のない旅程だけ。残っていない版と読めない形は undefined
+   */
+  async readGuideTripVersion(
+    id: string,
+    viewer: OwnerId | null,
+    version: number,
+  ): Promise<Itinerary | undefined> {
+    await this.flush(id);
+    if (viewer !== null) {
+      const own = await this.#storage.forOwner(viewer).getTrip(id, version);
+      if (own !== null) {
+        return own.version === version ? parseStoredItinerary(own.itinerary) : undefined;
+      }
+    }
+    const unowned = await this.#storage.readUnowned(id, version);
+    return unowned === null ? undefined : parseStoredItinerary(unowned.itinerary);
+  }
+
+  /**
    * 相談を引く。メモリになければ保存の口から戻し、その相談の旅程も手元の写しに置く。
    * 見つからなければ undefined。viewer は持ち主のない相談を開いた利用者で、その人の旅程なら戻せる。
    * 読めない旅程（消した・ほかの人の・前の形）は相談から外し、相談は旅程のないものとして続ける

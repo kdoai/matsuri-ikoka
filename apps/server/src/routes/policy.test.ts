@@ -71,6 +71,10 @@ const ROUTES: [string, string, RoutePolicy][] = [
   ["POST", "/api/guide/chat", "consultation"],
   ["POST", "/api/guide/memo/:id", "consultation"],
   ["POST", "/api/guide/memo/:id/delete", "consultation"],
+  ["POST", "/api/guide/notices/read", "consultation"],
+  ["POST", "/api/guide/watch", "consultation"],
+  ["POST", "/api/guide/proposals/:id/decision", "consultation"],
+  ["POST", "/api/guide/revert", "consultation"],
   ["POST", "/internal/patrol/start", "internal"],
   ["POST", "/internal/patrol/webhook", "internal"],
 ];

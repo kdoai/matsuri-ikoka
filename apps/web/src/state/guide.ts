@@ -1,4 +1,5 @@
 import {
+  type DecideProposalResponse,
   type EmergencyContact,
   GUIDE_STALLS,
   type GuideMemoItem,
@@ -8,9 +9,12 @@ import {
   type GuideStall,
   type GuideStateResponse,
   type GuideToolName,
+  type ItineraryDiff,
   noticeStall,
   type Source,
+  type TripChange,
   type TripPhase,
+  type TripWatch,
 } from "@matsuri-ikoka/schema";
 import type { ClientErrorCode } from "./types";
 
@@ -57,9 +61,38 @@ export type GuideEntry =
       retryable: boolean;
     };
 
+/**
+ * 決める操作の結果。applied 承認して新しい版になった / rejected 断った / reverted 前の版に戻した /
+ * stale 提案のあとに旅程が変わった / expired 期限が過ぎた / unknown 適用できたか確かめられない /
+ * failed 送れなかった（もう一度試せる）
+ */
+export type GuideOutcome =
+  | { kind: "applied"; diff: ItineraryDiff }
+  | { kind: "reverted"; diff: ItineraryDiff }
+  | { kind: "rejected" }
+  | { kind: "stale" }
+  | { kind: "expired" }
+  | { kind: "unknown" }
+  | { kind: "failed" };
+
+/** いま送っている決める操作。提案は、その ID */
+export type GuideBusy = { kind: "watch" } | { kind: "revert" } | { kind: "proposal"; id: string };
+
 export interface GuideState {
   availability: GuideAvailability;
   phase: TripPhase | null;
+  /** いまの旅程の版（サーバーの応答から） */
+  version: number | null;
+  /** 見回りの依頼。頼んでいなければ null */
+  watch: TripWatch | null;
+  /** この環境で見回りが動くか（サーバーの応答から）。動かなければ、見回りの切り替えを出さない */
+  watchAvailable: boolean;
+  /** 送っている決める操作（同じ操作を重ねて送らない） */
+  busy: GuideBusy | null;
+  /** 最後の決める操作の結果 */
+  outcome: GuideOutcome | null;
+  /** 承認のあとに戻せる版（承認する前の版）。戻したら null */
+  revertTo: number | null;
   /** 新しい順 */
   notices: GuideNotice[];
   proposals: GuideProposal[];
@@ -91,6 +124,12 @@ export interface GuideState {
 export const INITIAL_GUIDE: GuideState = Object.freeze({
   availability: "idle",
   phase: null,
+  version: null,
+  watch: null,
+  watchAvailable: false,
+  busy: null,
+  outcome: null,
+  revertTo: null,
   notices: [],
   proposals: [],
   memo: [],
@@ -161,6 +200,11 @@ export function applyGuideState(guide: GuideState, response: GuideStateResponse)
     ...guide,
     availability: "ready",
     phase: response.phase,
+    version: response.version,
+    watch: response.watch,
+    watchAvailable: response.watchAvailable,
+    // 別の画面で版が増えていたら、この画面で承認した変更の「戻す」は出さない
+    revertTo: guide.version === null || guide.version === response.version ? guide.revertTo : null,
     notices: response.notices.map((notice) => ({
       ...notice,
       readAt: notice.readAt ?? readHere.get(notice.id) ?? null,
@@ -182,6 +226,79 @@ export function markRead(guide: GuideState, ids: readonly string[], at: string):
     ),
     report: guide.report !== null && ids.includes(guide.report) ? null : guide.report,
   };
+}
+
+/** 手元の未読の数がサーバーの数と違うか（見回りが上限で古い通知を押し出すと、違ってくる） */
+export function unreadDiffers(guide: GuideState, serverUnread: number): boolean {
+  return unreadNotices(guide).length !== serverUnread;
+}
+
+/** 決める操作を送り始める。前の結果は消す */
+export function beginGuideAction(guide: GuideState, busy: GuideBusy): GuideState {
+  return { ...guide, busy, outcome: null };
+}
+
+/** 見回りの依頼の応答を入れる */
+export function applyWatch(guide: GuideState, watch: TripWatch): GuideState {
+  return { ...guide, busy: null, watch };
+}
+
+/** 版が増えた（承認か、前の版に戻した） */
+function changed(guide: GuideState, change: TripChange): GuideState {
+  return {
+    ...guide,
+    version: change.itinerary.version,
+    // 提案は元の版が今の版と違うので、もう承認できない
+    proposals: guide.proposals.filter(
+      (proposal) => proposal.baseVersion === change.itinerary.version,
+    ),
+  };
+}
+
+/** 提案の承認・却下の応答を入れる */
+export function applyDecision(
+  guide: GuideState,
+  proposalId: string,
+  response: DecideProposalResponse,
+): GuideState {
+  const without = guide.proposals.filter((proposal) => proposal.id !== proposalId);
+  const done = { ...guide, busy: null };
+  switch (response.outcome) {
+    case "applied":
+      return {
+        ...changed(done, response.change),
+        outcome: { kind: "applied", diff: response.change.diff },
+        revertTo: response.change.diff.fromVersion,
+      };
+    case "rejected":
+      return { ...done, proposals: without, outcome: { kind: "rejected" } };
+    case "stale":
+      return {
+        ...done,
+        proposals: without,
+        version: response.currentVersion,
+        outcome: { kind: "stale" },
+      };
+    case "expired":
+      return { ...done, proposals: without, outcome: { kind: "expired" } };
+    case "unknown":
+      // 自動でやり直さない。提案は残し、読み直した状態を見せる
+      return { ...done, outcome: { kind: "unknown" } };
+  }
+}
+
+/** 前の版に戻した応答を入れる */
+export function applyRevert(guide: GuideState, change: TripChange): GuideState {
+  return {
+    ...changed({ ...guide, busy: null }, change),
+    outcome: { kind: "reverted", diff: change.diff },
+    revertTo: null,
+  };
+}
+
+/** 決める操作を送れなかった。文はサーバーの文でなく、画面の辞書の文を出す（画面の言葉に合わせる） */
+export function failGuideAction(guide: GuideState): GuideState {
+  return { ...guide, busy: null, outcome: { kind: "failed" } };
 }
 
 /** 発言を送り始める。送り直しのときは、自分の発言を重ねない。報告は閉じて、返事を見せる */

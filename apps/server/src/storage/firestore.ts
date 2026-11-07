@@ -277,16 +277,15 @@ export class FirestoreTripStorage implements TripStorage {
     };
   }
 
-  async readUnowned(itineraryId: string): Promise<SharedItinerary | null> {
+  async readUnowned(itineraryId: string, wanted?: number): Promise<SharedItinerary | null> {
     const trip = await this.#readHead(itineraryId);
     if (trip === null || tripOwner(trip) !== null) return null;
     if (this.#now() - trip.updatedAt > SHARE_TTL_MS) return null;
-    const version = await this.#head(itineraryId)
-      .collection(VERSIONS)
-      .doc(versionDocId(trip.version))
-      .get();
+    const at = wanted ?? trip.version;
+    if (!Number.isInteger(at) || at < 1 || at > trip.version) return null;
+    const version = await this.#head(itineraryId).collection(VERSIONS).doc(versionDocId(at)).get();
     if (!version.exists) return null;
-    return { itineraryId, version: trip.version, itinerary: parseJson(version.data()) };
+    return { itineraryId, version: at, itinerary: parseJson(version.data()) };
   }
 
   async #claimTrip(uid: string, itineraryId: string): Promise<ClaimResult> {
