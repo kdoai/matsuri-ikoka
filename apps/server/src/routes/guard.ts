@@ -1,5 +1,5 @@
 import { timingSafeEqual } from "node:crypto";
-import type { IsoDate } from "@matsuri-ikoka/schema";
+import { type IsoDate, isTrialAccount } from "@matsuri-ikoka/schema";
 import type { MiddlewareHandler } from "hono";
 import { apiError } from "./errors";
 
@@ -69,6 +69,48 @@ export class DailyLimiter {
 /** 上限を数える単位。ログインしていれば利用者、していなければ IP */
 export function limitKey(viewer: string | null, ip: string): string {
   return viewer === null ? ip : `uid:${viewer}`;
+}
+
+/** 1回分の相談の枠。だれの分をどの枠で数えるかは turnQuota で決まっている */
+export interface TurnQuota {
+  /** 同時に作る数を数える単位 */
+  client: string;
+  /** 利用者の IP */
+  ip: string;
+  allows(): boolean;
+  consume(): void;
+}
+
+/**
+ * 相談の回数の数え方を決める。
+ * - ログインしていない人：全体の枠と、IP の枠
+ * - ログインしている人：全体の枠と、利用者の枠と、IP の枠。登録し直しても上限を回避できないよう、IP でも数える
+ * - お試し用のアカウント：お試し用の全体の枠と、IP の枠。何人かで使うので利用者では数えず、
+ *   全体の枠も分けて、お試し用だけでほかの人の相談の枠を使い切らないようにする
+ */
+export function turnQuota(
+  limiters: {
+    limiter: DailyLimiter;
+    clientLimiter?: DailyLimiter | undefined;
+    trialLimiter?: DailyLimiter | undefined;
+  },
+  viewer: string | null,
+  ip: string,
+): TurnQuota {
+  const trial = viewer !== null && isTrialAccount(viewer);
+  const pool = trial ? (limiters.trialLimiter ?? limiters.limiter) : limiters.limiter;
+  const client = trial ? ip : limitKey(viewer, ip);
+  const keys = client === ip ? [ip] : [ip, client];
+  return {
+    client,
+    ip,
+    allows: () =>
+      pool.allows() && keys.every((key) => limiters.clientLimiter?.allows(key) !== false),
+    consume: () => {
+      pool.consume();
+      for (const key of keys) limiters.clientLimiter?.consume(key);
+    },
+  };
 }
 
 /**

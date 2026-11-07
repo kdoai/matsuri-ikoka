@@ -420,6 +420,7 @@ main ブランチには直接 push しません。人の変更も自動の更新
 
 - 本番の環境変数：`NODE_ENV=production`・`MATSURI_AGENT_MODE=live`・`MODEL_CONCIERGE`・`MODEL_STAFF`・`MODEL_PLANNER`・`MODEL_EVALUATOR`・`MODEL_VERIFIER`・`MODEL_WISH_READER`（省略可）・`MODEL_GUIDE`（省略するとガイドの入口だけが断る）・`DAILY_CHAT_LIMIT`・`DAILY_CHAT_LIMIT_PER_IP`・`AGENT_MAX_BUDGET_USD`・`MAX_CONCURRENT_TURNS`・`TRUSTED_PROXY_HOPS=1`・`MATSURI_STORAGE=firestore`・`FIREBASE_PROJECT_ID`・`FIREBASE_WEB_API_KEY`・`FIREBASE_AUTH_DOMAIN`。`PORT` は Cloud Run が渡す
 - Firestore・TTL・セキュリティルール・Firebase Authentication・実行用のアカウントの権限は、[`scripts/setup-firestore.sh`](../../scripts/setup-firestore.sh) で入れて確かめる（[ログインと保存の仕様](account.md#google-cloud-の設定)）
+- お試し用のアカウントは [`apps/server/scripts/trial-account.ts`](../../apps/server/scripts/trial-account.ts) で作り、初期の状態に戻し、パスワードを作り直す（[ログインと保存の仕様](account.md#お試し用のアカウント)）。パスワードは実行した端末の画面にだけ出る
 - Cloud Run の既定の URL（`run.app`）では、末尾が `z` のパスが外から届かない。外からの死活監視には `/health` を使う
 - しおりの PDF を作るときは、コンテナに Chromium の headless shell と、`assets/shiori` の日本語フォントを入れる（Playwright の `playwright-core` はサーバーの依存なので、イメージには必ず入る。Dockerfile を見る）
 
@@ -571,7 +572,7 @@ Cloud Run の既定の URL（前にロードバランサーを置かない）で
 
 - 出発地は駅名までにとどめ、住所は聞かない
 - 会話の全文はログに残さない。ログにはツールの呼び出しと所要時間だけを残す
-- ログインは、旅を残す・あとで開く・消すときだけ。Google のアカウントの名前とメールアドレスは Firebase Authentication に残り、Firestore には利用者の ID だけを置く
+- ログインは、旅を残す・あとで開く・消すときだけ。メールアドレスと、Google のアカウントの名前は Firebase Authentication に残り、Firestore には利用者の ID だけを置く
 - 会話の全文は残さない。相談の途中の状態（条件・こだわり・候補・旅程の ID・段階）は6時間で消す
 - ログインせずに作った旅程と、共有のしおりは30日で自動的に消す。残した旅は、利用者が消すまで残す
 - 利用者は、旅を1つずつ、または旅とログインの記録をすべて、画面から消せる

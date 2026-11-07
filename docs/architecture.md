@@ -49,7 +49,7 @@ flowchart LR
 | カスタムツール   | 7つのツール。日程のルールや検証はここでコードとして実行する                                                                                                                                   | プロセス内の MCP サーバー、Zod                                      |
 | 祭りのデータ     | 1件1ファイルの JSON。コンテナに同梱し、起動時にメモリへ読み込む                                                                                                                               | JSON、Zod                                                           |
 | 旅程の保存       | 旅程の版・しおりの共有・相談の途中の状態を残す。サーバーだけが読み書きする（[ログインと保存](spec/account.md)）                                                                               | 既定はメモリ、`MATSURI_STORAGE=firestore` で Firestore（Admin SDK） |
-| ログイン         | 旅を残す・あとで開く・消すときだけ。相談はログインなしで始められる                                                                                                                            | Firebase Authentication（Google）                                   |
+| ログイン         | 旅を残す・あとで開く・消すときだけ。相談はログインなしで始められる                                                                                                                            | Firebase Authentication（Google、メールアドレスとパスワード）       |
 | データの更新     | 祭りの調査と追加は、調査スキルを使って手元の Claude Code で行い、PR で取り込む。開催情報の週次の調査は Managed Agents の定期実行で進め、GitHub Actions が準備と回収を行い、結果を PR で届ける | Claude Code、Claude Managed Agents、GitHub Actions                  |
 | スキーマ         | データ・旅程・SSE イベントの型の唯一の定義                                                                                                                                                    | `packages/schema`（Zod）                                            |
 

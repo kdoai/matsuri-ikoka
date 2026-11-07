@@ -276,6 +276,7 @@ const app = createApp({
   ...(readFestivalWish ? { readFestivalWish } : {}),
   limiter: new DailyLimiter(config.dailyChatLimit, today),
   clientLimiter: new DailyLimiter(config.dailyChatLimitPerIp, today),
+  trialLimiter: new DailyLimiter(config.dailyTrialChatLimit, today),
   concurrency: new ConcurrencyLimiter(
     config.maxConcurrentTurns,
     config.maxConcurrentTurnsPerClient,

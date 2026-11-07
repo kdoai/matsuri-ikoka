@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import type { Itinerary } from "@matsuri-ikoka/schema";
+import { DEFAULT_PREFERENCES, type Itinerary } from "@matsuri-ikoka/schema";
 import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
 import { expect, it } from "vitest";
 import { type OwnerId, ownerIdOf } from "./owner";
@@ -289,6 +289,33 @@ export function tripStorageContract(make: (clock: Clock) => TripStorage): void {
     // TTL で消えるまでは文書が残るので、時計を戻して、本当に消えたことを確かめる
     clock.now = savedAt;
     expect(await mine.getTrip(draft.id)).toBeNull();
+  });
+
+  it("すべて消すと、自分の相談の途中の状態も消え、ほかの人の相談は残る", async () => {
+    const { storage, owner, mine } = setup();
+    const snapshot = (ownerUid: string | null): SessionSnapshot => ({
+      id: `s-${randomUUID()}`,
+      createdAt: Date.UTC(2026, 7, 3),
+      updatedAt: Date.UTC(2026, 7, 3),
+      stage: "hearing",
+      conditions: {},
+      preferences: DEFAULT_PREFERENCES,
+      candidates: [],
+      selectedFestivalId: null,
+      itineraryId: null,
+      ownerUid,
+      replay: null,
+    });
+    const own = snapshot(owner);
+    const others = snapshot(`other-${randomUUID()}`);
+    const nobody = snapshot(null);
+    for (const session of [own, others, nobody]) await storage.saveSession(session);
+
+    await mine.deleteAllTrips();
+
+    expect(await storage.getSession(own.id)).toBeNull();
+    expect((await storage.getSession(others.id))?.id).toBe(others.id);
+    expect((await storage.getSession(nobody.id))?.id).toBe(nobody.id);
   });
 
   it("すべて消しても、ほかの利用者の旅には届かない", async () => {

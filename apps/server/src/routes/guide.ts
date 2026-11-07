@@ -10,6 +10,7 @@ import {
   type GuideStateResponse,
   GuideStateResponseSchema,
   type Itinerary,
+  isTrialAccount,
   MAX_MEMO_ITEMS,
   MAX_NOTICES_PER_TRIP,
   MAX_PENDING_PROPOSALS,
@@ -30,6 +31,8 @@ import {
   guideTurnBudgetUsd,
   MemoryGuideUsage,
   overGuideLimit,
+  ownerAndIpLedger,
+  trialLedger,
 } from "../guide/limits";
 import { memoContentRefusal, memoRefusalMessage } from "../guide/memo";
 import { isLivePendingProposal } from "../guide/proposal";
@@ -40,7 +43,7 @@ import { parseStoredItinerary, type StoragePersistence } from "../session/persis
 import { type ItineraryStore, randomId, type Session } from "../session/sessionStore";
 import { type DailyGuideUsage, TripGoneError } from "../storage/types";
 import { apiError, type ErrorBody } from "./errors";
-import { type ConcurrencyLimiter, type DailyLimiter, limitKey } from "./guard";
+import { type ConcurrencyLimiter, type DailyLimiter, type TurnQuota, turnQuota } from "./guard";
 import { routeParam, type SecureRoutes } from "./policy";
 import { isClientClosed, openEventStream, streamEvents, type TurnTiming } from "./turnStream";
 
@@ -66,6 +69,7 @@ export interface GuideDeps {
   itineraries: ItineraryStore;
   limiter: DailyLimiter;
   clientLimiter?: DailyLimiter | undefined;
+  trialLimiter?: DailyLimiter | undefined;
   concurrency?: ConcurrencyLimiter | undefined;
   clientIp?: ((c: Context) => string) | undefined;
   turnIdleMs?: number | undefined;
@@ -266,22 +270,29 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
     return result;
   };
 
-  /** だれの分を数えるか。ログインしていれば保存の口に、していなければメモリに残す */
+  /**
+   * だれの分を数えるか。ログインしていれば保存の口と IP に、していなければ IP に残す。
+   * お試し用のアカウントは IP ごとに数え、全員の費用の上限も持つ
+   */
   const usageLedger = (
     runner: GuideRunner,
     session: Session,
     tripId: string,
-    client: string,
-  ): GuideUsageLedger =>
-    session.ownerUid === null
-      ? anonymousUsage.ledger(client, tripId)
-      : ownerUsageLedger(deps.persistence, session.ownerUid, tripId, runner.today());
+    ip: string,
+  ): GuideUsageLedger => {
+    if (session.ownerUid === null) return anonymousUsage.ledger(ip, tripId);
+    if (isTrialAccount(session.ownerUid)) return trialLedger(anonymousUsage, ip, tripId, limits);
+    return ownerAndIpLedger(
+      ownerUsageLedger(deps.persistence, session.ownerUid, tripId, runner.today()),
+      anonymousUsage.ledger(ip, tripId),
+    );
+  };
 
   /** 相談と旅を開き、使った量を読む */
   const openTurn = async (
     runner: GuideRunner,
     sessionId: string,
-    client: string,
+    quota: TurnQuota,
     open: (id: string) => Promise<Session | undefined>,
   ): Promise<OpenedTurn | TurnRefusal> => {
     const session = await open(sessionId);
@@ -289,7 +300,7 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
     const result = await openTrip(runner, session);
     if (result.status !== "ok") return tripRefusalOf(result);
     const { trip } = result;
-    const ledger = usageLedger(runner, session, trip.itinerary.id, client);
+    const ledger = usageLedger(runner, session, trip.itinerary.id, quota.ip);
     const usage = await ledger.read().catch((error: unknown) => {
       // 数えられなくても相談は止めない。全体の回数の上限と同時に作る数の上限は効いたまま
       console.error(
@@ -307,25 +318,18 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
   const admitTurn = (
     runner: GuideRunner,
     opened: OpenedTurn,
-    client: string,
+    quota: TurnQuota,
   ): AdmittedTurn | TurnRefusal => {
     const { session, usage } = opened;
     if (session.busy) return TURN_BUSY;
-    if (
-      overGuideLimit(usage, limits) ||
-      !deps.limiter.allows() ||
-      deps.clientLimiter?.allows(client) === false
-    ) {
-      return DAILY_LIMIT;
-    }
+    if (overGuideLimit(usage, limits) || !quota.allows()) return DAILY_LIMIT;
     let release = () => {};
     if (runner.mode === "live" && deps.concurrency !== undefined) {
-      const acquired = deps.concurrency.tryAcquire(client);
+      const acquired = deps.concurrency.tryAcquire(quota.client);
       if (acquired === null) return CROWDED;
       release = acquired;
     }
-    deps.limiter.consume();
-    deps.clientLimiter?.consume(client);
+    quota.consume();
     session.busy = true;
     return {
       ...opened,
@@ -381,7 +385,10 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
     } finally {
       release();
       const settled = (async () => {
-        await settleTurn({ session, trip, runner, ledger, turn, meter, emergency });
+        // すべて消した人のデータを、止まった返事の片付けで書き戻さない
+        if (!session.discarded) {
+          await settleTurn({ session, trip, runner, ledger, turn, meter, emergency });
+        }
         await deps.persistence.saveSession(session);
       })();
       // 緊急の発言は、保存の口が止まっても閉じる
@@ -404,12 +411,13 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
     runner: GuideRunner,
     sessionId: string,
     request: TurnRequest,
-    client: string,
+    quota: TurnQuota,
     open: (id: string) => Promise<Session | undefined>,
   ): Response => {
     const waitMs = deps.emergencyWaitMs ?? EMERGENCY_WAIT_MS;
     let openedTrip: GuideTrip | null = null;
     let admittedSession: Session | null = null;
+    let stopTurn: (() => void) | null = null;
     return openEventStream<GuideSseEvent>(
       c,
       async (signal, emit, progress) => {
@@ -418,7 +426,7 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
           emit(emergencyFallback());
           throw new AgentError(body.code, body.message, body.retryable);
         };
-        const opened = await settleWithin(openTurn(runner, sessionId, client, open), waitMs, () => {
+        const opened = await settleWithin(openTurn(runner, sessionId, quota, open), waitMs, () => {
           console.error(JSON.stringify({ kind: "guide_emergency_open_late" }));
           return TRIP_UNAVAILABLE;
         }).catch((error: unknown) => {
@@ -429,9 +437,10 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
         });
         if (!opened.ok) return refuseAfterContacts(opened);
         openedTrip = opened.trip;
-        const admitted = admitTurn(runner, opened, client);
+        const admitted = admitTurn(runner, opened, quota);
         if (!admitted.ok) return refuseAfterContacts(admitted);
         admittedSession = admitted.session;
+        admittedSession.stopTurn = stopTurn;
         await runAdmitted(runner, admitted, request, true, { signal, emit, progress });
       },
       turnTiming(deps),
@@ -444,8 +453,14 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
             ? NO_TRIP_DONE
             : settleWithin(doneEvent(runner, trip), waitMs, () => uncountedDone(runner, trip));
         },
+        started: (stop) => {
+          stopTurn = stop;
+        },
         finished: () => {
-          if (admittedSession !== null) admittedSession.busy = false;
+          if (admittedSession !== null) {
+            admittedSession.stopTurn = null;
+            admittedSession.busy = false;
+          }
         },
       },
     );
@@ -521,15 +536,15 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
     if (!request.success) return badRequest(c);
     const { sessionId, message, location } = request.data;
     const { runner } = guide;
-    const client = limitKey(viewer, deps.clientIp?.(c) ?? "unknown");
+    const quota = turnQuota(deps, viewer, deps.clientIp?.(c) ?? "unknown");
     const said: TurnRequest = { message, location };
     if (isEmergencyMessage(message)) {
-      return emergencyTurn(c, runner, sessionId, said, client, open);
+      return emergencyTurn(c, runner, sessionId, said, quota, open);
     }
-    const opened = await openTurn(runner, sessionId, client, open);
+    const opened = await openTurn(runner, sessionId, quota, open);
     if (!opened.ok) return refuse(c, opened);
     // ここから返答を始めるまで待たない
-    const admitted = admitTurn(runner, opened, client);
+    const admitted = admitTurn(runner, opened, quota);
     if (!admitted.ok) return refuse(c, admitted);
     return streamEvents<GuideSseEvent>(
       c,
