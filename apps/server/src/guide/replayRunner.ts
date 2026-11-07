@@ -18,8 +18,8 @@ import type { GuideTrip } from "./data";
 import { proposalContentHash } from "./proposal";
 import type { EmitGuideEvent, GuideRunner, GuideTurnInput } from "./runner";
 
-// mock：記録したガイドの相談（data/samples/guide/*.json）を再生する。キーなしで、通知・提案・手帳・緊急の案内を確かめる。
-// 発言が記録と同じならその返答を、違えば次の返答を流す。緊急の言葉があるときは、緊急の案内の記録を流す。
+// mock：記録したガイドの相談（data/samples/guide/*.json）を再生する。キーなしで、通知・提案・手帳を確かめる。
+// 発言が記録と同じならその返答を、違えば次の返答を流す。
 // 記録の旅は、いま開いている相談の旅に置き換える（相談どうしで混ざらないように）。
 
 const END_OF_SAMPLE =
@@ -111,18 +111,13 @@ export class ReplayGuideRunner implements GuideRunner {
     }
   }
 
-  /** 流す記録を選ぶ。同じ発言があればそれ。緊急なら緊急の案内。それ以外は、まだ流していない次の記録 */
+  /** 流す記録を選ぶ。同じ発言があればそれ。それ以外は、まだ流していない次の記録 */
   #pick(input: GuideTurnInput): { turn: SampleGuideTurn; index: number } | null {
     const turns = this.#sample.turns;
     const played = input.session.guide.replayedTurns;
-    const isEmergencyTurn = (turn: SampleGuideTurn) =>
-      turn.events.some(({ event }) => event.type === "guide.emergency");
     const index = [
       turns.findIndex((turn) => turn.request.message === input.message.trim()),
-      input.emergency ? turns.findIndex(isEmergencyTurn) : -1,
-      input.emergency
-        ? -1
-        : turns.findIndex((turn, at) => !played.includes(at) && !isEmergencyTurn(turn)),
+      turns.findIndex((_turn, at) => !played.includes(at)),
     ].find((found) => found !== -1);
     const turn = index === undefined ? undefined : turns[index];
     return turn === undefined || index === undefined ? null : { turn, index };
@@ -145,8 +140,7 @@ export class ReplayGuideRunner implements GuideRunner {
       elapsed = recorded.atMs;
       const event: GuideSseEvent = recorded.event;
       switch (event.type) {
-        // 連絡先と終わりのイベントは、呼び出し側が送る
-        case "guide.emergency":
+        // 終わりのイベントは、呼び出し側が送る
         case "guide.done":
           break;
         case "guide.notice":

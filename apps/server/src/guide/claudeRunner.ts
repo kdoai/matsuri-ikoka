@@ -130,7 +130,6 @@ export class ClaudeGuideRunner implements GuideRunner {
       ).length,
       ...(guide.agentSessionId === null ? { resume: guide.resume } : {}),
       location: input.location,
-      emergency: input.emergency,
       message: input.message,
     });
   }
@@ -233,7 +232,6 @@ export class ClaudeGuideRunner implements GuideRunner {
           kind: "guide_turn",
           elapsedMs: Date.now() - started,
           tools: turn.toolCalls,
-          emergency: input.emergency,
           costUsd: meter.usd,
           ...((reply as ReplyStream | null)?.usage() ?? {}),
         }),

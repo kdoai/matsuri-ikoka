@@ -26,6 +26,7 @@ import {
   buildVerifierOptions,
   createVerifierHooks,
   type FetchedPage,
+  type FinalReply,
   finalText,
 } from "./webVerifier";
 
@@ -159,6 +160,8 @@ export function createWebNearbyResearcher(deps: {
   resolveHost?: ResolveHost;
   robots?: RobotsChecker;
   maxBudgetUsd?: number | undefined;
+  /** 残した会話の記録を消す（Agent SDK の deleteSession を包んだもの）。省略すると消さない（テスト） */
+  forgetTranscript?: ((sessionId: string) => void) | undefined;
   clock?: () => number;
 }): NearbyResearcher {
   const systemPrompt = `${deps.prompt}\n\n${ANSWER_FORMAT}`;
@@ -241,9 +244,17 @@ export function createWebNearbyResearcher(deps: {
       const started = Date.now();
       let costUsd = 0;
       let found = 0;
+      let salvage: FinalReply["salvage"] = null;
       const ask = async (prompt: string, withTools: boolean) => {
-        const reply = await finalText(deps.query, prompt, options(withTools), input.onActivity);
+        const reply = await finalText(
+          deps.query,
+          prompt,
+          options(withTools),
+          input.onActivity,
+          deps.forgetTranscript,
+        );
         costUsd += reply.costUsd;
+        salvage ??= reply.salvage;
         return reply.text;
       };
       try {
@@ -278,6 +289,7 @@ export function createWebNearbyResearcher(deps: {
             round: input.plan.round,
             perspective: input.plan.perspective ?? null,
             found,
+            ...(salvage === null ? {} : { salvage }),
             totalCostUsd: costUsd,
             elapsedMs: Date.now() - started,
             searches: log.searches.length,

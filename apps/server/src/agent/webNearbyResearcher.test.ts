@@ -3,20 +3,20 @@ import type {
   HookEvent,
   HookInput,
   Options,
-  SDKMessage,
 } from "@anthropic-ai/claude-agent-sdk";
 import { describe, expect, it } from "vitest";
 import { type NearbySearchRound, nearbySearchPlan } from "../domain/nearbySearch";
 import type { QueryFn } from "./runner";
+import { initMessage, MAX_TURNS, resultMessage, type ScriptResult } from "./testSdkMessages";
 import { createWebNearbyResearcher, NEARBY_MAX_TURNS } from "./webNearbyResearcher";
 
 // Agent SDK の代わりに、フックを呼んで決まった返答を返す偽物の query で確かめる。祭り・店・URL はすべて架空
 
 type Script = (
   hook: (event: HookEvent, input: Record<string, unknown>) => Promise<unknown>,
-) => Promise<string | null>;
+) => Promise<ScriptResult>;
 
-function setup(scripts: Script[]) {
+function setup(scripts: Script[], forgotten: string[] = []) {
   const calls: { prompt: string; options: Options }[] = [];
   const query: QueryFn = (params) => {
     calls.push(params);
@@ -41,16 +41,10 @@ function setup(scripts: Script[]) {
         }
       }
     };
+    const sessionId = `session-${calls.length}`;
     return (async function* () {
-      const text = await script(hook);
-      yield (text === null
-        ? { type: "result", subtype: "error_during_execution", is_error: true, errors: [] }
-        : {
-            type: "result",
-            subtype: "success",
-            is_error: false,
-            result: text,
-          }) as unknown as SDKMessage;
+      yield initMessage(sessionId);
+      yield resultMessage(await script(hook));
     })();
   };
   const researcher = createWebNearbyResearcher({
@@ -59,6 +53,9 @@ function setup(scripts: Script[]) {
     env: {},
     query,
     resolveHost: async () => ["8.8.8.8"],
+    forgetTranscript: (id) => {
+      forgotten.push(id);
+    },
   });
   let activity = 0;
   const research = (
@@ -171,6 +168,27 @@ describe("createWebNearbyResearcher", () => {
     expect(calls).toHaveLength(1);
     // 食べたいものが変われば、調べ直す
     await expect(research(["noodles"])).rejects.toThrow("台本がありません");
+  });
+
+  it("ターンの上限で終わったら、同じセッションを道具なしで続け、読んだ店を捨てない", async () => {
+    const forgotten: string[] = [];
+    const { calls, research } = setup(
+      [
+        async (hook) => {
+          await read(hook, "https://example.com/grill");
+          return MAX_TURNS;
+        },
+        async () => ANSWER,
+      ],
+      forgotten,
+    );
+
+    const report = await research();
+
+    expect(report?.spots.map((spot) => spot.name)).toEqual(["鈴鳴グリル"]);
+    expect(calls).toHaveLength(2);
+    expect(calls[1]?.options).toMatchObject({ resume: "session-1", tools: [], maxTurns: 1 });
+    expect(forgotten).toEqual(["session-1"]);
   });
 
   it("コードで決めた調べ方（検索の言葉・確かめる観点・範囲）を、毎回の依頼に必ず入れる", async () => {

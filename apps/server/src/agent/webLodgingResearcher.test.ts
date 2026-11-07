@@ -3,20 +3,20 @@ import type {
   HookEvent,
   HookInput,
   Options,
-  SDKMessage,
 } from "@anthropic-ai/claude-agent-sdk";
 import { describe, expect, it } from "vitest";
 import { lodgingSearchPlans } from "../domain/lodgingResearch";
 import type { QueryFn } from "./runner";
+import { initMessage, MAX_TURNS, resultMessage, type ScriptResult } from "./testSdkMessages";
 import { createWebLodgingResearcher, LODGING_MAX_TURNS, parseHotels } from "./webLodgingResearcher";
 
 // Agent SDK の代わりに、フックを呼んで決まった返答を返す偽物の query で確かめる。祭り・宿・URL はすべて架空
 
 type Hook = (event: HookEvent, input: Record<string, unknown>) => Promise<unknown>;
 /** 依頼文（観点の見出しを含む）から、その観点の調べ役の動きを決める */
-type Script = (prompt: string, hook: Hook) => Promise<string | null>;
+type Script = (prompt: string, hook: Hook) => Promise<ScriptResult>;
 
-function setup(script: Script) {
+function setup(script: Script, forgotten: string[] = []) {
   const calls: { prompt: string; options: Options }[] = [];
   const query: QueryFn = (params) => {
     calls.push(params);
@@ -39,16 +39,10 @@ function setup(script: Script) {
         }
       }
     };
+    const sessionId = `session-${calls.length}`;
     return (async function* () {
-      const text = await script(params.prompt as string, hook);
-      yield (text === null
-        ? { type: "result", subtype: "error_during_execution", is_error: true, errors: [] }
-        : {
-            type: "result",
-            subtype: "success",
-            is_error: false,
-            result: text,
-          }) as unknown as SDKMessage;
+      yield initMessage(sessionId);
+      yield resultMessage(await script(params.prompt as string, hook));
     })();
   };
   const researcher = createWebLodgingResearcher({
@@ -57,6 +51,9 @@ function setup(script: Script) {
     env: {},
     query,
     resolveHost: async () => ["8.8.8.8"],
+    forgetTranscript: (id) => {
+      forgotten.push(id);
+    },
   });
   const party = { adults: 2, children: 1 };
   const plans = lodgingSearchPlans({
@@ -135,6 +132,34 @@ describe("createWebLodgingResearcher", () => {
     });
     const result = await research();
     expect(result?.reports.map((r) => r.perspective)).toEqual(["station", "budget", "family"]);
+  });
+
+  it("ターンの上限で終わった観点は、同じセッションを道具なしで続けて宿を救う", async () => {
+    const forgotten: string[] = [];
+    const { calls, research } = setup(async (prompt, hook) => {
+      // 救いの頼み（道具なし）には、読んだ宿で答える
+      if (prompt.includes("ターンの上限に達した")) return JSON.stringify({ hotels: [INN] });
+      await read(hook, INN.pageUrl);
+      return prompt.includes("観点：会場の近くの宿")
+        ? MAX_TURNS
+        : JSON.stringify({ hotels: [INN] });
+    }, forgotten);
+
+    const result = await research();
+
+    expect(result?.reports.map((r) => r.perspective)).toEqual([
+      "venue",
+      "station",
+      "budget",
+      "family",
+    ]);
+    expect(result?.reports[0]?.hotels[0]?.name).toBe("鈴鳴川の宿");
+    expect(calls).toHaveLength(5);
+    const salvage = calls.find((call) => call.prompt.includes("ターンの上限に達した"));
+    expect(salvage?.options).toMatchObject({ tools: [], maxTurns: 1 });
+    expect(typeof salvage?.options.resume).toBe("string");
+    // 観点ごとの会話の記録を、調べが終わるたびに消す
+    expect(forgotten).toHaveLength(4);
   });
 
   it("ページを1つも読んでいなければ、調べたことにしない", async () => {

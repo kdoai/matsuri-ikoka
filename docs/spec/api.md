@@ -10,7 +10,7 @@
 | PATCH    | `/api/preferences`            | `PreferencesRequestSchema`           | SSE。旅程があり live のときは旅程係だけを動かして組み直す。それ以外（旅程がない、mock）はこだわりを変えて `done` だけを返す                                                       |
 | POST     | `/api/festivals/search`       | `FestivalSearchRequestSchema`        | 種類・季節・地域で祭りを探す（`FestivalSearchResponseSchema`）。[POST /api/festivals/search](#post-apifestivalssearch)                                                            |
 | GET      | `/api/festivals`              | —                                    | 祭りのデータの一覧（`FestivalsResponseSchema`、`{ "festivals": [...] }`）。候補が出る前の豆知識に使う                                                                             |
-| GET      | `/api/festivals/:id`          | —                                    | 祭りのデータ（`FestivalSchema`）。しおりの作法・地元の味・アクセス、待ち時間の小話に使う                                                                                          |
+| GET      | `/api/festivals/:id`          | —                                    | 祭りのデータ（`FestivalSchema`）。候補のカードの目印、待ち時間の小話と見どころに使う                                                                                              |
 | GET      | `/api/itinerary/:id`          | —                                    | 旅程（`ItinerarySchema`）。`:id` は持ち主のない旅程の ID（最後の保存から30日）か、共有の ID（`sh-…`、作ってから30日）。持ち主自身は ID トークンを付けて自分の旅程の ID でも読める |
 | GET      | `/shiori/:id`                 | —                                    | 旅のしおり（画面で見る HTML）。公式の情報で開催予定を確かめた旅程だけ（[しおり](shiori.md)）。`:id` は `/api/itinerary/:id` と同じ                                                |
 | GET      | `/shiori/:id.pdf`             | —                                    | 同じしおりの A4 の PDF。混み合っていたら 503（`upstream_unavailable`）と `Retry-After`                                                                                            |
@@ -136,7 +136,7 @@ SSE を始める前に断るときと、JSON を返す API が失敗したとき
 - `message` は前後の空白を除いて1〜1000字
 - `preferences` は画面で選んでいるこだわり（[旅程の仕様](itinerary.md#こだわりの効果)）
 - `anchor`（任意）は、祭りから探して決めた祭りと行く日（`TripAnchorSchema`）。あれば、祭りを固定して旅程を組む。祭りと日を確かめ（断り方は上の `POST /api/festival-trips/preview` と同じ）、相談の状態に残すので、次の発言からは送らなくてよい。固定を外すのはコンシェルジュ（ほかの祭りに変えたいと言われたとき）か、中止と分かったときで、そのあとに同じ `anchor` を送ると固定し直す
-- `search`（任意）は、候補の窓の次の手（ボタン）から送るときの、変えて探し直す条件（`SearchRetrySchema`：`when`・`maxTravelMinutes`・`nights`・`widen` のうち1つ以上）。サーバーは聞き取った条件に書き足し、その発言の `search_festivals` はこの条件を正として使う（[条件の守り方](agents.md#条件の守り方)）
+- `search`（任意）は、候補の窓の次の手（ボタン）から送るときの、変えて探し直す条件（`SearchRetrySchema`：`when`・`maxTravelMinutes`・`nights`・`widen` のうち1つ以上）。サーバーは聞き取った条件に書き足し（`widen` も残し、次の探し直しに引き継ぐ）、その発言の `search_festivals` はこの条件を正として使う（[条件の守り方](agents.md#条件の守り方)）
 
 ## SSE イベント
 

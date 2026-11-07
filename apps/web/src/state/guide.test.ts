@@ -1,6 +1,5 @@
 import {
   decodeGuideSseEvent,
-  EMERGENCY_CONTACTS,
   encodeGuideSseEvent,
   type GuideNotice,
   type GuideStateResponse,
@@ -13,7 +12,6 @@ import {
   applyGuideEvent,
   applyGuideState,
   beginGuideTurn,
-  currentEmergency,
   endGuideTurn,
   guideLine,
   INITIAL_GUIDE,
@@ -192,17 +190,6 @@ describe("発言と返答", () => {
     expect(guideLine(guide)).toMatchObject({ kind: "guide", streaming: false });
   });
 
-  it("緊急の連絡先は、その発言の間だけ先に出す", () => {
-    let guide = beginGuideTurn(ready, "助けて", false);
-    guide = applyGuideEvent(guide, {
-      type: "guide.emergency",
-      data: { contacts: [...EMERGENCY_CONTACTS] },
-    });
-    expect(currentEmergency(guide)).toHaveLength(2);
-    guide = beginGuideTurn(guide, "ありがとう", false);
-    expect(currentEmergency(guide)).toEqual([]);
-  });
-
   it("送り直すときは、自分の発言を重ねず、前のエラーを消す", () => {
     let guide = beginGuideTurn(ready, "持ち物は", false);
     guide = endGuideTurn(guide, { code: "connection_lost", message: null, retryable: true });
@@ -229,15 +216,11 @@ describe("発言と返答", () => {
     expect(guide.entries.at(-1)).toMatchObject({ kind: "memo", text: "ゆっくり歩く" });
   });
 
-  it("緊急の発言で失敗が続いても、決まった文を隠さない", () => {
-    let guide = beginGuideTurn(ready, "助けて", false);
-    guide = applyGuideEvent(guide, {
-      type: "guide.emergency",
-      data: { contacts: [...EMERGENCY_CONTACTS] },
-    });
+  it("返事の途中で失敗しても、届いていた文を隠さない", () => {
+    let guide = beginGuideTurn(ready, "持ち物は", false);
     guide = applyGuideEvent(guide, {
       type: "message.delta",
-      data: { messageId: "m", text: "すぐに連絡してください。" },
+      data: { messageId: "m", text: "雨具があると安心です。" },
     });
     guide = applyGuideEvent(guide, {
       type: "error",
@@ -245,14 +228,13 @@ describe("発言と返答", () => {
     });
     expect(guideLine(guide)).toMatchObject({
       kind: "error",
-      said: "すぐに連絡してください。",
+      said: "雨具があると安心です。",
       code: "upstream_unavailable",
     });
-    expect(currentEmergency(guide)).toHaveLength(2);
   });
 
   it("相談や旅が切れた知らせは、専用の案内にして、話せない状態にする", () => {
-    const guide = applyGuideEvent(beginGuideTurn(ready, "助けて", false), {
+    const guide = applyGuideEvent(beginGuideTurn(ready, "持ち物は", false), {
       type: "error",
       data: { code: "bad_request", message: "相談が見つかりません。", retryable: false },
     });

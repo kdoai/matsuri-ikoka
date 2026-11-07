@@ -9,13 +9,14 @@ import { DEFAULT_PREFERENCES, type SseEvent } from "@matsuri-ikoka/schema";
 import { describe, expect, it } from "vitest";
 import { createFestivalStore } from "../data/festivalStore";
 import { testFestival } from "../domain/testFestivals";
+import { TURN_MAX_MS } from "../routes/turnStream";
 import { ItineraryStore, type Session, SessionStore } from "../session/sessionStore";
 import type { ToolContext } from "../tools/context";
 import { createUnavailableLodging } from "../tools/lodging";
 import { searchFestivals } from "../tools/matsuriTools";
 import { createMatsuriMcpServer, runTool } from "../tools/mcpServer";
 import { unavailableVerifier } from "../tools/verifier";
-import { ClaudeAgentRunner } from "./claudeRunner";
+import { ClaudeAgentRunner, CONTINUE_PROMPT, RESUME_MIN_REMAINING_MS } from "./claudeRunner";
 import type { AgentPrompts } from "./prompts";
 import { AgentError, type QueryFn } from "./runner";
 
@@ -329,16 +330,93 @@ describe("ClaudeAgentRunner", () => {
     expect(calls).toHaveLength(1);
   });
 
-  it("返事の途中で失敗したら、やり直さずにエラーにする", async () => {
+  it("返事の途中で失敗したら、時間の残りがあれば、止まったところから resume で続ける", async () => {
+    const { calls, session, run } = setup([
+      async function* ({ hook }) {
+        yield init("sdk-7");
+        await hook("PreToolUse", {
+          tool_name: "Agent",
+          tool_input: { subagent_type: "researcher" },
+          tool_use_id: "a1",
+        });
+        await hook("SubagentStart", { agent_id: "x", agent_type: "researcher" });
+        yield text("ええと。");
+        yield blockStop();
+        throw new Error("connection reset");
+      },
+      async function* ({ hook }) {
+        yield init("sdk-7");
+        // 続きでは、失敗した試みで呼んだスタッフをもう一度呼べる
+        const again = await hook("PreToolUse", {
+          tool_name: "Agent",
+          tool_input: { subagent_type: "researcher" },
+          tool_use_id: "a2",
+        });
+        expect(JSON.stringify(again)).not.toContain("deny");
+        yield text("続きです。");
+        yield blockStop();
+        yield success();
+      },
+    ]);
+
+    const events = await run("こんにちは");
+
+    expect(calls).toHaveLength(2);
+    expect(calls[1]?.options.resume).toBe("sdk-7");
+    expect(calls[1]?.prompt).toBe(CONTINUE_PROMPT);
+    expect(session.agentSessionId).toBe("sdk-7");
+    const deltas = events.flatMap((e) => (e.type === "message.delta" ? [e.data] : []));
+    expect(deltas.map((d) => d.text)).toEqual(["ええと。", "続きです。"]);
+    // 続きの返答は、別の返答として新しい ID で流す
+    expect(deltas[0]?.messageId).not.toBe(deltas[1]?.messageId);
+  });
+
+  it("返事の途中で失敗し、セッションを名乗っていなければ、店の記録で新しく始める", async () => {
     const { calls, run } = setup([
+      // biome-ignore lint/correctness/useYield: イベントを送ってから、セッションを名乗る前に失敗する台本
+      async function* ({ hook }) {
+        await hook("SubagentStart", { agent_id: "x", agent_type: "researcher" });
+        throw new Error("connection reset");
+      },
       async function* () {
         yield init();
+        yield text("お待たせしました。");
+        yield blockStop();
+        yield success();
+      },
+    ]);
+
+    await run("こんにちは");
+
+    expect(calls).toHaveLength(2);
+    expect(calls[1]?.options.resume).toBeUndefined();
+    expect(calls[1]?.prompt).toContain("<お客さまの発言>");
+  });
+
+  it("返事の途中で失敗し、相談の時間の残りが少なければ、続けずにエラーにする", async () => {
+    const { calls, run } = setup([
+      async function* ({ ctx }) {
+        yield init();
         yield text("ええと。");
+        ctx.turn.startedAt = Date.now() - (TURN_MAX_MS - RESUME_MIN_REMAINING_MS) - 1;
         throw new Error("process exited");
       },
     ]);
 
     await expect(run("こんにちは")).rejects.toMatchObject({ code: "internal", retryable: true });
+    expect(calls).toHaveLength(1);
+  });
+
+  it("返事の途中でも、やり直しても直らない失敗は続けない", async () => {
+    const { calls, run } = setup([
+      async function* () {
+        yield init();
+        yield text("ええと。");
+        throw new Error("Failed to authenticate: invalid api key");
+      },
+    ]);
+
+    await expect(run("こんにちは")).rejects.toMatchObject({ retryable: false });
     expect(calls).toHaveLength(1);
   });
 });

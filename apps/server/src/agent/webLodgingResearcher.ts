@@ -19,7 +19,12 @@ import type { ResolveHost } from "./addressGuard";
 import { partyLabel } from "./briefing";
 import type { RobotsChecker } from "./robots";
 import type { QueryFn } from "./runner";
-import { buildVerifierOptions, createVerifierHooks, finalText } from "./webVerifier";
+import {
+  buildVerifierOptions,
+  createVerifierHooks,
+  type FinalReply,
+  finalText,
+} from "./webVerifier";
 
 // search_lodging の中で、Web の検索と取得だけを許した1回きりのエージェント（宿の調べ役）を、
 // 観点（会場の近く・駅の近く・予算・家族向け）ごとに並べて動かす（docs/spec/agent-runtime.md の「宿の調べ」）。
@@ -130,6 +135,8 @@ export function createWebLodgingResearcher(deps: {
   resolveHost?: ResolveHost;
   robots?: RobotsChecker;
   maxBudgetUsd?: number | undefined;
+  /** 残した会話の記録を消す（Agent SDK の deleteSession を包んだもの）。省略すると消さない（テスト） */
+  forgetTranscript?: ((sessionId: string) => void) | undefined;
   clock?: () => number;
 }): LodgingResearcher {
   const systemPrompt = `${deps.prompt}\n\n${ANSWER_FORMAT}`;
@@ -191,9 +198,17 @@ export function createWebLodgingResearcher(deps: {
     const started = Date.now();
     let costUsd = 0;
     let found = 0;
+    let salvage: FinalReply["salvage"] = null;
     const ask = async (prompt: string, withTools: boolean) => {
-      const reply = await finalText(deps.query, prompt, options(withTools), input.onActivity);
+      const reply = await finalText(
+        deps.query,
+        prompt,
+        options(withTools),
+        input.onActivity,
+        deps.forgetTranscript,
+      );
       costUsd += reply.costUsd;
+      salvage ??= reply.salvage;
       return reply.text;
     };
     try {
@@ -229,6 +244,7 @@ export function createWebLodgingResearcher(deps: {
           kind: "lodging_research",
           perspective: plan.perspective,
           found,
+          ...(salvage === null ? {} : { salvage }),
           totalCostUsd: costUsd,
           elapsedMs: Date.now() - started,
           searches: log.searches.length,
