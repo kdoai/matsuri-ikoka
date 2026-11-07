@@ -127,6 +127,8 @@ export class StoragePersistence {
   readonly #now: () => number;
   /** 旅程の ID → 書き込みの途中の Promise（同じ旅程の版を順に書く） */
   readonly #pending = new Map<string, Promise<void>>();
+  /** 書き込みの途中の相談。すべて消す前に待ち、消したあとに戻らないようにする */
+  readonly #pendingSessions = new Set<Promise<void>>();
 
   constructor(deps: {
     storage: TripStorage;
@@ -147,8 +149,10 @@ export class StoragePersistence {
   }
 
   /**
-   * 消した旅の手元の写しと、その旅を指す相談の中のガイドのデータを捨てる。旅が消されたと分かっているときだけ呼ぶ。
-   * 相談の旅程は、次の発言の前に外す（releaseDeletedTrip）。ガイドの入口で「旅が消された」と分かるよう、それまで残す
+   * 旅を消す前に呼ぶ。その旅を指す相談に印を付けて流している返事を止め、手元の写しと相談の中のガイドのデータを捨てる。
+   * 印のある間は旅程を保存しないので、返事の途中に消しても旅は作り直されない。
+   * 相談の旅程は、次の発言の前に外す（releaseDeletedTrip）。ガイドの入口で「旅が消された」と分かるよう、それまで残す。
+   * 持ち主と確かめた旅だけに呼ぶ
    */
   async forgetTrip(itineraryId: string): Promise<void> {
     this.#itineraries.forget(itineraryId);
@@ -156,6 +160,7 @@ export class StoragePersistence {
       const { agentSessionId, agentCostUsd } = session.guide;
       session.guide = { ...newSessionGuide(), agentSessionId, agentCostUsd };
       session.tripDeleted = true;
+      session.stopTurn?.();
       await this.saveSession(session);
     }
   }
@@ -177,12 +182,16 @@ export class StoragePersistence {
     await this.saveSession(session);
   }
 
-  /** すべて消した利用者の相談と旅程の写しを、メモリから外す。返事を作っている途中の相談は旅程だけを外す */
+  /**
+   * すべて消す前に呼ぶ。その人の相談に印を付けて流している返事を止め、メモリから外す。
+   * 印のある相談は、もう開けず、保存もしない。返事を作っている途中の相談は、返事が止まって保存しに来たときに外す
+   */
   forgetOwner(owner: OwnerId): void {
     for (const session of this.#sessions?.matching((s) => s.ownerUid === owner) ?? []) {
       if (session.itineraryId !== null) this.#itineraries.forget(session.itineraryId);
-      if (session.busy) session.itineraryId = null;
-      else this.#sessions?.remove(session);
+      session.discarded = true;
+      session.stopTurn?.();
+      if (!session.busy) this.#sessions?.remove(session);
     }
   }
 
@@ -207,7 +216,7 @@ export class StoragePersistence {
       await this.#pending.get(itineraryId);
       return;
     }
-    await Promise.all(this.#pending.values());
+    await Promise.all([...this.#pending.values(), ...this.#pendingSessions]);
   }
 
   /**
@@ -259,6 +268,7 @@ export class StoragePersistence {
   async load(sessionId: string, viewer: OwnerId | null = null): Promise<Session | undefined> {
     if (this.#sessions === undefined) return undefined;
     const inMemory = this.#sessions.get(sessionId);
+    if (inMemory?.discarded) return undefined;
     if (inMemory !== undefined) return inMemory;
     let saved: SessionSnapshot | null;
     try {
@@ -304,7 +314,18 @@ export class StoragePersistence {
    * 失敗してもログに残すだけにする
    */
   async saveSession(session: Session): Promise<void> {
+    const write = this.#writeSession(session);
+    this.#pendingSessions.add(write);
+    await write.finally(() => this.#pendingSessions.delete(write));
+  }
+
+  async #writeSession(session: Session): Promise<void> {
     if (session.itineraryId !== null) await this.flush(session.itineraryId);
+    // すべて消した相談は書かない。止まった返事の片付けで戻さない
+    if (session.discarded) {
+      this.#sessions?.remove(session);
+      return;
+    }
     try {
       await this.#storage.saveSession(snapshotOf(session, this.#now()));
     } catch (error) {

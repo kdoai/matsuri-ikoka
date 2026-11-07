@@ -1,6 +1,7 @@
 import {
   AuthConfigSchema,
   DEFAULT_PREFERENCES,
+  type Itinerary,
   ShareResponseSchema,
   TRIAL_ACCOUNT_UID,
   TripListResponseSchema,
@@ -13,8 +14,10 @@ import type { IdTokenVerifier } from "../account/idToken";
 import type { AgentRunner } from "../agent/runner";
 import { createApp } from "../app";
 import { createFestivalStore } from "../data/festivalStore";
+import { StoragePersistence } from "../session/persistence";
 import { ItineraryStore, SessionStore } from "../session/sessionStore";
 import { MemoryTripStorage } from "../storage/memory";
+import { ownerIdOf } from "../storage/owner";
 import { DailyLimiter } from "./guard";
 
 /** 「token-<利用者>」だけを通す、ネットワークに出ない ID トークンの確認 */
@@ -28,12 +31,16 @@ const fakeVerifier: IdTokenVerifier = {
 /** 返事を作らない接客（このテストでは相談の中身を使わない） */
 const runner: AgentRunner = { mode: "mock", runTurn: async () => {} };
 
-function setup(options: { login?: boolean } = {}) {
-  const itineraries = new ItineraryStore();
+function setup(
+  options: { login?: boolean; runner?: AgentRunner; itineraries?: ItineraryStore } = {},
+) {
+  const itineraries = options.itineraries ?? new ItineraryStore();
   const sessions = new SessionStore();
   const storage = new MemoryTripStorage();
+  const persistence = new StoragePersistence({ storage, itineraries, sessions });
   const app = createApp({
-    runner,
+    runner: options.runner ?? runner,
+    persistence,
     sessions,
     itineraries,
     festivals: createFestivalStore([]),
@@ -63,7 +70,7 @@ function setup(options: { login?: boolean } = {}) {
     session.itineraryId = itinerary.id;
     return { session, itinerary };
   };
-  return { app, call, sessions, itineraries, storage, sessionWithItinerary };
+  return { app, call, sessions, itineraries, storage, persistence, sessionWithItinerary };
 }
 
 describe("ログインと自分の旅の API", () => {
@@ -210,6 +217,135 @@ describe("ログインと自分の旅の API", () => {
     expect(after?.itineraryId).toBeNull();
     expect(after?.stage).toBe("hearing");
     expect((await call("/api/trips", { method: "POST", user: "alice", body })).status).toBe(409);
+  });
+
+  describe("返事の途中に消したとき", () => {
+    /** 返事を止められるまで動き、止められたあとに旅程を保存しようとする接客 */
+    const holdingRunner = (itineraries: ItineraryStore, save: Itinerary) => {
+      let started = () => {};
+      const running = new Promise<void>((resolve) => {
+        started = resolve;
+      });
+      const saved: boolean[] = [];
+      const holding: AgentRunner = {
+        mode: "mock",
+        runTurn: (input) =>
+          new Promise<void>((_resolve, reject) => {
+            started();
+            input.signal.addEventListener("abort", () => {
+              saved.push(itineraries.saveForSession(input.session, save));
+              reject(input.signal.reason);
+            });
+          }),
+      };
+      return { holding, running, saved };
+    };
+
+    const talkAndWait = async (
+      context: ReturnType<typeof setup>,
+      session: { id: string },
+      running: Promise<void>,
+    ) => {
+      const reply = context.call("/api/chat", {
+        method: "POST",
+        user: "alice",
+        body: {
+          sessionId: session.id,
+          message: "こんにちは",
+          preferences: DEFAULT_PREFERENCES,
+        },
+      });
+      const response = await reply;
+      const body = response.text();
+      await running;
+      return { body };
+    };
+
+    it("すべて消すと返事が止まり、相談も旅程も戻らない", async () => {
+      const replacement = { ...fictionalItinerary(), id: "trip-after-delete" };
+      const itineraries = new ItineraryStore();
+      const { holding, running, saved } = holdingRunner(itineraries, replacement);
+      const context = setup({ runner: holding, itineraries });
+      const { session } = context.sessionWithItinerary();
+      await context.call("/api/trips", {
+        method: "POST",
+        user: "alice",
+        body: { sessionId: session.id },
+      });
+      const { body } = await talkAndWait(context, session, running);
+
+      const deleted = await context.call("/api/me/trips", { method: "DELETE", user: "alice" });
+      expect(deleted.status).toBe(200);
+      const text = await body;
+      await context.persistence.flush();
+
+      expect(text).toContain("旅を消したので");
+      expect(saved).toEqual([false]);
+      expect(await context.storage.getSession(session.id)).toBeNull();
+      expect(context.itineraries.get(replacement.id)).toBeUndefined();
+      expect(await context.storage.forOwner(ownerIdOf("alice")).getTrip(replacement.id)).toBeNull();
+      // メモリからも外れて、もう開けない
+      expect(context.sessions.get(session.id)).toBeUndefined();
+      const again = await context.call("/api/chat", {
+        method: "POST",
+        user: "alice",
+        body: { sessionId: session.id, message: "やあ", preferences: DEFAULT_PREFERENCES },
+      });
+      expect(again.status).toBe(404);
+    });
+
+    it("旅を1つ消すと返事が止まり、同じ ID で作り直されない", async () => {
+      const itineraries = new ItineraryStore();
+      const placeholder = { ...fictionalItinerary(), id: "placeholder" };
+      const { holding, running, saved } = holdingRunner(itineraries, placeholder);
+      const context = setup({ runner: holding, itineraries });
+      const { session, itinerary } = context.sessionWithItinerary();
+      await context.call("/api/trips", {
+        method: "POST",
+        user: "alice",
+        body: { sessionId: session.id },
+      });
+      const { body } = await talkAndWait(context, session, running);
+
+      const deleted = await context.call(`/api/trips/${itinerary.id}`, {
+        method: "DELETE",
+        user: "alice",
+      });
+      expect(deleted.status).toBe(204);
+      expect(await body).toContain("旅を消したので");
+      await context.persistence.flush();
+
+      expect(saved).toEqual([false]);
+      expect(context.itineraries.get(itinerary.id)).toBeUndefined();
+      const read = await context.call(`/api/trips/${itinerary.id}`, { user: "alice" });
+      expect(read.status).toBe(404);
+      expect((await context.storage.readUnowned(itinerary.id)) ?? null).toBeNull();
+    });
+
+    it("ほかの人の旅を消そうとしても、その人の返事は止まらない", async () => {
+      const itineraries = new ItineraryStore();
+      const placeholder = { ...fictionalItinerary(), id: "placeholder" };
+      const { holding, running } = holdingRunner(itineraries, placeholder);
+      const context = setup({ runner: holding, itineraries });
+      const { session, itinerary } = context.sessionWithItinerary();
+      await context.call("/api/trips", {
+        method: "POST",
+        user: "alice",
+        body: { sessionId: session.id },
+      });
+      const { body } = await talkAndWait(context, session, running);
+
+      const refused = await context.call(`/api/trips/${itinerary.id}`, {
+        method: "DELETE",
+        user: "bob",
+      });
+
+      expect(refused.status).toBe(404);
+      expect(context.sessions.get(session.id)?.tripDeleted).toBe(false);
+      expect(context.sessions.get(session.id)?.stopTurn).not.toBeNull();
+      context.sessions.get(session.id)?.stopTurn?.();
+      await body;
+    });
   });
 
   it("すべて消すと、相談の途中の状態も消え、もう続けられない", async () => {

@@ -82,8 +82,15 @@ export interface Session {
   selectedFestivalId: string | null;
   /** この相談の旅程の ID。保存した旅程は ItineraryStore にある */
   itineraryId: string | null;
-  /** 利用者がこの旅を消した。次の発言の前に旅程を外す。保存しない（別のインスタンスでは、旅程を読めずに外れる） */
+  /**
+   * 利用者がこの旅を消した。この印がある間は旅程を保存せず、次の発言の前に旅程を外す。
+   * 保存しない（別のインスタンスでは、旅程を読めずに外れる）
+   */
   tripDeleted: boolean;
+  /** 利用者が自分のデータをすべて消した。もう開けず、相談も旅程も保存しない */
+  discarded: boolean;
+  /** 流している返事を止める。流していなければ null */
+  stopTurn: (() => void) | null;
   /** 祭りから探して決めた、必ず行く祭りと行く日。あれば、この祭りを固定して旅程を組む */
   anchor: TripAnchor | null;
   /** 固定した祭りを軸にした組み立て。出発地か泊数が分からない間は null */
@@ -177,6 +184,8 @@ export class SessionStore {
       selectedFestivalId: null,
       itineraryId: null,
       tripDeleted: false,
+      discarded: false,
+      stopTurn: null,
       anchor: null,
       anchorPlan: null,
       anchorCheck: null,
@@ -232,6 +241,8 @@ export class SessionStore {
       cancelledAnchor: saved.cancelledAnchor ?? null,
       guide: saved.guide ?? newSessionGuide(),
       tripDeleted: false,
+      discarded: false,
+      stopTurn: null,
       lastActiveAt: this.#now(),
       weather: new Map(),
       nearMisses: [],
@@ -311,6 +322,16 @@ export class ItineraryStore {
   save(itinerary: Itinerary, owner: OwnerId | null): void {
     this.remember(itinerary);
     for (const listener of this.#listeners) listener(itinerary, owner);
+  }
+
+  /**
+   * 相談の旅程を保存する。ツールと記録の再生はここから保存する。
+   * 返事の途中に旅やデータが消されたら保存せず、false を返す（消したものを作り直さない）
+   */
+  saveForSession(session: Session, itinerary: Itinerary): boolean {
+    if (session.discarded || session.tripDeleted) return false;
+    this.save(itinerary, session.ownerUid);
+    return true;
   }
 
   /** 保存の口から読んだ旅程を、手元の写しに置く（購読しているものには知らせない） */
