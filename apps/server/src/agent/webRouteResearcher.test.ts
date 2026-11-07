@@ -253,6 +253,37 @@ describe("createWebRouteResearcher", () => {
   });
 });
 
+describe("とっておく結果の分け方", () => {
+  it("同じ駅の組でも、時刻表の種類や着きたい時刻が違えば調べ直す", async () => {
+    const answer: Script = async (hook) => {
+      await read(hook, "https://example.com/route");
+      return ANSWER;
+    };
+    const { calls, researcher } = setup([answer, answer, answer, answer]);
+    const ask = (date: string, arriveBy?: string) =>
+      researcher.research({
+        from: "こがね台",
+        to: "鈴鳴駅",
+        date,
+        ...(arriveBy ? { arriveBy } : {}),
+        signal: new AbortController().signal,
+      });
+
+    await ask("2026-08-16");
+    // 同じ日曜の時刻表なら、とっておいた結果を使う
+    await ask("2026-08-23");
+    expect(calls).toHaveLength(1);
+    // 平日は時刻表が違う。土曜も日曜と分ける
+    await ask("2026-08-17");
+    expect(calls).toHaveLength(2);
+    await ask("2026-08-15");
+    expect(calls).toHaveLength(3);
+    // 着きたい時刻が違えば、乗る列車が違う
+    await ask("2026-08-16", "17:00");
+    expect(calls).toHaveLength(4);
+  });
+});
+
 describe("乗り換えの区間と帰りの最終", () => {
   const legs = [
     { from: "こがね台", to: "川辺", line: "こがね線", minutes: [30, 40] },

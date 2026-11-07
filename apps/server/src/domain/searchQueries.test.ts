@@ -36,6 +36,38 @@ describe("verificationQueries", () => {
     expect(new Set(queries).size).toBe(queries.length);
   });
 
+  it("会場の名前と確かめる年と月の言葉を、名前と年の次に入れる", () => {
+    const festival = testFestival({
+      id: "suzunari",
+      edit: (f) => {
+        f.name = { ja: "鈴鳴灯籠祭り" };
+        f.venue = { ...f.venue, name: "鈴鳴八幡宮" };
+      },
+    });
+    const queries = verificationQueries(festival, "2026-08-16");
+    expect(queries.slice(0, 3)).toEqual([
+      "site:example.com 鈴鳴灯籠祭り 2026",
+      "鈴鳴灯籠祭り 2026 日程",
+      "鈴鳴八幡宮 2026年8月",
+    ]);
+    // 広報誌は月ごとに出るので、月を添える
+    expect(queries).toContain("鈴鳴町 鈴鳴灯籠祭り 広報 8月");
+    expect(queries).toHaveLength(MAX_VERIFICATION_QUERIES);
+  });
+
+  it("会場の名前が祭りの名前に含まれるときは、会場の言葉を足さない", () => {
+    const festival = testFestival({
+      id: "suzunari",
+      edit: (f) => {
+        f.name = { ja: "鈴鳴八幡宮例大祭" };
+        f.venue = { ...f.venue, name: "鈴鳴八幡宮" };
+      },
+    });
+    expect(verificationQueries(festival, "2026-10-04").some((q) => q.includes("年10月"))).toBe(
+      false,
+    );
+  });
+
   it("令和の年を数える", () => {
     expect(reiwaYear(2026)).toBe(8);
     expect(reiwaYear(2018)).toBeNull();

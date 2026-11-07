@@ -113,8 +113,90 @@ export function extractToolOutput(response: unknown): Record<string, unknown> | 
 
 /** 旅程係を、保存しないまま終えようとしたときに戻す回数の上限 */
 const MAX_UNSAVED_SEND_BACKS = 2;
-const UNSAVED_NEXT_STEP =
-  "まだ旅程を保存できていません。失敗の理由（errors や入力の形の指摘）を読んで直し、update_itinerary を呼び直してください。調べられなかった区間や時刻は、推測で埋めず、書かないまま保存できます（足りないものは gaps に残ります）";
+/** 差し戻しの文の終わりに必ず添える */
+const UNSAVED_TAIL =
+  "調べられなかった区間や時刻は、推測で埋めず、書かないまま保存できます（足りないものは gaps に残ります）";
+const UNSAVED_NEXT_STEP = `まだ旅程を保存できていません。失敗の理由（errors や入力の形の指摘）を読んで直し、update_itinerary を呼び直してください。${UNSAVED_TAIL}`;
+
+/** 保存できなかった理由の種類ごとに、直し方を伝える */
+const SAVE_ERROR_ADVICE: Readonly<Record<string, readonly string[]>> = {
+  "予定の時刻を並べ直してください（移動の時間・祭りの会場に着く余裕・帰りの最終に合わせる）": [
+    "out_of_order",
+    "overlap",
+    "not_enough_move_time",
+    "festival_time_conflict",
+    "arrival_buffer",
+    "after_last_return",
+  ],
+  "行く日に休みか営業時間の外の場所は、時刻をずらすか、調べた別の場所に替えてください": [
+    "closed_day",
+    "outside_hours",
+    "after_last_entry",
+  ],
+  "場所と祭りは、調べた結果にある ID と、開催する日だけを使ってください": [
+    "unknown_spot",
+    "unknown_festival",
+    "festival_not_on_date",
+  ],
+  "1日目の最初の予定を出発の駅からの移動にし、所要時間は research_route の結果か見積もりをそのまま使ってください":
+    ["start_not_origin", "origin_move_too_short", "over_travel_limit"],
+  "主役の祭りを、選んだ日の旅程に入れてください": [
+    "anchor_visit_missing",
+    "anchor_date_missing",
+    "anchor_outside_dates",
+    "anchor_festival_changed",
+  ],
+};
+/** 保存を断る点検の種類（サーバーが決めた名前だけ。これ以外の文字列は reason に入れない） */
+const SAVE_ERROR_CODES: readonly string[] = Object.values(SAVE_ERROR_ADVICE).flat();
+/** 入力の形の検査で断られたことを示す印（Zod の種類と、MCP の入力の検査の文） */
+const SHAPE_FAILURE_MARKERS =
+  /\b(?:invalid_type|invalid_value|invalid_union|too_small|too_big|unrecognized_keys)\b|Invalid arguments|入力の(?:形|検査)/;
+
+/** この発言で、旅程の保存がどう断られたか（サーバーが受け取ったツールの結果から） */
+export interface SaveFailure {
+  shape: boolean;
+  codes: string[];
+}
+
+/**
+ * 保存しないまま終えようとした旅程係に返す、差し戻しの文。
+ * 理由は、ツールの結果（saveFailure）と、旅程係の最後の文（lastMessage）から種類だけを読む。
+ * 最後の文は信用しない入力として、決めた種類の名前と印があるかだけを見て、文は写さない
+ */
+export function unsavedNextStep(input: {
+  lastMessage: string | undefined;
+  saveFailure: SaveFailure | null;
+  triedSave: boolean;
+}): string {
+  const message = typeof input.lastMessage === "string" ? input.lastMessage.slice(0, 4000) : "";
+  const named = SAVE_ERROR_CODES.filter((code) => new RegExp(`\\b${code}\\b`).test(message));
+  const codes = SAVE_ERROR_CODES.filter(
+    (code) => input.saveFailure?.codes.includes(code) || named.includes(code),
+  );
+  const shape = input.saveFailure?.shape === true || SHAPE_FAILURE_MARKERS.test(message);
+  const steps: string[] = [];
+  if (shape) {
+    steps.push(
+      "update_itinerary が入力の形の検査で断られました。指摘の場所（path）と種類（code）が指す項目だけを直し、ほかは変えずに呼び直してください",
+    );
+  }
+  if (codes.length > 0) {
+    const advice = Object.entries(SAVE_ERROR_ADVICE)
+      .filter(([, group]) => group.some((code) => codes.includes(code)))
+      .map(([text]) => text);
+    steps.push(
+      `update_itinerary が点検で断られました（${codes.join("・")}）。${advice.join("。")}。直したら update_itinerary を呼び直してください`,
+    );
+  }
+  if (steps.length === 0 && !input.triedSave && input.saveFailure === null) {
+    steps.push(
+      "まだ update_itinerary を呼んでいません。調べた結果で旅程を組み、update_itinerary で保存してください",
+    );
+  }
+  if (steps.length === 0) return UNSAVED_NEXT_STEP;
+  return `${steps.join("。")}。${UNSAVED_TAIL}`;
+}
 
 /** ログに残す、入力の検査の指摘の数の上限 */
 const MAX_LOGGED_ISSUES = 8;
@@ -274,14 +356,31 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
     }
   };
 
+  /** この発言で、旅程の保存がどう断られたか。保存できたら消す */
+  let saveFailure: SaveFailure | null = null;
+
   const postToolUse: HookCallback = async (input, toolUseId) => {
     if (input.hook_event_name !== "PostToolUse") return {};
-    endTool(input.tool_use_id || toolUseId || "", extractToolOutput(input.tool_response));
+    const output = extractToolOutput(input.tool_response);
+    if (toolNameOf(input.tool_name) === "update_itinerary" && output !== null) {
+      if (output.saved === true) {
+        saveFailure = null;
+      } else {
+        const errors = z.array(z.looseObject({ code: z.string() })).safeParse(output.errors);
+        saveFailure = {
+          shape: false,
+          codes: errors.success ? errors.data.map((error) => error.code) : [],
+        };
+      }
+    }
+    endTool(input.tool_use_id || toolUseId || "", output);
     return {};
   };
 
   const postToolUseFailure: HookCallback = async (input, toolUseId) => {
     if (input.hook_event_name !== "PostToolUseFailure") return {};
+    if (toolNameOf(input.tool_name) === "update_itinerary")
+      saveFailure = { shape: true, codes: [] };
     // 書き直しの多い項目をつかむため、入力の検査の指摘の場所と種類だけを残す（値は残さない）
     console.info(
       JSON.stringify({
@@ -336,7 +435,14 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
     if (leavingUnsaved()) {
       if (unsavedSentBack >= MAX_UNSAVED_SEND_BACKS) return {};
       unsavedSentBack += 1;
-      return { decision: "block", reason: UNSAVED_NEXT_STEP };
+      return {
+        decision: "block",
+        reason: unsavedNextStep({
+          lastMessage: input.last_assistant_message,
+          saveFailure,
+          triedSave: turn.toolCalls.includes("update_itinerary"),
+        }),
+      };
     }
     const evaluation = turn.lastEvaluation;
     if (evaluation === null || evaluation.passed || evaluation.round >= evaluation.maxRounds) {

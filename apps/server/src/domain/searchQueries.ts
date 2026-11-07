@@ -31,17 +31,21 @@ export function nameVariants(name: string): string[] {
 }
 
 /**
- * 開催を確かめるための検索の言葉。上から順に優先する。
+ * 開催を確かめるための検索の言葉。上から順に優先し、上限（MAX_VERIFICATION_QUERIES）で切る。
  * 1. 公式のサイトの中を、祭りの名前と年で探す（主催者・神社・自治体）
  * 2. 名前と年（西暦）と「日程」
- * 3. 祭りの名前だけ（年の書かれていない案内や、地域のイベントのページも拾う）
- * 4. 市町村の名前と名前（同じ名前の別の土地の祭りと分ける）
- * 5. 市町村の名前と名前と令和の年（地域の呼び方で探す）
- * 6. 名前と「広報」（地域の広報誌の PDF に載る小さな行事）
- * 7. 名前の別の書き方と年
+ * 3. 会場（神社・寺・公園など）の名前と、確かめる年と月（小さな祭りは、祭りの名前を書かず、
+ *    会場の行事の日程だけを載せたページが多い）
+ * 4. 祭りの名前だけ（年の書かれていない案内や、地域のイベントのページも拾う）
+ * 5. 市町村の名前と名前（同じ名前の別の土地の祭りと分ける）
+ * 6. 市町村の名前と名前と令和の年（地域の呼び方で探す）
+ * 7. 名前と「広報」と月（地域の広報誌の PDF に載る小さな行事。広報誌は月ごとに出る）
+ * 8. 名前の別の書き方と年
  */
 export function verificationQueries(festival: Festival, date: IsoDate): string[] {
   const year = Number(date.slice(0, 4));
+  const month = Number(date.slice(5, 7));
+  const venue = festival.venue.name.trim();
   const reiwa = reiwaYear(year);
   const [name = festival.name.ja, ...others] = nameVariants(festival.name.ja);
   const city = festival.municipalities[0]?.name ?? "";
@@ -52,10 +56,12 @@ export function verificationQueries(festival: Festival, date: IsoDate): string[]
   const queries = [
     ...(officialHost ? [`site:${officialHost} ${name} ${year}`] : []),
     `${name} ${year} 日程`,
+    // 会場の名前が祭りの名前の中にあれば、名前と年の言葉と変わらないので足さない
+    ...(venue !== "" && !name.includes(venue) ? [`${venue} ${year}年${month}月`] : []),
     name,
     ...(city !== "" ? [`${city} ${name}`] : []),
     ...(reiwa !== null && city !== "" ? [`${city} ${name} 令和${reiwa}年`] : []),
-    `${city} ${name} 広報`.trim(),
+    `${city} ${name} 広報 ${month}月`.trim(),
     ...others.map((other) => `${other} ${year}`),
   ];
   return [...new Set(queries)].slice(0, MAX_VERIFICATION_QUERIES);
