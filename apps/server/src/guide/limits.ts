@@ -19,6 +19,12 @@ export const DEFAULT_GUIDE_LIMITS: GuideLimits = {
   costUsdPerTrip: 2,
 };
 
+/**
+ * 結果が届かなかった発言（切断・時間切れ・失敗）に足す費用の見積もり（米ドル）。
+ * 費用が分からなくても、モデルは動いているので、0 で数えない
+ */
+export const GUIDE_NO_RESULT_COST_USD = 0.02;
+
 /** 上限に達しているか */
 export function overGuideLimit(usage: DailyGuideUsage, limits: GuideLimits): boolean {
   return (

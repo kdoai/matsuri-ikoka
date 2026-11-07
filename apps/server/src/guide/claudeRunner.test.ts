@@ -12,6 +12,7 @@ import { createUnavailableLodging } from "../tools/lodging";
 import { unavailableVerifier } from "../tools/verifier";
 import { ClaudeGuideRunner } from "./claudeRunner";
 import { sessionGuideData } from "./data";
+import { GUIDE_NO_RESULT_COST_USD } from "./limits";
 import { newGuideTurn, noteTurnSource } from "./runner";
 
 // Agent SDK の代わりに、決まったメッセージを流し、フックを呼ぶ偽物の query で確かめる
@@ -45,6 +46,7 @@ type Script = (api: {
 
 function setup(script: Script) {
   const params: { prompt: string; options: Options }[] = [];
+  const forgotten: string[] = [];
   const query: QueryFn = ({ prompt, options }) => {
     params.push({ prompt, options });
     const hook = async (event: string, input: Record<string, unknown>) => {
@@ -89,17 +91,24 @@ function setup(script: Script) {
     today: () => "2026-08-03",
     now: () => "2026-08-03T10:00:00+09:00",
     query,
+    forgetTranscript: (id) => forgotten.push(id),
   });
   const session = new SessionStore().create();
   session.itineraryId = itinerary.id;
   const run = async (
     message: string,
-    options: { target?: Session; location?: LatLng; emergency?: boolean; budgetUsd?: number } = {},
+    options: {
+      target?: Session;
+      location?: LatLng;
+      emergency?: boolean;
+      budgetUsd?: number;
+      meter?: CostMeter;
+    } = {},
   ) => {
     const target = options.target ?? session;
     const events: GuideSseEvent[] = [];
     const turn = newGuideTurn();
-    const meter = new CostMeter();
+    const meter = options.meter ?? new CostMeter();
     await runner.runTurn(
       {
         session: target,
@@ -116,7 +125,7 @@ function setup(script: Script) {
     );
     return { events, turn, meter };
   };
-  return { run, params, session, itinerary };
+  return { run, params, session, itinerary, forgotten };
 }
 
 describe("ClaudeGuideRunner", () => {
@@ -153,22 +162,50 @@ describe("ClaudeGuideRunner", () => {
     expect(prompt.match(/<\/利用者の発言>/g)).toHaveLength(1);
   });
 
-  it("現在地は、その発言のプロンプトにだけ入れる", async () => {
+  it("現在地は、その発言のプロンプトにだけ入れ、次の発言で読み直さない", async () => {
     const info = vi.spyOn(console, "info").mockImplementation(() => {});
-    const { run, params, session } = setup(async function* () {
+    const { run, params, session, forgotten } = setup(async function* () {
       yield init("sdk-1");
-      yield result(0);
+      yield result(0.01);
     });
+    session.guide.resume = {
+      turns: 2,
+      topics: ["food"],
+      pendingProposalIds: [],
+      lastTurnAt: "2026-08-02T10:00:00+09:00",
+    };
+    session.guide.agentSessionId = "sdk-0";
 
     await run("近くでご飯を食べたい", { location: { lat: 35.1234, lng: 136.5678 } });
+
+    // 現在地を入れた会話は再開せず、記録も消して、要約から新しい会話にする
+    expect(session.guide.agentSessionId).toBeNull();
+    expect(forgotten).toEqual(["sdk-1"]);
+
     await run("ありがとう");
 
     const logged = info.mock.calls.flat().join(" ");
     info.mockRestore();
+    expect(params[0]?.options.resume).toBe("sdk-0");
     expect(params[0]?.prompt).toContain("35.1234");
+    expect(params[1]?.options.resume).toBeUndefined();
     expect(params[1]?.prompt).not.toContain("35.1234");
+    expect(params[1]?.prompt).toContain("2回話しました");
     expect(logged).not.toContain("35.1234");
     expect(JSON.stringify(session.guide)).not.toContain("35.1234");
+  });
+
+  it("現在地のない発言のあとは、同じ会話を再開する", async () => {
+    const { run, params, forgotten } = setup(async function* () {
+      yield init("sdk-1");
+      yield result(0.01);
+    });
+
+    await run("こんにちは");
+    await run("ありがとう");
+
+    expect(params[1]?.options.resume).toBe("sdk-1");
+    expect(forgotten).toEqual([]);
   });
 
   it("緊急のときは、診断も判断もしないよう伝える", async () => {
@@ -195,6 +232,24 @@ describe("ClaudeGuideRunner", () => {
     expect(params[1]?.options.resume).toBe("sdk-1");
     expect(first.meter.usd).toBeCloseTo(0.1);
     expect(second.meter.usd).toBeCloseTo(0.15);
+  });
+
+  it("結果が届かなかった発言にも、見積もりの費用を足す", async () => {
+    const meter = new CostMeter();
+    const { run } = setup(async function* () {
+      yield init("sdk-1");
+      yield text("途中まで。");
+      yield {
+        type: "stream_event",
+        parent_tool_use_id: null,
+        event: { type: "content_block_stop" },
+      } as unknown as SDKMessage;
+      throw new Error("接続が切れました");
+    });
+
+    await expect(run("こんにちは", { meter })).rejects.toThrow();
+
+    expect(meter.usd).toBe(GUIDE_NO_RESULT_COST_USD);
   });
 
   it("その発言に使える費用を上限として渡す", async () => {
@@ -330,12 +385,21 @@ describe("ClaudeGuideRunner", () => {
       yield result(0.01);
     });
     session.guide.agentSessionId = "sdk-gone";
+    session.guide.resume = {
+      turns: 4,
+      topics: ["weather"],
+      pendingProposalIds: [],
+      lastTurnAt: "2026-08-02T10:00:00+09:00",
+    };
 
     const { events } = await run("こんにちは");
 
     expect(params).toHaveLength(2);
     expect(params[0]?.options.resume).toBe("sdk-gone");
+    expect(params[0]?.prompt).not.toContain("4回話しました");
     expect(params[1]?.options.resume).toBeUndefined();
+    // 新しい会話でやり直すときは、要約の行を入れて続ける
+    expect(params[1]?.prompt).toContain("4回話しました");
     expect(session.guide.agentSessionId).toBe("sdk-2");
     expect(events.map((event) => event.type)).toEqual(["message.delta"]);
   });

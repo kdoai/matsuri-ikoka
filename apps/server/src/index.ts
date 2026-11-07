@@ -13,7 +13,7 @@ import { loadPrompts } from "./agent/prompts";
 import { loadSampleConversations, ReplayAgentRunner } from "./agent/replayRunner";
 import { createRobotsChecker } from "./agent/robots";
 import type { AgentRunner } from "./agent/runner";
-import { agentConfigDir, forgetTranscripts } from "./agent/transcripts";
+import { agentConfigDir, forgetTranscript, forgetTranscripts } from "./agent/transcripts";
 import { createWebGuideResearcher } from "./agent/webGuideResearcher";
 import { createWebLodgingResearcher } from "./agent/webLodgingResearcher";
 import { createWebNearbyResearcher } from "./agent/webNearbyResearcher";
@@ -181,6 +181,7 @@ if (config.mode === "live") {
       today,
       now: () => nowInJapan(),
       query,
+      forgetTranscript: forgetTranscript(deleteSession, cwd),
     });
   }
   runner = new ClaudeAgentRunner({

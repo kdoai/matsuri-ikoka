@@ -574,6 +574,31 @@ describe("費用と回数の上限", () => {
     expect(budgets).toEqual([1, 0.25]);
   });
 
+  it("ツールの中の調べに使える費用を、今日の残りで抑える", async () => {
+    const remaining: (number | null)[] = [];
+    const context = setup({
+      guide: {
+        runner: {
+          mode: "mock",
+          today: () => "2026-08-03",
+          now: () => "2026-08-03T10:00:00+09:00",
+          maxBudgetUsd: 0.1,
+          runTurn: async ({ meter }) => {
+            remaining.push(meter.remainingUsd);
+            meter.add(0.75);
+          },
+        },
+        limits: { turnsPerUser: 10, turnsPerTrip: 10, costUsdPerUser: 2, costUsdPerTrip: 1 },
+      },
+    });
+    const { sessionId } = await context.consult(ALICE);
+
+    await (await context.chat(sessionId, "こんにちは", ALICE)).text();
+    await (await context.chat(sessionId, "こんにちは", ALICE)).text();
+
+    expect(remaining).toEqual([1, 0.25]);
+  });
+
   it("全体の1日の回数の上限も使う", async () => {
     const limiter = new DailyLimiter(null, () => "2026-08-03");
     const context = setup({ limiter });

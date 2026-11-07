@@ -319,13 +319,15 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
     deps.limiter.consume();
     deps.clientLimiter?.consume(client);
     const budgetUsd = guideTurnBudgetUsd(usage, limits, runner.maxBudgetUsd);
+    // ツールの中の調べは、今日の残りで抑える（調べごとの上限は、それぞれの調べ役が持つ）
+    const todayBudgetUsd = guideTurnBudgetUsd(usage, limits, undefined);
 
     return streamEvents<GuideSseEvent>(
       c,
       session,
       async (signal, emit, progress) => {
         const turn = newGuideTurn();
-        const meter = new CostMeter();
+        const meter = new CostMeter(todayBudgetUsd);
         try {
           if (emergency) emit(emergencyEvent());
           await runner.runTurn(

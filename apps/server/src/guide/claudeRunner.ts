@@ -18,6 +18,7 @@ import type { RouteResearcher } from "../tools/routeResearch";
 import type { FestivalVerifier } from "../tools/verifier";
 import type { WeatherService } from "../tools/weather";
 import { createGuideHooks } from "./hooks";
+import { GUIDE_NO_RESULT_COST_USD } from "./limits";
 import { createGuideMcpServer } from "./mcpServer";
 import { guideTurnPrompt } from "./prompt";
 import { isLivePendingProposal } from "./proposal";
@@ -49,6 +50,8 @@ export interface ClaudeGuideRunnerDeps {
   today: () => IsoDate;
   now: () => string;
   query?: QueryFn;
+  /** 会話の記録を消す。現在地を入れた発言のあと、次の発言で読み直さないように使う */
+  forgetTranscript?: (id: string) => void;
   stderr?: (data: string) => void;
 }
 
@@ -136,7 +139,6 @@ export class ClaudeGuideRunner implements GuideRunner {
     const deps = this.#deps;
     const { session, signal, progress, turn, meter } = input;
     const guide = session.guide;
-    const prompt = await this.#prompt(input);
     let emitted = 0;
     const counted: EmitGuideEvent = (event) => {
       emitted += 1;
@@ -159,6 +161,8 @@ export class ClaudeGuideRunner implements GuideRunner {
       reply = stream;
       initSeen = false;
       try {
+        // 試みごとに作る。続きを読めず新しい会話でやり直すときは、要約の行が要る
+        const prompt = await this.#prompt(input);
         const options: Options = buildGuideOptions({
           prompt: deps.prompt,
           model: deps.model,
@@ -183,10 +187,10 @@ export class ClaudeGuideRunner implements GuideRunner {
       } finally {
         signal.removeEventListener("abort", abort);
         const total = stream.totalCostUsd;
-        if (total !== null) {
-          meter.add(total - baseCost);
-          guide.agentCostUsd = total;
-        }
+        const spent = total === null ? 0 : total - baseCost;
+        // 結果が届かない・費用が0のとき（切断・時間切れ・失敗）も、モデルは動いているので見積もりを足す
+        meter.add(spent > 0 ? spent : GUIDE_NO_RESULT_COST_USD);
+        if (total !== null) guide.agentCostUsd = total;
       }
     };
 
@@ -216,6 +220,13 @@ export class ClaudeGuideRunner implements GuideRunner {
         counted({ type: "guide.sources", data: { messageId, ...attached } });
       }
     } finally {
+      // 現在地はその発言のときだけ使う。入れた会話を次の発言で読み直さないよう、記録を消して要約から続ける
+      if (input.location !== undefined) {
+        const id = guide.agentSessionId;
+        guide.agentSessionId = null;
+        guide.agentCostUsd = 0;
+        if (id !== null) deps.forgetTranscript?.(id);
+      }
       // 費用・トークン・所要時間・呼んだ道具を残す。会話の文は残さない
       console.info(
         JSON.stringify({
