@@ -19,12 +19,15 @@ export function guideToolStartBubble(tool: GuideToolName): string {
 
 const count = (value: unknown): number => (Array.isArray(value) ? value.length : 0);
 
-/** ツールの結果から、終わったときの吹き出しを作る。output が null なら失敗 */
+/**
+ * ツールの結果から、終わったときの吹き出しを作る。output が null なら失敗。
+ * 失敗してもガイドは理由を読んで続けるので、止まったようには言わない
+ */
 export function guideToolEnd(
   tool: GuideToolName,
   output: Record<string, unknown> | null,
 ): { ok: boolean; bubble: string } {
-  if (output === null) return { ok: false, bubble: "うまく確かめられませんでした" };
+  if (output === null) return { ok: false, bubble: "もう少し確かめています" };
   switch (tool) {
     case "read_trip":
       return { ok: true, bubble: "旅程を見ました" };
