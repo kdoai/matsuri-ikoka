@@ -5,7 +5,7 @@ import {
   modelProgressVersion,
   subscribeModelProgress,
 } from "../scenes/modelFiles";
-import type { ShopSceneProps } from "../state/scene";
+import type { ShopSceneProps, StreetSceneProps } from "../state/scene";
 import { useReducedMotion } from "./hooks";
 
 // 3D の部品（src/scenes/）は遅れて読み込む。最初の画面は 2D で出し、3D は読み込めたら重ねる。
@@ -18,11 +18,17 @@ const storefrontModules = import.meta.glob<{
   default: ComponentType<{ testId?: string; onReady?: () => void }>;
 }>("../scenes/StorefrontScene.tsx");
 
+const streetModules = import.meta.glob<{ default: ComponentType<StreetSceneProps> }>(
+  "../scenes/StreetScene.tsx",
+);
+
 const loadShop = shopModules["../scenes/ShopScene.tsx"];
+const loadStreet = streetModules["../scenes/StreetScene.tsx"];
 const loadStorefront = storefrontModules["../scenes/StorefrontScene.tsx"];
 
 export const ShopScene = loadShop === undefined ? null : lazy(loadShop);
 export const StorefrontScene = loadStorefront === undefined ? null : lazy(loadStorefront);
+export const StreetScene = loadStreet === undefined ? null : lazy(loadStreet);
 
 /** 店内の 3D のコードを先に取っておく（店の外観が描けたあと、入店を押す前に） */
 export function preloadShopScene(): void {

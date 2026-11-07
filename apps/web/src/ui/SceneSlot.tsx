@@ -1,8 +1,9 @@
 import { Component, type ReactNode, Suspense, useEffect, useState } from "react";
-import { SHOP_SCENE_MODELS } from "../scenes/modelFiles";
+import { prefetchModels, SHOP_SCENE_MODELS, STREET_SCENE_MODELS } from "../scenes/modelFiles";
 import { playStore } from "../state/play";
 import { useApp, useT } from "../state/react";
 import { type FrameInsets, selectSceneProps } from "../state/scene";
+import { shioriReady } from "../state/selectors";
 import { TalkButton } from "./Hud";
 import { useReducedMotion } from "./hooks";
 import { GreetingBubble, PlayPrompt } from "./Play";
@@ -107,6 +108,11 @@ export function GameStage({
   useEffect(() => {
     if (use3d) playStore.getState().setEntering(true);
   }, [use3d]);
+  // しおりができたら、店の外の通りに備えてモデルを取っておく
+  const shioriDone = useApp(shioriReady);
+  useEffect(() => {
+    if (use3d && shioriDone) prefetchModels(STREET_SCENE_MODELS).catch(() => undefined);
+  }, [use3d, shioriDone]);
   return (
     <div className="absolute inset-0" data-testid="game-stage">
       {use3d && ShopScene !== null ? (

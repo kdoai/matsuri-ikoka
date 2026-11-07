@@ -46,7 +46,8 @@ export async function talkToConcierge(
   page: Page,
   name = "コンシェルジュに話しかける",
 ): Promise<void> {
-  await page.getByTestId("greeting-bar").getByRole("button", { name }).click({ timeout: 60_000 });
+  // 入店のカメラは1フレームに進む時間に上限があるので、GPU のない環境では1分ほどかかり、その間はボタンが出ない
+  await page.getByTestId("greeting-bar").getByRole("button", { name }).click({ timeout: 120_000 });
   await expect(page.getByTestId("dialogue")).toBeVisible();
   await expect(page.getByTestId("consult-choice").first()).toBeFocused();
   await sessionReady(page);

@@ -39,6 +39,7 @@ export function expectedSize(url: string, headers: Pick<Headers, "get">): number
 export type ModelName =
   | "interior"
   | "exterior"
+  | "ennichi"
   | "staff_hiyoko"
   | "staff_owl"
   | "staff_hen"
@@ -61,6 +62,19 @@ export const SHOP_MODELS: readonly ModelName[] = [
 
 /** 店内の画面が描くのに要るモデルすべて */
 export const SHOP_SCENE_MODELS: readonly ModelName[] = [...SET_MODELS, ...SHOP_MODELS];
+
+/** ガイドだけが使うモーション */
+export const GUIDE_MOTIONS = ["lead", "run"] as const;
+export type GuideMotion = (typeof GUIDE_MOTIONS)[number];
+
+/** 縁日の通りが描くのに要るモデルすべて */
+export const STREET_SCENE_MODELS: readonly ModelName[] = [
+  "ennichi",
+  "staff_hiyoko",
+  "player_penguin",
+  ...SCENE_MOTIONS.map((name) => `motion_${name}` as const),
+  ...GUIDE_MOTIONS.map((name) => `motion_${name}` as const),
+];
 
 export function modelUrl(name: ModelName): string {
   const key = Object.keys(urls).find((path) => path.endsWith(`/${name}.glb`));
