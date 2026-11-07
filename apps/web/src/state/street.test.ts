@@ -375,6 +375,37 @@ describe("ガイドとの相談", () => {
     expect(guide.entries.at(-1)).toMatchObject({ kind: "error", code: "guide_gone" });
   });
 
+  it("前の返事を作っている途中の 409 では、話せる状態のまま、送り直せる", async () => {
+    const { store } = await onStreet({
+      guideChat: async () => {
+        throw new TransportError("bad_request", {
+          status: 409,
+          message: "前の返事を作っています。少し待ってから送ってください。",
+          retryable: true,
+        });
+      },
+    });
+    await store.getState().actions.sendGuide("持ち物は");
+    const { guide } = store.getState();
+    expect(guide.availability).toBe("ready");
+    expect(guide.entries.at(-1)).toMatchObject({ kind: "error", retryable: true });
+    expect(guide.entries.at(-1)).not.toMatchObject({ code: "guide_gone" });
+  });
+
+  it("送り直せない 409 では、話せない状態にする", async () => {
+    const { store } = await onStreet({
+      guideChat: async () => {
+        throw new TransportError("bad_request", {
+          status: 409,
+          message: "まだ旅程がありません。",
+          retryable: false,
+        });
+      },
+    });
+    await store.getState().actions.sendGuide("持ち物は");
+    expect(store.getState().guide.availability).toBe("unavailable");
+  });
+
   it("返答の途中で店へ戻っても、受け取り中の印を残さない", async () => {
     const guideChat = vi.fn(
       (_request: GuideChatRequest, onMessage: OnSseMessage, signal: AbortSignal) =>

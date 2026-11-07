@@ -226,6 +226,10 @@ export function GuideDialogue() {
           aria-busy={typing}
           data-testid="guide-line"
           data-line={line.kind}
+          // 話せないときは書く欄も選択肢もないので、窓を開いたら文へ焦点を移す
+          {...(guide.availability === "unavailable"
+            ? { tabIndex: -1, "data-guide-focus": "" }
+            : {})}
         >
           {line.kind === "error" && line.said !== null ? (
             <p className="whitespace-pre-wrap font-bold text-[1.05rem] text-ink leading-relaxed sm:text-xl">
