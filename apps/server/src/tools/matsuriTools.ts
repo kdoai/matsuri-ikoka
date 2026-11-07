@@ -128,7 +128,7 @@ import {
 } from "../domain/travelEstimate";
 import { decideVerification } from "../domain/verification";
 import { randomId } from "../session/sessionStore";
-import type { CandidateCheck } from "./candidateCheck";
+import { type CandidateCheck, isSkippedCheck } from "./candidateCheck";
 import {
   type AgentToolName,
   type Settled,
@@ -314,22 +314,29 @@ export function hearingReport(ctx: ToolContext) {
   };
 }
 
-/** 候補の祭りと日付ごとに、開催を確かめる。終わったものから festival.verified で画面に送る */
+/**
+ * 候補の祭りと日付ごとに、開催を確かめる。終わったものから festival.verified で画面に送る。
+ * check は確かめた結果（確かめていなければ null）、limited は上限に達して確かめなかったか
+ */
 async function checkCandidates(
   ctx: ToolContext,
   matches: readonly { festival: Festival; date: IsoDate }[],
-): Promise<(CandidateCheck | null)[]> {
+): Promise<{ check: CandidateCheck | null; limited: boolean }[]> {
   const checker = ctx.candidateChecks;
-  if (checker === undefined) return matches.map(() => null);
+  if (checker === undefined) return matches.map(() => ({ check: null, limited: false }));
   return Promise.all(
     matches.map(async ({ festival, date }) => {
-      const check = await checker.check({
+      const outcome = await checker.check({
         festival,
         date,
         session: ctx.session,
         signal: ctx.signal,
       });
-      if (check !== null && !ctx.signal.aborted) {
+      if (isSkippedCheck(outcome)) {
+        return { check: null, limited: outcome.skipped === "limit" };
+      }
+      const check = outcome;
+      if (!ctx.signal.aborted) {
         ctx.emit?.({
           type: "festival.verified",
           data: {
@@ -343,7 +350,7 @@ async function checkCandidates(
           },
         });
       }
-      return check;
+      return { check, limited: false };
     }),
   );
 }
@@ -358,8 +365,9 @@ export async function confirmAnchor(ctx: ToolContext): Promise<void> {
   if (anchor === null || session.anchorCheck !== null) return;
   const festival = ctx.festivals.get(anchor.festivalId);
   if (festival === undefined) return;
-  const [check] = await checkCandidates(ctx, [{ festival, date: anchor.date }]);
-  if (check === undefined || check === null || ctx.signal.aborted) return;
+  const [checked] = await checkCandidates(ctx, [{ festival, date: anchor.date }]);
+  const check = checked?.check ?? null;
+  if (check === null || ctx.signal.aborted) return;
   session.anchorCheck = check.result;
   if (check.result !== "cancelled") return;
   session.cancelledAnchor = { ...anchor, name: festival.name.ja, note: check.note ?? null };
@@ -395,22 +403,22 @@ export const CANDIDATE_CHECK_POOL = MAX_CANDIDATES * 2;
 /**
  * 確かめの結果で候補を選び直す。
  * - 中止と分かった祭りと、どこからも開催の情報が取れなかった祭り（not_found）は出さない
- * - requireInfo のとき（確かめる手段があるとき）は、確かめられず（上限など）データでも確認済みでない祭りも出さない
+ * - requireInfo のとき（確かめる手段があるとき）は、確かめられず（止められたなど）データでも確認済みでない祭りも出さない。
+ *   ただし確かめの上限に達して確かめなかった祭り（limited）は、要事前確認として出す（黙って落とさない）
  * - 公式で確かめられた祭り（確かめていなければ、データで確認済みの祭り）を先に、要事前確認、変更のあった祭りの順
  * 同じ段の中は、日程とこだわりで並べた元の順を保つ
  */
-export function pickVerifiedCandidates<T extends { confirmed: boolean }>(
-  items: readonly { match: T; check: CandidateCheck | null }[],
-  limit: number,
-  options: { requireInfo?: boolean } = {},
-): { match: T; check: CandidateCheck | null }[] {
-  const tier = ({ match, check }: { match: T; check: CandidateCheck | null }) => {
+export function pickVerifiedCandidates<
+  T extends { confirmed: boolean },
+  I extends { match: T; check: CandidateCheck | null; limited?: boolean },
+>(items: readonly I[], limit: number, options: { requireInfo?: boolean } = {}): I[] {
+  const tier = ({ match, check }: I) => {
     if (check === null) return match.confirmed ? 0 : 1;
     return check.result === "as_planned" ? 0 : check.result === "needs_check" ? 1 : 2;
   };
   return items
-    .filter(({ match, check }) => {
-      if (check === null) return !options.requireInfo || match.confirmed;
+    .filter(({ match, check, limited }) => {
+      if (check === null) return !options.requireInfo || match.confirmed || limited === true;
       return check.result !== "cancelled" && check.result !== "not_found";
     })
     .map((item, index) => ({ item, index }))
@@ -621,7 +629,11 @@ export const searchFestivals = defineTool({
     // 出す数より多めに確かめ、確かめられた祭りを先に選ぶ
     const pooledChecks = await checkCandidates(ctx, pool);
     const picked = pickVerifiedCandidates(
-      pool.map((match, index) => ({ match, check: pooledChecks[index] ?? null })),
+      pool.map((match, index) => ({
+        match,
+        check: pooledChecks[index]?.check ?? null,
+        limited: pooledChecks[index]?.limited ?? false,
+      })),
       MAX_CANDIDATES,
       { requireInfo: ctx.candidateChecks !== undefined },
     );
@@ -681,12 +693,18 @@ export const searchFestivals = defineTool({
     const shownIds = new Set(picked.map((p) => p.match.festival.id));
     const withoutInfo = pool.filter((m, index) => {
       if (shownIds.has(m.festival.id)) return false;
-      const result = pooledChecks[index]?.result;
+      const result = pooledChecks[index]?.check?.result;
       return result === "not_found" || result === "cancelled";
     }).length;
     if (withoutInfo > 0) {
       notes.push(
         `開催の情報が見つからなかった・中止と分かった祭りを${withoutInfo}件、候補から外しました`,
+      );
+    }
+    const unchecked = shown.filter((p) => p.limited && !p.match.confirmed).length;
+    if (unchecked > 0) {
+      notes.push(
+        `この相談で開催を確かめられる数の上限に達したので、${unchecked}件は開催を確かめていません（factCheck が null）。「要事前確認」と伝え、出発の前に主催者の案内で確かめるよう添えてください`,
       );
     }
     if (picked.some((p) => p.check?.result === "needs_check")) {
@@ -768,7 +786,7 @@ export const searchFestivals = defineTool({
         // data：祭りのデータの所要時間 / estimate：駅の位置からの見積もり（目安と伝える）
         travelBasis: m.travelBasis,
         travelFit: m.travel.fit,
-        // 候補を出す前の確かめ。null は確かめていない（上限や、確かめる手段がない）
+        // 候補を出す前の確かめ。null は確かめていない（上限や、確かめる手段がない。上限のときは notes に書く）
         factCheck: factCheckOf(check),
         arrivalBufferMinutes: arrivalBufferMinutes(m.festival),
       })),

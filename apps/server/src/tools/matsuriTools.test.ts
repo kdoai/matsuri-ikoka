@@ -223,6 +223,40 @@ describe("search_festivals の、候補を出す前の確かめ", () => {
       }),
     ]);
   });
+
+  it("確かめの上限に達したら、確かめていない祭りを要事前確認として出し、そのことを notes に書く", async () => {
+    const ctx = testToolContext([testFestival({ id: "suzunari-toro", status: "expected" })], {
+      report: {
+        result: "as_planned",
+        sources: [{ url: "https://example.com/suzunari/2026" }],
+        yearStated: true,
+      },
+    });
+    const events: SseEvent[] = [];
+    ctx.emit = (event) => events.push(event);
+    ctx.candidateChecks = createCandidateChecker({
+      verifier: ctx.verifier,
+      today: ctx.today,
+      now: ctx.now,
+      maxPerSession: 0,
+    });
+
+    const result = await searchFestivals.run(
+      { when: { kind: "date", date: "2026-08-16" }, origin: "みなと中央駅", nights: 0 },
+      ctx,
+      signal,
+    );
+
+    expect(result.candidates).toEqual([
+      expect.objectContaining({ festivalId: "suzunari-toro", confirmed: false }),
+    ]);
+    expect((result.candidates as FestivalCandidate[])[0]?.check).toBeUndefined();
+    expect((result.details as Record<string, unknown>[])[0]?.factCheck).toBeNull();
+    expect(result.notes).toContain(
+      "この相談で開催を確かめられる数の上限に達したので、1件は開催を確かめていません（factCheck が null）。「要事前確認」と伝え、出発の前に主催者の案内で確かめるよう添えてください",
+    );
+    expect(events).toEqual([]);
+  });
 });
 
 describe("search_festivals の日ごとの開催", () => {
@@ -1573,6 +1607,18 @@ describe("候補を確かめてから選ぶ（pickVerifiedCandidates）", () => 
       "b",
     ]);
     expect(pickVerifiedCandidates(items, 3).map((p) => p.match.id)).toEqual(["b", "a"]);
+  });
+
+  it("確かめの上限に達して確かめなかった祭りは、確認済みでなくても要事前確認の段に出す", () => {
+    const items = [
+      { match: { id: "a", confirmed: false }, check: null, limited: true },
+      { match: { id: "b", confirmed: false }, check: null, limited: false },
+      { match: { id: "c", confirmed: false }, check: check("c", "as_planned"), limited: false },
+    ];
+    expect(pickVerifiedCandidates(items, 3, { requireInfo: true }).map((p) => p.match.id)).toEqual([
+      "c",
+      "a",
+    ]);
   });
 });
 
