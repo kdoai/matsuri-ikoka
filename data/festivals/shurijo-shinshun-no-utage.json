@@ -25,6 +25,7 @@
     "宮廷の音楽「御座楽」の演奏と、琉球舞踊・古典音楽の舞台",
     "三が日の夕方に、万国津梁の鐘を自分でつける"
   ],
+  "styles": [],
   "trivia": [
     {
       "text": "朝拝御規式は、琉球王国の時代に首里城の正殿の前で行っていた正月の儀式",
@@ -119,13 +120,25 @@
     },
     {
       "date": "2027-01-01",
-      "endDate": "2027-01-02",
+      "endDate": "2027-01-03",
       "start": null,
       "end": null,
-      "status": "expected",
+      "status": "announced",
       "rainPolicy": null,
       "note": "首里城公園は2027年1月の新春の宴（朝拝御規式・国王・王妃の出御）を予告しているが、日付と時刻はまだ発表がない。2026年は1月1日・2日に御座楽と朝拝御規式、3日に国王・王妃の出御を行ったので、同じ分け方と見込んだ。正殿の公開が始まってから初めての正月になる",
       "sources": [
+        {
+          "url": "https://oki-park.jp/shurijo/event/",
+          "title": "イベント情報 | 首里城公園 Official Site",
+          "checkedAt": "2026-11-07",
+          "confidence": "official"
+        },
+        {
+          "url": "https://visitokinawajapan.com/discover/events/shurijo-castle-new-year-celebration/",
+          "title": "Shurijo Castle Park New Year’s Celebration | VISIT OKINAWA JAPAN",
+          "checkedAt": "2026-11-07",
+          "confidence": "single"
+        },
         {
           "url": "https://oki-park.jp/shurijo/events/detail/10882",
           "title": "首里城公園 令和8年度 首里城復興祭 国王・王妃募集（公務に令和9年1月の新春の宴〔朝拝御規式／国王・王妃出御〕）",
@@ -250,5 +263,6 @@
     "規模の根拠の数（3日間の来場者数の公式の値は見つけていない。日ごとに違う見せ場が続くことから M とした）",
     "周辺の観光と食の場所（正月三が日の営業を公式で確かめられたものがない）",
     "会場の緯度・経度は、首里城の下之御庭あたりの地図上の位置で、公園の公式の地図からは取っていない"
-  ]
+  ],
+  "optOut": false
 }

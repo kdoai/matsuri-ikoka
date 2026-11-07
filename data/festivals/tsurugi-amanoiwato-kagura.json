@@ -124,17 +124,29 @@
     },
     {
       "date": "2027-01-01",
-      "start": null,
-      "end": null,
-      "status": "expected",
+      "start": "00:00",
+      "end": "00:15",
+      "status": "announced",
       "rainPolicy": null,
       "note": "町の案内にある「毎年元旦」の奉納から見込んだ日（町の2027年の発表はまだない）。例年は年明けの0時から15分ほどで、12月31日の夜のうちに神社に着いておく",
       "sources": [
         {
           "url": "https://www.town.tokushima-tsurugi.lg.jp/docs/3452.html",
-          "title": "つるぎ町 天の岩戸神楽（毎年元旦の年明けとともに奉納）",
-          "checkedAt": "2026-11-04",
-          "confidence": "inferred"
+          "title": "天の岩戸神楽 - つるぎ町",
+          "checkedAt": "2026-11-07",
+          "confidence": "official"
+        },
+        {
+          "url": "https://nishi-awa.jp/contents/3870/",
+          "title": "天の岩戸神楽【1月1日】 | にし阿波コンテンツ | にし阿波～剣山・吉野川観光圏公式サイト",
+          "checkedAt": "2026-11-07",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.enjoytokyo.jp/event/2062848/",
+          "title": "天の岩戸神楽｜レッツエンジョイ東京",
+          "checkedAt": "2026-11-07",
+          "confidence": "single"
         },
         {
           "url": "https://www.nta.co.jp/kokunai/special/eventinfo/10620426.htm",
@@ -214,5 +226,6 @@
     "町の無形民俗文化財の指定は観光の案内サイトにあるが、町の公式のページでは確かめていない",
     "周辺の観光と食の場所（元旦の深夜に営業を確かめられたものがない）",
     "会場の緯度・経度は、国土地理院の住所検索で「つるぎ町貞光町」を取ったもので、神社そのものの位置ではない"
-  ]
+  ],
+  "optOut": false
 }

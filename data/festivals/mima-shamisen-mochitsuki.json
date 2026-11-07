@@ -129,16 +129,16 @@
       "note": "毎年、市役所の仕事納めの日に公開する。2026年の仕事納めの日は市の発表がなく、12月28日（月）と見込んだ。例年10:00頃から1時間ほど",
       "sources": [
         {
-          "url": "https://www.awanavi.jp/archives/spot/1868",
-          "title": "阿波ナビ（徳島県観光協会） 三味線もちつき（12月下旬の市役所御用納めの日、10時頃〜11時頃）",
-          "checkedAt": "2026-11-05",
-          "confidence": "inferred"
+          "url": "https://www.city.mima.lg.jp/kanko/map/list/11514.html",
+          "title": "三味線もちつき - 【美馬市】観光サイト",
+          "checkedAt": "2026-11-07",
+          "confidence": "official"
         },
         {
-          "url": "https://www.city.mima.lg.jp/kanko/map/list/11514.html",
-          "title": "美馬市観光サイト 三味線もちつき（官公庁仕事納めの日に市役所前で一般公開）",
-          "checkedAt": "2026-11-05",
-          "confidence": "inferred"
+          "url": "https://www.awanavi.jp/archives/spot/1868",
+          "title": "三味線もちつき | 徳島県観光情報サイト阿波ナビ",
+          "checkedAt": "2026-11-07",
+          "confidence": "official"
         }
       ]
     },
@@ -218,5 +218,6 @@
     "撮影の決まり、服装・持ち物",
     "見物客の数",
     "会場の近くで公開の日に開いていると確かめられた観光地と食事の場所"
-  ]
+  ],
+  "optOut": false
 }

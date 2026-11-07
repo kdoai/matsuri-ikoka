@@ -135,14 +135,14 @@
       "sources": [
         {
           "url": "https://www.city.nishio.aichi.jp/sportskanko/bunkazai/1001485/1001609/1001670/1002754.html",
-          "title": "西尾市 西尾のてんてこ祭（毎年正月3日）",
-          "checkedAt": "2026-11-04",
+          "title": "西尾のてんてこ祭｜西尾市公式ウェブサイト",
+          "checkedAt": "2026-11-07",
           "confidence": "official"
         },
         {
           "url": "https://nishiokanko.com/list/shop/tentekosai/",
-          "title": "西尾市観光協会 てんてこ祭（熱池八幡社）（毎年1月3日）",
-          "checkedAt": "2026-11-04",
+          "title": "てんてこ祭（熱池八幡社） – 西尾観光",
+          "checkedAt": "2026-11-07",
           "confidence": "official"
         }
       ]
@@ -209,5 +209,6 @@
     "周辺の観光と食の場所",
     "見物客の数",
     "会場の正確な位置"
-  ]
+  ],
+  "optOut": false
 }

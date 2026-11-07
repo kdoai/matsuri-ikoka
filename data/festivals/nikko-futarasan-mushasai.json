@@ -103,12 +103,24 @@
     },
     {
       "date": "2027-01-04",
-      "start": null,
+      "start": "10:00",
       "end": null,
-      "status": "expected",
+      "status": "announced",
       "rainPolicy": null,
       "note": "見込み（2027年の発表はまだない）。日光市観光協会の案内の「毎年1月4日」から見込んだ日で、2027年は月曜日。2026年は10:00から行われる予定だった",
       "sources": [
+        {
+          "url": "https://www.tochigiji.or.jp/event/e15033",
+          "title": "二荒山神社中宮祠 武射祭 | とちぎ旅ネット",
+          "checkedAt": "2026-11-07",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.nikko-kankou.org/event/1051",
+          "title": "武射祭｜イベント | 【公式】日光市の観光サイト 日光旅ナビ",
+          "checkedAt": "2026-11-07",
+          "confidence": "official"
+        },
         {
           "url": "https://www.visitnikko.jp/en/spots/mushasai-festival/",
           "title": "日光市観光協会 Nikko Official Guide Mushasai Festival（January 4 every year）",
@@ -220,5 +232,6 @@
     "露店の有無",
     "周辺の食事の場所（1月4日に開いていると確かめられた店がない）",
     "華厳滝エレベーターの定休日と、会場からの徒歩の時間"
-  ]
+  ],
+  "optOut": false
 }

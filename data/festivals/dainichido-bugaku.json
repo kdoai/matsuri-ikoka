@@ -125,12 +125,24 @@
   "occurrences": [
     {
       "date": "2027-01-02",
-      "start": null,
-      "end": null,
-      "status": "expected",
+      "start": "08:00",
+      "end": "12:00",
+      "status": "announced",
       "rainPolicy": null,
-      "note": "毎年正月2日（保存会・鹿角市）。2027年の保存会の発表はまだない。例年の流れは、8:00 修祓の儀と地蔵舞、8:10 幡綜と花舞、8:30 幡上げ、8:50 神子舞、9:00 神名手舞と大小行事、9:40 権現舞、10:00 駒舞、10:30 烏遍舞、10:45 鳥舞、11:10 五大尊舞、11:40 工匠舞、11:50 田楽舞。保存会は奉納を8:00〜11:30とし、進行で舞の時刻が遅れることがあると案内している",
+      "note": "鹿角市は終了を12時と案内（例年の目安は11:30）。",
       "sources": [
+        {
+          "url": "https://www.city.kazuno.lg.jp/soshiki/bunkazai_sekai-isan/gyomu/1/2/mukeiminzokubunkazai0512/dainitidoubugaku/10557.html",
+          "title": "概要と開催状況｜鹿角市（2026年7月14日更新）",
+          "checkedAt": "2026-11-07",
+          "confidence": "official"
+        },
+        {
+          "url": "https://dainichido.explorekazuno.jp/",
+          "title": "大日堂舞楽 | 旅するかづの（鹿角公式観光サイト）",
+          "checkedAt": "2026-11-07",
+          "confidence": "official"
+        },
         {
           "url": "http://dainichido.p1.bindsite.jp/bugaku/intro.html",
           "title": "大日堂舞楽保存会 正月二日のタイムスケジュール",
@@ -242,5 +254,6 @@
     "1月2日に開いている周辺の観光・食事の場所",
     "地元の味・祭りの日だけの食べ物と、屋台が出るか",
     "2027年1月2日の花輪線の運転時刻"
-  ]
+  ],
+  "optOut": false
 }
