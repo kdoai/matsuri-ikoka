@@ -19,8 +19,8 @@ import { loadSampleGuides, ReplayGuideRunner } from "../guide/replayRunner";
 import type { GuideRunner } from "../guide/runner";
 import { ItineraryStore, SessionStore } from "../session/sessionStore";
 import { MemoryTripStorage } from "../storage/memory";
-import { ownerIdOf } from "../storage/owner";
-import type { SharedItinerary } from "../storage/types";
+import { type OwnerId, ownerIdOf } from "../storage/owner";
+import type { OwnerTripStorage, SharedItinerary } from "../storage/types";
 import { ConcurrencyLimiter, DailyLimiter } from "./guard";
 
 // ガイドの API を、架空の祭りのサンプルの相談で通して確かめる。モデルも外のサービスも呼ばない。
@@ -128,15 +128,37 @@ async function readEvents(res: Response): Promise<GuideSseEvent[]> {
   return events;
 }
 
-/** 読み取りが失敗する・読めない形を返す保存の口 */
+/** 読み取りが止まる・失敗する・読めない形を返す保存の口 */
 class TroubledStorage extends MemoryTripStorage {
+  readonly stalled = new Set<string>();
   failing = false;
   broken = false;
 
+  #read<T>(name: string, work: () => Promise<T>): Promise<T> {
+    return this.stalled.has(name) ? new Promise<T>(() => {}) : work();
+  }
+
+  override getSession(id: string) {
+    return this.#read("getSession", () => super.getSession(id));
+  }
+
   override async readUnowned(id: string): Promise<SharedItinerary | null> {
     if (this.failing) throw new Error("保存の口の失敗");
-    const found = await super.readUnowned(id);
+    const found = await this.#read("readUnowned", () => super.readUnowned(id));
     return found !== null && this.broken ? { ...found, itinerary: { broken: true } } : found;
+  }
+
+  override forOwner(owner: OwnerId): OwnerTripStorage {
+    const trips = super.forOwner(owner);
+    return {
+      ...trips,
+      readGuideUsage: (tripId, day) =>
+        this.#read("readGuideUsage", () => trips.readGuideUsage(tripId, day)),
+      tripDocs: (tripId) => {
+        const docs = trips.tripDocs(tripId);
+        return { ...docs, list: (kind) => this.#read("docs.list", () => docs.list(kind)) };
+      },
+    };
   }
 }
 
@@ -268,7 +290,7 @@ describe("POST /api/guide/chat", () => {
     expect(events.map((event) => event.type)).not.toContain("guide.emergency");
   });
 
-  it("返事を作れなくても、緊急の相談には連絡先と決まった文を返し、失敗にしない", async () => {
+  it("返事を作れなくても、緊急の相談には連絡先と決まった文を返し、もう一度送る案内も添える", async () => {
     const failing: GuideRunner = {
       mode: "live",
       today: () => "2026-08-03",
@@ -286,11 +308,14 @@ describe("POST /api/guide/chat", () => {
     expect(events.map((event) => event.type)).toEqual([
       "guide.emergency",
       "message.delta",
+      "error",
       "guide.done",
     ]);
+    expect(events[2]).toMatchObject({ type: "error", data: { retryable: true } });
+    expect(JSON.stringify(events[2])).toContain("もう一度");
   });
 
-  it("緊急の発言が時間切れになっても、もう一度送るよう求めず、決まった文を返す", async () => {
+  it("緊急の発言が時間切れになったら、決まった文のあとに、もう一度送る案内を添える", async () => {
     const hanging: GuideRunner = {
       mode: "live",
       today: () => "2026-08-03",
@@ -309,10 +334,11 @@ describe("POST /api/guide/chat", () => {
     expect(events.map((event) => event.type)).toEqual([
       "guide.emergency",
       "message.delta",
+      "error",
       "guide.done",
     ]);
-    expect(JSON.stringify(events)).toContain("119");
-    expect(JSON.stringify(events)).not.toContain("もう一度");
+    expect(JSON.stringify(events[1])).toContain("119");
+    expect(events[2]).toMatchObject({ type: "error", data: { code: "timeout", retryable: true } });
   });
 
   it("緊急でない発言の時間切れは、いままでどおり error で知らせる", async () => {
@@ -338,7 +364,7 @@ describe("POST /api/guide/chat", () => {
     const shape = (events: GuideSseEvent[]) =>
       JSON.stringify(events).replaceAll(/emergency-[A-Za-z0-9_-]+/g, "emergency-id");
 
-    it("ない相談でも、連絡先と決まった文を返す", async () => {
+    it("ない相談でも、連絡先と決まった文を返し、新しく始める案内も添える", async () => {
       const context = setup();
 
       const res = await context.chat("s-expired", EMERGENCY_MESSAGE);
@@ -348,9 +374,11 @@ describe("POST /api/guide/chat", () => {
       expect(events.map((event) => event.type)).toEqual([
         "guide.emergency",
         "message.delta",
+        "error",
         "guide.done",
       ]);
       expect(events[0]).toMatchObject({ type: "guide.emergency" });
+      expect(JSON.stringify(events[2])).toContain("新しく始めて");
     });
 
     it("ほかの人の相談でも同じ応答で、相談の中身を見せない", async () => {
@@ -406,6 +434,49 @@ describe("POST /api/guide/chat", () => {
       expect((await readEvents(res))[0]?.type).toBe("guide.emergency");
     });
 
+    it("保存の口が止まっていても、待たずに連絡先を送る", async () => {
+      const storage = new TroubledStorage();
+      storage.stalled.add("getSession");
+      const context = setup({ storage, emergencyWaitMs: 60_000 });
+
+      const res = await context.chat("s-elsewhere", EMERGENCY_MESSAGE);
+      const reader = res.body?.getReader();
+      const first = await reader?.read();
+
+      expect(res.status).toBe(200);
+      expect(new TextDecoder().decode(first?.value)).toContain("guide.emergency");
+      await reader?.cancel();
+    });
+
+    it.each([
+      ["相談", "getSession", undefined],
+      ["旅", "readUnowned", undefined],
+      ["使った量", "readGuideUsage", ALICE],
+    ])(
+      "%sの読み取りが止まっても、待つのをやめて、もう一度送る案内で閉じる",
+      async (_name, name, user) => {
+        vi.spyOn(console, "error").mockImplementation(() => {});
+        const storage = new TroubledStorage();
+        const context = setup({ storage, emergencyWaitMs: 5 });
+        const { sessionId } = await context.consult(user);
+        storage.stalled.add(name);
+        // 相談の読み取りは、相談が手元にない別のインスタンスから試す
+        const elsewhere = name === "getSession" ? setup({ storage, emergencyWaitMs: 5 }) : context;
+
+        const res = await elsewhere.chat(sessionId, EMERGENCY_MESSAGE, user);
+        const events = await readEvents(res);
+
+        expect(events.map((event) => event.type)).toEqual([
+          "guide.emergency",
+          "message.delta",
+          "error",
+          "guide.done",
+        ]);
+        expect(events[2]).toMatchObject({ type: "error", data: { retryable: true } });
+        expect(context.sessions.get(sessionId)?.busy ?? false).toBe(false);
+      },
+    );
+
     it("緊急でない発言は、いままでどおり断る", async () => {
       const context = setup();
       const created = await context.call("/api/session", { body: {} });
@@ -455,11 +526,14 @@ describe("POST /api/guide/chat", () => {
     const res = await context.chat(sessionId, EMERGENCY_MESSAGE);
 
     expect(res.status).toBe(200);
-    expect((await readEvents(res)).map((event) => event.type)).toEqual([
+    const events = await readEvents(res);
+    expect(events.map((event) => event.type)).toEqual([
       "guide.emergency",
       "message.delta",
+      "error",
       "guide.done",
     ]);
+    expect(JSON.stringify(events[2])).toContain("前の返事");
     expect(session.busy).toBe(true);
   });
 
@@ -515,11 +589,15 @@ describe("費用と回数の上限", () => {
     expect(refused.status).toBe(429);
     expect(await refused.json()).toMatchObject({ code: "rate_limited", retryable: false });
     expect(emergency.status).toBe(200);
-    expect((await readEvents(emergency)).map((event) => event.type)).toEqual([
+    const events = await readEvents(emergency);
+    expect(events.map((event) => event.type)).toEqual([
       "guide.emergency",
       "message.delta",
+      "error",
       "guide.done",
     ]);
+    expect(events[2]).toMatchObject({ type: "error", data: { code: "rate_limited" } });
+    expect(JSON.stringify(events[2])).toContain("また明日");
   });
 
   it("ログインしている人の分は保存の口に残し、別のインスタンスでも数える", async () => {
@@ -640,7 +718,16 @@ describe("費用と回数の上限", () => {
     const { sessionId } = await context.consult();
 
     expect((await context.chat(sessionId, "こんにちは")).status).toBe(503);
-    expect((await context.chat(sessionId, EMERGENCY_MESSAGE)).status).toBe(200);
+    const res = await context.chat(sessionId, EMERGENCY_MESSAGE);
+    expect(res.status).toBe(200);
+    const events = await readEvents(res);
+    expect(events.map((event) => event.type)).toEqual([
+      "guide.emergency",
+      "message.delta",
+      "error",
+      "guide.done",
+    ]);
+    expect(JSON.stringify(events[2])).toContain("もう一度");
   });
 });
 
@@ -889,6 +976,37 @@ describe("残した旅", () => {
 
     expect(res.status).toBe(404);
     expect(context.sessions.get(sessionId)?.guide.memo).toEqual([item]);
+  });
+
+  it("緊急の発言は、返事のあとに保存の口が止まっても閉じる", async () => {
+    const storage = new TroubledStorage();
+    const context = setup({
+      storage,
+      emergencyWaitMs: 5,
+      guide: {
+        runner: {
+          mode: "live",
+          today: () => "2026-08-03",
+          now: () => "2026-08-03T10:00:00+09:00",
+          runTurn: async (_input, emit) => {
+            emit({ type: "message.delta", data: { messageId: "m-1", text: "電話してください" } });
+          },
+        },
+      },
+    });
+    const { guideSession } = await keptTrip(context);
+    storage.stalled.add("docs.list");
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const events = await readEvents(await context.chat(guideSession, EMERGENCY_MESSAGE, ALICE));
+
+    expect(events.map((event) => event.type)).toEqual([
+      "guide.emergency",
+      "message.delta",
+      "guide.done",
+    ]);
+    expect(events.at(-1)).toMatchObject({ data: { unreadNotices: 0, pendingProposals: 0 } });
+    expect(context.sessions.get(guideSession)?.busy).toBe(false);
   });
 
   it("保存の口の版が手元より古くても、手元の旅程を古い版へ戻さない", async () => {

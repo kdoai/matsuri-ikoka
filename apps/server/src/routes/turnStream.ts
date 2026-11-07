@@ -99,6 +99,8 @@ export interface TurnEvents<E extends { type: string }> {
   done(): E | Promise<E>;
   /** 失敗を送る前に、それまでに送ったイベントの種類を見て、文を変える */
   adjustError?(body: ErrorBody, sent: ReadonlySet<string>): ErrorBody;
+  /** すべて送ったあとに呼ぶ */
+  finished?(): void;
 }
 
 /** 店内の相談の SSE。done は相談の状態から作る */
@@ -125,6 +127,7 @@ export function streamTurn(
   });
 }
 
+/** 相談の返答の SSE。流している間は、相談を「返事を作っている途中」にする */
 export function streamEvents<E extends { type: string }>(
   c: Context,
   session: Session,
@@ -133,6 +136,21 @@ export function streamEvents<E extends { type: string }>(
   kinds: TurnEvents<E>,
 ): Response {
   session.busy = true;
+  return openEventStream(c, run, options, {
+    ...kinds,
+    finished: () => {
+      session.busy = false;
+    },
+  });
+}
+
+/** SSE を開く。相談を開く前から流せる（緊急の発言は、保存の口を待たずに連絡先を送る） */
+export function openEventStream<E extends { type: string }>(
+  c: Context,
+  run: (signal: AbortSignal, emit: (event: E) => void, progress: () => void) => Promise<void>,
+  options: TurnTiming,
+  kinds: TurnEvents<E>,
+): Response {
   return streamSSE(c, async (stream) => {
     const started = Date.now();
     let events = 0;
@@ -194,7 +212,7 @@ export function streamEvents<E extends { type: string }>(
       // done を送れないと、画面は「接続が切れた」と受け取る。送れなかったこともログに残す
       const doneSent = emit(await kinds.done());
       await writes;
-      session.busy = false;
+      kinds.finished?.();
       console.info(
         JSON.stringify({
           kind: "turn_end",

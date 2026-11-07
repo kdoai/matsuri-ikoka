@@ -1,5 +1,6 @@
 import {
   encodeGuideSseEvent,
+  type GuideChatRequest,
   GuideChatRequestSchema,
   GuideMemoItemSchema,
   GuideOpenRequestSchema,
@@ -17,8 +18,8 @@ import {
   UpdateGuideMemoRequestSchema,
 } from "@matsuri-ikoka/schema";
 import type { Context } from "hono";
-import { streamSSE } from "hono/streaming";
 import { CostMeter } from "../agent/costMeter";
+import { AgentError } from "../agent/runner";
 import type { GuideTrip, GuideTripResult, TripGuideData } from "../guide/data";
 import { openGuideTrip, ownerUsageLedger } from "../guide/data";
 import { EMERGENCY_FALLBACK_TEXT, emergencyEvent, isEmergencyMessage } from "../guide/emergency";
@@ -37,17 +38,21 @@ import { errorForLog } from "../log";
 import type { Consultations } from "../session/consultations";
 import { parseStoredItinerary, type StoragePersistence } from "../session/persistence";
 import { type ItineraryStore, randomId, type Session } from "../session/sessionStore";
-import { TripGoneError } from "../storage/types";
-import { apiError } from "./errors";
+import { type DailyGuideUsage, TripGoneError } from "../storage/types";
+import { apiError, type ErrorBody } from "./errors";
 import { type ConcurrencyLimiter, type DailyLimiter, limitKey } from "./guard";
 import { routeParam, type SecureRoutes } from "./policy";
-import { isClientClosed, streamEvents, type TurnTiming } from "./turnStream";
+import { isClientClosed, openEventStream, streamEvents, type TurnTiming } from "./turnStream";
 
 // 旅のガイドの API（docs/spec/guide.md）。
 // - 旅は相談から決める。本文に旅の ID や利用者の ID を持たない（open だけは、残した旅を自分の口から開く）
 // - ガイドを用意していなければ（live でモデルの設定がない）、この入口だけが 404 で断る。今の相談は動く
-// - 緊急の相談は、上限や混雑でも、相談や旅を開けないときも断らない。公的な連絡先を先に送る
+// - 緊急の言葉がある発言は、保存の口を待たずに SSE を開いて、公的な連絡先を先に送る。上限や混雑でも、
+//   相談や旅を開けないときも、連絡先と決まった文を返し、いつもの案内（新しく始める、もう一度送るなど）を添える
 // - 利用者のデータは、決まり（routes/policy.ts）が渡した相談の中の旅と、持ち主で絞った口だけで読み書きする
+
+/** 緊急の発言で、保存の口を待つ上限。連絡先は待つ前に送ってある。止まったら、決まった文と案内で閉じる */
+const EMERGENCY_WAIT_MS = 5_000;
 
 export interface GuideOptions {
   runner: GuideRunner;
@@ -66,14 +71,63 @@ export interface GuideDeps {
   turnIdleMs?: number | undefined;
   turnMaxMs?: number | undefined;
   heartbeatMs?: number | undefined;
+  emergencyWaitMs?: number | undefined;
 }
+
+/** 断るときの状態と本文。ふつうの発言は HTTP の応答に、緊急の発言は連絡先のあとの error イベントにする */
+interface TurnRefusal {
+  ok: false;
+  status: 404 | 409 | 429 | 503;
+  body: ErrorBody;
+}
+
+const refusal = (
+  status: TurnRefusal["status"],
+  code: ErrorBody["code"],
+  message: string,
+  retryable: boolean,
+): TurnRefusal => ({ ok: false, status, body: apiError(code, message, retryable) });
+
+/** ない相談も、ほかの人の相談も、同じ応答で断る（あるかどうかを見せない） */
+const SESSION_NOT_FOUND = refusal(
+  404,
+  "bad_request",
+  "相談が見つかりません。新しく始めてください。",
+  false,
+);
+const NO_ITINERARY = refusal(409, "bad_request", "まだ旅程がありません。", false);
+const TRIP_NOT_FOUND = refusal(404, "bad_request", "旅が見つかりません。", false);
+const TRIP_UNAVAILABLE = refusal(
+  503,
+  "upstream_unavailable",
+  "いま旅を読めません。少し待ってから、もう一度送ってください。",
+  true,
+);
+const TURN_BUSY = refusal(
+  409,
+  "bad_request",
+  "前の返事を作っています。終わってから送ってください。",
+  true,
+);
+const DAILY_LIMIT = refusal(
+  429,
+  "rate_limited",
+  "今日のガイドへの相談の受付は終わりました。また明日お越しください。",
+  false,
+);
+const CROWDED = refusal(
+  503,
+  "upstream_unavailable",
+  "いま混み合っています。少し待ってから、もう一度送ってください。",
+  true,
+);
+
+const refuse = (c: Context, { body, status }: TurnRefusal) => c.json(body, status);
 
 const notAvailable = (c: Context) =>
   c.json(apiError("bad_request", "ガイドは用意していません。", false), 404);
 
-/** ない相談も、ほかの人の相談も、同じ応答で断る（あるかどうかを見せない） */
-const sessionNotFound = (c: Context) =>
-  c.json(apiError("bad_request", "相談が見つかりません。新しく始めてください。", false), 404);
+const sessionNotFound = (c: Context) => refuse(c, SESSION_NOT_FOUND);
 
 const badRequest = (c: Context, message = "送った内容の形が正しくありません。") =>
   c.json(apiError("bad_request", message, false), 400);
@@ -82,21 +136,37 @@ async function readJson(c: Context): Promise<unknown> {
   return c.req.json().catch(() => undefined);
 }
 
-/** 旅を開けなかったときの応答 */
-function tripRefusal(c: Context, result: Exclude<GuideTripResult, { status: "ok" }>) {
-  if (result.status === "unavailable") {
-    return c.json(
-      apiError(
-        "upstream_unavailable",
-        "いま旅を読めません。少し待ってから、もう一度送ってください。",
-        true,
-      ),
-      503,
-    );
+/** 旅を開けなかったときの断り方 */
+function tripRefusalOf(result: Exclude<GuideTripResult, { status: "ok" }>): TurnRefusal {
+  switch (result.status) {
+    case "no_itinerary":
+      return NO_ITINERARY;
+    case "unavailable":
+      return TRIP_UNAVAILABLE;
+    case "missing":
+      return TRIP_NOT_FOUND;
   }
-  return result.status === "no_itinerary"
-    ? c.json(apiError("bad_request", "まだ旅程がありません。", false), 409)
-    : c.json(apiError("bad_request", "旅が見つかりません。", false), 404);
+}
+
+const tripRefusal = (c: Context, result: Exclude<GuideTripResult, { status: "ok" }>) =>
+  refuse(c, tripRefusalOf(result));
+
+/** 上限までに終わらなければ late の値を返す。処理そのものは止めない（終わったら、結果は捨てる） */
+function settleWithin<T>(work: Promise<T>, ms: number, late: () => T): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => resolve(late()), ms);
+    timer.unref?.();
+    work.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (error: unknown) => {
+        clearTimeout(timer);
+        reject(error);
+      },
+    );
+  });
 }
 
 function turnTiming(deps: GuideDeps): TurnTiming {
@@ -114,12 +184,21 @@ async function pendingProposals(data: TripGuideData, itinerary: Itinerary, now: 
   );
 }
 
+/** 数を読めないときの、返答の終わりのイベント */
+const uncountedDone = (runner: GuideRunner, trip: GuideTrip): GuideSseEventOf<"guide.done"> => ({
+  type: "guide.done",
+  data: {
+    phase: tripPhase(trip.itinerary, runner.today()),
+    unreadNotices: 0,
+    pendingProposals: 0,
+  },
+});
+
 /** 返答の終わりのイベント。保存の口が失敗しても、必ず送れる形で返す */
 async function doneEvent(
   runner: GuideRunner,
   trip: GuideTrip,
 ): Promise<GuideSseEventOf<"guide.done">> {
-  const phase = tripPhase(trip.itinerary, runner.today());
   try {
     const [notices, pending] = await Promise.all([
       trip.data.notices(),
@@ -128,7 +207,7 @@ async function doneEvent(
     return {
       type: "guide.done",
       data: {
-        phase,
+        phase: tripPhase(trip.itinerary, runner.today()),
         unreadNotices: notices.filter((notice) => notice.readAt === null).length,
         pendingProposals: pending.length,
       },
@@ -137,7 +216,7 @@ async function doneEvent(
     console.error(
       JSON.stringify({ kind: "storage_failed", what: "guide_done", ...errorForLog(error) }),
     );
-    return { type: "guide.done", data: { phase, unreadNotices: 0, pendingProposals: 0 } };
+    return uncountedDone(runner, trip);
   }
 }
 
@@ -147,23 +226,32 @@ const NO_TRIP_DONE: GuideSseEventOf<"guide.done"> = {
   data: { phase: "during", unreadNotices: 0, pendingProposals: 0 },
 };
 
-/**
- * 返事を作れないときの緊急の案内。断る代わりに、連絡先と決まった文だけを送る。
- * 連絡先は保存の口を待たずに先に送る。相談の状態には触れない（前の返事を作っている途中でも送れる）。
- * 旅が null なら、ない相談もほかの人の相談も同じ応答になる（あるかどうかを見せない）
- */
-function emergencyOnly(c: Context, runner: GuideRunner, trip: GuideTrip | null): Response {
-  return streamSSE(c, async (stream) => {
-    await stream.writeSSE(encodeGuideSseEvent(emergencyEvent()));
-    await stream.writeSSE(
-      encodeGuideSseEvent({
-        type: "message.delta",
-        data: { messageId: randomId("emergency"), text: EMERGENCY_FALLBACK_TEXT },
-      }),
-    );
-    const done = trip === null ? NO_TRIP_DONE : await doneEvent(runner, trip);
-    await stream.writeSSE(encodeGuideSseEvent(done));
-  });
+/** モデルの返事がないときに、連絡先に添える決まった文 */
+const emergencyFallback = (): GuideSseEvent => ({
+  type: "message.delta",
+  data: { messageId: randomId("emergency"), text: EMERGENCY_FALLBACK_TEXT },
+});
+
+/** 相談と旅を開いて、使った量を読んだ発言。発言のうち、保存の口を待つのはここまで */
+interface OpenedTurn {
+  ok: true;
+  session: Session;
+  trip: GuideTrip;
+  ledger: GuideUsageLedger;
+  usage: DailyGuideUsage;
+}
+
+/** 受け付けた発言。返事を作り終えたら release を呼ぶ */
+interface AdmittedTurn extends OpenedTurn {
+  release: () => void;
+  budgetUsd: number;
+  todayBudgetUsd: number;
+}
+
+/** 発言の本文 */
+interface TurnRequest {
+  message: GuideChatRequest["message"];
+  location: GuideChatRequest["location"];
 }
 
 export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
@@ -180,14 +268,188 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
 
   /** だれの分を数えるか。ログインしていれば保存の口に、していなければメモリに残す */
   const usageLedger = (
-    c: Context,
     runner: GuideRunner,
     session: Session,
     tripId: string,
+    client: string,
   ): GuideUsageLedger =>
     session.ownerUid === null
-      ? anonymousUsage.ledger(limitKey(null, deps.clientIp?.(c) ?? "unknown"), tripId)
+      ? anonymousUsage.ledger(client, tripId)
       : ownerUsageLedger(deps.persistence, session.ownerUid, tripId, runner.today());
+
+  /** 相談と旅を開き、使った量を読む */
+  const openTurn = async (
+    runner: GuideRunner,
+    sessionId: string,
+    client: string,
+    open: (id: string) => Promise<Session | undefined>,
+  ): Promise<OpenedTurn | TurnRefusal> => {
+    const session = await open(sessionId);
+    if (session === undefined) return SESSION_NOT_FOUND;
+    const result = await openTrip(runner, session);
+    if (result.status !== "ok") return tripRefusalOf(result);
+    const { trip } = result;
+    const ledger = usageLedger(runner, session, trip.itinerary.id, client);
+    const usage = await ledger.read().catch((error: unknown) => {
+      // 数えられなくても相談は止めない。全体の回数の上限と同時に作る数の上限は効いたまま
+      console.error(
+        JSON.stringify({ kind: "storage_failed", what: "guide_usage", ...errorForLog(error) }),
+      );
+      return { user: { turns: 0, costUsd: 0 }, trip: { turns: 0, costUsd: 0 } };
+    });
+    return { ok: true, session, trip, ledger, usage };
+  };
+
+  /**
+   * 発言を受け付けるかを決める。受け付けたら、相談を「返事を作っている途中」にする。
+   * ここでは待たない。同じ相談の2つの発言が、どちらも返事を作り始めないように
+   */
+  const admitTurn = (
+    runner: GuideRunner,
+    opened: OpenedTurn,
+    client: string,
+  ): AdmittedTurn | TurnRefusal => {
+    const { session, usage } = opened;
+    if (session.busy) return TURN_BUSY;
+    if (
+      overGuideLimit(usage, limits) ||
+      !deps.limiter.allows() ||
+      deps.clientLimiter?.allows(client) === false
+    ) {
+      return DAILY_LIMIT;
+    }
+    let release = () => {};
+    if (runner.mode === "live" && deps.concurrency !== undefined) {
+      const acquired = deps.concurrency.tryAcquire(client);
+      if (acquired === null) return CROWDED;
+      release = acquired;
+    }
+    deps.limiter.consume();
+    deps.clientLimiter?.consume(client);
+    session.busy = true;
+    return {
+      ...opened,
+      release,
+      budgetUsd: guideTurnBudgetUsd(usage, limits, runner.maxBudgetUsd),
+      // ツールの中の調べは、今日の残りで抑える（調べごとの上限は、それぞれの調べ役が持つ）
+      todayBudgetUsd: guideTurnBudgetUsd(usage, limits, undefined),
+    };
+  };
+
+  /** 受け付けた発言の返事を作り、使った量を数える */
+  const runAdmitted = async (
+    runner: GuideRunner,
+    admitted: AdmittedTurn,
+    request: TurnRequest,
+    emergency: boolean,
+    stream: {
+      signal: AbortSignal;
+      emit: (event: GuideSseEvent) => void;
+      progress: () => void;
+    },
+  ): Promise<void> => {
+    const { session, trip, ledger, release, budgetUsd, todayBudgetUsd } = admitted;
+    const { signal, emit, progress } = stream;
+    const turn = newGuideTurn();
+    const meter = new CostMeter(todayBudgetUsd);
+    try {
+      await runner.runTurn(
+        {
+          session,
+          trip,
+          message: request.message,
+          location: request.location,
+          emergency,
+          budgetUsd,
+          turn,
+          meter,
+          signal,
+          progress,
+        },
+        emit,
+      );
+    } catch (error) {
+      // 緊急の相談では、返事を作れなくても（時間切れも）、決まった文を添える。そのあとの error でいつもの案内も届く。
+      // 利用者が接続を切ったときだけは、届かないので何も送らない
+      if (emergency && !isClientClosed(signal)) {
+        console.error(
+          JSON.stringify({ kind: "guide_emergency_reply_failed", ...errorForLog(error) }),
+        );
+        emit(emergencyFallback());
+      }
+      throw error;
+    } finally {
+      release();
+      const settled = (async () => {
+        await settleTurn({ session, trip, runner, ledger, turn, meter, emergency });
+        await deps.persistence.saveSession(session);
+      })();
+      // 緊急の発言は、保存の口が止まっても閉じる
+      await (emergency
+        ? settleWithin(settled, deps.emergencyWaitMs ?? EMERGENCY_WAIT_MS, () => {
+            console.error(JSON.stringify({ kind: "storage_failed", what: "guide_settle_late" }));
+          })
+        : settled);
+    }
+  };
+
+  /**
+   * 緊急の言葉がある発言。保存の口を待たずに SSE を開いて、公的な連絡先を先に送る。
+   * 受け付けられないときは、決まった文と、ふつうの発言と同じ案内を error で送る（緊急の言葉が
+   * たまたま当たった発言でも、案内を失わない）。ない相談もほかの人の相談も同じ応答になる。
+   * 受け付けられなかった発言は、相談の状態に触れない（前の返事を作っている途中でも送れる）
+   */
+  const emergencyTurn = (
+    c: Context,
+    runner: GuideRunner,
+    sessionId: string,
+    request: TurnRequest,
+    client: string,
+    open: (id: string) => Promise<Session | undefined>,
+  ): Response => {
+    const waitMs = deps.emergencyWaitMs ?? EMERGENCY_WAIT_MS;
+    let openedTrip: GuideTrip | null = null;
+    let admittedSession: Session | null = null;
+    return openEventStream<GuideSseEvent>(
+      c,
+      async (signal, emit, progress) => {
+        emit(emergencyEvent());
+        const refuseAfterContacts = ({ body }: TurnRefusal): never => {
+          emit(emergencyFallback());
+          throw new AgentError(body.code, body.message, body.retryable);
+        };
+        const opened = await settleWithin(openTurn(runner, sessionId, client, open), waitMs, () => {
+          console.error(JSON.stringify({ kind: "guide_emergency_open_late" }));
+          return TRIP_UNAVAILABLE;
+        }).catch((error: unknown) => {
+          console.error(
+            JSON.stringify({ kind: "guide_emergency_open_failed", ...errorForLog(error) }),
+          );
+          return TRIP_UNAVAILABLE;
+        });
+        if (!opened.ok) return refuseAfterContacts(opened);
+        openedTrip = opened.trip;
+        const admitted = admitTurn(runner, opened, client);
+        if (!admitted.ok) return refuseAfterContacts(admitted);
+        admittedSession = admitted.session;
+        await runAdmitted(runner, admitted, request, true, { signal, emit, progress });
+      },
+      turnTiming(deps),
+      {
+        encode: encodeGuideSseEvent,
+        error: (data) => ({ type: "error", data }),
+        done: () => {
+          const trip = openedTrip;
+          return trip === null
+            ? NO_TRIP_DONE
+            : settleWithin(doneEvent(runner, trip), waitMs, () => uncountedDone(runner, trip));
+        },
+        finished: () => {
+          if (admittedSession !== null) admittedSession.busy = false;
+        },
+      },
+    );
+  };
 
   // 残した旅を開いて、ガイドと話す相談を作る。読めるのは自分の旅だけ
   routes.owner("POST", "/api/guide/open", async (c, { owner, trips }) => {
@@ -257,126 +519,28 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
     if (guide === undefined) return notAvailable(c);
     const request = GuideChatRequestSchema.safeParse(await readJson(c));
     if (!request.success) return badRequest(c);
-    const { message, location } = request.data;
+    const { sessionId, message, location } = request.data;
     const { runner } = guide;
-    // 緊急の言葉は、モデルを待たず、相談や旅を開けなくても、上限や混雑でも断らずに、公的な連絡先を先に出す
-    const emergency = isEmergencyMessage(message);
-    let session: Session | undefined;
-    let result: GuideTripResult | undefined;
-    try {
-      session = await open(request.data.sessionId);
-      result = session === undefined ? undefined : await openTrip(runner, session);
-    } catch (error) {
-      if (!emergency) throw error;
-      console.error(JSON.stringify({ kind: "guide_emergency_open_failed", ...errorForLog(error) }));
-      return emergencyOnly(c, runner, null);
-    }
-    if (session === undefined || result === undefined) {
-      return emergency ? emergencyOnly(c, runner, null) : sessionNotFound(c);
-    }
-    if (result.status !== "ok") {
-      return emergency ? emergencyOnly(c, runner, null) : tripRefusal(c, result);
-    }
-    const { trip } = result;
     const client = limitKey(viewer, deps.clientIp?.(c) ?? "unknown");
-    const ledger = usageLedger(c, runner, session, trip.itinerary.id);
-    const usage = await ledger.read().catch((error: unknown) => {
-      // 数えられなくても相談は止めない。全体の回数の上限と同時に作る数の上限は効いたまま
-      console.error(
-        JSON.stringify({ kind: "storage_failed", what: "guide_usage", ...errorForLog(error) }),
-      );
-      return { user: { turns: 0, costUsd: 0 }, trip: { turns: 0, costUsd: 0 } };
-    });
-    // ここから返答を始めるまで待たない。同じ相談の2つの発言が、どちらも返事を作り始めないように
-    if (session.busy) {
-      if (emergency) return emergencyOnly(c, runner, trip);
-      return c.json(
-        apiError("bad_request", "前の返事を作っています。終わってから送ってください。", true),
-        409,
-      );
+    const said: TurnRequest = { message, location };
+    if (isEmergencyMessage(message)) {
+      return emergencyTurn(c, runner, sessionId, said, client, open);
     }
-    if (
-      overGuideLimit(usage, limits) ||
-      !deps.limiter.allows() ||
-      deps.clientLimiter?.allows(client) === false
-    ) {
-      if (emergency) return emergencyOnly(c, runner, trip);
-      return c.json(
-        apiError(
-          "rate_limited",
-          "今日のガイドへの相談の受付は終わりました。また明日お越しください。",
-          false,
-        ),
-        429,
-      );
-    }
-    let release = () => {};
-    if (runner.mode === "live" && deps.concurrency !== undefined) {
-      const acquired = deps.concurrency.tryAcquire(client);
-      if (acquired === null) {
-        if (emergency) return emergencyOnly(c, runner, trip);
-        return c.json(
-          apiError(
-            "upstream_unavailable",
-            "いま混み合っています。少し待ってから、もう一度送ってください。",
-            true,
-          ),
-          503,
-        );
-      }
-      release = acquired;
-    }
-    deps.limiter.consume();
-    deps.clientLimiter?.consume(client);
-    const budgetUsd = guideTurnBudgetUsd(usage, limits, runner.maxBudgetUsd);
-    // ツールの中の調べは、今日の残りで抑える（調べごとの上限は、それぞれの調べ役が持つ）
-    const todayBudgetUsd = guideTurnBudgetUsd(usage, limits, undefined);
-
+    const opened = await openTurn(runner, sessionId, client, open);
+    if (!opened.ok) return refuse(c, opened);
+    // ここから返答を始めるまで待たない
+    const admitted = admitTurn(runner, opened, client);
+    if (!admitted.ok) return refuse(c, admitted);
     return streamEvents<GuideSseEvent>(
       c,
-      session,
-      async (signal, emit, progress) => {
-        const turn = newGuideTurn();
-        const meter = new CostMeter(todayBudgetUsd);
-        try {
-          if (emergency) emit(emergencyEvent());
-          await runner.runTurn(
-            {
-              session,
-              trip,
-              message,
-              location,
-              emergency,
-              budgetUsd,
-              turn,
-              meter,
-              signal,
-              progress,
-            },
-            emit,
-          );
-        } catch (error) {
-          // 緊急の相談では、返事を作れなくても（時間切れも）、失敗の知らせの代わりに決まった文を添える。
-          // 利用者が接続を切ったときだけは、届かないので何も送らない
-          if (!emergency || isClientClosed(signal)) throw error;
-          console.error(
-            JSON.stringify({ kind: "guide_emergency_reply_failed", ...errorForLog(error) }),
-          );
-          emit({
-            type: "message.delta",
-            data: { messageId: randomId("emergency"), text: EMERGENCY_FALLBACK_TEXT },
-          });
-        } finally {
-          release();
-          await settleTurn({ session, trip, runner, ledger, turn, meter, emergency });
-          await deps.persistence.saveSession(session);
-        }
-      },
+      admitted.session,
+      (signal, emit, progress) =>
+        runAdmitted(runner, admitted, said, false, { signal, emit, progress }),
       turnTiming(deps),
       {
         encode: encodeGuideSseEvent,
         error: (data) => ({ type: "error", data }),
-        done: () => doneEvent(runner, trip),
+        done: () => doneEvent(runner, admitted.trip),
       },
     );
   });
