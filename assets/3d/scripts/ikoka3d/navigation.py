@@ -9,7 +9,7 @@ the meshes that stand on the floor, grown by the character's radius.
 
 import bmesh
 import bpy
-from mathutils import Vector
+from mathutils import Matrix, Vector
 
 from . import util as U
 
@@ -27,17 +27,22 @@ def _inside(poly, x, y):
     return inside
 
 
-def floor_blockers(objs, skip=()):
-    """Footprints (xmin, ymin, xmax, ymax) of meshes standing on the floor."""
+def floor_blockers(objs, skip=(), floor=0.0, frame=None):
+    """Footprints (xmin, ymin, xmax, ymax) of meshes standing on the floor at height `floor`.
+
+    Measured along the world axes, or along `frame`'s axes (a world matrix, with `floor` in
+    its coordinates) for things built at an angle.
+    """
     deps = bpy.context.evaluated_depsgraph_get()
+    to_frame = frame.inverted() if frame is not None else Matrix.Identity(4)
     out = []
     for o in objs:
         if o.type != "MESH" or o.name.startswith(skip):
             continue
         ev = o.evaluated_get(deps)
-        pts = [ev.matrix_world @ Vector(c) for c in ev.bound_box]
+        pts = [to_frame @ ev.matrix_world @ Vector(c) for c in ev.bound_box]
         zmin, zmax = min(p.z for p in pts), max(p.z for p in pts)
-        if zmin > 0.3 or zmax < 0.06:
+        if zmin > floor + 0.3 or zmax < floor + 0.06:
             continue
         xs, ys = [p.x for p in pts], [p.y for p in pts]
         if (max(xs) - min(xs)) * (max(ys) - min(ys)) > 8.0:
@@ -46,26 +51,46 @@ def floor_blockers(objs, skip=()):
     return out
 
 
-def build(name, coll, polygon, blockers, z=0.002):
+def _grown(boxes):
+    return [(a - RADIUS, b - RADIUS, c + RADIUS, d + RADIUS) for a, b, c, d in boxes]
+
+
+def _in_any(boxes, x, y):
+    return any(a <= x <= c and b <= y <= d for a, b, c, d in boxes)
+
+
+def build(name, coll, polygon, blockers, z=0.002, cell=CELL, framed=()):
+    """The walkable mesh. `framed` holds (world matrix, footprints) pairs for things built at an angle."""
     xs = [p[0] for p in polygon]
     ys = [p[1] for p in polygon]
     x0, y0 = min(xs), min(ys)
-    nx = int((max(xs) - x0) / CELL)
-    ny = int((max(ys) - y0) / CELL)
-    grown = [(a - RADIUS, b - RADIUS, c + RADIUS, d + RADIUS) for a, b, c, d in blockers]
+    nx = int((max(xs) - x0) / cell)
+    ny = int((max(ys) - y0) / cell)
+    grown = _grown(blockers)
+    turned = [(frame.inverted(), _grown(boxes)) for frame, boxes in framed]
+
+    def free(x, y):
+        if _in_any(grown, x, y):
+            return False
+        for to_frame, boxes in turned:
+            p = to_frame @ Vector((x, y, 0.0))
+            if _in_any(boxes, p.x, p.y):
+                return False
+        return True
+
     walk = [[False] * nx for _ in range(ny)]
     for j in range(ny):
-        cy = y0 + (j + 0.5) * CELL
+        cy = y0 + (j + 0.5) * cell
         for i in range(nx):
-            cx = x0 + (i + 0.5) * CELL
-            if _inside(polygon, cx, cy) and not any(a <= cx <= c and b <= cy <= d for a, b, c, d in grown):
+            cx = x0 + (i + 0.5) * cell
+            if _inside(polygon, cx, cy) and free(cx, cy):
                 walk[j][i] = True
     bm = bmesh.new()
     verts = {}
 
     def v(i, j):
         if (i, j) not in verts:
-            verts[(i, j)] = bm.verts.new((x0 + i * CELL, y0 + j * CELL, z))
+            verts[(i, j)] = bm.verts.new((x0 + i * cell, y0 + j * cell, z))
         return verts[(i, j)]
 
     for j in range(ny):
@@ -79,3 +104,30 @@ def build(name, coll, polygon, blockers, z=0.002):
     obj.hide_render = True          # data for the app, never drawn
     obj.display_type = "WIRE"
     return obj
+
+
+def _polygon_at(me, x, y):
+    for poly in me.polygons:
+        if _inside([me.vertices[i].co.to_2d() for i in poly.vertices], x, y):
+            return poly.index
+    return None
+
+
+def missing_spots(nav, start, spots):
+    """Names in `spots` {name: (x, y)} that a character walking from `start` (x, y) cannot reach."""
+    me = nav.data
+    first = _polygon_at(me, *start)
+    if first is None:
+        return sorted(spots)
+    by_edge = {}
+    for poly in me.polygons:
+        for key in poly.edge_keys:
+            by_edge.setdefault(key, []).append(poly.index)
+    seen, todo = {first}, [first]
+    while todo:
+        for key in me.polygons[todo.pop()].edge_keys:
+            for other in by_edge[key]:
+                if other not in seen:
+                    seen.add(other)
+                    todo.append(other)
+    return sorted(name for name, (x, y) in spots.items() if _polygon_at(me, x, y) not in seen)

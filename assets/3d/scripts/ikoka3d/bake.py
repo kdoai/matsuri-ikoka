@@ -1,4 +1,4 @@
-"""Bake the static scenes (interior, exterior) into unlit textures.
+"""Bake the static scenes (interior, exterior, festival street) into unlit textures.
 
 For each bake group the meshes are joined, given a fresh UV map and baked
 with Cycles in three passes:
