@@ -108,13 +108,13 @@ describe("しおりの HTML", () => {
 
     expect(await sections(fictionalOuting())).toBe(4);
     expect(await sections(fictionalWeekend())).toBe(12);
-    expect(await sections(fictionalWeek())).toBe(20);
+    expect(await sections(fictionalWeek())).toBe(16);
   });
 
   it("泊まりの旅は裏表紙で終わり、足りない分は旅の思い出のページで埋める", async () => {
     const page = await render(fictionalWeekend());
 
-    expect(page.match(/aria-label="旅の思い出"/g)).toHaveLength(2);
+    expect(page.match(/aria-label="旅の思い出"/g)).toHaveLength(3);
     const sheets = [...page.matchAll(/<section class="sheet[^"]*" aria-label="([^"]+)"/g)].map(
       (m) => m[1],
     );
@@ -129,13 +129,14 @@ describe("しおりの HTML", () => {
     expect(await render(fictionalOuting(), null)).not.toContain('<nav class="toolbar"');
   });
 
-  it("はじめての方へは日本語と英語で出し、分からない項目を示す", async () => {
+  it("祭りの決まりや参加の仕方のページは出さず、交通規制は祭りの紹介のアクセスに出す", async () => {
     const page = await render(fictionalWeek());
 
-    expect(page).toContain("はじめての方へ");
-    expect(page).toContain("For first-time visitors");
-    expect(page).toContain('<span class="unknown">分からない</span>');
-    expect(page).toContain("Requests from the organizers");
+    expect(page).not.toContain("はじめての方へ");
+    expect(page).not.toContain("Requests from the organizers");
+    expect(page).not.toContain("打ち上げの場所の近くには入らない");
+    expect(page).not.toContain("見学か参加か");
+    expect(page).toContain("交通規制：");
   });
 
   it("泊まりの旅では、日ごとに泊まる地域とメモの欄を出す", async () => {
@@ -224,14 +225,13 @@ describe("しおりの HTML", () => {
     expect(page).toContain('<span class="kind">移動</span>');
   });
 
-  it("見どころ・作法・持ち物に小さな絵と、スタッフのひとことを添える", async () => {
+  it("見どころ・地元の味・持ち物に小さな絵と、スタッフのひとことを添える", async () => {
     const page = await render(fictionalWeekend());
 
-    for (const spot of ["lantern", "torii", "kinchaku", "dango"]) {
+    for (const spot of ["lantern", "kinchaku", "dango"]) {
       expect(page).toContain(`href="#s-spot-${spot}"`);
     }
     expect(page).toContain("ここは見のがさないで！");
-    expect(page).toContain("お願いを守って、地元の人と一緒に楽しもう");
     expect(page).toMatch(
       /<h3><svg class="ic" aria-hidden="true"><use href="#s-icon-bag"><\/use><\/svg>いつもの持ち物<\/h3>/,
     );

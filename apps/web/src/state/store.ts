@@ -586,8 +586,12 @@ export function createAppStore(deps: StoreDeps): AppStore {
         if (caught instanceof TransportError && caught.code === "unauthorized") {
           update((state) => requirePasscode(state, transport.hasPasscode?.() ?? false));
         }
-        // 話せなくなった（相談の期限切れ・旅がない・ガイドの設定なし）
-        if (caught instanceof TransportError && (caught.status === 404 || caught.status === 409)) {
+        // 話せなくなった（相談の期限切れ・旅がない・ガイドの設定なし）。
+        // 前の返事を作っている途中の 409 は送り直せるので、ふつうの失敗として出す
+        if (
+          caught instanceof TransportError &&
+          (caught.status === 404 || (caught.status === 409 && caught.retryable !== true))
+        ) {
           updateGuide((state) => ({ ...state, availability: "unavailable" }));
           failure = GUIDE_GONE;
         } else {

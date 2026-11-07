@@ -15,9 +15,10 @@ import { speechLang } from "./speak";
  * 読み上げのオン・オフ。読み上げの機能がないブラウザでは出さない（文字だけで使える）。
  * 使う声がこの端末の外のもの（または選べずブラウザに任せる）ときは、オンにするたびに先に説明する。
  * オンのまま言語を変えて端末の外の声になったときは、いったんオフにして（useReadAloudGuard）、
- * ここで一度だけ説明を出す。設定を閉じている間にオフになったときは、次に開いたときに出す
+ * ここで一度だけ説明を出す。設定を閉じている間にオフになったときは、次に開いたときに出す。
+ * roundClass を渡すと、丸いアイコンだけのボタンにして、説明はボタンの下に重ねて出す（縁日の通りの上の段）
  */
-export function ReadAloudToggle() {
+export function ReadAloudToggle({ roundClass }: { roundClass?: string } = {}) {
   const t = useT();
   const actions = useActions();
   const locale = useApp((state) => state.ui.locale);
@@ -48,13 +49,19 @@ export function ReadAloudToggle() {
     actions.setReadAloud(true);
   };
 
+  const round = roundClass !== undefined;
+  const label = readAloud ? t.voice.readAloudOn : t.voice.readAloudOff;
   return (
-    <>
+    <div className={round ? "relative" : "contents"}>
       <button
         type="button"
-        className="flex min-h-11 items-center justify-center gap-2 rounded-xl border-2 border-ai-200 bg-white px-3 font-bold text-ai-800"
+        className={
+          roundClass ??
+          "flex min-h-11 items-center justify-center gap-2 rounded-xl border-2 border-ai-200 bg-white px-3 font-bold text-ai-800"
+        }
         aria-pressed={readAloud}
-        title={t.voice.readAloudHint}
+        aria-label={round ? label : undefined}
+        title={round ? t.voice.readAloudTitle(label, t.voice.readAloudHint) : t.voice.readAloudHint}
         data-testid="read-aloud-toggle"
         onClick={() => {
           if (readAloud) {
@@ -65,12 +72,22 @@ export function ReadAloudToggle() {
           else setExplaining(true);
         }}
       >
-        <AudioLines aria-hidden="true" className="size-4" />
-        {readAloud ? t.voice.readAloudOn : t.voice.readAloudOff}
+        <AudioLines aria-hidden="true" className={round ? "size-5" : "size-4"} />
+        {round ? (
+          readAloud ? (
+            <span className="-top-0.5 -right-0.5 absolute size-3 rounded-full bg-yamabuki-400 ring-2 ring-ai-900" />
+          ) : null
+        ) : (
+          label
+        )}
       </button>
       {explaining && !readAloud ? (
         <section
-          className="rounded-xl border-2 border-line-strong bg-kinari-50 px-3 py-2 text-ink text-sm"
+          className={`rounded-xl border-2 border-line-strong bg-kinari-50 px-3 py-2 text-ink text-sm ${
+            round
+              ? "absolute top-full right-0 z-30 mt-2 w-72 max-w-[calc(100vw-2rem)] shadow-lift"
+              : ""
+          }`}
           aria-label={t.voice.readAloudRemoteTitle}
           data-testid="read-aloud-notice"
         >
@@ -96,6 +113,6 @@ export function ReadAloudToggle() {
           </div>
         </section>
       ) : null}
-    </>
+    </div>
   );
 }

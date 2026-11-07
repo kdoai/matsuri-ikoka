@@ -130,7 +130,9 @@ export function Storefront() {
         <h1 className="mt-2 font-bold text-4xl text-ink tracking-wider sm:text-5xl">
           {t.app.name}
         </h1>
-        <p className="mx-auto mt-4 max-w-md text-ink leading-relaxed">{t.app.lead}</p>
+        <p className="mx-auto mt-4 max-w-md whitespace-pre-line text-ink leading-relaxed">
+          {t.app.lead}
+        </p>
         <SoundChoice />
         {passcodeNeeded ? (
           <div className="mx-auto mt-6 max-w-sm">

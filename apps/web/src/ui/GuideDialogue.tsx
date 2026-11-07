@@ -1,25 +1,27 @@
-import { EMERGENCY_CONTACTS, MAX_MESSAGE_LENGTH, noticeStall } from "@matsuri-ikoka/schema";
+import { MAX_MESSAGE_LENGTH, noticeStall } from "@matsuri-ikoka/schema";
 import {
   Clock,
   Flag,
   MessageCircle,
   MessageCircleQuestion,
-  Phone,
   RotateCcw,
   Send,
   X,
 } from "lucide-react";
-import { type FormEvent, useMemo, useState } from "react";
+import { type FormEvent, type KeyboardEvent, useMemo, useRef, useState } from "react";
 import { formatDateTime } from "../i18n";
-import { currentEmergency, type GuideEntry, guideLine } from "../state/guide";
+import { type GuideEntry, guideLine } from "../state/guide";
 import { useActions, useApp, useT } from "../state/react";
+import { useReadAloud } from "../voice/hooks";
+import { guideSpokenLine } from "../voice/readAloud";
+import { VoiceInput } from "../voice/VoiceInput";
 import { SourceLink } from "./common";
 import { Portrait } from "./Portraits";
 import { guideErrorText, shortLine } from "./text";
 
 // ガイドとの会話の窓。店の会話の窓と同じ、話し手の名札と顔の絵つきのセリフの枠。
 // ガイドは店のコンシェルジュと同じひよこなので、同じ顔の絵を使う。チャット欄にせず、いまのひとことだけを出す。
-// これまでの話は「これまでの話」で開ける。緊急の連絡先は、ガイドの文より先に、いちばん上に出す。
+// これまでの話は「これまでの話」で開ける。旅のことは、すべてこのガイド1人に尋ねればよい。
 
 const replyClass =
   "inline-flex min-h-12 items-center justify-center gap-1.5 rounded-2xl border-2 px-3 py-2 font-bold leading-tight shadow-soft transition hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60";
@@ -48,16 +50,6 @@ function HistoryEntry({ entry }: { entry: GuideEntry }) {
       return <p className="text-ink-soft">{entry.bubble}</p>;
     case "memo":
       return <p className="text-ink-soft">{t.street.memoSaved(entry.text)}</p>;
-    case "emergency":
-      return (
-        <p className="font-bold text-shu-700">
-          {t.street.dotted(
-            entry.contacts.map(
-              (contact) => `${t.street.emergency[contact.service]} ${contact.number}`,
-            ),
-          )}
-        </p>
-      );
     case "sources":
       return (
         <div>
@@ -79,28 +71,48 @@ function Composer({ placeholder }: { placeholder: string }) {
   const actions = useActions();
   const streaming = useApp((state) => state.guide.streaming);
   const [draft, setDraft] = useState("");
+  const input = useRef<HTMLInputElement>(null);
+  // 声で入れた文も切らずに残し、長すぎるときは店の窓と同じく知らせて、送れないようにする
+  const tooLong = draft.trim().length > MAX_MESSAGE_LENGTH;
   const submit = (event: FormEvent) => {
     event.preventDefault();
     const text = draft.trim();
-    if (text === "" || streaming) return;
+    if (text === "" || streaming || tooLong) return;
     setDraft("");
     void actions.sendGuide(text);
   };
+  // 押し続けて繰り返し届く Enter では送らない（声の入力のボタンから焦点が移ったときなど）
+  const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" && event.repeat) event.preventDefault();
+  };
   return (
-    <form className="flex items-center gap-2" onSubmit={submit} data-testid="guide-composer">
+    // 声の入力の説明と聞き取りのようすは、折り返して行の下に出す
+    <form
+      className="flex flex-wrap items-center gap-x-2"
+      onSubmit={submit}
+      data-testid="guide-composer"
+    >
       <input
+        ref={input}
         type="text"
         value={draft}
-        maxLength={MAX_MESSAGE_LENGTH}
+        onKeyDown={onKeyDown}
         onChange={(event) => setDraft(event.target.value)}
         aria-label={t.street.composerLabel}
+        aria-invalid={tooLong}
+        aria-describedby={tooLong ? "guide-too-long" : undefined}
         placeholder={placeholder}
         data-guide-focus=""
         className="min-h-11 min-w-0 flex-1 rounded-xl border-2 border-line-strong bg-white px-3 py-1.5 text-ink"
       />
+      <VoiceInput
+        draft={draft}
+        onDraft={setDraft}
+        onFilled={() => window.requestAnimationFrame(() => input.current?.focus())}
+      />
       <button
         type="submit"
-        disabled={streaming || draft.trim() === ""}
+        disabled={streaming || draft.trim() === "" || tooLong}
         aria-label={streaming ? t.street.waiting : t.street.send}
         className="grid size-11 shrink-0 place-items-center rounded-xl bg-ai-700 text-white shadow-sm transition hover:bg-ai-800 disabled:cursor-not-allowed disabled:bg-stone-400"
       >
@@ -110,6 +122,11 @@ function Composer({ placeholder }: { placeholder: string }) {
           <Send aria-hidden="true" className="size-5" />
         )}
       </button>
+      {tooLong ? (
+        <p id="guide-too-long" className="basis-full pt-1 font-semibold text-shu-700 text-sm">
+          {t.chat.tooLong(MAX_MESSAGE_LENGTH)}
+        </p>
+      ) : null}
     </form>
   );
 }
@@ -125,13 +142,10 @@ export function GuideDialogue() {
   const locale = useApp((state) => state.ui.locale);
   const guide = useApp((state) => state.guide);
   const line = useMemo(() => guideLine(guide), [guide]);
-  const emergency = useMemo(() => currentEmergency(guide), [guide]);
   const latest = useMemo(() => latestEntries(guide.entries), [guide.entries]);
   const [expanded, setExpanded] = useState<string | null>(null);
   const hasSession = useApp((state) => state.session.id !== null);
   const canTalk = guide.availability === "ready";
-  // 話せないときも、緊急の連絡先はいつも出す。ガイドがなくてもここで読める
-  const contacts = emergency.length > 0 ? emergency : canTalk ? [] : EMERGENCY_CONTACTS;
 
   let text: string;
   let rest: string | null = null;
@@ -168,6 +182,15 @@ export function GuideDialogue() {
   }
   const typing =
     line.kind === "waiting" || line.kind === "tool" || (line.kind === "guide" && line.streaming);
+  // 読み上げる文は、窓に出ている文と同じにする（窓を閉じると、この部品ごと外れて止まる）
+  useReadAloud(
+    guideSpokenLine({
+      line,
+      head: line.kind === "guide" ? shortLine(line.text).head : "",
+      expanded: line.kind === "guide" && expanded === line.id && rest !== null,
+      text,
+    }),
+  );
 
   return (
     <section
@@ -192,29 +215,6 @@ export function GuideDialogue() {
       >
         <X aria-hidden="true" className="size-4" />
       </button>
-      {/* 緊急の連絡先は、ガイドの文より先に出す */}
-      {contacts.length > 0 ? (
-        <div
-          role={emergency.length > 0 ? "alert" : undefined}
-          data-testid="guide-emergency"
-          className="mb-2 rounded-xl border-2 border-shu-600 bg-white px-3 py-2"
-        >
-          <p className="font-bold text-shu-700">{t.street.emergencyLead}</p>
-          <ul className="mt-1 flex flex-wrap gap-2">
-            {contacts.map((contact) => (
-              <li key={contact.service}>
-                <a
-                  href={`tel:${contact.number}`}
-                  className="inline-flex min-h-11 items-center gap-1.5 rounded-xl bg-shu-600 px-3 font-bold text-white"
-                >
-                  <Phone aria-hidden="true" className="size-4" />
-                  {t.street.emergency[contact.service]} {contact.number}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
       <div className="flex min-h-0 gap-3 sm:gap-5">
         <Portrait
           speaker="concierge"
@@ -317,7 +317,7 @@ export function GuideDialogue() {
               </button>
             </li>
           ) : null}
-          {guide.availability === "failed" ? (
+          {guide.availability === "failed" || guide.availability === "unavailable" ? (
             <li>
               <button
                 type="button"
@@ -359,12 +359,10 @@ export function GuideDialogue() {
           </details>
         ) : null}
       </div>
-      {/* 相談が切れていても、緊急の言葉はサーバーが連絡先を返すので、相談の ID があれば書ける */}
+      {/* 相談の ID があれば、いつでも書ける。つながれば、そのまま話せるようになる */}
       {hasSession ? (
         <div className="mt-2 shrink-0 border-line border-t border-dashed pt-2">
-          <Composer
-            placeholder={canTalk ? t.street.composerPlaceholder : t.street.troublePlaceholder}
-          />
+          <Composer placeholder={t.street.composerPlaceholder} />
         </div>
       ) : null}
     </section>

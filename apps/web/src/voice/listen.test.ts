@@ -227,6 +227,18 @@ describe("createPushToTalk", () => {
     expect(made).toHaveLength(2);
   });
 
+  it("終わったあとに遅れて届いた結果では、聞いている扱いに戻らない", () => {
+    const { Recognition, made } = fakeRecognition();
+    const rec = recorder();
+    const talk = createPushToTalk(Recognition, rec.handlers, fakeTimers().timers);
+    talk?.start("ja-JP");
+    made[0]?.fail("not-allowed");
+    made[0]?.end();
+    made[0]?.hear(result("遅れた文", true));
+    expect(rec.failed).toEqual(["denied"]);
+    expect(rec.heard).toEqual([]);
+  });
+
   it("画面を離れたら、聞き取った文を渡さずにやめる", () => {
     const { Recognition, made } = fakeRecognition();
     const rec = recorder();

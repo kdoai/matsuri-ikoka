@@ -6,7 +6,7 @@ import type {
   FestivalSearchResponse,
   FestivalSearchResult,
 } from "@matsuri-ikoka/schema";
-import { fictionalFestival, fictionalSource } from "@matsuri-ikoka/schema/testing";
+import { fictionalSource } from "@matsuri-ikoka/schema/testing";
 import { expect, type Page, test } from "@playwright/test";
 import {
   blockMapTiles,
@@ -217,7 +217,7 @@ test("入口の2択から祭りを探し、続きを見て、選んでここで�
   await expect(
     finished.getByRole("link", { name: "example.com/suzunari/kasou" }).first(),
   ).toHaveAttribute("href", SOURCE.url);
-  await expect(finished).toContainText("作法の要点");
+  await expect(finished).not.toContainText("作法");
   await snap(page, info, "53-finished");
   await finished.getByRole("button", { name: "はじめに戻る" }).click();
   await expect(page.getByTestId("consult-entry")).toBeVisible();
@@ -689,26 +689,4 @@ test("「はじめからやり直す」で、旅行計画の相談のあとも�
     .getByRole("button", { name: "はじめからやり直す" })
     .click();
   await expect(page.getByTestId("consult-entry")).toBeVisible();
-});
-
-test("祭りのデータがあれば、ここで終えたときに作法の要点を出す", async ({ page }, info) => {
-  test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
-  const festival = { ...fictionalFestival(), id: "kasou-matsuri-2" };
-  await page.route("**/api/festivals/kasou-matsuri-2", (route) =>
-    route.fulfill({ json: festival }),
-  );
-  await fakeSearch(page, [reply({ results: [result(2)] })]);
-  await open(page);
-  await answerAll(page);
-  await page
-    .getByTestId("festival-results")
-    .getByRole("button", { name: "この祭りにする" })
-    .click();
-  await page
-    .getByTestId("consult")
-    .getByRole("button", { name: "ここで終わる", exact: true })
-    .click();
-  const finished = page.getByTestId("festival-finished");
-  await expect(finished).toContainText("服装");
-  await expect(finished).toContainText("見学か、加われるか");
 });

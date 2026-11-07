@@ -252,3 +252,57 @@ export async function seenTexts(page: Page, selector: string): Promise<string[]>
     selector,
   );
 }
+
+/** 音声認識の代わりが聞き取ったことにする文（架空の祭り） */
+export const FAKE_HEARD = "架空の灯籠まつりに行きたい";
+
+/**
+ * ブラウザの音声認識の代わり。止めたら、聞き取った文を1つ返して終わる。
+ * error を渡すと、始めたときにそのエラー（例：マイクを断られた not-allowed）で終わる。実際の声やマイクは使わない
+ */
+export async function fakeSpeechRecognition(
+  page: Page,
+  options: { accepted?: boolean; error?: string } = {},
+) {
+  await page.addInitScript(
+    ({ heard, accepted, error }) => {
+      const voice = { made: 0, stopped: 0, aborted: 0 };
+      (window as unknown as { __voice: typeof voice }).__voice = voice;
+      if (accepted) window.localStorage.setItem("matsuri-ikoka:voice-input-accepted", "1");
+      class FakeRecognition {
+        lang = "";
+        continuous = false;
+        interimResults = false;
+        maxAlternatives = 1;
+        onresult: ((event: unknown) => void) | null = null;
+        onerror: ((event: unknown) => void) | null = null;
+        onend: (() => void) | null = null;
+        constructor() {
+          voice.made += 1;
+        }
+        start() {
+          if (error === null) return;
+          window.setTimeout(() => {
+            this.onerror?.({ error });
+            this.onend?.();
+          }, 20);
+        }
+        stop() {
+          voice.stopped += 1;
+          if (error !== null) return;
+          window.setTimeout(() => {
+            const result = Object.assign([{ transcript: heard }], { isFinal: true });
+            this.onresult?.({ results: [result] });
+            this.onend?.();
+          }, 20);
+        }
+        abort() {
+          voice.aborted += 1;
+          window.setTimeout(() => this.onend?.(), 0);
+        }
+      }
+      (window as unknown as { SpeechRecognition: unknown }).SpeechRecognition = FakeRecognition;
+    },
+    { heard: FAKE_HEARD, accepted: options.accepted ?? false, error: options.error ?? null },
+  );
+}

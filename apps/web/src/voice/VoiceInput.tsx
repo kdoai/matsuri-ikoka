@@ -4,11 +4,12 @@ import {
   type PointerEvent,
   type ReactNode,
   useEffect,
+  useId,
   useMemo,
   useRef,
   useState,
 } from "react";
-import { useActions, useApp, useAppStore, useT } from "../state/react";
+import { useApp, useT } from "../state/react";
 import { loadVoiceInputAccepted, saveVoiceInputAccepted } from "../ui/storage";
 import { setListening, sharedSpeaker } from "./hooks";
 import {
@@ -33,18 +34,29 @@ type Phase =
   | { kind: "filled" }
   | { kind: "failed"; reason: ListenFailure };
 
-const STATUS_ID = "voice-input-status";
-const NOTICE_TITLE_ID = "voice-notice-title";
-
 /** 説明を読んで使うと決めたか。端末に覚えられなくても、この画面の間は覚えておく */
 let acceptedHere = false;
 
-export function VoiceInput({ onFilled }: { onFilled: () => void }) {
+/**
+ * 入力欄の横に置く。下書きはその入力欄が持つものを読み書きする（店の会話の窓はストア、ガイドの会話の窓は部品の中）
+ */
+export function VoiceInput({
+  draft,
+  onDraft,
+  onFilled,
+}: {
+  draft: string;
+  onDraft: (text: string) => void;
+  onFilled: () => void;
+}) {
   const t = useT();
-  const store = useAppStore();
-  const actions = useActions();
+  const statusId = useId();
+  const noticeTitleId = useId();
+  const draftRef = useRef(draft);
+  draftRef.current = draft;
+  const onDraftRef = useRef(onDraft);
+  onDraftRef.current = onDraft;
   const locale = useApp((state) => state.ui.locale);
-  const draft = useApp((state) => state.ui.draft);
   const Recognition = useMemo(() => browserRecognition(), []);
   const [phase, setPhase] = useState<Phase>({ kind: "idle" });
   // 聞いているあいだの止め方（離したら止まる・もう一度押すと止まる）。表示の文を出し分ける
@@ -87,8 +99,7 @@ export function VoiceInput({ onFilled }: { onFilled: () => void }) {
       onHeard: (heard) => setPhase({ kind: "listening", heard }),
       onDone: (heard) => {
         ended();
-        const current = store.getState().ui.draft;
-        actions.setDraft(appendToDraft(current, heard, langRef.current));
+        onDraftRef.current(appendToDraft(draftRef.current, heard, langRef.current));
         setPhase({ kind: "filled" });
         press.current?.filled();
       },
@@ -111,7 +122,7 @@ export function VoiceInput({ onFilled }: { onFilled: () => void }) {
       talk.current = null;
       setListening(false);
     };
-  }, [Recognition, store, actions]);
+  }, [Recognition]);
 
   // 送ったら（下書きが空になったら）、聞き取りの知らせを片付ける
   useEffect(() => {
@@ -197,7 +208,7 @@ export function VoiceInput({ onFilled }: { onFilled: () => void }) {
         aria-label={listening ? t.voice.stop : t.voice.hold}
         title={mode === "toggle" ? t.voice.toggleTitle : t.voice.hold}
         aria-pressed={listening}
-        aria-describedby={status === null ? undefined : STATUS_ID}
+        aria-describedby={status === null ? undefined : statusId}
         data-testid="voice-input"
         onPointerDown={onPointerDown}
         onPointerUp={onPointerUp}
@@ -216,12 +227,12 @@ export function VoiceInput({ onFilled }: { onFilled: () => void }) {
       <VoiceStatusSlot>
         {phase.kind === "notice" ? (
           <section
-            aria-labelledby={NOTICE_TITLE_ID}
+            aria-labelledby={noticeTitleId}
             className="mt-2 rounded-card border-2 border-line-strong bg-kinari-50 px-3 py-2 text-ink text-sm"
             data-testid="voice-notice"
           >
             <h3
-              id={NOTICE_TITLE_ID}
+              id={noticeTitleId}
               ref={noticeTitle}
               tabIndex={-1}
               className="font-bold text-base focus:outline-none"
@@ -261,7 +272,7 @@ export function VoiceInput({ onFilled }: { onFilled: () => void }) {
           </section>
         ) : null}
         <p
-          id={STATUS_ID}
+          id={statusId}
           className={`text-sm ${status === null ? "" : "pt-1"} ${phase.kind === "failed" ? "font-semibold text-shu-700" : "text-ink-soft"}`}
           aria-live="polite"
           data-testid="voice-status"

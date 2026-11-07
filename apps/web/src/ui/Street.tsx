@@ -1,4 +1,4 @@
-import { BookOpen, List, Store, X } from "lucide-react";
+import { BookOpen, Store, Tent } from "lucide-react";
 import {
   Component,
   type CSSProperties,
@@ -12,11 +12,12 @@ import {
 } from "react";
 import { useAccountUser } from "../account/useAccountUser";
 import { prefetchModels, STREET_SCENE_MODELS } from "../scenes/modelFiles";
-import { litStalls, unreadNotices } from "../state/guide";
+import { unreadNotices } from "../state/guide";
 import { playStore, usePlay } from "../state/play";
 import { useActions, useApp, useAppStore, useT } from "../state/react";
 import { selectStreetSceneProps } from "../state/scene";
 import { shioriReady } from "../state/selectors";
+import { ReadAloudToggle } from "../voice/ReadAloudToggle";
 import { AccountMenu } from "./AccountMenu";
 import { openAccountMenu } from "./accountMenuEntry";
 import { focusGuideDialogue, GuideDialogue } from "./GuideDialogue";
@@ -27,12 +28,12 @@ import { PlayPrompt, PlayStatus } from "./Play";
 import { Portrait } from "./Portraits";
 import { SceneLoading } from "./SceneLoading";
 import { LanguageButton, useFrameInsets } from "./Shop";
-import { StallList, StallWindow } from "./StreetStalls";
+import { GuideBoard, GuideStallFront } from "./StreetStalls";
 import { StreetScene, useScene3d } from "./scene3d";
 
-// しおりのあとの画面。店の外の縁日の通りで、屋台を見て回り、ガイドと話す。
-// 3D が主役で、会話の窓と屋台の窓を重ねる。動きを減らす設定や 3D が使えないときは、屋台の一覧を主にする。
-// どちらでも、屋台の情報・通知・相談がすべて使える。店へ戻る口はいつも出す。
+// しおりのあとの画面。店の外の縁日の通りで、ガイドと話す。旅のことは、すべてガイド1人に尋ねればよい。
+// 3D が主役で、会話の窓とガイドの屋台の窓を重ねる。動きを減らす設定や 3D が使えないときは、ガイドの屋台の正面を主にする。
+// どちらでも、知らせ・組み直しの案・相談がすべて使える。店へ戻る口はいつも出す。
 
 class StreetBoundary extends Component<{ onError: () => void; children: ReactNode }> {
   override state = { failed: false };
@@ -42,7 +43,7 @@ class StreetBoundary extends Component<{ onError: () => void; children: ReactNod
   }
 
   override componentDidCatch(error: unknown) {
-    console.warn("[scene] 3D の通りを出せなかったので、屋台の一覧にします", error);
+    console.warn("[scene] 3D の通りを出せなかったので、ガイドの屋台の正面にします", error);
     this.props.onError();
   }
 
@@ -163,19 +164,17 @@ export function Street() {
   const guideOpen = useApp((state) => state.guide.dialogueOpen);
   const openStall = useApp((state) => state.guide.openStall);
   const listOpen = useApp((state) => state.guide.listOpen);
-  const availability = useApp((state) => state.guide.availability);
   const phase = useApp((state) => state.guide.phase);
   // 旅の当日のスマホでは 2D を主にして、次の予定・出発・帰りの最終を最初に見せる
   const use3d = wants3d && !failed && !(phase === "during" && !wide);
   const notices = useApp((state) => state.guide.notices);
   const ready = useApp(shioriReady);
-  const lit = useMemo(() => litStalls({ notices }), [notices]);
   const unread = useMemo(() => unreadNotices({ notices }).length, [notices]);
 
   const topRef = useRef<HTMLDivElement>(null);
   const dialogueRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
-  const beside = wide && openStall !== null;
+  const beside = wide && (openStall !== null || listOpen);
   const frame = useFrameInsets(topRef, dialogueRef, panelRef, beside);
 
   useEffect(() => {
@@ -199,15 +198,7 @@ export function Street() {
     menu: () => undefined,
   });
 
-  // Esc で一覧を閉じる
-  useEffect(() => {
-    if (!listOpen) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") actions.setStallList(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [listOpen, actions]);
+  const closeList = useCallback(() => actions.setStallList(false), [actions]);
 
   return (
     <div
@@ -217,7 +208,7 @@ export function Street() {
     >
       {use3d ? <StreetStage frame={frame} onTalk={talk} onFail={() => setFailed(true)} /> : null}
 
-      {/* 上の段：ロゴと、屋台の一覧・しおり・店へ戻る口 */}
+      {/* 上の段：ロゴと、ガイドの屋台・しおり・店へ戻る口 */}
       <div
         ref={topRef}
         className="no-print pointer-events-none absolute inset-x-0 top-0 z-40 grid grid-cols-[1fr_auto] items-start gap-2 p-2 sm:p-3 [&>*]:pointer-events-auto"
@@ -243,7 +234,7 @@ export function Street() {
               data-testid="stall-list-button"
               onClick={() => actions.setStallList(!listOpen)}
             >
-              <List aria-hidden="true" className="size-5" />
+              <Tent aria-hidden="true" className="size-5" />
               {unread > 0 ? (
                 <span className="-top-1 -right-1 absolute grid min-w-5 place-items-center rounded-full bg-shu-600 px-1 font-bold text-white text-xs">
                   {unread}
@@ -272,6 +263,8 @@ export function Street() {
           >
             <Store aria-hidden="true" className="size-5" />
           </button>
+          {/* 通りには設定の窓がないので、ガイドの返事の読み上げはここで切り替える */}
+          <ReadAloudToggle roundClass={roundButton} />
           <LanguageButton className="min-h-10 rounded-lg border border-kinari-300/60 bg-ai-900/70 px-2.5 py-1 font-semibold text-kinari-50 text-sm hover:bg-ai-700" />
         </div>
       </div>
@@ -280,31 +273,25 @@ export function Street() {
       <div className="sr-only">
         <PlayStatus hidden />
         <p role="status" data-testid="street-lit">
-          {t.street.joined(
-            lit.map((stall) => t.street.labelled(t.street.stalls[stall].title, t.street.lit)),
-          )}
+          {unread > 0 ? t.street.unreadNotices(unread) : ""}
         </p>
       </div>
 
-      {/* 2D を主にするときは、屋台の一覧がそのまま通りになる */}
+      {/* 2D を主にするときは、ガイドの屋台の正面がそのまま通りになる */}
       {use3d ? null : (
         <main
-          className="mx-auto w-full max-w-3xl px-3 pb-44"
+          className="mx-auto w-full max-w-2xl px-3 pb-44"
           style={{ paddingTop: frame.top + 8 }}
           data-testid="street-board"
         >
-          <div className="washi rounded-panel border-2 border-line-strong p-4 shadow-lift">
-            <h2 className="font-bold text-lg">{t.street.listTitle}</h2>
-            <p className="mb-3 text-ink-soft text-sm">{t.street.listLead}</p>
-            <StallList />
-          </div>
+          <GuideStallFront onTalk={talk} />
           <div className="mt-3">
             <GuestNote />
           </div>
         </main>
       )}
 
-      {/* ログインなしの旅の案内（2D では屋台の一覧の下に出す） */}
+      {/* ログインなしの旅の案内（2D ではガイドの屋台の下に出す） */}
       {use3d && !guideOpen && openStall === null && !listOpen ? (
         <div
           className="absolute left-2 z-20 w-[min(22rem,calc(100vw-1rem))] sm:left-3"
@@ -314,57 +301,34 @@ export function Street() {
         </div>
       ) : null}
 
-      {/* 3D のときの屋台の一覧 */}
-      {use3d && listOpen ? (
-        <div
-          className="absolute inset-x-2 bottom-20 z-30 max-h-[calc(100dvh-10rem)] overflow-y-auto lg:right-3 lg:left-auto lg:w-[34rem]"
-          style={{ top: "auto" }}
-          data-testid="stall-list-panel"
-        >
-          <div className="washi rounded-panel border-2 border-line-strong p-4 shadow-lift">
-            <div className="flex items-start justify-between gap-2">
-              <h2 className="font-bold text-lg">{t.street.listTitle}</h2>
-              <button
-                type="button"
-                aria-label={t.street.closeList}
-                onClick={() => actions.setStallList(false)}
-                className="grid size-9 place-items-center rounded-full border border-line-strong bg-kinari-50 shadow-soft"
-              >
-                <X aria-hidden="true" className="size-4" />
-              </button>
-            </div>
-            <p className="mb-3 text-ink-soft text-sm">{t.street.listLead}</p>
-            <StallList />
-          </div>
-        </div>
-      ) : null}
-
-      {/* 開いている屋台 */}
-      {openStall === null ? null : (
+      {/* ガイドの屋台の窓。3D の屋台に触れたときも、上の段から開いたときも、同じ1つの窓を出す */}
+      {openStall === null && !listOpen ? null : (
         <div
           ref={panelRef}
           className="fixed inset-x-2 bottom-2 z-30 lg:right-3 lg:bottom-3 lg:left-auto lg:w-[min(34rem,42vw)]"
           style={{ top: frame.top + 6 }}
+          data-testid="stall-list-panel"
         >
-          <StallWindow stall={openStall} />
+          <GuideBoard
+            stall={openStall}
+            onClose={openStall === null ? closeList : actions.closeStall}
+          />
         </div>
       )}
 
-      {/* ガイドに話しかける。話せないときは、そのことを文字で出す */}
-      {guideOpen || openStall !== null ? null : (
+      {/* ガイドに話しかける */}
+      {guideOpen || openStall !== null || listOpen ? null : (
         <div className="fixed inset-x-2 bottom-3 z-20 sm:bottom-4" data-testid="guide-bar">
           <div className="mx-auto w-fit max-w-full">
             <button
               type="button"
               onClick={talk}
-              aria-label={availability === "unavailable" ? t.street.cannotTalk : t.street.talk}
+              aria-label={t.street.talk}
               className="hud-chip flex items-center gap-2 rounded-full py-1 pr-4 pl-1 font-bold text-sm transition hover:bg-ink/80"
             >
               <Portrait speaker="concierge" className="size-8 border" />
-              {availability === "unavailable" ? null : <KeyCap small>E</KeyCap>}
-              <span aria-hidden="true">
-                {availability === "unavailable" ? t.street.cannotTalk : t.street.talk}
-              </span>
+              <KeyCap small>E</KeyCap>
+              <span aria-hidden="true">{t.street.talk}</span>
             </button>
           </div>
         </div>

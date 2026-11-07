@@ -1,4 +1,4 @@
-import { type Festival, UNKNOWN } from "@matsuri-ikoka/schema";
+import type { Festival } from "@matsuri-ikoka/schema";
 import type { AppData, WaitingTalk } from "./types";
 
 // 待ち時間に出す豆知識とクイズ。豆知識は祭りのデータの項目だけから作り、その場で文章を作らない。
@@ -21,7 +21,7 @@ export function waitingFestivals(
   return focused.length > 0 ? focused : all;
 }
 
-/** 1つの祭りの話。小話・見どころ・作法を、種類が続かないよう交互に並べる */
+/** 1つの祭りの話。小話と見どころを、種類が続かないよう交互に並べる */
 function talksOf(festival: Festival): WaitingTalk[] {
   const base = { festivalId: festival.id, festivalName: festival.name.ja };
   const festivalSource = festival.sources[0];
@@ -40,28 +40,7 @@ function talksOf(festival: Festival): WaitingTalk[] {
           text,
           source: festivalSource,
         }));
-  const etiquette: WaitingTalk[] = [];
-  const { etiquette: e } = festival;
-  const etiquetteSource = e.sources[0];
-  if (etiquetteSource !== undefined) {
-    const add = (item: NonNullable<WaitingTalk["item"]>, text: string, code?: string) =>
-      etiquette.push({
-        ...base,
-        kind: "etiquette",
-        item,
-        text,
-        ...(code === undefined ? {} : { code }),
-        source: etiquetteSource,
-      });
-    if (e.participation !== UNKNOWN) add("participation", "", e.participation);
-    if (e.howToJoin !== null && e.howToJoin !== UNKNOWN) add("howToJoin", e.howToJoin);
-    if (e.rules !== UNKNOWN) for (const rule of e.rules) add("rules", rule);
-    if (e.dress !== UNKNOWN) add("dress", e.dress.join("、"));
-    if (e.bring !== UNKNOWN) add("bring", e.bring.join("、"));
-    if (e.photo !== UNKNOWN) add("photo", e.photo.note ?? "", e.photo.policy);
-    if (e.risk !== UNKNOWN) add("risk", e.risk.reason, e.risk.level);
-  }
-  const lists = [trivia, highlights, etiquette];
+  const lists = [trivia, highlights];
   const talks: WaitingTalk[] = [];
   for (let i = 0; lists.some((list) => i < list.length); i++) {
     for (const list of lists) {
@@ -73,7 +52,7 @@ function talksOf(festival: Festival): WaitingTalk[] {
 }
 
 /**
- * 待ち時間の豆知識。祭りのデータの小話・見どころ・作法だけから作り、出典を添える。
+ * 待ち時間の豆知識。祭りのデータの小話と見どころだけから作り、出典を添える。
  * 祭りが続かないよう、祭りごとの話を1つずつ交互に並べる。
  */
 export function waitingTalks(

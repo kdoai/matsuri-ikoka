@@ -103,11 +103,12 @@ describe("readConfig", () => {
     });
   });
 
-  it("ガイドのモデルは、指定がなければ持たない（ほかのモデルで動かさない）", () => {
+  it("ガイドのモデルは、指定がなければコンシェルジュのモデル、それもなければ持たない", () => {
     expect(readConfig({ MODEL_GUIDE: "model-g" }, here).models.guide).toBe("model-g");
     expect(
       readConfig({ MODEL_CONCIERGE: "model-a", MODEL_STAFF: "model-b" }, here).models.guide,
-    ).toBeUndefined();
+    ).toBe("model-a");
+    expect(readConfig({ MODEL_STAFF: "model-b" }, here).models.guide).toBeUndefined();
   });
 
   it("ガイドの上限は、指定がなければ既定の値を使い、上限なしにしない", () => {

@@ -17,14 +17,7 @@ import {
 } from "./fit";
 import type { RouteView } from "./route";
 import { shioriStyle } from "./style";
-import type {
-  DayView,
-  FestivalView,
-  GuideView,
-  IconName,
-  ShioriView,
-  WeatherView,
-} from "./viewModel";
+import type { DayView, FestivalView, IconName, ShioriView, WeatherView } from "./viewModel";
 
 // しおりの HTML。画面（GET /shiori/:id）と PDF で同じものを使う。
 // 旅程・祭りのデータ・モデルの文章はすべて html`` の差し込みでエスケープし、raw() は自前の CSS と SVG だけに使う。
@@ -59,7 +52,6 @@ const PAGE_LINES: Partial<Record<PageKind, string>> = {
   festival: "調べた見どころをまとめました",
   overview: "旅の全体の流れです",
   day: "時刻は目安。早めに動くと安心です",
-  guide: "祭りの方からのお願いも書きました",
   checklist: "出かける前にチェック！",
   stamps: "旅の思い出に、スタンプやサインをどうぞ",
   sources: "しおりの情報は、ここから調べました",
@@ -72,7 +64,6 @@ const PAGE_MEDALS: Record<PageKind, string> = {
   festival: "spot-lantern",
   overview: "icon-pin",
   day: "deco-uchiwa",
-  guide: "spot-torii",
   checklist: "spot-kinchaku",
   stamps: "deco-crest",
   sources: "icon-info",
@@ -99,7 +90,7 @@ function bubble(still: StaffStill, line: Html | string): Html {
 }
 
 /** 見出しに添える小さな挿し絵（assets/shiori/svg/spot-*.svg）。文字の見出しの飾りなので読み上げない */
-function spot(name: "lantern" | "torii" | "kinchaku" | "dango"): Html {
+function spot(name: "lantern" | "kinchaku" | "dango"): Html {
   return symbol(`spot-${name}`, "spot");
 }
 
@@ -125,10 +116,6 @@ function shopTag(): Html {
 
 function list(items: readonly string[], cls = "dots"): Html {
   return html`<ul class="${cls}">${items.map((item) => html`<li>${item}</li>`)}</ul>`;
-}
-
-function value(text: string, unknown: boolean): Html {
-  return unknown ? html`<span class="unknown">${text}</span>` : html`${text}`;
 }
 
 function weatherChip(weather: WeatherView): Html {
@@ -168,17 +155,15 @@ interface Piece {
   keepWithNext?: boolean;
 }
 
-type Group = "timeline" | "guide" | "checks" | "stamps";
+type Group = "timeline" | "checks" | "stamps";
 
 /** 入れ物を開くときの高さ（mm。上の余白） */
-const GROUP_MM: Record<Group, number> = { timeline: 3, guide: 3, checks: 0, stamps: 3 };
+const GROUP_MM: Record<Group, number> = { timeline: 3, checks: 0, stamps: 3 };
 
 function wrapGroup(group: Group, inner: Html[]): Html {
   switch (group) {
     case "timeline":
       return html`<div class="timeline">${inner}</div>`;
-    case "guide":
-      return html`<table class="guide">${inner}</table>`;
     case "checks":
       return html`<div class="checks">${inner}</div>`;
     case "stamps":
@@ -405,7 +390,7 @@ function festivalSheets(f: FestivalView): Sheet[] {
   ];
   if (f.missing) {
     pieces.push({
-      html: html`<p class="box alert">この祭りのデータが見つかりませんでした。日時と作法は、主催者の公式の情報で確かめてください。</p>`,
+      html: html`<p class="box alert">この祭りのデータが見つかりませんでした。日時と行き方は、主催者の公式の情報で確かめてください。</p>`,
       mm: boxMm(LINE() * 2, false),
     });
   }
@@ -671,82 +656,6 @@ function daySheets(view: ShioriView, day: DayView): Sheet[] {
   });
 }
 
-/** 表の列の幅（mm）。見出しの列 40mm と余白を引く */
-const GUIDE_TD_W = FLOW_WIDTH_MM - 40 - 6;
-
-function guideSheets(g: GuideView): Sheet[] {
-  const pieces: Piece[] = [];
-  if (g.missing) {
-    pieces.push({
-      html: html`<p class="box alert">この祭りの作法のデータが見つかりませんでした。作法は<span class="unknown">分からない</span>ので、主催者の公式の情報で確かめてください。</p>`,
-      mm: boxMm(LINE() * 3, false),
-    });
-  } else {
-    if (g.requests.length > 0) {
-      pieces.push({
-        html: html`<div class="box alert keep"><h3>${spot("torii")}祭りの方からのお願い<span class="en">&nbsp;Requests from the organizers</span></h3>${list(g.requests)}</div>`,
-        mm: boxMm(dotsMm(g.requests, BOX_W - 1)) + 1,
-      });
-    }
-    pieces.push({
-      html: bubble("hen_point", "お願いを守って、地元の人と一緒に楽しもう"),
-      mm: 13.5,
-    });
-    for (const r of g.rows) {
-      const ja =
-        r.valuesJa.length > 1
-          ? dotsMm(r.valuesJa, GUIDE_TD_W)
-          : textMm(r.valuesJa[0] ?? "", GUIDE_TD_W, pt(10.5), 1.6);
-      const en = r.valueEn ? textMm(r.valueEn, GUIDE_TD_W, pt(8.6), 1.6) : 0;
-      const th = LINE() * lineCount(r.labelJa, 33, pt(10.5)) + textMm(r.labelEn, 33, pt(8.6), 1.6);
-      pieces.push({
-        html: html`<tr>
-                <th><span class="lbl">${icon(r.icon)}${r.labelJa}</span><span class="en">${r.labelEn}</span></th>
-                <td>${r.valuesJa.length > 1 ? list(r.valuesJa) : value(r.valuesJa[0] ?? "", r.unknown)}${r.valueEn ? html`<span class="en">${r.valueEn}</span>` : ""}</td>
-              </tr>`,
-        mm: 4.4 + Math.max(th, ja + en),
-        group: "guide",
-      });
-    }
-    if (g.cautions.length > 0) {
-      pieces.push({
-        html: html`<div class="box keep"><h3>${icon("info")}注意<span class="en">&nbsp;Notes</span></h3>${list(g.cautions)}</div>`,
-        mm: boxMm(dotsMm(g.cautions, BOX_W)),
-      });
-    }
-    pieces.push({
-      html: html`<p class="muted guide-note">「分からない」は、調べても確かめられなかった項目です。当日、会場の係の方に確かめてください。<br /><span class="en">"Unknown" means we could not confirm it. Please ask the staff at the venue.</span></p>`,
-      mm:
-        4.5 +
-        textMm(
-          "「分からない」は、調べても確かめられなかった項目です。当日、会場の係の方に確かめてください。",
-          FLOW_WIDTH_MM,
-          pt(9),
-          1.6,
-        ) +
-        textMm(
-          '"Unknown" means we could not confirm it. Please ask the staff at the venue.',
-          FLOW_WIDTH_MM,
-          pt(7.4),
-          1.6,
-        ),
-    });
-  }
-  return flowSheets({
-    kind: "guide",
-    label: "はじめての方へ",
-    head: (cont) =>
-      head(
-        "guide",
-        cont ? `${g.festivalName}（つづき）` : g.festivalName,
-        html`はじめての方へ`,
-        "For first-time visitors",
-      ),
-    headMm: headMm(true, true),
-    pieces,
-  });
-}
-
 function stampPieces(view: ShioriView): Piece[] {
   const rows: Piece[] = [];
   for (let i = 0; i < view.stamps.length; i += 3) {
@@ -982,13 +891,11 @@ export function buildSheets(view: ShioriView): Sheet[] {
   TEXT_SCALE = view.design.largeText ? 12 / 10.5 : 1;
   let festival = 0;
   let day = 0;
-  let guide = 0;
   const renderers: Record<PageKind, () => Sheet[]> = {
     cover: () => [cover(view)],
     overview: () => overviewSheets(view),
     festival: () => festivalSheets(view.festivals[festival++] as FestivalView),
     day: () => daySheets(view, view.days[day++] as DayView),
-    guide: () => guideSheets(view.guides[guide++] as GuideView),
     checklist: () => checklistSheets(view),
     stamps: () => stampsSheets(view),
     sources: () => sourcesSheets(view),
