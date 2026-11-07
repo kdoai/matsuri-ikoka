@@ -128,6 +128,7 @@ export interface AppActions {
   setTab(tab: PanelTab): void;
   setLocale(locale: Locale): void;
   setSound(on: boolean): void;
+  setReadAloud(on: boolean): void;
   setDrawer(open: boolean): void;
   setCandidatesOpen(open: boolean): void;
   openShiori(): void;
@@ -690,7 +691,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
         update(() => ({
           ...fresh,
           quiz: { ...fresh.quiz, deck: shuffleDeck(fresh.quiz.deck, random) },
-          ui: { ...fresh.ui, soundOn: ui.soundOn, view: "shop" },
+          ui: { ...fresh.ui, soundOn: ui.soundOn, readAloud: ui.readAloud, view: "shop" },
         }));
         await startSession();
       },
@@ -706,6 +707,9 @@ export function createAppStore(deps: StoreDeps): AppStore {
       },
       setSound(on) {
         setUi({ soundOn: on });
+      },
+      setReadAloud(on) {
+        setUi({ readAloud: on });
       },
       setDrawer(open) {
         setUi({ drawerOpen: open });
@@ -1077,7 +1081,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
             festivals: known,
             festivalLoad,
             auth,
-            ui: { ...fresh.ui, soundOn: ui.soundOn },
+            ui: { ...fresh.ui, soundOn: ui.soundOn, readAloud: ui.readAloud },
           };
         });
         arriveOnStreet();

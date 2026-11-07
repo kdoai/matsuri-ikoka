@@ -20,8 +20,8 @@ import { hasNextSteps } from "../state/events";
 import { useActions, useApp, useT } from "../state/react";
 import { canReturnToFestivals, currentLine, shioriReady } from "../state/selectors";
 import { waitLineIndex, waitPhase } from "../state/waitLines";
-import { type SpokenLine, useReadAloud } from "../voice/hooks";
-import { continuationText } from "../voice/speak";
+import { useReadAloud } from "../voice/hooks";
+import { dialogueSpokenLine } from "../voice/readAloud";
 import { Composer, focusComposer } from "./ChatPanel";
 import { ConsultPanel, useConsultLine } from "./Consult";
 import { openTripPanel } from "./Hud";
@@ -304,6 +304,7 @@ export function DialogueBox() {
   const actions = useActions();
   const locale = useApp((state) => state.ui.locale);
   const line = useApp(currentLine);
+  const dialogueOpen = useApp((state) => state.ui.dialogueOpen);
   const streaming = useApp((state) => state.session.streaming);
   const phase = useApp(waitPhase);
   const consultLine = useConsultLine();
@@ -330,16 +331,13 @@ export function DialogueBox() {
 
   let text: string;
   let rest: string | null = null;
-  // 読み上げる文は、窓に出ている文と同じにする。考えている間の入れ替わるひとことと作業の様子は読まない
-  let spoken: SpokenLine | null = null;
+  let head = "";
   if (consultOpen) {
     text = consultLine;
-    spoken = { key: `consult:${consultLine}`, text: consultLine };
   } else {
     switch (line.kind) {
       case "greeting":
         text = t.chat.greeting;
-        spoken = { key: "greeting", text };
         break;
       case "waiting":
         // 考えている間は、いまの段階に合うひとことを5秒おきに入れ替える
@@ -353,21 +351,25 @@ export function DialogueBox() {
         const open = expanded === line.id && short.rest !== null;
         text = open ? line.text : short.head;
         rest = short.rest;
-        // 流れてくる途中は読まず、出そろってから読む。「つづきを読む」では、続きの部分だけを読む
-        if (!line.streaming) {
-          spoken = open
-            ? { key: `${line.id}:rest`, text: continuationText(short.head, line.text) }
-            : { key: `${line.id}:head`, text: short.head };
-        }
+        head = short.head;
         break;
       }
       case "error":
         text = errorText(line.entry, locale, t);
-        spoken = { key: `error:${line.entry.id}`, text };
         break;
     }
   }
-  useReadAloud(spoken);
+  // 読み上げる文は、窓に出ている文と同じにする。窓を閉じている間は読まない（窓は隠すだけで外さないため）
+  useReadAloud(
+    dialogueSpokenLine({
+      open: dialogueOpen,
+      consult: consultOpen ? consultLine : null,
+      line,
+      head,
+      expanded: line.kind === "concierge" && expanded === line.id && rest !== null,
+      text,
+    }),
+  );
   const typing = consultOpen
     ? festivalSearching
     : line.kind === "waiting" || (line.kind === "concierge" && line.streaming);

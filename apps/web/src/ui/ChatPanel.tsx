@@ -201,10 +201,10 @@ export function Composer() {
     }
   };
   const onKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    // 変換中の Enter では送らない
+    // 変換中の Enter と、押し続けて繰り返し届く Enter では送らない（声の入力のボタンから焦点が移ったときなど）
     if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
       event.preventDefault();
-      submit();
+      if (!event.repeat) submit();
     }
     // Esc で入力欄を離れ、旅人の操作に戻る
     if (event.key === "Escape" && !event.nativeEvent.isComposing) {

@@ -75,6 +75,7 @@ export function initialData({ locale = "ja", tutorialSeen = false }: InitialOpti
       tab: "itinerary",
       locale,
       soundOn: false,
+      readAloud: false,
       candidatesOpen: false,
       drawerOpen: false,
       celebrating: false,

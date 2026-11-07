@@ -228,8 +228,14 @@ export const en: Messages = {
     readAloudOn: "Read aloud: on",
     readAloudOff: "Read aloud: off",
     readAloudHint:
-      "Reads the concierge's words in the dialogue window aloud with this device's voice",
+      "Reads the concierge's words in the dialogue window aloud, using a voice on this device first",
+    readAloudRemoteTitle: "Before turning on read aloud",
+    readAloudRemote:
+      "No reading voice was found on this device. Some browsers send the text to the browser maker's servers to read it aloud.",
+    readAloudConfirm: "Turn on",
+    readAloudCancel: "Cancel",
     hold: "Hold to speak",
+    stop: "Stop listening",
     listening: "Listening. Release to stop",
     heard: (text: string) => `"${text}"`,
     filled: "What you said is in the box. Check it, fix it if needed, then press Send",

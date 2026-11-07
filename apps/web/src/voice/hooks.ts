@@ -1,9 +1,16 @@
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { useApp } from "../state/react";
-import { type VoicePrefs, voicePrefs } from "./prefs";
-import { browserSynth, createSpeaker, type Speaker, speechLang } from "./speak";
+import { createReadAloud, type SpokenLine } from "./readAloud";
+import {
+  browserSynth,
+  createSpeaker,
+  onVoicesChanged,
+  type Speaker,
+  speechLang,
+  voiceOnDevice,
+} from "./speak";
 
-// 声の設定と読み上げを、画面の部品から使うための口。
+// 声の処理を、画面の部品から使うための口。
 
 let speaker: Speaker | null = null;
 
@@ -21,37 +28,62 @@ export function canReadAloud(): boolean {
   return browserSynth() !== null;
 }
 
-export function useVoicePrefs(): VoicePrefs {
-  const store = voicePrefs();
-  return useSyncExternalStore(store.subscribe, store.get, store.get);
+// 声の入力で聞いている間か。聞いている間は読み上げを始めない
+let listening = false;
+const listeners = new Set<() => void>();
+
+export function setListening(on: boolean): void {
+  if (listening === on) return;
+  listening = on;
+  for (const listener of listeners) listener();
 }
 
-/** 会話の窓で、いま読み上げる文。key が変わったときだけ読み直す */
-export interface SpokenLine {
-  key: string;
-  text: string;
+function subscribeListening(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+const getListening = () => listening;
+
+export function useListening(): boolean {
+  return useSyncExternalStore(subscribeListening, getListening, getListening);
 }
 
 /**
  * 読み上げがオンのとき、会話の窓に出た文を読む。文が変わったら前の読み上げを止め、
- * 文がない間（考えている間など）は黙る。窓が消えたら止める
+ * 文がない間（窓を閉じたとき・考えている間など）と聞いている間は黙る。窓が消えたら止める
  */
 export function useReadAloud(line: SpokenLine | null): void {
-  const { readAloud } = useVoicePrefs();
-  const locale = useApp((state) => state.ui.locale);
+  const enabled = useApp((state) => state.ui.readAloud);
+  const lang = speechLang(useApp((state) => state.ui.locale));
+  const heard = useListening();
+  const controller = useRef<ReturnType<typeof createReadAloud> | null>(null);
+  controller.current ??= createReadAloud(sharedSpeaker());
   const key = line?.key ?? null;
   const text = line?.text ?? "";
-  // biome-ignore lint/correctness/useExhaustiveDependencies: 同じ文（key）を、描き直しのたびに読み直さない
   useEffect(() => {
-    if (!readAloud) {
-      sharedSpeaker().stop();
-      return;
-    }
-    if (key === null || text.trim() === "") {
-      sharedSpeaker().stop();
-      return;
-    }
-    sharedSpeaker().say(text, speechLang(locale));
-  }, [readAloud, key, locale]);
-  useEffect(() => () => sharedSpeaker().stop(), []);
+    controller.current?.update({
+      enabled,
+      listening: heard,
+      line: key === null ? null : { key, text },
+      lang,
+    });
+  }, [enabled, heard, key, text, lang]);
+  useEffect(() => () => controller.current?.stop(), []);
+}
+
+function voicesSnapshot(lang: string): boolean {
+  const synth = browserSynth();
+  return synth === null ? false : voiceOnDevice(synth.synth.getVoices(), lang);
+}
+
+/** 読み上げに使う声が、この端末の中で読むものか。声の一覧が届いたら選び直す */
+export function useVoiceOnDevice(lang: string): boolean {
+  return useSyncExternalStore(
+    onVoicesChanged,
+    () => voicesSnapshot(lang),
+    () => false,
+  );
 }

@@ -91,8 +91,8 @@ export interface ListenHandlers {
 }
 
 export interface PushToTalk {
-  /** ボタンを押したとき */
-  start(lang: string): void;
+  /** ボタンを押したとき。聞き始めたら true（前の聞き取りがまだ終わっていない・始められないときは false） */
+  start(lang: string): boolean;
   /** ボタンを離したとき。聞き取った分は onDone で渡す */
   stop(): void;
   /** 画面を離れたときなど。何も渡さずにやめる */
@@ -133,7 +133,7 @@ export function createPushToTalk(
       return current !== null;
     },
     start(lang) {
-      if (current !== null) return;
+      if (current !== null) return false;
       const recognition = new Recognition();
       recognition.lang = lang;
       recognition.continuous = true;
@@ -168,7 +168,7 @@ export function createPushToTalk(
       } catch {
         finish();
         handlers.onFail("other");
-        return;
+        return false;
       }
       timer = timers.set(() => current?.stop(), MAX_LISTEN_MS);
       cancelCurrent = () => {
@@ -176,6 +176,7 @@ export function createPushToTalk(
         recognition.abort();
         finish();
       };
+      return true;
     },
     stop() {
       current?.stop();

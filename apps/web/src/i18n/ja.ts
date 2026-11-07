@@ -210,8 +210,15 @@ export const ja = {
   voice: {
     readAloudOn: "読み上げ：オン",
     readAloudOff: "読み上げ：オフ",
-    readAloudHint: "会話の窓に出たコンシェルジュの言葉を、この端末の声で読み上げます",
+    readAloudHint:
+      "会話の窓に出たコンシェルジュの言葉を読み上げます。この端末の中の声を先に使います",
+    readAloudRemoteTitle: "読み上げをオンにする前に",
+    readAloudRemote:
+      "この端末には読み上げの声が見つかりませんでした。ブラウザによっては、読み上げる文をブラウザの提供元のサーバーへ送って声にします。",
+    readAloudConfirm: "オンにする",
+    readAloudCancel: "やめる",
     hold: "押している間だけ、声で話す",
+    stop: "聞くのをやめる",
     listening: "聞いています。離すと止まります",
     heard: (text: string) => `「${text}」`,
     filled: "聞き取った文を入れました。確かめて、直してから「送る」を押してください",

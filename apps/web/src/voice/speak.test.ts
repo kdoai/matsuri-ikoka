@@ -10,6 +10,7 @@ import {
   type UtteranceLike,
   utteranceChunks,
   type VoiceLike,
+  voiceOnDevice,
 } from "./speak";
 
 function fakeSynth(voices: VoiceLike[] = []) {
@@ -94,7 +95,47 @@ describe("pickVoice", () => {
   });
 });
 
+describe("voiceOnDevice", () => {
+  it("この端末の中の声で読めるときだけ true", () => {
+    expect(voiceOnDevice([{ lang: "ja-JP", localService: true }], "ja-JP")).toBe(true);
+  });
+
+  it("端末の外の声しかないときや、声を選べずブラウザに任せるときは false", () => {
+    expect(voiceOnDevice([{ lang: "ja-JP", localService: false }], "ja-JP")).toBe(false);
+    expect(voiceOnDevice([], "ja-JP")).toBe(false);
+  });
+});
+
 describe("createSpeaker", () => {
+  it("声の一覧が届いたら、声を選び直す", () => {
+    const voices: VoiceLike[] = [];
+    let changed: (() => void) | null = null;
+    const spoken: UtteranceLike[] = [];
+    const synth: SynthLike = {
+      speak: (utterance) => spoken.push(utterance),
+      cancel: () => undefined,
+      getVoices: () => voices,
+      addEventListener: (_type, listener) => {
+        changed = listener;
+      },
+    };
+    const speaker = createSpeaker(synth, () => ({ lang: "", voice: null }));
+    speaker.say("一つ目。", "ja-JP");
+    expect(spoken[0]?.voice).toBeNull();
+    const remote = { lang: "ja-JP", localService: false };
+    voices.push(remote);
+    speaker.say("二つ目。", "ja-JP");
+    expect(spoken[1]?.voice).toBe(remote);
+    const local = { lang: "ja-JP", localService: true };
+    voices.push(local);
+    speaker.say("三つ目。", "ja-JP");
+    // 一覧が変わったと知らされるまでは、選んだ声を使い続ける
+    expect(spoken[2]?.voice).toBe(remote);
+    (changed as (() => void) | null)?.();
+    speaker.say("四つ目。", "ja-JP");
+    expect(spoken[3]?.voice).toBe(local);
+  });
+
   it("前の読み上げを止めてから、言語と声を付けて読む", () => {
     const voice = { lang: "ja-JP", localService: true };
     const fake = fakeSynth([voice]);

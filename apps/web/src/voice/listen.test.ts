@@ -203,7 +203,7 @@ describe("createPushToTalk", () => {
     const { Recognition } = fakeRecognition({ throwOnStart: true });
     const rec = recorder();
     const talk = createPushToTalk(Recognition, rec.handlers, fakeTimers().timers);
-    talk?.start("ja-JP");
+    expect(talk?.start("ja-JP")).toBe(false);
     expect(rec.failed).toEqual(["other"]);
     expect(talk?.listening).toBe(false);
   });
@@ -211,9 +211,20 @@ describe("createPushToTalk", () => {
   it("聞いている間にもう一度押しても、二つ目は始めない", () => {
     const { Recognition, made } = fakeRecognition();
     const talk = createPushToTalk(Recognition, recorder().handlers, fakeTimers().timers);
-    talk?.start("ja-JP");
-    talk?.start("ja-JP");
+    expect(talk?.start("ja-JP")).toBe(true);
+    expect(talk?.start("ja-JP")).toBe(false);
     expect(made).toHaveLength(1);
+  });
+
+  it("止めた直後に押し直しても、前の聞き取りが終わるまでは始めない", () => {
+    const { Recognition, made } = fakeRecognition();
+    const talk = createPushToTalk(Recognition, recorder().handlers, fakeTimers().timers);
+    talk?.start("ja-JP");
+    talk?.stop();
+    expect(talk?.start("ja-JP")).toBe(false);
+    made[0]?.end();
+    expect(talk?.start("ja-JP")).toBe(true);
+    expect(made).toHaveLength(2);
   });
 
   it("画面を離れたら、聞き取った文を渡さずにやめる", () => {

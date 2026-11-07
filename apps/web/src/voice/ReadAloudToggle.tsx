@@ -1,31 +1,81 @@
 import { AudioLines } from "lucide-react";
-import { useApp, useT } from "../state/react";
-import { canReadAloud, sharedSpeaker, useVoicePrefs } from "./hooks";
-import { voicePrefs } from "./prefs";
+import { useEffect, useRef, useState } from "react";
+import { useActions, useApp, useT } from "../state/react";
+import { canReadAloud, sharedSpeaker, useVoiceOnDevice } from "./hooks";
 import { speechLang } from "./speak";
 
-/** 読み上げのオン・オフ。読み上げの機能がないブラウザでは出さない（文字だけで使える） */
+/**
+ * 読み上げのオン・オフ。読み上げの機能がないブラウザでは出さない（文字だけで使える）。
+ * 使う声がこの端末の外のもの（または選べずブラウザに任せる）ときは、オンにする前に説明する
+ */
 export function ReadAloudToggle() {
   const t = useT();
+  const actions = useActions();
   const locale = useApp((state) => state.ui.locale);
-  const { readAloud } = useVoicePrefs();
+  const readAloud = useApp((state) => state.ui.readAloud);
+  const lang = speechLang(locale);
+  const onDevice = useVoiceOnDevice(lang);
+  const [explaining, setExplaining] = useState(false);
+  const title = useRef<HTMLParagraphElement>(null);
+  useEffect(() => {
+    if (explaining) title.current?.focus();
+  }, [explaining]);
   if (!canReadAloud()) return null;
+
+  const turnOn = () => {
+    setExplaining(false);
+    // 押したその場で一度読む（押してからでないと声を出さないブラウザがある）。会話の窓の文に置き換わる
+    sharedSpeaker().say(t.voice.readAloudOn, lang);
+    actions.setReadAloud(true);
+  };
+
   return (
-    <button
-      type="button"
-      className="flex min-h-11 items-center justify-center gap-2 rounded-xl border-2 border-ai-200 bg-white px-3 font-bold text-ai-800"
-      aria-pressed={readAloud}
-      title={t.voice.readAloudHint}
-      data-testid="read-aloud-toggle"
-      onClick={() => {
-        const on = !readAloud;
-        // 押したその場で一度読む（押してからでないと声を出さないブラウザがある）。会話の窓の文に置き換わる
-        if (on) sharedSpeaker().say(t.voice.readAloudOn, speechLang(locale));
-        voicePrefs().setReadAloud(on);
-      }}
-    >
-      <AudioLines aria-hidden="true" className="size-4" />
-      {readAloud ? t.voice.readAloudOn : t.voice.readAloudOff}
-    </button>
+    <>
+      <button
+        type="button"
+        className="flex min-h-11 items-center justify-center gap-2 rounded-xl border-2 border-ai-200 bg-white px-3 font-bold text-ai-800"
+        aria-pressed={readAloud}
+        title={t.voice.readAloudHint}
+        data-testid="read-aloud-toggle"
+        onClick={() => {
+          if (readAloud) {
+            actions.setReadAloud(false);
+            setExplaining(false);
+          } else if (onDevice) turnOn();
+          else setExplaining(true);
+        }}
+      >
+        <AudioLines aria-hidden="true" className="size-4" />
+        {readAloud ? t.voice.readAloudOn : t.voice.readAloudOff}
+      </button>
+      {explaining && !readAloud ? (
+        <section
+          className="rounded-xl border-2 border-line-strong bg-kinari-50 px-3 py-2 text-ink text-sm"
+          aria-label={t.voice.readAloudRemoteTitle}
+          data-testid="read-aloud-notice"
+        >
+          <p ref={title} tabIndex={-1} className="font-bold focus:outline-none">
+            {t.voice.readAloudRemoteTitle}
+          </p>
+          <p className="mt-1 leading-relaxed">{t.voice.readAloudRemote}</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <button
+              type="button"
+              className="min-h-10 rounded-full border-2 border-wood-700/40 bg-yamabuki-400 px-4 font-bold text-ink"
+              onClick={turnOn}
+            >
+              {t.voice.readAloudConfirm}
+            </button>
+            <button
+              type="button"
+              className="min-h-10 rounded-full border-2 border-line-strong bg-white px-4 font-bold text-ink"
+              onClick={() => setExplaining(false)}
+            >
+              {t.voice.readAloudCancel}
+            </button>
+          </div>
+        </section>
+      ) : null}
+    </>
   );
 }

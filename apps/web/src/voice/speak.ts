@@ -62,6 +62,8 @@ export interface SynthLike {
   speak(utterance: UtteranceLike): void;
   cancel(): void;
   getVoices(): readonly VoiceLike[];
+  /** 使える声の一覧が変わったとき（読み込みが遅れて届くブラウザがある） */
+  addEventListener?(type: "voiceschanged", listener: () => void): void;
 }
 
 export interface VoiceLike {
@@ -79,7 +81,7 @@ export type UtteranceFactory = (text: string) => UtteranceLike;
 
 /**
  * 言語に合う声を選ぶ。この端末の中で読む声を先にする（端末の外で読む声は、文がブラウザの提供元に送られる）。
- * 合う声がなければ null（ブラウザに任せる）
+ * 端末の中の声がなければ端末の外の声を使い、合う声がなければ null（ブラウザに任せる）
  */
 export function pickVoice(voices: readonly VoiceLike[], lang: string): VoiceLike | null {
   const prefix = lang.slice(0, 2).toLowerCase();
@@ -97,6 +99,14 @@ export function pickVoice(voices: readonly VoiceLike[], lang: string): VoiceLike
   );
 }
 
+/**
+ * 選ぶ声が、この端末の中で読むものか。端末の外の声や、選べずにブラウザに任せるときは false
+ * （ブラウザによっては、読み上げる文を提供元のサーバーへ送って声にする）
+ */
+export function voiceOnDevice(voices: readonly VoiceLike[], lang: string): boolean {
+  return pickVoice(voices, lang)?.localService === true;
+}
+
 export interface Speaker {
   /** 前の読み上げを止めて、この文を読む */
   say(text: string, lang: string): void;
@@ -112,11 +122,23 @@ export function createSpeaker(
     return { say: () => undefined, stop: () => undefined };
   }
   let spoke = false;
+  // 言語ごとに選んだ声。声の一覧が変わったら選び直す
+  const chosen = new Map<string, VoiceLike | null>();
+  synth.addEventListener?.("voiceschanged", () => chosen.clear());
+  const voiceFor = (lang: string): VoiceLike | null => {
+    const known = chosen.get(lang);
+    if (known !== undefined) return known;
+    const voices = synth.getVoices();
+    const voice = pickVoice(voices, lang);
+    // 一覧がまだ届いていないときは覚えず、次にまた選ぶ
+    if (voices.length > 0) chosen.set(lang, voice);
+    return voice;
+  };
   return {
     say(text, lang) {
       synth.cancel();
       spoke = true;
-      const voice = pickVoice(synth.getVoices(), lang);
+      const voice = voiceFor(lang);
       for (const chunk of utteranceChunks(speakableText(text))) {
         const utterance = makeUtterance(chunk);
         utterance.lang = lang;
@@ -131,6 +153,16 @@ export function createSpeaker(
       synth.cancel();
     },
   };
+}
+
+/** 声の一覧が変わったら知らせる。読み上げの機能がなければ何もしない */
+export function onVoicesChanged(listener: () => void): () => void {
+  if (typeof window === "undefined" || window.speechSynthesis === undefined) {
+    return () => undefined;
+  }
+  const synth = window.speechSynthesis;
+  synth.addEventListener("voiceschanged", listener);
+  return () => synth.removeEventListener("voiceschanged", listener);
 }
 
 /** このブラウザの読み上げの機能。なければ null */

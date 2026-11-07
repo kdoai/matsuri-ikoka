@@ -257,6 +257,8 @@ export interface UiState {
   tab: PanelTab;
   locale: Locale;
   soundOn: boolean;
+  /** 会話の窓に出た文を声で読み上げる */
+  readAloud: boolean;
   candidatesOpen: boolean;
   /** スマートフォンで、下から引き出すパネルが開いているか */
   drawerOpen: boolean;
