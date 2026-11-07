@@ -3,10 +3,10 @@ import type {
   HookEvent,
   HookInput,
   Options,
-  SDKMessage,
 } from "@anthropic-ai/claude-agent-sdk";
 import { describe, expect, it } from "vitest";
 import type { QueryFn } from "./runner";
+import { initMessage, MAX_TURNS, resultMessage, type ScriptResult } from "./testSdkMessages";
 import {
   createWebRouteResearcher,
   ROUTE_RESEARCH_MS,
@@ -17,9 +17,9 @@ import {
 
 type Script = (
   hook: (event: HookEvent, input: Record<string, unknown>) => Promise<unknown>,
-) => Promise<string | null>;
+) => Promise<ScriptResult>;
 
-function setup(scripts: Script[], clock?: () => number) {
+function setup(scripts: Script[], clock?: () => number, forgotten: string[] = []) {
   const calls: { prompt: string; options: Options }[] = [];
   const query: QueryFn = (params) => {
     calls.push(params);
@@ -44,16 +44,10 @@ function setup(scripts: Script[], clock?: () => number) {
         }
       }
     };
+    const sessionId = `session-${calls.length}`;
     return (async function* () {
-      const text = await script(hook);
-      yield (text === null
-        ? { type: "result", subtype: "error_during_execution", is_error: true, errors: [] }
-        : {
-            type: "result",
-            subtype: "success",
-            is_error: false,
-            result: text,
-          }) as unknown as SDKMessage;
+      yield initMessage(sessionId);
+      yield resultMessage(await script(hook));
     })();
   };
   const researcher = createWebRouteResearcher({
@@ -63,6 +57,9 @@ function setup(scripts: Script[], clock?: () => number) {
     query,
     resolveHost: async () => ["8.8.8.8"],
     ...(clock ? { clock } : {}),
+    forgetTranscript: (id) => {
+      forgotten.push(id);
+    },
   });
   const research = () =>
     researcher.research({
@@ -113,6 +110,26 @@ describe("createWebRouteResearcher", () => {
 
     expect(await research()).toEqual(report);
     expect(calls).toHaveLength(1);
+  });
+
+  it("ターンの上限で終わったら、同じセッションを道具なしで続け、読んだ行き方を捨てない", async () => {
+    const forgotten: string[] = [];
+    const { calls, research } = setup(
+      [
+        async (hook) => {
+          await read(hook, "https://example.com/route");
+          return MAX_TURNS;
+        },
+        async () => ANSWER,
+      ],
+      undefined,
+      forgotten,
+    );
+
+    expect(await research()).toMatchObject({ minutes: [55, 70] });
+    expect(calls).toHaveLength(2);
+    expect(calls[1]?.options).toMatchObject({ resume: "session-1", tools: [], maxTurns: 1 });
+    expect(forgotten).toEqual(["session-1"]);
   });
 
   it("ページを読まずに答えたときや、分からないと答えたときは、調べ方を変えて1回だけ調べ直す", async () => {

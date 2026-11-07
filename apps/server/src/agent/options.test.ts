@@ -298,7 +298,7 @@ describe("再確認のエージェント", () => {
       withTools,
     });
 
-  it("道具は Web の検索と取得だけで、設定も MCP も読まず、会話を残さない", () => {
+  it("道具は Web の検索と取得だけで、設定も MCP も読まない", () => {
     const opts = verifierOptions(true);
 
     expect(opts.tools).toEqual(["WebSearch", "WebFetch"]);
@@ -308,8 +308,12 @@ describe("再確認のエージェント", () => {
       settingSources: [],
       strictMcpConfig: true,
       mcpServers: {},
-      persistSession: false,
     });
+  });
+
+  it("道具を使う呼び出しだけ、ターンの上限で救えるように会話を残す。差し戻しは残さない", () => {
+    expect(verifierOptions(true).persistSession).toBe(true);
+    expect(verifierOptions(false).persistSession).toBe(false);
   });
 
   it("費用の上限を渡す", () => {

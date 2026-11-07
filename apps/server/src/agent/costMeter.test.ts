@@ -2,6 +2,7 @@ import type { Options, SDKMessage } from "@anthropic-ai/claude-agent-sdk";
 import { describe, expect, it, vi } from "vitest";
 import { CostMeter, remainingCostBudget, withCostMeter } from "./costMeter";
 import type { QueryFn } from "./runner";
+import { initMessage, MAX_TURNS, resultMessage } from "./testSdkMessages";
 import { finalText } from "./webVerifier";
 
 const result = (cost: number) =>
@@ -77,7 +78,57 @@ describe("finalText の費用の上限", () => {
 
     const reply = await withCostMeter(meter, () => finalText(query, "問い", {}));
 
-    expect(reply).toEqual({ text: null, costUsd: 0 });
+    expect(reply).toEqual({ text: null, costUsd: 0, salvage: null });
     expect(query).not.toHaveBeenCalled();
+  });
+});
+
+describe("finalText のターンの上限の救い", () => {
+  /** 1回目はターンの上限で終わり（累計 0.3）、続けた2回目で答える（累計 0.4）偽物の query */
+  function salvagedQuery() {
+    const options: Options[] = [];
+    const query: QueryFn = (params) => {
+      options.push(params.options);
+      const first = options.length === 1;
+      return (async function* () {
+        yield initMessage("session-1");
+        yield first ? resultMessage(MAX_TURNS, 0.3) : resultMessage("答え", 0.4);
+      })();
+    };
+    return { query, options };
+  }
+
+  it("道具を使う呼び出しがターンの上限で終わったら、同じセッションを道具なしで1ターン続け、続けた分の費用だけを足す", async () => {
+    const { query, options } = salvagedQuery();
+    const forgotten: string[] = [];
+    const meter = new CostMeter(1);
+
+    const reply = await withCostMeter(meter, () =>
+      finalText(query, "問い", { tools: ["WebFetch"], persistSession: true }, undefined, (id) => {
+        forgotten.push(id);
+      }),
+    );
+
+    expect(reply.text).toBe("答え");
+    expect(reply.costUsd).toBeCloseTo(0.4);
+    expect(reply.salvage?.costUsd).toBeCloseTo(0.1);
+    expect(meter.usd).toBeCloseTo(0.4);
+    expect(options[1]).toMatchObject({
+      resume: "session-1",
+      tools: [],
+      allowedTools: [],
+      maxTurns: 1,
+    });
+    // 会話を残した呼び出しの記録は、救いを終えたら消す
+    expect(forgotten).toEqual(["session-1"]);
+  });
+
+  it("道具のない呼び出しは、ターンの上限で終わっても続けない", async () => {
+    const { query, options } = salvagedQuery();
+
+    const reply = await finalText(query, "問い", { tools: [] });
+
+    expect(reply).toMatchObject({ text: null, salvage: null });
+    expect(options).toHaveLength(1);
   });
 });

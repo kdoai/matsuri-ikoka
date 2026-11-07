@@ -3,13 +3,13 @@ import type {
   HookEvent,
   HookInput,
   Options,
-  SDKMessage,
 } from "@anthropic-ai/claude-agent-sdk";
 import { createWebActivityLog } from "@matsuri-ikoka/agent-kit";
 import { describe, expect, it } from "vitest";
 import { testFestival } from "../domain/testFestivals";
 import type { RobotsChecker } from "./robots";
 import type { QueryFn } from "./runner";
+import { initMessage, MAX_TURNS, resultMessage, type ScriptResult } from "./testSdkMessages";
 import { createVerifierHooks, createWebVerifier, isRestrictedSite } from "./webVerifier";
 
 // Agent SDK の代わりに、フックを呼んで決まった返答を返す偽物の query で確かめる。URL はすべて架空
@@ -18,9 +18,9 @@ const festival = testFestival({ id: "suzunari-toro" });
 
 type Script = (
   hook: (event: HookEvent, input: Record<string, unknown>) => Promise<unknown>,
-) => Promise<string | null>;
+) => Promise<ScriptResult>;
 
-function setup(scripts: Script[]) {
+function setup(scripts: Script[], forgotten: string[] = []) {
   const calls: { prompt: string; options: Options }[] = [];
   const query: QueryFn = (params) => {
     calls.push(params);
@@ -49,16 +49,10 @@ function setup(scripts: Script[]) {
       }
       return output;
     };
+    const sessionId = `session-${calls.length}`;
     return (async function* () {
-      const text = await script(hook);
-      yield (text === null
-        ? { type: "result", subtype: "error_during_execution", is_error: true, errors: [] }
-        : {
-            type: "result",
-            subtype: "success",
-            is_error: false,
-            result: text,
-          }) as unknown as SDKMessage;
+      yield initMessage(sessionId);
+      yield resultMessage(await script(hook));
     })();
   };
   const verifier = createWebVerifier({
@@ -70,6 +64,9 @@ function setup(scripts: Script[]) {
     resolveHost: async (host) => {
       const ip = host.match(/^(\d+\.\d+\.\d+\.\d+)\.nip\.io$/)?.[1];
       return [ip ?? "8.8.8.8"];
+    },
+    forgetTranscript: (id) => {
+      forgotten.push(id);
     },
   });
   const verify = () =>
@@ -321,6 +318,59 @@ describe("createWebVerifier", () => {
 
       expect((await verify()).yearStated).toBe(false);
     });
+  });
+
+  it("ターンの上限で終わったら、同じセッションを道具なしで1ターンだけ続け、読んだ分から答えを救う", async () => {
+    const forgotten: string[] = [];
+    const { calls, verify } = setup(
+      [
+        async (hook) => {
+          await read(hook, "https://example.com/suzunari/2026", NOTICE_2026);
+          return MAX_TURNS;
+        },
+        async () =>
+          JSON.stringify({
+            result: "as_planned",
+            sources: [
+              { url: "https://example.com/suzunari/2026" },
+              { url: "https://example.net/not-read" },
+            ],
+            dateText: "2026年8月16日（日）",
+          }),
+      ],
+      forgotten,
+    );
+
+    const report = await verify();
+
+    // 出典の照合はこれまでどおり、実際に読んだページだけ
+    expect(report).toMatchObject({
+      result: "as_planned",
+      sources: [{ url: "https://example.com/suzunari/2026" }],
+      yearStated: true,
+    });
+    expect(calls).toHaveLength(2);
+    // 道具を使う呼び出しは、救えるように会話を残す
+    expect(calls[0]?.options.persistSession).toBe(true);
+    expect(calls[1]?.options).toMatchObject({
+      resume: "session-1",
+      tools: [],
+      allowedTools: [],
+      maxTurns: 1,
+    });
+    expect(calls[1]?.options.hooks).toBeUndefined();
+    expect(calls[1]?.prompt).toContain("ここまでに読んだページ");
+    // 会話を残した呼び出しの記録は、救いを終えたら消す
+    expect(forgotten).toEqual(["session-1"]);
+  });
+
+  it("救っても答えが出なければ「確認できず」にし、記録は消す", async () => {
+    const forgotten: string[] = [];
+    const { calls, verify } = setup([async () => MAX_TURNS, async () => MAX_TURNS], forgotten);
+
+    expect((await verify()).result).toBe("not_found");
+    expect(calls).toHaveLength(2);
+    expect(forgotten).toEqual(["session-1"]);
   });
 
   it("差し戻しても取り出せないとき、失敗したときは「確認できず」", async () => {
