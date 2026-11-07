@@ -7,17 +7,21 @@
 // 値は環境変数で渡す：FIREBASE_PROJECT_ID・TRIAL_ACCOUNT_EMAIL（create と reset）・FIRESTORE_DATABASE_ID（省略可）。
 // 権限は gcloud auth application-default login の資格情報を使う。鍵のファイルは使わない。
 // パスワードはこの端末の画面にだけ出す。ファイルにもログにも書かない。CI では動かさない。
+
+import { TRIAL_ACCOUNT_UID } from "@matsuri-ikoka/schema";
 import { initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
-import { TRIAL_OWNER } from "../src/account/idToken";
 import {
   createTrialAccount,
   resetTrialAccount,
   rotateTrialPassword,
+  TRIAL_STATE_DOC,
   TrialAccountError,
+  type TrialState,
 } from "../src/account/trialAccount";
 import { FirestoreTripStorage } from "../src/storage/firestore";
+import { ownerIdOf } from "../src/storage/owner";
 
 function required(name: string): string {
   const value = process.env[name]?.trim();
@@ -34,19 +38,31 @@ async function main(): Promise<void> {
 
   const app = initializeApp({ projectId: required("FIREBASE_PROJECT_ID") });
   const auth = getAuth(app);
+  const databaseId = process.env.FIRESTORE_DATABASE_ID?.trim();
+  const db = databaseId ? getFirestore(app, databaseId) : getFirestore(app);
+  const state: TrialState = {
+    invalidateLogins: async (validAfter) => {
+      await db.doc(TRIAL_STATE_DOC).set({ validAfter });
+    },
+  };
 
   if (command === "create") {
     const password = await createTrialAccount(auth, required("TRIAL_ACCOUNT_EMAIL"));
     console.log(`作りました。パスワード（再表示はできません）：${password}`);
   } else if (command === "rotate-password") {
-    const password = await rotateTrialPassword(auth);
+    const password = await rotateTrialPassword(auth, state);
     console.log(`作り直しました。パスワード（再表示はできません）：${password}`);
   } else {
-    const databaseId = process.env.FIRESTORE_DATABASE_ID?.trim();
-    const db = databaseId ? getFirestore(app, databaseId) : getFirestore(app);
-    const trips = new FirestoreTripStorage(db).forOwner(TRIAL_OWNER);
-    const deleted = await resetTrialAccount(auth, trips, required("TRIAL_ACCOUNT_EMAIL"));
-    console.log(`初期の状態に戻しました（残した旅 ${deleted} 件を消しました）`);
+    // 人が権限を持って実行するスクリプトなので、確かめた ID トークンなしで持ち主を決める（storage/owner.ts の例外）
+    const trips = new FirestoreTripStorage(db).forOwner(ownerIdOf(TRIAL_ACCOUNT_UID));
+    const email = required("TRIAL_ACCOUNT_EMAIL");
+    const { deleted, hasPassword } = await resetTrialAccount(auth, trips, state, email);
+    console.log(
+      `残した旅 ${deleted} 件を消し、ログインと結びつけたものを外しました。パスワードは変えていません。`,
+    );
+    if (!hasPassword) {
+      console.log("パスワードが外されています。rotate-password で作り直してください。");
+    }
   }
 }
 
