@@ -6,7 +6,6 @@ import {
   AnimationMixer,
   LoopOnce,
   LoopRepeat,
-  Mesh,
   type Object3D,
   type PerspectiveCamera,
   Quaternion,
@@ -63,6 +62,7 @@ import {
   useEntryRig,
   useRenderer,
 } from "./stage";
+import { firstTapHit } from "./tap";
 import { markOf, readShopWorld, type ShopWorld } from "./world";
 
 // 3D の店内。ストアの状態（ShopSceneProps）を読むだけで、SSE のイベントは受けない。
@@ -539,13 +539,6 @@ function padOrbit(target: Orbit, dt: number): void {
 /** 座る場所をタップしたとみなす、座面の目印からの距離（m） */
 const SEAT_TAP = 0.8;
 
-/** 透かしているもの（入口の壁） */
-function faded(object: Object3D): boolean {
-  if (!(object instanceof Mesh)) return false;
-  const materials = Array.isArray(object.material) ? object.material : [object.material];
-  return materials.some((material) => material.transparent && material.opacity < 0.5);
-}
-
 /** タップした場所へ旅人を歩かせる。仕掛け・ひよこ・スタッフ・座る場所なら、着いたら使う */
 function TapControls({
   world,
@@ -644,15 +637,7 @@ function TapControls({
         -((event.clientY - rect.top) / rect.height) * 2 + 1,
       );
       raycaster.setFromCamera(pointer, camera);
-      // 見えないもの（歩ける床）と、透かしている入口の壁は、タップの当たりにしない
-      const hit = raycaster
-        .intersectObjects(scene.children, true)
-        .find(
-          (entry) =>
-            entry.object.visible &&
-            !originalName(entry.object).startsWith("nav.") &&
-            !faded(entry.object),
-        );
+      const hit = firstTapHit(raycaster.intersectObjects(scene.children, true), originalName);
       if (hit === undefined) return;
 
       // 当たったものの親をたどって、何に触れたかを見分ける
