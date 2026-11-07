@@ -10,6 +10,7 @@ import {
   ItineraryDaySchema,
   ItineraryItemSchema,
   ItinerarySchema,
+  LastReturnSchema,
   type LatLng,
   LocalTimeSchema,
   type LodgingBudget,
@@ -20,6 +21,7 @@ import {
   MAX_TRIP_DAYS,
   MaxTravelMinutesSchema,
   MEAL_SLOTS,
+  MealPlanSchema,
   type MealSlot,
   MOVE_MODES,
   mainFestivalDay,
@@ -34,6 +36,7 @@ import {
   type SearchOutcome,
   SlugSchema,
   type Source,
+  SourceSchema,
   type SpotPin,
   StayPlanSchema,
   tripBudgetAmounts,
@@ -232,12 +235,29 @@ export const ItineraryItemDraftSchema = z
   .strictObject({ ...ItineraryItemSchema.shape })
   .omit({ changedInVersion: true });
 
-/** 下書きの1日。天気はサーバーが付ける */
+const DraftSourcesSchema = z
+  .array(SourceSchema)
+  .default([])
+  .describe("読んだページの出典。店の場所と祭りの屋台の出典はサーバーが入れ直す");
+
+/**
+ * 下書きの1日。天気はサーバーが付ける。
+ * 食事の案と帰りの最終の出典は、保存のときにサーバーが入れ直す（残らなければ、案を外すか時刻を「分からない」にする）。
+ * なので、ここでは出典がなくても断らない。断ると旅程の全体を書き直すことになり、時間と費用がむだになる
+ */
 const ItineraryDayDraftSchema = z
   .strictObject({
     ...ItineraryDaySchema.shape,
     items: z.array(ItineraryItemDraftSchema).min(1),
     stay: StayPlanSchema.nullable(),
+    meals: z
+      .array(z.strictObject({ ...MealPlanSchema.shape, sources: DraftSourcesSchema }))
+      .max(4)
+      .optional(),
+    lastReturn: z
+      .strictObject({ ...LastReturnSchema.shape, sources: DraftSourcesSchema })
+      .nullable()
+      .optional(),
   })
   .omit({ weather: true });
 
@@ -1047,16 +1067,21 @@ export const searchNearby = defineTool({
     const started = Date.now();
     // 営業まで確かめる Web の調べに、OpenStreetMap の店を、確かめる店として渡す
     const osmSpots = findOsmSpots(ctx, festival, date, searchRadiusKm(search.byCar, "first"));
-    const webFirst = await researchNearby(
-      ctx,
-      festival,
-      date,
-      search,
-      "first",
-      NEARBY_FIRST_ROUND_MS,
-      signal,
-      osmSpots,
-    );
+    // この発言で調べてあれば、調べ直さず、時間帯とこだわりで選び直す（調べ直しを頼まれたときは調べる）
+    const memoKey = `${festival.id}:${date}`;
+    const memo = args.focus === undefined ? ctx.turn.nearbyReports.get(memoKey) : undefined;
+    const webFirst =
+      memo?.reports ??
+      (await researchNearby(
+        ctx,
+        festival,
+        date,
+        search,
+        "first",
+        NEARBY_FIRST_ROUND_MS,
+        signal,
+        osmSpots,
+      ));
     if (signal.aborted) throw new ToolError("止められたので、寄り道の結果は使いません");
     // Web で調べた店を先に置く（同じ店なら、営業を確かめた Web の報告を残す）
     const first = webFirst === null && osmSpots.length === 0 ? null : (webFirst ?? []);
@@ -1105,11 +1130,16 @@ export const searchNearby = defineTool({
         party: conditions.party ?? null,
       });
     let screened = screen(mergeResearchedReports(first, osmSpots));
-    let rounds = 1;
+    let rounds = memo?.rounds ?? 1;
+    let reports = first;
     // 食べたいものに合う店か、食事に入れられる店が1つもなければ、時間の残りがあるときだけ、場所と言葉を広げてもう1回調べる
     const remaining = NEARBY_RESEARCH_MS - (Date.now() - started);
     const noShop = wantsShopMeals && !screened.spots.some((spot) => spot.kind === "food");
-    if ((screened.foodFound === false || noShop) && remaining >= NEARBY_WIDEN_MIN_MS) {
+    if (
+      memo === undefined &&
+      (screened.foodFound === false || noShop) &&
+      remaining >= NEARBY_WIDEN_MIN_MS
+    ) {
       const widened = await researchNearby(
         ctx,
         festival,
@@ -1122,7 +1152,13 @@ export const searchNearby = defineTool({
       );
       if (signal.aborted) throw new ToolError("止められたので、寄り道の結果は使いません");
       rounds = 2;
-      if (widened !== null) screened = screen(mergeResearchedReports(first, widened, osmSpots));
+      if (widened !== null) {
+        reports = mergeResearchedReports(first, widened);
+        screened = screen(mergeResearchedReports(first, widened, osmSpots));
+      }
+    }
+    if (webFirst !== null && args.focus === undefined) {
+      ctx.turn.nearbyReports.set(memoKey, { reports, rounds });
     }
     // 旅程を保存するとき、祭りのデータの場所と同じく照らせるよう、調べた場所を相談に残す
     for (const spot of screened.spots) ctx.session.researchedSpots.set(spot.id, asNearbySpot(spot));
@@ -1326,6 +1362,7 @@ async function researchRouteOnce(
           direction: options.direction,
           ...(options.arriveBy ? { arriveBy: options.arriveBy } : {}),
           ...(options.focus ? { focus: options.focus } : {}),
+          ...(ctx.progress ? { onActivity: ctx.progress } : {}),
           signal,
         }),
       { signal },
@@ -1390,6 +1427,19 @@ export const researchRoute = defineTool({
   },
   async run(args, ctx, signal) {
     const festival = festivalOf(ctx, args.festivalId);
+    const direction = args.direction ?? "outbound";
+    // 先に始めた同じ調べがあれば、2回動かさず、その結果を待つ
+    const current = ctx.turn.prefetch;
+    if (
+      current !== null &&
+      args.focus === undefined &&
+      args.arriveBy === undefined &&
+      (args.origin === undefined || args.origin === ctx.session.conditions.origin) &&
+      current.key === `${festival.id}:${visitDate(ctx, festival, args.date)}`
+    ) {
+      const result = await (direction === "return" ? current.inbound : current.outbound);
+      if (result.ok) return result.value as Awaited<ReturnType<typeof researchRouteOnce>>;
+    }
     return researchRouteOnce(
       ctx,
       festival,
@@ -1397,7 +1447,7 @@ export const researchRoute = defineTool({
         origin: args.origin,
         date: args.date,
         arriveBy: args.arriveBy,
-        direction: args.direction ?? "outbound",
+        direction,
         focus: args.focus,
       },
       signal,
@@ -1540,8 +1590,8 @@ export const researchTrip = defineTool({
   },
 });
 
-/** 先に始める調べを打ち切る時間（ミリ秒）。ツールの上限より短くする */
-const PREFETCH_MS = 80_000;
+/** 先に始める調べを打ち切る時間（ミリ秒）。行き方の調べ（調べ直しを含む）より長く、ツールの上限より短くする */
+const PREFETCH_MS = 95_000;
 /** 旅程係を動かす前に、先に始めた調べを待つ時間（ミリ秒） */
 export const PREFETCH_WAIT_MS = 60_000;
 

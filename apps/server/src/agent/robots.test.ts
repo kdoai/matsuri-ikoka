@@ -137,6 +137,17 @@ describe("createRobotsChecker", () => {
     expect(await checker.allowed(url)).toBe(false);
   });
 
+  it("読まない本文は片付ける", async () => {
+    const response = new Response("not found", { status: 404 });
+    const checker = createRobotsChecker({ fetch: (async () => response) as typeof fetch });
+
+    await checker.allowed(url);
+
+    // 片付けると、本文はもう読めない
+    expect(response.bodyUsed || response.body?.locked === false).toBe(true);
+    await expect(response.body?.getReader().read()).resolves.toMatchObject({ done: true });
+  });
+
   it("robots.txt がない・読めない・転送されるときは、読んでよいとする", async () => {
     const answers: (() => Response)[] = [
       () => new Response("not found", { status: 404 }),

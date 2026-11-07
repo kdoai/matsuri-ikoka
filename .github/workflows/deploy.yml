@@ -130,7 +130,8 @@ jobs:
             --project "$PROJECT_ID" --region "$REGION" \
             --image "${IMAGE}@${DIGEST}" \
             --min-instances 0 --max-instances 1 \
-            --update-env-vars "MATSURI_AGENT_MODE=live,MATSURI_STORAGE=firestore,FIREBASE_PROJECT_ID=${PROJECT_ID}" \
+            --timeout 660 \
+            --update-env-vars "MATSURI_AGENT_MODE=live,MATSURI_STORAGE=firestore,FIREBASE_PROJECT_ID=${PROJECT_ID},AGENT_MAX_BUDGET_USD=1" \
             --no-traffic --tag candidate --quiet
 
       # 合言葉（ACCESS_PASSCODE）をサービスに設定しているときだけ、相談の API が守られていることを求める

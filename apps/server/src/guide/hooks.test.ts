@@ -109,14 +109,17 @@ describe("ガイドのフック", () => {
     ]);
   });
 
-  it("失敗したら失敗の吹き出しを出す", async () => {
+  it("失敗したら失敗として終え、吹き出しは止まったようには言わない", async () => {
     const { call, events } = setup();
     const tool = `${GUIDE_MCP_TOOL_PREFIX}research_web`;
 
     await call("PreToolUse", { tool_name: tool, tool_input: {}, tool_use_id: "call-1" });
     await call("PostToolUseFailure", { tool_name: tool, tool_input: {}, tool_use_id: "call-1" });
 
-    expect(events.at(-1)).toMatchObject({ type: "guide.tool.end", data: { ok: false } });
+    expect(events.at(-1)).toMatchObject({
+      type: "guide.tool.end",
+      data: { ok: false, bubble: "もう少し確かめています" },
+    });
   });
 
   it.each(GUIDE_TOOL_NAMES)("%s は1回の発言で呼べる数を超えたら断る", async (name) => {
