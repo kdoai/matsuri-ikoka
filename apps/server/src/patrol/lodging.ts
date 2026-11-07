@@ -15,6 +15,8 @@ import { type LodgingService, MAX_OFFERS, MAX_SEARCH_RADIUS_KM } from "../tools/
 // 前の状態は、旅程の宿の候補と、その旅に届いた空きの通知から読むので、比べるための控えを増やさない。
 
 const MAX_NAME_LENGTH = 60;
+/** 楽天トラベルの宿の候補の ID（rakuten-施設番号） */
+const RAKUTEN_OFFER_ID = /^rakuten-(\d{1,12})$/;
 
 type Availability = Extract<NoticeContent, { kind: "availability" }>;
 
@@ -57,10 +59,10 @@ function availabilityChange(input: {
 
 /**
  * 旅程の泊まりごとに空室検索を呼び、状態が変わったときだけ変化を返す。
- * - 旅程に候補の宿があれば、その宿が検索に出ているかを見る。なくなったら空きなし、戻ったら空きあり
+ * - 旅程に候補の宿があれば、施設番号で絞って空室を確かめる。なくなったら空きなし、戻ったら空きあり
  * - 候補がなかった泊まりは、宿が出たら空きあり、また出なくなったら空きなし
- * 検索は安い順の上位だけを返すので、結果が上限まであるときに候補が出ていなくても、空きがないとは言えない
- * （値上がりや、より安い宿に押し出されただけのことがある）。その回は分からないものとして何もしない。
+ * 施設番号が分からない宿は周辺の検索で見る。検索は安い順の上位だけを返すので、結果が上限まであるときに
+ * 候補が出ていなくても、空きがないとは言えない。その回は分からないものとして何もしない。
  * Web で調べた宿は、空きを確かめていないので比べない
  */
 export async function checkTripLodging(input: {
@@ -87,6 +89,7 @@ export async function checkTripLodging(input: {
       continue;
     }
     budget.remaining -= 1;
+    const hotelNo = planned === undefined ? undefined : RAKUTEN_OFFER_ID.exec(planned.id)?.[1];
     const outcome = await lodging.search(
       {
         checkIn: search.checkIn,
@@ -94,6 +97,7 @@ export async function checkTripLodging(input: {
         party: itinerary.party,
         near,
         radiusKm: MAX_SEARCH_RADIUS_KM,
+        ...(hotelNo === undefined ? {} : { hotelNos: [hotelNo] }),
       },
       signal,
     );
@@ -118,7 +122,7 @@ export async function checkTripLodging(input: {
         ? offers.length > 0
         : plannedNow !== undefined
           ? true
-          : offers.length >= MAX_OFFERS
+          : hotelNo === undefined && offers.length >= MAX_OFFERS
             ? null
             : false;
     if (available === null || available === before) continue;

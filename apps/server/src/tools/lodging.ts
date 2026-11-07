@@ -31,6 +31,8 @@ export const LODGING_CACHE_MS = 5 * 60 * 1000;
 export const MAX_SEARCH_RADIUS_KM = 3;
 /** 1回に返す宿の数の上限（LodgingSearchSchema と同じ） */
 export const MAX_OFFERS = 5;
+/** API で1回に指定できる施設番号の数の上限 */
+const MAX_HOTEL_NOS = 15;
 /** API の人数の上限（大人・小学生・幼児のそれぞれ） */
 const MAX_GUESTS_PER_KIND = 10;
 
@@ -40,6 +42,8 @@ export interface LodgingQuery {
   party: Party;
   near: LatLng;
   radiusKm: number;
+  /** 宿を施設番号で絞る（15件まで）。指定すると near と radiusKm は使わない */
+  hotelNos?: readonly string[];
 }
 
 export type LodgingOutcome =
@@ -263,10 +267,16 @@ export function createRakutenLodging(options: RakutenLodgingOptions): LodgingSer
         format: "json",
         checkinDate: query.checkIn,
         checkoutDate: checkOut,
-        datumType: "1",
-        latitude: query.near.lat.toFixed(6),
-        longitude: query.near.lng.toFixed(6),
-        searchRadius: Math.min(MAX_SEARCH_RADIUS_KM, Math.max(0.1, query.radiusKm)).toFixed(1),
+        ...(query.hotelNos !== undefined && query.hotelNos.length > 0
+          ? { hotelNo: query.hotelNos.slice(0, MAX_HOTEL_NOS).join(",") }
+          : {
+              datumType: "1",
+              latitude: query.near.lat.toFixed(6),
+              longitude: query.near.lng.toFixed(6),
+              searchRadius: Math.min(MAX_SEARCH_RADIUS_KM, Math.max(0.1, query.radiusKm)).toFixed(
+                1,
+              ),
+            }),
         sort: "+roomCharge",
         hits: "10",
         responseType: "large",

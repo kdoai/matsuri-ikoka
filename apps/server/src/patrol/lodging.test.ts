@@ -198,6 +198,34 @@ describe("checkTripLodging", () => {
     expect(first?.fingerprint).toBe(second?.fingerprint);
   });
 
+  it("候補の宿の施設番号が分かれば、その宿に絞って確かめる", async () => {
+    const itinerary = withStay([offer("rakuten-123", 10_000)]);
+    const lodging = service([offer("rakuten-123", 12_000)]);
+
+    expect(await run(itinerary, lodging)).toEqual([]);
+
+    expect(lodging.queries[0]?.hotelNos).toEqual(["123"]);
+  });
+
+  it("施設番号で絞って出なければ、結果の数に関わらず空きがないと分かる", async () => {
+    const itinerary = withStay([offer("rakuten-123", 10_000)]);
+
+    const [none] = await run(itinerary, service([]));
+
+    expect(none?.content).toMatchObject({
+      available: false,
+      lodgingName: "（架空）宿 rakuten-123",
+    });
+  });
+
+  it("施設番号の分からない宿は、周辺を検索する", async () => {
+    const lodging = service([offer("a", 10_000)]);
+
+    await run(planned(), lodging);
+
+    expect(lodging.queries[0]?.hotelNos).toBeUndefined();
+  });
+
   it("Web で調べた宿は空きを確かめていないので、比べない", async () => {
     const search = vi.fn();
     const lodging: LodgingService = { provider: "rakuten", search };

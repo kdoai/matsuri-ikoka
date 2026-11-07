@@ -243,6 +243,71 @@ describe("createRakutenLodging", () => {
   });
 });
 
+describe("施設番号で絞る検索", () => {
+  it("施設番号を渡すと、緯度経度を送らず、カンマ区切りで送る", async () => {
+    const urls: string[] = [];
+    const service = createRakutenLodging({
+      applicationId: "test-app",
+      accessKey: "test-key",
+      now,
+      minIntervalMs: 0,
+      fetch: (async (input: string | URL | Request) => {
+        urls.push(String(input));
+        return new Response(JSON.stringify({ hotels: [] }), { status: 200 });
+      }) as typeof fetch,
+    });
+
+    await service.search({ ...query, hotelNos: ["123", "456"] }, new AbortController().signal);
+
+    const params = new URL(urls[0] ?? "").searchParams;
+    expect(params.get("hotelNo")).toBe("123,456");
+    expect(params.has("latitude")).toBe(false);
+    expect(params.has("longitude")).toBe(false);
+    expect(params.has("searchRadius")).toBe(false);
+  });
+
+  it("施設番号がなければ、今までどおり周辺を検索する", async () => {
+    const urls: string[] = [];
+    const service = createRakutenLodging({
+      applicationId: "test-app",
+      accessKey: "test-key",
+      now,
+      minIntervalMs: 0,
+      fetch: (async (input: string | URL | Request) => {
+        urls.push(String(input));
+        return new Response(JSON.stringify({ hotels: [] }), { status: 200 });
+      }) as typeof fetch,
+    });
+
+    await service.search(query, new AbortController().signal);
+
+    const params = new URL(urls[0] ?? "").searchParams;
+    expect(params.has("hotelNo")).toBe(false);
+    expect(params.get("latitude")).toBe("35.120000");
+  });
+
+  it("施設番号の上限は15件まで", async () => {
+    const urls: string[] = [];
+    const service = createRakutenLodging({
+      applicationId: "test-app",
+      accessKey: "test-key",
+      now,
+      minIntervalMs: 0,
+      fetch: (async (input: string | URL | Request) => {
+        urls.push(String(input));
+        return new Response(JSON.stringify({ hotels: [] }), { status: 200 });
+      }) as typeof fetch,
+    });
+
+    await service.search(
+      { ...query, hotelNos: Array.from({ length: 20 }, (_, i) => String(i + 1)) },
+      new AbortController().signal,
+    );
+
+    expect(new URL(urls[0] ?? "").searchParams.get("hotelNo")?.split(",")).toHaveLength(15);
+  });
+});
+
 describe("createFictionalLodging", () => {
   it("架空の宿は名前に（架空）と付け、URL は example.com", async () => {
     const outcome = await createFictionalLodging({ now }).search(
