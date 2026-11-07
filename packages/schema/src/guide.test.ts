@@ -28,6 +28,7 @@ import {
   PatrolReportSchema,
   PatrolRequestSchema,
   PatrolTargetSchema,
+  roundLocation,
   TripWatchSchema,
   tripPhase,
 } from "./guide";
@@ -656,5 +657,18 @@ describe("GuideSseEventSchema", () => {
   it("不正なイベントは送らない", () => {
     const invalid = { type: "guide.memo", data: {} } as GuideSseEvent;
     expect(() => encodeGuideSseEvent(invalid)).toThrow();
+  });
+});
+
+describe("roundLocation", () => {
+  it("現在地を小数3桁（およそ100m）に丸める", () => {
+    expect(roundLocation({ lat: 35.123456, lng: 136.567891 })).toEqual({
+      lat: 35.123,
+      lng: 136.568,
+    });
+    expect(roundLocation({ lat: -33.86549, lng: 151.20929 })).toEqual({
+      lat: -33.865,
+      lng: 151.209,
+    });
   });
 });

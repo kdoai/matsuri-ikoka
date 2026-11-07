@@ -1112,6 +1112,31 @@ export const ja = {
     remindersOff: "予定の時刻の声かけは止めています。",
     remindersStop: "声かけを止める",
     remindersStart: "声かけを戻す",
+    tripDay: {
+      title: "きょうの旅",
+      next: "次の予定",
+      nowDoing: "いまの予定",
+      noNext: "きょうの予定は終わりました。",
+      departure: "出発",
+      noDeparture: "これから乗る移動はありません。",
+      lastReturn: "帰りの最終",
+      lastReturnUnknown: "帰りの最終は分かっていません。ガイドに確かめてください。",
+      lastReturnAt: (station: string, time: string) => `${station}を ${time} までに`,
+      lastReturnPassed: (station: string, time: string) =>
+        `${station}の最終（${time}）は過ぎています。帰り方をガイドに相談してください。`,
+      fromTo: (from: string, to: string) => `${from} → ${to}`,
+      offline: "電波がなくても、この内容は読めます（いま開いている画面の旅程から出しています）。",
+      where: "いる場所から相談する",
+      whereNote:
+        "押したときだけ、この端末の現在地を一度使います（約100mに丸め、保存しません）。許可しなくても、駅の名前で相談できます。",
+      whereMessage: "いまいる場所から、次の予定へはどう行けばいいですか。",
+      whereDenied:
+        "現在地を使わずに相談します。近くの駅や目印の名前を教えてもらえれば、そこから調べます。",
+      whereDeniedMessage:
+        "次の予定への行き方を相談したいです（現在地は使いません。近くの駅の名前を聞いてください）。",
+      late: "予定より遅れている",
+      lateMessage: "予定より遅れています。残りの予定を組み直す案を出してください。",
+    },
     proposalsTitle: "ガイドからの組み直しの案",
     outcome: {
       applied: (version: number) =>

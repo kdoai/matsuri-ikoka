@@ -1,11 +1,14 @@
-import type {
-  Festival,
-  IsoDate,
-  ItineraryItem,
-  LastReturn,
-  NearbySpot,
-  Occurrence,
-  Preferences,
+import {
+  dayTimeline,
+  EARLY_MORNING_UNTIL_MINUTES,
+  type Festival,
+  type IsoDate,
+  type ItineraryItem,
+  type LastReturn,
+  type NearbySpot,
+  type Occurrence,
+  type Preferences,
+  type TimedPlanItem,
 } from "@matsuri-ikoka/schema";
 import { arrivalBufferMinutes } from "./arrivalBuffer";
 import { formatMonthDay, fromMinutes, toMinutes } from "./calendar";
@@ -66,42 +69,23 @@ export interface PlanToCheck {
   days: readonly PlanDayToCheck[];
 }
 
-/** 深夜の予定（日をまたいだとみなす）の境目 */
-const LATE_NIGHT_FROM = 18 * 60;
-const EARLY_MORNING_UNTIL = 6 * 60;
+/** 早朝の境目（日をまたいだあとの帰りの最終を、次の日の時刻として比べる） */
+const EARLY_MORNING_UNTIL = EARLY_MORNING_UNTIL_MINUTES;
 
-interface TimedItem {
-  item: PlanItem;
-  /** 旅の日の0時からの分。日をまたぐと 1440 を超える */
-  start: number;
-  end: number;
-}
+type TimedItem = Omit<TimedPlanItem<PlanItem>, "outOfOrder">;
 
-/** 予定を時刻順に並べ、日をまたぐ予定を翌日の時刻として扱う */
+/** 予定を時刻順に並べ、日をまたぐ予定を翌日の時刻として扱う（決まりは schema の dayTimeline） */
 function toTimeline(items: readonly PlanItem[], errors: PlanIssue[]): TimedItem[] {
-  const timeline: TimedItem[] = [];
-  let dayOffset = 0;
-  for (const item of items) {
-    const clock = toMinutes(item.start);
-    let start = clock + dayOffset;
-    const previous = timeline.at(-1);
-    if (previous !== undefined && start < previous.start) {
-      if (previous.start % 1440 >= LATE_NIGHT_FROM && clock < EARLY_MORNING_UNTIL) {
-        dayOffset += 1440;
-        start += 1440;
-      } else {
-        errors.push({
-          code: "out_of_order",
-          itemId: item.id,
-          message: `「${item.name}」が前の予定より早い時刻になっています。予定は時刻の順に並べてください`,
-        });
-      }
+  return dayTimeline(items).map(({ item, start, end, outOfOrder }) => {
+    if (outOfOrder) {
+      errors.push({
+        code: "out_of_order",
+        itemId: item.id,
+        message: `「${item.name}」が前の予定より早い時刻になっています。予定は時刻の順に並べてください`,
+      });
     }
-    let end = toMinutes(item.end) + dayOffset;
-    if (end < start) end += 1440;
-    timeline.push({ item, start, end });
-  }
-  return timeline;
+    return { item, start, end };
+  });
 }
 
 /** その日にかかる開催回 */

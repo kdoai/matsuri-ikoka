@@ -344,6 +344,22 @@ describe("POST /api/guide/chat", () => {
     expect(JSON.stringify(context.sessions.get(sessionId)?.guide)).not.toContain("35.1234");
   });
 
+  it("現在地は、要る細かさに丸めてからガイドに渡す", async () => {
+    const runner = new ReplayGuideRunner(guides, { speed: 0 });
+    const runTurn = vi.spyOn(runner, "runTurn");
+    const context = setup({ guide: { runner } });
+    const { sessionId } = await context.consult();
+
+    await (
+      await context.chat(sessionId, "ここから会場へはどう行けばいいですか", undefined, {
+        location: { lat: 35.123456, lng: 136.567891 },
+      })
+    ).text();
+
+    expect(runTurn).toHaveBeenCalled();
+    expect(runTurn.mock.calls[0]?.[0].location).toEqual({ lat: 35.123, lng: 136.568 });
+  });
+
   it("発言の本文と現在地をログに残さない", async () => {
     const logged: string[] = [];
     for (const method of ["log", "info", "warn", "error", "debug"] as const) {
