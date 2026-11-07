@@ -1,4 +1,4 @@
-import type { StaffId } from "@matsuri-ikoka/schema";
+import type { GuideStall, StaffId } from "@matsuri-ikoka/schema";
 import type { FlatPoint } from "./navmesh";
 
 // 旅人を動かす入力と、近くで使えるもの（話す・仕掛け・座る・隠れひよこ）の決め方。
@@ -62,7 +62,11 @@ export type Interaction =
   | { kind: "sit"; seat: string }
   | { kind: "chick"; chick: Chick }
   /** のれんをくぐって店の外へ出る */
-  | { kind: "exit" };
+  | { kind: "exit" }
+  /** 縁日の通りの屋台を開く */
+  | { kind: "stall"; stall: GuideStall }
+  /** 縁日の通りから店の中へ戻る */
+  | { kind: "door" };
 
 export interface Target {
   /** 見分けるための名前（同じものが近くに居続けるかを比べる） */
@@ -85,7 +89,7 @@ const TALK_PRIORITY = 1.6;
  * 同じ距離なら、話す・仕掛け・座る・ひよこの順に先にする。
  */
 export function nearestTarget(targets: readonly Target[], at: FlatPoint): Target | null {
-  const order: Interaction["kind"][] = ["talk", "exit", "gimmick", "sit", "chick"];
+  const order: Interaction["kind"][] = ["talk", "exit", "door", "stall", "gimmick", "sit", "chick"];
   let best: Target | null = null;
   let bestScore = Number.POSITIVE_INFINITY;
   for (const target of targets) {

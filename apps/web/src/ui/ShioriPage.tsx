@@ -47,6 +47,7 @@ export function ShioriPage() {
   const actions = useActions();
   const itinerary = useApp((state) => state.itinerary.current);
   const ready = useApp(shioriReady);
+  const shioriOpen = ready;
   const checkedAt = useApp((state) => state.verify.checkedAt);
   const account = useAccountClient();
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -94,6 +95,16 @@ export function ShioriPage() {
         >
           {t.shiori.close}
         </button>
+        {shioriOpen ? (
+          <button
+            type="button"
+            className={buttonPrimary}
+            data-testid="shiori-go-outside"
+            onClick={() => actions.leaveWithGuide()}
+          >
+            {t.street.goOutside}
+          </button>
+        ) : null}
         <h1
           id="shiori-title"
           ref={headingRef}

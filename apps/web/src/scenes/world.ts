@@ -78,6 +78,15 @@ export interface ShopWorld {
   clock: { hour: Object3D | null; minute: Object3D | null };
 }
 
+/** 旅人が歩くのに要るもの。店内と縁日の通りで同じ形にする */
+export type WalkWorld = Pick<
+  ShopWorld,
+  "nav" | "grid" | "walk" | "onFloor" | "start" | "targets" | "seats" | "exit"
+> & {
+  /** 地面の高さ（m）。店内の床は 0 */
+  groundY?: number;
+};
+
 export function markOf(root: Object3D, name: string): Mark | null {
   const node = findNode(root, name);
   if (node === undefined) return null;

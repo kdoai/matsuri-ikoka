@@ -3,6 +3,7 @@ import { useApp } from "./state/react";
 import { ShioriPage } from "./ui/ShioriPage";
 import { Shop } from "./ui/Shop";
 import { Storefront } from "./ui/Storefront";
+import { Street } from "./ui/Street";
 import { useBackgroundMusic, useSoundEffects } from "./ui/sound";
 import { Celebration } from "./ui/Waiting";
 
@@ -21,6 +22,7 @@ export function App() {
       {view === "storefront" ? <Storefront /> : null}
       {view === "shop" ? <Shop /> : null}
       {view === "shiori" ? <ShioriPage /> : null}
+      {view === "street" ? <Street /> : null}
       <Celebration />
     </>
   );

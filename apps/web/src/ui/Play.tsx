@@ -22,6 +22,10 @@ function interactionLabel(t: Messages, near: Interaction): string {
       return t.play.gimmicks[near.gimmick];
     case "exit":
       return t.play.exit;
+    case "stall":
+      return t.street.openStall(t.street.stalls[near.stall].name);
+    case "door":
+      return t.street.backToShop;
   }
 }
 
@@ -49,7 +53,10 @@ function usePromptLabel(): string | null {
   const t = useT();
   const near = usePlay((state) => state.near);
   const sitting = usePlay((state) => state.sitting);
+  const onStreet = useApp((state) => state.ui.view === "street");
   if (sitting) return t.play.stand;
+  // 通りのコンシェルジュは、旅のガイドとして話を聞く
+  if (onStreet && near?.kind === "talk") return t.street.talk;
   return near === null ? null : interactionLabel(t, near);
 }
 

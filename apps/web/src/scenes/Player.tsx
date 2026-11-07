@@ -1,4 +1,4 @@
-import type { StaffId } from "@matsuri-ikoka/schema";
+import type { GuideStall, StaffId } from "@matsuri-ikoka/schema";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useImperativeHandle, useMemo, useRef } from "react";
 import {
@@ -27,7 +27,7 @@ import {
 import { originalName } from "./models";
 import { type FlatPoint, findPath, nearestOnNavMesh, slideMove } from "./navmesh";
 import { faceTexture, setFace } from "./Staff";
-import type { ShopWorld } from "./world";
+import type { WalkWorld } from "./world";
 
 // 旅人のペンギン。キーボード（WASD・矢印）・ゲームパッド・タップで動かし、歩ける床から出さない。
 // 近くのスタッフに話しかけ、仕掛けを使い、座り、隠れひよこを見つける。
@@ -56,9 +56,9 @@ export interface PlayerApi {
 export interface PlayerProps {
   model: GLTF;
   clips: Record<SceneMotion, AnimationClip | undefined>;
-  world: ShopWorld;
+  world: WalkWorld;
   /** スタッフの頭の上の位置（話せる距離を測る） */
-  staff: React.RefObject<Record<StaffId, Vector3>>;
+  staff: React.RefObject<Partial<Record<StaffId, Vector3>>>;
   celebrating: boolean;
   talking: boolean;
   /** 旅人の位置を毎フレーム書き込む（カメラと入口の壁に使う） */
@@ -67,8 +67,10 @@ export interface PlayerProps {
   onHead(x: number, y: number, z: number): void;
   onTalk(staff: StaffId): void;
   onGimmick(interaction: Interaction): void;
-  /** のれんをくぐって店の外へ出る */
+  /** のれんをくぐって店の外へ出る（通りでは、店の中へ戻る） */
   onExit(): void;
+  /** 屋台を開く（縁日の通りだけ） */
+  onStall?(stall: GuideStall): void;
   onPad?(command: PadCommand): void;
 }
 
@@ -109,7 +111,7 @@ export function Player(props: PlayerProps) {
   const s = useRef({
     x: world.start.x,
     z: world.start.z,
-    y: 0,
+    y: world.groundY ?? 0,
     yaw: world.start.yaw,
     keys: new Set<string>(),
     goal: null as { path: FlatPoint[]; then: Target | null; stuck: number } | null,
@@ -197,7 +199,7 @@ export function Player(props: PlayerProps) {
     const state = s.current;
     if (state.seat === null) return;
     state.seat = null;
-    state.y = 0;
+    state.y = world.groundY ?? 0;
     // 座面は歩ける床の外にあるので、座る前に立っていた床の上へ戻る
     const stand = state.seatStand ?? nearestOnNavMesh(world.nav, state.x, state.z);
     state.x = stand.x;
@@ -236,7 +238,11 @@ export function Player(props: PlayerProps) {
         break;
       }
       case "exit":
+      case "door":
         callbacks.current.onExit();
+        break;
+      case "stall":
+        callbacks.current.onStall?.(interaction.stall);
         break;
       case "gimmick":
         callbacks.current.onGimmick(interaction);

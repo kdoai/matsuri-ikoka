@@ -67,7 +67,7 @@ export function LanguageButton({ className = "" }: { className?: string }) {
 }
 
 /** 重なる部品の大きさを測り、2D の見取り図が避ける幅にする */
-function useFrameInsets(
+export function useFrameInsets(
   top: React.RefObject<HTMLElement | null>,
   dialogue: React.RefObject<HTMLElement | null>,
   panel: React.RefObject<HTMLElement | null>,
@@ -148,6 +148,8 @@ export function Shop() {
   const hasItinerary = useApp((state) => state.itinerary.current !== null);
   const showWaiting = !useApp(proposalShown);
   const tutorialSeen = useApp((state) => state.ui.tutorialSeen);
+  const leadingOut = useApp((state) => state.ui.leadingOut);
+  const t = useT();
   const wide = useMediaQuery("(min-width: 1024px)");
   const roomy = useMediaQuery("(min-width: 1280px)");
   const [logOpen, setLogOpen] = useState(false);
@@ -295,7 +297,7 @@ export function Shop() {
       ) : null}
 
       {/* 会話の窓。探索の間は出さず、話しかけたら出す。待ち時間のカードは、その上に出す */}
-      {dialogueOpen ? null : (
+      {dialogueOpen || leadingOut ? null : (
         <div className="absolute inset-x-2 bottom-3 z-20 sm:bottom-4">
           <GreetingBar onTalk={talk} />
         </div>
@@ -330,6 +332,15 @@ export function Shop() {
         <DialogueBox />
       </div>
 
+      {leadingOut ? (
+        <p
+          role="status"
+          data-testid="lead-out"
+          className="-translate-x-1/2 absolute bottom-6 left-1/2 z-30 max-w-[90vw] animate-pop rounded-full border-2 border-yamabuki-400 bg-kinari-50 px-5 py-2 text-center font-bold text-ink shadow-xl"
+        >
+          {t.street.leadOut}
+        </p>
+      ) : null}
       <PlayNoticeToast />
       <CandidateCards />
       <FestivalResults />

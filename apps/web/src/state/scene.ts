@@ -1,4 +1,5 @@
-import type { ConversationStage, StaffId } from "@matsuri-ikoka/schema";
+import type { ConversationStage, GuideNotice, GuideStall, StaffId } from "@matsuri-ikoka/schema";
+import type { GuideSpot, GuideState } from "./guide";
 import { proposalShown } from "./selectors";
 import type { AppData, RelayState, StaffState } from "./types";
 
@@ -37,6 +38,8 @@ export interface ShopSceneProps {
   dialogueOpen: boolean;
   /** のれんをくぐって店の外へ出たとき */
   onExit?: () => void;
+  /** コンシェルジュが帽子と旗で、店の外へ先導している間 */
+  leadingOut: boolean;
   /** 店内を描けたとき（それまでは画面が読み込みの表示を出す） */
   onReady?: () => void;
   /** ゲームパッドの X・Y・＋（スタート）を押したとき */
@@ -57,6 +60,39 @@ export function selectSceneProps(
     stage: state.session.stage,
     celebrating: state.ui.celebrating,
     calm: proposalShown(state),
+    leadingOut: state.ui.leadingOut,
     reducedMotion,
+  };
+}
+
+/** 3D の縁日の通りに渡す状態。同じ情報は屋台の一覧と会話の窓でも文字で読める */
+export interface StreetSceneProps {
+  /** 通知。未読の通知がある屋台の提灯を灯す */
+  notices: readonly GuideNotice[];
+  spot: GuideSpot;
+  lead: GuideState["lead"];
+  openStall: GuideStall | null;
+  /** ガイドが返答している間か */
+  talking: boolean;
+  frame: FrameInsets;
+  /** 通りを描けたとき */
+  onReady?: () => void;
+  /** ガイドに話しかけたとき */
+  onTalk?: () => void;
+  /** 屋台の前で使ったとき */
+  onStall?: (stall: GuideStall) => void;
+  /** 店の入口で使ったとき */
+  onDoor?: () => void;
+}
+
+export function selectStreetSceneProps(state: AppData, frame: FrameInsets): StreetSceneProps {
+  const { guide } = state;
+  return {
+    notices: guide.notices,
+    spot: guide.spot,
+    lead: guide.lead,
+    openStall: guide.openStall,
+    talking: guide.streaming,
+    frame,
   };
 }

@@ -11,6 +11,7 @@ import {
   Search,
   SlidersHorizontal,
   Sparkles,
+  Store,
   Undo2,
   X,
 } from "lucide-react";
@@ -23,6 +24,7 @@ import { Composer, focusComposer } from "./ChatPanel";
 import { ConsultPanel, useConsultLine } from "./Consult";
 import { openTripPanel } from "./Hud";
 import { Portrait, type Speaker } from "./Portraits";
+import { useScene3d } from "./scene3d";
 import { errorText, shortLine } from "./text";
 import { useNow, useWaitClock } from "./waitClock";
 
@@ -95,6 +97,7 @@ function ReplyChoices({ retry }: { retry: boolean }) {
   const stage = useApp((state) => state.session.stage);
   const hasItinerary = useApp((state) => state.itinerary.current !== null);
   const ready = useApp(shioriReady);
+  const use3d = useScene3d();
   const canReopenCandidates = useApp(
     (state) =>
       !state.ui.candidatesOpen &&
@@ -191,6 +194,15 @@ function ReplyChoices({ retry }: { retry: boolean }) {
           onClick={() => actions.openShiori()}
         >
           {t.itinerary.openShiori}
+        </Reply>
+      ) : null}
+      {ready ? (
+        <Reply
+          primary
+          icon={<Store aria-hidden="true" className="size-5" />}
+          onClick={() => actions.leaveWithGuide(use3d)}
+        >
+          {t.street.goOutside}
         </Reply>
       ) : null}
       {canReopenCandidates ? (

@@ -20,6 +20,7 @@ export const SCENE_MOTIONS = [
   "sit",
   "reach",
   "cheer",
+  "wave_flag",
 ] as const;
 export type SceneMotion = (typeof SCENE_MOTIONS)[number];
 
@@ -76,6 +77,8 @@ export interface PlanOptions {
   asking?: boolean;
   /** 旅程の提案が出たあとか（スタッフは待機位置から動かず、作業の動きもしない） */
   calm?: boolean;
+  /** しおりのあと、店の外へ先導するところか（コンシェルジュが帽子をかぶり、旗を振る） */
+  leadingOut?: boolean;
 }
 
 /**
@@ -86,6 +89,7 @@ export interface PlanOptions {
  * - しおりの完成の演出の間は、全員がにっこりして、コンシェルジュがはんこを押す
  * - コンシェルジュが頼んでいる間は、待機位置で相手を指す（向きは Staff の lookAt で相手へ）
  * - 旅程の提案が出たあとは、待機位置に立ったままにする（コンシェルジュは話す仕草だけをする）
+ * - 店の外へ先導するときは、コンシェルジュが帽子をかぶって旗を振る
  */
 export function staffPlan(
   id: StaffId,
@@ -93,6 +97,9 @@ export function staffPlan(
   celebrating: boolean,
   options: PlanOptions = {},
 ): StaffPlan {
+  if (id === "concierge" && options.leadingOut === true) {
+    return plan("home", "wave_flag", "happy", ["prop.guide_cap", "prop.guide_flag"]);
+  }
   if (celebrating) {
     return id === "concierge"
       ? plan("home", "stamp", "sparkle", ["prop.stamp"], { once: true })

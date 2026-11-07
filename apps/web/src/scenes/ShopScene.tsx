@@ -267,6 +267,11 @@ function Shop({
     }
   };
 
+  // 店の外へ先導するとき、のれんが揺れて入口が開く
+  useEffect(() => {
+    if (props.leadingOut) gimmicks.play("noren");
+  }, [props.leadingOut, gimmicks]);
+
   const readied = useRef(false);
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.1);
@@ -375,6 +380,7 @@ function Shop({
             plan={staffPlan(id, staff, props.celebrating, {
               asking: id === "concierge" && props.relay.asking !== null,
               calm: props.calm,
+              leadingOut: props.leadingOut,
             })}
             seq={staff.seq}
             lookAt={
