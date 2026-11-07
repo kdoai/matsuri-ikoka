@@ -24,7 +24,7 @@ import { festivalDirs, loadFestivals } from "./data/festivalStore";
 import { loadOsmPlaces } from "./data/osmPlaces";
 import { loadStationPoints } from "./data/stationPoints";
 import { nowInJapan, todayInJapan } from "./domain/calendar";
-import { errorForLog } from "./log";
+import { errorForLog, isFetchParserAssertion } from "./log";
 import type { FestivalWishReader } from "./routes/festivalSearch";
 import { ConcurrencyLimiter, clientIp, DailyLimiter } from "./routes/guard";
 import { StoragePersistence } from "./session/persistence";
@@ -36,6 +36,11 @@ import { createJmaWeather } from "./tools/weather";
 // 待たれていない Promise の失敗で、サーバーごと止めない。止まると、返答の途中の接続がすべて切れる
 process.on("unhandledRejection", (reason) => {
   console.error(JSON.stringify({ kind: "unhandled_rejection", ...errorForLog(reason) }));
+});
+// 通信のライブラリの内部の確認の例外でも止めない。その通信は時間の上限で失敗に終わる。ほかの例外はこれまでどおり止める
+process.on("uncaughtException", (error) => {
+  console.error(JSON.stringify({ kind: "uncaught_exception", ...errorForLog(error) }));
+  if (!isFetchParserAssertion(error)) process.exit(1);
 });
 
 const config = readConfig(process.env);

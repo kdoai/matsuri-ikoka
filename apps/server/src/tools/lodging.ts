@@ -287,6 +287,8 @@ export function createRakutenLodging(options: RakutenLodgingOptions): LodgingSer
           signal,
         );
         const searchedAt = options.now();
+        // 読まない本文は片付ける（放っておくと、接続が閉じられたときに例外になることがある）
+        if (!response.ok) await response.body?.cancel().catch(() => {});
         // 404 は「条件に合う宿がない」
         if (response.status === 404) {
           const search: LodgingSearch = {
