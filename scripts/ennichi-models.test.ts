@@ -1,6 +1,6 @@
 // assets/3d/models の縁日の通りとガイドの GLB を読み、画面が頼るノードとアニメーションがあることと、
 // スマホでも動く大きさに収まっていることを確かめる。GLB の中身の JSON だけを読む。
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
@@ -19,10 +19,17 @@ interface GltfMaterial {
   emissiveTexture?: unknown;
   extensions?: Record<string, unknown>;
 }
+interface GltfPrimitive {
+  material?: number;
+  mode?: number;
+  indices?: number;
+  attributes: Record<string, number>;
+}
 interface Gltf {
   nodes?: GltfNode[];
-  meshes?: { primitives: { material?: number }[] }[];
+  meshes?: { primitives: GltfPrimitive[] }[];
   materials?: GltfMaterial[];
+  accessors?: { count: number }[];
   animations?: { name?: string; channels: { target: { node?: number } }[] }[];
 }
 
@@ -57,6 +64,24 @@ function glows(material: GltfMaterial): boolean {
   return (
     material.emissiveTexture !== undefined || (material.emissiveFactor ?? []).some((v) => v > 0)
   );
+}
+
+const TRIANGLES = 4;
+
+/** GLB の三角形を数える。同じメッシュを使うノードは、その数だけ描かれる */
+function countTriangles(gltf: Gltf): number {
+  let total = 0;
+  for (const entry of gltf.nodes ?? []) {
+    if (entry.mesh === undefined) continue;
+    for (const primitive of gltf.meshes?.[entry.mesh]?.primitives ?? []) {
+      if ((primitive.mode ?? TRIANGLES) !== TRIANGLES) continue;
+      const accessor = primitive.indices ?? primitive.attributes.POSITION;
+      const count = gltf.accessors?.[accessor ?? -1]?.count;
+      if (count === undefined) throw new Error("頂点の数が読めません");
+      total += Math.floor(count / 3);
+    }
+  }
+  return total;
 }
 
 describe("縁日の通り（ennichi.glb）", () => {
@@ -133,21 +158,38 @@ describe("モデルの大きさ（manifest.json）", () => {
     files: { file: string; kilobytes: number; triangles: number }[];
     total_kilobytes: number;
   };
-  const row = (file: string) => manifest.files.find((entry) => entry.file === file);
+  const files = readdirSync(MODELS)
+    .filter((name) => name.endsWith(".glb"))
+    .sort();
+  const trianglesOf = (file: string) => countTriangles(readGltf(file.replace(/\.glb$/, "")));
 
-  it("通りは 15 万三角形以下", () => {
-    expect(row("ennichi.glb")?.triangles).toBeLessThanOrEqual(150_000);
+  it("一覧に載っているモデルと、models/ の GLB が一致する", () => {
+    expect(manifest.files.map((entry) => entry.file).sort()).toEqual(files);
   });
 
-  it("帽子と旗を足しても、キャラクターは 1.5 万三角形以下", () => {
-    expect(row("staff_hiyoko.glb")?.triangles).toBeLessThanOrEqual(15_000);
+  it.each(manifest.files)("$file の三角形数とサイズが、実際のファイルと合う", (entry) => {
+    expect(trianglesOf(entry.file)).toBe(entry.triangles);
+    expect(statSync(join(MODELS, entry.file)).size / 1024).toBeCloseTo(entry.kilobytes, 0);
   });
 
-  it("GLB の合計は 15 MB 以下で、一覧と実際のファイルの大きさが合う", () => {
+  it("一覧の合計は、行の和と合い、15 MB 以下", () => {
+    const sum = manifest.files.reduce((total, entry) => total + entry.kilobytes, 0);
+    expect(manifest.total_kilobytes).toBeCloseTo(sum, 1);
     expect(manifest.total_kilobytes).toBeLessThanOrEqual(15 * 1024);
-    for (const entry of manifest.files) {
-      const size = readFileSync(join(MODELS, entry.file)).byteLength;
-      expect(size / 1024).toBeCloseTo(entry.kilobytes, 0);
+  });
+
+  it("店内と縁日の通りは、それぞれ 15 万三角形以下", () => {
+    for (const file of ["interior.glb", "ennichi.glb"]) {
+      expect(files).toContain(file);
+      expect(trianglesOf(file)).toBeLessThanOrEqual(150_000);
+    }
+  });
+
+  it("キャラクターは1体 1.5 万三角形以下", () => {
+    const characters = files.filter((file) => /^(staff|player)_/.test(file));
+    expect(characters).toEqual(expect.arrayContaining(["staff_hiyoko.glb", "player_penguin.glb"]));
+    for (const file of characters) {
+      expect(trianglesOf(file)).toBeLessThanOrEqual(15_000);
     }
   });
 });
