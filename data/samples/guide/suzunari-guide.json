@@ -1,7 +1,7 @@
 {
   "id": "suzunari-guide",
   "title": "鈴鳴灯籠まつりの旅に付き添う",
-  "description": "しおりのあと、見回りが開始の時刻の変更を見つけて知らせ、組み直しを提案する。雨・手帳・緊急・頼めないことの相談も入れた、架空の祭りのサンプル",
+  "description": "しおりのあと、見回りが開始の時刻の変更を見つけて知らせ、組み直しを提案する。雨・手帳・頼めないことの相談も入れた、架空の祭りのサンプル",
   "today": "2026-08-10",
   "conversation": "suzunari-day-trip",
   "watch": {
@@ -1295,52 +1295,6 @@
         },
         {
           "atMs": 800,
-          "event": {
-            "type": "guide.done",
-            "data": {
-              "phase": "before",
-              "unreadNotices": 1,
-              "pendingProposals": 1
-            }
-          }
-        }
-      ]
-    },
-    {
-      "request": {
-        "message": "連れが倒れて、呼びかけても返事がありません"
-      },
-      "events": [
-        {
-          "atMs": 0,
-          "event": {
-            "type": "guide.emergency",
-            "data": {
-              "contacts": [
-                {
-                  "service": "ambulance_fire",
-                  "number": "119"
-                },
-                {
-                  "service": "police",
-                  "number": "110"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "atMs": 100,
-          "event": {
-            "type": "message.delta",
-            "data": {
-              "messageId": "g-m-4",
-              "text": "すぐに 119 に電話してください。わたしには診断も判断もできません。電話の案内に従ってください。"
-            }
-          }
-        },
-        {
-          "atMs": 300,
           "event": {
             "type": "guide.done",
             "data": {

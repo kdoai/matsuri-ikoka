@@ -50,8 +50,6 @@ function HistoryEntry({ entry }: { entry: GuideEntry }) {
       return <p className="text-ink-soft">{entry.bubble}</p>;
     case "memo":
       return <p className="text-ink-soft">{t.street.memoSaved(entry.text)}</p>;
-    case "emergency":
-      return null;
     case "sources":
       return (
         <div>

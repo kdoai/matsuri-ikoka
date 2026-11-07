@@ -16,7 +16,7 @@ export interface GuideLimits {
 /** お試し用のアカウントの、全員を合わせた1日の費用の上限の既定 */
 export const DEFAULT_TRIAL_GUIDE_COST_USD = 5;
 
-/** 設定がないときの上限。緊急の案内は、上限に達しても断らない */
+/** 設定がないときの上限 */
 export const DEFAULT_GUIDE_LIMITS: GuideLimits = {
   turnsPerUser: 60,
   turnsPerTrip: 40,

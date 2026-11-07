@@ -650,18 +650,6 @@ export const GUIDE_TOOL_NAMES = [
 export const GuideToolNameSchema = z.enum(GUIDE_TOOL_NAMES);
 export type GuideToolName = z.infer<typeof GuideToolNameSchema>;
 
-/** 緊急のときに先に出す、公的な連絡先。ambulance_fire 救急・火事 / police 警察 */
-export const EmergencyContactSchema = z.discriminatedUnion("service", [
-  z.strictObject({ service: z.literal("ambulance_fire"), number: z.literal("119") }),
-  z.strictObject({ service: z.literal("police"), number: z.literal("110") }),
-]);
-export type EmergencyContact = z.infer<typeof EmergencyContactSchema>;
-
-export const EMERGENCY_CONTACTS = [
-  { service: "ambulance_fire", number: "119" },
-  { service: "police", number: "110" },
-] as const satisfies readonly EmergencyContact[];
-
 /** ツールを呼ぶ前 */
 export const GuideToolStartEventSchema = defineSseEvent(
   "guide.tool.start",
@@ -692,12 +680,6 @@ export const GuideSourcesEventSchema = defineSseEvent(
     sources: z.array(SourceSchema).min(1),
     checkedAt: IsoDateTimeSchema,
   }),
-);
-
-/** 緊急の相談。返答の文より先に送り、公的な連絡先を先に出す */
-export const GuideEmergencyEventSchema = defineSseEvent(
-  "guide.emergency",
-  z.strictObject({ contacts: z.array(EmergencyContactSchema).min(1) }),
 );
 
 /** 会話の中で知らせた通知 */
@@ -732,7 +714,6 @@ export const GuideSseEventSchema = z.discriminatedUnion("type", [
   GuideToolStartEventSchema,
   GuideToolEndEventSchema,
   GuideSourcesEventSchema,
-  GuideEmergencyEventSchema,
   GuideNoticeEventSchema,
   GuideProposalEventSchema,
   GuideMemoEventSchema,
@@ -748,7 +729,6 @@ export const GUIDE_SSE_EVENT_TYPES = [
   "guide.tool.start",
   "guide.tool.end",
   "guide.sources",
-  "guide.emergency",
   "guide.notice",
   "guide.proposal",
   "guide.memo",

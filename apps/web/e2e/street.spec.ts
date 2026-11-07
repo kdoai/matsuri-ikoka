@@ -103,6 +103,12 @@ test("2D だけで、ガイドの屋台の知らせ・相談がすべて使え�
   await expect(dialogue.getByRole("textbox", { name: "ガイドへの発言" })).toBeVisible();
   await expect(page.getByTestId("guide-emergency")).toHaveCount(0);
   await expect(dialogue.locator('a[href^="tel:"]')).toHaveCount(0);
+  const input = dialogue.getByRole("textbox", { name: "ガイドへの発言" });
+  await input.fill("雨が降ったらどうすればいいですか");
+  await input.press("Enter");
+  await expect(page.getByTestId("guide-line")).toContainText("小雨なら開催します", {
+    timeout: 20_000,
+  });
   await snap(page, info, "64-guide-dialogue-2d");
   await page.getByTestId("guide-dialogue-close").click();
 
