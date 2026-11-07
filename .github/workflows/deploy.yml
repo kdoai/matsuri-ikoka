@@ -7,7 +7,8 @@ name: デプロイ
 # 手で前の版に戻すときは rollback.yml を使う（docs/spec/operations.md の「前の版に戻す」）。
 # サービスの設定（環境変数・シークレット・CPU とメモリ）は Cloud Run の側にあり、ここではイメージを差し替える。
 # インスタンスの数（最小 0・最大 1）、リクエストの時間切れ、live で動くことと保存先（Firestore）、
-# 利用者の IP の決め方（TRUSTED_PROXY_HOPS）は、コンソールで変わっていても版ごとにここで決め直す。
+# 1回の発言の費用の上限（AGENT_MAX_BUDGET_USD）、利用者の IP の決め方（TRUSTED_PROXY_HOPS）は、
+# コンソールで変わっていても版ごとにここで決め直す。
 # 使う GitHub Actions の変数は docs/spec/operations.md の「デプロイ」にある。
 
 on:
