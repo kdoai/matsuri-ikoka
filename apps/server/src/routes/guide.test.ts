@@ -1340,9 +1340,80 @@ describe("通知・見回り・提案の決定", () => {
     expect(reverted.status).toBe(200);
     expect((await context.state(sessionId)).version).toBe(state.version + 2);
 
+    // ログインしていなければ、見回りは始められない（相談の中に書いても、だれも見回らない）
+    const start = await context.call("/api/guide/watch", {
+      body: { sessionId, action: "start" },
+    });
+    expect(start.status).toBe(401);
     const stopped = await context.call("/api/guide/watch", {
       body: { sessionId, action: "stop" },
     });
     expect(await stopped.json()).toMatchObject({ status: "stopped" });
   });
+
+  it("新しい版を保存できなかったら unknown にし、手元の写しを戻す。押し直すと保存してから当てる", async () => {
+    const storage = new FailingSaveStorage();
+    const context = setup({ storage });
+    const { itineraryId, guideSession, state, proposal } = await keptGuide(context);
+
+    storage.failNext = true;
+    const first = await decide(context, guideSession, proposal, ALICE);
+
+    expect(await first.json()).toEqual({ outcome: "unknown", currentVersion: state.version });
+    expect(context.itineraries.get(itineraryId)?.version).toBe(state.version);
+    expect((await context.state(guideSession, ALICE)).version).toBe(state.version);
+
+    const again = await decide(context, guideSession, proposal, ALICE);
+    expect(await again.json()).toMatchObject({ outcome: "applied" });
+    const detail = await context.storage.forOwner(ownerIdOf(ALICE)).getTrip(itineraryId);
+    expect(detail?.version).toBe(state.version + 1);
+
+    // 戻す操作も同じ。保存できなければ 503 で、手元の写しは戻す
+    storage.failNext = true;
+    const revert = () =>
+      context.call("/api/guide/revert", {
+        user: ALICE,
+        body: { sessionId: guideSession, toVersion: state.version },
+      });
+    expect((await revert()).status).toBe(503);
+    expect(context.itineraries.get(itineraryId)?.version).toBe(state.version + 1);
+    expect((await revert()).status).toBe(200);
+    expect((await context.storage.forOwner(ownerIdOf(ALICE)).getTrip(itineraryId))?.version).toBe(
+      state.version + 2,
+    );
+  });
+
+  it("返事を作っている途中の相談では、承認も戻すも 409 で断る", async () => {
+    const context = setup();
+    const { guideSession, state, proposal } = await keptGuide(context);
+    const session = context.sessions.get(guideSession);
+    if (session === undefined) throw new Error("相談がありません");
+    session.busy = true;
+
+    expect((await decide(context, guideSession, proposal, ALICE)).status).toBe(409);
+    const revert = await context.call("/api/guide/revert", {
+      user: ALICE,
+      body: { sessionId: guideSession, toVersion: Math.max(1, state.version - 1) },
+    });
+    expect(revert.status).toBe(409);
+
+    session.busy = false;
+    expect(await (await decide(context, guideSession, proposal, ALICE)).json()).toMatchObject({
+      outcome: "applied",
+    });
+    expect(session.busy).toBe(false);
+  });
 });
+
+/** 旅程の書き込みを1回だけ失敗させる保存の口 */
+class FailingSaveStorage extends MemoryTripStorage {
+  failNext = false;
+
+  override async saveItinerary(...args: Parameters<MemoryTripStorage["saveItinerary"]>) {
+    if (this.failNext) {
+      this.failNext = false;
+      throw new Error("保存の口の失敗");
+    }
+    return super.saveItinerary(...args);
+  }
+}

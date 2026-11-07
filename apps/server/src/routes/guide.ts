@@ -1,4 +1,5 @@
 import {
+  type DecideProposalRequest,
   DecideProposalRequestSchema,
   type DecideProposalResponse,
   encodeGuideSseEvent,
@@ -55,7 +56,11 @@ import { isLivePendingProposal, proposalContentHash, samePlan } from "../guide/p
 import { type GuideRunner, newGuideTurn, nextResumeSummary } from "../guide/runner";
 import { errorForLog } from "../log";
 import type { Consultations } from "../session/consultations";
-import { parseStoredItinerary, type StoragePersistence } from "../session/persistence";
+import {
+  type GuideTripRead,
+  parseStoredItinerary,
+  type StoragePersistence,
+} from "../session/persistence";
 import { type ItineraryStore, randomId, type Session } from "../session/sessionStore";
 import { type DailyGuideUsage, TripGoneError } from "../storage/types";
 import { apiError, type ErrorBody } from "./errors";
@@ -92,8 +97,6 @@ export interface GuideDeps {
   turnMaxMs?: number | undefined;
   heartbeatMs?: number | undefined;
   emergencyWaitMs?: number | undefined;
-  /** ログインを用意している環境か。用意していれば、見回りを始めるのにログインが要る */
-  authConfig?: { enabled: boolean } | undefined;
 }
 
 /** 断るときの状態と本文。ふつうの発言は HTTP の応答に、緊急の発言は連絡先のあとの error イベントにする */
@@ -123,6 +126,12 @@ const TRIP_UNAVAILABLE = refusal(
   503,
   "upstream_unavailable",
   "いま旅を読めません。少し待ってから、もう一度送ってください。",
+  true,
+);
+const DECISION_BUSY = refusal(
+  409,
+  "bad_request",
+  "いま返事を作っています。終わってから、もう一度お試しください。",
   true,
 );
 const TURN_BUSY = refusal(
@@ -653,26 +662,81 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
   };
 
   /**
-   * 新しい版を保存し、保存の口から読み直して確かめる。確かめられなければ、自動でやり直さず unknown にする。
+   * 承認と戻すの判断に使う旅を開く。今の版は手元の写しでなく、保存の口から読み直した版にする
+   * （書き込みに失敗すると、手元の写しだけが先の版になっていることがある）。
+   * 写しの版が違えば、写しを読んだ版に戻す。保存の口を読めなければ、判断しない
+   */
+  const openStoredTrip = async (
+    runner: GuideRunner,
+    session: Session,
+  ): Promise<GuideTripResult> => {
+    const result = await openTrip(runner, session);
+    if (result.status !== "ok") return result;
+    const { itinerary } = result.trip;
+    let read: GuideTripRead;
+    try {
+      read = await deps.persistence.readGuideTrip(itinerary.id, session.ownerUid);
+    } catch (error) {
+      console.error(
+        JSON.stringify({ kind: "storage_failed", what: "guide_decide", ...errorForLog(error) }),
+      );
+      return { status: "unavailable" };
+    }
+    if (read.status !== "found") return { status: "missing" };
+    if (read.itinerary.version !== itinerary.version) {
+      console.error(JSON.stringify({ kind: "guide_copy_reset" }));
+      deps.itineraries.remember(read.itinerary);
+    }
+    return { status: "ok", trip: { ...result.trip, itinerary: read.itinerary } };
+  };
+
+  /**
+   * 新しい版を保存し、保存の口から読み直して確かめる。確かめられなければ、自動でやり直さず unknown にし、
+   * 手元の写しを保存の口の版（読めなければ当てる前の版）に戻す。保存されていない版を、次の判断で今の版にしない。
    * gone は、返事の途中に旅が消された（消した旅を作り直さない）
    */
   const applyVersion = async (
     session: Session,
+    current: Itinerary,
     next: Itinerary,
   ): Promise<"applied" | "gone" | { unknown: number | null }> => {
     if (!deps.itineraries.saveForSession(session, next)) return "gone";
     try {
       const read = await deps.persistence.readGuideTrip(next.id, session.ownerUid);
-      if (read.status !== "found") return { unknown: null };
+      if (read.status !== "found") {
+        deps.itineraries.remember(current);
+        return { unknown: null };
+      }
       const same =
         read.itinerary.version === next.version &&
         proposalContentHash(read.itinerary) === proposalContentHash(next);
-      return same ? "applied" : { unknown: read.itinerary.version };
+      if (same) return "applied";
+      deps.itineraries.remember(read.itinerary);
+      return { unknown: read.itinerary.version };
     } catch (error) {
       console.error(
         JSON.stringify({ kind: "storage_failed", what: "guide_apply", ...errorForLog(error) }),
       );
+      deps.itineraries.remember(current);
       return { unknown: null };
+    }
+  };
+
+  /**
+   * 返事を作っている途中の相談では、承認と戻すを断る（返事が旅程を書くのと重ならないように）。
+   * 受け付けたら、終わるまで相談を「途中」にして、そのあいだの発言を待たせる
+   */
+  const whileIdle = async (
+    c: Context,
+    session: Session,
+    work: () => Promise<Response>,
+  ): Promise<Response> => {
+    if (session.busy) return refuse(c, DECISION_BUSY);
+    session.busy = true;
+    try {
+      return await work();
+    } finally {
+      session.busy = false;
     }
   };
 
@@ -725,9 +789,9 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
   });
 
   /**
-   * 見回りを始める・止める。ログインを用意している環境では、始めるのにログインが要る。
-   * ログインしていて、まだ残していない旅なら、旅を残してから旅の下に書く（見回りは残した旅だけを探す）。
-   * ログインを用意していない環境では、その相談の間だけ持つ
+   * 見回りを始める・止める。見回りは残した旅の下の依頼だけを探すので、始めるのにログインが要る
+   * （ログインしていなければ、どの環境でも 401。相談の中に書いても、だれも見回らない）。
+   * ログインしていて、まだ残していない旅なら、旅を残してから旅の下に書く
    */
   routes.consultation("POST", "/api/guide/watch", async (c, { open }) => {
     const guide = deps.guide;
@@ -738,9 +802,9 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
     const session = await open(request.data.sessionId);
     if (session === undefined) return sessionNotFound(c);
     const starting = request.data.action === "start";
-    if (starting && deps.authConfig?.enabled === true && session.ownerUid === null) {
+    if (starting && session.ownerUid === null) {
       return c.json(
-        apiError("unauthorized", "見回りを頼むには、ログインしてください。", false),
+        apiError("unauthorized", "見回りを頼むには、ログインして旅を残してください。", false),
         401,
       );
     }
@@ -789,6 +853,65 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
   const proposalNotFound = (c: Context) =>
     c.json(apiError("bad_request", "組み直しの案が見つかりません。", false), 404);
 
+  /** 承認・却下を、旅の順番待ちのあとで決める。今の版は保存の口から読み直した版 */
+  const decideLocked = async (
+    c: Context,
+    session: Session,
+    runner: GuideRunner,
+    id: string,
+    request: DecideProposalRequest,
+  ): Promise<Response> => {
+    const result = await openStoredTrip(runner, session);
+    if (result.status !== "ok") return tripRefusal(c, result);
+    const { itinerary, data } = result.trip;
+    const proposal = (await data.proposals()).find((entry) => entry.id === id);
+    if (proposal === undefined) return proposalNotFound(c);
+    const now = runner.now();
+    const settle = async (status: Parameters<typeof settleProposal>[1]) => {
+      await settleQuietly(() => data.putProposal(settleProposal(proposal, status, now)));
+      await deps.persistence.saveSession(session);
+    };
+    if (request.decision === "reject") {
+      if (proposal.status === "approved") {
+        return c.json(
+          apiError(
+            "bad_request",
+            "この案はもう承認しました。前の旅程に戻すときは、前の版に戻してください。",
+            false,
+          ),
+          409,
+        );
+      }
+      if (proposal.status !== "rejected") await settle("rejected");
+      return decided(c, { outcome: "rejected" });
+    }
+    const plan = planApproval(proposal, request, itinerary, now);
+    switch (plan.kind) {
+      case "rejected":
+        return decided(c, { outcome: "rejected" });
+      case "stale":
+        if (plan.mark) await settle("stale");
+        return decided(c, { outcome: "stale", currentVersion: itinerary.version });
+      case "expired":
+        if (plan.mark) await settle("expired");
+        return decided(c, { outcome: "expired" });
+      case "applied":
+        if (plan.mark) await settle("approved");
+        return decided(c, { outcome: "applied", change: proposalChange(proposal) });
+      case "apply": {
+        const change = proposalChange(proposal);
+        const applied = await applyVersion(session, itinerary, change.itinerary);
+        if (applied === "gone") return tripRefusal(c, { status: "missing" });
+        if (applied !== "applied") {
+          console.error(JSON.stringify({ kind: "guide_apply_unknown" }));
+          return decided(c, { outcome: "unknown", currentVersion: applied.unknown });
+        }
+        await settle("approved");
+        return decided(c, { outcome: "applied", change });
+      }
+    }
+  };
+
   // 提案を承認する・断る。承認は、見た提案の版とハッシュを照らし合わせてから、新しい版にする
   routes.consultation("POST", "/api/guide/proposals/:id/decision", async (c, { open }) => {
     if (deps.guide === undefined) return notAvailable(c);
@@ -801,64 +924,14 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
     const id = routeParam(c, "id");
     const tripId = session.itineraryId ?? "";
     try {
-      return await withTripLock(tripId, async () => {
-        // 待っている間に版が増えていることがあるので、開き直す
-        const result = await openTrip(runner, session);
-        if (result.status !== "ok") return tripRefusal(c, result);
-        const { itinerary, data } = result.trip;
-        const proposal = (await data.proposals()).find((entry) => entry.id === id);
-        if (proposal === undefined) return proposalNotFound(c);
-        const now = runner.now();
-        const settle = async (status: Parameters<typeof settleProposal>[1]) => {
-          await settleQuietly(() => data.putProposal(settleProposal(proposal, status, now)));
-          await deps.persistence.saveSession(session);
-        };
-        if (request.decision === "reject") {
-          if (proposal.status === "approved") {
-            return c.json(
-              apiError(
-                "bad_request",
-                "この案はもう承認しました。前の旅程に戻すときは、前の版に戻してください。",
-                false,
-              ),
-              409,
-            );
-          }
-          if (proposal.status !== "rejected") await settle("rejected");
-          return decided(c, { outcome: "rejected" });
-        }
-        const plan = planApproval(proposal, request, itinerary, now);
-        switch (plan.kind) {
-          case "rejected":
-            return decided(c, { outcome: "rejected" });
-          case "stale":
-            if (plan.mark) await settle("stale");
-            return decided(c, { outcome: "stale", currentVersion: itinerary.version });
-          case "expired":
-            if (plan.mark) await settle("expired");
-            return decided(c, { outcome: "expired" });
-          case "applied":
-            if (plan.mark) await settle("approved");
-            return decided(c, { outcome: "applied", change: proposalChange(proposal) });
-          case "apply": {
-            const change = proposalChange(proposal);
-            const applied = await applyVersion(session, change.itinerary);
-            if (applied === "gone") return tripRefusal(c, { status: "missing" });
-            if (applied !== "applied") {
-              console.error(JSON.stringify({ kind: "guide_apply_unknown" }));
-              return decided(c, { outcome: "unknown", currentVersion: applied.unknown });
-            }
-            await settle("approved");
-            return decided(c, { outcome: "applied", change });
-          }
-        }
-      });
+      return await withTripLock(tripId, () =>
+        whileIdle(c, session, () => decideLocked(c, session, runner, id, request)),
+      );
     } catch (error) {
       if (!(error instanceof TripGoneError)) throw error;
       return tripRefusal(c, { status: "missing" });
     }
   });
-
   // 前の版に戻す。戻す操作も新しい版として残し、履歴は消さない。差分は今の旅程から計算する
   routes.consultation("POST", "/api/guide/revert", async (c, { open }) => {
     if (deps.guide === undefined) return notAvailable(c);
@@ -868,51 +941,56 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
     if (opened instanceof Response) return opened;
     const { session, runner } = opened;
     const { toVersion } = request.data;
-    return withTripLock(session.itineraryId ?? "", async () => {
-      const result = await openTrip(runner, session);
-      if (result.status !== "ok") return tripRefusal(c, result);
-      const { itinerary } = result.trip;
-      if (toVersion >= itinerary.version) {
-        return c.json(apiError("bad_request", "いまの版より前の版を選んでください。", false), 409);
-      }
-      let target: Itinerary | undefined;
-      try {
-        target = await deps.persistence.readGuideTripVersion(
-          itinerary.id,
-          session.ownerUid,
-          toVersion,
-        );
-      } catch (error) {
-        console.error(
-          JSON.stringify({ kind: "storage_failed", what: "guide_revert", ...errorForLog(error) }),
-        );
-        return refuse(c, TRIP_UNAVAILABLE);
-      }
-      if (target === undefined) {
-        return c.json(apiError("bad_request", "その版はもう残っていません。", false), 404);
-      }
-      if (samePlan(itinerary, target)) {
-        return c.json(apiError("bad_request", "いまの旅程と同じです。", false), 409);
-      }
-      const change: TripChange = revertedItinerary(itinerary, target);
-      const applied = await applyVersion(session, change.itinerary);
-      if (applied === "gone") return tripRefusal(c, { status: "missing" });
-      if (applied !== "applied") {
-        console.error(JSON.stringify({ kind: "guide_apply_unknown" }));
-        // 自動でやり直さない。旅程を読み直してもらう
-        return c.json(
-          apiError(
-            "upstream_unavailable",
-            "戻せたか確かめられませんでした。旅程を読み直してから、もう一度お試しください。",
-            false,
-          ),
-          503,
-        );
-      }
-      await deps.persistence.saveSession(session);
-      c.header("Cache-Control", "private, no-store");
-      return c.json(change);
-    });
+    return withTripLock(session.itineraryId ?? "", () =>
+      whileIdle(c, session, async () => {
+        const result = await openStoredTrip(runner, session);
+        if (result.status !== "ok") return tripRefusal(c, result);
+        const { itinerary } = result.trip;
+        if (toVersion >= itinerary.version) {
+          return c.json(
+            apiError("bad_request", "いまの版より前の版を選んでください。", false),
+            409,
+          );
+        }
+        let target: Itinerary | undefined;
+        try {
+          target = await deps.persistence.readGuideTripVersion(
+            itinerary.id,
+            session.ownerUid,
+            toVersion,
+          );
+        } catch (error) {
+          console.error(
+            JSON.stringify({ kind: "storage_failed", what: "guide_revert", ...errorForLog(error) }),
+          );
+          return refuse(c, TRIP_UNAVAILABLE);
+        }
+        if (target === undefined) {
+          return c.json(apiError("bad_request", "その版はもう残っていません。", false), 404);
+        }
+        if (samePlan(itinerary, target)) {
+          return c.json(apiError("bad_request", "いまの旅程と同じです。", false), 409);
+        }
+        const change: TripChange = revertedItinerary(itinerary, target);
+        const applied = await applyVersion(session, itinerary, change.itinerary);
+        if (applied === "gone") return tripRefusal(c, { status: "missing" });
+        if (applied !== "applied") {
+          console.error(JSON.stringify({ kind: "guide_apply_unknown" }));
+          // 自動でやり直さない。旅程を読み直してもらう
+          return c.json(
+            apiError(
+              "upstream_unavailable",
+              "戻せたか確かめられませんでした。旅程を読み直してから、もう一度お試しください。",
+              false,
+            ),
+            503,
+          );
+        }
+        await deps.persistence.saveSession(session);
+        c.header("Cache-Control", "private, no-store");
+        return c.json(change);
+      }),
+    );
   });
 }
 

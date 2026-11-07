@@ -70,6 +70,12 @@ describe("planApproval", () => {
     expect(planApproval(p, seenOf(p), p.itinerary, NOW)).toEqual({ kind: "applied", mark: true });
   });
 
+  it("ほかの旅の提案は当てず、stale にする", () => {
+    const p = proposal();
+    const other = { ...fictionalItinerary(), id: "trip-other" };
+    expect(planApproval(p, seenOf(p), other, NOW)).toEqual({ kind: "stale", mark: true });
+  });
+
   it("断った提案は当てない", () => {
     const p = proposal({ status: "rejected", decidedAt: NOW });
     expect(planApproval(p, seenOf(p), fictionalItinerary(), NOW)).toEqual({ kind: "rejected" });

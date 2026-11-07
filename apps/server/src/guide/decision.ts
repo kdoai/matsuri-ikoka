@@ -38,6 +38,10 @@ export function planApproval(
   const pending = proposal.status === "pending";
   if (proposal.status === "approved") return { kind: "applied", mark: false };
   if (proposal.status === "rejected") return { kind: "rejected" };
+  // ほかの旅の提案は当てない
+  if (proposal.tripId !== current.id || proposal.itinerary.id !== current.id) {
+    return { kind: "stale", mark: pending };
+  }
   // 見た提案と違う（画面に古い提案が残っていた）。提案の状態は変えない
   if (seen.baseVersion !== proposal.baseVersion || seen.contentHash !== proposal.contentHash) {
     return { kind: "stale", mark: false };
