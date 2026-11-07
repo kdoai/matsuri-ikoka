@@ -57,7 +57,7 @@
 | GET      | `/api/trips/:id/versions/:version` | ログインした持ち主 | 自分の旅程                                                                                                       |
 | POST     | `/api/trips/:id/share`             | ログインした持ち主 | 自分の旅程                                                                                                       |
 | DELETE   | `/api/trips/:id`                   | ログインした持ち主 | 自分の旅程                                                                                                       |
-| DELETE   | `/api/me/trips`                    | ログインした持ち主 | 自分の旅程のすべて                                                                                               |
+| DELETE   | `/api/me/trips`                    | ログインした持ち主 | 自分の旅程のすべて。お試し用のアカウントは 403                                                                   |
 | POST     | `/api/guide/open`                  | ログインした持ち主 | 自分の旅程。ガイドと話す新しい相談を作る                                                                         |
 | POST     | `/api/guide/state`                 | 相談の持ち主       | その相談の旅（時期・見回り・通知・承認待ちの提案・手帳）                                                         |
 | POST     | `/api/guide/chat`                  | 相談の持ち主       | その相談の旅。旅程は変えず、提案を作るまで                                                                       |
