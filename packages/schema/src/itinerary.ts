@@ -560,6 +560,63 @@ export function collectItinerarySources(itinerary: Itinerary): Source[] {
   return [...byUrl.values()];
 }
 
+// ---------------------------------------------------------------------------
+// 日をまたぐ時刻。予定と帰りの最終は旅の日の時刻で書くので、0時を過ぎた時刻を翌日の時刻に直して比べる。
+// 旅程の点検（サーバー）・声かけの時刻（サーバー）・旅の当日の札（画面）が、同じ決まりを使う
+
+/** 深夜の予定の境目。この時刻以降の予定のあとに、EARLY_MORNING_UNTIL より前の予定が来たら翌日とみなす */
+export const LATE_NIGHT_FROM_MINUTES = 18 * 60;
+export const EARLY_MORNING_UNTIL_MINUTES = 6 * 60;
+/** これより前の帰りの最終は、日をまたいだ深夜の便とみなす */
+export const LAST_RETURN_AFTER_MIDNIGHT_UNTIL_MINUTES = 4 * 60;
+
+/** HH:MM を0時からの分に */
+export function localTimeMinutes(time: string): number {
+  const [hours = 0, minutes = 0] = time.split(":").map(Number);
+  return hours * 60 + minutes;
+}
+
+export interface TimedPlanItem<T> {
+  item: T;
+  /** 旅の日の0時からの分。日をまたぐと 1440 を超える */
+  start: number;
+  end: number;
+  /** 前の予定より早い時刻で、日をまたいだとも言えない（並びの誤り） */
+  outOfOrder: boolean;
+}
+
+/** 予定を書かれた順に、旅の日の0時からの分にする。深夜のあとの早朝は翌日の時刻にする */
+export function dayTimeline<T extends { start: string; end: string }>(
+  items: readonly T[],
+): TimedPlanItem<T>[] {
+  const timeline: TimedPlanItem<T>[] = [];
+  let dayOffset = 0;
+  for (const item of items) {
+    const clock = localTimeMinutes(item.start);
+    let start = clock + dayOffset;
+    let outOfOrder = false;
+    const previous = timeline.at(-1);
+    if (previous !== undefined && start < previous.start) {
+      if (previous.start % 1440 >= LATE_NIGHT_FROM_MINUTES && clock < EARLY_MORNING_UNTIL_MINUTES) {
+        dayOffset += 1440;
+        start += 1440;
+      } else {
+        outOfOrder = true;
+      }
+    }
+    let end = localTimeMinutes(item.end) + dayOffset;
+    if (end < start) end += 1440;
+    timeline.push({ item, start, end, outOfOrder });
+  }
+  return timeline;
+}
+
+/** 帰りの最終の時刻を、旅の日の0時からの分にする（4:00 より前は翌日の時刻） */
+export function lastReturnMinutes(departBy: string): number {
+  const minutes = localTimeMinutes(departBy);
+  return minutes < LAST_RETURN_AFTER_MIDNIGHT_UNTIL_MINUTES ? minutes + 1440 : minutes;
+}
+
 /** 旅程のすべての予定（日の順・時刻の順） */
 export function itineraryItems(itinerary: Pick<Itinerary, "days">): ItineraryItem[] {
   return itinerary.days.flatMap((day) => day.items);

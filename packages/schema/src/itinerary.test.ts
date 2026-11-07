@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   collectItinerarySources,
+  dayTimeline,
   googleMapsUrl,
   ItineraryDiffSchema,
   ItinerarySchema,
@@ -8,6 +9,7 @@ import {
   itineraryNights,
   LastReturnSchema,
   LodgingSearchSchema,
+  lastReturnMinutes,
   MealPlanSchema,
   MoveSchema,
   mainFestivalDay,
@@ -445,5 +447,34 @@ describe("そろっているべきもの（移動の区間・食事・帰りの�
     expect(collectItinerarySources(itinerary).map((s) => s.url)).toContain(
       "https://example.com/suzunari/last-train",
     );
+  });
+});
+
+describe("日をまたぐ時刻", () => {
+  it("深夜の予定のあとの早朝の予定は、翌日の時刻にする", () => {
+    const timeline = dayTimeline([
+      { start: "18:30", end: "21:00" },
+      { start: "23:30", end: "00:10" },
+      { start: "00:20", end: "01:10" },
+    ]);
+    expect(timeline.map(({ start, end, outOfOrder }) => [start, end, outOfOrder])).toEqual([
+      [1110, 1260, false],
+      [1410, 1450, false],
+      [1460, 1510, false],
+    ]);
+  });
+
+  it("昼の予定のあとの早い時刻は、並びの誤りとして印を付ける", () => {
+    const timeline = dayTimeline([
+      { start: "14:00", end: "15:00" },
+      { start: "09:00", end: "10:00" },
+    ]);
+    expect(timeline[1]?.outOfOrder).toBe(true);
+  });
+
+  it("4:00 より前の帰りの最終は、翌日の時刻にする", () => {
+    expect(lastReturnMinutes("22:45")).toBe(1365);
+    expect(lastReturnMinutes("00:20")).toBe(1460);
+    expect(lastReturnMinutes("04:00")).toBe(240);
   });
 });
