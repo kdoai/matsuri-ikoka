@@ -18,10 +18,11 @@ import {
   type ListenFailure,
   type PushToTalk,
 } from "./listen";
+import { createPressControl, type PressControl } from "./press";
 import { speechLang } from "./speak";
 
-// 声で話すボタン。押している間だけ聞く。スクリーンリーダーなどで押した（click だけが届いた）ときは、
-// 押すと聞き始め、もう一度押すと止める。聞き取った文は入力欄の下書きに足し、送るのは利用者が確かめてから。
+// 声で話すボタン。長く押したときは押している間だけ聞く。短く押したとき（ダブルタップなど）や、
+// click だけが届いたとき（スクリーンリーダーの決定など）は、押すと聞き始め、もう一度押すと止める（press.ts）。聞き取った文は入力欄の下書きに足し、送るのは利用者が確かめてから。
 // 音声認識のないブラウザでは何も出さず、文字の相談だけになる。
 
 type Phase =
@@ -52,29 +53,44 @@ export function VoiceInput({ onFilled }: { onFilled: () => void }) {
   langRef.current = lang;
   const onFilledRef = useRef(onFilled);
   onFilledRef.current = onFilled;
-  // キーを押している間は焦点を移さない（入力欄に移ると、キーの繰り返しで聞き取った文が送られてしまう）
-  const keyHeld = useRef(false);
-  const focusAfterKey = useRef(false);
-  // 押して離す操作で始めたあとに届く click を、もう一度の押し直しと取り違えない
-  const pressed = useRef(false);
   const noticeTitle = useRef<HTMLHeadingElement>(null);
+  const button = useRef<HTMLButtonElement>(null);
+  // 押し方（長く押す・短く押す・click だけ）の扱い。キーを押している間は入力欄へ焦点を移さない
+  // （入力欄に移ると、キーの繰り返しで聞き取った文が送られてしまう）
+  const press = useRef<PressControl | null>(null);
+  press.current ??= createPressControl({
+    now: () => performance.now(),
+    accepted: () => acceptedHere || loadVoiceInputAccepted(),
+    showNotice: () => setPhase({ kind: "notice" }),
+    start: () => talk.current?.start(langRef.current) === true,
+    stop: () => talk.current?.stop(),
+    listening: () => talk.current?.listening === true,
+    started: () => {
+      // 自分の読み上げの声を聞き取らないよう、聞き始めたら止める
+      sharedSpeaker().stop();
+      setListening(true);
+      setPhase({ kind: "listening", heard: "" });
+    },
+    focusInput: () => onFilledRef.current(),
+    defer: (callback) => window.setTimeout(callback, 0),
+  });
 
   useEffect(() => {
-    const fill = () => {
-      if (keyHeld.current) focusAfterKey.current = true;
-      else onFilledRef.current();
+    const ended = () => {
+      setListening(false);
+      press.current?.ended();
     };
     talk.current = createPushToTalk(Recognition, {
       onHeard: (heard) => setPhase({ kind: "listening", heard }),
       onDone: (heard) => {
-        setListening(false);
+        ended();
         const current = store.getState().ui.draft;
         actions.setDraft(appendToDraft(current, heard, langRef.current));
         setPhase({ kind: "filled" });
-        fill();
+        press.current?.filled();
       },
       onFail: (reason) => {
-        setListening(false);
+        ended();
         setPhase({ kind: "failed", reason });
       },
     });
@@ -82,7 +98,7 @@ export function VoiceInput({ onFilled }: { onFilled: () => void }) {
     const onHidden = () => {
       if (!document.hidden || talk.current?.listening !== true) return;
       talk.current.cancel();
-      setListening(false);
+      ended();
       setPhase({ kind: "idle" });
     };
     document.addEventListener("visibilitychange", onHidden);
@@ -106,62 +122,27 @@ export function VoiceInput({ onFilled }: { onFilled: () => void }) {
 
   if (Recognition === null) return null;
 
-  const begin = () => {
-    if (!acceptedHere && !loadVoiceInputAccepted()) {
-      setPhase({ kind: "notice" });
-      return;
-    }
-    // 自分の読み上げの声を聞き取らないよう、先に止める
-    sharedSpeaker().stop();
-    if (talk.current?.start(lang) !== true) return;
-    setListening(true);
-    setPhase({ kind: "listening", heard: "" });
-  };
-  const end = () => talk.current?.stop();
-  const released = () => {
-    window.setTimeout(() => {
-      pressed.current = false;
-    }, 0);
-  };
-
+  const isPressKey = (event: KeyboardEvent<HTMLButtonElement>) =>
+    event.key === " " || event.key === "Enter";
   const onPointerDown = (event: PointerEvent<HTMLButtonElement>) => {
     if (event.button !== 0) return;
     event.preventDefault();
     event.currentTarget.setPointerCapture?.(event.pointerId);
-    pressed.current = true;
-    begin();
+    press.current?.down("pointer");
   };
-  const onPointerUp = () => {
-    end();
-    released();
-  };
+  const onPointerUp = () => press.current?.up("pointer");
   const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
-    if (event.key !== " " && event.key !== "Enter") return;
+    if (!isPressKey(event)) return;
     // 押している間のキーを、店の中の旅人の操作に渡さない
     event.preventDefault();
     event.stopPropagation();
-    if (event.repeat) return;
-    keyHeld.current = true;
-    pressed.current = true;
-    begin();
+    if (!event.repeat) press.current?.down("key");
   };
   const onKeyUp = (event: KeyboardEvent<HTMLButtonElement>) => {
-    if (event.key !== " " && event.key !== "Enter") return;
+    if (!isPressKey(event)) return;
     event.preventDefault();
     event.stopPropagation();
-    keyHeld.current = false;
-    end();
-    released();
-    if (focusAfterKey.current) {
-      focusAfterKey.current = false;
-      onFilledRef.current();
-    }
-  };
-  // click だけが届く操作（スクリーンリーダーの決定・ダブルタップ）では、押すたびに聞く・止めるを切り替える
-  const onClick = () => {
-    if (pressed.current) return;
-    if (talk.current?.listening === true) end();
-    else begin();
+    press.current?.up("key");
   };
 
   const listening = phase.kind === "listening";
@@ -190,6 +171,7 @@ export function VoiceInput({ onFilled }: { onFilled: () => void }) {
     <>
       <button
         type="button"
+        ref={button}
         className={`grid size-10 shrink-0 touch-none select-none place-items-center rounded-full border-2 shadow-soft transition ${
           listening
             ? "animate-pulse border-shu-700 bg-shu-600 text-white motion-reduce:animate-none"
@@ -203,13 +185,12 @@ export function VoiceInput({ onFilled }: { onFilled: () => void }) {
         onPointerDown={onPointerDown}
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
-        onLostPointerCapture={() => {
-          if (pressed.current) onPointerUp();
-        }}
+        onLostPointerCapture={onPointerUp}
         onKeyDown={onKeyDown}
         onKeyUp={onKeyUp}
-        onClick={onClick}
-        onBlur={end}
+        // click だけが届く操作（スクリーンリーダーの決定など）では、押すたびに聞く・止めるを切り替える
+        onClick={() => press.current?.click()}
+        onBlur={() => press.current?.blur()}
         onContextMenu={(event) => event.preventDefault()}
       >
         <Mic aria-hidden="true" className="size-5" />
@@ -243,6 +224,8 @@ export function VoiceInput({ onFilled }: { onFilled: () => void }) {
                   acceptedHere = true;
                   saveVoiceInputAccepted();
                   setPhase({ kind: "ready" });
+                  // 説明の欄は消えるので、焦点をマイクのボタンへ戻す
+                  window.requestAnimationFrame(() => button.current?.focus());
                 }}
               >
                 {t.voice.accept}

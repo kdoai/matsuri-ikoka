@@ -157,10 +157,11 @@ export function createSpeaker(
 
 /** 声の一覧が変わったら知らせる。読み上げの機能がなければ何もしない */
 export function onVoicesChanged(listener: () => void): () => void {
-  if (typeof window === "undefined" || window.speechSynthesis === undefined) {
+  const synth = typeof window === "undefined" ? undefined : window.speechSynthesis;
+  // 声の一覧の知らせを持たない古いブラウザでは、選び直さない
+  if (synth === undefined || typeof synth.addEventListener !== "function") {
     return () => undefined;
   }
-  const synth = window.speechSynthesis;
   synth.addEventListener("voiceschanged", listener);
   return () => synth.removeEventListener("voiceschanged", listener);
 }

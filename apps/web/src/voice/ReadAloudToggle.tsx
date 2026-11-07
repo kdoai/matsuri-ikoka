@@ -1,12 +1,19 @@
 import { AudioLines } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useActions, useApp, useT } from "../state/react";
-import { canReadAloud, sharedSpeaker, useVoiceOnDevice } from "./hooks";
+import {
+  allowRemoteVoice,
+  canReadAloud,
+  forgetRemoteVoice,
+  useVoiceOnDevice,
+  voiceAllowed,
+} from "./hooks";
 import { speechLang } from "./speak";
 
 /**
  * 読み上げのオン・オフ。読み上げの機能がないブラウザでは出さない（文字だけで使える）。
- * 使う声がこの端末の外のもの（または選べずブラウザに任せる）ときは、オンにする前に説明する
+ * 使う声がこの端末の外のもの（または選べずブラウザに任せる）ときは、オンにするたびに先に説明する。
+ * オンのまま言語を変えて端末の外の声になったときは、いったんオフにして説明を出す
  */
 export function ReadAloudToggle() {
   const t = useT();
@@ -17,6 +24,14 @@ export function ReadAloudToggle() {
   const onDevice = useVoiceOnDevice(lang);
   const [explaining, setExplaining] = useState(false);
   const title = useRef<HTMLParagraphElement>(null);
+  const allowed = voiceAllowed(onDevice, lang);
+
+  useEffect(() => {
+    if (readAloud && !allowed) {
+      actions.setReadAloud(false);
+      setExplaining(true);
+    }
+  }, [readAloud, allowed, actions]);
   useEffect(() => {
     if (explaining) title.current?.focus();
   }, [explaining]);
@@ -24,8 +39,7 @@ export function ReadAloudToggle() {
 
   const turnOn = () => {
     setExplaining(false);
-    // 押したその場で一度読む（押してからでないと声を出さないブラウザがある）。会話の窓の文に置き換わる
-    sharedSpeaker().say(t.voice.readAloudOn, lang);
+    if (!onDevice) allowRemoteVoice(lang);
     actions.setReadAloud(true);
   };
 
@@ -39,6 +53,7 @@ export function ReadAloudToggle() {
         data-testid="read-aloud-toggle"
         onClick={() => {
           if (readAloud) {
+            forgetRemoteVoice();
             actions.setReadAloud(false);
             setExplaining(false);
           } else if (onDevice) turnOn();

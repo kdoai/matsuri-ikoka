@@ -1,5 +1,5 @@
 import { useEffect, useRef, useSyncExternalStore } from "react";
-import { useApp } from "../state/react";
+import { useActions, useApp } from "../state/react";
 import { createReadAloud, type SpokenLine } from "./readAloud";
 import {
   browserSynth,
@@ -51,6 +51,23 @@ export function useListening(): boolean {
   return useSyncExternalStore(subscribeListening, getListening, getListening);
 }
 
+// 端末の外の声で読むと説明して、オンにしてもらった言語。オフにしたら消し、オンにするたびに説明する
+let remoteAllowed: string | null = null;
+
+/** 端末の外の声で読むことを、説明してから認めてもらった */
+export function allowRemoteVoice(lang: string): void {
+  remoteAllowed = lang;
+}
+
+export function forgetRemoteVoice(): void {
+  remoteAllowed = null;
+}
+
+/** いまの声で読んでよいか。端末の外の声なら、その言語で説明してから認めてもらったときだけ */
+export function voiceAllowed(onDevice: boolean, lang: string): boolean {
+  return onDevice || remoteAllowed === lang;
+}
+
 /**
  * 読み上げがオンのとき、会話の窓に出た文を読む。文が変わったら前の読み上げを止め、
  * 文がない間（窓を閉じたとき・考えている間など）と聞いている間は黙る。窓が消えたら止める
@@ -59,18 +76,25 @@ export function useReadAloud(line: SpokenLine | null): void {
   const enabled = useApp((state) => state.ui.readAloud);
   const lang = speechLang(useApp((state) => state.ui.locale));
   const heard = useListening();
+  const onDevice = useVoiceOnDevice(lang);
+  const actions = useActions();
+  // オンのまま言語を変えて、使う声が端末の外のものになったら、いったんオフにする（次にオンにするとき説明する）
+  const allowed = voiceAllowed(onDevice, lang);
+  useEffect(() => {
+    if (enabled && !allowed) actions.setReadAloud(false);
+  }, [enabled, allowed, actions]);
   const controller = useRef<ReturnType<typeof createReadAloud> | null>(null);
   controller.current ??= createReadAloud(sharedSpeaker());
   const key = line?.key ?? null;
   const text = line?.text ?? "";
   useEffect(() => {
     controller.current?.update({
-      enabled,
+      enabled: enabled && allowed,
       listening: heard,
       line: key === null ? null : { key, text },
       lang,
     });
-  }, [enabled, heard, key, text, lang]);
+  }, [enabled, allowed, heard, key, text, lang]);
   useEffect(() => () => controller.current?.stop(), []);
 }
 
