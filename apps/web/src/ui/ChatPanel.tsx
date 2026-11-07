@@ -4,6 +4,7 @@ import { type FormEvent, type KeyboardEvent, useEffect, useRef } from "react";
 import { useActions, useApp, useT } from "../state/react";
 import { currentLine, shioriReady } from "../state/selectors";
 import type { ChatEntry } from "../state/types";
+import { VoiceInput } from "../voice/VoiceInput";
 import { buttonPrimary, buttonSecondary } from "./common";
 import { STAFF_LOOK } from "./StaffPanel";
 import { errorText } from "./text";
@@ -200,10 +201,10 @@ export function Composer() {
     }
   };
   const onKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    // 変換中の Enter では送らない
+    // 変換中の Enter と、押し続けて繰り返し届く Enter では送らない（声の入力のボタンから焦点が移ったときなど）
     if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
       event.preventDefault();
-      submit();
+      if (!event.repeat) submit();
     }
     // Esc で入力欄を離れ、旅人の操作に戻る
     if (event.key === "Escape" && !event.nativeEvent.isComposing) {
@@ -214,7 +215,8 @@ export function Composer() {
   if (hearing) return null;
   return (
     <form onSubmit={submit} className="space-y-1" data-testid="composer" data-ready={ready}>
-      <div className="flex items-end gap-2">
+      {/* 声の入力の説明と聞き取りのようすは、折り返して行の下に出す */}
+      <div className="flex flex-wrap items-end gap-x-2">
         <label className="sr-only" htmlFor={COMPOSER_ID}>
           {t.chat.label}
         </label>
@@ -235,6 +237,7 @@ export function Composer() {
             tooLong ? "chat-too-long" : status === "opening" ? "chat-starting" : undefined
           }
         />
+        <VoiceInput onFilled={() => window.requestAnimationFrame(focusComposer)} />
         <button
           type="submit"
           className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-full border-2 border-wood-700/40 bg-yamabuki-400 px-4 font-bold text-ink shadow-[inset_0_-3px_0_rgb(0_0_0/0.15)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:border-transparent disabled:bg-stone-300 disabled:text-stone-600"

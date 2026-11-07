@@ -227,6 +227,42 @@ export const en: Messages = {
       ],
     },
   },
+  voice: {
+    readAloudOn: "Read aloud: on",
+    readAloudOff: "Read aloud: off",
+    readAloudHint:
+      "Reads the concierge's words in the dialogue window aloud, using a voice on this device first",
+    readAloudRemoteTitle: "Before turning on read aloud",
+    readAloudRemote:
+      "No reading voice was found on this device. Some browsers send the text to the browser maker's servers to read it aloud.",
+    readAloudConfirm: "Turn on",
+    readAloudCancel: "Cancel",
+    hold: "Hold to speak",
+    stop: "Stop listening",
+    listening: "Listening. Release to stop",
+    listeningToggle: "Listening. Press again to stop",
+    toggleTitle: "Speak (press again to stop)",
+    heard: (text: string) => `"${text}"`,
+    filled: "What you said is in the box. Check it, fix it if needed, then press Send",
+    noticeTitle: "Before you speak",
+    notice: [
+      "Your browser's speech recognition turns your voice into text. Some browsers send the audio to the browser maker's servers to do this.",
+      "This shop never receives or stores your audio. You can check and fix the text before sending it.",
+      "If you decline the microphone, you can keep consulting by typing.",
+    ],
+    accept: "Use my voice",
+    decline: "Type instead",
+    accepted:
+      "Hold the button while you speak. If you tap it with your finger, it keeps listening until you tap again",
+    failed: {
+      denied: "The microphone isn't available. You can keep consulting by typing.",
+      noMic: "No microphone was found. You can keep consulting by typing.",
+      noSpeech: "I couldn't hear anything. Hold the button and try again, or type instead.",
+      network: "Couldn't reach speech recognition. You can keep consulting by typing.",
+      unsupported: "This browser can't recognize speech in this language. Please type instead.",
+      other: "Couldn't turn your voice into text. You can keep consulting by typing.",
+    },
+  },
   consult: {
     title: "Trip consultation",
     progress: (current: number, total: number) => `${current} / ${total}`,

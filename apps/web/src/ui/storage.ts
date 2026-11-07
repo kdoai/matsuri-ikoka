@@ -39,3 +39,22 @@ export function saveCandidateView(view: CandidateView): void {
     // 覚えられなくても、次はカード表示から始まるだけ
   }
 }
+
+const VOICE_INPUT_KEY = "matsuri-ikoka:voice-input-accepted";
+
+/** 声の入力の説明を読んで、使うと決めたか */
+export function loadVoiceInputAccepted(): boolean {
+  try {
+    return window.localStorage.getItem(VOICE_INPUT_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+export function saveVoiceInputAccepted(): void {
+  try {
+    window.localStorage.setItem(VOICE_INPUT_KEY, "1");
+  } catch {
+    // 覚えられなくても、次に使うときにもう一度説明するだけ
+  }
+}

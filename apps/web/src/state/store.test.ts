@@ -144,6 +144,21 @@ describe("ストア：記録した相談で、相談からしおりまで", () =
     await actions.send(sample.turns[0]!.request.message);
     expect(store.getState().session.stage).toBe("candidates");
   });
+
+  it("最初からやり直しても、音と読み上げの設定はそのまま残す", async () => {
+    const store = makeStore(instantReplay());
+    const { actions } = store.getState();
+    expect(store.getState().ui.readAloud).toBe(false);
+    actions.setSound(true);
+    actions.setReadAloud(true);
+    await actions.enterShop();
+    await actions.restart();
+    expect(store.getState().ui).toMatchObject({ soundOn: true, readAloud: true });
+    actions.setReadAloud(false, true);
+    expect(store.getState().ui).toMatchObject({ readAloud: false, readAloudNotice: true });
+    actions.setReadAloud(false);
+    expect(store.getState().ui.readAloudNotice).toBe(false);
+  });
 });
 
 describe("ストア：通信のエラー", () => {
