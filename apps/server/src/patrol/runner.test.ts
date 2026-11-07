@@ -300,6 +300,41 @@ describe("中止と撤回", () => {
   });
 });
 
+describe("中止の行が残っているページ", () => {
+  it("関係のない行が増えて予定どおりと報告されても、撤回にせず、中止のまま", async () => {
+    const trip = addTrip("a");
+    await baselined();
+    const report = (
+      result: "as_planned" | "cancelled",
+    ): Omit<PatrolFinding, "festivalId" | "date"> => ({
+      result,
+      observed:
+        result === "as_planned"
+          ? { date: PATROL_DATE, start: "18:30", end: "21:00" }
+          : { date: null, start: null, end: null },
+      topics: [],
+      dateText: null,
+      pages: [PAGE_URL],
+    });
+    const cancelLine = "今年の祭りは中止します";
+    setPage(cancelLine);
+    agentReports(report("cancelled"));
+    await startPatrol(harness.deps);
+    await collectSession(harness.deps, "session-1");
+
+    harness.clock.now += 7 * HOUR;
+    setPage(cancelLine, "屋台の案内を更新しました");
+    agentReports(report("as_planned"));
+    await startPatrol(harness.deps);
+    await collectSession(harness.deps, "session-2");
+
+    expect(harness.store.noticesOf(trip.ref).map((notice) => notice.content.kind)).toEqual([
+      "cancellation",
+    ]);
+    expect((await harness.store.readRecord(KEY))?.cancelled).toBe(true);
+  });
+});
+
 describe("読んだお知らせ", () => {
   const withTopic: Omit<PatrolFinding, "festivalId" | "date"> = {
     result: "as_planned",

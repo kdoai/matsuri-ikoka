@@ -422,12 +422,9 @@ const OTHER_EVENT_WORDS =
   "説明会|募集|締切|締め切り|申込|申し込み|受付|会議|講習|体験|ワークショップ|展示|物販|前夜祭|後夜祭|前日祭|後日祭|バス|列車|電車|シャトル|駐車場|終電|最終便|営業";
 /** 祭りの本体でない、別の催しや案内の文。日付や時刻があっても、開催の根拠にしない */
 const OTHER_EVENT = new RegExp(OTHER_EVENT_WORDS);
-const HOLDING =
-  "開催|日程|日時|期日|日にち|変更|振替|振り替え|実施|本祭|開始|開演|行います|行われ|おこな|(?:^|\\s)とき(?:[\\s:]|$)";
-/** 開催の日時を述べる語。報告が「予定どおり」でも、この語と違う値が同じ文にあれば数える */
-const HOLDING_WORD = new RegExp(HOLDING);
 /** 開催の日程を述べている文 */
-const SCHEDULE_CONTEXT = new RegExp(`${HOLDING}|延期|順延|当日|祭|まつり`);
+const SCHEDULE_CONTEXT =
+  /開催|日程|日時|期日|日にち|変更|延期|順延|振替|振り替え|実施|本祭|当日|祭|まつり|開始|開演|行います|行われ|おこな|(?:^|\s)とき(?:[\s:]|$)/;
 
 /** 日付と時刻と記号のほかに何もない文（見出しのあとの「11月22日(日)」） */
 function isBareDate(sentence: string): boolean {
@@ -482,15 +479,21 @@ const POSTPONE_WORDS = /延期|順延/;
 const CANCEL_LIKE =
   /見合わせ|(?<!お)見送|休止|休催|断念|とりやめ|開催しない|開催(?:でき|いたしかね|致しかね)(?:ませ|ない|なく|ます)|自粛/;
 const POSTPONE_LIKE = /繰り?下げ|繰り?上げ/;
-const CHANGE = "(?:中止|順延|延期|取りやめ|取り止め)";
+const CHANGE =
+  "(?:中止|順延|延期|取りやめ|取り止め|とりやめ|見合わせ|見送|休止|休催|断念|開催しない)";
+/** 中止の撤回を述べる文（「中止を撤回し」「中止の決定を取り消します」） */
+const WITHDRAWAL = new RegExp(
+  `${CHANGE}(?:の(?:決定|判断|発表|予定))?[はをの]?(?:撤回|取り消|取消|取りやめ|とりやめ)`,
+);
 
 /** 決まった文の印。雨天などの語があっても、決まったことを述べている */
 const DECIDED_MARK = /となりました|決定(?:いた)?しました|決定です|決定$|決まりました/;
 /** 打ち消し（「中止の予定はありません」）と、一部や別の催し（「前夜祭は中止」）。決まった文の印より先に見る */
 const NOT_ABOUT_FESTIVAL: readonly RegExp[] = [
   new RegExp(
-    `${CHANGE}(?:は|に|の|を)?(?:なし|予定はあ|予定はご|ありません|ございません|しません|いたしません|致しません|なりません|撤回|取り消|取消)`,
+    `${CHANGE}(?:は|に|の)?(?:なし|予定はあ|予定はご|ありません|ございません|しません|いたしません|致しません|なりません)`,
   ),
+  WITHDRAWAL,
   new RegExp(`(?:${OTHER_EVENT_WORDS}|一部|のみ|だけ|の部)[はをがのも]?[^。、]{0,6}${CHANGE}`),
 ];
 /** 条件や見込みの文（「雨天の場合は中止」「中止の際はお知らせします」） */
@@ -557,7 +560,9 @@ function sentenceLevel(sentence: string, words: RegExp, date?: string): ChangeLe
   if (past === "past") return "none";
   if (past === "earlier") return "mentioned";
   // 延期は後の年へ移ることがあるので、中止だけを見る（「来年(2027年)に延期します」は決まった延期）
-  if (words === CANCEL_WORDS && aboutLaterYear(sentence, date)) return "mentioned";
+  if ((words === CANCEL_WORDS || words === CANCEL_LIKE) && aboutLaterYear(sentence, date)) {
+    return "mentioned";
+  }
   if (NOT_ABOUT_FESTIVAL.some((pattern) => pattern.test(sentence))) return "mentioned";
   if (DECIDED_MARK.test(sentence)) return "decided";
   return CONDITIONAL.some((pattern) => pattern.test(sentence)) ? "mentioned" : "decided";
@@ -576,6 +581,16 @@ function lineLevel(line: string, words: RegExp, date?: string): ChangeLevel {
 /** 行に、中止が決まったと書いてあるか。date は開催回の日付（前の年の話を見分ける） */
 export function saysCancelled(line: string, date?: string): boolean {
   return lineLevel(line, CANCEL_WORDS, date) === "decided";
+}
+
+/** 行に、今回は開催しないと言い切る文があるか（中止とその言い換え）。中止の撤回を認めるときに見る */
+export function saysNotHeld(line: string, date: string): boolean {
+  return saysCancelled(line, date) || lineLevel(line, CANCEL_LIKE, date) === "decided";
+}
+
+/** 行に、中止の撤回が書いてあるか */
+export function saysWithdrawn(line: string): boolean {
+  return WITHDRAWAL.test(line.normalize("NFKC"));
 }
 
 /** 行に、延期が決まったと書いてあるか */
@@ -612,7 +627,7 @@ const NOT_SCHEDULE_VALUES: readonly RegExp[] = [
 /**
  * 行に、開催に関わる新しい語があるか（中止・延期とその言い換え、日時）。決定と言い切れなくても true にする。
  * 検問はこれが true の行を黙って捨てず、値を持たないお知らせにする。
- * wordsOnly は報告が「予定どおり」のとき。日付や時刻だけでは数えず、開催の言葉が同じ文にあるときだけ数える
+ * wordsOnly は報告が「予定どおり」のとき。日付や時刻だけでは数えず、開催の文脈のある文と、日付だけの文を数える
  */
 export function hasScheduleSignal(
   line: string,
@@ -634,9 +649,8 @@ export function hasScheduleSignal(
     const differs =
       dates.some((found) => found.day !== day || (found.month ?? month) !== month) ||
       times.some((time) => time !== known.start && time !== known.end);
-    if (differs && (!options.wordsOnly || (HOLDING_WORD.test(text) && !OTHER_EVENT.test(text)))) {
-      return true;
-    }
+    const inContext = !OTHER_EVENT.test(text) && (SCHEDULE_CONTEXT.test(text) || isBareDate(text));
+    if (differs && (!options.wordsOnly || inContext)) return true;
     return (
       dates.length === 0 && times.length === 0 && text === digits && SCHEDULE_WORD.test(digits)
     );

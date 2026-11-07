@@ -26,7 +26,9 @@ import {
   mentionsTime,
   normalizeLine,
   saysCancelled,
+  saysNotHeld,
   saysPostponed,
+  saysWithdrawn,
   talksOnlyAboutPast,
 } from "./lines";
 import type { RunPage, RunTarget, ScheduleBaseline } from "./types";
@@ -78,6 +80,8 @@ export interface KnownState {
   cancelled: boolean;
   /** 検問を通って、新しい日の分からない延期と決まっている */
   postponed: boolean;
+  /** 中止を出したページ。分からなければ、読んだ確かなページで確かめる */
+  cancelledBy?: readonly string[];
 }
 
 /** 報告が言っている変化。前回の値と比べてコードで決める。分からない値（null）は変化にしない */
@@ -189,6 +193,8 @@ export interface FindingCheck {
   cancelled: boolean | null;
   /** 新しい延期の状態。変わらなければ null */
   postponed: boolean | null;
+  /** 中止を出したページ。中止を認めたときだけ */
+  cancelledBy: string[] | null;
   /** 写した文がページになかった（信用しないだけで、判定は止めない） */
   dateTextMismatch: boolean;
 }
@@ -241,7 +247,8 @@ const isTrusted = (page: RunPage) =>
  * - 開催の変更と中止は、主張ごとに、公式か2つのサイトで確かめられたときだけ。足りなければ値を持たないお知らせにする
  * - それ以外で新しい行に開催に関わる語があるか、報告が中止や日付なしの変更と言っていれば、
  *   公式か確かな出典のページなら、値を持たないお知らせにする
- * - 中止と知らせたあとに確かなページが予定どおりと言っていれば、中止の状態を戻し、撤回を知らせる
+ * - 中止と知らせたあとは、確かなページに撤回と書いてあるか、中止を出したページから中止の言葉が消えたときだけ、
+ *   中止の状態を戻し、撤回を知らせる。報告だけでは戻さない
  * - どれでもなければ通知にしない。ここだけが黙って比べる元を進める道になる
  */
 export function checkFinding(input: {
@@ -303,6 +310,7 @@ export function checkFinding(input: {
     baseline: null,
     cancelled: null,
     postponed: null,
+    cancelledBy: null,
     dateTextMismatch,
     ...extra,
   });
@@ -313,13 +321,13 @@ export function checkFinding(input: {
 
   /**
    * 値を持たないお知らせ。出典の確度はページごとに決め、別々の話を合わせて上げない。
-   * 指紋は、基準と比べて決めた主張とページと、知らせる理由（reason）から作る。
-   * 見立ての揺れや、関係のない行が増えただけでは変わらないので、読んだお知らせが未読に戻らない
+   * 指紋は、種類とページと、知らせる理由（reason）から作る。お知らせは値を持たないので、
+   * 見立てが揺れても、関係のない行が増えただけでも変わらず、読んだお知らせが未読に戻らない
    */
   const announcements = (
     topics: readonly NoticeTopic[],
     pages: readonly RunPage[],
-    reason: unknown = null,
+    reason: unknown = [],
   ) => {
     const urls = pages.map((page) => page.url).sort();
     const sources = pages.map((page) => ({
@@ -330,7 +338,7 @@ export function checkFinding(input: {
     return topics.flatMap((topic) => {
       const change = checked(
         { kind: "announcement", festivalId: target.festivalId, date: target.date, topic },
-        ["announcement", target.key, topic, claims, urls, reason],
+        ["announcement", target.key, topic, urls, reason],
         sources,
         checkedAt,
       );
@@ -369,10 +377,11 @@ export function checkFinding(input: {
   }
 
   const changes: CheckedChange[] = [];
-  const state: Pick<FindingCheck, "baseline" | "cancelled" | "postponed"> = {
+  const state: Pick<FindingCheck, "baseline" | "cancelled" | "postponed" | "cancelledBy"> = {
     baseline: null,
     cancelled: null,
     postponed: null,
+    cancelledBy: null,
   };
   const cancellation = firmClaims.find(({ claim }) => claim.kind === "cancelled");
   if (cancellation !== undefined) {
@@ -385,6 +394,7 @@ export function checkFinding(input: {
     if (change !== null) {
       changes.push(change);
       state.cancelled = true;
+      state.cancelledBy = cancellation.pages.map((page) => page.url);
     }
   } else if (firmClaims.length > 0) {
     const list: FestivalChange[] = [];
@@ -423,22 +433,31 @@ export function checkFinding(input: {
   }
   const firm = changes.length > 0;
 
+  // 値を確かめた主張や、コードで読めないページの主張は、主張そのものが知らせる理由になる
   if (weakPages.length > 0) {
-    changes.push(...announcements(topicsOr("other"), uniquePages(weakPages)));
+    changes.push(...announcements(topicsOr("other"), uniquePages(weakPages), claims));
   }
-  if (unknown) changes.push(...announcements(topicsOr("other"), unverifiable));
+  if (unknown) changes.push(...announcements(topicsOr("other"), unverifiable, claims));
 
   if (firm) {
     return result(cancellation !== undefined ? "cancellation" : "schedule_change", changes, state);
   }
 
-  // 中止と知らせた祭りを、確かなページが予定どおりと言っている。新しい行に決まった中止がなければ、撤回として知らせる
+  // 報告は信用しない入力なので、「予定どおり」だけでは中止の状態を戻さない。コードで読んだ行で確かめる。
+  // 新しい行に撤回と書いてあるか、中止を出したページからも読んだページからも、中止の言葉が消えたときだけ戻す
   if (known.cancelled && finding.result === "as_planned") {
-    const stillCancelled = verifiable.some((page) =>
-      addedOf(page).some((line) => saysCancelled(line, target.date)),
+    const trustedPages = verifiable.filter(isTrusted);
+    const linesOf = (page: RunPage) => evidenceOf(page)?.lines ?? [];
+    const notHeld = verifiable.some((page) =>
+      linesOf(page).some((line) => saysNotHeld(line, target.date)),
     );
-    const pages = verifiable.filter(isTrusted);
-    if (!stillCancelled && pages.length > 0) {
+    const isSource = (page: RunPage) =>
+      known.cancelledBy === undefined ||
+      known.cancelledBy.some((url) => comparableUrl(url) === comparableUrl(page.url));
+    const pages = trustedPages.filter(
+      (page) => addedOf(page).some(saysWithdrawn) || (!notHeld && isSource(page)),
+    );
+    if (pages.length > 0) {
       changes.push(
         ...announcements(topicsOr("other"), pages, ["withdrawn", baseline.date, sequence]),
       );

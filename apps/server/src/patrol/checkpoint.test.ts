@@ -797,6 +797,29 @@ describe("同じ変化の見分け", () => {
     expect(of("日程が変わりました")).not.toBe(of("今年の開催は見合わせます"));
   });
 
+  it.each(["今年の開催は見合わせます", "雨天の場合は中止します", "日程が変わりました"])(
+    "同じ行「%s」で報告が予定どおりから中止に変わっても、同じ指紋になり未読に戻らない",
+    (line) => {
+      const of = (report: PatrolFinding) =>
+        check({ finding: report, evidence: [page([line])] }).changes[0]?.fingerprint;
+      const moved = finding({ result: "changed", observed: noValues });
+
+      expect(of(finding())).toBeDefined();
+      expect(of(cancelled)).toBe(of(finding()));
+      expect(of(moved)).toBe(of(finding()));
+    },
+  );
+
+  it("言葉を読み取れない行でも、報告の揺れでは別の指紋にしない", () => {
+    const of = (report: PatrolFinding) =>
+      check({
+        finding: { ...report, topics: ["traffic"] },
+        evidence: [page(["通行止めのお知らせ"])],
+      }).changes[0]?.fingerprint;
+
+    expect(of(cancelled)).toBe(of(finding()));
+  });
+
   it("別のページのお知らせは、別の指紋になる", () => {
     const second = "https://example.org/kanko/suzunari";
     const of = (url: string) =>
@@ -929,6 +952,16 @@ describe("開催と関係のない日付や時刻の行", () => {
     });
   });
 
+  it.each(["今年の祭りは8月23日です", "8月23日(日)", "まつり 8月23日", "当日は19:00から"])(
+    "予定どおりの報告でも、開催の文脈のある「%s」は知らせる",
+    (line) => {
+      const result = check({ finding: finding(), evidence: [page([line])] });
+
+      expect(result.outcome).toBe("announcement");
+      expect(result.baseline).toBeNull();
+    },
+  );
+
   it("確かめが要る報告なら、控えと違う日付は知らせる", () => {
     const report = finding({ result: "needs_check", observed: noValues });
 
@@ -947,7 +980,7 @@ describe("開催と関係のない日付や時刻の行", () => {
 });
 
 describe("中止の撤回", () => {
-  const afterCancel = known({ cancelled: true });
+  const afterCancel = known({ cancelled: true, cancelledBy: [PAGE_URL] });
 
   it("確かなページが予定どおりと言っていれば、中止の状態を戻し、値を持たないお知らせで知らせる", () => {
     const result = check({
@@ -987,6 +1020,94 @@ describe("中止の撤回", () => {
     expect(result.cancelled).toBeNull();
   });
 
+  it("中止の行が残ったまま関係のない行が増えても、予定どおりの報告だけでは戻さない", () => {
+    const result = check({
+      known: afterCancel,
+      finding: finding(),
+      evidence: [
+        page(["屋台の案内を更新しました"], {
+          lines: ["今年の祭りは中止します", "屋台の案内を更新しました"],
+        }),
+      ],
+    });
+
+    expect(result).toMatchObject({ outcome: "no_change", changes: [], cancelled: null });
+  });
+
+  it("中止のあとに言い換えの行が増えて予定どおりと報告されても、戻さない", () => {
+    const result = check({
+      known: afterCancel,
+      finding: finding(),
+      evidence: [page(["今年の開催は見合わせます"])],
+    });
+
+    expect(result).toMatchObject({ outcome: "no_change", changes: [], cancelled: null });
+  });
+
+  it("中止の行が残っていても、撤回と書いた新しい行があれば撤回にする", () => {
+    const line = "中止を撤回し、予定どおり開催します";
+    const result = check({
+      known: afterCancel,
+      finding: finding(),
+      evidence: [page([line], { lines: ["今年の祭りは中止します", line] })],
+    });
+
+    expect(result).toMatchObject({ outcome: "announcement", cancelled: false });
+  });
+
+  it.each([
+    "荒天の場合は開催を見合わせます",
+    "雨天の場合は中止します",
+    "昨年は中止となりました",
+    "シャトルバスの運転を見合わせます",
+  ])("決まった中止でない「%s」が残っていても、撤回を止めない", (line) => {
+    const added = "予定どおり開催します";
+    const result = check({
+      known: afterCancel,
+      finding: finding(),
+      evidence: [page([added], { lines: [line, added] })],
+    });
+
+    expect(result.cancelled).toBe(false);
+  });
+
+  it("中止を出していないページが予定どおりと言うだけでは、戻さない", () => {
+    const result = check({
+      known: known({ cancelled: true, cancelledBy: [SECOND_URL] }),
+      finding: finding(),
+      evidence: [page(["屋台の案内を更新しました"])],
+    });
+
+    expect(result).toMatchObject({ outcome: "no_change", changes: [], cancelled: null });
+  });
+
+  it("中止を出していないページでも、撤回と書いてあれば戻す", () => {
+    const result = check({
+      known: known({ cancelled: true, cancelledBy: [SECOND_URL] }),
+      finding: finding(),
+      evidence: [page(["中止を撤回し、予定どおり開催します"])],
+    });
+
+    expect(result.cancelled).toBe(false);
+  });
+
+  it("別の読んだページが中止と言っていれば、中止を出したページの行が消えても戻さない", () => {
+    const result = check({
+      known: afterCancel,
+      finding: finding({ pages: [PAGE_URL, SECOND_URL] }),
+      target: target({
+        pages: [
+          { url: PAGE_URL, reason: "changed", confidence: "official" },
+          { url: SECOND_URL, reason: "changed", confidence: "single" },
+        ],
+      }),
+      evidence: [page([]), page(["今年は中止します"], { url: SECOND_URL })],
+      fetchedUrls: [PAGE_URL, SECOND_URL],
+    });
+
+    expect(result.cancelled).toBeNull();
+  });
+
   it("確度の低いページだけなら戻さない", () => {
     const result = check({
       known: afterCancel,
@@ -997,6 +1118,12 @@ describe("中止の撤回", () => {
 
     expect(result.cancelled).toBeNull();
     expect(result.changes).toEqual([]);
+  });
+
+  it("中止を認めたら、どのページが中止を出したかを控えに残す", () => {
+    const result = check({ finding: cancelled, evidence: [page(["今年の開催は中止します"])] });
+
+    expect(result.cancelledBy).toEqual([PAGE_URL]);
   });
 
   it("中止と知らせていなければ、撤回にしない", () => {

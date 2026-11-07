@@ -507,7 +507,12 @@ async function acceptReport(
     const check = checkFinding({
       finding,
       target,
-      known: { baseline, cancelled: record.cancelled, postponed: record.postponed },
+      known: {
+        baseline,
+        cancelled: record.cancelled,
+        postponed: record.postponed,
+        cancelledBy: record.cancelledBy,
+      },
       sequence: record.changeCount,
       evidence: await readEvidence(deps, target, record, finding.pages),
       fetchedUrls: state.fetchedUrls,
@@ -553,6 +558,7 @@ async function acceptReport(
       ...record,
       observed: check.baseline ?? record.observed,
       cancelled: check.cancelled ?? record.cancelled,
+      cancelledBy: check.cancelledBy ?? record.cancelledBy,
       postponed: check.postponed ?? record.postponed,
       changeCount,
       seenBaselines: [...seen].slice(-MAX_SEEN_BASELINES),

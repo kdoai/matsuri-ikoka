@@ -15,7 +15,9 @@ import {
   normalizeLine,
   pageLines,
   saysCancelled,
+  saysNotHeld,
   saysPostponed,
+  saysWithdrawn,
 } from "./lines";
 
 describe("pageLines", () => {
@@ -394,6 +396,51 @@ describe("中止と延期の文", () => {
   );
 });
 
+describe("今回は開催しないと言い切れる文", () => {
+  it.each([
+    "今年の祭りは中止します",
+    "今年の開催は見合わせます",
+    "本年の開催は見送ります",
+    "本年は休止いたします",
+    "開催見送りとなりました",
+    "今年は開催しないことになりました",
+  ])("「%s」は言い切っている", (line) => {
+    expect(saysNotHeld(line, "2026-08-16")).toBe(true);
+  });
+
+  it.each([
+    "荒天の場合は開催を見合わせます",
+    "雨天の場合は中止します",
+    "昨年は開催を見合わせました",
+    "2027年は開催を見合わせます",
+    "シャトルバスの運転を見合わせます",
+    "お見送りは本部の前で行います",
+    "中止を撤回し、予定どおり開催します",
+    "予定どおり開催します",
+  ])("「%s」は言い切っていない", (line) => {
+    expect(saysNotHeld(line, "2026-08-16")).toBe(false);
+  });
+
+  it.each([
+    "中止を撤回し、予定どおり開催します",
+    "中止の決定を撤回しました",
+    "開催の見合わせを取り消します",
+    "中止を取り消します",
+    "中止を取りやめ、開催します",
+  ])("「%s」は撤回を述べている", (line) => {
+    expect(saysWithdrawn(line)).toBe(true);
+  });
+
+  it.each([
+    "今年の祭りは中止します",
+    "予定どおり開催します",
+    "申込を取り消す場合は受付へ",
+    "中止の場合は予約を取り消します",
+  ])("「%s」は撤回を述べていない", (line) => {
+    expect(saysWithdrawn(line)).toBe(false);
+  });
+});
+
 describe("開催の根拠にできる行", () => {
   it.each([
     "開催日 8月23日",
@@ -550,7 +597,11 @@ describe("hasScheduleSignal", () => {
     "日時 8月23日(日)",
     "日程が変わりました",
     "19時に開演します",
-  ])("予定どおりの報告でも、開催の言葉と違う値がある「%s」は数える", (line) => {
+    "今年の祭りは8月23日です",
+    "8月23日(日)",
+    "まつり 8月23日",
+    "当日は19:00から",
+  ])("予定どおりの報告でも、開催の文脈と違う値がある「%s」は数える", (line) => {
     expect(hasScheduleSignal(line, known, { wordsOnly: true })).toBe(true);
   });
 
@@ -559,7 +610,6 @@ describe("hasScheduleSignal", () => {
     "ボランティア説明会 8月1日 10:00",
     "午後7時半から",
     "屋台は16時から出ます",
-    "8月23日(日)",
     "開催日 8月16日",
   ])("予定どおりの報告なら、日付や時刻だけの「%s」は数えない", (line) => {
     expect(hasScheduleSignal(line, known, { wordsOnly: true })).toBe(false);

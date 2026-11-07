@@ -49,6 +49,8 @@ export interface PatrolRecord {
   observed: ScheduleBaseline | null;
   /** 検問を通って中止と決まっている */
   cancelled: boolean;
+  /** 中止を出したページ。撤回を確かめるときに読む */
+  cancelledBy: string[];
   /** 検問を通って、新しい日の分からない延期と決まっている */
   postponed: boolean;
   /** 日程が前の値に戻った回数。同じ内容の変更をもう一度知らせられるように、指紋に入れる */
