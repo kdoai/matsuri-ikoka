@@ -167,8 +167,10 @@ export type GuideTripResult =
   | { status: "ok"; trip: GuideTrip }
   /** 相談にまだ旅程がない */
   | { status: "no_itinerary" }
-  /** 旅が消された、または読めない */
-  | { status: "missing" };
+  /** 旅が消された、または読めない形 */
+  | { status: "missing" }
+  /** 保存の口が一時的に失敗し、手元の写しもない。あるかどうかが分からない */
+  | { status: "unavailable" };
 
 /**
  * 相談の旅を開く。旅は相談から決め、外から指定させない。別のインスタンスで版が増えていることがあるので、
@@ -181,7 +183,7 @@ export async function openGuideTrip(
 ): Promise<GuideTripResult> {
   const id = session.itineraryId;
   if (id === null) return { status: "no_itinerary" };
-  let read: GuideTripRead | undefined;
+  let read: GuideTripRead;
   try {
     read = await deps.persistence.readGuideTrip(id, session.ownerUid);
   } catch (error) {
@@ -189,13 +191,17 @@ export async function openGuideTrip(
       JSON.stringify({ kind: "storage_failed", what: "guide_trip", ...errorForLog(error) }),
     );
     const copy = deps.itineraries.get(id);
-    read = copy === undefined ? undefined : { itinerary: copy, kept: false };
+    // 消されたのか分からないので、相談の中の手帳は消さない
+    if (copy === undefined) return { status: "unavailable" };
+    read = { status: "found", itinerary: copy, kept: false };
   }
-  if (read === undefined) {
+  if (read.status === "none") {
     // 旅を消したら、相談の中に持っていた手帳も消す（旅の下は、旅を消すときに消える）
     if (forgetHeldData(session.guide)) await deps.persistence.saveSession(session);
     return { status: "missing" };
   }
+  // 読めない形の旅程は、消されたとは限らないので、相談の中の手帳は消さない
+  if (read.status === "unreadable") return { status: "missing" };
   const { kept } = read;
   // ツールは手元の写しから旅程を読むので、いまの版にそろえる（古い版へは戻さない）
   const itinerary = deps.itineraries.rememberLatest(read.itinerary);

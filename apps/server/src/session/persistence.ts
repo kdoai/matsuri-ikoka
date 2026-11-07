@@ -109,11 +109,14 @@ function currentAnchorState(saved: SessionSnapshot): SessionSnapshot & { guide: 
   };
 }
 
-/** ガイドが読む旅。kept は、その人が残した旅か（残した旅のデータだけを、旅の下に置く） */
-export interface GuideTripRead {
-  itinerary: Itinerary;
-  kept: boolean;
-}
+/**
+ * ガイドが読む旅。kept は、その人が残した旅か（残した旅のデータだけを、旅の下に置く）。
+ * none は保存の口に旅がない（消された）。unreadable は旅はあるが読めない形（消されたとは限らない）
+ */
+export type GuideTripRead =
+  | { status: "found"; itinerary: Itinerary; kept: boolean }
+  | { status: "none" }
+  | { status: "unreadable" };
 
 export class StoragePersistence {
   readonly #storage: TripStorage;
@@ -187,21 +190,23 @@ export class StoragePersistence {
    * 読めるのは、viewer 自身の旅程と、持ち主のない旅程だけ。消した旅とほかの人の旅は undefined。
    * 保存の口の失敗は呼ぶ側に投げる
    */
-  async readGuideTrip(id: string, viewer: OwnerId | null): Promise<GuideTripRead | undefined> {
+  async readGuideTrip(id: string, viewer: OwnerId | null): Promise<GuideTripRead> {
     await this.flush(id);
     if (viewer !== null) {
       const own = await this.#storage.forOwner(viewer).getTrip(id);
       if (own !== null) {
         const itinerary = parseStoredItinerary(own.itinerary);
         return itinerary === undefined
-          ? undefined
-          : { itinerary, kept: own.trip.ownerUid === viewer };
+          ? { status: "unreadable" }
+          : { status: "found", itinerary, kept: own.trip.ownerUid === viewer };
       }
     }
     const unowned = await this.#storage.readUnowned(id);
-    if (unowned === null) return undefined;
+    if (unowned === null) return { status: "none" };
     const itinerary = parseStoredItinerary(unowned.itinerary);
-    return itinerary === undefined ? undefined : { itinerary, kept: false };
+    return itinerary === undefined
+      ? { status: "unreadable" }
+      : { status: "found", itinerary, kept: false };
   }
 
   /**

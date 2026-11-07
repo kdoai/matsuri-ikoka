@@ -84,6 +84,16 @@ async function readJson(c: Context): Promise<unknown> {
 
 /** 旅を開けなかったときの応答 */
 function tripRefusal(c: Context, result: Exclude<GuideTripResult, { status: "ok" }>) {
+  if (result.status === "unavailable") {
+    return c.json(
+      apiError(
+        "upstream_unavailable",
+        "いま旅を読めません。少し待ってから、もう一度送ってください。",
+        true,
+      ),
+      503,
+    );
+  }
   return result.status === "no_itinerary"
     ? c.json(apiError("bad_request", "まだ旅程がありません。", false), 409)
     : c.json(apiError("bad_request", "旅が見つかりません。", false), 404);

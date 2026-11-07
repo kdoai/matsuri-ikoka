@@ -20,6 +20,7 @@ import type { GuideRunner } from "../guide/runner";
 import { ItineraryStore, SessionStore } from "../session/sessionStore";
 import { MemoryTripStorage } from "../storage/memory";
 import { ownerIdOf } from "../storage/owner";
+import type { SharedItinerary } from "../storage/types";
 import { ConcurrencyLimiter, DailyLimiter } from "./guard";
 
 // ガイドの API を、架空の祭りのサンプルの相談で通して確かめる。モデルも外のサービスも呼ばない。
@@ -125,6 +126,18 @@ async function readEvents(res: Response): Promise<GuideSseEvent[]> {
     if (event) events.push(decodeGuideSseEvent({ event, data }));
   }
   return events;
+}
+
+/** 読み取りが失敗する・読めない形を返す保存の口 */
+class TroubledStorage extends MemoryTripStorage {
+  failing = false;
+  broken = false;
+
+  override async readUnowned(id: string): Promise<SharedItinerary | null> {
+    if (this.failing) throw new Error("保存の口の失敗");
+    const found = await super.readUnowned(id);
+    return found !== null && this.broken ? { ...found, itinerary: { broken: true } } : found;
+  }
 }
 
 const MEMO_MESSAGE = "連れは歩くのがゆっくりなので、気にしてもらえますか";
@@ -844,6 +857,38 @@ describe("残した旅", () => {
     expect(JSON.stringify(await context.storage.getSession(sessionId))).not.toContain(
       "連れは歩くのがゆっくり",
     );
+  });
+
+  it("旅の読み取りが一時的に失敗したら、もう一度を求め、相談の中の手帳を消さない", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const storage = new TroubledStorage();
+    const context = setup({ storage });
+    const { sessionId } = await context.consult();
+    const item = await saveMemo(context, sessionId);
+    const session = context.sessions.get(sessionId);
+    if (session === undefined) throw new Error("相談がありません");
+    // 手元の写しもない旅にする
+    session.itineraryId = "trip-not-at-hand";
+    storage.failing = true;
+
+    const res = await context.call("/api/guide/state", { body: { sessionId } });
+
+    expect(res.status).toBe(503);
+    expect(await res.json()).toMatchObject({ retryable: true });
+    expect(session.guide.memo).toEqual([item]);
+  });
+
+  it("読めない形の旅程でも、相談の中の手帳を消さない", async () => {
+    const storage = new TroubledStorage();
+    const context = setup({ storage });
+    const { sessionId } = await context.consult();
+    const item = await saveMemo(context, sessionId);
+    storage.broken = true;
+
+    const res = await context.call("/api/guide/state", { body: { sessionId } });
+
+    expect(res.status).toBe(404);
+    expect(context.sessions.get(sessionId)?.guide.memo).toEqual([item]);
   });
 
   it("保存の口の版が手元より古くても、手元の旅程を古い版へ戻さない", async () => {
