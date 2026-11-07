@@ -637,3 +637,181 @@ describe("残した旅を開く", () => {
     expect(store.getState().ui.view).toBe("shop");
   });
 });
+
+describe("通知・見回り・提案の決定", () => {
+  const next: Itinerary = { ...itinerary, version: itinerary.version + 1 };
+  const proposal = {
+    id: "proposal-1",
+    tripId: itinerary.id,
+    status: "pending" as const,
+    noticeIds: [],
+    summary: "会場に着く時間を遅らせます",
+    baseVersion: itinerary.version,
+    contentHash: "a".repeat(64),
+    itinerary: next,
+    diff: {
+      fromVersion: itinerary.version,
+      toVersion: next.version,
+      added: [],
+      changed: ["festival"],
+      removed: [],
+    },
+    createdAt: "2026-08-10T06:06:00+09:00",
+    expiresAt: "2026-08-15T00:00:00+09:00",
+    decidedAt: null,
+  };
+  const watch = {
+    tripId: itinerary.id,
+    status: "active" as const,
+    startedAt: "2026-08-03T10:00:00+09:00",
+    endsOn: "2026-08-17",
+    stoppedAt: null,
+    lastCheckedAt: null,
+  };
+  const stateWith = (over: Partial<GuideStateResponse> = {}): GuideStateResponse => ({
+    tripId: itinerary.id,
+    version: itinerary.version,
+    phase: "before",
+    watch,
+    notices: [],
+    proposals: [proposal],
+    memo: [],
+    ...over,
+  });
+
+  it("承認すると、版が増えた旅程と差分を入れ、提案を外し、前の版に戻せる", async () => {
+    let current = stateWith();
+    const decideProposal = vi.fn(async () => {
+      current = stateWith({ version: next.version, proposals: [] });
+      return { outcome: "applied" as const, change: { itinerary: next, diff: proposal.diff } };
+    });
+    const reverted: Itinerary = { ...itinerary, version: next.version + 1 };
+    const revertTrip = vi.fn(async () => ({
+      itinerary: reverted,
+      diff: { ...proposal.diff, fromVersion: next.version, toVersion: reverted.version },
+    }));
+    const { store } = makeStore({ guideState: async () => current, decideProposal, revertTrip });
+    await store.getState().actions.loadGuide(true);
+
+    await store.getState().actions.decideProposal("proposal-1", "approve");
+
+    expect(decideProposal).toHaveBeenCalledWith("proposal-1", {
+      decision: "approve",
+      sessionId: "session-1",
+      baseVersion: proposal.baseVersion,
+      contentHash: proposal.contentHash,
+    });
+    let state = store.getState();
+    expect(state.itinerary.current?.version).toBe(next.version);
+    expect(state.itinerary.diff).toEqual(proposal.diff);
+    expect(state.guide).toMatchObject({
+      version: next.version,
+      proposals: [],
+      busy: null,
+      outcome: { kind: "applied" },
+      revertTo: itinerary.version,
+    });
+
+    await store.getState().actions.revertGuideChange();
+
+    expect(revertTrip).toHaveBeenCalledWith({
+      sessionId: "session-1",
+      toVersion: itinerary.version,
+    });
+    state = store.getState();
+    expect(state.itinerary.current?.version).toBe(reverted.version);
+    expect(state.guide).toMatchObject({ outcome: { kind: "reverted" }, revertTo: null });
+  });
+
+  it("提案のあとに旅程が変わっていたら、旅程を変えずに知らせる", async () => {
+    const decideProposal = vi.fn(async () => ({
+      outcome: "stale" as const,
+      currentVersion: itinerary.version + 1,
+    }));
+    const { store } = makeStore({ guideState: async () => stateWith(), decideProposal });
+    await store.getState().actions.loadGuide(true);
+
+    await store.getState().actions.decideProposal("proposal-1", "approve");
+
+    const state = store.getState();
+    expect(state.itinerary.current?.version).toBe(itinerary.version);
+    expect(state.guide.outcome).toEqual({ kind: "stale" });
+  });
+
+  it("断ると提案を外し、送れなければ結果に出して、もう一度押せる", async () => {
+    const decideProposal = vi
+      .fn()
+      .mockRejectedValueOnce(new TransportError("upstream_unavailable", { status: 503 }))
+      .mockResolvedValueOnce({ outcome: "rejected" });
+    const { store } = makeStore({ guideState: async () => stateWith(), decideProposal });
+    await store.getState().actions.loadGuide(true);
+
+    await store.getState().actions.decideProposal("proposal-1", "reject");
+    expect(store.getState().guide).toMatchObject({
+      busy: null,
+      outcome: { kind: "failed", message: null },
+    });
+    await flush();
+
+    await store.getState().actions.decideProposal("proposal-1", "reject");
+    expect(decideProposal).toHaveBeenLastCalledWith("proposal-1", {
+      decision: "reject",
+      sessionId: "session-1",
+    });
+    expect(store.getState().guide).toMatchObject({ proposals: [], outcome: { kind: "rejected" } });
+  });
+
+  it("見回りを止めると、依頼の状態を入れる", async () => {
+    const stopped = {
+      ...watch,
+      status: "stopped" as const,
+      stoppedAt: "2026-08-10T09:00:00+09:00",
+    };
+    const setTripWatch = vi.fn(async () => stopped);
+    const { store } = makeStore({ guideState: async () => stateWith(), setTripWatch });
+    await store.getState().actions.loadGuide(true);
+    expect(store.getState().guide.watch?.status).toBe("active");
+
+    await store.getState().actions.setGuideWatch("stop");
+
+    expect(setTripWatch).toHaveBeenCalledWith({ sessionId: "session-1", action: "stop" });
+    expect(store.getState().guide.watch).toEqual(stopped);
+  });
+
+  it("既読の応答の未読の数が手元と違えば（上限で押し出された通知がある）、読み直す", async () => {
+    const notice = {
+      id: "n1",
+      tripId: itinerary.id,
+      fingerprint: "b".repeat(16),
+      content: {
+        kind: "weather" as const,
+        date: "2026-08-16",
+        condition: "rain" as const,
+        precipitationPercent: 70,
+      },
+      sources: [
+        { url: "https://example.com/weather", checkedAt: "2026-08-10", confidence: "official" },
+      ],
+      checkedAt: "2026-08-10T06:00:00+09:00",
+      summary: "雨の予報です",
+      affectedItemIds: [],
+      proposalId: null,
+      createdAt: "2026-08-10T06:01:00+09:00",
+      readAt: null,
+    } as const;
+    const guideState = vi.fn(async () =>
+      stateWith({
+        proposals: [],
+        notices: [{ ...notice, sources: [...notice.sources], affectedItemIds: [] }],
+      }),
+    );
+    const markNoticesRead = vi.fn(async () => ({ unread: 1 }));
+    const { store } = makeStore({ guideState, markNoticesRead });
+    await store.getState().actions.loadGuide(true);
+
+    store.getState().actions.openStall("weather");
+    await flush();
+
+    expect(guideState).toHaveBeenCalledTimes(2);
+  });
+});
