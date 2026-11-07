@@ -1,11 +1,13 @@
 import {
   buildJsonRetryPrompt,
+  checkPublicWebUrl,
   createWebActivityLog,
   parseJsonWithSchema,
   STRICT_JSON_RULES,
   ungroundedSources,
 } from "@matsuri-ikoka/agent-kit";
 import { z } from "zod";
+import { type ResearchAnswerRefusal, researchAnswerRefusal } from "../guide/researchAnswer";
 import type { GuideWebReport, GuideWebResearcher } from "../guide/tools";
 import type { ResolveHost } from "./addressGuard";
 import { sanitizeMessage } from "./briefing";
@@ -22,6 +24,7 @@ import {
 // （docs/spec/agent-runtime.md の「ガイド」）。動かし方（開発環境から切り離す・WebFetch の宛先を確かめる・
 // JSON の差し戻し）は確定前の再確認と同じ。この役は利用者の情報を持たず、質問だけを受け取る。
 // ガイドに渡すのは、調べ役が自分の言葉で書いた短い答えと、実際に読んだページの URL だけ（ページの文章や題名は渡さない）。
+// 答えに URL・連絡先・指示の文・ページの写しがあれば捨てる。出典は報告の文字列を使わず、実際に読みに行った URL にする。
 
 /** 答えの長さの上限 */
 export const GUIDE_RESEARCH_ANSWER_LENGTH = 300;
@@ -52,6 +55,31 @@ const READ_NUDGE =
 
 const OPEN_QUESTION = "<質問>";
 const CLOSE_QUESTION = "</質問>";
+
+/**
+ * 実際に読みに行った URL のうち、報告に挙がった公開のページ。同じページの綴り違いは1つにする。
+ * 報告の文字列をそのまま使うと、`https://www.city.example.jp@evil.example/p` のような見せかけや、
+ * http(s) 以外の URL が出典に載る
+ */
+export function readPagesInReport(
+  reported: readonly { url: string }[],
+  fetchedUrls: readonly string[],
+): string[] {
+  const urls: string[] = [];
+  for (const url of fetchedUrls) {
+    if (!checkPublicWebUrl(url).ok) continue;
+    // ungroundedSources は「読んだ URL の一覧に、この出典があるか」を比べる。ここでは逆向きに使う
+    if (
+      ungroundedSources(
+        [{ url }],
+        reported.map((source) => source.url),
+      ).length > 0
+    )
+      continue;
+    if (ungroundedSources([{ url }], urls).length > 0) urls.push(url);
+  }
+  return urls;
+}
 
 export function createWebGuideResearcher(deps: {
   prompt: string;
@@ -91,6 +119,7 @@ export function createWebGuideResearcher(deps: {
       const started = Date.now();
       let costUsd = 0;
       let found = false;
+      let rejected: ResearchAnswerRefusal | null = null;
       const ask = async (prompt: string, withTools: boolean) => {
         const reply = await finalText(deps.query, prompt, options(withTools), onActivity);
         costUsd += reply.costUsd;
@@ -116,11 +145,13 @@ export function createWebGuideResearcher(deps: {
         }
         const report = parsed.value;
         // 実際に読んでいないページは出典にしない。読んだページがなければ、調べたことにしない
-        const unread = new Set(ungroundedSources(report.sources, log.fetchedUrls));
-        const urls = [
-          ...new Set(report.sources.map((s) => s.url).filter((url) => !unread.has(url))),
-        ];
+        const urls = readPagesInReport(report.sources, log.fetchedUrls);
         if (!report.found || report.answer === undefined || urls.length === 0) return null;
+        rejected = researchAnswerRefusal(
+          report.answer,
+          pages.map((page) => page.text),
+        );
+        if (rejected !== null) return null;
         found = true;
         return { answer: sanitizeMessage(report.answer), urls };
       } finally {
@@ -130,6 +161,7 @@ export function createWebGuideResearcher(deps: {
           JSON.stringify({
             kind: "guide_research",
             found,
+            ...(rejected === null ? {} : { rejected }),
             totalCostUsd: costUsd,
             elapsedMs: Date.now() - started,
             searches: log.searches.length,

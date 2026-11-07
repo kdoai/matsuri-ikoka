@@ -24,7 +24,7 @@ import { runTool } from "../tools/mcpServer";
 import { testToolContext } from "../tools/testContext";
 import { sessionGuideData } from "./data";
 import { proposalContentHash } from "./proposal";
-import { newGuideTurn } from "./runner";
+import { MAX_TURN_SOURCES, newGuideTurn, noteTurnSource, turnSources } from "./runner";
 import {
   GUIDE_TOOLS,
   type GuideTool,
@@ -185,6 +185,21 @@ describe("read_trip", () => {
     expect(turn.sources.size).toBeGreaterThan(0);
   });
 
+  it("保存してある祭りのデータの出典には、今の時刻を付けず、出典自身の確認した日を使う", async () => {
+    const { ctx, turn } = setup();
+
+    await runTool(readTrip, {}, ctx);
+
+    const attached = turnSources(turn);
+    const newest = Math.max(
+      ...(attached?.sources ?? []).map((source) =>
+        Date.parse(`${source.checkedAt}T00:00:00+09:00`),
+      ),
+    );
+    expect(Date.parse(attached?.checkedAt ?? "")).toBe(newest);
+    expect(attached?.checkedAt).not.toBe(ctx.tools.now());
+  });
+
   it("旅にない日は断る", async () => {
     const { ctx } = setup();
     const result = await runTool(readTrip, { date: "2030-01-01" }, ctx);
@@ -215,7 +230,7 @@ describe("list_notices", () => {
     expect((first.notices as unknown[]).length).toBe(2);
     expect(events.map((event) => event.type)).toEqual(["guide.notice", "guide.proposal"]);
     expect(turn.sources.size).toBe(1);
-    expect(turn.checkedAt).toBe(fictionalNotice().checkedAt);
+    expect(turnSources(turn)?.checkedAt).toBe(fictionalNotice().checkedAt);
     expect(JSON.stringify(first)).not.toContain(fictionalNotice().tripId);
   });
 });
@@ -241,19 +256,60 @@ describe("research_web", () => {
     expect(turn.sources.has(report.urls[0] as string)).toBe(true);
   });
 
-  it("2つ以上のページを読んだら確度を上げる", async () => {
-    const { ctx } = setup({
+  it("2つ以上の情報源を読んだら確度を上げ、同じサイトの別のページでは上げない", async () => {
+    const run = async (urls: string[]) => {
+      const { ctx } = setup({
+        researcher: { research: async () => ({ answer: "開催します", urls }) },
+      });
+      const output = outputOf(
+        await runTool(researchWeb, { question: "開催の予定を知りたい" }, ctx),
+      );
+      return (output.sources as { confidence: string }[])[0]?.confidence;
+    };
+
+    expect(await run(["https://example.com/a", "https://example.org/b"])).toBe("corroborated");
+    expect(await run(["https://example.com/a", "https://www.example.com/b"])).toBe("single");
+  });
+
+  it("出典が多いときは、Web と通知の出典を、祭りのデータより先に添える", async () => {
+    const { ctx, data, turn } = setup({
       researcher: {
-        research: async () => ({
-          answer: "開催します",
-          urls: ["https://example.com/a", "https://example.com/b"],
-        }),
+        research: async () => ({ answer: "開催します", urls: ["https://example.org/web"] }),
       },
     });
+    await data.putNotice({ ...fictionalNotice(), checkedAt: "2026-08-01T06:05:00+09:00" });
+    for (let index = 0; index < MAX_TURN_SOURCES + 2; index += 1) {
+      noteTurnSource(turn, {
+        source: {
+          url: `https://example.com/stored/${index}`,
+          checkedAt: "2026-07-01",
+          confidence: "official",
+        },
+        rank: "stored",
+        checkedAt: "2026-07-01T00:00:00+09:00",
+      });
+    }
 
-    const output = outputOf(await runTool(researchWeb, { question: "開催の予定を知りたい" }, ctx));
+    await runTool(listNotices, {}, ctx);
+    await runTool(researchWeb, { question: "開催の予定を知りたい" }, ctx);
 
-    expect((output.sources as { confidence: string }[])[0]?.confidence).toBe("corroborated");
+    const attached = turnSources(turn);
+    const urls = attached?.sources.map((source) => source.url) ?? [];
+    expect(urls).toHaveLength(MAX_TURN_SOURCES);
+    expect(urls[0]).toBe(fictionalNotice().sources[0]?.url);
+    expect(urls[1]).toBe("https://example.org/web");
+    // 調べた時刻は、この発言で調べた時刻
+    expect(attached?.checkedAt).toBe(ctx.tools.now());
+  });
+
+  it("通知だけの発言の調べた時刻は、通知の時刻で、保存してある出典に負けない", async () => {
+    const { ctx, data, turn } = setup();
+    await data.putNotice(fictionalNotice());
+
+    await runTool(readTrip, {}, ctx);
+    await runTool(listNotices, {}, ctx);
+
+    expect(turnSources(turn)?.checkedAt).toBe(fictionalNotice().checkedAt);
   });
 
   it("調べの費用を、この発言の費用に足す", async () => {
@@ -329,6 +385,8 @@ describe("ページの中の指示に従わない（架空のページ）", () =
     });
 
     const answer = outputOf(await runTool(researchWeb, { question: "雨のときの開催" }, ctx));
+    // ページの指示の入った答えは、ガイドに渡さず、分からなかったことにする
+    expect(answer).toMatchObject({ status: "not_found", answer: null });
     const saved = outputOf(
       await runTool(
         saveMemo,
@@ -337,8 +395,7 @@ describe("ページの中の指示に従わない（架空のページ）", () =
       ),
     );
 
-    // 調べ役の答えはデータとして返るだけで、ほかの動きは起きない
-    expect(answer.answer).toBe(INJECTED);
+    // ページの指示を残そうとしても、利用者の発言にないので残らない
     expect(saved.saved).toBe(false);
     expect(await data.memo()).toEqual([]);
     expect(events.filter((event) => event.type === "guide.memo")).toEqual([]);

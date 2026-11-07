@@ -52,7 +52,13 @@ import {
   proposalContentHash,
   proposalExpiresAt,
 } from "./proposal";
-import type { EmitGuideEvent, GuideTurnState } from "./runner";
+import { researchAnswerRefusal } from "./researchAnswer";
+import {
+  type EmitGuideEvent,
+  type GuideTurnState,
+  noteTurnSource,
+  type SourceRank,
+} from "./runner";
 
 // ガイドのツール（docs/spec/guide.md の「ガイドのツール」）。
 // - 入力に旅の ID や利用者の ID を持たせない。旅と利用者は、発言ごとに作る文脈（GuideToolContext）だけから決める。
@@ -116,19 +122,31 @@ function defineGuideTool<Shape extends z.ZodRawShape, Output extends Record<stri
   };
 }
 
-/** 返答に添える出典の数の上限 */
-const MAX_TURN_SOURCES = 8;
+/** 出典自身の確認した日を、時刻にする（日本の日付の0時） */
+const dateAsTime = (date: string): string => `${date}T00:00:00+09:00`;
 
-/** 返答に添える出典を控える。形の合わないものと、数を超えた分は控えない */
-function noteSources(ctx: GuideToolContext, values: readonly unknown[], checkedAt: string): void {
-  const { turn } = ctx;
+/**
+ * 返答に添える出典を控える。形の合わないものは控えない。
+ * - この発言で調べたもの・通知は、渡された時刻
+ * - 天気・行き方・周りの店は、とっておいた結果のことがあるので、今日確かめた出典だけ今の時刻
+ * - 保存してある祭りのデータは、調べていないので、出典自身の確認した日
+ */
+function noteSources(
+  ctx: GuideToolContext,
+  values: readonly unknown[],
+  rank: SourceRank,
+  checkedAt?: string,
+): void {
   for (const value of values) {
-    if (turn.sources.size >= MAX_TURN_SOURCES) break;
     const parsed = SourceSchema.safeParse(value);
-    if (parsed.success) turn.sources.set(parsed.data.url, parsed.data);
-  }
-  if (turn.checkedAt === null || Date.parse(checkedAt) > Date.parse(turn.checkedAt)) {
-    turn.checkedAt = checkedAt;
+    if (!parsed.success) continue;
+    const source = parsed.data;
+    const fresh = rank === "lookup" && source.checkedAt === ctx.tools.today();
+    noteTurnSource(ctx.turn, {
+      source,
+      rank,
+      checkedAt: checkedAt ?? (fresh ? ctx.tools.now() : dateAsTime(source.checkedAt)),
+    });
   }
 }
 
@@ -180,9 +198,8 @@ export const readTrip = defineGuideTool({
     const festival = ctx.tools.festivals.get(itinerary.mainFestivalId);
     const mainDay = mainFestivalDay(itinerary).date;
     const occurrence = festival === undefined ? null : occurrenceOn(festival, mainDay);
-    const now = ctx.tools.now();
     if (festival !== undefined) {
-      noteSources(ctx, [...(occurrence?.sources ?? []), ...festival.etiquette.sources], now);
+      noteSources(ctx, [...(occurrence?.sources ?? []), ...festival.etiquette.sources], "stored");
     }
     const detail =
       args.date === undefined
@@ -262,7 +279,7 @@ export const listNotices = defineGuideTool({
     const now = ctx.tools.now();
     const version = ctx.trip.itinerary.version;
     for (const notice of unread.slice(0, MAX_LISTED_NOTICES)) {
-      noteSources(ctx, notice.sources, notice.checkedAt);
+      noteSources(ctx, notice.sources, "checked", notice.checkedAt);
       if (!ctx.turn.shownNotices.has(notice.id)) {
         ctx.turn.shownNotices.add(notice.id);
         ctx.emit({ type: "guide.notice", data: { notice } });
@@ -292,6 +309,11 @@ export const listNotices = defineGuideTool({
   },
 });
 
+/** 情報源の数。同じサイトの別のページは1つと数える */
+function distinctHosts(urls: readonly string[]): number {
+  return new Set(urls.map((url) => new URL(url).hostname.replace(/^www\./, ""))).size;
+}
+
 export const researchWeb = defineGuideTool({
   name: "research_web",
   description:
@@ -320,14 +342,19 @@ export const researchWeb = defineGuideTool({
       ),
     ).catch(() => null);
     if (signal.aborted) throw new ToolError("止められたので、調べた結果は使いません");
-    if (report === null || report.urls.length === 0) {
+    // 答えはガイドのプロンプトに入るので、URL・連絡先・指示の文があれば、調べ役がだれでも通さない
+    if (
+      report === null ||
+      report.urls.length === 0 ||
+      researchAnswerRefusal(report.answer) !== null
+    ) {
       return { status: "not_found" as const, answer: null, sources: [] };
     }
     const now = ctx.tools.now();
     const checkedAt = ctx.tools.today();
-    const confidence = report.urls.length >= 2 ? "corroborated" : "single";
+    const confidence = distinctHosts(report.urls) >= 2 ? "corroborated" : "single";
     const sources = report.urls.map((url) => ({ url, checkedAt, confidence }));
-    noteSources(ctx, sources, now);
+    noteSources(ctx, sources, "checked", now);
     return { status: "found" as const, answer: report.answer, sources, checkedAt: now };
   },
 });
@@ -350,7 +377,7 @@ export const guideGetWeather = defineGuideTool({
       ),
     );
     const weather = output.weather as { status?: string; source?: unknown };
-    if (weather.status === "forecast") noteSources(ctx, [weather.source], ctx.tools.now());
+    if (weather.status === "forecast") noteSources(ctx, [weather.source], "lookup");
     return output;
   },
 });
@@ -389,7 +416,7 @@ export const guideResearchRoute = defineGuideTool({
     const { rules: _rules, ...route } = output as Record<string, unknown>;
     const researched = route.researched as { sources?: unknown[] } | null | undefined;
     if (researched?.sources !== undefined) {
-      noteSources(ctx, researched.sources, ctx.tools.now());
+      noteSources(ctx, researched.sources, "lookup");
     }
     return route;
   },
@@ -435,7 +462,7 @@ export const guideSearchNearby = defineGuideTool({
     noteSources(
       ctx,
       spots.flatMap((spot) => (spot as { sources?: unknown[] }).sources ?? []),
-      ctx.tools.now(),
+      "lookup",
     );
     return { ...found, spots };
   },

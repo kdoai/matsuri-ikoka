@@ -12,7 +12,7 @@ import { createUnavailableLodging } from "../tools/lodging";
 import { unavailableVerifier } from "../tools/verifier";
 import { ClaudeGuideRunner } from "./claudeRunner";
 import { sessionGuideData } from "./data";
-import { newGuideTurn } from "./runner";
+import { newGuideTurn, noteTurnSource } from "./runner";
 
 // Agent SDK の代わりに、決まったメッセージを流し、フックを呼ぶ偽物の query で確かめる
 
@@ -274,8 +274,7 @@ describe("ClaudeGuideRunner", () => {
 
     const events: GuideSseEvent[] = [];
     const turn = newGuideTurn();
-    turn.sources.set(source.url, source);
-    turn.checkedAt = "2026-08-03T10:00:00+09:00";
+    noteTurnSource(turn, { source, rank: "checked", checkedAt: "2026-08-03T10:00:00+09:00" });
     const { session, itinerary } = runner;
     await new ClaudeGuideRunner({
       prompt: "ガイドの決まり",

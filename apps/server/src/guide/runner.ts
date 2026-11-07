@@ -19,13 +19,28 @@ import type { GuideTrip } from "./data";
 
 export type EmitGuideEvent = (event: GuideSseEvent) => void;
 
+/**
+ * 返答に添える出典の優先。checked：この発言で Web を調べたものと、検問を通った通知 /
+ * lookup：天気・行き方・周りの店 / stored：保存してある祭りのデータ。数を超えたら後ろから落とす
+ */
+export const SOURCE_RANKS = { checked: 0, lookup: 1, stored: 2 } as const;
+export type SourceRank = keyof typeof SOURCE_RANKS;
+
+/** 返答に添える出典の数の上限 */
+export const MAX_TURN_SOURCES = 8;
+
+export interface NotedSource {
+  source: Source;
+  rank: SourceRank;
+  /** その出典を確かめた時刻 */
+  checkedAt: string;
+}
+
 /** 1回の発言の間に起きたこと */
 export interface GuideTurnState {
   toolCalls: GuideToolName[];
-  /** 返答に添える出典。キーは URL */
-  sources: Map<string, Source>;
-  /** 調べた時刻（いちばん新しいもの） */
-  checkedAt: string | null;
+  /** 返答に添える出典の候補。キーは URL */
+  sources: Map<string, NotedSource>;
   /** この発言で知らせた通知と提案（同じものを2度送らない） */
   shownNotices: Set<string>;
   shownProposals: Set<string>;
@@ -35,10 +50,45 @@ export function newGuideTurn(): GuideTurnState {
   return {
     toolCalls: [],
     sources: new Map(),
-    checkedAt: null,
     shownNotices: new Set(),
     shownProposals: new Set(),
   };
+}
+
+/** 出典を控える。同じ URL なら、優先の高いほうと、新しい時刻を残す */
+export function noteTurnSource(turn: GuideTurnState, noted: NotedSource): void {
+  const current = turn.sources.get(noted.source.url);
+  if (current === undefined) {
+    turn.sources.set(noted.source.url, noted);
+    return;
+  }
+  const better = SOURCE_RANKS[noted.rank] < SOURCE_RANKS[current.rank];
+  turn.sources.set(noted.source.url, {
+    source: better ? noted.source : current.source,
+    rank: better ? noted.rank : current.rank,
+    checkedAt:
+      Date.parse(noted.checkedAt) > Date.parse(current.checkedAt)
+        ? noted.checkedAt
+        : current.checkedAt,
+  });
+}
+
+/**
+ * 返答に添える出典と、調べた時刻。優先の高いものから上限まで選び、時刻は選んだもののいちばん新しい値にする。
+ * 出典がなければ null
+ */
+export function turnSources(turn: GuideTurnState): { sources: Source[]; checkedAt: string } | null {
+  const chosen = [...turn.sources.values()]
+    .sort((a, b) => SOURCE_RANKS[a.rank] - SOURCE_RANKS[b.rank])
+    .slice(0, MAX_TURN_SOURCES);
+  const [first, ...rest] = chosen;
+  if (first === undefined) return null;
+  const checkedAt = rest.reduce(
+    (newest, noted) =>
+      Date.parse(noted.checkedAt) > Date.parse(newest) ? noted.checkedAt : newest,
+    first.checkedAt,
+  );
+  return { sources: chosen.map((noted) => noted.source), checkedAt };
 }
 
 export interface GuideTurnInput {

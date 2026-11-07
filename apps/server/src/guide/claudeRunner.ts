@@ -21,7 +21,7 @@ import { createGuideHooks } from "./hooks";
 import { createGuideMcpServer } from "./mcpServer";
 import { guideTurnPrompt } from "./prompt";
 import { isLivePendingProposal } from "./proposal";
-import type { EmitGuideEvent, GuideRunner, GuideTurnInput } from "./runner";
+import { type EmitGuideEvent, type GuideRunner, type GuideTurnInput, turnSources } from "./runner";
 import type { GuideToolContext, GuideWebResearcher } from "./tools";
 
 // live：Agent SDK でガイドを動かす。接客エージェントと同じように開発環境から切り離す（agent/options.ts）。
@@ -211,11 +211,9 @@ export class ClaudeGuideRunner implements GuideRunner {
       }
       // 調べて答えたら、出典と調べた時刻を添える。出典はツールの結果からコードが決め、モデルには書かせない
       const messageId = (reply as ReplyStream | null)?.lastMessageId ?? null;
-      if (messageId !== null && turn.sources.size > 0 && turn.checkedAt !== null) {
-        counted({
-          type: "guide.sources",
-          data: { messageId, sources: [...turn.sources.values()], checkedAt: turn.checkedAt },
-        });
+      const attached = turnSources(turn);
+      if (messageId !== null && attached !== null) {
+        counted({ type: "guide.sources", data: { messageId, ...attached } });
       }
     } finally {
       // 費用・トークン・所要時間・呼んだ道具を残す。会話の文は残さない
