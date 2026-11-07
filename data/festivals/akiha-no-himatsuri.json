@@ -115,6 +115,18 @@
       "note": "火まつりの1日目。例年14:30 御阿禮祭（神社の年中祭事による。2026年の神社の発表はまだない）。上社行きの臨時バスは西鹿島駅10:00発、上社13:30発の1往復で、2026年12月15日も運行する",
       "sources": [
         {
+          "url": "https://www.akihasanhongu.jp/himatsuri/",
+          "title": "秋葉山本宮秋葉神社 秋葉の火まつり（防火祭）",
+          "checkedAt": "2026-11-07",
+          "confidence": "official"
+        },
+        {
+          "url": "https://akihasanhongu.jp/himatsuri/index.html",
+          "title": "秋葉山本宮秋葉神社 秋葉の火まつり（防火祭）",
+          "checkedAt": "2026-11-07",
+          "confidence": "official"
+        },
+        {
           "url": "https://www.akihasanhongu.jp/saiji/index.html",
           "title": "秋葉山本宮秋葉神社 年中祭事（12月15日 午後2時半 御阿禮祭）",
           "checkedAt": "2026-11-04",
@@ -268,5 +280,6 @@
     "屋台・振る舞いの有無",
     "見物人の数の公表値（るるぶ&more.に前年約7,000人とあるだけ）",
     "祭りの前後に寄れる店や観光地（同じ日に火渡りを行う秋葉寺は、営業時間などを公式で確かめられていない）"
-  ]
+  ],
+  "optOut": false
 }
