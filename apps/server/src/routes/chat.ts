@@ -277,9 +277,10 @@ export function registerChatRoutes(routes: SecureRoutes, deps: ChatDeps) {
           409,
         );
       }
+      // 確かめてから流し始める（busy にする）までの間に待ちを挟まない。保存は流している間に行い、
+      // 保存を待つ間に届いた発言は 409 で断る（進行中の返事の busy と stopTurn を上書きしない）
       existing.preferences = request.preferences;
-      await deps.persistence.saveSession(existing);
-      return streamTurn(c, existing, async () => {}, timing);
+      return streamTurn(c, existing, persistOf(deps, existing), timing);
     }
     const opened = reserveTurn(c, deps, existing, viewer);
     if (opened instanceof Response) return opened;
