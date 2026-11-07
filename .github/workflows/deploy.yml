@@ -145,9 +145,18 @@ jobs:
       - name: サービスに合言葉が設定されているかを調べる
         id: passcode
         run: |
-          names="$(gcloud run services describe "$SERVICE" \
-            --project "$PROJECT_ID" --region "$REGION" --format=json \
-            | jq -r '[.spec.template.spec.containers[0].env[]?.name] | join(",")')"
+          set -o pipefail
+          # 読めないまま進むと「合言葉なし」と取り違えるので、読めなければ理由を書いて止める
+          if ! service="$(gcloud run services describe "$SERVICE" \
+            --project "$PROJECT_ID" --region "$REGION" --format=json)"; then
+            echo "::error::サービスの設定を読めなかったので、合言葉の有無を決められません" >&2
+            exit 1
+          fi
+          names="$(jq -r '[.spec.template.spec.containers[0].env[]?.name] | join(",")' <<<"$service")"
+          if [[ -z "$names" ]]; then
+            echo "::error::サービスに環境変数が1つもありません（新しい版を置いたあとは、少なくとも MATSURI_AGENT_MODE がある）" >&2
+            exit 1
+          fi
           if [[ ",${names}," == *",ACCESS_PASSCODE,"* ]]; then set=true; else set=false; fi
           echo "set=${set}" >> "$GITHUB_OUTPUT"
           echo "names=${names}" >> "$GITHUB_OUTPUT"
