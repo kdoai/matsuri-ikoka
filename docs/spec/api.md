@@ -136,7 +136,7 @@ SSE を始める前に断るときと、JSON を返す API が失敗したとき
 - `message` は前後の空白を除いて1〜1000字
 - `preferences` は画面で選んでいるこだわり（[旅程の仕様](itinerary.md#こだわりの効果)）
 - `anchor`（任意）は、祭りから探して決めた祭りと行く日（`TripAnchorSchema`）。あれば、祭りを固定して旅程を組む。祭りと日を確かめ（断り方は上の `POST /api/festival-trips/preview` と同じ）、相談の状態に残すので、次の発言からは送らなくてよい。固定を外すのはコンシェルジュ（ほかの祭りに変えたいと言われたとき）か、中止と分かったときで、そのあとに同じ `anchor` を送ると固定し直す
-- `search`（任意）は、候補の窓の次の手（ボタン）から送るときの、変えて探し直す条件（`SearchRetrySchema`：`when`・`maxTravelMinutes`・`nights`・`widen` のうち1つ以上）。サーバーは聞き取った条件に書き足し、その発言の `search_festivals` はこの条件を正として使う（[条件の守り方](agents.md#条件の守り方)）
+- `search`（任意）は、候補の窓の次の手（ボタン）から送るときの、変えて探し直す条件（`SearchRetrySchema`：`when`・`maxTravelMinutes`・`nights`・`widen` のうち1つ以上）。サーバーは聞き取った条件に書き足し（`widen` も残し、次の探し直しに引き継ぐ）、その発言の `search_festivals` はこの条件を正として使う（[条件の守り方](agents.md#条件の守り方)）
 
 ## SSE イベント
 

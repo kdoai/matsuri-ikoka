@@ -455,7 +455,8 @@ function withCheck(candidate: FestivalCandidate, check: CandidateCheck | null): 
 
 // ---------------------------------------------------------------------------
 
-const NoteConditionsInputSchema = PartialTripConditionsSchema.extend({
+// 行き先を広げる段階（widen）は、了承を得て search_festivals で広げたときだけ書き留める（ここでは受け取らない）
+const NoteConditionsInputSchema = PartialTripConditionsSchema.omit({ widen: true }).extend({
   nights: NightsSchema.optional().describe(
     "泊数。0 は日帰り・週末のお出かけ。近場のお出かけと分かるときは 0",
   ),
@@ -497,6 +498,13 @@ const NoteConditionsInputSchema = PartialTripConditionsSchema.extend({
     ),
 });
 
+/** 行き先の名前の並びが同じか（順は問わない） */
+function sameNames(a: readonly string[], b: readonly string[]): boolean {
+  const left = new Set(a.map((name) => name.trim()));
+  const right = new Set(b.map((name) => name.trim()));
+  return left.size === right.size && [...left].every((name) => right.has(name));
+}
+
 /** 行き先の名前を都道府県に直す。都道府県にも地方にも当たらない名前はエージェントに返す */
 function destinationOf(names: readonly string[]) {
   const resolved = resolveDestination(names);
@@ -521,8 +529,13 @@ export const noteConditions = defineTool({
     const given = Object.fromEntries(
       Object.entries(noted).filter(([, value]) => value !== undefined),
     );
-    if (args.destinations !== undefined) destinationOf(args.destinations);
-    const merged = PartialTripConditionsSchema.safeParse({ ...ctx.session.conditions, ...given });
+    const kept = { ...ctx.session.conditions };
+    if (args.destinations !== undefined) {
+      destinationOf(args.destinations);
+      // 行き先を言い直したら（聞き取りに戻ったときも）、広げた段階は元に戻す
+      delete kept.widen;
+    }
+    const merged = PartialTripConditionsSchema.safeParse({ ...kept, ...given });
     if (!merged.success) throw new ToolError("条件の形が正しくありません");
     ctx.session.conditions = merged.data;
     if (release === true) releaseAnchor(ctx);
@@ -578,12 +591,22 @@ export const searchFestivals = defineTool({
     const nights = retry?.nights ?? args.nights;
     const maxTravelMinutes =
       retry?.maxTravelMinutes ?? args.maxTravelMinutes ?? session.conditions.maxTravelMinutes;
-    const widen = retry?.widen ?? args.widen ?? "area";
     const destinations = args.destinations ?? session.conditions.destinations ?? [];
     const prefectures = destinationOf(destinations);
+    // 了承を得て広げた段階は相談の条件に残し、探し直すときも引き継ぐ。行き先が変わったら元に戻す
+    const sameDestinations =
+      args.destinations === undefined ||
+      sameNames(args.destinations, session.conditions.destinations ?? []);
+    const widen =
+      retry?.widen ??
+      args.widen ??
+      (sameDestinations ? session.conditions.widen : undefined) ??
+      "area";
     // 聞き取りで書き留めたほかの条件（旅のかたち・ペースなど）は残す
+    const { widen: _previous, ...kept } = session.conditions;
     session.conditions = {
-      ...session.conditions,
+      ...kept,
+      ...(widen === "area" ? {} : { widen }),
       when,
       origin: args.origin,
       nights,

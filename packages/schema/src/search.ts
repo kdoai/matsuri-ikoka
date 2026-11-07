@@ -1,15 +1,16 @@
 import { z } from "zod";
 import { MinuteRangeSchema } from "./common";
-import { DateWishSchema, MaxTravelMinutesSchema, NightsSchema } from "./preferences";
+import {
+  DateWishSchema,
+  DestinationWidenSchema,
+  MaxTravelMinutesSchema,
+  NightsSchema,
+} from "./preferences";
 
 // 祭りを探すときの条件の検査と、条件に合う祭りがないときの次の手（docs/spec/agents.md の「条件の守り方」）。
 // 条件に照らした値・外れた理由・次の手は、どれもコードで決める。モデルには判断させない。
 
 const TextSchema = z.string().min(1);
-
-/** 行き先をどこまで広げてよいか：選んだ地域だけ / 隣接する県まで / 全国からランダムに */
-export const DESTINATION_WIDEN_STAGES = ["area", "neighbor", "nationwide"] as const;
-export const DestinationWidenSchema = z.enum(DESTINATION_WIDEN_STAGES);
 
 /**
  * 出発の駅からの片道の所要時間を、上限と比べた結果：
@@ -93,7 +94,6 @@ export const SearchSuggestionSchema = z
     }
   });
 
-export type DestinationWiden = z.infer<typeof DestinationWidenSchema>;
 export type TravelFit = z.infer<typeof TravelFitSchema>;
 export type CandidateTravel = z.infer<typeof CandidateTravelSchema>;
 export type SearchCondition = z.infer<typeof SearchConditionSchema>;

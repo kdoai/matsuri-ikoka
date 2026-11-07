@@ -400,6 +400,37 @@ describe("search_festivals の行き先", () => {
     expect(output.destination).toMatchObject({ stage: "nationwide" });
   });
 
+  it("広げた段階は相談の条件に残り、次の手（ボタン）で探し直しても引き継ぐ", async () => {
+    const ctx = testToolContext([
+      at("gifu", "岐阜県"),
+      at("gifu-later", "岐阜県", "2026-08-22"),
+      at("shiga", "滋賀県"),
+    ]);
+    ctx.session.conditions = { destinations: ["富山県"] };
+    const widened = await searchFestivals.run({ ...base, widen: "neighbor" }, ctx, signal);
+    expect(ids(widened)).toEqual(["gifu"]);
+    expect(ctx.session.conditions.widen).toBe("neighbor");
+
+    // 次の週末のボタン：ボタンの条件は日程だけで、widen はモデルも渡さない
+    ctx.turn.searchRetry = { when: { kind: "range", from: "2026-08-22", to: "2026-08-23" } };
+    const retried = await searchFestivals.run({ ...base, destinations: ["富山県"] }, ctx, signal);
+    expect(retried.destination).toMatchObject({ stage: "neighbor", needsConsent: null });
+    expect(ids(retried)).toContain("gifu-later");
+    expect(ctx.session.conditions.widen).toBe("neighbor");
+  });
+
+  it("行き先を変えたら、広げた段階を元に戻す", async () => {
+    const ctx = testToolContext([at("gifu", "岐阜県"), at("shiga", "滋賀県")]);
+    ctx.session.conditions = { destinations: ["富山県"], widen: "neighbor" };
+    const output = await searchFestivals.run({ ...base, destinations: ["沖縄県"] }, ctx, signal);
+    expect(output.destination).toMatchObject({ needsConsent: "nationwide" });
+    expect(ctx.session.conditions.widen).toBeUndefined();
+
+    ctx.session.conditions = { destinations: ["富山県"], widen: "nationwide" };
+    await noteConditions.run({ destinations: ["富山県"] }, ctx, signal);
+    expect(ctx.session.conditions.widen).toBeUndefined();
+  });
+
   it("都道府県にも地方にも当たらない行き先は、推測せずに失敗で返す", async () => {
     const ctx = testToolContext([at("toyama", "富山県")]);
     await expect(

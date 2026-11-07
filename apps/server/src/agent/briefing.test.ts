@@ -85,6 +85,13 @@ describe("店の記録", () => {
     expect(shopRecord(context)).toContain("交通手段 新幹線・レンタカー");
   });
 
+  it("了承を得て広げた行き先の段階を載せる", () => {
+    const context = ctx();
+    context.session.conditions = { destinations: ["富山県"], widen: "neighbor" };
+
+    expect(shopRecord(context)).toContain("行き先 富山県 / 行き先の広げ方 隣の県まで（了承済み）");
+  });
+
   it("旅程係には、今の旅程の全体と到着の余裕を渡す。調査係には渡さない", () => {
     const context = ctx();
     const itinerary = fictionalItinerary();
