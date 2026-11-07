@@ -12,7 +12,7 @@ MATSURI IKOKA の画面に出る 3D の店「たびや」と店の外の縁日�
 blender -b --factory-startup --python-exit-code 1 -P assets/3d/scripts/build.py -- --target all
 ```
 
-`--target` で一部だけ作り直せます（`--target interior,optimize` のようにカンマ区切りで複数指定も可）。
+`--target` で一部だけ作り直せます（`--target interior,optimize` のようにカンマ区切りで複数指定も可）。このときの `optimize` は `models/` のモデルを消しません。今はもう作らないモデルを `models/` から消すのは、`--target all` のときだけです。
 `--python-exit-code 1` を付けると、途中で失敗したときに終了コードが 0 以外になります。
 
 | target | 内容 | 出力 |

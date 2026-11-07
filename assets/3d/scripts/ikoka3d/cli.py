@@ -274,7 +274,8 @@ def target_optimize(args):
     missing = only - raw
     if missing:
         raise SystemExit(f"--only: not built yet: {', '.join(sorted(missing))}")
-    if os.path.isdir(args.dist) and not only:
+    # Only a full rebuild has made every model, so only then does a missing raw file mean the model is gone.
+    if os.path.isdir(args.dist) and args.target == "all" and not args.no_export and not only:
         for name in os.listdir(args.dist):
             if name.endswith(".glb") and name not in raw:
                 os.remove(os.path.join(args.dist, name))      # files from characters that no longer exist
