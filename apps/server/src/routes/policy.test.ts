@@ -66,6 +66,11 @@ const ROUTES: [string, string, RoutePolicy][] = [
   ["POST", "/api/trips/:id/share", "owner"],
   ["DELETE", "/api/trips/:id", "owner"],
   ["DELETE", "/api/me/trips", "owner"],
+  ["POST", "/api/guide/open", "owner"],
+  ["POST", "/api/guide/state", "consultation"],
+  ["POST", "/api/guide/chat", "consultation"],
+  ["POST", "/api/guide/memo/:id", "consultation"],
+  ["POST", "/api/guide/memo/:id/delete", "consultation"],
 ];
 
 const POLICY_LABELS: Record<RoutePolicy, string> = {

@@ -33,6 +33,8 @@ const prompts: AgentPrompts = {
   lodging: "lg",
   evaluator: "ev",
   "wish-reader": "wr",
+  guide: "ガイド",
+  "guide-research": "ガイドの調べ役",
 };
 
 type Script = (api: {

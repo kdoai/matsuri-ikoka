@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import type { AgentModels } from "./agent/options";
 import type { AgentMode } from "./agent/runner";
+import { DEFAULT_GUIDE_LIMITS, type GuideLimits } from "./guide/limits";
 
 // 接客サーバーの設定。値は環境変数から読む（.env.example に名前と説明がある）。
 
@@ -33,6 +34,8 @@ export interface ServerConfig {
   maxBudgetUsd: number | undefined;
   /** 同じオリジンから配る画面のビルドの場所。本番では apps/web/dist、それ以外は MATSURI_WEB_DIST があるときだけ */
   webDist: string | null;
+  /** ガイドの1日の費用と回数の上限（利用者と旅ごと） */
+  guideLimits: GuideLimits;
 }
 
 /** pnpm-workspace.yaml のあるディレクトリを、start から上にたどって探す */
@@ -117,6 +120,7 @@ export function readConfig(env: NodeJS.ProcessEnv, cwd: string = process.cwd()):
       evaluator:
         nonEmpty(env.MODEL_EVALUATOR) ?? nonEmpty(env.MODEL_PLANNER) ?? nonEmpty(env.MODEL_STAFF),
       wishReader: nonEmpty(env.MODEL_WISH_READER) ?? DEFAULT_WISH_READER_MODEL,
+      guide: nonEmpty(env.MODEL_GUIDE),
     },
     accessPasscode: nonEmpty(env.ACCESS_PASSCODE) ?? null,
     dailyChatLimit: limitOf("DAILY_CHAT_LIMIT", env.DAILY_CHAT_LIMIT),
@@ -131,6 +135,21 @@ export function readConfig(env: NodeJS.ProcessEnv, cwd: string = process.cwd()):
     webDist:
       nonEmpty(env.MATSURI_WEB_DIST) ??
       (production ? path.join(repoRoot, "apps", "web", "dist") : null),
+    // 空なら既定の上限を使う（上限なしにはしない）
+    guideLimits: {
+      turnsPerUser:
+        positiveNumber("GUIDE_DAILY_TURNS_PER_USER", env.GUIDE_DAILY_TURNS_PER_USER) ??
+        DEFAULT_GUIDE_LIMITS.turnsPerUser,
+      turnsPerTrip:
+        positiveNumber("GUIDE_DAILY_TURNS_PER_TRIP", env.GUIDE_DAILY_TURNS_PER_TRIP) ??
+        DEFAULT_GUIDE_LIMITS.turnsPerTrip,
+      costUsdPerUser:
+        positiveNumber("GUIDE_DAILY_COST_USD_PER_USER", env.GUIDE_DAILY_COST_USD_PER_USER) ??
+        DEFAULT_GUIDE_LIMITS.costUsdPerUser,
+      costUsdPerTrip:
+        positiveNumber("GUIDE_DAILY_COST_USD_PER_TRIP", env.GUIDE_DAILY_COST_USD_PER_TRIP) ??
+        DEFAULT_GUIDE_LIMITS.costUsdPerTrip,
+    },
   };
   checkProductionConfig(config, env);
   return config;

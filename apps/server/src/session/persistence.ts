@@ -1,10 +1,16 @@
 import {
   AnchorPlanSchema,
   type ConversationStage,
+  GuideMemoItemSchema,
+  GuideNoticeSchema,
+  GuideProposalSchema,
+  GuideResumeSummarySchema,
   type Itinerary,
   ItinerarySchema,
   TripAnchorSchema,
+  TripWatchSchema,
 } from "@matsuri-ikoka/schema";
+import { z } from "zod";
 import { errorForLog } from "../log";
 import { type OwnerId, ownerIdOf } from "../storage/owner";
 import {
@@ -13,7 +19,13 @@ import {
   type SessionSnapshot,
   type TripStorage,
 } from "../storage/types";
-import type { ItineraryStore, Session, SessionStore } from "./sessionStore";
+import {
+  type ItineraryStore,
+  newSessionGuide,
+  type Session,
+  type SessionGuide,
+  type SessionStore,
+} from "./sessionStore";
 
 // 相談と旅程を、保存の口（storage/）に残す。
 // - 旅程：ツールが手元の写し（ItineraryStore）に保存するたびに、版を保存の口に書く。同じ旅程の書き込みは順に並べる
@@ -27,7 +39,38 @@ export function parseStoredItinerary(value: unknown): Itinerary | undefined {
   return parsed.success ? parsed.data : undefined;
 }
 
+/** 保存するガイドの状態の形。Agent SDK の会話の ID と費用は、インスタンスの中だけのものなので残さない */
+const SavedGuideSchema = z.strictObject({
+  resume: GuideResumeSummarySchema,
+  memo: z.array(GuideMemoItemSchema),
+  notices: z.array(GuideNoticeSchema),
+  proposals: z.array(GuideProposalSchema),
+  watch: TripWatchSchema.nullable(),
+  replayedTurns: z.array(z.number().int().nonnegative()),
+  replaySeeded: z.boolean(),
+});
+
+/** ガイドと話していなければ、保存の項目を増やさない */
+function savedGuide(guide: SessionGuide): z.infer<typeof SavedGuideSchema> | undefined {
+  const { agentSessionId: _id, agentCostUsd: _cost, ...saved } = guide;
+  const unused =
+    saved.resume.turns === 0 &&
+    saved.memo.length === 0 &&
+    saved.notices.length === 0 &&
+    saved.proposals.length === 0 &&
+    saved.watch === null &&
+    !saved.replaySeeded;
+  return unused ? undefined : saved;
+}
+
+/** 保存の口から読んだガイドの状態を、いまの形で確かめる。前の形のものは捨てて、話し始めからにする */
+function restoredGuide(saved: unknown): SessionGuide {
+  const parsed = SavedGuideSchema.safeParse(saved);
+  return parsed.success ? { ...newSessionGuide(), ...parsed.data } : newSessionGuide();
+}
+
 export function snapshotOf(session: Session, now: number): SessionSnapshot {
+  const guide = savedGuide(session.guide);
   return {
     id: session.id,
     ownerUid: session.ownerUid,
@@ -44,6 +87,7 @@ export function snapshotOf(session: Session, now: number): SessionSnapshot {
     anchorCheck: session.anchorCheck,
     cancelledAnchor: session.cancelledAnchor,
     replay: session.replay,
+    ...(guide === undefined ? {} : { guide }),
   };
 }
 
@@ -54,15 +98,25 @@ function stageWithoutItinerary(saved: SessionSnapshot): ConversationStage {
 }
 
 /** 保存の口から読んだアンカーを、いまの形で確かめる。前の形のものは捨てる（組み立ては次の発言で計算し直す） */
-function currentAnchorState(saved: SessionSnapshot): SessionSnapshot {
+function currentAnchorState(saved: SessionSnapshot): SessionSnapshot & { guide: SessionGuide } {
   const anchor = TripAnchorSchema.safeParse(saved.anchor);
   const plan = AnchorPlanSchema.safeParse(saved.anchorPlan);
   return {
     ...saved,
     anchor: anchor.success ? anchor.data : null,
     anchorPlan: anchor.success && plan.success ? plan.data : null,
+    guide: restoredGuide(saved.guide),
   };
 }
+
+/**
+ * ガイドが読む旅。kept は、その人が残した旅か（残した旅のデータだけを、旅の下に置く）。
+ * none は保存の口に旅がない（消された）。unreadable は旅はあるが読めない形（消されたとは限らない）
+ */
+export type GuideTripRead =
+  | { status: "found"; itinerary: Itinerary; kept: boolean }
+  | { status: "none" }
+  | { status: "unreadable" };
 
 export class StoragePersistence {
   readonly #storage: TripStorage;
@@ -129,6 +183,30 @@ export class StoragePersistence {
     if (viewer === null) return undefined;
     const own = await this.#storage.forOwner(viewer).getTrip(id);
     return own === null ? undefined : parseStoredItinerary(own.itinerary);
+  }
+
+  /**
+   * ガイドが読む旅を、保存の口から読む（別のインスタンスで版が増えていても、いまの版を読む）。
+   * 読めるのは、viewer 自身の旅程と、持ち主のない旅程だけ。消した旅とほかの人の旅は undefined。
+   * 保存の口の失敗は呼ぶ側に投げる
+   */
+  async readGuideTrip(id: string, viewer: OwnerId | null): Promise<GuideTripRead> {
+    await this.flush(id);
+    if (viewer !== null) {
+      const own = await this.#storage.forOwner(viewer).getTrip(id);
+      if (own !== null) {
+        const itinerary = parseStoredItinerary(own.itinerary);
+        return itinerary === undefined
+          ? { status: "unreadable" }
+          : { status: "found", itinerary, kept: own.trip.ownerUid === viewer };
+      }
+    }
+    const unowned = await this.#storage.readUnowned(id);
+    if (unowned === null) return { status: "none" };
+    const itinerary = parseStoredItinerary(unowned.itinerary);
+    return itinerary === undefined
+      ? { status: "unreadable" }
+      : { status: "found", itinerary, kept: false };
   }
 
   /**

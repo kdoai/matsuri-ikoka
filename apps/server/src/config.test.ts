@@ -8,6 +8,7 @@ import {
   readConfig,
   startupNotice,
 } from "./config";
+import { DEFAULT_GUIDE_LIMITS } from "./guide/limits";
 import { ConcurrencyLimiter, clientIp, DailyLimiter, limitKey } from "./routes/guard";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -97,6 +98,31 @@ describe("readConfig", () => {
     expect(readConfig({ MODEL_STAFF: "model-b" }, here).models).toMatchObject({
       evaluator: "model-b",
     });
+  });
+
+  it("ガイドのモデルは、指定がなければ持たない（ほかのモデルで動かさない）", () => {
+    expect(readConfig({ MODEL_GUIDE: "model-g" }, here).models.guide).toBe("model-g");
+    expect(
+      readConfig({ MODEL_CONCIERGE: "model-a", MODEL_STAFF: "model-b" }, here).models.guide,
+    ).toBeUndefined();
+  });
+
+  it("ガイドの上限は、指定がなければ既定の値を使い、上限なしにしない", () => {
+    expect(readConfig({}, here).guideLimits).toEqual(DEFAULT_GUIDE_LIMITS);
+    expect(
+      readConfig(
+        {
+          GUIDE_DAILY_TURNS_PER_USER: "9",
+          GUIDE_DAILY_TURNS_PER_TRIP: "8",
+          GUIDE_DAILY_COST_USD_PER_USER: "1.5",
+          GUIDE_DAILY_COST_USD_PER_TRIP: "0.5",
+        },
+        here,
+      ).guideLimits,
+    ).toEqual({ turnsPerUser: 9, turnsPerTrip: 8, costUsdPerUser: 1.5, costUsdPerTrip: 0.5 });
+    expect(() => readConfig({ GUIDE_DAILY_TURNS_PER_USER: "many" }, here)).toThrow(
+      "GUIDE_DAILY_TURNS_PER_USER",
+    );
   });
 
   it("DAILY_CHAT_LIMIT=0 は上限なし", () => {

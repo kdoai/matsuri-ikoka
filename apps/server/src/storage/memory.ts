@@ -1,10 +1,15 @@
 import { randomBytes } from "node:crypto";
 import type { Itinerary } from "@matsuri-ikoka/schema";
-import type { OwnerId } from "./owner";
+import { isDocumentId, type OwnerId, ownerTripPath } from "./owner";
 import {
   type ClaimResult,
   type CreatedShare,
+  type DailyGuideUsage,
+  GUIDE_USAGE_TTL_MS,
+  type GuideUsage,
+  MAX_TRIP_DOCS,
   MAX_VERSIONS,
+  type OwnerTripDocs,
   type OwnerTripStorage,
   SESSION_STATE_TTL_MS,
   type SessionSnapshot,
@@ -14,6 +19,8 @@ import {
   type StoredTrip,
   type StoredTripDetail,
   summarize,
+  type TripDocKind,
+  TripGoneError,
   type TripStorage,
   tripOwner,
 } from "./types";
@@ -38,6 +45,18 @@ interface ShareEntry {
   expiresAt: number;
 }
 
+interface TripDocEntry {
+  json: string;
+  expiresAt: number | null;
+}
+
+interface UsageEntry extends GuideUsage {
+  trips: Map<string, GuideUsage>;
+  expiresAt: number;
+}
+
+const noUsage = (): GuideUsage => ({ turns: 0, costUsd: 0 });
+
 /** 推測できない共有の ID */
 export function newShareId(): string {
   return `sh-${randomBytes(18).toString("base64url")}`;
@@ -59,6 +78,10 @@ export class MemoryTripStorage implements TripStorage {
     string,
     { json: string; updatedAt: number; ownerUid: string | null }
   >();
+  /** 持ち主の旅の置き場のパス → 「種類/ID」→ 文書 */
+  readonly #tripDocs = new Map<string, Map<string, TripDocEntry>>();
+  /** 「持ち主/日」→ ガイドの使った量 */
+  readonly #guideUsage = new Map<string, UsageEntry>();
   readonly #now: () => number;
   readonly #max: number;
 
@@ -85,6 +108,9 @@ export class MemoryTripStorage implements TripStorage {
   forOwner(owner: OwnerId): OwnerTripStorage {
     return {
       owner,
+      tripDocs: (tripId) => this.#docsOf(owner, tripId),
+      readGuideUsage: async (tripId, day) => this.#readUsage(owner, tripId, day),
+      addGuideUsage: async (tripId, day, delta) => this.#addUsage(owner, tripId, day, delta),
       claimTrip: (itineraryId) => this.#claimTrip(owner, itineraryId),
       listTrips: () => this.#listTrips(owner),
       getTrip: (itineraryId, version) => this.#getTrip(owner, itineraryId, version),
@@ -92,6 +118,72 @@ export class MemoryTripStorage implements TripStorage {
       deleteAllTrips: () => this.#deleteAllTrips(owner),
       createShare: (itineraryId) => this.#createShare(owner, itineraryId),
     };
+  }
+
+  #docsOf(owner: OwnerId, tripId: string): OwnerTripDocs {
+    const path = ownerTripPath(owner, tripId);
+    const keyOf = (kind: TripDocKind, id: string) => `${kind}/${id}`;
+    const alive = (entry: TripDocEntry) =>
+      entry.expiresAt === null || this.#now() <= entry.expiresAt;
+    return {
+      get: async (kind, id) => {
+        if (!isDocumentId(id)) return null;
+        const entry = this.#tripDocs.get(path)?.get(keyOf(kind, id));
+        return entry !== undefined && alive(entry) ? JSON.parse(entry.json) : null;
+      },
+      list: async (kind) => {
+        const prefix = `${kind}/`;
+        return [...(this.#tripDocs.get(path)?.entries() ?? [])]
+          .filter(([key, entry]) => key.startsWith(prefix) && alive(entry))
+          .slice(0, MAX_TRIP_DOCS)
+          .map(([, entry]) => JSON.parse(entry.json) as unknown);
+      },
+      put: async (kind, id, value, options = {}) => {
+        if (!isDocumentId(id)) throw new Error("保存の置き場の ID の形が正しくありません");
+        if (this.#owned(owner, tripId) === undefined) throw new TripGoneError();
+        const docs = this.#tripDocs.get(path) ?? new Map<string, TripDocEntry>();
+        docs.set(keyOf(kind, id), {
+          json: JSON.stringify(value),
+          expiresAt: options.expiresAt ?? null,
+        });
+        // 使った順を保つ（上限で消すのは、いちばん長く書かれていない旅の分から）
+        this.#tripDocs.delete(path);
+        this.#tripDocs.set(path, docs);
+        trim(this.#tripDocs, this.#max);
+      },
+      delete: async (kind, id) =>
+        isDocumentId(id) && (this.#tripDocs.get(path)?.delete(keyOf(kind, id)) ?? false),
+    };
+  }
+
+  #readUsage(owner: OwnerId, tripId: string, day: string): DailyGuideUsage {
+    const entry = this.#guideUsage.get(`${owner}/${day}`);
+    if (entry === undefined || this.#now() > entry.expiresAt) {
+      return { user: noUsage(), trip: noUsage() };
+    }
+    return {
+      user: { turns: entry.turns, costUsd: entry.costUsd },
+      trip: { ...(entry.trips.get(tripId) ?? noUsage()) },
+    };
+  }
+
+  #addUsage(owner: OwnerId, tripId: string, day: string, delta: GuideUsage): void {
+    const key = `${owner}/${day}`;
+    const entry: UsageEntry = this.#guideUsage.get(key) ?? {
+      ...noUsage(),
+      trips: new Map<string, GuideUsage>(),
+      expiresAt: this.#now() + GUIDE_USAGE_TTL_MS,
+    };
+    const trip = entry.trips.get(tripId) ?? noUsage();
+    entry.turns += delta.turns;
+    entry.costUsd += delta.costUsd;
+    entry.trips.set(tripId, {
+      turns: trip.turns + delta.turns,
+      costUsd: trip.costUsd + delta.costUsd,
+    });
+    this.#guideUsage.delete(key);
+    this.#guideUsage.set(key, entry);
+    trim(this.#guideUsage, this.#max);
   }
 
   async saveItinerary(itinerary: Itinerary, consultOwner: OwnerId | null): Promise<void> {
@@ -183,28 +275,37 @@ export class MemoryTripStorage implements TripStorage {
     };
   }
 
-  #removeTrip(itineraryId: string): void {
+  #removeTrip(owner: OwnerId, itineraryId: string): void {
     this.#itineraries.delete(itineraryId);
     for (const [id, share] of this.#shares) {
       if (share.itineraryId === itineraryId) this.#shares.delete(id);
     }
+    // 旅の下のデータ（手帳・通知・提案・見回りの依頼）をまるごと消す
+    this.#tripDocs.delete(ownerTripPath(owner, itineraryId));
   }
 
-  async #deleteTrip(uid: string, itineraryId: string): Promise<boolean> {
-    if (this.#owned(uid, itineraryId) === undefined) return false;
-    this.#removeTrip(itineraryId);
+  async #deleteTrip(owner: OwnerId, itineraryId: string): Promise<boolean> {
+    if (this.#owned(owner, itineraryId) === undefined) return false;
+    this.#removeTrip(owner, itineraryId);
     return true;
   }
 
-  async #deleteAllTrips(uid: string): Promise<number> {
-    const kept = (await this.#listTrips(uid)).length;
+  async #deleteAllTrips(owner: OwnerId): Promise<number> {
+    const kept = (await this.#listTrips(owner)).length;
     // 期限を過ぎた残す前の旅程も消すので、期限は見ず、見出しの持ち主で選ぶ
     for (const entry of [...this.#itineraries.values()]) {
-      if (tripOwner(entry.head) === uid) this.#removeTrip(entry.head.itineraryId);
+      if (tripOwner(entry.head) === owner) this.#removeTrip(owner, entry.head.itineraryId);
     }
-    // 旅を消したあとに残った、この利用者の共有も消す
+    // 旅を消したあとに残った、この利用者の共有・旅の下のデータ・使った量も消す
     for (const [id, share] of this.#shares) {
-      if (share.ownerUid === uid) this.#shares.delete(id);
+      if (share.ownerUid === owner) this.#shares.delete(id);
+    }
+    const prefix = `users/${owner}/trips/`;
+    for (const path of [...this.#tripDocs.keys()]) {
+      if (path.startsWith(prefix)) this.#tripDocs.delete(path);
+    }
+    for (const key of [...this.#guideUsage.keys()]) {
+      if (key.startsWith(`${owner}/`)) this.#guideUsage.delete(key);
     }
     return kept;
   }
