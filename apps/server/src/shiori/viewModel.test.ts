@@ -160,34 +160,24 @@ describe("しおりの view-model", () => {
     expect(view.festivals[1]?.food.stalls).toBe(`屋台は${UNKNOWN_JA}`);
   });
 
-  it("作法の分からない項目は「分からない」と出し、英語の見出しを添える", () => {
-    const view = buildShioriView(fictionalWeek(), lookup);
-    const guide = view.guides[1];
-    const byLabel = Object.fromEntries((guide?.rows ?? []).map((r) => [r.labelJa, r]));
+  it("祭りの決まり・参加の仕方・写真・持ち物の項目は、しおりに出さない", () => {
+    const text = JSON.stringify(buildShioriView(fictionalWeek(), lookup));
 
-    expect(byLabel["服装"]).toMatchObject({
-      valuesJa: [UNKNOWN_JA],
-      valueEn: "Unknown",
-      unknown: true,
-      labelEn: "What to wear",
-    });
-    expect(byLabel["見学か参加か"]).toMatchObject({
-      valuesJa: ["見学のみ"],
-      valueEn: "Watch only",
-    });
-    expect(byLabel["申し込み"]).toBeUndefined();
-    expect(guide?.requests).toEqual(["打ち上げの場所の近くには入らない"]);
+    for (const etiquette of [
+      "打ち上げの場所の近くには入らない",
+      "灯籠は係の合図のあとに流す",
+      "神事の間はフラッシュを使わない",
+      "敷物",
+      "見学のみ",
+    ]) {
+      expect(text).not.toContain(etiquette);
+    }
   });
 
-  it("祭りの側からのお願いに、ルールと写真の制限をまとめる", () => {
+  it("交通規制は、祭りの紹介のアクセスに出す", () => {
     const view = buildShioriView(fictionalOuting(), lookup);
 
-    expect(view.guides[0]?.requests).toEqual([
-      "灯籠は係の合図のあとに流す",
-      "立入禁止の縄の内側に入らない",
-      "写真：制限がある（神事の間はフラッシュを使わない）",
-    ]);
-    expect(view.guides[0]?.cautions).toContain(
+    expect(view.festivals[0]?.access).toContain(
       "交通規制：17時から22時まで、河原沿いの道は車両通行止め",
     );
   });
@@ -200,25 +190,22 @@ describe("しおりの view-model", () => {
       missing: true,
       venue: UNKNOWN_JA,
     });
-    expect(view.guides[0]).toMatchObject({ missing: true, rows: [] });
     expect(view.design.category).toBe("other");
   });
 
-  it("持ち物は、祭りのデータ・旅程のメモ・一般の目安・泊まり・子どもの順にまとめる", () => {
+  it("持ち物は、旅程のメモ・一般の目安・泊まり・子どもの順にまとめる", () => {
     const trip = fictionalWeekend();
     trip.party.children = 1;
     const groups = buildShioriView(trip, lookup).checklist;
 
     expect(groups.map((g) => g.title)).toEqual([
-      "祭りのために",
       "旅程係のメモ",
       "いつもの持ち物",
       "泊まりの分（1泊）",
       "子どもと一緒",
     ]);
-    expect(groups[0]?.items).toEqual(["懐中電灯", "歩きやすい靴"]);
     // 2日目の降水確率が 60% なので、雨具を先頭に出す
-    expect(groups[2]?.items[0]).toBe("雨具（降水確率が高い日があります）");
+    expect(groups[1]?.items[0]).toBe("雨具（降水確率が高い日があります）");
   });
 
   it("スタンプ帳は日ごとと祭りごとの枠を出し、9つまでにする", () => {

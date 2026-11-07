@@ -183,7 +183,7 @@ function tripFestival(ctx: GuideToolContext, festivalId: string | undefined): st
 export const readTrip = defineGuideTool({
   name: "read_trip",
   description:
-    "この旅の旅程を読む。旅の日ごとの予定の一覧、主役の祭りの開催・雨のときの扱い・作法・行き方・地元の味、持ち物と注意、雨や中止のときの案を返す。" +
+    "この旅の旅程を読む。旅の日ごとの予定の一覧、主役の祭りの開催・雨のときの扱い・行き方・地元の味、持ち物と注意、雨や中止のときの案を返す。" +
     "date を渡すと、その日の予定の中身（移動の区間・営業時間・出典まで）を detail に返す。予定を直す提案を書く前に、その日を読む。",
   input: {
     date: IsoDateSchema.optional().describe("くわしく読む旅の日（YYYY-MM-DD）"),
@@ -199,7 +199,7 @@ export const readTrip = defineGuideTool({
     const mainDay = mainFestivalDay(itinerary).date;
     const occurrence = festival === undefined ? null : occurrenceOn(festival, mainDay);
     if (festival !== undefined) {
-      noteSources(ctx, [...(occurrence?.sources ?? []), ...festival.etiquette.sources], "stored");
+      noteSources(ctx, occurrence?.sources ?? [], "stored");
     }
     const detail =
       args.date === undefined
@@ -232,7 +232,6 @@ export const readTrip = defineGuideTool({
               status: occurrence?.status ?? null,
               rainPolicy: occurrence?.rainPolicy ?? null,
               note: occurrence?.note ?? null,
-              etiquette: { ...festival.etiquette, sources: undefined },
               access: {
                 stations: festival.access.stations,
                 parking: festival.access.parking,
