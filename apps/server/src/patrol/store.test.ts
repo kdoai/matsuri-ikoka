@@ -1,4 +1,4 @@
-import { GuideNoticeSchema } from "@matsuri-ikoka/schema";
+import { GuideNoticeSchema, type TripWatch } from "@matsuri-ikoka/schema";
 import {
   fictionalItinerary,
   fictionalNotice,
@@ -6,6 +6,7 @@ import {
 } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
 import { FirestoreTripStorage } from "../storage/firestore";
+import { MemoryTripStorage } from "../storage/memory";
 import { ownerIdOf } from "../storage/owner";
 import { TRIP_WATCH_DOC_ID } from "../storage/types";
 import { FirestorePatrolStore } from "./firestoreStore";
@@ -39,6 +40,55 @@ describe("MemoryPatrolStore", () => {
 
     expect(await store.listWatchedTrips(10)).toEqual([active]);
     expect((await store.readItinerary(active))?.id).toBe(fictionalItinerary().id);
+  });
+});
+
+describe("MemoryPatrolStore（旅の保存先と同じメモリの置き場）", () => {
+  /** 依頼のパスの利用者の旅を保存して、依頼を書く（ガイドの API と同じ口） */
+  const putTripWatch = async (storage: MemoryTripStorage, ref: string, watch: TripWatch) => {
+    const [, uid = "", , tripId = ""] = ref.split("/");
+    const owner = ownerIdOf(uid);
+    await storage.saveItinerary({ ...fictionalItinerary(), id: tripId }, owner);
+    await storage.forOwner(owner).tripDocs(tripId).put("watch", TRIP_WATCH_DOC_ID, watch);
+  };
+
+  patrolStoreContract(() => {
+    const storage = new MemoryTripStorage();
+    return {
+      store: new MemoryPatrolStore({ trips: storage.patrolTrips() }),
+      putWatch: (trip) => putTripWatch(storage, trip.ref, trip.watch),
+      removeWatch: async (trip) => {
+        const [, uid = "", , tripId = ""] = trip.ref.split("/");
+        await storage.forOwner(ownerIdOf(uid)).tripDocs(tripId).delete("watch", TRIP_WATCH_DOC_ID);
+      },
+    };
+  });
+
+  it("ガイドの API が書いた依頼を読み、見回りの通知をガイドが読める。旅を消すと書けない", async () => {
+    const storage = new MemoryTripStorage();
+    const store = new MemoryPatrolStore({ trips: storage.patrolTrips() });
+    const owner = ownerIdOf("user-m");
+    const tripId = "trip-m";
+    await putTripWatch(storage, `users/user-m/trips/${tripId}`, {
+      ...fictionalTripWatch(),
+      tripId,
+    });
+    const docs = storage.forOwner(owner).tripDocs(tripId);
+
+    const [found] = await store.listWatchedTrips(10);
+    if (found === undefined) throw new Error("頼まれた旅が見つかりません");
+    expect(found.ref).toBe(`users/user-m/trips/${tripId}`);
+    expect((await store.readItinerary(found))?.id).toBe(tripId);
+    expect(await store.readItinerary({ ...found, ref: `users/other/trips/${tripId}` })).toBeNull();
+
+    const notice = { ...fictionalNotice(), tripId };
+    expect(await store.addNotice(found, notice, Date.now() + 60_000)).toBe("created");
+    expect(await docs.list("notices")).toEqual([notice]);
+
+    expect(await storage.forOwner(owner).deleteTrip(tripId)).toBe(true);
+    expect(await store.listWatchedTrips(10)).toEqual([]);
+    expect(await store.addNotice(found, notice, Date.now() + 60_000)).toBe("not_watching");
+    expect(await store.listNotices(found)).toEqual([]);
   });
 });
 

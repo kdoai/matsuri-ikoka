@@ -131,6 +131,8 @@ function setup(overrides: Partial<AppDeps> = {}) {
       itineraryId,
       version: itineraries.get(itineraryId)?.version ?? 1,
       memoId: "memo-suzunari-sample-1",
+      noticeId: "notice-suzunari-sample-1",
+      proposalId: "proposal-suzunari-sample-1",
     };
   };
   return { app, call, chat, start, consult, sessions, itineraries, storage };
@@ -162,6 +164,9 @@ interface Target {
   version: number;
   /** ガイドの手帳の項目 */
   memoId: string;
+  /** 記録の見回りが届けた通知と、組み直しの提案 */
+  noticeId: string;
+  proposalId: string;
 }
 
 /** 利用者のデータに触れる経路の表。other は利用者 B、anonymous はログインなし（偽のトークンも同じ扱い） */
@@ -344,6 +349,50 @@ const TABLE: {
     other: 404,
     anonymous: 404,
   },
+  {
+    route: "POST /api/guide/notices/read",
+    request: ({ sessionId, noticeId }) => ({
+      method: "POST",
+      path: "/api/guide/notices/read",
+      body: { sessionId, noticeIds: [noticeId] },
+    }),
+    owner: 200,
+    other: 404,
+    anonymous: 404,
+  },
+  {
+    route: "POST /api/guide/watch",
+    request: ({ sessionId }) => ({
+      method: "POST",
+      path: "/api/guide/watch",
+      body: { sessionId, action: "stop" },
+    }),
+    owner: 200,
+    other: 404,
+    anonymous: 404,
+  },
+  {
+    route: "POST /api/guide/proposals/:id/decision",
+    request: ({ sessionId, proposalId }) => ({
+      method: "POST",
+      path: `/api/guide/proposals/${proposalId}/decision`,
+      body: { sessionId, decision: "reject" },
+    }),
+    owner: 200,
+    other: 404,
+    anonymous: 404,
+  },
+  {
+    route: "POST /api/guide/revert",
+    request: ({ sessionId, version }) => ({
+      method: "POST",
+      path: "/api/guide/revert",
+      body: { sessionId, toVersion: Math.max(1, version - 1) },
+    }),
+    owner: 200,
+    other: 404,
+    anonymous: 404,
+  },
 ];
 
 /** 決まりは「だれでも」で、利用者のデータに触れない経路 */
@@ -454,6 +503,8 @@ describe.each([
       itineraryId: "trip-no-such-trip",
       version: target.version,
       memoId: target.memoId,
+      noticeId: target.noticeId,
+      proposalId: target.proposalId,
     });
 
     const refusals: { name: string; init: CallInit; status: number }[] = [

@@ -123,6 +123,7 @@ if (config.mode === "live") {
     env: process.env,
     festivals: festivals.store,
     lodging,
+    storage: account.storage,
   }).catch((error: unknown) => {
     console.error(JSON.stringify({ kind: "patrol_setup_failed", ...errorForLog(error) }));
     return null;

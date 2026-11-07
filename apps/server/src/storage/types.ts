@@ -191,8 +191,11 @@ export interface TripStorage {
   saveItinerary(itinerary: Itinerary, consultOwner: OwnerId | null): Promise<void>;
   /** 共有の ID（sh-…）から、作ってから30日以内の、作ったときの版を読む */
   readShare(shareId: string): Promise<SharedItinerary | null>;
-  /** 持ち主のない旅程の最新の版を、最後の保存から30日以内なら読む。持ち主のある旅程は null */
-  readUnowned(itineraryId: string): Promise<SharedItinerary | null>;
+  /**
+   * 持ち主のない旅程を、最後の保存から30日以内なら読む。version を省くと最新の版。
+   * 持ち主のある旅程と、残っていない版は null
+   */
+  readUnowned(itineraryId: string, version?: number): Promise<SharedItinerary | null>;
 
   /** 一度書いた持ち主は、持ち主のない書き込みでも、別の持ち主の書き込みでも変わらない */
   saveSession(snapshot: SessionSnapshot): Promise<void>;

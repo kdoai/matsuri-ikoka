@@ -1084,3 +1084,265 @@ describe("ログインしていない相談", () => {
     expect(saved).not.toContain("手帳はいつでも見て");
   });
 });
+
+describe("通知・見回り・提案の決定", () => {
+  /** A が旅を残し、ガイドの相談を開いて、記録の通知と提案を受け取る */
+  const keptGuide = async (context: ReturnType<typeof setup>) => {
+    const { sessionId, itineraryId } = await context.consult(ALICE);
+    await context.call("/api/trips", { user: ALICE, body: { sessionId } });
+    const opened = await context.call("/api/guide/open", {
+      user: ALICE,
+      body: { tripId: itineraryId },
+    });
+    const { sessionId: guideSession } = SessionResponseSchema.parse(await opened.json());
+    const state = await context.state(guideSession, ALICE);
+    const [proposal] = state.proposals;
+    if (proposal === undefined) throw new Error("提案がありません");
+    return { itineraryId, guideSession, state, proposal };
+  };
+
+  const decide = (
+    context: ReturnType<typeof setup>,
+    sessionId: string,
+    proposal: { id: string; baseVersion: number; contentHash: string },
+    user?: string,
+  ) =>
+    context.call(`/api/guide/proposals/${proposal.id}/decision`, {
+      body: {
+        decision: "approve",
+        sessionId,
+        baseVersion: proposal.baseVersion,
+        contentHash: proposal.contentHash,
+      },
+      ...(user ? { user } : {}),
+    });
+
+  it("通知を読んだことにし、未読の数を返す。この旅にない通知だけなら 404", async () => {
+    const context = setup();
+    const { guideSession, state } = await keptGuide(context);
+    const [notice] = state.notices;
+    if (notice === undefined) throw new Error("通知がありません");
+
+    const read = await context.call("/api/guide/notices/read", {
+      user: ALICE,
+      body: { sessionId: guideSession, noticeIds: [notice.id] },
+    });
+
+    expect(read.status).toBe(200);
+    expect(await read.json()).toEqual({ unread: 0 });
+    expect((await context.state(guideSession, ALICE)).notices[0]?.readAt).not.toBeNull();
+    const missing = await context.call("/api/guide/notices/read", {
+      user: ALICE,
+      body: { sessionId: guideSession, noticeIds: ["notice-of-someone-else"] },
+    });
+    expect(missing.status).toBe(404);
+  });
+
+  it("承認すると版が1つ増え、差分を返す。同じ承認が2回届いても、版は1つしか増えない", async () => {
+    const context = setup();
+    const { itineraryId, guideSession, state, proposal } = await keptGuide(context);
+
+    const [first, second] = await Promise.all([
+      decide(context, guideSession, proposal, ALICE),
+      decide(context, guideSession, proposal, ALICE),
+    ]);
+    const firstBody = await first.json();
+
+    expect(first.status).toBe(200);
+    expect(firstBody).toMatchObject({
+      outcome: "applied",
+      change: { itinerary: { version: state.version + 1 }, diff: proposal.diff },
+    });
+    expect(await second.json()).toEqual(firstBody);
+    expect(await (await decide(context, guideSession, proposal, ALICE)).json()).toEqual(firstBody);
+    const after = await context.state(guideSession, ALICE);
+    expect(after.version).toBe(state.version + 1);
+    expect(after.proposals).toEqual([]);
+    const detail = await context.storage.forOwner(ownerIdOf(ALICE)).getTrip(itineraryId);
+    expect(detail?.version).toBe(state.version + 1);
+  });
+
+  it("断ると旅程は変わらず、承認待ちから外れる", async () => {
+    const context = setup();
+    const { guideSession, state, proposal } = await keptGuide(context);
+
+    const res = await context.call(`/api/guide/proposals/${proposal.id}/decision`, {
+      user: ALICE,
+      body: { decision: "reject", sessionId: guideSession },
+    });
+
+    expect(await res.json()).toEqual({ outcome: "rejected" });
+    const after = await context.state(guideSession, ALICE);
+    expect(after.version).toBe(state.version);
+    expect(after.proposals).toEqual([]);
+    expect(await (await decide(context, guideSession, proposal, ALICE)).json()).toEqual({
+      outcome: "rejected",
+    });
+  });
+
+  it("提案のあとに旅程が変わると、古い提案は承認できない", async () => {
+    const context = setup();
+    const { itineraryId, guideSession, state, proposal } = await keptGuide(context);
+    const current = context.itineraries.get(itineraryId);
+    if (current === undefined) throw new Error("旅程がありません");
+    context.itineraries.save({ ...current, version: current.version + 1 }, ownerIdOf(ALICE));
+
+    const res = await decide(context, guideSession, proposal, ALICE);
+
+    expect(await res.json()).toEqual({ outcome: "stale", currentVersion: state.version + 1 });
+    expect((await context.state(guideSession, ALICE)).version).toBe(state.version + 1);
+  });
+
+  it("見た提案と版かハッシュが違えば、承認できない", async () => {
+    const context = setup();
+    const { guideSession, state, proposal } = await keptGuide(context);
+
+    const res = await decide(
+      context,
+      guideSession,
+      { ...proposal, contentHash: "f".repeat(64) },
+      ALICE,
+    );
+
+    expect(await res.json()).toEqual({ outcome: "stale", currentVersion: state.version });
+    expect((await context.state(guideSession, ALICE)).proposals).toHaveLength(1);
+  });
+
+  it("期限を過ぎた提案は承認できない", async () => {
+    let now = "2026-08-10T12:00:00+09:00";
+    class Clocked extends ReplayGuideRunner {
+      override now() {
+        return now;
+      }
+    }
+    const context = setup({ guide: { runner: new Clocked(guides, { speed: 0 }) } });
+    const { guideSession, state, proposal } = await keptGuide(context);
+    now = proposal.expiresAt;
+
+    const res = await decide(context, guideSession, proposal, ALICE);
+
+    expect(await res.json()).toEqual({ outcome: "expired" });
+    expect((await context.state(guideSession, ALICE)).version).toBe(state.version);
+  });
+
+  it("ほかの人の提案は 404 で、承認できない", async () => {
+    const context = setup();
+    const { guideSession, state, proposal } = await keptGuide(context);
+    const other = await context.consult(BOB);
+
+    expect((await decide(context, guideSession, proposal, BOB)).status).toBe(404);
+    const unknown = { ...proposal, id: "proposal-none" };
+    expect((await decide(context, other.sessionId, unknown, BOB)).status).toBe(404);
+    expect((await context.state(guideSession, ALICE)).version).toBe(state.version);
+  });
+
+  it("承認した変更を前の版に戻せる。戻す操作も新しい版になり、履歴は消えない", async () => {
+    const context = setup();
+    const { itineraryId, guideSession, state, proposal } = await keptGuide(context);
+    await decide(context, guideSession, proposal, ALICE);
+
+    const res = await context.call("/api/guide/revert", {
+      user: ALICE,
+      body: { sessionId: guideSession, toVersion: state.version },
+    });
+
+    expect(res.status).toBe(200);
+    const change = (await res.json()) as {
+      itinerary: { version: number };
+      diff: { fromVersion: number; toVersion: number; changed: string[] };
+    };
+    expect(change.itinerary.version).toBe(state.version + 2);
+    expect(change.diff).toMatchObject({
+      fromVersion: state.version + 1,
+      toVersion: state.version + 2,
+      changed: proposal.diff.changed,
+    });
+    const detail = await context.storage.forOwner(ownerIdOf(ALICE)).getTrip(itineraryId);
+    expect(detail?.versions).toEqual(
+      expect.arrayContaining([state.version, state.version + 1, state.version + 2]),
+    );
+    // いまの版や、いまと同じ旅程へは戻さない
+    for (const toVersion of [state.version + 2, state.version]) {
+      const again = await context.call("/api/guide/revert", {
+        user: ALICE,
+        body: { sessionId: guideSession, toVersion },
+      });
+      expect(again.status, String(toVersion)).toBe(409);
+    }
+    const other = await context.call("/api/guide/revert", {
+      user: BOB,
+      body: { sessionId: guideSession, toVersion: state.version },
+    });
+    expect(other.status).toBe(404);
+  });
+
+  it("見回りを止めて、また始められる。ほかの人は止められない", async () => {
+    const context = setup();
+    const { itineraryId, guideSession } = await keptGuide(context);
+    const watch = (user: string, action: "start" | "stop") =>
+      context.call("/api/guide/watch", { user, body: { sessionId: guideSession, action } });
+
+    expect((await watch(BOB, "stop")).status).toBe(404);
+    const stopped = await watch(ALICE, "stop");
+    expect(await stopped.json()).toMatchObject({ tripId: itineraryId, status: "stopped" });
+    const docs = context.storage.forOwner(ownerIdOf(ALICE)).tripDocs(itineraryId);
+    expect(await docs.get("watch", "current")).toMatchObject({ status: "stopped" });
+
+    const started = await watch(ALICE, "start");
+    expect(await started.json()).toMatchObject({ status: "active", stoppedAt: null });
+    expect((await context.state(guideSession, ALICE)).watch?.status).toBe("active");
+  });
+
+  it("残す前の旅で見回りを始めると、旅を残してから旅の下に書く。ログインなしは 401", async () => {
+    const context = setup();
+    const { sessionId, itineraryId } = await context.consult(ALICE);
+    const anonymous = await context.consult();
+
+    const guest = await context.call("/api/guide/watch", {
+      body: { sessionId: anonymous.sessionId, action: "start" },
+    });
+    expect(guest.status).toBe(401);
+
+    const res = await context.call("/api/guide/watch", {
+      user: ALICE,
+      body: { sessionId, action: "start" },
+    });
+
+    expect(res.status).toBe(200);
+    const listed = await context.call("/api/trips", { method: "GET", user: ALICE });
+    const { trips } = (await listed.json()) as { trips: { itineraryId: string }[] };
+    expect(trips.map((trip) => trip.itineraryId)).toEqual([itineraryId]);
+    const docs = context.storage.forOwner(ownerIdOf(ALICE)).tripDocs(itineraryId);
+    expect(await docs.get("watch", "current")).toMatchObject({ status: "active" });
+    expect(context.sessions.get(sessionId)?.guide.watch).toBeNull();
+  });
+
+  it("モックで、見回りの通知を読み、承認して、前の版に戻せる（ログインを用意していない環境）", async () => {
+    const context = setup({ authConfig: { enabled: false } });
+    const { sessionId } = await context.consult();
+    const state = await context.state(sessionId);
+    const [notice] = state.notices;
+    const [proposal] = state.proposals;
+    if (notice === undefined || proposal === undefined) throw new Error("記録が届いていません");
+    expect(notice.proposalId).toBe(proposal.id);
+
+    const read = await context.call("/api/guide/notices/read", {
+      body: { sessionId, noticeIds: [notice.id] },
+    });
+    expect(await read.json()).toEqual({ unread: 0 });
+    const applied = await decide(context, sessionId, proposal);
+    expect(await applied.json()).toMatchObject({ outcome: "applied" });
+    expect((await context.state(sessionId)).version).toBe(state.version + 1);
+
+    const reverted = await context.call("/api/guide/revert", {
+      body: { sessionId, toVersion: state.version },
+    });
+    expect(reverted.status).toBe(200);
+    expect((await context.state(sessionId)).version).toBe(state.version + 2);
+
+    const stopped = await context.call("/api/guide/watch", {
+      body: { sessionId, action: "stop" },
+    });
+    expect(await stopped.json()).toMatchObject({ status: "stopped" });
+  });
+});

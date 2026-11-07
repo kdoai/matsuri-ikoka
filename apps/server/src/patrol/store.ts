@@ -1,8 +1,11 @@
 import {
   type GuideNotice,
+  GuideNoticeSchema,
   type IsoDate,
   type Itinerary,
+  ItinerarySchema,
   MAX_NOTICES_PER_TRIP,
+  TripWatchSchema,
 } from "@matsuri-ikoka/schema";
 import { isFirmNotice, noticeToEvict } from "./notices";
 import type { PatrolRecord, PatrolRun, WatchedTrip } from "./types";
@@ -101,6 +104,23 @@ export function newRecord(
 
 const clone = <T>(value: T): T => structuredClone(value);
 
+/**
+ * 見回りが旅を横断して読み書きする、メモリの旅の置き場（storage/memory.ts の MemoryTripStorage）。
+ * 保存先がメモリのときに、ガイドの API が書いた依頼を見回りが読み、見回りの通知をガイドが読めるようにする。
+ * ref は旅の置き場のパス（users/{uid}/trips/{旅の ID}）。値はスキーマを通していない
+ */
+export interface PatrolTripSource {
+  /** 見回りの依頼（watch/current）のある旅 */
+  listWatches(): { ref: string; tripId: string; watch: unknown }[];
+  /** 依頼のパスの利用者の旅の、いまの版。読めなければ null */
+  readItinerary(ref: string): unknown | null;
+  readWatch(ref: string): unknown | null;
+  listNotices(ref: string): unknown[];
+  /** expiresAt が null なら、旅を消すまで残す */
+  putNotice(ref: string, notice: GuideNotice, expiresAt: number | null): void;
+  deleteNotice(ref: string, id: string): void;
+}
+
 /** メモリの保存の口。開発とテストで使う。再起動で消える */
 export class MemoryPatrolStore implements PatrolStore {
   readonly #trips = new Map<string, { trip: WatchedTrip; itinerary: Itinerary | null }>();
@@ -108,6 +128,12 @@ export class MemoryPatrolStore implements PatrolStore {
   readonly #records = new Map<string, PatrolRecord>();
   readonly #runs = new Map<string, PatrolRun>();
   readonly #deliveries = new Map<string, { done: boolean; until: number }>();
+  /** 旅の置き場。あれば、依頼・旅程・通知はそこで読み書きする（ガイドと同じ置き場） */
+  readonly #source: PatrolTripSource | null;
+
+  constructor(options: { trips?: PatrolTripSource } = {}) {
+    this.#source = options.trips ?? null;
+  }
 
   /** 見回りの依頼を足す（依頼を書く API の代わり） */
   putWatchedTrip(trip: WatchedTrip, itinerary: Itinerary | null): void {
@@ -121,10 +147,27 @@ export class MemoryPatrolStore implements PatrolStore {
 
   /** その旅の通知（テストと開発で確かめるため） */
   noticesOf(ref: string): GuideNotice[] {
+    if (this.#source !== null) {
+      return this.#source.listNotices(ref).flatMap((value) => {
+        const notice = GuideNoticeSchema.safeParse(value);
+        return notice.success ? [notice.data] : [];
+      });
+    }
     return [...(this.#notices.get(ref)?.values() ?? [])].map(clone);
   }
 
   async listWatchedTrips(limit: number): Promise<WatchedTrip[]> {
+    if (this.#source !== null) {
+      return this.#source
+        .listWatches()
+        .flatMap(({ ref, tripId, watch }) => {
+          const parsed = TripWatchSchema.safeParse(watch);
+          return parsed.success && parsed.data.tripId === tripId && parsed.data.status === "active"
+            ? [{ ref, watch: parsed.data }]
+            : [];
+        })
+        .slice(0, limit);
+    }
     return [...this.#trips.values()]
       .filter(({ trip }) => trip.watch.status === "active")
       .slice(0, limit)
@@ -132,6 +175,10 @@ export class MemoryPatrolStore implements PatrolStore {
   }
 
   async readItinerary(trip: WatchedTrip): Promise<Itinerary | null> {
+    if (this.#source !== null) {
+      const parsed = ItinerarySchema.safeParse(this.#source.readItinerary(trip.ref));
+      return parsed.success ? parsed.data : null;
+    }
     return clone(this.#trips.get(trip.ref)?.itinerary ?? null);
   }
 
@@ -139,17 +186,45 @@ export class MemoryPatrolStore implements PatrolStore {
     return this.noticesOf(trip.ref);
   }
 
-  async addNotice(trip: WatchedTrip, notice: GuideNotice): Promise<AddNoticeResult> {
-    if (this.#trips.get(trip.ref)?.trip.watch.status !== "active") return "not_watching";
-    const notices = this.#notices.get(trip.ref) ?? new Map<string, GuideNotice>();
+  #watching(ref: string): boolean {
+    if (this.#source === null) return this.#trips.get(ref)?.trip.watch.status === "active";
+    const watch = TripWatchSchema.safeParse(this.#source.readWatch(ref));
+    return watch.success && watch.data.status === "active";
+  }
+
+  #writeNotice(
+    ref: string,
+    notice: GuideNotice,
+    expiresAt: number | null,
+    evict: string | null,
+  ): void {
+    if (this.#source !== null) {
+      if (evict !== null) this.#source.deleteNotice(ref, evict);
+      this.#source.putNotice(ref, clone(notice), expiresAt);
+      return;
+    }
+    const notices = this.#notices.get(ref) ?? new Map<string, GuideNotice>();
+    if (evict !== null) notices.delete(evict);
+    notices.set(notice.id, clone(notice));
+    this.#notices.set(ref, notices);
+  }
+
+  async addNotice(
+    trip: WatchedTrip,
+    notice: GuideNotice,
+    expiresAt: number | null = null,
+  ): Promise<AddNoticeResult> {
+    if (!this.#watching(trip.ref)) return "not_watching";
+    const notices = new Map(this.noticesOf(trip.ref).map((item) => [item.id, item]));
     const existing = notices.get(notice.id);
     if (existing !== undefined) {
       if (existing.fingerprint === notice.fingerprint || notice.content.kind !== "announcement") {
         return "duplicate";
       }
-      notices.set(notice.id, clone({ ...notice, proposalId: existing.proposalId }));
+      this.#writeNotice(trip.ref, { ...notice, proposalId: existing.proposalId }, expiresAt, null);
       return "replaced";
     }
+    let evict: string | null = null;
     if (notices.size >= MAX_NOTICES_PER_TRIP) {
       if (!isFirmNotice(notice)) return "full";
       const victim = noticeToEvict(
@@ -161,10 +236,9 @@ export class MemoryPatrolStore implements PatrolStore {
         })),
       );
       if (victim === null) return "full";
-      notices.delete(victim);
+      evict = victim;
     }
-    notices.set(notice.id, clone(notice));
-    this.#notices.set(trip.ref, notices);
+    this.#writeNotice(trip.ref, notice, expiresAt, evict);
     return "created";
   }
 
