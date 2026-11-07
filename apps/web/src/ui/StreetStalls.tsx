@@ -17,6 +17,7 @@ import { litStalls, noticesOfStall } from "../state/guide";
 import { useActions, useApp, useT } from "../state/react";
 import { buttonPrimary, buttonSecondary, SourceLink } from "./common";
 import { stallFacts } from "./stallFacts";
+import { TripDayCard } from "./TripDay";
 
 // 屋台の一覧と、屋台の窓。3D に出ること（提灯が灯っているか・屋台の中身）を、ここですべて文字で読める。
 // 3D を使わない画面では、この一覧が通りの主役になる。
@@ -211,6 +212,7 @@ export function StallList() {
   const lit = useMemo(() => litStalls({ notices }), [notices]);
   return (
     <>
+      <TripDayCard />
       <ul className="grid gap-2 sm:grid-cols-2" data-testid="stall-list">
         {GUIDE_STALLS.map((stall) => {
           const Icon = STALL_ICONS[stall];

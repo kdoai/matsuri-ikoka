@@ -6,9 +6,11 @@ import {
   type FestivalSearchResult,
   type GuideSseEvent,
   type GuideStall,
+  type LatLng,
   MAX_MESSAGE_LENGTH,
   MarkNoticesReadResponseSchema,
   type Preferences,
+  roundLocation,
   type SearchRetry,
   type SearchSuggestion,
   type SetTripWatchRequest,
@@ -202,7 +204,11 @@ export interface AppActions {
   /** ガイドの通知と手帳を読む（読み込み済みなら、force のときだけ読み直す） */
   loadGuide(force?: boolean): Promise<void>;
   /** ガイドに発言を送る */
-  sendGuide(text: string): Promise<void>;
+  /**
+   * ガイドに話す。location はこの発言のときだけ使う現在地で、丸めてから送る。保存しない。
+   * 送り直し（retryGuide）では現在地を送らない（使うたびに利用者が選ぶ）
+   */
+  sendGuide(text: string, options?: { location?: LatLng }): Promise<void>;
   /** 最後の発言をガイドに送り直す */
   retryGuide(): Promise<void>;
   /** 屋台を開く。その屋台の通知は読んだことになり、提灯が消える */
@@ -541,12 +547,15 @@ export function createAppStore(deps: StoreDeps): AppStore {
       void get().actions.loadGuide(true);
     };
 
-    const runGuideTurn = async (message: string, retry: boolean) => {
+    const runGuideTurn = async (message: string, retry: boolean, location?: LatLng) => {
       const { session, guide } = get();
       if (guide.streaming || session.id === null || transport.guideChat === undefined) {
         return;
       }
-      const request = { sessionId: session.id, message };
+      const request =
+        location === undefined
+          ? { sessionId: session.id, message }
+          : { sessionId: session.id, message, location: roundLocation(location) };
       updateGuide((current) => beginGuideTurn(current, message, retry));
       const current = new AbortController();
       guideController = current;
@@ -1039,10 +1048,10 @@ export function createAppStore(deps: StoreDeps): AppStore {
           }));
         }
       },
-      async sendGuide(text) {
+      async sendGuide(text, options) {
         const message = text.trim();
         if (message.length === 0 || message.length > MAX_MESSAGE_LENGTH) return;
-        await runGuideTurn(message, false);
+        await runGuideTurn(message, false, options?.location);
       },
       async retryGuide() {
         const { lastMessage } = get().guide;
