@@ -73,7 +73,7 @@ const toolEnd = (id: string, staff: "researcher" | "scout" | "planner", ok = tru
           : "update_itinerary",
     staff,
     ok,
-    bubble: ok ? "見つかりました" : "うまく調べられませんでした",
+    bubble: ok ? "見つかりました" : "もう少し調べています",
     count: null,
   },
 });

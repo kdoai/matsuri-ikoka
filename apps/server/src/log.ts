@@ -16,6 +16,19 @@ export interface LoggedError {
   frames?: string[];
 }
 
+/**
+ * 通信のライブラリ（undici）の内部の確認が、接続が閉じられた瞬間に投げた例外か。
+ * ソケットの知らせの中で投げられるので受け止める場所がないが、失敗するのはその1件の通信だけ
+ */
+export function isFetchParserAssertion(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  return (
+    (error as { code?: unknown }).code === "ERR_ASSERTION" &&
+    (error.stack ?? "").includes("Parser.finish") &&
+    (error.stack ?? "").includes("undici")
+  );
+}
+
 export function errorForLog(error: unknown): LoggedError {
   if (!(error instanceof Error)) return { errorName: typeof error };
   const code = (error as { code?: unknown }).code;

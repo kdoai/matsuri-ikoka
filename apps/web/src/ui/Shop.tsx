@@ -29,7 +29,7 @@ import {
   useHudKeys,
 } from "./Hud";
 import { useMediaQuery } from "./hooks";
-import { ItineraryPanel } from "./ItineraryPanel";
+import { ItineraryPanel, preloadMapView } from "./ItineraryPanel";
 import { PasscodeDialog } from "./Passcode";
 import { GreetingBar, PlayNoticeToast, PlayStatus, Tutorial } from "./Play";
 import { GameStage } from "./SceneSlot";
@@ -48,6 +48,9 @@ import { WaitingCard } from "./Waiting";
 // 幅 1024px 以上でしおりを開いていないときは、店内のようすと豆知識（クイズ）の窓を右に縦に並べる。
 // 会話の窓は、幅 1280px 以上なら画面の横の真ん中に、それより狭ければ右の列の左の空いたところに置く。
 // 旅程の提案が出たあとは、旅程を読む邪魔にならないよう豆知識（クイズ）の窓を出さない
+
+/** 店に入ってから地図のコードを取りに行くまでの時間（ミリ秒）。店の描画の邪魔をしない */
+const MAP_PRELOAD_DELAY_MS = 3_000;
 
 export function LanguageButton({ className = "" }: { className?: string }) {
   const t = useT();
@@ -167,6 +170,12 @@ export function Shop() {
   useEffect(() => {
     if (tutorialSeen) saveTutorialSeen();
   }, [tutorialSeen]);
+
+  // 店に入って落ち着いたら、地図のコードを先に取っておく
+  useEffect(() => {
+    const timer = window.setTimeout(preloadMapView, MAP_PRELOAD_DELAY_MS);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   // 旅程ができたら、旅程のパネルを開いて見せる
   useEffect(() => {

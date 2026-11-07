@@ -292,12 +292,14 @@ describe("research_trip：経路と食事・寄り道を並べて調べる", () 
           legs: outbound
             ? [
                 {
+                  means: "train" as const,
                   from: "こがね台",
                   to: "川辺",
                   line: "こがね線",
                   minutes: [30, 40] as [number, number],
                 },
                 {
+                  means: "train" as const,
                   from: "川辺",
                   to: "鈴鳴駅",
                   line: "鈴鳴線",
@@ -306,12 +308,14 @@ describe("research_trip：経路と食事・寄り道を並べて調べる", () 
               ]
             : [
                 {
+                  means: "train" as const,
                   from: "鈴鳴駅",
                   to: "川辺",
                   line: "鈴鳴線",
                   minutes: [25, 35] as [number, number],
                 },
                 {
+                  means: "train" as const,
                   from: "川辺",
                   to: "こがね台",
                   line: "こがね線",

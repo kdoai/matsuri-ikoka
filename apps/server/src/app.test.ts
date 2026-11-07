@@ -289,6 +289,34 @@ describe("時間の上限と失敗", () => {
     expect(second.events[0]).toMatchObject({ data: { code: "timeout" } });
   });
 
+  it("旅程を保存したあとに止まったら、送り直しを求めず、案ができていることを伝える", async () => {
+    const stopsAfterSaving = (error: AgentError): AgentRunner => ({
+      mode: "live",
+      async runTurn(_input, emit) {
+        emit({
+          type: "itinerary.updated",
+          data: {
+            itinerary: fictionalItinerary(),
+            diff: { fromVersion: 0, toVersion: 1, added: [], changed: [], removed: [] },
+          },
+        });
+        throw error;
+      },
+    });
+    const overBudget = sessionWith(
+      stopsAfterSaving(new AgentError("internal", "これ以上調べられませんでした。", false)),
+    );
+
+    const { events } = await readSse(
+      await overBudget.post("/api/chat", chat(overBudget.session.id)),
+    );
+
+    expect(events.map((e) => e.type)).toEqual(["itinerary.updated", "error", "done"]);
+    expect(events[1]).toMatchObject({
+      data: { retryable: false, message: expect.stringContaining("旅程の案はできています") },
+    });
+  });
+
   it("15秒ごとの空のコメント行で、接続を保つ", async () => {
     const waiting: AgentRunner = {
       mode: "live",
