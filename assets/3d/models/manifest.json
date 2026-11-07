@@ -1,6 +1,13 @@
 {
   "files": [
     {
+      "file": "ennichi.glb",
+      "kilobytes": 1485.8,
+      "triangles": 66382,
+      "animations": [],
+      "textures": 15
+    },
+    {
       "file": "exterior.glb",
       "kilobytes": 997.1,
       "triangles": 93742,
@@ -66,6 +73,15 @@
       "textures": 0
     },
     {
+      "file": "motion_lead.glb",
+      "kilobytes": 13.2,
+      "triangles": 0,
+      "animations": [
+        "lead"
+      ],
+      "textures": 0
+    },
+    {
       "file": "motion_look_up.glb",
       "kilobytes": 9.3,
       "triangles": 0,
@@ -98,6 +114,15 @@
       "triangles": 0,
       "animations": [
         "reach"
+      ],
+      "textures": 0
+    },
+    {
+      "file": "motion_run.glb",
+      "kilobytes": 11.9,
+      "triangles": 0,
+      "animations": [
+        "run"
       ],
       "textures": 0
     },
@@ -147,6 +172,15 @@
       "textures": 0
     },
     {
+      "file": "motion_wave_flag.glb",
+      "kilobytes": 10.5,
+      "triangles": 0,
+      "animations": [
+        "wave_flag"
+      ],
+      "textures": 0
+    },
+    {
       "file": "player_penguin.glb",
       "kilobytes": 138.0,
       "triangles": 9294,
@@ -162,10 +196,10 @@
     },
     {
       "file": "staff_hiyoko.glb",
-      "kilobytes": 155.8,
-      "triangles": 9830,
+      "kilobytes": 185.9,
+      "triangles": 10806,
       "animations": [],
-      "textures": 5
+      "textures": 7
     },
     {
       "file": "staff_owl.glb",
@@ -182,5 +216,5 @@
       "textures": 5
     }
   ],
-  "total_kilobytes": 4414.0
+  "total_kilobytes": 5965.5
 }

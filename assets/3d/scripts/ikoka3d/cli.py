@@ -6,9 +6,11 @@ Targets (run in this order by `--target all`):
   motions     motion clips: contact-sheet preview, motion_<name>.glb
   interior    shop interior: preview, Cycles bake, interior.glb
   exterior    storefront + entry camera path: preview, bake, exterior.glb
+  ennichi     festival street with its six stalls: previews, bake, ennichi.glb
   optimize    gltf-transform (meshopt, WebP <= 1024) out/glb -> models/, manifest.json
 
 Extra target (not part of `all`):
+  guide       the guide's cap and flag: previews, and a check that they stay on through every motion
   stills      staff and traveler stills for the travel booklet, and the faces -> ../shiori/staff/*.webp
   faces       only the square face close-ups (dialogue window, booklet) -> ../shiori/staff/face_*.webp
 """
@@ -29,8 +31,8 @@ from . import util as U
 
 ASSETS_3D = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
-TARGETS = ("textures", "characters", "motions", "interior", "exterior", "optimize")
-EXTRA_TARGETS = ("stills", "faces")
+TARGETS = ("textures", "characters", "motions", "interior", "exterior", "ennichi", "optimize")
+EXTRA_TARGETS = ("guide", "stills", "faces")
 
 
 def parse(argv):
@@ -46,6 +48,8 @@ def parse(argv):
     ap.add_argument("--samples", type=int, default=64, help="EEVEE preview samples")
     ap.add_argument("--bake-samples", type=int, default=64, help="Cycles samples for the lighting bake")
     ap.add_argument("--bake-res", type=int, default=1024, help="bake texture size")
+    ap.add_argument("--only", default="", help="optimize only these models (comma-separated names, no extension); "
+                                               "the rest of models/ stays as it is")
     ap.add_argument("--no-render", action="store_true", help="skip preview PNGs")
     ap.add_argument("--no-export", action="store_true", help="skip bakes and GLB export")
     ap.add_argument("--save-blend", action="store_true", help="also save the working .blend")
@@ -127,7 +131,6 @@ def target_characters(args):
 def target_motions(args):
     """Bake every motion; preview each as a strip of frames; one GLB per motion."""
     from . import canvas, export, motions, rig
-    import numpy as np
     _fresh()
     coll = U.collection("staff")
     arms = {}
@@ -156,10 +159,7 @@ def target_motions(args):
             for col in range(cols):
                 bpy.context.scene.frame_set(1 + col * frames // cols)
                 stage.render(tmp, cam)
-                img = bpy.data.images.load(tmp)
-                px = np.array(img.pixels[:], dtype=np.float32).reshape(size, size, 4)[::-1]
-                bpy.data.images.remove(img)
-                sheet.px[row * size:(row + 1) * size, col * size:(col + 1) * size] = px
+                sheet.paste_file(tmp, col * size, row * size)
             sheet.text(name, 10, row * size + 20, 22, "#2B2220", anchor="lt")
         sheet.save(os.path.join(args.out, "preview", "motions.png"))
         os.remove(tmp)
@@ -242,6 +242,16 @@ def target_exterior(args):
     exterior.target(args, _fresh, _save, _glb)
 
 
+def target_ennichi(args):
+    from . import ennichi
+    ennichi.target(args, _fresh, _save, _glb)
+
+
+def target_guide(args):
+    from . import guide
+    guide.target(args, _fresh)
+
+
 def target_stills(args):
     from . import stills
     stills.target(args, _fresh)
@@ -256,12 +266,16 @@ def target_optimize(args):
     from . import export
     raw_dir = os.path.join(args.out, "glb")
     raw = set(n for n in os.listdir(raw_dir) if n.endswith(".glb"))
-    if os.path.isdir(args.dist):
+    only = {f"{n.strip()}.glb" for n in args.only.split(",") if n.strip()}
+    missing = only - raw
+    if missing:
+        raise SystemExit(f"--only: not built yet: {', '.join(sorted(missing))}")
+    # Only a full rebuild has made every model, so only then does a missing raw file mean the model is gone.
+    if os.path.isdir(args.dist) and args.target == "all" and not args.no_export and not only:
         for name in os.listdir(args.dist):
             if name.endswith(".glb") and name not in raw:
                 os.remove(os.path.join(args.dist, name))      # files from characters that no longer exist
-    for name in sorted(os.listdir(raw_dir)):
-        if name.endswith(".glb"):
-            export.optimize(os.path.join(raw_dir, name), os.path.join(args.dist, name))
-            print(f"[ikoka3d] optimized {name}")
+    for name in sorted(only or raw):
+        export.optimize(os.path.join(raw_dir, name), os.path.join(args.dist, name))
+        print(f"[ikoka3d] optimized {name}")
     export.write_manifest(args.dist)

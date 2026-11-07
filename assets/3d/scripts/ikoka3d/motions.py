@@ -15,6 +15,7 @@ Wings: X -90 raises a wing straight forward; Y -90 lifts wing.L sideways
 import math
 
 import bpy
+from mathutils import Euler
 
 from . import rig
 
@@ -57,6 +58,13 @@ def _mix(a, b, k):
 
 def _wing(side, rot):
     return rot if side == "L" else rig.mirror(rot)
+
+
+def _hold(arm, tilt=(0, 0, 0)):
+    """Hand rotation that keeps a held pole at `tilt` from vertical whatever the arm's rotation is."""
+    a = Euler([math.radians(v) for v in arm], "XYZ").to_quaternion()
+    want = Euler([math.radians(v) for v in tilt], "XYZ").to_quaternion()
+    return tuple(math.degrees(v) for v in (a.inverted() @ want).to_euler("XYZ"))
 
 
 # --------------------------------------------------------------------------
@@ -244,6 +252,50 @@ def cheer(t):
     }
 
 
+def lead(t):
+    """The guide leads the way: walking with the flag held high, glancing back at the traveler once a loop."""
+    p = _gait(t)
+    ph = 3 * t
+    arm = _wing("R", (-25, -86 + 5 * _s(ph), 0))
+    p["wing.R"] = {"rot": arm}
+    p["hand.R"] = {"rot": _hold(arm, (-3, 5 * _s(ph), 0))}
+    p["wing.L"] = {"rot": _wing("L", (-28 * _s(ph), -20, 0))}
+    look = _pulse(t, 0.32, 0.1, 0.22, 0.12)
+    h = p["head"]["rot"]
+    p["head"]["rot"] = (h[0], h[1], h[2] + 42 * look)
+    p["jaw"] = {"rot": (12 * look, 0, 0)}
+    return p
+
+
+def wave_flag(t):
+    """The guide swings the flag in wide arcs overhead to call the traveler over."""
+    w = _s(t * 2)
+    arm = _wing("R", (-18, -92 + 8 * w, 0))
+    return {
+        "wing.R": {"rot": arm},
+        "hand.R": {"rot": _hold(arm, (-2, -14 + 26 * w, 0))},
+        "wing.L": {"rot": _wing("L", (-8, -22 - 6 * abs(w), 0))},
+        "body": {"rot": (-3, 3 * w, 0), "loc": (0, 0, 0.012 * abs(_s(t * 2)))},
+        "head": {"rot": (-8, 3 * w, -7 * w)},
+        "jaw": {"rot": (15, 0, 0)},
+    }
+
+
+def run(t):
+    """The guide hurries over: a quick scurry leaning forward, the flag trailing behind."""
+    p = _gait(t, cycles=3, stride=0.15, lift=0.11)
+    ph = 3 * t
+    tilt = _s(ph)
+    p["body"] = {"rot": (15, -7 * tilt, 3 * _s(ph + 0.25)), "loc": (0, 0, 0.055 * (1 - _c(2 * ph)) / 2)}
+    p["head"]["rot"] = (-14, 3 * tilt, 3 * _s(ph + 0.1))
+    arm = _wing("R", (-30 + 10 * _s(ph), -70, 0))
+    p["wing.R"] = {"rot": arm}
+    p["hand.R"] = {"rot": _hold(arm, (-34 + 6 * _s(2 * ph), -6, 0))}
+    p["wing.L"] = {"rot": _wing("L", (42 * _s(ph), -38, 0))}
+    p["jaw"] = {"rot": (16, 0, 0)}
+    return p
+
+
 MOTIONS = {
     "idle": (2.4, idle, "hiyoko"),
     "walk": (2.0, walk, "hiyoko"),
@@ -258,6 +310,9 @@ MOTIONS = {
     "sit": (2.4, sit, "penguin"),
     "reach": (2.0, reach, "penguin"),
     "cheer": (2.0, cheer, "penguin"),
+    "lead": (2.0, lead, "hiyoko"),
+    "wave_flag": (2.0, wave_flag, "hiyoko"),
+    "run": (1.2, run, "hiyoko"),
 }
 
 

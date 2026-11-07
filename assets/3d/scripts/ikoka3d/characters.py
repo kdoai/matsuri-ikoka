@@ -402,8 +402,10 @@ def _props(kind, c):
                  U.cylinder("stamp.face", 0.03, 0.006, c, base=(0, 0, -0.004), mat=M.flat("ink_red", "#B8302A", 0.5),
                             verts=16)]
         stamp = U.join(parts, "prop.stamp")
-        stamp.location = (-0.35, -0.06, 0.12)
+        stamp.matrix_world = Matrix.Translation((-0.35, -0.06, 0.12))
         out.append((stamp, "hand.R"))
+        out.append((_guide_cap(c), "head"))
+        out.append((_guide_flag(c), "hand.R"))
     elif kind == "owl":
         bk = U.flatten(props.open_book("prop.book_parts", c, w=0.26, d=0.18), "prop.book")
         bk.matrix_world = Matrix.Translation((0.3, -0.16, 0.3)) @ Matrix.Rotation(0.9, 4, "X") @ Matrix.Rotation(0.5, 4, "Z")
@@ -440,6 +442,72 @@ def _props(kind, c):
         book.matrix_world = Matrix.Translation((-0.35, -0.08, 0.16)) @ Matrix.Rotation(1.2, 4, "X")
         out.append((book, "hand.R"))
     return out
+
+
+def _guide_cap(c):
+    """Guide's cap: vermilion with a cream band, the shop's crest and a visor. The chick's tuft pokes out on top."""
+    red = M.felt("guide_cap", "#D2402E", 0.25)
+    cream = M.flat("guide_cap_band", P.CREAM, 0.7)
+    visor_mat = M.flat("guide_visor", "#8E2A1E", 0.35)
+    crown = U.lathe("cap.crown", [(0.0, 0.0), (0.238, 0.0), (0.246, 0.055), (0.266, 0.12), (0.244, 0.16), (0.13, 0.185),
+                                  (0.0, 0.19)], c, segs=28, mat=red)
+    band = U.cylinder("cap.band", 0.244, 0.042, c, base=(0, 0, 0.006), mat=cream, verts=28)
+    visor = _ellipsoid("cap.visor", c, Vector((0, -0.205, 0.002)), (0.185, 0.14, 0.016), visor_mat, 22, 8)
+    crest = props.shape_panel("cap.crest", c, props._circle(16), (0.13, 0.13), "crest", loc=(0, -0.262, 0.1),
+                              facing=(math.pi / 2 - 0.26, 0, 0), thickness=0.004)
+    hat = U.join([crown, band, visor, crest], "prop.guide_cap")
+    hat.matrix_world = Matrix.Translation((0, 0.03, 0.885)) @ Matrix.Rotation(-0.18, 4, "X") @ hat.matrix_world
+    return hat
+
+
+# Where the wing tip closes on the pole, at rest (the pole runs straight up through this point).
+GUIDE_GRIP = (-0.3475, -0.012, 0.233)
+GUIDE_CAP_CENTER = (0.0, 0.03, 0.98)
+FLAG_ABOVE, FLAG_BELOW = 1.12, 0.17     # pole length above and below the grip
+FLAG_SIZE = (0.56, 0.34)
+FLAG_LEAN = 0.13                        # radians away from the head, at rest
+
+
+def _guide_flag(c):
+    """Guide's flag: a light pole held in the right wing tip, with a swallowtail cloth at the top, on the outer side."""
+    gx, gy, gz = GUIDE_GRIP
+    lacquer = M.flat("flag_pole", "#6A3D21", 0.4)
+    gold = M.flat("brass", P.GOLD, 0.25, metal=1.0)
+    pole = U.cylinder("flag.pole", 0.013, FLAG_ABOVE + FLAG_BELOW, c, base=(gx, gy, gz - FLAG_BELOW), mat=lacquer, verts=8)
+    tip = U.sphere("flag.tip", 0.03, c, loc=(gx, gy, gz + FLAG_ABOVE + 0.015), mat=gold, segs=10, rings=6)
+    grip = U.cylinder("flag.grip", 0.02, 0.1, c, base=(gx, gy, gz - 0.05), mat=M.flat("flag_grip", "#2B2220", 0.6), verts=8)
+    length, height = FLAG_SIZE
+    bm = bmesh.new()
+    uv = bm.loops.layers.uv.new("UVMap")
+    nu, nv = 8, 4
+    top = gz + FLAG_ABOVE - 0.02
+    grid = []
+    for j in range(nv + 1):
+        v = j / nv
+        end = length * (1.0 - 0.2 * (1.0 - abs(2 * v - 1)))     # swallowtail
+        row = []
+        for i in range(nu + 1):
+            u = i / nu
+            x = u * end
+            sway = 0.028 * math.sin(u * 2 * math.pi + 0.5) * u
+            vert = bm.verts.new((gx - x, gy + sway, top - height + v * height - 0.018 * u))
+            row.append((vert, x / length, v))
+        grid.append(row)
+    for j in range(nv):
+        for i in range(nu):
+            quad = (grid[j][i], grid[j][i + 1], grid[j + 1][i + 1], grid[j + 1][i])
+            f = bm.faces.new([q[0] for q in quad])
+            for loop, q in zip(f.loops, quad):
+                loop[uv].uv = (q[1], q[2])
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    cloth = U.mesh_object("flag.cloth", bm, c, M.textured("guide_flag", "guide_flag", rough=0.85, sheen=0.2), smooth=True)
+    flag = U.join([pole, tip, grip, cloth], "prop.guide_flag")
+    # Lean the pole away from the head, about the grip; the hand keeps it there through the motions.
+    # The mesh is in the coordinates of the pole's foot, where the joined object's origin is.
+    pivot = Vector(GUIDE_GRIP) - flag.location
+    flag.data.transform(Matrix.Translation(pivot) @ Matrix.Rotation(-FLAG_LEAN, 4, "Y") @ Matrix.Translation(-pivot))
+    flag.matrix_world = Matrix.Translation(flag.location)
+    return flag
 
 
 def _shadow(kind, c):
