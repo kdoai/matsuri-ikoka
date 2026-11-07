@@ -1,5 +1,13 @@
-import { fictionalItinerary, fictionalTripWatch } from "@matsuri-ikoka/schema/testing";
+import { GuideNoticeSchema } from "@matsuri-ikoka/schema";
+import {
+  fictionalItinerary,
+  fictionalNotice,
+  fictionalTripWatch,
+} from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
+import { FirestoreTripStorage } from "../storage/firestore";
+import { ownerIdOf } from "../storage/owner";
+import { TRIP_WATCH_DOC_ID } from "../storage/types";
 import { FirestorePatrolStore } from "./firestoreStore";
 import { MemoryPatrolStore } from "./store";
 import { patrolStoreContract } from "./storeContract";
@@ -79,6 +87,55 @@ describe.skipIf(db === null)("FirestorePatrolStore（エミュレーター）", 
     if (found === undefined) return;
     expect((await store.readItinerary(found))?.version).toBe(2);
     expect(await store.readItinerary({ ...found, ref: `users/other/trips/${tripId}` })).toBeNull();
+  });
+
+  it("ガイドの保存の口で頼んだ旅を見回りが読み、見回りが書いた通知をガイドの口で読める", async () => {
+    const storage = new FirestoreTripStorage(db);
+    const store = new FirestorePatrolStore(db);
+    const stamp = String(Date.now());
+    const uid = `user-g-${stamp}`;
+    const tripId = `trip-g-${stamp}`;
+    const owner = ownerIdOf(uid);
+    await storage.saveItinerary({ ...fictionalItinerary(), id: tripId }, owner);
+    const docs = storage.forOwner(owner).tripDocs(tripId);
+    await docs.put("watch", TRIP_WATCH_DOC_ID, { ...fictionalTripWatch(), tripId });
+
+    const found = (await store.listWatchedTrips(10_000)).find(
+      (trip) => trip.watch.tripId === tripId,
+    );
+    if (found === undefined) throw new Error("頼まれた旅が見つかりません");
+    expect(found.ref).toBe(`users/${uid}/trips/${tripId}`);
+    expect((await store.readItinerary(found))?.id).toBe(tripId);
+
+    const notice = { ...fictionalNotice(), tripId };
+    expect(await store.addNotice(found, notice, Date.now() + 60_000)).toBe("created");
+    expect(GuideNoticeSchema.parse(await docs.get("notices", notice.id))).toEqual(notice);
+    expect(await docs.list("notices")).toEqual([notice]);
+
+    // 旅を消すと、依頼も通知もいっしょに消え、見回りも書けない
+    expect(await storage.forOwner(owner).deleteTrip(tripId)).toBe(true);
+    expect(await store.listNotices(found)).toEqual([]);
+    expect(
+      (await store.listWatchedTrips(10_000)).some((trip) => trip.watch.tripId === tripId),
+    ).toBe(false);
+    expect(await store.addNotice(found, notice, Date.now() + 60_000)).toBe("not_watching");
+  });
+
+  it("期限を過ぎた依頼は、消える前でも見回らない", async () => {
+    const stamp = String(Date.now());
+    const uid = `user-e-${stamp}`;
+    const tripId = `trip-e-${stamp}`;
+    const expiresAt = Date.UTC(2026, 7, 10);
+    await db
+      .doc(`users/${uid}/trips/${tripId}/watch/current`)
+      .set({ ...fictionalTripWatch(), tripId, expiresAt: new Date(expiresAt) });
+    const found = async (now: number) =>
+      (await new FirestorePatrolStore(db, { now: () => now }).listWatchedTrips(10_000)).some(
+        (trip) => trip.watch.tripId === tripId,
+      );
+
+    expect(await found(expiresAt - 1)).toBe(true);
+    expect(await found(expiresAt + 1)).toBe(false);
   });
 
   it("通知の文書に expiresAt があっても、通知として読める", async () => {

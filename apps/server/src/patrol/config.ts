@@ -3,7 +3,7 @@ import { MAX_PATROL_TARGETS } from "@matsuri-ikoka/schema";
 // 見回りの設定。どれも省略でき、なければ見回りの入口だけが断る。サーバーは起動し、相談はそのまま動く。
 // 費用は、セッションの予算（list cost の上限）と、1回に調べる対象の数の上限で抑える。
 
-/** managed-agents/ の定義の名前。ID は ant apply が管理するので、コードには持たない */
+/** managed-agents-patrol/ の定義の名前。ID は ant apply が管理するので、コードには持たない */
 export const PATROL_NAMES = {
   agent: "matsuri-patrol-reader",
   environment: "matsuri-patrol",

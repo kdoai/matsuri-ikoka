@@ -35,6 +35,12 @@ function check(ok, message) {
 const health = await fetch(new URL("/health", base));
 check(health.ok && (await health.json()).status === "ok", "/health");
 
+// 見回りの設定がなければ、見回りの入口だけが断る。相談はこのあとの確かめのとおり動く
+for (const path of ["/internal/patrol/start", "/internal/patrol/webhook"]) {
+  const refused = await fetch(new URL(path, base), { method: "POST" });
+  check(refused.status === 404, `${path}：見回りの設定がなければ断る`);
+}
+
 for (const file of samples) {
   const sample = JSON.parse(await readFile(file, "utf8"));
   const session = await fetch(new URL("/api/session", base), {

@@ -52,9 +52,11 @@ function versionDocId(version: number): string {
 
 export class FirestorePatrolStore implements PatrolStore {
   readonly #db: Firestore;
+  readonly #now: () => number;
 
-  constructor(db: Firestore) {
+  constructor(db: Firestore, options: { now?: () => number } = {}) {
     this.#db = db;
+    this.#now = options.now ?? Date.now;
   }
 
   #patrol(key: string) {
@@ -74,6 +76,9 @@ export class FirestorePatrolStore implements PatrolStore {
     return snapshot.docs.flatMap((doc) => {
       const path = doc.id === WATCH_DOC ? tripPathOf(doc.ref.path) : null;
       if (path === null) return [];
+      // 期限のある依頼は、消える前でもガイドの側と同じく、ないものとして扱う
+      const expiresAt = doc.get("expiresAt");
+      if (expiresAt != null && this.#now() > millis(expiresAt)) return [];
       // 決まった項目だけを取り出す。ほかの項目があっても、依頼の形は変えない
       const { tripId, status, startedAt, endsOn, stoppedAt, lastCheckedAt } = doc.data();
       const watch = TripWatchSchema.safeParse({

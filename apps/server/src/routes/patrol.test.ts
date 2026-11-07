@@ -6,6 +6,8 @@ import {
   createSignatureVerifier,
   type InternalVerifiers,
 } from "../account/internalAuth";
+import { type AppDeps, createApp } from "../app";
+import { createFestivalStore } from "../data/festivalStore";
 import {
   PAGE_URL,
   type PatrolHarness,
@@ -15,6 +17,8 @@ import {
 } from "../patrol/testing";
 import type { Consultations } from "../session/consultations";
 import type { StoragePersistence } from "../session/persistence";
+import { ItineraryStore, SessionStore } from "../session/sessionStore";
+import { DailyLimiter } from "./guard";
 import { PATROL_START_PATH, PATROL_WEBHOOK_PATH, registerPatrolRoutes } from "./patrol";
 import { SecureRoutes } from "./policy";
 
@@ -340,5 +344,99 @@ describe("経路の宣言", () => {
       { method: "POST", path: PATROL_START_PATH, policy: "internal" },
       { method: "POST", path: PATROL_WEBHOOK_PATH, policy: "internal" },
     ]);
+  });
+});
+
+describe("配線したアプリ", () => {
+  const wired = (over: Partial<AppDeps> = {}) =>
+    createApp({
+      runner: { mode: "mock", sampleFor: () => "fictional-sample", runTurn: async () => {} },
+      sessions: new SessionStore(),
+      itineraries: new ItineraryStore(),
+      festivals: createFestivalStore([]),
+      limiter: new DailyLimiter(null, () => "2026-08-03"),
+      accessPasscode: null,
+      ...over,
+    });
+  const oidcOk: InternalVerifiers = {
+    oidc: {
+      verify: async (c) =>
+        c.req.header("authorization") === "Bearer ok"
+          ? { kind: "oidc", id: "scheduler@example.com" }
+          : null,
+    },
+  };
+  const post = (server: Hono, path: string, headers: Record<string, string> = {}) =>
+    server.request(path, { method: "POST", headers });
+
+  it("設定がなければ、見回りの入口だけが断り、相談はそのまま動く", async () => {
+    const server = wired();
+
+    expect((await post(server, PATROL_START_PATH)).status).toBe(404);
+    expect((await post(server, PATROL_WEBHOOK_PATH)).status).toBe(404);
+    expect((await server.request("/healthz")).status).toBe(200);
+    expect((await post(server, "/api/session")).status).toBe(201);
+  });
+
+  it("鍵があっても、検証の設定がなければ、見回りを動かさない", async () => {
+    const server = wired({ patrol: harness.deps });
+
+    expect((await post(server, PATROL_START_PATH)).status).toBe(404);
+    expect((await post(server, PATROL_WEBHOOK_PATH)).status).toBe(404);
+    expect(harness.agent.requests).toEqual([]);
+  });
+
+  it("検証の設定があるときは確かめ、見回りの鍵がなければ入口だけが断る", async () => {
+    const server = wired({ internal: oidcOk, patrol: null });
+
+    expect((await post(server, PATROL_START_PATH)).status).toBe(401);
+    expect((await post(server, PATROL_START_PATH, { authorization: "Bearer ok" })).status).toBe(
+      404,
+    );
+    // 署名の鍵がなければ、Webhook の入口は確かめる前に断る
+    expect((await post(server, PATROL_WEBHOOK_PATH)).status).toBe(404);
+  });
+
+  it("配線すると、検証を通った起動が見回りを動かす", async () => {
+    const { trip, itinerary } = watchedTrip("a");
+    harness.store.putWatchedTrip(trip, itinerary);
+    harness.pages.script.set(PAGE_URL, { status: "ok", lines: pageLinesFor() });
+    const server = wired({ internal: oidcOk, patrol: harness.deps });
+
+    const res = await post(server, PATROL_START_PATH, { authorization: "Bearer ok" });
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toMatchObject({ targets: 1, sentToAgent: 0 });
+  });
+
+  it("合言葉があっても、内部の入口は合言葉で確かめない", async () => {
+    const server = wired({
+      internal: oidcOk,
+      patrol: harness.deps,
+      accessPasscode: "test-passcode",
+    });
+
+    expect((await post(server, PATROL_START_PATH)).status).toBe(401);
+    expect((await post(server, PATROL_START_PATH, { authorization: "Bearer ok" })).status).toBe(
+      200,
+    );
+  });
+
+  it("大きすぎる本文は、処理の前に断る", async () => {
+    const server = wired({
+      internal: {
+        signature: createSignatureVerifier(SIGNING_KEY, { now: () => harness.clock.now }),
+      },
+      patrol: harness.deps,
+    });
+    const body = "x".repeat(64 * 1024);
+
+    const res = await server.request(PATROL_WEBHOOK_PATH, {
+      method: "POST",
+      body,
+      headers: { "content-length": String(body.length) },
+    });
+
+    expect(res.status).toBe(413);
   });
 });
