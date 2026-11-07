@@ -74,6 +74,14 @@ describe("画面のビルドを同じオリジンから配る", () => {
     expect(await res.text()).toContain("<title>画面</title>");
   });
 
+  it("なくなった assets には index.html を返さず 404 にし、長く置く見出しも付けない", async () => {
+    const res = await app(dist).request("/assets/MapView-oldhash.js");
+
+    expect(res.status).toBe(404);
+    expect(await res.text()).not.toContain("<title>画面</title>");
+    expect(res.headers.get("cache-control") ?? "").not.toContain("immutable");
+  });
+
   it("API・しおり・死活監視の経路は、画面のファイルで上書きしない", async () => {
     const api = await app(dist).request("/api/no-such");
     const shiori = await app(dist).request("/shiori/no-such");

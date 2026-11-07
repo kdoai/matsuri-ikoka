@@ -176,6 +176,9 @@ export const en: Messages = {
     soundChoiceOn: "On",
     soundChoiceOff: "Off",
     soundChoiceNote: "You can change this in the settings once inside",
+    reload: "Reload the page",
+    troubleTitle: "We couldn't show this screen",
+    troubleBody: "Reload the page to carry on. Your current conversation will start over.",
   },
   dialogue: {
     thinking: "One moment, please",
@@ -909,6 +912,9 @@ export const en: Messages = {
     venue: "Venue",
     spot: "Side-trip idea",
     noLocations: "Nothing to show on the map yet.",
+    troubleTitle: "We couldn't load the map",
+    troubleBody:
+      "Reloading the page brings the map back, but your current conversation will start over. The places are listed below.",
   },
   sources: {
     title: "Sources used",

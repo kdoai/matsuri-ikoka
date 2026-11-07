@@ -4,7 +4,7 @@ import type { SecureRoutes } from "./policy";
 
 // 画面のビルド（apps/web/dist）を、API と同じオリジンから配る（docs/architecture.md）。
 // API・しおり・死活監視の経路を先に通し、それ以外の GET で画面のファイルを返す。
-// 見つからない経路は、画面の中の経路として index.html を返す。
+// 見つからない経路は、画面の中の経路として index.html を返す（assets の下は 404）。
 
 /** API など、画面のファイルを返さない経路 */
 const SERVER_PATHS = /^\/(?:api|shiori|internal)(?:\/|$)|^\/healthz?$/;
@@ -71,13 +71,16 @@ export function registerWebRoutes(
     "*",
     withHeaders(serveStatic({ root: deps.webDist, precompressed: true }), authDomain),
   );
-  // 画面の中の経路（例：/trip/…）は index.html を返す
+  // 画面の中の経路（例：/trip/…）は index.html を返す。
+  // 見つからない assets には返さない。新しい版を公開すると、開いたままのページが古いファイルを取りに来る。
+  // そこに HTML を返すと、長く置く見出しも付くうえ、ブラウザは読み込みの失敗の理由を取り違える
+  const page = withHeaders(
+    serveStatic({ root: deps.webDist, path: "index.html", precompressed: true }),
+    authDomain,
+  );
   routes.files(
     "*",
-    withHeaders(
-      serveStatic({ root: deps.webDist, path: "index.html", precompressed: true }),
-      authDomain,
-    ),
+    (c, next) => (c.req.path.startsWith("/assets/") ? next() : page(c, next)),
     "GET",
   );
 }

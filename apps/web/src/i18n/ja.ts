@@ -158,6 +158,9 @@ export const ja = {
     soundChoiceOn: "オン",
     soundChoiceOff: "オフ",
     soundChoiceNote: "店に入ってからも、設定で変えられます",
+    reload: "ページを読み込み直す",
+    troubleTitle: "画面を表示できませんでした",
+    troubleBody: "ページを読み込み直すと、また使えます。いまの相談は最初からになります。",
   },
   dialogue: {
     thinking: "少々お待ちください",
@@ -834,6 +837,9 @@ export const ja = {
     venue: "会場",
     spot: "寄り道の候補",
     noLocations: "地図に打てる場所がまだありません。",
+    troubleTitle: "地図を読み込めませんでした",
+    troubleBody:
+      "ページを読み込み直すと地図が出ますが、いまの相談は最初からになります。地図の地点は、下の文字で読めます。",
   },
   sources: {
     title: "使った出典",
