@@ -101,7 +101,7 @@ export async function createAccount(config: AccountConfig): Promise<Account> {
     import("firebase-admin/auth"),
     import("firebase-admin/firestore"),
     import("../storage/firestore"),
-    import("../storage/dailyCounts"),
+    import("../storage/firestoreDailyCounts"),
   ]);
   const app = initializeApp(config.projectId === null ? {} : { projectId: config.projectId });
   const db =

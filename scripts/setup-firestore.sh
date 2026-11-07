@@ -48,6 +48,9 @@ TTL_GROUPS=(itineraries versions shares sessions notices proposals guideUsage da
 # gcloud の --index は範囲を指定できず、書かなかった索引を消すので、REST で入れる
 WATCH_INDEX_URL="https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/collectionGroups/watch/fields/status?updateMask=indexConfig"
 WATCH_INDEX_CONFIG='{"indexConfig":{"indexes":[{"queryScope":"COLLECTION","fields":[{"fieldPath":"status","order":"ASCENDING"}]},{"queryScope":"COLLECTION_GROUP","fields":[{"fieldPath":"status","order":"ASCENDING"}]}]}}'
+# 1日の回数の数え（dailyLimits.counts）は、キーが IP の数だけ増えるので、索引から外す。
+# 探すのに使わず、索引の数と書き込みの費用だけが増えるため
+UNINDEXED_FIELDS=("dailyLimits counts")
 ROLE="roles/datastore.user"
 
 failed=0
@@ -117,6 +120,23 @@ check_watch_index() {
   else
     ng "索引 watch.status のコレクショングループ"
   fi
+}
+
+# 索引から外してあれば exempt。集まりの既定（usesAncestorConfig）のままなら inherited
+unindexed_state() {
+  gcloud firestore indexes fields describe "$2" --collection-group="$1" --project "$PROJECT"     --format=json 2>/dev/null     | json 'data?.indexConfig?.usesAncestorConfig===false && (data?.indexConfig?.indexes ?? []).length===0 ? "exempt" : "inherited"'     || true
+}
+
+check_unindexed() {
+  local entry group field
+  for entry in "${UNINDEXED_FIELDS[@]}"; do
+    read -r group field <<<"$entry"
+    if [[ "$(unindexed_state "$group" "$field")" == "exempt" ]]; then
+      ok "索引から外す $group.$field"
+    else
+      ng "索引から外す $group.$field"
+    fi
+  done
 }
 
 check_role() {
@@ -195,6 +215,7 @@ check_all() {
   check_database
   check_ttl
   check_watch_index
+  check_unindexed
   check_role
   check_run_env
   check_auth
@@ -225,6 +246,15 @@ apply_all() {
       -H "x-goog-user-project: $PROJECT" -H "Content-Type: application/json" \
       -d "$WATCH_INDEX_CONFIG" "$WATCH_INDEX_URL" >/dev/null
   fi
+
+  local entry group field
+  for entry in "${UNINDEXED_FIELDS[@]}"; do
+    read -r group field <<<"$entry"
+    if [[ "$(unindexed_state "$group" "$field")" != "exempt" ]]; then
+      echo "索引から外す（$group.$field）"
+      gcloud firestore indexes fields update "$field" --collection-group="$group"         --disable-indexes --project "$PROJECT" --async --quiet
+    fi
+  done
 
   echo "プロジェクトに Firebase を足し、セキュリティルール（ブラウザからはすべて断る）を入れる"
   if ! firebase projects:list --json | P="$PROJECT" json 'data.result.some((p)=>p.projectId===process.env.P)'; then
