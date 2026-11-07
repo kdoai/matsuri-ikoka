@@ -5,9 +5,11 @@ import type { FestivalStore } from "../data/festivalStore";
 import { daysBetween, nowInJapan, todayInJapan } from "../domain/calendar";
 import { errorForLog } from "../log";
 import type { LodgingService } from "../tools/lodging";
+import type { WeatherService } from "../tools/weather";
 import type { PatrolAgent, PatrolSessionState } from "./agent";
 import { checkFinding, type PageEvidence, parsePatrolReport } from "./checkpoint";
 import type { PatrolConfig } from "./config";
+import { deliverGuideCalls } from "./guideCalls";
 import {
   changedLinesForAgent,
   diffLines,
@@ -72,6 +74,8 @@ export interface PatrolDeps {
   pages: PageFetcher;
   festivals: FestivalStore;
   lodging: LodgingService;
+  /** 声かけに添える天気の予報。なければ天気を添えない */
+  weather?: WeatherService;
   config: Pick<
     PatrolConfig,
     "sessionBudgetCents" | "maxTargetsPerRun" | "maxLodgingChecksPerRun" | "checkIntervalMs"
@@ -94,6 +98,8 @@ export interface PatrolTickResult {
   lodgingNotices: number;
   /** 定期の起動で受け取った、Webhook が届かなかった結果の数 */
   reconciled: number;
+  /** 旅程の時刻に合わせて届けた声かけの数 */
+  guideCalls: number;
 }
 
 function log(kind: string, fields: object): void {
@@ -727,10 +733,20 @@ async function pruneRecords(deps: PatrolDeps, plans: readonly PatrolPlan[]): Pro
 export async function startPatrol(deps: PatrolDeps): Promise<PatrolTickResult> {
   const startedAt = deps.now();
   const holder = `tick-${randomUUID()}`;
+  const { watched, complete } = await loadWatched(deps);
+
+  // 声かけは時刻に遅れると役に立たないので、ほかの前処理より先に届ける。
+  // 前の実行の片付けや控えの整理が失敗しても、この回の声かけは届いている
+  let guideCalls = 0;
+  try {
+    guideCalls = await deliverGuideCalls(deps, watched);
+  } catch (error) {
+    log("guide_call_failed", errorForLog(error));
+  }
+
   const reconciled = await reconcileRuns(deps, holder);
   await disposeLeftovers(deps);
 
-  const { watched, complete } = await loadWatched(deps);
   const { plans, unmatched } = planTargets(
     watched,
     deps.festivals,
@@ -798,6 +814,7 @@ export async function startPatrol(deps: PatrolDeps): Promise<PatrolTickResult> {
     skipped,
     lodgingNotices,
     reconciled,
+    guideCalls,
   };
   log("patrol_tick", { ...summary, ms: deps.now() - startedAt });
   return summary;

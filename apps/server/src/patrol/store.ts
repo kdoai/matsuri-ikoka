@@ -7,7 +7,7 @@ import {
   MAX_NOTICES_PER_TRIP,
   TripWatchSchema,
 } from "@matsuri-ikoka/schema";
-import { isFirmNotice, noticeToEvict } from "./notices";
+import { evictionFor, noticeToEvict } from "./notices";
 import type { PatrolRecord, PatrolRun, WatchedTrip } from "./types";
 
 // 見回りの保存の口。見回りに要るものだけを持つ狭い口にする。
@@ -130,9 +130,11 @@ export class MemoryPatrolStore implements PatrolStore {
   readonly #deliveries = new Map<string, { done: boolean; until: number }>();
   /** 旅の置き場。あれば、依頼・旅程・通知はそこで読み書きする（ガイドと同じ置き場） */
   readonly #source: PatrolTripSource | null;
+  readonly #now: () => number;
 
-  constructor(options: { trips?: PatrolTripSource } = {}) {
+  constructor(options: { trips?: PatrolTripSource; now?: () => number } = {}) {
     this.#source = options.trips ?? null;
+    this.#now = options.now ?? Date.now;
   }
 
   /** 見回りの依頼を足す（依頼を書く API の代わり） */
@@ -226,7 +228,8 @@ export class MemoryPatrolStore implements PatrolStore {
     }
     let evict: string | null = null;
     if (notices.size >= MAX_NOTICES_PER_TRIP) {
-      if (!isFirmNotice(notice)) return "full";
+      const eviction = evictionFor(notice);
+      if (eviction === null) return "full";
       const victim = noticeToEvict(
         [...notices.values()].map((item) => ({
           id: item.id,
@@ -234,6 +237,8 @@ export class MemoryPatrolStore implements PatrolStore {
           createdAt: item.createdAt,
           readAt: item.readAt,
         })),
+        this.#now(),
+        { onlySpentReminders: eviction === "spent_reminders" },
       );
       if (victim === null) return "full";
       evict = victim;

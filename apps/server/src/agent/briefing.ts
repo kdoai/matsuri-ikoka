@@ -187,6 +187,12 @@ export function shopRecord(ctx: ToolContext): string {
     conditions.destinations
       ? `行き先 ${conditions.destinations.length === 0 ? "おまかせ（どこでも）" : conditions.destinations.join("・")}`
       : null,
+    // 了承を得て広げた段階。探し直すときも search_festivals が引き継ぐ
+    conditions.widen === "neighbor"
+      ? "行き先の広げ方 隣の県まで（了承済み）"
+      : conditions.widen === "nationwide"
+        ? "行き先の広げ方 全国から（了承済み）"
+        : null,
     conditions.nights === undefined
       ? null
       : conditions.nights === 0

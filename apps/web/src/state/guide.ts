@@ -1,6 +1,5 @@
 import {
   type DecideProposalResponse,
-  type EmergencyContact,
   GUIDE_STALLS,
   type GuideMemoItem,
   type GuideNotice,
@@ -50,7 +49,6 @@ export type GuideEntry =
   | { kind: "user"; id: string; text: string }
   | { kind: "guide"; id: string; text: string; streaming: boolean }
   | { kind: "tool"; id: string; tool: GuideToolName; bubble: string; running: boolean; ok: boolean }
-  | { kind: "emergency"; id: string; contacts: EmergencyContact[] }
   | { kind: "memo"; id: string; text: string }
   | { kind: "sources"; id: string; sources: Source[]; checkedAt: string }
   | {
@@ -359,16 +357,6 @@ export function applyGuideEvent(guide: GuideState, event: GuideSseEvent): GuideS
             : entry,
         ),
       };
-    case "guide.emergency":
-      // 緊急の連絡先は、ガイドの文より前に並ぶ（サーバーが先に送る）
-      return {
-        ...guide,
-        dialogueOpen: true,
-        entries: [
-          ...guide.entries,
-          { kind: "emergency", id: `${prefix}-emergency`, contacts: event.data.contacts },
-        ],
-      };
     case "guide.notice": {
       const { notice } = event.data;
       const others = guide.notices.filter((other) => other.id !== notice.id);
@@ -457,7 +445,7 @@ export type GuideLine =
       code: GuideErrorCode;
       message: string | null;
       retryable: boolean;
-      /** 失敗の前に届いていた文。緊急の発言の決まった文を隠さない */
+      /** 失敗の前に届いていた文。隠さない */
       said: string | null;
     };
 
@@ -486,12 +474,4 @@ export function guideLine(guide: GuideState): GuideLine {
     if (entry.kind === "tool" && entry.running) return { kind: "tool", bubble: entry.bubble };
   }
   return guide.availability === "unavailable" ? { kind: "unavailable" } : { kind: "greeting" };
-}
-
-/** いまの発言への緊急の連絡先。文より先に、いちばん上に出す */
-export function currentEmergency(guide: GuideState): EmergencyContact[] {
-  const entry = guide.entries.findLast((item) => item.kind === "emergency");
-  if (entry?.kind !== "emergency") return [];
-  const lastUser = guide.entries.findLastIndex((item) => item.kind === "user");
-  return guide.entries.indexOf(entry) > lastUser ? entry.contacts : [];
 }

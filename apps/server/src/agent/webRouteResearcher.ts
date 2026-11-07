@@ -16,6 +16,7 @@ import {
   buildVerifierOptions,
   createVerifierHooks,
   type FetchedPage,
+  type FinalReply,
   finalText,
 } from "./webVerifier";
 
@@ -120,6 +121,8 @@ export function createWebRouteResearcher(deps: {
   query: QueryFn;
   resolveHost?: ResolveHost;
   maxBudgetUsd?: number | undefined;
+  /** 残した会話の記録を消す（Agent SDK の deleteSession を包んだもの）。省略すると消さない（テスト） */
+  forgetTranscript?: ((sessionId: string) => void) | undefined;
   clock?: () => number;
 }): RouteResearcher {
   const systemPrompt = `${deps.prompt}\n\n${ANSWER_FORMAT}`;
@@ -182,9 +185,17 @@ export function createWebRouteResearcher(deps: {
         let costUsd = 0;
         let found = false;
         let legCount = 0;
+        let salvage: FinalReply["salvage"] = null;
         const ask = async (text: string, withTools: boolean) => {
-          const reply = await finalText(deps.query, text, options(withTools), onActivity);
+          const reply = await finalText(
+            deps.query,
+            text,
+            options(withTools),
+            onActivity,
+            deps.forgetTranscript,
+          );
           costUsd += reply.costUsd;
+          salvage ??= reply.salvage;
           return reply.text;
         };
         try {
@@ -254,6 +265,7 @@ export function createWebRouteResearcher(deps: {
               kind: "route_research",
               found,
               legs: legCount,
+              ...(salvage === null ? {} : { salvage }),
               totalCostUsd: costUsd,
               elapsedMs: Date.now() - started,
               searches: log.searches.length,

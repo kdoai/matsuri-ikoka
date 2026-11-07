@@ -29,18 +29,17 @@ import {
 } from "@matsuri-ikoka/schema";
 import type { Context } from "hono";
 import { CostMeter } from "../agent/costMeter";
-import { AgentError } from "../agent/runner";
 import type { GuideTrip, GuideTripResult, TripGuideData } from "../guide/data";
 import { openGuideTrip, ownerUsageLedger } from "../guide/data";
 import {
   planApproval,
   proposalChange,
+  remindersWatch,
   revertedItinerary,
   settleProposal,
   startedWatch,
   stoppedWatch,
 } from "../guide/decision";
-import { EMERGENCY_FALLBACK_TEXT, emergencyEvent, isEmergencyMessage } from "../guide/emergency";
 import {
   DEFAULT_GUIDE_LIMITS,
   type GuideLimits,
@@ -66,17 +65,12 @@ import { type DailyGuideUsage, TripGoneError } from "../storage/types";
 import { apiError, type ErrorBody } from "./errors";
 import { type ConcurrencyLimiter, type DailyLimiter, type TurnQuota, turnQuota } from "./guard";
 import { routeParam, type SecureRoutes } from "./policy";
-import { isClientClosed, openEventStream, streamEvents, type TurnTiming } from "./turnStream";
+import { streamEvents, type TurnTiming } from "./turnStream";
 
 // 旅のガイドの API（docs/spec/guide.md）。
 // - 旅は相談から決める。本文に旅の ID や利用者の ID を持たない（open だけは、残した旅を自分の口から開く）
 // - ガイドを用意していなければ（live でモデルの設定がない）、この入口だけが 404 で断る。今の相談は動く
-// - 緊急の言葉がある発言は、保存の口を待たずに SSE を開いて、公的な連絡先を先に送る。上限や混雑でも、
-//   相談や旅を開けないときも、連絡先と決まった文を返し、いつもの案内（新しく始める、もう一度送るなど）を添える
 // - 利用者のデータは、決まり（routes/policy.ts）が渡した相談の中の旅と、持ち主で絞った口だけで読み書きする
-
-/** 緊急の発言で、保存の口を待つ上限。連絡先は待つ前に送ってある。止まったら、決まった文と案内で閉じる */
-const EMERGENCY_WAIT_MS = 5_000;
 
 export interface GuideOptions {
   runner: GuideRunner;
@@ -96,12 +90,11 @@ export interface GuideDeps {
   turnIdleMs?: number | undefined;
   turnMaxMs?: number | undefined;
   heartbeatMs?: number | undefined;
-  emergencyWaitMs?: number | undefined;
   /** 見回りの部品。組み立てられなかった環境では null で、見回りを頼めない（頼んでも、だれも見回らない） */
   patrol?: object | null | undefined;
 }
 
-/** 断るときの状態と本文。ふつうの発言は HTTP の応答に、緊急の発言は連絡先のあとの error イベントにする */
+/** 断るときの状態と本文。HTTP の応答にする */
 interface TurnRefusal {
   ok: false;
   status: 404 | 409 | 429 | 503;
@@ -184,24 +177,6 @@ function tripRefusalOf(result: Exclude<GuideTripResult, { status: "ok" }>): Turn
 const tripRefusal = (c: Context, result: Exclude<GuideTripResult, { status: "ok" }>) =>
   refuse(c, tripRefusalOf(result));
 
-/** 上限までに終わらなければ late の値を返す。処理そのものは止めない（終わったら、結果は捨てる） */
-function settleWithin<T>(work: Promise<T>, ms: number, late: () => T): Promise<T> {
-  return new Promise<T>((resolve, reject) => {
-    const timer = setTimeout(() => resolve(late()), ms);
-    timer.unref?.();
-    work.then(
-      (value) => {
-        clearTimeout(timer);
-        resolve(value);
-      },
-      (error: unknown) => {
-        clearTimeout(timer);
-        reject(error);
-      },
-    );
-  });
-}
-
 function turnTiming(deps: GuideDeps): TurnTiming {
   return {
     ...(deps.turnIdleMs === undefined ? {} : { idleMs: deps.turnIdleMs }),
@@ -252,18 +227,6 @@ async function doneEvent(
     return uncountedDone(runner, trip);
   }
 }
-
-/** 相談や旅を開けないときの終わりのイベント。旅が分からないので、数は0で返す */
-const NO_TRIP_DONE: GuideSseEventOf<"guide.done"> = {
-  type: "guide.done",
-  data: { phase: "during", unreadNotices: 0, pendingProposals: 0 },
-};
-
-/** モデルの返事がないときに、連絡先に添える決まった文 */
-const emergencyFallback = (): GuideSseEvent => ({
-  type: "message.delta",
-  data: { messageId: randomId("emergency"), text: EMERGENCY_FALLBACK_TEXT },
-});
 
 /** 相談と旅を開いて、使った量を読んだ発言。発言のうち、保存の口を待つのはここまで */
 interface OpenedTurn {
@@ -376,7 +339,6 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
     runner: GuideRunner,
     admitted: AdmittedTurn,
     request: TurnRequest,
-    emergency: boolean,
     stream: {
       signal: AbortSignal;
       emit: (event: GuideSseEvent) => void;
@@ -394,7 +356,6 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
           trip,
           message: request.message,
           location: request.location,
-          emergency,
           budgetUsd,
           turn,
           meter,
@@ -403,98 +364,14 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
         },
         emit,
       );
-    } catch (error) {
-      // 緊急の相談では、返事を作れなくても（時間切れも）、決まった文を添える。そのあとの error でいつもの案内も届く。
-      // 利用者が接続を切ったときだけは、届かないので何も送らない
-      if (emergency && !isClientClosed(signal)) {
-        console.error(
-          JSON.stringify({ kind: "guide_emergency_reply_failed", ...errorForLog(error) }),
-        );
-        emit(emergencyFallback());
-      }
-      throw error;
     } finally {
       release();
-      const settled = (async () => {
-        // すべて消した人のデータを、止まった返事の片付けで書き戻さない
-        if (!session.discarded) {
-          await settleTurn({ session, trip, runner, ledger, turn, meter, emergency });
-        }
-        await deps.persistence.saveSession(session);
-      })();
-      // 緊急の発言は、保存の口が止まっても閉じる
-      await (emergency
-        ? settleWithin(settled, deps.emergencyWaitMs ?? EMERGENCY_WAIT_MS, () => {
-            console.error(JSON.stringify({ kind: "storage_failed", what: "guide_settle_late" }));
-          })
-        : settled);
+      // すべて消した人のデータを、止まった返事の片付けで書き戻さない
+      if (!session.discarded) {
+        await settleTurn({ session, trip, runner, ledger, turn, meter });
+      }
+      await deps.persistence.saveSession(session);
     }
-  };
-
-  /**
-   * 緊急の言葉がある発言。保存の口を待たずに SSE を開いて、公的な連絡先を先に送る。
-   * 受け付けられないときは、決まった文と、ふつうの発言と同じ案内を error で送る（緊急の言葉が
-   * たまたま当たった発言でも、案内を失わない）。ない相談もほかの人の相談も同じ応答になる。
-   * 受け付けられなかった発言は、相談の状態に触れない（前の返事を作っている途中でも送れる）
-   */
-  const emergencyTurn = (
-    c: Context,
-    runner: GuideRunner,
-    sessionId: string,
-    request: TurnRequest,
-    quota: TurnQuota,
-    open: (id: string) => Promise<Session | undefined>,
-  ): Response => {
-    const waitMs = deps.emergencyWaitMs ?? EMERGENCY_WAIT_MS;
-    let openedTrip: GuideTrip | null = null;
-    let admittedSession: Session | null = null;
-    let stopTurn: (() => void) | null = null;
-    return openEventStream<GuideSseEvent>(
-      c,
-      async (signal, emit, progress) => {
-        emit(emergencyEvent());
-        const refuseAfterContacts = ({ body }: TurnRefusal): never => {
-          emit(emergencyFallback());
-          throw new AgentError(body.code, body.message, body.retryable);
-        };
-        const opened = await settleWithin(openTurn(runner, sessionId, quota, open), waitMs, () => {
-          console.error(JSON.stringify({ kind: "guide_emergency_open_late" }));
-          return TRIP_UNAVAILABLE;
-        }).catch((error: unknown) => {
-          console.error(
-            JSON.stringify({ kind: "guide_emergency_open_failed", ...errorForLog(error) }),
-          );
-          return TRIP_UNAVAILABLE;
-        });
-        if (!opened.ok) return refuseAfterContacts(opened);
-        openedTrip = opened.trip;
-        const admitted = admitTurn(runner, opened, quota);
-        if (!admitted.ok) return refuseAfterContacts(admitted);
-        admittedSession = admitted.session;
-        admittedSession.stopTurn = stopTurn;
-        await runAdmitted(runner, admitted, request, true, { signal, emit, progress });
-      },
-      turnTiming(deps),
-      {
-        encode: encodeGuideSseEvent,
-        error: (data) => ({ type: "error", data }),
-        done: () => {
-          const trip = openedTrip;
-          return trip === null
-            ? NO_TRIP_DONE
-            : settleWithin(doneEvent(runner, trip), waitMs, () => uncountedDone(runner, trip));
-        },
-        started: (stop) => {
-          stopTurn = stop;
-        },
-        finished: () => {
-          if (admittedSession !== null) {
-            admittedSession.stopTurn = null;
-            admittedSession.busy = false;
-          }
-        },
-      },
-    );
   };
 
   // 残した旅を開いて、ガイドと話す相談を作る。読めるのは自分の旅だけ
@@ -570,9 +447,6 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
     const { runner } = guide;
     const quota = turnQuota(deps, viewer, deps.clientIp?.(c) ?? "unknown");
     const said: TurnRequest = { message, location };
-    if (isEmergencyMessage(message)) {
-      return emergencyTurn(c, runner, sessionId, said, quota, open);
-    }
     const opened = await openTurn(runner, sessionId, quota, open);
     if (!opened.ok) return refuse(c, opened);
     // ここから返答を始めるまで待たない
@@ -581,8 +455,7 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
     return streamEvents<GuideSseEvent>(
       c,
       admitted.session,
-      (signal, emit, progress) =>
-        runAdmitted(runner, admitted, said, false, { signal, emit, progress }),
+      (signal, emit, progress) => runAdmitted(runner, admitted, said, { signal, emit, progress }),
       turnTiming(deps),
       {
         encode: encodeGuideSseEvent,
@@ -845,7 +718,11 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
       if (existing === null) {
         return c.json(apiError("bad_request", "見回りは頼まれていません。", false), 404);
       }
-      watch = stoppedWatch(existing, now);
+      const { action } = request.data;
+      watch =
+        action === "stop"
+          ? stoppedWatch(existing, now)
+          : remindersWatch(existing, action === "reminders_on");
     }
     try {
       if (watch !== existing) await data.putWatch(watch);
@@ -1010,16 +887,14 @@ async function settleTurn(input: {
   ledger: GuideUsageLedger;
   turn: ReturnType<typeof newGuideTurn>;
   meter: CostMeter;
-  emergency: boolean;
 }): Promise<void> {
-  const { session, trip, runner, ledger, turn, meter, emergency } = input;
+  const { session, trip, runner, ledger, turn, meter } = input;
   try {
     await ledger.add({ turns: 1, costUsd: meter.usd });
     const now = runner.now();
     const pending = await pendingProposals(trip.data, trip.itinerary, now);
     session.guide.resume = nextResumeSummary(session.guide.resume, {
       turn,
-      emergency,
       pendingProposalIds: pending.slice(0, MAX_PENDING_PROPOSALS).map((proposal) => proposal.id),
       now,
     });

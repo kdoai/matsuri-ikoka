@@ -120,6 +120,8 @@ if (config.mode === "live") {
   }
   // 相談が消えたら、その相談の会話の記録を消す
   sessions = new SessionStore({ onRemove: forgetTranscripts(deleteSession, cwd) });
+  // Web を読む1回きりの調べ役は、ターンの上限で救えるように会話を残すので、調べが終わるたびに記録を消す
+  const forgetResearch = forgetTranscript(deleteSession, cwd);
   const env = agentEnv(process.env);
   readFestivalWish = createFestivalWishReader({
     prompt: prompts["wish-reader"],
@@ -142,6 +144,7 @@ if (config.mode === "live") {
     env: process.env,
     festivals: festivals.store,
     lodging,
+    weather,
     storage: account.storage,
   }).catch((error: unknown) => {
     console.error(JSON.stringify({ kind: "patrol_setup_failed", ...errorForLog(error) }));
@@ -154,6 +157,7 @@ if (config.mode === "live") {
     env,
     query,
     maxBudgetUsd: config.maxBudgetUsd,
+    forgetTranscript: forgetResearch,
   });
   // 旅程の評価は、旅程係が保存するたびに update_itinerary の中で動く。足りないところを見抜く力が要るので、
   // 評価係のモデル（MODEL_EVALUATOR、省略時は旅程係のモデル）で行う
@@ -173,6 +177,7 @@ if (config.mode === "live") {
     env,
     query,
     maxBudgetUsd: config.maxBudgetUsd,
+    forgetTranscript: forgetResearch,
   });
   // 寄り道の調べは周辺係・旅程係の search_nearby の中で動くので、スタッフのモデルで行う
   const nearby = createWebNearbyResearcher({
@@ -183,6 +188,7 @@ if (config.mode === "live") {
     env,
     query,
     maxBudgetUsd: config.maxBudgetUsd,
+    forgetTranscript: forgetResearch,
   });
   if (config.models.guide !== undefined) {
     guideRunner = new ClaudeGuideRunner({
@@ -207,6 +213,7 @@ if (config.mode === "live") {
         env,
         query,
         maxBudgetUsd: config.maxBudgetUsd,
+        forgetTranscript: forgetResearch,
       }),
       maxBudgetUsd: config.maxBudgetUsd,
       cwd,
@@ -233,6 +240,7 @@ if (config.mode === "live") {
       env,
       query,
       maxBudgetUsd: config.maxBudgetUsd,
+      forgetTranscript: forgetResearch,
     }),
     festivals: festivals.store,
     itineraries,
@@ -248,6 +256,7 @@ if (config.mode === "live") {
         env,
         query,
         maxBudgetUsd: config.maxBudgetUsd,
+        forgetTranscript: forgetResearch,
       }),
       today,
       now: () => nowInJapan(),

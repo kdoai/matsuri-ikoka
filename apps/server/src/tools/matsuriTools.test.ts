@@ -223,6 +223,40 @@ describe("search_festivals の、候補を出す前の確かめ", () => {
       }),
     ]);
   });
+
+  it("確かめの上限に達したら、確かめていない祭りを要事前確認として出し、そのことを notes に書く", async () => {
+    const ctx = testToolContext([testFestival({ id: "suzunari-toro", status: "expected" })], {
+      report: {
+        result: "as_planned",
+        sources: [{ url: "https://example.com/suzunari/2026" }],
+        yearStated: true,
+      },
+    });
+    const events: SseEvent[] = [];
+    ctx.emit = (event) => events.push(event);
+    ctx.candidateChecks = createCandidateChecker({
+      verifier: ctx.verifier,
+      today: ctx.today,
+      now: ctx.now,
+      maxPerSession: 0,
+    });
+
+    const result = await searchFestivals.run(
+      { when: { kind: "date", date: "2026-08-16" }, origin: "みなと中央駅", nights: 0 },
+      ctx,
+      signal,
+    );
+
+    expect(result.candidates).toEqual([
+      expect.objectContaining({ festivalId: "suzunari-toro", confirmed: false }),
+    ]);
+    expect((result.candidates as FestivalCandidate[])[0]?.check).toBeUndefined();
+    expect((result.details as Record<string, unknown>[])[0]?.factCheck).toBeNull();
+    expect(result.notes).toContain(
+      "この相談で開催を確かめられる数の上限に達したので、1件は開催を確かめていません（factCheck が null）。「要事前確認」と伝え、出発の前に主催者の案内で確かめるよう添えてください",
+    );
+    expect(events).toEqual([]);
+  });
 });
 
 describe("search_festivals の日ごとの開催", () => {
@@ -364,6 +398,37 @@ describe("search_festivals の行き先", () => {
     const output = await searchFestivals.run({ ...base, widen: "nationwide" }, ctx, signal);
     expect(ids(output).sort()).toEqual(["okinawa", "shiga"]);
     expect(output.destination).toMatchObject({ stage: "nationwide" });
+  });
+
+  it("広げた段階は相談の条件に残り、次の手（ボタン）で探し直しても引き継ぐ", async () => {
+    const ctx = testToolContext([
+      at("gifu", "岐阜県"),
+      at("gifu-later", "岐阜県", "2026-08-22"),
+      at("shiga", "滋賀県"),
+    ]);
+    ctx.session.conditions = { destinations: ["富山県"] };
+    const widened = await searchFestivals.run({ ...base, widen: "neighbor" }, ctx, signal);
+    expect(ids(widened)).toEqual(["gifu"]);
+    expect(ctx.session.conditions.widen).toBe("neighbor");
+
+    // 次の週末のボタン：ボタンの条件は日程だけで、widen はモデルも渡さない
+    ctx.turn.searchRetry = { when: { kind: "range", from: "2026-08-22", to: "2026-08-23" } };
+    const retried = await searchFestivals.run({ ...base, destinations: ["富山県"] }, ctx, signal);
+    expect(retried.destination).toMatchObject({ stage: "neighbor", needsConsent: null });
+    expect(ids(retried)).toContain("gifu-later");
+    expect(ctx.session.conditions.widen).toBe("neighbor");
+  });
+
+  it("行き先を変えたら、広げた段階を元に戻す", async () => {
+    const ctx = testToolContext([at("gifu", "岐阜県"), at("shiga", "滋賀県")]);
+    ctx.session.conditions = { destinations: ["富山県"], widen: "neighbor" };
+    const output = await searchFestivals.run({ ...base, destinations: ["沖縄県"] }, ctx, signal);
+    expect(output.destination).toMatchObject({ needsConsent: "nationwide" });
+    expect(ctx.session.conditions.widen).toBeUndefined();
+
+    ctx.session.conditions = { destinations: ["富山県"], widen: "nationwide" };
+    await noteConditions.run({ destinations: ["富山県"] }, ctx, signal);
+    expect(ctx.session.conditions.widen).toBeUndefined();
   });
 
   it("都道府県にも地方にも当たらない行き先は、推測せずに失敗で返す", async () => {
@@ -1573,6 +1638,18 @@ describe("候補を確かめてから選ぶ（pickVerifiedCandidates）", () => 
       "b",
     ]);
     expect(pickVerifiedCandidates(items, 3).map((p) => p.match.id)).toEqual(["b", "a"]);
+  });
+
+  it("確かめの上限に達して確かめなかった祭りは、確認済みでなくても要事前確認の段に出す", () => {
+    const items = [
+      { match: { id: "a", confirmed: false }, check: null, limited: true },
+      { match: { id: "b", confirmed: false }, check: null, limited: false },
+      { match: { id: "c", confirmed: false }, check: check("c", "as_planned"), limited: false },
+    ];
+    expect(pickVerifiedCandidates(items, 3, { requireInfo: true }).map((p) => p.match.id)).toEqual([
+      "c",
+      "a",
+    ]);
   });
 });
 

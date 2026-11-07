@@ -11,6 +11,7 @@ import {
   type Preferences,
   type SearchRetry,
   type SearchSuggestion,
+  type SetTripWatchRequest,
   type SseEvent,
   type SseMessage,
   type TripAnchor,
@@ -217,7 +218,7 @@ export interface AppActions {
   /** 報告を「あとで」にする。次の未報告の通知があれば、続けて報告する */
   dismissReport(): void;
   /** 見回りを始める・止める */
-  setGuideWatch(action: "start" | "stop"): Promise<void>;
+  setGuideWatch(action: SetTripWatchRequest["action"]): Promise<void>;
   /** 組み直しの提案を承認する・断る。承認すると旅程が新しい版になる */
   decideProposal(proposalId: string, decision: "approve" | "reject"): Promise<void>;
   /** 承認した変更を、承認する前の版に戻す。戻した旅程も新しい版になる */
@@ -576,8 +577,12 @@ export function createAppStore(deps: StoreDeps): AppStore {
         if (caught instanceof TransportError && caught.code === "unauthorized") {
           update((state) => requirePasscode(state, transport.hasPasscode?.() ?? false));
         }
-        // 話せなくなった（相談の期限切れ・旅がない・ガイドの設定なし）
-        if (caught instanceof TransportError && (caught.status === 404 || caught.status === 409)) {
+        // 話せなくなった（相談の期限切れ・旅がない・ガイドの設定なし）。
+        // 前の返事を作っている途中の 409 は送り直せるので、ふつうの失敗として出す
+        if (
+          caught instanceof TransportError &&
+          (caught.status === 404 || (caught.status === 409 && caught.retryable !== true))
+        ) {
           updateGuide((state) => ({ ...state, availability: "unavailable" }));
           failure = GUIDE_GONE;
         } else {

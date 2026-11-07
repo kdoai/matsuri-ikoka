@@ -179,6 +179,11 @@ export const MAX_DESTINATIONS = 20;
  */
 export const DestinationsSchema = z.array(PlaceNameSchema).max(MAX_DESTINATIONS);
 
+/** 行き先をどこまで広げてよいか：選んだ地域だけ / 隣接する県まで / 全国からランダムに */
+export const DESTINATION_WIDEN_STAGES = ["area", "neighbor", "nationwide"] as const;
+export const DestinationWidenSchema = z.enum(DESTINATION_WIDEN_STAGES);
+export type DestinationWiden = z.infer<typeof DestinationWidenSchema>;
+
 /** 泊まる場所の希望：祭りの会場の近く / 街（駅や繁華街の近く）/ おまかせ */
 export const STAY_NEAR = ["festival", "town", "auto"] as const;
 /** 祭りに行く日の数：1日だけ / 何日か / おまかせ */
@@ -238,6 +243,11 @@ export const TripConditionsSchema = z.strictObject({
   nights: NightsSchema,
   /** 行き先（都道府県・地方）。言われたときだけ。空の並びは「おまかせ（どこでも）」 */
   destinations: DestinationsSchema.optional(),
+  /**
+   * 行き先をどこまで広げてよいか。お客さまの了承を得て広げた段階を残し、探し直すときも引き継ぐ。
+   * ないときは選んだ地域だけ（area）。行き先を変えたら消す
+   */
+  widen: DestinationWidenSchema.optional(),
   /** 日帰りの片道の所要時間の上限（分）。利用者が言ったときだけ。泊まりの旅では使わない */
   maxTravelMinutes: MaxTravelMinutesSchema.optional(),
   party: PartySchema.optional(),

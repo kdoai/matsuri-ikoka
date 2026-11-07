@@ -61,6 +61,8 @@ const ONCE_PER_TURN: readonly AgentToolName[] = ["verify_festival"];
 
 /** サブエージェントを呼ぶ組み込みの道具の名前（古い版では Task） */
 const AGENT_TOOL_NAMES = new Set(["Agent", "Task"]);
+/** 1回の発言で、同じスタッフを呼べる回数の上限（呼び出しが失敗したときの呼び直しを含む） */
+export const MAX_STAFF_CALLS = 2;
 
 export function toolNameOf(fullName: string): AgentToolName | null {
   if (!fullName.startsWith(MCP_TOOL_PREFIX)) return null;
@@ -164,8 +166,12 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
   const { turn } = ctx;
   /** tool.start を出したツールの呼び出しと、そのスタッフ */
   const started = new Map<string, { tool: ToolName; staff: StaffId }>();
-  /** この発言で呼ぶと決めたスタッフ（同じスタッフは1回まで） */
+  /** この発言で呼ぶと決め、まだ失敗していないスタッフ（同じスタッフは報告を使い、呼び直さない） */
   const requested = new Set<Staff>();
+  /** この発言でスタッフを呼んだ回数（失敗して呼び直した分も数える） */
+  const staffCalls = new Map<Staff, number>();
+  /** スタッフを呼んだ Agent の呼び出しと、呼んだスタッフ（失敗したときに呼び直せるようにする） */
+  const agentCalls = new Map<string, Staff>();
   /** この発言ですでに呼んだ、1回までの道具 */
   const usedOnce = new Set<AgentToolName>();
   const hasItinerary = () => ctx.session.itineraryId !== null;
@@ -187,7 +193,16 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
           `この発言では、もう${STAFF_NAMES[target]}に頼みました。その報告を使ってください`,
         );
       }
+      const calls = staffCalls.get(target) ?? 0;
+      if (calls >= MAX_STAFF_CALLS) {
+        return deny(
+          `この発言では、${STAFF_NAMES[target]}にもう${MAX_STAFF_CALLS}回頼みました。ここまでに分かったことで続けてください`,
+        );
+      }
       requested.add(target);
+      staffCalls.set(target, calls + 1);
+      const callId = input.tool_use_id || toolUseId || "";
+      if (callId !== "") agentCalls.set(callId, target);
       return {};
     }
 
@@ -220,6 +235,27 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
         },
       });
     }
+    return {};
+  };
+
+  /**
+   * スタッフを呼ぶ Agent の呼び出しそのものが失敗した。呼んだことを取り消し、同じスタッフを呼び直せるようにする
+   * （呼べる回数の上限は MAX_STAFF_CALLS で残る）
+   */
+  const agentFailure: HookCallback = async (input, toolUseId) => {
+    if (input.hook_event_name !== "PostToolUseFailure") return {};
+    const callId = input.tool_use_id || toolUseId || "";
+    const type = z.object({ subagent_type: z.string() }).safeParse(input.tool_input);
+    const fromInput =
+      type.success && isStaff(type.data.subagent_type) ? type.data.subagent_type : null;
+    const staff = agentCalls.get(callId) ?? fromInput;
+    agentCalls.delete(callId);
+    if (staff === null) return {};
+    requested.delete(staff);
+    // 失敗の文は残さない。どのスタッフの呼び出しが何回目で失敗したかだけを残す
+    console.info(
+      JSON.stringify({ kind: "staff_call_failed", staff, calls: staffCalls.get(staff) ?? 0 }),
+    );
     return {};
   };
 
@@ -350,7 +386,10 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
   return {
     PreToolUse: [{ hooks: [preToolUse] }],
     PostToolUse: [{ matcher: `^${MCP_TOOL_PREFIX}`, hooks: [postToolUse] }],
-    PostToolUseFailure: [{ matcher: `^${MCP_TOOL_PREFIX}`, hooks: [postToolUseFailure] }],
+    PostToolUseFailure: [
+      { matcher: `^${MCP_TOOL_PREFIX}`, hooks: [postToolUseFailure] },
+      { matcher: "^(?:Agent|Task)$", hooks: [agentFailure] },
+    ],
     // 旅程係の前に先の調べを待つことがあるので、時間の枠を広げる（秒）
     SubagentStart: [{ hooks: [subagentStart], timeout: 90 }],
     SubagentStop: [{ hooks: [subagentStop] }],

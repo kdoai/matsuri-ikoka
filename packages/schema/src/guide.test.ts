@@ -8,8 +8,6 @@ import {
   DecideProposalRequestSchema,
   DecideProposalResponseSchema,
   decodeGuideSseEvent,
-  EMERGENCY_CONTACTS,
-  EmergencyContactSchema,
   encodeGuideSseEvent,
   GUIDE_SSE_EVENT_TYPES,
   type GUIDE_STALLS,
@@ -384,6 +382,14 @@ describe("noticeStall", () => {
       { kind: "weather", date: "2026-08-16", condition: "storm", precipitationPercent: null },
       "weather",
     ],
+    [
+      { kind: "reminder", slot: "eve", date: "2026-08-16", at: "18:00", itemId: null },
+      "headquarters",
+    ],
+    [
+      { kind: "reminder", slot: "last_return", date: "2026-08-16", at: "21:10", itemId: null },
+      "access",
+    ],
   ])("通知の中身から屋台を決める %#", (content, stall) => {
     expect(noticeStall(content)).toBe(stall);
   });
@@ -593,7 +599,6 @@ function exampleGuideEvents(): GuideSseEvent[] {
         checkedAt: "2026-08-10T20:00:00+09:00",
       },
     },
-    { type: "guide.emergency", data: { contacts: [...EMERGENCY_CONTACTS] } },
     { type: "guide.notice", data: { notice: fictionalNotice() } },
     { type: "guide.proposal", data: { proposal: fictionalProposal() } },
     { type: "guide.memo", data: { item: fictionalMemoItem() } },
@@ -645,32 +650,6 @@ describe("GuideSseEventSchema", () => {
         type: "guide.sources",
         data: { messageId: "m-1", sources: [], checkedAt: "2026-08-10T20:00:00+09:00" },
       }).success,
-    ).toBe(false);
-  });
-
-  it("緊急の知らせは連絡先が要り、119 と 110 を出せる", () => {
-    expect(EMERGENCY_CONTACTS.map((contact) => contact.number)).toEqual(["119", "110"]);
-    expect(
-      GuideSseEventSchema.safeParse({ type: "guide.emergency", data: { contacts: [] } }).success,
-    ).toBe(false);
-  });
-
-  it("決まった連絡先は、サービスと番号の組が合う", () => {
-    for (const contact of EMERGENCY_CONTACTS) {
-      expect(EmergencyContactSchema.safeParse(contact).success).toBe(true);
-    }
-  });
-
-  it.each([
-    { service: "ambulance_fire", number: "110" },
-    { service: "police", number: "119" },
-    { service: "ambulance_fire", number: "118" },
-    { service: "coast_guard", number: "118" },
-  ])("サービスと番号の誤った組は送らない（%j）", (contact) => {
-    expect(EmergencyContactSchema.safeParse(contact).success).toBe(false);
-    expect(
-      GuideSseEventSchema.safeParse({ type: "guide.emergency", data: { contacts: [contact] } })
-        .success,
     ).toBe(false);
   });
 
