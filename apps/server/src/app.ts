@@ -11,6 +11,7 @@ import { type FestivalSearchOptions, registerFestivalSearchRoutes } from "./rout
 import { registerFestivalRoutes } from "./routes/festivals";
 import { registerFestivalTripRoutes } from "./routes/festivalTrips";
 import { passcodeGuard } from "./routes/guard";
+import { type GuideOptions, registerGuideRoutes } from "./routes/guide";
 import { registerItineraryRoutes } from "./routes/itinerary";
 import { type DeclaredRoute, SecureRoutes } from "./routes/policy";
 import { registerTripRoutes } from "./routes/trips";
@@ -23,6 +24,8 @@ import { MemoryTripStorage } from "./storage/memory";
 import type { TripStorage } from "./storage/types";
 
 export interface AppDeps extends ChatOptions, FestivalSearchOptions {
+  /** 緊急の発言で、保存の口を待つ上限（ミリ秒）。テストで短くする */
+  emergencyWaitMs?: number;
   sessions: SessionStore;
   itineraries: ItineraryStore;
   festivals: FestivalStore;
@@ -41,6 +44,8 @@ export interface AppDeps extends ChatOptions, FestivalSearchOptions {
   internal?: InternalVerifiers;
   /** 旅のしおり（省略すると assets/shiori と Chromium を使うもの） */
   shiori?: Shiori;
+  /** しおりのあとのガイド。省略すると、ガイドの入口だけが 404 で断る */
+  guide?: GuideOptions;
 }
 
 /** API の本文の大きさの上限（発言は1000字まで） */
@@ -97,6 +102,7 @@ export function createApp(appDeps: AppDeps) {
     persistence,
     authConfig: deps.authConfig ?? { enabled: false },
   });
+  registerGuideRoutes(routes, deps);
   if (deps.webDist) {
     registerWebRoutes(routes, {
       webDist: deps.webDist,

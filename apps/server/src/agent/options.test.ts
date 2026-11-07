@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { GUIDE_TOOL_NAMES } from "@matsuri-ikoka/schema";
 import { describe, expect, it } from "vitest";
 import { testFestival } from "../domain/testFestivals";
 import { createMatsuriMcpServer } from "../tools/mcpServer";
@@ -9,7 +10,10 @@ import {
   type AgentModels,
   agentEnv,
   buildAgentOptions,
+  buildGuideOptions,
   createAgentWorkdir,
+  GUIDE_MCP_SERVER_NAME,
+  GUIDE_MCP_TOOL_PREFIX,
   ISOLATION_ENV,
 } from "./options";
 import type { AgentPrompts } from "./prompts";
@@ -27,6 +31,8 @@ const prompts: AgentPrompts = {
   lodging: "宿の調べ",
   evaluator: "旅程の評価",
   "wish-reader": "自由記述の読み取り",
+  guide: "ガイド",
+  "guide-research": "ガイドの調べ役",
 };
 
 function options(overrides: { models?: AgentModels; resume?: string } = {}) {
@@ -164,6 +170,61 @@ describe("接客エージェントを開発環境から切り離す", () => {
   it("会話の続きは resume で渡す", () => {
     expect(options({ resume: "abc" }).resume).toBe("abc");
     expect(options().resume).toBeUndefined();
+  });
+});
+
+describe("ガイドを開発環境から切り離す", () => {
+  const guideOptions = (overrides: { resume?: string; maxBudgetUsd?: number } = {}) =>
+    buildGuideOptions({
+      prompt: "ガイド",
+      model: "guide-model",
+      mcpServer: createMatsuriMcpServer(testToolContext([testFestival({ id: "suzunari-toro" })])),
+      hooks: {},
+      cwd: "/tmp/matsuri-agent-test",
+      env: agentEnv({ PATH: "/usr/bin", ACCESS_PASSCODE: "passcode" }),
+      abortController: new AbortController(),
+      ...overrides,
+    });
+
+  it("組み込みの道具を1つも持たせない", () => {
+    const options = guideOptions();
+    expect(options.tools).toEqual([]);
+    expect(options.agents).toBeUndefined();
+    for (const tool of [...DANGEROUS_TOOLS, "Agent", "Task"]) {
+      expect(options.allowedTools, tool).not.toContain(tool);
+    }
+  });
+
+  it("許すのは決まったツールの名前だけで、ワイルドカードを使わない", () => {
+    const options = guideOptions();
+    expect(options.allowedTools).toEqual(
+      GUIDE_TOOL_NAMES.map((tool) => `${GUIDE_MCP_TOOL_PREFIX}${tool}`),
+    );
+    expect(options.allowedTools?.join(",")).not.toContain("*");
+    expect(Object.keys(options.mcpServers ?? {})).toEqual([GUIDE_MCP_SERVER_NAME]);
+  });
+
+  it("聞かずに断る。ファイルの設定も、渡していない MCP も読まない", () => {
+    const options = guideOptions();
+    expect(options.permissionMode).toBe("dontAsk");
+    expect(options.settingSources).toEqual([]);
+    expect(options.strictMcpConfig).toBe(true);
+    expect(options.plugins).toEqual([]);
+    expect(options.cwd).toBe("/tmp/matsuri-agent-test");
+  });
+
+  it("サーバーの秘密情報を渡さず、切り離しの変数を付ける", () => {
+    const env = guideOptions().env ?? {};
+    expect(env.ACCESS_PASSCODE).toBeUndefined();
+    expect(env.CLAUDE_CODE_DISABLE_AUTO_MEMORY).toBe(ISOLATION_ENV.CLAUDE_CODE_DISABLE_AUTO_MEMORY);
+  });
+
+  it("モデルと費用の上限と、会話の続きを渡す", () => {
+    const options = guideOptions({ resume: "sdk-1", maxBudgetUsd: 0.25 });
+    expect(options.model).toBe("guide-model");
+    expect(options.maxBudgetUsd).toBe(0.25);
+    expect(options.resume).toBe("sdk-1");
+    expect(guideOptions().resume).toBeUndefined();
   });
 });
 

@@ -1,6 +1,6 @@
-# 3D アセット（店内・店の外観・スタッフ・プレイヤー・モーション）
+# 3D アセット（店内・店の外観・縁日の通り・スタッフ・プレイヤー・モーション）
 
-MATSURI IKOKA の画面に出る 3D の店「たびや」と、そこで働く4体のスタッフ、利用者が動かす旅人のペンギンをつくるスクリプト一式です。
+MATSURI IKOKA の画面に出る 3D の店「たびや」と店の外の縁日の通り、そこで働く4体のスタッフ、利用者が動かす旅人のペンギンをつくるスクリプト一式です。
 形、テクスチャ、照明、モーション、店内の仕掛けはすべて Blender の Python（bpy）スクリプトで一から生成します。
 外部のモデルや画像は読み込みません。看板・のれん・ポスター・地図・時刻表・本の背表紙・顔の表情も、図形と文字からスクリプトで描いています。
 
@@ -12,7 +12,7 @@ MATSURI IKOKA の画面に出る 3D の店「たびや」と、そこで働く4�
 blender -b --factory-startup --python-exit-code 1 -P assets/3d/scripts/build.py -- --target all
 ```
 
-`--target` で一部だけ作り直せます（`--target interior,optimize` のようにカンマ区切りで複数指定も可）。
+`--target` で一部だけ作り直せます（`--target interior,optimize` のようにカンマ区切りで複数指定も可）。このときの `optimize` は `models/` のモデルを消しません。今はもう作らないモデルを `models/` から消すのは、`--target all` のときだけです。
 `--python-exit-code 1` を付けると、途中で失敗したときに終了コードが 0 以外になります。
 
 | target | 内容 | 出力 |
@@ -22,7 +22,9 @@ blender -b --factory-startup --python-exit-code 1 -P assets/3d/scripts/build.py 
 | `motions` | モーション。コマ割りのプレビュー、1モーション1ファイルの GLB | `out/preview/motions.png`, `out/glb/motion_*.glb` |
 | `interior` | 店内と仕掛け。固定カメラのプレビュー、Cycles で焼き込み、GLB | `out/preview/interior.png`, `interior_baked.png`, `out/glb/interior.glb` |
 | `exterior` | 店の外観と入店カメラ。プレビュー、焼き込み、GLB | `out/preview/exterior*.png`, `out/glb/exterior.glb` |
+| `ennichi` | 縁日の通りと6つの屋台。プレビュー（全景の消灯と点灯、屋台ごとの消灯と点灯、形だけの影）、焼き込み、GLB | `out/preview/ennichi_*.png`, `out/glb/ennichi.glb` |
 | `optimize` | meshopt 圧縮と WebP（1辺1024px以下）、サイズと三角形数の一覧 | `models/*.glb`, `models/manifest.json` |
+| `guide` | 帽子と旗のガイドのプレビューと、全モーションで帽子と旗が外れないことの確認（外れたら失敗で止まる）。`all` には含まない | `out/preview/guide.png`, `guide_motions.png`, `guide_attachment.json` |
 | `stills` | しおり用のスタッフと旅人の静止画と、顔の静止画（透過の WebP）。`all` には含まない | `../shiori/staff/*.webp` |
 | `faces` | 顔の静止画だけ（正面に寄せた正方形。会話の窓と、しおりの吹き出しの顔の絵）。`all` には含まない | `../shiori/staff/face_*.webp` |
 
@@ -33,6 +35,7 @@ blender -b --factory-startup --python-exit-code 1 -P assets/3d/scripts/build.py 
 - `--bake-samples 16 --bake-res 512`：焼き込みを軽くして試す（本番は 64 / 1024）
 - `--save-blend`：作業用の `.blend` を `out/blend/` に保存する
 - `--res 1280x720 --samples 32`：プレビューの解像度とサンプル数
+- `--only ennichi,staff_hiyoko`：`optimize` で指定したモデルだけを `models/` に入れ直す。ほかのモデルは消さず、そのまま残す
 
 `out/` は Git の対象外です（プレビュー、焼き込み途中の画像、未圧縮の GLB、`.blend`）。
 アプリが読むのは `models/` の GLB だけです（Git で管理します）。
@@ -57,7 +60,10 @@ blender -b --factory-startup --python-exit-code 1 -P assets/3d/scripts/build.py 
 | `navigation.py` | 客と従業員が歩ける床のメッシュ |
 | `interior.py` | 店内の組み立てと、焼き込みのグループ分け |
 | `exterior.py` | 外観（店の正面、二階、屋根、看板、隣家、広場、街灯、遠景）と入店カメラの経路 |
+| `stalls.py` | 縁日の6つの屋台（形と看板で役割が分かる）と、提灯の消灯と点灯 |
+| `ennichi.py` | 縁日の通りの組み立て（地面、電球の列、のぼり、木、休憩所、歩ける床、目印、カメラ、焼き込みのグループ分け） |
 | `characters.py` | スタッフ4体（ひよこ、フクロウ、にわとり、スズメ）、プレイヤーのペンギン、役割の小物 |
+| `guide.py` | ガイドの帽子と旗のプレビューと、モーションの間に外れないことの確認 |
 | `rig.py` | 全員共通のリグ |
 | `motions.py` | ループするモーション |
 | `stage.py` | カメラ、プレビュー用の照明、EEVEE の描画 |
@@ -133,11 +139,34 @@ Blender は Z が上、glTF は Y が上です。書き出しで Blender の `(x
   通りから看板を見上げ、のれんへ寄り、上へ引いて `cam.main` とまったく同じ位置・向きで止まります。
   カメラが上がり始めたら外観を消してください。目安は経路の 50%〜66%（2.25〜2.97 秒）で `exterior.glb` を不透明度 1 → 0 にします。
 
+### `ennichi.glb`（縁日の通り）
+
+- 店の外の通り。店内・外観と同じ座標で、店の前から glTF の +Z の向きに伸びています（地面の高さは y = -0.22）。
+  店から奥を見て右の列（-X）に行き方・宿・作法、左の列（+X）に天気・食べ物と休憩所、突き当たりに本部のテントがあります。
+  地面が店の下まで続き、`cam.ennichi` は店の後ろの上空にあるので、店内と外観とは重ねず、これだけを表示します。
+- 屋台の `<role>` はスキーマの `GuideStall`（`access` / `lodging` / `etiquette` / `food` / `weather` / `headquarters`）と同じ語です。
+  屋台は文字がなくても形で分かります：行き方は線路と屋根の上の電車、宿は瓦屋根と月と布団、作法は大きな鳥居、食べ物は紅白の日よけと大きなどんぶり、天気は大きな番傘と風速計、本部は白いテントと紅白の幕。
+- `baked.<group>`（`street`, `road`, `decor`, `trees`, `stall_<role>`, `rest`）：店内と同じ、焼き込みの unlit のメッシュ。`rest` は休憩所（太鼓、ベンチ、金魚の桶）です。
+- `street.bulbs`：電球の列（発光）。`backdrop`, `street.far`：遠景の山と花火、遠くの地面（焼き込まない unlit）。
+- **提灯**：消えた提灯の紙は `baked.stall_<role>` に焼き込まれていて、いつも見えています。
+  `lantern.<role>.on` は、灯った提灯と光のにじみを1つにまとめたノードです。**読み込んだら全部隠し**、灯すときにそのノードを `visible = true` にします。
+  マテリアルは屋台の間で共有しているので、色や強さではなく、ノードの表示で切り替えてください。
+- `nav.street`：歩ける床。屋台や柱の場所は（キャラクターの半径 0.2 m ぶん広げて）抜いてあります。下の `anchor.*` はすべて、`anchor.player.start` から歩いて着ける場所にあります（着けないと `target ennichi` が失敗で止まります）。表示しないデータです。読み込んだら `visible = false` にしてください。
+- 置き場所の目印（空のノード）。目印の向き（Y 軸まわりの回転）が、そこでキャラクターが向く方向です：
+  - `anchor.stall.<role>`：旅人が屋台の前に立つ位置（屋台を向く）
+  - `anchor.guide.<role>`：ガイドが屋台の脇に立つ位置（旅人の立つ位置を向く）
+  - `anchor.shop.door`：店を出たところ。`anchor.player.start`、`anchor.guide.start`：通りに出た旅人とガイドが立つ位置
+  - `anchor.guide.home`：通りの入り口でガイドが待つ位置
+  - `seat.street.0`、`seat.street.1`：休憩所のベンチ。目印の高さが座面です。キャラクターの一番上のノードをここに置き、モーション `sit` を流します
+- カメラ：
+  - `cam.ennichi`：通り全体を店の側から奥へ見下ろす（焦点距離 35 mm）
+  - `cam.stall.<role>`：屋台の正面に寄る（看板と提灯が入る）
+
 ### `staff_<kind>.glb` と `player_penguin.glb`（キャラクター）
 
 | ファイル | キャラクター | 役割 | 小物（`prop.*`） |
 | --- | --- | --- | --- |
-| `staff_hiyoko.glb` | ひよこ | コンシェルジュ | `prop.stamp`（はんこ、右手） |
+| `staff_hiyoko.glb` | ひよこ | コンシェルジュ、旅のガイド | `prop.stamp`（はんこ、右手）、`prop.guide_cap`（ガイドの帽子、頭）、`prop.guide_flag`（誘導の旗、右手） |
 | `staff_owl.glb` | フクロウ（丸眼鏡） | 祭り調査係 | `prop.book`（左手）、`prop.scroll`（右手） |
 | `staff_hen.glb` | にわとり | 周辺係 | `prop.map`（地図、左手） |
 | `staff_sparrow.glb` | スズメ（駅員帽） | 旅程係 | `prop.binder`（左手）、`prop.document`（運ぶ書類、右手） |
@@ -186,6 +215,12 @@ Blender は Z が上、glTF は Y が上です。書き出しで Blender の `(x
 | `sit` | 2.4 s | 全員 | 座る。`seat.*` に置いて流す。足をぶらぶら |
 | `reach` | 2.0 s | ペンギン | 手を伸ばして前のものに触れる（呼び鈴、はんこ、ガチャ、猫） |
 | `cheer` | 2.0 s | ペンギン | 両手を上げてぴょんと跳ねる（隠れひよこを見つけたとき、大吉のときなど） |
+| `lead` | 2.0 s | ガイド | 先導して歩く。旗を高く掲げてよちよち 6 歩、途中で旅人のほうを振り返る。移動は 0.4〜0.5 m/s が目安 |
+| `wave_flag` | 2.0 s | ガイド | 旗を振る。その場で頭の上に大きく2往復 |
+| `run` | 1.2 s | ガイド | 駆け寄る。前かがみの小走り 6 歩で、旗は後ろへなびかせる。移動は 1.2 m/s 前後が目安 |
+
+ガイドの旗（`prop.guide_flag`）を出している間は、`idle`, `talk`, `nod`, `lead`, `wave_flag`, `run` を使います。
+ほかのモーションは竿が頭や体に重なるので、旗を隠して使ってください（`target guide` が、この6つで重ならないことを確かめます）。
 
 ## 画面側での描き方
 
@@ -209,34 +244,38 @@ Blender は Z が上、glTF は Y が上です。書き出しで Blender の `(x
 
 ## 三角形数とファイルサイズ
 
-`models/manifest.json` に `optimize` 実行時の値が入ります。予算は、店内 15 万三角形以下、キャラクター1体 1.5 万三角形以下、GLB 合計 15 MB 以下です。
-`interior.glb` の数には `nav.*`（表示しない床のメッシュ）も入っています。
+`models/manifest.json` に `optimize` 実行時の値が入ります。予算は、店内と縁日の通りはそれぞれ 15 万三角形以下、キャラクター1体 1.5 万三角形以下、GLB 合計 15 MB 以下です。
+`interior.glb` と `ennichi.glb` の数には `nav.*`（表示しない床のメッシュ）も入っています。
 
 <!-- stats -->
 
 | ファイル | 三角形 | サイズ |
 | --- | ---: | ---: |
+| `ennichi.glb` | 66,382 | 1,486 KB |
 | `exterior.glb` | 93,742 | 997 KB |
 | `interior.glb` | 117,796 | 2,435 KB |
 | `motion_carry.glb` | 0 | 12 KB |
 | `motion_cheer.glb` | 0 | 10 KB |
 | `motion_flip.glb` | 0 | 10 KB |
 | `motion_idle.glb` | 0 | 10 KB |
+| `motion_lead.glb` | 0 | 13 KB |
 | `motion_look_up.glb` | 0 | 9 KB |
 | `motion_nod.glb` | 0 | 9 KB |
 | `motion_point.glb` | 0 | 10 KB |
 | `motion_reach.glb` | 0 | 10 KB |
+| `motion_run.glb` | 0 | 12 KB |
 | `motion_sit.glb` | 0 | 10 KB |
 | `motion_stamp.glb` | 0 | 11 KB |
 | `motion_talk.glb` | 0 | 11 KB |
 | `motion_walk.glb` | 0 | 13 KB |
 | `motion_wave.glb` | 0 | 10 KB |
+| `motion_wave_flag.glb` | 0 | 10 KB |
 | `player_penguin.glb` | 9,294 | 138 KB |
 | `staff_hen.glb` | 10,254 | 209 KB |
-| `staff_hiyoko.glb` | 9,830 | 156 KB |
+| `staff_hiyoko.glb` | 10,806 | 186 KB |
 | `staff_owl.glb` | 10,342 | 189 KB |
 | `staff_sparrow.glb` | 10,362 | 154 KB |
-| 合計 | | 4.31 MB |
+| 合計 | | 5.83 MB |
 
 <!-- /stats -->
 

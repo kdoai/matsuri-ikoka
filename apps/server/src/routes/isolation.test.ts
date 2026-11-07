@@ -3,6 +3,7 @@ import {
   DEFAULT_PREFERENCES,
   decodeSseEvent,
   type SampleConversation,
+  type SampleGuide,
   type SseEvent,
 } from "@matsuri-ikoka/schema";
 import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
@@ -12,6 +13,7 @@ import { loadSampleConversations, ReplayAgentRunner } from "../agent/replayRunne
 import type { AgentRunner } from "../agent/runner";
 import { type AppDeps, createApp, declaredRoutes } from "../app";
 import { type FestivalStore, loadFestivals } from "../data/festivalStore";
+import { loadSampleGuides, ReplayGuideRunner } from "../guide/replayRunner";
 import { snapshotOf } from "../session/persistence";
 import { ItineraryStore, SessionStore } from "../session/sessionStore";
 import { createShiori } from "../shiori";
@@ -26,10 +28,12 @@ const root = (relative: string) =>
   fileURLToPath(new URL(`../../../../${relative}`, import.meta.url));
 
 let samples: SampleConversation[];
+let guides: SampleGuide[];
 let festivals: FestivalStore;
 
 beforeAll(async () => {
   samples = await loadSampleConversations(root("data/samples/conversations"));
+  guides = await loadSampleGuides(root("data/samples/guide"));
   festivals = (await loadFestivals([root("data/samples/festivals")])).store;
 });
 
@@ -58,6 +62,7 @@ function setup(overrides: Partial<AppDeps> = {}) {
   const storage = (overrides.storage as MemoryTripStorage | undefined) ?? new MemoryTripStorage();
   const app = createApp({
     runner: new ReplayAgentRunner(samples, itineraries, { speed: 0 }),
+    guide: { runner: new ReplayGuideRunner(guides, { speed: 0 }) },
     limiter: new DailyLimiter(null, () => "2026-08-03"),
     festivals,
     accessPasscode: null,
@@ -120,7 +125,12 @@ function setup(overrides: Partial<AppDeps> = {}) {
     const session = sessions.get(sessionId);
     const itineraryId = session?.itineraryId;
     if (session === undefined || !itineraryId) throw new Error("旅程がありません");
-    return { sessionId, itineraryId, version: itineraries.get(itineraryId)?.version ?? 1 };
+    return {
+      sessionId,
+      itineraryId,
+      version: itineraries.get(itineraryId)?.version ?? 1,
+      memoId: "memo-suzunari-sample-1",
+    };
   };
   return { app, call, chat, start, consult, sessions, itineraries, storage };
 }
@@ -149,6 +159,8 @@ interface Target {
   sessionId: string;
   itineraryId: string;
   version: number;
+  /** ガイドの手帳の項目 */
+  memoId: string;
 }
 
 /** 利用者のデータに触れる経路の表。other は利用者 B、anonymous はログインなし（偽のトークンも同じ扱い） */
@@ -276,6 +288,61 @@ const TABLE: {
     other: 404,
     anonymous: 404,
   },
+  {
+    route: "POST /api/guide/open",
+    request: ({ itineraryId }) => ({
+      method: "POST",
+      path: "/api/guide/open",
+      body: { tripId: itineraryId },
+    }),
+    owner: 201,
+    other: 404,
+    anonymous: 401,
+  },
+  {
+    route: "POST /api/guide/state",
+    request: ({ sessionId }) => ({
+      method: "POST",
+      path: "/api/guide/state",
+      body: { sessionId },
+    }),
+    owner: 200,
+    other: 404,
+    anonymous: 404,
+  },
+  {
+    route: "POST /api/guide/chat",
+    request: ({ sessionId }) => ({
+      method: "POST",
+      path: "/api/guide/chat",
+      body: { sessionId, message: "こんにちは" },
+    }),
+    owner: 200,
+    other: 404,
+    anonymous: 404,
+  },
+  {
+    route: "POST /api/guide/memo/:id",
+    request: ({ sessionId, memoId }) => ({
+      method: "POST",
+      path: `/api/guide/memo/${memoId}`,
+      body: { sessionId, text: "連れはゆっくり歩く" },
+    }),
+    owner: 200,
+    other: 404,
+    anonymous: 404,
+  },
+  {
+    route: "POST /api/guide/memo/:id/delete",
+    request: ({ sessionId, memoId }) => ({
+      method: "POST",
+      path: `/api/guide/memo/${memoId}/delete`,
+      body: { sessionId },
+    }),
+    owner: 204,
+    other: 404,
+    anonymous: 404,
+  },
 ];
 
 /** 決まりは「だれでも」で、利用者のデータに触れない経路 */
@@ -316,6 +383,17 @@ describe.each([
       });
       expect(kept.status).toBe(201);
     }
+    // ガイドに話しかけて、手帳に項目を残す（サンプルの架空の相談の、手帳の発言）
+    const memo = await context.call("/api/guide/chat", {
+      method: "POST",
+      user: ALICE,
+      body: {
+        sessionId: target.sessionId,
+        message: "連れは歩くのがゆっくりなので、気にしてもらえますか",
+      },
+    });
+    await memo.text();
+    expect(memo.status).toBe(200);
     /** A の相談と旅程が変わっていないことを確かめるための、いまの状態 */
     const state = () => ({
       session: snapshotOf(context.sessions.get(target.sessionId)!, 0),
@@ -344,6 +422,7 @@ describe.each([
       sessionId: "s-no-such-session",
       itineraryId: "trip-no-such-trip",
       version: target.version,
+      memoId: target.memoId,
     });
 
     const refusals: { name: string; init: CallInit; status: number }[] = [

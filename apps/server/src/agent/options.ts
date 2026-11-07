@@ -6,6 +6,7 @@ import type {
   McpSdkServerConfigWithInstance,
   Options,
 } from "@anthropic-ai/claude-agent-sdk";
+import { GUIDE_TOOL_NAMES } from "@matsuri-ikoka/schema";
 import { MCP_SERVER_NAME, MCP_TOOL_PREFIX } from "../tools/mcpServer";
 import type { Staff } from "./bubbles";
 import { TOOLS_BY_STAFF } from "./hooks";
@@ -125,6 +126,8 @@ export interface AgentModels {
   verifier?: string | undefined;
   evaluator?: string | undefined;
   wishReader?: string | undefined;
+  /** しおりのあとのガイド。なければ、ガイドの入口だけが断る */
+  guide?: string | undefined;
 }
 
 export interface AgentOptionsInput {
@@ -152,6 +155,55 @@ function staffAgent(staff: Staff, input: AgentOptionsInput): AgentDefinition {
     maxTurns: STAFF_MAX_TURNS[staff],
     effort: STAFF_EFFORT[staff],
     background: false,
+  };
+}
+
+/** ガイドのプロセス内の MCP サーバーの名前。ツールは mcp__guide__<ツール名> で呼ばれる */
+export const GUIDE_MCP_SERVER_NAME = "guide";
+export const GUIDE_MCP_TOOL_PREFIX = `mcp__${GUIDE_MCP_SERVER_NAME}__`;
+
+/** ガイドの1回の発言のターンの上限。旅程を読み、調べ、提案を書き直しても届く回数にする */
+const GUIDE_MAX_TURNS = 14;
+
+/**
+ * ガイドのオプション（docs/spec/agent-runtime.md の「ガイド」）。接客エージェントと同じように開発環境から切り離す。
+ * 違うのは、組み込みの道具を1つも持たせず、許すツールをガイドのツールの名前だけにすること。
+ * ファイル・シェル・Web を読む道具はなく、Web はツールの中の1回きりの調べ役だけが読む
+ */
+export function buildGuideOptions(input: {
+  prompt: string;
+  model: string;
+  /** 1回の発言の費用の上限（米ドル） */
+  maxBudgetUsd?: number | undefined;
+  mcpServer: McpSdkServerConfigWithInstance;
+  hooks: Options["hooks"];
+  cwd: string;
+  env: Record<string, string>;
+  abortController: AbortController;
+  resume?: string | undefined;
+  stderr?: (data: string) => void;
+}): Options {
+  return {
+    systemPrompt: input.prompt,
+    model: input.model,
+    tools: [],
+    allowedTools: GUIDE_TOOL_NAMES.map((tool) => `${GUIDE_MCP_TOOL_PREFIX}${tool}`),
+    permissionMode: "dontAsk",
+    settingSources: [],
+    strictMcpConfig: true,
+    mcpServers: { [GUIDE_MCP_SERVER_NAME]: input.mcpServer },
+    plugins: [],
+    cwd: input.cwd,
+    env: input.env,
+    hooks: input.hooks,
+    includePartialMessages: true,
+    thinking: { type: "adaptive" },
+    effort: "medium",
+    maxTurns: GUIDE_MAX_TURNS,
+    ...(input.maxBudgetUsd ? { maxBudgetUsd: input.maxBudgetUsd } : {}),
+    abortController: input.abortController,
+    ...(input.resume ? { resume: input.resume } : {}),
+    ...(input.stderr ? { stderr: input.stderr } : {}),
   };
 }
 

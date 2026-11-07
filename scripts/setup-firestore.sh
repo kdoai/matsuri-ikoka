@@ -42,7 +42,7 @@ PROJECT="$GCP_PROJECT_ID"
 APIS=(firestore.googleapis.com identitytoolkit.googleapis.com securetoken.googleapis.com
   firebase.googleapis.com firebaserules.googleapis.com)
 # expiresAt で消す集まり（コレクショングループ）。apps/server/src/storage/firestore.ts と同じにする
-TTL_GROUPS=(itineraries versions shares sessions)
+TTL_GROUPS=(itineraries versions shares sessions notices proposals guideUsage)
 ROLE="roles/datastore.user"
 
 failed=0

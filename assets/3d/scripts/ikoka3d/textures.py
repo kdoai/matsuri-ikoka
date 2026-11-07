@@ -1128,6 +1128,237 @@ def paint_polaroids():
     return c
 
 
+# --------------------------------------------------------------------------
+# Festival street: stall signs, lantern paper, boards, the guide's flag
+
+# The six stalls of the street, and the order of their cells in the atlases below.
+STALL_ROLES = ("access", "lodging", "etiquette", "food", "weather", "headquarters")
+STALL_LOOK = {
+    "access": ("#2F7F7A", "行き方"),
+    "lodging": (P.INDIGO, "宿"),
+    "etiquette": ("#C8392B", "作法"),
+    "food": ("#DE6F24", "食べ物"),
+    "weather": ("#2E86C8", "天気"),
+    "headquarters": ("#3C4256", "本部"),
+}
+
+
+def stall_icon(c, role, cx, cy, r, fg, bg):
+    """The stall's pictogram, drawn without letters so it reads in any language."""
+    if role == "access":         # a train coming down the rails
+        c.rect(cx - 0.62 * r, cy - 0.85 * r, cx + 0.62 * r, cy + 0.5 * r, fg, radius=0.22 * r)
+        c.rect(cx - 0.46 * r, cy - 0.66 * r, cx + 0.46 * r, cy - 0.1 * r, bg, radius=0.07 * r)
+        for s in (-1, 1):
+            c.circle(cx + s * 0.34 * r, cy + 0.22 * r, 0.1 * r, bg)
+            c.stroke([(cx + s * 0.34 * r, cy + 0.5 * r), (cx + s * 0.62 * r, cy + 0.95 * r)], 0.1 * r, fg)
+        c.rect(cx - 0.5 * r, cy + 0.68 * r, cx + 0.5 * r, cy + 0.76 * r, fg)
+    elif role == "lodging":     # a futon and pillow under the moon
+        c.circle(cx + 0.42 * r, cy - 0.52 * r, 0.36 * r, fg)
+        c.circle(cx + 0.56 * r, cy - 0.62 * r, 0.31 * r, bg)
+        c.rect(cx - 0.92 * r, cy + 0.12 * r, cx + 0.92 * r, cy + 0.62 * r, fg, radius=0.18 * r)
+        c.rect(cx - 0.8 * r, cy - 0.16 * r, cx - 0.18 * r, cy + 0.2 * r, fg, radius=0.14 * r)
+        c.rect(cx - 0.92 * r, cy + 0.7 * r, cx + 0.92 * r, cy + 0.82 * r, fg, radius=0.04 * r)
+    elif role == "etiquette":   # a torii gate
+        torii(c, cx, cy + 0.85 * r, 1.6 * r, fg)
+    elif role == "food":        # a steaming bowl
+        c.polygon([(cx - 0.9 * r, cy), (cx + 0.9 * r, cy), (cx + 0.5 * r, cy + 0.72 * r), (cx - 0.5 * r, cy + 0.72 * r)], fg)
+        c.rect(cx - 0.3 * r, cy + 0.72 * r, cx + 0.3 * r, cy + 0.85 * r, fg)
+        for k in (-1, 0, 1):
+            x = cx + k * 0.38 * r
+            c.stroke([(x, cy - 0.12 * r), (x + 0.1 * r, cy - 0.38 * r), (x - 0.06 * r, cy - 0.62 * r),
+                      (x + 0.06 * r, cy - 0.86 * r)], 0.09 * r, fg)
+    elif role == "weather":     # a sun behind a cloud
+        sx, sy = cx - 0.28 * r, cy - 0.3 * r
+        c.circle(sx, sy, 0.36 * r, fg)
+        for i in range(8):
+            a = 2 * math.pi * i / 8
+            c.stroke([(sx + math.cos(a) * 0.48 * r, sy + math.sin(a) * 0.48 * r),
+                      (sx + math.cos(a) * 0.68 * r, sy + math.sin(a) * 0.68 * r)], 0.09 * r, fg)
+        puffs = ((-0.14, 0.34, 0.3), (0.26, 0.14, 0.4), (0.66, 0.38, 0.28))
+        for grow, color in ((0.08, bg), (0.0, fg)):
+            for dx, dy, rr in puffs:
+                c.circle(cx + dx * r, cy + dy * r, (rr + grow) * r, color)
+            c.rect(cx - (0.14 + grow) * r, cy + 0.34 * r, cx + (0.66 + grow) * r, cy + (0.66 + grow) * r, color)
+    else:                       # headquarters: a megaphone
+        c.polygon([(cx - 0.35 * r, cy - 0.22 * r), (cx + 0.5 * r, cy - 0.72 * r), (cx + 0.5 * r, cy + 0.62 * r),
+                   (cx - 0.35 * r, cy + 0.18 * r)], fg)
+        c.rect(cx - 0.76 * r, cy - 0.24 * r, cx - 0.3 * r, cy + 0.2 * r, fg, radius=0.08 * r)
+        c.stroke([(cx - 0.22 * r, cy + 0.2 * r), (cx - 0.32 * r, cy + 0.74 * r)], 0.18 * r, fg)
+        for k in range(2):
+            c.arc(cx + 0.5 * r, cy - 0.05 * r, (0.22 + 0.2 * k) * r, -0.7, 0.7, 0.07 * r, fg)
+
+
+def paint_stall_signs():
+    """3 x 2 atlas of the stalls' signboards: pictogram over the stall's word."""
+    c = canvas.Canvas(768, 512, PAPER)
+    for k, role in enumerate(STALL_ROLES):
+        x0, y0 = (k % 3) * 256, (k // 3) * 256
+        col, label = STALL_LOOK[role]
+        c.rect(x0, y0, x0 + 256, y0 + 256, col)
+        c.frame(x0 + 14, y0 + 14, x0 + 242, y0 + 242, 6, CREAM, radius=14)
+        stall_icon(c, role, x0 + 128, y0 + 100, 62, CREAM, col)
+        c.text(label, x0 + 128, y0 + 202, {1: 58, 2: 50, 3: 44}[len(label)], CREAM, weight=0.05)
+    c.grain(0.02, seed=91, scale=2)
+    return c
+
+
+LANTERN_ROW = 144
+
+
+def paint_lantern_roles():
+    """Lantern paper, one row per stall (top row first). u wraps around, the pictogram sits front and back."""
+    w, row = 384, LANTERN_ROW
+    paper = "#FBE3B0"
+    c = canvas.Canvas(w, row * len(STALL_ROLES), paper)
+    c.grain(0.03, seed=92)
+    for k, role in enumerate(STALL_ROLES):
+        y0 = k * row
+        col = STALL_LOOK[role][0]
+        c.rect(0, y0, w, y0 + 16, col)
+        c.rect(0, y0 + row - 16, w, y0 + row, col)
+        for j in range(1, 6):
+            y = y0 + j * row / 6
+            c.rect(0, y - 0.6, w, y + 0.6, "#B98A57", alpha=0.4)
+        for x in (w / 4, 3 * w / 4):
+            stall_icon(c, role, x, y0 + row / 2, 40, col, paper)
+    return c
+
+
+def paint_lantern_glow():
+    """Soft warm glow with radial alpha: the light a lit lantern throws around itself."""
+    c = canvas.Canvas(256, 256, "#FFB45A", alpha=0.0)
+    c.glow(128, 128, 124, "#FFB45A", 0.6)
+    return c
+
+
+def paint_noren_lodging():
+    c = canvas.Canvas(768, 384, P.INDIGO)
+    c.grain(0.03, seed=93)
+    c.rect(0, 0, 768, 22, P.INDIGO_DARK)
+    c.text("宿", 384, 196, 190, CREAM, weight=0.04)
+    for x in (128, 640):
+        c.circle(x, 186, 62, CREAM)
+        c.circle(x + 22, 170, 56, P.INDIGO)
+    return c
+
+
+def paint_noren_food():
+    c = canvas.Canvas(768, 256, "#C8392B")
+    c.grain(0.03, seed=94)
+    c.rect(0, 0, 768, 18, INK)
+    c.text("食", 384, 132, 150, CREAM, weight=0.04)
+    for x in (128, 640):
+        stall_icon(c, "food", x, 132, 62, CREAM, "#C8392B")
+    return c
+
+
+def paint_etiquette_board():
+    """Wooden board with three pictograms: bow, rinse the hands, take off the shoes."""
+    c = canvas.Canvas(512, 256, "#C9A36A")
+    c.grain(0.05, seed=95, scale=2)
+    c.frame(8, 8, 504, 248, 8, P.WOOD_DARK, radius=6)
+    for k in (1, 2):
+        c.rect(k * 512 / 3 - 2, 16, k * 512 / 3 + 2, 240, P.WOOD_DARK)
+    # Bow: a person bending from the hips.
+    c.circle(58, 92, 20, INK)
+    c.stroke([(72, 110), (114, 134), (114, 208)], 16, INK)
+    c.stroke([(84, 118), (70, 160)], 11, INK)
+    # Rinse: a ladle over a basin.
+    c.rect(200, 168, 312, 208, INK, radius=8)
+    c.stroke([(214, 90), (286, 120)], 9, INK)
+    c.rect(282, 112, 318, 142, INK, radius=4)
+    for x in (292, 306):
+        c.stroke([(x, 150), (x - 2, 164)], 5, INK)
+    # Shoes side by side.
+    for x in (388, 438):
+        c.rect(x - 16, 100, x + 16, 200, INK, radius=15)
+        c.rect(x - 8, 118, x + 8, 158, "#C9A36A", radius=7)
+    return c
+
+
+def paint_weather_board():
+    """Forecast board: sun, cloud and umbrella over a row of little bars."""
+    c = canvas.Canvas(384, 512, "#F4F0E4")
+    c.frame(8, 8, 376, 504, 8, "#2E86C8", radius=8)
+    c.circle(108, 104, 46, "#F2A33A")
+    for i in range(8):
+        a = 2 * math.pi * i / 8
+        c.stroke([(108 + math.cos(a) * 58, 104 + math.sin(a) * 58), (108 + math.cos(a) * 76, 104 + math.sin(a) * 76)],
+                 8, "#F2A33A")
+    for dx, dy, rr in ((238, 112, 28), (272, 88, 36), (310, 114, 26)):
+        c.circle(dx, dy, rr, "#7F8FA6")
+    c.rect(238, 104, 310, 140, "#7F8FA6")
+    c.arc(108, 288, 62, math.pi, 2 * math.pi, 62, "#2E86C8")
+    c.stroke([(108, 288), (108, 360)], 8, INK)
+    for x in (238, 272, 306):
+        c.stroke([(x, 240), (x - 12, 290)], 8, "#2E86C8")
+        c.stroke([(x + 4, 310), (x - 8, 356)], 8, "#2E86C8")
+    for k, h in enumerate((70, 40, 90, 54, 30)):
+        x = 60 + k * 58
+        c.rect(x, 480 - h, x + 36, 480, "#2E86C8" if k % 2 else "#F2A33A", radius=3)
+    return c
+
+
+def paint_wagasa():
+    """Big-parasol paper with the classic ring. u wraps around, the top row is the crown."""
+    c = canvas.Canvas(1024, 256, "#2466A8")
+    c.rect(0, 92, 1024, 150, "#F4EEDF")
+    c.rect(0, 0, 1024, 26, INK)
+    c.rect(0, 238, 1024, 256, "#163F6E")
+    for i in range(32):
+        x = i * 32
+        c.rect(x - 1.2, 0, x + 1.2, 256, "#000000", alpha=0.25)
+    c.grain(0.03, seed=96, scale=2)
+    return c
+
+
+def paint_crest():
+    """The shop's crest on a cream disc, for the guide's cap."""
+    c = canvas.Canvas(128, 128, CREAM)
+    mon(c, 64, 64, 60, fg=INDIGO, bg=CREAM)
+    return c
+
+
+def paint_guide_flag():
+    """The guide's flag: vermilion with the shop's crest and a golden stripe along the pole."""
+    c = canvas.Canvas(512, 320, "#D2402E")
+    c.rect(0, 0, 36, 320, "#F2C04E")
+    c.rect(36, 0, 44, 320, CREAM)
+    c.rect(44, 0, 512, 12, CREAM)
+    c.rect(44, 308, 512, 320, CREAM)
+    mon(c, 210, 160, 104, fg=INDIGO, bg=CREAM)
+    c.grain(0.03, seed=97, scale=2)
+    return c
+
+
+def paint_ennichi_backdrop():
+    """Dusk seen past the far end of the street: hills, far town lights and fireworks. One pixel is 1/16 m."""
+    c = canvas.Canvas(1024, 256, "#3E3576")
+    c.vgradient(0, 240, "#3E3576", "#F2A67E")
+    c.vgradient(120, 256, "#00000000", "#F6B48866")
+    rng = random.Random(53)
+    for _ in range(50):
+        c.circle(rng.uniform(0, 1024), rng.uniform(0, 110), rng.uniform(0.6, 1.5), "#FFFFFF", rng.uniform(0.3, 0.8))
+    firework(c, 372, 176, 38, "#F7C54E", rays=22, seed=5)
+    firework(c, 546, 158, 30, "#F58A8A", rays=18, seed=6)
+    firework(c, 660, 184, 24, "#9FD8F0", rays=16, seed=7)
+    for k, (base, col, amp) in enumerate([(206, "#8A6A9E", 22), (222, "#6E5A8C", 18), (236, "#55487A", 14)]):
+        pts = [(0, 256)]
+        for i in range(33):
+            pts.append((i * 32, base - amp * (0.5 + 0.5 * math.sin(i * 0.55 + k * 2.1)) - rng.uniform(0, 5)))
+        pts.append((1024, 256))
+        c.polygon(pts, col)
+    for _ in range(50):
+        x, y = rng.uniform(0, 1024), rng.uniform(236, 254)
+        c.circle(x, y, rng.uniform(0.8, 1.6), "#FFD08A")
+    return c
+
+
+def paint_far_ground():
+    """Ground beyond the lit part of the street, fading out at dusk."""
+    return canvas.Canvas(16, 16, "#6B5563")
+
+
 def export_all(folder, sheet_cell=300, cols=5):
     """Save every texture plus a labeled-free contact sheet (_sheet.png)."""
     import os

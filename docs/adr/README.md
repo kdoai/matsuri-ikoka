@@ -16,3 +16,4 @@
 | [0010](0010-place-data-sources.md)                | 店と宿の一覧は OpenStreetMap で探し、公式のページで確かめる                        | 採用             |
 | [0011](0011-owner-isolation.md)                   | 相談と旅を利用者ごとに分け、経路ごとの決まりで既定で断る                           | 採用             |
 | [0012](0012-trip-patrol.md)                       | 頼まれた旅の見回りは、変化があるときだけ Managed Agents に読ませる                 | 採用             |
+| [0013](0013-guide-conversation.md)                | 旅のガイドの会話は組み込みの道具なしで動かし、変更は直しの提案にする               | 採用             |
