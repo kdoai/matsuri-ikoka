@@ -59,13 +59,18 @@ def _in_any(boxes, x, y):
     return any(a <= x <= c and b <= y <= d for a, b, c, d in boxes)
 
 
-def build(name, coll, polygon, blockers, z=0.002, cell=CELL, framed=()):
-    """The walkable mesh. `framed` holds (world matrix, footprints) pairs for things built at an angle."""
+def build(name, coll, polygon, blockers, z=0.002, cell=CELL, framed=(), whole_cells=False):
+    """The walkable mesh. `framed` holds (world matrix, footprints) pairs for things built at an angle.
+
+    The grid drops whatever part of a cell doesn't fit, which can lose a whole row to floating point
+    (8.2 / 0.2 < 41). `whole_cells` rounds to the nearest cell count instead.
+    """
     xs = [p[0] for p in polygon]
     ys = [p[1] for p in polygon]
     x0, y0 = min(xs), min(ys)
-    nx = int((max(xs) - x0) / cell)
-    ny = int((max(ys) - y0) / cell)
+    cells = round if whole_cells else int
+    nx = cells((max(xs) - x0) / cell)
+    ny = cells((max(ys) - y0) / cell)
     grown = _grown(blockers)
     turned = [(frame.inverted(), _grown(boxes)) for frame, boxes in framed]
 
@@ -113,12 +118,8 @@ def _polygon_at(me, x, y):
     return None
 
 
-def missing_spots(nav, start, spots):
-    """Names in `spots` {name: (x, y)} that a character walking from `start` (x, y) cannot reach."""
-    me = nav.data
-    first = _polygon_at(me, *start)
-    if first is None:
-        return sorted(spots)
+def _connected(me, first):
+    """Indices of the faces that can be walked to from face `first`, crossing shared edges."""
     by_edge = {}
     for poly in me.polygons:
         for key in poly.edge_keys:
@@ -130,4 +131,39 @@ def missing_spots(nav, start, spots):
                 if other not in seen:
                     seen.add(other)
                     todo.append(other)
+    return seen
+
+
+def keep_reachable(nav, start):
+    """Remove the floor that a character walking from `start` (x, y) cannot get to."""
+    me = nav.data
+    first = _polygon_at(me, *start)
+    if first is None:
+        return
+    keep = _connected(me, first)
+    bm = bmesh.new()
+    bm.from_mesh(me)
+    bmesh.ops.delete(bm, geom=[f for f in bm.faces if f.index not in keep], context="FACES")
+    bm.to_mesh(me)
+    bm.free()
+
+
+def pieces(nav):
+    """How many separate pieces the floor is in."""
+    me = nav.data
+    left = {poly.index for poly in me.polygons}
+    count = 0
+    while left:
+        left -= _connected(me, next(iter(left)))
+        count += 1
+    return count
+
+
+def missing_spots(nav, start, spots):
+    """Names in `spots` {name: (x, y)} that a character walking from `start` (x, y) cannot reach."""
+    me = nav.data
+    first = _polygon_at(me, *start)
+    if first is None:
+        return sorted(spots)
+    seen = _connected(me, first)
     return sorted(name for name, (x, y) in spots.items() if _polygon_at(me, x, y) not in seen)

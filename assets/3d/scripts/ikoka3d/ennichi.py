@@ -193,7 +193,9 @@ def _nav(c, loose, stalls_by_root):
     """The walkable ground. The stalls stand at an angle, so their parts are measured in each stall's own axes."""
     blockers = navigation.floor_blockers(loose, floor=Z)
     framed = [(root.matrix_basis, navigation.floor_blockers(objs, frame=root.matrix_basis)) for root, objs in stalls_by_root]
-    return navigation.build("nav.street", c, WALK, blockers, z=Z + 0.002, cell=0.2, framed=framed)
+    nav = navigation.build("nav.street", c, WALK, blockers, z=Z + 0.002, cell=0.2, framed=framed, whole_cells=True)
+    navigation.keep_reachable(nav, c.objects["anchor.player.start"].location.to_tuple()[:2])
+    return nav
 
 
 def _check_spots(nav, markers):
@@ -202,6 +204,9 @@ def _check_spots(nav, markers):
     missing = navigation.missing_spots(nav, spots["anchor.player.start"], spots)
     if missing:
         raise RuntimeError(f"not reachable on nav.street: {', '.join(missing)}")
+    pieces = navigation.pieces(nav)
+    if pieces != 1:
+        raise RuntimeError(f"nav.street is in {pieces} pieces, with no way to walk between them")
 
 
 def _cameras(coll, roots):
