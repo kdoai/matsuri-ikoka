@@ -9,10 +9,13 @@ import {
   Send,
   X,
 } from "lucide-react";
-import { type FormEvent, useMemo, useState } from "react";
+import { type FormEvent, type KeyboardEvent, useMemo, useRef, useState } from "react";
 import { formatDateTime } from "../i18n";
 import { currentEmergency, type GuideEntry, guideLine } from "../state/guide";
 import { useActions, useApp, useT } from "../state/react";
+import { useReadAloud } from "../voice/hooks";
+import { guideSpokenLine } from "../voice/readAloud";
+import { VoiceInput } from "../voice/VoiceInput";
 import { SourceLink } from "./common";
 import { Portrait } from "./Portraits";
 import { guideErrorText, shortLine } from "./text";
@@ -79,28 +82,48 @@ function Composer({ placeholder }: { placeholder: string }) {
   const actions = useActions();
   const streaming = useApp((state) => state.guide.streaming);
   const [draft, setDraft] = useState("");
+  const input = useRef<HTMLInputElement>(null);
+  // 声で入れた文も切らずに残し、長すぎるときは店の窓と同じく知らせて、送れないようにする
+  const tooLong = draft.trim().length > MAX_MESSAGE_LENGTH;
   const submit = (event: FormEvent) => {
     event.preventDefault();
     const text = draft.trim();
-    if (text === "" || streaming) return;
+    if (text === "" || streaming || tooLong) return;
     setDraft("");
     void actions.sendGuide(text);
   };
+  // 押し続けて繰り返し届く Enter では送らない（声の入力のボタンから焦点が移ったときなど）
+  const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" && event.repeat) event.preventDefault();
+  };
   return (
-    <form className="flex items-center gap-2" onSubmit={submit} data-testid="guide-composer">
+    // 声の入力の説明と聞き取りのようすは、折り返して行の下に出す
+    <form
+      className="flex flex-wrap items-center gap-x-2"
+      onSubmit={submit}
+      data-testid="guide-composer"
+    >
       <input
+        ref={input}
         type="text"
         value={draft}
-        maxLength={MAX_MESSAGE_LENGTH}
+        onKeyDown={onKeyDown}
         onChange={(event) => setDraft(event.target.value)}
         aria-label={t.street.composerLabel}
+        aria-invalid={tooLong}
+        aria-describedby={tooLong ? "guide-too-long" : undefined}
         placeholder={placeholder}
         data-guide-focus=""
         className="min-h-11 min-w-0 flex-1 rounded-xl border-2 border-line-strong bg-white px-3 py-1.5 text-ink"
       />
+      <VoiceInput
+        draft={draft}
+        onDraft={setDraft}
+        onFilled={() => window.requestAnimationFrame(() => input.current?.focus())}
+      />
       <button
         type="submit"
-        disabled={streaming || draft.trim() === ""}
+        disabled={streaming || draft.trim() === "" || tooLong}
         aria-label={streaming ? t.street.waiting : t.street.send}
         className="grid size-11 shrink-0 place-items-center rounded-xl bg-ai-700 text-white shadow-sm transition hover:bg-ai-800 disabled:cursor-not-allowed disabled:bg-stone-400"
       >
@@ -110,6 +133,11 @@ function Composer({ placeholder }: { placeholder: string }) {
           <Send aria-hidden="true" className="size-5" />
         )}
       </button>
+      {tooLong ? (
+        <p id="guide-too-long" className="basis-full pt-1 font-semibold text-shu-700 text-sm">
+          {t.chat.tooLong(MAX_MESSAGE_LENGTH)}
+        </p>
+      ) : null}
     </form>
   );
 }
@@ -168,6 +196,15 @@ export function GuideDialogue() {
   }
   const typing =
     line.kind === "waiting" || line.kind === "tool" || (line.kind === "guide" && line.streaming);
+  // 読み上げる文は、窓に出ている文と同じにする（窓を閉じると、この部品ごと外れて止まる）
+  useReadAloud(
+    guideSpokenLine({
+      line,
+      head: line.kind === "guide" ? shortLine(line.text).head : "",
+      expanded: line.kind === "guide" && expanded === line.id && rest !== null,
+      text,
+    }),
+  );
 
   return (
     <section

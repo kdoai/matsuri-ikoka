@@ -17,6 +17,7 @@ import { playStore, usePlay } from "../state/play";
 import { useActions, useApp, useAppStore, useT } from "../state/react";
 import { selectStreetSceneProps } from "../state/scene";
 import { shioriReady } from "../state/selectors";
+import { ReadAloudToggle } from "../voice/ReadAloudToggle";
 import { AccountMenu } from "./AccountMenu";
 import { openAccountMenu } from "./accountMenuEntry";
 import { focusGuideDialogue, GuideDialogue } from "./GuideDialogue";
@@ -271,6 +272,8 @@ export function Street() {
           >
             <Store aria-hidden="true" className="size-5" />
           </button>
+          {/* 通りには設定の窓がないので、ガイドの返事の読み上げはここで切り替える */}
+          <ReadAloudToggle roundClass={roundButton} />
           <LanguageButton className="min-h-10 rounded-lg border border-kinari-300/60 bg-ai-900/70 px-2.5 py-1 font-semibold text-kinari-50 text-sm hover:bg-ai-700" />
         </div>
       </div>
