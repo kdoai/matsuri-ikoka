@@ -59,6 +59,19 @@ export function tripStorageContract(make: (clock: Clock) => TripStorage): void {
     expect((shared?.itinerary as Itinerary | undefined)?.title).toBe("二つめの版");
   });
 
+  it("持ち主のない旅程は、版を指して前の版も読める。ない版は null", async () => {
+    const { storage, itinerary } = setup();
+    const v1 = itinerary(1);
+    await storage.saveItinerary(v1, null);
+    await storage.saveItinerary({ ...v1, version: 2, title: "二つめの版" }, null);
+
+    const first = await storage.readUnowned(v1.id, 1);
+
+    expect(first?.version).toBe(1);
+    expect(first?.itinerary).toEqual(v1);
+    expect(await storage.readUnowned(v1.id, 3)).toBeNull();
+  });
+
   it("持ち主のない旅程は、最後の保存から30日で読めなくなる", async () => {
     const { clock, storage, itinerary } = setup();
     const v1 = itinerary();

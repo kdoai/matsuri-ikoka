@@ -19,6 +19,7 @@ import {
   type StoredTrip,
   type StoredTripDetail,
   summarize,
+  TRIP_WATCH_DOC_ID,
   type TripDocKind,
   TripGoneError,
   type TripStorage,
@@ -117,6 +118,63 @@ export class MemoryTripStorage implements TripStorage {
       deleteTrip: (itineraryId) => this.#deleteTrip(owner, itineraryId),
       deleteAllTrips: () => this.#deleteAllTrips(owner),
       createShare: (itineraryId) => this.#createShare(owner, itineraryId),
+    };
+  }
+
+  /**
+   * 見回り（patrol/store.ts の PatrolTripSource）が、頼まれた旅を横断して読み書きする口。
+   * Firestore で collectionGroup("watch") を読むのと同じ役で、保存先がメモリのときだけ使う。
+   * 利用者の操作からは呼ばない。旅程は、依頼のパスの利用者の旅のときだけ返す
+   */
+  patrolTrips() {
+    const parse = (ref: string): { uid: string; tripId: string } | null => {
+      const match = /^users\/([^/]+)\/trips\/([^/]+)$/.exec(ref);
+      if (match === null) return null;
+      const [, uid = "", tripId = ""] = match;
+      return isDocumentId(uid) && isDocumentId(tripId) ? { uid, tripId } : null;
+    };
+    const alive = (entry: TripDocEntry | undefined) =>
+      entry !== undefined && (entry.expiresAt === null || this.#now() <= entry.expiresAt);
+    const read = (ref: string, key: string): unknown | null => {
+      const entry = this.#tripDocs.get(ref)?.get(key);
+      return entry !== undefined && alive(entry) ? JSON.parse(entry.json) : null;
+    };
+    return {
+      listWatches: () =>
+        [...this.#tripDocs.keys()].flatMap((ref) => {
+          const path = parse(ref);
+          const watch = read(ref, `watch/${TRIP_WATCH_DOC_ID}`);
+          return path === null || watch === null ? [] : [{ ref, tripId: path.tripId, watch }];
+        }),
+      readWatch: (ref: string) => read(ref, `watch/${TRIP_WATCH_DOC_ID}`),
+      readItinerary: (ref: string): unknown | null => {
+        const path = parse(ref);
+        if (path === null) return null;
+        const entry = this.#owned(path.uid, path.tripId);
+        const json = entry?.versions.get(entry.head.version);
+        return json === undefined ? null : JSON.parse(json);
+      },
+      // Firestore の見回りと同じく、期限は TTL に任せて読む（同じ変化を2度足さないため）
+      listNotices: (ref: string): unknown[] =>
+        [...(this.#tripDocs.get(ref)?.entries() ?? [])]
+          .filter(([key]) => key.startsWith("notices/"))
+          .map(([, entry]) => JSON.parse(entry.json) as unknown),
+      putNotice: (ref: string, notice: { id: string }, expiresAt: number | null) => {
+        const path = parse(ref);
+        const docs = this.#tripDocs.get(ref);
+        // 旅を消したあとに、通知を書き残さない
+        if (
+          path === null ||
+          docs === undefined ||
+          this.#owned(path.uid, path.tripId) === undefined
+        ) {
+          return;
+        }
+        docs.set(`notices/${notice.id}`, { json: JSON.stringify(notice), expiresAt });
+      },
+      deleteNotice: (ref: string, id: string) => {
+        this.#tripDocs.get(ref)?.delete(`notices/${id}`);
+      },
     };
   }
 
@@ -232,13 +290,14 @@ export class MemoryTripStorage implements TripStorage {
     };
   }
 
-  async readUnowned(itineraryId: string): Promise<SharedItinerary | null> {
+  async readUnowned(itineraryId: string, version?: number): Promise<SharedItinerary | null> {
     const entry = this.#alive(this.#itineraries.get(itineraryId));
     if (entry === undefined || tripOwner(entry.head) !== null) return null;
     if (this.#now() - entry.head.updatedAt > SHARE_TTL_MS) return null;
-    const json = entry.versions.get(entry.head.version);
+    const wanted = version ?? entry.head.version;
+    const json = entry.versions.get(wanted);
     if (json === undefined) return null;
-    return { itineraryId, version: entry.head.version, itinerary: JSON.parse(json) };
+    return { itineraryId, version: wanted, itinerary: JSON.parse(json) };
   }
 
   async #claimTrip(uid: string, itineraryId: string): Promise<ClaimResult> {

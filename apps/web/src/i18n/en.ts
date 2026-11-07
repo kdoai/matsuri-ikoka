@@ -1241,6 +1241,27 @@ export const en: Messages = {
     noticeChecked: (when: string) => `Checked ${when}`,
     proposalNote: (summary: string) =>
       `Suggested change: ${summary} (your plan has not changed yet)`,
+    approve: "Update my plan with this",
+    reject: "Keep my current plan",
+    revert: "Go back to the plan before the change",
+    watchOn: "Watching. While you are away, we check the festival for changes and let you know.",
+    watchOff: "Watching is off. Turn it on to hear about festival changes while you are away.",
+    watchStart: "Watch this trip",
+    watchStop: "Stop watching",
+    watchNeedsLogin:
+      "Sign in and save this trip, and we can watch the festival for changes while you are away.",
+    proposalsTitle: "Suggested changes from your guide",
+    outcome: {
+      applied: (version: number) =>
+        `Your plan is updated (version ${version}). You can see what changed in your trip guide.`,
+      reverted: (version: number) => `Your plan is back to before the change (version ${version}).`,
+      rejected: "We kept your current plan.",
+      stale:
+        "Your plan changed after this suggestion, so it was not applied. Ask your guide for a new one.",
+      expired: "This suggestion has expired, so it was not applied. Ask your guide for a new one.",
+      unknown: "We could not confirm the change. Reloading your current plan.",
+      failed: "Could not send. Please wait a moment and try again.",
+    },
     guideName: "Concierge (your guide)",
     talk: "Talk to your guide",
     talkShort: "Talk",

@@ -4,6 +4,8 @@ import {
   type AnchorPlanRequest,
   ApiErrorSchema,
   type ChatRequest,
+  type DecideProposalRequest,
+  type DecideProposalResponse,
   type Festival,
   type FestivalSearchRequest,
   type FestivalSearchResponse,
@@ -12,7 +14,11 @@ import {
   type Itinerary,
   type MarkNoticesReadRequest,
   type PreferencesRequest,
+  type RevertTripRequest,
+  type SetTripWatchRequest,
   type SseMessage,
+  type TripChange,
+  type TripWatch,
 } from "@matsuri-ikoka/schema";
 import { clientError, retryableByDefault } from "../state/errors";
 import type { ClientError, ClientErrorCode } from "../state/types";
@@ -48,8 +54,20 @@ export interface ChatTransport {
     onMessage: OnSseMessage,
     signal: AbortSignal,
   ): Promise<void>;
-  /** 通知を読んだと知らせる。知らせられなくても、画面の側では読んだままにする */
-  markNoticesRead?(request: MarkNoticesReadRequest): Promise<void>;
+  /**
+   * 通知を読んだと知らせる。知らせられなくても、画面の側では読んだままにする。
+   * 応答の本文があれば返す（MarkNoticesReadResponse の形なら、サーバーの未読の数）
+   */
+  markNoticesRead?(request: MarkNoticesReadRequest): Promise<unknown>;
+  /** 見回りを始める・止める */
+  setTripWatch?(request: SetTripWatchRequest): Promise<TripWatch>;
+  /** 組み直しの提案を承認する・断る */
+  decideProposal?(
+    proposalId: string,
+    request: DecideProposalRequest,
+  ): Promise<DecideProposalResponse>;
+  /** 前の版に戻す。戻した旅程は新しい版になる */
+  revertTrip?(request: RevertTripRequest): Promise<TripChange>;
   /** 残した旅を開き、ガイドと話す相談と旅程を受け取る。ガイドがなければ sessionId は null */
   openSavedTrip?(tripId: string): Promise<{ sessionId: string | null; itinerary: Itinerary }>;
   /** 最後に始めた相談で、サーバーが知らせた動き方（知らせがなければ null） */

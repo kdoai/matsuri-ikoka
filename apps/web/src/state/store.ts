@@ -7,12 +7,14 @@ import {
   type GuideSseEvent,
   type GuideStall,
   MAX_MESSAGE_LENGTH,
+  MarkNoticesReadResponseSchema,
   type Preferences,
   type SearchRetry,
   type SearchSuggestion,
   type SseEvent,
   type SseMessage,
   type TripAnchor,
+  type TripChange,
 } from "@matsuri-ikoka/schema";
 import { createStore, type StoreApi } from "zustand/vanilla";
 import { MESSAGES } from "../i18n";
@@ -67,16 +69,23 @@ import {
 } from "./festivalSearch";
 import {
   advanceReport,
+  applyDecision,
   applyGuideEvent,
   applyGuideState,
+  applyRevert,
+  applyWatch,
+  beginGuideAction,
   beginGuideTurn,
   closeText,
   endGuideTurn,
+  failGuideAction,
   GUIDE_GONE,
+  type GuideBusy,
   type GuideError,
   type GuideState,
   markRead,
   noticesOfStall,
+  unreadDiffers,
 } from "./guide";
 import { initialData } from "./initial";
 import { quizById } from "./quizBank";
@@ -206,6 +215,12 @@ export interface AppActions {
   setStreetScene(ready: boolean): void;
   /** 報告を「あとで」にする。次の未報告の通知があれば、続けて報告する */
   dismissReport(): void;
+  /** 見回りを始める・止める */
+  setGuideWatch(action: "start" | "stop"): Promise<void>;
+  /** 組み直しの提案を承認する・断る。承認すると旅程が新しい版になる */
+  decideProposal(proposalId: string, decision: "approve" | "reject"): Promise<void>;
+  /** 承認した変更を、承認する前の版に戻す。戻した旅程も新しい版になる */
+  revertGuideChange(): Promise<void>;
   /** 残した旅を開いて、縁日の通りに戻る。開けなければ false */
   openSavedTrip(tripId: string): Promise<boolean>;
   nextTrivia(): void;
@@ -534,6 +549,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
       const current = new AbortController();
       guideController = current;
       let sawDone = false;
+      let serverUnread: number | null = null;
       let failure: GuideError | null = null;
       try {
         await transport.guideChat(
@@ -546,7 +562,10 @@ export function createAppStore(deps: StoreDeps): AppStore {
               failure = clientError("invalid_event");
               return;
             }
-            if (event.type === "guide.done") sawDone = true;
+            if (event.type === "guide.done") {
+              sawDone = true;
+              serverUnread = event.data.unreadNotices;
+            }
             updateGuide((state) => applyGuideEvent(state, event));
           },
           current.signal,
@@ -569,6 +588,50 @@ export function createAppStore(deps: StoreDeps): AppStore {
       if (!sawDone) {
         updateGuide((state) => endGuideTurn(state, failure ?? clientError("connection_lost")));
       }
+      // 見回りが上限で古い通知を押し出すと、手元の未読の数が合わなくなる。サーバーの数に合わせる
+      if (serverUnread !== null && unreadDiffers(get().guide, serverUnread)) {
+        void get().actions.loadGuide(true);
+      }
+    };
+
+    /** 版が増えた旅程を、店内の旅程と同じ形で入れる（差分を見せる） */
+    const applyTripChange = (change: TripChange) =>
+      update((state) => ({
+        ...state,
+        itinerary: {
+          current: change.itinerary,
+          previous: state.itinerary.current,
+          diff: change.diff,
+        },
+        verify: verifyFromItinerary(change.itinerary),
+      }));
+
+    /**
+     * ガイドの決める操作を送る。送っている間は、ほかの決める操作を重ねない。
+     * 送れなければ結果に出して、もう一度押せるようにする（自動ではやり直さない）。
+     * send は応答を受けて、ストアに入れる関数を返す。送っている間に別の旅や相談へ移っていたら、入れない
+     */
+    const runGuideAction = async (
+      busy: GuideBusy,
+      send: (sessionId: string) => Promise<() => void>,
+    ) => {
+      const { session, guide } = get();
+      // ガイドが返事を流している間は送らない（返事の途中の相談では断られる）
+      if (session.id === null || guide.busy !== null || guide.streaming) return;
+      const sessionId = session.id;
+      const here = () => get().session.id === sessionId;
+      updateGuide((state) => beginGuideAction(state, busy));
+      let apply: () => void;
+      try {
+        apply = await send(sessionId);
+      } catch {
+        if (!here()) return;
+        updateGuide(failGuideAction);
+        // 提案や版の状態が変わっているかもしれないので、読み直す
+        void get().actions.loadGuide(true);
+        return;
+      }
+      if (here()) apply();
     };
 
     /** ガイドとの通信を止める */
@@ -999,12 +1062,26 @@ export function createAppStore(deps: StoreDeps): AppStore {
           // 届かなくても、この画面では読んだままにする（次に開いたときに、また知らせるだけ）
           void transport
             .markNoticesRead?.({ sessionId: session.id, noticeIds: ids })
+            .then((response) => {
+              // 上限で押し出された通知があると、手元の未読の数が合わない。サーバーの数に合わせる
+              const parsed = MarkNoticesReadResponseSchema.safeParse(response);
+              if (parsed.success && unreadDiffers(get().guide, parsed.data.unread)) {
+                void get().actions.loadGuide(true);
+              }
+            })
             .catch(() => undefined);
         }
       },
       closeStall() {
         // 屋台を閉じたら、待っていた次の報告へ進む
-        updateGuide((state) => advanceReport({ ...state, openStall: null }));
+        // 決める操作の結果は、その屋台を見ている間だけ出す
+        updateGuide((state) =>
+          advanceReport({
+            ...state,
+            openStall: null,
+            outcome: state.busy === null ? null : state.outcome,
+          }),
+        );
       },
       setStallList(open) {
         updateGuide((state) => ({
@@ -1044,6 +1121,51 @@ export function createAppStore(deps: StoreDeps): AppStore {
       },
       dismissReport() {
         updateGuide((state) => advanceReport({ ...state, report: null }));
+      },
+      async setGuideWatch(action) {
+        const setTripWatch = transport.setTripWatch;
+        if (setTripWatch === undefined) return;
+        await runGuideAction({ kind: "watch" }, async (sessionId) => {
+          const watch = await setTripWatch({ sessionId, action });
+          return () => updateGuide((state) => applyWatch(state, watch));
+        });
+      },
+      async decideProposal(proposalId, decision) {
+        const decide = transport.decideProposal;
+        const proposal = get().guide.proposals.find((item) => item.id === proposalId);
+        if (decide === undefined || proposal === undefined) return;
+        await runGuideAction({ kind: "proposal", id: proposalId }, async (sessionId) => {
+          const response = await decide(
+            proposalId,
+            decision === "approve"
+              ? {
+                  decision,
+                  sessionId,
+                  baseVersion: proposal.baseVersion,
+                  contentHash: proposal.contentHash,
+                }
+              : { decision, sessionId },
+          );
+          return () => {
+            if (response.outcome === "applied") applyTripChange(response.change);
+            updateGuide((state) => applyDecision(state, proposalId, response));
+            // 承認で新しい版になったときと、当てられなかったときは、提案と版を読み直す
+            if (response.outcome !== "rejected") void get().actions.loadGuide(true);
+          };
+        });
+      },
+      async revertGuideChange() {
+        const revertTrip = transport.revertTrip;
+        const toVersion = get().guide.revertTo;
+        if (revertTrip === undefined || toVersion === null) return;
+        await runGuideAction({ kind: "revert" }, async (sessionId) => {
+          const change = await revertTrip({ sessionId, toVersion });
+          return () => {
+            applyTripChange(change);
+            updateGuide((state) => applyRevert(state, change));
+            void get().actions.loadGuide(true);
+          };
+        });
       },
       async openSavedTrip(tripId) {
         if (transport.openSavedTrip === undefined) return false;

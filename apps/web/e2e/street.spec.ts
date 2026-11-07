@@ -117,6 +117,34 @@ test("2D だけで、屋台の情報・通知・相談がすべて使え、店�
   await expect(page.getByTestId("reply-choices")).toContainText("旅のしおりを開く");
 });
 
+test("知らせの組み直しの案を承認すると旅程が新しい版になり、直す前の旅程に戻せる", async ({
+  page,
+}, info) => {
+  test.setTimeout(180_000);
+  await enterShop(page);
+  await untilShiori(page);
+  await goOutside(page);
+
+  await page.getByTestId("guide-lead").click();
+  const stall = page.getByTestId("stall-window");
+  await expect(stall).toHaveAttribute("data-stall", "headquarters");
+  const proposal = page.getByTestId("stall-notices").getByTestId("stall-proposal");
+  await expect(proposal).toContainText("旅程はまだ変わっていません");
+
+  await proposal.getByTestId("proposal-approve").click();
+  const outcome = page.getByTestId("guide-outcome");
+  await expect(outcome).toHaveAttribute("data-outcome", "applied");
+  await expect(page.getByTestId("stall-proposal")).toHaveCount(0);
+  await snap(page, info, "64-proposal-applied-2d");
+
+  // 窓を閉じて開き直しても、直す前の旅程に戻せる
+  await stall.getByRole("button", { name: "屋台を閉じる" }).click();
+  await page.getByTestId("stall-headquarters").click();
+  await page.getByTestId("guide-revert").click();
+  await expect(outcome).toHaveAttribute("data-outcome", "reverted");
+  await expect(page.getByTestId("guide-revert")).toHaveCount(0);
+});
+
 test("ガイドを用意していない環境でも、屋台を読め、相談できないことが分かる", async ({
   page,
 }, info) => {

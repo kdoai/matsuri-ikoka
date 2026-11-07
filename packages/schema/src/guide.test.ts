@@ -534,6 +534,7 @@ describe("GuideStateResponseSchema", () => {
     version: 1,
     phase: "before",
     watch: fictionalTripWatch(),
+    watchAvailable: true,
     notices: [fictionalNotice()],
     proposals: [fictionalProposal()],
     memo: [fictionalMemoItem()],

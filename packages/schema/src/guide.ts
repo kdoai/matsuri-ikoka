@@ -525,6 +525,8 @@ export const GuideStateResponseSchema = z.strictObject({
   phase: TripPhaseSchema,
   /** 見回りを頼んでいなければ null */
   watch: TripWatchSchema.nullable(),
+  /** この環境で見回りが動くか。動かなければ、見回りを頼めない（頼んでも、だれも見回らない） */
+  watchAvailable: z.boolean(),
   /** 新しい順 */
   notices: z.array(GuideNoticeSchema).max(MAX_NOTICES_PER_TRIP),
   /** 承認を待っている提案だけ。提案は旅程をまるごと持つので、決まったものは返さない */
