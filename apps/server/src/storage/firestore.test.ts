@@ -29,17 +29,19 @@ describe.skipIf(db === null)("FirestoreTripStorage（エミュレーター）", 
   tripStorageContract((clock) => new FirestoreTripStorage(db, { now: () => clock.now }));
 
   describe("旅の下の文書の形", () => {
-    const setup = () => {
+    const setup = async () => {
       const storage = new FirestoreTripStorage(db);
       const uid = `user-${randomUUID()}`;
       const tripId = `trip-${randomUUID()}`;
-      const docs = storage.forOwner(ownerIdOf(uid)).tripDocs(tripId);
+      const owner = ownerIdOf(uid);
+      await storage.saveItinerary({ ...fictionalItinerary(), id: tripId }, owner);
+      const docs = storage.forOwner(owner).tripDocs(tripId);
       const trip = db.doc(`users/${uid}/trips/${tripId}`);
       return { docs, trip, tripId };
     };
 
     it("見回りの依頼は項目を平らに置き、見回りが status で探せる", async () => {
-      const { docs, trip, tripId } = setup();
+      const { docs, trip, tripId } = await setup();
       const watch = { ...fictionalTripWatch(), tripId };
 
       await docs.put("watch", TRIP_WATCH_DOC_ID, watch);
@@ -57,7 +59,7 @@ describe.skipIf(db === null)("FirestoreTripStorage（エミュレーター）", 
     });
 
     it("見回りが平らに書いた通知を、ガイドが読み、提案を結びつけられる", async () => {
-      const { docs, trip, tripId } = setup();
+      const { docs, trip, tripId } = await setup();
       const notice = { ...fictionalNotice(), id: "n-0123456789abcdef", tripId, proposalId: null };
       const expiresAt = new Date(Date.now() + 60_000);
       await trip
@@ -78,7 +80,7 @@ describe.skipIf(db === null)("FirestoreTripStorage（エミュレーター）", 
     });
 
     it("期限を過ぎた、平らに置いた通知は読まない", async () => {
-      const { docs, trip, tripId } = setup();
+      const { docs, trip, tripId } = await setup();
       const notice = { ...fictionalNotice(), id: "n-expired", tripId };
       await trip
         .collection("notices")
@@ -89,7 +91,7 @@ describe.skipIf(db === null)("FirestoreTripStorage（エミュレーター）", 
     });
 
     it("提案は、自分の期限の項目を保ったまま JSON の文字列で持つ", async () => {
-      const { docs, trip } = setup();
+      const { docs, trip } = await setup();
       const proposal = fictionalProposal();
 
       await docs.put("proposals", proposal.id, proposal, { expiresAt: Date.now() + 60_000 });

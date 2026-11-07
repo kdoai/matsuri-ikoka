@@ -37,6 +37,7 @@ import { errorForLog } from "../log";
 import type { Consultations } from "../session/consultations";
 import { parseStoredItinerary, type StoragePersistence } from "../session/persistence";
 import { type ItineraryStore, randomId, type Session } from "../session/sessionStore";
+import { TripGoneError } from "../storage/types";
 import { apiError } from "./errors";
 import { type ConcurrencyLimiter, type DailyLimiter, limitKey } from "./guard";
 import { routeParam, type SecureRoutes } from "./policy";
@@ -191,18 +192,19 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
     if (itinerary === undefined) {
       return c.json(apiError("bad_request", "旅が見つかりません。", false), 404);
     }
-    deps.itineraries.remember(itinerary);
+    // 手元の写しのほうが新しければ、そちらの版で開く
+    const latest = deps.itineraries.rememberLatest(itinerary);
     const session = await deps.consultations.start(owner, null);
-    session.itineraryId = itinerary.id;
-    session.selectedFestivalId = itinerary.mainFestivalId;
+    session.itineraryId = latest.id;
+    session.selectedFestivalId = latest.mainFestivalId;
     session.stage = "shiori";
-    session.preferences = itinerary.preferences;
+    session.preferences = latest.preferences;
     // 組み直しの提案を、今の旅程の条件で確かめられるようにする
     session.conditions = {
-      origin: itinerary.origin,
-      returnTo: itinerary.returnTo,
-      party: itinerary.party,
-      ...(itinerary.budget === undefined ? {} : { budget: itinerary.budget }),
+      origin: latest.origin,
+      returnTo: latest.returnTo,
+      party: latest.party,
+      ...(latest.budget === undefined ? {} : { budget: latest.budget }),
     };
     await deps.persistence.saveSession(session);
     return c.json(
@@ -402,7 +404,12 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
       text: request.data.text,
       updatedAt: runner.now(),
     });
-    await data.putMemo(updated);
+    try {
+      await data.putMemo(updated);
+    } catch (error) {
+      if (!(error instanceof TripGoneError)) throw error;
+      return tripRefusal(c, { status: "missing" });
+    }
     await deps.persistence.saveSession(session);
     c.header("Cache-Control", "private, no-store");
     return c.json(updated);

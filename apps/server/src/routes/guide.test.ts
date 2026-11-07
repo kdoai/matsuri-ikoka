@@ -804,6 +804,37 @@ describe("残した旅", () => {
     expect((await context.chat(guideSession, "こんにちは", ALICE)).status).toBe(404);
   });
 
+  it("残す前の旅を消すと、相談の中の手帳も消える", async () => {
+    const context = setup();
+    const { sessionId, itineraryId } = await context.consult(ALICE);
+    await saveMemo(context, sessionId, ALICE);
+    expect(context.sessions.get(sessionId)?.guide.memo).toHaveLength(1);
+
+    await context.call(`/api/trips/${itineraryId}`, { method: "DELETE", user: ALICE });
+
+    expect(
+      (await context.call("/api/guide/state", { user: ALICE, body: { sessionId } })).status,
+    ).toBe(404);
+    expect(context.sessions.get(sessionId)?.guide.memo).toEqual([]);
+    expect(JSON.stringify(await context.storage.getSession(sessionId))).not.toContain(
+      "連れは歩くのがゆっくり",
+    );
+  });
+
+  it("保存の口の版が手元より古くても、手元の旅程を古い版へ戻さない", async () => {
+    const storage = new MemoryTripStorage();
+    const context = setup({ storage });
+    const { sessionId, itineraryId } = await context.consult(ALICE);
+    const current = context.itineraries.get(itineraryId);
+    if (current === undefined) throw new Error("旅程がありません");
+    context.itineraries.remember({ ...current, version: current.version + 5 });
+
+    const state = await context.state(sessionId, ALICE);
+
+    expect(state.version).toBe(current.version + 5);
+    expect(context.itineraries.get(itineraryId)?.version).toBe(current.version + 5);
+  });
+
   it("ログインせずに残した手帳は、ログインして旅を残すと、旅の下へ移る", async () => {
     const context = setup();
     const { sessionId, itineraryId } = await context.consult();

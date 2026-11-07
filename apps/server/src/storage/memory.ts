@@ -20,6 +20,7 @@ import {
   type StoredTripDetail,
   summarize,
   type TripDocKind,
+  TripGoneError,
   type TripStorage,
   tripOwner,
 } from "./types";
@@ -139,6 +140,7 @@ export class MemoryTripStorage implements TripStorage {
       },
       put: async (kind, id, value, options = {}) => {
         if (!isDocumentId(id)) throw new Error("保存の置き場の ID の形が正しくありません");
+        if (this.#owned(owner, tripId) === undefined) throw new TripGoneError();
         const docs = this.#tripDocs.get(path) ?? new Map<string, TripDocEntry>();
         docs.set(keyOf(kind, id), {
           json: JSON.stringify(value),

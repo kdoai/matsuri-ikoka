@@ -10,6 +10,7 @@ import {
   SHARE_REUSE_MIN_REMAINING_MS,
   SHARE_TTL_MS,
   TRIP_DOC_KINDS,
+  TripGoneError,
   type TripStorage,
 } from "./types";
 
@@ -449,15 +450,56 @@ export function tripStorageContract(make: (clock: Clock) => TripStorage): void {
     await mine.tripDocs(trip.id).put("memo", "m-1", { text: "ゆっくり歩く" });
     await mine.addGuideUsage(trip.id, "2026-08-03", { turns: 1, costUsd: 0.5 });
     const other = storage.forOwner(ownerIdOf(`other-${randomUUID()}`));
-    await other.tripDocs("theirs").put("memo", "m-1", { text: "ほかの人の手帳" });
-    await other.addGuideUsage("theirs", "2026-08-03", { turns: 2, costUsd: 1 });
+    const theirs = itinerary();
+    await storage.saveItinerary(theirs, null);
+    await other.claimTrip(theirs.id);
+    await other.tripDocs(theirs.id).put("memo", "m-1", { text: "ほかの人の手帳" });
+    await other.addGuideUsage(theirs.id, "2026-08-03", { turns: 2, costUsd: 1 });
 
     await mine.deleteAllTrips();
 
     expect(await mine.tripDocs(trip.id).get("memo", "m-1")).toBeNull();
     expect((await mine.readGuideUsage(trip.id, "2026-08-03")).user.turns).toBe(0);
-    expect(await other.tripDocs("theirs").get("memo", "m-1")).toEqual({ text: "ほかの人の手帳" });
-    expect((await other.readGuideUsage("theirs", "2026-08-03")).user.turns).toBe(2);
+    expect(await other.tripDocs(theirs.id).get("memo", "m-1")).toEqual({ text: "ほかの人の手帳" });
+    expect((await other.readGuideUsage(theirs.id, "2026-08-03")).user.turns).toBe(2);
+  });
+
+  it("消した旅の下には書き戻せず、ないものとして断る", async () => {
+    const { storage, itinerary, mine } = setup();
+    const trip = itinerary();
+    await storage.saveItinerary(trip, null);
+    await mine.claimTrip(trip.id);
+    const docs = mine.tripDocs(trip.id);
+    await docs.put("memo", "m-1", { text: "ゆっくり歩く" });
+
+    await mine.deleteTrip(trip.id);
+
+    await expect(docs.put("memo", "m-2", { text: "書き戻し" })).rejects.toThrow(TripGoneError);
+    await expect(docs.put("proposals", "p-1", { summary: "案" })).rejects.toThrow(TripGoneError);
+    expect(await docs.list("memo")).toEqual([]);
+    expect(await docs.list("proposals")).toEqual([]);
+  });
+
+  it("ほかの人の旅とない旅の下には書けない", async () => {
+    const { storage, itinerary, mine } = setup();
+    const trip = itinerary();
+    await storage.saveItinerary(trip, null);
+    await mine.claimTrip(trip.id);
+    const other = storage.forOwner(ownerIdOf(`other-${randomUUID()}`));
+
+    await expect(other.tripDocs(trip.id).put("memo", "m-1", {})).rejects.toThrow(TripGoneError);
+    await expect(mine.tripDocs("trip-none").put("memo", "m-1", {})).rejects.toThrow(TripGoneError);
+    expect(await other.tripDocs(trip.id).list("memo")).toEqual([]);
+  });
+
+  it("ログインした相談で組んだ残す前の旅の下にも書ける", async () => {
+    const { storage, itinerary, owner, mine } = setup();
+    const draft = itinerary();
+    await storage.saveItinerary(draft, owner);
+
+    await mine.tripDocs(draft.id).put("memo", "m-1", { text: "ゆっくり歩く" });
+
+    expect(await mine.tripDocs(draft.id).get("memo", "m-1")).toEqual({ text: "ゆっくり歩く" });
   });
 
   it("ガイドの使った量を、利用者と旅ごとに、日ごとに数える", async () => {

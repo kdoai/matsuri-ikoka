@@ -20,6 +20,7 @@ import { CostMeter, chargeCost } from "../agent/costMeter";
 import { draftFromItinerary } from "../domain/itinerary";
 import { testFestival } from "../domain/testFestivals";
 import { newSessionGuide } from "../session/sessionStore";
+import { TripGoneError } from "../storage/types";
 import { prepareItinerary } from "../tools/matsuriTools";
 import { runTool } from "../tools/mcpServer";
 import { reviewPlan } from "../tools/planReview";
@@ -460,6 +461,33 @@ describe("save_memo", () => {
     expect(events).toEqual([]);
   });
 
+  it("発言の途中に旅が消されたら、手帳に書き戻さない", async () => {
+    const { ctx, events } = setup();
+    const gone = {
+      ...ctx,
+      trip: {
+        ...ctx.trip,
+        data: {
+          ...ctx.trip.data,
+          putMemo: async () => {
+            throw new TripGoneError();
+          },
+        },
+      },
+    };
+
+    const output = outputOf(
+      await runTool(
+        saveMemo,
+        { kind: "pace", text: "連れは歩くのがゆっくり", quote: "歩くのがゆっくり" },
+        gone,
+      ),
+    );
+
+    expect(output.saved).toBe(false);
+    expect(events).toEqual([]);
+  });
+
   it("断ったときのログに、文を残さない", async () => {
     const info = vi.spyOn(console, "info").mockImplementation(() => {});
     const { ctx } = setup({ message: "電話は090-1234-5678です" });
@@ -697,6 +725,28 @@ describe("propose_change", () => {
     expect(output, JSON.stringify(output)).toMatchObject({ proposed: true });
     const [proposal] = await data.proposals();
     expect(proposal?.diff).toMatchObject({ added: [], changed: [], removed: [] });
+  });
+
+  it("発言の途中に旅が消されたら、提案を書き戻さず、知らせない", async () => {
+    const { ctx, events } = setup({ itinerary: await savedItinerary() });
+    const gone = {
+      ...ctx,
+      trip: {
+        ...ctx.trip,
+        data: {
+          ...ctx.trip.data,
+          putProposal: async () => {
+            throw new TripGoneError();
+          },
+        },
+      },
+    };
+
+    const output = outputOf(await runTool(proposeChange, retime, gone));
+
+    expect(output.proposed).toBe(false);
+    expect((output.errors as { code: string }[])[0]?.code).toBe("trip_gone");
+    expect(events).toEqual([]);
   });
 
   it("検証を通らない案は作らず、理由を返す", async () => {

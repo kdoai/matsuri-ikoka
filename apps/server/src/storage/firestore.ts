@@ -21,6 +21,7 @@ import {
   type StoredTripDetail,
   summarize,
   type TripDocKind,
+  TripGoneError,
   type TripStorage,
   tripOwner,
 } from "./types";
@@ -171,14 +172,16 @@ export class FirestoreTripStorage implements TripStorage {
         const expiresAt = options.expiresAt === undefined ? null : at(options.expiresAt);
         // undefined の項目は Firestore に書けないので、JSON にして落とす
         const json = JSON.stringify(value);
-        await trip
-          .collection(kind)
-          .doc(id)
-          .set(
-            FLAT_DOC_KINDS.has(kind)
-              ? { ...JSON.parse(json), expiresAt }
-              : { json, updatedAt: at(this.#now()), expiresAt },
-          );
+        const doc = trip.collection(kind).doc(id);
+        const fields = FLAT_DOC_KINDS.has(kind)
+          ? { ...JSON.parse(json), expiresAt }
+          : { json, updatedAt: at(this.#now()), expiresAt };
+        // 発言の途中に旅を消されても書き戻さないよう、同じトランザクションで旅と持ち主を確かめる
+        await this.#db.runTransaction(async (tx) => {
+          const head = this.#alive(tripOf(await tx.get(this.#head(tripId))));
+          if (head === null || tripOwner(head) !== owner) throw new TripGoneError();
+          tx.set(doc, fields);
+        });
       },
       delete: async (kind, id) => {
         if (!isDocumentId(id)) return false;
@@ -351,11 +354,15 @@ export class FirestoreTripStorage implements TripStorage {
   }
 
   async #removeTrip(owner: OwnerId, itineraryId: string): Promise<void> {
+    // 旅の下のデータ（手帳・通知・提案・見回りの依頼）を、見出しより先に消す。
+    // 途中で失敗しても見出しが残るので、やり直せる（見出しを先に消すと、やり直しが「ない旅」になる）
+    const underTrip = this.#db.doc(ownerTripPath(owner, itineraryId));
+    await this.#db.recursiveDelete(underTrip);
     await this.#deleteShares("itineraryId", itineraryId);
     // 版（サブコレクション）ごと消す
     await this.#db.recursiveDelete(this.#head(itineraryId));
-    // 旅の下のデータ（手帳・通知・提案・見回りの依頼）をまるごと消す
-    await this.#db.recursiveDelete(this.#db.doc(ownerTripPath(owner, itineraryId)));
+    // 見出しを消す前に書かれたものを片付ける。見出しを消したあとは書き込みが断られる
+    await this.#db.recursiveDelete(underTrip);
   }
 
   async #deleteTrip(owner: OwnerId, itineraryId: string): Promise<boolean> {

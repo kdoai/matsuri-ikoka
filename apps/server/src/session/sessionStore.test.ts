@@ -2,6 +2,20 @@ import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
 import { ITINERARY_TTL_MS, ItineraryStore, SessionStore } from "./sessionStore";
 
+describe("ItineraryStore の rememberLatest", () => {
+  it("手元の版以上のときだけ写しに置き、手元のほうが新しければ、それを返す", () => {
+    const store = new ItineraryStore();
+    const v2 = { ...fictionalItinerary(), version: 2 };
+    store.remember(v2);
+
+    expect(store.rememberLatest({ ...v2, version: 1 })).toBe(v2);
+    expect(store.get(v2.id)?.version).toBe(2);
+    const v3 = { ...v2, version: 3 };
+    expect(store.rememberLatest(v3)).toBe(v3);
+    expect(store.get(v2.id)?.version).toBe(3);
+  });
+});
+
 describe("SessionStore", () => {
   it("数の上限を超えたら、いちばん長く使われていない相談から消す", () => {
     const removed: string[] = [];

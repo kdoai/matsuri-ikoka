@@ -310,6 +310,17 @@ export class ItineraryStore {
     }
   }
 
+  /**
+   * 保存の口から読んだ旅程を、手元の版以上のときだけ写しに置く。手元の写しのほうが新しければ、それを返す。
+   * 別のインスタンスや、書き込みの途中の版で、古い版へ戻さないため
+   */
+  rememberLatest(itinerary: Itinerary): Itinerary {
+    const current = this.get(itinerary.id);
+    if (current !== undefined && current.version > itinerary.version) return current;
+    this.remember(itinerary);
+    return itinerary;
+  }
+
   get(id: string): Itinerary | undefined {
     const entry = this.#itineraries.get(id);
     if (entry === undefined) return undefined;

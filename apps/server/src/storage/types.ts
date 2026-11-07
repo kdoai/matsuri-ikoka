@@ -111,6 +111,14 @@ export function isShareId(id: string): boolean {
   return id.startsWith("sh-");
 }
 
+/** 旅がもうない（消された）か、自分の旅でないので、旅の下に書けない */
+export class TripGoneError extends Error {
+  constructor() {
+    super("旅がありません");
+    this.name = "TripGoneError";
+  }
+}
+
 /**
  * 1人の利用者の1つの旅に絞った、ガイドのデータの口。置き場は users/{持ち主}/trips/{旅}/{種類}/{ID}。
  * 値は保存した JSON をそのまま戻したもの（スキーマは通していない）。読むときに呼ぶ側でスキーマを通す。
@@ -119,7 +127,10 @@ export function isShareId(id: string): boolean {
 export interface OwnerTripDocs {
   get(kind: TripDocKind, id: string): Promise<unknown | null>;
   list(kind: TripDocKind): Promise<unknown[]>;
-  /** expiresAt は消す時刻（ミリ秒）。省略すると、旅を消すまで残す */
+  /**
+   * expiresAt は消す時刻（ミリ秒）。省略すると、旅を消すまで残す。
+   * 旅がない・自分の旅でないときは書かず、TripGoneError を投げる（発言の途中に消した旅へ書き戻さない）
+   */
   put(
     kind: TripDocKind,
     id: string,

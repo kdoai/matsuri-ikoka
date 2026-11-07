@@ -152,6 +152,17 @@ export function ownerUsageLedger(
   };
 }
 
+/** 相談の中に持っているデータを消す。消すものがあれば true */
+function forgetHeldData(guide: SessionGuide): boolean {
+  const held =
+    guide.memo.length + guide.notices.length + guide.proposals.length > 0 || guide.watch !== null;
+  guide.memo = [];
+  guide.notices = [];
+  guide.proposals = [];
+  guide.watch = null;
+  return held;
+}
+
 export type GuideTripResult =
   | { status: "ok"; trip: GuideTrip }
   /** 相談にまだ旅程がない */
@@ -180,10 +191,14 @@ export async function openGuideTrip(
     const copy = deps.itineraries.get(id);
     read = copy === undefined ? undefined : { itinerary: copy, kept: false };
   }
-  if (read === undefined) return { status: "missing" };
-  const { itinerary, kept } = read;
-  // ツールは手元の写しから旅程を読むので、いまの版にそろえる
-  deps.itineraries.remember(itinerary);
+  if (read === undefined) {
+    // 旅を消したら、相談の中に持っていた手帳も消す（旅の下は、旅を消すときに消える）
+    if (forgetHeldData(session.guide)) await deps.persistence.saveSession(session);
+    return { status: "missing" };
+  }
+  const { kept } = read;
+  // ツールは手元の写しから旅程を読むので、いまの版にそろえる（古い版へは戻さない）
+  const itinerary = deps.itineraries.rememberLatest(read.itinerary);
   if (!kept || session.ownerUid === null) {
     return { status: "ok", trip: { itinerary, data: sessionGuideData(session.guide) } };
   }

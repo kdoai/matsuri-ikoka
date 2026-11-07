@@ -21,6 +21,7 @@ import { type CostMeter, withCostMeter } from "../agent/costMeter";
 import { draftFromItinerary } from "../domain/itinerary";
 import { occurrenceOn } from "../domain/planCheck";
 import { randomId } from "../session/sessionStore";
+import { TripGoneError } from "../storage/types";
 import type { ToolContext } from "../tools/context";
 import {
   getWeather,
@@ -576,8 +577,16 @@ export const proposeChange = defineGuideTool({
       expiresAt: proposalExpiresAt(itinerary, now),
       decidedAt: null,
     });
-    await data.putProposal(proposal);
-    for (const notice of related) await data.putNotice({ ...notice, proposalId: proposal.id });
+    try {
+      await data.putProposal(proposal);
+      for (const notice of related) await data.putNotice({ ...notice, proposalId: proposal.id });
+    } catch (error) {
+      if (!(error instanceof TripGoneError)) throw error;
+      return {
+        proposed: false,
+        errors: [{ code: "trip_gone", message: "この旅は消されました。提案は作れません" }],
+      };
+    }
     ctx.turn.shownProposals.add(proposal.id);
     ctx.emit({ type: "guide.proposal", data: { proposal } });
     return {
@@ -631,7 +640,12 @@ export const saveMemo = defineGuideTool({
       createdAt: now,
       updatedAt: now,
     };
-    await ctx.trip.data.putMemo(item);
+    try {
+      await ctx.trip.data.putMemo(item);
+    } catch (error) {
+      if (!(error instanceof TripGoneError)) throw error;
+      return { saved: false, reason: "この旅は消されました。手帳には残しません" };
+    }
     ctx.emit({ type: "guide.memo", data: { item } });
     return { saved: true, id: item.id, text: item.text };
   },
