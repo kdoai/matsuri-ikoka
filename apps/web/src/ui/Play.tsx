@@ -23,7 +23,7 @@ function interactionLabel(t: Messages, near: Interaction): string {
     case "exit":
       return t.play.exit;
     case "stall":
-      return t.street.openStall(t.street.stalls[near.stall].name);
+      return t.street.lookStall;
     case "door":
       return t.street.backToShop;
   }
