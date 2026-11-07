@@ -251,7 +251,7 @@ Blender は Z が上、glTF は Y が上です。書き出しで Blender の `(x
 
 | ファイル | 三角形 | サイズ |
 | --- | ---: | ---: |
-| `ennichi.glb` | 66,470 | 1,489 KB |
+| `ennichi.glb` | 66,382 | 1,486 KB |
 | `exterior.glb` | 93,742 | 997 KB |
 | `interior.glb` | 117,796 | 2,435 KB |
 | `motion_carry.glb` | 0 | 12 KB |
@@ -272,7 +272,7 @@ Blender は Z が上、glTF は Y が上です。書き出しで Blender の `(x
 | `motion_wave_flag.glb` | 0 | 10 KB |
 | `player_penguin.glb` | 9,294 | 138 KB |
 | `staff_hen.glb` | 10,254 | 209 KB |
-| `staff_hiyoko.glb` | 10,806 | 188 KB |
+| `staff_hiyoko.glb` | 10,806 | 186 KB |
 | `staff_owl.glb` | 10,342 | 189 KB |
 | `staff_sparrow.glb` | 10,362 | 154 KB |
 | 合計 | | 5.83 MB |

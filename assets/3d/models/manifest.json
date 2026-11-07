@@ -2,8 +2,8 @@
   "files": [
     {
       "file": "ennichi.glb",
-      "kilobytes": 1489.1,
-      "triangles": 66470,
+      "kilobytes": 1485.8,
+      "triangles": 66382,
       "animations": [],
       "textures": 15
     },
@@ -196,7 +196,7 @@
     },
     {
       "file": "staff_hiyoko.glb",
-      "kilobytes": 188.2,
+      "kilobytes": 185.9,
       "triangles": 10806,
       "animations": [],
       "textures": 7
@@ -216,5 +216,5 @@
       "textures": 5
     }
   ],
-  "total_kilobytes": 5971.1
+  "total_kilobytes": 5965.5
 }
