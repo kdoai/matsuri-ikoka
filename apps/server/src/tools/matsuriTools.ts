@@ -1777,7 +1777,14 @@ export async function prepareItinerary(
   ctx: ToolContext,
   written: ItineraryDraft,
   previous: Itinerary | null,
-  options: { findFestival?: (id: string) => Festival | undefined } = {},
+  options: {
+    findFestival?: (id: string) => Festival | undefined;
+    /** 調べた場所の採否を決め直す（祭りのデータで照らしたあとの下書きと、見つけた場所を受け取る） */
+    reviewResearched?: (
+      draft: ItineraryDraft,
+      found: ResearchedPlace[],
+    ) => { draft: ItineraryDraft; researched: ResearchedPlace[] };
+  } = {},
 ): Promise<PreparedItinerary> {
   const { session } = ctx;
   // 祭りを固定しているときは、主役の祭り・祭りの日・旅の日付を先に確かめる
@@ -1838,7 +1845,9 @@ export async function prepareItinerary(
     weatherByDate.set(day.date, weather ?? { status: "unavailable" });
   }
 
-  const result = buildItinerary(draft, {
+  const found = researchedPlaces(ctx, draft);
+  const reviewed = options.reviewResearched?.(draft, found) ?? { draft, researched: found };
+  const result = buildItinerary(reviewed.draft, {
     id: previous?.id ?? randomId("trip"),
     previous,
     budget: session.conditions.budget,
@@ -1849,12 +1858,12 @@ export async function prepareItinerary(
       ...(previous === null ? [] : researchedSpotsInItinerary(previous)),
       ...session.researchedSpots,
     ]),
-    // 行き方の調べで読んだページも出典として認める。前の版の移動の出典も引き継ぐ
+    // 行き方の調べで読んだページも出典として認める。前の版の移動・食事の案の出典も引き継ぐ
     extraSources: new Map([
-      ...(previous === null ? [] : routeSourcesInItinerary(previous)),
+      ...(previous === null ? [] : plannedSourcesInItinerary(previous)),
       ...session.researchedSources,
     ]),
-    researched: researchedPlaces(ctx, draft),
+    researched: reviewed.researched,
   });
   if (!result.ok) {
     // 旅程係の組み方の傾向をつかむため、断った理由の種類だけを残す（予定の名前や文は残さない）
@@ -1904,8 +1913,11 @@ function checkAnchorOnSave(
   );
 }
 
-/** 前の版の移動・帰りの最終の出典（相談を戻したあとでも、同じ出典で直せるように） */
-function routeSourcesInItinerary(itinerary: Itinerary): Map<string, Source> {
+/**
+ * 前の版の移動・帰りの最終・食事の案の出典（相談を戻したあとでも、同じ出典で直せるように）。
+ * 調べた店を指す食事の案は、予定にならない店だと場所の一覧から引けないので、ここで出典を認める
+ */
+function plannedSourcesInItinerary(itinerary: Itinerary): Map<string, Source> {
   const sources = new Map<string, Source>();
   for (const day of itinerary.days) {
     for (const item of day.items) {
@@ -1913,6 +1925,9 @@ function routeSourcesInItinerary(itinerary: Itinerary): Map<string, Source> {
       for (const source of item.sources) sources.set(source.url, source);
     }
     for (const source of day.lastReturn?.sources ?? []) sources.set(source.url, source);
+    for (const meal of day.meals ?? []) {
+      for (const source of meal.sources) sources.set(source.url, source);
+    }
   }
   return sources;
 }

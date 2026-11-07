@@ -7,16 +7,13 @@ import {
   IsoDateSchema,
   type Itinerary,
   ItinerarySchema,
-  LastReturnSchema,
   LocalTimeSchema,
   MAX_MEMO_ITEMS,
   MAX_MEMO_TEXT_LENGTH,
   MAX_PENDING_PROPOSALS,
-  MealPlanSchema,
   mainFestivalDay,
   SlugSchema,
   SourceSchema,
-  StayPlanSchema,
   tripPhase,
 } from "@matsuri-ikoka/schema";
 import { z } from "zod";
@@ -27,7 +24,6 @@ import { randomId } from "../session/sessionStore";
 import type { ToolContext } from "../tools/context";
 import {
   getWeather,
-  ItineraryItemDraftSchema,
   prepareItinerary,
   researchRoute,
   searchNearby,
@@ -47,10 +43,13 @@ import {
 import {
   acceptableEvaluation,
   applyGuideEdits,
+  carryConsidered,
   festivalWithNotices,
+  GuideEditSchema,
   isLivePendingProposal,
   proposalContentHash,
   proposalExpiresAt,
+  samePlan,
 } from "./proposal";
 import { researchAnswerRefusal } from "./researchAnswer";
 import {
@@ -468,39 +467,6 @@ export const guideSearchNearby = defineGuideTool({
   },
 });
 
-const ItemIdSchema = z.string().trim().min(1).max(100);
-
-const GuideEditSchema = z.discriminatedUnion("op", [
-  z
-    .strictObject({
-      op: z.literal("retime"),
-      itemId: ItemIdSchema,
-      start: LocalTimeSchema,
-      end: LocalTimeSchema,
-    })
-    .describe("予定の時刻を変える"),
-  z.strictObject({ op: z.literal("remove"), itemId: ItemIdSchema }).describe("予定を外す"),
-  z
-    .strictObject({
-      op: z.literal("replace"),
-      itemId: ItemIdSchema,
-      item: ItineraryItemDraftSchema,
-    })
-    .describe("予定を置き換える。read_trip の detail の形で書く"),
-  z
-    .strictObject({ op: z.literal("add"), date: IsoDateSchema, item: ItineraryItemDraftSchema })
-    .describe("その日に予定を足す。新しい id を付ける"),
-  z
-    .strictObject({
-      op: z.literal("set_day"),
-      date: IsoDateSchema,
-      stay: StayPlanSchema.nullable().optional(),
-      lastReturn: LastReturnSchema.nullable().optional(),
-      meals: z.array(MealPlanSchema).max(4).optional(),
-    })
-    .describe("その日の泊まり・帰りの最終・食事の案を直す"),
-]);
-
 export const proposeChange = defineGuideTool({
   name: "propose_change",
   description:
@@ -548,10 +514,7 @@ export const proposeChange = defineGuideTool({
         ],
       };
     }
-    const edited = applyGuideEdits(
-      draftFromItinerary(itinerary),
-      args.edits as Parameters<typeof applyGuideEdits>[1],
-    );
+    const edited = applyGuideEdits(draftFromItinerary(itinerary), args.edits);
     if (!edited.ok) return { proposed: false, errors: edited.errors };
     // 通知で分かった開催の変更は、祭りのデータの更新を待たずに照らしに入れる
     const related = notices.filter((notice) => noticeIds.includes(notice.id));
@@ -561,13 +524,14 @@ export const proposeChange = defineGuideTool({
           const festival = ctx.tools.festivals.get(id);
           return festival === undefined ? undefined : festivalWithNotices(festival, related);
         },
+        reviewResearched: (draft, found) => carryConsidered(draft, itinerary, found),
       }),
     );
     if (!prepared.ok) {
       return { proposed: false, errors: prepared.errors, warnings: prepared.warnings };
     }
     const { result, warnings } = prepared;
-    if (result.unchanged) {
+    if (result.unchanged || samePlan(itinerary, result.itinerary)) {
       return {
         proposed: false,
         errors: [{ code: "unchanged", message: "今の旅程と同じです。提案にしません" }],

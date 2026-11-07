@@ -11,10 +11,14 @@ import { testFestival } from "../domain/testFestivals";
 import {
   acceptableEvaluation,
   applyGuideEdits,
+  carryConsidered,
   festivalWithNotices,
   isLivePendingProposal,
+  NOT_USED_REASON,
   proposalContentHash,
   proposalExpiresAt,
+  REMOVED_REASON,
+  samePlan,
 } from "./proposal";
 
 const draft = () => draftFromItinerary(fictionalItinerary());
@@ -175,6 +179,108 @@ describe("festivalWithNotices", () => {
 
     expect(festivalWithNotices(festival, [other])).toBe(festival);
     expect(festivalWithNotices(festival, [])).toBe(festival);
+  });
+});
+
+describe("carryConsidered", () => {
+  const place = (id: string, adopted: boolean, reason: string) => ({
+    id,
+    name: id,
+    from: "nearby" as const,
+    adopted,
+    reason,
+  });
+
+  it("新しい相談でも前の版の採否を引き継ぎ、調べただけの場所の理由をコードで補う", () => {
+    const previous = {
+      ...fictionalItinerary(),
+      considered: [place("web-a", false, "遠いので入れなかった")],
+    };
+
+    const { draft: next, researched } = carryConsidered(draft(), previous, [
+      { id: "web-b", name: "web-b", from: "nearby" },
+    ]);
+
+    expect(researched.map((entry) => entry.id)).toEqual(["web-a", "web-b"]);
+    expect(next.considered).toEqual([
+      { id: "web-a", reason: "遠いので入れなかった" },
+      { id: "web-b", reason: NOT_USED_REASON },
+    ]);
+  });
+
+  it("前の版で採っていて案から外した場所は、外したと書き、案に入っている場所は前の理由を保つ", () => {
+    const base = draft();
+    const craft = base.days[0]?.items.find((item) => item.spotId !== undefined);
+    if (craft?.spotId === undefined) throw new Error("場所のある予定がありません");
+    const previous = {
+      ...fictionalItinerary(),
+      considered: [place(craft.spotId, true, "和紙が見られる"), place("web-gone", true, "近い")],
+    };
+
+    const { draft: next } = carryConsidered(base, previous, []);
+
+    expect(next.considered).toEqual([
+      { id: craft.spotId, reason: "和紙が見られる" },
+      { id: "web-gone", reason: REMOVED_REASON },
+    ]);
+  });
+
+  it("上限を超えたら、案に入っている場所を残す", () => {
+    const base = draft();
+    const spotId = base.days[0]?.items.find((item) => item.spotId !== undefined)?.spotId;
+    if (spotId === undefined) throw new Error("場所のある予定がありません");
+    const found = Array.from({ length: 45 }, (_, index) => ({
+      id: `web-${index}`,
+      name: `店${index}`,
+      from: "nearby" as const,
+    }));
+
+    const { researched, draft: next } = carryConsidered(base, fictionalItinerary(), [
+      ...found,
+      { id: spotId, name: "和紙の館", from: "nearby" },
+    ]);
+
+    expect(researched).toHaveLength(40);
+    expect(researched[0]?.id).toBe(spotId);
+    expect(next.considered?.length).toBe(39);
+  });
+});
+
+describe("samePlan", () => {
+  it("採否の理由・不足・評価・天気だけの違いは、同じ計画とする", () => {
+    const base = fictionalItinerary();
+    const other = {
+      ...base,
+      version: 9,
+      considered: [
+        { id: "web-a", name: "店", from: "nearby" as const, adopted: false, reason: "遠い" },
+      ],
+      days: base.days.map((day) => ({
+        ...day,
+        weather: { status: "unavailable" as const },
+        items: day.items.map((item) => ({ ...item, changedInVersion: 9 })),
+      })),
+    };
+
+    expect(samePlan(base, other)).toBe(true);
+  });
+
+  it("予定と、帰りの最終の違いは、別の計画とする", () => {
+    const base = fictionalItinerary();
+    const retimed = {
+      ...base,
+      days: base.days.map((day) => ({
+        ...day,
+        items: day.items.map((item, index) => (index === 0 ? { ...item, start: "14:00" } : item)),
+      })),
+    };
+    const lastReturn = {
+      ...base,
+      days: base.days.map((day) => ({ ...day, lastReturn: null })),
+    };
+
+    expect(samePlan(base, retimed)).toBe(false);
+    expect(samePlan(base, lastReturn)).toBe(false);
   });
 });
 

@@ -12,6 +12,7 @@ import {
   fictionalMemoItem,
   fictionalNotice,
   fictionalProposal,
+  fictionalSource,
 } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it, vi } from "vitest";
 import { z } from "zod";
@@ -21,9 +22,10 @@ import { testFestival } from "../domain/testFestivals";
 import { newSessionGuide } from "../session/sessionStore";
 import { prepareItinerary } from "../tools/matsuriTools";
 import { runTool } from "../tools/mcpServer";
+import { reviewPlan } from "../tools/planReview";
 import { testToolContext } from "../tools/testContext";
 import { sessionGuideData } from "./data";
-import { proposalContentHash } from "./proposal";
+import { NOT_USED_REASON, proposalContentHash } from "./proposal";
 import { MAX_TURN_SOURCES, newGuideTurn, noteTurnSource, turnSources } from "./runner";
 import {
   GUIDE_TOOLS,
@@ -579,6 +581,122 @@ describe("propose_change", () => {
     // 承認されるまで、旅程は変わらない
     expect(tools.itineraries.get(itinerary.id)).toEqual(itinerary);
     expect(ctx.trip.itinerary).toEqual(itinerary);
+  });
+
+  it("周りを探したあとでも、直しと関係なく評価を落とさず、案を作る", async () => {
+    const saved = await savedItinerary();
+    const { ctx, data, tools } = setup({ itinerary: saved });
+    // 今の旅程の評価（この場所を調べる前のもの）。案と同じ下書きから同じ手順で求める
+    const before = await prepareItinerary(tools, draftFromItinerary(saved), null);
+    if (!before.ok) throw new Error(JSON.stringify(before.errors));
+    const evaluation = await reviewPlan({
+      ctx: tools,
+      itinerary: saved,
+      gaps: before.result.gaps,
+      warnings: before.warnings as { code: string; message: string }[],
+      conditions: "",
+      signal: new AbortController().signal,
+    });
+    const itinerary = { ...saved, evaluation };
+    const context = { ...ctx, trip: { ...ctx.trip, itinerary } };
+    tools.itineraries.remember(itinerary);
+    // search_nearby が調べて残す場所。後の発言でも相談に残っている
+    tools.session.foundSpots.set("suzunari-toro", [{ id: "web-kawabe", name: "川べりの店" }]);
+
+    const output = outputOf(await runTool(proposeChange, retime, context));
+
+    expect(output, JSON.stringify(output)).toMatchObject({ proposed: true });
+    const [proposal] = await data.proposals();
+    expect(proposal?.itinerary.gaps?.map((gap) => gap.code)).not.toContain("research_unreviewed");
+    expect(proposal?.itinerary.considered).toEqual([
+      {
+        id: "web-kawabe",
+        name: "川べりの店",
+        from: "nearby",
+        adopted: false,
+        reason: NOT_USED_REASON,
+      },
+    ]);
+  });
+
+  it("新しい相談でも、前の版の採否と、調べた店を指す食事の案を保つ", async () => {
+    const saved = await savedItinerary();
+    const shop = fictionalSource("web-shop", "single");
+    const itinerary: Itinerary = {
+      ...saved,
+      considered: [
+        { id: "web-far", name: "遠い店", from: "nearby", adopted: false, reason: "遠いので外した" },
+      ],
+      days: saved.days.map((day) => ({
+        ...day,
+        meals: [
+          ...(day.meals ?? []),
+          {
+            slot: "lunch" as const,
+            kind: "shop" as const,
+            name: "川べりの店",
+            itemId: null,
+            spotId: "web-kawabe",
+            sources: [shop],
+          },
+        ],
+      })),
+    };
+    const { ctx, data } = setup({ itinerary });
+
+    const output = outputOf(await runTool(proposeChange, retime, ctx));
+
+    expect(output, JSON.stringify(output)).toMatchObject({ proposed: true });
+    const [proposal] = await data.proposals();
+    expect(proposal?.itinerary.considered).toEqual(itinerary.considered);
+    expect(proposal?.itinerary.days[0]?.meals).toContainEqual(
+      expect.objectContaining({ spotId: "web-kawabe", sources: [shop] }),
+    );
+  });
+
+  it("今と同じ時刻に直すだけなら、調べた場所があっても案にせず、枠を使わない", async () => {
+    const { ctx, data, tools } = setup({ itinerary: await savedItinerary() });
+    tools.session.foundSpots.set("suzunari-toro", [{ id: "web-kawabe", name: "川べりの店" }]);
+
+    const output = outputOf(
+      await runTool(
+        proposeChange,
+        {
+          summary: "案",
+          edits: [{ op: "retime", itemId: "craft-hall", start: "15:30", end: "16:20" }],
+        },
+        ctx,
+      ),
+    );
+
+    expect(output.proposed).toBe(false);
+    expect((output.errors as { code: string }[])[0]?.code).toBe("unchanged");
+    expect(await data.proposals()).toEqual([]);
+  });
+
+  it("帰りの最終だけの直しは、予定の差分が空でも案にする", async () => {
+    const { ctx, data } = setup({ itinerary: await savedItinerary() });
+
+    const output = outputOf(
+      await runTool(
+        proposeChange,
+        {
+          summary: "帰りの最終を確かめ直します",
+          edits: [
+            {
+              op: "set_day",
+              date: "2026-08-16",
+              lastReturn: { station: "鈴鳴駅", departBy: null, sources: [] },
+            },
+          ],
+        },
+        ctx,
+      ),
+    );
+
+    expect(output, JSON.stringify(output)).toMatchObject({ proposed: true });
+    const [proposal] = await data.proposals();
+    expect(proposal?.diff).toMatchObject({ added: [], changed: [], removed: [] });
   });
 
   it("検証を通らない案は作らず、理由を返す", async () => {
