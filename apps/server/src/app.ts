@@ -26,8 +26,6 @@ import { MemoryTripStorage } from "./storage/memory";
 import type { TripStorage } from "./storage/types";
 
 export interface AppDeps extends ChatOptions, FestivalSearchOptions {
-  /** 緊急の発言で、保存の口を待つ上限（ミリ秒）。テストで短くする */
-  emergencyWaitMs?: number;
   sessions: SessionStore;
   itineraries: ItineraryStore;
   festivals: FestivalStore;

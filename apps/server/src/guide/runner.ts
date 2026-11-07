@@ -15,7 +15,7 @@ import type { GuideTrip } from "./data";
 // ガイドの差し替え口。店内の相談と同じく、画面は SSE のイベントだけを見て、どちらが動いているかを知らない。
 // - live：Agent SDK でガイドを動かす（ClaudeGuideRunner）
 // - mock：記録したガイドの相談を再生する（ReplayGuideRunner）
-// guide.emergency と guide.done は、呼び出し側（routes）が送る。
+// guide.done は、呼び出し側（routes）が送る。
 
 export type EmitGuideEvent = (event: GuideSseEvent) => void;
 
@@ -97,8 +97,6 @@ export interface GuideTurnInput {
   message: string;
   /** この発言のときだけ使う現在地。保存せず、ログにも残さない */
   location?: LatLng | undefined;
-  /** 発言に緊急かもしれない言葉があった。連絡先は呼び出し側が先に送ってある */
-  emergency: boolean;
   /** この発言に使える費用（米ドル） */
   budgetUsd: number;
   turn: GuideTurnState;
@@ -137,14 +135,12 @@ export function nextResumeSummary(
   previous: GuideResumeSummary,
   input: {
     turn: GuideTurnState;
-    emergency: boolean;
     pendingProposalIds: readonly string[];
     now: string;
   },
 ): GuideResumeSummary {
   const topics = new Set(previous.topics);
   for (const tool of input.turn.toolCalls) topics.add(TOPIC_BY_TOOL[tool]);
-  if (input.emergency) topics.add("trouble");
   return {
     turns: previous.turns + 1,
     topics: GUIDE_TOPICS.filter((topic) => topics.has(topic)),

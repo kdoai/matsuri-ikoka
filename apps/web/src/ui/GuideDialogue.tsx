@@ -1,17 +1,16 @@
-import { EMERGENCY_CONTACTS, MAX_MESSAGE_LENGTH, noticeStall } from "@matsuri-ikoka/schema";
+import { MAX_MESSAGE_LENGTH, noticeStall } from "@matsuri-ikoka/schema";
 import {
   Clock,
   Flag,
   MessageCircle,
   MessageCircleQuestion,
-  Phone,
   RotateCcw,
   Send,
   X,
 } from "lucide-react";
 import { type FormEvent, type KeyboardEvent, useMemo, useRef, useState } from "react";
 import { formatDateTime } from "../i18n";
-import { currentEmergency, type GuideEntry, guideLine } from "../state/guide";
+import { type GuideEntry, guideLine } from "../state/guide";
 import { useActions, useApp, useT } from "../state/react";
 import { useReadAloud } from "../voice/hooks";
 import { guideSpokenLine } from "../voice/readAloud";
@@ -22,7 +21,7 @@ import { guideErrorText, shortLine } from "./text";
 
 // ガイドとの会話の窓。店の会話の窓と同じ、話し手の名札と顔の絵つきのセリフの枠。
 // ガイドは店のコンシェルジュと同じひよこなので、同じ顔の絵を使う。チャット欄にせず、いまのひとことだけを出す。
-// これまでの話は「これまでの話」で開ける。緊急の連絡先は、ガイドの文より先に、いちばん上に出す。
+// これまでの話は「これまでの話」で開ける。
 
 const replyClass =
   "inline-flex min-h-12 items-center justify-center gap-1.5 rounded-2xl border-2 px-3 py-2 font-bold leading-tight shadow-soft transition hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60";
@@ -51,16 +50,6 @@ function HistoryEntry({ entry }: { entry: GuideEntry }) {
       return <p className="text-ink-soft">{entry.bubble}</p>;
     case "memo":
       return <p className="text-ink-soft">{t.street.memoSaved(entry.text)}</p>;
-    case "emergency":
-      return (
-        <p className="font-bold text-shu-700">
-          {t.street.dotted(
-            entry.contacts.map(
-              (contact) => `${t.street.emergency[contact.service]} ${contact.number}`,
-            ),
-          )}
-        </p>
-      );
     case "sources":
       return (
         <div>
@@ -153,13 +142,10 @@ export function GuideDialogue() {
   const locale = useApp((state) => state.ui.locale);
   const guide = useApp((state) => state.guide);
   const line = useMemo(() => guideLine(guide), [guide]);
-  const emergency = useMemo(() => currentEmergency(guide), [guide]);
   const latest = useMemo(() => latestEntries(guide.entries), [guide.entries]);
   const [expanded, setExpanded] = useState<string | null>(null);
   const hasSession = useApp((state) => state.session.id !== null);
   const canTalk = guide.availability === "ready";
-  // 話せないときも、緊急の連絡先はいつも出す。ガイドがなくてもここで読める
-  const contacts = emergency.length > 0 ? emergency : canTalk ? [] : EMERGENCY_CONTACTS;
 
   let text: string;
   let rest: string | null = null;
@@ -229,29 +215,6 @@ export function GuideDialogue() {
       >
         <X aria-hidden="true" className="size-4" />
       </button>
-      {/* 緊急の連絡先は、ガイドの文より先に出す */}
-      {contacts.length > 0 ? (
-        <div
-          role={emergency.length > 0 ? "alert" : undefined}
-          data-testid="guide-emergency"
-          className="mb-2 rounded-xl border-2 border-shu-600 bg-white px-3 py-2"
-        >
-          <p className="font-bold text-shu-700">{t.street.emergencyLead}</p>
-          <ul className="mt-1 flex flex-wrap gap-2">
-            {contacts.map((contact) => (
-              <li key={contact.service}>
-                <a
-                  href={`tel:${contact.number}`}
-                  className="inline-flex min-h-11 items-center gap-1.5 rounded-xl bg-shu-600 px-3 font-bold text-white"
-                >
-                  <Phone aria-hidden="true" className="size-4" />
-                  {t.street.emergency[contact.service]} {contact.number}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
       <div className="flex min-h-0 gap-3 sm:gap-5">
         <Portrait
           speaker="concierge"
@@ -396,12 +359,10 @@ export function GuideDialogue() {
           </details>
         ) : null}
       </div>
-      {/* 相談が切れていても、緊急の言葉はサーバーが連絡先を返すので、相談の ID があれば書ける */}
-      {hasSession ? (
+      {/* ガイドと話せないとき（相談が切れた・旅がない）は、書く欄を出さない */}
+      {hasSession && guide.availability !== "unavailable" ? (
         <div className="mt-2 shrink-0 border-line border-t border-dashed pt-2">
-          <Composer
-            placeholder={canTalk ? t.street.composerPlaceholder : t.street.troublePlaceholder}
-          />
+          <Composer placeholder={t.street.composerPlaceholder} />
         </div>
       ) : null}
     </section>

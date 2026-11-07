@@ -398,15 +398,5 @@ describe("data/samples/guide（ガイドの相談と見回りのサンプル）"
         }
       }
     });
-
-    it("緊急の相談では、連絡先を返答の文より先に出す", () => {
-      const emergencyTurns = sample.turns.filter((turn) =>
-        turn.events.some(({ event }) => event.type === "guide.emergency"),
-      );
-      expect(emergencyTurns.length).toBeGreaterThan(0);
-      for (const turn of emergencyTurns) {
-        expect(turn.events[0]?.event.type).toBe("guide.emergency");
-      }
-    });
   });
 });

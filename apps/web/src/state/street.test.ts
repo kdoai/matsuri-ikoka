@@ -350,32 +350,7 @@ describe("ガイドとの相談", () => {
     expect(guide.entries.at(-1)).toMatchObject({ kind: "error", code: "invalid_event" });
   });
 
-  it.each([404, 409, 429, 503])(
-    "ガイドの知らせを読めない（%i）ときも、緊急の相談を送れて、連絡先が出る",
-    async (status) => {
-      const guideChat = streaming([
-        {
-          type: "guide.emergency",
-          data: { contacts: [{ service: "ambulance_fire", number: "119" }] },
-        },
-        { type: "guide.done", data: { phase: "during", unreadNotices: 0, pendingProposals: 0 } },
-      ]);
-      const { store } = await onStreet({
-        guideChat,
-        guideState: async () => {
-          throw new TransportError("bad_request", { status });
-        },
-      });
-      await store.getState().actions.sendGuide("連れが倒れました");
-      expect(guideChat).toHaveBeenCalledOnce();
-      expect(store.getState().guide.entries.map((entry) => entry.kind)).toEqual([
-        "user",
-        "emergency",
-      ]);
-    },
-  );
-
-  it("読み込みの最中も、緊急の相談を送れる", async () => {
+  it("読み込みの最中も、相談を送れる", async () => {
     const guideChat = streaming([
       { type: "guide.done", data: { phase: "during", unreadNotices: 0, pendingProposals: 0 } },
     ]);
@@ -384,7 +359,7 @@ describe("ガイドとの相談", () => {
       guideState: () => new Promise(() => undefined),
     });
     expect(store.getState().guide.availability).toBe("loading");
-    await store.getState().actions.sendGuide("助けて");
+    await store.getState().actions.sendGuide("持ち物は");
     expect(guideChat).toHaveBeenCalledOnce();
   });
 

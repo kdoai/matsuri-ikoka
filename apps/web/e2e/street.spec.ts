@@ -105,13 +105,14 @@ test("2D だけで、屋台の情報・通知・相談がすべて使え、店�
   });
   await expect(page.getByTestId("stall-headquarters")).toHaveAttribute("data-lit", "false");
 
-  // 自分の言葉で聞いて、緊急のときは連絡先が先に出る
+  // 自分の言葉で聞ける
   const input = dialogue.getByRole("textbox", { name: "ガイドへの発言" });
-  await input.fill("連れが倒れて、呼びかけても返事がありません");
+  await input.fill("雨が降ったらどうすればいいですか");
   await input.press("Enter");
-  await expect(page.getByTestId("guide-emergency")).toContainText("119", { timeout: 20_000 });
-  await expect(page.getByTestId("guide-emergency")).toContainText("110");
-  await snap(page, info, "64-guide-emergency-2d");
+  await expect(page.getByTestId("guide-line")).toContainText("小雨なら開催します", {
+    timeout: 20_000,
+  });
+  await snap(page, info, "64-guide-free-text-2d");
   await page.getByTestId("guide-dialogue-close").click();
 
   // 通りから店内へ戻れて、今の相談はそのまま続く
@@ -178,15 +179,8 @@ test("ガイドを用意していない環境でも、屋台を読め、相談�
   await page.keyboard.press("Escape");
   await page.getByTestId("guide-bar").getByRole("button").click();
   await expect(page.getByTestId("guide-line")).toContainText("いまはガイドに相談できません");
-  // 話せないときも、公的な連絡先はいつも出す
-  await expect(page.getByTestId("guide-emergency")).toContainText("119");
-  await expect(page.getByTestId("guide-emergency")).toContainText("110");
-  // 入力欄は残る。ふつうの発言が断られたら、続け方を案内する
-  const input = page.getByRole("textbox", { name: "ガイドへの発言" });
-  await input.fill("持ち物を教えてください");
-  await input.press("Enter");
-  await expect(page.getByTestId("guide-line")).toContainText("この相談は続けられなくなりました");
-  await expect(page.getByTestId("guide-emergency")).toContainText("119");
+  // 話せないときは、書く欄を出さない
+  await expect(page.getByRole("textbox", { name: "ガイドへの発言" })).toHaveCount(0);
   await snap(page, info, "65-guide-unavailable");
 });
 
@@ -227,38 +221,6 @@ test("通りの案内からログインの窓を開け、窓は画面に収ま�
   await expect(panel).toBeInViewport({ ratio: 1 });
   await panel.getByRole("button").first().click({ trial: true });
   await snap(page, info, "67-account-panel-over-stall");
-});
-
-test("ガイドの知らせを読めなくても、緊急の相談を送れて、連絡先が先に出る", async ({
-  page,
-}, info) => {
-  test.setTimeout(150_000);
-  test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
-  await page.route("**/api/guide/state", (route) =>
-    route.fulfill({
-      status: 503,
-      contentType: "application/json",
-      body: JSON.stringify({
-        code: "upstream_unavailable",
-        message: "いま旅を読めません。",
-        retryable: true,
-      }),
-    }),
-  );
-  await enterShop(page);
-  await untilShiori(page);
-  await goOutside(page);
-  await page.getByTestId("guide-bar").getByRole("button").click();
-  await expect(
-    page.getByTestId("guide-dialogue").getByRole("button", { name: "もう一度読む" }),
-  ).toBeVisible();
-  const input = page.getByRole("textbox", { name: "ガイドへの発言" });
-  await input.fill("連れが倒れて、呼びかけても返事がありません");
-  await input.press("Enter");
-  await expect(page.getByTestId("guide-emergency")).toHaveAttribute("role", "alert", {
-    timeout: 20_000,
-  });
-  await expect(page.getByTestId("guide-emergency")).toContainText("119");
 });
 
 test("通りのモデルを読めないときは、屋台の一覧を主にし、案内はすぐに屋台を開く", async ({
