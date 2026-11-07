@@ -1,7 +1,8 @@
-import type { AuthConfig } from "@matsuri-ikoka/schema";
+import { type AuthConfig, isTrialAccount } from "@matsuri-ikoka/schema";
 import { MemoryTripStorage } from "../storage/memory";
 import type { TripStorage } from "../storage/types";
 import type { IdTokenVerifier } from "./idToken";
+import { TRIAL_STATE_DOC, type TrialToken, trialTokenAccepted } from "./trialAccount";
 
 // Firebase（ログインと Firestore）の設定。値は環境変数から読む（docs/spec/account.md）。
 // 鍵のファイルは使わない。Cloud Run では実行用のサービスアカウントの権限で、手元ではエミュレーターで動かす
@@ -56,6 +57,27 @@ export interface Account {
   web: AuthConfig;
 }
 
+/**
+ * ID トークンを確かめる口を作る。パスワードと Google のどちらでも、利用者の ID の決め方は同じ。
+ * お試し用のアカウントだけは、ログインの方法と、無効にした時刻も確かめる。時刻を読めなければ断る
+ */
+export function createIdTokenVerifier(
+  verifyIdToken: (token: string) => Promise<TrialToken & { uid: string }>,
+  trialValidAfter: () => Promise<number | null>,
+): IdTokenVerifier {
+  return {
+    async verify(token) {
+      try {
+        const decoded = await verifyIdToken(token);
+        if (!isTrialAccount(decoded.uid)) return decoded.uid;
+        return trialTokenAccepted(decoded, await trialValidAfter()) ? decoded.uid : null;
+      } catch {
+        return null;
+      }
+    },
+  };
+}
+
 export async function createAccount(config: AccountConfig): Promise<Account> {
   if (config.storage === "memory" && !config.web.enabled) {
     return { storage: new MemoryTripStorage(), verifier: null, web: config.web };
@@ -68,23 +90,22 @@ export async function createAccount(config: AccountConfig): Promise<Account> {
       import("../storage/firestore"),
     ]);
   const app = initializeApp(config.projectId === null ? {} : { projectId: config.projectId });
-  const storage =
-    config.storage === "firestore"
-      ? new FirestoreTripStorage(
-          config.databaseId === null ? getFirestore(app) : getFirestore(app, config.databaseId),
-        )
-      : new MemoryTripStorage();
+  const db =
+    config.storage !== "firestore"
+      ? null
+      : config.databaseId === null
+        ? getFirestore(app)
+        : getFirestore(app, config.databaseId);
+  const storage = db === null ? new MemoryTripStorage() : new FirestoreTripStorage(db);
   const auth = getAuth(app);
   const verifier: IdTokenVerifier | null = config.web.enabled
-    ? {
-        async verify(token) {
-          try {
-            return (await auth.verifyIdToken(token)).uid;
-          } catch {
-            return null;
-          }
+    ? createIdTokenVerifier(
+        (token) => auth.verifyIdToken(token),
+        async () => {
+          const saved = (await db?.doc(TRIAL_STATE_DOC).get())?.get("validAfter");
+          return typeof saved === "number" ? saved : null;
         },
-      }
+      )
     : null;
   return { storage, verifier, web: config.web };
 }

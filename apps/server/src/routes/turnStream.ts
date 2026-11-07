@@ -27,6 +27,8 @@ export const HEARTBEAT_MS = 15_000;
 
 export class TurnTimeoutError extends Error {}
 class ClientClosedError extends Error {}
+/** 利用者が旅やデータを消したので止めた */
+class TurnStoppedError extends Error {}
 
 /** 返答の終わり方。client_closed は、done を送る前に利用者の側から接続が切れた */
 export type TurnEnding = "done" | "error" | "timeout" | "client_closed";
@@ -51,6 +53,13 @@ export function toErrorBody(error: unknown, signal: AbortSignal): ErrorBody | nu
       code: "timeout",
       message: "時間がかかりすぎたので、ここで止めました。もう一度送ってください。",
       retryable: true,
+    };
+  }
+  if (signal.aborted && signal.reason instanceof TurnStoppedError) {
+    return {
+      code: "bad_request",
+      message: "旅を消したので、返事を止めました。",
+      retryable: false,
     };
   }
   if (error instanceof AgentError) {
@@ -99,6 +108,8 @@ export interface TurnEvents<E extends { type: string }> {
   done(): E | Promise<E>;
   /** 失敗を送る前に、それまでに送ったイベントの種類を見て、文を変える */
   adjustError?(body: ErrorBody, sent: ReadonlySet<string>): ErrorBody;
+  /** 流し始めたときに、返事を止める関数を渡す */
+  started?(stop: () => void): void;
   /** すべて送ったあとに呼ぶ */
   finished?(): void;
 }
@@ -138,7 +149,13 @@ export function streamEvents<E extends { type: string }>(
   session.busy = true;
   return openEventStream(c, run, options, {
     ...kinds,
+    started: (stop) => {
+      session.stopTurn = stop;
+      // 受け付けてから流し始めるまでの間に消されていたら、すぐ止める
+      if (session.discarded || session.tripDeleted) stop();
+    },
     finished: () => {
+      session.stopTurn = null;
       session.busy = false;
     },
   });
@@ -167,6 +184,7 @@ export function openEventStream<E extends { type: string }>(
       idle = setTimeout(timeout, idleMs);
     };
     stream.onAbort(() => controller.abort(new ClientClosedError()));
+    kinds.started?.(() => controller.abort(new TurnStoppedError()));
     let writes = Promise.resolve();
     const write = (task: () => Promise<unknown>) => {
       writes = writes.then(task).then(

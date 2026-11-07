@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useRestartWhenUserLeaves } from "./account/useAccountUser";
 import { useApp } from "./state/react";
 import { ShioriPage } from "./ui/ShioriPage";
 import { Shop } from "./ui/Shop";
@@ -11,6 +12,7 @@ export function App() {
   const locale = useApp((state) => state.ui.locale);
   useSoundEffects();
   useBackgroundMusic();
+  useRestartWhenUserLeaves();
 
   useEffect(() => {
     document.documentElement.lang = locale;

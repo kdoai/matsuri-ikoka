@@ -119,7 +119,13 @@ describe("readConfig", () => {
         },
         here,
       ).guideLimits,
-    ).toEqual({ turnsPerUser: 9, turnsPerTrip: 8, costUsdPerUser: 1.5, costUsdPerTrip: 0.5 });
+    ).toEqual({
+      turnsPerUser: 9,
+      turnsPerTrip: 8,
+      costUsdPerUser: 1.5,
+      costUsdPerTrip: 0.5,
+      costUsdTrialTotal: DEFAULT_GUIDE_LIMITS.costUsdTrialTotal,
+    });
     expect(() => readConfig({ GUIDE_DAILY_TURNS_PER_USER: "many" }, here)).toThrow(
       "GUIDE_DAILY_TURNS_PER_USER",
     );
