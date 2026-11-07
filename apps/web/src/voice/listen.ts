@@ -143,7 +143,8 @@ export function createPushToTalk(
       let failure: ListenFailure | null = null;
       let cancelled = false;
       recognition.onresult = (event) => {
-        if (cancelled) return;
+        // やめたあとや、終わったあとに遅れて届いた結果は使わない
+        if (cancelled || current !== recognition) return;
         heard = transcriptOf(event.results);
         handlers.onHeard(
           `${heard.final}${heard.final && heard.interim ? " " : ""}${heard.interim}`,
