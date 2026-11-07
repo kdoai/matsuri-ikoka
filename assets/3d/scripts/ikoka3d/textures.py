@@ -1252,17 +1252,6 @@ def paint_noren_food():
     return c
 
 
-def paint_station_board():
-    """Station name board of a fictional stop."""
-    c = canvas.Canvas(512, 192, "#F7F4EA")
-    c.rect(0, 110, 512, 142, "#2F7F7A")
-    c.text("まつりまえ", 256, 62, 62, INK, weight=0.03)
-    c.polygon([(452, 126), (424, 100), (424, 152)], "#F7F4EA")
-    c.text("まつりの町", 40, 170, 22, INK, anchor="lm")
-    c.text("宿場", 472, 170, 22, INK, anchor="rm")
-    return c
-
-
 def paint_etiquette_board():
     """Wooden board with three pictograms: bow, rinse the hands, take off the shoes."""
     c = canvas.Canvas(512, 256, "#C9A36A")

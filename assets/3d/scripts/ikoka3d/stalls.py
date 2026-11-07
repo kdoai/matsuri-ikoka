@@ -669,9 +669,8 @@ def headquarters(root, c, shells):
     U.box("headquarters.aid_cross", (0.16, 0.006, 0.05), c, base=(1.3, -0.742, 0.735), mat=green, parent=root)
     for x in (-1.1, 0.0, 1.1):
         _folding_chair(c, root, (x, 0.3, 0), 0.0)
-    # Water jugs at the side.
-    for x in (2.15, 2.15):
-        U.cylinder("headquarters.jug", 0.14, 0.34, c, base=(x, -0.2, 0.02), mat=M.flat("jug", "#3F87C8", 0.4), verts=12, bev=0.01, parent=root)
+    # Water jug at the side.
+    U.cylinder("headquarters.jug", 0.14, 0.34, c, base=(2.15, -0.2, 0.02), mat=M.flat("jug", "#3F87C8", 0.4), verts=12, bev=0.01, parent=root)
     # Loudspeaker mast behind the tent, flag on top.
     mast_x, mast_y = w / 2 + 0.34, d / 2 - 0.2
     U.cylinder("headquarters.mast", 0.05, 4.2, c, base=(mast_x, mast_y, 0), mat=pipe, verts=8, parent=root)

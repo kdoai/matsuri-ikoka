@@ -95,15 +95,6 @@ def check_attachment(arm):
     return {"rows": rows, "worst": worst, "problems": bad}
 
 
-def _paste(sheet, tmp, x0, y0):
-    import numpy as np
-    img = bpy.data.images.load(tmp)
-    w, h = img.size
-    px = np.array(img.pixels[:], dtype=np.float32).reshape(h, w, 4)[::-1]
-    bpy.data.images.remove(img)
-    sheet.px[y0:y0 + h, x0:x0 + w] = px
-
-
 def target(args, fresh):
     """Outfit from three sides, the guide's motions frame by frame, and the attachment report."""
     out = os.path.join(args.out, "preview")
@@ -144,7 +135,7 @@ def target(args, fresh):
             for col in range(cols):
                 bpy.context.scene.frame_set(1 + col * frames // cols)
                 stage.render(tmp, cam)
-                _paste(sheet, tmp, col * size, row * size)
+                sheet.paste_file(tmp, col * size, row * size)
             sheet.text(name, 10, row * size + 20, 22, "#2B2220", anchor="lt")
         sheet.save(os.path.join(out, "guide_motions.png"))
         os.remove(tmp)

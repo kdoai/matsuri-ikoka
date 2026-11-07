@@ -317,15 +317,6 @@ def _people(coll):
     return arm, penguin
 
 
-def _sheet_cell(sheet, tmp, x0, y0):
-    import numpy as np
-    img = bpy.data.images.load(tmp)
-    w, h = img.size
-    px = np.array(img.pixels[:], dtype=np.float32).reshape(h, w, 4)[::-1]
-    bpy.data.images.remove(img)
-    sheet.px[y0:y0 + h, x0:x0 + w] = px
-
-
 def _label(sheet, text, x, y, size=26):
     sheet.rect(x + 8, y + 8, x + 8 + size * (len(text) + 1), y + 8 + size + 14, "#2B2220", radius=6, alpha=0.78)
     sheet.text(text, x + 8 + size / 2, y + 15, size, "#FFF4DC", anchor="lt", weight=0.02)
@@ -345,7 +336,7 @@ def _stall_sheet(args, cams, lanterns):
         for j, state in enumerate(("消灯", "点灯")):
             set_lanterns(lanterns, (role,) if j else ())
             stage.render(tmp, cams[role])
-            _sheet_cell(sheet, tmp, cx, cy + j * h)
+            sheet.paste_file(tmp, cx, cy + j * h)
             _label(sheet, f"{word}（{state}）", cx, cy + j * h)
     os.remove(tmp)
     sheet.save(os.path.join(args.out, "preview", "ennichi_stalls.png"))
@@ -389,7 +380,7 @@ def _silhouette_sheet(args, cams):
         coll = bpy.data.collections[f"ennichi.stall_{role}"]
         coll.hide_render = False
         stage.render(tmp, cams[role])
-        _sheet_cell(sheet, tmp, (k % 3) * w, (k // 3) * h)
+        sheet.paste_file(tmp, (k % 3) * w, (k // 3) * h)
         coll.hide_render = True
     os.remove(tmp)
     sheet.save(os.path.join(args.out, "preview", "ennichi_silhouettes.png"))

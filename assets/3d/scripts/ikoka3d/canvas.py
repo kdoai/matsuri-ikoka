@@ -40,6 +40,14 @@ class Canvas:
         self.px = np.zeros((h, w, 4), dtype=np.float32)
         self.px[:] = rgba(bg, alpha)
 
+    def paste_file(self, path, x, y):
+        """Copy an image file onto the canvas with its top left corner at (x, y)."""
+        img = bpy.data.images.load(path)
+        w, h = img.size
+        px = np.array(img.pixels[:], dtype=np.float32).reshape(h, w, 4)[::-1]
+        bpy.data.images.remove(img)
+        self.px[y:y + h, x:x + w] = px
+
     # -- core ---------------------------------------------------------------
 
     def _grid(self, x0, y0, x1, y1):

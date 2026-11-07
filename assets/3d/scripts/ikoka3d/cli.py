@@ -131,7 +131,6 @@ def target_characters(args):
 def target_motions(args):
     """Bake every motion; preview each as a strip of frames; one GLB per motion."""
     from . import canvas, export, motions, rig
-    import numpy as np
     _fresh()
     coll = U.collection("staff")
     arms = {}
@@ -160,10 +159,7 @@ def target_motions(args):
             for col in range(cols):
                 bpy.context.scene.frame_set(1 + col * frames // cols)
                 stage.render(tmp, cam)
-                img = bpy.data.images.load(tmp)
-                px = np.array(img.pixels[:], dtype=np.float32).reshape(size, size, 4)[::-1]
-                bpy.data.images.remove(img)
-                sheet.px[row * size:(row + 1) * size, col * size:(col + 1) * size] = px
+                sheet.paste_file(tmp, col * size, row * size)
             sheet.text(name, 10, row * size + 20, 22, "#2B2220", anchor="lt")
         sheet.save(os.path.join(args.out, "preview", "motions.png"))
         os.remove(tmp)
