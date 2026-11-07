@@ -31,6 +31,11 @@ class ClientClosedError extends Error {}
 /** 返答の終わり方。client_closed は、done を送る前に利用者の側から接続が切れた */
 export type TurnEnding = "done" | "error" | "timeout" | "client_closed";
 
+/** 利用者の側から接続が切れて止まったか（時間切れで止まったときは false） */
+export function isClientClosed(signal: AbortSignal): boolean {
+  return signal.aborted && signal.reason instanceof ClientClosedError;
+}
+
 /** 返答の終わり方を決める（ログに残す） */
 export function turnEnding(signal: AbortSignal, errorBody: ErrorBody | null): TurnEnding {
   if (signal.aborted && signal.reason instanceof ClientClosedError) return "client_closed";

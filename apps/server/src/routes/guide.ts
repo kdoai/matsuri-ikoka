@@ -40,12 +40,12 @@ import { type ItineraryStore, randomId, type Session } from "../session/sessionS
 import { apiError } from "./errors";
 import { type ConcurrencyLimiter, type DailyLimiter, limitKey } from "./guard";
 import { routeParam, type SecureRoutes } from "./policy";
-import { streamEvents, type TurnTiming } from "./turnStream";
+import { isClientClosed, streamEvents, type TurnTiming } from "./turnStream";
 
 // 旅のガイドの API（docs/spec/guide.md）。
 // - 旅は相談から決める。本文に旅の ID や利用者の ID を持たない（open だけは、残した旅を自分の口から開く）
 // - ガイドを用意していなければ（live でモデルの設定がない）、この入口だけが 404 で断る。今の相談は動く
-// - 緊急の相談は、上限や混雑で断らない。公的な連絡先を先に送る
+// - 緊急の相談は、上限や混雑でも、相談や旅を開けないときも断らない。公的な連絡先を先に送る
 // - 利用者のデータは、決まり（routes/policy.ts）が渡した相談の中の旅と、持ち主で絞った口だけで読み書きする
 
 export interface GuideOptions {
@@ -130,21 +130,28 @@ async function doneEvent(
   }
 }
 
+/** 相談や旅を開けないときの終わりのイベント。旅が分からないので、数は0で返す */
+const NO_TRIP_DONE: GuideSseEventOf<"guide.done"> = {
+  type: "guide.done",
+  data: { phase: "during", unreadNotices: 0, pendingProposals: 0 },
+};
+
 /**
- * 返事を作れないときの緊急の案内。上限や混雑で断る代わりに、連絡先と決まった文だけを送る。
- * 相談の状態には触れない（前の返事を作っている途中でも送れる）
+ * 返事を作れないときの緊急の案内。断る代わりに、連絡先と決まった文だけを送る。
+ * 連絡先は保存の口を待たずに先に送る。相談の状態には触れない（前の返事を作っている途中でも送れる）。
+ * 旅が null なら、ない相談もほかの人の相談も同じ応答になる（あるかどうかを見せない）
  */
-function emergencyOnly(c: Context, runner: GuideRunner, trip: GuideTrip): Response {
+function emergencyOnly(c: Context, runner: GuideRunner, trip: GuideTrip | null): Response {
   return streamSSE(c, async (stream) => {
-    const events: GuideSseEvent[] = [
-      emergencyEvent(),
-      {
+    await stream.writeSSE(encodeGuideSseEvent(emergencyEvent()));
+    await stream.writeSSE(
+      encodeGuideSseEvent({
         type: "message.delta",
         data: { messageId: randomId("emergency"), text: EMERGENCY_FALLBACK_TEXT },
-      },
-      await doneEvent(runner, trip),
-    ];
-    for (const event of events) await stream.writeSSE(encodeGuideSseEvent(event));
+      }),
+    );
+    const done = trip === null ? NO_TRIP_DONE : await doneEvent(runner, trip);
+    await stream.writeSSE(encodeGuideSseEvent(done));
   });
 }
 
@@ -239,14 +246,26 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
     const request = GuideChatRequestSchema.safeParse(await readJson(c));
     if (!request.success) return badRequest(c);
     const { message, location } = request.data;
-    const session = await open(request.data.sessionId);
-    if (session === undefined) return sessionNotFound(c);
     const { runner } = guide;
-    const result = await openTrip(runner, session);
-    if (result.status !== "ok") return tripRefusal(c, result);
-    const { trip } = result;
-    // 緊急の言葉は、モデルを待たず、上限や混雑でも断らずに、公的な連絡先を先に出す
+    // 緊急の言葉は、モデルを待たず、相談や旅を開けなくても、上限や混雑でも断らずに、公的な連絡先を先に出す
     const emergency = isEmergencyMessage(message);
+    let session: Session | undefined;
+    let result: GuideTripResult | undefined;
+    try {
+      session = await open(request.data.sessionId);
+      result = session === undefined ? undefined : await openTrip(runner, session);
+    } catch (error) {
+      if (!emergency) throw error;
+      console.error(JSON.stringify({ kind: "guide_emergency_open_failed", ...errorForLog(error) }));
+      return emergencyOnly(c, runner, null);
+    }
+    if (session === undefined || result === undefined) {
+      return emergency ? emergencyOnly(c, runner, null) : sessionNotFound(c);
+    }
+    if (result.status !== "ok") {
+      return emergency ? emergencyOnly(c, runner, null) : tripRefusal(c, result);
+    }
+    const { trip } = result;
     const client = limitKey(viewer, deps.clientIp?.(c) ?? "unknown");
     const ledger = usageLedger(c, runner, session, trip.itinerary.id);
     const usage = await ledger.read().catch((error: unknown) => {
@@ -323,8 +342,9 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
             emit,
           );
         } catch (error) {
-          // 緊急の相談では、返事を作れなくても、失敗の知らせの代わりに決まった文を添える
-          if (!emergency || signal.aborted) throw error;
+          // 緊急の相談では、返事を作れなくても（時間切れも）、失敗の知らせの代わりに決まった文を添える。
+          // 利用者が接続を切ったときだけは、届かないので何も送らない
+          if (!emergency || isClientClosed(signal)) throw error;
           console.error(
             JSON.stringify({ kind: "guide_emergency_reply_failed", ...errorForLog(error) }),
           );

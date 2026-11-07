@@ -277,6 +277,132 @@ describe("POST /api/guide/chat", () => {
     ]);
   });
 
+  it("緊急の発言が時間切れになっても、もう一度送るよう求めず、決まった文を返す", async () => {
+    const hanging: GuideRunner = {
+      mode: "live",
+      today: () => "2026-08-03",
+      now: () => "2026-08-03T10:00:00+09:00",
+      runTurn: ({ signal }) =>
+        new Promise((_resolve, reject) => {
+          signal.addEventListener("abort", () => reject(signal.reason), { once: true });
+        }),
+    };
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const context = setup({ guide: { runner: hanging }, turnIdleMs: 5 });
+    const { sessionId } = await context.consult();
+
+    const events = await readEvents(await context.chat(sessionId, EMERGENCY_MESSAGE));
+
+    expect(events.map((event) => event.type)).toEqual([
+      "guide.emergency",
+      "message.delta",
+      "guide.done",
+    ]);
+    expect(JSON.stringify(events)).toContain("119");
+    expect(JSON.stringify(events)).not.toContain("もう一度");
+  });
+
+  it("緊急でない発言の時間切れは、いままでどおり error で知らせる", async () => {
+    const hanging: GuideRunner = {
+      mode: "live",
+      today: () => "2026-08-03",
+      now: () => "2026-08-03T10:00:00+09:00",
+      runTurn: ({ signal }) =>
+        new Promise((_resolve, reject) => {
+          signal.addEventListener("abort", () => reject(signal.reason), { once: true });
+        }),
+    };
+    const context = setup({ guide: { runner: hanging }, turnIdleMs: 5 });
+    const { sessionId } = await context.consult();
+
+    const events = await readEvents(await context.chat(sessionId, "こんにちは"));
+
+    expect(events.map((event) => event.type)).toEqual(["error", "guide.done"]);
+  });
+
+  describe("相談や旅を開けないときの緊急の相談", () => {
+    /** 乱数の返答の ID をならして、応答を比べられるようにする */
+    const shape = (events: GuideSseEvent[]) =>
+      JSON.stringify(events).replaceAll(/emergency-[A-Za-z0-9_-]+/g, "emergency-id");
+
+    it("ない相談でも、連絡先と決まった文を返す", async () => {
+      const context = setup();
+
+      const res = await context.chat("s-expired", EMERGENCY_MESSAGE);
+      const events = await readEvents(res);
+
+      expect(res.status).toBe(200);
+      expect(events.map((event) => event.type)).toEqual([
+        "guide.emergency",
+        "message.delta",
+        "guide.done",
+      ]);
+      expect(events[0]).toMatchObject({ type: "guide.emergency" });
+    });
+
+    it("ほかの人の相談でも同じ応答で、相談の中身を見せない", async () => {
+      const context = setup();
+      const { sessionId, itineraryId } = await context.consult(ALICE);
+      await saveMemo(context, sessionId, ALICE);
+
+      const others = await readEvents(await context.chat(sessionId, EMERGENCY_MESSAGE, BOB));
+      const missing = await readEvents(await context.chat("s-none", EMERGENCY_MESSAGE, BOB));
+
+      expect(shape(others)).toBe(shape(missing));
+      expect(JSON.stringify(others)).not.toContain(itineraryId);
+      expect(context.sessions.get(sessionId)?.guide.resume.turns).toBe(1);
+    });
+
+    it("相談に旅程がないとき、旅が消されたときも、連絡先を返す", async () => {
+      const context = setup();
+      const created = await context.call("/api/session", { body: {} });
+      const { sessionId: empty } = (await created.json()) as { sessionId: string };
+      const kept = await context.consult(ALICE);
+      await context.call(`/api/trips/${kept.itineraryId}`, { method: "DELETE", user: ALICE });
+
+      for (const [sessionId, user] of [
+        [empty, undefined],
+        [kept.sessionId, ALICE],
+      ] as const) {
+        const res = await context.chat(sessionId, EMERGENCY_MESSAGE, user);
+        expect(res.status, sessionId).toBe(200);
+        expect((await readEvents(res))[0]?.type, sessionId).toBe("guide.emergency");
+      }
+    });
+
+    it("保存の口が失敗しても、連絡先を返す", async () => {
+      vi.spyOn(console, "error").mockImplementation(() => {});
+      const context = setup({
+        guide: {
+          runner: {
+            mode: "live",
+            today: () => "2026-08-03",
+            now: () => "2026-08-03T10:00:00+09:00",
+            prepare: async () => {
+              throw new Error("保存の口の失敗");
+            },
+            runTurn: async () => {},
+          },
+        },
+      });
+      const { sessionId } = await context.consult();
+
+      const res = await context.chat(sessionId, EMERGENCY_MESSAGE);
+
+      expect(res.status).toBe(200);
+      expect((await readEvents(res))[0]?.type).toBe("guide.emergency");
+    });
+
+    it("緊急でない発言は、いままでどおり断る", async () => {
+      const context = setup();
+      const created = await context.call("/api/session", { body: {} });
+      const { sessionId } = (await created.json()) as { sessionId: string };
+
+      expect((await context.chat("s-none", "こんにちは")).status).toBe(404);
+      expect((await context.chat(sessionId, "こんにちは")).status).toBe(409);
+    });
+  });
+
   it("緊急でない相談で返事を作れなければ、error のあと guide.done で閉じる", async () => {
     const failing: GuideRunner = {
       mode: "live",
