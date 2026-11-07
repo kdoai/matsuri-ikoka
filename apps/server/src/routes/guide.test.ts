@@ -17,6 +17,7 @@ import { type FestivalStore, loadFestivals } from "../data/festivalStore";
 import { proposalContentHash } from "../guide/proposal";
 import { loadSampleGuides, ReplayGuideRunner } from "../guide/replayRunner";
 import type { GuideRunner } from "../guide/runner";
+import { patrolHarness } from "../patrol/testing";
 import { ItineraryStore, SessionStore } from "../session/sessionStore";
 import { MemoryTripStorage } from "../storage/memory";
 import { type OwnerId, ownerIdOf } from "../storage/owner";
@@ -64,6 +65,7 @@ function setup(overrides: Partial<AppDeps> & { noGuide?: boolean } = {}) {
     accessPasscode: null,
     verifier: fakeVerifier,
     authConfig: { enabled: true, apiKey: "k", authDomain: "example.com", projectId: "demo" },
+    patrol: patrolHarness().deps,
     ...(noGuide ? {} : { guide: { runner: new ReplayGuideRunner(guides, { speed: 0 }) } }),
     ...deps,
     itineraries,
@@ -1402,6 +1404,43 @@ describe("通知・見回り・提案の決定", () => {
       outcome: "applied",
     });
     expect(session.busy).toBe(false);
+  });
+
+  it("手元の写しだけが先の版になっていたら、保存の口の版に戻してから決める", async () => {
+    const context = setup();
+    const { itineraryId, guideSession, state, proposal } = await keptGuide(context);
+    const current = context.itineraries.get(itineraryId);
+    if (current === undefined) throw new Error("旅程がありません");
+    // 保存の口に届かなかった版が、手元の写しにだけある
+    context.itineraries.remember({ ...current, version: current.version + 5 });
+
+    const res = await decide(context, guideSession, proposal, ALICE);
+
+    expect(await res.json()).toMatchObject({
+      outcome: "applied",
+      change: { itinerary: { version: state.version + 1 } },
+    });
+    expect(context.itineraries.get(itineraryId)?.version).toBe(state.version + 1);
+  });
+
+  it("見回りを組み立てられなかった環境では、見回りを使えないと返し、始められない", async () => {
+    const context = setup({ patrol: null });
+    const { guideSession, state } = await keptGuide(context);
+
+    expect(state.watchAvailable).toBe(false);
+    const start = await context.call("/api/guide/watch", {
+      user: ALICE,
+      body: { sessionId: guideSession, action: "start" },
+    });
+    expect(start.status).toBe(409);
+    // 止めることはできる
+    const stop = await context.call("/api/guide/watch", {
+      user: ALICE,
+      body: { sessionId: guideSession, action: "stop" },
+    });
+    expect(stop.status).toBe(200);
+    // 見回りのある環境では、使えると返す
+    expect((await keptGuide(setup())).state.watchAvailable).toBe(true);
   });
 });
 

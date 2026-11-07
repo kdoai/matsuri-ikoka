@@ -42,8 +42,10 @@ export function WatchControl() {
   const availability = useApp((state) => state.guide.availability);
   const phase = useApp((state) => state.guide.phase);
   const watch = useApp((state) => state.guide.watch);
-  const busy = useApp((state) => state.guide.busy);
-  if (availability !== "ready" || phase === "after") return null;
+  const watchAvailable = useApp((state) => state.guide.watchAvailable);
+  const busy = useApp((state) => (state.guide.streaming ? "streaming" : state.guide.busy));
+  // 見回りが動かない環境では、頼めるように見せない（頼んでも、だれも見回らない）
+  if (availability !== "ready" || phase === "after" || !watchAvailable) return null;
   if (user === null) {
     return loginOffered ? (
       <p
@@ -83,7 +85,7 @@ export function GuideOutcomeNote() {
   const actions = useActions();
   const outcome = useApp((state) => state.guide.outcome);
   const revertTo = useApp((state) => state.guide.revertTo);
-  const busy = useApp((state) => state.guide.busy);
+  const busy = useApp((state) => (state.guide.streaming ? "streaming" : state.guide.busy));
   if (outcome === null && revertTo === null) return null;
   const text = (() => {
     if (outcome === null) return null;
@@ -122,17 +124,17 @@ export function GuideOutcomeNote() {
   );
 }
 
-/** 組み直しの案の、承認と却下のボタン */
+/** 組み直しの案の、承認と却下のボタン。ガイドが返事を流している間は押せない（返事の途中の相談では断られる） */
 function ProposalActions({ proposalId }: { proposalId: string }) {
   const t = useT();
   const actions = useActions();
-  const busy = useApp((state) => state.guide.busy);
+  const blocked = useApp((state) => state.guide.busy !== null || state.guide.streaming);
   return (
     <div className="mt-2 flex flex-wrap gap-2">
       <button
         type="button"
         className={buttonPrimary}
-        disabled={busy !== null}
+        disabled={blocked}
         data-testid="proposal-approve"
         onClick={() => void actions.decideProposal(proposalId, "approve")}
       >
@@ -141,7 +143,7 @@ function ProposalActions({ proposalId }: { proposalId: string }) {
       <button
         type="button"
         className={buttonSecondary}
-        disabled={busy !== null}
+        disabled={blocked}
         data-testid="proposal-reject"
         onClick={() => void actions.decideProposal(proposalId, "reject")}
       >

@@ -85,6 +85,8 @@ export interface GuideState {
   version: number | null;
   /** 見回りの依頼。頼んでいなければ null */
   watch: TripWatch | null;
+  /** この環境で見回りが動くか（サーバーの応答から）。動かなければ、見回りの切り替えを出さない */
+  watchAvailable: boolean;
   /** 送っている決める操作（同じ操作を重ねて送らない） */
   busy: GuideBusy | null;
   /** 最後の決める操作の結果 */
@@ -124,6 +126,7 @@ export const INITIAL_GUIDE: GuideState = Object.freeze({
   phase: null,
   version: null,
   watch: null,
+  watchAvailable: false,
   busy: null,
   outcome: null,
   revertTo: null,
@@ -199,6 +202,7 @@ export function applyGuideState(guide: GuideState, response: GuideStateResponse)
     phase: response.phase,
     version: response.version,
     watch: response.watch,
+    watchAvailable: response.watchAvailable,
     // 別の画面で版が増えていたら、この画面で承認した変更の「戻す」は出さない
     revertTo: guide.version === null || guide.version === response.version ? guide.revertTo : null,
     notices: response.notices.map((notice) => ({

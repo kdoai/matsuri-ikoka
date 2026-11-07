@@ -615,7 +615,8 @@ export function createAppStore(deps: StoreDeps): AppStore {
       send: (sessionId: string) => Promise<() => void>,
     ) => {
       const { session, guide } = get();
-      if (session.id === null || guide.busy !== null) return;
+      // ガイドが返事を流している間は送らない（返事の途中の相談では断られる）
+      if (session.id === null || guide.busy !== null || guide.streaming) return;
       const sessionId = session.id;
       const here = () => get().session.id === sessionId;
       updateGuide((state) => beginGuideAction(state, busy));

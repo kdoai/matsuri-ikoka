@@ -65,6 +65,7 @@ function response(notices: GuideNotice[]): GuideStateResponse {
     version: 1,
     phase: "before",
     watch: null,
+    watchAvailable: true,
     notices,
     proposals: [],
     memo: [],

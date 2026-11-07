@@ -44,6 +44,7 @@ function makeStore(overrides: Partial<ChatTransport> = {}) {
       version: itinerary.version,
       phase: "before",
       watch: null,
+      watchAvailable: true,
       notices: [],
       proposals: [],
       memo: [],
@@ -140,6 +141,7 @@ describe("読み直しと、遅れた応答", () => {
     version: 1,
     phase: "before" as const,
     watch: null,
+    watchAvailable: true,
     notices: [],
     proposals: [],
     memo: [],
@@ -290,6 +292,7 @@ describe("ガイドがいない環境", () => {
           version: 1,
           phase: "before",
           watch: null,
+          watchAvailable: true,
           notices: [],
           proposals: [],
           memo: [],
@@ -440,6 +443,7 @@ describe("通知から屋台へ", () => {
       version: 1,
       phase: "before" as const,
       watch: null,
+      watchAvailable: true,
       notices: [{ ...notice, sources: [...notice.sources], affectedItemIds: [] }],
       proposals: [],
       memo: [],
@@ -506,6 +510,7 @@ describe("通知から屋台へ", () => {
         version: 1,
         phase: "before" as const,
         watch: null,
+        watchAvailable: true,
         notices: [notice, second].map((item) => ({
           ...item,
           sources: [...item.sources],
@@ -673,6 +678,7 @@ describe("通知・見回り・提案の決定", () => {
     version: itinerary.version,
     phase: "before",
     watch,
+    watchAvailable: true,
     notices: [],
     proposals: [proposal],
     memo: [],
@@ -782,6 +788,22 @@ describe("通知・見回り・提案の決定", () => {
     await pending;
 
     expect(store.getState().itinerary.current?.version).toBe(itinerary.version);
+  });
+
+  it("ガイドが返事を流している間は、承認を送らない。見回りが動かない環境と分かる", async () => {
+    const decideProposal = vi.fn();
+    const { store } = makeStore({
+      guideState: async () => stateWith({ watchAvailable: false }),
+      decideProposal,
+    });
+    await store.getState().actions.loadGuide(true);
+    expect(store.getState().guide.watchAvailable).toBe(false);
+    store.setState((state) => ({ ...state, guide: { ...state.guide, streaming: true } }));
+
+    await store.getState().actions.decideProposal("proposal-1", "approve");
+
+    expect(decideProposal).not.toHaveBeenCalled();
+    expect(store.getState().guide.busy).toBeNull();
   });
 
   it("見回りを止めると、依頼の状態を入れる", async () => {

@@ -97,6 +97,8 @@ export interface GuideDeps {
   turnMaxMs?: number | undefined;
   heartbeatMs?: number | undefined;
   emergencyWaitMs?: number | undefined;
+  /** 見回りの部品。組み立てられなかった環境では null で、見回りを頼めない（頼んでも、だれも見回らない） */
+  patrol?: object | null | undefined;
 }
 
 /** 断るときの状態と本文。ふつうの発言は HTTP の応答に、緊急の発言は連絡先のあとの error イベントにする */
@@ -288,6 +290,8 @@ interface TurnRequest {
 export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
   const limits = deps.guide?.limits ?? DEFAULT_GUIDE_LIMITS;
   const anonymousUsage = new MemoryGuideUsage(() => deps.guide?.runner.today() ?? "");
+  /** 見回りが動く環境か。動かなければ、見回りを始められない */
+  const watchAvailable = deps.patrol !== undefined && deps.patrol !== null;
 
   /** 相談の旅を開き、mock では記録の通知と提案を届ける */
   const openTrip = async (runner: GuideRunner, session: Session): Promise<GuideTripResult> => {
@@ -548,6 +552,7 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
       version: itinerary.version,
       phase: tripPhase(itinerary, guide.runner.today()),
       watch,
+      watchAvailable,
       notices: notices.slice(0, MAX_NOTICES_PER_TRIP),
       proposals: pending.slice(0, MAX_PENDING_PROPOSALS),
       memo: memo.slice(0, MAX_MEMO_ITEMS),
@@ -802,6 +807,9 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
     const session = await open(request.data.sessionId);
     if (session === undefined) return sessionNotFound(c);
     const starting = request.data.action === "start";
+    if (starting && !watchAvailable) {
+      return c.json(apiError("bad_request", "この環境では、見回りを頼めません。", false), 409);
+    }
     if (starting && session.ownerUid === null) {
       return c.json(
         apiError("unauthorized", "見回りを頼むには、ログインして旅を残してください。", false),
