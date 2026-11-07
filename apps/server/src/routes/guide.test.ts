@@ -1295,6 +1295,23 @@ describe("通知・見回り・提案の決定", () => {
     expect((await context.state(guideSession, ALICE)).watch?.status).toBe("active");
   });
 
+  it("旅程の時刻に合わせた声かけを止めて、また戻せる。ほかの人は変えられない", async () => {
+    const context = setup();
+    const { itineraryId, guideSession } = await keptGuide(context);
+    const watch = (user: string, action: "reminders_off" | "reminders_on") =>
+      context.call("/api/guide/watch", { user, body: { sessionId: guideSession, action } });
+
+    expect((await watch(BOB, "reminders_off")).status).toBe(404);
+    const quiet = await watch(ALICE, "reminders_off");
+    expect(await quiet.json()).toMatchObject({ status: "active", reminders: false });
+    const docs = context.storage.forOwner(ownerIdOf(ALICE)).tripDocs(itineraryId);
+    expect(await docs.get("watch", "current")).toMatchObject({ reminders: false });
+
+    const back = await watch(ALICE, "reminders_on");
+    expect(await back.json()).toMatchObject({ status: "active", reminders: true });
+    expect((await context.state(guideSession, ALICE)).watch?.reminders).toBe(true);
+  });
+
   it("残す前の旅で見回りを始めると、旅を残してから旅の下に書く。ログインなしは 401", async () => {
     const context = setup();
     const { sessionId, itineraryId } = await context.consult(ALICE);

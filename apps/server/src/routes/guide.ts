@@ -35,6 +35,7 @@ import { openGuideTrip, ownerUsageLedger } from "../guide/data";
 import {
   planApproval,
   proposalChange,
+  remindersWatch,
   revertedItinerary,
   settleProposal,
   startedWatch,
@@ -845,7 +846,11 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
       if (existing === null) {
         return c.json(apiError("bad_request", "見回りは頼まれていません。", false), 404);
       }
-      watch = stoppedWatch(existing, now);
+      const { action } = request.data;
+      watch =
+        action === "stop"
+          ? stoppedWatch(existing, now)
+          : remindersWatch(existing, action === "reminders_on");
     }
     try {
       if (watch !== existing) await data.putWatch(watch);

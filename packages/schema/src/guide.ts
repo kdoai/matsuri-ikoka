@@ -66,6 +66,8 @@ export const TripWatchSchema = z
     stoppedAt: IsoDateTimeSchema.nullable(),
     /** 最後に調べた時刻。まだ調べていなければ null */
     lastCheckedAt: IsoDateTimeSchema.nullable(),
+    /** 旅程の時刻に合わせた声かけ。false なら止めている。項目がなければ声をかける */
+    reminders: z.boolean().optional(),
   })
   .refine((watch) => (watch.status === "active") === (watch.stoppedAt === null), {
     path: ["stoppedAt"],
@@ -180,7 +182,7 @@ export type PatrolReport = z.infer<typeof PatrolReportSchema>;
 
 /**
  * 通知の種類。schedule_change 開催の変更 / cancellation 中止 / announcement 主催者のお知らせ /
- * availability 宿の空き / weather 天気
+ * availability 宿の空き / weather 天気 / reminder 旅程の時刻に合わせた声かけ
  */
 export const NOTICE_KINDS = [
   "schedule_change",
@@ -188,6 +190,7 @@ export const NOTICE_KINDS = [
   "announcement",
   "availability",
   "weather",
+  "reminder",
 ] as const;
 export type NoticeKind = (typeof NOTICE_KINDS)[number];
 
@@ -210,6 +213,14 @@ export const FestivalChangeSchema = z.discriminatedUnion("field", [
   }),
 ]);
 export type FestivalChange = z.infer<typeof FestivalChangeSchema>;
+
+/**
+ * 声をかける時。eve 出発の前日の夕方 / morning 旅の日の朝 / depart 会場へ向かう前 /
+ * last_return 帰りの最終の前。時刻は旅程からコードで決める
+ */
+export const REMINDER_SLOTS = ["eve", "morning", "depart", "last_return"] as const;
+export const ReminderSlotSchema = z.enum(REMINDER_SLOTS);
+export type ReminderSlot = z.infer<typeof ReminderSlotSchema>;
 
 /** 天気の知らせの理由。rain 雨 / storm 荒天 / heat 暑さ */
 export const WEATHER_CONDITIONS = ["rain", "storm", "heat"] as const;
@@ -261,6 +272,16 @@ export const NoticeContentSchema = z.discriminatedUnion("kind", [
     condition: z.enum(WEATHER_CONDITIONS),
     precipitationPercent: z.number().int().min(0).max(100).nullable(),
   }),
+  z.strictObject({
+    kind: z.literal("reminder"),
+    slot: ReminderSlotSchema,
+    /** 声をかける予定の日 */
+    date: IsoDateSchema,
+    /** 声をかける時刻（日本時間） */
+    at: LocalTimeSchema,
+    /** 知らせる予定の ID。なければ null */
+    itemId: TextSchema.max(100).nullable(),
+  }),
 ]);
 export type NoticeContent = z.infer<typeof NoticeContentSchema>;
 
@@ -297,6 +318,10 @@ export function noticeStall(content: NoticeContent): GuideStall {
       return "lodging";
     case "weather":
       return "weather";
+    case "reminder":
+      return content.slot === "depart" || content.slot === "last_return"
+        ? "access"
+        : "headquarters";
   }
 }
 
@@ -558,7 +583,8 @@ export type MarkNoticesReadResponse = z.infer<typeof MarkNoticesReadResponseSche
 /** POST /api/guide/watch の本文。応答は TripWatchSchema */
 export const SetTripWatchRequestSchema = z.strictObject({
   sessionId: SessionIdSchema,
-  action: z.enum(["start", "stop"]),
+  /** start・stop 見回り / reminders_off・reminders_on 旅程の時刻に合わせた声かけ（見回り中だけ届く） */
+  action: z.enum(["start", "stop", "reminders_off", "reminders_on"]),
 });
 export type SetTripWatchRequest = z.infer<typeof SetTripWatchRequestSchema>;
 

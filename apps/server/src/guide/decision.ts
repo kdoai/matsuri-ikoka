@@ -123,7 +123,15 @@ export function startedWatch(
     endsOn: watchEndsOn(itinerary),
     stoppedAt: null,
     lastCheckedAt: existing?.lastCheckedAt ?? null,
+    // 声かけを止めていたら、始め直しても止めたままにする
+    ...(existing?.reminders === undefined ? {} : { reminders: existing.reminders }),
   });
+}
+
+/** 旅程の時刻に合わせた声かけを止める・戻す。同じ状態なら、そのまま返す */
+export function remindersWatch(existing: TripWatch, on: boolean): TripWatch {
+  if ((existing.reminders ?? true) === on) return existing;
+  return TripWatchSchema.parse({ ...existing, reminders: on });
 }
 
 /** 見回りを止める。止まっているものは、そのまま返す */
