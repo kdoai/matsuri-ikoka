@@ -19,6 +19,8 @@ describe("API の本文と応答", () => {
   it("POST /api/session の応答はセッション ID", () => {
     expect(SessionResponseSchema.parse({ sessionId: "s-1" })).toEqual({ sessionId: "s-1" });
     expect(SessionResponseSchema.safeParse({ sessionId: "" }).success).toBe(false);
+    expect(SessionResponseSchema.safeParse({ sessionId: "s".repeat(100) }).success).toBe(true);
+    expect(SessionResponseSchema.safeParse({ sessionId: "s".repeat(101) }).success).toBe(false);
     expect(SessionResponseSchema.parse({ sessionId: "s-1", mode: "mock" })).toEqual({
       sessionId: "s-1",
       mode: "mock",
