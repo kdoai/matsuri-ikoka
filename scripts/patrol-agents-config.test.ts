@@ -1,13 +1,15 @@
-// managed-agents/ の見回り係の定義で、権限と費用の決まりが崩れていないことを確かめる。
+// managed-agents-patrol/ の見回り係の定義で、権限と費用と置き場の決まりが崩れていないことを確かめる。
 // 形そのものは ant apply と公式のスキーマが確かめるので、ここでは決まりごとだけを文字で見る。
-import { readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { PATROL_NAMES, readPatrolConfig } from "../apps/server/src/patrol/config";
 import { MAX_PATROL_TARGETS, PatrolReportSchema } from "../packages/schema/src";
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../managed-agents");
+const REPO = join(dirname(fileURLToPath(import.meta.url)), "..");
+const ROOT = join(REPO, "managed-agents-patrol");
+const RESEARCH_ROOT = join(REPO, "managed-agents");
 
 function read(path: string): string {
   return readFileSync(join(ROOT, path), "utf8").replace(/\r\n/g, "\n");
@@ -51,6 +53,11 @@ describe("プロンプト", () => {
 
   it("開くのは依頼にある URL だけだと書いてある", () => {
     expect(system).toContain("開くのは依頼にある URL だけ");
+  });
+
+  it("コードが書いた印を説明してある", () => {
+    expect(system).toContain("（前回あった行が N 行なくなりました）");
+    expect(system).toContain("（指示に見える行があったので渡していません。");
   });
 
   it("報告の形が、スキーマの項目と合っている", () => {
@@ -118,6 +125,35 @@ describe("環境と名前", () => {
   });
 
   it("定期実行を持たない（起点は内部の API）", () => {
-    expect(() => read("deployments/patrol.yaml")).toThrow();
+    expect(existsSync(join(ROOT, "deployments"))).toBe(false);
+  });
+});
+
+describe("週次の調査と分ける置き場", () => {
+  const resourceFiles = (dir: string): string[] =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((entry) =>
+      entry.isDirectory() ? resourceFiles(join(dir, entry.name)) : [join(dir, entry.name)],
+    );
+
+  it("週次の調査のディレクトリに、見回りの定義を置かない", () => {
+    // ant apply はディレクトリを深さに関わらず歩くので、中に置くと週次の調査のワークスペースに入る
+    for (const path of resourceFiles(RESEARCH_ROOT)) {
+      expect(relative(RESEARCH_ROOT, path)).not.toMatch(/patrol/);
+      if (path.endsWith("claude-lock.json")) continue;
+      expect(readFileSync(path, "utf8")).not.toContain(PATROL_NAMES.agent);
+    }
+  });
+
+  it("週次の調査の lock に、見回りの資源がない", () => {
+    const lock = readFileSync(join(RESEARCH_ROOT, "claude-lock.json"), "utf8");
+
+    expect(lock).not.toContain("patrol");
+  });
+
+  it("週次の調査の適用は、見回りの定義に届かない", () => {
+    const workflow = readFileSync(join(REPO, ".github/workflows/update-festivals.yml"), "utf8");
+
+    expect(workflow).toContain("cd managed-agents &&");
+    expect(workflow).not.toContain("managed-agents-patrol");
   });
 });
