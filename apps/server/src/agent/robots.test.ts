@@ -40,6 +40,51 @@ Disallow: /admin/
   it("全部を断るサイトは読まない", () => {
     expect(isPathAllowed(parseRobots("User-agent: *\nDisallow: /\n"), "/shop")).toBe(false);
   });
+
+  it.each([
+    ["/a*b", "/a-x-b-y", false],
+    ["/a*b", "/ax", true],
+    ["/a*b", "/b/a", true],
+    ["/a*b*c", "/a1b2c3", false],
+    ["/a*b*c", "/a1c2b", true],
+    ["/a**b", "/a1b", false],
+    ["/*", "/anything", false],
+    ["/*$", "/anything", false],
+    ["/*.pdf$", "/x.pdf", false],
+    ["/*.pdf$", "/x.pdf?page=1", true],
+    ["/*.pdf$", "/.pdf.txt", true],
+    ["/a*a$", "/a", true],
+    ["/a*a$", "/aa", false],
+    ["/a$", "/a", false],
+    ["/a$", "/ab", true],
+    ["/a$b", "/a$b/c", false],
+    ["/a.b", "/axb", true],
+    ["/(x", "/(x/y", false],
+  ])("Disallow: %s に %s は、読んでよいが %s", (rule, path, allowed) => {
+    const rules = parseRobots(`User-agent: *\nDisallow: ${rule}\n`);
+    expect(isPathAllowed(rules, path)).toBe(allowed);
+  });
+
+  it.each([
+    ["* が多く並ぶ", `/${"*".repeat(400)}Q`],
+    ["* と文字が交互に並ぶ", `/${"*a".repeat(240)}Q`],
+    ["末尾が $ の", `/${"*".repeat(400)}Q$`],
+  ])("%s決まりでも、すぐに終わる", (_name, rule) => {
+    const rules = parseRobots(`User-agent: *\nDisallow: ${rule}\n`);
+    const started = performance.now();
+
+    expect(isPathAllowed(rules, `/${"a".repeat(2_000)}`)).toBe(true);
+
+    expect(performance.now() - started).toBeLessThan(200);
+  });
+
+  it("長すぎる決まりは使わず、決まりの数にも上限がある", () => {
+    const long = parseRobots(`User-agent: *\nDisallow: /${"a".repeat(600)}\nDisallow: /x\n`);
+    expect(long).toEqual([{ allow: false, path: "/x" }]);
+
+    const many = Array.from({ length: 1_500 }, (_, i) => `Disallow: /p${i}`).join("\n");
+    expect(parseRobots(`User-agent: *\n${many}\n`)).toHaveLength(1_000);
+  });
 });
 
 describe("createRobotsChecker", () => {
@@ -63,6 +108,33 @@ describe("createRobotsChecker", () => {
     now = ROBOTS_CACHE_TTL_MS + 1;
     await checker.allowed(url);
     expect(calls).toHaveLength(2);
+  });
+
+  it("本文は上限のバイト数までしか読まない", async () => {
+    let pulled = 0;
+    const chunk = new TextEncoder().encode(`${"# 読まない行\n".repeat(4_000)}`);
+    const endless = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        pulled += 1;
+        controller.enqueue(chunk);
+      },
+    });
+    const checker = createRobotsChecker({
+      fetch: (async () => new Response(endless)) as typeof fetch,
+    });
+
+    expect(await checker.allowed(url)).toBe(true);
+
+    expect(pulled * chunk.byteLength).toBeLessThan(400_000);
+  });
+
+  it("上限の中の決まりは読み、文字の途中で切れても失敗しない", async () => {
+    const body = `User-agent: *\nDisallow: /private/\n${"# 祭り\n".repeat(50_000)}`;
+    const checker = createRobotsChecker({
+      fetch: (async () => new Response(body)) as typeof fetch,
+    });
+
+    expect(await checker.allowed(url)).toBe(false);
   });
 
   it("robots.txt がない・読めない・転送されるときは、読んでよいとする", async () => {
