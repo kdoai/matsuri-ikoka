@@ -1,4 +1,4 @@
-// 祭りのデータから、評価の数字（情報の壁・作法の壁）を集計する。
+// 祭りのデータから、評価の数字（情報の壁）を集計する。
 // ファイルの読み込みはしない（呼ぶ側が渡す）ので、テストではファイルなしで使える。
 import {
   CONFIDENCE_LEVELS,
@@ -29,9 +29,9 @@ export interface DataEvaluation {
   confirmed: Ratio;
   /** 次の開催回の出典のうち、いちばん強い確度ごとの祭りの数 */
   occurrenceConfidence: Record<Confidence, number>;
-  /** 作法の項目のうち、値が分かっているもの（当てはまらない項目は除く） */
+  /** 参加の仕方と決まりの項目のうち、値が分かっているもの（当てはまらない項目は除く） */
   etiquetteKnown: Ratio;
-  /** 作法の項目ごとの、値が分かっている祭り */
+  /** 参加の仕方と決まりの項目ごとの、値が分かっている祭り */
   etiquetteKnownByItem: Record<EtiquetteItem, Ratio>;
   /** gaps（調べても分からなかったこと）の数の平均 */
   gapsPerFestival: number;
