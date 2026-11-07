@@ -24,6 +24,40 @@ test.beforeEach(async ({ page }) => {
   await blockMapTiles(page);
 });
 
+test("地図の部品を読み込めなくても、しおりの窓は消えず、地点を文字で読める", async ({ page }) => {
+  test.setTimeout(120_000);
+  // ページを開いたあとに新しい版が公開されると、知っているファイルが取れなくなる
+  await page.route(/\/MapView[^/]*\.(js|tsx)(\?.*)?$/, (route) =>
+    route.fulfill({ status: 404, contentType: "text/plain", body: "not found" }),
+  );
+  await enterShop(page);
+  await sendSampleMessage(page, 0);
+  const cards = page.getByTestId("candidate-card");
+  await expect(cards).toHaveCount(1, { timeout: 20_000 });
+  await waitForReply(page);
+  await cards.nth(0).getByRole("button", { name: "この祭りにする" }).click();
+  await expect(page.getByTestId("candidates")).toHaveCount(0);
+  await waitForReply(page);
+  await openPanel(page);
+
+  await page.getByRole("tab", { name: "旅の案内" }).click();
+
+  await expect(page.getByTestId("map-trouble")).toContainText("地図を読み込めませんでした");
+  await expect(page.getByTestId("map-trouble").getByRole("button")).toHaveText(
+    "ページを読み込み直す",
+  );
+  await expect(page.getByTestId("map-places").getByRole("listitem")).toHaveCount(6);
+  await expect(page.getByTestId("map-places")).toContainText("鈴鳴灯籠まつり（会場）");
+  // 店も、しおりの窓のほかの中身も消えない
+  await expect(page.getByTestId("game-stage")).toBeVisible();
+  await expect(page.getByTestId("itinerary-panel")).toContainText("天気");
+  await page.getByRole("tab", { name: "旅程" }).click();
+  await expect(page.getByTestId("itinerary-item")).toHaveCount(8);
+  // 戻っても同じ表示のまま
+  await page.getByRole("tab", { name: "旅の案内" }).click();
+  await expect(page.getByTestId("map-trouble")).toBeVisible();
+});
+
 test("相談からしおりまで、画面で通せる", async ({ page }, info) => {
   // 記録を記録の間隔のとおりに再生するので、相談の4回の返答だけで20秒ほどかかる
   test.setTimeout(150_000);

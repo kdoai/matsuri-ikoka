@@ -253,7 +253,15 @@ const VERIFIED_BUBBLES: Record<VerificationResult, string> = {
   not_found: "開催の情報が見つかりませんでした",
 };
 
-export const FAILED_BUBBLE = "うまく調べられませんでした";
+/**
+ * ツールが失敗したときの吹き出し。スタッフは理由を読んで続けるので、失敗で止まったようには言わない。
+ * 旅程の保存は、書き方の誤りで断られたら直して保存し直す
+ */
+const RETRY_BUBBLES: Partial<Record<ToolName, string>> = {
+  update_itinerary: "旅程を整えています",
+  verify_festival: "開催の情報を確かめています",
+};
+const RETRY_BUBBLE = "もう少し調べています";
 
 /** ツールの後の吹き出し・くわしい文・件数 */
 export interface ToolEnd extends Lines {
@@ -577,7 +585,8 @@ function lodgingEnd(output: Record<string, unknown>): ToolEnd {
 
 /** ツールの後の吹き出しと件数。output は失敗のとき null */
 export function toolEndBubble(tool: ToolName, output: Record<string, unknown> | null): ToolEnd {
-  if (output === null) return { ok: false, bubble: FAILED_BUBBLE, count: null };
+  const retry = RETRY_BUBBLES[tool] ?? RETRY_BUBBLE;
+  if (output === null) return { ok: false, bubble: retry, count: null };
   switch (tool) {
     case "search_festivals":
       return festivalsEnd(output);
@@ -625,7 +634,7 @@ export function toolEndBubble(tool: ToolName, output: Record<string, unknown> | 
       const bubble =
         result === "as_planned" && official === undefined
           ? "開催予定を確かめました"
-          : (VERIFIED_BUBBLES[result] ?? FAILED_BUBBLE);
+          : (VERIFIED_BUBBLES[result] ?? retry);
       const title = quoted(field(official ?? sources[0], "title"));
       return {
         ok: true,

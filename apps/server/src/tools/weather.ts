@@ -204,8 +204,12 @@ export function createJmaWeather(
     const json = fetchFn(`${FORECAST_URL}/${officeCode}.json`, {
       signal: AbortSignal.timeout(timeoutMs),
       headers: { accept: "application/json" },
-    }).then((res) => {
-      if (!res.ok) throw new Error(`気象庁の予報を取得できません（${res.status}）`);
+    }).then(async (res) => {
+      if (!res.ok) {
+        // 読まない本文は片付ける（放っておくと、接続が閉じられたときに例外になることがある）
+        await res.body?.cancel().catch(() => {});
+        throw new Error(`気象庁の予報を取得できません（${res.status}）`);
+      }
       return res.json() as Promise<unknown>;
     });
     cache.set(officeCode, { at: now(), json });

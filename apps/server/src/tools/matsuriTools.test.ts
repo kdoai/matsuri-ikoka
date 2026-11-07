@@ -1,6 +1,7 @@
 import type { FestivalCandidate, Itinerary, SearchOutcome, SseEvent } from "@matsuri-ikoka/schema";
 import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
+import { z } from "zod";
 import type { NearbySearchRound } from "../domain/nearbySearch";
 import { createOsmPlaceIndex } from "../domain/osmPlaces";
 import { testFestival } from "../domain/testFestivals";
@@ -24,6 +25,7 @@ import {
   searchFestivals,
   searchLodging,
   searchNearby,
+  startTripPrefetch,
   updateItinerary,
   verifyFestival,
 } from "./matsuriTools";
@@ -758,6 +760,31 @@ describe("search_lodging と OpenStreetMap", () => {
 });
 
 describe("search_nearby と周辺係の Web の調べ", () => {
+  it("同じ発言で同じ祭りと日を調べてあれば、時間帯を変えて呼ばれても調べ直さない", async () => {
+    let researched = 0;
+    const nearby = fakeNearby(async () => {
+      researched += 1;
+      return { spots: [grill()] };
+    });
+    const ctx = testToolContext([suzunari()], { nearby });
+    const input = { festivalId: "suzunari-toro", date: "2026-08-16" };
+
+    await searchNearby.run(input, ctx, signal);
+    const asked = researched;
+    const again = await searchNearby.run(
+      { ...input, window: { from: "11:00", to: "14:00" } },
+      ctx,
+      signal,
+    );
+
+    expect(researched).toBe(asked);
+    expect((again.spots as { name: string }[]).map((s) => s.name)).toContain("鈴鳴グリル");
+
+    // 調べ直しを頼まれたときは調べる
+    await searchNearby.run({ ...input, focus: "昼の店を調べ直す" }, ctx, signal);
+    expect(researched).toBeGreaterThan(asked);
+  });
+
   it("屋台で十分のこだわりでも、夜の祭りの日は、昼に入れる店を返す", async () => {
     const nearby = fakeNearby(async () => ({ spots: [grill()] }));
     const ctx = testToolContext([suzunari()], { nearby });
@@ -1052,6 +1079,53 @@ describe("get_weather", () => {
     expect(output.weather).toEqual({ status: "not_yet" });
     expect(ctx.weatherCalls).toEqual(["滋賀県@2026-08-16"]);
     expect(ctx.session.weather.get("suzunari-toro@2026-08-16")).toEqual({ status: "not_yet" });
+  });
+});
+
+describe("update_itinerary の入力の検査", () => {
+  const input = z.object(updateItinerary.input);
+  const withDay = (day: Record<string, unknown>) => {
+    const draft = draftOf(fictionalItinerary());
+    return { itinerary: { ...draft, days: [{ ...draft.days[0], ...day }] } };
+  };
+
+  it("店の食事の案や帰りの最終に出典がなくても断らない（出典はサーバーが入れ直す）", () => {
+    const parsed = input.safeParse(
+      withDay({
+        meals: [
+          { slot: "lunch", kind: "shop", name: "鈴鳴そば庵", itemId: "lunch", spotId: "soba-an" },
+          { slot: "dinner", kind: "stalls", name: "会場の屋台", itemId: "festival", sources: [] },
+        ],
+        lastReturn: { station: "鈴鳴駅", departBy: "22:10" },
+      }),
+    );
+
+    expect(parsed.success).toBe(true);
+    const { itinerary } = parsed.data as {
+      itinerary: {
+        days: { meals: { sources: unknown[] }[]; lastReturn: { sources: unknown[] } }[];
+      };
+    };
+    expect(itinerary.days[0]?.meals[0]?.sources).toEqual([]);
+    expect(itinerary.days[0]?.lastReturn.sources).toEqual([]);
+  });
+
+  it("保存するときに、出典の残らない帰りの最終は「分からない」にし、店の案は外す", async () => {
+    const ctx = testToolContext([suzunari()]);
+    const existing = draftOf(fictionalItinerary()).days[0]?.meals ?? [];
+    const parsed = input.parse(
+      withDay({
+        meals: [...existing, { slot: "dinner", kind: "shop", name: "どこかの店", itemId: null }],
+        lastReturn: { station: "鈴鳴駅", departBy: "22:10" },
+      }),
+    );
+
+    const output = await updateItinerary.run(parsed as never, ctx, signal);
+
+    expect(output).toMatchObject({ saved: true });
+    const [day] = (output.itinerary as Itinerary).days;
+    expect(day?.meals?.map((meal) => meal.name)).not.toContain("どこかの店");
+    expect(day?.lastReturn).toMatchObject({ departBy: null, sources: [] });
   });
 });
 
@@ -1548,6 +1622,35 @@ describe("research_route", () => {
       researched: null,
     });
     expect((output.rules as string[])[0]).toContain("こがね台");
+  });
+
+  it("先に始めた同じ調べがあれば、2回動かさず、その結果を使う", async () => {
+    const calls: string[] = [];
+    const routes = {
+      async research(input: { direction?: string }) {
+        calls.push(input.direction ?? "outbound");
+        return { minutes: [60, 80] as [number, number], summary: "", transfers: 0, sources: [] };
+      },
+    };
+    const ctx = withOrigin(testToolContext([suzunari()], { stations, routes }));
+
+    startTripPrefetch(ctx, suzunari(), "2026-08-16");
+    const output = await researchRoute.run(
+      { festivalId: "suzunari-toro", date: "2026-08-16", direction: "return", origin: "こがね台" },
+      ctx,
+      signal,
+    );
+
+    expect(output).toMatchObject({ direction: "return" });
+    expect(calls.sort()).toEqual(["outbound", "return"]);
+
+    // 調べ直し（focus）は、先の結果を使わない
+    await researchRoute.run(
+      { festivalId: "suzunari-toro", date: "2026-08-16", focus: "乗り換えの駅を確かめる" },
+      ctx,
+      signal,
+    );
+    expect(calls).toHaveLength(3);
   });
 
   it("調べた所要時間が見積もりと合えば使う", async () => {

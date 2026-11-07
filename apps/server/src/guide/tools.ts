@@ -22,7 +22,7 @@ import { draftFromItinerary } from "../domain/itinerary";
 import { occurrenceOn } from "../domain/planCheck";
 import { randomId } from "../session/sessionStore";
 import { TripGoneError } from "../storage/types";
-import type { ToolContext } from "../tools/context";
+import { TOOL_TIMEOUT_MS, type ToolContext } from "../tools/context";
 import {
   getWeather,
   prepareItinerary,
@@ -396,7 +396,8 @@ export const guideResearchRoute = defineGuideTool({
     focus: z.string().trim().min(1).max(200).optional().describe("特に確かめること"),
     festivalId: SlugSchema.optional().describe("この旅の別の祭りへの行き方。省略すると主役の祭り"),
   },
-  timeoutMs: 40_000,
+  // 店内の相談と同じ調べを呼ぶので、見つからないときに調べ直せる長さを同じにする
+  timeoutMs: TOOL_TIMEOUT_MS.research_route,
   async run(args, ctx, signal) {
     assertPublicText(args.origin, args.focus);
     const output = await withCostMeter(ctx.meter, () =>

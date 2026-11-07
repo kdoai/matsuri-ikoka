@@ -106,6 +106,39 @@ export function checkProductionConfig(config: ServerConfig, env: NodeJS.ProcessE
   }
 }
 
+/** 本番の live で、欠けていると起動しない設定（checkProductionConfig）。scripts/lib/production-env.json と同じ */
+export const REQUIRED_PRODUCTION_ENV = [
+  "ACCESS_PASSCODE",
+  "DAILY_CHAT_LIMIT",
+  "AGENT_MAX_BUDGET_USD",
+  "ANTHROPIC_API_KEY",
+  "MATSURI_STORAGE",
+] as const;
+
+/**
+ * 本番の live で、欠けていても起動するが、黙って効かなくなる設定。scripts/lib/production-env.json と同じ。
+ * - MODEL_CONCIERGE・MODEL_STAFF：省くと、Agent SDK の既定のモデルで動く
+ * - MODEL_GUIDE：省くと、ガイドの入口が断る
+ * - DAILY_CHAT_LIMIT_PER_IP：省くと、1人の回数の上限がなく、1人で全体の枠を使い切れる
+ * - TRUSTED_PROXY_HOPS：省くと、Cloud Run では全員が同じ IP になり、IP ごとの上限と同時の数が全員にまとめて効く
+ */
+export const RECOMMENDED_PRODUCTION_ENV = [
+  "MODEL_CONCIERGE",
+  "MODEL_STAFF",
+  "MODEL_GUIDE",
+  "DAILY_CHAT_LIMIT_PER_IP",
+  "TRUSTED_PROXY_HOPS",
+] as const;
+
+/**
+ * 本番の live で欠けている、勧める設定の名前（起動のログに出す。値は出さない）。
+ * 起動は止めない。止めると、今動いている版のまま新しい版が出せなくなるため
+ */
+export function missingRecommendedConfig(config: ServerConfig, env: NodeJS.ProcessEnv): string[] {
+  if (!config.production || config.mode !== "live") return [];
+  return RECOMMENDED_PRODUCTION_ENV.filter((name) => nonEmpty(env[name]) === undefined);
+}
+
 export function readConfig(env: NodeJS.ProcessEnv, cwd: string = process.cwd()): ServerConfig {
   const mode = nonEmpty(env.MATSURI_AGENT_MODE) ?? "mock";
   if (mode !== "mock" && mode !== "live") {

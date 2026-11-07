@@ -3,6 +3,7 @@ import "leaflet/dist/leaflet.css";
 import { useEffect, useMemo, useRef } from "react";
 import { useApp, useT } from "../state/react";
 import { type MapPoint, mapPoints } from "../state/selectors";
+import { MapPlaces } from "./MapPlaces";
 
 // 地図：Leaflet と OpenStreetMap のタイル。帰属の表示は必ず出す。
 // ピンの名前などの文字は textContent で入れ、HTML として埋め込まない。
@@ -120,8 +121,6 @@ export default function MapView({
   const mapRole = interactive
     ? ({ role: "region", "aria-label": t.map.label } as const)
     : ({ role: "img", "aria-label": t.map.label } as const);
-  const ordered = points.filter((point) => point.order !== null);
-  const extra = points.filter((point) => point.order === null);
 
   return (
     <div className={framed ? "space-y-2 p-3 print:space-y-1 print:p-0" : ""} data-testid="map-view">
@@ -130,40 +129,7 @@ export default function MapView({
         className={`${heightClass} w-full overflow-hidden ${framed ? "rounded-xl ring-1 ring-wood-300" : ""}`}
         {...mapRole}
       />
-      {/* 地図の内容は、文字でも読めるようにする */}
-      {!showPlaces ? null : points.length === 0 ? (
-        <p className="text-ink-soft">{t.map.noLocations}</p>
-      ) : (
-        <section aria-label={t.map.places}>
-          <h3 className={`font-bold text-ai-700 ${textClass}`}>{t.map.places}</h3>
-          <ol
-            className={`mt-1 space-y-0.5 ${textClass} print:columns-2 print:gap-x-3`}
-            data-testid="map-places"
-          >
-            {ordered.map((point) => (
-              <li key={point.key} className="flex gap-2">
-                <span
-                  aria-hidden="true"
-                  className={`grid shrink-0 place-items-center rounded-full font-bold text-white ${
-                    textClass === "text-sm" ? "size-5 text-[11px]" : "size-7 text-base"
-                  } ${point.kind === "venue" ? "bg-shu-600" : "bg-ai-700"}`}
-                >
-                  {point.order}
-                </span>
-                <span>
-                  {point.name}
-                  {point.kind === "venue" ? `（${t.map.venue}）` : null}
-                </span>
-              </li>
-            ))}
-          </ol>
-          {extra.length > 0 ? (
-            <p className={`mt-1 text-ink-soft ${textClass}`}>
-              {t.map.spot}：{extra.map((point) => point.name).join("、")}
-            </p>
-          ) : null}
-        </section>
-      )}
+      {showPlaces ? <MapPlaces points={points} textClass={textClass} /> : null}
     </div>
   );
 }

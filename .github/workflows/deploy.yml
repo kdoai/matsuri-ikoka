@@ -6,7 +6,8 @@ name: デプロイ
 # 切り替える前に失敗したら、通信は前の版のまま。切り替えたあとの確かめに失敗したら、通信を前の版に戻す。
 # 手で前の版に戻すときは rollback.yml を使う（docs/spec/operations.md の「前の版に戻す」）。
 # サービスの設定（環境変数・シークレット・CPU とメモリ）は Cloud Run の側にあり、ここではイメージを差し替える。
-# インスタンスの数（最小 0・最大 1）と、live で動くことと保存先（Firestore）は、
+# インスタンスの数（最小 0・最大 1）、リクエストの時間切れ、live で動くことと保存先（Firestore）、
+# 1回の発言の費用の上限（AGENT_MAX_BUDGET_USD）、利用者の IP の決め方（TRUSTED_PROXY_HOPS）は、
 # コンソールで変わっていても版ごとにここで決め直す。
 # 使う GitHub Actions の変数は docs/spec/operations.md の「デプロイ」にある。
 
@@ -61,6 +62,12 @@ jobs:
       REGION: ${{ vars.GCP_REGION }}
       SERVICE: ${{ vars.CLOUD_RUN_SERVICE }}
       REPOSITORY: ${{ vars.ARTIFACT_REGISTRY_REPOSITORY }}
+      # リクエストの時間切れ（秒）。相談1回の全体の上限（TURN_MAX_MS の10分）のあとに、
+      # 時間切れの案内と done を送り終える時間を足す（scripts/deploy-config.test.ts で確かめる）
+      REQUEST_TIMEOUT_SECONDS: "660"
+      # 利用者との間のプロキシの数。Cloud Run の既定の URL では 1（docs/spec/operations.md の「利用者の IP」）。
+      # 前にロードバランサーを置くときは、GitHub Actions の変数 TRUSTED_PROXY_HOPS で変える
+      TRUSTED_PROXY_HOPS: ${{ vars.TRUSTED_PROXY_HOPS || '1' }}
     steps:
       - name: 変数がそろっているか確かめる
         env:
@@ -130,21 +137,37 @@ jobs:
             --project "$PROJECT_ID" --region "$REGION" \
             --image "${IMAGE}@${DIGEST}" \
             --min-instances 0 --max-instances 1 \
-            --update-env-vars "MATSURI_AGENT_MODE=live,MATSURI_STORAGE=firestore,FIREBASE_PROJECT_ID=${PROJECT_ID}" \
+            --timeout "$REQUEST_TIMEOUT_SECONDS" \
+            --update-env-vars "MATSURI_AGENT_MODE=live,MATSURI_STORAGE=firestore,FIREBASE_PROJECT_ID=${PROJECT_ID},AGENT_MAX_BUDGET_USD=1,TRUSTED_PROXY_HOPS=${TRUSTED_PROXY_HOPS}" \
             --no-traffic --tag candidate --quiet
 
-      # 合言葉（ACCESS_PASSCODE）をサービスに設定しているときだけ、相談の API が守られていることを求める
+      # 合言葉（ACCESS_PASSCODE）をサービスに設定しているときだけ、相談の API が守られていることを求める。
+      # 設定してある環境変数の名前（値は読まない）を控え、足りない設定を外からの確かめで知らせる
       - name: サービスに合言葉が設定されているかを調べる
         id: passcode
         run: |
-          set="$(gcloud run services describe "$SERVICE"             --project "$PROJECT_ID" --region "$REGION" --format=json             | jq -r '[.spec.template.spec.containers[0].env[]?.name] | index("ACCESS_PASSCODE") != null')"
+          set -o pipefail
+          # 読めないまま進むと「合言葉なし」と取り違えるので、読めなければ理由を書いて止める
+          if ! service="$(gcloud run services describe "$SERVICE" \
+            --project "$PROJECT_ID" --region "$REGION" --format=json)"; then
+            echo "::error::サービスの設定を読めなかったので、合言葉の有無を決められません" >&2
+            exit 1
+          fi
+          names="$(jq -r '[.spec.template.spec.containers[0].env[]?.name] | join(",")' <<<"$service")"
+          if [[ -z "$names" ]]; then
+            echo "::error::サービスに環境変数が1つもありません（新しい版を置いたあとは、少なくとも MATSURI_AGENT_MODE がある）" >&2
+            exit 1
+          fi
+          if [[ ",${names}," == *",ACCESS_PASSCODE,"* ]]; then set=true; else set=false; fi
           echo "set=${set}" >> "$GITHUB_OUTPUT"
+          echo "names=${names}" >> "$GITHUB_OUTPUT"
           echo "合言葉：${set}"
 
       # Cloud Run の既定の URL では /healthz が外から届かないので、/health で確かめる
       - name: 新しい版を外から確かめる（/health・画面・3D のモデル・合言葉・しおりの経路）
         env:
           ACCESS_PASSCODE_SET: ${{ steps.passcode.outputs.set }}
+          SERVICE_ENV_NAMES: ${{ steps.passcode.outputs.names }}
         run: |
           url="$(gcloud run services describe "$SERVICE" \
             --project "$PROJECT_ID" --region "$REGION" --format=json \
@@ -171,6 +194,7 @@ jobs:
       - name: 公開の URL を外から確かめる
         env:
           ACCESS_PASSCODE_SET: ${{ steps.passcode.outputs.set }}
+          SERVICE_ENV_NAMES: ${{ steps.passcode.outputs.names }}
         run: |
           url="$(gcloud run services describe "$SERVICE" \
             --project "$PROJECT_ID" --region "$REGION" --format='value(status.url)')"

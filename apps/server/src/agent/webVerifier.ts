@@ -31,7 +31,7 @@ import type { QueryFn } from "./runner";
 // （docs/spec/agent-runtime.md の「確定前の再確認」）。
 // - 接客エージェントと同じく開発環境から切り離し、道具は WebSearch と WebFetch だけにする
 // - WebFetch の宛先は公開の Web だけにする（checkPublicWebUrl）
-// - 検索だけして本文を読まずに答えようとしたら、1回だけ続けさせる
+// - 本文を読まずに答えようとしたら（検索だけのときも、検索もしないときも）、1回だけ続けさせる
 // - 返答の JSON は parseJsonWithSchema で取り出し、取り出せなければ道具なしで1回だけ差し戻す
 // - 出典のうち、実際に読んでいないページは捨てる。結果と確度は domain/verification.ts で決め直す
 // - 今年の開催と書かれていたかは、自己申告させない。ページの日付の文を写させ、読んだページの本文と照らして
@@ -122,7 +122,7 @@ function fetchedText(response: unknown): string {
 }
 
 const READ_NUDGE =
-  "検索結果だけでは開催を確かめられません。公式のページを WebFetch で1つ読んでから、決めた形の JSON で答えてください。";
+  "まだページを読んでいないので、開催を確かめられません。公式のページを検索して WebFetch で1つ読んでから、決めた形の JSON で答えてください。";
 
 /** 再確認のエージェントのフック。WebFetch の宛先の確認、読んだページの控え、1回だけ続けさせる */
 /**
@@ -176,7 +176,8 @@ export function createVerifierHooks(
   };
   const requireReading: HookCallback = async (input) => {
     if (input.hook_event_name !== "Stop") return {};
-    if (!log.searchedWithoutReading() || nudges >= MAX_READ_NUDGES) return {};
+    // 検索しただけのときも、検索もしないで答えようとしたときも、ページを読んでから答えさせる
+    if (log.fetchedUrls.length > 0 || nudges >= MAX_READ_NUDGES) return {};
     nudges += 1;
     return { decision: "block", reason: nudge };
   };

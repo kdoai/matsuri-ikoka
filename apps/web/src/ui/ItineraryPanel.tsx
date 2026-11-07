@@ -29,7 +29,9 @@ import { useActions, useApp, useT } from "../state/react";
 import { itemChange, shioriReady, usedSources } from "../state/selectors";
 import { PANEL_TABS, type PanelTab, type VerifyState } from "../state/types";
 import { buttonPrimary, SourceLink } from "./common";
+import { ErrorBoundary } from "./ErrorBoundary";
 import { itemIcon, LanternIcon } from "./icons";
+import { MapTrouble } from "./MapPlaces";
 
 // 旅のしおりの窓：旅程・旅の案内・持ち物と確認のタブ。
 // 旅程は、表題・日付・同行者・道のりのひとことのカードと、日ごとの時刻・アイコン・予定の縦の並びで見せる。
@@ -42,7 +44,16 @@ const TAB_ICON: Record<PanelTab, LucideIcon> = {
   sources: ListChecks,
 };
 
-const MapView = lazy(() => import("./MapView"));
+const loadMapView = () => import("./MapView");
+const MapView = lazy(loadMapView);
+
+/**
+ * 地図のコードを先に取っておく。ページを開いたあとに新しい版が公開されると、
+ * このページの知っているファイルは取れなくなるので、押されるまで待たない
+ */
+export function preloadMapView(): void {
+  void loadMapView().catch(() => undefined);
+}
 
 /** 旅の予算を、言われた数え方と、コードで換算したもう一方で書く */
 export function budgetText(t: Messages, budget: TripBudget, party: Party): string {
@@ -504,9 +515,11 @@ function GuideTab() {
   const itinerary = useApp((state) => state.itinerary.current);
   return (
     <div className="space-y-4">
-      <Suspense fallback={<p className="p-4 text-base text-ink-soft">…</p>}>
-        <MapView textClass="text-base" />
-      </Suspense>
+      <ErrorBoundary name="map" fallback={<MapTrouble />}>
+        <Suspense fallback={<p className="p-4 text-base text-ink-soft">…</p>}>
+          <MapView textClass="text-base" />
+        </Suspense>
+      </ErrorBoundary>
       {itinerary === null ? null : (
         <div className="space-y-4 px-3 pb-3">
           <section className="space-y-1">

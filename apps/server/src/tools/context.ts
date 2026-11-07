@@ -15,7 +15,7 @@ import type { ItineraryStore, Session } from "../session/sessionStore";
 import type { CandidateChecker } from "./candidateCheck";
 import type { LodgingService } from "./lodging";
 import type { LodgingResearcher } from "./lodgingResearch";
-import type { NearbyResearcher } from "./nearbyResearch";
+import type { NearbyResearcher, ResearchedSpotReport } from "./nearbyResearch";
 import type { PlanEvaluator } from "./planEvaluator";
 import type { RouteResearcher } from "./routeResearch";
 import type { FestivalVerifier } from "./verifier";
@@ -57,6 +57,8 @@ export interface TripPrefetch {
 export interface TurnState {
   /** 先に始めた調べ。まだ始めていなければ null */
   prefetch: TripPrefetch | null;
+  /** この発言で調べた会場の周りの結果（祭りと日ごと）。時間帯を変えて呼ばれても調べ直さず、選び直すだけにする */
+  nearbyReports: Map<string, { reports: ResearchedSpotReport[]; rounds: number }>;
   /** この発言が始まった時刻（ミリ秒）。時間の残りを見て、調べ直しをやめる */
   startedAt: number;
   startedStaff: Set<StaffId>;
@@ -78,6 +80,7 @@ export interface TurnState {
 export function newTurnState(searchRetry: SearchRetry | null = null): TurnState {
   return {
     prefetch: null,
+    nearbyReports: new Map(),
     startedAt: Date.now(),
     startedStaff: new Set(),
     toolCalls: [],
@@ -148,8 +151,9 @@ export const TOOL_TIMEOUT_MS: Readonly<Record<AgentToolName, number>> = {
   search_lodging: 95_000,
   // 保存のあとに評価係の採点（EVALUATION_MS で打ち切る）を含む
   update_itinerary: 75_000,
-  // 乗り換え案内や鉄道会社のページを検索して読む
-  research_route: 40_000,
+  // 乗り換え案内や鉄道会社のページを検索して読む。見つからなければ、調べ方を変えて1回だけ調べ直す。
+  // 調べの間は ToolContext.progress で進みを知らせるので、進みのない時間の上限には掛からない
+  research_route: 95_000,
   // 行き・帰りの行き方と、食事と寄り道の調べを並べて動かす。いちばん長い寄り道の調べ（search_nearby）に合わせる。
   // 調べの間は ToolContext.progress で進みを知らせるので、進みのない時間の上限には掛からない
   research_trip: 100_000,

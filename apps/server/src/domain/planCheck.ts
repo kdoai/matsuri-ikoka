@@ -320,7 +320,9 @@ function checkLastReturn(day: PlanDayToCheck, timeline: readonly TimedItem[], er
   }
   const legs = last.item.move.legs ?? [];
   const firstRide = legs.findIndex((leg) => leg.means !== "walk");
-  const walk = legs.slice(0, Math.max(0, firstRide)).reduce((sum, leg) => sum + leg.minutes[0], 0);
+  const walk = legs
+    .slice(0, Math.max(0, firstRide))
+    .reduce((sum, leg) => sum + (leg.minutes?.[0] ?? 0), 0);
   const leaves = last.start + walk;
   // 最終は旅の日の時刻で書く。早朝（日をまたいだあと）の時刻は、次の日の時刻として比べる
   let limit = toMinutes(departBy);
