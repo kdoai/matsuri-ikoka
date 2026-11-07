@@ -47,8 +47,8 @@ const PUSH_OUT_SECONDS = 0.35;
 export type PadCommand = "details" | "map" | "menu";
 
 export interface PlayerApi {
-  /** 床の上の点へ歩く。着いたら then を使う */
-  walkTo(point: FlatPoint, then?: Target | null): void;
+  /** 床の上の点へ歩く。着いたら then を使う。then に届かないまま止まったら giveUp を呼ぶ */
+  walkTo(point: FlatPoint, then?: Target | null, giveUp?: () => void): void;
   /** その場で使う（タップした仕掛け・ひよこ） */
   use(target: Target): void;
 }
@@ -114,7 +114,12 @@ export function Player(props: PlayerProps) {
     y: world.groundY ?? 0,
     yaw: world.start.yaw,
     keys: new Set<string>(),
-    goal: null as { path: FlatPoint[]; then: Target | null; stuck: number } | null,
+    goal: null as {
+      path: FlatPoint[];
+      then: Target | null;
+      stuck: number;
+      giveUp: (() => void) | undefined;
+    } | null,
     seat: null as string | null,
     /** 座る前に立っていた床の上の位置（立つときにここへ戻る） */
     seatStand: null as FlatPoint | null,
@@ -256,12 +261,15 @@ export function Player(props: PlayerProps) {
     Math.hypot(target.stand.x - s.current.x, target.stand.z - s.current.z) <= target.radius + 0.05;
 
   useImperativeHandle(props.api, () => ({
-    walkTo(point, then = null) {
+    walkTo(point, then = null, giveUp) {
       standUp();
       const path = findPath(world.grid, s.current, point);
-      s.current.goal = path.length === 0 ? null : { path, then, stuck: 0 };
+      s.current.goal = path.length === 0 ? null : { path, then, stuck: 0, giveUp };
       // 道がなくても、すでに届くところにいれば使う
-      if (path.length === 0 && then !== null && within(then)) use(then);
+      if (path.length === 0) {
+        if (then !== null && within(then)) use(then);
+        else giveUp?.();
+      }
       playStore.getState().markMoved();
     },
     use,
@@ -363,9 +371,10 @@ export function Player(props: PlayerProps) {
       if (distance <= ARRIVE) {
         state.goal.path.shift();
         if (state.goal.path.length === 0) {
-          const then = state.goal.then;
+          const { then, giveUp } = state.goal;
           state.goal = null;
           if (then !== null && within(then)) use(then);
+          else giveUp?.();
         }
       } else {
         const step = Math.min(distance, SPEED * dt);
@@ -384,9 +393,10 @@ export function Player(props: PlayerProps) {
         // 家具に引っかかったら、そこで止まる（近ければ、そのまま使う）
         state.goal.stuck = moved < step * 0.2 ? state.goal.stuck + dt : 0;
         if (state.goal.stuck > 0.4) {
-          const then = state.goal.then;
+          const { then, giveUp } = state.goal;
           state.goal = null;
           if (then !== null && within(then)) use(then);
+          else giveUp?.();
         }
       }
     }

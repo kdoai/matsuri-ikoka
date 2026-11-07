@@ -71,7 +71,7 @@ function lodgingFacts(itinerary: Itinerary, t: Messages, locale: Locale): StallF
         ...offers.flatMap((offer) =>
           offer.nightlyTotalYen === null
             ? []
-            : [`${offer.name}：${words.nightly(offer.nightlyTotalYen)}`],
+            : [t.street.labelled(offer.name, words.nightly(offer.nightlyTotalYen))],
         ),
       ],
       uniqueSources(offers.map((offer) => offer.source)),
@@ -97,11 +97,12 @@ function accessFacts(
         ...moves.map(({ move, name }) =>
           move === null
             ? name
-            : `${move.from !== undefined && move.to !== undefined ? words.routeLine(move.from, move.to) : name}：${t.itinerary.move(
-                t.itinerary.means[move.means],
-                move.minutes[0],
-                move.minutes[1],
-              )}`,
+            : t.street.labelled(
+                move.from !== undefined && move.to !== undefined
+                  ? words.routeLine(move.from, move.to)
+                  : name,
+                t.itinerary.move(t.itinerary.means[move.means], move.minutes[0], move.minutes[1]),
+              ),
         ),
       ],
       uniqueSources(moves.flatMap((item) => item.sources)),
@@ -111,7 +112,7 @@ function accessFacts(
     if (day.lastReturn === null || day.lastReturn === undefined) continue;
     facts.push(
       fact(
-        `${words.lastReturn}（${formatDate(day.date, locale)}）`,
+        t.street.dated(words.lastReturn, formatDate(day.date, locale)),
         [
           words.lastLine(day.lastReturn.station, day.lastReturn.departBy),
           ...(day.lastReturn.note === undefined ? [] : [day.lastReturn.note]),
@@ -179,14 +180,14 @@ function etiquetteFacts(
     fact(words.labels.risk, [
       etiquette.risk === UNKNOWN
         ? words.unknown
-        : `${words.risk[etiquette.risk.level]}：${etiquette.risk.reason}`,
+        : t.street.labelled(words.risk[etiquette.risk.level], etiquette.risk.reason),
     ]),
     fact(words.labels.photo, [
       etiquette.photo === UNKNOWN
         ? words.unknown
-        : [words.photo[etiquette.photo.policy], etiquette.photo.note]
-            .filter((part) => part !== undefined)
-            .join("："),
+        : etiquette.photo.note === undefined
+          ? words.photo[etiquette.photo.policy]
+          : t.street.labelled(words.photo[etiquette.photo.policy], etiquette.photo.note),
     ]),
   ];
   return [...items, ...notes];
@@ -204,22 +205,26 @@ function foodFacts(
     if (day.meals === undefined || day.meals.length === 0) continue;
     facts.push(
       fact(
-        `${words.meals}（${formatDate(day.date, locale)}）`,
+        t.street.dated(words.meals, formatDate(day.date, locale)),
         day.meals.map((meal) => words.mealLine(meal.slot, meal.name)),
         uniqueSources(day.meals.flatMap((meal) => meal.sources)),
       ),
     );
   }
   if (festival !== null) {
-    if (festival.food.stalls !== UNKNOWN) {
-      facts.push(fact(words.foodStallsLabel, [words.foodStalls[festival.food.stalls]]));
-    }
+    facts.push(
+      fact(words.foodStallsLabel, [
+        festival.food.stalls === UNKNOWN
+          ? t.etiquette.unknown
+          : words.foodStalls[festival.food.stalls],
+      ]),
+    );
     if (festival.food.local.length > 0) {
       facts.push(
         fact(
           words.localFood,
           festival.food.local.map((food) =>
-            food.note === undefined ? food.name : `${food.name}：${food.note}`,
+            food.note === undefined ? food.name : t.street.labelled(food.name, food.note),
           ),
           uniqueSources(festival.food.local.flatMap((food) => food.sources)),
         ),

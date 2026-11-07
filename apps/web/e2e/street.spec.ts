@@ -78,7 +78,10 @@ test("2D だけで、屋台の情報・通知・相談がすべて使え、店�
   await page.getByTestId("stall-etiquette").click();
   await expect(stall).toContainText("作法の屋台");
   await expect(stall).toContainText("見学か、加われるか");
-  await expect(stall.getByRole("link").first()).toHaveAttribute("href", /example\.com/);
+  await expect(stall.getByRole("link").first()).toHaveAttribute(
+    "href",
+    /^https:\/\/example\.com\//,
+  );
   await snap(page, info, "63-stall-etiquette-2d");
   await page.keyboard.press("Escape");
   await expect(stall).toHaveCount(0);
@@ -139,8 +142,79 @@ test("ガイドを用意していない環境でも、屋台を読め、相談�
   await page.keyboard.press("Escape");
   await page.getByTestId("guide-bar").getByRole("button").click();
   await expect(page.getByTestId("guide-line")).toContainText("いまはガイドに相談できません");
-  await expect(page.getByTestId("guide-composer")).toHaveCount(0);
+  // 話せないときも、公的な連絡先はいつも出す
+  await expect(page.getByTestId("guide-emergency")).toContainText("119");
+  await expect(page.getByTestId("guide-emergency")).toContainText("110");
+  // 入力欄は残る。ふつうの発言が断られたら、続け方を案内する
+  const input = page.getByRole("textbox", { name: "ガイドへの発言" });
+  await input.fill("持ち物を教えてください");
+  await input.press("Enter");
+  await expect(page.getByTestId("guide-line")).toContainText("この相談は続けられなくなりました");
+  await expect(page.getByTestId("guide-emergency")).toContainText("119");
   await snap(page, info, "65-guide-unavailable");
+});
+
+test("ガイドの知らせを読めなくても、緊急の相談を送れて、連絡先が先に出る", async ({
+  page,
+}, info) => {
+  test.setTimeout(150_000);
+  test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
+  await page.route("**/api/guide/state", (route) =>
+    route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      body: JSON.stringify({
+        code: "upstream_unavailable",
+        message: "いま旅を読めません。",
+        retryable: true,
+      }),
+    }),
+  );
+  await enterShop(page);
+  await untilShiori(page);
+  await goOutside(page);
+  await page.getByTestId("guide-bar").getByRole("button").click();
+  await expect(
+    page.getByTestId("guide-dialogue").getByRole("button", { name: "もう一度読む" }),
+  ).toBeVisible();
+  const input = page.getByRole("textbox", { name: "ガイドへの発言" });
+  await input.fill("連れが倒れて、呼びかけても返事がありません");
+  await input.press("Enter");
+  await expect(page.getByTestId("guide-emergency")).toHaveAttribute("role", "alert", {
+    timeout: 20_000,
+  });
+  await expect(page.getByTestId("guide-emergency")).toContainText("119");
+});
+
+test("通りのモデルを読めないときは、屋台の一覧を主にし、案内はすぐに屋台を開く", async ({
+  page,
+}, info) => {
+  test.setTimeout(150_000);
+  test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
+  // モデルの取得だけを止める（開発サーバーの ?import の付いた読み込みは止めない）
+  await page.route(/ennichi[^/?]*\.glb$/, (route) => route.abort());
+  await enterShop(page);
+  await untilShiori(page);
+  await page.evaluate(() => window.history.replaceState(null, "", "/"));
+  await goOutside(page);
+  await expect(page.getByTestId("street")).toHaveAttribute("data-mode", "2d", { timeout: 60_000 });
+  await expect(page.getByTestId("stall-list")).toBeVisible();
+  await page.getByTestId("guide-lead").click();
+  await expect(page.getByTestId("stall-window")).toHaveAttribute("data-stall", "headquarters");
+});
+
+test("3D の読み込み中に案内を頼んでも、すぐに屋台が開く", async ({ page }, info) => {
+  test.setTimeout(150_000);
+  test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
+  // 通りのモデルを返さないまま待たせる
+  await page.route(/ennichi[^/?]*\.glb$/, () => undefined);
+  await enterShop(page);
+  await untilShiori(page);
+  await page.evaluate(() => window.history.replaceState(null, "", "/"));
+  await goOutside(page);
+  await expect(page.getByTestId("street")).toHaveAttribute("data-mode", "3d");
+  await page.getByTestId("guide-lead").click();
+  await expect(page.getByTestId("stall-window")).toHaveAttribute("data-stall", "headquarters");
 });
 
 test("動きを減らす設定では、3D を出さずに屋台の一覧を主にする", async ({ page }, info) => {
@@ -204,6 +278,8 @@ test("3D の通りで、提灯が灯り、ガイドに案内されて歩いて�
   await page.waitForTimeout(4_000);
   await snap(page, info, "77-stall-food-3d");
   await page.keyboard.press("Escape");
+  // 一覧のボタンは消えたので、焦点は一覧を開くボタンへ戻る
+  await expect(page.getByTestId("stall-list-button")).toBeFocused();
 
   // 店内へ戻れる
   await page.getByTestId("back-to-shop").click();

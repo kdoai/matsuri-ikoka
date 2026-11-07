@@ -19,6 +19,7 @@ import { useActions, useApp, useAppStore, useT } from "../state/react";
 import { selectStreetSceneProps } from "../state/scene";
 import { shioriReady } from "../state/selectors";
 import { AccountMenu } from "./AccountMenu";
+import { openAccountMenu } from "./accountMenuEntry";
 import { focusGuideDialogue, GuideDialogue } from "./GuideDialogue";
 import { KeyCap, Logo, ModeBadge, useHudKeys } from "./Hud";
 import { useMediaQuery } from "./hooks";
@@ -89,11 +90,7 @@ function GuestNote() {
             type="button"
             className="font-bold text-ai-700 underline underline-offset-2"
             // ログインの処理は今の入口にまかせる（入口を開くだけ）
-            onClick={() =>
-              document
-                .querySelector<HTMLButtonElement>('[data-testid="account-menu"] button')
-                ?.click()
-            }
+            onClick={openAccountMenu}
           >
             {t.street.guestLogin}
           </button>
@@ -127,6 +124,8 @@ function StreetStage({
   const nearGuide = usePlay((state) => state.near?.kind === "talk");
   const [ready, setReady] = useState(false);
   const onDoor = useCallback(() => void actions.returnToShop(), [actions]);
+  // 描けなくなったら（読み込みの失敗も含む）、案内は歩かずに屋台を開く
+  useEffect(() => () => actions.setStreetScene(false), [actions]);
   if (StreetScene === null) return null;
   return (
     <div className="absolute inset-0" data-testid="street-stage">
@@ -134,7 +133,10 @@ function StreetStage({
         <Suspense fallback={null}>
           <StreetScene
             {...props}
-            onReady={() => setReady(true)}
+            onReady={() => {
+              setReady(true);
+              actions.setStreetScene(true);
+            }}
             onTalk={onTalk}
             onStall={actions.openStall}
             onDoor={onDoor}
@@ -239,8 +241,9 @@ export function Street() {
         <div className="flex flex-col items-start gap-1.5 justify-self-start">
           <Logo />
           <p className="hud-chip w-fit rounded-full px-3 py-1 font-bold text-sm leading-tight">
-            {t.street.title}
-            {phase === null ? "" : `・${t.street.phase[phase]}`}
+            {phase === null
+              ? t.street.title
+              : t.street.dotted([t.street.title, t.street.phase[phase]])}
           </p>
           <ModeBadge />
         </div>
@@ -293,7 +296,9 @@ export function Street() {
       <div className="sr-only">
         <PlayStatus hidden />
         <p role="status" data-testid="street-lit">
-          {lit.map((stall) => `${t.street.stalls[stall].name}：${t.street.lit}`).join("、")}
+          {t.street.joined(
+            lit.map((stall) => t.street.labelled(t.street.stalls[stall].title, t.street.lit)),
+          )}
         </p>
       </div>
 
@@ -387,7 +392,7 @@ export function Street() {
         style={{ "--frame-top": `${frame.top}px` } as CSSProperties}
         className="fixed inset-x-2 bottom-2 z-30 sm:inset-x-3 sm:bottom-3 lg:inset-x-0 lg:mx-auto lg:w-[min(50rem,calc(100vw-4rem))]"
       >
-        {guideOpen ? <GuideDialogue walk={use3d} /> : null}
+        {guideOpen ? <GuideDialogue /> : null}
       </div>
 
       <PasscodeDialog />

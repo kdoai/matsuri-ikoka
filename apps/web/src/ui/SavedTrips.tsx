@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useAccountClient } from "../account/context";
 import { useActions, useT } from "../state/react";
 import { buttonSecondary } from "./common";
+import { latestOnly } from "./latestOnly";
 
 // 店の外観に出す、残した旅の入口。ログインしていて旅を残してあれば、そこから縁日の通りへ戻れる。
 // ログインを用意していないとき・ログインしていないときは何も出さない。
@@ -17,21 +18,21 @@ export function SavedTrips() {
 
   useEffect(() => {
     if (client === null) return;
-    let active = true;
+    // ログアウトの直前に頼んだ一覧の応答で、前の人の旅の名前を出さない
+    const latest = latestOnly();
     const stop = client.onUser((user) => {
-      if (user === null) {
-        setTrips([]);
-        return;
-      }
+      const ticket = latest.next();
+      setTrips([]);
+      if (user === null) return;
       client.listTrips().then(
         (list) => {
-          if (active) setTrips(list);
+          if (latest.isCurrent(ticket)) setTrips(list);
         },
         () => undefined,
       );
     });
     return () => {
-      active = false;
+      latest.next();
       stop();
     };
   }, [client]);
@@ -56,7 +57,7 @@ export function SavedTrips() {
                 });
               }}
             >
-              {t.street.savedOpen(trip.title)}
+              {t.street.savedOpen(trip.title.trim() === "" ? t.street.untitled : trip.title)}
             </button>
           </li>
         ))}

@@ -102,7 +102,7 @@ describe("報告", () => {
     expect(later.spot).toBe("home");
   });
 
-  it("返答の途中は待ち、終わってから報告する", () => {
+  it("返答に届いた通知は提灯だけを灯し、読んでいる返事を隠さない。次に話しかけたときに報告する", () => {
     const started = beginGuideTurn(
       { ...INITIAL_GUIDE, availability: "ready" },
       "変わったことは",
@@ -111,11 +111,40 @@ describe("報告", () => {
     const arrived = applyGuideEvent(started, { type: "guide.notice", data: { notice: weather } });
     expect(arrived.report).toBeNull();
     expect(litStalls(arrived)).toEqual(["weather"]);
-    const done = applyGuideEvent(arrived, {
+    const answered = applyGuideEvent(arrived, {
+      type: "message.delta",
+      data: { messageId: "m", text: "雨の予報です。" },
+    });
+    const done = applyGuideEvent(answered, {
       type: "guide.done",
       data: { phase: "before", unreadNotices: 1, pendingProposals: 0 },
     });
-    expect(done.report).toBe("n-weather");
+    expect(done.report).toBeNull();
+    expect(guideLine(done)).toMatchObject({ kind: "guide", text: "雨の予報です。" });
+    expect(advanceReport(done).report).toBe("n-weather");
+  });
+
+  it("報告の途中で発言すると、報告を閉じて返事を見せる", () => {
+    const reporting = applyGuideState(INITIAL_GUIDE, response([weather]));
+    const asked = beginGuideTurn(reporting, "傘は要りますか", false);
+    expect(asked.report).toBeNull();
+    expect(guideLine(asked)).toEqual({ kind: "waiting" });
+  });
+
+  it("話している最中に読み直しても、報告を重ねない", () => {
+    const talking = {
+      ...beginGuideTurn({ ...INITIAL_GUIDE, availability: "ready" as const }, "こんにちは", false),
+      streaming: false,
+    };
+    const reloaded = applyGuideState(talking, response([weather]));
+    expect(reloaded.report).toBeNull();
+    expect(litStalls(reloaded)).toEqual(["weather"]);
+  });
+
+  it("屋台を開いている間は、次の報告を重ねない", () => {
+    const open = { ...INITIAL_GUIDE, notices: [weather], openStall: "food" as const };
+    expect(advanceReport(open).report).toBeNull();
+    expect(advanceReport({ ...open, openStall: null }).report).toBe("n-weather");
   });
 
   it("読み直しても、手元で読んだ通知は未読に戻らない", () => {
@@ -197,6 +226,46 @@ describe("発言と返答", () => {
     });
     expect(guide.memo).toHaveLength(1);
     expect(guide.entries.at(-1)).toMatchObject({ kind: "memo", text: "ゆっくり歩く" });
+  });
+
+  it("緊急の発言で失敗が続いても、決まった文を隠さない", () => {
+    let guide = beginGuideTurn(ready, "助けて", false);
+    guide = applyGuideEvent(guide, {
+      type: "guide.emergency",
+      data: { contacts: [...EMERGENCY_CONTACTS] },
+    });
+    guide = applyGuideEvent(guide, {
+      type: "message.delta",
+      data: { messageId: "m", text: "すぐに連絡してください。" },
+    });
+    guide = applyGuideEvent(guide, {
+      type: "error",
+      data: { code: "upstream_unavailable", message: "混み合っています", retryable: true },
+    });
+    expect(guideLine(guide)).toMatchObject({
+      kind: "error",
+      said: "すぐに連絡してください。",
+      code: "upstream_unavailable",
+    });
+    expect(currentEmergency(guide)).toHaveLength(2);
+  });
+
+  it("相談や旅が切れた知らせは、専用の案内にして、話せない状態にする", () => {
+    const guide = applyGuideEvent(beginGuideTurn(ready, "助けて", false), {
+      type: "error",
+      data: { code: "bad_request", message: "相談が見つかりません。", retryable: false },
+    });
+    expect(guide.availability).toBe("unavailable");
+    expect(guideLine(guide)).toMatchObject({ kind: "error", code: "guide_gone", message: null });
+  });
+
+  it("同じ発言の失敗を2度重ねない", () => {
+    const failed = applyGuideEvent(beginGuideTurn(ready, "持ち物は", false), {
+      type: "error",
+      data: { code: "internal", message: "失敗しました", retryable: true },
+    });
+    const ended = endGuideTurn(failed, { code: "connection_lost", message: null, retryable: true });
+    expect(ended.entries.filter((entry) => entry.kind === "error")).toHaveLength(1);
   });
 
   it("話せない環境では、話せないことを出す", () => {

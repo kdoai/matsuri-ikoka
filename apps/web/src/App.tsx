@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useApp } from "./state/react";
+import { AccountWatch } from "./ui/AccountWatch";
 import { ShioriPage } from "./ui/ShioriPage";
 import { Shop } from "./ui/Shop";
 import { Storefront } from "./ui/Storefront";
@@ -24,6 +25,7 @@ export function App() {
       {view === "shiori" ? <ShioriPage /> : null}
       {view === "street" ? <Street /> : null}
       <Celebration />
+      <AccountWatch />
     </>
   );
 }

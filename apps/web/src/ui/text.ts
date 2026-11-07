@@ -1,4 +1,5 @@
 import type { Messages } from "../i18n";
+import type { GuideErrorCode } from "../state/guide";
 import type { ChatEntry, Locale } from "../state/types";
 
 // 画面に出す文を、ストアの値と辞書から組み立てる。
@@ -48,4 +49,15 @@ export function shortLine(text: string): { head: string; rest: string | null } {
     head = `${head.slice(0, SHORT_LINE_CHARS).trimEnd()}…`;
   }
   return head === trimmed ? { head: trimmed, rest: null } : { head, rest: trimmed };
+}
+
+/** ガイドの相談のエラーの一文。相談が切れたときは、次にできることを書いた文を出す */
+export function guideErrorText(
+  entry: { code: GuideErrorCode; message: string | null },
+  locale: Locale,
+  t: Messages,
+): string {
+  return entry.code === "guide_gone"
+    ? t.street.gone
+    : errorText({ code: entry.code, message: entry.message }, locale, t);
 }

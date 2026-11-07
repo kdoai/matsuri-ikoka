@@ -12,7 +12,7 @@ import {
   type Source,
   type TripPhase,
 } from "@matsuri-ikoka/schema";
-import type { ClientError, ClientErrorCode } from "./types";
+import type { ClientErrorCode } from "./types";
 
 // しおりのあとの縁日の通りとガイドの状態。正しい状態はここ（ストアの guide）だけが持つ。
 // 画面の 2D と 3D は、どちらもこの形を読むだけにする。SSE のイベントは applyGuideEvent でこの形の更新に変える。
@@ -26,6 +26,22 @@ export type GuideAvailability = "idle" | "loading" | "ready" | "unavailable" | "
 /** ガイドが立つ場所。home 通りの入り口 / player 旅人のそば / それ以外は、その屋台の脇 */
 export type GuideSpot = "home" | "player" | GuideStall;
 
+/** ガイドの相談のエラー。guide_gone は相談や旅が切れて、この相談では続けられないとき */
+export type GuideErrorCode = ClientErrorCode | "guide_gone";
+
+export interface GuideError {
+  code: GuideErrorCode;
+  message: string | null;
+  retryable: boolean;
+}
+
+/** この相談では続けられない（サーバーの一文は使わず、画面の辞書の文を出す） */
+export const GUIDE_GONE: GuideError = Object.freeze({
+  code: "guide_gone",
+  message: null,
+  retryable: false,
+});
+
 export type GuideEntry =
   | { kind: "user"; id: string; text: string }
   | { kind: "guide"; id: string; text: string; streaming: boolean }
@@ -36,7 +52,7 @@ export type GuideEntry =
   | {
       kind: "error";
       id: string;
-      code: ClientErrorCode;
+      code: GuideErrorCode;
       message: string | null;
       retryable: boolean;
     };
@@ -60,8 +76,10 @@ export interface GuideState {
   /** もう報告した通知（同じ通知を2度報告しない） */
   reported: string[];
   spot: GuideSpot;
-  /** 旗で案内している屋台。seq が変わるたびに、3D の旅人がそこへ歩く */
-  lead: { stall: GuideStall; seq: number } | null;
+  /** 旗で案内している屋台。seq が変わるたびに、3D の旅人がそこへ歩く。done は屋台を開いたあと */
+  lead: { stall: GuideStall; seq: number; done: boolean } | null;
+  /** 3D の通りを描けていて、旅人が歩けるか。描けていなければ、案内は歩かずに屋台を開く */
+  sceneReady: boolean;
   /** 開いている屋台 */
   openStall: GuideStall | null;
   /** 屋台の一覧を開いているか（2D を主にしているときは、いつも出す） */
@@ -84,6 +102,7 @@ export const INITIAL_GUIDE: GuideState = Object.freeze({
   reported: [],
   spot: "home",
   lead: null,
+  sceneReady: false,
   openStall: null,
   listOpen: false,
   dialogueOpen: false,
@@ -116,10 +135,10 @@ export function reportedNotice(guide: {
 
 /**
  * まだ報告していない未読の通知があれば、ガイドが旅人へ駆け寄って報告する。
- * 返答の途中と、別の通知を報告している間は待つ
+ * 返答の途中、別の通知を報告している間、屋台を開いている間は待つ
  */
 export function advanceReport(guide: GuideState): GuideState {
-  if (guide.streaming || guide.report !== null) return guide;
+  if (guide.streaming || guide.report !== null || guide.openStall !== null) return guide;
   const next = unreadNotices(guide).find((notice) => !guide.reported.includes(notice.id));
   if (next === undefined) return guide;
   return {
@@ -138,7 +157,7 @@ export function applyGuideState(guide: GuideState, response: GuideStateResponse)
       notice.readAt === null ? [] : [[notice.id, notice.readAt] as const],
     ),
   );
-  return advanceReport({
+  const next: GuideState = {
     ...guide,
     availability: "ready",
     phase: response.phase,
@@ -148,7 +167,9 @@ export function applyGuideState(guide: GuideState, response: GuideStateResponse)
     })),
     proposals: response.proposals,
     memo: response.memo,
-  });
+  };
+  // 話している最中なら、読んでいる返事を報告で隠さない（提灯だけ灯して、次の操作まで待つ）
+  return guide.dialogueOpen && guide.entries.length > 0 ? next : advanceReport(next);
 }
 
 /** 通知を読んだことにする。その屋台の提灯は消える。報告の途中の通知なら、報告も終える */
@@ -163,7 +184,7 @@ export function markRead(guide: GuideState, ids: readonly string[], at: string):
   };
 }
 
-/** 発言を送り始める。送り直しのときは、自分の発言を重ねない */
+/** 発言を送り始める。送り直しのときは、自分の発言を重ねない。報告は閉じて、返事を見せる */
 export function beginGuideTurn(guide: GuideState, message: string, retry: boolean): GuideState {
   const turn = guide.turn + 1;
   const kept = guide.entries.filter((entry) => entry.kind !== "error");
@@ -171,6 +192,7 @@ export function beginGuideTurn(guide: GuideState, message: string, retry: boolea
     ...guide,
     turn,
     streaming: true,
+    report: null,
     lastMessage: message,
     dialogueOpen: true,
     spot: "player",
@@ -186,7 +208,8 @@ function upsertGuideText(entries: GuideEntry[], id: string, text: string): Guide
   );
 }
 
-const closeText = (entries: GuideEntry[]): GuideEntry[] =>
+/** 受け取っている途中の文を閉じる */
+export const closeText = (entries: GuideEntry[]): GuideEntry[] =>
   entries.map((entry) =>
     entry.kind === "guide" && entry.streaming ? { ...entry, streaming: false } : entry,
   );
@@ -275,47 +298,33 @@ export function applyGuideEvent(guide: GuideState, event: GuideSseEvent): GuideS
           },
         ],
       };
-    case "error":
+    case "error": {
+      // 形の誤りで送り直せないのは、相談や旅が切れたとき（サーバーの区別は code に出ない）
+      const gone = event.data.code === "bad_request" && !event.data.retryable;
+      const error: GuideError = gone ? GUIDE_GONE : event.data;
       return {
         ...guide,
-        entries: [
-          ...guide.entries,
-          {
-            kind: "error",
-            id: `${prefix}-error`,
-            code: event.data.code,
-            message: event.data.message,
-            retryable: event.data.retryable,
-          },
-        ],
+        availability: gone ? "unavailable" : guide.availability,
+        entries: [...guide.entries, { kind: "error", id: `${prefix}-error`, ...error }],
       };
+    }
     case "guide.done":
-      return advanceReport({
+      // 読んでいる返事を報告で隠さない。届いた通知は提灯を灯し、次の操作まで待つ
+      return {
         ...guide,
         streaming: false,
         phase: event.data.phase,
         entries: closeText(guide.entries),
-      });
+      };
   }
 }
 
-/** 返答を受け取れないまま閉じたときの片付け。error があれば会話の窓に出す */
-export function endGuideTurn(guide: GuideState, error: ClientError | null): GuideState {
+/** 返答を受け取れないまま閉じたときの片付け。error があれば会話の窓に出す（もう届いていれば重ねない） */
+export function endGuideTurn(guide: GuideState, error: GuideError | null): GuideState {
   const closed = { ...guide, streaming: false, entries: closeText(guide.entries) };
-  if (error === null) return advanceReport(closed);
-  return advanceReport({
-    ...closed,
-    entries: [
-      ...closed.entries,
-      {
-        kind: "error",
-        id: `t${guide.turn}-error`,
-        code: error.code,
-        message: error.message,
-        retryable: error.retryable,
-      },
-    ],
-  });
+  const id = `t${guide.turn}-error`;
+  if (error === null || closed.entries.some((entry) => entry.id === id)) return closed;
+  return { ...closed, entries: [...closed.entries, { kind: "error", id, ...error }] };
 }
 
 /** 会話の窓に出す、いまのひとこと */
@@ -326,7 +335,14 @@ export type GuideLine =
   | { kind: "waiting" }
   | { kind: "tool"; bubble: string }
   | { kind: "guide"; id: string; text: string; streaming: boolean }
-  | { kind: "error"; code: ClientErrorCode; message: string | null; retryable: boolean };
+  | {
+      kind: "error";
+      code: GuideErrorCode;
+      message: string | null;
+      retryable: boolean;
+      /** 失敗の前に届いていた文。緊急の発言の決まった文を隠さない */
+      said: string | null;
+    };
 
 export function guideLine(guide: GuideState): GuideLine {
   const notice = reportedNotice(guide);
@@ -339,11 +355,15 @@ export function guideLine(guide: GuideState): GuideLine {
       return { kind: "guide", id: entry.id, text: entry.text, streaming: entry.streaming };
     }
     if (entry.kind === "error") {
+      const said = guide.entries
+        .slice(0, index)
+        .findLast((item) => item.kind === "user" || item.kind === "guide");
       return {
         kind: "error",
         code: entry.code,
         message: entry.message,
         retryable: entry.retryable,
+        said: said?.kind === "guide" ? said.text : null,
       };
     }
     if (entry.kind === "tool" && entry.running) return { kind: "tool", bubble: entry.bubble };

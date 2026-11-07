@@ -62,7 +62,7 @@ export function StallList() {
                 <Icon className="size-5" />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block font-bold">{t.street.stalls[stall].name}</span>
+                <span className="block font-bold">{t.street.stalls[stall].title}</span>
                 <span className="block text-ink-soft text-sm">{t.street.stalls[stall].lead}</span>
               </span>
               {on ? (
@@ -110,7 +110,14 @@ export function StallWindow({ stall }: { stall: GuideStall }) {
     const before = document.activeElement;
     heading.current?.focus();
     return () => {
-      if (before instanceof HTMLElement && before.isConnected) before.focus();
+      // 開くのに使ったボタンが消えていたら（一覧から開いたとき）、一覧のボタンか話しかけるボタンへ
+      const back =
+        before instanceof HTMLElement && before.isConnected
+          ? before
+          : document.querySelector<HTMLElement>(
+              '[data-testid="stall-list-button"], [data-testid="guide-bar"] button',
+            );
+      back?.focus();
     };
   }, []);
   useEffect(() => {
@@ -137,7 +144,7 @@ export function StallWindow({ stall }: { stall: GuideStall }) {
           tabIndex={-1}
           className="min-w-0 flex-1 font-bold text-lg outline-none"
         >
-          {t.street.stalls[stall].name}
+          {t.street.stalls[stall].title}
         </h2>
         <button
           type="button"

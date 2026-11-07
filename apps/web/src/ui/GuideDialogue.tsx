@@ -1,4 +1,4 @@
-import { MAX_MESSAGE_LENGTH, noticeStall } from "@matsuri-ikoka/schema";
+import { EMERGENCY_CONTACTS, MAX_MESSAGE_LENGTH, noticeStall } from "@matsuri-ikoka/schema";
 import {
   Clock,
   Flag,
@@ -15,7 +15,7 @@ import { currentEmergency, type GuideEntry, guideLine } from "../state/guide";
 import { useActions, useApp, useT } from "../state/react";
 import { SourceLink } from "./common";
 import { Portrait } from "./Portraits";
-import { errorText, shortLine } from "./text";
+import { guideErrorText, shortLine } from "./text";
 
 // ガイドとの会話の窓。店の会話の窓と同じ、話し手の名札と顔の絵つきのセリフの枠。
 // ガイドは店のコンシェルジュと同じひよこなので、同じ顔の絵を使う。チャット欄にせず、いまのひとことだけを出す。
@@ -39,18 +39,10 @@ function HistoryEntry({ entry }: { entry: GuideEntry }) {
   const locale = useApp((state) => state.ui.locale);
   switch (entry.kind) {
     case "user":
-      return (
-        <p>
-          <span className="font-bold">{t.street.you}：</span>
-          {entry.text}
-        </p>
-      );
+      return <p>{t.street.labelled(t.street.you, entry.text)}</p>;
     case "guide":
       return (
-        <p className="whitespace-pre-wrap">
-          <span className="font-bold">{t.street.guideName}：</span>
-          {entry.text}
-        </p>
+        <p className="whitespace-pre-wrap">{t.street.labelled(t.street.guideName, entry.text)}</p>
       );
     case "tool":
       return <p className="text-ink-soft">{entry.bubble}</p>;
@@ -59,9 +51,11 @@ function HistoryEntry({ entry }: { entry: GuideEntry }) {
     case "emergency":
       return (
         <p className="font-bold text-shu-700">
-          {entry.contacts
-            .map((contact) => `${t.street.emergency[contact.service]} ${contact.number}`)
-            .join("・")}
+          {t.street.dotted(
+            entry.contacts.map(
+              (contact) => `${t.street.emergency[contact.service]} ${contact.number}`,
+            ),
+          )}
         </p>
       );
     case "sources":
@@ -76,11 +70,11 @@ function HistoryEntry({ entry }: { entry: GuideEntry }) {
         </div>
       );
     case "error":
-      return <p className="text-shu-700">{errorText(entry, locale, t)}</p>;
+      return <p className="text-shu-700">{guideErrorText(entry, locale, t)}</p>;
   }
 }
 
-function Composer() {
+function Composer({ placeholder }: { placeholder: string }) {
   const t = useT();
   const actions = useActions();
   const streaming = useApp((state) => state.guide.streaming);
@@ -100,7 +94,7 @@ function Composer() {
         maxLength={MAX_MESSAGE_LENGTH}
         onChange={(event) => setDraft(event.target.value)}
         aria-label={t.street.composerLabel}
-        placeholder={t.street.composerPlaceholder}
+        placeholder={placeholder}
         data-guide-focus=""
         className="min-h-11 min-w-0 flex-1 rounded-xl border-2 border-line-strong bg-white px-3 py-1.5 text-ink"
       />
@@ -125,7 +119,7 @@ export function focusGuideDialogue(): void {
   document.querySelector<HTMLElement>("[data-testid='guide-dialogue'] [data-guide-focus]")?.focus();
 }
 
-export function GuideDialogue({ walk }: { walk: boolean }) {
+export function GuideDialogue() {
   const t = useT();
   const actions = useActions();
   const locale = useApp((state) => state.ui.locale);
@@ -134,7 +128,10 @@ export function GuideDialogue({ walk }: { walk: boolean }) {
   const emergency = useMemo(() => currentEmergency(guide), [guide]);
   const latest = useMemo(() => latestEntries(guide.entries), [guide.entries]);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const hasSession = useApp((state) => state.session.id !== null);
   const canTalk = guide.availability === "ready";
+  // 話せないときも、緊急の連絡先はいつも出す。ガイドがなくてもここで読める
+  const contacts = emergency.length > 0 ? emergency : canTalk ? [] : EMERGENCY_CONTACTS;
 
   let text: string;
   let rest: string | null = null;
@@ -155,7 +152,7 @@ export function GuideDialogue({ walk }: { walk: boolean }) {
       break;
     }
     case "error":
-      text = errorText(line, locale, t);
+      text = guideErrorText(line, locale, t);
       break;
     case "unavailable":
       text = t.street.unavailable;
@@ -196,15 +193,15 @@ export function GuideDialogue({ walk }: { walk: boolean }) {
         <X aria-hidden="true" className="size-4" />
       </button>
       {/* 緊急の連絡先は、ガイドの文より先に出す */}
-      {emergency.length > 0 ? (
+      {contacts.length > 0 ? (
         <div
-          role="alert"
+          role={emergency.length > 0 ? "alert" : undefined}
           data-testid="guide-emergency"
           className="mb-2 rounded-xl border-2 border-shu-600 bg-white px-3 py-2"
         >
           <p className="font-bold text-shu-700">{t.street.emergencyLead}</p>
           <ul className="mt-1 flex flex-wrap gap-2">
-            {emergency.map((contact) => (
+            {contacts.map((contact) => (
               <li key={contact.service}>
                 <a
                   href={`tel:${contact.number}`}
@@ -230,6 +227,11 @@ export function GuideDialogue({ walk }: { walk: boolean }) {
           data-testid="guide-line"
           data-line={line.kind}
         >
+          {line.kind === "error" && line.said !== null ? (
+            <p className="whitespace-pre-wrap font-bold text-[1.05rem] text-ink leading-relaxed sm:text-xl">
+              {line.said}
+            </p>
+          ) : null}
           <p
             className={`whitespace-pre-wrap font-bold text-[1.05rem] leading-relaxed sm:text-xl ${
               line.kind === "error" ? "text-shu-700" : "text-ink"
@@ -284,7 +286,7 @@ export function GuideDialogue({ walk }: { walk: boolean }) {
                   data-guide-focus=""
                   data-testid="guide-lead"
                   className={`${replyClass} ${REPLY_TONE.primary}`}
-                  onClick={() => actions.leadToStall(noticeStall(line.notice.content), walk)}
+                  onClick={() => actions.leadToStall(noticeStall(line.notice.content))}
                 >
                   <Flag aria-hidden="true" className="size-5" />
                   {t.street.leadMe}
@@ -301,7 +303,7 @@ export function GuideDialogue({ walk }: { walk: boolean }) {
               </li>
             </>
           ) : null}
-          {line.kind === "error" && line.retryable && canTalk ? (
+          {line.kind === "error" && line.retryable && hasSession ? (
             <li>
               <button
                 type="button"
@@ -357,9 +359,12 @@ export function GuideDialogue({ walk }: { walk: boolean }) {
           </details>
         ) : null}
       </div>
-      {canTalk ? (
+      {/* 相談が切れていても、緊急の言葉はサーバーが連絡先を返すので、相談の ID があれば書ける */}
+      {hasSession ? (
         <div className="mt-2 shrink-0 border-line border-t border-dashed pt-2">
-          <Composer />
+          <Composer
+            placeholder={canTalk ? t.street.composerPlaceholder : t.street.troublePlaceholder}
+          />
         </div>
       ) : null}
     </section>

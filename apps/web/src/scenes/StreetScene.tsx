@@ -95,9 +95,13 @@ function Street({
   useEffect(() => {
     if (leadSeq === null || leadSeq === walkedSeq.current) return;
     walkedSeq.current = leadSeq;
-    const stall = callbacks.current.lead?.stall;
-    const target = set.world.targets.find((item) => item.id === `stall.${stall}`);
-    if (target !== undefined) api.current?.walkTo(target.stand, target);
+    const lead = callbacks.current.lead;
+    if (lead === null || lead.done) return;
+    // 着けなければ（道がない・引っかかった）、歩くのをやめて屋台を開く
+    const giveUp = () => callbacks.current.onStall?.(lead.stall);
+    const target = set.world.targets.find((item) => item.id === `stall.${lead.stall}`);
+    if (target === undefined || api.current === null) giveUp();
+    else api.current.walkTo(target.stand, target, giveUp);
   }, [leadSeq, set]);
 
   useFrame((_, delta) => {

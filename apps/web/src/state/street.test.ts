@@ -3,14 +3,21 @@ import {
   FestivalSchema,
   type GuideChatRequest,
   type GuideSseEvent,
+  type GuideStateResponse,
   type Itinerary,
   ItinerarySchema,
 } from "@matsuri-ikoka/schema";
-import { fictionalFestival, fictionalItinerary } from "@matsuri-ikoka/schema/testing";
+import {
+  fictionalFestival,
+  fictionalItinerary,
+  fictionalSource,
+} from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it, vi } from "vitest";
 import { createReplayTransport } from "../testing/replayTransport";
 import type { ChatTransport, OnSseMessage } from "../transport/types";
 import { TransportError } from "../transport/types";
+import { clearGuideForLeavingUser, userLeft } from "../ui/AccountWatch";
+import { shioriReady } from "./selectors";
 import { createAppStore, LEAD_OUT_MS } from "./store";
 
 // 縁日の通りの流れ。通信の口の代わりを渡して、ストアの状態だけを確かめる。
@@ -127,6 +134,128 @@ describe("店の外へ出る", () => {
   });
 });
 
+describe("読み直しと、遅れた応答", () => {
+  const empty = {
+    tripId: itinerary.id,
+    version: 1,
+    phase: "before" as const,
+    watch: null,
+    notices: [],
+    proposals: [],
+    memo: [],
+  };
+
+  it("通りへ出るたびに読み直す", async () => {
+    const guideState = vi.fn(async () => empty);
+    const { store } = makeStore({ guideState });
+    store.getState().actions.leaveWithGuide();
+    await flush();
+    await store.getState().actions.returnToShop();
+    store.getState().actions.leaveWithGuide();
+    await flush();
+    expect(guideState).toHaveBeenCalledTimes(2);
+  });
+
+  it("別の相談に変わったあとに届いた応答を入れない", async () => {
+    const pending: ((value: GuideStateResponse) => void)[] = [];
+    const { store } = makeStore({
+      guideState: () => new Promise((resolve) => pending.push(resolve)),
+    });
+    store.getState().actions.leaveWithGuide();
+    await flush();
+    store.setState((state) => ({ ...state, session: { ...state.session, id: "session-new" } }));
+    pending[0]?.({ ...empty, phase: "after" });
+    await flush();
+    expect(store.getState().guide.phase).toBeNull();
+  });
+
+  it("先導の間にしおりを開いたら、残ったタイマーで通りへ移らない", async () => {
+    const { store, timers } = makeStore();
+    store.getState().actions.leaveWithGuide(true);
+    store.getState().actions.openShiori();
+    for (const timer of timers.splice(0)) timer();
+    await flush();
+    expect(store.getState().ui.view).toBe("shiori");
+    expect(store.getState().ui.leadingOut).toBe(false);
+  });
+});
+
+describe("合言葉を入れ直す", () => {
+  it("通りでは店内の前の発言を送らず、ガイドの知らせを読み直す", async () => {
+    const chat = vi.fn(async () => undefined);
+    const guideState = vi.fn(async () => {
+      throw new TransportError("unauthorized", { status: 401 });
+    });
+    const { store } = makeStore({ chat, guideState });
+    store.setState((state) => ({
+      ...state,
+      session: {
+        ...state.session,
+        lastRequest: { message: "店内の前の発言", preferences: state.preferences },
+      },
+    }));
+    store.getState().actions.leaveWithGuide();
+    await flush();
+    expect(store.getState().auth.needed).toBe(true);
+    await store.getState().actions.submitPasscode("example-pass");
+    expect(chat).not.toHaveBeenCalled();
+    expect(guideState).toHaveBeenCalledTimes(2);
+  });
+
+  it("発言の途中で断られたなら、その発言を送り直す", async () => {
+    let calls = 0;
+    const guideChat = vi.fn(async (_request: GuideChatRequest, onMessage: OnSseMessage) => {
+      calls += 1;
+      if (calls === 1) throw new TransportError("unauthorized", { status: 401 });
+      onMessage(
+        encodeGuideSseEvent({
+          type: "guide.done",
+          data: { phase: "before", unreadNotices: 0, pendingProposals: 0 },
+        }),
+      );
+    });
+    const { store } = makeStore({ guideChat });
+    store.getState().actions.leaveWithGuide();
+    await flush();
+    await store.getState().actions.sendGuide("持ち物は");
+    await store.getState().actions.submitPasscode("example-pass");
+    expect(guideChat).toHaveBeenCalledTimes(2);
+    expect(guideChat.mock.calls[1]?.[0].message).toBe("持ち物は");
+  });
+});
+
+describe("ログアウト", () => {
+  it("ログインしていた人が離れたときだけ片付ける", () => {
+    const a = { name: "架空の旅人" };
+    expect(userLeft(a, null)).toBe(true);
+    expect(userLeft(a, { name: "別の旅人" })).toBe(true);
+    expect(userLeft(a, a)).toBe(false);
+    expect(userLeft(null, a)).toBe(false);
+    expect(userLeft(null, null)).toBe(false);
+  });
+
+  it("通りの旅と通知と会話を消して、新しい相談から始める", async () => {
+    const { store } = makeStore();
+    store.getState().actions.leaveWithGuide();
+    await flush();
+    store.getState().actions.openStall("food");
+    clearGuideForLeavingUser(store);
+    await flush();
+    const state = store.getState();
+    expect(state.ui.view).toBe("shop");
+    expect(state.itinerary.current).toBeNull();
+    expect(state.guide.availability).toBe("idle");
+    expect(state.guide.openStall).toBeNull();
+  });
+
+  it("通りに出ていない相談には触らない", async () => {
+    const { store } = makeStore();
+    clearGuideForLeavingUser(store);
+    await flush();
+    expect(store.getState().itinerary.current?.id).toBe(itinerary.id);
+  });
+});
+
 describe("ガイドがいない環境", () => {
   it("404 なら話せない状態にして、通りと屋台はそのまま使える", async () => {
     const { store } = makeStore({
@@ -211,16 +340,74 @@ describe("ガイドとの相談", () => {
     expect(guide.entries.at(-1)).toMatchObject({ kind: "error", code: "invalid_event" });
   });
 
-  it("話せない状態では送らない", async () => {
-    const guideChat = streaming([]);
+  it.each([404, 409, 429, 503])(
+    "ガイドの知らせを読めない（%i）ときも、緊急の相談を送れて、連絡先が出る",
+    async (status) => {
+      const guideChat = streaming([
+        {
+          type: "guide.emergency",
+          data: { contacts: [{ service: "ambulance_fire", number: "119" }] },
+        },
+        { type: "guide.done", data: { phase: "during", unreadNotices: 0, pendingProposals: 0 } },
+      ]);
+      const { store } = await onStreet({
+        guideChat,
+        guideState: async () => {
+          throw new TransportError("bad_request", { status });
+        },
+      });
+      await store.getState().actions.sendGuide("連れが倒れました");
+      expect(guideChat).toHaveBeenCalledOnce();
+      expect(store.getState().guide.entries.map((entry) => entry.kind)).toEqual([
+        "user",
+        "emergency",
+      ]);
+    },
+  );
+
+  it("読み込みの最中も、緊急の相談を送れる", async () => {
+    const guideChat = streaming([
+      { type: "guide.done", data: { phase: "during", unreadNotices: 0, pendingProposals: 0 } },
+    ]);
     const { store } = await onStreet({
       guideChat,
-      guideState: async () => {
-        throw new TransportError("bad_request", { status: 404 });
+      guideState: () => new Promise(() => undefined),
+    });
+    expect(store.getState().guide.availability).toBe("loading");
+    await store.getState().actions.sendGuide("助けて");
+    expect(guideChat).toHaveBeenCalledOnce();
+  });
+
+  it("発言が 404 で断られたら、話せない状態にして、続け方を案内する", async () => {
+    const { store } = await onStreet({
+      guideChat: async () => {
+        throw new TransportError("bad_request", { status: 404, message: "相談が見つかりません。" });
       },
     });
     await store.getState().actions.sendGuide("持ち物は");
-    expect(guideChat).not.toHaveBeenCalled();
+    const { guide } = store.getState();
+    expect(guide.availability).toBe("unavailable");
+    expect(guide.entries.at(-1)).toMatchObject({ kind: "error", code: "guide_gone" });
+  });
+
+  it("返答の途中で店へ戻っても、受け取り中の印を残さない", async () => {
+    const guideChat = vi.fn(
+      (_request: GuideChatRequest, onMessage: OnSseMessage, signal: AbortSignal) =>
+        new Promise<void>((_resolve, reject) => {
+          onMessage(
+            encodeGuideSseEvent({ type: "message.delta", data: { messageId: "m", text: "はい" } }),
+          );
+          signal.addEventListener("abort", () => reject(new DOMException("中止", "AbortError")));
+        }),
+    );
+    const { store } = await onStreet({ guideChat });
+    const sending = store.getState().actions.sendGuide("持ち物は");
+    await flush();
+    await store.getState().actions.returnToShop();
+    await sending;
+    const { guide } = store.getState();
+    expect(guide.streaming).toBe(false);
+    expect(guide.entries.at(-1)).toMatchObject({ kind: "guide", streaming: false });
   });
 });
 
@@ -263,13 +450,14 @@ describe("通知から屋台へ", () => {
       dialogueOpen: true,
     });
 
-    // 3D では、旅人が歩いて着くまで屋台は開かない
-    store.getState().actions.leadToStall("weather", true);
+    // 3D を描けているなら、旅人が歩いて着くまで屋台は開かない
+    store.getState().actions.setStreetScene(true);
+    store.getState().actions.leadToStall("weather");
     expect(store.getState().guide).toMatchObject({
       report: null,
       spot: "weather",
       openStall: null,
-      lead: { stall: "weather", seq: 1 },
+      lead: { stall: "weather", seq: 1, done: false },
     });
     store.getState().actions.openStall("weather");
     const { guide } = store.getState();
@@ -278,11 +466,66 @@ describe("通知から屋台へ", () => {
     expect(markNoticesRead).toHaveBeenCalledWith({ sessionId: "session-1", noticeIds: ["n1"] });
   });
 
+  it("歩いている途中で 3D が描けなくなったら、屋台を開く", async () => {
+    const { store } = makeStore(withNotice);
+    store.getState().actions.leaveWithGuide();
+    await flush();
+    store.getState().actions.setStreetScene(true);
+    store.getState().actions.leadToStall("weather");
+    expect(store.getState().guide.openStall).toBeNull();
+    store.getState().actions.setStreetScene(false);
+    expect(store.getState().guide.openStall).toBe("weather");
+    expect(store.getState().guide.lead?.done).toBe(true);
+  });
+
+  it("未読が2件でも、開いた屋台に次の報告を重ねず、閉じてから報告する", async () => {
+    const second = {
+      ...notice,
+      id: "n2",
+      content: {
+        kind: "availability",
+        lodgingName: "架空の宿",
+        checkIn: "2026-08-15",
+        checkOut: "2026-08-16",
+        available: false,
+        nightlyTotalYen: null,
+        bookingUrl: null,
+      },
+      summary: "宿の空きがなくなりました",
+    } as const;
+    const { store } = makeStore({
+      guideState: async () => ({
+        tripId: itinerary.id,
+        version: 1,
+        phase: "before" as const,
+        watch: null,
+        notices: [notice, second].map((item) => ({
+          ...item,
+          sources: [...item.sources],
+          affectedItemIds: [],
+        })),
+        proposals: [],
+        memo: [],
+      }),
+    });
+    store.getState().actions.leaveWithGuide();
+    await flush();
+    expect(store.getState().guide.report).toBe("n1");
+    store.getState().actions.leadToStall("weather");
+    expect(store.getState().guide).toMatchObject({
+      openStall: "weather",
+      report: null,
+      dialogueOpen: false,
+    });
+    store.getState().actions.closeStall();
+    expect(store.getState().guide).toMatchObject({ report: "n2", dialogueOpen: true });
+  });
+
   it("2D では案内を頼むとすぐに屋台を開く", async () => {
     const { store } = makeStore(withNotice);
     store.getState().actions.leaveWithGuide();
     await flush();
-    store.getState().actions.leadToStall("weather", false);
+    store.getState().actions.leadToStall("weather");
     expect(store.getState().guide.openStall).toBe("weather");
   });
 
@@ -313,6 +556,58 @@ describe("残した旅を開く", () => {
     expect(state.session.id).toBe("session-2");
     expect(state.itinerary.current?.id).toBe(itinerary.id);
     expect(state.guide.availability).toBe("ready");
+  });
+
+  it("確認の結果を旅程から入れ、しおりを開けて、前の相談を残さない", async () => {
+    const confirmed = ItinerarySchema.parse({
+      ...fictionalItinerary(),
+      verification: {
+        status: "as_planned",
+        checkedAt: "2026-08-10T06:00:00+09:00",
+        sources: [fictionalSource("schedule")],
+      },
+    });
+    const { store } = makeStore({
+      openSavedTrip: async () => ({ sessionId: "session-2", itinerary: confirmed }),
+    });
+    store.setState((state) => ({
+      ...state,
+      messages: [{ kind: "user", id: "u1", text: "前の人の発言" }],
+      verify: { ...state.verify, result: "changed" },
+      ui: { ...state.ui, view: "storefront" },
+    }));
+    await store.getState().actions.openSavedTrip(confirmed.id);
+    await flush();
+    const state = store.getState();
+    expect(state.messages).toEqual([]);
+    expect(state.verify.result).toBe("as_planned");
+    expect(shioriReady(state)).toBe(true);
+    // のれんをくぐっても通りへ出る
+    state.actions.returnToShop();
+    store.getState().actions.leaveShop();
+    expect(store.getState().ui.view).toBe("street");
+  });
+
+  it("店内の返答の途中でも、前の通信を止める", async () => {
+    let aborted = false;
+    const chat: ChatTransport["chat"] = (_request, _onMessage, signal) =>
+      new Promise((_resolve, reject) => {
+        signal.addEventListener("abort", () => {
+          aborted = true;
+          reject(new DOMException("中止", "AbortError"));
+        });
+      });
+    const { store } = makeStore({
+      chat,
+      openSavedTrip: async () => ({ sessionId: "session-2", itinerary }),
+    });
+    void store.getState().actions.send("店内の発言");
+    await flush();
+    await store.getState().actions.openSavedTrip(itinerary.id);
+    await flush();
+    expect(aborted).toBe(true);
+    expect(store.getState().session.id).toBe("session-2");
+    expect(store.getState().session.streaming).toBe(false);
   });
 
   it("ガイドのない環境でも、屋台の情報は読める", async () => {
