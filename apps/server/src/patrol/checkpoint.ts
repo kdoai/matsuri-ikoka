@@ -20,12 +20,9 @@ import { nowInJapan, todayInJapan } from "../domain/calendar";
 import {
   announcesDate,
   announcesTime,
-  hasScheduleValue,
-  isInstructionLine,
-  isOtherEvent,
+  hasScheduleSignal,
   lineHash,
   mentionsDate,
-  mentionsOtherYear,
   mentionsTime,
   normalizeLine,
   saysCancelled,
@@ -36,6 +33,10 @@ import type { RunPage, RunTarget, ScheduleBaseline } from "./types";
 // 検問。見回り係の報告は信用しない入力なので、形・URL・出典を確かめ、変化の種類はコードが決める。
 // モデルの見立て（result）だけでは通知を作らない。値がコードで読んだ新しい行に書いてあることを確かめる。
 // ページの文章は次へ渡さない。ここから出るのは、決まった形の値と出典だけ。
+//
+// 最も避けたいのは、本物の中止や変更を黙って失うこと。決まったと言い切れるものだけを開催の変更や中止にし、
+// 新しい行に中止・延期・日時の語があるのに言い切れないものは、値を持たないお知らせにする。
+// 語がないときだけ、黙って比べる元を進める。
 
 export type ReportParse =
   | { ok: true; report: PatrolReport }
@@ -69,17 +70,25 @@ type Claim =
   | { kind: "postponed" }
   | { kind: "cancelled" };
 
+/** いま分かっている状態 */
+export interface KnownState {
+  baseline: ScheduleBaseline;
+  /** 検問を通って中止と決まっている */
+  cancelled: boolean;
+  /** 検問を通って、新しい日の分からない延期と決まっている */
+  postponed: boolean;
+}
+
 /** 報告が言っている変化。前回の値と比べてコードで決める。分からない値（null）は変化にしない */
-function claimsOf(
-  finding: PatrolFinding,
-  baseline: ScheduleBaseline,
-  alreadyCancelled: boolean,
-): Claim[] {
+function claimsOf(finding: PatrolFinding, known: KnownState): Claim[] {
   const claims: Claim[] = [];
-  if (finding.result === "cancelled" && !alreadyCancelled) claims.push({ kind: "cancelled" });
+  const { baseline } = known;
+  if (finding.result === "cancelled" && !known.cancelled) claims.push({ kind: "cancelled" });
   const { date, start, end } = finding.observed;
   if (date !== null && date !== baseline.date) claims.push({ kind: "date", after: date });
-  if (date === null && finding.result === "changed") claims.push({ kind: "postponed" });
+  if (date === null && finding.result === "changed" && !known.postponed) {
+    claims.push({ kind: "postponed" });
+  }
   if (start !== null && start !== baseline.start) {
     claims.push({ kind: "time", field: "start", after: start });
   }
@@ -87,32 +96,31 @@ function claimsOf(
   return claims;
 }
 
-function claimHolds(claim: Claim, evidence: PageEvidence, added: readonly string[]): boolean {
+function claimHolds(claim: Claim, evidence: PageEvidence, occurrence: string): boolean {
+  const { added, lines } = evidence;
+  const unchanged = lines.filter((line) => !added.includes(line));
   switch (claim.kind) {
     case "date":
       return (
         added.some((line) => announcesDate(line, claim.after)) ||
         // 新しい行で順延と言えていて、前から載っている予備日へ移るとき
-        (added.some(saysPostponed) &&
-          evidence.lines.some((line) => mentionsDate(line, claim.after) && !isOtherEvent(line)))
+        (added.some((line) => saysPostponed(line, occurrence)) &&
+          unchanged.some((line) => mentionsDate(line, claim.after)))
       );
     case "time":
       return added.some((line) => announcesTime(line, claim.after));
     case "postponed":
-      return added.some(saysPostponed);
+      return added.some((line) => saysPostponed(line, occurrence));
     case "cancelled":
-      return added.some(saysCancelled);
+      return added.some((line) => saysCancelled(line, occurrence));
   }
 }
 
 /** 値が、変わっていない行にだけ書いてあるか（読むだけで変化と言っているとき） */
 function valueOnUnchangedLine(claim: Claim, evidence: PageEvidence): boolean {
-  if (claim.kind === "date") {
-    return evidence.lines.some((line) => mentionsDate(line, claim.after));
-  }
-  if (claim.kind === "time") {
-    return evidence.lines.some((line) => mentionsTime(line, claim.after));
-  }
+  const unchanged = evidence.lines.filter((line) => !evidence.added.includes(line));
+  if (claim.kind === "date") return unchanged.some((line) => mentionsDate(line, claim.after));
+  if (claim.kind === "time") return unchanged.some((line) => mentionsTime(line, claim.after));
   return false;
 }
 
@@ -121,11 +129,6 @@ function fingerprintOf(parts: unknown): string {
 }
 
 const compact = (text: string) => text.replace(/\s+/g, "");
-
-/** 写した開催日の文が、ページにそのまま書いてあるか。照合だけに使い、残さない */
-function dateTextOnPage(dateText: string, evidence: PageEvidence): boolean {
-  return compact(evidence.lines.join("")).includes(compact(normalizeLine(dateText)));
-}
 
 /** 同じ組織のサイトをまとめるための、日本の第2レベルの区分 */
 const JP_GENERIC = new Set(["ac", "ad", "co", "ed", "go", "gr", "lg", "ne", "or"]);
@@ -167,8 +170,10 @@ export type FindingOutcome =
   | "schedule_change"
   | "cancellation"
   | "announcement"
-  /** 読んだページはあるが、言っている値が読めるページのどこからも確かめられない。指示に見える文字がある */
+  /** 言っている値が読めるページのどこにもなく、新しい行に開催に関わる語もない */
   | "rejected"
+  /** 新しい行に開催に関わる語があるが、公式でも確かでもないページだけなので知らせない */
+  | "unconfirmed"
   /** 実際に開いたページが1つもない。結果として扱わず、調べ直す */
   | "not_read";
 
@@ -181,12 +186,14 @@ export interface FindingCheck {
   baseline: ScheduleBaseline | null;
   /** 新しい中止の状態。変わらなければ null */
   cancelled: boolean | null;
-  /** 確かな開催の変更か中止を知らせる */
-  firm: boolean;
+  /** 新しい延期の状態。変わらなければ null */
+  postponed: boolean | null;
+  /** 写した文がページになかった（信用しないだけで、判定は止めない） */
+  dateTextMismatch: boolean;
 }
 
-/** 主張を支持するページから、確度をコードで決める */
-function firmSources(
+/** 1つの主張を支持するページの確度。公式か、別のサイトが2つそろうと確かとする */
+function claimSources(
   pages: readonly RunPage[],
   checkedOn: string,
 ): { sources: CheckedSource[]; firm: boolean } {
@@ -220,31 +227,30 @@ function checked(
   return parsed.success ? parsed.data : null;
 }
 
+const uniquePages = (pages: readonly RunPage[]): RunPage[] =>
+  pages.filter((page, index) => pages.indexOf(page) === index);
+
 /**
  * 1つの対象の報告を確かめる。
  * - 読んだページは、依頼にあり、実際に開いたものだけを数える。1つもなければ not_read
- * - 変化は、値がコードで読んだ新しい行に書いてあるときだけ認める。指示に見える行、別の年の行、
- *   一部の催しや別の催しの行は根拠にしない
- * - 変わっていない行にしかない値は、主張を捨てるだけで、お知らせの判定へ進む
- * - 開催の変更と中止は、主張ごとに、公式か2つのサイトで確かめられたときだけ。足りなければ、値を持たない
- *   お知らせ（announcement）に落とし、くわしくは出典のページを開いてもらう
- * - 新しい行に中止や延期の言葉があるのに報告が何も言っていなければ、黙って捨てず、お知らせにする
+ * - 変化は、値がコードで読んだ新しい行に書いてあるときだけ認める。指示に見える行は根拠にしない
+ * - 開催の変更と中止は、主張ごとに、公式か2つのサイトで確かめられたときだけ。足りなければ値を持たないお知らせにする
+ * - それ以外で新しい行に開催に関わる語があれば、公式か確かな出典のページなら、値を持たないお知らせにする
+ * - 語がなければ通知にしない。ここだけが黙って比べる元を進める道になる
  */
 export function checkFinding(input: {
   finding: PatrolFinding;
   target: RunTarget;
-  baseline: ScheduleBaseline;
-  /** 検問を通って中止と決まっている */
-  cancelled?: boolean;
-  /** これまでに知らせた開催の変更と中止の数 */
-  changeCount?: number;
+  known: KnownState;
+  /** 同じ内容の変更を見分ける順番の値。日程が前の値に戻ったときに増える */
+  sequence?: number;
   evidence: readonly PageEvidence[];
   fetchedUrls: readonly string[];
   now: number;
 }): FindingCheck {
-  const { finding, target, baseline, evidence, fetchedUrls } = input;
-  const alreadyCancelled = input.cancelled ?? false;
-  const changeCount = input.changeCount ?? 0;
+  const { finding, target, known, evidence, fetchedUrls } = input;
+  const { baseline } = known;
+  const sequence = input.sequence ?? 0;
   const nowDate = new Date(input.now);
   const checkedAt = nowInJapan(nowDate);
   const checkedOn = todayInJapan(nowDate);
@@ -266,7 +272,20 @@ export function checkFinding(input: {
     if (read.includes(page) || evidenceOf(page)?.transient === true) continue;
     read.push(page);
   }
-  const readUrls = read.map((page) => page.url);
+  const verifiable = read.filter((page) => evidenceOf(page)?.verifiable === true);
+  const unverifiable = read.filter((page) => evidenceOf(page)?.verifiable !== true);
+
+  // 写した文は補助の項目なので、ページになくても信用しないだけで、判定は止めない
+  const dateTextMismatch =
+    finding.dateText !== null &&
+    verifiable.length > 0 &&
+    unverifiable.length === 0 &&
+    !verifiable.some((page) =>
+      compact((evidenceOf(page)?.lines ?? []).join("")).includes(
+        compact(normalizeLine(finding.dateText ?? "")),
+      ),
+    );
+
   const result = (
     outcome: FindingOutcome,
     changes: CheckedChange[] = [],
@@ -274,48 +293,36 @@ export function checkFinding(input: {
   ): FindingCheck => ({
     outcome,
     changes,
-    readUrls,
+    readUrls: read.map((page) => page.url),
     baseline: null,
     cancelled: null,
-    firm: false,
+    postponed: null,
+    dateTextMismatch,
     ...extra,
   });
-
   if (read.length === 0) return result("not_read");
-  if (finding.dateText !== null && isInstructionLine(finding.dateText)) return result("rejected");
 
-  const verifiable = read.filter((page) => evidenceOf(page)?.verifiable === true);
-  const unverifiable = read.filter((page) => evidenceOf(page)?.verifiable !== true);
+  const addedOf = (page: RunPage) => evidenceOf(page)?.added ?? [];
+  const claims = claimsOf(finding, known);
 
-  // 読んだページがすべて読み直せたのに、写した文がどこにもなければ、報告そのものを信用しない
-  if (
-    finding.dateText !== null &&
-    verifiable.length > 0 &&
-    unverifiable.length === 0 &&
-    !verifiable.some((page) => {
-      const item = evidenceOf(page);
-      return item !== undefined && dateTextOnPage(finding.dateText ?? "", item);
-    })
-  ) {
-    return result("rejected");
-  }
-
-  /** 別の年の行は根拠にしない */
-  const addedOf = (page: RunPage): string[] =>
-    (evidenceOf(page)?.added ?? []).filter((line) => !mentionsOtherYear(line, target.date));
-
+  /**
+   * 値を持たないお知らせ。出典の確度はページごとに決め、別々の話を合わせて上げない。
+   * 指紋は、基準と比べて決めた主張と新しい行から作る（見立ての揺れで、読んだお知らせを未読に戻さない）
+   */
   const announcements = (topics: readonly NoticeTopic[], pages: readonly RunPage[]) => {
-    // 指紋に報告の値を入れる。読めないページでは、時刻の変更のあとの中止を重複として捨てないため
-    const marks = pages.flatMap((page) => {
-      const added = addedOf(page);
-      return evidenceOf(page)?.verifiable === true ? added.map(lineHash) : [page.url];
-    });
-    const parts = [finding.result, finding.observed, [...marks].sort()];
+    const marks = pages.flatMap((page) =>
+      evidenceOf(page)?.verifiable === true ? addedOf(page).map(lineHash) : [page.url],
+    );
+    const sources = pages.map((page) => ({
+      url: page.url,
+      checkedAt: checkedOn,
+      confidence: page.confidence === "official" ? ("official" as const) : ("single" as const),
+    }));
     return topics.flatMap((topic) => {
       const change = checked(
         { kind: "announcement", festivalId: target.festivalId, date: target.date, topic },
-        ["announcement", target.key, topic, ...parts],
-        firmSources(pages, checkedOn).sources,
+        ["announcement", target.key, topic, claims, [...marks].sort()],
+        sources,
         checkedAt,
       );
       return change === null ? [] : [change];
@@ -324,63 +331,67 @@ export function checkFinding(input: {
   const topicsOr = (fallback: NoticeTopic): readonly NoticeTopic[] =>
     finding.topics.length > 0 ? finding.topics : [fallback];
 
-  const claims = claimsOf(finding, baseline, alreadyCancelled);
-  const supportOf = (claim: Claim) =>
-    verifiable.filter((page) => {
-      const item = evidenceOf(page);
-      return item !== undefined && claimHolds(claim, item, addedOf(page));
-    });
-  const firmClaims: { claim: Claim; pages: RunPage[] }[] = [];
+  // 主張を、確かなもの・確かでないもの・確かめられないもの・根拠のないものに分ける
+  const firmClaims: { claim: Claim; pages: RunPage[]; sources: CheckedSource[] }[] = [];
   const weakPages: RunPage[] = [];
-  let unsupported = 0;
-  let unknown = 0;
+  let unknown = false;
+  let unsupported = false;
   for (const claim of claims) {
-    const pages = supportOf(claim);
+    const pages = verifiable.filter((page) => {
+      const item = evidenceOf(page);
+      return item !== undefined && claimHolds(claim, item, target.date);
+    });
     if (pages.length > 0) {
-      if (firmSources(pages, checkedOn).firm) firmClaims.push({ claim, pages });
-      else weakPages.push(...pages.filter((page) => !weakPages.includes(page)));
+      const { sources, firm } = claimSources(pages, checkedOn);
+      if (firm) firmClaims.push({ claim, pages, sources });
+      else weakPages.push(...pages);
       continue;
     }
     if (claim.kind === "time" && baseline[claim.field] === null) continue;
     if (unverifiable.length > 0) {
-      unknown += 1;
+      unknown = true;
       continue;
     }
     const stale = verifiable.some((page) => {
       const item = evidenceOf(page);
       return item !== undefined && valueOnUnchangedLine(claim, item);
     });
-    if (!stale) unsupported += 1;
+    if (!stale) unsupported = true;
   }
 
   const changes: CheckedChange[] = [];
-  let next: ScheduleBaseline | null = null;
-  let cancelled: boolean | null =
-    alreadyCancelled && finding.result === "as_planned" ? false : null;
+  const state: Pick<FindingCheck, "baseline" | "cancelled" | "postponed"> = {
+    baseline: null,
+    cancelled: null,
+    postponed: null,
+  };
   const cancellation = firmClaims.find(({ claim }) => claim.kind === "cancelled");
   if (cancellation !== undefined) {
     const change = checked(
       { kind: "cancellation", festivalId: target.festivalId, date: target.date },
-      ["cancellation", target.key, changeCount],
-      firmSources(cancellation.pages, checkedOn).sources,
+      ["cancellation", target.key, baseline.date, sequence],
+      cancellation.sources,
       checkedAt,
     );
-    if (change !== null) changes.push(change);
-    cancelled = true;
+    if (change !== null) {
+      changes.push(change);
+      state.cancelled = true;
+    }
   } else if (firmClaims.length > 0) {
     const list: FestivalChange[] = [];
-    const updated: ScheduleBaseline = { ...baseline };
-    const pages: RunPage[] = [];
-    for (const { claim, pages: support } of firmClaims) {
-      pages.push(...support.filter((page) => !pages.includes(page)));
+    const next: ScheduleBaseline = { ...baseline };
+    let postponed: boolean | null = null;
+    for (const { claim } of firmClaims) {
       if (claim.kind === "date") {
         list.push({ field: "date", before: baseline.date, after: claim.after });
-        updated.date = claim.after;
+        next.date = claim.after;
+        postponed = false;
       } else if (claim.kind === "postponed") {
         list.push({ field: "date", before: baseline.date, after: null });
+        postponed = true;
       } else if (claim.kind === "time") {
         list.push({ field: claim.field, before: baseline[claim.field], after: claim.after });
-        updated[claim.field] = claim.after;
+        next[claim.field] = claim.after;
       }
     }
     const content: NoticeContent = {
@@ -389,62 +400,54 @@ export function checkFinding(input: {
       date: target.date,
       changes: list,
     };
-    const change = checked(
-      content,
-      [content, changeCount],
-      firmClaims
-        .flatMap(({ pages: support }) => firmSources(support, checkedOn).sources)
-        .filter((source, index, all) => all.findIndex((item) => item.url === source.url) === index),
-      checkedAt,
-    );
+    const sources = firmClaims
+      .flatMap((item) => item.sources)
+      .filter((source, index, all) => all.findIndex((one) => one.url === source.url) === index);
+    const change = checked(content, [content, sequence], sources, checkedAt);
     if (change !== null) {
       changes.push(change);
-      next = updated;
+      state.baseline = next;
+      state.postponed = postponed;
+      // 開催が動いたので、前の日の中止は持ち越さない
+      state.cancelled = false;
     }
   }
   const firm = changes.length > 0;
 
-  // 確かでない主張は、値を持たないお知らせに落とす
-  if (weakPages.length > 0) changes.push(...announcements(topicsOr("other"), weakPages));
-  if (unknown > 0) changes.push(...announcements(topicsOr("other"), unverifiable));
-
-  if (changes.length === 0) {
-    // 主張がないか確かめられなくても、新しい行に日程の言葉があれば、黙って捨てない
-    const noValues =
-      finding.observed.date === null &&
-      finding.observed.start === null &&
-      finding.observed.end === null;
-    // すでに知らせた中止や順延の言葉が、ページに載り直しただけなら数えない
-    const knownMove = baseline.date !== target.date && finding.observed.date === baseline.date;
-    const unclear = verifiable.filter((page) => {
-      const added = addedOf(page);
-      return (
-        added.some(
-          (line) =>
-            (saysCancelled(line) && !alreadyCancelled) || (saysPostponed(line) && !knownMove),
-        ) ||
-        (noValues && added.some(hasScheduleValue)) ||
-        (evidenceOf(page)?.suspiciousSchedule ?? 0) > 0
-      );
-    });
-    if (unclear.length > 0) changes.push(...announcements(topicsOr("other"), unclear));
-    else if (finding.topics.length > 0) {
-      // お知らせは、読めるページなら新しい行があるときだけ、読めないページならそのまま受ける
-      const topicPages = [
-        ...verifiable.filter((page) => addedOf(page).length > 0),
-        ...unverifiable,
-      ];
-      if (topicPages.length > 0) changes.push(...announcements(finding.topics, topicPages));
-    }
+  if (weakPages.length > 0) {
+    changes.push(...announcements(topicsOr("other"), uniquePages(weakPages)));
   }
+  if (unknown) changes.push(...announcements(topicsOr("other"), unverifiable));
 
   if (firm) {
-    return result(cancellation !== undefined ? "cancellation" : "schedule_change", changes, {
-      baseline: next,
-      cancelled,
-      firm: true,
-    });
+    return result(cancellation !== undefined ? "cancellation" : "schedule_change", changes, state);
   }
-  if (changes.length > 0) return result("announcement", changes, { cancelled });
-  return result(unsupported > 0 ? "rejected" : "no_change", [], { cancelled });
+  if (changes.length > 0) return result("announcement", changes);
+
+  // 主張で決まらなかった。新しい行に開催に関わる語があれば、黙って捨てない
+  const signalKnown = {
+    occurrence: target.date,
+    date: baseline.date,
+    start: baseline.start,
+    end: baseline.end,
+    cancelled: known.cancelled,
+    postponed: known.postponed || baseline.date !== target.date,
+  };
+  const signalPages = verifiable.filter(
+    (page) =>
+      addedOf(page).some((line) => hasScheduleSignal(line, signalKnown)) ||
+      (evidenceOf(page)?.suspiciousSchedule ?? 0) > 0,
+  );
+  const trusted = signalPages.filter(
+    (page) => page.confidence === "official" || page.confidence === "corroborated",
+  );
+  if (trusted.length > 0) return result("announcement", announcements(topicsOr("other"), trusted));
+
+  // お知らせは、読めるページなら新しい行があるときだけ、読めないページならそのまま受ける
+  const topicPages = [...verifiable.filter((page) => addedOf(page).length > 0), ...unverifiable];
+  if (finding.topics.length > 0 && topicPages.length > 0) {
+    return result("announcement", announcements(finding.topics, topicPages));
+  }
+  if (signalPages.length > 0) return result("unconfirmed");
+  return result(unsupported ? "rejected" : "no_change");
 }

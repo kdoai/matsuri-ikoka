@@ -4,11 +4,12 @@ import {
   announcesTime,
   changedLinesForAgent,
   diffLines,
+  hasScheduleSignal,
   isInstructionLine,
+  type KnownSchedule,
   lineHash,
   lineHashes,
   mentionsDate,
-  mentionsOtherYear,
   mentionsTime,
   needsAgent,
   normalizeLine,
@@ -50,8 +51,24 @@ describe("pageLines", () => {
     expect(diffLines(lineHashes(before), after).added).toEqual(["開始 21:00", "終了 18:30"]);
   });
 
-  it("見えない文字は取り除く", () => {
+  it("見えない文字を取り除き、波線の字形をそろえる", () => {
     expect(normalizeLine("中​止﻿します")).toBe("中止します");
+    expect(normalizeLine("18時〜21時")).toBe(normalizeLine("18時～21時"));
+    expect(normalizeLine("18時〜21時")).toBe("18時~21時");
+  });
+
+  it.each([
+    ["「<div 」の繰り返し", "<div ".repeat(80_000)],
+    ["数字だけの長い行", `<p>${"1".repeat(400_000)}</p>`],
+    ["閉じないタグの繰り返し", "<p".repeat(200_000)],
+    ["script の繰り返し", "<script>".repeat(50_000)],
+    ["日付に似た文字の繰り返し", `<p>${"11月".repeat(100_000)}</p>`],
+  ])("%sでも、すぐに終わる", (_name, html) => {
+    const started = performance.now();
+
+    pageLines(html);
+
+    expect(performance.now() - started).toBeLessThan(1_500);
   });
 });
 
@@ -205,6 +222,11 @@ describe("mentionsDate", () => {
     ["11月21日(土)〜22日(日)", "2026-11-22"],
     ["11月21〜22日", "2026-11-21"],
     ["11月21〜22日", "2026-11-22"],
+    ["8.23(日)", "2026-08-23"],
+    ["11/21・22", "2026-11-21"],
+    ["11/21・22", "2026-11-22"],
+    ["R8.8.23", "2026-08-23"],
+    ["令和8年8月23日", "2026-08-23"],
   ])("「%s」には %s が書いてある", (line, date) => {
     expect(mentionsDate(line, date)).toBe(true);
   });
@@ -226,6 +248,9 @@ describe("mentionsDate", () => {
     ["22日(日)は休みです", "2026-11-22"],
     ["3日間の開催", "2026-11-03"],
     ["2025-11-15 開催", "2026-11-15"],
+    ["2025年11月15日", "2026-11-15"],
+    ["R7.8.23", "2026-08-23"],
+    ["令和7年8月23日", "2026-08-23"],
   ])("「%s」には %s は書いてない", (line, date) => {
     expect(mentionsDate(line, date)).toBe(false);
   });
@@ -242,12 +267,17 @@ describe("mentionsTime", () => {
     ["09:00 開場", "09:00"],
     ["夕方6時から", "18:00"],
     ["夜7時から", "19:00"],
+    ["夜の部 7時から", "19:00"],
     ["正午から", "12:00"],
     ["午後0時から", "12:00"],
     ["10時05分から", "10:05"],
     ["午後6時から", "18:00"],
     ["午後6時〜9時", "21:00"],
     ["十八時から", "18:00"],
+    ["PM6:00", "18:00"],
+    ["6:00PM", "18:00"],
+    ["6:00 pm", "18:00"],
+    ["AM9:30", "09:30"],
   ])("「%s」には %s が書いてある", (line, time) => {
     expect(mentionsTime(line, time)).toBe(true);
   });
@@ -258,6 +288,7 @@ describe("mentionsTime", () => {
     ["20時から", "19:30"],
     ["午後6時から", "06:00"],
     ["夕方6時から", "06:00"],
+    ["PM6:00", "06:00"],
     ["3時間かかります", "03:00"],
   ])("「%s」には %s は書いてない", (line, time) => {
     expect(mentionsTime(line, time)).toBe(false);
@@ -277,8 +308,20 @@ describe("中止と延期の文", () => {
     "花火大会ならびに神輿渡御は中止します",
     "今年の開催は中止いたします",
     "中止が決まりました",
+    "開催中止について",
+    // 中止の告知に並ぶ案内で、決定を見失わない
+    "本年度の鈴鳴灯籠まつりは中止いたします。なお、駐車場の営業もございません",
+    "今年の祭りは中止します。シャトルバスも運休します",
+    "祭りは中止します(申込済みの方には返金します)",
+    "神事のみ行い、今年の祭りは中止いたします",
+    "今年の祭りは中止します。前夜祭も行いません",
+    "今年の祭りは中止となりました。詳細は受付までお問い合わせください。",
+    "本日の祭りは中止です。臨時バスは運行しません",
+    // 別の年を述べていても、今回の決定を見失わない
+    "2025年に続き、本年も開催を中止いたします",
+    "今年の祭りは中止します。次回は2027年に開催の予定です",
   ])("「%s」は中止が決まった文", (line) => {
-    expect(saysCancelled(line)).toBe(true);
+    expect(saysCancelled(line, "2026-08-16")).toBe(true);
   });
 
   it.each([
@@ -287,15 +330,40 @@ describe("中止と延期の文", () => {
     "荒天中止",
     "小雨決行、荒天時は中止",
     "中止することがあります",
+    "中止することがございます",
     "天候により中止となる場合があります",
     "中止の場合は決定次第お知らせします",
+    "中止が決定次第お知らせします",
+    "中止の際はホームページでお知らせします",
+    "中止のときは、ホームページでお知らせします",
+    "雨天時には中止いたします",
+    "荒天時、中止いたします",
+    "雨なら中止します",
+    "雨であれば中止いたします",
+    "天候によっては中止いたします",
+    "中止・順延の判断は当日午前7時に発表します",
     "中止はありません",
+    "中止の予定はありません",
+    "中止は致しません",
+    "昨年は台風のため中止となりました",
     "前夜祭は中止しました",
     "説明会は中止します",
     "一部の催しは中止します",
     "神輿渡御のみ中止します",
+    "2019年の巡行は中止でした",
+    "令和元年は中止しました",
+    "二〇二五年の開催は中止",
+    "令和6年度の開催は中止します",
   ])("「%s」は中止が決まった文ではない", (line) => {
-    expect(saysCancelled(line)).toBe(false);
+    expect(saysCancelled(line, "2026-08-16")).toBe(false);
+  });
+
+  it("年度は4月から翌年3月までの幅で見る", () => {
+    const line = "1月の祭りの令和7年度の開催は中止します";
+
+    // 令和7年度は 2025年4月から2026年3月まで
+    expect(saysCancelled(line, "2026-01-15")).toBe(true);
+    expect(saysCancelled(line, "2026-08-16")).toBe(false);
   });
 
   it.each([
@@ -303,14 +371,16 @@ describe("中止と延期の文", () => {
     "延期することになりました",
     "順延することが決定しました",
     "今年の開催は延期いたします",
+    "来年(2027年)に延期します",
+    "2027年8月に延期します",
   ])("「%s」は延期が決まった文", (line) => {
-    expect(saysPostponed(line)).toBe(true);
+    expect(saysPostponed(line, "2026-08-16")).toBe(true);
   });
 
   it.each(["雨天順延", "荒天の場合は翌日に順延", "順延することもあります"])(
     "「%s」は延期が決まった文ではない",
     (line) => {
-      expect(saysPostponed(line)).toBe(false);
+      expect(saysPostponed(line, "2026-08-16")).toBe(false);
     },
   );
 });
@@ -323,8 +393,15 @@ describe("開催の根拠にできる行", () => {
     "鈴鳴灯籠まつり 8月23日",
     "8月23日(日)",
     "8月23日(日) 18:30〜",
+    "2026.8.23(日)",
+    "日時 8月23日(日)",
+    "日時:8月23日",
+    "とき 8月23日",
+    "期日 8月23日",
+    "日にち:8月23日",
+    "開催を8月23日に変更します(受付は9時から)",
   ])("「%s」は 8月23日の開催を述べている", (line) => {
-    expect(announcesDate(line, "2026-08-23")).toBe(true);
+    expect(announcesDate(normalizeLine(line), "2026-08-23")).toBe(true);
   });
 
   it.each(["8月23日に説明会", "8月23日は休館です", "8月23日 申込締切", "8月23日に臨時バスを運行"])(
@@ -339,18 +416,78 @@ describe("開催の根拠にできる行", () => {
     expect(announcesTime("説明会 19:30", "19:30")).toBe(false);
     expect(announcesTime("シャトルバス 19:30 発", "19:30")).toBe(false);
   });
+});
 
-  it.each(["2019年の巡行は中止でした", "令和元年は中止しました", "二〇二五年の開催は中止"])(
-    "「%s」は別の年の行",
-    (line) => {
-      expect(mentionsOtherYear(line, "2026-08-16")).toBe(true);
-    },
-  );
+describe("長い行の読み取り", () => {
+  const known: KnownSchedule = {
+    occurrence: "2026-08-16",
+    date: "2026-08-16",
+    start: "18:30",
+    end: "21:00",
+    cancelled: false,
+    postponed: false,
+  };
 
-  it.each(["2026年の開催は中止します", "令和8年8月16日", "今年の開催は中止します"])(
-    "「%s」は別の年の行ではない",
-    (line) => {
-      expect(mentionsOtherYear(line, "2026-08-16")).toBe(false);
-    },
-  );
+  it.each([
+    ["中止の語の繰り返し", "中止".repeat(5_000)],
+    ["日付に似た文字の繰り返し", "11月".repeat(5_000)],
+    ["年の繰り返し", "2026年".repeat(5_000)],
+    ["時刻に似た文字の繰り返し", "午後6時".repeat(5_000)],
+    ["括弧の繰り返し", "(".repeat(10_000)],
+    ["数字と点の繰り返し", "1.".repeat(5_000)],
+    ["区切りの繰り返し", "・".repeat(10_000)],
+  ])("%sでも、すぐに終わる", (_name, text) => {
+    const line = normalizeLine(text);
+    const started = performance.now();
+
+    saysCancelled(line, "2026-08-16");
+    saysPostponed(line, "2026-08-16");
+    announcesDate(line, "2026-08-23");
+    announcesTime(line, "19:30");
+    hasScheduleSignal(line, known);
+    isInstructionLine(line);
+
+    expect(performance.now() - started).toBeLessThan(1_000);
+  });
+});
+
+describe("hasScheduleSignal", () => {
+  const known: KnownSchedule = {
+    occurrence: "2026-08-16",
+    date: "2026-08-16",
+    start: "18:30",
+    end: "21:00",
+    cancelled: false,
+    postponed: false,
+  };
+
+  it.each([
+    "今年の開催は中止します",
+    "雨天の場合は中止します",
+    "開催を延期します",
+    "雨天順延",
+    "8月23日に説明会",
+    "19時に変わりました",
+    "日程が変わりました",
+    "2027年に延期します",
+    "午後7時半から",
+  ])("「%s」は開催に関わる新しい語", (line) => {
+    expect(hasScheduleSignal(line, known)).toBe(true);
+  });
+
+  it.each([
+    "屋台の案内を更新しました",
+    "灯籠は500円です",
+    "開催日 8月16日",
+    "開始 18:30 / 終了 21:00",
+    "2019年の巡行は中止でした",
+    "昨年は台風のため中止となりました",
+  ])("「%s」は開催に関わる新しい語ではない", (line) => {
+    expect(hasScheduleSignal(line, known)).toBe(false);
+  });
+
+  it("すでに知らせた中止や延期の語は、新しい語に数えない", () => {
+    expect(hasScheduleSignal("中止の払い戻しのご案内", { ...known, cancelled: true })).toBe(false);
+    expect(hasScheduleSignal("延期のご案内", { ...known, postponed: true })).toBe(false);
+  });
 });

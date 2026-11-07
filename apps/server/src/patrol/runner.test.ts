@@ -1,4 +1,4 @@
-import { type GuideNotice, type PatrolFinding, PatrolRequestSchema } from "@matsuri-ikoka/schema";
+import { type PatrolFinding, PatrolRequestSchema } from "@matsuri-ikoka/schema";
 import { fictionalNotice } from "@matsuri-ikoka/schema/testing";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createFestivalStore } from "../data/festivalStore";
@@ -176,7 +176,7 @@ describe("架空の祭りのページの変更（順延）", () => {
     }
     const record = await harness.store.readRecord(KEY);
     expect(record?.pending).toBeNull();
-    expect(record?.changeCount).toBe(1);
+    expect(record?.changeCount).toBe(0);
     expect(record?.observed).toEqual({ date: "2026-08-23", start: "18:30", end: "21:00" });
     expect(await firstRun()).toMatchObject({
       status: "done",
@@ -245,6 +245,54 @@ describe("架空の祭りのページの変更（順延）", () => {
     await move("開催日は8月23日に変更となりました", "2026-08-23", "8月23日", "session-3");
 
     expect(harness.store.noticesOf(trip.ref)).toHaveLength(3);
+  });
+});
+
+describe("日付のない延期", () => {
+  const noDate: Omit<PatrolFinding, "festivalId" | "date"> = {
+    result: "changed",
+    observed: { date: null, start: null, end: null },
+    topics: [],
+    dateText: null,
+    pages: [PAGE_URL],
+  };
+
+  it("知らせ済みなら、延期の語がある行が増えても、同じ知らせを重ねない", async () => {
+    const trip = addTrip("a");
+    await baselined();
+    setPage("今年の開催は延期します");
+    agentReports(noDate);
+    await startPatrol(harness.deps);
+    await collectSession(harness.deps, "session-1");
+    expect(harness.store.noticesOf(trip.ref)).toHaveLength(1);
+    expect((await harness.store.readRecord(KEY))?.postponed).toBe(true);
+
+    harness.clock.now += 7 * HOUR;
+    setPage("今年の開催は延期します", "延期に伴う払い戻しのご案内");
+    await startPatrol(harness.deps);
+    await collectSession(harness.deps, "session-2");
+
+    expect(harness.store.noticesOf(trip.ref)).toHaveLength(1);
+  });
+
+  it("新しい日が分かったら、開催日の変更として知らせ、延期の状態を戻す", async () => {
+    const trip = addTrip("a");
+    await baselined();
+    setPage("今年の開催は延期します");
+    agentReports(noDate);
+    await startPatrol(harness.deps);
+    await collectSession(harness.deps, "session-1");
+
+    harness.clock.now += 7 * HOUR;
+    setPage("今年の開催は延期します", POSTPONE_LINE);
+    agentReports(postponed);
+    await startPatrol(harness.deps);
+    await collectSession(harness.deps, "session-2");
+
+    expect(harness.store.noticesOf(trip.ref)).toHaveLength(2);
+    const record = await harness.store.readRecord(KEY);
+    expect(record?.postponed).toBe(false);
+    expect(record?.observed?.date).toBe("2026-08-23");
   });
 });
 
@@ -779,36 +827,65 @@ describe("セッションの後始末", () => {
 });
 
 describe("届けられなかった変化", () => {
-  const fill = (trip: { ref: string; watch: { tripId: string } }) => {
-    // 上限まで未読の確かな通知で埋める
-    const store = harness.store;
-    return Promise.all(
-      Array.from({ length: 50 }, (_, i) => {
-        const notice: GuideNotice = {
-          ...fictionalNotice(),
-          id: `n-${i}`,
-          tripId: trip.watch.tripId,
-        };
-        return store.addNotice(trip as never, notice);
-      }),
-    );
-  };
-
-  it("上限で届けられなければ、比べる元を進めず、次の回に届け直す", async () => {
-    const trip = addTrip("a");
+  it("上限で確かな変化が届かない旅があっても、比べる元を進め、モデルを呼ばずに届け直す", async () => {
+    const full = addTrip("full");
+    const other = addTrip("other");
     await baselined();
-    const before = (await harness.store.readRecord(KEY))?.pages[0]?.lineHashes;
-    await fill(trip);
     setPage(POSTPONE_LINE);
     agentReports(postponed);
     await startPatrol(harness.deps);
+    // 1つの旅だけ、通知の上限に達している
+    const add = harness.store.addNotice.bind(harness.store);
+    const spy = vi
+      .spyOn(harness.store, "addNotice")
+      .mockImplementation(async (trip, notice) =>
+        trip.ref === full.ref ? "full" : add(trip, notice),
+      );
 
     await collectSession(harness.deps, "session-1");
 
     const record = await harness.store.readRecord(KEY);
-    expect(record?.pages[0]?.lineHashes).toEqual(before);
-    expect(record?.observed).toBeNull();
+    // 比べる元は進み、対象の失敗には数えない
+    expect(record?.observed?.date).toBe("2026-08-23");
+    expect(record?.failures).toBe(0);
+    expect(record?.undelivered).toHaveLength(1);
     expect(await firstRun()).toMatchObject({ counts: { schedule_change: 1, undelivered: 1 } });
+    expect(harness.store.noticesOf(other.ref)).toHaveLength(1);
+    expect(harness.store.noticesOf(full.ref)).toEqual([]);
+
+    // 空いたら、次の回に届く。モデルは呼ばない
+    spy.mockRestore();
+    harness.clock.now = (record?.nextCheckAt ?? 0) + 1;
+    await startPatrol(harness.deps);
+
+    expect(harness.agent.requests).toHaveLength(1);
+    expect(harness.store.noticesOf(full.ref)).toHaveLength(1);
+    expect(harness.store.noticesOf(other.ref)).toHaveLength(1);
+    expect((await harness.store.readRecord(KEY))?.undelivered).toEqual([]);
+  });
+
+  it("お知らせが上限で届かなくても、ログだけにして比べる元を進める", async () => {
+    addTrip("a");
+    await baselined();
+    setPage("今年の開催は中止するかもしれません");
+    agentReports({
+      result: "as_planned",
+      observed: { date: PATROL_DATE, start: "18:30", end: "21:00" },
+      topics: [],
+      dateText: null,
+      pages: [PAGE_URL],
+    });
+    await startPatrol(harness.deps);
+    vi.spyOn(harness.store, "addNotice").mockResolvedValue("full");
+    const before = (await harness.store.readRecord(KEY))?.pages[0]?.lineHashes;
+
+    await collectSession(harness.deps, "session-1");
+
+    const record = await harness.store.readRecord(KEY);
+    expect(record?.pages[0]?.lineHashes).not.toEqual(before);
+    expect(record?.undelivered).toEqual([]);
+    expect(record?.failures).toBe(0);
+    expect(console.log).toHaveBeenCalledWith(expect.stringContaining("patrol_notices_full"));
   });
 
   it("お知らせで上限が埋まっていても、公式の中止は届く", async () => {
@@ -1103,6 +1180,154 @@ describe("コードで読めないページ", () => {
     await startPatrol(harness.deps);
 
     expect(harness.agent.requests).toEqual([]);
+  });
+});
+
+describe("対象ごとの時間の上限", () => {
+  it("1つのページで止まっても、起動全体は返り、次の起動はそこで止まらない", async () => {
+    const festival = patrolFestival();
+    const later = {
+      ...festival,
+      id: "hanabi-matsuri",
+      occurrences: festival.occurrences.map((item) => ({
+        ...item,
+        date: "2026-08-20",
+        sources: [
+          {
+            url: "https://hanabi.example.com/2026",
+            checkedAt: "2026-08-01",
+            confidence: "official" as const,
+          },
+        ],
+      })),
+      sources: [
+        {
+          url: "https://hanabi.example.com/2026",
+          checkedAt: "2026-08-01",
+          confidence: "official" as const,
+        },
+      ],
+    };
+    harness.deps.festivals = createFestivalStore([festival, later]);
+    harness.deps.targetTimeoutMs = 20;
+    addTrip("a");
+    const other = watchedTrip("b");
+    harness.store.putWatchedTrip(other.trip, {
+      ...other.itinerary,
+      mainFestivalId: later.id,
+      days: other.itinerary.days.map((day) => ({
+        ...day,
+        date: "2026-08-20",
+        items: day.items.map((item) =>
+          item.type === "festival" ? { ...item, festivalId: later.id } : item,
+        ),
+      })),
+    });
+    harness.pages.script.set("https://hanabi.example.com/2026", {
+      status: "ok",
+      lines: pageLinesFor("花火の案内"),
+    });
+    const read = harness.pages.read;
+    let hung = 0;
+    harness.pages.read = (url) => {
+      if (url !== PAGE_URL) return read(url);
+      hung += 1;
+      return new Promise(() => {});
+    };
+
+    const result = await startPatrol(harness.deps);
+
+    expect(hung).toBe(1);
+    expect(result).toMatchObject({ targets: 1, skipped: 1 });
+    const record = await harness.store.readRecord(KEY);
+    expect(record?.failures).toBe(1);
+    expect(record?.nextCheckAt).toBeGreaterThan(harness.clock.now);
+
+    // 次の起動は、止まった対象に時間を使わない
+    await startPatrol(harness.deps);
+    expect(hung).toBe(1);
+  });
+});
+
+describe("宿の空きの枠", () => {
+  const offer = {
+    id: "rakuten-1",
+    name: "（架空）川べりの宿",
+    nightlyTotalYen: 12_000,
+    bookingUrl: "https://example.com/lodging/kawabe",
+    location: { lat: 35.12, lng: 136.08 },
+    checkedAt: "2026-08-01T06:00:00+09:00",
+    source: {
+      url: "https://example.com/lodging/kawabe",
+      checkedAt: "2026-08-01",
+      confidence: "single" as const,
+    },
+  };
+
+  it("近い祭りの旅が多くても、遠い祭りの旅も調べられる", async () => {
+    const festival = patrolFestival();
+    const later = {
+      ...festival,
+      id: "hanabi-matsuri",
+      occurrences: festival.occurrences.map((item) => ({ ...item, date: "2026-08-20" })),
+    };
+    harness.deps.festivals = createFestivalStore([festival, later]);
+    const stay = (name: string, festivalId: string, date: string) => {
+      const { trip, itinerary } = watchedTrip(name);
+      const [day, ...rest] = itinerary.days;
+      if (day === undefined) throw new Error("旅程に日がありません");
+      harness.store.putWatchedTrip(trip, {
+        ...itinerary,
+        mainFestivalId: festivalId,
+        days: [
+          {
+            ...day,
+            date,
+            items: day.items.map((item) =>
+              item.type === "festival" ? { ...item, festivalId } : item,
+            ),
+            stay: {
+              area: "鈴鳴町",
+              lodging: {
+                checkIn: date,
+                checkOut: "2026-08-21",
+                searchedAt: "2026-08-01T06:00:00+09:00",
+                provider: "rakuten",
+                offers: [offer],
+              },
+            },
+          },
+          ...rest,
+        ],
+      });
+    };
+    for (let i = 0; i < 12; i += 1) stay(`near-${i}`, festival.id, PATROL_DATE);
+    stay("far", later.id, "2026-08-20");
+    setPage();
+    const searched: string[] = [];
+    harness.deps.lodging = {
+      provider: "rakuten",
+      search: async (query) => {
+        searched.push(query.checkIn);
+        return {
+          status: "ok",
+          search: {
+            checkIn: query.checkIn,
+            checkOut: "2026-08-21",
+            searchedAt: "2026-08-10T06:00:00+09:00",
+            provider: "rakuten",
+            offers: [offer],
+          },
+        };
+      },
+    };
+
+    for (let run = 0; run < 3; run += 1) {
+      await startPatrol(harness.deps);
+      harness.clock.now += 7 * HOUR;
+    }
+
+    expect(searched).toContain("2026-08-20");
   });
 });
 

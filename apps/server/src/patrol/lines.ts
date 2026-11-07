@@ -9,6 +9,8 @@ import { MAX_PATROL_CHANGED_LINES, MAX_PATROL_LINE_LENGTH } from "@matsuri-ikoka
 
 /** 1ページから取り出す行の数の上限。保存する文書の大きさを抑える */
 const MAX_LINES = 2_000;
+/** 1行の長さの上限。正規表現にかける文字の長さを抑える */
+const MAX_LINE_LENGTH = 2_000;
 
 /** 中身を読まない要素 */
 const SKIPPED_ELEMENTS = new Set([
@@ -115,13 +117,15 @@ function htmlToText(html: string): string {
 
 /** 見えない文字。語の間に挟むと、指示の見分けをすり抜けられる */
 const INVISIBLE_CHARS = /​|‌|‍|⁠|﻿|­/g;
+/** 波線の字形。NFKC ではそろわないものをそろえる */
+const WAVE_DASHES = /〜|∼|〰/g;
 
 function withoutInvisible(text: string): string {
   return text.replace(INVISIBLE_CHARS, "");
 }
 
 const RELATIVE_TIME =
-  "(?:(?:\\d+|数|[一二三四五六七八九十]+) ?(?:秒|分|時間|日|週間|か月|ヶ月|カ月|ヵ月|ケ月|年) ?前|ついさっき|今さっき|さっき|たった今|先ほど|一昨日|おととい|昨日)";
+  "(?:(?:\\d{1,6}|数|[一二三四五六七八九十]{1,3}) ?(?:秒|分|時間|日|週間|か月|ヶ月|カ月|ヵ月|ケ月|年) ?前|ついさっき|今さっき|さっき|たった今|先ほど|一昨日|おととい|昨日)";
 const RELATIVE_LABEL = "(?:更新|投稿|公開)(?:日時?)?";
 /** 行全体が相対的な時刻だけ（「3日前」「3日前に更新」） */
 const WHOLE_RELATIVE = new RegExp(
@@ -141,7 +145,10 @@ const RELATIVE_THEN_LABEL = new RegExp(`${RELATIVE_TIME} ?に?(${RELATIVE_LABEL}
  * 消し損ねても余分に調べるだけで、変更を見逃すことはない。何も残らなければ空文字
  */
 export function normalizeLine(raw: string): string {
-  const line = withoutInvisible(raw.normalize("NFKC")).replace(/\s+/g, " ").trim();
+  const line = withoutInvisible(raw.slice(0, MAX_LINE_LENGTH).normalize("NFKC"))
+    .replace(WAVE_DASHES, "~")
+    .replace(/\s+/g, " ")
+    .trim();
   const whole = WHOLE_RELATIVE.exec(line);
   const cleaned = whole
     ? (whole[1] ?? "")
@@ -246,7 +253,23 @@ export function changedLinesForAgent(diff: LineDiff): string[] {
 }
 
 // ---------------------------------------------------------------------------
-// 根拠の照合。報告の値が、コードで読んだ行に書いてあるかを確かめる
+// 文に分ける。判定は文ごとに行う。中止の告知には、払い戻しや交通の案内がよく並ぶため
+
+const WEEKDAY_PAREN = /^[月火水木金土日祝・]{1,4}(?:曜日?)?$/;
+
+/** 行を文に分ける。括弧の中の補足は別の文にする。曜日の括弧はそのまま残す */
+function sentencesOf(line: string): string[] {
+  const notes: string[] = [];
+  const body = line.normalize("NFKC").replace(/\(([^()]{1,200})\)/g, (whole, inner: string) => {
+    if (WEEKDAY_PAREN.test(inner)) return whole;
+    notes.push(inner);
+    return " ";
+  });
+  return [...body.split(/[。!?]/), ...notes].map((text) => text.trim()).filter(Boolean);
+}
+
+// ---------------------------------------------------------------------------
+// 日付と時刻を読む
 
 const KANJI_DIGITS: Record<string, number> = {
   〇: 0,
@@ -284,15 +307,16 @@ interface MonthDay {
   year: number | null;
 }
 
-const validDay = (month: number | null, day: number) =>
-  day >= 1 && day <= 31 && (month === null || (month >= 1 && month <= 12));
+const eraYear = (era: string): number => (era === "元" ? 1 : Number(era)) + 2018;
 
-/** 行に書いてある日付を読む。月の省略は、同じ行の前の日付の月を引き継ぐ */
+/** 行に書いてある日付を読む。月や年の省略は、同じ行の前の日付から引き継ぐ */
 function datesIn(line: string): MonthDay[] {
   const text = withArabicDigits(line);
   const dates: MonthDay[] = [];
   const add = (year: number | null, month: number | null, day: number) => {
-    if (validDay(month, day)) dates.push({ year, month, day });
+    if (day >= 1 && day <= 31 && (month === null || (month >= 1 && month <= 12))) {
+      dates.push({ year, month, day });
+    }
   };
   // 2026-11-15・2026.11.15・2026/11/15。「5-6人」「3.1km」は年がないので日付にしない
   for (const match of text.matchAll(
@@ -300,24 +324,39 @@ function datesIn(line: string): MonthDay[] {
   )) {
     add(Number(match[1]), Number(match[2]), Number(match[3]));
   }
-  // 11/15。「1/2人」のような数は日付にしない
+  // R8.8.23・令和8.8.23
   for (const match of text.matchAll(
-    /(?<![\d/.-])(\d{1,2})\/(\d{1,2})(?![\d/]|\s*(?:%|km|kg|m\b|人|名|円|個|本|杯))/g,
+    /(?:\br|令和)\s*(\d{1,2}|元)\s*[-./]\s*(\d{1,2})\s*[-./]\s*(\d{1,2})(?!\d)/gi,
   )) {
+    add(eraYear(match[1] ?? ""), Number(match[2]), Number(match[3]));
+  }
+  // 8.23(日)。年のない点の区切りは、曜日があるときだけ日付にする
+  for (const match of text.matchAll(/(?<![\d.])(\d{1,2})\.(\d{1,2})(?=\s*\([月火水木金土日祝])/g)) {
     add(null, Number(match[1]), Number(match[2]));
+  }
+  // 11/15、11/21・22。「1/2人」のような数は日付にしない
+  for (const match of text.matchAll(
+    /(?<![\d/.-])(\d{1,2})\/(\d{1,2})((?:\s*(?:\([^)]{1,4}\))?\s*[・,、~〜-]\s*\d{1,2}(?![\d/]))*)(?![\d/]|\s*(?:%|km|kg|m\b|人|名|円|個|本|杯))/g,
+  )) {
+    const month = Number(match[1]);
+    add(null, month, Number(match[2]));
+    for (const more of (match[3] ?? "").matchAll(/\d{1,2}/g)) add(null, month, Number(more[0]));
   }
   // 11月21〜22日
   for (const match of text.matchAll(/(\d{1,2})\s*月\s*(\d{1,2})\s*[~〜・,、-]\s*(\d{1,2})\s*日/g)) {
     add(null, Number(match[1]), Number(match[2]));
     add(null, Number(match[1]), Number(match[3]));
   }
-  // 11月21日・22日、11月21日(土)〜22日(日)、22日(日)に変更
+  // 2026年11月21日・22日、11月21日(土)〜22日(日)、22日(日)に変更
   let month: number | null = null;
+  let year: number | null = null;
   for (const match of text.matchAll(
-    /(?<!\d)(?:(\d{1,2})\s*月\s*)?(\d{1,2})\s*日(?!\s*(?:間|以内|前|後|程度|ほど))/g,
+    /(?<!\d)(?:(?:令和\s*(\d{1,2}|元)|(\d{4}))\s*年\s*)?(?:(\d{1,2})\s*月\s*)?(\d{1,2})\s*日(?!\s*(?:間|以内|前|後|程度|ほど))/g,
   )) {
-    if (match[1] !== undefined) month = Number(match[1]);
-    add(null, month, Number(match[2]));
+    if (match[1] !== undefined) year = eraYear(match[1]);
+    if (match[2] !== undefined) year = Number(match[2]);
+    if (match[3] !== undefined) month = Number(match[3]);
+    add(year, month, Number(match[4]));
   }
   return dates;
 }
@@ -336,7 +375,8 @@ export function mentionsDate(line: string, date: string): boolean {
   );
 }
 
-const PM_WORDS = new Set(["午後", "夕方", "夕", "夜", "晩"]);
+const PM_WORDS = new Set(["午後", "夕方", "夕", "夜の部", "夜", "晩", "pm", "p.m."]);
+const NOON_WORDS = new Set(["昼", "昼の部"]);
 
 /** 行に書いてある時刻を HH:mm で読む。「午後6時〜9時」の 9時 は 21:00 としても読む */
 function timesIn(line: string): string[] {
@@ -350,9 +390,9 @@ function timesIn(line: string): string[] {
   if (/正午/.test(text)) add(12, 0);
   let afternoon = false;
   for (const match of text.matchAll(
-    /(午前|午後|朝|昼|夕方|夕|夜|晩|深夜|未明)?\s*(?<![\d:])(\d{1,2})\s*(?:時(?!間)\s*(?:(\d{1,2})\s*分|(半))?|:(\d{2})(?!\d))/g,
+    /(午前|午後|朝|昼の部|昼|夕方|夕|夜の部|夜|晩|深夜|未明|am|pm|a\.m\.|p\.m\.)?\s*(?<![\d:])(\d{1,2})\s*(?:時(?!間)\s*(?:(\d{1,2})\s*分|(半))?|:(\d{2})(?!\d))\s*(am|pm|a\.m\.|p\.m\.)?/gi,
   )) {
-    const word = match[1];
+    const word = (match[1] ?? match[6])?.toLowerCase();
     const raw = Number(match[2]);
     const minute = match[4] === "半" ? 30 : Number(match[3] ?? match[5] ?? 0);
     if (word !== undefined) afternoon = PM_WORDS.has(word);
@@ -361,7 +401,7 @@ function timesIn(line: string): string[] {
       if (afternoon && raw < 12) add(raw + 12, minute);
     } else if (PM_WORDS.has(word)) {
       add(raw < 12 ? raw + 12 : raw, minute);
-    } else if (word === "昼") {
+    } else if (NOON_WORDS.has(word)) {
       add(raw <= 6 ? raw + 12 : raw, minute);
     } else {
       add(raw, minute);
@@ -375,86 +415,175 @@ export function mentionsTime(line: string, time: string): boolean {
   return timesIn(line).includes(time);
 }
 
-/** 祭りの本体でない、別の催しや案内の行。日付や時刻があっても、開催の根拠にしない */
-const OTHER_EVENT =
-  /説明会|募集|締切|締め切り|申込|申し込み|受付|会議|講習|体験|ワークショップ|展示|物販|前夜祭|後夜祭|前日祭|後日祭|バス|列車|電車|シャトル|駐車場|終電|最終便|営業/;
-/** 開催の日程を述べている行 */
-const SCHEDULE_CONTEXT =
-  /開催|日程|変更|延期|順延|振替|振り替え|実施|本祭|当日|祭|まつり|開始|開演|行います|行われ|おこな/;
+// ---------------------------------------------------------------------------
+// 開催の根拠にできる文
 
-/** 日付と時刻と記号のほかに何もない行（見出しのあとの「11月22日(日)」） */
-function isBareDate(line: string): boolean {
-  const rest = withArabicDigits(line)
+const OTHER_EVENT_WORDS =
+  "説明会|募集|締切|締め切り|申込|申し込み|受付|会議|講習|体験|ワークショップ|展示|物販|前夜祭|後夜祭|前日祭|後日祭|バス|列車|電車|シャトル|駐車場|終電|最終便|営業";
+/** 祭りの本体でない、別の催しや案内の文。日付や時刻があっても、開催の根拠にしない */
+const OTHER_EVENT = new RegExp(OTHER_EVENT_WORDS);
+/** 開催の日程を述べている文 */
+const SCHEDULE_CONTEXT =
+  /開催|日程|日時|期日|日にち|変更|延期|順延|振替|振り替え|実施|本祭|当日|祭|まつり|開始|開演|行います|行われ|おこな|(?:^|\s)とき(?:[\s:]|$)/;
+
+/** 日付と時刻と記号のほかに何もない文（見出しのあとの「11月22日(日)」） */
+function isBareDate(sentence: string): boolean {
+  const rest = withArabicDigits(sentence)
+    .replace(/(?:\br|令和)\s*(?:\d{1,2}|元)\s*[-./]\s*\d{1,2}\s*[-./]\s*\d{1,2}/gi, "")
+    .replace(/\d{4}\s*[-./]\s*\d{1,2}\s*[-./]\s*\d{1,2}/g, "")
     .replace(/\d{4}\s*年/g, "")
     .replace(/令和\s*(?:\d{1,2}|元)\s*年/g, "")
     .replace(/\d{1,2}\s*月/g, "")
     .replace(/\d{1,2}\s*日/g, "")
-    .replace(/\d{1,2}\s*[:/]\s*\d{1,2}/g, "")
+    .replace(/\d{1,2}\s*[:/.]\s*\d{1,2}/g, "")
     .replace(/\d{1,2}\s*時(\s*\d{1,2}\s*分)?/g, "")
     .replace(/\([^)]{1,4}\)/g, "")
     .replace(/[\s~〜・,、.\-:]/g, "");
   return rest === "";
 }
 
-export function isOtherEvent(line: string): boolean {
-  return OTHER_EVENT.test(line);
-}
-
 /** 行が、祭りの開催日としてその日付を述べているか */
 export function announcesDate(line: string, date: string): boolean {
-  if (!mentionsDate(line, date) || isOtherEvent(line)) return false;
-  return SCHEDULE_CONTEXT.test(line) || isBareDate(line);
+  return sentencesOf(line).some(
+    (sentence) =>
+      mentionsDate(sentence, date) &&
+      !OTHER_EVENT.test(sentence) &&
+      (SCHEDULE_CONTEXT.test(sentence) || isBareDate(sentence)),
+  );
 }
 
 /** 行が、祭りの時刻としてその時刻を述べているか */
 export function announcesTime(line: string, time: string): boolean {
-  return mentionsTime(line, time) && !isOtherEvent(line);
+  return sentencesOf(line).some(
+    (sentence) => mentionsTime(sentence, time) && !OTHER_EVENT.test(sentence),
+  );
 }
 
-/** 行の年が、開催回の年と違うか（「2019年の巡行は中止でした」） */
-export function mentionsOtherYear(line: string, date: string): boolean {
-  const target = Number(date.slice(0, 4));
-  const text = withArabicDigits(line);
-  for (const match of text.matchAll(/(?<!\d)((?:19|20)\d{2})\s*年/g)) {
-    if (Number(match[1]) !== target) return true;
-  }
-  for (const match of text.matchAll(/令和\s*(\d{1,2}|元)\s*年/g)) {
-    const era = match[1] === "元" ? 1 : Number(match[1]);
-    if (era + 2018 !== target) return true;
-  }
-  return false;
-}
+// ---------------------------------------------------------------------------
+// 中止と延期の判定（ここだけで決める）
+//
+// 文ごとに次の3つに分ける。迷うときは「言及」に倒す。決まった変更として知らせるのは「決定」だけで、
+// 「言及」は検問で値を持たないお知らせになる。本物の中止を黙って失わないことを優先する。
+//   decided   決まったと言い切れる
+//   mentioned 語はあるが言い切れない（条件・打ち消し・一部の催し・別の催し・前の年の話かもしれない）
+//   none      語がない、または前の年のことを述べている
 
-/** 決まった文の印。これがあれば、雨天などの語があっても決まったことを述べている */
+type ChangeLevel = "decided" | "mentioned" | "none";
+
+const CANCEL_WORDS = /中止|取りやめ|取り止め|開催(?:いた|致)?しません|開催を見送/;
+const POSTPONE_WORDS = /延期|順延/;
+const CHANGE = "(?:中止|順延|延期|取りやめ|取り止め)";
+
+/** 決まった文の印。雨天などの語があっても、決まったことを述べている */
 const DECIDED_MARK = /となりました|決定(?:いた)?しました|決定です|決定$|決まりました/;
-/** 「雨天の場合は中止」のような、決まりの説明の文 */
-const CONDITIONAL_CHANGE: readonly RegExp[] = [
-  /(場合|とき|時は|際は|ならば|なら、|次第)[^。]{0,12}(中止|順延|延期)/,
-  /(雨天|荒天|悪天候)時?は?(中止|順延|延期)/,
-  /(中止|順延|延期)[^。]{0,6}(場合|ことがあ|こともあ|可能性)/,
+/** 打ち消し（「中止の予定はありません」）と、一部や別の催し（「前夜祭は中止」）。決まった文の印より先に見る */
+const NOT_ABOUT_FESTIVAL: readonly RegExp[] = [
+  new RegExp(
+    `${CHANGE}(?:は|に|の)?(?:なし|予定はあ|予定はご|ありません|ございません|しません|いたしません|致しません|なりません)`,
+  ),
+  new RegExp(`(?:${OTHER_EVENT_WORDS}|一部|のみ|だけ|の部)[はをがのも]?[^。、]{0,6}${CHANGE}`),
 ];
-/** 中止や延期を打ち消す文（「中止はありません」） */
-const NEGATED_CHANGE = /(中止|順延|延期)(は|に)?(なし|ありません|しません|いたしません|なりません)/;
-/** 祭りの全体でなく、一部の催しについての文 */
-const PARTIAL_EVENT = /一部|のみ|だけ|の部(?:は|を|が|の)/;
+/** 条件や見込みの文（「雨天の場合は中止」「中止の際はお知らせします」） */
+const CONDITIONAL: readonly RegExp[] = [
+  new RegExp(
+    `(?:場合|とき|時は|時には|時、|際は|際には|なら(?!び)|であれば|によっては|次第)[^。]{0,16}${CHANGE}`,
+  ),
+  new RegExp(`(?:雨天|荒天|悪天候)時?は?${CHANGE}`),
+  new RegExp(
+    `${CHANGE}[^。]{0,10}(?:場合|とき|際|次第|ことがあ|こともあ|ことがござ|可能性|おそれ|恐れ|判断|かどうか|か否か|可否)`,
+  ),
+];
 
-function isDecided(line: string, words: RegExp): boolean {
-  if (!words.test(line) || NEGATED_CHANGE.test(line)) return false;
-  if (isOtherEvent(line) || PARTIAL_EVENT.test(line)) return false;
-  return DECIDED_MARK.test(line) || !CONDITIONAL_CHANGE.some((pattern) => pattern.test(line));
+const LAST_YEAR = /昨年|去年|前年|前回/;
+const THIS_YEAR = /本年|今年|今回|今季|に続き|に引き続き/;
+const PAST_TENSE = /でした|ました|となった|だった|なった/;
+
+/** 文の年が、開催回より前か。年度は4月から翌年3月までの幅で見る */
+function yearRelation(sentence: string, date: string): "earlier" | "current" | "none" {
+  const text = withArabicDigits(sentence);
+  const year = Number(date.slice(0, 4));
+  const fiscal = Number(date.slice(5, 7)) >= 4 ? year : year - 1;
+  let relation: "earlier" | "current" | "none" = "none";
+  const see = (stated: number, isFiscal: boolean) => {
+    const target = isFiscal ? fiscal : year;
+    if (stated === target) relation = "current";
+    else if (stated < target && relation === "none") relation = "earlier";
+  };
+  for (const match of text.matchAll(/(?<!\d)((?:19|20)\d{2})\s*年(度)?/g)) {
+    see(Number(match[1]), match[2] !== undefined);
+  }
+  for (const match of text.matchAll(/令和\s*(\d{1,2}|元)\s*年(度)?/g)) {
+    see(eraYear(match[1] ?? ""), match[2] !== undefined);
+  }
+  return relation;
 }
 
-/** 行に、中止が決まったと書いてあるか */
-export function saysCancelled(line: string): boolean {
-  return isDecided(line, /中止|取りやめ|取り止め|開催(いた)?しません|開催を見送/);
+/** 前の年のことを述べている文か。past は過去の形で言い切っている（〜年は中止でした） */
+function pastState(sentence: string, date?: string): "past" | "earlier" | null {
+  if (THIS_YEAR.test(sentence)) return null;
+  const relation = date === undefined ? "none" : yearRelation(sentence, date);
+  if (relation === "current") return null;
+  if (relation !== "earlier" && !LAST_YEAR.test(sentence)) return null;
+  return PAST_TENSE.test(sentence) ? "past" : "earlier";
+}
+
+function sentenceLevel(sentence: string, words: RegExp, date?: string): ChangeLevel {
+  if (!words.test(sentence)) return "none";
+  const past = pastState(sentence, date);
+  if (past === "past") return "none";
+  if (past === "earlier") return "mentioned";
+  if (NOT_ABOUT_FESTIVAL.some((pattern) => pattern.test(sentence))) return "mentioned";
+  if (DECIDED_MARK.test(sentence)) return "decided";
+  return CONDITIONAL.some((pattern) => pattern.test(sentence)) ? "mentioned" : "decided";
+}
+
+function lineLevel(line: string, words: RegExp, date?: string): ChangeLevel {
+  let level: ChangeLevel = "none";
+  for (const sentence of sentencesOf(line)) {
+    const found = sentenceLevel(sentence, words, date);
+    if (found === "decided") return "decided";
+    if (found === "mentioned") level = "mentioned";
+  }
+  return level;
+}
+
+/** 行に、中止が決まったと書いてあるか。date は開催回の日付（前の年の話を見分ける） */
+export function saysCancelled(line: string, date?: string): boolean {
+  return lineLevel(line, CANCEL_WORDS, date) === "decided";
 }
 
 /** 行に、延期が決まったと書いてあるか */
-export function saysPostponed(line: string): boolean {
-  return isDecided(line, /延期|順延/);
+export function saysPostponed(line: string, date?: string): boolean {
+  return lineLevel(line, POSTPONE_WORDS, date) === "decided";
 }
 
-/** 行に、日付や時刻があるか（別の催しの行を除く） */
-export function hasScheduleValue(line: string): boolean {
-  return !isOtherEvent(line) && (datesIn(line).length > 0 || timesIn(line).length > 0);
+/** いま分かっていること。同じことが載り直しただけの行は、新しい語として数えない */
+export interface KnownSchedule {
+  /** 開催回の日付 */
+  occurrence: string;
+  date: string;
+  start: string | null;
+  end: string | null;
+  cancelled: boolean;
+  postponed: boolean;
+}
+
+const SCHEDULE_WORD = /日程|日時|期日|開催日|開始時刻|開始時間/;
+
+/**
+ * 行に、開催に関わる新しい語があるか（中止・延期・順延・日時）。決定と言い切れなくても true にする。
+ * 検問はこれが true の行を黙って捨てず、値を持たないお知らせにする
+ */
+export function hasScheduleSignal(line: string, known: KnownSchedule): boolean {
+  const [, month, day] = known.date.split("-").map(Number);
+  return sentencesOf(line).some((sentence) => {
+    if (pastState(sentence, known.occurrence) === "past") return false;
+    if (CANCEL_WORDS.test(sentence) && !known.cancelled) return true;
+    if (POSTPONE_WORDS.test(sentence) && !known.postponed) return true;
+    const dates = datesIn(sentence);
+    const times = timesIn(sentence);
+    if (dates.some((found) => found.day !== day || (found.month ?? month) !== month)) return true;
+    if (times.some((time) => time !== known.start && time !== known.end)) return true;
+    return dates.length === 0 && times.length === 0 && SCHEDULE_WORD.test(sentence);
+  });
 }

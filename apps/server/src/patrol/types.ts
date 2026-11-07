@@ -1,4 +1,11 @@
-import type { Confidence, IsoDate, LocalTime, PatrolPage, TripWatch } from "@matsuri-ikoka/schema";
+import type {
+  CheckedChange,
+  Confidence,
+  IsoDate,
+  LocalTime,
+  PatrolPage,
+  TripWatch,
+} from "@matsuri-ikoka/schema";
 
 // 見回りのコードの中で使う型。Zod のスキーマにしないのは、どれも外から受け取らず、外へも渡さないため。
 
@@ -42,8 +49,14 @@ export interface PatrolRecord {
   observed: ScheduleBaseline | null;
   /** 検問を通って中止と決まっている */
   cancelled: boolean;
-  /** 知らせた開催の変更と中止の数。同じ内容の変更をもう一度知らせられるように、指紋に入れる */
+  /** 検問を通って、新しい日の分からない延期と決まっている */
+  postponed: boolean;
+  /** 日程が前の値に戻った回数。同じ内容の変更をもう一度知らせられるように、指紋に入れる */
   changeCount: number;
+  /** これまでの日程の値（前の値に戻ったかを見分ける） */
+  seenBaselines: string[];
+  /** 上限で届けられなかった確かな変化。次の回に届け直す。公開の情報だけで、利用者の情報を持たない */
+  undelivered: CheckedChange[];
   pages: PatrolPageRecord[];
   lastCheckedAt: number | null;
   nextCheckAt: number;

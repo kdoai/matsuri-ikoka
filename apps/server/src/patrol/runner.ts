@@ -16,7 +16,7 @@ import {
   needsAgent,
 } from "./lines";
 import { checkTripLodging, type LodgingBudget } from "./lodging";
-import { noticeExpiresAt, noticeFor } from "./notices";
+import { isFirmNotice, noticeExpiresAt, noticeFor } from "./notices";
 import type { PageFetcher } from "./pageFetcher";
 import { buildPatrolRequest, newPatrolId } from "./request";
 import type { PatrolStore } from "./store";
@@ -34,6 +34,8 @@ import type { PatrolPageRecord, PatrolRecord, PatrolRun, RunTarget } from "./typ
 const LEASE_TTL_MS = 5 * 60 * 1000;
 /** 起動が新しい対象に取りかかってよい時間。Cloud Run の 300 秒より十分短くする */
 const TICK_DEADLINE_MS = 180 * 1000;
+/** 1つの対象の作業の時間の上限。1つのページで起動全体を止めない */
+const TARGET_TIMEOUT_MS = 90 * 1000;
 /** 読めないページと、読まないページを見に行く間隔 */
 const QUIET_PAGE_INTERVAL_MS = 24 * 60 * 60 * 1000;
 /** 失敗が続いたときに空ける間隔の上限 */
@@ -58,6 +60,10 @@ const DELIVERY_TTL_MS = 5 * 60 * 1000;
 const MAX_WATCHED_TRIPS = 2_000;
 const MAX_RECORD_KEYS = 2_000;
 const MAX_OPEN_RUNS = 10;
+/** 届け直しのために控えに残す変化の数の上限 */
+const MAX_UNDELIVERED = 5;
+/** 日程の値を覚えておく数の上限（前の値に戻ったかを見分ける） */
+const MAX_SEEN_BASELINES = 20;
 
 export interface PatrolDeps {
   store: PatrolStore;
@@ -73,6 +79,8 @@ export interface PatrolDeps {
   now: () => number;
   /** 間隔のずらし方（テストで決める） */
   random?: () => number;
+  /** 1つの対象の作業の時間の上限（テストで短くする） */
+  targetTimeoutMs?: number;
 }
 
 export interface PatrolTickResult {
@@ -163,11 +171,13 @@ async function deliver(
     if (result === "created" || result === "replaced") delivery.created += 1;
     if (result === "full") delivery.full += 1;
   }
-  if (delivery.full > 0) log("patrol_notices_full", { kind_of: change.content.kind });
+  if (delivery.full > 0) {
+    log("patrol_notices_full", { noticeKind: change.content.kind, trips: delivery.full });
+  }
   return delivery;
 }
 
-/** 同じ順で枠を使うと後ろの旅がいつまでも調べられないので、起動ごとに始まりをずらす */
+/** 同じ順で枠を使うと後ろがいつまでも調べられないので、回ごとに始まりをずらす */
 function rotated<T>(items: readonly T[], seed: number): T[] {
   if (items.length === 0) return [];
   const start = seed % items.length;
@@ -179,10 +189,10 @@ async function checkLodging(
   deps: PatrolDeps,
   plan: PatrolPlan,
   budget: LodgingBudget,
+  seed: number,
 ): Promise<number> {
   const venue = deps.festivals.get(plan.festivalId)?.venue;
   const near = venue === undefined ? null : { lat: venue.lat, lng: venue.lng };
-  const seed = Math.floor(deps.now() / deps.config.checkIntervalMs);
   let created = 0;
   for (const entry of rotated(plan.trips, seed)) {
     if (!entry.itinerary.days.some((day) => day.stay?.lodging !== undefined)) continue;
@@ -209,7 +219,21 @@ async function checkLodging(
 
 type TargetResult =
   | { kind: "skipped" }
-  | { kind: "checked"; target: PatrolTarget | null; run: RunTarget | null; lodging: number };
+  | { kind: "checked"; target: PatrolTarget | null; run: RunTarget | null };
+
+/** 前の回に上限で届けられなかった確かな変化を、届け直す。モデルは呼ばない */
+async function retryUndelivered(
+  deps: PatrolDeps,
+  plan: PatrolPlan,
+  record: PatrolRecord,
+): Promise<void> {
+  const left: CheckedChange[] = [];
+  for (const change of record.undelivered) {
+    const delivery = await deliver(deps, change, plan.festivalName, plan.trips);
+    if (delivery.full > 0) left.push(change);
+  }
+  record.undelivered = left;
+}
 
 /** 1つの対象をコードで調べる。モデルは呼ばない。見回り係に渡すものがあれば返す */
 async function checkTarget(
@@ -217,7 +241,7 @@ async function checkTarget(
   plan: PatrolPlan,
   holder: string,
   patrolId: string,
-  lodgingBudget: LodgingBudget,
+  work: { stale: boolean },
 ): Promise<TargetResult> {
   const seed = { festivalId: plan.festivalId, date: plan.date };
   const record = await deps.store.acquireLease(plan.key, seed, holder, deps.now(), LEASE_TTL_MS);
@@ -246,6 +270,7 @@ async function checkTarget(
     const page = pageRecord(record, planned.url);
     if (page.nextTryAt > deps.now()) continue;
     const read = await deps.pages.read(planned.url);
+    if (work.stale) return { kind: "skipped" };
     if (read.status === "ok") {
       page.failures = 0;
       page.nextTryAt = 0;
@@ -280,11 +305,7 @@ async function checkTarget(
     }
   }
 
-  const lodging = await checkLodging(deps, plan, lodgingBudget);
-  if (!(await deps.store.renewLease(plan.key, holder, deps.now(), LEASE_TTL_MS))) {
-    log("patrol_lease_lost", { festivalId: plan.festivalId });
-    return { kind: "skipped" };
-  }
+  if (record.undelivered.length > 0) await retryUndelivered(deps, plan, record);
 
   const now = deps.now();
   record.lastCheckedAt = now;
@@ -297,7 +318,7 @@ async function checkTarget(
     log("patrol_lease_lost", { festivalId: plan.festivalId });
     return { kind: "skipped" };
   }
-  if (!send) return { kind: "checked", target: null, run: null, lodging };
+  if (!send) return { kind: "checked", target: null, run: null };
   return {
     kind: "checked",
     target: {
@@ -307,8 +328,42 @@ async function checkTarget(
       pages,
     },
     run: { key: plan.key, festivalId: plan.festivalId, date: plan.date, pages: runPages },
-    lodging,
   };
+}
+
+/** 時間の上限を超えたら失敗にする。止まった処理は見捨てて、起動を先へ進める */
+async function withinTime<T>(work: Promise<T>, ms: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      work,
+      new Promise<never>((_resolve, reject) => {
+        timer = setTimeout(() => reject(new Error("対象の作業が時間内に終わりませんでした")), ms);
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/** 対象の作業が途中で失敗したので、間隔を空ける。次の起動が同じ場所で止まらないように */
+async function markTargetFailed(deps: PatrolDeps, plan: PatrolPlan, holder: string): Promise<void> {
+  try {
+    const seed = { festivalId: plan.festivalId, date: plan.date };
+    const record = await deps.store.acquireLease(plan.key, seed, holder, deps.now(), LEASE_TTL_MS);
+    if (record === null) return;
+    const failures = record.failures + 1;
+    await deps.store.saveRecord(plan.key, holder, {
+      ...record,
+      failures,
+      nextCheckAt: deps.now() + failureDelay(deps, failures, plan.date),
+      pages: record.pages.map((page) => ({ ...page, pendingHashes: null })),
+      pending: null,
+      lease: null,
+    });
+  } catch (error) {
+    log("patrol_target_mark_failed", errorForLog(error));
+  }
 }
 
 /** 見回りが失敗した対象：比べる元を変えず、間隔を空けて調べ直す */
@@ -418,7 +473,7 @@ async function acceptReport(
 ): Promise<{ finished: boolean; failure: string | null; counts: Record<string, number> }> {
   const counts: Record<string, number> = {};
   const count = (name: string, by = 1) => {
-    counts[name] = (counts[name] ?? 0) + by;
+    if (by > 0) counts[name] = (counts[name] ?? 0) + by;
   };
   const parsed =
     state.text === null
@@ -452,17 +507,17 @@ async function acceptReport(
     const check = checkFinding({
       finding,
       target,
-      baseline,
-      cancelled: record.cancelled,
-      changeCount: record.changeCount,
+      known: { baseline, cancelled: record.cancelled, postponed: record.postponed },
+      sequence: record.changeCount,
       evidence: await readEvidence(deps, target, record, finding.pages),
       fetchedUrls: state.fetchedUrls,
       now: deps.now(),
     });
     count(check.outcome);
+    if (check.dateTextMismatch) count("date_text_mismatch");
     if (check.outcome === "not_read") return settleFailure(deps, record, "target");
 
-    let undelivered = 0;
+    const undelivered = [...record.undelivered];
     if (check.changes.length > 0) {
       if (plans === null) {
         const { watched } = await loadWatched(deps);
@@ -473,13 +528,22 @@ async function acceptReport(
       for (const change of check.changes) {
         const delivery = await deliver(deps, change, festivalName, plan?.trips ?? []);
         count("notices", delivery.created);
-        undelivered += delivery.full;
+        // お知らせは届かなくても次の変化で足りる。確かな変化だけ、次の回に届け直す（モデルは呼ばない）
+        if (delivery.full > 0 && isFirmNotice(change)) {
+          count("undelivered", delivery.full);
+          undelivered.push(change);
+        }
       }
     }
-    // 届けられなかった変化は比べる元を進めず、次の回に届け直す。届いた旅には同じ ID で重ならない
-    if (undelivered > 0) {
-      count("undelivered", undelivered);
-      return settleFailure(deps, record, "target");
+
+    // 日程が前の値に戻ったら順番の値を増やす。同じ内容の変更をもう一度知らせられるように
+    const seen = new Set(record.seenBaselines);
+    let changeCount = record.changeCount;
+    if (check.baseline !== null) {
+      const after = JSON.stringify(check.baseline);
+      if (seen.has(after)) changeCount += 1;
+      seen.add(JSON.stringify(baseline));
+      seen.add(after);
     }
 
     const read = new Set(check.readUrls.map(comparableUrl));
@@ -487,7 +551,10 @@ async function acceptReport(
       ...record,
       observed: check.baseline ?? record.observed,
       cancelled: check.cancelled ?? record.cancelled,
-      changeCount: record.changeCount + (check.firm ? 1 : 0),
+      postponed: check.postponed ?? record.postponed,
+      changeCount,
+      seenBaselines: [...seen].slice(-MAX_SEEN_BASELINES),
+      undelivered: undelivered.slice(-MAX_UNDELIVERED),
       pages: record.pages.map((page) => {
         if (page.pendingHashes === null) return page;
         if (read.has(comparableUrl(page.url))) {
@@ -667,35 +734,50 @@ export async function startPatrol(deps: PatrolDeps): Promise<PatrolTickResult> {
   const patrolId = newPatrolId();
   const targets: PatrolTarget[] = [];
   const runTargets: RunTarget[] = [];
-  const lodgingBudget: LodgingBudget = {
-    remaining: deps.config.maxLodgingChecksPerRun,
-    skipped: 0,
-  };
-  let checked = 0;
+  const checkedPlans: PatrolPlan[] = [];
   let skipped = 0;
-  let lodgingNotices = 0;
   for (const plan of plans) {
-    if (checked >= deps.config.maxTargetsPerRun || deps.now() - startedAt > TICK_DEADLINE_MS) {
+    if (
+      checkedPlans.length >= deps.config.maxTargetsPerRun ||
+      deps.now() - startedAt > TICK_DEADLINE_MS
+    ) {
       skipped += 1;
       continue;
     }
+    const work = { stale: false };
     try {
-      const result = await checkTarget(deps, plan, holder, patrolId, lodgingBudget);
+      const result = await withinTime(
+        checkTarget(deps, plan, holder, patrolId, work),
+        deps.targetTimeoutMs ?? TARGET_TIMEOUT_MS,
+      );
       if (result.kind === "skipped") {
         skipped += 1;
         continue;
       }
-      checked += 1;
-      lodgingNotices += result.lodging;
+      checkedPlans.push(plan);
       if (result.target !== null && result.run !== null) {
         targets.push(result.target);
         runTargets.push(result.run);
       }
     } catch (error) {
-      // 1つの対象の失敗で、集めた分を捨てない。実行権が切れたら次の起動が引き継ぐ
+      // 1つの対象の失敗で、集めた分を捨てない。間隔を空けて、次の起動が同じ場所で止まらないようにする
+      work.stale = true;
       skipped += 1;
       log("patrol_target_failed", { festivalId: plan.festivalId, ...errorForLog(error) });
+      await markTargetFailed(deps, plan, holder);
     }
+  }
+
+  // 宿の空きは枠を分け合うので、祭りの先頭も旅の先頭も、回ごとにずらす
+  const seed = Math.floor(startedAt / deps.config.checkIntervalMs);
+  const lodgingBudget: LodgingBudget = {
+    remaining: deps.config.maxLodgingChecksPerRun,
+    skipped: 0,
+  };
+  let lodgingNotices = 0;
+  for (const plan of rotated(checkedPlans, seed)) {
+    if (deps.now() - startedAt > TICK_DEADLINE_MS) break;
+    lodgingNotices += await checkLodging(deps, plan, lodgingBudget, seed);
   }
   if (lodgingBudget.skipped > 0) {
     log("patrol_lodging_skipped", { stays: lodgingBudget.skipped });
@@ -703,7 +785,7 @@ export async function startPatrol(deps: PatrolDeps): Promise<PatrolTickResult> {
 
   if (targets.length > 0) await sendToAgent(deps, patrolId, targets, runTargets);
   const summary: PatrolTickResult = {
-    targets: checked,
+    targets: checkedPlans.length,
     sentToAgent: targets.length,
     skipped,
     lodgingNotices,

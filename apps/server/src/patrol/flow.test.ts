@@ -196,7 +196,7 @@ describe("架空のページを取得から通す", () => {
     pages: [PAGE_URL],
   };
 
-  it("見回り係がページの指示に従っても、指示の値は通知にならない", async () => {
+  it("見回り係がページの指示に従っても、指示の値は通知に入らない", async () => {
     const trip = addTrip("a");
     await firstRead();
     page = html(
@@ -210,10 +210,12 @@ describe("架空のページを取得から通す", () => {
     expect(JSON.stringify(harness.agent.requests)).not.toContain("11月3日");
     await collectSession(harness.deps, "session-1");
 
-    expect(harness.store.noticesOf(trip.ref)).toEqual([]);
+    const notices = harness.store.noticesOf(trip.ref);
+    expect(notices.map((notice) => notice.content)).toEqual([
+      { kind: "announcement", festivalId: FESTIVAL_ID, date: PATROL_DATE, topic: "other" },
+    ]);
+    expect(JSON.stringify(notices)).not.toContain("11月3日");
     expect((await harness.store.readRecord(KEY))?.observed).toBeNull();
-    const run = await harness.store.readRun(harness.agent.requests[0]?.patrolId ?? "");
-    expect(run?.counts).toEqual({ rejected: 1 });
   });
 
   it("同じ報告でも、ページに本当に書いてあれば通る", async () => {
