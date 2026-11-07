@@ -107,6 +107,9 @@ test("2D だけで、屋台の情報・通知・相談がすべて使え、店�
   await page.getByTestId("back-to-shop").click();
   await expect(page.getByTestId("game-stage")).toBeVisible();
   await expect(page.getByTestId("street")).toHaveCount(0);
+  // 旅程があるので、狭い画面では旅程のパネルが開いて重なる
+  const closePanel = page.getByRole("button", { name: "パネルを閉じる" });
+  if (await closePanel.isVisible()) await closePanel.click();
   await page.getByTestId("greeting-bar").getByRole("button").click();
   await expect(page.getByTestId("reply-choices")).toContainText("旅のしおりを開く");
 });
