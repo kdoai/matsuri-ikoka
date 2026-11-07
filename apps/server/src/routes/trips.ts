@@ -1,6 +1,7 @@
 import {
   type AuthConfig,
   type DeleteTripsResponse,
+  isTrialAccount,
   SaveTripRequestSchema,
   type ShareResponse,
   type TripListResponse,
@@ -107,11 +108,19 @@ export function registerTripRoutes(routes: SecureRoutes, deps: TripDeps) {
     const id = routeParam(c, "id");
     await deps.persistence.flush(id);
     const deleted = await trips.deleteTrip(id);
-    return deleted ? c.body(null, 204) : notFound(c);
+    if (!deleted) return notFound(c);
+    // 消した旅を、次の発言で作り直さない
+    await deps.persistence.forgetTrip(id);
+    return c.body(null, 204);
   });
 
-  routes.owner("DELETE", "/api/me/trips", async (c, { trips }) => {
+  routes.owner("DELETE", "/api/me/trips", async (c, { owner, trips }) => {
+    // お試し用のアカウントは何人かで使うので、ひとりの操作で空にしない（戻すのは初期化のスクリプト）
+    if (isTrialAccount(owner)) {
+      return c.json(apiError("bad_request", "お試し用のアカウントは消せません。", false), 403);
+    }
     await deps.persistence.flush();
+    deps.persistence.forgetOwner(owner);
     const deleted = await trips.deleteAllTrips();
     return c.json({ deleted } satisfies DeleteTripsResponse);
   });

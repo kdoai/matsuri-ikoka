@@ -82,6 +82,8 @@ export interface Session {
   selectedFestivalId: string | null;
   /** この相談の旅程の ID。保存した旅程は ItineraryStore にある */
   itineraryId: string | null;
+  /** 利用者がこの旅を消した。次の発言の前に旅程を外す。保存しない（別のインスタンスでは、旅程を読めずに外れる） */
+  tripDeleted: boolean;
   /** 祭りから探して決めた、必ず行く祭りと行く日。あれば、この祭りを固定して旅程を組む */
   anchor: TripAnchor | null;
   /** 固定した祭りを軸にした組み立て。出発地か泊数が分からない間は null */
@@ -174,6 +176,7 @@ export class SessionStore {
       nearMisses: [],
       selectedFestivalId: null,
       itineraryId: null,
+      tripDeleted: false,
       anchor: null,
       anchorPlan: null,
       anchorCheck: null,
@@ -228,6 +231,7 @@ export class SessionStore {
       anchorCheck: saved.anchorCheck ?? null,
       cancelledAnchor: saved.cancelledAnchor ?? null,
       guide: saved.guide ?? newSessionGuide(),
+      tripDeleted: false,
       lastActiveAt: this.#now(),
       weather: new Map(),
       nearMisses: [],
@@ -254,6 +258,16 @@ export class SessionStore {
     this.#sessions.delete(id);
     this.#sessions.set(id, session);
     return session;
+  }
+
+  /** 条件に合う相談。使った順や最後に使った時刻は変えない */
+  matching(predicate: (session: Session) => boolean): Session[] {
+    return [...this.#sessions.values()].filter(predicate);
+  }
+
+  /** 相談をメモリから消す（会話の記録も片付く） */
+  remove(session: Session): void {
+    this.#remove(session);
   }
 
   /** 使われなくなった相談を消す */
@@ -329,6 +343,11 @@ export class ItineraryStore {
       return undefined;
     }
     return entry.itinerary;
+  }
+
+  /** 消した旅の写しを捨てる */
+  forget(id: string): void {
+    this.#itineraries.delete(id);
   }
 
   /** 期限を過ぎた旅程を消す */

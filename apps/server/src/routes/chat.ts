@@ -193,6 +193,7 @@ export function registerChatRoutes(routes: SecureRoutes, deps: ChatDeps) {
     }
     // 別のインスタンスで始めた相談なら、保存の口から戻す
     const found = await open(request.sessionId);
+    if (found !== undefined && !found.busy) await deps.persistence.releaseDeletedTrip(found);
     const { anchor } = request;
     if (anchor !== undefined) {
       const refusal = refuseAnchor(
@@ -261,6 +262,9 @@ export function registerChatRoutes(routes: SecureRoutes, deps: ChatDeps) {
       return badRequest(c);
     }
     const existing = await open(request.sessionId);
+    if (existing !== undefined && !existing.busy) {
+      await deps.persistence.releaseDeletedTrip(existing);
+    }
     // 旅程があるときだけ旅程係を動かす。記録の再生（mock）では、こだわりを変えるだけにする
     const replan = existing?.itineraryId != null && deps.runner.mode === "live";
     if (!replan) {

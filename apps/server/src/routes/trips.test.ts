@@ -1,6 +1,8 @@
 import {
   AuthConfigSchema,
+  DEFAULT_PREFERENCES,
   ShareResponseSchema,
+  TRIAL_ACCOUNT_UID,
   TripListResponseSchema,
   TripResponseSchema,
   TripSummarySchema,
@@ -61,7 +63,7 @@ function setup(options: { login?: boolean } = {}) {
     session.itineraryId = itinerary.id;
     return { session, itinerary };
   };
-  return { app, call, sessions, sessionWithItinerary };
+  return { app, call, sessions, itineraries, storage, sessionWithItinerary };
 }
 
 describe("ログインと自分の旅の API", () => {
@@ -183,6 +185,84 @@ describe("ログインと自分の旅の API", () => {
 
     expect(await res.json()).toEqual({ deleted: 2 });
     expect(await (await call("/api/trips", { user: "alice" })).json()).toEqual({ trips: [] });
+  });
+
+  it("旅を消すと写しを捨て、次の発言の前に相談から旅程を外す", async () => {
+    const { call, sessions, itineraries, sessionWithItinerary } = setup();
+    const { session, itinerary } = sessionWithItinerary();
+    const body = { sessionId: session.id };
+    await call("/api/trips", { method: "POST", user: "alice", body });
+
+    const deleted = await call(`/api/trips/${itinerary.id}`, { method: "DELETE", user: "alice" });
+
+    expect(deleted.status).toBe(204);
+    expect(itineraries.get(itinerary.id)).toBeUndefined();
+
+    const said = await call("/api/chat", {
+      method: "POST",
+      user: "alice",
+      body: { ...body, message: "こんにちは", preferences: DEFAULT_PREFERENCES },
+    });
+    await said.text();
+
+    expect(said.status).toBe(200);
+    const after = sessions.get(session.id);
+    expect(after?.itineraryId).toBeNull();
+    expect(after?.stage).toBe("hearing");
+    expect((await call("/api/trips", { method: "POST", user: "alice", body })).status).toBe(409);
+  });
+
+  it("すべて消すと、相談の途中の状態も消え、もう続けられない", async () => {
+    const { call, sessions, storage, itineraries, sessionWithItinerary } = setup();
+    const { session, itinerary } = sessionWithItinerary();
+    const others = sessions.create();
+    const body = { sessionId: session.id };
+    await call("/api/trips", { method: "POST", user: "alice", body });
+    expect((await storage.getSession(session.id))?.ownerUid).toBe("alice");
+
+    await call("/api/me/trips", { method: "DELETE", user: "alice" });
+
+    expect(await storage.getSession(session.id)).toBeNull();
+    expect(sessions.get(session.id)).toBeUndefined();
+    expect(itineraries.get(itinerary.id)).toBeUndefined();
+    expect(sessions.get(others.id)?.id).toBe(others.id);
+    expect((await call("/api/trips", { method: "POST", user: "alice", body })).status).toBe(404);
+  });
+
+  it("お試し用のアカウントは、まとめて消せない。旅は残したままで、1つずつは消せる", async () => {
+    const { call, sessionWithItinerary } = setup();
+    const { session, itinerary } = sessionWithItinerary();
+    await call("/api/trips", {
+      method: "POST",
+      user: TRIAL_ACCOUNT_UID,
+      body: { sessionId: session.id },
+    });
+
+    const refused = await call("/api/me/trips", { method: "DELETE", user: TRIAL_ACCOUNT_UID });
+
+    expect(refused.status).toBe(403);
+    expect((await call(`/api/trips/${itinerary.id}`, { user: TRIAL_ACCOUNT_UID })).status).toBe(
+      200,
+    );
+    expect(
+      (await call(`/api/trips/${itinerary.id}`, { method: "DELETE", user: TRIAL_ACCOUNT_UID }))
+        .status,
+    ).toBe(204);
+  });
+
+  it("お試し用のアカウントと、ほかの人は、たがいの旅を読めない", async () => {
+    const { call, sessionWithItinerary } = setup();
+    const trial = sessionWithItinerary();
+    const own = sessionWithItinerary();
+    const keep = (sessionId: string, user: string) =>
+      call("/api/trips", { method: "POST", user, body: { sessionId } });
+    await keep(trial.session.id, TRIAL_ACCOUNT_UID);
+    await keep(own.session.id, "alice");
+
+    const read = (id: string, user: string) => call(`/api/trips/${id}`, { user });
+
+    expect((await read(trial.itinerary.id, "alice")).status).toBe(404);
+    expect((await read(own.itinerary.id, TRIAL_ACCOUNT_UID)).status).toBe(404);
   });
 
   it("前の版も開ける", async () => {

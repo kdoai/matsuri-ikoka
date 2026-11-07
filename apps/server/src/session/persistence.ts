@@ -92,7 +92,9 @@ export function snapshotOf(session: Session, now: number): SessionSnapshot {
 }
 
 /** 旅程を読めない相談の段階。旅程がある前提の段階からは、聞き取りか候補へ戻す */
-function stageWithoutItinerary(saved: SessionSnapshot): ConversationStage {
+function stageWithoutItinerary(
+  saved: Pick<SessionSnapshot, "stage" | "candidates">,
+): ConversationStage {
   if (saved.stage === "hearing" || saved.stage === "candidates") return saved.stage;
   return saved.candidates.length > 0 ? "candidates" : "hearing";
 }
@@ -142,6 +144,46 @@ export class StoragePersistence {
   /** 持ち主を決めて、利用者の旅の口を受け取る */
   forOwner(owner: OwnerId): OwnerTripStorage {
     return this.#storage.forOwner(owner);
+  }
+
+  /**
+   * 消した旅の手元の写しと、その旅を指す相談の中のガイドのデータを捨てる。旅が消されたと分かっているときだけ呼ぶ。
+   * 相談の旅程は、次の発言の前に外す（releaseDeletedTrip）。ガイドの入口で「旅が消された」と分かるよう、それまで残す
+   */
+  async forgetTrip(itineraryId: string): Promise<void> {
+    this.#itineraries.forget(itineraryId);
+    for (const session of this.#sessions?.matching((s) => s.itineraryId === itineraryId) ?? []) {
+      const { agentSessionId, agentCostUsd } = session.guide;
+      session.guide = { ...newSessionGuide(), agentSessionId, agentCostUsd };
+      session.tripDeleted = true;
+      await this.saveSession(session);
+    }
+  }
+
+  /**
+   * 利用者が消した旅を指す相談から、旅程を外す。発言とこだわりの変更の前に呼ぶ。
+   * 消した旅が次の発言で作り直されないようにし、相談は聞き取りか候補の段階から旅程のないものとして続ける
+   */
+  async releaseDeletedTrip(session: Session): Promise<void> {
+    if (!session.tripDeleted) return;
+    session.tripDeleted = false;
+    session.stage = stageWithoutItinerary(session);
+    session.itineraryId = null;
+    if (session.replay !== null) {
+      // 記録の再生でも、消した旅の ID を使い回さない
+      const { itineraryIds: _ids, ...replay } = session.replay;
+      session.replay = replay;
+    }
+    await this.saveSession(session);
+  }
+
+  /** すべて消した利用者の相談と旅程の写しを、メモリから外す。返事を作っている途中の相談は旅程だけを外す */
+  forgetOwner(owner: OwnerId): void {
+    for (const session of this.#sessions?.matching((s) => s.ownerUid === owner) ?? []) {
+      if (session.itineraryId !== null) this.#itineraries.forget(session.itineraryId);
+      if (session.busy) session.itineraryId = null;
+      else this.#sessions?.remove(session);
+    }
   }
 
   #writeItinerary(itinerary: Itinerary, owner: OwnerId | null): void {

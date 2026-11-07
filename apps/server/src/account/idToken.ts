@@ -1,3 +1,4 @@
+import { TRIAL_ACCOUNT_UID } from "@matsuri-ikoka/schema";
 import type { Context } from "hono";
 import { type OwnerId, ownerIdOf } from "../storage/owner";
 
@@ -8,6 +9,9 @@ export interface IdTokenVerifier {
   /** 確かめられたら利用者の ID、だめなら null */
   verify(token: string): Promise<string | null>;
 }
+
+/** お試し用のアカウントの持ち主。初期化のスクリプトが、この人の旅だけを消すのに使う */
+export const TRIAL_OWNER: OwnerId = ownerIdOf(TRIAL_ACCOUNT_UID);
 
 /** ID トークンの長さの上限（Firebase の ID トークンは 1〜2KB ほど） */
 const MAX_TOKEN_LENGTH = 4096;

@@ -307,6 +307,9 @@ export class MemoryTripStorage implements TripStorage {
     for (const key of [...this.#guideUsage.keys()]) {
       if (key.startsWith(`${owner}/`)) this.#guideUsage.delete(key);
     }
+    for (const [id, session] of this.#sessions) {
+      if (session.ownerUid === owner) this.#sessions.delete(id);
+    }
     return kept;
   }
 

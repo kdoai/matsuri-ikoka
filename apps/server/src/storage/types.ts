@@ -170,7 +170,7 @@ export interface OwnerTripStorage {
   getTrip(itineraryId: string, version?: number): Promise<StoredTripDetail | null>;
   /** 自分の旅程を、すべての版と共有と、ガイドのデータごと消す。消したら true */
   deleteTrip(itineraryId: string): Promise<boolean>;
-  /** 自分の旅程をすべて（残す前のものも）、ガイドのデータごと消す。消した、残した旅の数を返す */
+  /** 自分の旅程をすべて（残す前のものも）、ガイドのデータと相談の途中の状態ごと消す。消した、残した旅の数を返す */
   deleteAllTrips(): Promise<number>;
   /**
    * 自分の旅程の最新の版を、推測できない ID で30日だけ共有する。自分のものでなければ null。

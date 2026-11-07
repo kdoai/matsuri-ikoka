@@ -391,6 +391,17 @@ export class FirestoreTripStorage implements TripStorage {
     await this.#deleteShares("ownerUid", uid);
     // 旅程がもうない旅の下のデータと、使った量も消す
     await this.#db.recursiveDelete(this.#db.collection(USERS).doc(owner));
+    // 相談の途中の状態（条件・日程・出発地が入っている）も、期限を待たずに消す
+    const sessions = await this.#db
+      .collection(SESSIONS)
+      .where("ownerUid", "==", uid)
+      .select()
+      .get();
+    if (!sessions.empty) {
+      const writer = this.#db.bulkWriter();
+      for (const doc of sessions.docs) void writer.delete(doc.ref);
+      await writer.close();
+    }
     return kept.size;
   }
 
