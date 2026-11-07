@@ -1,48 +1,12 @@
 import { expect, type Page, test } from "@playwright/test";
-import { talkToConcierge } from "./helpers";
+import {
+  fakeSpeechRecognition as fakeRecognition,
+  FAKE_HEARD as HEARD,
+  talkToConcierge,
+} from "./helpers";
 
 // 声で話すボタン。ブラウザの音声認識の代わりを差し込み、押し方・焦点の移り方・送る前に確かめられることを見る。
 // 実際の声やマイクの許可は使わない。
-
-const HEARD = "架空の灯籠まつりに行きたい";
-
-/** 音声認識の代わり。止めたら、聞き取った文を1つ返して終わる */
-async function fakeRecognition(page: Page, options: { accepted?: boolean } = {}) {
-  await page.addInitScript(
-    ({ heard, accepted }) => {
-      const voice = { made: 0, stopped: 0, aborted: 0 };
-      (window as unknown as { __voice: typeof voice }).__voice = voice;
-      if (accepted) window.localStorage.setItem("matsuri-ikoka:voice-input-accepted", "1");
-      class FakeRecognition {
-        lang = "";
-        continuous = false;
-        interimResults = false;
-        maxAlternatives = 1;
-        onresult: ((event: unknown) => void) | null = null;
-        onerror: ((event: unknown) => void) | null = null;
-        onend: (() => void) | null = null;
-        constructor() {
-          voice.made += 1;
-        }
-        start() {}
-        stop() {
-          voice.stopped += 1;
-          window.setTimeout(() => {
-            const result = Object.assign([{ transcript: heard }], { isFinal: true });
-            this.onresult?.({ results: [result] });
-            this.onend?.();
-          }, 20);
-        }
-        abort() {
-          voice.aborted += 1;
-          window.setTimeout(() => this.onend?.(), 0);
-        }
-      }
-      (window as unknown as { SpeechRecognition: unknown }).SpeechRecognition = FakeRecognition;
-    },
-    { heard: HEARD, accepted: options.accepted ?? false },
-  );
-}
 
 async function open(page: Page) {
   await page.goto("/?scene=2d");
@@ -109,4 +73,43 @@ test("押したことだけが届く操作では、押すと聞き続け、ボ�
   await input.click();
   await expect.poll(() => stopped(page)).toBe(1);
   await expect(input).toHaveValue(HEARD);
+});
+
+test("声の機能がないブラウザでは、声のボタンを出さず、すべて文字で相談できる", async ({
+  page,
+}, info) => {
+  test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
+  await page.addInitScript(() => {
+    for (const name of [
+      "SpeechRecognition",
+      "webkitSpeechRecognition",
+      "speechSynthesis",
+      "SpeechSynthesisUtterance",
+    ]) {
+      Object.defineProperty(window, name, { value: undefined, configurable: true });
+    }
+  });
+  await open(page);
+  await expect(page.getByTestId("voice-input")).toHaveCount(0);
+  await page.getByRole("button", { name: "設定" }).click();
+  await expect(page.getByTestId("read-aloud-toggle")).toHaveCount(0);
+  await page.keyboard.press("Escape");
+  const input = page.getByRole("textbox", { name: "相談の発言" });
+  await input.fill("みなと中央駅から行ける祭りはありますか");
+  await input.press("Enter");
+  await expect(page.getByTestId("consult")).toHaveCount(0);
+});
+
+test("マイクの許可を断っても、わけを出して、文字で相談を続けられる", async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
+  await fakeRecognition(page, { accepted: true, error: "not-allowed" });
+  await open(page);
+  await page.getByTestId("voice-input").click();
+  await expect(page.getByTestId("voice-status")).toHaveText(
+    "マイクを使えませんでした。文字で相談を続けられます。",
+  );
+  const input = page.getByRole("textbox", { name: "相談の発言" });
+  await input.fill("みなと中央駅から行ける祭りはありますか");
+  await input.press("Enter");
+  await expect(page.getByTestId("consult")).toHaveCount(0);
 });

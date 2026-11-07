@@ -237,7 +237,11 @@ export function Composer() {
             tooLong ? "chat-too-long" : status === "opening" ? "chat-starting" : undefined
           }
         />
-        <VoiceInput onFilled={() => window.requestAnimationFrame(focusComposer)} />
+        <VoiceInput
+          draft={draft}
+          onDraft={actions.setDraft}
+          onFilled={() => window.requestAnimationFrame(focusComposer)}
+        />
         <button
           type="submit"
           className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-full border-2 border-wood-700/40 bg-yamabuki-400 px-4 font-bold text-ink shadow-[inset_0_-3px_0_rgb(0_0_0/0.15)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:border-transparent disabled:bg-stone-300 disabled:text-stone-600"

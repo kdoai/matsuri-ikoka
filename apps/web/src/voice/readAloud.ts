@@ -1,3 +1,4 @@
+import type { GuideLine } from "../state/guide";
 import type { DialogueLine } from "../state/selectors";
 import { continuationText, type Speaker } from "./speak";
 
@@ -42,6 +43,58 @@ export function dialogueSpokenLine(input: {
     case "work":
       return null;
   }
+}
+
+/**
+ * ガイドの会話の窓で読む文。窓に出ている文と同じにする。
+ * 緊急の連絡先が出ているときは、窓と同じく、ガイドの文より先に読む。
+ * 考えている間、調べている様子、流れてくる途中の返事は読まない（null）
+ */
+export function guideSpokenLine(input: {
+  line: GuideLine;
+  /** 会話の窓に出ているセリフの頭（1〜2文）と、「つづきを読む」を開いているか */
+  head: string;
+  expanded: boolean;
+  /** 窓に出ている文（知らせ・エラー・あいさつ・使えないときの文） */
+  text: string;
+  /** 緊急のときに先に出す文（連絡先を含む）。緊急でなければ null */
+  emergency: string | null;
+}): SpokenLine | null {
+  const { line } = input;
+  let spoken: SpokenLine | null;
+  switch (line.kind) {
+    case "waiting":
+    case "tool":
+      spoken = null;
+      break;
+    case "guide":
+      if (line.streaming) {
+        spoken = null;
+        break;
+      }
+      spoken = input.expanded
+        ? { key: `${line.id}:rest`, text: continuationText(input.head, line.text) }
+        : { key: `${line.id}:head`, text: input.head };
+      break;
+    case "report":
+      spoken = { key: `report:${line.notice.id}`, text: input.text };
+      break;
+    case "error":
+      spoken = {
+        key: `error:${line.code}:${line.said ?? ""}`,
+        text: line.said === null ? input.text : `${line.said}\n${input.text}`,
+      };
+      break;
+    case "greeting":
+    case "unavailable":
+      spoken = { key: `${line.kind}:${input.text}`, text: input.text };
+      break;
+  }
+  if (input.emergency === null) return spoken;
+  // 緊急の連絡先は、流れてくる途中でもすぐに読む
+  return spoken === null
+    ? { key: `emergency:${input.emergency}`, text: input.emergency }
+    : { key: `emergency:${spoken.key}`, text: `${input.emergency}\n${spoken.text}` };
 }
 
 export interface ReadAloudState {

@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
+import type { GuideLine } from "../state/guide";
 import type { DialogueLine } from "../state/selectors";
-import { createReadAloud, dialogueSpokenLine, type ReadAloudState } from "./readAloud";
+import {
+  createReadAloud,
+  dialogueSpokenLine,
+  guideSpokenLine,
+  type ReadAloudState,
+} from "./readAloud";
 import type { Speaker } from "./speak";
 
 const reply: DialogueLine = {
@@ -135,5 +141,81 @@ describe("createReadAloud", () => {
     read.update(on);
     read.stop();
     expect(calls.at(-1)).toBe("stop");
+  });
+});
+
+describe("guideSpokenLine", () => {
+  const guide = {
+    line: {
+      kind: "guide",
+      id: "g1",
+      text: "会場までは歩いて10分です。提灯の列に沿って進みます。くわしくは屋台で。",
+      streaming: false,
+    } as GuideLine,
+    head: "会場までは歩いて10分です。提灯の列に沿って進みます。",
+    expanded: false,
+    text: "",
+    emergency: null,
+  };
+
+  it("ガイドのセリフの頭を読み、「つづきを読む」では続きだけを読む", () => {
+    expect(guideSpokenLine(guide)).toEqual({ key: "g1:head", text: guide.head });
+    expect(guideSpokenLine({ ...guide, expanded: true })).toEqual({
+      key: "g1:rest",
+      text: "くわしくは屋台で。",
+    });
+  });
+
+  it("考えている間、調べている様子、流れてくる途中の返事は読まない", () => {
+    expect(guideSpokenLine({ ...guide, line: { kind: "waiting" } })).toBeNull();
+    expect(
+      guideSpokenLine({ ...guide, line: { kind: "tool", bubble: "調べています" } }),
+    ).toBeNull();
+    expect(
+      guideSpokenLine({
+        ...guide,
+        line: { ...(guide.line as object), streaming: true } as GuideLine,
+      }),
+    ).toBeNull();
+  });
+
+  it("知らせ・あいさつ・エラーは、窓に出ている文を読む", () => {
+    const notice = { id: "n1" } as Extract<GuideLine, { kind: "report" }>["notice"];
+    expect(
+      guideSpokenLine({
+        ...guide,
+        line: { kind: "report", notice },
+        text: "開始の時刻が変わりました",
+      }),
+    ).toEqual({ key: "report:n1", text: "開始の時刻が変わりました" });
+    expect(guideSpokenLine({ ...guide, line: { kind: "greeting" }, text: "ようこそ" })).toEqual({
+      key: "greeting:ようこそ",
+      text: "ようこそ",
+    });
+    expect(
+      guideSpokenLine({
+        ...guide,
+        line: {
+          kind: "error",
+          code: "internal",
+          message: null,
+          retryable: true,
+          said: "落ち着いて",
+        },
+        text: "うまくいきませんでした",
+      }),
+    ).toEqual({ key: "error:internal:落ち着いて", text: "落ち着いて\nうまくいきませんでした" });
+  });
+
+  it("緊急の連絡先は、ガイドの文より先に、流れてくる途中でも読む", () => {
+    const emergency = "緊急のときは、すぐに連絡してください\n救急・火事 119";
+    expect(guideSpokenLine({ ...guide, line: { kind: "waiting" }, emergency })).toEqual({
+      key: `emergency:${emergency}`,
+      text: emergency,
+    });
+    expect(guideSpokenLine({ ...guide, emergency })).toEqual({
+      key: "emergency:g1:head",
+      text: `${emergency}\n${guide.head}`,
+    });
   });
 });

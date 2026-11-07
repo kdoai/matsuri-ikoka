@@ -9,10 +9,13 @@ import {
   Send,
   X,
 } from "lucide-react";
-import { type FormEvent, useMemo, useState } from "react";
+import { type FormEvent, type KeyboardEvent, useMemo, useRef, useState } from "react";
 import { formatDateTime } from "../i18n";
 import { currentEmergency, type GuideEntry, guideLine } from "../state/guide";
 import { useActions, useApp, useT } from "../state/react";
+import { useReadAloud } from "../voice/hooks";
+import { guideSpokenLine } from "../voice/readAloud";
+import { VoiceInput } from "../voice/VoiceInput";
 import { SourceLink } from "./common";
 import { Portrait } from "./Portraits";
 import { guideErrorText, shortLine } from "./text";
@@ -79,6 +82,7 @@ function Composer({ placeholder }: { placeholder: string }) {
   const actions = useActions();
   const streaming = useApp((state) => state.guide.streaming);
   const [draft, setDraft] = useState("");
+  const input = useRef<HTMLInputElement>(null);
   const submit = (event: FormEvent) => {
     event.preventDefault();
     const text = draft.trim();
@@ -86,17 +90,33 @@ function Composer({ placeholder }: { placeholder: string }) {
     setDraft("");
     void actions.sendGuide(text);
   };
+  // 押し続けて繰り返し届く Enter では送らない（声の入力のボタンから焦点が移ったときなど）
+  const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" && event.repeat) event.preventDefault();
+  };
   return (
-    <form className="flex items-center gap-2" onSubmit={submit} data-testid="guide-composer">
+    // 声の入力の説明と聞き取りのようすは、折り返して行の下に出す
+    <form
+      className="flex flex-wrap items-center gap-x-2"
+      onSubmit={submit}
+      data-testid="guide-composer"
+    >
       <input
+        ref={input}
         type="text"
         value={draft}
+        onKeyDown={onKeyDown}
         maxLength={MAX_MESSAGE_LENGTH}
         onChange={(event) => setDraft(event.target.value)}
         aria-label={t.street.composerLabel}
         placeholder={placeholder}
         data-guide-focus=""
         className="min-h-11 min-w-0 flex-1 rounded-xl border-2 border-line-strong bg-white px-3 py-1.5 text-ink"
+      />
+      <VoiceInput
+        draft={draft}
+        onDraft={(text) => setDraft(text.slice(0, MAX_MESSAGE_LENGTH))}
+        onFilled={() => window.requestAnimationFrame(() => input.current?.focus())}
       />
       <button
         type="submit"
@@ -168,6 +188,23 @@ export function GuideDialogue() {
   }
   const typing =
     line.kind === "waiting" || line.kind === "tool" || (line.kind === "guide" && line.streaming);
+  // 読み上げる文は、窓に出ている文と同じにする（窓を閉じると、この部品ごと外れて止まる）
+  useReadAloud(
+    guideSpokenLine({
+      line,
+      head: line.kind === "guide" ? shortLine(line.text).head : "",
+      expanded: line.kind === "guide" && expanded === line.id && rest !== null,
+      text,
+      emergency:
+        emergency.length > 0
+          ? `${t.street.emergencyLead}\n${t.street.dotted(
+              emergency.map(
+                (contact) => `${t.street.emergency[contact.service]} ${contact.number}`,
+              ),
+            )}`
+          : null,
+    }),
+  );
 
   return (
     <section
