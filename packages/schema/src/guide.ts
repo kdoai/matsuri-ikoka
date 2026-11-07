@@ -3,6 +3,7 @@ import { MAX_MESSAGE_LENGTH } from "./api";
 import {
   IsoDateSchema,
   IsoDateTimeSchema,
+  type LatLng,
   LatLngSchema,
   LocalTimeSchema,
   SlugSchema,
@@ -532,6 +533,21 @@ export type GuideSessionRef = z.infer<typeof GuideSessionRefSchema>;
 /** POST /api/guide/open の本文。残した旅を開いて、ガイドと話す相談を作る（持ち主だけ） */
 export const GuideOpenRequestSchema = z.strictObject({ tripId: IdSchema });
 export type GuideOpenRequest = z.infer<typeof GuideOpenRequestSchema>;
+
+/**
+ * 現在地を丸める小数の桁。0.001 度（およそ100m）。最寄りの駅や行き方を調べるのに足り、
+ * 建物までは分からない細かさにする
+ */
+export const LOCATION_DECIMALS = 3;
+
+/** 現在地を、ガイドに要る細かさに丸める。端末で送る前と、サーバーで受けたときの両方で通す */
+export function roundLocation(location: LatLng): LatLng {
+  const factor = 10 ** LOCATION_DECIMALS;
+  return {
+    lat: Math.round(location.lat * factor) / factor,
+    lng: Math.round(location.lng * factor) / factor,
+  };
+}
 
 /** POST /api/guide/chat の本文。返答は SSE（GuideSseEventSchema）で返す */
 export const GuideChatRequestSchema = z.strictObject({

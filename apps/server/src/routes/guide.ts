@@ -20,6 +20,7 @@ import {
   MarkNoticesReadRequestSchema,
   type MarkNoticesReadResponse,
   RevertTripRequestSchema,
+  roundLocation,
   type SessionResponse,
   SetTripWatchRequestSchema,
   type TripChange,
@@ -570,7 +571,11 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
     const { sessionId, message, location } = request.data;
     const { runner } = guide;
     const quota = turnQuota(deps, viewer, deps.clientIp?.(c) ?? "unknown");
-    const said: TurnRequest = { message, location };
+    // 現在地は、端末が丸めていなくても、ここで要る細かさに丸めてから使う
+    const said: TurnRequest = {
+      message,
+      location: location === undefined ? undefined : roundLocation(location),
+    };
     if (isEmergencyMessage(message)) {
       return emergencyTurn(c, runner, sessionId, said, quota, open);
     }
