@@ -154,6 +154,20 @@ export function patrolStoreContract(make: () => PatrolStoreSetup): void {
       ...over,
     });
 
+  it("声かけを止めた依頼は、見回り中の一覧でも止めたまま読む", async () => {
+    const { store, putWatch } = make();
+    const quiet = newTrip();
+    const plain = newTrip();
+    await putWatch({ ...quiet, watch: { ...quiet.watch, reminders: false } });
+    await putWatch(plain);
+
+    const listed = await store.listWatchedTrips(2_000);
+    expect(listed.find((trip) => trip.ref === quiet.ref)?.watch.reminders).toBe(false);
+    const other = listed.find((trip) => trip.ref === plain.ref);
+    expect(other).toBeDefined();
+    expect(other?.watch.reminders).toBeUndefined();
+  });
+
   it("同じ通知は2度足さない。足した通知を読める", async () => {
     const { store, putWatch } = make();
     const trip = newTrip();
@@ -235,6 +249,41 @@ export function patrolStoreContract(make: () => PatrolStoreSetup): void {
     expect(notices).toHaveLength(MAX_NOTICES_PER_TRIP);
     expect(notices.map((notice) => notice.id)).toContain("n-firm");
     expect(notices.map((notice) => notice.id)).not.toContain("n-a-0");
+  }, 60_000);
+
+  it("上限に達しても、役目を終えた声かけは未読でも押し出して、新しい声かけと中止を足す", async () => {
+    const { store, putWatch } = make();
+    const trip = newTrip();
+    await putWatch(trip);
+    const reminder = (id: string, createdAt: string): GuideNotice =>
+      noticeOf(trip, {
+        id,
+        content: { kind: "reminder", slot: "eve", date: "2026-08-16", at: "18:00", itemId: null },
+        proposalId: null,
+        createdAt,
+      });
+    // 届けたばかりの声かけ（いまの時刻）と、役目を終えた声かけ（ずっと前）
+    const fresh = new Date().toISOString();
+    for (let i = 0; i < MAX_NOTICES_PER_TRIP - 2; i += 1) {
+      await store.addNotice(trip, noticeOf(trip, { id: `n-${i}` }), NOW);
+    }
+    await store.addNotice(trip, reminder("n-r-spent-1", "2026-08-01T00:00:00+09:00"), NOW);
+    await store.addNotice(trip, reminder("n-r-spent-2", "2026-08-02T00:00:00+09:00"), NOW);
+
+    expect(await store.addNotice(trip, reminder("n-r-new", fresh), NOW)).toBe("created");
+    const firm = noticeOf(trip, {
+      id: "n-firm",
+      content: { kind: "cancellation", festivalId: "suzunari-toro", date: "2026-08-16" },
+    });
+    expect(await store.addNotice(trip, firm, NOW)).toBe("created");
+    // 役目を終えた声かけがなくなれば、届けたばかりの声かけも、新しい声かけも押し出さない
+    expect(await store.addNotice(trip, reminder("n-r-later", fresh), NOW)).toBe("full");
+
+    const ids = (await store.listNotices(trip)).map((notice) => notice.id);
+    expect(ids).toHaveLength(MAX_NOTICES_PER_TRIP);
+    expect(ids).toEqual(expect.arrayContaining(["n-r-new", "n-firm"]));
+    expect(ids).not.toContain("n-r-spent-1");
+    expect(ids).not.toContain("n-r-spent-2");
   }, 60_000);
 
   it("上限まで未読の確かな通知なら、新しい通知も足せない", async () => {

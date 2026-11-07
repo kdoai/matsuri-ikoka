@@ -1,7 +1,14 @@
 import { type CheckedChange, GuideNoticeSchema, type NoticeContent } from "@matsuri-ikoka/schema";
 import { fictionalCheckedChange, fictionalItinerary } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
-import { noticeExpiresAt, noticeFor, noticeId, noticeSummary, noticeToEvict } from "./notices";
+import {
+  evictionFor,
+  noticeExpiresAt,
+  noticeFor,
+  noticeId,
+  noticeSummary,
+  noticeToEvict,
+} from "./notices";
 import { FESTIVAL_ID, NOW, PATROL_DATE } from "./testing";
 
 describe("noticeSummary", () => {
@@ -113,6 +120,7 @@ describe("noticeId", () => {
 });
 
 describe("noticeToEvict", () => {
+  const NOW_MS = Date.parse("2026-08-16T12:00:00+09:00");
   const notice = (id: string, kind: string, createdAt: string, readAt: string | null = null) => ({
     id,
     kind,
@@ -122,30 +130,84 @@ describe("noticeToEvict", () => {
 
   it("古いお知らせから押し出す", () => {
     expect(
-      noticeToEvict([
-        notice("a", "cancellation", "2026-08-01"),
-        notice("b", "announcement", "2026-08-03"),
-        notice("c", "announcement", "2026-08-02"),
-      ]),
+      noticeToEvict(
+        [
+          notice("a", "cancellation", "2026-08-01"),
+          notice("b", "announcement", "2026-08-03"),
+          notice("c", "announcement", "2026-08-02"),
+        ],
+        NOW_MS,
+      ),
     ).toBe("c");
   });
 
   it("お知らせがなければ、読んだ古い通知を押し出す", () => {
     expect(
-      noticeToEvict([
-        notice("a", "schedule_change", "2026-08-01"),
-        notice("b", "availability", "2026-08-03", "2026-08-04"),
-        notice("c", "cancellation", "2026-08-02", "2026-08-05"),
-      ]),
+      noticeToEvict(
+        [
+          notice("a", "schedule_change", "2026-08-01"),
+          notice("b", "availability", "2026-08-03", "2026-08-04"),
+          notice("c", "cancellation", "2026-08-02", "2026-08-05"),
+        ],
+        NOW_MS,
+      ),
     ).toBe("c");
   });
 
   it("未読の開催の変更と中止は押し出さない", () => {
     expect(
-      noticeToEvict([
-        notice("a", "schedule_change", "2026-08-01"),
-        notice("b", "cancellation", "2026-08-02"),
-      ]),
+      noticeToEvict(
+        [notice("a", "schedule_change", "2026-08-01"), notice("b", "cancellation", "2026-08-02")],
+        NOW_MS,
+      ),
+    ).toBeNull();
+  });
+
+  it("役目を終えた声かけは、未読でも先に押し出す。届けたばかりの声かけは押し出さない", () => {
+    const items = [
+      notice("a", "announcement", "2026-08-01T00:00:00+09:00"),
+      notice("b", "reminder", "2026-08-16T08:00:00+09:00"),
+      notice("c", "reminder", "2026-08-16T11:30:00+09:00"),
+    ];
+    expect(noticeToEvict(items, NOW_MS)).toBe("b");
+    expect(noticeToEvict(items.slice(2), NOW_MS)).toBeNull();
+  });
+
+  it("新しい声かけのためには、役目を終えた声かけだけを押し出す", () => {
+    const items = [
+      notice("a", "announcement", "2026-08-01T00:00:00+09:00"),
+      notice("b", "availability", "2026-08-02T00:00:00+09:00", "2026-08-03T00:00:00+09:00"),
+    ];
+    expect(noticeToEvict(items, NOW_MS, { onlySpentReminders: true })).toBeNull();
+    expect(
+      noticeToEvict([...items, notice("c", "reminder", "2026-08-16T08:00:00+09:00")], NOW_MS, {
+        onlySpentReminders: true,
+      }),
+    ).toBe("c");
+  });
+});
+
+describe("evictionFor", () => {
+  it("開催の変更と中止は何でも、声かけは役目を終えた声かけだけを押し出せる", () => {
+    expect(
+      evictionFor({
+        content: { kind: "cancellation", festivalId: "suzunari-toro", date: "2026-08-16" },
+      }),
+    ).toBe("any");
+    expect(
+      evictionFor({
+        content: { kind: "reminder", slot: "eve", date: "2026-08-16", at: "18:00", itemId: null },
+      }),
+    ).toBe("spent_reminders");
+    expect(
+      evictionFor({
+        content: {
+          kind: "announcement",
+          festivalId: "suzunari-toro",
+          date: "2026-08-16",
+          topic: "other",
+        },
+      }),
     ).toBeNull();
   });
 });
