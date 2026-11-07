@@ -10,6 +10,7 @@ import type { IsoDate, SseEventOf } from "@matsuri-ikoka/schema";
 import type { FestivalStore } from "../data/festivalStore";
 import type { OsmPlaceIndex } from "../domain/osmPlaces";
 import type { StationPointIndex } from "../domain/travelEstimate";
+import { TURN_MAX_MS } from "../routes/turnStream";
 import type { ItineraryStore } from "../session/sessionStore";
 import type { CandidateChecker } from "../tools/candidateCheck";
 import { newTurnState, type ToolContext } from "../tools/context";
@@ -74,6 +75,16 @@ export interface ClaudeRunnerDeps {
   createToolServer?: typeof createMatsuriMcpServer;
   stderr?: (data: string) => void;
 }
+
+/**
+ * 画面にイベントを送ったあとの失敗で、resume して続けるのに要る、相談の時間の残り（ミリ秒）。
+ * 続きの調べと返事を書き終えるだけの時間がなければ、続けずに失敗を伝える
+ */
+export const RESUME_MIN_REMAINING_MS = 120_000;
+
+/** 途中で止まった相談を resume で続けるときの文。謝ったり振り返ったりさせない */
+export const CONTINUE_PROMPT =
+  "止まったところから続けてください。謝ったり、ここまでを振り返ったりせず、そのまま続きの作業と返事をしてください。";
 
 /** 文の切れ目。返答の文は、ここまでたまったら1つの message.delta にして送る */
 const SENTENCE_END = /[。！？!?\n]/g;
@@ -247,7 +258,7 @@ export class ClaudeAgentRunner implements AgentRunner {
     /** Agent SDK が起動を終える（init を受け取る）までの時間。遅れが起動か API かを分ける */
     let initMs: number | null = null;
 
-    const attempt = async (resume: string | undefined) => {
+    const attempt = async (resume: string | undefined, prompt: string) => {
       const controller = new AbortController();
       const abort = () => controller.abort(signal.reason);
       if (signal.aborted) abort();
@@ -292,10 +303,10 @@ export class ClaudeAgentRunner implements AgentRunner {
       }
     };
 
-    const run = async () => {
+    const run = async (text: string) => {
       initSeen = false;
       try {
-        await attempt(session.agentSessionId ?? undefined);
+        await attempt(session.agentSessionId ?? undefined, text);
       } catch (error) {
         if (signal.aborted || error instanceof AgentError) throw error;
         throw toAgentError(classifyFailure(error));
@@ -303,13 +314,26 @@ export class ClaudeAgentRunner implements AgentRunner {
     };
 
     try {
-      await run();
+      await run(prompt);
     } catch (failure) {
-      // まだ何も送っていなければ、1回だけやり直す。続きの会話を読めなかったときは、店の記録だけで新しく始める
-      if (!(failure instanceof AgentError) || !failure.retryable || emitted > 0) throw failure;
+      // 時間をおけば直りうる失敗なら、1回だけやり直す。
+      // 画面にイベントを送ったあとは、相談の時間の残りが十分あるときだけ、止まったところから resume で続ける。
+      // 続きの会話を読めなかった（セッションを名乗らなかった）ときは、店の記録だけで新しく始める
+      if (!(failure instanceof AgentError) || !failure.retryable) throw failure;
+      const remainingMs = TURN_MAX_MS - (Date.now() - turn.startedAt);
+      if (emitted > 0 && remainingMs < RESUME_MIN_REMAINING_MS) throw failure;
+      const resumed = emitted > 0 && initSeen;
       if (!initSeen) session.agentSessionId = null;
+      console.info(
+        JSON.stringify({
+          kind: "turn_retry",
+          code: failure.code,
+          afterEvents: emitted > 0,
+          resumed,
+        }),
+      );
       await sleep(backoffMs(1), undefined, { signal });
-      await run();
+      await run(resumed ? CONTINUE_PROMPT : prompt);
     } finally {
       session.stage = nextStage(session.stage, turn, session.itineraryId !== null);
       // 相談ごとの費用・トークン・所要時間・呼んだ道具を残す。会話の文は残さない
