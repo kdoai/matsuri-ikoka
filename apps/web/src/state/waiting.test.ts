@@ -96,66 +96,15 @@ describe("待ち時間の豆知識", () => {
     });
   });
 
-  it("小話・見どころ・作法を、データの文字列と出典のまま、種類が続かないように並べる", () => {
+  it("小話と見どころを、データの文字列と出典のまま、種類が続かないように並べる", () => {
     const a = festival();
     const talks = waitingTalks({ festivals: { [a.id]: a }, candidates: [], itinerary: empty });
-    expect(talks.slice(0, 3).map((talk) => talk.kind)).toEqual([
-      "trivia",
-      "highlight",
-      "etiquette",
-    ]);
+    expect(talks.slice(0, 2).map((talk) => talk.kind)).toEqual(["trivia", "highlight"]);
     const highlight = talks.find((talk) => talk.kind === "highlight");
     expect(highlight).toMatchObject({ text: a.highlights[0], source: a.sources[0] });
-    const etiquette = talks.filter((talk) => talk.kind === "etiquette");
-    // 決まった値は code に、データの文はそのまま text に入れる
-    expect(etiquette).toContainEqual(
-      expect.objectContaining({ item: "participation", code: "join_by_application", text: "" }),
-    );
-    expect(etiquette).toContainEqual(
-      expect.objectContaining({
-        item: "photo",
-        code: "restricted",
-        text: "神事の間はフラッシュを使わない",
-      }),
-    );
-    for (const talk of etiquette) expect(talk.source).toEqual(a.etiquette.sources[0]);
     // データにない話は作らない
-    const texts = new Set([
-      ...a.trivia.map((item) => item.text),
-      ...a.highlights,
-      "",
-      "当日16時までに河原の受付で申し込む（灯籠1つ500円）",
-      "灯籠は係の合図のあとに流す",
-      "立入禁止の縄の内側に入らない",
-      "歩きやすい靴",
-      "懐中電灯",
-      "神事の間はフラッシュを使わない",
-      "見学と灯籠流しだけ。夜の河原は足元が暗い",
-    ]);
+    const texts = new Set([...a.trivia.map((item) => item.text), ...a.highlights]);
     for (const talk of talks) expect(texts.has(talk.text)).toBe(true);
-  });
-
-  it("分からない作法（unknown）は話さない", () => {
-    const base = fictionalFestival();
-    const unknownEtiquette = FestivalSchema.parse({
-      ...base,
-      etiquette: {
-        participation: "unknown",
-        howToJoin: "unknown",
-        rules: "unknown",
-        dress: "unknown",
-        bring: "unknown",
-        risk: "unknown",
-        photo: "unknown",
-        sources: [],
-      },
-    });
-    const talks = waitingTalks({
-      festivals: { [unknownEtiquette.id]: unknownEtiquette },
-      candidates: [],
-      itinerary: empty,
-    });
-    expect(talks.some((talk) => talk.kind === "etiquette")).toBe(false);
   });
 
   it("候補が出たら、候補と主役の祭りから話す", () => {

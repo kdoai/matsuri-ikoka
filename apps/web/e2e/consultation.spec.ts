@@ -227,9 +227,9 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   const booklet = page.frameLocator('[data-testid="shiori-booklet"]');
   await expect(booklet.getByRole("region", { name: "表紙", exact: true })).toBeVisible();
   await expect(booklet.locator("h1")).toHaveText("鈴鳴の灯籠と川べりさんぽ");
-  await expect(booklet.getByRole("region", { name: "はじめての方へ" }).first()).toContainText(
-    "For first-time visitors",
-  );
+  await expect(booklet.getByRole("region", { name: "祭りの紹介" }).first()).toBeVisible();
+  // 作法のページは載せない
+  await expect(booklet.getByRole("region", { name: "はじめての方へ" })).toHaveCount(0);
   // 冊子にできるよう、ページの数は4の倍数
   expect((await booklet.locator(".sheet").count()) % 4).toBe(0);
   await snap(page, info, "06-shiori", true);

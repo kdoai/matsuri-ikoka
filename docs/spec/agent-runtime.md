@@ -264,7 +264,7 @@ tools:
 | `allowedTools` | `GUIDE_TOOL_NAMES` の MCP ツール              | 決まったツールだけを呼べる                                                                                                         |
 | 会話の続き     | 店内の相談と同じ（[会話の続き](#会話の続き)） | 記録はインスタンスの一時ディレクトリだけに置く。別のインスタンスに届いたら、旅の要約と `GuideResumeSummary` から新しい会話で続ける |
 
-- `query()` の設定は `buildGuideOptions`（`apps/server/src/agent/options.ts`）。モデルは `MODEL_GUIDE`。設定がなければ、ガイドの入口だけが断ります（[旅のガイドの仕様](guide.md#api)）。指示は `prompts/guide.md`
+- `query()` の設定は `buildGuideOptions`（`apps/server/src/agent/options.ts`）。モデルは `MODEL_GUIDE`（なければ `MODEL_CONCIERGE`）。どちらもなければ、ガイドの入口だけが断ります（[旅のガイドの仕様](guide.md#api)）。指示は `prompts/guide.md`
 - 旅と利用者は、ツールのハンドラーがサーバーの文脈から決めます。ツールの入力に ID を持たせません。入力は `z.strictObject` で読むので、余分な項目があれば断ります
 - フックは決まったツールのほかを断り、1回の発言で呼べる数を確かめ、`guide.tool.start`・`guide.tool.end` を出します（`apps/server/src/guide/hooks.ts`）
 - Web は `research_web` の中で、1回きりの調べ役（`apps/server/src/agent/webGuideResearcher.ts`、指示は `prompts/guide-research.md`、確定前の再確認と同じ動かし方）を動かし、`ungroundedSources` で確かめた結果だけを返します。渡すのは質問だけで、調べ役は利用者の情報を持ちません。返すのは調べ役が自分の言葉で書いた答え（300字まで）と読んだページの URL だけで、ページの文章や題名は渡しません。モデルは `MODEL_STAFF`
