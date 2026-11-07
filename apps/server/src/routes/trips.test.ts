@@ -57,7 +57,7 @@ function setup(options: { login?: boolean } = {}) {
   const sessionWithItinerary = () => {
     const session = sessions.create();
     const itinerary = { ...fictionalItinerary(), id: `it-${session.id}` };
-    itineraries.save(itinerary);
+    itineraries.save(itinerary, null);
     session.itineraryId = itinerary.id;
     return { session, itinerary };
   };
@@ -118,14 +118,22 @@ describe("ログインと自分の旅の API", () => {
     expect((await post({ itineraryId: "it-1" })).status).toBe(400);
   });
 
-  it("ほかの人が残した旅は、同じ相談からでも残せない", async () => {
+  it("ほかの人が残した旅は、同じ相談からでも残せず、あるかどうかも見せない", async () => {
     const { call, sessionWithItinerary } = setup();
     const { session } = sessionWithItinerary();
     const post = (user: string) =>
       call("/api/trips", { method: "POST", user, body: { sessionId: session.id } });
 
     expect((await post("alice")).status).toBe(201);
-    expect((await post("bob")).status).toBe(403);
+    const refused = await post("bob");
+    const missing = await call("/api/trips", {
+      method: "POST",
+      user: "bob",
+      body: { sessionId: "s-none" },
+    });
+
+    expect(refused.status).toBe(404);
+    expect(await refused.json()).toEqual(await missing.json());
   });
 
   it("共有の ID でしおりの旅程を読める", async () => {

@@ -56,7 +56,7 @@ export function applyRecordedEvent(session: Session, itineraries: ItineraryStore
       if (event.data.candidates !== undefined) session.candidates = event.data.candidates;
       break;
     case "itinerary.updated":
-      itineraries.save(event.data.itinerary);
+      itineraries.save(event.data.itinerary, session.ownerUid);
       session.itineraryId = event.data.itinerary.id;
       session.selectedFestivalId = event.data.itinerary.mainFestivalId;
       break;
@@ -68,10 +68,13 @@ export function applyRecordedEvent(session: Session, itineraries: ItineraryStore
         itinerary.mainFestivalId === event.data.festivalId
       ) {
         const { result, checkedAt, sources, note } = event.data;
-        itineraries.save({
-          ...itinerary,
-          verification: { status: result, checkedAt, sources, ...(note ? { note } : {}) },
-        });
+        itineraries.save(
+          {
+            ...itinerary,
+            verification: { status: result, checkedAt, sources, ...(note ? { note } : {}) },
+          },
+          session.ownerUid,
+        );
       }
       break;
     }

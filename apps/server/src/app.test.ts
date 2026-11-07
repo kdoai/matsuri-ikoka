@@ -171,7 +171,7 @@ describe("POST /api/chat（mock）", () => {
 
   it("IP ごとの1日の上限を超えたら、その IP だけ 429", async () => {
     const { post, newSession } = setup({
-      ipLimiter: new DailyLimiter(1, () => "2026-08-03"),
+      clientLimiter: new DailyLimiter(1, () => "2026-08-03"),
       clientIp: (c) => c.req.header("x-test-ip") ?? "unknown",
     });
     const sessionId = await newSession();
@@ -550,7 +550,7 @@ describe("旅程としおり", () => {
       checkedAt: "2026-08-03T10:00:00+09:00",
       sources: [{ url: "https://example.net/blog", checkedAt: "2026-08-03", confidence: "single" }],
     };
-    itineraries.save(itinerary);
+    itineraries.save(itinerary, null);
 
     expect((await app.request(`/shiori/${itinerary.id}`)).status).toBe(409);
   });
@@ -570,7 +570,7 @@ describe("旅程としおり", () => {
         },
       ],
     };
-    itineraries.save(itinerary);
+    itineraries.save(itinerary, null);
 
     const page = await (await app.request(`/shiori/${itinerary.id}`)).text();
 

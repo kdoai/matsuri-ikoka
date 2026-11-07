@@ -1,4 +1,5 @@
 import type { Context } from "hono";
+import { type OwnerId, ownerIdOf } from "../storage/owner";
 
 // ログインした利用者を、Firebase の ID トークン（Authorization: Bearer …）で決める。
 // トークンを確かめるのはサーバーだけ。画面から送られた利用者の ID は使わない。
@@ -18,8 +19,17 @@ export function bearerToken(header: string | undefined): string | null {
   return token !== undefined && token.length <= MAX_TOKEN_LENGTH ? token : null;
 }
 
-/** 要求の利用者の ID。トークンがない・確かめられなければ null */
-export async function requestUid(c: Context, verifier: IdTokenVerifier): Promise<string | null> {
+/**
+ * 要求の利用者を、持ち主の ID にして返す。トークンがない・確かめられない・ログインを用意していなければ null。
+ * 利用者のデータに触れるときの持ち主は、ここを通した値だけを使う
+ */
+export async function requestOwner(
+  c: Context,
+  verifier: IdTokenVerifier | null,
+): Promise<OwnerId | null> {
+  if (verifier === null) return null;
   const token = bearerToken(c.req.header("authorization"));
-  return token === null ? null : verifier.verify(token);
+  if (token === null) return null;
+  const uid = await verifier.verify(token);
+  return uid === null ? null : ownerIdOf(uid);
 }

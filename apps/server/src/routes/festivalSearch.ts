@@ -6,14 +6,14 @@ import {
   FestivalWishIntentSchema,
   type IsoDate,
 } from "@matsuri-ikoka/schema";
-import type { Context, Hono } from "hono";
+import type { Context } from "hono";
 import type { FestivalStore } from "../data/festivalStore";
 import { todayInJapan } from "../domain/calendar";
 import { searchFestivalsByConditions } from "../domain/festivalSearch";
-import type { StoragePersistence } from "../session/persistence";
-import type { SessionStore } from "../session/sessionStore";
+import { errorForLog } from "../log";
 import { apiError } from "./errors";
-import type { ConcurrencyLimiter, DailyLimiter } from "./guard";
+import { type ConcurrencyLimiter, type DailyLimiter, limitKey } from "./guard";
+import type { ConsultationAccess, SecureRoutes } from "./policy";
 
 // 祭りから探す API（docs/spec/festival-search.md）。検索はコードだけで行う。
 // モデルで自由記述を読むときだけ、相談の回数と、同時に呼ぶ枠を使う。
@@ -36,10 +36,8 @@ export interface FestivalSearchOptions {
 
 export interface FestivalSearchDeps extends FestivalSearchOptions {
   festivals: FestivalStore;
-  sessions: SessionStore;
-  persistence?: StoragePersistence;
   limiter: DailyLimiter;
-  ipLimiter?: DailyLimiter;
+  clientLimiter?: DailyLimiter;
   concurrency?: ConcurrencyLimiter;
   clientIp?: (c: Context) => string;
 }
@@ -57,23 +55,27 @@ function withTimeout<T>(run: (signal: AbortSignal) => Promise<T>, ms: number): P
   return Promise.race([run(controller.signal), expired]).finally(() => clearTimeout(timer));
 }
 
-export function registerFestivalSearchRoutes(app: Hono, deps: FestivalSearchDeps) {
+export function registerFestivalSearchRoutes(routes: SecureRoutes, deps: FestivalSearchDeps) {
   const today = deps.today ?? (() => todayInJapan());
   // 同じ相談の同じ自由記述は読み直さない。「別の祭りを提案してもらう」で順がずれず、回数も増えない。
   // 読めなかったとき（null）も残し、途中から言葉の辞書の順に変わらないようにする
   const readings = new Map<string, FestivalWishIntent | null>();
 
-  async function readByModel(c: Context, wish: string): Promise<FestivalWishIntent | null> {
+  async function readByModel(
+    c: Context,
+    wish: string,
+    viewer: ConsultationAccess["viewer"],
+  ): Promise<FestivalWishIntent | null> {
     const reader = deps.readFestivalWish;
     if (reader === undefined) return null;
-    const ip = deps.clientIp?.(c) ?? "unknown";
-    if (!deps.limiter.allows() || (deps.ipLimiter !== undefined && !deps.ipLimiter.allows(ip))) {
+    const client = limitKey(viewer, deps.clientIp?.(c) ?? "unknown");
+    if (!deps.limiter.allows() || deps.clientLimiter?.allows(client) === false) {
       return null;
     }
-    const release = deps.concurrency === undefined ? () => {} : deps.concurrency.tryAcquire();
+    const release = deps.concurrency === undefined ? () => {} : deps.concurrency.tryAcquire(client);
     if (release === null) return null;
     deps.limiter.consume();
-    deps.ipLimiter?.consume(ip);
+    deps.clientLimiter?.consume(client);
     try {
       const read = await withTimeout(
         (signal) => reader(wish, signal),
@@ -83,7 +85,7 @@ export function registerFestivalSearchRoutes(app: Hono, deps: FestivalSearchDeps
       const parsed = FestivalWishIntentSchema.safeParse(read);
       return parsed.success ? parsed.data : null;
     } catch (error) {
-      console.warn("[festival-search] 自由記述を読めませんでした", (error as Error).message);
+      console.warn(JSON.stringify({ kind: "wish_read_failed", ...errorForLog(error) }));
       return null;
     } finally {
       release();
@@ -93,13 +95,14 @@ export function registerFestivalSearchRoutes(app: Hono, deps: FestivalSearchDeps
   async function wishIntent(
     c: Context,
     request: FestivalSearchRequest,
+    viewer: ConsultationAccess["viewer"],
   ): Promise<FestivalWishIntent | undefined> {
     const wish = request.wish;
     if (deps.readFestivalWish === undefined || wish === undefined || wish === "") return undefined;
     const key = `${request.sessionId}\u0000${wish}`;
     let read = readings.get(key);
     if (read === undefined) {
-      read = await readByModel(c, wish);
+      read = await readByModel(c, wish, viewer);
       if (readings.size >= MAX_CACHED_READINGS) {
         readings.delete(readings.keys().next().value as string);
       }
@@ -108,7 +111,7 @@ export function registerFestivalSearchRoutes(app: Hono, deps: FestivalSearchDeps
     return read ?? undefined;
   }
 
-  app.post("/api/festivals/search", async (c) => {
+  routes.consultation("POST", "/api/festivals/search", async (c, { viewer, open }) => {
     let request: FestivalSearchRequest;
     try {
       request = FestivalSearchRequestSchema.parse(await c.req.json());
@@ -116,8 +119,7 @@ export function registerFestivalSearchRoutes(app: Hono, deps: FestivalSearchDeps
       return c.json(apiError("bad_request", "送った内容の形が正しくありません。", false), 400);
     }
     // 別のインスタンスで始めた相談なら、保存の口から戻す
-    await deps.persistence?.load(request.sessionId);
-    if (deps.sessions.get(request.sessionId) === undefined) {
+    if ((await open(request.sessionId)) === undefined) {
       return c.json(
         apiError("bad_request", "相談が見つかりません。新しく始めてください。", false),
         404,
@@ -132,7 +134,7 @@ export function registerFestivalSearchRoutes(app: Hono, deps: FestivalSearchDeps
       sessionId: request.sessionId,
       excludeIds: request.excludeIds,
       wish: request.wish,
-      wishIntent: await wishIntent(c, request),
+      wishIntent: await wishIntent(c, request, viewer),
       today: today(),
     });
     return c.json(response satisfies FestivalSearchResponse);

@@ -8,13 +8,17 @@ import type {
   TripAnchor,
   VerificationResult,
 } from "@matsuri-ikoka/schema";
+import type { OwnerId } from "./owner";
 
 // 保存の口（docs/spec/account.md）。Firestore の実装（firestore.ts）と、テストと手元用のメモリの実装（memory.ts）がある。
 // 旅程は形が変わっても保存の側を直さずに済むよう、丸ごと JSON の文字列で持ち、読むときに呼ぶ側でスキーマを通す。
 // 会話の全文は残さない。
+// 利用者の旅は forOwner(持ち主) を通してしか読み書きできない。持ち主を決めずに呼ぶ口はない。
 
 /** 共有の URL で読める期間と、持ち主のない旅程を残す期間（最後の保存から） */
 export const SHARE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+/** 共有を使い回すときに残っているべき期間。これより短ければ、受け取った人がすぐ開けなくなるので新しく作る */
+export const SHARE_REUSE_MIN_REMAINING_MS = SHARE_TTL_MS / 2;
 /** 相談の途中の状態を残す期間（最後に使ってから） */
 export const SESSION_STATE_TTL_MS = 6 * 60 * 60 * 1000;
 /** 1つの旅程に残す版の数。超えたら古い版から消す */
@@ -23,8 +27,10 @@ export const MAX_VERSIONS = 20;
 /** 自分の旅の一覧に出す見出し */
 export interface StoredTrip {
   itineraryId: string;
-  /** ログインした利用者の ID。まだだれも残していなければ null */
+  /** 自分の旅として残した利用者の ID。まだだれも残していなければ null */
   ownerUid: string | null;
+  /** ログインした相談で組んだ旅程の、その利用者の ID。残す前でも、この人だけが読める */
+  consultOwnerUid: string | null;
   title: string;
   date: string | null;
   /** 最新の版 */
@@ -68,6 +74,8 @@ export interface SessionSnapshot {
   candidates: FestivalCandidate[];
   selectedFestivalId: string | null;
   itineraryId: string | null;
+  /** ログインして使った相談の持ち主。一度決まったら変わらない。この項目がない、前の形の保存もある */
+  ownerUid?: string | null;
   /** 祭りを固定した旅程の状態。この項目がない、前の形の保存もある */
   anchor?: TripAnchor | null;
   anchorPlan?: AnchorPlan | null;
@@ -78,33 +86,55 @@ export interface SessionSnapshot {
 
 export type ClaimResult =
   | { status: "saved"; trip: StoredTrip }
-  | { status: "not_found" }
-  /** ほかの利用者がもう残している */
-  | { status: "forbidden" };
+  /** 旅程がない。ほかの利用者の旅程も、あるかどうかを見せずに同じように扱う */
+  | { status: "not_found" };
+
+/** 旅程の持ち主。残した人を先に見る。どちらもいなければ null（だれのものでもない） */
+export function tripOwner(trip: Pick<StoredTrip, "ownerUid" | "consultOwnerUid">): string | null {
+  return trip.ownerUid ?? trip.consultOwnerUid;
+}
+
+/** 共有の URL の ID か（旅程の ID とは頭の文字で分かれる） */
+export function isShareId(id: string): boolean {
+  return id.startsWith("sh-");
+}
+
+/** 1人の利用者に絞った保存の口。ここを通る読み書きは、その人の旅にしか届かない */
+export interface OwnerTripStorage {
+  readonly owner: OwnerId;
+  /** 相談の中の旅程を、自分の旅として残す（消えないようにする）。ほかの人の旅程は not_found */
+  claimTrip(itineraryId: string): Promise<ClaimResult>;
+  /** 残した旅の一覧（新しく保存した順） */
+  listTrips(): Promise<StoredTrip[]>;
+  /** 自分の旅程を読む。version を省くと最新の版。自分のものでなければ null */
+  getTrip(itineraryId: string, version?: number): Promise<StoredTripDetail | null>;
+  /** 自分の旅程を、すべての版と共有ごと消す。消したら true */
+  deleteTrip(itineraryId: string): Promise<boolean>;
+  /** 自分の旅程をすべて（残す前のものも）消す。消した、残した旅の数を返す */
+  deleteAllTrips(): Promise<number>;
+  /**
+   * 自分の旅程の最新の版を、推測できない ID で30日だけ共有する。自分のものでなければ null。
+   * 同じ内容で、期限に余裕のある自分の共有があれば、それを返す。内容が変われば別の共有になる
+   */
+  createShare(itineraryId: string): Promise<CreatedShare | null>;
+}
 
 export interface TripStorage {
   readonly kind: "memory" | "firestore";
 
-  /** 旅程の版を残す。持ち主は変えない。持ち主のない旅程は、最後の保存から30日で消える */
-  saveItinerary(itinerary: Itinerary): Promise<void>;
+  /** 持ち主を決めて、利用者の旅の口を受け取る */
+  forOwner(owner: OwnerId): OwnerTripStorage;
   /**
-   * 共有の URL（しおり）から読む。id は旅程の ID か共有の ID（sh-…）。
-   * 旅程の ID なら最後の保存から30日以内の最新の版、共有の ID なら作ってから30日以内の、作ったときの版
+   * 旅程の版を残す。consultOwner は、その旅程を組んだ相談の持ち主（ログインなしなら null）。
+   * 残した人は変えない。残されていない旅程は、最後の保存から30日で消える
    */
-  getShared(id: string): Promise<SharedItinerary | null>;
-  /** 相談の中の旅程を、利用者の旅として残す（消えないようにする） */
-  claimTrip(uid: string, itineraryId: string): Promise<ClaimResult>;
-  /** 利用者の旅の一覧（新しく保存した順） */
-  listTrips(uid: string): Promise<StoredTrip[]>;
-  /** 利用者の旅を読む。version を省くと最新の版。持ち主でなければ null */
-  getTrip(uid: string, itineraryId: string, version?: number): Promise<StoredTripDetail | null>;
-  /** 利用者の旅を、すべての版と共有ごと消す。消したら true */
-  deleteTrip(uid: string, itineraryId: string): Promise<boolean>;
-  /** 利用者の旅をすべて消す。消した数を返す */
-  deleteAllTrips(uid: string): Promise<number>;
-  /** 利用者の旅の最新の版を、推測できない ID で30日だけ共有する。持ち主でなければ null */
-  createShare(uid: string, itineraryId: string): Promise<CreatedShare | null>;
+  saveItinerary(itinerary: Itinerary, consultOwner: OwnerId | null): Promise<void>;
+  /** 共有の ID（sh-…）から、作ってから30日以内の、作ったときの版を読む */
+  readShare(shareId: string): Promise<SharedItinerary | null>;
+  /** 持ち主のない旅程の最新の版を、最後の保存から30日以内なら読む。持ち主のある旅程は null */
+  readUnowned(itineraryId: string): Promise<SharedItinerary | null>;
 
+  /** 一度書いた持ち主は、持ち主のない書き込みでも、別の持ち主の書き込みでも変わらない */
   saveSession(snapshot: SessionSnapshot): Promise<void>;
   /** 最後に使ってから6時間を過ぎた相談は null */
   getSession(id: string): Promise<SessionSnapshot | null>;

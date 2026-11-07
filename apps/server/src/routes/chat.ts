@@ -5,7 +5,7 @@ import {
   type SessionResponse,
   type TripAnchor,
 } from "@matsuri-ikoka/schema";
-import type { Context, Hono } from "hono";
+import type { Context } from "hono";
 import type { z } from "zod";
 import { preferencesLabel } from "../agent/briefing";
 import type { AgentRunner } from "../agent/runner";
@@ -13,32 +13,32 @@ import type { FestivalStore } from "../data/festivalStore";
 import { refreshAnchorPlan, refuseAnchor } from "../domain/anchorPlan";
 import { todayInJapan } from "../domain/calendar";
 import type { StationPointIndex } from "../domain/travelEstimate";
+import type { Consultations } from "../session/consultations";
 import type { StoragePersistence } from "../session/persistence";
-import type { Session, SessionStore } from "../session/sessionStore";
+import type { Session } from "../session/sessionStore";
+import type { OwnerId } from "../storage/owner";
 import { apiError } from "./errors";
-import type { ConcurrencyLimiter, DailyLimiter } from "./guard";
+import { type ConcurrencyLimiter, type DailyLimiter, limitKey } from "./guard";
+import type { SecureRoutes } from "./policy";
 import { streamTurn } from "./turnStream";
 
 // 相談の API。返答は SSE（routes/turnStream.ts）で返す。
 // SSE を始める前に断るとき（形の誤り・相談が見つからない・返答の途中・回数の上限・混雑）は、
 // HTTP の状態コードと error イベントの data と同じ形の JSON で返す。
 
-export interface ChatDeps {
+export interface ChatOptions {
   runner: AgentRunner & { sampleFor?(requested?: string): string | null };
-  sessions: SessionStore;
   /** 祭りのデータ。祭りを固定するときに、祭りと日を確かめる */
   festivals: FestivalStore;
   /** 駅の位置。祭りを固定した旅の組み立てで、移動を見積もる */
   stations?: StationPointIndex;
   /** 今日の日付。省略すると日本の今日 */
   today?: () => string;
-  /** 相談の途中の状態を保存の口に残し、別のインスタンスでも続けられるようにする */
-  persistence?: StoragePersistence;
   /** 1日の相談の回数の上限（全体） */
   limiter: DailyLimiter;
-  /** 1日の相談の回数の上限（IP ごと） */
-  ipLimiter?: DailyLimiter;
-  /** live で同時に返事を作る数の上限 */
+  /** 1日の相談の回数の上限（利用者ごと。ログインしていなければ IP ごと） */
+  clientLimiter?: DailyLimiter;
+  /** live で同時に返事を作る数の上限（全体と、利用者ごと） */
   concurrency?: ConcurrencyLimiter;
   /** 利用者の IP を決める関数（前に置いたプロキシの数で変わる） */
   clientIp?: (c: Context) => string;
@@ -47,6 +47,21 @@ export interface ChatDeps {
   /** 相談1回の全体の上限（ミリ秒） */
   turnMaxMs?: number;
   heartbeatMs?: number;
+}
+
+export interface ChatDeps extends ChatOptions {
+  /** 相談の入口。相談はここからだけ受け取る */
+  consultations: Consultations;
+  /** 相談の途中の状態を保存の口に残し、別のインスタンスでも続けられるようにする */
+  persistence: StoragePersistence;
+}
+
+/** ない相談も、ほかの人の相談も、同じ応答で断る（あるかどうかを見せない） */
+function sessionNotFound(c: Context) {
+  return c.json(
+    apiError("bad_request", "相談が見つかりません。新しく始めてください。", false),
+    404,
+  );
 }
 
 async function readJson(c: Context): Promise<unknown> {
@@ -60,29 +75,24 @@ function badRequest(c: Context, message = "送った内容の形が正しくあ�
 }
 
 /**
- * 相談を引き、返答を作れる状態か確かめる。だめならエラーの Response を返す。
+ * 開いた相談が返答を作れる状態か確かめる。だめならエラーの Response を返す。
  * 通れば、回数を1回分使い、live なら同時に返事を作る枠を1つ取る（release で返す）
  */
-function openSession(
+function reserveTurn(
   c: Context,
   deps: ChatDeps,
-  sessionId: string,
+  session: Session | undefined,
+  viewer: OwnerId | null,
 ): { session: Session; release: () => void } | Response {
-  const session = deps.sessions.get(sessionId);
-  if (session === undefined) {
-    return c.json(
-      apiError("bad_request", "相談が見つかりません。新しく始めてください。", false),
-      404,
-    );
-  }
+  if (session === undefined) return sessionNotFound(c);
   if (session.busy) {
     return c.json(
       apiError("bad_request", "前の返事を作っています。終わってから送ってください。", true),
       409,
     );
   }
-  const ip = deps.clientIp?.(c) ?? "unknown";
-  if (!deps.limiter.allows() || (deps.ipLimiter !== undefined && !deps.ipLimiter.allows(ip))) {
+  const client = limitKey(viewer, deps.clientIp?.(c) ?? "unknown");
+  if (!deps.limiter.allows() || deps.clientLimiter?.allows(client) === false) {
     return c.json(
       apiError("rate_limited", "今日の相談の受付は終わりました。また明日お越しください。", false),
       429,
@@ -90,7 +100,7 @@ function openSession(
   }
   let release = () => {};
   if (deps.runner.mode === "live" && deps.concurrency !== undefined) {
-    const acquired = deps.concurrency.tryAcquire();
+    const acquired = deps.concurrency.tryAcquire(client);
     if (acquired === null) {
       return c.json(
         apiError(
@@ -104,7 +114,7 @@ function openSession(
     release = acquired;
   }
   deps.limiter.consume();
-  deps.ipLimiter?.consume(ip);
+  deps.clientLimiter?.consume(client);
   return { session, release };
 }
 
@@ -144,18 +154,19 @@ function fixAnchor(session: Session, anchor: TripAnchor): void {
 
 function persistOf(deps: ChatDeps, session: Session): () => Promise<void> {
   return async () => {
-    await deps.persistence?.saveSession(session);
+    await deps.persistence.saveSession(session);
   };
 }
 
-export function registerChatRoutes(app: Hono, deps: ChatDeps) {
+export function registerChatRoutes(routes: SecureRoutes, deps: ChatDeps) {
   const timing = {
     ...(deps.turnIdleMs === undefined ? {} : { idleMs: deps.turnIdleMs }),
     ...(deps.turnMaxMs === undefined ? {} : { maxMs: deps.turnMaxMs }),
     ...(deps.heartbeatMs === undefined ? {} : { heartbeatMs: deps.heartbeatMs }),
   };
 
-  app.post("/api/session", async (c) => {
+  // だれでも相談を始められる。ログインしていれば、はじめからその人の相談にする
+  routes.public("POST", "/api/session", async (c, { viewer }) => {
     let body: z.infer<typeof SessionRequestSchema>;
     try {
       // 本文は省略できる
@@ -169,12 +180,11 @@ export function registerChatRoutes(app: Hono, deps: ChatDeps) {
       if (sampleId === null) return badRequest(c, "そのサンプルの相談はありません。");
       replay = { sampleId, nextTurn: 0 };
     }
-    const session = deps.sessions.create({ replay });
-    await deps.persistence?.saveSession(session);
+    const session = await deps.consultations.start(await viewer(), replay);
     return c.json({ sessionId: session.id, mode: deps.runner.mode } satisfies SessionResponse, 201);
   });
 
-  app.post("/api/chat", async (c) => {
+  routes.consultation("POST", "/api/chat", async (c, { viewer, open }) => {
     let request: z.infer<typeof ChatRequestSchema>;
     try {
       request = ChatRequestSchema.parse(await readJson(c));
@@ -182,7 +192,7 @@ export function registerChatRoutes(app: Hono, deps: ChatDeps) {
       return badRequest(c);
     }
     // 別のインスタンスで始めた相談なら、保存の口から戻す
-    await deps.persistence?.load(request.sessionId);
+    const found = await open(request.sessionId);
     const { anchor } = request;
     if (anchor !== undefined) {
       const refusal = refuseAnchor(
@@ -194,7 +204,7 @@ export function registerChatRoutes(app: Hono, deps: ChatDeps) {
         return c.json(apiError("bad_request", refusal.message, false), refusal.status);
       }
     }
-    const opened = openSession(c, deps, request.sessionId);
+    const opened = reserveTurn(c, deps, found, viewer);
     if (opened instanceof Response) return opened;
     const { session, release } = opened;
     // 画面で選んでいるこだわりを正とする。会話で切り替わったら、ツールが相談の状態を書き換える
@@ -243,24 +253,18 @@ export function registerChatRoutes(app: Hono, deps: ChatDeps) {
     );
   });
 
-  app.patch("/api/preferences", async (c) => {
+  routes.consultation("PATCH", "/api/preferences", async (c, { viewer, open }) => {
     let request: z.infer<typeof PreferencesRequestSchema>;
     try {
       request = PreferencesRequestSchema.parse(await readJson(c));
     } catch {
       return badRequest(c);
     }
-    await deps.persistence?.load(request.sessionId);
-    const existing = deps.sessions.get(request.sessionId);
+    const existing = await open(request.sessionId);
     // 旅程があるときだけ旅程係を動かす。記録の再生（mock）では、こだわりを変えるだけにする
     const replan = existing?.itineraryId != null && deps.runner.mode === "live";
     if (!replan) {
-      if (existing === undefined) {
-        return c.json(
-          apiError("bad_request", "相談が見つかりません。新しく始めてください。", false),
-          404,
-        );
-      }
+      if (existing === undefined) return sessionNotFound(c);
       if (existing.busy) {
         return c.json(
           apiError("bad_request", "前の返事を作っています。終わってから送ってください。", true),
@@ -268,10 +272,10 @@ export function registerChatRoutes(app: Hono, deps: ChatDeps) {
         );
       }
       existing.preferences = request.preferences;
-      await deps.persistence?.saveSession(existing);
+      await deps.persistence.saveSession(existing);
       return streamTurn(c, existing, async () => {}, timing);
     }
-    const opened = openSession(c, deps, request.sessionId);
+    const opened = reserveTurn(c, deps, existing, viewer);
     if (opened instanceof Response) return opened;
     const { session, release } = opened;
     session.preferences = request.preferences;

@@ -1,5 +1,6 @@
 import { createSdkMcpServer, tool } from "@anthropic-ai/claude-agent-sdk";
 import { z } from "zod";
+import { errorForLog } from "../log";
 import { TOOL_TIMEOUT_MS, type ToolContext } from "./context";
 import { MATSURI_TOOLS, type MatsuriTool, ToolError } from "./matsuriTools";
 
@@ -59,7 +60,7 @@ export async function runTool(
           ? `入力の形が正しくありません：${error.issues.map((i) => `${i.path.join(".")} ${i.message}`).join("、")}`
           : "ツールの中でエラーが起きました";
     if (!(error instanceof ToolError || error instanceof z.ZodError)) {
-      console.error(`[tool] ${def.name} failed`, error);
+      console.error(JSON.stringify({ kind: "tool_failed", tool: def.name, ...errorForLog(error) }));
     }
     return { content: [{ type: "text", text: message }], isError: true };
   } finally {

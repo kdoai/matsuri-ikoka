@@ -31,6 +31,18 @@ export interface AccountClient {
   saveTrip(sessionId: string): Promise<TripSummary>;
   /** しおりを30日だけ共有する URL のパス */
   shareTrip(itineraryId: string): Promise<string>;
+  /**
+   * ログインしていれば ID トークン。していなければ null。
+   * 相談をログインした人に結びつけるのに使う。ログインの部品を読み込んでいなければ、読み込まずに null を返す。
+   * ログイン中に取れないときは、再試行できるエラーにする（ログインなしとして送ると、持ち主のある相談が 404 になる）
+   */
+  idToken(): Promise<string | null>;
+  /**
+   * 自分の旅程のしおりを開くパス。自分の旅程は旅程の ID では開けないので、共有で開く。
+   * 同じ内容の共有があれば、サーバーがそれを返す。
+   * ログインしていない・自分の旅程でなければ null（旅程の ID のまま開ける）
+   */
+  ownShioriPath(itineraryId: string): Promise<string | null>;
   deleteTrip(itineraryId: string): Promise<void>;
   /** 自分の旅をすべて消し、ログインの記録（Firebase のアカウント）も消してログアウトする */
   deleteEverything(): Promise<void>;
@@ -139,6 +151,31 @@ export function createAccountClient(
     return response;
   };
 
+  const shareTrip = async (itineraryId: string) => {
+    const response = await call(`/api/trips/${encodeURIComponent(itineraryId)}/share`, {
+      method: "POST",
+    });
+    return ShareResponseSchema.parse(await response.json()).path;
+  };
+
+  const idToken = async (): Promise<string | null> => {
+    if (firebasePromise === null) return null;
+    let part: FirebaseAuthPart;
+    try {
+      part = await firebasePromise;
+    } catch {
+      // ログインの部品を読み込めなければ、ログインしていない
+      return null;
+    }
+    const user = part.currentUser;
+    if (user === null) return null;
+    try {
+      return await user.getIdToken();
+    } catch {
+      throw new TransportError("connection_lost");
+    }
+  };
+
   return {
     enabled: async () => (await config()).enabled,
     onUser(listener) {
@@ -172,11 +209,17 @@ export function createAccountClient(
       const response = await call("/api/trips", { method: "POST", body: { sessionId } });
       return TripSummarySchema.parse(await response.json());
     },
-    async shareTrip(itineraryId) {
-      const response = await call(`/api/trips/${encodeURIComponent(itineraryId)}/share`, {
-        method: "POST",
-      });
-      return ShareResponseSchema.parse(await response.json()).path;
+    shareTrip,
+    idToken,
+    async ownShioriPath(itineraryId) {
+      if ((await idToken()) === null) return null;
+      try {
+        return await shareTrip(itineraryId);
+      } catch (error) {
+        // ログインする前に組んだ、持ち主のない旅程は、旅程の ID のまま開ける
+        if (error instanceof TransportError && error.status === 404) return null;
+        throw error;
+      }
     },
     async deleteTrip(itineraryId) {
       await call(`/api/trips/${encodeURIComponent(itineraryId)}`, { method: "DELETE" });

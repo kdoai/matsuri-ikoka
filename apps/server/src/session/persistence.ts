@@ -1,10 +1,18 @@
 import {
   AnchorPlanSchema,
+  type ConversationStage,
   type Itinerary,
   ItinerarySchema,
   TripAnchorSchema,
 } from "@matsuri-ikoka/schema";
-import type { SessionSnapshot, TripStorage } from "../storage/types";
+import { errorForLog } from "../log";
+import { type OwnerId, ownerIdOf } from "../storage/owner";
+import {
+  isShareId,
+  type OwnerTripStorage,
+  type SessionSnapshot,
+  type TripStorage,
+} from "../storage/types";
 import type { ItineraryStore, Session, SessionStore } from "./sessionStore";
 
 // 相談と旅程を、保存の口（storage/）に残す。
@@ -22,6 +30,7 @@ export function parseStoredItinerary(value: unknown): Itinerary | undefined {
 export function snapshotOf(session: Session, now: number): SessionSnapshot {
   return {
     id: session.id,
+    ownerUid: session.ownerUid,
     createdAt: session.createdAt,
     updatedAt: now,
     stage: session.stage,
@@ -38,6 +47,12 @@ export function snapshotOf(session: Session, now: number): SessionSnapshot {
   };
 }
 
+/** 旅程を読めない相談の段階。旅程がある前提の段階からは、聞き取りか候補へ戻す */
+function stageWithoutItinerary(saved: SessionSnapshot): ConversationStage {
+  if (saved.stage === "hearing" || saved.stage === "candidates") return saved.stage;
+  return saved.candidates.length > 0 ? "candidates" : "hearing";
+}
+
 /** 保存の口から読んだアンカーを、いまの形で確かめる。前の形のものは捨てる（組み立ては次の発言で計算し直す） */
 function currentAnchorState(saved: SessionSnapshot): SessionSnapshot {
   const anchor = TripAnchorSchema.safeParse(saved.anchor);
@@ -50,7 +65,7 @@ function currentAnchorState(saved: SessionSnapshot): SessionSnapshot {
 }
 
 export class StoragePersistence {
-  readonly storage: TripStorage;
+  readonly #storage: TripStorage;
   readonly #sessions: SessionStore | undefined;
   readonly #itineraries: ItineraryStore;
   readonly #now: () => number;
@@ -63,24 +78,25 @@ export class StoragePersistence {
     sessions?: SessionStore;
     now?: () => number;
   }) {
-    this.storage = deps.storage;
+    this.#storage = deps.storage;
     this.#sessions = deps.sessions;
     this.#itineraries = deps.itineraries;
     this.#now = deps.now ?? Date.now;
-    deps.itineraries.onSave((itinerary) => this.#writeItinerary(itinerary));
+    deps.itineraries.onSave((itinerary, owner) => this.#writeItinerary(itinerary, owner));
   }
 
-  #writeItinerary(itinerary: Itinerary): void {
+  /** 持ち主を決めて、利用者の旅の口を受け取る */
+  forOwner(owner: OwnerId): OwnerTripStorage {
+    return this.#storage.forOwner(owner);
+  }
+
+  #writeItinerary(itinerary: Itinerary, owner: OwnerId | null): void {
     const previous = this.#pending.get(itinerary.id) ?? Promise.resolve();
     const next = previous
-      .then(() => this.storage.saveItinerary(itinerary))
+      .then(() => this.#storage.saveItinerary(itinerary, owner))
       .catch((error: unknown) => {
         console.error(
-          JSON.stringify({
-            kind: "storage_failed",
-            what: "itinerary",
-            message: error instanceof Error ? error.message : String(error),
-          }),
+          JSON.stringify({ kind: "storage_failed", what: "itinerary", ...errorForLog(error) }),
         );
       })
       .finally(() => {
@@ -98,40 +114,69 @@ export class StoragePersistence {
     await Promise.all(this.#pending.values());
   }
 
-  /** 共有の URL（旅程の ID か共有の ID）から、いまの形の旅程を読む */
-  async readShared(id: string): Promise<Itinerary | undefined> {
+  /**
+   * ID から、いまの形の旅程を読む。読めるのは、共有の ID、持ち主のない旅程の ID、
+   * viewer（確かめた利用者）自身の旅程の ID だけ。ほかの人の旅程は、ないものとして扱う
+   */
+  async readItinerary(id: string, viewer: OwnerId | null): Promise<Itinerary | undefined> {
     await this.flush(id);
-    const shared = await this.storage.getShared(id);
-    return shared === null ? undefined : parseStoredItinerary(shared.itinerary);
+    if (isShareId(id)) {
+      const shared = await this.#storage.readShare(id);
+      return shared === null ? undefined : parseStoredItinerary(shared.itinerary);
+    }
+    const unowned = await this.#storage.readUnowned(id);
+    if (unowned !== null) return parseStoredItinerary(unowned.itinerary);
+    if (viewer === null) return undefined;
+    const own = await this.#storage.forOwner(viewer).getTrip(id);
+    return own === null ? undefined : parseStoredItinerary(own.itinerary);
   }
 
   /**
    * 相談を引く。メモリになければ保存の口から戻し、その相談の旅程も手元の写しに置く。
-   * 見つからなければ undefined
+   * 見つからなければ undefined。viewer は持ち主のない相談を開いた利用者で、その人の旅程なら戻せる。
+   * 読めない旅程（消した・ほかの人の・前の形）は相談から外し、相談は旅程のないものとして続ける
    */
-  async load(sessionId: string): Promise<Session | undefined> {
+  async load(sessionId: string, viewer: OwnerId | null = null): Promise<Session | undefined> {
     if (this.#sessions === undefined) return undefined;
     const inMemory = this.#sessions.get(sessionId);
     if (inMemory !== undefined) return inMemory;
     let saved: SessionSnapshot | null;
     try {
-      saved = await this.storage.getSession(sessionId);
+      saved = await this.#storage.getSession(sessionId);
     } catch (error) {
       console.error(
-        JSON.stringify({
-          kind: "storage_failed",
-          what: "session_read",
-          message: error instanceof Error ? error.message : String(error),
-        }),
+        JSON.stringify({ kind: "storage_failed", what: "session_read", ...errorForLog(error) }),
       );
       return undefined;
     }
     if (saved === null) return undefined;
+    // 保存した相談の持ち主は、書くときに確かめた利用者なので、そのまま持ち主に戻す
+    const ownerUid = saved.ownerUid ? ownerIdOf(saved.ownerUid) : null;
     if (saved.itineraryId !== null && this.#itineraries.get(saved.itineraryId) === undefined) {
-      const itinerary = await this.readShared(saved.itineraryId).catch(() => undefined);
-      if (itinerary !== undefined) this.#itineraries.remember(itinerary);
+      const itinerary = await this.#readForRestore(saved.itineraryId, ownerUid ?? viewer);
+      if (itinerary === undefined) {
+        return this.#sessions.restore({
+          ...currentAnchorState(saved),
+          ownerUid,
+          itineraryId: null,
+          stage: stageWithoutItinerary(saved),
+        });
+      }
+      this.#itineraries.remember(itinerary);
     }
-    return this.#sessions.restore(currentAnchorState(saved));
+    return this.#sessions.restore({ ...currentAnchorState(saved), ownerUid });
+  }
+
+  /** 戻す相談の旅程を読む。読みに失敗したら、読めない旅程と同じに扱う（相談は止めない） */
+  async #readForRestore(id: string, viewer: OwnerId | null): Promise<Itinerary | undefined> {
+    try {
+      return await this.readItinerary(id, viewer);
+    } catch (error) {
+      console.error(
+        JSON.stringify({ kind: "storage_failed", what: "itinerary_read", ...errorForLog(error) }),
+      );
+      return undefined;
+    }
   }
 
   /**
@@ -141,14 +186,10 @@ export class StoragePersistence {
   async saveSession(session: Session): Promise<void> {
     if (session.itineraryId !== null) await this.flush(session.itineraryId);
     try {
-      await this.storage.saveSession(snapshotOf(session, this.#now()));
+      await this.#storage.saveSession(snapshotOf(session, this.#now()));
     } catch (error) {
       console.error(
-        JSON.stringify({
-          kind: "storage_failed",
-          what: "session",
-          message: error instanceof Error ? error.message : String(error),
-        }),
+        JSON.stringify({ kind: "storage_failed", what: "session", ...errorForLog(error) }),
       );
     }
   }

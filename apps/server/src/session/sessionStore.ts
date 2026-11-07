@@ -15,6 +15,7 @@ import {
   type VerificationResult,
   type Weather,
 } from "@matsuri-ikoka/schema";
+import type { OwnerId } from "../storage/owner";
 
 // 相談の状態。会話の状態・聞き取れた条件・こだわり・候補・旅程は、サーバーが持つ。
 // 返事を作る間はメモリに置き、しばらく使われなかった相談は消す。
@@ -25,6 +26,8 @@ export const SESSION_IDLE_MS = 6 * 60 * 60 * 1000;
 
 export interface Session {
   id: string;
+  /** ログインして使った相談の持ち主。ログインなしの相談は null。一度決まったら変わらない */
+  ownerUid: OwnerId | null;
   createdAt: number;
   lastActiveAt: number;
   stage: ConversationStage;
@@ -113,11 +116,12 @@ export class SessionStore {
     }
   }
 
-  create(init: Partial<Pick<Session, "preferences" | "replay">> = {}): Session {
+  create(init: Partial<Pick<Session, "preferences" | "replay" | "ownerUid">> = {}): Session {
     this.#makeRoom();
     const now = this.#now();
     const session: Session = {
       id: randomId("s"),
+      ownerUid: init.ownerUid ?? null,
       createdAt: now,
       lastActiveAt: now,
       stage: "hearing",
@@ -161,14 +165,17 @@ export class SessionStore {
       | "itineraryId"
       | "replay"
     > &
-      Partial<Pick<Session, "anchor" | "anchorPlan" | "anchorCheck" | "cancelledAnchor">>,
+      Partial<
+        Pick<Session, "ownerUid" | "anchor" | "anchorPlan" | "anchorCheck" | "cancelledAnchor">
+      >,
   ): Session {
     const existing = this.get(saved.id);
     if (existing !== undefined) return existing;
     this.#makeRoom();
     const session: Session = {
       ...saved,
-      // アンカーの項目がない、前の形の保存も読めるようにする
+      // 持ち主とアンカーの項目がない、前の形の保存も読めるようにする
+      ownerUid: saved.ownerUid ?? null,
       anchor: saved.anchor ?? null,
       anchorPlan: saved.anchorPlan ?? null,
       anchorCheck: saved.anchorCheck ?? null,
@@ -221,7 +228,7 @@ export class ItineraryStore {
   readonly #now: () => number;
   readonly #ttlMs: number;
   readonly #max: number;
-  readonly #listeners: ((itinerary: Itinerary) => void)[] = [];
+  readonly #listeners: ((itinerary: Itinerary, owner: OwnerId | null) => void)[] = [];
 
   constructor(options: { now?: () => number; ttlMs?: number; max?: number } = {}) {
     this.#now = options.now ?? Date.now;
@@ -234,13 +241,14 @@ export class ItineraryStore {
   }
 
   /** 旅程を保存するたびに呼ぶ関数を足す */
-  onSave(listener: (itinerary: Itinerary) => void): void {
+  onSave(listener: (itinerary: Itinerary, owner: OwnerId | null) => void): void {
     this.#listeners.push(listener);
   }
 
-  save(itinerary: Itinerary): void {
+  /** 旅程を保存する。owner は旅程を組んだ相談の持ち主（ログインなしの相談は null） */
+  save(itinerary: Itinerary, owner: OwnerId | null): void {
     this.remember(itinerary);
-    for (const listener of this.#listeners) listener(itinerary);
+    for (const listener of this.#listeners) listener(itinerary, owner);
   }
 
   /** 保存の口から読んだ旅程を、手元の写しに置く（購読しているものには知らせない） */

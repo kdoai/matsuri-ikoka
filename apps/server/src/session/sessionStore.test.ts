@@ -35,7 +35,7 @@ describe("ItineraryStore", () => {
     let now = 0;
     const itineraries = new ItineraryStore({ now: () => now });
     const itinerary = fictionalItinerary();
-    itineraries.save(itinerary);
+    itineraries.save(itinerary, null);
 
     now = ITINERARY_TTL_MS;
     expect(itineraries.get(itinerary.id)).toEqual(itinerary);
@@ -47,12 +47,12 @@ describe("ItineraryStore", () => {
     let now = 0;
     const itineraries = new ItineraryStore({ now: () => now, max: 2 });
     const make = (id: string) => ({ ...fictionalItinerary(), id });
-    itineraries.save(make("a"));
-    itineraries.save(make("b"));
+    itineraries.save(make("a"), null);
+    itineraries.save(make("b"), null);
     now = 10;
-    itineraries.save(make("a"));
+    itineraries.save(make("a"), null);
 
-    itineraries.save(make("c"));
+    itineraries.save(make("c"), null);
 
     expect(itineraries.get("b")).toBeUndefined();
     expect(itineraries.get("a")?.id).toBe("a");
@@ -62,7 +62,7 @@ describe("ItineraryStore", () => {
   it("期限を過ぎた旅程を片付ける", () => {
     let now = 0;
     const itineraries = new ItineraryStore({ now: () => now });
-    itineraries.save(fictionalItinerary());
+    itineraries.save(fictionalItinerary(), null);
 
     now = ITINERARY_TTL_MS + 1;
     itineraries.sweep();

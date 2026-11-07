@@ -152,6 +152,9 @@ function event<const T extends string, S extends z.ZodType>(type: T, data: S) {
   return z.strictObject({ type: z.literal(type), data });
 }
 
+/** SSE のイベントの形を作る（ガイドのイベント（guide.ts）と同じ形にそろえる） */
+export const defineSseEvent = event;
+
 /** サブエージェント（スタッフ）が作業を始めた */
 export const StaffStartEventSchema = event(
   "staff.start",

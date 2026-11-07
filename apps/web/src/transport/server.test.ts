@@ -1,4 +1,4 @@
-import { FestivalSchema } from "@matsuri-ikoka/schema";
+import { DEFAULT_PREFERENCES, FestivalSchema } from "@matsuri-ikoka/schema";
 import { fictionalFestival } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it, vi } from "vitest";
 import {
@@ -72,6 +72,101 @@ describe("合言葉の形", () => {
     expect(isSendablePasscode("ｍａｔｓｕｒｉ")).toBe(false);
     expect(isSendablePasscode("two words")).toBe(false);
     expect(isSendablePasscode("")).toBe(false);
+  });
+});
+
+describe("相談の呼び出しの ID トークン", () => {
+  const session = async () => json({ sessionId: "s-1" }, 201);
+
+  it("ログインしていれば、相談の呼び出しに ID トークンを付ける", async () => {
+    const fetchMock = vi.fn<typeof fetch>(session);
+    const transport = createServerTransport({
+      fetch: fetchMock,
+      idToken: async () => "id-token",
+    });
+
+    await transport.startSession();
+    await transport
+      .searchFestivals({
+        sessionId: "s-1",
+        kinds: [],
+        season: null,
+        prefectures: [],
+        excludeIds: [],
+      })
+      .catch(() => {});
+
+    for (const call of fetchMock.mock.calls) {
+      expect(headerOf(call[1], "authorization")).toBe("Bearer id-token");
+    }
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("ログインしていないときは、付けずに送る", async () => {
+    const fetchMock = vi.fn<typeof fetch>(session);
+
+    await createServerTransport({ fetch: fetchMock }).startSession();
+    await createServerTransport({ fetch: fetchMock, idToken: async () => null }).startSession();
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    for (const call of fetchMock.mock.calls) {
+      expect(headerOf(call[1], "authorization")).toBeNull();
+    }
+  });
+
+  describe("ログイン中にトークンを取れないとき", () => {
+    const failing = (fetchMock: typeof fetch) =>
+      createServerTransport({
+        fetch: fetchMock,
+        idToken: () => Promise.reject(new Error("つながらない")),
+      });
+    const retryable = { code: "connection_lost" };
+
+    it("相談の呼び出しを送らず、再試行できるエラーにする", async () => {
+      const fetchMock = vi.fn<typeof fetch>(session);
+      const transport = failing(fetchMock);
+      const signal = new AbortController().signal;
+      const preferences = DEFAULT_PREFERENCES;
+
+      await expect(transport.startSession()).rejects.toMatchObject(retryable);
+      await expect(
+        transport.chat({ sessionId: "s-1", message: "やあ", preferences }, () => {}, signal),
+      ).rejects.toMatchObject(retryable);
+      await expect(
+        transport.updatePreferences({ sessionId: "s-1", preferences }, () => {}, signal),
+      ).rejects.toMatchObject(retryable);
+      await expect(
+        transport.searchFestivals({
+          sessionId: "s-1",
+          kinds: [],
+          season: null,
+          prefectures: [],
+          excludeIds: [],
+        }),
+      ).rejects.toMatchObject(retryable);
+
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it("相談が切れたものとして扱わない（画面は相談を作り直さない）", async () => {
+      const error = await failing(vi.fn<typeof fetch>(session))
+        .startSession()
+        .catch((caught) => caught);
+
+      expect(toClientError(error)).toMatchObject({ code: "connection_lost", retryable: true });
+    });
+  });
+
+  it("祭りのデータと死活監視には付けない", async () => {
+    const fetchMock = vi.fn<typeof fetch>(async () => json({ status: "ok" }, 200));
+    const transport = createServerTransport({
+      fetch: fetchMock,
+      idToken: async () => "id-token",
+    });
+
+    await transport.checkServer?.();
+
+    expect(headerOf(fetchMock.mock.calls[0]?.[1], "authorization")).toBeNull();
   });
 });
 

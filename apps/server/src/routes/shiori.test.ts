@@ -7,9 +7,13 @@ import {
 import { Hono } from "hono";
 import { describe, expect, it } from "vitest";
 import { createFestivalStore } from "../data/festivalStore";
-import { ItineraryStore } from "../session/sessionStore";
+import { Consultations } from "../session/consultations";
+import { StoragePersistence } from "../session/persistence";
+import { ItineraryStore, SessionStore } from "../session/sessionStore";
 import { createShiori } from "../shiori";
 import type { PdfEngine } from "../shiori/pdf";
+import { MemoryTripStorage } from "../storage/memory";
+import { SecureRoutes } from "./policy";
 import { registerShioriRoutes } from "./shiori";
 
 function setup(engine?: PdfEngine, verified: boolean | "needs_check" | "not_found" = true) {
@@ -28,8 +32,8 @@ function setup(engine?: PdfEngine, verified: boolean | "needs_check" | "not_foun
       sources: [fictionalSource("2026")],
     };
   }
-  itineraries.save(itinerary);
-  itineraries.save({ ...itinerary, id: `${itinerary.id}-2` });
+  itineraries.save(itinerary, null);
+  itineraries.save({ ...itinerary, id: `${itinerary.id}-2` }, null);
   const app = new Hono();
   const renders: string[] = [];
   const fake: PdfEngine = engine ?? {
@@ -39,7 +43,18 @@ function setup(engine?: PdfEngine, verified: boolean | "needs_check" | "not_foun
     },
     close: async () => {},
   };
-  registerShioriRoutes(app, {
+  const sessions = new SessionStore();
+  const persistence = new StoragePersistence({
+    storage: new MemoryTripStorage(),
+    itineraries,
+    sessions,
+  });
+  const routes = new SecureRoutes(app, {
+    verifier: null,
+    persistence,
+    consultations: new Consultations({ sessions, persistence }),
+  });
+  registerShioriRoutes(routes, {
     readItinerary: async (id) => itineraries.get(id),
     festivals: createFestivalStore([FestivalSchema.parse(fictionalFestival())]),
     shiori: createShiori({

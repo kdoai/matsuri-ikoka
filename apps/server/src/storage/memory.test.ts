@@ -9,10 +9,12 @@ describe("MemoryTripStorage", () => {
 
   it("数の上限を超えたら、いちばん長く保存されていない旅程から消す", async () => {
     const storage = new MemoryTripStorage({ max: 2 });
-    for (const id of ["a", "b", "c"]) await storage.saveItinerary({ ...fictionalItinerary(), id });
+    for (const id of ["a", "b", "c"]) {
+      await storage.saveItinerary({ ...fictionalItinerary(), id }, null);
+    }
 
-    expect(await storage.getShared("a")).toBeNull();
-    expect(await storage.getShared("c")).not.toBeNull();
+    expect(await storage.readUnowned("a")).toBeNull();
+    expect(await storage.readUnowned("c")).not.toBeNull();
   });
 });
 

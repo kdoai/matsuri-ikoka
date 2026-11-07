@@ -8,7 +8,7 @@ import {
   readConfig,
   startupNotice,
 } from "./config";
-import { ConcurrencyLimiter, clientIp, DailyLimiter } from "./routes/guard";
+import { ConcurrencyLimiter, clientIp, DailyLimiter, limitKey } from "./routes/guard";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 
@@ -150,6 +150,35 @@ describe("DailyLimiter（キーごと）と、同時の数と、利用者の IP"
     release?.();
     expect(limiter.running).toBe(0);
     expect(limiter.tryAcquire()).not.toBeNull();
+  });
+
+  it("1人の上限を超えたら、全体に空きがあってもその人だけ取れない", () => {
+    const limiter = new ConcurrencyLimiter(3, 1);
+    const mine = limiter.tryAcquire("uid:alice");
+
+    expect(limiter.tryAcquire("uid:alice")).toBeNull();
+    expect(limiter.tryAcquire("uid:bob")).not.toBeNull();
+    expect(limiter.tryAcquire("203.0.113.1")).not.toBeNull();
+    expect(limiter.running).toBe(3);
+    expect(limiter.tryAcquire("uid:carol")).toBeNull();
+    mine?.();
+    mine?.();
+    expect(limiter.tryAcquire("uid:alice")).not.toBeNull();
+  });
+
+  it("上限を数える単位は、ログインしていれば利用者、していなければ IP", () => {
+    expect(limitKey("alice", "203.0.113.1")).toBe("uid:alice");
+    expect(limitKey(null, "203.0.113.1")).toBe("203.0.113.1");
+  });
+
+  it("1人の上限の既定は全体の半分（切り上げ）で、設定で変えられる", () => {
+    expect(readConfig({}).maxConcurrentTurnsPerClient).toBe(2);
+    expect(readConfig({ MAX_CONCURRENT_TURNS: "5" }).maxConcurrentTurnsPerClient).toBe(3);
+    expect(readConfig({ MAX_CONCURRENT_TURNS: "1" }).maxConcurrentTurnsPerClient).toBe(1);
+    expect(
+      readConfig({ MAX_CONCURRENT_TURNS: "8", MAX_CONCURRENT_TURNS_PER_CLIENT: "1" })
+        .maxConcurrentTurnsPerClient,
+    ).toBe(1);
   });
 
   it("プロキシの数だけ X-Forwarded-For の右から数え、利用者が書いた左側は使わない", () => {
