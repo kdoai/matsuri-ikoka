@@ -7,7 +7,11 @@ import type {
 } from "@anthropic-ai/claude-agent-sdk";
 import { describe, expect, it } from "vitest";
 import type { QueryFn } from "./runner";
-import { createWebRouteResearcher } from "./webRouteResearcher";
+import {
+  createWebRouteResearcher,
+  ROUTE_RESEARCH_MS,
+  ROUTE_RETRY_MIN_MS,
+} from "./webRouteResearcher";
 
 // Agent SDK の代わりに、フックを呼んで決まった返答を返す偽物の query で確かめる。駅と URL はすべて架空
 
@@ -15,7 +19,7 @@ type Script = (
   hook: (event: HookEvent, input: Record<string, unknown>) => Promise<unknown>,
 ) => Promise<string | null>;
 
-function setup(scripts: Script[]) {
+function setup(scripts: Script[], clock?: () => number) {
   const calls: { prompt: string; options: Options }[] = [];
   const query: QueryFn = (params) => {
     calls.push(params);
@@ -58,6 +62,7 @@ function setup(scripts: Script[]) {
     env: {},
     query,
     resolveHost: async () => ["8.8.8.8"],
+    ...(clock ? { clock } : {}),
   });
   const research = () =>
     researcher.research({
@@ -110,12 +115,128 @@ describe("createWebRouteResearcher", () => {
     expect(calls).toHaveLength(1);
   });
 
-  it("ページを読まずに答えたときや、分からないと答えたときは null", async () => {
-    const unread = setup([async () => ANSWER]);
+  it("ページを読まずに答えたときや、分からないと答えたときは、調べ方を変えて1回だけ調べ直す", async () => {
+    const unread = setup([async () => ANSWER, async () => ANSWER]);
     expect(await unread.research()).toBeNull();
+    expect(unread.calls).toHaveLength(2);
+    expect(unread.calls[1]?.prompt).toContain("調べ直しです");
+    expect(unread.calls[1]?.options.tools).toEqual(["WebSearch", "WebFetch"]);
 
-    const notFound = setup([async () => JSON.stringify({ found: false, sources: [] })]);
-    expect(await notFound.research()).toBeNull();
+    const notFound = setup([
+      async () => JSON.stringify({ found: false, sources: [] }),
+      async (hook) => {
+        await read(hook, "https://example.com/route");
+        return ANSWER;
+      },
+    ]);
+    expect(await notFound.research()).toMatchObject({ minutes: [55, 70] });
+  });
+
+  it("読まずに答えようとしたら、検索もしていなくても、読むまで続けさせる", async () => {
+    const stops: unknown[] = [];
+    const { calls, research } = setup([
+      async () => {
+        const hooks = calls[0]?.options.hooks?.Stop as HookCallbackMatcher[];
+        const stop = hooks[0]?.hooks[0];
+        if (stop === undefined) throw new Error("Stop のフックがありません");
+        stops.push(
+          await stop(
+            { session_id: "r", transcript_path: "", cwd: "", hook_event_name: "Stop" } as HookInput,
+            undefined,
+            { signal: new AbortController().signal },
+          ),
+        );
+        return JSON.stringify({ found: false, sources: [] });
+      },
+      async () => JSON.stringify({ found: false, sources: [] }),
+    ]);
+
+    await research();
+
+    expect(stops[0]).toMatchObject({
+      decision: "block",
+      reason: expect.stringContaining("まだページを読んでいません"),
+    });
+  });
+
+  it("時間の残りが少なければ、調べ直さない", async () => {
+    let now = 1_000_000;
+    const { calls, research } = setup(
+      [
+        async () => {
+          now += ROUTE_RESEARCH_MS - ROUTE_RETRY_MIN_MS + 1;
+          return JSON.stringify({ found: false, sources: [] });
+        },
+      ],
+      () => now,
+    );
+
+    expect(await research()).toBeNull();
+    expect(calls).toHaveLength(1);
+  });
+
+  it("途中で止まった調べは、見つからなかったものとして扱い、時間が残っていれば調べ直す", async () => {
+    const { calls, research } = setup([
+      async () => {
+        const abort = calls[0]?.options.abortController;
+        abort?.abort(new Error("timeout"));
+        throw new Error("aborted");
+      },
+      async (hook) => {
+        await read(hook, "https://example.com/route");
+        return ANSWER;
+      },
+    ]);
+
+    expect(await research()).toMatchObject({ minutes: [55, 70] });
+    expect(calls).toHaveLength(2);
+  });
+
+  it("調べの進みを知らせる", async () => {
+    let count = 0;
+    const { researcher } = setup([
+      async (hook) => {
+        await read(hook, "https://example.com/route");
+        return ANSWER;
+      },
+    ]);
+    await researcher.research({
+      from: "こがね台",
+      to: "鈴鳴駅",
+      date: "2026-08-16",
+      signal: new AbortController().signal,
+      onActivity: () => {
+        count += 1;
+      },
+    });
+    expect(count).toBeGreaterThan(0);
+  });
+
+  it("最終の時刻や要約の書き方が違っても、読めた行き方を捨てない", async () => {
+    const { calls, researcher } = setup([
+      async (hook) => {
+        await read(hook, "https://example.com/route");
+        return JSON.stringify({
+          ...JSON.parse(ANSWER),
+          lastDeparture: "翌0:10ごろ",
+          summary: "長い要約".repeat(60),
+          transfers: "不明",
+        });
+      },
+    ]);
+
+    const report = await researcher.research({
+      from: "鈴鳴駅",
+      to: "こがね台",
+      date: "2026-08-16",
+      direction: "return",
+      signal: new AbortController().signal,
+    });
+
+    expect(report).toMatchObject({ minutes: [55, 70], lastDeparture: null, transfers: null });
+    expect(report?.summary.length).toBe(160);
+    // 差し戻さずに使う
+    expect(calls).toHaveLength(1);
   });
 
   it("JSON を取り出せなければ、道具なしで1回だけ差し戻す", async () => {
@@ -138,7 +259,7 @@ describe("乗り換えの区間と帰りの最終", () => {
     { from: "川辺", to: "鈴鳴駅", line: "鈴鳴線", minutes: [20, 25] },
   ];
 
-  it("出発の駅から着く駅までつながった区間だけを使う", async () => {
+  it("出発の駅から着く駅までつながった区間だけを使う。直せなければ区間なしで返す", async () => {
     const connected = setup([
       async (hook) => {
         await read(hook, "https://example.com/route");
@@ -147,18 +268,56 @@ describe("乗り換えの区間と帰りの最終", () => {
     ]);
     expect(await connected.research()).toMatchObject({ legs });
 
+    const brokenLegs = [legs[0], { ...legs[1], from: "別の駅" }];
     const broken = setup([
       async (hook) => {
         await read(hook, "https://example.com/route");
-        return JSON.stringify({
-          ...JSON.parse(ANSWER),
-          legs: [legs[0], { ...legs[1], from: "別の駅" }],
-        });
+        return JSON.stringify({ ...JSON.parse(ANSWER), legs: brokenLegs });
       },
+      async () => JSON.stringify({ ...JSON.parse(ANSWER), legs: brokenLegs }),
     ]);
     const report = await broken.research();
     expect(report).not.toBeNull();
     expect(report).not.toHaveProperty("legs");
+    expect(broken.calls[1]?.options.tools).toEqual([]);
+    expect(broken.calls[1]?.prompt).toContain("鈴鳴駅");
+  });
+
+  it("区間がつながっていなければ、道具なしで1回だけ直してもらう", async () => {
+    const { calls, research } = setup([
+      async (hook) => {
+        await read(hook, "https://example.com/route");
+        return JSON.stringify({ ...JSON.parse(ANSWER), legs: legs.slice(0, 1) });
+      },
+      async () => JSON.stringify({ ...JSON.parse(ANSWER), legs }),
+    ]);
+
+    expect(await research()).toMatchObject({ legs });
+    expect(calls).toHaveLength(2);
+  });
+
+  it("区間の所要時間や路線が読めなくても、行き方と区間を捨てない", async () => {
+    const { calls, research } = setup([
+      async (hook) => {
+        await read(hook, "https://example.com/route");
+        return JSON.stringify({
+          ...JSON.parse(ANSWER),
+          legs: [
+            { from: "こがね台", to: "川辺", line: "こがね線", minutes: null },
+            { means: "walk", from: "川辺", to: "鈴鳴駅", line: null, minutes: null },
+          ],
+        });
+      },
+    ]);
+
+    expect(await research()).toMatchObject({
+      minutes: [55, 70],
+      legs: [
+        { means: "train", from: "こがね台", to: "川辺", line: "こがね線", minutes: null },
+        { means: "walk", from: "川辺", to: "鈴鳴駅", line: null, minutes: null },
+      ],
+    });
+    expect(calls).toHaveLength(1);
   });
 
   it("区間の駅の名前の書き方が違っても使い、両端を頼んだ駅の名前にそろえる", async () => {

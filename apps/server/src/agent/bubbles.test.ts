@@ -185,11 +185,19 @@ describe("吹き出し（docs/spec/api.md の例）", () => {
     expect(
       toolEndBubble("verify_festival", { result: "needs_check", reused: true, sources: [] }).bubble,
     ).toBe("旅程を確定しました（出発前に開催を要確認）");
+  });
+
+  it("ツールが失敗しても、スタッフは続けるので、失敗で止まったようには言わない", () => {
     expect(toolEndBubble("get_access", null)).toEqual({
       ok: false,
-      bubble: "うまく調べられませんでした",
+      bubble: "もう少し調べています",
       count: null,
     });
+    expect(toolEndBubble("update_itinerary", null).bubble).toBe("旅程を整えています");
+    expect(toolEndBubble("verify_festival", null).bubble).toBe("開催の情報を確かめています");
+    expect(toolEndBubble("verify_festival", { result: "unknown", sources: [] }).bubble).toBe(
+      "開催の情報を確かめています",
+    );
   });
 });
 

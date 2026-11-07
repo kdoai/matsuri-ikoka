@@ -16,8 +16,11 @@ import type { ErrorBody } from "./errors";
 
 /** 進みのない時間の上限 */
 export const TURN_IDLE_MS = 90_000;
-/** 相談1回の全体の上限。進みがあっても、これを超えたら止める */
-export const TURN_MAX_MS = 360_000;
+/**
+ * 相談1回の全体の上限。進みがあっても、これを超えたら止める。
+ * Cloud Run のリクエストの時間切れ（deploy.yml の --timeout）より短くし、止めたことを伝えられるようにする
+ */
+export const TURN_MAX_MS = 600_000;
 export const HEARTBEAT_MS = 15_000;
 
 export class TurnTimeoutError extends Error {}
@@ -131,13 +134,15 @@ export function streamTurn(
       await run(controller.signal, emit, progress);
     } catch (error) {
       errorBody = toErrorBody(error, controller.signal);
-      // 旅程の案は届いているので、送り直しを求めず、案を見てもらう
-      if (errorBody?.code === "timeout" && itineraryUpdated) {
+      // 旅程の案は届いているので、送り直しを求めず、案を見てもらう（時間切れでも、費用の上限などでも）
+      if (errorBody !== null && itineraryUpdated) {
         errorBody = {
           ...errorBody,
           retryable: false,
           message:
-            "旅程の案はできています。説明の途中で時間がかかったので、ここで止めました。変えたいところがあれば教えてください。",
+            errorBody.code === "timeout"
+              ? "旅程の案はできています。説明の途中で時間がかかったので、ここで止めました。変えたいところがあれば教えてください。"
+              : "旅程の案はできています。説明の途中で止まりましたが、案はそのまま見られます。変えたいところがあれば教えてください。",
         };
       }
       if (errorBody !== null) emit({ type: "error", data: errorBody });

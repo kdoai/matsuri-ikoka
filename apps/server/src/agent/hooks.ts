@@ -38,7 +38,7 @@ import {
 // - SubagentStart → staff.start（スタッフが持ち場へ歩く）。スタッフに店の記録を渡す
 // - PreToolUse → tool.start。スタッフと道具の組み合わせ、スタッフを呼ぶ回数もここで守る
 // - PostToolUse / PostToolUseFailure → tool.end、続けて itinerary.updated・festival.verified
-// - SubagentStop → 旅程係が、評価の基準に届かないまま（回数が残っているのに）終えようとしたら、作り直しに戻す
+// - SubagentStop → 旅程係が、保存しないまま、または評価の基準に届かないまま（回数が残っているのに）終えようとしたら、作り直しに戻す
 
 /** スタッフが使える道具。仕様の表（docs/spec/agents.md）と同じ */
 export const TOOLS_BY_STAFF: Readonly<Record<StaffId, readonly AgentToolName[]>> = {
@@ -109,6 +109,46 @@ export function extractToolOutput(response: unknown): Record<string, unknown> | 
   const object = asObject(response);
   if (object === null || object.isError === true) return null;
   return asObject(object.structuredContent) ?? fromBlocks(object.content);
+}
+
+/** 旅程係を、保存しないまま終えようとしたときに戻す回数の上限 */
+const MAX_UNSAVED_SEND_BACKS = 2;
+const UNSAVED_NEXT_STEP =
+  "まだ旅程を保存できていません。失敗の理由（errors や入力の形の指摘）を読んで直し、update_itinerary を呼び直してください。調べられなかった区間や時刻は、推測で埋めず、書かないまま保存できます（足りないものは gaps に残ります）";
+
+/** ログに残す、入力の検査の指摘の数の上限 */
+const MAX_LOGGED_ISSUES = 8;
+
+/**
+ * ツールの失敗の文から、入力の検査の指摘の場所と種類だけを取り出す（ログ用）。
+ * 文には入力の値が混ざることがあるので、場所（添字は # にする）と種類のほかは残さない。読めなければ空
+ */
+export function inputIssues(error: unknown): string[] {
+  if (typeof error !== "string") return [];
+  const start = error.indexOf("[");
+  const end = error.lastIndexOf("]");
+  if (start === -1 || end <= start) return [];
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(error.slice(start, end + 1));
+  } catch {
+    return [];
+  }
+  const issues = z
+    .array(
+      z.looseObject({
+        code: z.string().regex(/^[a-z_]+$/),
+        path: z.array(z.union([z.string(), z.number()])),
+      }),
+    )
+    .safeParse(parsed);
+  if (!issues.success) return [];
+  return issues.data
+    .slice(0, MAX_LOGGED_ISSUES)
+    .map(
+      ({ code, path }) =>
+        `${path.map((part) => (typeof part === "number" ? "#" : part)).join(".")}:${code}`,
+    );
 }
 
 export interface HookDeps {
@@ -242,6 +282,14 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
 
   const postToolUseFailure: HookCallback = async (input, toolUseId) => {
     if (input.hook_event_name !== "PostToolUseFailure") return {};
+    // 書き直しの多い項目をつかむため、入力の検査の指摘の場所と種類だけを残す（値は残さない）
+    console.info(
+      JSON.stringify({
+        kind: "tool_failure",
+        tool: toolNameOf(input.tool_name) ?? "unknown",
+        issues: inputIssues(input.error),
+      }),
+    );
     endTool(input.tool_use_id || toolUseId || "", null);
     return {};
   };
@@ -269,15 +317,32 @@ export function createAgentHooks({ ctx, emit, briefing }: HookDeps): Hooks {
 
   /** 旅程係を作り直しに戻した回数。評価の回数が進まないまま戻し続けないよう、上限を付ける */
   let sentBack = 0;
+  /** 旅程係を、保存しないまま終えようとしたので戻した回数 */
+  let unsavedSentBack = 0;
+  /**
+   * 頼まれた旅程を保存しないまま終えようとしている。まだ旅程がない相談か、この発言で保存を試して失敗したまま。
+   * 中止と分かった祭りの旅程は保存しないので、戻さない。旅程についての質問に答えただけのときも戻さない
+   */
+  const leavingUnsaved = () =>
+    !turn.savedItinerary &&
+    turn.lastEvaluation === null &&
+    ctx.session.cancelledAnchor === null &&
+    (ctx.session.itineraryId === null || turn.toolCalls.includes("update_itinerary"));
+
   const subagentStop: HookCallback = async (input) => {
     if (input.hook_event_name !== "SubagentStop" || input.agent_type !== "planner") return {};
+    // 時間の残りが少なければ、作り直しに戻さず、そこまでの結果で報告してもらう
+    if (ctx.signal.aborted || !canRedoPlan(turn.startedAt)) return {};
+    if (leavingUnsaved()) {
+      if (unsavedSentBack >= MAX_UNSAVED_SEND_BACKS) return {};
+      unsavedSentBack += 1;
+      return { decision: "block", reason: UNSAVED_NEXT_STEP };
+    }
     const evaluation = turn.lastEvaluation;
     if (evaluation === null || evaluation.passed || evaluation.round >= evaluation.maxRounds) {
       return {};
     }
-    if (sentBack >= evaluation.maxRounds - 1 || ctx.signal.aborted) return {};
-    // 時間の残りが少なければ、作り直しに戻さず、保存した旅程で報告してもらう
-    if (!canRedoPlan(turn.startedAt)) return {};
+    if (sentBack >= evaluation.maxRounds - 1) return {};
     sentBack += 1;
     return { decision: "block", reason: nextStepAfter(evaluation) };
   };
