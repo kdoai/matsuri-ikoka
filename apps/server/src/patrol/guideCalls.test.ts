@@ -35,12 +35,24 @@ describe("旅程の時刻に合わせた声かけ", () => {
       .filter((notice) => notice.content.kind === "reminder");
     expect(calls).toHaveLength(1);
     expect(calls[0]).toMatchObject({
-      id: guideCallNoticeId(trip.watch.tripId, { key: "depart:2026-08-16" }),
+      id: guideCallNoticeId(trip.watch.tripId, { key: "depart:2026-08-16:18:30" }),
       content: { kind: "reminder", slot: "depart", date: "2026-08-16", itemId: "festival" },
       affectedItemIds: ["festival"],
       readAt: null,
     });
     expect(calls[0]?.summary).toContain("18:30からの「鈴鳴灯籠まつり」");
+  });
+
+  it("前の実行の片付けが失敗しても、声かけは先に届いている", async () => {
+    const harness = patrolHarness();
+    harness.clock.now = at("17:50");
+    const { trip, itinerary } = watchedTrip("a");
+    harness.store.putWatchedTrip(trip, itinerary);
+    vi.spyOn(harness.store, "listOpenRuns").mockRejectedValue(new Error("保存先に届きません"));
+
+    await expect(startPatrol(harness.deps)).rejects.toThrow();
+
+    expect(harness.store.noticesOf(trip.ref)).toHaveLength(1);
   });
 
   it("2つの起動が同時に届いても、1回だけ届く", async () => {
@@ -180,5 +192,53 @@ describe("旅程の時刻に合わせた声かけ", () => {
     expect(harness.store.noticesOf(b.trip.ref)).toHaveLength(1);
     // ログには分類だけを残し、旅の置き場や利用者の ID を残さない
     expect(JSON.stringify(error.mock.calls)).not.toContain("user-a");
+  });
+
+  it("起動の間が空いて出せなかった声かけを、分類だけでログに残す", async () => {
+    const harness = patrolHarness();
+    const { trip, itinerary } = watchedTrip("a");
+    harness.store.putWatchedTrip(trip, itinerary);
+    const logged = vi.spyOn(console, "log").mockImplementation(() => {});
+
+    // 会場へ向かう前（17:45）の声かけは、祭りの開始 18:30 を過ぎると出せない
+    harness.clock.now = at("18:40");
+    expect(await deliverGuideCalls(harness.deps, [{ trip, itinerary }])).toBe(0);
+
+    const lines = logged.mock.calls.map((args) => String(args[0]));
+    expect(lines).toContain(
+      JSON.stringify({ kind: "guide_call_missed", slot: "depart", lateMinutes: 55 }),
+    );
+    expect(lines.join(" ")).not.toContain(trip.watch.tripId);
+    expect(lines.join(" ")).not.toContain("user-a");
+  });
+
+  it("届けた声かけは、過ぎたあとも出せなかったとは数えない", async () => {
+    const harness = patrolHarness();
+    const { trip, itinerary } = watchedTrip("a");
+    harness.store.putWatchedTrip(trip, itinerary);
+    harness.clock.now = at("17:50");
+    await deliverGuideCalls(harness.deps, [{ trip, itinerary }]);
+    const logged = vi.spyOn(console, "log").mockImplementation(() => {});
+
+    harness.clock.now = at("18:40");
+    await deliverGuideCalls(harness.deps, [{ trip, itinerary }]);
+
+    expect(logged.mock.calls.map((args) => String(args[0])).join(" ")).not.toContain(
+      "guide_call_missed",
+    );
+  });
+
+  it("通知の上限で足せなかった声かけを、分類だけでログに残す", async () => {
+    const harness = patrolHarness();
+    harness.clock.now = at("17:50");
+    const { trip, itinerary } = watchedTrip("a");
+    harness.store.putWatchedTrip(trip, itinerary);
+    vi.spyOn(harness.store, "addNotice").mockResolvedValue("full");
+    const logged = vi.spyOn(console, "log").mockImplementation(() => {});
+
+    expect(await deliverGuideCalls(harness.deps, [{ trip, itinerary }])).toBe(0);
+    expect(logged.mock.calls.map((args) => String(args[0]))).toContain(
+      JSON.stringify({ kind: "guide_call_dropped", slot: "depart", reason: "full" }),
+    );
   });
 });

@@ -37,7 +37,10 @@ export interface GuideCall {
   untilMs: number;
   /** 知らせる予定の ID。なければ null */
   itemId: string | null;
-  /** 旅の中で声かけを1つに決める値。同じ旅で同じ値の声かけは1回だけ */
+  /**
+   * 旅の中で声かけを1つに決める値。同じ旅で同じ値の声かけは1回だけ。
+   * 会場へ向かう前と帰りの最終の前は、対象の時刻を含める（時刻が変わったら、もう一度声をかける）
+   */
   key: string;
 }
 
@@ -53,6 +56,8 @@ function call(
   atMinutes: number,
   untilMs: number,
   itemId: string | null,
+  /** 声かけの対象の時刻。あれば key に入れ、時刻が変わったときだけもう一度声をかける */
+  target?: LocalTime,
 ): GuideCall {
   const at = fromMinutes(atMinutes);
   return {
@@ -62,7 +67,7 @@ function call(
     atMs: japanTimeMs(atDate, at),
     untilMs,
     itemId,
-    key: `${slot}:${date}`,
+    key: target === undefined ? `${slot}:${date}` : `${slot}:${date}:${target}`,
   };
 }
 
@@ -117,6 +122,7 @@ export function guideCallSchedule(itinerary: Pick<Itinerary, "days">): GuideCall
             at,
             japanTimeMs(day.date, festival.start),
             festival.id,
+            festival.start,
           ),
         );
       }
@@ -136,11 +142,31 @@ export function guideCallSchedule(itinerary: Pick<Itinerary, "days">): GuideCall
         atMs,
         untilMs: lastMs,
         itemId: null,
-        key: `last_return:${day.date}`,
+        key: `last_return:${day.date}:${departBy}`,
       });
     }
   }
   return calls.sort((a, b) => a.atMs - b.atMs);
+}
+
+/** これを過ぎたら、その声かけはもう出さない時刻 */
+function closesAt(item: GuideCall): number {
+  return Math.min(item.untilMs, item.atMs + MAX_CALL_DELAY_MS);
+}
+
+/**
+ * 出せる時間を過ぎた声かけのうち、過ぎてから lookbackMs の間のもの。
+ * 定期の起動の間隔が空きすぎて出せなかった声かけを、ログで見つけるために使う
+ */
+export function closedGuideCalls(
+  itinerary: Pick<Itinerary, "days">,
+  nowMs: number,
+  lookbackMs: number,
+): GuideCall[] {
+  return guideCallSchedule(itinerary).filter((item) => {
+    const closed = closesAt(item);
+    return item.atMs < closed && closed <= nowMs && nowMs < closed + lookbackMs;
+  });
 }
 
 /**
@@ -149,6 +175,6 @@ export function guideCallSchedule(itinerary: Pick<Itinerary, "days">): GuideCall
  */
 export function dueGuideCalls(itinerary: Pick<Itinerary, "days">, nowMs: number): GuideCall[] {
   return guideCallSchedule(itinerary).filter(
-    (item) => item.atMs <= nowMs && nowMs < item.untilMs && nowMs < item.atMs + MAX_CALL_DELAY_MS,
+    (item) => item.atMs <= nowMs && nowMs < closesAt(item),
   );
 }

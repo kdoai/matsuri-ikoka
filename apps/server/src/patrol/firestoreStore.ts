@@ -11,7 +11,7 @@ import type { DocumentSnapshot, Firestore, QuerySnapshot } from "firebase-admin/
 import { errorForLog } from "../log";
 import { isDocumentId } from "../storage/owner";
 import { tripOwner } from "../storage/types";
-import { isFirmNotice, noticeToEvict } from "./notices";
+import { evictionFor, noticeToEvict } from "./notices";
 import { type AddNoticeResult, type DeliveryClaim, newRecord, type PatrolStore } from "./store";
 import type { PatrolRecord, PatrolRun, WatchedTrip } from "./types";
 
@@ -80,7 +80,7 @@ export class FirestorePatrolStore implements PatrolStore {
       const expiresAt = doc.get("expiresAt");
       if (expiresAt != null && this.#now() > millis(expiresAt)) return [];
       // 決まった項目だけを取り出す。ほかの項目があっても、依頼の形は変えない
-      const { tripId, status, startedAt, endsOn, stoppedAt, lastCheckedAt } = doc.data();
+      const { tripId, status, startedAt, endsOn, stoppedAt, lastCheckedAt, reminders } = doc.data();
       const watch = TripWatchSchema.safeParse({
         tripId,
         status,
@@ -88,6 +88,8 @@ export class FirestorePatrolStore implements PatrolStore {
         endsOn,
         stoppedAt,
         lastCheckedAt,
+        // 声かけを止めた依頼を、止めたまま読む（項目がなければ声をかける）
+        ...(reminders === undefined ? {} : { reminders }),
       });
       if (!watch.success || watch.data.tripId !== path.tripId) {
         console.warn(JSON.stringify({ kind: "patrol_watch_invalid" }));
@@ -169,7 +171,8 @@ export class FirestorePatrolStore implements PatrolStore {
         notices.select("content.kind", "createdAt", "readAt").limit(MAX_NOTICES_PER_TRIP),
       );
       if (all.size >= MAX_NOTICES_PER_TRIP) {
-        if (!isFirmNotice(notice)) return "full";
+        const eviction = evictionFor(notice);
+        if (eviction === null) return "full";
         const victim = noticeToEvict(
           all.docs.map((item) => ({
             id: item.id,
@@ -177,6 +180,8 @@ export class FirestorePatrolStore implements PatrolStore {
             createdAt: String(item.get("createdAt")),
             readAt: typeof item.get("readAt") === "string" ? String(item.get("readAt")) : null,
           })),
+          this.#now(),
+          { onlySpentReminders: eviction === "spent_reminders" },
         );
         if (victim === null) return "full";
         tx.delete(notices.doc(victim));

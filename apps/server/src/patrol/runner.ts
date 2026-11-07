@@ -733,10 +733,20 @@ async function pruneRecords(deps: PatrolDeps, plans: readonly PatrolPlan[]): Pro
 export async function startPatrol(deps: PatrolDeps): Promise<PatrolTickResult> {
   const startedAt = deps.now();
   const holder = `tick-${randomUUID()}`;
+  const { watched, complete } = await loadWatched(deps);
+
+  // 声かけは時刻に遅れると役に立たないので、ほかの前処理より先に届ける。
+  // 前の実行の片付けや控えの整理が失敗しても、この回の声かけは届いている
+  let guideCalls = 0;
+  try {
+    guideCalls = await deliverGuideCalls(deps, watched);
+  } catch (error) {
+    log("guide_call_failed", errorForLog(error));
+  }
+
   const reconciled = await reconcileRuns(deps, holder);
   await disposeLeftovers(deps);
 
-  const { watched, complete } = await loadWatched(deps);
   const { plans, unmatched } = planTargets(
     watched,
     deps.festivals,
@@ -744,9 +754,6 @@ export async function startPatrol(deps: PatrolDeps): Promise<PatrolTickResult> {
   );
   if (unmatched > 0) log("patrol_plan_unmatched", { count: unmatched });
   if (complete) await pruneRecords(deps, plans);
-
-  // 声かけは祭りのページを読まないので、ページの作業より先に、時刻に遅れないよう届ける
-  const guideCalls = await deliverGuideCalls(deps, watched);
 
   const patrolId = newPatrolId();
   const targets: PatrolTarget[] = [];

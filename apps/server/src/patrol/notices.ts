@@ -9,6 +9,7 @@ import {
   type NoticeTopic,
 } from "@matsuri-ikoka/schema";
 import { addDays, formatMonthDay, nowInJapan } from "../domain/calendar";
+import { MAX_CALL_DELAY_MS } from "../domain/guideCalls";
 
 // 検問を通った変化を、旅の通知にする。一覧の短い文は、通知の中身から決まった型で作る（ページの文章を使わない）。
 
@@ -116,16 +117,41 @@ export function isFirmNotice(notice: Pick<GuideNotice, "content">): boolean {
 }
 
 /**
- * 上限に達したときに押し出す通知の ID。古いお知らせ、なければ読んだ古い通知の順に選ぶ。
- * 未読の開催の変更と中止は押し出さない。選べなければ null
+ * 役目を終えた声かけ。届けてから声をかけてよい時間（MAX_CALL_DELAY_MS）が過ぎたもので、
+ * 未読でも、上限のときに押し出してよい
+ */
+export function isSpentReminder(notice: { kind: string; createdAt: string }, now: number): boolean {
+  const created = Date.parse(notice.createdAt);
+  return (
+    notice.kind === "reminder" && Number.isFinite(created) && created + MAX_CALL_DELAY_MS <= now
+  );
+}
+
+/**
+ * 上限に達したときに押し出す通知の ID。役目を終えた声かけ、古いお知らせ、読んだ古い通知の順に選ぶ。
+ * 未読の開催の変更と中止は押し出さない。onlySpentReminders なら、役目を終えた声かけだけから選ぶ
+ * （新しい声かけのために、ほかの通知を押し出さない）。選べなければ null
  */
 export function noticeToEvict(
   notices: readonly { id: string; kind: string; createdAt: string; readAt: string | null }[],
+  now: number,
+  options: { onlySpentReminders?: boolean } = {},
 ): string | null {
   const oldest = (items: readonly { id: string; createdAt: string }[]) =>
     [...items].sort((a, b) => (a.createdAt < b.createdAt ? -1 : 1))[0]?.id ?? null;
+  const spent = oldest(notices.filter((notice) => isSpentReminder(notice, now)));
+  if (options.onlySpentReminders === true) return spent;
   return (
+    spent ??
     oldest(notices.filter((notice) => notice.kind === "announcement")) ??
     oldest(notices.filter((notice) => notice.readAt !== null))
   );
+}
+
+/** 上限に達したときに、押し出してでも足す通知か。開催の変更と中止は何を押し出してもよく、声かけは役目を終えた声かけだけを押し出せる */
+export function evictionFor(
+  notice: Pick<GuideNotice, "content">,
+): "any" | "spent_reminders" | null {
+  if (isFirmNotice(notice)) return "any";
+  return notice.content.kind === "reminder" ? "spent_reminders" : null;
 }

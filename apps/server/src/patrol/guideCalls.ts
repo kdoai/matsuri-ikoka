@@ -9,7 +9,7 @@ import {
   type Weather,
 } from "@matsuri-ikoka/schema";
 import { nowInJapan, todayInJapan } from "../domain/calendar";
-import { dueGuideCalls, type GuideCall } from "../domain/guideCalls";
+import { closedGuideCalls, dueGuideCalls, type GuideCall } from "../domain/guideCalls";
 import { errorForLog } from "../log";
 import type { WeatherService } from "../tools/weather";
 import { noticeExpiresAt } from "./notices";
@@ -169,8 +169,20 @@ async function forecastFor(
 }
 
 /**
+ * 出せる時間を過ぎた声かけを、ログで見つける間。起動のたびに確かめるので、
+ * この間に起動が何回か来れば、同じ声かけを何回か数える
+ */
+const MISSED_LOOKBACK_MS = 6 * 60 * 60 * 1000;
+
+/** ログに残すのは分類だけ。旅の ID・本文・時刻の値は残さない */
+function logCall(kind: string, slot: string, fields: object = {}): void {
+  console.log(JSON.stringify({ kind, slot, ...fields }));
+}
+
+/**
  * 見回り中の旅に、来た声かけを届ける。利用者が声かけを止めている旅には届けない。
- * 1つの旅の失敗で、ほかの旅の声かけを止めない。届けた数を返す
+ * 1つの旅の失敗で、ほかの旅の声かけを止めない。届けた数を返す。
+ * 届けられなかった声かけ（出せる時間を過ぎた・通知の上限）は、分類だけをログに残す
  */
 export async function deliverGuideCalls(
   deps: GuideCallDeps,
@@ -179,11 +191,19 @@ export async function deliverGuideCalls(
   let created = 0;
   for (const { trip, itinerary } of entries) {
     if (trip.watch.reminders === false) continue;
-    const due = dueGuideCalls(itinerary, deps.now());
-    if (due.length === 0) continue;
+    const now = deps.now();
+    const due = dueGuideCalls(itinerary, now);
+    const closed = closedGuideCalls(itinerary, now, MISSED_LOOKBACK_MS);
+    if (due.length === 0 && closed.length === 0) continue;
     try {
       const notices = await deps.store.listNotices(trip);
       const delivered = new Set(notices.map((notice) => notice.id));
+      for (const call of closed) {
+        if (delivered.has(guideCallNoticeId(trip.watch.tripId, call))) continue;
+        // 定期の起動の間が空きすぎると、声かけが黙って出ない。何分遅れたかだけを残す
+        const lateMinutes = Math.round((now - call.atMs) / 60_000);
+        logCall("guide_call_missed", call.slot, { lateMinutes });
+      }
       const unread = notices.filter(
         (notice) => notice.readAt === null && notice.content.kind !== "reminder",
       ).length;
@@ -199,11 +219,12 @@ export async function deliverGuideCalls(
           now: deps.now(),
         });
         if (notice === null) {
-          console.log(JSON.stringify({ kind: "guide_call_no_source", slot: call.slot }));
+          logCall("guide_call_no_source", call.slot);
           continue;
         }
         const result = await deps.store.addNotice(trip, notice, noticeExpiresAt(itinerary));
         if (result === "created") created += 1;
+        if (result === "full") logCall("guide_call_dropped", call.slot, { reason: "full" });
       }
     } catch (error) {
       console.error(JSON.stringify({ kind: "guide_call_failed", ...errorForLog(error) }));
