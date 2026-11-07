@@ -727,6 +727,25 @@ describe("propose_change", () => {
     expect(proposal?.diff).toMatchObject({ added: [], changed: [], removed: [] });
   });
 
+  it("帰りの最終を「なし」にするだけの直しは、もともとなければ同じ計画なので案にしない", async () => {
+    const { ctx, data } = setup({ itinerary: await savedItinerary() });
+
+    const output = outputOf(
+      await runTool(
+        proposeChange,
+        {
+          summary: "帰りの最終を確かめ直します",
+          edits: [{ op: "set_day", date: "2026-08-16", lastReturn: null }],
+        },
+        ctx,
+      ),
+    );
+
+    expect(output.proposed).toBe(false);
+    expect((output.errors as { code: string }[])[0]?.code).toBe("unchanged");
+    expect(await data.proposals()).toEqual([]);
+  });
+
   it("発言の途中に旅が消されたら、提案を書き戻さず、知らせない", async () => {
     const { ctx, events } = setup({ itinerary: await savedItinerary() });
     const gone = {

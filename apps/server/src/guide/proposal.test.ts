@@ -3,6 +3,7 @@ import type { PlanEvaluation } from "@matsuri-ikoka/schema";
 import {
   fictionalItinerary,
   fictionalNotice,
+  fictionalPlannedItinerary,
   fictionalProposal,
 } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
@@ -225,6 +226,21 @@ describe("carryConsidered", () => {
     ]);
   });
 
+  it("前の版で外した場所をこの案で採るときは、外した理由を引き継がない", () => {
+    const base = draft();
+    const craft = base.days[0]?.items.find((item) => item.spotId !== undefined);
+    if (craft?.spotId === undefined) throw new Error("場所のある予定がありません");
+    const previous = {
+      ...fictionalItinerary(),
+      considered: [place(craft.spotId, false, "遠いので外した")],
+    };
+
+    const { draft: next, researched } = carryConsidered(base, previous, []);
+
+    expect(researched.map((entry) => entry.id)).toEqual([craft.spotId]);
+    expect(next.considered).toEqual([]);
+  });
+
   it("上限を超えたら、案に入っている場所を残す", () => {
     const base = draft();
     const spotId = base.days[0]?.items.find((item) => item.spotId !== undefined)?.spotId;
@@ -265,8 +281,24 @@ describe("samePlan", () => {
     expect(samePlan(base, other)).toBe(true);
   });
 
+  it("帰りの最終と食事の案は、null や空と項目なしを同じものとして比べる", () => {
+    const itinerary = fictionalItinerary();
+    const base = {
+      ...itinerary,
+      days: itinerary.days.map(({ lastReturn: _lastReturn, meals: _meals, ...day }) => day),
+    };
+    const other = {
+      ...base,
+      days: base.days.map((day) => ({ ...day, lastReturn: null, meals: [] })),
+    };
+
+    expect(samePlan(base, other)).toBe(true);
+    expect(samePlan(other, base)).toBe(true);
+  });
+
   it("予定と、帰りの最終の違いは、別の計画とする", () => {
-    const base = fictionalItinerary();
+    const base = fictionalPlannedItinerary();
+    expect(base.days.some((day) => day.lastReturn != null)).toBe(true);
     const retimed = {
       ...base,
       days: base.days.map((day) => ({
@@ -274,13 +306,22 @@ describe("samePlan", () => {
         items: day.items.map((item, index) => (index === 0 ? { ...item, start: "14:00" } : item)),
       })),
     };
-    const lastReturn = {
+    const earlier = {
+      ...base,
+      days: base.days.map((day) =>
+        day.lastReturn == null
+          ? day
+          : { ...day, lastReturn: { ...day.lastReturn, departBy: "21:30" } },
+      ),
+    };
+    const noLastReturn = {
       ...base,
       days: base.days.map((day) => ({ ...day, lastReturn: null })),
     };
 
     expect(samePlan(base, retimed)).toBe(false);
-    expect(samePlan(base, lastReturn)).toBe(false);
+    expect(samePlan(base, earlier)).toBe(false);
+    expect(samePlan(base, noLastReturn)).toBe(false);
   });
 });
 

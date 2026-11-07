@@ -243,9 +243,9 @@ export function carryConsidered(
     .slice(0, MAX_CONSIDERED);
   const considered = researched.flatMap((place) => {
     const was = before.get(place.id);
-    // 採った場所で理由がなければ、その予定の理由を使う（reconcileConsidered）
-    if (adopted.has(place.id))
-      return was === undefined ? [] : [{ id: place.id, reason: was.reason }];
+    // 案に入っている場所は、前の版でも採っていたときだけ、その理由を保つ。前の版で外した場所を
+    // この案で採るときに「遠いので外した」を残さない。理由がなければ、その予定の理由を使う（reconcileConsidered）
+    if (adopted.has(place.id)) return was?.adopted ? [{ id: place.id, reason: was.reason }] : [];
     if (was === undefined) return [{ id: place.id, reason: NOT_USED_REASON }];
     return [{ id: place.id, reason: was.adopted ? REMOVED_REASON : was.reason }];
   });
@@ -255,12 +255,15 @@ export function carryConsidered(
 /**
  * 案が今の旅程と同じ計画か。予定・泊まり・食事の案・帰りの最終を比べる。
  * 採否の理由・不足・評価・天気は計画の変更ではないので比べない。
- * 予定の差分だけでは決めない（帰りの最終だけの直しは、予定の差分が空でも正しい案）
+ * 予定の差分だけでは決めない（帰りの最終だけの直しは、予定の差分が空でも正しい案）。
+ * 帰りの最終の null と項目なし、食事の案の空と項目なしは、どちらも「ない」なので同じものとして比べる
  */
 export function samePlan(a: Itinerary, b: Itinerary): boolean {
   const plan = (itinerary: Itinerary) =>
     itinerary.days.map(({ weather: _weather, items, ...day }) => ({
       ...day,
+      lastReturn: day.lastReturn ?? null,
+      meals: day.meals ?? [],
       items: items.map(({ changedInVersion: _changed, ...item }) => item),
     }));
   return stableStringify(plan(a)) === stableStringify(plan(b));
