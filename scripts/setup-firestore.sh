@@ -172,6 +172,21 @@ check_auth() {
   else
     ng "Google でのログイン（Firebase のコンソールの Authentication で有効にする）"
   fi
+  if json 'data.signIn?.email?.enabled===true && data.signIn?.email?.passwordRequired===true' <<<"$config"; then
+    ok "メールアドレスとパスワードでのログイン"
+  else
+    ng "メールアドレスとパスワードでのログイン（apply で有効にする）"
+  fi
+  if json 'data.emailPrivacyConfig?.enableImprovedEmailPrivacy===true' <<<"$config"; then
+    ok "メールアドレスの有無を隠す設定"
+  else
+    ng "メールアドレスの有無を隠す設定（apply で有効にする）"
+  fi
+  if json 'data.passwordPolicyConfig?.passwordPolicyEnforcementState==="ENFORCE" && data.passwordPolicyConfig?.passwordPolicyVersions?.[0]?.customStrengthOptions?.minPasswordLength>=8' <<<"$config"; then
+    ok "パスワードの決まり（8文字以上）"
+  else
+    ng "パスワードの決まり（8文字以上。apply で有効にする）"
+  fi
 }
 
 check_all() {
@@ -229,6 +244,12 @@ apply_all() {
       -H "x-goog-user-project: $PROJECT" -H "Content-Type: application/json" \
       -d "{\"authorizedDomains\": ${domains}}" \
       "https://identitytoolkit.googleapis.com/admin/v2/projects/${PROJECT}/config?updateMask=authorizedDomains" \
+      >/dev/null
+    echo "メールアドレスとパスワードでのログイン、メールアドレスの有無を隠す設定、パスワードの決まりを有効にする"
+    curl -fsS -X PATCH -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+      -H "x-goog-user-project: $PROJECT" -H "Content-Type: application/json" \
+      -d '{"signIn":{"email":{"enabled":true,"passwordRequired":true}},"emailPrivacyConfig":{"enableImprovedEmailPrivacy":true},"passwordPolicyConfig":{"passwordPolicyEnforcementState":"ENFORCE","passwordPolicyVersions":[{"customStrengthOptions":{"minPasswordLength":8}}]}}' \
+      "https://identitytoolkit.googleapis.com/admin/v2/projects/${PROJECT}/config?updateMask=signIn.email.enabled,signIn.email.passwordRequired,emailPrivacyConfig.enableImprovedEmailPrivacy,passwordPolicyConfig" \
       >/dev/null
   else
     echo "  Firebase Authentication をまだ始めていません。コンソールで始めてから、もう一度実行してください" >&2
