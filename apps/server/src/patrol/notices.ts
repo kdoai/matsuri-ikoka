@@ -53,6 +53,9 @@ export function noticeSummary(content: NoticeContent, festivalName: string): str
         : `${formatMonthDay(content.checkIn)}の宿「${content.lodgingName}」の空きが見つからなくなりました`;
     case "weather":
       return `${formatMonthDay(content.date)}の天気にご注意ください`;
+    case "reminder":
+      // 声かけの文は旅程から作る（patrol/guideCalls.ts）。ここでは短い見出しだけ
+      return `${formatMonthDay(content.date)} ${content.at}のガイドからの声かけ`;
   }
 }
 

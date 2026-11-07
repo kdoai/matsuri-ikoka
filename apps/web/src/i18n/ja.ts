@@ -1144,6 +1144,11 @@ export const ja = {
     watchStart: "見回りを頼む",
     watchStop: "見回りを止める",
     watchNeedsLogin: "ログインして旅を残すと、留守の間の祭りの変化を見回って、お知らせできます。",
+    remindersOn:
+      "旅の予定の時刻（前日の夕方・当日の朝・会場へ向かう前・帰りの最終の前）にも声をかけます。",
+    remindersOff: "予定の時刻の声かけは止めています。",
+    remindersStop: "声かけを止める",
+    remindersStart: "声かけを戻す",
     proposalsTitle: "ガイドからの組み直しの案",
     outcome: {
       applied: (version: number) =>

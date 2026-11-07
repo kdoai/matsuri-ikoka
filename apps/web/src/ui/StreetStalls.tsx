@@ -57,6 +57,8 @@ export function WatchControl() {
     ) : null;
   }
   const on = watch?.status === "active";
+  // 項目がなければ声をかける
+  const reminders = watch?.reminders !== false;
   return (
     <div
       className="mt-3 flex flex-wrap items-center gap-2 rounded-xl border border-line bg-white/80 px-3 py-2"
@@ -72,6 +74,21 @@ export function WatchControl() {
       >
         {on ? t.street.watchStop : t.street.watchStart}
       </button>
+      {on ? (
+        <div className="flex w-full flex-wrap items-center gap-2" data-testid="reminders-control">
+          <p className="min-w-0 flex-1 text-xs text-ink-soft">
+            {reminders ? t.street.remindersOn : t.street.remindersOff}
+          </p>
+          <button
+            type="button"
+            className={buttonSecondary}
+            disabled={busy !== null}
+            onClick={() => void actions.setGuideWatch(reminders ? "reminders_off" : "reminders_on")}
+          >
+            {reminders ? t.street.remindersStop : t.street.remindersStart}
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }

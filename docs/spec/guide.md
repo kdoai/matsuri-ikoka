@@ -71,7 +71,7 @@ Web を読む役に利用者の情報を持たせず、利用者の情報を持�
 頼まれた旅だけを、裏で定期的に確かめます。
 
 1. **依頼**：利用者が旅ごとに頼み、止められる（`TripWatch`）。あとで開いて通知を読み、見回りは残した旅の下の依頼だけを探すので、ログインが要る。ログインを用意していない環境では頼めない
-   - `POST /api/guide/watch` の `start` で始め、`stop` で止める。止めたあとも始め直せ、調べた時刻（`lastCheckedAt`）は引き継ぐ。見回り中に始めても、止まっているものを止めても、そのままの依頼を返す
+   - `POST /api/guide/watch` の `start` で始め、`stop` で止める（`reminders_off`・`reminders_on` は [旅程の時刻に合わせた声かけ](#旅程の時刻に合わせた声かけ)）。止めたあとも始め直せ、調べた時刻（`lastCheckedAt`）は引き継ぐ。見回り中に始めても、止まっているものを止めても、そのままの依頼を返す
    - 見回りは残した旅の下の依頼だけを探すので、ログインして、まだ残していない旅で始めると、旅を残して（自分の旅の一覧に入る）から旅の下に書く。相談の中に持っていた手帳・通知・提案も旅の下へ移る
    - ログインせずに始めると、どの環境でも 401 で断る（相談の中に依頼を書いても、だれも見回らないので、留守の間に知らせるとは言わない）。画面は、ログインしていなければ頼むボタンを出さず、ログインして旅を残せば頼めることを出す。ログインを用意していない環境では、見回りの案内を出さない
    - 見回りの部品を組み立てられなかった環境（live で見回りの鍵がない・組み立てに失敗した、mock）では、見回りが動かないので始められない（409）。`POST /api/guide/state` は `watchAvailable: false` を返し、画面は見回りの切り替えを出さない
@@ -85,15 +85,36 @@ Web を読む役に利用者の情報を持たせず、利用者の情報を持�
 
 宿の空きは、モデルを使わず今の処理をコードで呼びます。結果は同じ `CheckedChange` の形にします。天気の変化はまだ見回りません。見回りが動くのは live で鍵があるときだけです。取得・検問・失敗の扱いの決まりは [旅の見回り](operations.md#旅の見回り) にあります。
 
+## 旅程の時刻に合わせた声かけ
+
+決まった周期だけでなく、その旅の予定に合わせて、ガイドから声をかけます（`reminder` の通知）。見回り中の旅にだけ届けます。
+
+| 時（`ReminderSlot`） | 声をかける時刻（日本時間）                                                                                   | これを過ぎたら出さない |
+| -------------------- | ------------------------------------------------------------------------------------------------------------ | ---------------------- |
+| `eve`                | 初日の前日の 18:00                                                                                           | 初日の 5:00            |
+| `morning`            | 旅の日ごとに、最初の予定の90分前。5:00〜8:00 に収める                                                        | 最初の予定の開始       |
+| `depart`             | 祭りのある日に、祭りの開始から、会場への移動の最長の目安と支度の30分を引いた時刻。移動の目安がなければ60分前 | 祭りの開始             |
+| `last_return`        | 帰りの最終の目安（`lastReturn.departBy`）の60分前。4:00 より前の最終は翌日の時刻とみなす                     | 最終の時刻             |
+
+- 時刻は旅程からコードで決める（`apps/server/src/domain/guideCalls.ts` の `guideCallSchedule`）。モデルに決めさせない
+- 旅ごとに定期実行を作らない。見回りの定期の起動のたびに、いまの旅程から計算し直し、時刻が来た分（`dueGuideCalls`）だけを確かめる。旅程が変わると、まだ来ていない時刻は自然に作り直される
+- 時刻を過ぎてから2時間を超えたもの、役に立つ時刻を過ぎたものは出さない。起動が遅れたり止まったりしても、古い声かけをあとからまとめて届けない。届く時刻の細かさは、定期の起動の間隔で決まる
+- 実行済みの記録は通知そのもの。通知の ID は旅と声かけ（時と日）から決まる（`n-r-…`）。同じ ID の通知があれば足さないので、起動が2回届いても、同時に届いても、再起動のあとでも、同じ声かけは1回だけ。届けたあとに旅程の時刻が変わっても、同じ日の同じ時の声かけは2度しない
+- 文は、旅程の予定・帰りの最終・天気の予報（前日の夕方と朝だけ。気象庁の予報）・未読の通知の数から、コードが決まった型で作る（`apps/server/src/patrol/guideCalls.ts`）。モデルは使わない。天気が読めなくても、天気なしで届ける
+- 出典は、知らせる予定と主役の祭りの出典、帰りの最終の出典、天気の予報の出典から、推定でないものを使う。1つもなければ出さない
+- 利用者は `POST /api/guide/watch` の `reminders_off` で止め、`reminders_on` で戻せる（`TripWatch.reminders`。項目がなければ声をかける）。見回りは止まらない。見回りを止めて始め直しても、止めた声かけは止めたまま
+- 1つの旅で失敗しても、ほかの旅の声かけは止めない。ログには分類だけを残す
+
 ## 通知
 
-| 種類（`content.kind`） | 中身                       | 提灯を灯す屋台（`noticeStall`） |
-| ---------------------- | -------------------------- | ------------------------------- |
-| `schedule_change`      | 開催の日・開始・終了の変更 | 本部のテント                    |
-| `cancellation`         | 中止                       | 本部のテント                    |
-| `announcement`         | 主催者のお知らせの種類     | お知らせの種類で決める          |
-| `availability`         | 宿の空き                   | 宿                              |
-| `weather`              | 雨・荒天・暑さ             | 天気                            |
+| 種類（`content.kind`） | 中身                       | 提灯を灯す屋台（`noticeStall`）                            |
+| ---------------------- | -------------------------- | ---------------------------------------------------------- |
+| `schedule_change`      | 開催の日・開始・終了の変更 | 本部のテント                                               |
+| `cancellation`         | 中止                       | 本部のテント                                               |
+| `announcement`         | 主催者のお知らせの種類     | お知らせの種類で決める                                     |
+| `availability`         | 宿の空き                   | 宿                                                         |
+| `weather`              | 雨・荒天・暑さ             | 天気                                                       |
+| `reminder`             | 旅程の時刻に合わせた声かけ | 会場へ向かう前と帰りの最終の前は行き方、ほかは本部のテント |
 
 - すべての通知に、出典（1つ以上）と調べた時刻（`checkedAt`）がある。どちらも欠けた通知は型で作れない
 - 推定の出典は使えない。中止と日程の変更は、公式か、2つ以上の情報源で一致したときだけ知らせる
@@ -200,19 +221,19 @@ live でガイドのモデル（`MODEL_GUIDE`）を設定していないとき�
 
 緊急の言葉がある `POST /api/guide/chat` は、相談がない・ほかの人の相談・旅程がない・旅が消された・保存の口の失敗のときも、4xx や 5xx の代わりに 200 の SSE で、連絡先（`guide.emergency`）、決まった文（`message.delta`）、ふつうの発言と同じ案内（`error`）、`guide.done` の順に返します。相談の中身を読まないので、ない相談とほかの人の相談は同じ応答で、`guide.done` の数は0、時期は `during` です。
 
-| メソッド | パス                                | 決まり              | 本文                             | 返すもの                                                                                                                                                                 |
-| -------- | ----------------------------------- | ------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| POST     | `/api/guide/open`                   | ログインした持ち主  | `GuideOpenRequestSchema`         | 201 `SessionResponseSchema`。残した旅を開いて、ガイドと話す相談を作る                                                                                                    |
-| POST     | `/api/guide/state`                  | 相談の持ち主        | `GuideSessionRefSchema`          | `GuideStateResponseSchema`（時期・見回り・見回りが動くか・通知・承認待ちの提案・手帳）                                                                                   |
-| POST     | `/api/guide/chat`                   | 相談の持ち主        | `GuideChatRequestSchema`         | 返答を SSE（`GuideSseEventSchema`）で返す                                                                                                                                |
-| POST     | `/api/guide/notices/read`           | 相談の持ち主        | `MarkNoticesReadRequestSchema`   | `MarkNoticesReadResponseSchema`（未読の数）                                                                                                                              |
-| POST     | `/api/guide/watch`                  | 相談の持ち主        | `SetTripWatchRequestSchema`      | `TripWatchSchema`。始めるときはログインが要る（ログインしていなければ、どの環境でも 401）。止めるのはログインなしでもできる。見回りが動かない環境では始められない（409） |
-| POST     | `/api/guide/proposals/:id/decision` | 相談の持ち主        | `DecideProposalRequestSchema`    | `DecideProposalResponseSchema`                                                                                                                                           |
-| POST     | `/api/guide/revert`                 | 相談の持ち主        | `RevertTripRequestSchema`        | `TripChangeSchema`（新しい版の旅程と差分）                                                                                                                               |
-| POST     | `/api/guide/memo/:id`               | 相談の持ち主        | `UpdateGuideMemoRequestSchema`   | `GuideMemoItemSchema`                                                                                                                                                    |
-| POST     | `/api/guide/memo/:id/delete`        | 相談の持ち主        | `GuideSessionRefSchema`          | 204                                                                                                                                                                      |
-| POST     | `/internal/patrol/start`            | 内部（`oidc`）      | なし                             | 調べた対象の数・見回り係に渡した数など（`PatrolTickResult`）。見回りを動かしていない環境では 404                                                                         |
-| POST     | `/internal/patrol/webhook`          | 内部（`signature`） | Managed Agents の Webhook の本文 | 204。見回りを動かしていない環境では 404                                                                                                                                  |
+| メソッド | パス                                | 決まり              | 本文                             | 返すもの                                                                                                                                                                                                         |
+| -------- | ----------------------------------- | ------------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| POST     | `/api/guide/open`                   | ログインした持ち主  | `GuideOpenRequestSchema`         | 201 `SessionResponseSchema`。残した旅を開いて、ガイドと話す相談を作る                                                                                                                                            |
+| POST     | `/api/guide/state`                  | 相談の持ち主        | `GuideSessionRefSchema`          | `GuideStateResponseSchema`（時期・見回り・見回りが動くか・通知・承認待ちの提案・手帳）                                                                                                                           |
+| POST     | `/api/guide/chat`                   | 相談の持ち主        | `GuideChatRequestSchema`         | 返答を SSE（`GuideSseEventSchema`）で返す                                                                                                                                                                        |
+| POST     | `/api/guide/notices/read`           | 相談の持ち主        | `MarkNoticesReadRequestSchema`   | `MarkNoticesReadResponseSchema`（未読の数）                                                                                                                                                                      |
+| POST     | `/api/guide/watch`                  | 相談の持ち主        | `SetTripWatchRequestSchema`      | `TripWatchSchema`。始めるときはログインが要る（ログインしていなければ、どの環境でも 401）。止めるのと、予定の時刻の声かけを止める・戻すのは、ログインなしでもできる。見回りが動かない環境では始められない（409） |
+| POST     | `/api/guide/proposals/:id/decision` | 相談の持ち主        | `DecideProposalRequestSchema`    | `DecideProposalResponseSchema`                                                                                                                                                                                   |
+| POST     | `/api/guide/revert`                 | 相談の持ち主        | `RevertTripRequestSchema`        | `TripChangeSchema`（新しい版の旅程と差分）                                                                                                                                                                       |
+| POST     | `/api/guide/memo/:id`               | 相談の持ち主        | `UpdateGuideMemoRequestSchema`   | `GuideMemoItemSchema`                                                                                                                                                                                            |
+| POST     | `/api/guide/memo/:id/delete`        | 相談の持ち主        | `GuideSessionRefSchema`          | 204                                                                                                                                                                                                              |
+| POST     | `/internal/patrol/start`            | 内部（`oidc`）      | なし                             | 調べた対象の数・見回り係に渡した数など（`PatrolTickResult`）。見回りを動かしていない環境では 404                                                                                                                 |
+| POST     | `/internal/patrol/webhook`          | 内部（`signature`） | Managed Agents の Webhook の本文 | 204。見回りを動かしていない環境では 404                                                                                                                                                                          |
 
 内部の経路は `routes.internal` で足し、呼び出し元の確かめは [内部の入口](api.md#内部の入口) の検証（`oidc`・`signature`）だけで行います。確かめられなければ 401、検証の設定がなければその入口だけ 404 で、ハンドラーには届きません。
 

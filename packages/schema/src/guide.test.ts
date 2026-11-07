@@ -384,6 +384,14 @@ describe("noticeStall", () => {
       { kind: "weather", date: "2026-08-16", condition: "storm", precipitationPercent: null },
       "weather",
     ],
+    [
+      { kind: "reminder", slot: "eve", date: "2026-08-16", at: "18:00", itemId: null },
+      "headquarters",
+    ],
+    [
+      { kind: "reminder", slot: "last_return", date: "2026-08-16", at: "21:10", itemId: null },
+      "access",
+    ],
   ])("通知の中身から屋台を決める %#", (content, stall) => {
     expect(noticeStall(content)).toBe(stall);
   });

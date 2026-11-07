@@ -3,6 +3,7 @@ import { fictionalItinerary, fictionalProposal } from "@matsuri-ikoka/schema/tes
 import { describe, expect, it } from "vitest";
 import {
   planApproval,
+  remindersWatch,
   revertedItinerary,
   settleProposal,
   startedWatch,
@@ -143,5 +144,21 @@ describe("見回りの開始と停止", () => {
       status: "active",
       lastCheckedAt: NOW,
     });
+  });
+
+  it("声かけを止めても見回りは続き、始め直しても止めたままにする", () => {
+    const watch = startedWatch(null, itinerary, NOW);
+    const quiet = remindersWatch(watch, false);
+    expect(quiet).toMatchObject({ status: "active", reminders: false });
+    expect(remindersWatch(quiet, false)).toBe(quiet);
+    const restarted = startedWatch(
+      stoppedWatch(quiet, "2026-08-12T09:00:00+09:00"),
+      itinerary,
+      "2026-08-13T09:00:00+09:00",
+    );
+    expect(restarted.reminders).toBe(false);
+    expect(remindersWatch(restarted, true).reminders).toBe(true);
+    // 項目がなければ声をかける
+    expect(remindersWatch(watch, true)).toBe(watch);
   });
 });

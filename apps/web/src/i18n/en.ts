@@ -1253,6 +1253,11 @@ export const en: Messages = {
     watchStop: "Stop watching",
     watchNeedsLogin:
       "Sign in and save this trip, and we can watch the festival for changes while you are away.",
+    remindersOn:
+      "I will also check in at set times: the evening before, the morning of, before you head to the venue, and before the last train home.",
+    remindersOff: "Check-ins at set times are off.",
+    remindersStop: "Turn off check-ins",
+    remindersStart: "Turn on check-ins",
     proposalsTitle: "Suggested changes from your guide",
     outcome: {
       applied: (version: number) =>
