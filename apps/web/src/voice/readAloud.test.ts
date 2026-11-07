@@ -155,7 +155,6 @@ describe("guideSpokenLine", () => {
     head: "会場までは歩いて10分です。提灯の列に沿って進みます。",
     expanded: false,
     text: "",
-    emergency: null,
   };
 
   it("ガイドのセリフの頭を読み、「つづきを読む」では続きだけを読む", () => {
@@ -205,17 +204,5 @@ describe("guideSpokenLine", () => {
         text: "うまくいきませんでした",
       }),
     ).toEqual({ key: "error:internal:落ち着いて", text: "落ち着いて\nうまくいきませんでした" });
-  });
-
-  it("緊急の連絡先は、ガイドの文より先に、流れてくる途中でも読む", () => {
-    const emergency = "緊急のときは、すぐに連絡してください\n救急・火事 119";
-    expect(guideSpokenLine({ ...guide, line: { kind: "waiting" }, emergency })).toEqual({
-      key: `emergency:${emergency}`,
-      text: emergency,
-    });
-    expect(guideSpokenLine({ ...guide, emergency })).toEqual({
-      key: "emergency:g1:head",
-      text: `${emergency}\n${guide.head}`,
-    });
   });
 });

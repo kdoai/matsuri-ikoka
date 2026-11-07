@@ -61,7 +61,7 @@ export function ReadAloudToggle({ roundClass }: { roundClass?: string } = {}) {
         }
         aria-pressed={readAloud}
         aria-label={round ? label : undefined}
-        title={round ? `${label}（${t.voice.readAloudHint}）` : t.voice.readAloudHint}
+        title={round ? t.voice.readAloudTitle(label, t.voice.readAloudHint) : t.voice.readAloudHint}
         data-testid="read-aloud-toggle"
         onClick={() => {
           if (readAloud) {

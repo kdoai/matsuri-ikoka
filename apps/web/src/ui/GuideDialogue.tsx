@@ -83,10 +83,12 @@ function Composer({ placeholder }: { placeholder: string }) {
   const streaming = useApp((state) => state.guide.streaming);
   const [draft, setDraft] = useState("");
   const input = useRef<HTMLInputElement>(null);
+  // 声で入れた文も切らずに残し、長すぎるときは店の窓と同じく知らせて、送れないようにする
+  const tooLong = draft.trim().length > MAX_MESSAGE_LENGTH;
   const submit = (event: FormEvent) => {
     event.preventDefault();
     const text = draft.trim();
-    if (text === "" || streaming) return;
+    if (text === "" || streaming || tooLong) return;
     setDraft("");
     void actions.sendGuide(text);
   };
@@ -106,21 +108,22 @@ function Composer({ placeholder }: { placeholder: string }) {
         type="text"
         value={draft}
         onKeyDown={onKeyDown}
-        maxLength={MAX_MESSAGE_LENGTH}
         onChange={(event) => setDraft(event.target.value)}
         aria-label={t.street.composerLabel}
+        aria-invalid={tooLong}
+        aria-describedby={tooLong ? "guide-too-long" : undefined}
         placeholder={placeholder}
         data-guide-focus=""
         className="min-h-11 min-w-0 flex-1 rounded-xl border-2 border-line-strong bg-white px-3 py-1.5 text-ink"
       />
       <VoiceInput
         draft={draft}
-        onDraft={(text) => setDraft(text.slice(0, MAX_MESSAGE_LENGTH))}
+        onDraft={setDraft}
         onFilled={() => window.requestAnimationFrame(() => input.current?.focus())}
       />
       <button
         type="submit"
-        disabled={streaming || draft.trim() === ""}
+        disabled={streaming || draft.trim() === "" || tooLong}
         aria-label={streaming ? t.street.waiting : t.street.send}
         className="grid size-11 shrink-0 place-items-center rounded-xl bg-ai-700 text-white shadow-sm transition hover:bg-ai-800 disabled:cursor-not-allowed disabled:bg-stone-400"
       >
@@ -130,6 +133,11 @@ function Composer({ placeholder }: { placeholder: string }) {
           <Send aria-hidden="true" className="size-5" />
         )}
       </button>
+      {tooLong ? (
+        <p id="guide-too-long" className="basis-full pt-1 font-semibold text-shu-700 text-sm">
+          {t.chat.tooLong(MAX_MESSAGE_LENGTH)}
+        </p>
+      ) : null}
     </form>
   );
 }
@@ -195,14 +203,6 @@ export function GuideDialogue() {
       head: line.kind === "guide" ? shortLine(line.text).head : "",
       expanded: line.kind === "guide" && expanded === line.id && rest !== null,
       text,
-      emergency:
-        emergency.length > 0
-          ? `${t.street.emergencyLead}\n${t.street.dotted(
-              emergency.map(
-                (contact) => `${t.street.emergency[contact.service]} ${contact.number}`,
-              ),
-            )}`
-          : null,
     }),
   );
 
