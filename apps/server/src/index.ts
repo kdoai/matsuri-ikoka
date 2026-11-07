@@ -20,7 +20,7 @@ import { createWebNearbyResearcher } from "./agent/webNearbyResearcher";
 import { createWebRouteResearcher } from "./agent/webRouteResearcher";
 import { createWebVerifier } from "./agent/webVerifier";
 import { type AppDeps, createApp } from "./app";
-import { portInUseMessage, readConfig, startupNotice } from "./config";
+import { missingRecommendedConfig, portInUseMessage, readConfig, startupNotice } from "./config";
 import { festivalDirs, loadFestivals } from "./data/festivalStore";
 import { loadOsmPlaces } from "./data/osmPlaces";
 import { loadStationPoints } from "./data/stationPoints";
@@ -45,6 +45,11 @@ process.on("unhandledRejection", (reason) => {
 });
 
 const config = readConfig(process.env);
+// 欠けていても起動はするが、黙って効かなくなる設定を、名前だけ知らせる
+const missingConfig = missingRecommendedConfig(config, process.env);
+if (missingConfig.length > 0) {
+  console.warn(JSON.stringify({ kind: "config_missing", missing: missingConfig }));
+}
 const account = await createAccount(readAccountConfig(process.env));
 console.info(
   JSON.stringify({ kind: "account", storage: account.storage.kind, login: account.web.enabled }),
