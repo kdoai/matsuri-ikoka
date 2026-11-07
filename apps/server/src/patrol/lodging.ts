@@ -2,9 +2,9 @@ import { createHash } from "node:crypto";
 import {
   type CheckedChange,
   CheckedChangeSchema,
+  type GuideNotice,
   type Itinerary,
   type LatLng,
-  type LodgingOffer,
   type NoticeContent,
 } from "@matsuri-ikoka/schema";
 import { daysBetween, nowInJapan, todayInJapan } from "../domain/calendar";
@@ -12,26 +12,36 @@ import { type LodgingService, MAX_OFFERS, MAX_SEARCH_RADIUS_KM } from "../tools/
 
 // 宿の空きの見回り。モデルを使わず、今の空室検索の処理を呼ぶ。
 // 旅ごとに人数と日付が違うので、祭りごとにはまとめない。
-// 前の結果は旅程の宿の候補にあるので、比べるための控えを増やさない。
+// 前の状態は、旅程の宿の候補と、その旅に届いた空きの通知から読むので、比べるための控えを増やさない。
 
 const MAX_NAME_LENGTH = 60;
 
+type Availability = Extract<NoticeContent, { kind: "availability" }>;
+
+export interface LodgingBudget {
+  /** このあと検索を呼んでよい回数。実際に呼んだときだけ減らす */
+  remaining: number;
+  /** 回数が足りずに飛ばした泊まりの数 */
+  skipped: number;
+}
+
 function availabilityChange(input: {
-  content: Extract<NoticeContent, { kind: "availability" }>;
-  source: LodgingOffer["source"];
+  content: Availability;
+  sequence: number;
+  sourceUrl: string;
   now: number;
 }): CheckedChange | null {
-  const { content, source } = input;
+  const { content } = input;
   const now = new Date(input.now);
-  // 料金は調べるたびに変わるので、同じ変化かどうかの判定には入れない
+  // 泊まりの単位で状態の変わり目を数える。最安の宿の名前や料金は入れない
   const fingerprint = createHash("sha256")
     .update(
       JSON.stringify([
         "availability",
-        content.lodgingName,
         content.checkIn,
         content.checkOut,
         content.available,
+        input.sequence,
       ]),
     )
     .digest("hex")
@@ -39,17 +49,18 @@ function availabilityChange(input: {
   const parsed = CheckedChangeSchema.safeParse({
     fingerprint,
     content,
-    sources: [{ url: source.url, checkedAt: todayInJapan(now), confidence: "single" }],
+    sources: [{ url: input.sourceUrl, checkedAt: todayInJapan(now), confidence: "single" }],
     checkedAt: nowInJapan(now),
   });
   return parsed.success ? parsed.data : null;
 }
 
 /**
- * 旅程の泊まりごとに空室検索を呼び、変化を返す。
- * - 旅程の宿の候補が検索に出なくなったら、空きがなくなった変化にする
- * - 候補がなかった泊まりで宿が出たら、空きが出た変化にする
- * 検索は安い順の上位だけを返すので、より安い宿に押し出されただけのときは、変化にしない。
+ * 旅程の泊まりごとに空室検索を呼び、状態が変わったときだけ変化を返す。
+ * - 旅程に候補の宿があれば、その宿が検索に出ているかを見る。なくなったら空きなし、戻ったら空きあり
+ * - 候補がなかった泊まりは、宿が出たら空きあり、また出なくなったら空きなし
+ * 検索は安い順の上位だけを返すので、結果が上限まであるときに候補が出ていなくても、空きがないとは言えない
+ * （値上がりや、より安い宿に押し出されただけのことがある）。その回は分からないものとして何もしない。
  * Web で調べた宿は、空きを確かめていないので比べない
  */
 export async function checkTripLodging(input: {
@@ -57,10 +68,13 @@ export async function checkTripLodging(input: {
   lodging: LodgingService;
   /** 会場。宿の候補に場所がないときに使う */
   venue: LatLng | null;
+  /** その旅に届いている通知 */
+  notices: readonly GuideNotice[];
   now: number;
+  budget: LodgingBudget;
   signal: AbortSignal;
 }): Promise<CheckedChange[]> {
-  const { itinerary, lodging, venue, now, signal } = input;
+  const { itinerary, lodging, venue, notices, now, budget, signal } = input;
   const changes: CheckedChange[] = [];
   for (const day of itinerary.days) {
     const search = day.stay?.lodging;
@@ -68,6 +82,11 @@ export async function checkTripLodging(input: {
     const planned = search.offers.find((offer) => offer.nightlyTotalYen !== null);
     const near = planned?.location ?? venue;
     if (near === null) continue;
+    if (budget.remaining <= 0) {
+      budget.skipped += 1;
+      continue;
+    }
+    budget.remaining -= 1;
     const outcome = await lodging.search(
       {
         checkIn: search.checkIn,
@@ -80,43 +99,48 @@ export async function checkTripLodging(input: {
     );
     if (outcome.status !== "ok") continue;
     const offers = outcome.search.offers;
-    const stay = { checkIn: search.checkIn, checkOut: search.checkOut };
-    let change: CheckedChange | null = null;
-    if (planned === undefined) {
-      const opened = offers[0];
-      if (opened !== undefined) {
-        change = availabilityChange({
-          content: {
-            kind: "availability",
-            lodgingName: opened.name.slice(0, MAX_NAME_LENGTH),
-            ...stay,
-            available: true,
-            nightlyTotalYen: opened.nightlyTotalYen,
-            bookingUrl: opened.bookingUrl,
-          },
-          source: opened.source,
-          now,
-        });
-      }
-    } else if (!offers.some((offer) => offer.id === planned.id)) {
-      const pushedOut =
-        offers.length >= MAX_OFFERS &&
-        offers.every((offer) => (offer.nightlyTotalYen ?? 0) <= (planned.nightlyTotalYen ?? 0));
-      if (!pushedOut) {
-        change = availabilityChange({
-          content: {
-            kind: "availability",
-            lodgingName: planned.name.slice(0, MAX_NAME_LENGTH),
-            ...stay,
-            available: false,
-            nightlyTotalYen: null,
-            bookingUrl: planned.bookingUrl,
-          },
-          source: planned.source,
-          now,
-        });
-      }
-    }
+
+    const past = notices
+      .filter(
+        (notice): notice is GuideNotice & { content: Availability } =>
+          notice.content.kind === "availability" &&
+          notice.content.checkIn === search.checkIn &&
+          notice.content.checkOut === search.checkOut,
+      )
+      .sort((a, b) => (a.createdAt < b.createdAt ? -1 : 1));
+    const last = past.at(-1);
+    const before = last === undefined ? planned !== undefined : last.content.available;
+
+    const plannedNow =
+      planned === undefined ? undefined : offers.find((offer) => offer.id === planned.id);
+    const available =
+      planned === undefined
+        ? offers.length > 0
+        : plannedNow !== undefined
+          ? true
+          : offers.length >= MAX_OFFERS
+            ? null
+            : false;
+    if (available === null || available === before) continue;
+
+    const shown = plannedNow ?? (planned === undefined ? offers[0] : undefined);
+    const name = shown?.name ?? planned?.name ?? last?.content.lodgingName;
+    const sourceUrl = shown?.source.url ?? planned?.source.url ?? last?.sources[0]?.url;
+    if (name === undefined || sourceUrl === undefined) continue;
+    const change = availabilityChange({
+      content: {
+        kind: "availability",
+        lodgingName: name.slice(0, MAX_NAME_LENGTH),
+        checkIn: search.checkIn,
+        checkOut: search.checkOut,
+        available,
+        nightlyTotalYen: available ? (shown?.nightlyTotalYen ?? null) : null,
+        bookingUrl: shown?.bookingUrl ?? planned?.bookingUrl ?? last?.content.bookingUrl ?? null,
+      },
+      sequence: past.length,
+      sourceUrl,
+      now,
+    });
     if (change !== null) changes.push(change);
   }
   return changes;

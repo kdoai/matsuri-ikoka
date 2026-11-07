@@ -1,3 +1,7 @@
+import http from "node:http";
+import https from "node:https";
+import { isIP } from "node:net";
+import { Readable } from "node:stream";
 import { checkPublicWebUrl } from "@matsuri-ikoka/agent-kit";
 import { checkHostAddresses, type ResolveHost, resolveHost } from "../agent/addressGuard";
 import { createRobotsChecker, ROBOTS_USER_AGENT, type RobotsChecker } from "../agent/robots";
@@ -5,6 +9,7 @@ import { pageLines } from "./lines";
 
 // 見回りでコードが公開のページを読む。モデルは使わない。
 // URL は転送のたびに確かめ直し、サイトが読まないでほしいと書いているページは読まない。
+// 確かめたあとに名前の向き先を変えられないよう、確かめたアドレスにだけつなぐ（名前を解決し直さない）。
 
 /** 1回の取得を打ち切る時間（ミリ秒） */
 const PAGE_TIMEOUT_MS = 15_000;
@@ -15,6 +20,18 @@ const MAX_REDIRECTS = 3;
 const MIN_HOST_INTERVAL_MS = 1_000;
 /** 本文がこれより短いページは、スクリプトで描かれていて比べられないとみなす */
 const MIN_READABLE_CHARS = 200;
+
+/** スクリプトで中身を描くページの、空の入れ物 */
+const EMPTY_APP_ROOT =
+  /<(?:div|main|section)\b[^>]*\bid\s*=\s*["']?(?:app|root|__next|__nuxt)["']?[^>]*>\s*<\/(?:div|main|section)>/i;
+/** スクリプトを有効にするよう案内するページ */
+const NOSCRIPT_NOTICE =
+  /<noscript\b[^>]*>(?=[^<]{0,600}(?:javascript|スクリプト))(?=[^<]{0,600}(?:有効|オン|enable|required|必要))/i;
+
+/** スクリプトで描くページか。迷うときは読めないページに倒す（ナビだけ読んで変化なしとしない） */
+export function looksScriptRendered(html: string): boolean {
+  return EMPTY_APP_ROOT.test(html) || NOSCRIPT_NOTICE.test(html);
+}
 
 export type PageRead =
   /** コードで読めた。比べるための行 */
@@ -30,8 +47,62 @@ export interface PageFetcher {
   read(url: string): Promise<PageRead>;
 }
 
+export interface PinnedRequest {
+  headers: Record<string, string>;
+  signal: AbortSignal;
+}
+
+/** 確かめたアドレスにだけつないで取得する。転送はたどらない */
+export type PinnedFetch = (
+  url: URL,
+  addresses: readonly string[],
+  init: PinnedRequest,
+) => Promise<Response>;
+
+/** 名前を解決し直さず、渡したアドレスにつなぐ。TLS の確認は URL の名前で行う */
+export const pinnedFetch: PinnedFetch = (url, addresses, init) =>
+  new Promise((resolve, reject) => {
+    const entries = addresses.map((address) => ({ address, family: isIP(address) }));
+    const first = entries[0];
+    if (first === undefined) {
+      reject(new Error("つなぐ先のアドレスがありません"));
+      return;
+    }
+    const request = (url.protocol === "https:" ? https : http).request(
+      url,
+      {
+        method: "GET",
+        headers: init.headers,
+        signal: init.signal,
+        lookup: (_host, options, done) => {
+          if (options.all) done(null, entries);
+          else done(null, first.address, first.family);
+        },
+      },
+      (response) => {
+        const status = response.statusCode ?? 502;
+        const headers = new Headers();
+        for (const [name, value] of Object.entries(response.headers)) {
+          if (typeof value === "string") headers.set(name, value);
+          else if (Array.isArray(value)) headers.set(name, value.join(", "));
+        }
+        const empty = status === 204 || status === 205 || status === 304;
+        if (empty) response.resume();
+        resolve(
+          new Response(
+            empty ? null : (Readable.toWeb(response) as unknown as ReadableStream<Uint8Array>),
+            { status: status < 200 || status > 599 ? 502 : status, headers },
+          ),
+        );
+      },
+    );
+    request.on("error", reject);
+    request.end();
+  });
+
 export interface PageFetcherOptions {
-  fetch?: typeof fetch;
+  /** テストで差し替える。省略すると確かめたアドレスにつなぐ */
+  fetch?: PinnedFetch;
   resolve?: ResolveHost;
   robots?: RobotsChecker;
   clock?: () => number;
@@ -77,14 +148,38 @@ function decode(bytes: Uint8Array, contentType: string): string {
 }
 
 export function createPageFetcher(options: PageFetcherOptions = {}): PageFetcher {
-  const send = options.fetch ?? fetch;
+  const send = options.fetch ?? pinnedFetch;
   const resolve = options.resolve ?? resolveHost;
-  const robots = options.robots ?? createRobotsChecker({ fetch: send });
   const clock = options.clock ?? Date.now;
   const minInterval = options.minHostIntervalMs ?? MIN_HOST_INTERVAL_MS;
   const timeoutMs = options.timeoutMs ?? PAGE_TIMEOUT_MS;
   const maxBytes = options.maxBytes ?? MAX_PAGE_BYTES;
   const lastReadAt = new Map<string, number>();
+
+  /** 名前の向き先を確かめ、確かめたアドレスを返す。公開の Web でなければ null */
+  async function verifiedAddresses(host: string): Promise<string[] | null> {
+    let addresses: string[] = [];
+    const check = await checkHostAddresses(host, async (name) => {
+      addresses = await resolve(name);
+      return addresses;
+    });
+    return check.ok ? addresses : null;
+  }
+
+  // robots.txt も、確かめたアドレスから読む。転送はたどらない
+  const robots =
+    options.robots ??
+    createRobotsChecker({
+      fetch: (async (input: string | URL | Request, init?: RequestInit) => {
+        const url = new URL(String(input));
+        const addresses = await verifiedAddresses(url.hostname);
+        if (addresses === null) throw new Error("公開の Web ではありません");
+        return send(url, addresses, {
+          headers: { "User-Agent": `${ROBOTS_USER_AGENT}/0.1` },
+          signal: init?.signal ?? AbortSignal.timeout(timeoutMs),
+        });
+      }) as typeof fetch,
+    });
 
   async function waitForHost(host: string): Promise<void> {
     const wait = (lastReadAt.get(host) ?? Number.NEGATIVE_INFINITY) + minInterval - clock();
@@ -92,26 +187,20 @@ export function createPageFetcher(options: PageFetcherOptions = {}): PageFetcher
     lastReadAt.set(host, clock());
   }
 
-  /** 読んでよい URL なら URL を返す。転送先でも毎回確かめる */
-  async function allowedUrl(raw: string): Promise<URL | null> {
-    const check = checkPublicWebUrl(raw);
-    if (!check.ok) return null;
-    const address = await checkHostAddresses(check.url.hostname, resolve);
-    if (!address.ok) return null;
-    return (await robots.allowed(check.url)) ? check.url : null;
-  }
-
   return {
     async read(raw) {
       let target = raw;
       for (let hop = 0; hop <= MAX_REDIRECTS; hop += 1) {
-        const url = await allowedUrl(target);
-        if (url === null) return { status: "blocked" };
+        // 読んでよい URL か。転送先でも毎回確かめる
+        const check = checkPublicWebUrl(target);
+        if (!check.ok) return { status: "blocked" };
+        const url = check.url;
+        const addresses = await verifiedAddresses(url.hostname);
+        if (addresses === null || !(await robots.allowed(url))) return { status: "blocked" };
         await waitForHost(url.hostname);
         let response: Response;
         try {
-          response = await send(url, {
-            redirect: "manual",
+          response = await send(url, addresses, {
             headers: { "User-Agent": `${ROBOTS_USER_AGENT}/0.1` },
             signal: AbortSignal.timeout(timeoutMs),
           });
@@ -144,7 +233,9 @@ export function createPageFetcher(options: PageFetcherOptions = {}): PageFetcher
           return { status: "unreadable" };
         }
         try {
-          const lines = pageLines(decode(await readBytes(response, maxBytes), type));
+          const html = decode(await readBytes(response, maxBytes), type);
+          if (looksScriptRendered(html)) return { status: "unreadable" };
+          const lines = pageLines(html);
           const chars = lines.reduce((total, line) => total + line.length, 0);
           return chars < MIN_READABLE_CHARS ? { status: "unreadable" } : { status: "ok", lines };
         } catch {

@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import {
   type CheckedChange,
   type GuideNotice,
@@ -65,11 +66,21 @@ function affectedItems(itinerary: Itinerary, content: NoticeContent): string[] {
     .slice(0, 40);
 }
 
+/**
+ * 通知の ID。同じ変化からは同じ ID になるので、同じ旅に2度届かない。
+ * お知らせは祭りと開催日と種類ごとに1つに畳む（同じサイトの更新で通知の上限が埋まらないように）
+ */
 export function noticeId(change: CheckedChange): string {
-  return `n-${change.fingerprint}`;
+  const { content } = change;
+  if (content.kind !== "announcement") return `n-${change.fingerprint}`;
+  const key = createHash("sha256")
+    .update(JSON.stringify([content.festivalId, content.date, content.topic]))
+    .digest("hex")
+    .slice(0, 32);
+  return `n-a-${key}`;
 }
 
-/** 通知の形を確かめて作る。同じ変化からは同じ ID になるので、同じ旅に2度届かない */
+/** 通知の形を確かめて作る */
 export function noticeFor(input: {
   change: CheckedChange;
   tripId: string;
@@ -94,4 +105,24 @@ export function noticeFor(input: {
 export function noticeExpiresAt(itinerary: Itinerary): number {
   const last: IsoDate = itinerary.days.at(-1)?.date ?? "1970-01-01";
   return Date.parse(`${addDays(last, NOTICE_RETENTION_DAYS)}T00:00:00+09:00`);
+}
+
+/** 上限に達しても残す通知（開催の変更と中止） */
+export function isFirmNotice(notice: Pick<GuideNotice, "content">): boolean {
+  return notice.content.kind === "schedule_change" || notice.content.kind === "cancellation";
+}
+
+/**
+ * 上限に達したときに押し出す通知の ID。古いお知らせ、なければ読んだ古い通知の順に選ぶ。
+ * 未読の開催の変更と中止は押し出さない。選べなければ null
+ */
+export function noticeToEvict(
+  notices: readonly { id: string; kind: string; createdAt: string; readAt: string | null }[],
+): string | null {
+  const oldest = (items: readonly { id: string; createdAt: string }[]) =>
+    [...items].sort((a, b) => (a.createdAt < b.createdAt ? -1 : 1))[0]?.id ?? null;
+  return (
+    oldest(notices.filter((notice) => notice.kind === "announcement")) ??
+    oldest(notices.filter((notice) => notice.readAt !== null))
+  );
 }

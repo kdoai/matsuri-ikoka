@@ -14,6 +14,8 @@ const DEFAULT_SESSION_BUDGET_USD = 2;
 /** セッションの予算の上限（米ドル）。設定を間違えても、これより使わない */
 const MAX_SESSION_BUDGET_USD = 10;
 const DEFAULT_CHECK_INTERVAL_HOURS = 6;
+/** 同じ対象を調べる間隔の下限（時間）。短くしすぎて、祭りのサイトに負担をかけない */
+const MIN_CHECK_INTERVAL_HOURS = 1;
 /** 1回の起動で宿の空きを調べる数の上限。空室検索の呼び出しの間隔を空けるので、多くすると時間内に終わらない */
 const DEFAULT_MAX_LODGING_CHECKS = 10;
 
@@ -53,6 +55,12 @@ export function readPatrolConfig(env: NodeJS.ProcessEnv): PatrolConfig | null {
     ),
     maxLodgingChecksPerRun: DEFAULT_MAX_LODGING_CHECKS,
     checkIntervalMs:
-      positive(env.PATROL_CHECK_INTERVAL_HOURS, DEFAULT_CHECK_INTERVAL_HOURS) * 60 * 60 * 1000,
+      Math.max(
+        MIN_CHECK_INTERVAL_HOURS,
+        positive(env.PATROL_CHECK_INTERVAL_HOURS, DEFAULT_CHECK_INTERVAL_HOURS),
+      ) *
+      60 *
+      60 *
+      1000,
   };
 }

@@ -4,8 +4,8 @@ import type { PatrolRequest } from "@matsuri-ikoka/schema";
 import { PATROL_NAMES } from "./config";
 import { patrolStartMessage } from "./request";
 
-// 見回り係（Managed Agents のセッション）を動かす口。定義は managed-agents/ のファイルにあり、ant apply で適用する。
-// ここはセッションを作ることと、終わったセッションを読むことだけを行う。
+// 見回り係（Managed Agents のセッション）を動かす口。定義は managed-agents-patrol/ のファイルにあり、ant apply で適用する。
+// ここはセッションを作ること、終わったセッションを読むこと、用が済んだセッションを消すことだけを行う。
 
 export const PATROL_METADATA_KEY = "patrol_id";
 
@@ -36,6 +36,11 @@ export interface PatrolAgent {
   read(sessionId: string): Promise<PatrolSessionState>;
   /** 確認待ちの呼び出しを断る */
   deny(sessionId: string, toolUseIds: readonly string[]): Promise<void>;
+  /**
+   * 用が済んだセッションを止めて消す（セッションにはページの文章が残る）。
+   * 消せたら true。動いている途中なら止める指示を送って false を返し、あとで消し直す
+   */
+  dispose(sessionId: string): Promise<boolean>;
 }
 
 /** 名前で探す。ID は ant apply が管理するので、コードには持たない */
@@ -46,13 +51,16 @@ async function findByName<T extends { id: string; name: string; archived_at?: st
   for await (const item of items) {
     if (item.name === name && !item.archived_at) return item;
   }
-  throw new Error("見回りの定義がありません。managed-agents/ を適用してください");
+  throw new Error("見回りの定義がありません。managed-agents-patrol/ を適用してください");
 }
 
 function centsOf(amount: { amount: string } | null | undefined): number | null {
   const cents = Number(amount?.amount);
   return Number.isFinite(cents) ? cents : null;
 }
+
+const isNotFound = (error: unknown): boolean =>
+  typeof error === "object" && error !== null && "status" in error && error.status === 404;
 
 export function createManagedPatrolAgent(client: Anthropic): PatrolAgent {
   return {
@@ -61,27 +69,38 @@ export function createManagedPatrolAgent(client: Anthropic): PatrolAgent {
         findByName(client.beta.agents.list(), PATROL_NAMES.agent),
         findByName(client.beta.environments.list(), PATROL_NAMES.environment),
       ]);
-      const session = await client.beta.sessions.create({
-        agent: agent.id,
-        environment_id: environment.id,
-        title: request.patrolId,
-        budget: {
-          type: "limit",
-          max_list_cost: { amount: String(budgetCents), currency: "USD" },
-        },
-        metadata: { [PATROL_METADATA_KEY]: request.patrolId },
-        initial_events: [
-          {
-            type: "user.message",
-            content: [{ type: "text", text: patrolStartMessage(request) }],
+      const session = await client.beta.sessions.create(
+        {
+          agent: agent.id,
+          environment_id: environment.id,
+          title: request.patrolId,
+          budget: {
+            type: "limit",
+            max_list_cost: { amount: String(budgetCents), currency: "USD" },
           },
-        ],
-      });
+          metadata: { [PATROL_METADATA_KEY]: request.patrolId },
+          initial_events: [
+            {
+              type: "user.message",
+              content: [{ type: "text", text: patrolStartMessage(request) }],
+            },
+          ],
+        },
+        // やり直すとセッションと費用が増えるので、この呼び出しは SDK の再試行を使わない
+        { maxRetries: 0 },
+      );
       return session.id;
     },
 
     async read(sessionId) {
-      const session = await client.beta.sessions.retrieve(sessionId);
+      let session: Awaited<ReturnType<typeof client.beta.sessions.retrieve>>;
+      try {
+        session = await client.beta.sessions.retrieve(sessionId);
+      } catch (error) {
+        // 別のワークスペースのセッションや消したセッションは、見回りのものとして扱わない
+        if (isNotFound(error)) return { state: "running", patrolId: null };
+        throw error;
+      }
       const patrolId = session.metadata?.[PATROL_METADATA_KEY] ?? null;
       if (patrolId === null) return { state: "running", patrolId };
       if (session.status === "running" || session.status === "rescheduling") {
@@ -142,6 +161,23 @@ export function createManagedPatrolAgent(client: Anthropic): PatrolAgent {
           result: "deny" as const,
         })),
       });
+    },
+
+    async dispose(sessionId) {
+      try {
+        const session = await client.beta.sessions.retrieve(sessionId);
+        if (session.status === "running" || session.status === "rescheduling") {
+          await client.beta.sessions.events.send(sessionId, {
+            events: [{ type: "user.interrupt" }],
+          });
+          return false;
+        }
+        await client.beta.sessions.delete(sessionId);
+        return true;
+      } catch (error) {
+        if (isNotFound(error)) return true;
+        throw error;
+      }
     },
   };
 }

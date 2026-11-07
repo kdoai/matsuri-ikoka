@@ -7,9 +7,18 @@ import { FESTIVAL_ID, PAGE_URL, PATROL_DATE, patrolFestival, watchedTrip } from 
 const TODAY = "2026-08-10";
 const festivals = createFestivalStore([patrolFestival()]);
 
+/** 旅程の祭りの日を変える */
+const onDate = (name: string, date: string) => {
+  const entry = watchedTrip(name);
+  const day = entry.itinerary.days[0];
+  if (day === undefined) throw new Error("旅程に日がありません");
+  entry.itinerary = { ...entry.itinerary, days: [{ ...day, date }] };
+  return entry;
+};
+
 describe("planTargets", () => {
   it("同じ祭りと開催日は、いくつの旅で見張っていても1つにまとめる", () => {
-    const plans = planTargets([watchedTrip("a"), watchedTrip("b")], festivals, TODAY);
+    const { plans } = planTargets([watchedTrip("a"), watchedTrip("b")], festivals, TODAY);
 
     expect(plans).toHaveLength(1);
     expect(plans[0]).toMatchObject({
@@ -29,8 +38,8 @@ describe("planTargets", () => {
       status: "stopped",
       stoppedAt: "2026-08-10T06:00:00+09:00",
     };
-    expect(planTargets([stopped], festivals, TODAY)).toEqual([]);
-    expect(planTargets([watchedTrip("a")], festivals, "2026-08-17")).toEqual([]);
+    expect(planTargets([stopped], festivals, TODAY).plans).toEqual([]);
+    expect(planTargets([watchedTrip("a")], festivals, "2026-08-17").plans).toEqual([]);
   });
 
   it("掲載停止の祭りは対象にしない", () => {
@@ -38,7 +47,33 @@ describe("planTargets", () => {
       FestivalSchema.parse({ ...patrolFestival(), optOut: true }),
     ]);
 
-    expect(planTargets([watchedTrip("a")], hidden, TODAY)).toEqual([]);
+    expect(planTargets([watchedTrip("a")], hidden, TODAY).plans).toEqual([]);
+  });
+
+  it("開催回に当たらない旅程の日は、利用者の日付を使わず、対象にしない", () => {
+    const { plans, unmatched } = planTargets([onDate("a", "2026-08-15")], festivals, TODAY);
+
+    expect(plans).toEqual([]);
+    expect(unmatched).toBe(1);
+    expect(JSON.stringify(plans)).not.toContain("2026-08-15");
+  });
+
+  it("複数日の開催の2日目の旅も、開催回の日付で1つにまとめる", () => {
+    const festival = patrolFestival();
+    const long = FestivalSchema.parse({
+      ...festival,
+      occurrences: festival.occurrences.map((item) => ({ ...item, endDate: "2026-08-17" })),
+    });
+
+    const { plans, unmatched } = planTargets(
+      [onDate("a", "2026-08-17"), watchedTrip("b")],
+      createFestivalStore([long]),
+      TODAY,
+    );
+
+    expect(unmatched).toBe(0);
+    expect(plans.map((plan) => plan.date)).toEqual([PATROL_DATE]);
+    expect(plans[0]?.trips).toHaveLength(2);
   });
 
   it("読むページは確度の高い順に、推定を除いて、同じページを1つにする", () => {
@@ -60,9 +95,9 @@ describe("planTargets", () => {
       }),
     ]);
 
-    const [plan] = planTargets([watchedTrip("a")], store, TODAY);
+    const { plans } = planTargets([watchedTrip("a")], store, TODAY);
 
-    expect(plan?.pages.map((page) => page.url)).toEqual([
+    expect(plans[0]?.pages.map((page) => page.url)).toEqual([
       PAGE_URL,
       "https://example.com/kanko",
       "https://example.com/news",
@@ -76,25 +111,20 @@ describe("planTargets", () => {
       id: "hanabi-matsuri",
       occurrences: festival.occurrences.map((item) => ({ ...item, date: "2026-08-20" })),
     });
-    const entry = watchedTrip("b");
-    const day = entry.itinerary.days[0];
-    if (day === undefined) throw new Error("旅程に日がありません");
+    const entry = onDate("b", "2026-08-20");
     entry.itinerary = {
       ...entry.itinerary,
-      days: [
-        {
-          ...day,
-          date: "2026-08-20",
-          items: day.items.map((item) =>
-            item.type === "festival" ? { ...item, festivalId: later.id } : item,
-          ),
-        },
-      ],
+      days: entry.itinerary.days.map((day) => ({
+        ...day,
+        items: day.items.map((item) =>
+          item.type === "festival" ? { ...item, festivalId: later.id } : item,
+        ),
+      })),
     };
 
-    const plans = planTargets(
+    const { plans } = planTargets(
       [entry, watchedTrip("a")],
-      createFestivalStore([festival as never, later]),
+      createFestivalStore([festival, later]),
       TODAY,
     );
 

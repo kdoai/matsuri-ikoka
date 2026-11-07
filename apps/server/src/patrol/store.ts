@@ -4,12 +4,13 @@ import {
   type Itinerary,
   MAX_NOTICES_PER_TRIP,
 } from "@matsuri-ikoka/schema";
+import { isFirmNotice, noticeToEvict } from "./notices";
 import type { PatrolRecord, PatrolRun, WatchedTrip } from "./types";
 
 // 見回りの保存の口。見回りに要るものだけを持つ狭い口にする。
 //
 //   users/{uid}/trips/{旅の ID}/watch/current   見回りの依頼（読むだけ。書くのはガイドの API）
-//   users/{uid}/trips/{旅の ID}/notices/{ID}    通知（足すだけ）
+//   users/{uid}/trips/{旅の ID}/notices/{ID}    通知（足すだけ。お知らせは種類ごとに畳む）
 //   patrols/{祭りの ID}_{開催日}                 ページの比較の控え・調べた時刻・実行権。利用者の情報を持たない
 //   patrolRuns/{見回りの ID}                     実行の記録。利用者の情報を持たない
 //   patrolDeliveries/{配信の ID}                 Webhook の配信の受け取りの印
@@ -17,7 +18,11 @@ import type { PatrolRecord, PatrolRun, WatchedTrip } from "./types";
 // 持ち主を型で分ける forOwner の口は使わない。見回りは、頼まれた旅を横断して読む裏の処理で、
 // 利用者の操作から呼ばれない。旅の置き場を指す値（WatchedTrip.ref）は、この口の中でだけ使う。
 
-export type AddNoticeResult = "created" | "duplicate" | "full";
+/**
+ * created 足した / replaced 同じ種類のお知らせを畳んだ / duplicate 同じ変化の通知がある /
+ * full 上限に達して足せない / not_watching 依頼がない、または止められた旅なので足さない
+ */
+export type AddNoticeResult = "created" | "replaced" | "duplicate" | "full" | "not_watching";
 export type DeliveryClaim = "claimed" | "duplicate";
 
 export interface PatrolStore {
@@ -25,7 +30,12 @@ export interface PatrolStore {
   listWatchedTrips(limit: number): Promise<WatchedTrip[]>;
   /** 旅のいまの旅程。読めなければ null */
   readItinerary(trip: WatchedTrip): Promise<Itinerary | null>;
-  /** 通知を足す。同じ ID の通知があれば足さない。上限に達した旅には足さない */
+  /** その旅に届いている通知 */
+  listNotices(trip: WatchedTrip): Promise<GuideNotice[]>;
+  /**
+   * 通知を足す。依頼が見回り中のときだけ書く（旅を消したあとや止めたあとに書かない）。
+   * 上限に達したら、開催の変更と中止だけは、古いお知らせか読んだ通知を押し出して足す
+   */
   addNotice(trip: WatchedTrip, notice: GuideNotice, expiresAt: number): Promise<AddNoticeResult>;
 
   readRecord(key: string): Promise<PatrolRecord | null>;
@@ -52,6 +62,8 @@ export interface PatrolStore {
   /** 結果の受け取りを始める。終わっている、またはほかの実行が受け取っていれば null */
   claimRun(patrolId: string, holder: string, now: number, ttlMs: number): Promise<PatrolRun | null>;
   listOpenRuns(limit: number): Promise<PatrolRun[]>;
+  /** 終わったのに、セッションをまだ消していない実行 */
+  listRunsToDispose(limit: number): Promise<PatrolRun[]>;
 
   /** 配信の受け取りを始める。終わった配信と、受け取っている途中の配信は duplicate */
   claimDelivery(id: string, now: number, ttlMs: number, expiresAt: number): Promise<DeliveryClaim>;
@@ -71,10 +83,13 @@ export function newRecord(
     festivalId: seed.festivalId,
     date: seed.date,
     observed: null,
+    cancelled: false,
+    changeCount: 0,
     pages: [],
     lastCheckedAt: null,
     nextCheckAt: 0,
     failures: 0,
+    groupFailures: 0,
     pending: null,
     lease,
   };
@@ -95,6 +110,11 @@ export class MemoryPatrolStore implements PatrolStore {
     this.#trips.set(trip.ref, { trip: clone(trip), itinerary: clone(itinerary) });
   }
 
+  /** 依頼を消す（旅を消したとき） */
+  removeWatchedTrip(ref: string): void {
+    this.#trips.delete(ref);
+  }
+
   /** その旅の通知（テストと開発で確かめるため） */
   noticesOf(ref: string): GuideNotice[] {
     return [...(this.#notices.get(ref)?.values() ?? [])].map(clone);
@@ -111,10 +131,34 @@ export class MemoryPatrolStore implements PatrolStore {
     return clone(this.#trips.get(trip.ref)?.itinerary ?? null);
   }
 
+  async listNotices(trip: WatchedTrip): Promise<GuideNotice[]> {
+    return this.noticesOf(trip.ref);
+  }
+
   async addNotice(trip: WatchedTrip, notice: GuideNotice): Promise<AddNoticeResult> {
+    if (this.#trips.get(trip.ref)?.trip.watch.status !== "active") return "not_watching";
     const notices = this.#notices.get(trip.ref) ?? new Map<string, GuideNotice>();
-    if (notices.has(notice.id)) return "duplicate";
-    if (notices.size >= MAX_NOTICES_PER_TRIP) return "full";
+    const existing = notices.get(notice.id);
+    if (existing !== undefined) {
+      if (existing.fingerprint === notice.fingerprint || notice.content.kind !== "announcement") {
+        return "duplicate";
+      }
+      notices.set(notice.id, clone({ ...notice, proposalId: existing.proposalId }));
+      return "replaced";
+    }
+    if (notices.size >= MAX_NOTICES_PER_TRIP) {
+      if (!isFirmNotice(notice)) return "full";
+      const victim = noticeToEvict(
+        [...notices.values()].map((item) => ({
+          id: item.id,
+          kind: item.content.kind,
+          createdAt: item.createdAt,
+          readAt: item.readAt,
+        })),
+      );
+      if (victim === null) return "full";
+      notices.delete(victim);
+    }
     notices.set(notice.id, clone(notice));
     this.#notices.set(trip.ref, notices);
     return "created";
@@ -192,6 +236,13 @@ export class MemoryPatrolStore implements PatrolStore {
   async listOpenRuns(limit: number): Promise<PatrolRun[]> {
     return [...this.#runs.values()]
       .filter((run) => run.status === "open")
+      .slice(0, limit)
+      .map(clone);
+  }
+
+  async listRunsToDispose(limit: number): Promise<PatrolRun[]> {
+    return [...this.#runs.values()]
+      .filter((run) => run.needsDisposal && run.status !== "open")
       .slice(0, limit)
       .map(clone);
   }

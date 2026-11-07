@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { MAX_NOTICES_PER_TRIP } from "@matsuri-ikoka/schema";
+import { type GuideNotice, MAX_NOTICES_PER_TRIP } from "@matsuri-ikoka/schema";
 import { fictionalNotice, fictionalTripWatch } from "@matsuri-ikoka/schema/testing";
 import { expect, it } from "vitest";
 import type { PatrolStore } from "./store";
@@ -14,7 +14,7 @@ const TTL = 5 * 60 * 1000;
 const seed = { festivalId: "suzunari-toro", date: "2026-08-16" };
 const uniqueKey = () => `suzunari-toro-${randomUUID()}_2026-08-16`;
 
-const trip = (): WatchedTrip => {
+const newTrip = (): WatchedTrip => {
   const tripId = `trip-${randomUUID()}`;
   return {
     ref: `users/user-${randomUUID()}/trips/${tripId}`,
@@ -33,12 +33,21 @@ const run = (over: Partial<PatrolRun> = {}): PatrolRun => ({
   failure: null,
   counts: {},
   costCents: null,
+  needsDisposal: false,
   ...over,
 });
 
-export function patrolStoreContract(make: () => PatrolStore): void {
+export interface PatrolStoreSetup {
+  store: PatrolStore;
+  /** 見回りの依頼を置く */
+  putWatch(trip: WatchedTrip): Promise<void>;
+  /** 見回りの依頼を消す（旅を消したとき） */
+  removeWatch(trip: WatchedTrip): Promise<void>;
+}
+
+export function patrolStoreContract(make: () => PatrolStoreSetup): void {
   it("実行権は1つの実行だけが持てて、切れたら別の実行が引き継ぐ", async () => {
-    const store = make();
+    const { store } = make();
     const key = uniqueKey();
 
     const first = await store.acquireLease(key, seed, "a", NOW, TTL);
@@ -52,7 +61,7 @@ export function patrolStoreContract(make: () => PatrolStore): void {
   });
 
   it("同時に取りに来ても、実行権を持てるのは1つだけ", async () => {
-    const store = make();
+    const { store } = make();
     const key = uniqueKey();
 
     const results = await Promise.all(
@@ -63,7 +72,7 @@ export function patrolStoreContract(make: () => PatrolStore): void {
   });
 
   it("実行権を延ばせるのは、持っている実行だけ", async () => {
-    const store = make();
+    const { store } = make();
     const key = uniqueKey();
     await store.acquireLease(key, seed, "a", NOW, TTL);
 
@@ -73,7 +82,7 @@ export function patrolStoreContract(make: () => PatrolStore): void {
   });
 
   it("実行権を失った実行は保存できない", async () => {
-    const store = make();
+    const { store } = make();
     const key = uniqueKey();
     const record = await store.acquireLease(key, seed, "a", NOW, TTL);
     await store.acquireLease(key, seed, "b", NOW + TTL + 1, TTL);
@@ -84,7 +93,7 @@ export function patrolStoreContract(make: () => PatrolStore): void {
   });
 
   it("保存した控えを読める。実行権を放すと別の実行が取れる", async () => {
-    const store = make();
+    const { store } = make();
     const key = uniqueKey();
     const record = await store.acquireLease(key, seed, "a", NOW, TTL);
     if (record === null) throw new Error("実行権を取れませんでした");
@@ -101,16 +110,23 @@ export function patrolStoreContract(make: () => PatrolStore): void {
         ...record,
         pages: [page],
         lastCheckedAt: NOW,
+        changeCount: 2,
         lease: null,
       }),
     ).toBe(true);
 
-    expect(await store.readRecord(key)).toMatchObject({ pages: [page], lastCheckedAt: NOW });
+    expect(await store.readRecord(key)).toMatchObject({
+      pages: [page],
+      lastCheckedAt: NOW,
+      changeCount: 2,
+      cancelled: false,
+      groupFailures: 0,
+    });
     expect(await store.acquireLease(key, seed, "b", NOW + 1, TTL)).not.toBeNull();
   });
 
   it("実行権が残っている控えは消さない。一覧に出る", async () => {
-    const store = make();
+    const { store } = make();
     const key = uniqueKey();
     await store.acquireLease(key, seed, "a", NOW, TTL);
 
@@ -121,22 +137,119 @@ export function patrolStoreContract(make: () => PatrolStore): void {
     expect(await store.deleteRecord(key, NOW + TTL + 1)).toBe(false);
   });
 
-  it("同じ通知は2度足さない。上限に達した旅には足さない", async () => {
-    const store = make();
-    const target = trip();
-    const notice = { ...fictionalNotice(), tripId: target.watch.tripId };
+  const noticeOf = (trip: WatchedTrip, over: Partial<GuideNotice> = {}): GuideNotice => ({
+    ...fictionalNotice(),
+    tripId: trip.watch.tripId,
+    ...over,
+  });
+  const announcement = (trip: WatchedTrip, over: Partial<GuideNotice>): GuideNotice =>
+    noticeOf(trip, {
+      content: {
+        kind: "announcement",
+        festivalId: "suzunari-toro",
+        date: "2026-08-16",
+        topic: "other",
+      },
+      proposalId: null,
+      ...over,
+    });
 
-    expect(await store.addNotice(target, notice, NOW)).toBe("created");
-    expect(await store.addNotice(target, notice, NOW)).toBe("duplicate");
+  it("同じ通知は2度足さない。足した通知を読める", async () => {
+    const { store, putWatch } = make();
+    const trip = newTrip();
+    await putWatch(trip);
+    const notice = noticeOf(trip);
 
-    for (let i = 1; i < MAX_NOTICES_PER_TRIP; i += 1) {
-      await store.addNotice(target, { ...notice, id: `n-${i}` }, NOW);
-    }
-    expect(await store.addNotice(target, { ...notice, id: "n-over" }, NOW)).toBe("full");
+    expect(await store.addNotice(trip, notice, NOW)).toBe("created");
+    expect(await store.addNotice(trip, notice, NOW)).toBe("duplicate");
+
+    expect(await store.listNotices(trip)).toEqual([notice]);
   });
 
+  it("依頼がない旅、止めた旅には通知を書かない", async () => {
+    const { store, putWatch, removeWatch } = make();
+    const never = newTrip();
+    expect(await store.addNotice(never, noticeOf(never), NOW)).toBe("not_watching");
+    expect(await store.listNotices(never)).toEqual([]);
+
+    const removed = newTrip();
+    await putWatch(removed);
+    await removeWatch(removed);
+    expect(await store.addNotice(removed, noticeOf(removed), NOW)).toBe("not_watching");
+
+    const stopped = newTrip();
+    await putWatch({
+      ...stopped,
+      watch: { ...stopped.watch, status: "stopped", stoppedAt: "2026-08-10T06:00:00+09:00" },
+    });
+    expect(await store.addNotice(stopped, noticeOf(stopped), NOW)).toBe("not_watching");
+  });
+
+  it("同じ種類のお知らせは置き換えて畳み、付いている提案は残す", async () => {
+    const { store, putWatch } = make();
+    const trip = newTrip();
+    await putWatch(trip);
+    const first = announcement(trip, {
+      id: "n-a-1",
+      fingerprint: "0123456789abcdef",
+      proposalId: "proposal-1",
+    });
+    const second = announcement(trip, { id: "n-a-1", fingerprint: "fedcba9876543210" });
+
+    expect(await store.addNotice(trip, first, NOW)).toBe("created");
+    expect(await store.addNotice(trip, first, NOW)).toBe("duplicate");
+    expect(await store.addNotice(trip, second, NOW)).toBe("replaced");
+
+    const notices = await store.listNotices(trip);
+    expect(notices).toHaveLength(1);
+    expect(notices[0]).toMatchObject({
+      fingerprint: "fedcba9876543210",
+      proposalId: "proposal-1",
+    });
+  });
+
+  it("上限に達したら、お知らせは足さず、開催の変更と中止は古いお知らせを押し出して足す", async () => {
+    const { store, putWatch } = make();
+    const trip = newTrip();
+    await putWatch(trip);
+    for (let i = 0; i < MAX_NOTICES_PER_TRIP; i += 1) {
+      await store.addNotice(
+        trip,
+        announcement(trip, {
+          id: `n-a-${i}`,
+          createdAt: `2026-08-01T${String(i % 24).padStart(2, "0")}:${String(i).padStart(2, "0")}:00+09:00`,
+        }),
+        NOW,
+      );
+    }
+
+    expect(await store.addNotice(trip, announcement(trip, { id: "n-a-over" }), NOW)).toBe("full");
+
+    const firm = noticeOf(trip, {
+      id: "n-firm",
+      content: { kind: "cancellation", festivalId: "suzunari-toro", date: "2026-08-16" },
+    });
+    expect(await store.addNotice(trip, firm, NOW)).toBe("created");
+
+    const notices = await store.listNotices(trip);
+    expect(notices).toHaveLength(MAX_NOTICES_PER_TRIP);
+    expect(notices.map((notice) => notice.id)).toContain("n-firm");
+    expect(notices.map((notice) => notice.id)).not.toContain("n-a-0");
+  }, 60_000);
+
+  it("上限まで未読の確かな通知なら、新しい通知も足せない", async () => {
+    const { store, putWatch } = make();
+    const trip = newTrip();
+    await putWatch(trip);
+    for (let i = 0; i < MAX_NOTICES_PER_TRIP; i += 1) {
+      await store.addNotice(trip, noticeOf(trip, { id: `n-${i}` }), NOW);
+    }
+
+    expect(await store.addNotice(trip, noticeOf(trip, { id: "n-over" }), NOW)).toBe("full");
+  }, 60_000);
+
   it("実行の記録を作り、受け取りは1つの実行に絞る", async () => {
-    const store = make();
+    const { store } = make();
     const item = run();
     await store.createRun(item, NOW + TTL);
 
@@ -166,15 +279,32 @@ export function patrolStoreContract(make: () => PatrolStore): void {
     expect(await store.claimRun(item.patrolId, "c", NOW + TTL * 3, TTL)).toBeNull();
   });
 
+  it("終わったのにセッションを消していない実行を一覧にする", async () => {
+    const { store } = make();
+    const item = run({ sessionId: "session-1" });
+    await store.createRun(item, NOW + TTL);
+    const listed = async () => (await store.listRunsToDispose(10_000)).map((left) => left.patrolId);
+
+    // 動いている間は出ない
+    await store.updateRun(item.patrolId, { needsDisposal: true });
+    expect(await listed()).not.toContain(item.patrolId);
+
+    await store.updateRun(item.patrolId, { status: "done" });
+    expect(await listed()).toContain(item.patrolId);
+
+    await store.updateRun(item.patrolId, { needsDisposal: false });
+    expect(await listed()).not.toContain(item.patrolId);
+  });
+
   it("ない実行は読めず、受け取れない", async () => {
-    const store = make();
+    const { store } = make();
 
     expect(await store.readRun("patrol-ffffffffffffffff")).toBeNull();
     expect(await store.claimRun("patrol-ffffffffffffffff", "a", NOW, TTL)).toBeNull();
   });
 
   it("同じ配信は受け取らない。失敗して放した配信は受け取り直せる", async () => {
-    const store = make();
+    const { store } = make();
     const id = `whe_${randomUUID()}`;
 
     expect(await store.claimDelivery(id, NOW, TTL, NOW + TTL)).toBe("claimed");

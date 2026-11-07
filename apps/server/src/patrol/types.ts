@@ -8,13 +8,6 @@ export interface WatchedTrip {
   watch: TripWatch;
 }
 
-/** 開催の日時。分からない項目は null */
-export interface ObservedSchedule {
-  date: IsoDate | null;
-  start: LocalTime | null;
-  end: LocalTime | null;
-}
-
 /** 比べる元の開催の日時。日付は必ず分かっている（祭りのデータか、検問を通った前回の値） */
 export interface ScheduleBaseline {
   date: IsoDate;
@@ -27,7 +20,7 @@ export interface PatrolPageRecord {
   url: string;
   /** 前回の行のハッシュ。コードで読めたことがなければ null */
   lineHashes: string[] | null;
-  /** 見回り係の結果を待っている、今回の行のハッシュ。結果を確かめてから lineHashes にする */
+  /** 見回り係の結果を待っている、今回の行のハッシュ。実際に開いたと確かめてから lineHashes にする */
   pendingHashes: string[] | null;
   /** 続けて失敗した回数 */
   failures: number;
@@ -47,11 +40,17 @@ export interface PatrolRecord {
   date: IsoDate;
   /** 検問を通った、いまの開催の日時。まだなければ祭りのデータと比べる */
   observed: ScheduleBaseline | null;
+  /** 検問を通って中止と決まっている */
+  cancelled: boolean;
+  /** 知らせた開催の変更と中止の数。同じ内容の変更をもう一度知らせられるように、指紋に入れる */
+  changeCount: number;
   pages: PatrolPageRecord[];
   lastCheckedAt: number | null;
   nextCheckAt: number;
-  /** 見回り係の失敗が続いた回数 */
+  /** この対象が原因と分かっている失敗が続いた回数 */
   failures: number;
+  /** ほかの対象といっしょに失敗した回数（セッションの失敗や崩れた報告）。原因が分からないので軽く数える */
+  groupFailures: number;
   /** 結果を待っている見回り。待っている間は同じ対象を調べ直さない */
   pending: { patrolId: string; until: number } | null;
   /** 実行権。切れた実行権は、別の実行が引き継ぐ */
@@ -91,4 +90,6 @@ export interface PatrolRun {
   counts: Record<string, number>;
   /** 使った費用（セント） */
   costCents: number | null;
+  /** 終わったのに、セッションをまだ止めて消していない。セッションにはページの文章が残るので消す */
+  needsDisposal: boolean;
 }

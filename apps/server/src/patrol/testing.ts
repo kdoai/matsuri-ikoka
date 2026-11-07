@@ -86,9 +86,12 @@ export interface ScriptedAgent extends PatrolAgent {
   requests: PatrolRequest[];
   budgets: number[];
   denied: string[][];
+  disposed: string[];
   /** セッションの状態を決める */
   respond: (request: PatrolRequest) => PatrolSessionState;
   failStart: boolean;
+  /** 動いている途中で消せないセッションにする */
+  stillRunning: boolean;
 }
 
 export function scriptedAgent(): ScriptedAgent {
@@ -96,7 +99,9 @@ export function scriptedAgent(): ScriptedAgent {
     requests: [],
     budgets: [],
     denied: [],
+    disposed: [],
     failStart: false,
+    stillRunning: false,
     respond: (request) => ({
       state: "finished",
       patrolId: request.patrolId,
@@ -118,6 +123,11 @@ export function scriptedAgent(): ScriptedAgent {
     },
     async deny(_sessionId, ids) {
       agent.denied.push([...ids]);
+    },
+    async dispose(sessionId) {
+      if (agent.stillRunning) return false;
+      agent.disposed.push(sessionId);
+      return true;
     },
   };
   return agent;

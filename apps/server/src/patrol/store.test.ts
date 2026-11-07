@@ -5,7 +5,14 @@ import { MemoryPatrolStore } from "./store";
 import { patrolStoreContract } from "./storeContract";
 
 describe("MemoryPatrolStore", () => {
-  patrolStoreContract(() => new MemoryPatrolStore());
+  patrolStoreContract(() => {
+    const store = new MemoryPatrolStore();
+    return {
+      store,
+      putWatch: async (trip) => store.putWatchedTrip(trip, null),
+      removeWatch: async (trip) => store.removeWatchedTrip(trip.ref),
+    };
+  });
 
   it("見回り中の旅だけを一覧にする", async () => {
     const store = new MemoryPatrolStore();
@@ -39,7 +46,15 @@ const db = process.env.FIRESTORE_EMULATOR_HOST
 
 describe.skipIf(db === null)("FirestorePatrolStore（エミュレーター）", () => {
   if (db === null) return;
-  patrolStoreContract(() => new FirestorePatrolStore(db));
+  patrolStoreContract(() => ({
+    store: new FirestorePatrolStore(db),
+    putWatch: async (trip) => {
+      await db.doc(`${trip.ref}/watch/current`).set(trip.watch);
+    },
+    removeWatch: async (trip) => {
+      await db.doc(`${trip.ref}/watch/current`).delete();
+    },
+  }));
 
   it("watch の文書から依頼を読み、持ち主の旅程だけを読む", async () => {
     const store = new FirestorePatrolStore(db);
@@ -64,5 +79,23 @@ describe.skipIf(db === null)("FirestorePatrolStore（エミュレーター）", 
     if (found === undefined) return;
     expect((await store.readItinerary(found))?.version).toBe(2);
     expect(await store.readItinerary({ ...found, ref: `users/other/trips/${tripId}` })).toBeNull();
+  });
+
+  it("通知の文書に expiresAt があっても、通知として読める", async () => {
+    const store = new FirestorePatrolStore(db);
+    const stamp = String(Date.now());
+    const trip = {
+      ref: `users/user-n-${stamp}/trips/trip-n-${stamp}`,
+      watch: { ...fictionalTripWatch(), tripId: `trip-n-${stamp}` },
+    };
+    await db.doc(`${trip.ref}/watch/current`).set(trip.watch);
+    const { fictionalNotice } = await import("@matsuri-ikoka/schema/testing");
+    const notice = { ...fictionalNotice(), tripId: trip.watch.tripId };
+
+    await store.addNotice(trip, notice, Date.UTC(2026, 8, 15));
+
+    const raw = await db.doc(`${trip.ref}/notices/${notice.id}`).get();
+    expect(raw.get("expiresAt")).toBeDefined();
+    expect(await store.listNotices(trip)).toEqual([notice]);
   });
 });

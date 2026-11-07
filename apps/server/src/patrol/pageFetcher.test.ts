@@ -1,10 +1,18 @@
-import { describe, expect, it, vi } from "vitest";
+import http from "node:http";
+import type { AddressInfo } from "node:net";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import type { ResolveHost } from "../agent/addressGuard";
-import { createPageFetcher, type PageFetcherOptions } from "./pageFetcher";
+import {
+  createPageFetcher,
+  looksScriptRendered,
+  type PageFetcherOptions,
+  type PinnedFetch,
+  pinnedFetch,
+} from "./pageFetcher";
 
-// ページの取得。ネットワークには出ない。URL は example.com の架空のページ。
+// ページの取得。外のネットワークには出ない。URL は example.com の架空のページ。
 
-const BODY = `<html><body>${"<p>架空の祭りの案内の文章です。開催は8月16日です。</p>".repeat(1)}${Array.from(
+const BODY = `<html><body><p>架空の祭りの案内の文章です。開催は8月16日です。</p>${Array.from(
   { length: 12 },
   (_, i) => `<p>架空の祭りの案内の行 その${i}。屋台と灯籠流しがあります。</p>`,
 ).join("")}</body></html>`;
@@ -21,12 +29,13 @@ function fetcher(
   send: (url: string) => Response | Promise<Response>,
   over: PageFetcherOptions = {},
 ) {
-  const calls: string[] = [];
+  const calls: { url: string; addresses: readonly string[] }[] = [];
+  const stub: PinnedFetch = async (url, addresses) => {
+    calls.push({ url: String(url), addresses });
+    return send(String(url));
+  };
   const pages = createPageFetcher({
-    fetch: (async (input: string | URL | Request) => {
-      calls.push(String(input));
-      return send(String(input));
-    }) as typeof fetch,
+    fetch: stub,
     resolve: publicAddress,
     robots: { allowed: async () => true },
     minHostIntervalMs: 0,
@@ -43,6 +52,14 @@ describe("createPageFetcher", () => {
 
     expect(read.status).toBe("ok");
     expect(read.status === "ok" && read.lines[0]).toContain("開催は8月16日です");
+  });
+
+  it("確かめたアドレスにつなぐ", async () => {
+    const { pages, calls } = fetcher(() => html());
+
+    await pages.read("https://example.com/matsuri");
+
+    expect(calls).toEqual([{ url: "https://example.com/matsuri", addresses: ["93.184.216.34"] }]);
   });
 
   it.each([
@@ -72,6 +89,20 @@ describe("createPageFetcher", () => {
     expect(calls).toEqual([]);
   });
 
+  it("robots.txt も確かめたアドレスから読む", async () => {
+    const seen: string[] = [];
+    const stub: PinnedFetch = async (url, addresses) => {
+      seen.push(`${url.pathname} ${addresses.join(",")}`);
+      return url.pathname === "/robots.txt"
+        ? new Response("User-agent: *\nDisallow: /secret\n")
+        : html();
+    };
+    const pages = createPageFetcher({ fetch: stub, resolve: publicAddress, minHostIntervalMs: 0 });
+
+    expect(await pages.read("https://example.com/secret")).toEqual({ status: "blocked" });
+    expect(seen).toEqual(["/robots.txt 93.184.216.34"]);
+  });
+
   it("転送先も確かめ直す", async () => {
     const { pages, calls } = fetcher((url) =>
       url.endsWith("/old")
@@ -79,13 +110,16 @@ describe("createPageFetcher", () => {
         : html(),
     );
     expect((await pages.read("https://example.com/old")).status).toBe("ok");
-    expect(calls).toEqual(["https://example.com/old", "https://example.com/new"]);
+    expect(calls.map((call) => call.url)).toEqual([
+      "https://example.com/old",
+      "https://example.com/new",
+    ]);
 
     const inner = fetcher(
       () => new Response(null, { status: 302, headers: { location: "http://127.0.0.1/admin" } }),
     );
     expect(await inner.pages.read("https://example.com/old")).toEqual({ status: "blocked" });
-    expect(inner.calls).toEqual(["https://example.com/old"]);
+    expect(inner.calls).toHaveLength(1);
   });
 
   it("転送が続くページは失敗にする", async () => {
@@ -101,6 +135,20 @@ describe("createPageFetcher", () => {
     ["スクリプトで描くページ", () => html("<html><body><div id='app'></div></body></html>")],
     ["PDF", () => new Response("%PDF-1.7", { headers: { "content-type": "application/pdf" } })],
     ["機械を断るページ", () => html("forbidden", { status: 403 })],
+    [
+      "ナビが長くても中身が空のページ",
+      () =>
+        html(
+          `<html><body><nav>${Array.from({ length: 30 }, (_, i) => `<a href="/${i}">観光案内のメニュー ${i}</a>`).join("")}</nav><div id="__next"></div></body></html>`,
+        ),
+    ],
+    [
+      "スクリプトを有効にするよう案内するページ",
+      () =>
+        html(
+          `<html><body><noscript>このページの表示には JavaScript を有効にしてください</noscript>${BODY}</body></html>`,
+        ),
+    ],
   ])("%sは、コードでは読めないページとして返す", async (_name, respond) => {
     const { pages } = fetcher(respond);
 
@@ -157,5 +205,79 @@ describe("createPageFetcher", () => {
 
     expect(timer).not.toHaveBeenCalledWith(expect.any(Function), 5);
     timer.mockRestore();
+  });
+});
+
+describe("looksScriptRendered", () => {
+  it.each([
+    '<div id="app"></div>',
+    "<div id='root'>  </div>",
+    '<div class="a" id="__nuxt"></div>',
+    "<main id=app></main>",
+    "<noscript>JavaScript を有効にしてご覧ください</noscript>",
+    "<noscript>You need to enable JavaScript to run this app.</noscript>",
+  ])("%s は、スクリプトで描くページ", (html) => {
+    expect(looksScriptRendered(html)).toBe(true);
+  });
+
+  it.each([
+    '<div id="app"><p>開催日 8月16日</p></div>',
+    '<div id="root"><h1>鈴鳴灯籠まつり</h1></div>',
+    "<noscript><img src='/pixel.gif'></noscript>",
+    '<div id="content"></div>',
+  ])("%s は、スクリプトで描くページではない", (html) => {
+    expect(looksScriptRendered(html)).toBe(false);
+  });
+});
+
+describe("pinnedFetch", () => {
+  let server: http.Server;
+  let port = 0;
+  const hosts: (string | undefined)[] = [];
+
+  beforeAll(async () => {
+    server = http.createServer((request, response) => {
+      hosts.push(request.headers.host);
+      if (request.url === "/moved") {
+        response.writeHead(302, { location: "/next" });
+        response.end();
+        return;
+      }
+      response.writeHead(200, { "content-type": "text/plain; charset=utf-8" });
+      response.end("確かめたアドレスから読みました");
+    });
+    await new Promise<void>((done) => server.listen(0, "127.0.0.1", done));
+    port = (server.address() as AddressInfo).port;
+  });
+
+  afterAll(async () => {
+    await new Promise((done) => server.close(done));
+  });
+
+  const init = () => ({ headers: {}, signal: AbortSignal.timeout(5_000) });
+
+  it("名前を解決し直さず、渡したアドレスにつなぐ", async () => {
+    // festival.example.com は解決できても別の先を指す名前。渡した 127.0.0.1 につながる
+    const url = new URL(`http://festival.example.com:${port}/page`);
+
+    const response = await pinnedFetch(url, ["127.0.0.1"], init());
+
+    expect(await response.text()).toBe("確かめたアドレスから読みました");
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toContain("text/plain");
+    expect(hosts.at(-1)).toBe(`festival.example.com:${port}`);
+  });
+
+  it("転送はたどらない", async () => {
+    const url = new URL(`http://festival.example.com:${port}/moved`);
+
+    const response = await pinnedFetch(url, ["127.0.0.1"], init());
+
+    expect(response.status).toBe(302);
+    expect(response.headers.get("location")).toBe("/next");
+  });
+
+  it("アドレスがなければ、つながない", async () => {
+    await expect(pinnedFetch(new URL("http://example.com/"), [], init())).rejects.toThrow();
   });
 });

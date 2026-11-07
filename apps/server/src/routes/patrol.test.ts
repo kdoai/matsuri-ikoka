@@ -232,7 +232,7 @@ describe("POST /internal/patrol/webhook", () => {
     warn.mockRestore();
   });
 
-  it("薄い通知を受けて結果を取りに行き、通知の候補を作る", async () => {
+  it("薄い通知を受けて結果を取りに行き、通知の候補を作り、セッションを消す", async () => {
     const server = app();
     const trip = await startedSession(server);
 
@@ -240,6 +240,7 @@ describe("POST /internal/patrol/webhook", () => {
 
     expect(response.status).toBe(204);
     expect(harness.store.noticesOf(trip.ref)).toHaveLength(1);
+    expect(harness.agent.disposed).toEqual(["session-1"]);
   });
 
   it("同じ通知が2回届いても、結果を取りに行くのは1回", async () => {

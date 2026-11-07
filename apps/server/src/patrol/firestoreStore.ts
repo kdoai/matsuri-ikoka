@@ -1,15 +1,17 @@
 import {
   type GuideNotice,
+  GuideNoticeSchema,
   type IsoDate,
   type Itinerary,
   ItinerarySchema,
   MAX_NOTICES_PER_TRIP,
   TripWatchSchema,
 } from "@matsuri-ikoka/schema";
-import type { DocumentSnapshot, Firestore } from "firebase-admin/firestore";
+import type { DocumentSnapshot, Firestore, QuerySnapshot } from "firebase-admin/firestore";
 import { errorForLog } from "../log";
 import { isDocumentId } from "../storage/owner";
 import { tripOwner } from "../storage/types";
+import { isFirmNotice, noticeToEvict } from "./notices";
 import { type AddNoticeResult, type DeliveryClaim, newRecord, type PatrolStore } from "./store";
 import type { PatrolRecord, PatrolRun, WatchedTrip } from "./types";
 
@@ -116,17 +118,64 @@ export class FirestorePatrolStore implements PatrolStore {
     }
   }
 
+  async listNotices(trip: WatchedTrip): Promise<GuideNotice[]> {
+    const snapshot = await this.#db
+      .doc(trip.ref)
+      .collection(NOTICES)
+      .limit(MAX_NOTICES_PER_TRIP)
+      .get();
+    return snapshot.docs.flatMap((doc) => {
+      const { expiresAt: _expiresAt, ...data } = doc.data();
+      const notice = GuideNoticeSchema.safeParse(data);
+      return notice.success ? [notice.data] : [];
+    });
+  }
+
   async addNotice(
     trip: WatchedTrip,
     notice: GuideNotice,
     expiresAt: number,
   ): Promise<AddNoticeResult> {
-    const notices = this.#db.doc(trip.ref).collection(NOTICES);
+    const tripDoc = this.#db.doc(trip.ref);
+    const notices = tripDoc.collection(NOTICES);
     const doc = notices.doc(notice.id);
+    const watch = tripDoc.collection(WATCH_GROUP).doc(WATCH_DOC);
     return this.#db.runTransaction(async (tx): Promise<AddNoticeResult> => {
-      if ((await tx.get(doc)).exists) return "duplicate";
-      const existing = await tx.get(notices.select().limit(MAX_NOTICES_PER_TRIP));
-      if (existing.size >= MAX_NOTICES_PER_TRIP) return "full";
+      // 旅を消したあとや依頼を止めたあとに、通知を書き残さない
+      const watching = await tx.get(watch);
+      if (watching.get("status") !== "active") return "not_watching";
+      const existing = await tx.get(doc);
+      if (existing.exists) {
+        if (
+          existing.get("fingerprint") === notice.fingerprint ||
+          notice.content.kind !== "announcement"
+        ) {
+          return "duplicate";
+        }
+        const proposalId = existing.get("proposalId");
+        tx.set(doc, {
+          ...notice,
+          proposalId: typeof proposalId === "string" ? proposalId : notice.proposalId,
+          expiresAt: new Date(expiresAt),
+        });
+        return "replaced";
+      }
+      const all = await tx.get(
+        notices.select("content.kind", "createdAt", "readAt").limit(MAX_NOTICES_PER_TRIP),
+      );
+      if (all.size >= MAX_NOTICES_PER_TRIP) {
+        if (!isFirmNotice(notice)) return "full";
+        const victim = noticeToEvict(
+          all.docs.map((item) => ({
+            id: item.id,
+            kind: String(item.get("content.kind")),
+            createdAt: String(item.get("createdAt")),
+            readAt: typeof item.get("readAt") === "string" ? String(item.get("readAt")) : null,
+          })),
+        );
+        if (victim === null) return "full";
+        tx.delete(notices.doc(victim));
+      }
       tx.create(doc, { ...notice, expiresAt: new Date(expiresAt) });
       return "created";
     });
@@ -197,6 +246,7 @@ export class FirestorePatrolStore implements PatrolStore {
     await this.#run(run.patrolId).create({
       state: JSON.stringify(run),
       status: run.status,
+      needsDisposal: run.needsDisposal,
       createdAt: new Date(run.createdAt),
       expiresAt: new Date(expiresAt),
     });
@@ -213,7 +263,11 @@ export class FirestorePatrolStore implements PatrolStore {
       const run = stateOf<PatrolRun>(await tx.get(doc));
       if (run === null) return;
       const next = { ...run, ...patch };
-      tx.update(doc, { state: JSON.stringify(next), status: next.status });
+      tx.update(doc, {
+        state: JSON.stringify(next),
+        status: next.status,
+        needsDisposal: next.needsDisposal,
+      });
     });
   }
 
@@ -237,16 +291,28 @@ export class FirestorePatrolStore implements PatrolStore {
     });
   }
 
-  async listOpenRuns(limit: number): Promise<PatrolRun[]> {
-    const snapshot = await this.#db
-      .collection(RUNS)
-      .where("status", "==", "open")
-      .limit(limit)
-      .get();
+  #runsOf(snapshot: QuerySnapshot): PatrolRun[] {
     return snapshot.docs.flatMap((doc) => {
       const run = stateOf<PatrolRun>(doc);
       return run === null ? [] : [run];
     });
+  }
+
+  async listOpenRuns(limit: number): Promise<PatrolRun[]> {
+    return this.#runsOf(
+      await this.#db.collection(RUNS).where("status", "==", "open").limit(limit).get(),
+    );
+  }
+
+  async listRunsToDispose(limit: number): Promise<PatrolRun[]> {
+    const runs = this.#runsOf(
+      await this.#db
+        .collection(RUNS)
+        .where("needsDisposal", "==", true)
+        .limit(limit * 2)
+        .get(),
+    );
+    return runs.filter((run) => run.status !== "open").slice(0, limit);
   }
 
   async claimDelivery(

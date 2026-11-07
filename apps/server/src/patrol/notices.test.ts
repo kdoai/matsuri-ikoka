@@ -1,7 +1,7 @@
-import { GuideNoticeSchema, type NoticeContent } from "@matsuri-ikoka/schema";
+import { type CheckedChange, GuideNoticeSchema, type NoticeContent } from "@matsuri-ikoka/schema";
 import { fictionalCheckedChange, fictionalItinerary } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
-import { noticeExpiresAt, noticeFor, noticeId, noticeSummary } from "./notices";
+import { noticeExpiresAt, noticeFor, noticeId, noticeSummary, noticeToEvict } from "./notices";
 import { FESTIVAL_ID, NOW, PATROL_DATE } from "./testing";
 
 describe("noticeSummary", () => {
@@ -88,5 +88,64 @@ describe("noticeFor", () => {
     expect(new Date(noticeExpiresAt(itinerary)).toISOString().slice(0, 10)).toBe(
       new Date(Date.parse(`${last}T00:00:00+09:00`) + 30 * 86_400_000).toISOString().slice(0, 10),
     );
+  });
+});
+
+describe("noticeId", () => {
+  const announcement = (topic: "traffic" | "venue", fingerprint: string): CheckedChange => ({
+    ...fictionalCheckedChange(),
+    fingerprint,
+    content: { kind: "announcement", festivalId: FESTIVAL_ID, date: PATROL_DATE, topic },
+  });
+
+  it("お知らせは、祭りと開催日と種類ごとに1つの ID に畳む", () => {
+    const first = noticeId(announcement("traffic", "0123456789abcdef"));
+
+    expect(noticeId(announcement("traffic", "fedcba9876543210"))).toBe(first);
+    expect(noticeId(announcement("venue", "0123456789abcdef"))).not.toBe(first);
+  });
+
+  it("開催の変更と中止は、変化ごとの ID にする", () => {
+    const change = fictionalCheckedChange();
+
+    expect(noticeId(change)).toBe(`n-${change.fingerprint}`);
+  });
+});
+
+describe("noticeToEvict", () => {
+  const notice = (id: string, kind: string, createdAt: string, readAt: string | null = null) => ({
+    id,
+    kind,
+    createdAt,
+    readAt,
+  });
+
+  it("古いお知らせから押し出す", () => {
+    expect(
+      noticeToEvict([
+        notice("a", "cancellation", "2026-08-01"),
+        notice("b", "announcement", "2026-08-03"),
+        notice("c", "announcement", "2026-08-02"),
+      ]),
+    ).toBe("c");
+  });
+
+  it("お知らせがなければ、読んだ古い通知を押し出す", () => {
+    expect(
+      noticeToEvict([
+        notice("a", "schedule_change", "2026-08-01"),
+        notice("b", "availability", "2026-08-03", "2026-08-04"),
+        notice("c", "cancellation", "2026-08-02", "2026-08-05"),
+      ]),
+    ).toBe("c");
+  });
+
+  it("未読の開催の変更と中止は押し出さない", () => {
+    expect(
+      noticeToEvict([
+        notice("a", "schedule_change", "2026-08-01"),
+        notice("b", "cancellation", "2026-08-02"),
+      ]),
+    ).toBeNull();
   });
 });

@@ -37,6 +37,14 @@ describe("readPatrolConfig", () => {
     expect(config("0.5")?.maxTargetsPerRun).toBe(1);
   });
 
+  it("調べる間隔には1時間の下限がある", () => {
+    const config = (value: string) =>
+      readPatrolConfig({ PATROL_ANTHROPIC_API_KEY: KEY, PATROL_CHECK_INTERVAL_HOURS: value });
+
+    expect(config("0.01")?.checkIntervalMs).toBe(60 * 60 * 1000);
+    expect(config("12")?.checkIntervalMs).toBe(12 * 60 * 60 * 1000);
+  });
+
   it.each(["abc", "-1", "0", ""])("読めない値「%s」は既定にして、サーバーを止めない", (value) => {
     const config = readPatrolConfig({
       PATROL_ANTHROPIC_API_KEY: KEY,

@@ -2,20 +2,20 @@ import { randomUUID } from "node:crypto";
 import { backoffMs, comparableUrl } from "@matsuri-ikoka/agent-kit";
 import type { CheckedChange, PatrolPage, PatrolTarget } from "@matsuri-ikoka/schema";
 import type { FestivalStore } from "../data/festivalStore";
-import { nowInJapan, todayInJapan } from "../domain/calendar";
+import { daysBetween, nowInJapan, todayInJapan } from "../domain/calendar";
 import { errorForLog } from "../log";
 import type { LodgingService } from "../tools/lodging";
 import type { PatrolAgent, PatrolSessionState } from "./agent";
-import {
-  checkFinding,
-  type FindingOutcome,
-  needsEvidence,
-  type PageEvidence,
-  parsePatrolReport,
-} from "./checkpoint";
+import { checkFinding, type PageEvidence, parsePatrolReport } from "./checkpoint";
 import type { PatrolConfig } from "./config";
-import { changedLinesForAgent, diffLines, isInstructionLine, lineHashes } from "./lines";
-import { checkTripLodging } from "./lodging";
+import {
+  changedLinesForAgent,
+  diffLines,
+  isInstructionLine,
+  lineHashes,
+  needsAgent,
+} from "./lines";
+import { checkTripLodging, type LodgingBudget } from "./lodging";
 import { noticeExpiresAt, noticeFor } from "./notices";
 import type { PageFetcher } from "./pageFetcher";
 import { buildPatrolRequest, newPatrolId } from "./request";
@@ -27,6 +27,7 @@ import type { PatrolPageRecord, PatrolRecord, PatrolRun, RunTarget } from "./typ
 // 起動：頼まれた旅から対象を作り、コードがページを読んで前回と比べる。変わらなければモデルを呼ばない。
 //       変わったページとコードで読めないページだけを、祭りごとにまとめて見回り係に渡す。
 // 結果：終わったセッションの報告を検問に通し、確かな変化だけを、該当する旅の通知にする。
+//       比べる元を進めるのは、実際に開いたと確かめられたページだけ。
 // 祭りごとの作業には実行権を持たせる。起動が2回届いても同じ作業を二重に走らせず、止まった作業は別の実行が引き継ぐ。
 
 /** 実行権の長さ。作業中はページを読むごとに延ばす */
@@ -37,8 +38,16 @@ const TICK_DEADLINE_MS = 180 * 1000;
 const QUIET_PAGE_INTERVAL_MS = 24 * 60 * 60 * 1000;
 /** 失敗が続いたときに空ける間隔の上限 */
 const MAX_BACKOFF_MS = 7 * 24 * 60 * 60 * 1000;
+/** 原因の対象が分からない失敗で空ける間隔の上限 */
+const MAX_GROUP_BACKOFF_MS = 24 * 60 * 60 * 1000;
+/** 開催がこの日数より近い対象は、空ける時間を短くする */
+const SOON_DAYS = 3;
+const NEAR_DAYS = 14;
+const NEAR_BACKOFF_MS = 24 * 60 * 60 * 1000;
 /** Webhook が届かなかったときに、定期の起動で結果を取りに行くまでの時間 */
 const RECONCILE_AFTER_MS = 15 * 60 * 1000;
+/** セッションができるまで対象を押さえておく時間。途中で止まっても、すぐに次の起動が引き継ぐ */
+const PENDING_START_TTL_MS = 10 * 60 * 1000;
 /** 結果を待つ時間の上限。超えたら失敗として、次の回に調べ直す */
 const RUN_MAX_AGE_MS = 6 * 60 * 60 * 1000;
 /** 実行の記録を残す期間 */
@@ -113,12 +122,25 @@ function pageRecord(record: PatrolRecord, url: string): PatrolPageRecord {
   return page;
 }
 
-function failureDelay(deps: PatrolDeps, failures: number): number {
+/** 空ける時間の上限。開催が近い対象は長く空けない */
+function backoffCap(deps: PatrolDeps, date: string): number {
+  const days = daysBetween(todayInJapan(new Date(deps.now())), date);
+  if (days <= SOON_DAYS) return deps.config.checkIntervalMs;
+  return days <= NEAR_DAYS ? NEAR_BACKOFF_MS : MAX_BACKOFF_MS;
+}
+
+function failureDelay(deps: PatrolDeps, failures: number, date: string, cap = MAX_BACKOFF_MS) {
   return backoffMs(failures, {
     baseMs: deps.config.checkIntervalMs,
-    maxMs: MAX_BACKOFF_MS,
+    maxMs: Math.min(cap, backoffCap(deps, date)),
     ...(deps.random === undefined ? {} : { random: deps.random }),
   });
+}
+
+interface DeliveryResult {
+  created: number;
+  /** 上限に達して届けられなかった旅の数 */
+  full: number;
 }
 
 /** 通知を足す。同じ変化は同じ ID なので、2度は届かない */
@@ -127,8 +149,8 @@ async function deliver(
   change: CheckedChange,
   festivalName: string,
   entries: readonly WatchedItinerary[],
-): Promise<number> {
-  let created = 0;
+): Promise<DeliveryResult> {
+  const delivery: DeliveryResult = { created: 0, full: 0 };
   for (const { trip, itinerary } of entries) {
     const notice = noticeFor({
       change,
@@ -138,35 +160,45 @@ async function deliver(
       now: deps.now(),
     });
     const result = await deps.store.addNotice(trip, notice, noticeExpiresAt(itinerary));
-    if (result === "created") created += 1;
-    if (result === "full") log("patrol_notices_full", {});
+    if (result === "created" || result === "replaced") delivery.created += 1;
+    if (result === "full") delivery.full += 1;
   }
-  return created;
+  if (delivery.full > 0) log("patrol_notices_full", { kind_of: change.content.kind });
+  return delivery;
+}
+
+/** 同じ順で枠を使うと後ろの旅がいつまでも調べられないので、起動ごとに始まりをずらす */
+function rotated<T>(items: readonly T[], seed: number): T[] {
+  if (items.length === 0) return [];
+  const start = seed % items.length;
+  return [...items.slice(start), ...items.slice(0, start)];
 }
 
 /** 宿の空きを調べ、変化を旅の通知にする。失敗しても祭りの見回りは止めない */
 async function checkLodging(
   deps: PatrolDeps,
   plan: PatrolPlan,
-  budget: { remaining: number },
+  budget: LodgingBudget,
 ): Promise<number> {
   const venue = deps.festivals.get(plan.festivalId)?.venue;
   const near = venue === undefined ? null : { lat: venue.lat, lng: venue.lng };
+  const seed = Math.floor(deps.now() / deps.config.checkIntervalMs);
   let created = 0;
-  for (const entry of plan.trips) {
-    if (budget.remaining <= 0) break;
+  for (const entry of rotated(plan.trips, seed)) {
     if (!entry.itinerary.days.some((day) => day.stay?.lodging !== undefined)) continue;
-    budget.remaining -= 1;
     try {
+      const notices = await deps.store.listNotices(entry.trip);
       const changes = await checkTripLodging({
         itinerary: entry.itinerary,
         lodging: deps.lodging,
         venue: near,
+        notices,
         now: deps.now(),
+        budget,
         signal: AbortSignal.timeout(30_000),
       });
       for (const change of changes) {
-        created += await deliver(deps, change, plan.festivalName, [entry]);
+        created += (await deliver(deps, change, plan.festivalName, [entry])).created;
       }
     } catch (error) {
       log("patrol_lodging_failed", errorForLog(error));
@@ -185,20 +217,21 @@ async function checkTarget(
   plan: PatrolPlan,
   holder: string,
   patrolId: string,
-  lodgingBudget: { remaining: number },
+  lodgingBudget: LodgingBudget,
 ): Promise<TargetResult> {
   const seed = { festivalId: plan.festivalId, date: plan.date };
   const record = await deps.store.acquireLease(plan.key, seed, holder, deps.now(), LEASE_TTL_MS);
   if (record === null) return { kind: "skipped" };
   const release = () => deps.store.saveRecord(plan.key, holder, { ...record, lease: null });
+  const unfinished = record.pending !== null;
   if (record.pending !== null && record.pending.until > deps.now()) {
     await release();
     return { kind: "skipped" };
   }
-  // 結果を待ちきれなかった見回りは、失敗として調べ直す
+  // 期限が切れた待ちは、前の実行が途中で止まったもの。待たずに調べ直す
   record.pending = null;
   for (const page of record.pages) page.pendingHashes = null;
-  if (record.nextCheckAt > deps.now()) {
+  if (!unfinished && record.nextCheckAt > deps.now()) {
     await release();
     return { kind: "skipped" };
   }
@@ -226,7 +259,10 @@ async function checkTarget(
       if (diff.suspicious > 0) {
         log("patrol_suspicious_lines", { festivalId: plan.festivalId, lines: diff.suspicious });
       }
-      if (diff.added.length === 0 && diff.removed === 0) continue;
+      if (!needsAgent(diff)) {
+        page.lineHashes = hashes;
+        continue;
+      }
       page.pendingHashes = hashes;
       pages.push({ url: planned.url, reason: "changed", changedLines: changedLinesForAgent(diff) });
       runPages.push({ url: planned.url, reason: "changed", confidence: planned.confidence });
@@ -239,7 +275,7 @@ async function checkTarget(
       page.nextTryAt = deps.now() + QUIET_PAGE_INTERVAL_MS;
     } else {
       page.failures += 1;
-      page.nextTryAt = deps.now() + failureDelay(deps, page.failures);
+      page.nextTryAt = deps.now() + failureDelay(deps, page.failures, plan.date);
       log("patrol_page_failed", { festivalId: plan.festivalId, failures: page.failures });
     }
   }
@@ -254,7 +290,8 @@ async function checkTarget(
   record.lastCheckedAt = now;
   record.nextCheckAt = now + deps.config.checkIntervalMs;
   const send = pages.length > 0;
-  record.pending = send ? { patrolId, until: now + RUN_MAX_AGE_MS } : null;
+  // セッションができるまでは短く押さえる。途中で止まっても長く待たせない
+  record.pending = send ? { patrolId, until: now + PENDING_START_TTL_MS } : null;
   const saved = await deps.store.saveRecord(plan.key, holder, { ...record, lease: null });
   if (!saved) {
     log("patrol_lease_lost", { festivalId: plan.festivalId });
@@ -274,39 +311,69 @@ async function checkTarget(
   };
 }
 
-/** 見回り係が失敗した対象：比べる元を変えず、間隔を空けて調べ直す */
-function settleFailure(deps: PatrolDeps, record: PatrolRecord): PatrolRecord {
-  const failures = record.failures + 1;
-  return {
+/** 見回りが失敗した対象：比べる元を変えず、間隔を空けて調べ直す */
+function settleFailure(
+  deps: PatrolDeps,
+  record: PatrolRecord,
+  cause: "target" | "group",
+): PatrolRecord {
+  const base = {
     ...record,
     pages: record.pages.map((page) => ({ ...page, pendingHashes: null })),
     pending: null,
-    failures,
-    nextCheckAt: deps.now() + failureDelay(deps, failures),
     lease: null,
+  };
+  if (cause === "target") {
+    const failures = record.failures + 1;
+    return {
+      ...base,
+      failures,
+      nextCheckAt: deps.now() + failureDelay(deps, failures, record.date),
+    };
+  }
+  // 束ねた全部の失敗。原因の対象が分からないので、この対象の失敗には数えず、長くは空けない
+  const groupFailures = record.groupFailures + 1;
+  return {
+    ...base,
+    groupFailures,
+    nextCheckAt: deps.now() + failureDelay(deps, groupFailures, record.date, MAX_GROUP_BACKOFF_MS),
   };
 }
 
-/** 検問のために、ページをコードで読み直す。ページの文章はこの関数の外に残さない */
+/** 検問のために、報告が読んだと言うページをコードで読み直す。ページの文章はこの関数の外に残さない */
 async function readEvidence(
   deps: PatrolDeps,
   target: RunTarget,
   record: PatrolRecord,
+  readByAgent: readonly string[],
 ): Promise<PageEvidence[]> {
+  const claimed = new Set(readByAgent.map(comparableUrl));
+  const pages = target.pages.filter((page) => claimed.has(comparableUrl(page.url)));
   return Promise.all(
-    target.pages.map(async ({ url, reason }): Promise<PageEvidence> => {
-      const none = { url, verifiable: false, added: [], lines: [] };
+    pages.map(async ({ url, reason }): Promise<PageEvidence> => {
+      const none = {
+        url,
+        verifiable: false,
+        transient: false,
+        added: [],
+        lines: [],
+        suspiciousSchedule: 0,
+      };
       const previous = record.pages.find(
         (page) => comparableUrl(page.url) === comparableUrl(url),
       )?.lineHashes;
       if (reason !== "changed" || previous === null || previous === undefined) return none;
       const read = await deps.pages.read(url);
+      if (read.status === "failed") return { ...none, transient: true };
       if (read.status !== "ok") return none;
+      const diff = diffLines(previous, read.lines);
       return {
         url,
         verifiable: true,
-        added: diffLines(previous, read.lines).added,
+        transient: false,
+        added: diff.added,
         lines: read.lines.filter((line) => !isInstructionLine(line)),
+        suspiciousSchedule: diff.suspiciousSchedule,
       };
     }),
   );
@@ -360,7 +427,7 @@ async function acceptReport(
   if (!parsed.ok) {
     log("patrol_report_rejected", { reason: parsed.reason });
     const finished = await settleTargets(deps, run, holder, async (_target, record) =>
-      settleFailure(deps, record),
+      settleFailure(deps, record, "group"),
     );
     return { finished, failure: `report_${parsed.reason}`, counts };
   }
@@ -372,7 +439,7 @@ async function acceptReport(
     );
     if (finding === undefined) {
       count("no_finding");
-      return settleFailure(deps, record);
+      return settleFailure(deps, record, "target");
     }
     const occurrence = deps.festivals
       .get(target.festivalId)
@@ -382,44 +449,81 @@ async function acceptReport(
       start: occurrence?.start ?? null,
       end: occurrence?.end ?? null,
     };
-    const evidence = needsEvidence(finding, baseline)
-      ? await readEvidence(deps, target, record)
-      : [];
     const check = checkFinding({
       finding,
       target,
       baseline,
-      evidence,
+      cancelled: record.cancelled,
+      changeCount: record.changeCount,
+      evidence: await readEvidence(deps, target, record, finding.pages),
       fetchedUrls: state.fetchedUrls,
       now: deps.now(),
     });
-    const outcome: FindingOutcome = check.outcome;
-    count(outcome);
+    count(check.outcome);
+    if (check.outcome === "not_read") return settleFailure(deps, record, "target");
+
+    let undelivered = 0;
     if (check.changes.length > 0) {
       if (plans === null) {
         const { watched } = await loadWatched(deps);
-        plans = planTargets(watched, deps.festivals, todayInJapan(new Date(deps.now())));
+        plans = planTargets(watched, deps.festivals, todayInJapan(new Date(deps.now()))).plans;
       }
       const plan = plans.find((item) => item.key === target.key);
       const festivalName = deps.festivals.get(target.festivalId)?.name.ja ?? target.festivalId;
       for (const change of check.changes) {
-        count("notices", await deliver(deps, change, festivalName, plan?.trips ?? []));
+        const delivery = await deliver(deps, change, festivalName, plan?.trips ?? []);
+        count("notices", delivery.created);
+        undelivered += delivery.full;
       }
     }
+    // 届けられなかった変化は比べる元を進めず、次の回に届け直す。届いた旅には同じ ID で重ならない
+    if (undelivered > 0) {
+      count("undelivered", undelivered);
+      return settleFailure(deps, record, "target");
+    }
+
+    const read = new Set(check.readUrls.map(comparableUrl));
     return {
       ...record,
       observed: check.baseline ?? record.observed,
-      pages: record.pages.map((page) =>
-        page.pendingHashes === null
-          ? page
-          : { ...page, lineHashes: page.pendingHashes, pendingHashes: null },
-      ),
+      cancelled: check.cancelled ?? record.cancelled,
+      changeCount: record.changeCount + (check.firm ? 1 : 0),
+      pages: record.pages.map((page) => {
+        if (page.pendingHashes === null) return page;
+        if (read.has(comparableUrl(page.url))) {
+          return { ...page, lineHashes: page.pendingHashes, pendingHashes: null, failures: 0 };
+        }
+        // 開けなかったページは元のまま。間隔を空けて、同じ変化を調べ直す
+        const failures = page.failures + 1;
+        return {
+          ...page,
+          pendingHashes: null,
+          failures,
+          nextTryAt: deps.now() + failureDelay(deps, failures, record.date),
+        };
+      }),
       pending: null,
       failures: 0,
+      groupFailures: 0,
       lease: null,
     };
   });
   return { finished, failure: null, counts };
+}
+
+/** 用が済んだセッションを止めて消す。消せなくても結果には響かないので、次の起動で消し直す */
+async function disposeSession(
+  deps: PatrolDeps,
+  patrolId: string,
+  sessionId: string,
+): Promise<void> {
+  try {
+    const disposed = await deps.agent.dispose(sessionId);
+    await deps.store.updateRun(patrolId, { needsDisposal: !disposed });
+  } catch (error) {
+    log("patrol_dispose_failed", errorForLog(error));
+    await deps.store.updateRun(patrolId, { needsDisposal: true });
+  }
 }
 
 /**
@@ -439,21 +543,31 @@ export async function collectSession(
   }
   const holder = `collect-${randomUUID()}`;
   const run = await deps.store.claimRun(state.patrolId, holder, deps.now(), LEASE_TTL_MS);
-  if (run === null) return "busy";
+  if (run === null) {
+    // もう終わった実行のセッションが残っていれば、消す
+    const closed = await deps.store.readRun(state.patrolId);
+    if (closed !== null && closed.status !== "open") {
+      await disposeSession(deps, closed.patrolId, sessionId);
+    }
+    return "busy";
+  }
 
   const costCents = state.costCents;
   if (state.state === "failed") {
     log("patrol_session_failed", { reason: state.reason, costCents });
     const finished = await settleTargets(deps, run, holder, async (_target, record) =>
-      settleFailure(deps, record),
+      settleFailure(deps, record, "group"),
     );
     await deps.store.updateRun(run.patrolId, {
       sessionId,
       costCents,
       claim: null,
       failure: state.reason,
-      ...(finished ? { status: "failed" as const, finishedAt: deps.now() } : {}),
+      ...(finished
+        ? { status: "failed" as const, finishedAt: deps.now(), needsDisposal: true }
+        : {}),
     });
+    if (finished) await disposeSession(deps, run.patrolId, sessionId);
     return "failed";
   }
   const { finished, failure, counts } = await acceptReport(deps, run, holder, state);
@@ -467,9 +581,11 @@ export async function collectSession(
       ? {
           status: failure === null ? ("done" as const) : ("failed" as const),
           finishedAt: deps.now(),
+          needsDisposal: true,
         }
       : {}),
   });
+  if (finished) await disposeSession(deps, run.patrolId, sessionId);
   log("patrol_collected", { targets: run.targets.length, failure, costCents, ...counts });
   return failure === null ? "collected" : "failed";
 }
@@ -479,7 +595,9 @@ async function reconcileRuns(deps: PatrolDeps, holder: string): Promise<number> 
   let reconciled = 0;
   const now = deps.now();
   for (const run of await deps.store.listOpenRuns(MAX_OPEN_RUNS)) {
-    if (now - run.createdAt < RECONCILE_AFTER_MS) continue;
+    const age = now - run.createdAt;
+    const noSession = run.sessionId === null && age >= PENDING_START_TTL_MS;
+    if (age < RECONCILE_AFTER_MS && !noSession) continue;
     try {
       if (run.sessionId !== null) {
         const result = await collectSession(deps, run.sessionId);
@@ -488,18 +606,20 @@ async function reconcileRuns(deps: PatrolDeps, holder: string): Promise<number> 
           continue;
         }
       }
-      if (now - run.createdAt >= RUN_MAX_AGE_MS) {
+      if (age >= RUN_MAX_AGE_MS || noSession) {
         const claimed = await deps.store.claimRun(run.patrolId, holder, now, LEASE_TTL_MS);
         if (claimed === null) continue;
         await settleTargets(deps, claimed, holder, async (_target, record) =>
-          settleFailure(deps, record),
+          settleFailure(deps, record, "group"),
         );
         await deps.store.updateRun(run.patrolId, {
           status: "failed",
           failure: "timed_out",
           finishedAt: deps.now(),
           claim: null,
+          needsDisposal: run.sessionId !== null,
         });
+        if (run.sessionId !== null) await disposeSession(deps, run.patrolId, run.sessionId);
         reconciled += 1;
       }
     } catch (error) {
@@ -507,6 +627,17 @@ async function reconcileRuns(deps: PatrolDeps, holder: string): Promise<number> 
     }
   }
   return reconciled;
+}
+
+/** 前の回に消せなかったセッションを消す */
+async function disposeLeftovers(deps: PatrolDeps): Promise<void> {
+  for (const run of await deps.store.listRunsToDispose(MAX_OPEN_RUNS)) {
+    if (run.sessionId === null) {
+      await deps.store.updateRun(run.patrolId, { needsDisposal: false });
+    } else {
+      await disposeSession(deps, run.patrolId, run.sessionId);
+    }
+  }
 }
 
 /** 見回る旅がなくなった控えを消す */
@@ -522,15 +653,24 @@ export async function startPatrol(deps: PatrolDeps): Promise<PatrolTickResult> {
   const startedAt = deps.now();
   const holder = `tick-${randomUUID()}`;
   const reconciled = await reconcileRuns(deps, holder);
+  await disposeLeftovers(deps);
 
   const { watched, complete } = await loadWatched(deps);
-  const plans = planTargets(watched, deps.festivals, todayInJapan(new Date(startedAt)));
+  const { plans, unmatched } = planTargets(
+    watched,
+    deps.festivals,
+    todayInJapan(new Date(startedAt)),
+  );
+  if (unmatched > 0) log("patrol_plan_unmatched", { count: unmatched });
   if (complete) await pruneRecords(deps, plans);
 
   const patrolId = newPatrolId();
   const targets: PatrolTarget[] = [];
   const runTargets: RunTarget[] = [];
-  const lodgingBudget = { remaining: deps.config.maxLodgingChecksPerRun };
+  const lodgingBudget: LodgingBudget = {
+    remaining: deps.config.maxLodgingChecksPerRun,
+    skipped: 0,
+  };
   let checked = 0;
   let skipped = 0;
   let lodgingNotices = 0;
@@ -539,17 +679,26 @@ export async function startPatrol(deps: PatrolDeps): Promise<PatrolTickResult> {
       skipped += 1;
       continue;
     }
-    const result = await checkTarget(deps, plan, holder, patrolId, lodgingBudget);
-    if (result.kind === "skipped") {
+    try {
+      const result = await checkTarget(deps, plan, holder, patrolId, lodgingBudget);
+      if (result.kind === "skipped") {
+        skipped += 1;
+        continue;
+      }
+      checked += 1;
+      lodgingNotices += result.lodging;
+      if (result.target !== null && result.run !== null) {
+        targets.push(result.target);
+        runTargets.push(result.run);
+      }
+    } catch (error) {
+      // 1つの対象の失敗で、集めた分を捨てない。実行権が切れたら次の起動が引き継ぐ
       skipped += 1;
-      continue;
+      log("patrol_target_failed", { festivalId: plan.festivalId, ...errorForLog(error) });
     }
-    checked += 1;
-    lodgingNotices += result.lodging;
-    if (result.target !== null && result.run !== null) {
-      targets.push(result.target);
-      runTargets.push(result.run);
-    }
+  }
+  if (lodgingBudget.skipped > 0) {
+    log("patrol_lodging_skipped", { stays: lodgingBudget.skipped });
   }
 
   if (targets.length > 0) await sendToAgent(deps, patrolId, targets, runTargets);
@@ -562,6 +711,31 @@ export async function startPatrol(deps: PatrolDeps): Promise<PatrolTickResult> {
   };
   log("patrol_tick", { ...summary, ms: deps.now() - startedAt });
   return summary;
+}
+
+/** セッションができたので、結果を待つ間は同じ対象を調べ直さないようにする */
+async function holdForResult(
+  deps: PatrolDeps,
+  patrolId: string,
+  runTargets: readonly RunTarget[],
+): Promise<void> {
+  const holder = `hold-${randomUUID()}`;
+  for (const target of runTargets) {
+    const seed = { festivalId: target.festivalId, date: target.date };
+    const record = await deps.store.acquireLease(
+      target.key,
+      seed,
+      holder,
+      deps.now(),
+      LEASE_TTL_MS,
+    );
+    if (record === null) continue;
+    const pending =
+      record.pending?.patrolId === patrolId
+        ? { patrolId, until: deps.now() + RUN_MAX_AGE_MS }
+        : record.pending;
+    await deps.store.saveRecord(target.key, holder, { ...record, pending, lease: null });
+  }
 }
 
 async function sendToAgent(
@@ -582,9 +756,10 @@ async function sendToAgent(
     failure: null,
     counts: {},
     costCents: null,
+    needsDisposal: false,
   };
-  await deps.store.createRun(run, now + RUN_RETENTION_MS);
   try {
+    await deps.store.createRun(run, now + RUN_RETENTION_MS);
     const request = buildPatrolRequest({
       patrolId,
       requestedAt: nowInJapan(new Date(now)),
@@ -592,11 +767,14 @@ async function sendToAgent(
     });
     const sessionId = await deps.agent.start(request, deps.config.sessionBudgetCents);
     await deps.store.updateRun(patrolId, { sessionId });
+    await holdForResult(deps, patrolId, runTargets);
   } catch (error) {
     // セッションを作れなければ、比べる元を変えずに次の回に調べ直す
     log("patrol_start_failed", errorForLog(error));
     const holder = `start-${randomUUID()}`;
-    await settleTargets(deps, run, holder, async (_target, record) => settleFailure(deps, record));
+    await settleTargets(deps, run, holder, async (_target, record) =>
+      settleFailure(deps, record, "group"),
+    );
     await deps.store.updateRun(patrolId, {
       status: "failed",
       failure: "start_failed",

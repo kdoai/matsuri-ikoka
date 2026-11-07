@@ -1,8 +1,9 @@
-import type { Itinerary, LodgingOffer, LodgingSearch } from "@matsuri-ikoka/schema";
+import type { GuideNotice, Itinerary, LodgingOffer, LodgingSearch } from "@matsuri-ikoka/schema";
 import { fictionalItinerary, fictionalPlannedItinerary } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it, vi } from "vitest";
 import type { LodgingOutcome, LodgingQuery, LodgingService } from "../tools/lodging";
-import { checkTripLodging } from "./lodging";
+import { checkTripLodging, type LodgingBudget } from "./lodging";
+import { noticeFor } from "./notices";
 import { NOW } from "./testing";
 
 // 宿の空きの見回り。モデルを使わず、今の空室検索の口だけを呼ぶ。宿は架空のもの。
@@ -74,25 +75,47 @@ function service(
   };
 }
 
-const run = (itinerary: Itinerary, lodging: LodgingService) =>
+const newBudget = (remaining = 10): LodgingBudget => ({ remaining, skipped: 0 });
+
+const run = (
+  itinerary: Itinerary,
+  lodging: LodgingService,
+  over: { notices?: GuideNotice[]; budget?: LodgingBudget } = {},
+) =>
   checkTripLodging({
     itinerary,
     lodging,
     venue: { lat: 35.12, lng: 136.08 },
+    notices: over.notices ?? [],
     now: NOW,
+    budget: over.budget ?? newBudget(),
     signal: new AbortController().signal,
   });
 
+/** 変化を、その旅に届いた通知にする（次の回の状態を調べるため） */
+const delivered = (itinerary: Itinerary, changes: Awaited<ReturnType<typeof run>>) =>
+  changes.map((change, index) =>
+    noticeFor({
+      change,
+      tripId: itinerary.id,
+      itinerary,
+      festivalName: "鈴鳴灯籠まつり",
+      now: NOW + index,
+    }),
+  );
+
 describe("checkTripLodging", () => {
+  const planned = () => withStay([offer("a", 10_000)]);
+
   it("候補の宿がまだ出ていれば、変化にしない。料金が動いただけでも知らせない", async () => {
     const lodging = service([offer("a", 12_000)]);
 
-    expect(await run(withStay([offer("a", 10_000)]), lodging)).toEqual([]);
+    expect(await run(planned(), lodging)).toEqual([]);
     expect(lodging.queries[0]).toMatchObject({ nights: 1, near: { lat: 35.12, lng: 136.08 } });
   });
 
-  it("候補の宿が出なくなったら、空きがなくなった変化にする", async () => {
-    const [change] = await run(withStay([offer("a", 10_000)]), service([offer("b", 15_000)]));
+  it("結果が上限より少ないのに候補の宿が出なくなったら、空きがなくなった変化にする", async () => {
+    const [change] = await run(planned(), service([offer("b", 15_000)]));
 
     expect(change?.content).toMatchObject({
       kind: "availability",
@@ -103,10 +126,46 @@ describe("checkTripLodging", () => {
     expect(change?.sources[0]).toMatchObject({ confidence: "single", checkedAt: "2026-08-10" });
   });
 
-  it("より安い宿に押し出されただけなら、変化にしない", async () => {
+  it("結果が上限まであるときは、候補が出ていなくても空きがないとは言わない", async () => {
     const cheaper = ["b", "c", "d", "e", "f"].map((id) => offer(id, 8_000));
+    const pricier = ["b", "c", "d", "e", "f"].map((id) => offer(id, 20_000));
 
-    expect(await run(withStay([offer("a", 10_000)]), service(cheaper))).toEqual([]);
+    // より安い宿に押し出された
+    expect(await run(planned(), service(cheaper))).toEqual([]);
+    // 上位に高い宿しかなくても、候補が値上がりしただけかもしれない
+    expect(await run(planned(), service(pricier))).toEqual([]);
+  });
+
+  it("候補の宿の空きがなくなったあと、戻ったら知らせる。同じ状態では知らせない", async () => {
+    const itinerary = planned();
+    const first = await run(itinerary, service([]));
+    const notices = delivered(itinerary, first);
+    expect(first[0]?.content).toMatchObject({ available: false });
+
+    // 同じ状態のまま
+    expect(await run(itinerary, service([]), { notices })).toEqual([]);
+
+    const back = await run(itinerary, service([offer("a", 13_000)]), { notices });
+    expect(back[0]?.content).toMatchObject({
+      available: true,
+      lodgingName: "（架空）宿 a",
+      nightlyTotalYen: 13_000,
+    });
+    expect(back[0]?.fingerprint).not.toBe(first[0]?.fingerprint);
+  });
+
+  it("空きなし→空きあり→空きなしの2度目も、別の通知として届く", async () => {
+    const itinerary = planned();
+    const first = await run(itinerary, service([]));
+    const second = await run(itinerary, service([offer("a", 13_000)]), {
+      notices: delivered(itinerary, first),
+    });
+    const third = await run(itinerary, service([]), {
+      notices: delivered(itinerary, [...first, ...second]),
+    });
+
+    expect(third[0]?.content).toMatchObject({ available: false });
+    expect(third[0]?.fingerprint).not.toBe(first[0]?.fingerprint);
   });
 
   it("候補がなかった泊まりで宿が出たら、空きが出た変化にする", async () => {
@@ -120,9 +179,21 @@ describe("checkTripLodging", () => {
     });
   });
 
-  it("同じ変化は同じ値になり、料金が違っても2度通知にしない", async () => {
+  it("最安の宿が替わっても、状態が同じなら別の通知を作らない", async () => {
+    const itinerary = withStay([]);
+    const first = await run(itinerary, service([offer("b", 15_000)]));
+
+    const second = await run(itinerary, service([offer("c", 9_000)]), {
+      notices: delivered(itinerary, first),
+    });
+
+    expect(first).toHaveLength(1);
+    expect(second).toEqual([]);
+  });
+
+  it("空きの指紋は泊まりの単位で、宿の名前や料金に左右されない", async () => {
     const [first] = await run(withStay([]), service([offer("b", 15_000)]));
-    const [second] = await run(withStay([]), service([offer("b", 18_000)]));
+    const [second] = await run(withStay([]), service([offer("c", 18_000)]));
 
     expect(first?.fingerprint).toBe(second?.fingerprint);
   });
@@ -136,13 +207,27 @@ describe("checkTripLodging", () => {
   });
 
   it("調べられないときは、変化にしない", async () => {
-    expect(await run(withStay([offer("a", 10_000)]), service("unavailable"))).toEqual([]);
+    expect(await run(planned(), service("unavailable"))).toEqual([]);
   });
 
-  it("泊まりのない旅は調べない", async () => {
+  it("泊まりのない旅は調べず、枠も使わない", async () => {
     const lodging = service([]);
+    const budget = newBudget(1);
 
-    expect(await run(fictionalItinerary(), lodging)).toEqual([]);
+    expect(await run(fictionalItinerary(), lodging, { budget })).toEqual([]);
     expect(lodging.queries).toEqual([]);
+    expect(budget.remaining).toBe(1);
+  });
+
+  it("枠を減らすのは実際に検索を呼んだときだけで、足りない分は数える", async () => {
+    const lodging = service([offer("a", 10_000)]);
+    const used = newBudget(1);
+    await run(planned(), lodging, { budget: used });
+    expect(used).toEqual({ remaining: 0, skipped: 0 });
+
+    const empty = newBudget(0);
+    await run(planned(), lodging, { budget: empty });
+    expect(empty).toEqual({ remaining: 0, skipped: 1 });
+    expect(lodging.queries).toHaveLength(1);
   });
 });
