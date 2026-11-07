@@ -11,6 +11,7 @@ import {
   type Preferences,
   type SearchRetry,
   type SearchSuggestion,
+  type SetTripWatchRequest,
   type SseEvent,
   type SseMessage,
   type TripAnchor,
@@ -217,7 +218,7 @@ export interface AppActions {
   /** 報告を「あとで」にする。次の未報告の通知があれば、続けて報告する */
   dismissReport(): void;
   /** 見回りを始める・止める */
-  setGuideWatch(action: "start" | "stop"): Promise<void>;
+  setGuideWatch(action: SetTripWatchRequest["action"]): Promise<void>;
   /** 組み直しの提案を承認する・断る。承認すると旅程が新しい版になる */
   decideProposal(proposalId: string, decision: "approve" | "reject"): Promise<void>;
   /** 承認した変更を、承認する前の版に戻す。戻した旅程も新しい版になる */

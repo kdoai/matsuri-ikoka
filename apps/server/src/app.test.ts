@@ -564,7 +564,7 @@ describe("旅程としおり", () => {
     expect(shiori.status).toBe(200);
     expect(shiori.headers.get("content-security-policy")).toContain("default-src 'none'");
     expect(page).toContain("鈴鳴灯籠まつりの見どころ");
-    expect(page).toContain("はじめての方へ");
+    expect(page).not.toContain("はじめての方へ");
     expect(page).toContain("公式情報で開催予定を確認済み");
     expect(page).toContain("https://example.com/suzunari/2026");
     expect((await app.request("/api/itinerary/no-such")).status).toBe(404);

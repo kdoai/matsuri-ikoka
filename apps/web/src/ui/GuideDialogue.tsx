@@ -21,7 +21,7 @@ import { guideErrorText, shortLine } from "./text";
 
 // ガイドとの会話の窓。店の会話の窓と同じ、話し手の名札と顔の絵つきのセリフの枠。
 // ガイドは店のコンシェルジュと同じひよこなので、同じ顔の絵を使う。チャット欄にせず、いまのひとことだけを出す。
-// これまでの話は「これまでの話」で開ける。
+// これまでの話は「これまでの話」で開ける。旅のことは、すべてこのガイド1人に尋ねればよい。
 
 const replyClass =
   "inline-flex min-h-12 items-center justify-center gap-1.5 rounded-2xl border-2 px-3 py-2 font-bold leading-tight shadow-soft transition hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60";
@@ -226,10 +226,6 @@ export function GuideDialogue() {
           aria-busy={typing}
           data-testid="guide-line"
           data-line={line.kind}
-          // 話せないときは書く欄も選択肢もないので、窓を開いたら文へ焦点を移す
-          {...(guide.availability === "unavailable"
-            ? { tabIndex: -1, "data-guide-focus": "" }
-            : {})}
         >
           {line.kind === "error" && line.said !== null ? (
             <p className="whitespace-pre-wrap font-bold text-[1.05rem] text-ink leading-relaxed sm:text-xl">
@@ -321,7 +317,7 @@ export function GuideDialogue() {
               </button>
             </li>
           ) : null}
-          {guide.availability === "failed" ? (
+          {guide.availability === "failed" || guide.availability === "unavailable" ? (
             <li>
               <button
                 type="button"
@@ -363,8 +359,8 @@ export function GuideDialogue() {
           </details>
         ) : null}
       </div>
-      {/* ガイドと話せないとき（相談が切れた・旅がない）は、書く欄を出さない */}
-      {hasSession && guide.availability !== "unavailable" ? (
+      {/* 相談の ID があれば、いつでも書ける。つながれば、そのまま話せるようになる */}
+      {hasSession ? (
         <div className="mt-2 shrink-0 border-line border-t border-dashed pt-2">
           <Composer placeholder={t.street.composerPlaceholder} />
         </div>

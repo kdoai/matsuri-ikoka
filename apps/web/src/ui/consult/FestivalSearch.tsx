@@ -1,10 +1,8 @@
 import {
   FESTIVAL_KINDS,
-  type Festival,
   type FestivalCandidate,
   MAX_FESTIVAL_WISH_LENGTH,
   SEASONS,
-  UNKNOWN,
 } from "@matsuri-ikoka/schema";
 import {
   CalendarDays,
@@ -19,7 +17,7 @@ import {
   Undo2,
 } from "lucide-react";
 import { useEffect } from "react";
-import { formatDate, type Messages } from "../../i18n";
+import { formatDate } from "../../i18n";
 import { AUTO, CONSULT_OPTIONS } from "../../state/consult";
 import {
   canReachFestivalStep,
@@ -363,79 +361,16 @@ function Decide() {
   );
 }
 
-/** 作法の項目を、短い文の並びにする。分からない項目は「不明」と出す（推測で埋めない） */
-function etiquettePoints(festival: Festival, t: Messages): { label: string; text: string }[] {
-  const { etiquette } = festival;
-  const words = t.etiquette;
-  const list = (value: readonly string[] | typeof UNKNOWN) =>
-    value === UNKNOWN ? words.unknown : value.join("・");
-  return [
-    {
-      label: words.labels.participation,
-      text:
-        etiquette.participation === UNKNOWN
-          ? words.unknown
-          : words.participation[etiquette.participation],
-    },
-    { label: words.labels.rules, text: list(etiquette.rules) },
-    { label: words.labels.dress, text: list(etiquette.dress) },
-    { label: words.labels.bring, text: list(etiquette.bring) },
-    {
-      label: words.labels.risk,
-      text:
-        etiquette.risk === UNKNOWN
-          ? words.unknown
-          : `${words.risk[etiquette.risk.level]}（${etiquette.risk.reason}）`,
-    },
-    {
-      label: words.labels.photo,
-      text:
-        etiquette.photo === UNKNOWN
-          ? words.unknown
-          : [words.photo[etiquette.photo.policy], etiquette.photo.note]
-              .filter((part) => part !== undefined)
-              .join("："),
-    },
-  ];
-}
-
-/** 「ここで終わる」：祭りの日時・場所・作法の要点・出典を出して終える */
+/** 「ここで終わる」：祭りの日時・場所・出典を出して終える */
 function Finished() {
   const t = useT();
   const actions = useActions();
   const chosen = useApp((state) => state.festivalSearch.chosen);
-  const festivalId = chosen?.candidate.festivalId ?? "";
-  const festival = useApp((state) => state.festivals[festivalId] ?? null);
-  const load = useApp((state) => state.festivalLoad[festivalId]);
   const words = t.festivalSearch.finished;
   if (chosen === null) return null;
   return (
     <div className="space-y-2" data-testid="festival-finished">
       <ChosenFacts candidate={chosen.candidate} />
-      <section aria-label={words.etiquette}>
-        <h4 className="mb-1 font-bold text-ai-700 text-xs">{words.etiquette}</h4>
-        {festival === null ? (
-          <p className="text-ink-soft text-sm">
-            {load === "loading" ? t.festivalCard.loading : words.etiquetteNone}
-          </p>
-        ) : (
-          <>
-            <dl className="grid gap-1 text-sm sm:grid-cols-2">
-              {etiquettePoints(festival, t).map((point) => (
-                <div key={point.label} className="rounded-lg bg-white/70 px-2 py-1">
-                  <dt className="font-bold text-ink-soft text-xs">{point.label}</dt>
-                  <dd className="text-ink">{point.text}</dd>
-                </div>
-              ))}
-            </dl>
-            {festival.etiquette.sources[0] === undefined ? null : (
-              <div className="mt-1 text-xs">
-                <SourceLink source={festival.etiquette.sources[0]} compact />
-              </div>
-            )}
-          </>
-        )}
-      </section>
       <div className="text-xs">
         <span className="mr-1 font-bold text-ai-700">{words.source}</span>
         <SourceLink source={chosen.candidate.source} />
@@ -469,7 +404,7 @@ export function FestivalSearchPanel() {
   const phase = useApp((state) => state.festivalSearch.phase);
   const chosenId = useApp((state) => state.festivalSearch.chosen?.candidate.festivalId ?? null);
 
-  // 選んだ祭りの作法を、ここで終えるときに読めるよう読み込んでおく
+  // 選んだ祭りのデータを、先に読み込んでおく
   useEffect(() => {
     if (chosenId !== null) void actions.ensureFestivals([chosenId]);
   }, [actions, chosenId]);

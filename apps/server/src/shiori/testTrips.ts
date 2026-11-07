@@ -27,6 +27,7 @@ export function fictionalFestivals(): Festival[] {
   second.municipalities = [{ prefecture: "滋賀県", name: "星見町" }];
   second.venue = { name: "星見浜", lat: 35.2, lng: 136.1 };
   second.highlights = ["湖の上に開く尺玉", "浜に並ぶ手づくりの行灯"];
+  // 祭りのデータには決まりや持ち物の項目があるが、しおりには出さない（出ていないことをテストで確かめる）
   second.etiquette = {
     participation: "watch_only",
     howToJoin: null,

@@ -3,7 +3,7 @@ import type { FestivalStore } from "../data/festivalStore";
 import { apiError } from "./errors";
 import { routeParam, type SecureRoutes } from "./policy";
 
-// 祭りのデータ。しおりの作法・地元の味・アクセスや、待ち時間の小話を画面が読む。
+// 祭りのデータ。地元の味・アクセスや、待ち時間の小話を画面が読む。
 // 掲載停止の祭りは祭りのデータの読み込みで外してあるので、一覧にも出ず、1件でも 404 になる。
 
 export function registerFestivalRoutes(routes: SecureRoutes, deps: { festivals: FestivalStore }) {

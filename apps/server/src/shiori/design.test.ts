@@ -88,21 +88,21 @@ describe("ページの並び", () => {
   const plan = (t: ShioriTrip, festivals = 1) =>
     pagePlan(chooseDesign(t, { category: "lantern" }, "2026-08-16"), t.days.length, festivals);
 
-  it("半日のお出かけは表紙・流れ・作法・持ち物（裏表紙を兼ねる）の4ページにまとめる", () => {
-    expect(plan(fictionalOuting())).toEqual(["cover", "day", "guide", "checklist"]);
+  it("半日のお出かけは表紙・祭りの紹介・流れ・持ち物（裏表紙を兼ねる）の4ページにまとめる", () => {
+    expect(plan(fictionalOuting())).toEqual(["cover", "festival", "day", "checklist"]);
   });
 
-  it("日帰りは祭りの紹介とスタンプ帳と出典のページと裏表紙を足す", () => {
+  it("日帰りは祭りの紹介とスタンプ帳と出典のページと裏表紙を足し、足りない分は思い出のページで埋める", () => {
     const t = fictionalOuting();
     (t.days[0]?.items[0] as { start: string }).start = "10:00";
     expect(plan(t)).toEqual([
       "cover",
       "festival",
       "day",
-      "guide",
       "checklist",
       "stamps",
       "sources",
+      "memory",
       "back",
     ]);
   });
@@ -115,7 +115,6 @@ describe("ページの並び", () => {
     const week = plan(fictionalWeek(), 2);
     expect(count(week, "day")).toBe(7);
     expect(count(week, "festival")).toBe(2);
-    expect(count(week, "guide")).toBe(2);
     expect(week.slice(0, 2)).toEqual(["cover", "overview"]);
     expect(week.at(-1)).toBe("back");
   });

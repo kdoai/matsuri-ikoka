@@ -42,7 +42,6 @@
 
 依頼の Issue は、テンプレートが付けるラベル（`data-correction`・`listing-request`・`opt-out`）で種類を決め、「祭りの名前」の欄から祭りの ID を決めます。欄にデータにある ID がそのまま書かれていればそれを使い、なければ祭りの名前（日本語・英語。全角と半角、大文字と小文字の違いはならす）で探します。決まるのはデータにある ID だけで、本文のほかの文字は使いません。欄がない、どの祭りにも当たらない、複数の祭りに当たる依頼は、対象に入れずに一覧に出し、人が確かめます（まだデータにない祭りの掲載の依頼も、ここに出ます）。
 
-
 差分は、調べ直す前と後の祭りを比べ、下の「マージのルール」の種類に分けます。表にない変更（見込みから発表への確定、作法・周辺の場所・そのほかの中身の変更、掲載停止の変更）は、人が確かめる側に入れます。出典は、付いている場所（開催回は日付、周辺の場所は ID、地元の味は名前）と URL で同じものかを見ます。
 
 調べ直した結果は、PR の本文にまとめます（`refreshPullRequestBody`）。中止・延期を先頭に、人が確かめるもの、自動でよいものの順に、祭りごとの変更の種類と、変わった出典（追加・更新・消えた。URL・確度・確認した日）を書きます。変わらなかった祭りは数だけを書き、スキーマや検証に落ちて取り込まなかった祭りは理由とともに書きます。1件でも人が確かめるものか取り込まなかったものがあれば、PR 全体を人が確かめる側にします。祭りの名前や理由は調査で集めた信用しない文字列なので、Markdown・HTML の記号と `@` を打ち消し、1行にして書きます。
@@ -199,6 +198,8 @@ Memory Store に、調査員が書き込める学習の記憶は持たせませ�
 | 7   | サーバー（検問）           | スキーマ・URL・出典を確かめ、前回の値と比べて変化の種類をコードで決める。通ったものを、該当する旅の通知（`users/{uid}/trips/{旅の ID}/notices/{ID}`）の候補にする。言い切れないものは値を持たないお知らせにする |
 | 8   | サーバー（コード）         | 結果を受け取ったら、セッションを止めて消す（セッションにはページの文章が残るため）                                                                                                                              |
 
+同じ起動で、旅程の時刻に合わせた声かけのうち時刻が来た分も届けます（[旅程の時刻に合わせた声かけ](guide.md#旅程の時刻に合わせた声かけ)）。声かけはページを読まずモデルも使わないので、祭りのページの作業より先に行います。声かけが届く時刻の細かさは Cloud Scheduler の間隔で決まり、時刻を2時間過ぎた声かけは出さないので、間隔は15〜30分にします（Cloud Scheduler のジョブはリポジトリの外で設定しています）。間が空いて出せなかった声かけは、分類だけをログ（`guide_call_missed` と時と遅れた分）に残し、通知の上限で足せなかった声かけは `guide_call_dropped` に残します。対象ごとに調べる間隔（`PATROL_CHECK_INTERVAL_HOURS`）は別に持つので、起動を短い間隔にしても、変わっていない祭りのページを読み直しません。
+
 Cloud Run の CPU はリクエストの間だけ割り当てられるので、起動と結果の受け取りは、応答を返す前に終えます。起動は新しい対象に取りかかる時間を 180 秒までに区切り、残りは次の回に回します。
 
 ### 行の比べ方
@@ -279,7 +280,7 @@ Cloud Run の CPU はリクエストの間だけ割り当てられるので、�
 
 - 1つの旅の通知は `MAX_NOTICES_PER_TRIP` 件までです
 - お知らせは祭りと開催日と種類ごとに1つに畳み、新しい内容で置き換えます。同じサイトの更新で上限が埋まらないようにするためです
-- 上限に達していても、開催の変更と中止は、古いお知らせか読んだ通知を押し出して足します
+- 上限に達していても、開催の変更と中止は、役目を終えた声かけ（届けてから2時間を過ぎたもの。未読でも）、古いお知らせ、読んだ通知の順に押し出して足します。新しい声かけは、役目を終えた声かけだけを押し出せます
 - それでも届けられない開催の変更と中止は、対象の控えに残して、比べる元を進めます。次の回に、モデルを呼ばずに届け直します
 - お知らせが上限で届けられなければ、ログに残すだけで、比べる元を進めます。お知らせは値を持たず、同じ種類の新しい内容で置き換わるものなので、届け直しのために同じページを読み直しません
 - 依頼がない旅や止められた旅には書きません（同じトランザクションで `watch/current` を確かめます）
@@ -422,7 +423,7 @@ main ブランチには直接 push しません。人の変更も自動の更新
 | 秘密情報           | Secret Manager から環境変数として渡す                                                                                                                                                                                                      | 値をイメージ・リポジトリ・ログに出さない                                                                                                                                               |
 | イメージ           | Artifact Registry。最新の10版を残し、1日より古いものは消す                                                                                                                                                                                 |                                                                                                                                                                                        |
 
-- 本番の環境変数：`NODE_ENV=production`・`MATSURI_AGENT_MODE=live`・`MODEL_CONCIERGE`・`MODEL_STAFF`・`MODEL_PLANNER`・`MODEL_EVALUATOR`・`MODEL_VERIFIER`・`MODEL_WISH_READER`（省略可）・`MODEL_GUIDE`（省略するとガイドの入口だけが断る）・`DAILY_CHAT_LIMIT`・`DAILY_CHAT_LIMIT_PER_IP`・`DAILY_TRIAL_CHAT_LIMIT`（省略可）・`AGENT_MAX_BUDGET_USD`（デプロイが付ける）・`MAX_CONCURRENT_TURNS`・`TRUSTED_PROXY_HOPS=1`（デプロイが付ける）・`MATSURI_STORAGE=firestore`・`FIREBASE_PROJECT_ID`・`FIREBASE_WEB_API_KEY`・`FIREBASE_AUTH_DOMAIN`。`PORT` は Cloud Run が渡す
+- 本番の環境変数：`NODE_ENV=production`・`MATSURI_AGENT_MODE=live`・`MODEL_CONCIERGE`・`MODEL_STAFF`・`MODEL_PLANNER`・`MODEL_EVALUATOR`・`MODEL_VERIFIER`・`MODEL_WISH_READER`（省略可）・`MODEL_GUIDE`（省略すると `MODEL_CONCIERGE` で動く）・`DAILY_CHAT_LIMIT`・`DAILY_CHAT_LIMIT_PER_IP`・`DAILY_TRIAL_CHAT_LIMIT`（省略可）・`AGENT_MAX_BUDGET_USD`（デプロイが付ける）・`MAX_CONCURRENT_TURNS`・`TRUSTED_PROXY_HOPS=1`（デプロイが付ける）・`MATSURI_STORAGE=firestore`・`FIREBASE_PROJECT_ID`・`FIREBASE_WEB_API_KEY`・`FIREBASE_AUTH_DOMAIN`。`PORT` は Cloud Run が渡す
 - Firestore・TTL・セキュリティルール・Firebase Authentication・実行用のアカウントの権限は、[`scripts/setup-firestore.sh`](../../scripts/setup-firestore.sh) で入れて確かめる（[ログインと保存の仕様](account.md#google-cloud-の設定)）
 - お試し用のアカウントは [`apps/server/scripts/trial-account.ts`](../../apps/server/scripts/trial-account.ts) で作り、初期の状態に戻し、パスワードを作り直す（[ログインと保存の仕様](account.md#お試し用のアカウント)）。パスワードは実行した端末の画面にだけ出る
 - Cloud Run の既定の URL（`run.app`）では、末尾が `z` のパスが外から届かない。外からの死活監視には `/health` を使う
@@ -485,6 +486,7 @@ gcloud run services update-traffic "$CLOUD_RUN_SERVICE" --region "$GCP_REGION" -
 ```
 
 - イメージは最新の10版を残すので、戻せるのはその範囲。3D のモデルをコンテナに入れる前の版に戻すと、外からの確かめ（3D のモデル）は落ちる
+- 旅程の時刻に合わせた声かけより前の版に戻すと、声かけを止めたり戻したりした見回りの依頼（`watch/current` に `reminders` がある）を、前の版のガイドは読めない（`TripWatchSchema` が知らない項目を断る）。その旅のガイドの画面では、見回りが頼まれていないように見える（見回り自体は、決まった項目だけを読むので続く）。困るときは、依頼から `reminders` の項目を消すか、声かけのある版に戻し直す
 
 ### 利用者の IP（`TRUSTED_PROXY_HOPS`）
 
@@ -515,7 +517,7 @@ Cloud Run の既定の URL（前にロードバランサーを置かない）で
 | `ANTHROPIC_API_KEY`                                                                    | Claude の API キー（live のとき）                                                                                                                                                    |
 | `MODEL_CONCIERGE`・`MODEL_STAFF`・`MODEL_PLANNER`・`MODEL_EVALUATOR`・`MODEL_VERIFIER` | 役割ごとのモデル名（[モデルの割り当て](agents.md#モデルの割り当て)）                                                                                                                 |
 | `MODEL_WISH_READER`                                                                    | 祭りから探すときの自由記述の読み取りのモデル名。省略時は軽いモデルの別名 `haiku`（[自由記述の読み取り](agent-runtime.md#自由記述の読み取り)）                                        |
-| `MODEL_GUIDE`                                                                          | しおりのあとのガイドのモデル名。live で空なら、ガイドの入口だけが 404 で断る（[旅のガイドの仕様](guide.md)）                                                                         |
+| `MODEL_GUIDE`                                                                          | しおりのあとのガイドのモデル名。空なら `MODEL_CONCIERGE` を使い、それも空なら、ガイドの入口だけが 404 で断る（[旅のガイドの仕様](guide.md)）                                         |
 | `ACCESS_PASSCODE`                                                                      | 公開している URL の合言葉。画面からはヘッダー `x-access-passcode` で送る                                                                                                             |
 | `DAILY_CHAT_LIMIT`                                                                     | 1日（日本の日付）の相談の回数の上限。空か 0 なら上限なし                                                                                                                             |
 | `AGENT_MAX_BUDGET_USD`                                                                 | live の1回の発言の費用の上限（米ドル、Agent SDK の推定で判定）。本番は `deploy.yml` で 1 にする。旅程の調べ直しと作り直しを最後まで回せる額にする                                    |
@@ -552,7 +554,7 @@ Cloud Run の既定の URL（前にロードバランサーを置かない）で
 | ------------------------- | ------------------------------------------------------------------------------------- |
 | `MODEL_CONCIERGE`         | コンシェルジュが Agent SDK の既定のモデルで動く                                       |
 | `MODEL_STAFF`             | スタッフ（と、指定のない旅程係・再確認・評価係）が Agent SDK の既定のモデルで動く     |
-| `MODEL_GUIDE`             | ガイドの入口が断る                                                                    |
+| `MODEL_GUIDE`             | コンシェルジュのモデルで動く（それもなければ、ガイドの入口が断る）                    |
 | `DAILY_CHAT_LIMIT_PER_IP` | 1人の回数の上限がなく、1人で全体の枠を使い切れる                                      |
 | `TRUSTED_PROXY_HOPS`      | 全員が同じ IP になり、IP ごとの上限と同時の数が全員にまとめて効く（デプロイが付ける） |
 

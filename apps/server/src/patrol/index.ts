@@ -3,6 +3,7 @@ import { readAccountConfig } from "../account/firebase";
 import type { FestivalStore } from "../data/festivalStore";
 import type { TripStorage } from "../storage/types";
 import type { LodgingService } from "../tools/lodging";
+import type { WeatherService } from "../tools/weather";
 import { createManagedPatrolAgent } from "./agent";
 import { readPatrolConfig } from "./config";
 import { createPageFetcher } from "./pageFetcher";
@@ -39,6 +40,8 @@ export async function createPatrolDeps(input: {
   env: NodeJS.ProcessEnv;
   festivals: FestivalStore;
   lodging: LodgingService;
+  /** 声かけに添える天気の予報 */
+  weather?: WeatherService;
   /** 旅の保存先。メモリなら、見回りも同じ置き場で依頼と旅程を読み、通知を書く（ガイドの API と同じ置き場） */
   storage?: TripStorage & { patrolTrips?: () => PatrolTripSource };
   now?: () => number;
@@ -58,6 +61,7 @@ export async function createPatrolDeps(input: {
     pages: createPageFetcher(),
     festivals: input.festivals,
     lodging: input.lodging,
+    ...(input.weather === undefined ? {} : { weather: input.weather }),
     config,
     now: input.now ?? Date.now,
   };

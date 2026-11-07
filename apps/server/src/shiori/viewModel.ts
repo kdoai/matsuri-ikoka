@@ -1,6 +1,5 @@
 import {
   type Confidence,
-  type Etiquette,
   type Festival,
   type ItineraryItem,
   type LodgingOffer,
@@ -20,11 +19,10 @@ import { type RouteView, routeOf } from "./route";
 import type { ShioriTrip, TripDay, TripInterest, TripPace } from "./trip";
 
 // しおりの見た目のためのデータ（view-model）。テンプレートに出す文字は、すべてここで決める。
-// 祭りや店の名前・時刻・作法は、旅程と祭りのデータにあるものだけを使い、分からない項目は「分からない」と出す。
+// 祭りや店の名前・時刻・行き方は、旅程と祭りのデータにあるものだけを使い、分からない項目は「分からない」と出す。
 // 持ち物の「いつもの持ち物」や季節の持ち物は、祭りの事実ではない一般の目安として、コードの決まった文で出す。
 
 export const UNKNOWN_JA = "分からない";
-export const UNKNOWN_EN = "Unknown";
 
 /** 予定の種類と移動の手段ごとのアイコン（assets/shiori/svg/icon-*.svg） */
 export type IconName =
@@ -130,29 +128,6 @@ export interface FestivalView {
   missing: boolean;
 }
 
-export interface GuideRow {
-  icon: IconName;
-  labelJa: string;
-  labelEn: string;
-  /** 1行ずつ。分からない項目は ["分からない"] */
-  valuesJa: string[];
-  /** 選択肢で決まる値の英語（自由文の項目は null） */
-  valueEn: string | null;
-  unknown: boolean;
-}
-
-export interface GuideView {
-  festivalName: string;
-  festivalNameEn: string | null;
-  rows: GuideRow[];
-  /** 祭りの側からのお願い（ルールとマナー、写真の制限） */
-  requests: string[];
-  /** 交通規制・駐車場・雨天の扱い */
-  cautions: string[];
-  /** 祭りのデータがない */
-  missing: boolean;
-}
-
 export interface ChecklistGroup {
   /** まとまりの見出しの印 */
   icon: IconName;
@@ -217,7 +192,6 @@ export interface ShioriView {
   styleNotes: string[];
   festivals: FestivalView[];
   days: DayView[];
-  guides: GuideView[];
   checklist: ChecklistGroup[];
   stamps: StampSlot[];
   /** スタンプ帳のページの下に出すメモの見出し（泊まりの旅は日ごとのページにメモを置く） */
@@ -273,21 +247,6 @@ const SCALE_LABELS: Record<Festival["scaleTier"], string> = {
   M: "中くらいの祭り",
   L: "大きな祭り",
 };
-const PARTICIPATION = {
-  watch_only: ["見学のみ", "Watch only"],
-  join_open: ["だれでも加われる", "Anyone can join"],
-  join_by_application: ["申し込みが必要", "Application required"],
-} as const;
-const RISK = {
-  low: ["低い", "Low"],
-  medium: ["中くらい", "Medium"],
-  high: ["高い", "High"],
-} as const;
-const PHOTO = {
-  allowed: ["撮ってよい", "Allowed"],
-  restricted: ["制限がある", "Restricted"],
-  prohibited: ["撮らない", "Not allowed"],
-} as const;
 const PARKING_LABELS = { available: "あり", limited: "少ない", none: "なし" } as const;
 const STALL_LABELS = { yes: "屋台が出る", no: "屋台は出ない" } as const;
 const ALTERNATIVE_LABELS = { rain: "雨の日", cancelled: "中止のとき", other: "そのほか" } as const;
@@ -324,7 +283,10 @@ const BASIC_ITEMS = [
   "ごみ袋（ごみは持ち帰る）",
 ];
 const TRAIN_ITEMS = ["交通系 IC カード", "スマートフォンの充電（モバイルバッテリー）"];
-const CAR_ITEMS = ["駐車場の場所（下の「注意」も見てください）", "スマートフォンの充電"];
+const CAR_ITEMS = [
+  "駐車場の場所（祭りの紹介の「アクセス」も見てください）",
+  "スマートフォンの充電",
+];
 const SEASON_ITEMS: Record<ShioriDesign["season"], string[]> = {
   spring: ["羽織るもの（朝晩は冷える）"],
   summer: ["帽子", "汗ふきタオル", "虫よけ"],
@@ -513,111 +475,8 @@ function festivalView(trip: ShioriTrip, id: string, festival: Festival | undefin
         (h) => `${h.hub}から ${joinRange(h.minutes, "分")}（目安）${h.route ? `・${h.route}` : ""}`,
       ),
       `駐車場：${access.parking === UNKNOWN ? UNKNOWN_JA : PARKING_LABELS[access.parking]}`,
+      ...access.trafficRestrictions.map((t) => `交通規制：${t}`),
     ],
-    missing: false,
-  };
-}
-
-function listOrUnknown(value: readonly string[] | typeof UNKNOWN): string[] {
-  return value === UNKNOWN ? [UNKNOWN_JA] : [...value];
-}
-
-function guideRows(etiquette: Etiquette): GuideRow[] {
-  const rows: GuideRow[] = [];
-  const p = etiquette.participation;
-  rows.push({
-    icon: "people",
-    labelJa: "見学か参加か",
-    labelEn: "Watch or join",
-    valuesJa: [p === UNKNOWN ? UNKNOWN_JA : PARTICIPATION[p][0]],
-    valueEn: p === UNKNOWN ? UNKNOWN_EN : PARTICIPATION[p][1],
-    unknown: p === UNKNOWN,
-  });
-  if (etiquette.howToJoin !== null) {
-    rows.push({
-      icon: "calendar",
-      labelJa: "申し込み",
-      labelEn: "How to join",
-      valuesJa: [etiquette.howToJoin === UNKNOWN ? UNKNOWN_JA : etiquette.howToJoin],
-      valueEn: etiquette.howToJoin === UNKNOWN ? UNKNOWN_EN : null,
-      unknown: etiquette.howToJoin === UNKNOWN,
-    });
-  }
-  const lists = [
-    ["warn", "ルールとマナー", "Rules and manners", etiquette.rules],
-    ["shirt", "服装", "What to wear", etiquette.dress],
-    ["bag", "持ち物", "What to bring", etiquette.bring],
-  ] as const;
-  for (const [icon, labelJa, labelEn, value] of lists) {
-    rows.push({
-      icon,
-      labelJa,
-      labelEn,
-      valuesJa: listOrUnknown(value),
-      valueEn: value === UNKNOWN ? UNKNOWN_EN : null,
-      unknown: value === UNKNOWN,
-    });
-  }
-  const { risk, photo } = etiquette;
-  rows.push({
-    icon: "info",
-    labelJa: "危険度",
-    labelEn: "Risk",
-    valuesJa: [risk === UNKNOWN ? UNKNOWN_JA : `${RISK[risk.level][0]}：${risk.reason}`],
-    valueEn: risk === UNKNOWN ? UNKNOWN_EN : RISK[risk.level][1],
-    unknown: risk === UNKNOWN,
-  });
-  rows.push({
-    icon: "camera",
-    labelJa: "写真",
-    labelEn: "Photos",
-    valuesJa: [
-      photo === UNKNOWN
-        ? UNKNOWN_JA
-        : `${PHOTO[photo.policy][0]}${photo.note ? `：${photo.note}` : ""}`,
-    ],
-    valueEn: photo === UNKNOWN ? UNKNOWN_EN : PHOTO[photo.policy][1],
-    unknown: photo === UNKNOWN,
-  });
-  return rows;
-}
-
-function guideView(trip: ShioriTrip, id: string, festival: Festival | undefined): GuideView {
-  if (festival === undefined) {
-    return {
-      festivalName: itemName(trip, id),
-      festivalNameEn: null,
-      rows: [],
-      requests: [],
-      cautions: [],
-      missing: true,
-    };
-  }
-  const { etiquette, access } = festival;
-  const requests = [
-    ...(etiquette.rules === UNKNOWN ? [] : etiquette.rules),
-    ...(etiquette.photo !== UNKNOWN && etiquette.photo.policy !== "allowed"
-      ? [
-          `写真：${PHOTO[etiquette.photo.policy][0]}${etiquette.photo.note ? `（${etiquette.photo.note}）` : ""}`,
-        ]
-      : []),
-  ];
-  const rainPolicies = festivalDays(trip, id)
-    .map((day) => occurrenceOn(festival, day.date)?.rainPolicy ?? null)
-    .filter((v): v is string => v !== null);
-  const cautions = [
-    ...access.trafficRestrictions.map((t) => `交通規制：${t}`),
-    ...(trip.preferences.move === "car"
-      ? [`駐車場：${access.parking === UNKNOWN ? UNKNOWN_JA : PARKING_LABELS[access.parking]}`]
-      : []),
-    ...[...new Set(rainPolicies)].map((r) => `雨天の扱い：${r}`),
-  ];
-  return {
-    festivalName: festival.name.ja,
-    festivalNameEn: festival.name.en ?? null,
-    rows: guideRows(etiquette),
-    requests,
-    cautions,
     missing: false,
   };
 }
@@ -759,25 +618,8 @@ function overviewRows(trip: ShioriTrip): OverviewRow[] {
   });
 }
 
-function checklist(
-  trip: ShioriTrip,
-  design: ShioriDesign,
-  festivals: readonly (Festival | undefined)[],
-): ChecklistGroup[] {
+function checklist(trip: ShioriTrip, design: ShioriDesign): ChecklistGroup[] {
   const groups: ChecklistGroup[] = [];
-  const bring = festivals.flatMap((f) =>
-    f && f.etiquette.bring !== UNKNOWN ? f.etiquette.bring : [],
-  );
-  const dress = festivals.flatMap((f) =>
-    f && f.etiquette.dress !== UNKNOWN ? f.etiquette.dress : [],
-  );
-  const festivalItems = [...new Set([...bring, ...dress])];
-  groups.push({
-    icon: "festival",
-    title: "祭りのために",
-    note: "祭りのデータの「持ち物」と「服装」から",
-    items: festivalItems.length > 0 ? festivalItems : [`祭りの持ち物は${UNKNOWN_JA}`],
-  });
   if (trip.notes.length > 0) {
     groups.push({ icon: "info", title: "旅程係のメモ", note: null, items: [...trip.notes] });
   }
@@ -840,7 +682,6 @@ function collectSources(trip: ShioriTrip, festivals: readonly (Festival | undefi
     all.push(
       ...f.sources,
       ...occurrences.flatMap((o) => o.sources),
-      ...f.etiquette.sources,
       ...f.access.sources,
       ...f.food.local.flatMap((l) => l.sources),
       ...f.trivia.slice(0, 2).map((t) => t.source),
@@ -877,7 +718,6 @@ export function buildShioriView(trip: ShioriTrip, lookup: FestivalLookup): Shior
     ) ?? (trip.days[0] as TripDay);
   const design = chooseDesign(trip, main, mainDay.date);
   const festivals = festivalIds.map((id, i) => festivalView(trip, id, festivalData[i]));
-  const guides = festivalIds.map((id, i) => guideView(trip, id, festivalData[i]));
   const pages = pagePlan(design, trip.days.length, festivals.length);
   const mainView = festivals[0] as FestivalView;
 
@@ -915,8 +755,7 @@ export function buildShioriView(trip: ShioriTrip, lookup: FestivalLookup): Shior
     styleNotes: styleNotes(trip),
     festivals,
     days: dayViews(trip, main),
-    guides,
-    checklist: checklist(trip, design, festivalData),
+    checklist: checklist(trip, design),
     stamps: stampSlots(trip, festivals),
     memoPrompts:
       design.length === "day_trip" ? ["いちばん心に残ったこと", "次に行ってみたい祭り"] : [],

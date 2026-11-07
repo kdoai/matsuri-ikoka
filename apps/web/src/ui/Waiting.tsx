@@ -26,33 +26,19 @@ import { useReducedMotion } from "./hooks";
 import { CATEGORY_ICON, CATEGORY_TONE, LanternIcon } from "./icons";
 import { Portrait } from "./Portraits";
 
-// 待ち時間を楽しめる時間にする部品：コンシェルジュの豆知識（祭りの小話・見どころ・作法）を
+// 待ち時間を楽しめる時間にする部品：コンシェルジュの豆知識（祭りの小話・見どころ）を
 // 時間で送りながら話し、ときどき祭りクイズを挟む。どちらも同じ1つの窓に出す。しおり完成の演出もここに置く。
 
 /** 窓の下に並べる点の上限 */
 const MAX_DOTS = 5;
 
-/** 豆知識の1話を、画面の言葉にする（決まった値は辞書で、データの文はそのまま） */
+/** 豆知識の1話を、画面の言葉にする（データの文はそのまま） */
 function useTalkText() {
   const t = useT();
-  return (talk: WaitingTalk): { label: string; text: string } => {
-    if (talk.kind !== "etiquette" || talk.item === undefined) {
-      return { label: t.waiting.kinds[talk.kind], text: talk.text };
-    }
-    const label = `${t.waiting.kinds.etiquette}・${t.etiquette.labels[talk.item]}`;
-    const code =
-      talk.code === undefined
-        ? null
-        : talk.item === "participation"
-          ? t.etiquette.participation[talk.code as keyof typeof t.etiquette.participation]
-          : talk.item === "photo"
-            ? t.etiquette.photo[talk.code as keyof typeof t.etiquette.photo]
-            : talk.item === "risk"
-              ? t.etiquette.risk[talk.code as keyof typeof t.etiquette.risk]
-              : null;
-    const text = [code, talk.text].filter((part) => part != null && part !== "").join("。");
-    return { label, text };
-  };
+  return (talk: WaitingTalk): { label: string; text: string } => ({
+    label: t.waiting.kinds[talk.kind],
+    text: talk.text,
+  });
 }
 
 /** 待ち時間に話せる豆知識の一覧 */
@@ -128,7 +114,7 @@ const roundButton =
   "grid size-9 shrink-0 place-items-center rounded-full border-2 border-wood-300 bg-white text-ink shadow-sm transition hover:border-yamabuki-400 hover:bg-yamabuki-100";
 
 /**
- * 豆知識の1話：コンシェルジュが祭りの小話・見どころ・作法を話す（中身は祭りのデータだけで、出典を添える）。
+ * 豆知識の1話：コンシェルジュが祭りの小話・見どころを話す（中身は祭りのデータだけで、出典を添える）。
  * 「くわしく見る」で出典と候補に入れるボタンを開く
  */
 function TalkSlide({

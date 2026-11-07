@@ -771,7 +771,6 @@ export const searchFestivals = defineTool({
         // 候補を出す前の確かめ。null は確かめていない（上限や、確かめる手段がない）
         factCheck: factCheckOf(check),
         arrivalBufferMinutes: arrivalBufferMinutes(m.festival),
-        participation: m.festival.etiquette.participation,
       })),
       search,
       notes,
