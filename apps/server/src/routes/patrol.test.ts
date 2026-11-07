@@ -166,6 +166,7 @@ describe("POST /internal/patrol/start", () => {
       skipped: 0,
       lodgingNotices: 0,
       reconciled: 0,
+      guideCalls: 0,
     });
   });
 

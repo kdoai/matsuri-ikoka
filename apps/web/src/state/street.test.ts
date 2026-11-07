@@ -331,6 +331,26 @@ describe("ガイドとの相談", () => {
     expect(guide.entries.map((entry) => entry.kind)).toEqual(["user", "guide"]);
   });
 
+  it("現在地は丸めて送り、送り直しでは現在地を送らない", async () => {
+    const guideChat = streaming([]);
+    const { store } = await onStreet({ guideChat });
+    await store
+      .getState()
+      .actions.sendGuide("ここから会場へ", { location: { lat: 35.123456, lng: 136.567891 } });
+    expect(guideChat.mock.calls[0]?.[0]).toEqual({
+      sessionId: "session-1",
+      message: "ここから会場へ",
+      location: { lat: 35.123, lng: 136.568 },
+    });
+    await store.getState().actions.retryGuide();
+    expect(guideChat.mock.calls[1]?.[0]).toEqual({
+      sessionId: "session-1",
+      message: "ここから会場へ",
+    });
+    // 現在地は手元の状態にも残さない
+    expect(JSON.stringify(store.getState())).not.toContain("136.56");
+  });
+
   it("guide.done が来ないまま閉じたら、もう一度送れるようにする", async () => {
     const { store } = await onStreet({ guideChat: streaming([]) });
     await store.getState().actions.sendGuide("持ち物は");

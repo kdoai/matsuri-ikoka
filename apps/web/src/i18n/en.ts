@@ -1254,6 +1254,35 @@ export const en: Messages = {
     watchStop: "Stop watching",
     watchNeedsLogin:
       "Sign in and save this trip, and we can watch the festival for changes while you are away.",
+    remindersOn:
+      "I will also check in at set times: the evening before, the morning of, before you head to the venue, and before the last train home.",
+    remindersOff: "Check-ins at set times are off.",
+    remindersStop: "Turn off check-ins",
+    remindersStart: "Turn on check-ins",
+    tripDay: {
+      title: "Today's trip",
+      next: "Next",
+      nowDoing: "Now",
+      noNext: "Today's plan is done.",
+      departure: "Departure",
+      noDeparture: "No more rides today.",
+      lastReturn: "Last train home",
+      lastReturnUnknown: "The last train home is not known. Ask your guide to check.",
+      lastReturnAt: (station: string, time: string) => `From ${station} by ${time}`,
+      fromTo: (from: string, to: string) => `${from} → ${to}`,
+      offline:
+        "You can read this without a signal (it comes from the plan already on this screen).",
+      where: "Ask from where I am",
+      whereNote:
+        "Only when you tap, this device's location is used once (rounded to about 100 m, not saved). You can also ask using a station name instead.",
+      whereMessage: "How do I get to my next stop from where I am now?",
+      whereDenied:
+        "Asking without your location. Tell your guide the name of a nearby station or landmark.",
+      whereDeniedMessage:
+        "I'd like help getting to my next stop (without my location; please ask me for the nearest station).",
+      late: "I'm running late",
+      lateMessage: "I'm running behind schedule. Please suggest a new plan for the rest of today.",
+    },
     proposalsTitle: "Suggested changes from your guide",
     outcome: {
       applied: (version: number) =>

@@ -160,13 +160,14 @@ export function Street() {
   const store = useAppStore();
   const wants3d = useScene3d() && StreetScene !== null;
   const [failed, setFailed] = useState(false);
-  const use3d = wants3d && !failed;
   const wide = useMediaQuery("(min-width: 1024px)");
   const guideOpen = useApp((state) => state.guide.dialogueOpen);
   const openStall = useApp((state) => state.guide.openStall);
   const listOpen = useApp((state) => state.guide.listOpen);
   const availability = useApp((state) => state.guide.availability);
   const phase = useApp((state) => state.guide.phase);
+  // 旅の当日のスマホでは 2D を主にして、次の予定・出発・帰りの最終を最初に見せる
+  const use3d = wants3d && !failed && !(phase === "during" && !wide);
   const notices = useApp((state) => state.guide.notices);
   const ready = useApp(shioriReady);
   const lit = useMemo(() => litStalls({ notices }), [notices]);

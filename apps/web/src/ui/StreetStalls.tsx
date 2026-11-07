@@ -17,6 +17,7 @@ import { litStalls, noticesOfStall } from "../state/guide";
 import { useActions, useApp, useT } from "../state/react";
 import { buttonPrimary, buttonSecondary, SourceLink } from "./common";
 import { stallFacts } from "./stallFacts";
+import { TripDayCard } from "./TripDay";
 
 // 屋台の一覧と、屋台の窓。3D に出ること（提灯が灯っているか・屋台の中身）を、ここですべて文字で読める。
 // 3D を使わない画面では、この一覧が通りの主役になる。
@@ -57,6 +58,8 @@ export function WatchControl() {
     ) : null;
   }
   const on = watch?.status === "active";
+  // 項目がなければ声をかける
+  const reminders = watch?.reminders !== false;
   return (
     <div
       className="mt-3 flex flex-wrap items-center gap-2 rounded-xl border border-line bg-white/80 px-3 py-2"
@@ -72,6 +75,21 @@ export function WatchControl() {
       >
         {on ? t.street.watchStop : t.street.watchStart}
       </button>
+      {on ? (
+        <div className="flex w-full flex-wrap items-center gap-2" data-testid="reminders-control">
+          <p className="min-w-0 flex-1 text-xs text-ink-soft">
+            {reminders ? t.street.remindersOn : t.street.remindersOff}
+          </p>
+          <button
+            type="button"
+            className={buttonSecondary}
+            disabled={busy !== null}
+            onClick={() => void actions.setGuideWatch(reminders ? "reminders_off" : "reminders_on")}
+          >
+            {reminders ? t.street.remindersStop : t.street.remindersStart}
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -194,6 +212,7 @@ export function StallList() {
   const lit = useMemo(() => litStalls({ notices }), [notices]);
   return (
     <>
+      <TripDayCard />
       <ul className="grid gap-2 sm:grid-cols-2" data-testid="stall-list">
         {GUIDE_STALLS.map((stall) => {
           const Icon = STALL_ICONS[stall];

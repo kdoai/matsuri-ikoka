@@ -554,6 +554,22 @@ describe("POST /api/guide/chat", () => {
     expect(JSON.stringify(context.sessions.get(sessionId)?.guide)).not.toContain("35.1234");
   });
 
+  it("現在地は、要る細かさに丸めてからガイドに渡す", async () => {
+    const runner = new ReplayGuideRunner(guides, { speed: 0 });
+    const runTurn = vi.spyOn(runner, "runTurn");
+    const context = setup({ guide: { runner } });
+    const { sessionId } = await context.consult();
+
+    await (
+      await context.chat(sessionId, "ここから会場へはどう行けばいいですか", undefined, {
+        location: { lat: 35.123456, lng: 136.567891 },
+      })
+    ).text();
+
+    expect(runTurn).toHaveBeenCalled();
+    expect(runTurn.mock.calls[0]?.[0].location).toEqual({ lat: 35.123, lng: 136.568 });
+  });
+
   it("発言の本文と現在地をログに残さない", async () => {
     const logged: string[] = [];
     for (const method of ["log", "info", "warn", "error", "debug"] as const) {
@@ -1293,6 +1309,23 @@ describe("通知・見回り・提案の決定", () => {
     const started = await watch(ALICE, "start");
     expect(await started.json()).toMatchObject({ status: "active", stoppedAt: null });
     expect((await context.state(guideSession, ALICE)).watch?.status).toBe("active");
+  });
+
+  it("旅程の時刻に合わせた声かけを止めて、また戻せる。ほかの人は変えられない", async () => {
+    const context = setup();
+    const { itineraryId, guideSession } = await keptGuide(context);
+    const watch = (user: string, action: "reminders_off" | "reminders_on") =>
+      context.call("/api/guide/watch", { user, body: { sessionId: guideSession, action } });
+
+    expect((await watch(BOB, "reminders_off")).status).toBe(404);
+    const quiet = await watch(ALICE, "reminders_off");
+    expect(await quiet.json()).toMatchObject({ status: "active", reminders: false });
+    const docs = context.storage.forOwner(ownerIdOf(ALICE)).tripDocs(itineraryId);
+    expect(await docs.get("watch", "current")).toMatchObject({ reminders: false });
+
+    const back = await watch(ALICE, "reminders_on");
+    expect(await back.json()).toMatchObject({ status: "active", reminders: true });
+    expect((await context.state(guideSession, ALICE)).watch?.reminders).toBe(true);
   });
 
   it("残す前の旅で見回りを始めると、旅を残してから旅の下に書く。ログインなしは 401", async () => {

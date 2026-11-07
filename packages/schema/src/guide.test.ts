@@ -30,6 +30,7 @@ import {
   PatrolReportSchema,
   PatrolRequestSchema,
   PatrolTargetSchema,
+  roundLocation,
   TripWatchSchema,
   tripPhase,
 } from "./guide";
@@ -384,6 +385,14 @@ describe("noticeStall", () => {
       { kind: "weather", date: "2026-08-16", condition: "storm", precipitationPercent: null },
       "weather",
     ],
+    [
+      { kind: "reminder", slot: "eve", date: "2026-08-16", at: "18:00", itemId: null },
+      "headquarters",
+    ],
+    [
+      { kind: "reminder", slot: "last_return", date: "2026-08-16", at: "21:10", itemId: null },
+      "access",
+    ],
   ])("通知の中身から屋台を決める %#", (content, stall) => {
     expect(noticeStall(content)).toBe(stall);
   });
@@ -677,5 +686,18 @@ describe("GuideSseEventSchema", () => {
   it("不正なイベントは送らない", () => {
     const invalid = { type: "guide.memo", data: {} } as GuideSseEvent;
     expect(() => encodeGuideSseEvent(invalid)).toThrow();
+  });
+});
+
+describe("roundLocation", () => {
+  it("現在地を小数3桁（およそ100m）に丸める", () => {
+    expect(roundLocation({ lat: 35.123456, lng: 136.567891 })).toEqual({
+      lat: 35.123,
+      lng: 136.568,
+    });
+    expect(roundLocation({ lat: -33.86549, lng: 151.20929 })).toEqual({
+      lat: -33.865,
+      lng: 151.209,
+    });
   });
 });
