@@ -4,7 +4,10 @@ import { describe, expect, it } from "vitest";
 import {
   DEFAULT_WISH_READER_MODEL,
   findRepoRoot,
+  missingRecommendedConfig,
   portInUseMessage,
+  RECOMMENDED_PRODUCTION_ENV,
+  REQUIRED_PRODUCTION_ENV,
   readConfig,
   startupNotice,
 } from "./config";
@@ -254,6 +257,36 @@ describe("本番の live の設定の確認", () => {
     expect(() => readConfig({ ...complete, MATSURI_STORAGE: "memory" }, here)).toThrow(
       "MATSURI_STORAGE=firestore",
     );
+  });
+
+  it("起動を止める設定の一覧は、そろっている設定と同じ名前を持つ", () => {
+    expect(
+      Object.keys(complete).filter((name) => name !== "NODE_ENV" && name !== "MATSURI_AGENT_MODE"),
+    ).toEqual([...REQUIRED_PRODUCTION_ENV]);
+  });
+
+  it("勧める設定が欠けていれば、起動は止めずに名前を挙げる", () => {
+    const env = { ...complete, MODEL_STAFF: "model-b", MODEL_GUIDE: " " };
+    const config = readConfig(env, here);
+
+    expect(missingRecommendedConfig(config, env)).toEqual([
+      "MODEL_CONCIERGE",
+      "MODEL_GUIDE",
+      "DAILY_CHAT_LIMIT_PER_IP",
+      "TRUSTED_PROXY_HOPS",
+    ]);
+    const filled = {
+      ...complete,
+      ...Object.fromEntries(RECOMMENDED_PRODUCTION_ENV.map((name) => [name, "1"])),
+    };
+    expect(missingRecommendedConfig(readConfig(filled, here), filled)).toEqual([]);
+  });
+
+  it("勧める設定は、本番の live のときだけ挙げる", () => {
+    const mock = { NODE_ENV: "production", MATSURI_AGENT_MODE: "mock" };
+    expect(missingRecommendedConfig(readConfig(mock, here), mock)).toEqual([]);
+    const dev = { MATSURI_AGENT_MODE: "live" };
+    expect(missingRecommendedConfig(readConfig(dev, here), dev)).toEqual([]);
   });
 
   it("本番でも mock なら、開発でも live なら確かめない", () => {

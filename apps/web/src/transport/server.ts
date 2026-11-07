@@ -247,9 +247,10 @@ export function createServerTransport(options: ServerTransportOptions = {}): Cha
       return { sessionId: session.data.sessionId, itinerary: trip.data.itinerary };
     },
     async checkServer() {
-      // 死活監視の口は合言葉が要らない。応答があれば、サーバーは動いている
+      // 死活監視の口は合言葉が要らない。応答があれば、サーバーは動いている。
+      // 公開の URL（Cloud Run の既定の URL）では /healthz が外から届かないので、/health を呼ぶ
       try {
-        const response = await fetchImpl("/healthz", {
+        const response = await fetchImpl("/health", {
           signal: AbortSignal.timeout(SERVER_CHECK_TIMEOUT_MS),
         });
         return response.ok;

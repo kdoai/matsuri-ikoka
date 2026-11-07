@@ -2,13 +2,13 @@ import type { HookCallbackMatcher, HookEvent, HookInput } from "@anthropic-ai/cl
 import type { Itinerary, SseEvent } from "@matsuri-ikoka/schema";
 import { decodeSseEvent, encodeSseEvent } from "@matsuri-ikoka/schema";
 import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { testFestival } from "../domain/testFestivals";
 import { searchFestivals, updateItinerary } from "../tools/matsuriTools";
 import { runTool } from "../tools/mcpServer";
 import { canRedoPlan, PLAN_REDO_DEADLINE_MS } from "../tools/planReview";
 import { testToolContext } from "../tools/testContext";
-import { createAgentHooks, extractToolOutput } from "./hooks";
+import { createAgentHooks, extractToolOutput, inputIssues } from "./hooks";
 
 const base = { session_id: "s", transcript_path: "/tmp/t", cwd: "/tmp" };
 
@@ -163,8 +163,40 @@ describe("createAgentHooks", () => {
 
     expect(events[1]).toMatchObject({
       type: "tool.end",
-      data: { ok: false, bubble: "うまく調べられませんでした", count: null },
+      data: { ok: false, bubble: "もう少し調べています", count: null },
     });
+  });
+
+  it("保存が入力の検査で断られても、失敗で止まったようには言わず、指摘の場所だけをログに残す", async () => {
+    const { events, call } = setup();
+    const logs: string[] = [];
+    const spy = vi.spyOn(console, "info").mockImplementation((line) => {
+      logs.push(String(line));
+    });
+
+    await call("PreToolUse", {
+      agent_type: "planner",
+      tool_name: "mcp__matsuri__update_itinerary",
+      tool_input: {},
+      tool_use_id: "call-4",
+    });
+    await call("PostToolUseFailure", {
+      agent_type: "planner",
+      tool_name: "mcp__matsuri__update_itinerary",
+      tool_input: {},
+      tool_use_id: "call-4",
+      error: `MCP error: Invalid arguments: ${JSON.stringify([
+        { code: "custom", path: ["itinerary", "title"], message: "秘密の文" },
+      ])}`,
+    });
+    spy.mockRestore();
+
+    expect(events[1]).toMatchObject({
+      type: "tool.end",
+      data: { ok: false, bubble: "旅程を整えています" },
+    });
+    expect(logs.join("\n")).toContain("itinerary.title:custom");
+    expect(logs.join("\n")).not.toContain("秘密の文");
   });
 
   it("スタッフと道具の組み合わせが仕様と違えば止める", async () => {
@@ -228,6 +260,30 @@ describe("createAgentHooks", () => {
   });
 });
 
+describe("inputIssues", () => {
+  it("指摘の場所と種類だけを取り出す。添字は # にし、文や値は残さない", () => {
+    const error = `MCP error -32602: Invalid arguments for tool update_itinerary: ${JSON.stringify([
+      {
+        code: "custom",
+        path: ["itinerary", "days", 0, "meals", 1, "sources"],
+        message: "店や屋台の食事の案には出典が必要です",
+      },
+      { code: "invalid_type", path: ["itinerary", "title"], input: "みなと中央駅から" },
+    ])}`;
+
+    expect(inputIssues(error)).toEqual([
+      "itinerary.days.#.meals.#.sources:custom",
+      "itinerary.title:invalid_type",
+    ]);
+  });
+
+  it("読めない文は空にする", () => {
+    expect(inputIssues("時間の上限（10秒）を超えました")).toEqual([]);
+    expect(inputIssues("[壊れた文]")).toEqual([]);
+    expect(inputIssues(undefined)).toEqual([]);
+  });
+});
+
 describe("extractToolOutput", () => {
   it("MCP の結果のどの形からでも JSON を取り出す", () => {
     const value = { a: 1 };
@@ -283,6 +339,45 @@ describe("評価の基準に届かないまま旅程係が終えようとした�
 
     expect(output.decision).toBe("block");
     expect(output.reason).toContain("research_trip");
+  });
+
+  it("保存しないまま終えようとしたら、組み直しに戻す（戻すのは2回まで）", async () => {
+    const { call } = setup();
+    const decisions = [];
+    for (let i = 0; i < 3; i += 1) {
+      decisions.push(((await call("SubagentStop", stop)) as { decision?: string }).decision);
+    }
+    expect(decisions).toEqual(["block", "block", undefined]);
+  });
+
+  it("保存の失敗で戻すときは、推測で埋めず書かないまま保存できると伝える", async () => {
+    const { call } = setup();
+    const output = (await call("SubagentStop", stop)) as { reason?: string };
+    expect(output.reason).toContain("update_itinerary");
+    expect(output.reason).toContain("推測で埋めず");
+  });
+
+  it("すでに旅程があり、この発言で保存を試していなければ、保存しなくても戻さない", async () => {
+    const { ctx, call } = setup();
+    ctx.session.itineraryId = "trip-1";
+    expect(await call("SubagentStop", stop)).toEqual({});
+
+    ctx.turn.toolCalls.push("update_itinerary");
+    expect(((await call("SubagentStop", stop)) as { decision?: string }).decision).toBe("block");
+  });
+
+  it("中止と分かった祭りの旅程や、時間の残りが少ないときは、保存しなくても戻さない", async () => {
+    const cancelled = setup();
+    cancelled.ctx.session.cancelledAnchor = {
+      festivalId: "suzunari-toro",
+      name: "鈴鳴灯籠まつり",
+      date: "2026-08-16",
+    } as typeof cancelled.ctx.session.cancelledAnchor;
+    expect(await cancelled.call("SubagentStop", stop)).toEqual({});
+
+    const late = setup();
+    late.ctx.turn.startedAt = Date.now() - PLAN_REDO_DEADLINE_MS;
+    expect(await late.call("SubagentStop", stop)).toEqual({});
   });
 
   it("合格したとき、回数を使い切ったとき、旅程係でないときは戻さない", async () => {

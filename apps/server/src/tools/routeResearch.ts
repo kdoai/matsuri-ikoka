@@ -1,12 +1,14 @@
-import type { IsoDate, LocalTime, MinuteRange } from "@matsuri-ikoka/schema";
+import type { IsoDate, LocalTime, MinuteRange, MoveLeg } from "@matsuri-ikoka/schema";
 
-/** 調べた行き方の1区間（乗り換えまでの1本） */
+/** 調べた行き方の1区間（乗り換えまでの1本）。そのまま旅程の move.legs に写せる形 */
 export interface RouteLeg {
+  means: MoveLeg["means"];
   from: string;
   to: string;
-  /** 乗る路線。歩く区間は null */
+  /** 乗る路線。歩く区間や、読めなかったときは null */
   line: string | null;
-  minutes: MinuteRange;
+  /** 区間の所要時間（分の幅）。読めなかったときは null */
+  minutes: MinuteRange | null;
 }
 
 /**
@@ -43,5 +45,7 @@ export interface RouteResearcher {
     /** 調べ直しで特に確かめること（評価係の指摘） */
     focus?: string;
     signal: AbortSignal;
+    /** 調べが進んだこと（中の Agent SDK の知らせが届いたこと）を知らせる */
+    onActivity?: () => void;
   }): Promise<RouteReport | null>;
 }

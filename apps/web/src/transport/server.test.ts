@@ -353,7 +353,7 @@ describe("接客サーバーとの通信", () => {
   it("接続が切れたあとは、合言葉の要らない死活監視の口でサーバーが応答するかを確かめる", async () => {
     const up = vi.fn<typeof fetch>(async () => json({ status: "ok" }, 200));
     expect(await createServerTransport({ fetch: up }).checkServer?.()).toBe(true);
-    expect(up.mock.calls[0]?.[0]).toBe("/healthz");
+    expect(up.mock.calls[0]?.[0]).toBe("/health");
 
     const refused = vi.fn<typeof fetch>(async () => {
       throw new TypeError("Failed to fetch");

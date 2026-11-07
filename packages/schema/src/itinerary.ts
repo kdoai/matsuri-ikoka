@@ -45,15 +45,21 @@ export const MOVE_PURPOSES = ["outbound", "last_mile", "between", "return"] as c
 
 /**
  * 移動の1区間（乗り換えまでの1本）。区間の境の駅が乗り換えの駅になる。
- * 路線は調べた結果にあるものだけを書き、分からなければ null
+ * 路線と区間の所要時間は調べた結果にあるものだけを書き、分からなければ null
  */
 export const MoveLegSchema = z.strictObject({
   means: z.enum(MOVE_MEANS),
   from: TextSchema.max(60),
   to: TextSchema.max(60),
   line: TextSchema.max(60).nullable(),
-  minutes: MinuteRangeSchema,
+  minutes: MinuteRangeSchema.nullable(),
 });
+
+/** 区間の境が同じ場所か。「鈴鳴」と「鈴鳴駅」の書き方の違いでは断らない */
+function samePlace(a: string, b: string): boolean {
+  const name = (text: string) => text.trim().replace(/駅$/, "");
+  return name(a) === name(b);
+}
 
 /** 前の予定からの移動。所要時間は必ず目安として扱う */
 export const MoveSchema = z
@@ -74,7 +80,7 @@ export const MoveSchema = z
     const legs = move.legs ?? [];
     legs.forEach((leg, index) => {
       const next = legs[index + 1];
-      if (next !== undefined && leg.to !== next.from) {
+      if (next !== undefined && !samePlace(leg.to, next.from)) {
         ctx.addIssue({
           code: "custom",
           path: ["legs", index + 1, "from"],
@@ -84,14 +90,14 @@ export const MoveSchema = z
     });
     const first = legs[0];
     const last = legs.at(-1);
-    if (first !== undefined && move.from !== undefined && first.from !== move.from) {
+    if (first !== undefined && move.from !== undefined && !samePlace(first.from, move.from)) {
       ctx.addIssue({
         code: "custom",
         path: ["legs", 0, "from"],
         message: "最初の区間は、移動の出発の場所から始めてください",
       });
     }
-    if (last !== undefined && move.to !== undefined && last.to !== move.to) {
+    if (last !== undefined && move.to !== undefined && !samePlace(last.to, move.to)) {
       ctx.addIssue({
         code: "custom",
         path: ["legs", legs.length - 1, "to"],

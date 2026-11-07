@@ -1,4 +1,5 @@
 import { type AuthConfig, isTrialAccount } from "@matsuri-ikoka/schema";
+import type { DailyCountStore } from "../storage/dailyCounts";
 import { MemoryTripStorage } from "../storage/memory";
 import type { TripStorage } from "../storage/types";
 import type { IdTokenVerifier } from "./idToken";
@@ -52,6 +53,8 @@ export function readAccountConfig(env: NodeJS.ProcessEnv): AccountConfig {
 
 export interface Account {
   storage: TripStorage;
+  /** 1日の相談の回数の数えを残す先。保存先がメモリなら null（メモリで数えるだけ） */
+  dailyCounts: DailyCountStore | null;
   /** ログインを用意していなければ null（旅の保存の API は 404 で断る） */
   verifier: IdTokenVerifier | null;
   web: AuthConfig;
@@ -80,15 +83,26 @@ export function createIdTokenVerifier(
 
 export async function createAccount(config: AccountConfig): Promise<Account> {
   if (config.storage === "memory" && !config.web.enabled) {
-    return { storage: new MemoryTripStorage(), verifier: null, web: config.web };
+    return {
+      storage: new MemoryTripStorage(),
+      dailyCounts: null,
+      verifier: null,
+      web: config.web,
+    };
   }
-  const [{ initializeApp }, { getAuth }, { getFirestore }, { FirestoreTripStorage }] =
-    await Promise.all([
-      import("firebase-admin/app"),
-      import("firebase-admin/auth"),
-      import("firebase-admin/firestore"),
-      import("../storage/firestore"),
-    ]);
+  const [
+    { initializeApp },
+    { getAuth },
+    { getFirestore },
+    { FirestoreTripStorage },
+    { FirestoreDailyCountStore },
+  ] = await Promise.all([
+    import("firebase-admin/app"),
+    import("firebase-admin/auth"),
+    import("firebase-admin/firestore"),
+    import("../storage/firestore"),
+    import("../storage/firestoreDailyCounts"),
+  ]);
   const app = initializeApp(config.projectId === null ? {} : { projectId: config.projectId });
   const db =
     config.storage !== "firestore"
@@ -97,6 +111,7 @@ export async function createAccount(config: AccountConfig): Promise<Account> {
         ? getFirestore(app)
         : getFirestore(app, config.databaseId);
   const storage = db === null ? new MemoryTripStorage() : new FirestoreTripStorage(db);
+  const dailyCounts = db === null ? null : new FirestoreDailyCountStore(db);
   const auth = getAuth(app);
   const verifier: IdTokenVerifier | null = config.web.enabled
     ? createIdTokenVerifier(
@@ -107,5 +122,5 @@ export async function createAccount(config: AccountConfig): Promise<Account> {
         },
       )
     : null;
-  return { storage, verifier, web: config.web };
+  return { storage, dailyCounts, verifier, web: config.web };
 }

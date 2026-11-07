@@ -14,6 +14,7 @@ import {
   createServerFestivalSource,
   createServerTransport,
 } from "./transport/server";
+import { ErrorBoundary, PageTrouble } from "./ui/ErrorBoundary";
 import { loadTutorialSeen } from "./ui/storage";
 // 丸ゴシックの字体（OFL）。使う文字の分だけ、必要になったときに読み込まれる
 import "@fontsource/zen-maru-gothic/400.css";
@@ -46,7 +47,9 @@ createRoot(root).render(
   <StrictMode>
     <StoreProvider store={store}>
       <AccountProvider client={account}>
-        <App />
+        <ErrorBoundary name="app" fallback={<PageTrouble />}>
+          <App />
+        </ErrorBoundary>
       </AccountProvider>
     </StoreProvider>
   </StrictMode>,

@@ -388,6 +388,21 @@ describe("そろっているべきもの（移動の区間・食事・帰りの�
     expect(MoveSchema.safeParse(wrongEnd.days[0]!.items[0]!.move).success).toBe(false);
   });
 
+  it("「駅」の有無の書き方の違いでは断らない", () => {
+    const plan = fictionalPlannedItinerary();
+    const move = plan.days[0]!.items[0]!.move!;
+    move.from = `${move.legs![0]!.from.replace(/駅$/, "")}駅`;
+    move.legs![1]!.from = move.legs![0]!.to.replace(/駅$/, "");
+    expect(MoveSchema.safeParse(move).success).toBe(true);
+  });
+
+  it("区間の所要時間が読めなければ null でよい", () => {
+    const plan = fictionalPlannedItinerary();
+    const move = plan.days[0]!.items[0]!.move!;
+    move.legs![0]!.minutes = null;
+    expect(MoveSchema.safeParse(move).success).toBe(true);
+  });
+
   it("店や屋台の食事の案には出典が要る。持っていく案には要らない", () => {
     expect(
       MealPlanSchema.safeParse({

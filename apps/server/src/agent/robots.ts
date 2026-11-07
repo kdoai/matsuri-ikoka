@@ -127,6 +127,9 @@ export function createRobotsChecker(
       });
       if (response.status === 200) {
         rules = parseRobots(await readLimitedText(response, MAX_ROBOTS_BYTES));
+      } else {
+        // 読まない本文を放っておくと、接続が閉じられたときに通信のライブラリが例外を投げることがある
+        await response.body?.cancel().catch(() => {});
       }
     } catch {
       // 読めなければ決まりなしとして扱う
