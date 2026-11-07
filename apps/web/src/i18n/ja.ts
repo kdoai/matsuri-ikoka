@@ -223,6 +223,8 @@ export const ja = {
     hold: "押している間だけ、声で話す",
     stop: "聞くのをやめる",
     listening: "聞いています。離すと止まります",
+    listeningToggle: "聞いています。もう一度押すと止まります",
+    toggleTitle: "声で話す（もう一度押すと止まります）",
     heard: (text: string) => `「${text}」`,
     filled: "聞き取った文を入れました。確かめて、直してから「送る」を押してください",
     noticeTitle: "声で話す前に",
@@ -233,7 +235,8 @@ export const ja = {
     ],
     accept: "声で話す",
     decline: "文字で書く",
-    accepted: "ボタンを押している間、話してください",
+    accepted:
+      "ボタンを押している間、話してください。指で短く押したときは、もう一度押すまで聞き続けます",
     failed: {
       denied: "マイクを使えませんでした。文字で相談を続けられます。",
       noMic: "マイクが見つかりませんでした。文字で相談を続けられます。",

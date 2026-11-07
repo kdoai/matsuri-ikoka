@@ -76,6 +76,7 @@ export function initialData({ locale = "ja", tutorialSeen = false }: InitialOpti
       locale,
       soundOn: false,
       readAloud: false,
+      readAloudNotice: false,
       candidatesOpen: false,
       drawerOpen: false,
       celebrating: false,

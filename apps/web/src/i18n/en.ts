@@ -240,6 +240,8 @@ export const en: Messages = {
     hold: "Hold to speak",
     stop: "Stop listening",
     listening: "Listening. Release to stop",
+    listeningToggle: "Listening. Press again to stop",
+    toggleTitle: "Speak (press again to stop)",
     heard: (text: string) => `"${text}"`,
     filled: "What you said is in the box. Check it, fix it if needed, then press Send",
     noticeTitle: "Before you speak",
@@ -250,7 +252,8 @@ export const en: Messages = {
     ],
     accept: "Use my voice",
     decline: "Type instead",
-    accepted: "Hold the button while you speak",
+    accepted:
+      "Hold the button while you speak. If you tap it with your finger, it keeps listening until you tap again",
     failed: {
       denied: "The microphone isn't available. You can keep consulting by typing.",
       noMic: "No microphone was found. You can keep consulting by typing.",

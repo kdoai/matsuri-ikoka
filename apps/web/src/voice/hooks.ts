@@ -69,6 +69,33 @@ export function voiceAllowed(onDevice: boolean, lang: string): boolean {
 }
 
 /**
+ * 読み上げをいったんオフにするか。オンのまま言語を変えて、使う声が端末の外のものになったときは true。
+ * 言語が変わったら、前の言語で認めてもらったことを忘れる（戻っても、もう一度説明する）。
+ * オフにするときも忘れる
+ */
+export function shouldPauseReadAloud(enabled: boolean, onDevice: boolean, lang: string): boolean {
+  if (remoteAllowed !== null && remoteAllowed !== lang) remoteAllowed = null;
+  if (!enabled || onDevice || remoteAllowed === lang) return false;
+  remoteAllowed = null;
+  return true;
+}
+
+/**
+ * 読み上げのオン・オフを見張る。使う声が端末の外のものになったら、いったんオフにして、
+ * 次に設定を開いたときに一度だけ知らせる（ストアの readAloudNotice）。いまの声で読んでよいかを返す
+ */
+export function useReadAloudGuard(): boolean {
+  const enabled = useApp((state) => state.ui.readAloud);
+  const lang = speechLang(useApp((state) => state.ui.locale));
+  const onDevice = useVoiceOnDevice(lang);
+  const actions = useActions();
+  useEffect(() => {
+    if (shouldPauseReadAloud(enabled, onDevice, lang)) actions.setReadAloud(false, true);
+  }, [enabled, onDevice, lang, actions]);
+  return voiceAllowed(onDevice, lang);
+}
+
+/**
  * 読み上げがオンのとき、会話の窓に出た文を読む。文が変わったら前の読み上げを止め、
  * 文がない間（窓を閉じたとき・考えている間など）と聞いている間は黙る。窓が消えたら止める
  */
@@ -76,13 +103,7 @@ export function useReadAloud(line: SpokenLine | null): void {
   const enabled = useApp((state) => state.ui.readAloud);
   const lang = speechLang(useApp((state) => state.ui.locale));
   const heard = useListening();
-  const onDevice = useVoiceOnDevice(lang);
-  const actions = useActions();
-  // オンのまま言語を変えて、使う声が端末の外のものになったら、いったんオフにする（次にオンにするとき説明する）
-  const allowed = voiceAllowed(onDevice, lang);
-  useEffect(() => {
-    if (enabled && !allowed) actions.setReadAloud(false);
-  }, [enabled, allowed, actions]);
+  const allowed = useReadAloudGuard();
   const controller = useRef<ReturnType<typeof createReadAloud> | null>(null);
   controller.current ??= createReadAloud(sharedSpeaker());
   const key = line?.key ?? null;

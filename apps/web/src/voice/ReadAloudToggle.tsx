@@ -5,33 +5,36 @@ import {
   allowRemoteVoice,
   canReadAloud,
   forgetRemoteVoice,
+  sharedSpeaker,
+  useReadAloudGuard,
   useVoiceOnDevice,
-  voiceAllowed,
 } from "./hooks";
 import { speechLang } from "./speak";
 
 /**
  * 読み上げのオン・オフ。読み上げの機能がないブラウザでは出さない（文字だけで使える）。
  * 使う声がこの端末の外のもの（または選べずブラウザに任せる）ときは、オンにするたびに先に説明する。
- * オンのまま言語を変えて端末の外の声になったときは、いったんオフにして説明を出す
+ * オンのまま言語を変えて端末の外の声になったときは、いったんオフにして（useReadAloudGuard）、
+ * ここで一度だけ説明を出す。設定を閉じている間にオフになったときは、次に開いたときに出す
  */
 export function ReadAloudToggle() {
   const t = useT();
   const actions = useActions();
   const locale = useApp((state) => state.ui.locale);
   const readAloud = useApp((state) => state.ui.readAloud);
+  const notice = useApp((state) => state.ui.readAloudNotice);
   const lang = speechLang(locale);
   const onDevice = useVoiceOnDevice(lang);
   const [explaining, setExplaining] = useState(false);
   const title = useRef<HTMLParagraphElement>(null);
-  const allowed = voiceAllowed(onDevice, lang);
+  useReadAloudGuard();
 
+  // 自動でオフにしたわけを、一度だけ知らせる
   useEffect(() => {
-    if (readAloud && !allowed) {
-      actions.setReadAloud(false);
-      setExplaining(true);
-    }
-  }, [readAloud, allowed, actions]);
+    if (!notice) return;
+    setExplaining(true);
+    actions.setReadAloud(false);
+  }, [notice, actions]);
   useEffect(() => {
     if (explaining) title.current?.focus();
   }, [explaining]);
@@ -40,6 +43,8 @@ export function ReadAloudToggle() {
   const turnOn = () => {
     setExplaining(false);
     if (!onDevice) allowRemoteVoice(lang);
+    // 押したその場で出口を開けておく（聞こえる声は出さない）
+    sharedSpeaker().prime();
     actions.setReadAloud(true);
   };
 

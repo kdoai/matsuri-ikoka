@@ -75,6 +75,7 @@ export interface VoiceLike {
 export interface UtteranceLike {
   lang: string;
   voice: VoiceLike | null;
+  volume: number;
 }
 
 export type UtteranceFactory = (text: string) => UtteranceLike;
@@ -110,6 +111,11 @@ export function voiceOnDevice(voices: readonly VoiceLike[], lang: string): boole
 export interface Speaker {
   /** 前の読み上げを止めて、この文を読む */
   say(text: string, lang: string): void;
+  /**
+   * 押したその場で、音量 0 の空の文を読ませる。押したときでないと声を出さないブラウザ（iOS の Safari など）で、
+   * あとから読み上げられるようにする。聞こえる声は出さない
+   */
+  prime(): void;
   stop(): void;
 }
 
@@ -119,7 +125,7 @@ export function createSpeaker(
   makeUtterance: UtteranceFactory | null,
 ): Speaker {
   if (synth === null || makeUtterance === null) {
-    return { say: () => undefined, stop: () => undefined };
+    return { say: () => undefined, stop: () => undefined, prime: () => undefined };
   }
   let spoke = false;
   // 言語ごとに選んだ声。声の一覧が変わったら選び直す
@@ -145,6 +151,11 @@ export function createSpeaker(
         utterance.voice = voice;
         synth.speak(utterance);
       }
+    },
+    prime() {
+      const utterance = makeUtterance(" ");
+      utterance.volume = 0;
+      synth.speak(utterance);
     },
     stop() {
       // 読んでいないときは、ブラウザの読み上げに触らない（ほかの音のじゃまをしない）

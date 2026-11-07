@@ -18,7 +18,7 @@ import {
   type ListenFailure,
   type PushToTalk,
 } from "./listen";
-import { createPressControl, type PressControl } from "./press";
+import { createPressControl, type PressControl, type PressMode, type PressSource } from "./press";
 import { speechLang } from "./speak";
 
 // 声で話すボタン。長く押したときは押している間だけ聞く。短く押したとき（ダブルタップなど）や、
@@ -47,6 +47,8 @@ export function VoiceInput({ onFilled }: { onFilled: () => void }) {
   const draft = useApp((state) => state.ui.draft);
   const Recognition = useMemo(() => browserRecognition(), []);
   const [phase, setPhase] = useState<Phase>({ kind: "idle" });
+  // 聞いているあいだの止め方（離したら止まる・もう一度押すと止まる）。表示の文を出し分ける
+  const [mode, setMode] = useState<PressMode>("idle");
   const talk = useRef<PushToTalk | null>(null);
   const lang = speechLang(locale);
   const langRef = useRef(lang);
@@ -71,6 +73,7 @@ export function VoiceInput({ onFilled }: { onFilled: () => void }) {
       setListening(true);
       setPhase({ kind: "listening", heard: "" });
     },
+    modeChanged: setMode,
     focusInput: () => onFilledRef.current(),
     defer: (callback) => window.setTimeout(callback, 0),
   });
@@ -115,6 +118,17 @@ export function VoiceInput({ onFilled }: { onFilled: () => void }) {
     if (draft === "") setPhase((now) => (now.kind === "filled" ? { kind: "idle" } : now));
   }, [draft]);
 
+  // 切り替えで聞いている間は、ボタンの外を押したら止める（ボタンに焦点が来ず、焦点が外れたことが届かないブラウザがある）
+  useEffect(() => {
+    if (mode !== "toggle") return;
+    const onOutside = (event: Event) => {
+      if (event.target instanceof Node && button.current?.contains(event.target)) return;
+      press.current?.outside();
+    };
+    document.addEventListener("pointerdown", onOutside, true);
+    return () => document.removeEventListener("pointerdown", onOutside, true);
+  }, [mode]);
+
   // 説明を出したら、見出しへ焦点を移して読ませる
   useEffect(() => {
     if (phase.kind === "notice") noticeTitle.current?.focus();
@@ -124,13 +138,16 @@ export function VoiceInput({ onFilled }: { onFilled: () => void }) {
 
   const isPressKey = (event: KeyboardEvent<HTMLButtonElement>) =>
     event.key === " " || event.key === "Enter";
+  const sourceOf = (event: PointerEvent<HTMLButtonElement>): PressSource =>
+    event.pointerType === "mouse" ? "mouse" : "touch";
   const onPointerDown = (event: PointerEvent<HTMLButtonElement>) => {
     if (event.button !== 0) return;
     event.preventDefault();
     event.currentTarget.setPointerCapture?.(event.pointerId);
-    press.current?.down("pointer");
+    press.current?.down(sourceOf(event));
   };
-  const onPointerUp = () => press.current?.up("pointer");
+  const onPointerUp = (event: PointerEvent<HTMLButtonElement>) =>
+    press.current?.up(sourceOf(event));
   const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
     if (!isPressKey(event)) return;
     // 押している間のキーを、店の中の旅人の操作に渡さない
@@ -149,10 +166,10 @@ export function VoiceInput({ onFilled }: { onFilled: () => void }) {
   let status: string | null = null;
   switch (phase.kind) {
     case "listening":
-      status =
-        phase.heard === ""
-          ? t.voice.listening
-          : `${t.voice.listening} ${t.voice.heard(phase.heard)}`;
+      {
+        const now = mode === "toggle" ? t.voice.listeningToggle : t.voice.listening;
+        status = phase.heard === "" ? now : `${now} ${t.voice.heard(phase.heard)}`;
+      }
       break;
     case "ready":
       status = t.voice.accepted;
@@ -178,7 +195,7 @@ export function VoiceInput({ onFilled }: { onFilled: () => void }) {
             : "border-line-strong bg-white/95 text-ink hover:border-yamabuki-400"
         }`}
         aria-label={listening ? t.voice.stop : t.voice.hold}
-        title={t.voice.hold}
+        title={mode === "toggle" ? t.voice.toggleTitle : t.voice.hold}
         aria-pressed={listening}
         aria-describedby={status === null ? undefined : STATUS_ID}
         data-testid="voice-input"

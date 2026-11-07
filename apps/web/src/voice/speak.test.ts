@@ -24,7 +24,7 @@ function fakeSynth(voices: VoiceLike[] = []) {
     },
     getVoices: () => voices,
   };
-  const make = (text: string) => ({ text, lang: "", voice: null }) as UtteranceLike;
+  const make = (text: string) => ({ text, lang: "", voice: null, volume: 1 }) as UtteranceLike;
   return { synth, make, spoken, cancels: () => cancels };
 }
 
@@ -119,7 +119,7 @@ describe("createSpeaker", () => {
         changed = listener;
       },
     };
-    const speaker = createSpeaker(synth, () => ({ lang: "", voice: null }));
+    const speaker = createSpeaker(synth, () => ({ lang: "", voice: null, volume: 1 }));
     speaker.say("一つ目。", "ja-JP");
     expect(spoken[0]?.voice).toBeNull();
     const remote = { lang: "ja-JP", localService: false };
@@ -142,7 +142,9 @@ describe("createSpeaker", () => {
     const speaker = createSpeaker(fake.synth, fake.make);
     speaker.say("架空の夏まつりを見つけました。", "ja-JP");
     expect(fake.cancels()).toBe(1);
-    expect(fake.spoken).toEqual([{ text: "架空の夏まつりを見つけました。", lang: "ja-JP", voice }]);
+    expect(fake.spoken).toEqual([
+      { text: "架空の夏まつりを見つけました。", lang: "ja-JP", voice, volume: 1 },
+    ]);
     speaker.stop();
     expect(fake.spoken).toEqual([]);
   });
@@ -158,10 +160,17 @@ describe("createSpeaker", () => {
     expect(fake.cancels()).toBe(2);
   });
 
+  it("出口を開けるときは、音量 0 の空の文だけを読ませる", () => {
+    const fake = fakeSynth();
+    createSpeaker(fake.synth, fake.make).prime();
+    expect(fake.spoken).toEqual([{ text: " ", lang: "", voice: null, volume: 0 }]);
+  });
+
   it("読み上げの機能がなければ、何もせずに壊れない", () => {
     const speaker = createSpeaker(null, null);
     expect(() => {
       speaker.say("こんにちは", "ja-JP");
+      speaker.prime();
       speaker.stop();
     }).not.toThrow();
   });

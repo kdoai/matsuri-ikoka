@@ -154,8 +154,10 @@ describe("ストア：記録した相談で、相談からしおりまで", () =
     await actions.enterShop();
     await actions.restart();
     expect(store.getState().ui).toMatchObject({ soundOn: true, readAloud: true });
+    actions.setReadAloud(false, true);
+    expect(store.getState().ui).toMatchObject({ readAloud: false, readAloudNotice: true });
     actions.setReadAloud(false);
-    expect(store.getState().ui.readAloud).toBe(false);
+    expect(store.getState().ui.readAloudNotice).toBe(false);
   });
 });
 

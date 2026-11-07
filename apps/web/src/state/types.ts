@@ -259,6 +259,8 @@ export interface UiState {
   soundOn: boolean;
   /** 会話の窓に出た文を声で読み上げる */
   readAloud: boolean;
+  /** 使う声が端末の外のものになったため、読み上げを自動でオフにした。次に設定を開いたとき一度だけ知らせる */
+  readAloudNotice: boolean;
   candidatesOpen: boolean;
   /** スマートフォンで、下から引き出すパネルが開いているか */
   drawerOpen: boolean;

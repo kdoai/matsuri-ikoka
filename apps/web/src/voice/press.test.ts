@@ -6,6 +6,7 @@ function setup(options: { accepted?: boolean; startOk?: boolean } = {}) {
   let accepted = options.accepted ?? true;
   let listening = false;
   const log: string[] = [];
+  const modes: string[] = [];
   const deferred: (() => void)[] = [];
   const deps: PressDeps = {
     now: () => time,
@@ -23,6 +24,7 @@ function setup(options: { accepted?: boolean; startOk?: boolean } = {}) {
     },
     listening: () => listening,
     started: () => log.push("started"),
+    modeChanged: (mode) => modes.push(mode),
     focusInput: () => log.push("focus"),
     defer: (callback) => deferred.push(callback),
   };
@@ -30,6 +32,7 @@ function setup(options: { accepted?: boolean; startOk?: boolean } = {}) {
   return {
     control,
     log,
+    modes,
     wait: (ms: number) => {
       time += ms;
     },
@@ -51,42 +54,61 @@ function setup(options: { accepted?: boolean; startOk?: boolean } = {}) {
 describe("createPressControl", () => {
   it("長く押したときは、押している間だけ聞く", () => {
     const { control, log, wait } = setup();
-    control.down("pointer");
+    control.down("touch");
     wait(TAP_MS + 200);
-    control.up("pointer");
+    control.up("touch");
     expect(log).toEqual(["start", "started", "stop"]);
   });
 
-  it("押してすぐ離したとき（ダブルタップなど）は聞き続け、次に押したら止める", () => {
-    const { control, log, wait, settle } = setup();
-    control.down("pointer");
+  it("マウスで短くクリックしたときは、離したら止める", () => {
+    const { control, log, wait } = setup();
+    control.down("mouse");
+    wait(100);
+    control.up("mouse");
+    control.click();
+    expect(log).toEqual(["start", "started", "stop"]);
+  });
+
+  it("キーを短く押したときも、離したら止める", () => {
+    const { control, log, wait } = setup();
+    control.down("key");
+    wait(50);
+    control.up("key");
+    expect(log).toEqual(["start", "started", "stop"]);
+  });
+
+  it("指で押してすぐ離したとき（ダブルタップなど）は聞き続け、次に押したら止める", () => {
+    const { control, log, modes, wait, settle } = setup();
+    control.down("touch");
     wait(40);
-    control.up("pointer");
+    control.up("touch");
     control.click();
     settle();
     expect(log).toEqual(["start", "started"]);
-    control.down("pointer");
+    expect(modes).toEqual(["hold", "toggle"]);
+    control.down("touch");
     wait(40);
-    control.up("pointer");
+    control.up("touch");
     control.click();
     expect(log).toEqual(["start", "started", "stop"]);
   });
 
   it("click だけが届くときは、押すたびに聞く・止めるを切り替える", () => {
-    const { control, log } = setup();
+    const { control, log, modes } = setup();
     control.click();
     expect(log).toEqual(["start", "started"]);
+    expect(modes).toEqual(["toggle"]);
     control.click();
     expect(log).toEqual(["start", "started", "stop"]);
   });
 
   it("押したあとに続いて届く click では、止めない", () => {
     const { control, log, wait } = setup();
-    control.down("pointer");
+    control.down("touch");
     wait(TAP_MS + 10);
     control.click();
     expect(log).toEqual(["start", "started"]);
-    control.up("pointer");
+    control.up("touch");
     expect(log.at(-1)).toBe("stop");
   });
 
@@ -147,10 +169,29 @@ describe("createPressControl", () => {
 
   it("聞き始められなかったときは、聞いている扱いにしない", () => {
     const { control, log, wait } = setup({ startOk: false });
-    control.down("pointer");
+    control.down("touch");
     wait(10);
-    control.up("pointer");
+    control.up("touch");
     control.click();
     expect(log).toEqual([]);
+  });
+
+  it("切り替えで聞いている間にボタンの外を押したら止める。押している間だけ聞くときは止めない", () => {
+    const { control, log, wait } = setup();
+    control.click();
+    control.outside();
+    expect(log).toEqual(["start", "started", "stop"]);
+    control.down("mouse");
+    wait(TAP_MS + 10);
+    control.outside();
+    expect(log.at(-1)).toBe("started");
+  });
+
+  it("止めたら、聞いていない表示に戻す", () => {
+    const { control, modes, wait } = setup();
+    control.down("mouse");
+    wait(TAP_MS + 10);
+    control.up("mouse");
+    expect(modes).toEqual(["hold", "idle"]);
   });
 });

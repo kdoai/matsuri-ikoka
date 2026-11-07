@@ -1,12 +1,17 @@
 // 声で話すボタンの押し方。画面の部品から切り離して、テストで確かめられるようにする。
-// - 長く押したとき：押している間だけ聞き、離したら止める
-// - 短く押したとき（ダブルタップのように、押してすぐ離れるとき）：聞き続け、次に押したら止める
+// - マウスとキー：押している間だけ聞き、離したら止める
+// - 指やペン：長く押したときは押している間だけ聞く。短く押したとき（スクリーンリーダーのダブルタップのように、
+//   押してすぐ離れるとき）は聞き続け、次に押すか、ボタンの外を押したら止める
 // - click だけが届くとき（スクリーンリーダーの決定など）：押すたびに聞く・止めるを切り替える
 
-/** これより短く押して離したときは、離しても止めず、次に押すまで聞き続ける */
+/** 指やペンでこれより短く押して離したときは、離しても止めず、次に押すまで聞き続ける */
 export const TAP_MS = 300;
 
-export type PressSource = "pointer" | "key";
+/** 押したもの。touch は指とペン */
+export type PressSource = "mouse" | "touch" | "key";
+
+/** 聞いているあいだの止め方。hold は離したら止める、toggle は次に押したら止める */
+export type PressMode = "idle" | "hold" | "toggle";
 
 export interface PressDeps {
   now(): number;
@@ -18,8 +23,10 @@ export interface PressDeps {
   start(): boolean;
   stop(): void;
   listening(): boolean;
-  /** 聞き始めたとき（読み上げを止め、聞いている表示にする） */
+  /** 聞き始めたとき（読み上げを止める） */
   started(): void;
+  /** 止め方が変わったとき（聞いている表示の文を出し分ける） */
+  modeChanged(mode: PressMode): void;
   /** 聞き取った文を入れた入力欄へ焦点を移す */
   focusInput(): void;
   /** 押下に続いて届く click を見分けるあいだ待つ（ふだんは次の処理の番まで） */
@@ -32,6 +39,8 @@ export interface PressControl {
   click(): void;
   /** ボタンから焦点が外れたとき */
   blur(): void;
+  /** ボタンの外が押されたとき */
+  outside(): void;
   /** 聞き取った文を下書きに入れたとき */
   filled(): void;
   /** 聞き取りが終わったとき（文が入った・失敗した・やめた） */
@@ -42,13 +51,17 @@ export function createPressControl(deps: PressDeps): PressControl {
   /** いま押されているもの */
   let held: PressSource | null = null;
   let downAt = 0;
-  /** 聞いているあいだの止め方。hold は離したら止める、toggle は次に押したら止める */
-  let mode: "idle" | "hold" | "toggle" = "idle";
+  let mode: PressMode = "idle";
   /** 押下に続いて届く click を、別の押し直しと取り違えない */
   let fromPress = false;
   /** キーやボタンを押している間に文が入ったら、離してから入力欄へ移る */
   let focusPending = false;
 
+  const setMode = (next: PressMode) => {
+    if (mode === next) return;
+    mode = next;
+    deps.modeChanged(next);
+  };
   const release = () => {
     deps.defer(() => {
       fromPress = false;
@@ -60,13 +73,13 @@ export function createPressControl(deps: PressDeps): PressControl {
       return false;
     }
     if (!deps.start()) return false;
-    mode = next;
     deps.started();
+    setMode(next);
     return true;
   };
   const finish = () => {
     deps.stop();
-    mode = "idle";
+    setMode("idle");
   };
 
   return {
@@ -92,7 +105,8 @@ export function createPressControl(deps: PressDeps): PressControl {
       held = null;
       release();
       if (mode === "hold") {
-        if (deps.now() - downAt < TAP_MS) mode = "toggle";
+        // 指で短く押したときだけ聞き続ける（マウスのクリックやキーは、離したら止める）
+        if (source === "touch" && deps.now() - downAt < TAP_MS) setMode("toggle");
         else finish();
       }
       if (focusPending) {
@@ -107,17 +121,20 @@ export function createPressControl(deps: PressDeps): PressControl {
     },
     blur() {
       if (deps.listening()) finish();
-      mode = "idle";
+      setMode("idle");
       held = null;
       focusPending = false;
       release();
+    },
+    outside() {
+      if (mode === "toggle" && deps.listening()) finish();
     },
     filled() {
       if (held !== null) focusPending = true;
       else deps.focusInput();
     },
     ended() {
-      mode = "idle";
+      setMode("idle");
     },
   };
 }

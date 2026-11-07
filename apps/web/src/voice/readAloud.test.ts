@@ -65,6 +65,7 @@ function fakeSpeaker() {
   const speaker: Speaker = {
     say: (text, lang) => calls.push(`say:${lang}:${text}`),
     stop: () => calls.push("stop"),
+    prime: () => calls.push("prime"),
   };
   return { speaker, calls };
 }

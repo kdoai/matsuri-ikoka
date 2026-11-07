@@ -137,7 +137,8 @@ export interface AppActions {
   setTab(tab: PanelTab): void;
   setLocale(locale: Locale): void;
   setSound(on: boolean): void;
-  setReadAloud(on: boolean): void;
+  /** 読み上げのオン・オフ。notice が true なら、自動でオフにしたことを次に一度だけ知らせる */
+  setReadAloud(on: boolean, notice?: boolean): void;
   setDrawer(open: boolean): void;
   setCandidatesOpen(open: boolean): void;
   openShiori(): void;
@@ -771,8 +772,8 @@ export function createAppStore(deps: StoreDeps): AppStore {
       setSound(on) {
         setUi({ soundOn: on });
       },
-      setReadAloud(on) {
-        setUi({ readAloud: on });
+      setReadAloud(on, notice = false) {
+        setUi({ readAloud: on, readAloudNotice: notice });
       },
       setDrawer(open) {
         setUi({ drawerOpen: open });
