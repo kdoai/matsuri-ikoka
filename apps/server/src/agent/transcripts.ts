@@ -27,13 +27,14 @@ export type DeleteSession = (sessionId: string, options: { dir: string }) => Pro
 /** 相談が消えたときに、その相談の会話の記録を消す関数を作る。cwd はエージェントの作業ディレクトリ */
 export function forgetTranscripts(deleteSession: DeleteSession, cwd: string) {
   return (session: Session): void => {
-    const id = session.agentSessionId;
-    if (id === null) return;
-    deleteSession(id, { dir: cwd }).catch((error: unknown) => {
-      // 記録がまだない（一度も話していない）ときも失敗になるので、ログだけにする
-      console.warn(
-        JSON.stringify({ kind: "transcript_delete_failed", reason: String(error).slice(0, 120) }),
-      );
-    });
+    for (const id of [session.agentSessionId, session.guide.agentSessionId]) {
+      if (id === null) continue;
+      deleteSession(id, { dir: cwd }).catch((error: unknown) => {
+        // 記録がまだない（一度も話していない）ときも失敗になるので、ログだけにする
+        console.warn(
+          JSON.stringify({ kind: "transcript_delete_failed", reason: String(error).slice(0, 120) }),
+        );
+      });
+    }
   };
 }

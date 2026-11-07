@@ -4,6 +4,10 @@ import {
   type ConversationStage,
   DEFAULT_PREFERENCES,
   type FestivalCandidate,
+  type GuideMemoItem,
+  type GuideNotice,
+  type GuideProposal,
+  type GuideResumeSummary,
   type IsoDate,
   type Itinerary,
   type LodgingSearch,
@@ -12,6 +16,7 @@ import {
   type Preferences,
   type Source,
   type TripAnchor,
+  type TripWatch,
   type VerificationResult,
   type Weather,
 } from "@matsuri-ikoka/schema";
@@ -23,6 +28,42 @@ import type { OwnerId } from "../storage/owner";
 
 /** 使われなくなった相談を消すまでの時間 */
 export const SESSION_IDLE_MS = 6 * 60 * 60 * 1000;
+
+/**
+ * ガイドと話すときの相談の状態（docs/spec/guide.md）。
+ * 手帳・通知・提案・見回りの依頼は、残した旅なら旅の下に置き、ここには持たない。
+ * ログインしていない相談と、残す前の旅では、ここにだけ持つ（相談の間だけ残る）
+ */
+export interface SessionGuide {
+  /** Agent SDK の会話の ID。インスタンスの一時ディレクトリの記録を指すので、保存しない */
+  agentSessionId: string | null;
+  /** その会話でかかった費用。再開すると累計で届くので、差を取るのに使う。保存しない */
+  agentCostUsd: number;
+  /** 別のインスタンスに届いたときの続きに使う、コードが書く要約 */
+  resume: GuideResumeSummary;
+  memo: GuideMemoItem[];
+  notices: GuideNotice[];
+  proposals: GuideProposal[];
+  watch: TripWatch | null;
+  /** mock：再生した発言の番号 */
+  replayedTurns: number[];
+  /** mock：記録の通知と提案をこの相談の旅に届けたか */
+  replaySeeded: boolean;
+}
+
+export function newSessionGuide(): SessionGuide {
+  return {
+    agentSessionId: null,
+    agentCostUsd: 0,
+    resume: { turns: 0, topics: [], pendingProposalIds: [], lastTurnAt: null },
+    memo: [],
+    notices: [],
+    proposals: [],
+    watch: null,
+    replayedTurns: [],
+    replaySeeded: false,
+  };
+}
 
 export interface Session {
   id: string;
@@ -61,6 +102,8 @@ export interface Session {
   foundSpots: Map<string, { id: string; name: string }[]>;
   /** live：Agent SDK のセッション ID（resume に使う） */
   agentSessionId: string | null;
+  /** しおりのあとのガイドと話すときの状態 */
+  guide: SessionGuide;
   /**
    * mock：再生しているサンプルの相談と、次に再生する発言の番号。
    * itineraryIds は、記録の旅程 ID からこの相談の旅程 ID への置き換え（相談どうしで旅程を取り違えないため）
@@ -141,6 +184,7 @@ export class SessionStore {
       researchedSources: new Map(),
       foundSpots: new Map(),
       agentSessionId: null,
+      guide: newSessionGuide(),
       replay: init.replay ?? null,
       busy: false,
     };
@@ -166,7 +210,10 @@ export class SessionStore {
       | "replay"
     > &
       Partial<
-        Pick<Session, "ownerUid" | "anchor" | "anchorPlan" | "anchorCheck" | "cancelledAnchor">
+        Pick<
+          Session,
+          "ownerUid" | "anchor" | "anchorPlan" | "anchorCheck" | "cancelledAnchor" | "guide"
+        >
       >,
   ): Session {
     const existing = this.get(saved.id);
@@ -180,6 +227,7 @@ export class SessionStore {
       anchorPlan: saved.anchorPlan ?? null,
       anchorCheck: saved.anchorCheck ?? null,
       cancelledAnchor: saved.cancelledAnchor ?? null,
+      guide: saved.guide ?? newSessionGuide(),
       lastActiveAt: this.#now(),
       weather: new Map(),
       nearMisses: [],
