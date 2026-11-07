@@ -356,15 +356,45 @@ const PUBLIC_WITHOUT_USER_DATA = [
   "GET /api/auth/config",
 ];
 
+/** 内部の入口。利用者のデータに触れるが、利用者の ID トークンでは通らない（下の「内部の入口」） */
+const INTERNAL_ROUTES = ["POST /internal/patrol/start", "POST /internal/patrol/webhook"];
+
 const label = (route: { method: string; path: string }) => `${route.method} ${route.path}`;
 
 describe("経路の表", () => {
   it("すべての経路が、この表か「利用者のデータに触れない経路」のどちらかにある", () => {
     const { app } = setup();
     const declared = declaredRoutes(app).map(label).sort();
-    const listed = [...TABLE.map((row) => row.route), ...PUBLIC_WITHOUT_USER_DATA].sort();
+    const listed = [
+      ...TABLE.map((row) => row.route),
+      ...PUBLIC_WITHOUT_USER_DATA,
+      ...INTERNAL_ROUTES,
+    ].sort();
 
     expect(listed).toEqual(declared);
+  });
+});
+
+describe("内部の入口", () => {
+  const paths = INTERNAL_ROUTES.map((route) => route.replace("POST ", ""));
+
+  it.each(paths)("%s は、検証の設定がなければ、利用者の ID トークンでも断る", async (path) => {
+    const { call } = setup();
+
+    expect((await call(path, { method: "POST", user: ALICE })).status).toBe(404);
+    expect((await call(path, { method: "POST" })).status).toBe(404);
+  });
+
+  it.each(paths)("%s は、検証があるとき、利用者の ID トークンを通さない", async (path) => {
+    const { call } = setup({
+      internal: {
+        oidc: { verify: async () => null },
+        signature: { verify: async () => null },
+      },
+    });
+
+    expect((await call(path, { method: "POST", user: ALICE })).status).toBe(401);
+    expect((await call(path, { method: "POST" })).status).toBe(401);
   });
 });
 

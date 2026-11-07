@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=https://platform.claude.com/schemas/ant/beta/environment.json
+name: matsuri-patrol
+description: 頼まれた旅の祭りの見回り。秘密の値を置かない
+# 祭りの公式サイトは前もって列挙できないので、ネットワークは絞らない（週次の調査と同じ理由）。
+# 見回り係はページの取得の道具しか持たず、セッションに秘密の値も利用者の情報もない
+config:
+  type: cloud
+  networking:
+    type: unrestricted

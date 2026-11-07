@@ -29,6 +29,8 @@ import { ClaudeGuideRunner } from "./guide/claudeRunner";
 import { loadSampleGuides, ReplayGuideRunner } from "./guide/replayRunner";
 import type { GuideRunner } from "./guide/runner";
 import { errorForLog } from "./log";
+import { createPatrolDeps } from "./patrol";
+import type { PatrolDeps } from "./patrol/runner";
 import type { FestivalWishReader } from "./routes/festivalSearch";
 import { ConcurrencyLimiter, clientIp, DailyLimiter } from "./routes/guard";
 import { StoragePersistence } from "./session/persistence";
@@ -81,6 +83,8 @@ const stations = await loadStationPoints(config.repoRoot);
 let readFestivalWish: FestivalWishReader | undefined;
 // ガイドは、モデルの設定（MODEL_GUIDE）がなければ動かさない。入口だけが断り、今の相談は動く
 let guideRunner: GuideRunner | undefined;
+// 見回りは、live で鍵（PATROL_ANTHROPIC_API_KEY）があるときだけ動かす。なければ入口だけが断り、今の相談はそのまま動く
+let patrol: PatrolDeps | null = null;
 if (config.mode === "live") {
   const prompts = await loadPrompts();
   const cwd = createAgentWorkdir();
@@ -113,6 +117,15 @@ if (config.mode === "live") {
   const lodging = createLodgingService(process.env, {
     production: config.production,
     now: () => nowInJapan(),
+  });
+  // 組み立てに失敗しても、サーバーと相談は止めない
+  patrol = await createPatrolDeps({
+    env: process.env,
+    festivals: festivals.store,
+    lodging,
+  }).catch((error: unknown) => {
+    console.error(JSON.stringify({ kind: "patrol_setup_failed", ...errorForLog(error) }));
+    return null;
   });
   const verifier = createWebVerifier({
     prompt: prompts.verifier,
@@ -246,9 +259,11 @@ const persistence = new StoragePersistence({ storage: account.storage, itinerari
 const guide: AppDeps["guide"] =
   guideRunner === undefined ? undefined : { runner: guideRunner, limits: config.guideLimits };
 console.info(JSON.stringify({ kind: "guide", available: guide !== undefined }));
+console.info(JSON.stringify({ kind: "patrol", available: patrol !== null }));
 
 const app = createApp({
   ...(guide === undefined ? {} : { guide }),
+  patrol,
   runner,
   sessions,
   itineraries,

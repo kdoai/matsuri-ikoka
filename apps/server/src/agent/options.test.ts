@@ -236,6 +236,8 @@ describe("agentEnv", () => {
       USERPROFILE: "C:\\Users\\someone",
       ANTHROPIC_API_KEY: "test-key",
       ACCESS_PASSCODE: "passcode",
+      PATROL_ANTHROPIC_API_KEY: "test-patrol-key",
+      ANTHROPIC_WEBHOOK_SIGNING_KEY: "test-signing-key",
       DAILY_CHAT_LIMIT: "100",
       GCS_BUCKET: "bucket",
       MODEL_CONCIERGE: "model-a",
@@ -250,6 +252,8 @@ describe("agentEnv", () => {
     });
     for (const key of [
       "ACCESS_PASSCODE",
+      "PATROL_ANTHROPIC_API_KEY",
+      "ANTHROPIC_WEBHOOK_SIGNING_KEY",
       "DAILY_CHAT_LIMIT",
       "GCS_BUCKET",
       "MODEL_CONCIERGE",

@@ -75,9 +75,9 @@ Web を読む役に利用者の情報を持たせず、利用者の情報を持�
 3. **比較**：コードが公開のページを取得し、行に分けて前回と比べる。変化がなければモデルを呼ばず、調べた時刻だけを残す。相対的な時刻（「3日前」など）だけの変化は無視し、日付・時刻・数字の変化は更新として扱う
 4. **見回り係**：変わったページと、コードで読めないページだけを `PatrolRequest` にして渡す。対象の URL は開始の発言に入れる
 5. **検問**：報告を `PatrolReportSchema` で確かめ、読んだ URL と出典を照らし合わせる。開催の日時は前回の値とコードで比べ、変化の種類を決める。写した開催日の文（`dateText`）は照合だけに使って捨てる
-6. **配布**：確かな変化（`CheckedChange`）を、影響する旅の通知（`GuideNotice`）にする
+6. **配布**：検問を通った変化（`CheckedChange`）を、影響する旅の通知（`GuideNotice`）にする。確かめ切れないものは、値を持たないお知らせにする
 
-宿の空きと天気は、モデルを使わず今の処理をコードで呼びます。結果は同じ `CheckedChange` の形にします。
+宿の空きは、モデルを使わず今の処理をコードで呼びます。結果は同じ `CheckedChange` の形にします。天気の変化はまだ見回りません。見回りが動くのは live で鍵があるときだけです。取得・検問・失敗の扱いの決まりは [旅の見回り](operations.md#旅の見回り) にあります。
 
 ## 通知
 
@@ -129,15 +129,17 @@ Web を読む役に利用者の情報を持たせず、利用者の情報を持�
 
 ## データの保存と消し方
 
-| 残すもの                                               | 置き場                                       | 消える時期                                                                 |
-| ------------------------------------------------------ | -------------------------------------------- | -------------------------------------------------------------------------- |
-| ガイドの1日の使った量（回数と費用の見積もり）          | `users/{uid}/guideUsage/{日}`                | 3日で消える                                                                |
-| 見回りの依頼                                           | `users/{uid}/trips/{旅の ID}/watch/current`  | 旅を消すとき。旅が終わると止まる                                           |
-| 通知                                                   | `users/{uid}/trips/{旅の ID}/notices/{ID}`   | 旅を消すとき。旅の最終日から30日                                           |
-| 提案                                                   | `users/{uid}/trips/{旅の ID}/proposals/{ID}` | 旅を消すとき。旅の最終日から30日                                           |
-| 手帳                                                   | `users/{uid}/trips/{旅の ID}/memo/{ID}`      | 旅を消すとき                                                               |
-| 続きの要約                                             | 相談の途中の状態（`sessions/{相談の ID}`）   | 相談と同じ（最後に使ってから6時間）                                        |
-| ページの比較の控え（行のハッシュ・調べた時刻・実行権） | `patrols/{祭りの ID と開催日}`               | 見回る旅がなくなったとき。利用者の情報を持たず、ページの文章もコピーしない |
+| 残すもの                                                                                     | 置き場                                       | 消える時期                                                                 |
+| -------------------------------------------------------------------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------- |
+| ガイドの1日の使った量（回数と費用の見積もり）                                                | `users/{uid}/guideUsage/{日}`                | 3日で消える                                                                |
+| 見回りの依頼                                                                                 | `users/{uid}/trips/{旅の ID}/watch/current`  | 旅を消すとき。旅が終わると止まる                                           |
+| 通知                                                                                         | `users/{uid}/trips/{旅の ID}/notices/{ID}`   | 旅を消すとき。旅の最終日から30日                                           |
+| 提案                                                                                         | `users/{uid}/trips/{旅の ID}/proposals/{ID}` | 旅を消すとき。旅の最終日から30日                                           |
+| 手帳                                                                                         | `users/{uid}/trips/{旅の ID}/memo/{ID}`      | 旅を消すとき                                                               |
+| 続きの要約                                                                                   | 相談の途中の状態（`sessions/{相談の ID}`）   | 相談と同じ（最後に使ってから6時間）                                        |
+| ページの比較の控え（行のハッシュ・調べた時刻・実行権・検問を通った開催の日時・届け直す変化） | `patrols/{祭りの ID}_{開催日}`               | 見回る旅がなくなったとき。利用者の情報を持たず、ページの文章もコピーしない |
+| 見回りの実行の記録（調べた祭りと URL・分類ごとの数・費用）                                   | `patrolRuns/{見回りの ID}`                   | 30日で消える。利用者の情報とページの文章を持たない                         |
+| Webhook の配信の受け取りの印                                                                 | `patrolDeliveries/{配信の ID}`               | 7日で消える                                                                |
 
 残さないものは次のとおりです。
 
@@ -164,19 +166,19 @@ live でガイドのモデル（`MODEL_GUIDE`）を設定していないとき�
 
 緊急の言葉がある `POST /api/guide/chat` は、相談がない・ほかの人の相談・旅程がない・旅が消された・保存の口の失敗のときも、4xx や 5xx の代わりに 200 の SSE で、連絡先（`guide.emergency`）、決まった文（`message.delta`）、ふつうの発言と同じ案内（`error`）、`guide.done` の順に返します。相談の中身を読まないので、ない相談とほかの人の相談は同じ応答で、`guide.done` の数は0、時期は `during` です。
 
-| メソッド | パス                                | 決まり              | 本文                             | 返すもの                                                               |
-| -------- | ----------------------------------- | ------------------- | -------------------------------- | ---------------------------------------------------------------------- |
-| POST     | `/api/guide/open`                   | ログインした持ち主  | `GuideOpenRequestSchema`         | 201 `SessionResponseSchema`。残した旅を開いて、ガイドと話す相談を作る  |
-| POST     | `/api/guide/state`                  | 相談の持ち主        | `GuideSessionRefSchema`          | `GuideStateResponseSchema`（時期・見回り・通知・承認待ちの提案・手帳） |
-| POST     | `/api/guide/chat`                   | 相談の持ち主        | `GuideChatRequestSchema`         | 返答を SSE（`GuideSseEventSchema`）で返す                              |
-| POST     | `/api/guide/notices/read`           | 相談の持ち主        | `MarkNoticesReadRequestSchema`   | `MarkNoticesReadResponseSchema`（未読の数）                            |
-| POST     | `/api/guide/watch`                  | 相談の持ち主        | `SetTripWatchRequestSchema`      | `TripWatchSchema`。始めるときはログインが要る（用意している環境だけ）  |
-| POST     | `/api/guide/proposals/:id/decision` | 相談の持ち主        | `DecideProposalRequestSchema`    | `DecideProposalResponseSchema`                                         |
-| POST     | `/api/guide/revert`                 | 相談の持ち主        | `RevertTripRequestSchema`        | `TripChangeSchema`（新しい版の旅程と差分）                             |
-| POST     | `/api/guide/memo/:id`               | 相談の持ち主        | `UpdateGuideMemoRequestSchema`   | `GuideMemoItemSchema`                                                  |
-| POST     | `/api/guide/memo/:id/delete`        | 相談の持ち主        | `GuideSessionRefSchema`          | 204                                                                    |
-| POST     | `/internal/patrol/start`            | 内部（`oidc`）      | なし                             | 受け付けた対象の数                                                     |
-| POST     | `/internal/patrol/webhook`          | 内部（`signature`） | Managed Agents の Webhook の本文 | 2xx                                                                    |
+| メソッド | パス                                | 決まり              | 本文                             | 返すもの                                                                                         |
+| -------- | ----------------------------------- | ------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------ |
+| POST     | `/api/guide/open`                   | ログインした持ち主  | `GuideOpenRequestSchema`         | 201 `SessionResponseSchema`。残した旅を開いて、ガイドと話す相談を作る                            |
+| POST     | `/api/guide/state`                  | 相談の持ち主        | `GuideSessionRefSchema`          | `GuideStateResponseSchema`（時期・見回り・通知・承認待ちの提案・手帳）                           |
+| POST     | `/api/guide/chat`                   | 相談の持ち主        | `GuideChatRequestSchema`         | 返答を SSE（`GuideSseEventSchema`）で返す                                                        |
+| POST     | `/api/guide/notices/read`           | 相談の持ち主        | `MarkNoticesReadRequestSchema`   | `MarkNoticesReadResponseSchema`（未読の数）                                                      |
+| POST     | `/api/guide/watch`                  | 相談の持ち主        | `SetTripWatchRequestSchema`      | `TripWatchSchema`。始めるときはログインが要る（用意している環境だけ）                            |
+| POST     | `/api/guide/proposals/:id/decision` | 相談の持ち主        | `DecideProposalRequestSchema`    | `DecideProposalResponseSchema`                                                                   |
+| POST     | `/api/guide/revert`                 | 相談の持ち主        | `RevertTripRequestSchema`        | `TripChangeSchema`（新しい版の旅程と差分）                                                       |
+| POST     | `/api/guide/memo/:id`               | 相談の持ち主        | `UpdateGuideMemoRequestSchema`   | `GuideMemoItemSchema`                                                                            |
+| POST     | `/api/guide/memo/:id/delete`        | 相談の持ち主        | `GuideSessionRefSchema`          | 204                                                                                              |
+| POST     | `/internal/patrol/start`            | 内部（`oidc`）      | なし                             | 調べた対象の数・見回り係に渡した数など（`PatrolTickResult`）。見回りを動かしていない環境では 404 |
+| POST     | `/internal/patrol/webhook`          | 内部（`signature`） | Managed Agents の Webhook の本文 | 204。見回りを動かしていない環境では 404                                                          |
 
 内部の経路は `routes.internal` で足し、呼び出し元の確かめは [内部の入口](api.md#内部の入口) の検証（`oidc`・`signature`）だけで行います。確かめられなければ 401、検証の設定がなければその入口だけ 404 で、ハンドラーには届きません。
 
@@ -221,7 +223,7 @@ live でガイドのモデル（`MODEL_GUIDE`）を設定していないとき�
 | 場面                                 | 動き                                                                                                                                                                       |
 | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 見回り係が失敗した・報告が崩れていた | 通知を作らず、次の回に調べ直す。失敗が続くページは間隔を空ける                                                                                                             |
-| 検問を通らなかった                   | 捨てて、分類だけをログに残す。利用者には知らせない                                                                                                                         |
+| 値がページで確かめられなかった       | 捨てて、分類だけをログに残す。開催に関わる語が新しい行にあるときは、公式か確かな出典のページなら値を持たないお知らせにする。本物の中止を黙って失わないため                 |
 | 定期の起動や Webhook が2回届いた     | 実行権と ID で重複を除き、同じ作業を二重に走らせない                                                                                                                       |
 | 署名の鍵や検証の設定がない           | その入口だけ 404 で断る。設定がないから通す、という動きにしない                                                                                                            |
 | 組み直しの案が検証を通らなかった     | 案を見せず、通知だけを届ける                                                                                                                                               |
