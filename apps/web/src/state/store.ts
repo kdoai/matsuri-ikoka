@@ -1,8 +1,11 @@
 import {
+  decodeGuideSseEvent,
   decodeSseEvent,
   type FestivalCandidate,
   type FestivalSearchNext,
   type FestivalSearchResult,
+  type GuideSseEvent,
+  type GuideStall,
   MAX_MESSAGE_LENGTH,
   type Preferences,
   type SearchRetry,
@@ -15,7 +18,7 @@ import { createStore, type StoreApi } from "zustand/vanilla";
 import { MESSAGES } from "../i18n";
 import { isSendablePasscode } from "../transport/server";
 import type { ChatTransport, FestivalSource, OnSseMessage } from "../transport/types";
-import { toClientError } from "../transport/types";
+import { TransportError, toClientError } from "../transport/types";
 import {
   anchorMessage,
   anchorPlanRequest,
@@ -42,7 +45,7 @@ import {
   todayInJapan,
 } from "./consult";
 import { clientError } from "./errors";
-import { applyEvent } from "./events";
+import { applyEvent, verifyFromItinerary } from "./events";
 import {
   anchorOf,
   applySearchResponse,
@@ -62,8 +65,22 @@ import {
   returnToResults,
   searchRequest,
 } from "./festivalSearch";
+import {
+  advanceReport,
+  applyGuideEvent,
+  applyGuideState,
+  beginGuideTurn,
+  closeText,
+  endGuideTurn,
+  GUIDE_GONE,
+  type GuideError,
+  type GuideState,
+  markRead,
+  noticesOfStall,
+} from "./guide";
 import { initialData } from "./initial";
 import { quizById } from "./quizBank";
+import { shioriReady } from "./selectors";
 import {
   addError,
   answerQuiz,
@@ -87,6 +104,8 @@ import { shuffleDeck } from "./waiting";
 export const STAFF_RETURN_MS = 1_200;
 /** 「旅のしおり完成」の演出の長さ */
 export const CELEBRATION_MS = 1_500;
+/** コンシェルジュが帽子をかぶって旗を振り、店の外へ先導する長さ */
+export const LEAD_OUT_MS = 2_400;
 
 export interface AppActions {
   /** 店に入り、相談を始める */
@@ -164,6 +183,30 @@ export interface AppActions {
   dismissTutorial(): void;
   /** のれんをくぐって店の外へ出る（相談はそのまま残す） */
   leaveShop(): void;
+  /** ガイドと店の外へ出る。animate は 3D の店内を出しているときで、先導の動きのあとに通りへ出る */
+  leaveWithGuide(animate?: boolean): void;
+  /** 縁日の通りから店内へ戻る */
+  returnToShop(): Promise<void>;
+  /** ガイドの通知と手帳を読む（読み込み済みなら、force のときだけ読み直す） */
+  loadGuide(force?: boolean): Promise<void>;
+  /** ガイドに発言を送る */
+  sendGuide(text: string): Promise<void>;
+  /** 最後の発言をガイドに送り直す */
+  retryGuide(): Promise<void>;
+  /** 屋台を開く。その屋台の通知は読んだことになり、提灯が消える */
+  openStall(stall: GuideStall): void;
+  closeStall(): void;
+  setStallList(open: boolean): void;
+  /** ガイドの会話の窓を出す・しまう。出すと、ガイドが旅人のそばへ来る */
+  setGuideDialogue(open: boolean): void;
+  /** ガイドが旗でその屋台へ案内する。3D の旅人が歩けるなら歩いて着いてから、歩けなければすぐに屋台を開く */
+  leadToStall(stall: GuideStall): void;
+  /** 3D の通りを描けたか。描けなくなったら、歩いている途中の案内は屋台を開いて終える */
+  setStreetScene(ready: boolean): void;
+  /** 報告を「あとで」にする。次の未報告の通知があれば、続けて報告する */
+  dismissReport(): void;
+  /** 残した旅を開いて、縁日の通りに戻る。開けなければ false */
+  openSavedTrip(tripId: string): Promise<boolean>;
   nextTrivia(): void;
   prevTrivia(): void;
   /** 豆知識のあいだに出したクイズに答える */
@@ -200,6 +243,8 @@ export function createAppStore(deps: StoreDeps): AppStore {
   let sessionController: AbortController | null = null;
   let searchController: AbortController | null = null;
   let previewController: AbortController | null = null;
+  let guideController: AbortController | null = null;
+  let guideStateController: AbortController | null = null;
   const timers = new Set<unknown>();
 
   return createStore<AppState>()((set, get) => {
@@ -455,6 +500,84 @@ export function createAppStore(deps: StoreDeps): AppStore {
     const setUi = (patch: Partial<AppData["ui"]>) =>
       update((state) => ({ ...state, ui: { ...state.ui, ...patch } }));
 
+    const updateGuide = (change: (guide: GuideState) => GuideState) =>
+      update((state) => ({ ...state, guide: change(state.guide) }));
+
+    /** 通りへ出る。旅の祭りのデータと、ガイドの通知を読み始める */
+    const arriveOnStreet = () => {
+      update((state) => ({
+        ...state,
+        guide: { ...state.guide, spot: "home" },
+        ui: {
+          ...state.ui,
+          view: "street",
+          leadingOut: false,
+          dialogueOpen: false,
+          drawerOpen: false,
+          candidatesOpen: false,
+        },
+      }));
+      const id = get().itinerary.current?.mainFestivalId;
+      if (id !== undefined) void get().actions.ensureFestivals([id]);
+      // 通りへ出るたびに読み直す（留守の間に通知が増えている）
+      void get().actions.loadGuide(true);
+    };
+
+    const runGuideTurn = async (message: string, retry: boolean) => {
+      const { session, guide } = get();
+      if (guide.streaming || session.id === null || transport.guideChat === undefined) {
+        return;
+      }
+      const request = { sessionId: session.id, message };
+      updateGuide((current) => beginGuideTurn(current, message, retry));
+      const current = new AbortController();
+      guideController = current;
+      let sawDone = false;
+      let failure: GuideError | null = null;
+      try {
+        await transport.guideChat(
+          request,
+          (raw) => {
+            let event: GuideSseEvent;
+            try {
+              event = decodeGuideSseEvent(raw);
+            } catch {
+              failure = clientError("invalid_event");
+              return;
+            }
+            if (event.type === "guide.done") sawDone = true;
+            updateGuide((state) => applyGuideEvent(state, event));
+          },
+          current.signal,
+        );
+      } catch (caught) {
+        if (current.signal.aborted) return;
+        if (caught instanceof TransportError && caught.code === "unauthorized") {
+          update((state) => requirePasscode(state, transport.hasPasscode?.() ?? false));
+        }
+        // 話せなくなった（相談の期限切れ・旅がない・ガイドの設定なし）
+        if (caught instanceof TransportError && (caught.status === 404 || caught.status === 409)) {
+          updateGuide((state) => ({ ...state, availability: "unavailable" }));
+          failure = GUIDE_GONE;
+        } else {
+          failure = toClientError(caught);
+        }
+      }
+      if (current.signal.aborted) return;
+      guideController = null;
+      if (!sawDone) {
+        updateGuide((state) => endGuideTurn(state, failure ?? clientError("connection_lost")));
+      }
+    };
+
+    /** ガイドとの通信を止める */
+    const stopGuide = () => {
+      guideController?.abort();
+      guideController = null;
+      guideStateController?.abort();
+      guideStateController = null;
+    };
+
     const actions: AppActions = {
       async enterShop() {
         setUi({ view: "shop" });
@@ -529,6 +652,13 @@ export function createAppStore(deps: StoreDeps): AppStore {
         }
         transport.setPasscode?.(passcode);
         update(passcodeAccepted);
+        // 通りでは、店内の前の発言を送り直さない（回数を使い、旅程が変わることがある）
+        if (get().ui.view === "street") {
+          const last = get().guide.entries.at(-1);
+          if (last?.kind === "error" && last.code === "unauthorized") await actions.retryGuide();
+          else await actions.loadGuide(true);
+          return;
+        }
         if (get().session.status !== "ready") {
           setUi({ view: "shop" });
           await startSession();
@@ -553,6 +683,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
         controller = null;
         searchController?.abort();
         previewController?.abort();
+        stopGuide();
         clearTimers();
         const { ui } = get();
         const fresh = initialData({ locale: ui.locale, tutorialSeen: ui.tutorialSeen });
@@ -584,11 +715,12 @@ export function createAppStore(deps: StoreDeps): AppStore {
       },
       openShiori() {
         if (get().itinerary.current !== null) {
-          setUi({ view: "shiori", drawerOpen: false });
+          const shioriReturn = get().ui.view === "street" ? "street" : "shop";
+          setUi({ view: "shiori", shioriReturn, drawerOpen: false });
         }
       },
       closeShiori() {
-        setUi({ view: "shop" });
+        setUi({ view: get().ui.shioriReturn });
       },
       setDialogue(open) {
         setUi(open ? { dialogueOpen: true, tutorialSeen: true } : { dialogueOpen: false });
@@ -753,12 +885,203 @@ export function createAppStore(deps: StoreDeps): AppStore {
         setUi({ tutorialSeen: true });
       },
       leaveShop() {
+        // しおりができたあとなら、外は縁日の通り。ガイドが付き添う
+        if (shioriReady(get())) {
+          arriveOnStreet();
+          return;
+        }
         setUi({
           view: "storefront",
           dialogueOpen: false,
           drawerOpen: false,
           candidatesOpen: false,
         });
+      },
+      leaveWithGuide(animate = false) {
+        if (get().itinerary.current === null || get().ui.leadingOut) return;
+        if (!animate) {
+          arriveOnStreet();
+          return;
+        }
+        setUi({
+          view: "shop",
+          leadingOut: true,
+          dialogueOpen: false,
+          drawerOpen: false,
+          candidatesOpen: false,
+        });
+        later(LEAD_OUT_MS, () => {
+          // 先導の間にしおりを開くか、自分で外へ出ていたら、もう移らない
+          const { view, leadingOut } = get().ui;
+          if (leadingOut && view === "shop") arriveOnStreet();
+          else if (leadingOut) setUi({ leadingOut: false });
+        });
+      },
+      async returnToShop() {
+        stopGuide();
+        // 開いた相談がなければ（ガイドのない環境で残した旅を開いたとき）、新しい相談から始める
+        if (get().session.id === null) {
+          await actions.restart();
+          return;
+        }
+        update((state) => ({
+          ...state,
+          guide: {
+            ...state.guide,
+            streaming: false,
+            entries: closeText(state.guide.entries),
+            openStall: null,
+            listOpen: false,
+            dialogueOpen: false,
+            lead: null,
+          },
+          ui: { ...state.ui, view: "shop", dialogueOpen: false },
+        }));
+      },
+      async loadGuide(force = false) {
+        const { session, guide } = get();
+        if (!force && (guide.availability === "ready" || guide.availability === "loading")) return;
+        if (session.id === null || transport.guideState === undefined) {
+          updateGuide((state) => ({ ...state, availability: "unavailable" }));
+          return;
+        }
+        // 話せている間は、読み直しの間も話せるままにする
+        if (guide.availability !== "ready") {
+          updateGuide((state) => ({ ...state, availability: "loading" }));
+        }
+        guideStateController?.abort();
+        const current = new AbortController();
+        guideStateController = current;
+        /** 遅れた応答を、別の相談に入れない */
+        const stale = () => current.signal.aborted || get().session.id !== session.id;
+        try {
+          const response = await transport.guideState(session.id, current.signal);
+          if (!stale()) updateGuide((state) => applyGuideState(state, response));
+        } catch (caught) {
+          if (stale()) return;
+          const status = caught instanceof TransportError ? caught.status : undefined;
+          if (status === 401 || status === 403) {
+            update((state) => requirePasscode(state, transport.hasPasscode?.() ?? false));
+          }
+          updateGuide((state) => ({
+            ...state,
+            // 404 と 409 は待っても話せない。屋台の情報だけを読めるようにする
+            availability: status === 404 || status === 409 ? "unavailable" : "failed",
+          }));
+        }
+      },
+      async sendGuide(text) {
+        const message = text.trim();
+        if (message.length === 0 || message.length > MAX_MESSAGE_LENGTH) return;
+        await runGuideTurn(message, false);
+      },
+      async retryGuide() {
+        const { lastMessage } = get().guide;
+        if (lastMessage !== null) await runGuideTurn(lastMessage, true);
+      },
+      openStall(stall) {
+        const { guide, session } = get();
+        const ids = noticesOfStall(guide, stall)
+          .filter((notice) => notice.readAt === null)
+          .map((notice) => notice.id);
+        updateGuide((state) => ({
+          ...markRead(state, ids, new Date().toISOString()),
+          openStall: stall,
+          listOpen: false,
+          dialogueOpen: false,
+          lead: state.lead === null ? null : { ...state.lead, done: true },
+        }));
+        if (ids.length > 0 && session.id !== null) {
+          // 届かなくても、この画面では読んだままにする（次に開いたときに、また知らせるだけ）
+          void transport
+            .markNoticesRead?.({ sessionId: session.id, noticeIds: ids })
+            .catch(() => undefined);
+        }
+      },
+      closeStall() {
+        // 屋台を閉じたら、待っていた次の報告へ進む
+        updateGuide((state) => advanceReport({ ...state, openStall: null }));
+      },
+      setStallList(open) {
+        updateGuide((state) => ({
+          ...state,
+          listOpen: open,
+          ...(open ? { openStall: null } : {}),
+        }));
+      },
+      setGuideDialogue(open) {
+        updateGuide((state) =>
+          open
+            ? advanceReport({
+                ...state,
+                dialogueOpen: true,
+                spot: "player",
+                openStall: null,
+                listOpen: false,
+              })
+            : { ...state, dialogueOpen: false },
+        );
+      },
+      leadToStall(stall) {
+        updateGuide((state) => ({
+          ...state,
+          report: null,
+          spot: stall,
+          dialogueOpen: false,
+          listOpen: false,
+          lead: { stall, seq: (state.lead?.seq ?? 0) + 1, done: false },
+        }));
+        if (!get().guide.sceneReady) actions.openStall(stall);
+      },
+      setStreetScene(ready) {
+        updateGuide((state) => ({ ...state, sceneReady: ready }));
+        const { lead } = get().guide;
+        if (!ready && lead !== null && !lead.done) actions.openStall(lead.stall);
+      },
+      dismissReport() {
+        updateGuide((state) => advanceReport({ ...state, report: null }));
+      },
+      async openSavedTrip(tripId) {
+        if (transport.openSavedTrip === undefined) return false;
+        let opened: Awaited<ReturnType<NonNullable<ChatTransport["openSavedTrip"]>>>;
+        try {
+          opened = await transport.openSavedTrip(tripId);
+        } catch {
+          return false;
+        }
+        // 前の相談の通信を止め、前の人の会話や確認の結果を残さない
+        controller?.abort();
+        controller = null;
+        sessionController?.abort();
+        searchController?.abort();
+        previewController?.abort();
+        stopGuide();
+        clearTimers();
+        const { sessionId, itinerary } = opened;
+        update((state) => {
+          const { ui, festivals: known, festivalLoad, auth } = state;
+          const fresh = initialData({ locale: ui.locale, tutorialSeen: ui.tutorialSeen });
+          return {
+            ...fresh,
+            quiz: { ...fresh.quiz, deck: shuffleDeck(fresh.quiz.deck, random) },
+            session: {
+              ...fresh.session,
+              id: sessionId,
+              mode: transport.agentMode?.() ?? null,
+              status: sessionId === null ? "closed" : "ready",
+              stage: "shiori",
+            },
+            preferences: itinerary.preferences,
+            itinerary: { current: itinerary, previous: null, diff: null },
+            verify: verifyFromItinerary(itinerary),
+            festivals: known,
+            festivalLoad,
+            auth,
+            ui: { ...fresh.ui, soundOn: ui.soundOn },
+          };
+        });
+        arriveOnStreet();
+        return true;
       },
       nextTrivia() {
         update((state) => ({ ...state, trivia: { index: state.trivia.index + 1 } }));

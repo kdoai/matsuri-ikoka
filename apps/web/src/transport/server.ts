@@ -3,8 +3,11 @@ import {
   AnchorPlanSchema,
   FestivalSchema,
   FestivalSearchResponseSchema,
+  type GuideStateResponse,
+  GuideStateResponseSchema,
   type SessionRequest,
   SessionResponseSchema,
+  TripResponseSchema,
 } from "@matsuri-ikoka/schema";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import type { ChatTransport, FestivalSource, OnSseMessage } from "./types";
@@ -85,6 +88,7 @@ export function createServerTransport(options: ServerTransportOptions = {}): Cha
     body: unknown,
     onMessage: OnSseMessage,
     signal: AbortSignal,
+    sessionBound = true,
   ): Promise<void> => {
     await fetchEventSource(path, {
       method,
@@ -97,7 +101,7 @@ export function createServerTransport(options: ServerTransportOptions = {}): Cha
       async onopen(response) {
         if (!response.ok) {
           // SSE を始める前に断られた。本文の code・message・retryable を読む
-          throw await errorFromResponse(response, true);
+          throw await errorFromResponse(response, sessionBound);
         }
         if (!response.headers.get("content-type")?.startsWith(EVENT_STREAM)) {
           throw new TransportError("invalid_event", { status: response.status });
@@ -180,6 +184,67 @@ export function createServerTransport(options: ServerTransportOptions = {}): Cha
         throw new TransportError("invalid_event", { status: response.status });
       }
       return parsed.data;
+    },
+    async guideState(sessionId, signal): Promise<GuideStateResponse> {
+      const response = await fetchImpl("/api/guide/state", {
+        method: "POST",
+        headers: await consultHeaders(),
+        body: JSON.stringify({ sessionId }),
+        ...(signal === undefined ? {} : { signal }),
+      });
+      if (!response.ok) {
+        // 404 はガイドがない環境や、もう話せない相談。呼ぶ側が状態コードで見分ける
+        throw await errorFromResponse(response, false);
+      }
+      const parsed = GuideStateResponseSchema.safeParse(
+        await response.json().catch(() => undefined),
+      );
+      if (!parsed.success) {
+        throw new TransportError("invalid_event", { status: response.status });
+      }
+      return parsed.data;
+    },
+    guideChat(request, onMessage, signal) {
+      return postStream("/api/guide/chat", "POST", request, onMessage, signal, false);
+    },
+    async markNoticesRead(request) {
+      const response = await fetchImpl("/api/guide/notices/read", {
+        method: "POST",
+        headers: await consultHeaders(),
+        body: JSON.stringify(request),
+      });
+      if (!response.ok) {
+        throw await errorFromResponse(response, false);
+      }
+    },
+    async openSavedTrip(tripId) {
+      const headers = await consultHeaders();
+      const tripResponse = await fetchImpl(`/api/trips/${encodeURIComponent(tripId)}`, { headers });
+      if (!tripResponse.ok) {
+        throw await errorFromResponse(tripResponse, false);
+      }
+      const trip = TripResponseSchema.safeParse(await tripResponse.json().catch(() => undefined));
+      if (!trip.success || trip.data.itinerary === null) {
+        throw new TransportError("invalid_event", { status: tripResponse.status });
+      }
+      const opened = await fetchImpl("/api/guide/open", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ tripId }),
+      });
+      // ガイドを用意していない環境でも、屋台の情報は読めるようにする
+      if (opened.status === 404) {
+        return { sessionId: null, itinerary: trip.data.itinerary };
+      }
+      if (!opened.ok) {
+        throw await errorFromResponse(opened, false);
+      }
+      const session = SessionResponseSchema.safeParse(await opened.json().catch(() => undefined));
+      if (!session.success) {
+        throw new TransportError("invalid_event", { status: opened.status });
+      }
+      mode = session.data.mode ?? null;
+      return { sessionId: session.data.sessionId, itinerary: trip.data.itinerary };
     },
     async checkServer() {
       // 死活監視の口は合言葉が要らない。応答があれば、サーバーは動いている

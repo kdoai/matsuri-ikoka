@@ -7,6 +7,10 @@ import {
   type Festival,
   type FestivalSearchRequest,
   type FestivalSearchResponse,
+  type GuideChatRequest,
+  type GuideStateResponse,
+  type Itinerary,
+  type MarkNoticesReadRequest,
   type PreferencesRequest,
   type SseMessage,
 } from "@matsuri-ikoka/schema";
@@ -36,6 +40,18 @@ export interface ChatTransport {
   ): Promise<FestivalSearchResponse>;
   /** 決めた祭りを軸にした旅の組み立てを確かめる（モデルは呼ばない） */
   previewFestivalTrip(request: AnchorPlanRequest, signal?: AbortSignal): Promise<AnchorPlan>;
+  /** ガイドが読むものをまとめて読む。ガイドを用意していない環境では 404 の TransportError */
+  guideState?(sessionId: string, signal?: AbortSignal): Promise<GuideStateResponse>;
+  /** ガイドに発言を送り、返答のイベント（GuideSseEvent の形）を受け取る */
+  guideChat?(
+    request: GuideChatRequest,
+    onMessage: OnSseMessage,
+    signal: AbortSignal,
+  ): Promise<void>;
+  /** 通知を読んだと知らせる。知らせられなくても、画面の側では読んだままにする */
+  markNoticesRead?(request: MarkNoticesReadRequest): Promise<void>;
+  /** 残した旅を開き、ガイドと話す相談と旅程を受け取る。ガイドがなければ sessionId は null */
+  openSavedTrip?(tripId: string): Promise<{ sessionId: string | null; itinerary: Itinerary }>;
   /** 最後に始めた相談で、サーバーが知らせた動き方（知らせがなければ null） */
   agentMode?(): AgentMode | null;
   /** 接続が切れたあとに、サーバーが応答するかを確かめる（つながらなければ false） */

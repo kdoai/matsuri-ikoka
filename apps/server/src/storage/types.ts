@@ -23,6 +23,16 @@ export const SHARE_REUSE_MIN_REMAINING_MS = SHARE_TTL_MS / 2;
 export const SESSION_STATE_TTL_MS = 6 * 60 * 60 * 1000;
 /** 1つの旅程に残す版の数。超えたら古い版から消す */
 export const MAX_VERSIONS = 20;
+/** ガイドの1日の使った量を残す期間。上限を数え終えたら要らない */
+export const GUIDE_USAGE_TTL_MS = 3 * 24 * 60 * 60 * 1000;
+/** 旅の下の1つの種類から読む文書の数の上限（通知と手帳はスキーマで決まった数まで。提案は期限で消える） */
+export const MAX_TRIP_DOCS = 200;
+
+/** 旅の下に置くガイドのデータの種類（docs/spec/guide.md の「データの保存と消し方」） */
+export const TRIP_DOC_KINDS = ["watch", "notices", "proposals", "memo"] as const;
+export type TripDocKind = (typeof TRIP_DOC_KINDS)[number];
+/** 見回りの依頼の文書の ID。1つの旅に1つだけ持つ */
+export const TRIP_WATCH_DOC_ID = "current";
 
 /** 自分の旅の一覧に出す見出し */
 export interface StoredTrip {
@@ -76,6 +86,8 @@ export interface SessionSnapshot {
   itineraryId: string | null;
   /** ログインして使った相談の持ち主。一度決まったら変わらない。この項目がない、前の形の保存もある */
   ownerUid?: string | null;
+  /** ガイドと話した相談の状態。話していない相談と、前の形の保存にはない */
+  guide?: unknown;
   /** 祭りを固定した旅程の状態。この項目がない、前の形の保存もある */
   anchor?: TripAnchor | null;
   anchorPlan?: AnchorPlan | null;
@@ -99,18 +111,66 @@ export function isShareId(id: string): boolean {
   return id.startsWith("sh-");
 }
 
+/** 旅がもうない（消された）か、自分の旅でないので、旅の下に書けない */
+export class TripGoneError extends Error {
+  constructor() {
+    super("旅がありません");
+    this.name = "TripGoneError";
+  }
+}
+
+/**
+ * 1人の利用者の1つの旅に絞った、ガイドのデータの口。置き場は users/{持ち主}/trips/{旅}/{種類}/{ID}。
+ * 値は保存した JSON をそのまま戻したもの（スキーマは通していない）。読むときに呼ぶ側でスキーマを通す。
+ * 文書の ID の形でない ID は、ないものとして扱う。期限を過ぎた文書は読めない
+ */
+export interface OwnerTripDocs {
+  get(kind: TripDocKind, id: string): Promise<unknown | null>;
+  list(kind: TripDocKind): Promise<unknown[]>;
+  /**
+   * expiresAt は消す時刻（ミリ秒）。省略すると、旅を消すまで残す。
+   * 旅がない・自分の旅でないときは書かず、TripGoneError を投げる（発言の途中に消した旅へ書き戻さない）
+   */
+  put(
+    kind: TripDocKind,
+    id: string,
+    value: unknown,
+    options?: { expiresAt?: number },
+  ): Promise<void>;
+  /** 消したら true */
+  delete(kind: TripDocKind, id: string): Promise<boolean>;
+}
+
+/** ガイドの使った量（発言の回数と費用の見積もり） */
+export interface GuideUsage {
+  turns: number;
+  costUsd: number;
+}
+
+/** 1日の使った量。利用者全体と、1つの旅の分 */
+export interface DailyGuideUsage {
+  user: GuideUsage;
+  trip: GuideUsage;
+}
+
 /** 1人の利用者に絞った保存の口。ここを通る読み書きは、その人の旅にしか届かない */
 export interface OwnerTripStorage {
   readonly owner: OwnerId;
+  /** この人の、この旅のガイドのデータの口。読めない ID の旅は例外にする */
+  tripDocs(tripId: string): OwnerTripDocs;
+  /** この人のガイドの、その日の使った量（日は YYYY-MM-DD） */
+  readGuideUsage(tripId: string, day: string): Promise<DailyGuideUsage>;
+  /** ガイドの使った量を足す */
+  addGuideUsage(tripId: string, day: string, delta: GuideUsage): Promise<void>;
   /** 相談の中の旅程を、自分の旅として残す（消えないようにする）。ほかの人の旅程は not_found */
   claimTrip(itineraryId: string): Promise<ClaimResult>;
   /** 残した旅の一覧（新しく保存した順） */
   listTrips(): Promise<StoredTrip[]>;
   /** 自分の旅程を読む。version を省くと最新の版。自分のものでなければ null */
   getTrip(itineraryId: string, version?: number): Promise<StoredTripDetail | null>;
-  /** 自分の旅程を、すべての版と共有ごと消す。消したら true */
+  /** 自分の旅程を、すべての版と共有と、ガイドのデータごと消す。消したら true */
   deleteTrip(itineraryId: string): Promise<boolean>;
-  /** 自分の旅程をすべて（残す前のものも）消す。消した、残した旅の数を返す */
+  /** 自分の旅程をすべて（残す前のものも）、ガイドのデータと相談の途中の状態ごと消す。消した、残した旅の数を返す */
   deleteAllTrips(): Promise<number>;
   /**
    * 自分の旅程の最新の版を、推測できない ID で30日だけ共有する。自分のものでなければ null。

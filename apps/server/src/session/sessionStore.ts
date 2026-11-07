@@ -4,6 +4,10 @@ import {
   type ConversationStage,
   DEFAULT_PREFERENCES,
   type FestivalCandidate,
+  type GuideMemoItem,
+  type GuideNotice,
+  type GuideProposal,
+  type GuideResumeSummary,
   type IsoDate,
   type Itinerary,
   type LodgingSearch,
@@ -12,6 +16,7 @@ import {
   type Preferences,
   type Source,
   type TripAnchor,
+  type TripWatch,
   type VerificationResult,
   type Weather,
 } from "@matsuri-ikoka/schema";
@@ -23,6 +28,42 @@ import type { OwnerId } from "../storage/owner";
 
 /** 使われなくなった相談を消すまでの時間 */
 export const SESSION_IDLE_MS = 6 * 60 * 60 * 1000;
+
+/**
+ * ガイドと話すときの相談の状態（docs/spec/guide.md）。
+ * 手帳・通知・提案・見回りの依頼は、残した旅なら旅の下に置き、ここには持たない。
+ * ログインしていない相談と、残す前の旅では、ここにだけ持つ（相談の間だけ残る）
+ */
+export interface SessionGuide {
+  /** Agent SDK の会話の ID。インスタンスの一時ディレクトリの記録を指すので、保存しない */
+  agentSessionId: string | null;
+  /** その会話でかかった費用。再開すると累計で届くので、差を取るのに使う。保存しない */
+  agentCostUsd: number;
+  /** 別のインスタンスに届いたときの続きに使う、コードが書く要約 */
+  resume: GuideResumeSummary;
+  memo: GuideMemoItem[];
+  notices: GuideNotice[];
+  proposals: GuideProposal[];
+  watch: TripWatch | null;
+  /** mock：再生した発言の番号 */
+  replayedTurns: number[];
+  /** mock：記録の通知と提案をこの相談の旅に届けたか */
+  replaySeeded: boolean;
+}
+
+export function newSessionGuide(): SessionGuide {
+  return {
+    agentSessionId: null,
+    agentCostUsd: 0,
+    resume: { turns: 0, topics: [], pendingProposalIds: [], lastTurnAt: null },
+    memo: [],
+    notices: [],
+    proposals: [],
+    watch: null,
+    replayedTurns: [],
+    replaySeeded: false,
+  };
+}
 
 export interface Session {
   id: string;
@@ -41,6 +82,15 @@ export interface Session {
   selectedFestivalId: string | null;
   /** この相談の旅程の ID。保存した旅程は ItineraryStore にある */
   itineraryId: string | null;
+  /**
+   * 利用者がこの旅を消した。この印がある間は旅程を保存せず、次の発言の前に旅程を外す。
+   * 保存しない（別のインスタンスでは、旅程を読めずに外れる）
+   */
+  tripDeleted: boolean;
+  /** 利用者が自分のデータをすべて消した。もう開けず、相談も旅程も保存しない */
+  discarded: boolean;
+  /** 流している返事を止める。流していなければ null */
+  stopTurn: (() => void) | null;
   /** 祭りから探して決めた、必ず行く祭りと行く日。あれば、この祭りを固定して旅程を組む */
   anchor: TripAnchor | null;
   /** 固定した祭りを軸にした組み立て。出発地か泊数が分からない間は null */
@@ -61,6 +111,8 @@ export interface Session {
   foundSpots: Map<string, { id: string; name: string }[]>;
   /** live：Agent SDK のセッション ID（resume に使う） */
   agentSessionId: string | null;
+  /** しおりのあとのガイドと話すときの状態 */
+  guide: SessionGuide;
   /**
    * mock：再生しているサンプルの相談と、次に再生する発言の番号。
    * itineraryIds は、記録の旅程 ID からこの相談の旅程 ID への置き換え（相談どうしで旅程を取り違えないため）
@@ -131,6 +183,9 @@ export class SessionStore {
       nearMisses: [],
       selectedFestivalId: null,
       itineraryId: null,
+      tripDeleted: false,
+      discarded: false,
+      stopTurn: null,
       anchor: null,
       anchorPlan: null,
       anchorCheck: null,
@@ -141,6 +196,7 @@ export class SessionStore {
       researchedSources: new Map(),
       foundSpots: new Map(),
       agentSessionId: null,
+      guide: newSessionGuide(),
       replay: init.replay ?? null,
       busy: false,
     };
@@ -166,7 +222,10 @@ export class SessionStore {
       | "replay"
     > &
       Partial<
-        Pick<Session, "ownerUid" | "anchor" | "anchorPlan" | "anchorCheck" | "cancelledAnchor">
+        Pick<
+          Session,
+          "ownerUid" | "anchor" | "anchorPlan" | "anchorCheck" | "cancelledAnchor" | "guide"
+        >
       >,
   ): Session {
     const existing = this.get(saved.id);
@@ -180,6 +239,10 @@ export class SessionStore {
       anchorPlan: saved.anchorPlan ?? null,
       anchorCheck: saved.anchorCheck ?? null,
       cancelledAnchor: saved.cancelledAnchor ?? null,
+      guide: saved.guide ?? newSessionGuide(),
+      tripDeleted: false,
+      discarded: false,
+      stopTurn: null,
       lastActiveAt: this.#now(),
       weather: new Map(),
       nearMisses: [],
@@ -206,6 +269,16 @@ export class SessionStore {
     this.#sessions.delete(id);
     this.#sessions.set(id, session);
     return session;
+  }
+
+  /** 条件に合う相談。使った順や最後に使った時刻は変えない */
+  matching(predicate: (session: Session) => boolean): Session[] {
+    return [...this.#sessions.values()].filter(predicate);
+  }
+
+  /** 相談をメモリから消す（会話の記録も片付く） */
+  remove(session: Session): void {
+    this.#remove(session);
   }
 
   /** 使われなくなった相談を消す */
@@ -251,6 +324,16 @@ export class ItineraryStore {
     for (const listener of this.#listeners) listener(itinerary, owner);
   }
 
+  /**
+   * 相談の旅程を保存する。ツールと記録の再生はここから保存する。
+   * 返事の途中に旅やデータが消されたら保存せず、false を返す（消したものを作り直さない）
+   */
+  saveForSession(session: Session, itinerary: Itinerary): boolean {
+    if (session.discarded || session.tripDeleted) return false;
+    this.save(itinerary, session.ownerUid);
+    return true;
+  }
+
   /** 保存の口から読んだ旅程を、手元の写しに置く（購読しているものには知らせない） */
   remember(itinerary: Itinerary): void {
     this.#itineraries.delete(itinerary.id);
@@ -262,6 +345,17 @@ export class ItineraryStore {
     }
   }
 
+  /**
+   * 保存の口から読んだ旅程を、手元の版以上のときだけ写しに置く。手元の写しのほうが新しければ、それを返す。
+   * 別のインスタンスや、書き込みの途中の版で、古い版へ戻さないため
+   */
+  rememberLatest(itinerary: Itinerary): Itinerary {
+    const current = this.get(itinerary.id);
+    if (current !== undefined && current.version > itinerary.version) return current;
+    this.remember(itinerary);
+    return itinerary;
+  }
+
   get(id: string): Itinerary | undefined {
     const entry = this.#itineraries.get(id);
     if (entry === undefined) return undefined;
@@ -270,6 +364,11 @@ export class ItineraryStore {
       return undefined;
     }
     return entry.itinerary;
+  }
+
+  /** 消した旅の写しを捨てる */
+  forget(id: string): void {
+    this.#itineraries.delete(id);
   }
 
   /** 期限を過ぎた旅程を消す */

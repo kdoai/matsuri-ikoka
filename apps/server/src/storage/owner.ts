@@ -10,7 +10,8 @@ export type OwnerId = string & { readonly [ownerBrand]: true };
 /**
  * 確かめた利用者の ID を、持ち主の ID にする。呼んでよいのは、ID トークンを確かめた直後
  * （account/idToken.ts）と、保存した持ち主を戻すとき（session/persistence.ts）だけ。
- * ほかから呼ばれていないことは owner.test.ts で確かめる
+ * ほかから呼ばれていないことは owner.test.ts で確かめる。
+ * 例外は、人が権限を持って手元で実行する apps/server/scripts/trial-account.ts だけで、サーバーの経路からは届かない
  */
 export function ownerIdOf(uid: string): OwnerId {
   return uid as OwnerId;

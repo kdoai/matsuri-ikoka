@@ -106,7 +106,8 @@ describe("画面のビルドを同じオリジンから配る", () => {
     expect(pageCsp(null)).not.toContain("googleapis");
     expect(pageCsp(null)).not.toContain("frame-src");
     const csp = pageCsp("demo-project.firebaseapp.com");
-    expect(csp).toContain("frame-src https://demo-project.firebaseapp.com");
+    // 店内のしおりは同じオリジンの枠で開くので、ログインを用意しても読める
+    expect(csp).toContain("frame-src 'self' https://demo-project.firebaseapp.com");
     expect(csp).toContain("https://identitytoolkit.googleapis.com");
     expect(csp).toContain("script-src 'self' 'wasm-unsafe-eval' https://apis.google.com");
     // 見出しに別の指示を入れられる値は使わない

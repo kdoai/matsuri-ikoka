@@ -29,7 +29,7 @@ function devPorts(mode: string): { webPort: number; serverOrigin: string } {
  * （顔の絵は src/ui/Portraits.tsx が import.meta.glob で拾うので、ないとエラーにならずに消える）
  */
 const REQUIRED_ASSETS = [
-  ...["interior", "exterior", "player_penguin", "staff_hiyoko"].map(
+  ...["interior", "exterior", "ennichi", "player_penguin", "staff_hiyoko"].map(
     (name) => `3d/models/${name}.glb`,
   ),
   ...["hiyoko", "owl", "hen", "sparrow", "penguin"].map((name) => `shiori/staff/face_${name}.webp`),

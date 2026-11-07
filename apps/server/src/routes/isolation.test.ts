@@ -3,7 +3,9 @@ import {
   DEFAULT_PREFERENCES,
   decodeSseEvent,
   type SampleConversation,
+  type SampleGuide,
   type SseEvent,
+  TRIAL_ACCOUNT_UID,
 } from "@matsuri-ikoka/schema";
 import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
 import { beforeAll, describe, expect, it } from "vitest";
@@ -12,6 +14,7 @@ import { loadSampleConversations, ReplayAgentRunner } from "../agent/replayRunne
 import type { AgentRunner } from "../agent/runner";
 import { type AppDeps, createApp, declaredRoutes } from "../app";
 import { type FestivalStore, loadFestivals } from "../data/festivalStore";
+import { loadSampleGuides, ReplayGuideRunner } from "../guide/replayRunner";
 import { snapshotOf } from "../session/persistence";
 import { ItineraryStore, SessionStore } from "../session/sessionStore";
 import { createShiori } from "../shiori";
@@ -26,10 +29,12 @@ const root = (relative: string) =>
   fileURLToPath(new URL(`../../../../${relative}`, import.meta.url));
 
 let samples: SampleConversation[];
+let guides: SampleGuide[];
 let festivals: FestivalStore;
 
 beforeAll(async () => {
   samples = await loadSampleConversations(root("data/samples/conversations"));
+  guides = await loadSampleGuides(root("data/samples/guide"));
   festivals = (await loadFestivals([root("data/samples/festivals")])).store;
 });
 
@@ -58,6 +63,7 @@ function setup(overrides: Partial<AppDeps> = {}) {
   const storage = (overrides.storage as MemoryTripStorage | undefined) ?? new MemoryTripStorage();
   const app = createApp({
     runner: new ReplayAgentRunner(samples, itineraries, { speed: 0 }),
+    guide: { runner: new ReplayGuideRunner(guides, { speed: 0 }) },
     limiter: new DailyLimiter(null, () => "2026-08-03"),
     festivals,
     accessPasscode: null,
@@ -120,7 +126,12 @@ function setup(overrides: Partial<AppDeps> = {}) {
     const session = sessions.get(sessionId);
     const itineraryId = session?.itineraryId;
     if (session === undefined || !itineraryId) throw new Error("旅程がありません");
-    return { sessionId, itineraryId, version: itineraries.get(itineraryId)?.version ?? 1 };
+    return {
+      sessionId,
+      itineraryId,
+      version: itineraries.get(itineraryId)?.version ?? 1,
+      memoId: "memo-suzunari-sample-1",
+    };
   };
   return { app, call, chat, start, consult, sessions, itineraries, storage };
 }
@@ -149,6 +160,8 @@ interface Target {
   sessionId: string;
   itineraryId: string;
   version: number;
+  /** ガイドの手帳の項目 */
+  memoId: string;
 }
 
 /** 利用者のデータに触れる経路の表。other は利用者 B、anonymous はログインなし（偽のトークンも同じ扱い） */
@@ -276,6 +289,61 @@ const TABLE: {
     other: 404,
     anonymous: 404,
   },
+  {
+    route: "POST /api/guide/open",
+    request: ({ itineraryId }) => ({
+      method: "POST",
+      path: "/api/guide/open",
+      body: { tripId: itineraryId },
+    }),
+    owner: 201,
+    other: 404,
+    anonymous: 401,
+  },
+  {
+    route: "POST /api/guide/state",
+    request: ({ sessionId }) => ({
+      method: "POST",
+      path: "/api/guide/state",
+      body: { sessionId },
+    }),
+    owner: 200,
+    other: 404,
+    anonymous: 404,
+  },
+  {
+    route: "POST /api/guide/chat",
+    request: ({ sessionId }) => ({
+      method: "POST",
+      path: "/api/guide/chat",
+      body: { sessionId, message: "こんにちは" },
+    }),
+    owner: 200,
+    other: 404,
+    anonymous: 404,
+  },
+  {
+    route: "POST /api/guide/memo/:id",
+    request: ({ sessionId, memoId }) => ({
+      method: "POST",
+      path: `/api/guide/memo/${memoId}`,
+      body: { sessionId, text: "連れはゆっくり歩く" },
+    }),
+    owner: 200,
+    other: 404,
+    anonymous: 404,
+  },
+  {
+    route: "POST /api/guide/memo/:id/delete",
+    request: ({ sessionId, memoId }) => ({
+      method: "POST",
+      path: `/api/guide/memo/${memoId}/delete`,
+      body: { sessionId },
+    }),
+    owner: 204,
+    other: 404,
+    anonymous: 404,
+  },
 ];
 
 /** 決まりは「だれでも」で、利用者のデータに触れない経路 */
@@ -289,15 +357,45 @@ const PUBLIC_WITHOUT_USER_DATA = [
   "GET /api/auth/config",
 ];
 
+/** 内部の入口。利用者のデータに触れるが、利用者の ID トークンでは通らない（下の「内部の入口」） */
+const INTERNAL_ROUTES = ["POST /internal/patrol/start", "POST /internal/patrol/webhook"];
+
 const label = (route: { method: string; path: string }) => `${route.method} ${route.path}`;
 
 describe("経路の表", () => {
   it("すべての経路が、この表か「利用者のデータに触れない経路」のどちらかにある", () => {
     const { app } = setup();
     const declared = declaredRoutes(app).map(label).sort();
-    const listed = [...TABLE.map((row) => row.route), ...PUBLIC_WITHOUT_USER_DATA].sort();
+    const listed = [
+      ...TABLE.map((row) => row.route),
+      ...PUBLIC_WITHOUT_USER_DATA,
+      ...INTERNAL_ROUTES,
+    ].sort();
 
     expect(listed).toEqual(declared);
+  });
+});
+
+describe("内部の入口", () => {
+  const paths = INTERNAL_ROUTES.map((route) => route.replace("POST ", ""));
+
+  it.each(paths)("%s は、検証の設定がなければ、利用者の ID トークンでも断る", async (path) => {
+    const { call } = setup();
+
+    expect((await call(path, { method: "POST", user: ALICE })).status).toBe(404);
+    expect((await call(path, { method: "POST" })).status).toBe(404);
+  });
+
+  it.each(paths)("%s は、検証があるとき、利用者の ID トークンを通さない", async (path) => {
+    const { call } = setup({
+      internal: {
+        oidc: { verify: async () => null },
+        signature: { verify: async () => null },
+      },
+    });
+
+    expect((await call(path, { method: "POST", user: ALICE })).status).toBe(401);
+    expect((await call(path, { method: "POST" })).status).toBe(401);
   });
 });
 
@@ -316,6 +414,17 @@ describe.each([
       });
       expect(kept.status).toBe(201);
     }
+    // ガイドに話しかけて、手帳に項目を残す（サンプルの架空の相談の、手帳の発言）
+    const memo = await context.call("/api/guide/chat", {
+      method: "POST",
+      user: ALICE,
+      body: {
+        sessionId: target.sessionId,
+        message: "連れは歩くのがゆっくりなので、気にしてもらえますか",
+      },
+    });
+    await memo.text();
+    expect(memo.status).toBe(200);
     /** A の相談と旅程が変わっていないことを確かめるための、いまの状態 */
     const state = () => ({
       session: snapshotOf(context.sessions.get(target.sessionId)!, 0),
@@ -344,6 +453,7 @@ describe.each([
       sessionId: "s-no-such-session",
       itineraryId: "trip-no-such-trip",
       version: target.version,
+      memoId: target.memoId,
     });
 
     const refusals: { name: string; init: CallInit; status: number }[] = [
@@ -670,10 +780,10 @@ describe("同時に相談しても混ざらない", () => {
   });
 });
 
-describe("上限は利用者（なければ IP）ごとに数える", () => {
+describe("上限は IP と、ログインしていれば利用者でも数える", () => {
   const silentLive: AgentRunner = { mode: "live", runTurn: async () => {} };
 
-  it("1日の回数：A が使い切っても、B とほかの IP は使える", async () => {
+  const limited = () => {
     const context = setup({
       runner: silentLive,
       clientLimiter: new DailyLimiter(1, () => "2026-08-03"),
@@ -689,23 +799,66 @@ describe("上限は利用者（なければ IP）ごとに数える", () => {
         },
         body: JSON.stringify({ sessionId, message: "やあ", preferences: DEFAULT_PREFERENCES }),
       });
+    return { context, post };
+  };
+
+  it("1日の回数：利用者でも IP でも数え、ほかの IP の人は使える", async () => {
+    const { context, post } = limited();
     const aliceSession = await context.start(ALICE);
     const bobSession = await context.start(BOB);
     const anonymousSession = await context.start();
 
-    // 同じ IP の A と B と、ログインなしは、別々に数える
     await (await post(aliceSession, ALICE, "203.0.113.1")).text();
+    // A は IP を変えても、利用者の枠で止まる
     expect((await post(aliceSession, ALICE, "203.0.113.2")).status).toBe(429);
-    const bob = await post(bobSession, BOB, "203.0.113.1");
+    // B は別の人でも、同じ IP なら止まる。登録し直しても上限を回避できない
+    expect((await post(bobSession, BOB, "203.0.113.1")).status).toBe(429);
+    expect((await post(anonymousSession, undefined, "203.0.113.1")).status).toBe(429);
+    // ほかの IP の人は使える
+    const bob = await post(bobSession, BOB, "203.0.113.3");
     expect(bob.status).toBe(200);
     await bob.text();
-    const anonymous = await post(anonymousSession, undefined, "203.0.113.1");
+    const anonymous = await post(anonymousSession, undefined, "203.0.113.4");
     expect(anonymous.status).toBe(200);
     await anonymous.text();
-    expect((await post(anonymousSession, undefined, "203.0.113.1")).status).toBe(429);
-    const elsewhere = await post(anonymousSession, undefined, "203.0.113.2");
+  });
+
+  it("お試し用のアカウント：IP ごとに数えるので、1人が使い切っても、ほかの IP の人は使える", async () => {
+    const { context, post } = limited();
+    const session = await context.start(TRIAL_ACCOUNT_UID);
+
+    await (await post(session, TRIAL_ACCOUNT_UID, "203.0.113.1")).text();
+    expect((await post(session, TRIAL_ACCOUNT_UID, "203.0.113.1")).status).toBe(429);
+    const elsewhere = await post(session, TRIAL_ACCOUNT_UID, "203.0.113.2");
     expect(elsewhere.status).toBe(200);
     await elsewhere.text();
+  });
+
+  it("お試し用のアカウント：全体の枠を分けるので、使い切ってもほかの人は相談できる", async () => {
+    const context = setup({
+      runner: silentLive,
+      limiter: new DailyLimiter(1, () => "2026-08-03"),
+      trialLimiter: new DailyLimiter(1, () => "2026-08-03"),
+      clientIp: (c) => c.req.header("x-test-ip") ?? "unknown",
+    });
+    const post = (sessionId: string, user: string, ip: string) =>
+      context.app.request("/api/chat", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-test-ip": ip,
+          authorization: `Bearer token-${user}`,
+        },
+        body: JSON.stringify({ sessionId, message: "やあ", preferences: DEFAULT_PREFERENCES }),
+      });
+    const trial = await context.start(TRIAL_ACCOUNT_UID);
+    const alice = await context.start(ALICE);
+
+    await (await post(trial, TRIAL_ACCOUNT_UID, "203.0.113.1")).text();
+    expect((await post(trial, TRIAL_ACCOUNT_UID, "203.0.113.2")).status).toBe(429);
+    const other = await post(alice, ALICE, "203.0.113.3");
+    expect(other.status).toBe(200);
+    await other.text();
   });
 
   it("同時に作る数：A が自分の枠を使い切っても、B は空きを使える", async () => {

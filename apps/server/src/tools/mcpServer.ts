@@ -2,7 +2,7 @@ import { createSdkMcpServer, tool } from "@anthropic-ai/claude-agent-sdk";
 import { z } from "zod";
 import { errorForLog } from "../log";
 import { TOOL_TIMEOUT_MS, type ToolContext } from "./context";
-import { MATSURI_TOOLS, type MatsuriTool, ToolError } from "./matsuriTools";
+import { MATSURI_TOOLS, ToolError } from "./matsuriTools";
 
 /** プロセス内の MCP サーバーの名前。ツールは mcp__matsuri__<ツール名> で呼ばれる */
 export const MCP_SERVER_NAME = "matsuri";
@@ -20,14 +20,21 @@ export type ToolCallResult = {
   isError?: boolean;
 };
 
+/** runTool で動かせるツール。C はツールが使う文脈 */
+export interface RunnableTool<C> {
+  name: string;
+  timeoutMs: number;
+  run(args: unknown, ctx: C, signal: AbortSignal): Promise<Record<string, unknown>>;
+}
+
 /**
  * ツールを1回動かす。時間の上限を超えたら打ち切り、失敗はエージェントが読める短い文で返す。
  * ログにはツール名と所要時間と成否だけを残す（入力の文は残さない）。
  */
-export async function runTool(
-  def: MatsuriTool,
+export async function runTool<C extends { signal: AbortSignal }>(
+  def: RunnableTool<C>,
   args: unknown,
-  ctx: ToolContext,
+  ctx: C,
 ): Promise<ToolCallResult> {
   const started = Date.now();
   if (ctx.signal.aborted) {

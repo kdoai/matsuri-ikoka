@@ -22,6 +22,7 @@ import { bySourcePriority, verificationQueries } from "../domain/searchQueries";
 import { officialHosts, type VerificationReport, yearStatedOnPage } from "../domain/verification";
 import type { FestivalVerifier } from "../tools/verifier";
 import { checkHostAddresses, type ResolveHost, resolveHost } from "./addressGuard";
+import { chargeCost, remainingCostBudget } from "./costMeter";
 import { deny } from "./hooks";
 import type { RobotsChecker } from "./robots";
 import type { QueryFn } from "./runner";
@@ -199,11 +200,19 @@ export async function finalText(
 ): Promise<{ text: string | null; costUsd: number }> {
   let text: string | null = null;
   let costUsd = 0;
-  for await (const message of query({ prompt, options })) {
+  // 発言ごとの費用を測っているときは（ガイド）、今日の残りで抑える。残りがなければ呼ばない
+  const remaining = remainingCostBudget();
+  if (remaining !== null && remaining <= 0) return { text: null, costUsd: 0 };
+  const bounded =
+    remaining === null
+      ? options
+      : { ...options, maxBudgetUsd: Math.min(options.maxBudgetUsd ?? remaining, remaining) };
+  for await (const message of query({ prompt, options: bounded })) {
     onMessage?.();
     if (message.type === "result") {
       text = message.subtype === "success" && !message.is_error ? message.result : null;
       costUsd = message.total_cost_usd ?? 0;
+      chargeCost(costUsd);
     }
   }
   return { text, costUsd };

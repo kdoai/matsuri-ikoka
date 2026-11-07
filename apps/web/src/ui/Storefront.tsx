@@ -4,6 +4,7 @@ import { prefetchModels, SET_MODELS } from "../scenes/modelFiles";
 import { useActions, useApp, useT } from "../state/react";
 import { buttonPrimary } from "./common";
 import { PasscodeForm } from "./Passcode";
+import { SavedTrips } from "./SavedTrips";
 import { SceneLoading } from "./SceneLoading";
 import { LanguageButton } from "./Shop";
 import { preloadShopScene, StorefrontScene, useScene3d } from "./scene3d";
@@ -144,6 +145,7 @@ export function Storefront() {
             {t.app.enter}
           </button>
         )}
+        <SavedTrips />
       </div>
       {/* 提灯の明かり */}
       <div aria-hidden="true" className={`mt-8 flex gap-10 ${use3d ? "hidden" : ""}`}>

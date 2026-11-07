@@ -1,11 +1,16 @@
 import type { Itinerary } from "@matsuri-ikoka/schema";
 import type { DocumentData, DocumentSnapshot, Firestore } from "firebase-admin/firestore";
 import { newShareId } from "./memory";
-import { isDocumentId, type OwnerId } from "./owner";
+import { isDocumentId, type OwnerId, ownerTripPath } from "./owner";
 import {
   type ClaimResult,
   type CreatedShare,
+  type DailyGuideUsage,
+  GUIDE_USAGE_TTL_MS,
+  type GuideUsage,
+  MAX_TRIP_DOCS,
   MAX_VERSIONS,
+  type OwnerTripDocs,
   type OwnerTripStorage,
   SESSION_STATE_TTL_MS,
   type SessionSnapshot,
@@ -15,6 +20,8 @@ import {
   type StoredTrip,
   type StoredTripDetail,
   summarize,
+  type TripDocKind,
+  TripGoneError,
   type TripStorage,
   tripOwner,
 } from "./types";
@@ -25,6 +32,11 @@ import {
 //   itineraries/{旅程の ID}/versions/{版}   旅程の JSON（版ごと）・expiresAt
 //   shares/{共有の ID}                      共有したときの版の JSON・expiresAt
 //   sessions/{相談の ID}                    相談の途中の状態の JSON・持ち主・expiresAt
+//   users/{利用者}/trips/{旅}/memo/{ID}     手帳の JSON・expiresAt
+//   users/{利用者}/trips/{旅}/proposals/{ID} 提案の JSON（旅程をまるごと持つ）・expiresAt
+//   users/{利用者}/trips/{旅}/notices/{ID}  通知の項目を平らに置く・expiresAt
+//   users/{利用者}/trips/{旅}/watch/current 見回りの依頼の項目を平らに置く・expiresAt
+//   users/{利用者}/guideUsage/{日}          ガイドのその日の使った量（利用者全体と旅ごと）・expiresAt
 //
 // expiresAt は TTL ポリシーで消す時刻。残した旅程とその版は null（消さない）。
 // TTL で消えるまでには時間がかかるので、読むときにも期限を確かめる。
@@ -34,6 +46,13 @@ const ITINERARIES = "itineraries";
 const VERSIONS = "versions";
 const SHARES = "shares";
 const SESSIONS = "sessions";
+const USERS = "users";
+const GUIDE_USAGE = "guideUsage";
+/**
+ * 項目を平らに置く種類。見回りが、頼まれた旅を項目（status）で探し、通知を足せるようにする。
+ * 提案は旅程をまるごと持ち、自分の期限の項目（expiresAt）もあるので、JSON の文字列のまま持つ
+ */
+const FLAT_DOC_KINDS: ReadonlySet<TripDocKind> = new Set<TripDocKind>(["watch", "notices"]);
 /** 1人の旅の一覧に出す数の上限 */
 const MAX_TRIPS_PER_USER = 200;
 
@@ -65,6 +84,15 @@ function tripOf(snapshot: DocumentSnapshot): StoredTrip | null {
     version: typeof data.version === "number" ? data.version : 1,
     createdAt: millis(data.createdAt),
     updatedAt: millis(data.updatedAt),
+  };
+}
+
+/** 読んだ使った量。形が違えば 0 にする */
+function usageOf(value: unknown): GuideUsage {
+  const record = (value ?? {}) as { turns?: unknown; costUsd?: unknown };
+  return {
+    turns: typeof record.turns === "number" ? record.turns : 0,
+    costUsd: typeof record.costUsd === "number" ? record.costUsd : 0,
   };
 }
 
@@ -108,6 +136,9 @@ export class FirestoreTripStorage implements TripStorage {
   forOwner(owner: OwnerId): OwnerTripStorage {
     return {
       owner,
+      tripDocs: (tripId) => this.#docsOf(owner, tripId),
+      readGuideUsage: (tripId, day) => this.#readUsage(owner, tripId, day),
+      addGuideUsage: (tripId, day, delta) => this.#addUsage(owner, tripId, day, delta),
       claimTrip: (itineraryId) => this.#claimTrip(owner, itineraryId),
       listTrips: () => this.#listTrips(owner),
       getTrip: (itineraryId, version) => this.#getTrip(owner, itineraryId, version),
@@ -115,6 +146,83 @@ export class FirestoreTripStorage implements TripStorage {
       deleteAllTrips: () => this.#deleteAllTrips(owner),
       createShare: (itineraryId) => this.#createShare(owner, itineraryId),
     };
+  }
+
+  #docsOf(owner: OwnerId, tripId: string): OwnerTripDocs {
+    const trip = this.#db.doc(ownerTripPath(owner, tripId));
+    /** 期限のある文書は、TTL で消える前でも読まない。読めるものは、置いた値だけを戻す（期限の項目は除く） */
+    const readValue = (data: DocumentData | undefined): unknown => {
+      if (data === undefined) return null;
+      if (data.expiresAt != null && this.#now() > millis(data.expiresAt)) return null;
+      if (typeof data.json === "string") return JSON.parse(data.json);
+      const { expiresAt: _expiresAt, ...fields } = data;
+      return fields;
+    };
+    return {
+      get: async (kind, id) => {
+        if (!isDocumentId(id)) return null;
+        return readValue((await trip.collection(kind).doc(id).get()).data());
+      },
+      list: async (kind) => {
+        const docs = await trip.collection(kind).limit(MAX_TRIP_DOCS).get();
+        return docs.docs.map((doc) => readValue(doc.data())).filter((value) => value !== null);
+      },
+      put: async (kind, id, value, options = {}) => {
+        if (!isDocumentId(id)) throw new Error("保存の置き場の ID の形が正しくありません");
+        const expiresAt = options.expiresAt === undefined ? null : at(options.expiresAt);
+        // undefined の項目は Firestore に書けないので、JSON にして落とす
+        const json = JSON.stringify(value);
+        const doc = trip.collection(kind).doc(id);
+        const fields = FLAT_DOC_KINDS.has(kind)
+          ? { ...JSON.parse(json), expiresAt }
+          : { json, updatedAt: at(this.#now()), expiresAt };
+        // 発言の途中に旅を消されても書き戻さないよう、同じトランザクションで旅と持ち主を確かめる
+        await this.#db.runTransaction(async (tx) => {
+          const head = this.#alive(tripOf(await tx.get(this.#head(tripId))));
+          if (head === null || tripOwner(head) !== owner) throw new TripGoneError();
+          tx.set(doc, fields);
+        });
+      },
+      delete: async (kind, id) => {
+        if (!isDocumentId(id)) return false;
+        const doc = trip.collection(kind).doc(id);
+        return this.#db.runTransaction(async (tx) => {
+          if (!(await tx.get(doc)).exists) return false;
+          tx.delete(doc);
+          return true;
+        });
+      },
+    };
+  }
+
+  #usageDoc(owner: OwnerId, day: string) {
+    if (!isDocumentId(day)) throw new Error("保存の置き場の ID の形が正しくありません");
+    return this.#db.collection(USERS).doc(owner).collection(GUIDE_USAGE).doc(day);
+  }
+
+  async #readUsage(owner: OwnerId, tripId: string, day: string): Promise<DailyGuideUsage> {
+    const data = (await this.#usageDoc(owner, day).get()).data();
+    const trips = (data?.trips ?? {}) as Record<string, unknown>;
+    return { user: usageOf(data), trip: usageOf(trips[tripId]) };
+  }
+
+  async #addUsage(owner: OwnerId, tripId: string, day: string, delta: GuideUsage): Promise<void> {
+    const doc = this.#usageDoc(owner, day);
+    await this.#db.runTransaction(async (tx) => {
+      const data = (await tx.get(doc)).data();
+      const trips = (data?.trips ?? {}) as Record<string, unknown>;
+      const user = usageOf(data);
+      const trip = usageOf(trips[tripId]);
+      tx.set(doc, {
+        turns: user.turns + delta.turns,
+        costUsd: user.costUsd + delta.costUsd,
+        trips: {
+          ...trips,
+          [tripId]: { turns: trip.turns + delta.turns, costUsd: trip.costUsd + delta.costUsd },
+        },
+        expiresAt: at(this.#now() + GUIDE_USAGE_TTL_MS),
+      });
+    });
   }
 
   async saveItinerary(itinerary: Itinerary, consultOwner: OwnerId | null): Promise<void> {
@@ -245,19 +353,26 @@ export class FirestoreTripStorage implements TripStorage {
     await writer.close();
   }
 
-  async #removeTrip(itineraryId: string): Promise<void> {
+  async #removeTrip(owner: OwnerId, itineraryId: string): Promise<void> {
+    // 旅の下のデータ（手帳・通知・提案・見回りの依頼）を、見出しより先に消す。
+    // 途中で失敗しても見出しが残るので、やり直せる（見出しを先に消すと、やり直しが「ない旅」になる）
+    const underTrip = this.#db.doc(ownerTripPath(owner, itineraryId));
+    await this.#db.recursiveDelete(underTrip);
     await this.#deleteShares("itineraryId", itineraryId);
     // 版（サブコレクション）ごと消す
     await this.#db.recursiveDelete(this.#head(itineraryId));
+    // 見出しを消す前に書かれたものを片付ける。見出しを消したあとは書き込みが断られる
+    await this.#db.recursiveDelete(underTrip);
   }
 
-  async #deleteTrip(uid: string, itineraryId: string): Promise<boolean> {
-    if ((await this.#owned(uid, itineraryId)) === null) return false;
-    await this.#removeTrip(itineraryId);
+  async #deleteTrip(owner: OwnerId, itineraryId: string): Promise<boolean> {
+    if ((await this.#owned(owner, itineraryId)) === null) return false;
+    await this.#removeTrip(owner, itineraryId);
     return true;
   }
 
-  async #deleteAllTrips(uid: string): Promise<number> {
+  async #deleteAllTrips(owner: OwnerId): Promise<number> {
+    const uid: string = owner;
     const itineraries = this.#db.collection(ITINERARIES);
     const [kept, consulted] = await Promise.all([
       itineraries.where("ownerUid", "==", uid).select("ownerUid", "consultOwnerUid").get(),
@@ -272,8 +387,21 @@ export class FirestoreTripStorage implements TripStorage {
         })
         .map((doc) => doc.id),
     );
-    for (const id of ids) await this.#removeTrip(id);
+    for (const id of ids) await this.#removeTrip(owner, id);
     await this.#deleteShares("ownerUid", uid);
+    // 旅程がもうない旅の下のデータと、使った量も消す
+    await this.#db.recursiveDelete(this.#db.collection(USERS).doc(owner));
+    // 相談の途中の状態（条件・日程・出発地が入っている）も、期限を待たずに消す
+    const sessions = await this.#db
+      .collection(SESSIONS)
+      .where("ownerUid", "==", uid)
+      .select()
+      .get();
+    if (!sessions.empty) {
+      const writer = this.#db.bulkWriter();
+      for (const doc of sessions.docs) void writer.delete(doc.ref);
+      await writer.close();
+    }
     return kept.size;
   }
 

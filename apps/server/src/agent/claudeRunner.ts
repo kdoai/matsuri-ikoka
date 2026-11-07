@@ -6,7 +6,7 @@ import {
   query as sdkQuery,
 } from "@anthropic-ai/claude-agent-sdk";
 import { backoffMs, classifyFailure } from "@matsuri-ikoka/agent-kit";
-import type { IsoDate } from "@matsuri-ikoka/schema";
+import type { IsoDate, SseEventOf } from "@matsuri-ikoka/schema";
 import type { FestivalStore } from "../data/festivalStore";
 import type { OsmPlaceIndex } from "../domain/osmPlaces";
 import type { StationPointIndex } from "../domain/travelEstimate";
@@ -80,17 +80,28 @@ const SENTENCE_END = /[。！？!?\n]/g;
 
 /** コンシェルジュの返答の文を、文の切れ目ごとに message.delta にする */
 export class ReplyStream {
-  readonly #emit: EmitEvent;
+  readonly #emit: (event: SseEventOf<"message.delta">) => void;
   readonly #prefix = `m-${randomBytes(4).toString("hex")}`;
   #messages = 0;
   #messageId: string | null = null;
+  #lastMessageId: string | null = null;
   #buffer = "";
   #result: SDKResultMessage | null = null;
   #assistantError: string | null = null;
   sessionId: string | null = null;
 
-  constructor(emit: EmitEvent) {
+  constructor(emit: (event: SseEventOf<"message.delta">) => void) {
     this.#emit = emit;
+  }
+
+  /** 最後に流した返答の ID。まだ何も流していなければ null */
+  get lastMessageId(): string | null {
+    return this.#lastMessageId;
+  }
+
+  /** 結果のメッセージの費用（SDK の推定）。結果がまだなければ null */
+  get totalCostUsd(): number | null {
+    return this.#result?.total_cost_usd ?? null;
   }
 
   /** 費用と使用量（ログ用）。費用は SDK の推定で、トークンはサブエージェントの分を含む */
@@ -170,6 +181,7 @@ export class ReplyStream {
     }
     if (text.trim() === "") return;
     this.#messageId ??= `${this.#prefix}-${++this.#messages}`;
+    this.#lastMessageId = this.#messageId;
     this.#emit({ type: "message.delta", data: { messageId: this.#messageId, text } });
   }
 

@@ -13,18 +13,24 @@ import { loadPrompts } from "./agent/prompts";
 import { loadSampleConversations, ReplayAgentRunner } from "./agent/replayRunner";
 import { createRobotsChecker } from "./agent/robots";
 import type { AgentRunner } from "./agent/runner";
-import { agentConfigDir, forgetTranscripts } from "./agent/transcripts";
+import { agentConfigDir, forgetTranscript, forgetTranscripts } from "./agent/transcripts";
+import { createWebGuideResearcher } from "./agent/webGuideResearcher";
 import { createWebLodgingResearcher } from "./agent/webLodgingResearcher";
 import { createWebNearbyResearcher } from "./agent/webNearbyResearcher";
 import { createWebRouteResearcher } from "./agent/webRouteResearcher";
 import { createWebVerifier } from "./agent/webVerifier";
-import { createApp } from "./app";
+import { type AppDeps, createApp } from "./app";
 import { portInUseMessage, readConfig, startupNotice } from "./config";
 import { festivalDirs, loadFestivals } from "./data/festivalStore";
 import { loadOsmPlaces } from "./data/osmPlaces";
 import { loadStationPoints } from "./data/stationPoints";
 import { nowInJapan, todayInJapan } from "./domain/calendar";
+import { ClaudeGuideRunner } from "./guide/claudeRunner";
+import { loadSampleGuides, ReplayGuideRunner } from "./guide/replayRunner";
+import type { GuideRunner } from "./guide/runner";
 import { errorForLog, isFetchParserAssertion } from "./log";
+import { createPatrolDeps } from "./patrol";
+import type { PatrolDeps } from "./patrol/runner";
 import type { FestivalWishReader } from "./routes/festivalSearch";
 import { ConcurrencyLimiter, clientIp, DailyLimiter } from "./routes/guard";
 import { StoragePersistence } from "./session/persistence";
@@ -80,6 +86,10 @@ let sessions = new SessionStore();
 const stations = await loadStationPoints(config.repoRoot);
 // モックと CI ではつながず、自由記述は言葉の辞書で読む
 let readFestivalWish: FestivalWishReader | undefined;
+// ガイドは、モデルの設定（MODEL_GUIDE）がなければ動かさない。入口だけが断り、今の相談は動く
+let guideRunner: GuideRunner | undefined;
+// 見回りは、live で鍵（PATROL_ANTHROPIC_API_KEY）があるときだけ動かす。なければ入口だけが断り、今の相談はそのまま動く
+let patrol: PatrolDeps | null = null;
 if (config.mode === "live") {
   const prompts = await loadPrompts();
   const cwd = createAgentWorkdir();
@@ -107,37 +117,96 @@ if (config.mode === "live") {
   });
   const robots = createRobotsChecker();
   const osmPlaces = await loadOsmPlaces(config.repoRoot);
+  // 店内の相談とガイドで分け合う部品
+  const weather = createJmaWeather();
+  const lodging = createLodgingService(process.env, {
+    production: config.production,
+    now: () => nowInJapan(),
+  });
+  // 組み立てに失敗しても、サーバーと相談は止めない
+  patrol = await createPatrolDeps({
+    env: process.env,
+    festivals: festivals.store,
+    lodging,
+  }).catch((error: unknown) => {
+    console.error(JSON.stringify({ kind: "patrol_setup_failed", ...errorForLog(error) }));
+    return null;
+  });
+  const verifier = createWebVerifier({
+    prompt: prompts.verifier,
+    model: config.models.verifier,
+    cwd,
+    env,
+    query,
+    maxBudgetUsd: config.maxBudgetUsd,
+  });
+  // 旅程の評価は、旅程係が保存するたびに update_itinerary の中で動く。足りないところを見抜く力が要るので、
+  // 評価係のモデル（MODEL_EVALUATOR、省略時は旅程係のモデル）で行う
+  const planEvaluator = createPlanEvaluator({
+    prompt: prompts.evaluator,
+    model: config.models.evaluator,
+    cwd,
+    env,
+    query,
+    maxBudgetUsd: config.maxBudgetUsd,
+  });
+  // 行き方の調べは旅程係の中で行きと帰りの2回動くので、スタッフのモデルで行う
+  const routes = createWebRouteResearcher({
+    prompt: prompts.route,
+    model: config.models.staff,
+    cwd,
+    env,
+    query,
+    maxBudgetUsd: config.maxBudgetUsd,
+  });
+  // 寄り道の調べは周辺係・旅程係の search_nearby の中で動くので、スタッフのモデルで行う
+  const nearby = createWebNearbyResearcher({
+    robots,
+    prompt: prompts.nearby,
+    model: config.models.staff,
+    cwd,
+    env,
+    query,
+    maxBudgetUsd: config.maxBudgetUsd,
+  });
+  if (config.models.guide !== undefined) {
+    guideRunner = new ClaudeGuideRunner({
+      prompt: prompts.guide,
+      model: config.models.guide,
+      festivals: festivals.store,
+      itineraries,
+      weather,
+      lodging,
+      verifier,
+      stations: stations ?? undefined,
+      routes,
+      nearby,
+      osmPlaces: osmPlaces ?? undefined,
+      planEvaluator,
+      // Web を読むのはこの調べ役だけ。ガイドの質問だけを受け取り、利用者の情報を持たない
+      researcher: createWebGuideResearcher({
+        robots,
+        prompt: prompts["guide-research"],
+        model: config.models.staff,
+        cwd,
+        env,
+        query,
+        maxBudgetUsd: config.maxBudgetUsd,
+      }),
+      maxBudgetUsd: config.maxBudgetUsd,
+      cwd,
+      env,
+      today,
+      now: () => nowInJapan(),
+      query,
+      forgetTranscript: forgetTranscript(deleteSession, cwd),
+    });
+  }
   runner = new ClaudeAgentRunner({
     ...(stations ? { stations } : {}),
-    // 旅程の評価は、旅程係が保存するたびに update_itinerary の中で動く。足りないところを見抜く力が要るので、
-    // 評価係のモデル（MODEL_EVALUATOR、省略時は旅程係のモデル）で行う
-    planEvaluator: createPlanEvaluator({
-      prompt: prompts.evaluator,
-      model: config.models.evaluator,
-      cwd,
-      env,
-      query,
-      maxBudgetUsd: config.maxBudgetUsd,
-    }),
-    // 行き方の調べは旅程係の中で行きと帰りの2回動くので、スタッフのモデルで行う
-    routes: createWebRouteResearcher({
-      prompt: prompts.route,
-      model: config.models.staff,
-      cwd,
-      env,
-      query,
-      maxBudgetUsd: config.maxBudgetUsd,
-    }),
-    // 寄り道の調べは周辺係・旅程係の search_nearby の中で動くので、スタッフのモデルで行う
-    nearby: createWebNearbyResearcher({
-      robots,
-      prompt: prompts.nearby,
-      model: config.models.staff,
-      cwd,
-      env,
-      query,
-      maxBudgetUsd: config.maxBudgetUsd,
-    }),
+    planEvaluator,
+    routes,
+    nearby,
     // 店と宿の一覧は、OpenStreetMap から作った手元のデータで引く（docs/adr/0010-place-data-sources.md）
     ...(osmPlaces ? { osmPlaces } : {}),
     // 宿の調べは旅程係の search_lodging の中で観点ごとに並べて動くので、スタッフのモデルで行う
@@ -152,19 +221,9 @@ if (config.mode === "live") {
     }),
     festivals: festivals.store,
     itineraries,
-    weather: createJmaWeather(),
-    lodging: createLodgingService(process.env, {
-      production: config.production,
-      now: () => nowInJapan(),
-    }),
-    verifier: createWebVerifier({
-      prompt: prompts.verifier,
-      model: config.models.verifier,
-      cwd,
-      env,
-      query,
-      maxBudgetUsd: config.maxBudgetUsd,
-    }),
+    weather,
+    lodging,
+    verifier,
     // 候補を出す前の確かめは3件ずつ動くので、スタッフのモデルで行う
     candidateChecks: createCandidateChecker({
       verifier: createWebVerifier({
@@ -193,12 +252,23 @@ if (config.mode === "live") {
   );
   sampleIds = samples.map((sample) => sample.id);
   runner = new ReplayAgentRunner(samples, itineraries, { speed: config.replaySpeed });
+  guideRunner = new ReplayGuideRunner(
+    await loadSampleGuides(path.join(config.repoRoot, "data", "samples", "guide")),
+    { speed: config.replaySpeed },
+  );
 }
 
 // 旅程の版と相談の途中の状態を、保存の口に残す
 const persistence = new StoragePersistence({ storage: account.storage, itineraries, sessions });
 
+const guide: AppDeps["guide"] =
+  guideRunner === undefined ? undefined : { runner: guideRunner, limits: config.guideLimits };
+console.info(JSON.stringify({ kind: "guide", available: guide !== undefined }));
+console.info(JSON.stringify({ kind: "patrol", available: patrol !== null }));
+
 const app = createApp({
+  ...(guide === undefined ? {} : { guide }),
+  patrol,
   runner,
   sessions,
   itineraries,
@@ -211,6 +281,7 @@ const app = createApp({
   ...(readFestivalWish ? { readFestivalWish } : {}),
   limiter: new DailyLimiter(config.dailyChatLimit, today),
   clientLimiter: new DailyLimiter(config.dailyChatLimitPerIp, today),
+  trialLimiter: new DailyLimiter(config.dailyTrialChatLimit, today),
   concurrency: new ConcurrencyLimiter(
     config.maxConcurrentTurns,
     config.maxConcurrentTurnsPerClient,

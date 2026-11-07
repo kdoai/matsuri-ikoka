@@ -74,7 +74,7 @@ export type BuildItineraryResult =
   | { ok: false; errors: ItineraryIssue[]; warnings: ItineraryIssue[] };
 
 /** キーの順に左右されない比較のための文字列 */
-function stableStringify(value: unknown): string {
+export function stableStringify(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`;
   if (value !== null && typeof value === "object") {
     const entries = Object.entries(value)

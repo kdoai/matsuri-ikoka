@@ -1,10 +1,16 @@
 import {
   AnchorPlanSchema,
   type ConversationStage,
+  GuideMemoItemSchema,
+  GuideNoticeSchema,
+  GuideProposalSchema,
+  GuideResumeSummarySchema,
   type Itinerary,
   ItinerarySchema,
   TripAnchorSchema,
+  TripWatchSchema,
 } from "@matsuri-ikoka/schema";
+import { z } from "zod";
 import { errorForLog } from "../log";
 import { type OwnerId, ownerIdOf } from "../storage/owner";
 import {
@@ -13,7 +19,13 @@ import {
   type SessionSnapshot,
   type TripStorage,
 } from "../storage/types";
-import type { ItineraryStore, Session, SessionStore } from "./sessionStore";
+import {
+  type ItineraryStore,
+  newSessionGuide,
+  type Session,
+  type SessionGuide,
+  type SessionStore,
+} from "./sessionStore";
 
 // 相談と旅程を、保存の口（storage/）に残す。
 // - 旅程：ツールが手元の写し（ItineraryStore）に保存するたびに、版を保存の口に書く。同じ旅程の書き込みは順に並べる
@@ -27,7 +39,38 @@ export function parseStoredItinerary(value: unknown): Itinerary | undefined {
   return parsed.success ? parsed.data : undefined;
 }
 
+/** 保存するガイドの状態の形。Agent SDK の会話の ID と費用は、インスタンスの中だけのものなので残さない */
+const SavedGuideSchema = z.strictObject({
+  resume: GuideResumeSummarySchema,
+  memo: z.array(GuideMemoItemSchema),
+  notices: z.array(GuideNoticeSchema),
+  proposals: z.array(GuideProposalSchema),
+  watch: TripWatchSchema.nullable(),
+  replayedTurns: z.array(z.number().int().nonnegative()),
+  replaySeeded: z.boolean(),
+});
+
+/** ガイドと話していなければ、保存の項目を増やさない */
+function savedGuide(guide: SessionGuide): z.infer<typeof SavedGuideSchema> | undefined {
+  const { agentSessionId: _id, agentCostUsd: _cost, ...saved } = guide;
+  const unused =
+    saved.resume.turns === 0 &&
+    saved.memo.length === 0 &&
+    saved.notices.length === 0 &&
+    saved.proposals.length === 0 &&
+    saved.watch === null &&
+    !saved.replaySeeded;
+  return unused ? undefined : saved;
+}
+
+/** 保存の口から読んだガイドの状態を、いまの形で確かめる。前の形のものは捨てて、話し始めからにする */
+function restoredGuide(saved: unknown): SessionGuide {
+  const parsed = SavedGuideSchema.safeParse(saved);
+  return parsed.success ? { ...newSessionGuide(), ...parsed.data } : newSessionGuide();
+}
+
 export function snapshotOf(session: Session, now: number): SessionSnapshot {
+  const guide = savedGuide(session.guide);
   return {
     id: session.id,
     ownerUid: session.ownerUid,
@@ -44,25 +87,38 @@ export function snapshotOf(session: Session, now: number): SessionSnapshot {
     anchorCheck: session.anchorCheck,
     cancelledAnchor: session.cancelledAnchor,
     replay: session.replay,
+    ...(guide === undefined ? {} : { guide }),
   };
 }
 
 /** 旅程を読めない相談の段階。旅程がある前提の段階からは、聞き取りか候補へ戻す */
-function stageWithoutItinerary(saved: SessionSnapshot): ConversationStage {
+function stageWithoutItinerary(
+  saved: Pick<SessionSnapshot, "stage" | "candidates">,
+): ConversationStage {
   if (saved.stage === "hearing" || saved.stage === "candidates") return saved.stage;
   return saved.candidates.length > 0 ? "candidates" : "hearing";
 }
 
 /** 保存の口から読んだアンカーを、いまの形で確かめる。前の形のものは捨てる（組み立ては次の発言で計算し直す） */
-function currentAnchorState(saved: SessionSnapshot): SessionSnapshot {
+function currentAnchorState(saved: SessionSnapshot): SessionSnapshot & { guide: SessionGuide } {
   const anchor = TripAnchorSchema.safeParse(saved.anchor);
   const plan = AnchorPlanSchema.safeParse(saved.anchorPlan);
   return {
     ...saved,
     anchor: anchor.success ? anchor.data : null,
     anchorPlan: anchor.success && plan.success ? plan.data : null,
+    guide: restoredGuide(saved.guide),
   };
 }
+
+/**
+ * ガイドが読む旅。kept は、その人が残した旅か（残した旅のデータだけを、旅の下に置く）。
+ * none は保存の口に旅がない（消された）。unreadable は旅はあるが読めない形（消されたとは限らない）
+ */
+export type GuideTripRead =
+  | { status: "found"; itinerary: Itinerary; kept: boolean }
+  | { status: "none" }
+  | { status: "unreadable" };
 
 export class StoragePersistence {
   readonly #storage: TripStorage;
@@ -71,6 +127,8 @@ export class StoragePersistence {
   readonly #now: () => number;
   /** 旅程の ID → 書き込みの途中の Promise（同じ旅程の版を順に書く） */
   readonly #pending = new Map<string, Promise<void>>();
+  /** 書き込みの途中の相談。すべて消す前に待ち、消したあとに戻らないようにする */
+  readonly #pendingSessions = new Set<Promise<void>>();
 
   constructor(deps: {
     storage: TripStorage;
@@ -88,6 +146,53 @@ export class StoragePersistence {
   /** 持ち主を決めて、利用者の旅の口を受け取る */
   forOwner(owner: OwnerId): OwnerTripStorage {
     return this.#storage.forOwner(owner);
+  }
+
+  /**
+   * 旅を消す前に呼ぶ。その旅を指す相談に印を付けて流している返事を止め、手元の写しと相談の中のガイドのデータを捨てる。
+   * 印のある間は旅程を保存しないので、返事の途中に消しても旅は作り直されない。
+   * 相談の旅程は、次の発言の前に外す（releaseDeletedTrip）。ガイドの入口で「旅が消された」と分かるよう、それまで残す。
+   * 持ち主と確かめた旅だけに呼ぶ
+   */
+  async forgetTrip(itineraryId: string): Promise<void> {
+    this.#itineraries.forget(itineraryId);
+    for (const session of this.#sessions?.matching((s) => s.itineraryId === itineraryId) ?? []) {
+      const { agentSessionId, agentCostUsd } = session.guide;
+      session.guide = { ...newSessionGuide(), agentSessionId, agentCostUsd };
+      session.tripDeleted = true;
+      session.stopTurn?.();
+      await this.saveSession(session);
+    }
+  }
+
+  /**
+   * 利用者が消した旅を指す相談から、旅程を外す。発言とこだわりの変更の前に呼ぶ。
+   * 消した旅が次の発言で作り直されないようにし、相談は聞き取りか候補の段階から旅程のないものとして続ける
+   */
+  async releaseDeletedTrip(session: Session): Promise<void> {
+    if (!session.tripDeleted) return;
+    session.tripDeleted = false;
+    session.stage = stageWithoutItinerary(session);
+    session.itineraryId = null;
+    if (session.replay !== null) {
+      // 記録の再生でも、消した旅の ID を使い回さない
+      const { itineraryIds: _ids, ...replay } = session.replay;
+      session.replay = replay;
+    }
+    await this.saveSession(session);
+  }
+
+  /**
+   * すべて消す前に呼ぶ。その人の相談に印を付けて流している返事を止め、メモリから外す。
+   * 印のある相談は、もう開けず、保存もしない。返事を作っている途中の相談は、返事が止まって保存しに来たときに外す
+   */
+  forgetOwner(owner: OwnerId): void {
+    for (const session of this.#sessions?.matching((s) => s.ownerUid === owner) ?? []) {
+      if (session.itineraryId !== null) this.#itineraries.forget(session.itineraryId);
+      session.discarded = true;
+      session.stopTurn?.();
+      if (!session.busy) this.#sessions?.remove(session);
+    }
   }
 
   #writeItinerary(itinerary: Itinerary, owner: OwnerId | null): void {
@@ -111,7 +216,7 @@ export class StoragePersistence {
       await this.#pending.get(itineraryId);
       return;
     }
-    await Promise.all(this.#pending.values());
+    await Promise.all([...this.#pending.values(), ...this.#pendingSessions]);
   }
 
   /**
@@ -132,6 +237,30 @@ export class StoragePersistence {
   }
 
   /**
+   * ガイドが読む旅を、保存の口から読む（別のインスタンスで版が増えていても、いまの版を読む）。
+   * 読めるのは、viewer 自身の旅程と、持ち主のない旅程だけ。消した旅とほかの人の旅は undefined。
+   * 保存の口の失敗は呼ぶ側に投げる
+   */
+  async readGuideTrip(id: string, viewer: OwnerId | null): Promise<GuideTripRead> {
+    await this.flush(id);
+    if (viewer !== null) {
+      const own = await this.#storage.forOwner(viewer).getTrip(id);
+      if (own !== null) {
+        const itinerary = parseStoredItinerary(own.itinerary);
+        return itinerary === undefined
+          ? { status: "unreadable" }
+          : { status: "found", itinerary, kept: own.trip.ownerUid === viewer };
+      }
+    }
+    const unowned = await this.#storage.readUnowned(id);
+    if (unowned === null) return { status: "none" };
+    const itinerary = parseStoredItinerary(unowned.itinerary);
+    return itinerary === undefined
+      ? { status: "unreadable" }
+      : { status: "found", itinerary, kept: false };
+  }
+
+  /**
    * 相談を引く。メモリになければ保存の口から戻し、その相談の旅程も手元の写しに置く。
    * 見つからなければ undefined。viewer は持ち主のない相談を開いた利用者で、その人の旅程なら戻せる。
    * 読めない旅程（消した・ほかの人の・前の形）は相談から外し、相談は旅程のないものとして続ける
@@ -139,6 +268,7 @@ export class StoragePersistence {
   async load(sessionId: string, viewer: OwnerId | null = null): Promise<Session | undefined> {
     if (this.#sessions === undefined) return undefined;
     const inMemory = this.#sessions.get(sessionId);
+    if (inMemory?.discarded) return undefined;
     if (inMemory !== undefined) return inMemory;
     let saved: SessionSnapshot | null;
     try {
@@ -184,7 +314,18 @@ export class StoragePersistence {
    * 失敗してもログに残すだけにする
    */
   async saveSession(session: Session): Promise<void> {
+    const write = this.#writeSession(session);
+    this.#pendingSessions.add(write);
+    await write.finally(() => this.#pendingSessions.delete(write));
+  }
+
+  async #writeSession(session: Session): Promise<void> {
     if (session.itineraryId !== null) await this.flush(session.itineraryId);
+    // すべて消した相談は書かない。止まった返事の片付けで戻さない
+    if (session.discarded) {
+      this.#sessions?.remove(session);
+      return;
+    }
     try {
       await this.#storage.saveSession(snapshotOf(session, this.#now()));
     } catch (error) {

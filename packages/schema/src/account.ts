@@ -55,6 +55,16 @@ export const DeleteTripsResponseSchema = z.strictObject({ deleted: z.number().in
 export type DeleteTripsResponse = z.infer<typeof DeleteTripsResponseSchema>;
 
 /**
+ * お試し用のアカウントの利用者の ID。何人かで同じアカウントを使うので、パスワードの変更と削除を断る。
+ * ID はサーバーが ID トークンから確かめた値なので、ほかの人がこの ID を名乗ることはできない
+ */
+export const TRIAL_ACCOUNT_UID = "trial-account";
+
+export function isTrialAccount(uid: string): boolean {
+  return uid === TRIAL_ACCOUNT_UID;
+}
+
+/**
  * GET /api/auth/config の応答。画面がログインに使う Firebase の公開の設定（秘密の値ではない）。
  * ログインを用意していなければ enabled: false
  */

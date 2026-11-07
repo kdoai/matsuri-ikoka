@@ -1,4 +1,9 @@
-import { DoneEventSchema, encodeSseEvent, type SseEvent } from "@matsuri-ikoka/schema";
+import {
+  DoneEventSchema,
+  encodeSseEvent,
+  type SseEvent,
+  type SseMessage,
+} from "@matsuri-ikoka/schema";
 import type { Context } from "hono";
 import { streamSSE } from "hono/streaming";
 import { AgentError, type EmitEvent } from "../agent/runner";
@@ -25,9 +30,16 @@ export const HEARTBEAT_MS = 15_000;
 
 export class TurnTimeoutError extends Error {}
 class ClientClosedError extends Error {}
+/** 利用者が旅やデータを消したので止めた */
+class TurnStoppedError extends Error {}
 
 /** 返答の終わり方。client_closed は、done を送る前に利用者の側から接続が切れた */
 export type TurnEnding = "done" | "error" | "timeout" | "client_closed";
+
+/** 利用者の側から接続が切れて止まったか（時間切れで止まったときは false） */
+export function isClientClosed(signal: AbortSignal): boolean {
+  return signal.aborted && signal.reason instanceof ClientClosedError;
+}
 
 /** 返答の終わり方を決める（ログに残す） */
 export function turnEnding(signal: AbortSignal, errorBody: ErrorBody | null): TurnEnding {
@@ -44,6 +56,13 @@ export function toErrorBody(error: unknown, signal: AbortSignal): ErrorBody | nu
       code: "timeout",
       message: "時間がかかりすぎたので、ここで止めました。もう一度送ってください。",
       retryable: true,
+    };
+  }
+  if (signal.aborted && signal.reason instanceof TurnStoppedError) {
+    return {
+      code: "bad_request",
+      message: "旅を消したので、返事を止めました。",
+      retryable: false,
     };
   }
   if (error instanceof AgentError) {
@@ -77,17 +96,87 @@ export function doneEvent(session: Session): SseEvent {
   };
 }
 
+export interface TurnTiming {
+  idleMs?: number;
+  maxMs?: number;
+  heartbeatMs?: number;
+}
+
+/** イベントの種類（店内の相談・ガイド）ごとの、SSE の作り方 */
+export interface TurnEvents<E extends { type: string }> {
+  /** 送る前に検証する。形が違えば例外を投げる */
+  encode(event: E): SseMessage;
+  error(body: ErrorBody): E;
+  /** 最後に必ず送るイベント。失敗で落とさない */
+  done(): E | Promise<E>;
+  /** 失敗を送る前に、それまでに送ったイベントの種類を見て、文を変える */
+  adjustError?(body: ErrorBody, sent: ReadonlySet<string>): ErrorBody;
+  /** 流し始めたときに、返事を止める関数を渡す */
+  started?(stop: () => void): void;
+  /** すべて送ったあとに呼ぶ */
+  finished?(): void;
+}
+
+/** 店内の相談の SSE。done は相談の状態から作る */
 export function streamTurn(
   c: Context,
   session: Session,
   run: (signal: AbortSignal, emit: EmitEvent, progress: () => void) => Promise<void>,
-  options: { idleMs?: number; maxMs?: number; heartbeatMs?: number } = {},
+  options: TurnTiming = {},
+): Response {
+  return streamEvents<SseEvent>(c, session, run, options, {
+    encode: encodeSseEvent,
+    error: (data) => ({ type: "error", data }),
+    done: () => doneEvent(session),
+    adjustError: (body, sent) =>
+      // 旅程の案は届いているので、送り直しを求めず、案を見てもらう（時間切れでも、費用の上限などでも）
+      sent.has("itinerary.updated")
+        ? {
+            ...body,
+            retryable: false,
+            message:
+              body.code === "timeout"
+                ? "旅程の案はできています。説明の途中で時間がかかったので、ここで止めました。変えたいところがあれば教えてください。"
+                : "旅程の案はできています。説明の途中で止まりましたが、案はそのまま見られます。変えたいところがあれば教えてください。",
+          }
+        : body,
+  });
+}
+
+/** 相談の返答の SSE。流している間は、相談を「返事を作っている途中」にする */
+export function streamEvents<E extends { type: string }>(
+  c: Context,
+  session: Session,
+  run: (signal: AbortSignal, emit: (event: E) => void, progress: () => void) => Promise<void>,
+  options: TurnTiming,
+  kinds: TurnEvents<E>,
 ): Response {
   session.busy = true;
+  return openEventStream(c, run, options, {
+    ...kinds,
+    started: (stop) => {
+      session.stopTurn = stop;
+      // 受け付けてから流し始めるまでの間に消されていたら、すぐ止める
+      if (session.discarded || session.tripDeleted) stop();
+    },
+    finished: () => {
+      session.stopTurn = null;
+      session.busy = false;
+    },
+  });
+}
+
+/** SSE を開く。相談を開く前から流せる（緊急の発言は、保存の口を待たずに連絡先を送る） */
+export function openEventStream<E extends { type: string }>(
+  c: Context,
+  run: (signal: AbortSignal, emit: (event: E) => void, progress: () => void) => Promise<void>,
+  options: TurnTiming,
+  kinds: TurnEvents<E>,
+): Response {
   return streamSSE(c, async (stream) => {
     const started = Date.now();
     let events = 0;
-    let itineraryUpdated = false;
+    const sent = new Set<string>();
     const controller = new AbortController();
     const timeout = () => controller.abort(new TurnTimeoutError());
     const idleMs = options.idleMs ?? TURN_IDLE_MS;
@@ -100,6 +189,7 @@ export function streamTurn(
       idle = setTimeout(timeout, idleMs);
     };
     stream.onAbort(() => controller.abort(new ClientClosedError()));
+    kinds.started?.(() => controller.abort(new TurnStoppedError()));
     let writes = Promise.resolve();
     const write = (task: () => Promise<unknown>) => {
       writes = writes.then(task).then(
@@ -111,10 +201,10 @@ export function streamTurn(
       () => write(() => stream.write(": keep-alive\n\n")),
       options.heartbeatMs ?? HEARTBEAT_MS,
     );
-    const emit = (event: SseEvent): boolean => {
-      let message: ReturnType<typeof encodeSseEvent>;
+    const emit = (event: E): boolean => {
+      let message: SseMessage;
       try {
-        message = encodeSseEvent(event);
+        message = kinds.encode(event);
       } catch (error) {
         // 形の違うイベントは送らない（画面のストアを壊さない）
         console.error(
@@ -124,7 +214,7 @@ export function streamTurn(
       }
       progress();
       events += 1;
-      if (event.type === "itinerary.updated") itineraryUpdated = true;
+      sent.add(event.type);
       write(() => stream.writeSSE(message));
       return true;
     };
@@ -134,26 +224,18 @@ export function streamTurn(
       await run(controller.signal, emit, progress);
     } catch (error) {
       errorBody = toErrorBody(error, controller.signal);
-      // 旅程の案は届いているので、送り直しを求めず、案を見てもらう（時間切れでも、費用の上限などでも）
-      if (errorBody !== null && itineraryUpdated) {
-        errorBody = {
-          ...errorBody,
-          retryable: false,
-          message:
-            errorBody.code === "timeout"
-              ? "旅程の案はできています。説明の途中で時間がかかったので、ここで止めました。変えたいところがあれば教えてください。"
-              : "旅程の案はできています。説明の途中で止まりましたが、案はそのまま見られます。変えたいところがあれば教えてください。",
-        };
+      if (errorBody !== null) {
+        errorBody = kinds.adjustError?.(errorBody, sent) ?? errorBody;
+        emit(kinds.error(errorBody));
       }
-      if (errorBody !== null) emit({ type: "error", data: errorBody });
     } finally {
       clearTimeout(idle);
       clearTimeout(overall);
       clearInterval(heartbeat);
       // done を送れないと、画面は「接続が切れた」と受け取る。送れなかったこともログに残す
-      const doneSent = emit(doneEvent(session));
+      const doneSent = emit(await kinds.done());
       await writes;
-      session.busy = false;
+      kinds.finished?.();
       console.info(
         JSON.stringify({
           kind: "turn_end",
