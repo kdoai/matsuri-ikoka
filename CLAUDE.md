@@ -12,6 +12,7 @@ apps/web/          画面（Vite + React + Tailwind CSS）。state・ui・scenes
 packages/schema/   Zod のスキーマ（唯一の定義）。テスト用の架空のデータは ./testing
 packages/agent-kit/ Claude を呼ぶ処理の共通の部品（JSON の取り出し、URL の確認、出典の照合、失敗の分類）
 managed-agents/    週次の調査の Managed Agents の定義（エージェント・環境・Store・定期実行。ant apply で適用）
+managed-agents-patrol/ 見回り係の Managed Agents の定義（週次の調査と別のワークスペース。人が ant apply で適用）
 data/festivals/    祭りのデータ（1件1ファイル）
 data/samples/      モックで再生するサンプルの相談（架空）
 assets/3d/         3D の店内とスタッフのモデルを作るスクリプト
