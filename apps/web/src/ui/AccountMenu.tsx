@@ -1,12 +1,13 @@
 import type { TripSummary } from "@matsuri-ikoka/schema";
-import { BookOpen, LogIn, Trash2, UserRound } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import type { AccountUser } from "../account/client";
+import { BookOpen, Trash2, UserRound } from "lucide-react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { type AccountUser, watchUserLeaving } from "../account/client";
 import { useAccountClient } from "../account/context";
 import { formatDate } from "../i18n";
-import { useApp } from "../state/react";
+import { useActions, useApp } from "../state/react";
 import type { Locale } from "../state/types";
 import { buttonPrimary, buttonQuiet, buttonSecondary } from "./common";
+import { inputClass, LoginForm, loginFailureText } from "./LoginForm";
 
 // ログインのボタンと、自分の旅の一覧（docs/spec/account.md）。
 // 相談はログインなしで始められる。旅を残す・あとで開く・消すのは、ログインしてから。
@@ -16,8 +17,6 @@ const MESSAGES = {
   ja: {
     button: "ログインと自分の旅",
     title: "自分の旅",
-    loginLead: "旅を残して、あとで開くにはログインします。相談はログインしなくても続けられます。",
-    login: "Google でログイン",
     signedIn: (name: string | null) => (name ? `${name} さんでログイン中` : "ログイン中"),
     save: "この旅を残す",
     saved: "残しました",
@@ -27,10 +26,18 @@ const MESSAGES = {
     confirmDelete: (title: string) =>
       `「${title}」を消します。共有したしおりの URL も開けなくなります。`,
     logout: "ログアウト",
+    trialNote:
+      "お試し用のアカウントです。残した旅は、同じアカウントを使うほかの人にも見え、初期の状態に戻すと消えます。",
+    changePassword: "パスワードを変える",
+    changePasswordSent:
+      "パスワードを変えるメールを送りました。メールの案内に沿って進めてください。",
+    confirmPassword: "確かめのため、パスワードを入れてください",
+    confirmGoogle: "確かめのため、Google のログインの窓が開きます。",
+    confirmDeleteAllButton: "すべて消す",
+    cancel: "やめる",
     deleteAll: "旅とログインの記録をすべて消す",
     confirmDeleteAll:
       "残した旅と共有したしおり、このアプリのログインの記録をすべて消して、ログアウトします。元に戻せません。",
-    failed: "うまくいきませんでした。少し待ってから、もう一度お試しください。",
     keepNote: "残した旅は、消すまで残ります。しおりの共有の URL は30日で開けなくなります。",
     close: "閉じる",
     untitled: "名前のない旅",
@@ -38,9 +45,6 @@ const MESSAGES = {
   en: {
     button: "Sign in and my trips",
     title: "My trips",
-    loginLead:
-      "Sign in to keep a trip and open it later. You can keep chatting without signing in.",
-    login: "Sign in with Google",
     signedIn: (name: string | null) => (name ? `Signed in as ${name}` : "Signed in"),
     save: "Keep this trip",
     saved: "Kept",
@@ -50,10 +54,17 @@ const MESSAGES = {
     confirmDelete: (title: string) =>
       `Delete "${title}"? Shared guide links will stop working too.`,
     logout: "Sign out",
+    trialNote:
+      "This is the trial account. Others using it can see kept trips, and they're removed when the account is reset.",
+    changePassword: "Change password",
+    changePasswordSent: "We sent you an email to change your password. Please follow its steps.",
+    confirmPassword: "Please enter your password to confirm",
+    confirmGoogle: "A Google sign-in window will open to confirm it's you.",
+    confirmDeleteAllButton: "Delete everything",
+    cancel: "Cancel",
     deleteAll: "Delete all trips and my sign-in record",
     confirmDeleteAll:
       "This deletes your kept trips, shared guides, and this app's sign-in record, then signs you out. This cannot be undone.",
-    failed: "Something went wrong. Please try again in a moment.",
     keepNote: "Kept trips stay until you delete them. Shared guide links expire after 30 days.",
     close: "Close",
     untitled: "Untitled trip",
@@ -77,6 +88,7 @@ function openLater(): (path: string) => void {
 
 export function AccountMenu() {
   const client = useAccountClient();
+  const { restart } = useActions();
   const locale = useApp((state) => state.ui.locale);
   const sessionId = useApp((state) => state.session.id);
   const itineraryId = useApp((state) => state.itinerary.current?.id ?? null);
@@ -86,9 +98,18 @@ export function AccountMenu() {
   const [open, setOpen] = useState(false);
   const [trips, setTrips] = useState<TripSummary[] | null>(null);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [password, setPassword] = useState("");
+  const passwordId = useId();
   const ref = useRef<HTMLDivElement>(null);
+  // 合言葉が要るサーバーでは、合言葉を入れて相談が始まるまで設定を読めないので、そのあとに読み直す
+  const sessionReady = sessionId !== null;
+  // 前の人の旅程と会話を画面に残さない。いなくなった人の相談は続けられないので、新しい相談を始める
+  const onUserChange = useRef(watchUserLeaving(() => void restart()));
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: sessionReady は読み直しのきっかけとして見る
   useEffect(() => {
     if (client === null) return;
     let active = true;
@@ -97,26 +118,34 @@ export function AccountMenu() {
     });
     const stop = client.onUser((next) => {
       if (!active) return;
+      onUserChange.current(next);
       setUser(next);
       setTrips(null);
+      setConfirmingDelete(false);
+      setPassword("");
+      setNotice(null);
     });
     return () => {
       active = false;
       stop();
     };
-  }, [client]);
+  }, [client, sessionReady]);
 
-  const run = useCallback(async (task: () => Promise<void>) => {
-    setBusy(true);
-    setError(false);
-    try {
-      await task();
-    } catch {
-      setError(true);
-    } finally {
-      setBusy(false);
-    }
-  }, []);
+  const run = useCallback(
+    async (task: () => Promise<void>) => {
+      setBusy(true);
+      setError(null);
+      setNotice(null);
+      try {
+        await task();
+      } catch (caught) {
+        setError(loginFailureText(locale, caught));
+      } finally {
+        setBusy(false);
+      }
+    },
+    [locale],
+  );
 
   const refresh = useCallback(async () => {
     if (client !== null) setTrips(await client.listTrips());
@@ -182,21 +211,11 @@ export function AccountMenu() {
           </div>
 
           {user === null ? (
-            <div className="grid gap-3">
-              <p className="text-sm leading-relaxed">{m.loginLead}</p>
-              <button
-                type="button"
-                className={buttonPrimary}
-                disabled={busy}
-                onClick={() => void run(() => client.signIn())}
-              >
-                <LogIn className="size-4" />
-                {m.login}
-              </button>
-            </div>
+            <LoginForm client={client} locale={locale} />
           ) : (
             <div className="grid gap-3">
               <p className="text-ink-soft text-sm">{m.signedIn(user.name)}</p>
+              {user.trial ? <p className="text-sm leading-relaxed">{m.trialNote}</p> : null}
               {sessionId !== null && itineraryId !== null ? (
                 <button
                   type="button"
@@ -247,6 +266,8 @@ export function AccountMenu() {
                             void run(async () => {
                               await client.deleteTrip(trip.itineraryId);
                               await refresh();
+                              // 消した旅を画面に残さない
+                              if (trip.itineraryId === itineraryId) await restart();
                             });
                           }}
                         >
@@ -268,25 +289,95 @@ export function AccountMenu() {
                 >
                   {m.logout}
                 </button>
-                <button
-                  type="button"
-                  className={`${buttonQuiet} text-shu-700`}
-                  disabled={busy}
-                  onClick={() => {
-                    if (!window.confirm(m.confirmDeleteAll)) return;
-                    void run(() => client.deleteEverything());
+                {user.usesPassword && !user.trial ? (
+                  <button
+                    type="button"
+                    className={buttonQuiet}
+                    disabled={busy}
+                    onClick={() =>
+                      void run(async () => {
+                        await client.changePassword();
+                        setNotice(m.changePasswordSent);
+                      })
+                    }
+                  >
+                    {m.changePassword}
+                  </button>
+                ) : null}
+                {user.trial ? null : (
+                  <button
+                    type="button"
+                    className={`${buttonQuiet} text-shu-700`}
+                    disabled={busy}
+                    aria-expanded={confirmingDelete}
+                    onClick={() => setConfirmingDelete((value) => !value)}
+                  >
+                    {m.deleteAll}
+                  </button>
+                )}
+              </div>
+              {confirmingDelete && !user.trial ? (
+                <form
+                  className="grid gap-2 rounded-xl border border-shu-600 bg-white p-3"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    // Google の確かめ直しの窓は、この押した操作の中で開く
+                    void run(() =>
+                      client.deleteEverything(user.usesPassword ? password : undefined),
+                    );
                   }}
                 >
-                  {m.deleteAll}
-                </button>
-              </div>
+                  <p className="text-sm leading-relaxed">{m.confirmDeleteAll}</p>
+                  {user.usesPassword ? (
+                    <div>
+                      <label htmlFor={passwordId} className="block font-bold text-sm">
+                        {m.confirmPassword}
+                      </label>
+                      <input
+                        id={passwordId}
+                        type="password"
+                        autoComplete="current-password"
+                        value={password}
+                        onChange={(event) => setPassword(event.target.value)}
+                        className={inputClass}
+                      />
+                    </div>
+                  ) : (
+                    <p className="text-ink-soft text-xs">{m.confirmGoogle}</p>
+                  )}
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="submit"
+                      className={buttonSecondary}
+                      disabled={busy || (user.usesPassword && password === "")}
+                    >
+                      {m.confirmDeleteAllButton}
+                    </button>
+                    <button
+                      type="button"
+                      className={buttonQuiet}
+                      onClick={() => {
+                        setConfirmingDelete(false);
+                        setPassword("");
+                      }}
+                    >
+                      {m.cancel}
+                    </button>
+                  </div>
+                </form>
+              ) : null}
+              {notice === null ? null : (
+                <p role="status" className="text-sm">
+                  {notice}
+                </p>
+              )}
             </div>
           )}
-          {error ? (
+          {error === null ? null : (
             <p role="alert" className="mt-2 text-shu-700 text-sm">
-              {m.failed}
+              {error}
             </p>
-          ) : null}
+          )}
         </div>
       ) : null}
     </div>
