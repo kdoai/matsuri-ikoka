@@ -1,33 +1,25 @@
 import { useEffect, useRef } from "react";
-import type { AccountUser } from "../account/client";
-import { useAccountClient } from "../account/context";
+import { watchUserLeaving } from "../account/client";
+import { useAccountUser } from "../account/useAccountUser";
 import { useAppStore } from "../state/react";
 import type { AppStore } from "../state/store";
 
-// ログインしていた人が離れたら、通りに残った前の人の旅・通知・会話を消す。
-// ログインの状態を読むだけで、ログインの処理はしない。何度呼ばれても害がない（restart を重ねるだけ）。
+// ログインしていた人が離れたときの片付けのうち、useRestartWhenUserLeaves が見ない場合だけを受け持つ。
+// ガイドのない環境で残した旅を開くと、相談の ID はないが、旅程は手元にある。
+// 相談の ID があるときは useRestartWhenUserLeaves が新しい相談を始めるので、ここでは何もしない。
 
-/** 前にログインしていた人が離れたか。ログインなしからログインしたときは、相談を続ける */
-export function userLeft(before: AccountUser | null, after: AccountUser | null): boolean {
-  return before !== null && (after === null || after.name !== before.name);
-}
-
-/** 通りに出たことがある相談なら、新しい相談から始める */
-export function clearGuideForLeavingUser(store: AppStore): void {
-  const { guide, actions } = store.getState();
-  if (guide.availability !== "idle") void actions.restart();
+/** 相談の ID がなく、前の人の旅が手元にあれば、消して新しい相談から始める */
+export function clearTripWithoutSession(store: AppStore): void {
+  const { session, itinerary, actions } = store.getState();
+  if (session.id === null && itinerary.current !== null) void actions.restart();
 }
 
 export function AccountWatch() {
-  const client = useAccountClient();
+  const { user } = useAccountUser();
   const store = useAppStore();
-  const before = useRef<AccountUser | null>(null);
+  const onUser = useRef(watchUserLeaving(() => clearTripWithoutSession(store)));
   useEffect(() => {
-    if (client === null) return;
-    return client.onUser((user) => {
-      if (userLeft(before.current, user)) clearGuideForLeavingUser(store);
-      before.current = user;
-    });
-  }, [client, store]);
+    onUser.current(user);
+  }, [user]);
   return null;
 }

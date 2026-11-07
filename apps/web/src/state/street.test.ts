@@ -16,7 +16,7 @@ import { describe, expect, it, vi } from "vitest";
 import { createReplayTransport } from "../testing/replayTransport";
 import type { ChatTransport, OnSseMessage } from "../transport/types";
 import { TransportError } from "../transport/types";
-import { clearGuideForLeavingUser, userLeft } from "../ui/AccountWatch";
+import { clearTripWithoutSession } from "../ui/AccountWatch";
 import { shioriReady } from "./selectors";
 import { createAppStore, LEAD_OUT_MS } from "./store";
 
@@ -225,21 +225,14 @@ describe("合言葉を入れ直す", () => {
 });
 
 describe("ログアウト", () => {
-  it("ログインしていた人が離れたときだけ片付ける", () => {
-    const a = { name: "架空の旅人" };
-    expect(userLeft(a, null)).toBe(true);
-    expect(userLeft(a, { name: "別の旅人" })).toBe(true);
-    expect(userLeft(a, a)).toBe(false);
-    expect(userLeft(null, a)).toBe(false);
-    expect(userLeft(null, null)).toBe(false);
-  });
-
-  it("通りの旅と通知と会話を消して、新しい相談から始める", async () => {
-    const { store } = makeStore();
-    store.getState().actions.leaveWithGuide();
+  it("相談の ID がなく、前の人の旅が手元にあれば、消して新しい相談から始める", async () => {
+    const { store } = makeStore({
+      openSavedTrip: async () => ({ sessionId: null, itinerary }),
+    });
+    await store.getState().actions.openSavedTrip(itinerary.id);
     await flush();
     store.getState().actions.openStall("food");
-    clearGuideForLeavingUser(store);
+    clearTripWithoutSession(store);
     await flush();
     const state = store.getState();
     expect(state.ui.view).toBe("shop");
@@ -248,11 +241,25 @@ describe("ログアウト", () => {
     expect(state.guide.openStall).toBeNull();
   });
 
-  it("通りに出ていない相談には触らない", async () => {
+  it("相談の ID があるときは触らない（useRestartWhenUserLeaves が受け持つ）", async () => {
     const { store } = makeStore();
-    clearGuideForLeavingUser(store);
+    clearTripWithoutSession(store);
     await flush();
     expect(store.getState().itinerary.current?.id).toBe(itinerary.id);
+  });
+
+  it("通りを開いていても、新しい相談から始めれば、旅と通知と会話は残らない", async () => {
+    const { store } = makeStore();
+    store.getState().actions.leaveWithGuide();
+    await flush();
+    store.getState().actions.openStall("food");
+    await store.getState().actions.restart();
+    const state = store.getState();
+    expect(state.ui.view).toBe("shop");
+    expect(state.itinerary.current).toBeNull();
+    expect(state.guide.notices).toEqual([]);
+    expect(state.guide.entries).toEqual([]);
+    expect(state.guide.openStall).toBeNull();
   });
 });
 

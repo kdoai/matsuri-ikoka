@@ -154,6 +154,45 @@ test("ガイドを用意していない環境でも、屋台を読め、相談�
   await snap(page, info, "65-guide-unavailable");
 });
 
+test("通りの案内からログインの窓を開け、窓は画面に収まり、ほかの窓に隠れない", async ({
+  page,
+}, info) => {
+  test.setTimeout(150_000);
+  await page.route("**/api/auth/config", (route) =>
+    route.fulfill({
+      json: {
+        enabled: true,
+        apiKey: "demo-api-key",
+        authDomain: "example.com",
+        projectId: "demo-project",
+      },
+    }),
+  );
+  await enterShop(page);
+  await untilShiori(page);
+  await goOutside(page);
+  await page.getByTestId("guide-lead").click();
+  await page.getByTestId("stall-window").getByRole("button", { name: "屋台を閉じる" }).click();
+  const note = page.getByTestId("guest-note");
+  await expect(note).toContainText("旅を残すと");
+  await note.getByRole("button", { name: "ログインと自分の旅" }).click();
+  const panel = page.locator("#account-panel");
+  await expect(panel).toBeVisible();
+  await expect(panel).toBeInViewport({ ratio: 1 });
+  // 窓の中のボタンが、ほかの部品に隠れず押せる
+  await panel.getByRole("button").first().click({ trial: true });
+  await snap(page, info, "66-account-panel-street");
+
+  // 屋台を開いていても、上の段の入口から開ける
+  await page.keyboard.press("Escape");
+  await page.getByTestId("stall-food").click();
+  const entry = page.getByTestId("account-menu").getByRole("button").first();
+  await entry.click();
+  await expect(panel).toBeInViewport({ ratio: 1 });
+  await panel.getByRole("button").first().click({ trial: true });
+  await snap(page, info, "67-account-panel-over-stall");
+});
+
 test("ガイドの知らせを読めなくても、緊急の相談を送れて、連絡先が先に出る", async ({
   page,
 }, info) => {

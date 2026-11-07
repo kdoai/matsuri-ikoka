@@ -10,8 +10,7 @@ import {
   useRef,
   useState,
 } from "react";
-import type { AccountUser } from "../account/client";
-import { useAccountClient } from "../account/context";
+import { useAccountUser } from "../account/useAccountUser";
 import { prefetchModels, STREET_SCENE_MODELS } from "../scenes/modelFiles";
 import { litStalls, unreadNotices } from "../state/guide";
 import { playStore, usePlay } from "../state/play";
@@ -58,24 +57,8 @@ const roundButton =
 /** ログインなしの旅は相談の間しか続かない。残すとあとで開けることを、ログインしていない人に伝える */
 function GuestNote() {
   const t = useT();
-  const client = useAccountClient();
-  const [loginOffered, setLoginOffered] = useState(false);
-  const [user, setUser] = useState<AccountUser | null>(null);
+  const { enabled: loginOffered, user } = useAccountUser();
   const [dismissed, setDismissed] = useState(false);
-  useEffect(() => {
-    if (client === null) return;
-    let active = true;
-    void client.enabled().then((enabled) => {
-      if (active) setLoginOffered(enabled);
-    });
-    const stop = client.onUser((next) => {
-      if (active) setUser(next);
-    });
-    return () => {
-      active = false;
-      stop();
-    };
-  }, [client]);
   if (dismissed || user !== null) return null;
   return (
     <aside
