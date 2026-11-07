@@ -448,6 +448,21 @@ describe("checkPlan：帰りの最終", () => {
     expect(checkPlan(itinerary, find).errors).toEqual([]);
   });
 
+  it("駅までの歩きの時間が分からない区間は、0分として比べる", () => {
+    const itinerary = fictionalPlannedItinerary();
+    // 帰りは 21:20 に会場を出る。歩きの時間が分からなければ、21:20 に駅を出るものとして比べる
+    itinerary.days[0]!.lastReturn = {
+      station: "鈴鳴駅",
+      departBy: "21:25",
+      sources: [itinerary.days[0]!.items[0]!.sources[0]!],
+    };
+    const back = itinerary.days[0]!.items.at(-1)!;
+    const walk = back.move!.legs!.find((leg) => leg.means === "walk")!;
+    walk.minutes = null;
+
+    expect(checkPlan(itinerary, find).errors).toEqual([]);
+  });
+
   it("日をまたいだ最終（0時台）は、次の日の時刻として比べる", () => {
     const itinerary = fictionalPlannedItinerary();
     itinerary.days[0]!.lastReturn = {
