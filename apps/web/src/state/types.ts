@@ -21,6 +21,7 @@ import type {
 } from "@matsuri-ikoka/schema";
 import type { ConsultState } from "./consult";
 import type { FestivalSearchState } from "./festivalSearch";
+import type { GuideState } from "./guide";
 
 // 画面の正しい状態の形。3D・会話・しおりは、どれもこの形を読むだけにする。
 
@@ -248,7 +249,11 @@ export interface AuthState {
 }
 
 export interface UiState {
-  view: "storefront" | "shop" | "shiori";
+  view: "storefront" | "shop" | "shiori" | "street";
+  /** しおりを閉じたときに戻る画面 */
+  shioriReturn: "shop" | "street";
+  /** コンシェルジュが帽子と旗で、店の外へ先導している間 */
+  leadingOut: boolean;
   tab: PanelTab;
   locale: Locale;
   soundOn: boolean;
@@ -290,5 +295,7 @@ export interface AppData {
   festivals: Record<string, Festival>;
   festivalLoad: Record<string, FestivalLoad>;
   auth: AuthState;
+  /** しおりのあとの縁日の通りとガイド */
+  guide: GuideState;
   ui: UiState;
 }
