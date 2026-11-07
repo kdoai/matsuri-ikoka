@@ -120,6 +120,8 @@ export function createWebRouteResearcher(deps: {
   query: QueryFn;
   resolveHost?: ResolveHost;
   maxBudgetUsd?: number | undefined;
+  /** 調べ役の会話の記録を消す（ターンの上限で終わった調べを救うために、調べの間だけ記録を残す） */
+  forgetSession?: (sessionId: string) => void;
   clock?: () => number;
 }): RouteResearcher {
   const systemPrompt = `${deps.prompt}\n\n${ANSWER_FORMAT}`;
@@ -167,6 +169,7 @@ export function createWebRouteResearcher(deps: {
             abortController: controller,
             maxBudgetUsd: deps.maxBudgetUsd,
             withTools,
+            keepRecord: deps.forgetSession !== undefined,
             ...(withTools
               ? {
                   hooks: createVerifierHooks(
@@ -182,9 +185,17 @@ export function createWebRouteResearcher(deps: {
         let costUsd = 0;
         let found = false;
         let legCount = 0;
+        let salvaged = false;
         const ask = async (text: string, withTools: boolean) => {
-          const reply = await finalText(deps.query, text, options(withTools), onActivity);
+          const reply = await finalText(
+            deps.query,
+            text,
+            options(withTools),
+            onActivity,
+            withTools ? { options: options(false), forget: deps.forgetSession } : undefined,
+          );
           costUsd += reply.costUsd;
+          salvaged ||= reply.salvaged;
           return reply.text;
         };
         try {
@@ -254,6 +265,7 @@ export function createWebRouteResearcher(deps: {
               kind: "route_research",
               found,
               legs: legCount,
+              salvaged,
               totalCostUsd: costUsd,
               elapsedMs: Date.now() - started,
               searches: log.searches.length,

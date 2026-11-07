@@ -90,6 +90,8 @@ export function createWebGuideResearcher(deps: {
   resolveHost?: ResolveHost;
   robots?: RobotsChecker;
   maxBudgetUsd?: number | undefined;
+  /** 調べ役の会話の記録を消す（ターンの上限で終わった調べを救うために、調べの間だけ記録を残す） */
+  forgetSession?: (sessionId: string) => void;
 }): GuideWebResearcher {
   const systemPrompt = `${deps.prompt}\n\n${ANSWER_FORMAT}`;
   return {
@@ -109,6 +111,7 @@ export function createWebGuideResearcher(deps: {
           abortController: controller,
           maxBudgetUsd: deps.maxBudgetUsd,
           withTools,
+          keepRecord: deps.forgetSession !== undefined,
           maxTurns: GUIDE_RESEARCH_MAX_TURNS,
           ...(withTools
             ? {
@@ -120,9 +123,17 @@ export function createWebGuideResearcher(deps: {
       let costUsd = 0;
       let found = false;
       let rejected: ResearchAnswerRefusal | null = null;
+      let salvaged = false;
       const ask = async (prompt: string, withTools: boolean) => {
-        const reply = await finalText(deps.query, prompt, options(withTools), onActivity);
+        const reply = await finalText(
+          deps.query,
+          prompt,
+          options(withTools),
+          onActivity,
+          withTools ? { options: options(false), forget: deps.forgetSession } : undefined,
+        );
         costUsd += reply.costUsd;
+        salvaged ||= reply.salvaged;
         return reply.text;
       };
       try {
@@ -162,6 +173,7 @@ export function createWebGuideResearcher(deps: {
             kind: "guide_research",
             found,
             ...(rejected === null ? {} : { rejected }),
+            salvaged,
             totalCostUsd: costUsd,
             elapsedMs: Date.now() - started,
             searches: log.searches.length,

@@ -9,14 +9,19 @@ import { describe, expect, it } from "vitest";
 import { type NearbySearchRound, nearbySearchPlan } from "../domain/nearbySearch";
 import type { QueryFn } from "./runner";
 import { createWebNearbyResearcher, NEARBY_MAX_TURNS } from "./webNearbyResearcher";
+import { SALVAGE_PROMPT } from "./webVerifier";
 
 // Agent SDK の代わりに、フックを呼んで決まった返答を返す偽物の query で確かめる。祭り・店・URL はすべて架空
 
+/** 台本がこれを返すと、ターンの上限（error_max_turns）で終わったことにする */
+const MAX_TURNS = Symbol("max_turns");
+
 type Script = (
   hook: (event: HookEvent, input: Record<string, unknown>) => Promise<unknown>,
-) => Promise<string | null>;
+) => Promise<string | null | typeof MAX_TURNS>;
 
 function setup(scripts: Script[]) {
+  const forgotten: string[] = [];
   const calls: { prompt: string; options: Options }[] = [];
   const query: QueryFn = (params) => {
     calls.push(params);
@@ -41,16 +46,21 @@ function setup(scripts: Script[]) {
         }
       }
     };
+    // resume した会話は同じセッションを名乗る
+    const sessionId = params.options.resume ?? `r-${calls.length}`;
     return (async function* () {
+      yield { type: "system", subtype: "init", session_id: sessionId } as unknown as SDKMessage;
       const text = await script(hook);
-      yield (text === null
-        ? { type: "result", subtype: "error_during_execution", is_error: true, errors: [] }
-        : {
-            type: "result",
-            subtype: "success",
-            is_error: false,
-            result: text,
-          }) as unknown as SDKMessage;
+      yield (text === MAX_TURNS
+        ? { type: "result", subtype: "error_max_turns", is_error: true, errors: [] }
+        : text === null
+          ? { type: "result", subtype: "error_during_execution", is_error: true, errors: [] }
+          : {
+              type: "result",
+              subtype: "success",
+              is_error: false,
+              result: text,
+            }) as unknown as SDKMessage;
     })();
   };
   const researcher = createWebNearbyResearcher({
@@ -59,6 +69,7 @@ function setup(scripts: Script[]) {
     env: {},
     query,
     resolveHost: async () => ["8.8.8.8"],
+    forgetSession: (id: string) => forgotten.push(id),
   });
   let activity = 0;
   const research = (
@@ -95,7 +106,7 @@ function setup(scripts: Script[]) {
         activity += 1;
       },
     });
-  return { calls, research, activity: () => activity };
+  return { calls, research, activity: () => activity, forgotten };
 }
 
 const read = (hook: Parameters<Script>[0], url: string) =>
@@ -257,5 +268,37 @@ describe("createWebNearbyResearcher", () => {
 
     expect((await research())?.spots).toHaveLength(1);
     expect(calls[1]?.options.tools).toEqual([]);
+  });
+
+  it("ターンの上限で終わったら、同じ会話を resume して読んだ分から答えさせる。出典は読んだページだけ", async () => {
+    const { calls, research, forgotten } = setup([
+      async (hook) => {
+        await read(hook, "https://example.com/grill");
+        return MAX_TURNS;
+      },
+      async () => ANSWER,
+    ]);
+
+    const report = await research();
+
+    expect(calls).toHaveLength(2);
+    expect(calls[1]?.prompt).toBe(SALVAGE_PROMPT);
+    expect(calls[1]?.options).toMatchObject({ resume: "r-1", tools: [], maxTurns: 1 });
+    expect(report?.spots.map((s) => s.name)).toEqual(["鈴鳴グリル"]);
+    expect(report?.spots[0]?.sources).toEqual([
+      { url: "https://example.com/grill", title: "鈴鳴グリル" },
+    ]);
+    expect(forgotten).toEqual(["r-1"]);
+  });
+
+  it("ターンの上限のあとに救えなければ、調べなかったことにする", async () => {
+    const { research } = setup([
+      async (hook) => {
+        await read(hook, "https://example.com/grill");
+        return MAX_TURNS;
+      },
+      async () => null,
+    ]);
+    expect(await research()).toBeNull();
   });
 });

@@ -130,6 +130,8 @@ export function createWebLodgingResearcher(deps: {
   resolveHost?: ResolveHost;
   robots?: RobotsChecker;
   maxBudgetUsd?: number | undefined;
+  /** 調べ役の会話の記録を消す（ターンの上限で終わった調べを救うために、調べの間だけ記録を残す） */
+  forgetSession?: (sessionId: string) => void;
   clock?: () => number;
 }): LodgingResearcher {
   const systemPrompt = `${deps.prompt}\n\n${ANSWER_FORMAT}`;
@@ -175,6 +177,7 @@ export function createWebLodgingResearcher(deps: {
         abortController: controller,
         maxBudgetUsd: deps.maxBudgetUsd,
         withTools,
+        keepRecord: deps.forgetSession !== undefined,
         maxTurns: LODGING_MAX_TURNS,
         ...(withTools
           ? {
@@ -191,9 +194,17 @@ export function createWebLodgingResearcher(deps: {
     const started = Date.now();
     let costUsd = 0;
     let found = 0;
+    let salvaged = false;
     const ask = async (prompt: string, withTools: boolean) => {
-      const reply = await finalText(deps.query, prompt, options(withTools), input.onActivity);
+      const reply = await finalText(
+        deps.query,
+        prompt,
+        options(withTools),
+        input.onActivity,
+        withTools ? { options: options(false), forget: deps.forgetSession } : undefined,
+      );
       costUsd += reply.costUsd;
+      salvaged ||= reply.salvaged;
       return reply.text;
     };
     try {
@@ -229,6 +240,7 @@ export function createWebLodgingResearcher(deps: {
           kind: "lodging_research",
           perspective: plan.perspective,
           found,
+          salvaged,
           totalCostUsd: costUsd,
           elapsedMs: Date.now() - started,
           searches: log.searches.length,

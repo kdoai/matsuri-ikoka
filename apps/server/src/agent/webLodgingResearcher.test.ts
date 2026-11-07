@@ -9,14 +9,19 @@ import { describe, expect, it } from "vitest";
 import { lodgingSearchPlans } from "../domain/lodgingResearch";
 import type { QueryFn } from "./runner";
 import { createWebLodgingResearcher, LODGING_MAX_TURNS, parseHotels } from "./webLodgingResearcher";
+import { SALVAGE_PROMPT } from "./webVerifier";
 
 // Agent SDK の代わりに、フックを呼んで決まった返答を返す偽物の query で確かめる。祭り・宿・URL はすべて架空
 
 type Hook = (event: HookEvent, input: Record<string, unknown>) => Promise<unknown>;
 /** 依頼文（観点の見出しを含む）から、その観点の調べ役の動きを決める */
-type Script = (prompt: string, hook: Hook) => Promise<string | null>;
+/** 台本がこれを返すと、ターンの上限（error_max_turns）で終わったことにする */
+const MAX_TURNS = Symbol("max_turns");
+
+type Script = (prompt: string, hook: Hook) => Promise<string | null | typeof MAX_TURNS>;
 
 function setup(script: Script) {
+  const forgotten: string[] = [];
   const calls: { prompt: string; options: Options }[] = [];
   const query: QueryFn = (params) => {
     calls.push(params);
@@ -39,16 +44,21 @@ function setup(script: Script) {
         }
       }
     };
+    // resume した会話は同じセッションを名乗る
+    const sessionId = params.options.resume ?? `r-${calls.length}`;
     return (async function* () {
+      yield { type: "system", subtype: "init", session_id: sessionId } as unknown as SDKMessage;
       const text = await script(params.prompt as string, hook);
-      yield (text === null
-        ? { type: "result", subtype: "error_during_execution", is_error: true, errors: [] }
-        : {
-            type: "result",
-            subtype: "success",
-            is_error: false,
-            result: text,
-          }) as unknown as SDKMessage;
+      yield (text === MAX_TURNS
+        ? { type: "result", subtype: "error_max_turns", is_error: true, errors: [] }
+        : text === null
+          ? { type: "result", subtype: "error_during_execution", is_error: true, errors: [] }
+          : {
+              type: "result",
+              subtype: "success",
+              is_error: false,
+              result: text,
+            }) as unknown as SDKMessage;
     })();
   };
   const researcher = createWebLodgingResearcher({
@@ -57,6 +67,7 @@ function setup(script: Script) {
     env: {},
     query,
     resolveHost: async () => ["8.8.8.8"],
+    forgetSession: (id: string) => forgotten.push(id),
   });
   const party = { adults: 2, children: 1 };
   const plans = lodgingSearchPlans({
@@ -82,7 +93,7 @@ function setup(script: Script) {
       plans,
       signal: new AbortController().signal,
     });
-  return { calls, research, plans };
+  return { calls, research, plans, forgotten };
 }
 
 const read = (hook: Hook, url: string) =>
@@ -187,5 +198,25 @@ describe("parseHotels", () => {
       ["http://127.0.0.1/inn", INN.pageUrl],
     );
     expect(hotels).toEqual([]);
+  });
+});
+
+describe("ターンの上限で終わったとき", () => {
+  it("観点ごとに同じ会話を resume して、読んだ分から宿を答えさせる", async () => {
+    const { calls, research, plans, forgotten } = setup(async (prompt, hook) => {
+      if (prompt === SALVAGE_PROMPT) return JSON.stringify({ hotels: [INN] });
+      await read(hook, INN.pageUrl);
+      return MAX_TURNS;
+    });
+
+    const result = await research();
+
+    expect(result?.reports).toHaveLength(plans.length);
+    expect(result?.reports[0]?.hotels.map((h) => h.name)).toEqual(["鈴鳴川の宿"]);
+    const salvages = calls.filter((call) => call.prompt === SALVAGE_PROMPT);
+    expect(salvages).toHaveLength(plans.length);
+    expect(salvages.every((call) => call.options.resume?.startsWith("r-"))).toBe(true);
+    expect(salvages.every((call) => (call.options.tools as string[]).length === 0)).toBe(true);
+    expect(forgotten).toHaveLength(plans.length);
   });
 });

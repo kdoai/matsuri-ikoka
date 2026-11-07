@@ -12,14 +12,19 @@ import {
   ROUTE_RESEARCH_MS,
   ROUTE_RETRY_MIN_MS,
 } from "./webRouteResearcher";
+import { SALVAGE_PROMPT } from "./webVerifier";
 
 // Agent SDK の代わりに、フックを呼んで決まった返答を返す偽物の query で確かめる。駅と URL はすべて架空
 
+/** 台本がこれを返すと、ターンの上限（error_max_turns）で終わったことにする */
+const MAX_TURNS = Symbol("max_turns");
+
 type Script = (
   hook: (event: HookEvent, input: Record<string, unknown>) => Promise<unknown>,
-) => Promise<string | null>;
+) => Promise<string | null | typeof MAX_TURNS>;
 
 function setup(scripts: Script[], clock?: () => number) {
+  const forgotten: string[] = [];
   const calls: { prompt: string; options: Options }[] = [];
   const query: QueryFn = (params) => {
     calls.push(params);
@@ -44,16 +49,21 @@ function setup(scripts: Script[], clock?: () => number) {
         }
       }
     };
+    // resume した会話は同じセッションを名乗る
+    const sessionId = params.options.resume ?? `r-${calls.length}`;
     return (async function* () {
+      yield { type: "system", subtype: "init", session_id: sessionId } as unknown as SDKMessage;
       const text = await script(hook);
-      yield (text === null
-        ? { type: "result", subtype: "error_during_execution", is_error: true, errors: [] }
-        : {
-            type: "result",
-            subtype: "success",
-            is_error: false,
-            result: text,
-          }) as unknown as SDKMessage;
+      yield (text === MAX_TURNS
+        ? { type: "result", subtype: "error_max_turns", is_error: true, errors: [] }
+        : text === null
+          ? { type: "result", subtype: "error_during_execution", is_error: true, errors: [] }
+          : {
+              type: "result",
+              subtype: "success",
+              is_error: false,
+              result: text,
+            }) as unknown as SDKMessage;
     })();
   };
   const researcher = createWebRouteResearcher({
@@ -62,6 +72,7 @@ function setup(scripts: Script[], clock?: () => number) {
     env: {},
     query,
     resolveHost: async () => ["8.8.8.8"],
+    forgetSession: (id: string) => forgotten.push(id),
     ...(clock ? { clock } : {}),
   });
   const research = () =>
@@ -71,7 +82,7 @@ function setup(scripts: Script[], clock?: () => number) {
       date: "2026-08-16",
       signal: new AbortController().signal,
     });
-  return { calls, research, researcher };
+  return { calls, research, researcher, forgotten };
 }
 
 const read = (hook: Parameters<Script>[0], url: string) =>
@@ -365,5 +376,26 @@ describe("乗り換えの区間と帰りの最終", () => {
     expect(go).not.toHaveProperty("lastDeparture");
     expect(calls).toHaveLength(2);
     expect(calls[1]?.prompt).toContain("調べ直しで特に確かめること：乗り換えの駅を確かめる");
+  });
+});
+
+describe("ターンの上限で終わったとき", () => {
+  it("同じ会話を resume して読んだ分から答えさせ、調べ直さない", async () => {
+    const { calls, research, forgotten } = setup([
+      async (hook) => {
+        await read(hook, "https://example.com/route");
+        return MAX_TURNS;
+      },
+      async () => ANSWER,
+    ]);
+
+    expect(await research()).toMatchObject({
+      minutes: [55, 70],
+      sources: [{ url: "https://example.com/route", title: "乗り換え案内" }],
+    });
+    expect(calls).toHaveLength(2);
+    expect(calls[1]?.prompt).toBe(SALVAGE_PROMPT);
+    expect(calls[1]?.options).toMatchObject({ resume: "r-1", tools: [], maxTurns: 1 });
+    expect(forgotten).toEqual(["r-1"]);
   });
 });

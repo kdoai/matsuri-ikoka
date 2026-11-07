@@ -121,6 +121,8 @@ if (config.mode === "live") {
   // 相談が消えたら、その相談の会話の記録を消す
   sessions = new SessionStore({ onRemove: forgetTranscripts(deleteSession, cwd) });
   const env = agentEnv(process.env);
+  // Web の調べ役は、ターンの上限で終わった調べを救えるよう調べの間だけ記録を残し、終わったら消す
+  const forgetSession = forgetTranscript(deleteSession, cwd);
   readFestivalWish = createFestivalWishReader({
     prompt: prompts["wish-reader"],
     model: config.models.wishReader,
@@ -155,6 +157,7 @@ if (config.mode === "live") {
     env,
     query,
     maxBudgetUsd: config.maxBudgetUsd,
+    forgetSession,
   });
   // 旅程の評価は、旅程係が保存するたびに update_itinerary の中で動く。足りないところを見抜く力が要るので、
   // 評価係のモデル（MODEL_EVALUATOR、省略時は旅程係のモデル）で行う
@@ -174,6 +177,7 @@ if (config.mode === "live") {
     env,
     query,
     maxBudgetUsd: config.maxBudgetUsd,
+    forgetSession,
   });
   // 寄り道の調べは周辺係・旅程係の search_nearby の中で動くので、スタッフのモデルで行う
   const nearby = createWebNearbyResearcher({
@@ -184,6 +188,7 @@ if (config.mode === "live") {
     env,
     query,
     maxBudgetUsd: config.maxBudgetUsd,
+    forgetSession,
   });
   if (config.models.guide !== undefined) {
     guideRunner = new ClaudeGuideRunner({
@@ -208,6 +213,7 @@ if (config.mode === "live") {
         env,
         query,
         maxBudgetUsd: config.maxBudgetUsd,
+        forgetSession,
       }),
       maxBudgetUsd: config.maxBudgetUsd,
       cwd,
@@ -234,6 +240,7 @@ if (config.mode === "live") {
       env,
       query,
       maxBudgetUsd: config.maxBudgetUsd,
+      forgetSession,
     }),
     festivals: festivals.store,
     itineraries,
@@ -249,6 +256,7 @@ if (config.mode === "live") {
         env,
         query,
         maxBudgetUsd: config.maxBudgetUsd,
+        forgetSession,
       }),
       today,
       now: () => nowInJapan(),

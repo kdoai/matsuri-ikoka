@@ -2,6 +2,7 @@ import type { HookInput, Options, SDKMessage } from "@anthropic-ai/claude-agent-
 import { describe, expect, it } from "vitest";
 import type { QueryFn } from "./runner";
 import { createWebGuideResearcher, readPagesInReport } from "./webGuideResearcher";
+import { SALVAGE_PROMPT } from "./webVerifier";
 
 // Agent SDK の代わりに、架空のページを読んだことにする偽物の query で確かめる
 
@@ -260,5 +261,51 @@ describe("ガイドの調べ役", () => {
     });
 
     expect(JSON.stringify(output)).toContain('"permissionDecision":"deny"');
+  });
+
+  it("ターンの上限で終わったら、同じ会話を resume して読んだ分から答えさせる", async () => {
+    const prompts: string[] = [];
+    const options: Options[] = [];
+    const forgotten: string[] = [];
+    const query: QueryFn = (params) => {
+      prompts.push(params.prompt);
+      options.push(params.options);
+      const first = params.options.resume === undefined;
+      return (async function* () {
+        yield { type: "system", subtype: "init", session_id: "g-1" } as unknown as SDKMessage;
+        if (!first) {
+          yield result(
+            JSON.stringify({ found: true, answer: "小雨なら開催します", sources: [{ url: PAGE }] }),
+          );
+          return;
+        }
+        await runHook(params.options, "PostToolUse", {
+          tool_name: "WebFetch",
+          tool_input: { url: PAGE, prompt: "読む" },
+          tool_response: { result: "雨天決行" },
+        });
+        yield {
+          type: "result",
+          subtype: "error_max_turns",
+          is_error: true,
+          errors: [],
+        } as unknown as SDKMessage;
+      })();
+    };
+    const guide = createWebGuideResearcher({
+      prompt: "ガイドの調べ役",
+      cwd: "/tmp/matsuri-agent-test",
+      env: {},
+      query,
+      resolveHost: async () => ["93.184.216.34"],
+      forgetSession: (id) => forgotten.push(id),
+    });
+
+    const report = await guide.research({ question: "雨でも開催しますか", signal: signal() });
+
+    expect(report).toEqual({ answer: "小雨なら開催します", urls: [PAGE] });
+    expect(prompts[1]).toBe(SALVAGE_PROMPT);
+    expect(options[1]).toMatchObject({ resume: "g-1", tools: [], maxTurns: 1 });
+    expect(forgotten).toEqual(["g-1"]);
   });
 });

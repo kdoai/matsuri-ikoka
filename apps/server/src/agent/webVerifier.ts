@@ -81,6 +81,11 @@ export function buildVerifierOptions(input: {
   maxTurns?: number;
   /** 考える深さ。省略すると low（決まった形の確かめを速く済ませる） */
   effort?: Options["effort"];
+  /**
+   * 道具を使う調べの間だけ、会話の記録を残す。ターンの上限で終わったときに resume して読んだ分を救うため。
+   * 記録を消す口（finalText の salvage.forget）を渡すときだけ true にする。差し戻しは記録を残さない
+   */
+  keepRecord?: boolean;
 }): Options {
   const tools = input.withTools ? WEB_TOOLS : [];
   return {
@@ -98,7 +103,7 @@ export function buildVerifierOptions(input: {
     thinking: { type: "adaptive" },
     effort: input.effort ?? "low",
     maxTurns: input.withTools ? (input.maxTurns ?? VERIFIER_MAX_TURNS) : 1,
-    persistSession: false,
+    persistSession: input.withTools && input.keepRecord === true,
     ...(input.maxBudgetUsd ? { maxBudgetUsd: input.maxBudgetUsd } : {}),
     abortController: input.abortController,
     ...(input.hooks ? { hooks: input.hooks } : {}),
@@ -188,34 +193,116 @@ export function createVerifierHooks(
   };
 }
 
-/**
- * query を最後まで回し、成功の結果の文（失敗なら null）と費用（SDK の推定）を返す。
- * onMessage は Agent SDK の知らせが届くたびに呼ぶ（呼ぶ側の進みのない時間を数え直す）
- */
-export async function finalText(
+/** ターンの上限で終わった調べに、道具なしで答えだけを頼む文 */
+export const SALVAGE_PROMPT =
+  "ターンの上限に達したので、ここで調べを終えます。これ以上検索もページの読み込みもせず、ここまでに WebFetch で読んだページから分かったことだけで、決めた形の JSON で答えてください。読んだページで分からないことは推測で埋めないでください。";
+
+/** ターンの上限で終わった調べを救うための設定 */
+export interface Salvage {
+  /** 道具なし・1ターンの設定（buildVerifierOptions の withTools: false）。resume はこちらで足す */
+  options: Options;
+  /** 調べ役の会話の記録を消す。省略すると消さない（テスト） */
+  forget?: ((sessionId: string) => void) | undefined;
+}
+
+interface QueryOutcome {
+  text: string | null;
+  /** この呼び出しで増えた費用（SDK の推定。resume では前の累計を引く） */
+  costUsd: number;
+  /** 累計の費用（resume の差分を出すため） */
+  totalCostUsd: number;
+  subtype: string | null;
+  sessionId: string | null;
+}
+
+async function runQuery(
   query: QueryFn,
   prompt: string,
   options: Options,
-  onMessage?: () => void,
-): Promise<{ text: string | null; costUsd: number }> {
-  let text: string | null = null;
-  let costUsd = 0;
+  onMessage: (() => void) | undefined,
+  baseCostUsd: number,
+  /** セッションを名乗ったら、すぐに控える（途中で止まっても記録を消せるように） */
+  onSession: (sessionId: string) => void,
+): Promise<QueryOutcome> {
+  const outcome: QueryOutcome = {
+    text: null,
+    costUsd: 0,
+    totalCostUsd: baseCostUsd,
+    subtype: null,
+    sessionId: null,
+  };
   // 発言ごとの費用を測っているときは（ガイド）、今日の残りで抑える。残りがなければ呼ばない
   const remaining = remainingCostBudget();
-  if (remaining !== null && remaining <= 0) return { text: null, costUsd: 0 };
+  if (remaining !== null && remaining <= 0) return outcome;
   const bounded =
     remaining === null
       ? options
       : { ...options, maxBudgetUsd: Math.min(options.maxBudgetUsd ?? remaining, remaining) };
   for await (const message of query({ prompt, options: bounded })) {
     onMessage?.();
+    if (message.type === "system" && message.subtype === "init") {
+      outcome.sessionId = message.session_id;
+      onSession(message.session_id);
+    }
     if (message.type === "result") {
-      text = message.subtype === "success" && !message.is_error ? message.result : null;
-      costUsd = message.total_cost_usd ?? 0;
-      chargeCost(costUsd);
+      outcome.subtype = message.subtype;
+      outcome.text = message.subtype === "success" && !message.is_error ? message.result : null;
+      const total = message.total_cost_usd ?? 0;
+      // resume した会話の費用は、記録に残った累計から続けて届く
+      outcome.costUsd = Math.max(0, total - baseCostUsd);
+      outcome.totalCostUsd = total;
+      chargeCost(outcome.costUsd);
     }
   }
-  return { text, costUsd };
+  return outcome;
+}
+
+/**
+ * query を最後まで回し、成功の結果の文（失敗なら null）と費用（SDK の推定）を返す。
+ * onMessage は Agent SDK の知らせが届くたびに呼ぶ（呼ぶ側の進みのない時間を数え直す）。
+ * salvage を渡すと、ターンの上限（error_max_turns）で終わったとき、同じ会話を resume し、
+ * 道具なし・1ターンで「ここまでに読んだページから答えて」と1回だけ頼む（salvaged: true）。
+ * 出典の照合は、呼ぶ側がこれまでどおり実際に読んだページだけで行う。終わったら会話の記録を消す
+ */
+export async function finalText(
+  query: QueryFn,
+  prompt: string,
+  options: Options,
+  onMessage?: () => void,
+  salvage?: Salvage,
+): Promise<{ text: string | null; costUsd: number; salvaged: boolean }> {
+  const sessions = new Set<string>();
+  try {
+    const remember = (id: string) => sessions.add(id);
+    const first = await runQuery(query, prompt, options, onMessage, 0, remember);
+    const aborted = options.abortController?.signal.aborted ?? false;
+    if (
+      salvage === undefined ||
+      options.persistSession !== true ||
+      first.subtype !== "error_max_turns" ||
+      first.sessionId === null ||
+      aborted
+    ) {
+      return { text: first.text, costUsd: first.costUsd, salvaged: false };
+    }
+    const second = await runQuery(
+      query,
+      SALVAGE_PROMPT,
+      { ...salvage.options, resume: first.sessionId, persistSession: true },
+      onMessage,
+      first.totalCostUsd,
+      remember,
+    );
+    return {
+      text: second.text,
+      costUsd: first.costUsd + second.costUsd,
+      salvaged: second.text !== null,
+    };
+  } finally {
+    if (salvage?.forget !== undefined && options.persistSession === true) {
+      for (const id of sessions) salvage.forget(id);
+    }
+  }
 }
 
 const NOT_CONFIRMED: VerificationReport = {
@@ -234,6 +321,8 @@ export function createWebVerifier(deps: {
   resolveHost?: ResolveHost;
   /** 1回の呼び出しの費用の上限（米ドル） */
   maxBudgetUsd?: number | undefined;
+  /** 調べ役の会話の記録を消す（ターンの上限で終わった調べを救うために、調べの間だけ記録を残す） */
+  forgetSession?: (sessionId: string) => void;
 }): FestivalVerifier {
   const systemPrompt = verifierSystemPrompt(deps.prompt);
   return {
@@ -272,14 +361,23 @@ export function createWebVerifier(deps: {
           abortController: controller,
           maxBudgetUsd: deps.maxBudgetUsd,
           withTools,
+          keepRecord: deps.forgetSession !== undefined,
           ...(withTools ? { hooks: createVerifierHooks(log, deps.resolveHost, pages) } : {}),
         });
       const started = Date.now();
       let costUsd = 0;
       let outcome: VerificationReport["result"] = "not_found";
+      let salvaged = false;
       const ask = async (prompt: string, withTools: boolean) => {
-        const reply = await finalText(deps.query, prompt, options(withTools));
+        const reply = await finalText(
+          deps.query,
+          prompt,
+          options(withTools),
+          undefined,
+          withTools ? { options: options(false), forget: deps.forgetSession } : undefined,
+        );
         costUsd += reply.costUsd;
+        salvaged ||= reply.salvaged;
         return reply.text;
       };
       try {
@@ -329,6 +427,7 @@ export function createWebVerifier(deps: {
           JSON.stringify({
             kind: "verify",
             reported: outcome,
+            salvaged,
             totalCostUsd: costUsd,
             elapsedMs: Date.now() - started,
             searches: log.searches.length,
