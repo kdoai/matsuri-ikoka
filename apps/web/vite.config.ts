@@ -102,13 +102,15 @@ export default defineConfig(({ mode }) => {
       proxy: {
         "/api": serverOrigin,
         "/shiori": serverOrigin,
-        "/healthz": serverOrigin,
+        // 死活監視の口（/healthz と /health）。画面は /health を呼ぶ
+        "^/healthz?$": serverOrigin,
       },
     },
     preview: {
       proxy: {
         "/api": serverOrigin,
         "/shiori": serverOrigin,
+        "^/healthz?$": serverOrigin,
       },
     },
   };

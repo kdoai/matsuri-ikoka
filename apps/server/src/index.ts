@@ -20,7 +20,7 @@ import { createWebNearbyResearcher } from "./agent/webNearbyResearcher";
 import { createWebRouteResearcher } from "./agent/webRouteResearcher";
 import { createWebVerifier } from "./agent/webVerifier";
 import { type AppDeps, createApp } from "./app";
-import { portInUseMessage, readConfig, startupNotice } from "./config";
+import { missingRecommendedConfig, portInUseMessage, readConfig, startupNotice } from "./config";
 import { festivalDirs, loadFestivals } from "./data/festivalStore";
 import { loadOsmPlaces } from "./data/osmPlaces";
 import { loadStationPoints } from "./data/stationPoints";
@@ -32,12 +32,21 @@ import { errorForLog, isFetchParserAssertion } from "./log";
 import { createPatrolDeps } from "./patrol";
 import type { PatrolDeps } from "./patrol/runner";
 import type { FestivalWishReader } from "./routes/festivalSearch";
-import { ConcurrencyLimiter, clientIp, DailyLimiter } from "./routes/guard";
+import {
+  ConcurrencyLimiter,
+  clientIp,
+  DailyLimiter,
+  type DailyLimiterPersistence,
+  restoreDailyLimits,
+} from "./routes/guard";
 import { StoragePersistence } from "./session/persistence";
 import { ItineraryStore, SessionStore } from "./session/sessionStore";
 import { createCandidateChecker } from "./tools/candidateCheck";
 import { createLodgingService } from "./tools/lodging";
 import { createJmaWeather } from "./tools/weather";
+
+/** 起動のときに、1日の回数の数えを読み戻すのを待つ時間 */
+const DAILY_LIMIT_RESTORE_TIMEOUT_MS = 5_000;
 
 // 待たれていない Promise の失敗で、サーバーごと止めない。止まると、返答の途中の接続がすべて切れる
 process.on("unhandledRejection", (reason) => {
@@ -50,6 +59,11 @@ process.on("uncaughtException", (error) => {
 });
 
 const config = readConfig(process.env);
+// 欠けていても起動はするが、黙って効かなくなる設定を、名前だけ知らせる
+const missingConfig = missingRecommendedConfig(config, process.env);
+if (missingConfig.length > 0) {
+  console.warn(JSON.stringify({ kind: "config_missing", missing: missingConfig }));
+}
 const account = await createAccount(readAccountConfig(process.env));
 console.info(
   JSON.stringify({ kind: "account", storage: account.storage.kind, login: account.web.enabled }),
@@ -266,6 +280,29 @@ const guide: AppDeps["guide"] =
 console.info(JSON.stringify({ kind: "guide", available: guide !== undefined }));
 console.info(JSON.stringify({ kind: "patrol", available: patrol !== null }));
 
+// 1日の相談の回数は、保存先が Firestore なら残し、インスタンスが起動し直しても数え直さない
+const persisted = (scope: string): DailyLimiterPersistence | null =>
+  account.dailyCounts === null
+    ? null
+    : {
+        store: account.dailyCounts,
+        scope,
+        onError: (error) =>
+          console.error(
+            JSON.stringify({ kind: "daily_limit_save_failed", scope, ...errorForLog(error) }),
+          ),
+      };
+const limiters = {
+  limiter: new DailyLimiter(config.dailyChatLimit, today, persisted("chat")),
+  clientLimiter: new DailyLimiter(config.dailyChatLimitPerIp, today, persisted("client")),
+  trialLimiter: new DailyLimiter(config.dailyTrialChatLimit, today, persisted("trial")),
+};
+// 読み戻せなくても起動する（その日の数は0から数える）
+const restored = await restoreDailyLimits(limiters, DAILY_LIMIT_RESTORE_TIMEOUT_MS);
+if (restored.failed.length > 0) {
+  console.error(JSON.stringify({ kind: "daily_limit_restore_failed", scopes: restored.failed }));
+}
+
 const app = createApp({
   ...(guide === undefined ? {} : { guide }),
   patrol,
@@ -279,9 +316,7 @@ const app = createApp({
   festivals: festivals.store,
   ...(stations ? { stations } : {}),
   ...(readFestivalWish ? { readFestivalWish } : {}),
-  limiter: new DailyLimiter(config.dailyChatLimit, today),
-  clientLimiter: new DailyLimiter(config.dailyChatLimitPerIp, today),
-  trialLimiter: new DailyLimiter(config.dailyTrialChatLimit, today),
+  ...limiters,
   concurrency: new ConcurrencyLimiter(
     config.maxConcurrentTurns,
     config.maxConcurrentTurnsPerClient,

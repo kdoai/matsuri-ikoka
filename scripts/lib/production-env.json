@@ -1,0 +1,16 @@
+{
+  "required": [
+    "ACCESS_PASSCODE",
+    "DAILY_CHAT_LIMIT",
+    "AGENT_MAX_BUDGET_USD",
+    "ANTHROPIC_API_KEY",
+    "MATSURI_STORAGE"
+  ],
+  "recommended": [
+    "MODEL_CONCIERGE",
+    "MODEL_STAFF",
+    "MODEL_GUIDE",
+    "DAILY_CHAT_LIMIT_PER_IP",
+    "TRUSTED_PROXY_HOPS"
+  ]
+}

@@ -1,7 +1,15 @@
 import { TRIAL_ACCOUNT_UID } from "@matsuri-ikoka/schema";
 import { Hono } from "hono";
-import { describe, expect, it } from "vitest";
-import { DailyLimiter, PASSCODE_HEADER, passcodeGuard, turnQuota } from "./guard";
+import { describe, expect, it, vi } from "vitest";
+import { MemoryDailyCountStore } from "../storage/dailyCounts";
+import {
+  countKey,
+  DailyLimiter,
+  PASSCODE_HEADER,
+  passcodeGuard,
+  restoreDailyLimits,
+  turnQuota,
+} from "./guard";
 
 // 合言葉の入口。値はテストのためだけのもの。
 
@@ -85,5 +93,144 @@ describe("turnQuota", () => {
     turnQuota({ limiter }, TRIAL_ACCOUNT_UID, "203.0.113.1").consume();
 
     expect(limiter.allows()).toBe(false);
+  });
+});
+
+describe("DailyLimiter（数えを残す）", () => {
+  const day = () => "2026-08-03";
+  /** 書き足しは待たないので、終わるのを待つ */
+  const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
+
+  it("起動し直しても、その日の数を読み戻して、利用者と IP の両方の上限を数え直さない", async () => {
+    const store = new MemoryDailyCountStore();
+    const make = () => ({
+      limiter: new DailyLimiter(3, day, { store, scope: "chat" }),
+      clientLimiter: new DailyLimiter(1, day, { store, scope: "client" }),
+    });
+    const before = make();
+    turnQuota(before, "alice", "203.0.113.1").consume();
+    await settle();
+
+    const after = make();
+    expect(await restoreDailyLimits(after, 1_000)).toEqual({ failed: [] });
+    expect(turnQuota(after, "alice", "203.0.113.2").allows()).toBe(false);
+    expect(turnQuota(after, "bob", "203.0.113.1").allows()).toBe(false);
+    expect(turnQuota(after, "bob", "203.0.113.3").allows()).toBe(true);
+    turnQuota(after, "bob", "203.0.113.3").consume();
+    turnQuota(after, "carol", "203.0.113.4").consume();
+    // 全体の枠も読み戻している（3回のうち、前の1回と今の2回）
+    expect(turnQuota(after, "dave", "203.0.113.5").allows()).toBe(false);
+  });
+
+  it("お試し用の全体の枠も、ほかの人の枠とは別に読み戻す", async () => {
+    const store = new MemoryDailyCountStore();
+    const make = () => ({
+      limiter: new DailyLimiter(5, day, { store, scope: "chat" }),
+      trialLimiter: new DailyLimiter(1, day, { store, scope: "trial" }),
+      clientLimiter: new DailyLimiter(5, day, { store, scope: "client" }),
+    });
+    turnQuota(make(), TRIAL_ACCOUNT_UID, "203.0.113.1").consume();
+    await settle();
+
+    const after = make();
+    await restoreDailyLimits(after, 1_000);
+    expect(turnQuota(after, TRIAL_ACCOUNT_UID, "203.0.113.2").allows()).toBe(false);
+    expect(turnQuota(after, "alice", "203.0.113.2").allows()).toBe(true);
+  });
+
+  it("前の日の数は読み戻さない", async () => {
+    const store = new MemoryDailyCountStore();
+    new DailyLimiter(1, () => "2026-08-02", { store, scope: "chat" }).consume();
+    await settle();
+
+    const limiter = new DailyLimiter(1, day, { store, scope: "chat" });
+    await limiter.restore();
+    expect(limiter.allows()).toBe(true);
+  });
+
+  it("IP や利用者の ID そのものは残さない", async () => {
+    const store = new MemoryDailyCountStore();
+    new DailyLimiter(1, day, { store, scope: "client" }).consume("203.0.113.1");
+    await settle();
+
+    const saved = await store.load("client", "2026-08-03");
+    expect([...saved.keys()]).toEqual([countKey("203.0.113.1")]);
+    expect([...saved.keys()].join()).not.toContain("203.0.113");
+  });
+
+  it("残すのに失敗しても、相談は止めずに知らせる", async () => {
+    const onError = vi.fn();
+    const failing = {
+      load: async () => {
+        throw new Error("unavailable");
+      },
+      add: async () => {
+        throw new Error("unavailable");
+      },
+    };
+    const limiter = new DailyLimiter(2, day, { store: failing, scope: "chat", onError });
+
+    expect(limiter.consume()).toBe(true);
+    await settle();
+    expect(onError).toHaveBeenCalledTimes(1);
+    expect(limiter.consume()).toBe(true);
+    expect(limiter.consume()).toBe(false);
+  });
+
+  it("読み戻せない・間に合わない枠を挙げて、残りは読み戻す", async () => {
+    const store = new MemoryDailyCountStore();
+    await store.add("chat", "2026-08-03", countKey("*"));
+    const never = { load: () => new Promise<Map<string, number>>(() => {}), add: async () => {} };
+    const broken = {
+      load: async (): Promise<Map<string, number>> => {
+        throw new Error("unavailable");
+      },
+      add: async () => {},
+    };
+    const limiter = new DailyLimiter(1, day, { store, scope: "chat" });
+
+    const result = await restoreDailyLimits(
+      {
+        limiter,
+        slow: new DailyLimiter(1, day, { store: never, scope: "client" }),
+        broken: new DailyLimiter(1, day, { store: broken, scope: "trial" }),
+      },
+      20,
+    );
+    expect(result).toEqual({ failed: ["broken", "slow"] });
+    expect(limiter.allows()).toBe(false);
+  });
+
+  it("間に合わなかった枠は、あとで読めても足さず、0から数える", async () => {
+    let finish: (counts: Map<string, number>) => void = () => {};
+    const slow = {
+      load: () =>
+        new Promise<Map<string, number>>((resolve) => {
+          finish = resolve;
+        }),
+      add: async () => {},
+    };
+    const limiter = new DailyLimiter(1, day, { store: slow, scope: "chat" });
+
+    expect(await restoreDailyLimits({ limiter }, 10)).toEqual({ failed: ["limiter"] });
+    finish(new Map([[countKey("*"), 1]]));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(limiter.allows()).toBe(true);
+  });
+
+  it("残す先がなければ、読み戻しは何もしない", async () => {
+    const limiter = new DailyLimiter(1, day);
+    await limiter.restore();
+    expect(limiter.consume()).toBe(true);
+  });
+});
+
+describe("DailyLimiter（上限のない枠）", () => {
+  it("上限がなければ、数えを残さない", async () => {
+    const store = new MemoryDailyCountStore();
+    new DailyLimiter(null, () => "2026-08-03", { store, scope: "chat" }).consume();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(await store.load("chat", "2026-08-03")).toEqual(new Map());
   });
 });
