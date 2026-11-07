@@ -1,5 +1,13 @@
 import { expect, type Page, test } from "@playwright/test";
-import { blockMapTiles, enterShop, sendSampleMessage, snap, waitForReply } from "./helpers";
+import {
+  blockMapTiles,
+  enterShop,
+  FAKE_HEARD,
+  fakeSpeechRecognition,
+  sendSampleMessage,
+  snap,
+  waitForReply,
+} from "./helpers";
 
 // しおりのあと、店の外の縁日の通りへ出て、屋台を読み、ガイドに相談し、通知から屋台へ案内してもらう。
 // 接客サーバー（mock）が再生する架空の相談とガイドの相談を使う。
@@ -354,4 +362,100 @@ test("3D の通りで、提灯が灯り、ガイドに案内されて歩いて�
     timeout: 120_000,
   });
   await expect(page.getByTestId("street")).toHaveCount(0);
+});
+
+test("ガイドの会話の窓でも、押している間だけ声で話し、送る前に確かめられる", async ({
+  page,
+}, info) => {
+  test.setTimeout(180_000);
+  test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
+  await fakeSpeechRecognition(page, { accepted: true });
+  await enterShop(page);
+  await untilShiori(page);
+  await goOutside(page);
+  // 通りには設定の窓がないので、読み上げの切り替えを上の段に出す
+  await expect(page.getByTestId("read-aloud-toggle")).toBeVisible();
+
+  const composer = page.getByTestId("guide-composer");
+  const mic = composer.getByTestId("voice-input");
+  const input = composer.getByRole("textbox");
+  await mic.focus();
+  await page.keyboard.down("Space");
+  await expect(composer.getByTestId("voice-status")).toHaveText("聞いています。離すと止まります");
+  await page.keyboard.up("Space");
+  // 聞き取った文は送らずに入力欄へ入れ、焦点も入力欄へ移る
+  await expect(input).toHaveValue(FAKE_HEARD);
+  await expect(input).toBeFocused();
+  await expect(page.getByTestId("guide-line")).toHaveAttribute("data-line", "report");
+  // 確かめてから Enter で送る
+  await input.press("Enter");
+  await expect(input).toHaveValue("");
+  await expect(page.getByTestId("guide-history")).toContainText(FAKE_HEARD);
+});
+
+test("声の機能がないブラウザでは、ガイドの窓にも声のボタンを出さず、文字で相談できる", async ({
+  page,
+}, info) => {
+  test.setTimeout(180_000);
+  test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
+  await page.addInitScript(() => {
+    for (const name of [
+      "SpeechRecognition",
+      "webkitSpeechRecognition",
+      "speechSynthesis",
+      "SpeechSynthesisUtterance",
+    ]) {
+      Object.defineProperty(window, name, { value: undefined, configurable: true });
+    }
+  });
+  await enterShop(page);
+  await untilShiori(page);
+  await goOutside(page);
+  const composer = page.getByTestId("guide-composer");
+  await expect(composer).toBeVisible();
+  await expect(composer.getByTestId("voice-input")).toHaveCount(0);
+  await expect(page.getByTestId("read-aloud-toggle")).toHaveCount(0);
+  const input = composer.getByRole("textbox");
+  await input.fill("会場までの道を教えてください");
+  await input.press("Enter");
+  await expect(input).toHaveValue("");
+  await expect(page.getByTestId("guide-history")).toContainText("会場までの道を教えてください");
+});
+
+test("ガイドの窓でマイクの許可を断っても、わけを出して、文字で相談を続けられる", async ({
+  page,
+}, info) => {
+  test.setTimeout(180_000);
+  test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
+  await fakeSpeechRecognition(page, { accepted: true, error: "not-allowed" });
+  await enterShop(page);
+  await untilShiori(page);
+  await goOutside(page);
+  const composer = page.getByTestId("guide-composer");
+  await composer.getByTestId("voice-input").click();
+  await expect(composer.getByTestId("voice-status")).toHaveText(
+    "マイクを使えませんでした。文字で相談を続けられます。",
+  );
+  const input = composer.getByRole("textbox");
+  await input.fill("会場までの道を教えてください");
+  await input.press("Enter");
+  await expect(page.getByTestId("guide-history")).toContainText("会場までの道を教えてください");
+});
+
+test("スマートフォンの幅（375px）でも、通りの上の段が横にはみ出さない", async ({ page }, info) => {
+  test.setTimeout(180_000);
+  test.skip(info.project.name !== "mobile", "スマートフォンの幅だけで確かめる");
+  await page.setViewportSize({ width: 375, height: 812 });
+  await enterShop(page);
+  await untilShiori(page);
+  await goOutside(page);
+  await expect(page.getByTestId("read-aloud-toggle")).toBeVisible();
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+  expect(overflow).toBeLessThanOrEqual(0);
+  // 上の段のボタンは、どれも画面の中に収まる
+  const box = await page.getByTestId("read-aloud-toggle").boundingBox();
+  expect(box).not.toBeNull();
+  expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(375);
 });

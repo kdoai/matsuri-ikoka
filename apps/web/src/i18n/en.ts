@@ -232,6 +232,7 @@ export const en: Messages = {
     readAloudOff: "Read aloud: off",
     readAloudHint:
       "Reads the concierge's words in the dialogue window aloud, using a voice on this device first",
+    readAloudTitle: (label: string, hint: string) => `${label} (${hint})`,
     readAloudRemoteTitle: "Before turning on read aloud",
     readAloudRemote:
       "No reading voice was found on this device. Some browsers send the text to the browser maker's servers to read it aloud.",

@@ -1,3 +1,4 @@
+import type { GuideLine } from "../state/guide";
 import type { DialogueLine } from "../state/selectors";
 import { continuationText, type Speaker } from "./speak";
 
@@ -41,6 +42,41 @@ export function dialogueSpokenLine(input: {
     case "waiting":
     case "work":
       return null;
+  }
+}
+
+/**
+ * ガイドの会話の窓で読む文。窓に出ているガイドの文と同じにする（緊急の連絡先の欄は読まない）。
+ * 考えている間、調べている様子、流れてくる途中の返事は読まない（null）
+ */
+export function guideSpokenLine(input: {
+  line: GuideLine;
+  /** 会話の窓に出ているセリフの頭（1〜2文）と、「つづきを読む」を開いているか */
+  head: string;
+  expanded: boolean;
+  /** 窓に出ている文（知らせ・エラー・あいさつ・使えないときの文） */
+  text: string;
+}): SpokenLine | null {
+  const { line } = input;
+  switch (line.kind) {
+    case "waiting":
+    case "tool":
+      return null;
+    case "guide":
+      if (line.streaming) return null;
+      return input.expanded
+        ? { key: `${line.id}:rest`, text: continuationText(input.head, line.text) }
+        : { key: `${line.id}:head`, text: input.head };
+    case "report":
+      return { key: `report:${line.notice.id}`, text: input.text };
+    case "error":
+      return {
+        key: `error:${line.code}:${line.said ?? ""}`,
+        text: line.said === null ? input.text : `${line.said}\n${input.text}`,
+      };
+    case "greeting":
+    case "unavailable":
+      return { key: `${line.kind}:${input.text}`, text: input.text };
   }
 }
 

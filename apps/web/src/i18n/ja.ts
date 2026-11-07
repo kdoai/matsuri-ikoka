@@ -215,6 +215,7 @@ export const ja = {
     readAloudOff: "読み上げ：オフ",
     readAloudHint:
       "会話の窓に出たコンシェルジュの言葉を読み上げます。この端末の中の声を先に使います",
+    readAloudTitle: (label: string, hint: string) => `${label}（${hint}）`,
     readAloudRemoteTitle: "読み上げをオンにする前に",
     readAloudRemote:
       "この端末には読み上げの声が見つかりませんでした。ブラウザによっては、読み上げる文をブラウザの提供元のサーバーへ送って声にします。",
