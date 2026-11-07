@@ -1,6 +1,7 @@
 import {
   type AuthConfig,
   type DeleteTripsResponse,
+  isTrialAccount,
   SaveTripRequestSchema,
   type ShareResponse,
   type TripListResponse,
@@ -106,11 +107,22 @@ export function registerTripRoutes(routes: SecureRoutes, deps: TripDeps) {
   routes.owner("DELETE", "/api/trips/:id", async (c, { trips }) => {
     const id = routeParam(c, "id");
     await deps.persistence.flush(id);
+    if ((await trips.getTrip(id)) === null) return notFound(c);
+    // 流している返事を先に止める。返事の途中に消しても、消した旅を作り直さない
+    await deps.persistence.forgetTrip(id);
+    await deps.persistence.flush(id);
     const deleted = await trips.deleteTrip(id);
     return deleted ? c.body(null, 204) : notFound(c);
   });
 
-  routes.owner("DELETE", "/api/me/trips", async (c, { trips }) => {
+  routes.owner("DELETE", "/api/me/trips", async (c, { owner, trips }) => {
+    // アカウントごと消す操作の入口なので、お試し用のアカウントでは断る。旅は1つずつなら消せる。
+    // まとめて戻すのは初期化のスクリプト
+    if (isTrialAccount(owner)) {
+      return c.json(apiError("bad_request", "お試し用のアカウントは消せません。", false), 403);
+    }
+    // 流している返事を先に止める。止まった返事の片付けで、相談や旅程が戻らないようにする
+    deps.persistence.forgetOwner(owner);
     await deps.persistence.flush();
     const deleted = await trips.deleteAllTrips();
     return c.json({ deleted } satisfies DeleteTripsResponse);

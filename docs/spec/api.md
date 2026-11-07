@@ -57,24 +57,28 @@
 | GET      | `/api/trips/:id/versions/:version` | ログインした持ち主 | 自分の旅程                                                                                                       |
 | POST     | `/api/trips/:id/share`             | ログインした持ち主 | 自分の旅程                                                                                                       |
 | DELETE   | `/api/trips/:id`                   | ログインした持ち主 | 自分の旅程                                                                                                       |
-| DELETE   | `/api/me/trips`                    | ログインした持ち主 | 自分の旅程のすべて                                                                                               |
+| DELETE   | `/api/me/trips`                    | ログインした持ち主 | 自分の旅程のすべて。お試し用のアカウントは 403                                                                   |
 | POST     | `/api/guide/open`                  | ログインした持ち主 | 自分の旅程。ガイドと話す新しい相談を作る                                                                         |
 | POST     | `/api/guide/state`                 | 相談の持ち主       | その相談の旅（時期・見回り・通知・承認待ちの提案・手帳）                                                         |
 | POST     | `/api/guide/chat`                  | 相談の持ち主       | その相談の旅。旅程は変えず、提案を作るまで                                                                       |
 | POST     | `/api/guide/memo/:id`              | 相談の持ち主       | その相談の旅の手帳                                                                                               |
 | POST     | `/api/guide/memo/:id/delete`       | 相談の持ち主       | その相談の旅の手帳                                                                                               |
+| POST     | `/internal/patrol/start`           | 内部               | 見回りの起動（検証は `oidc`）。頼まれた旅を読み、通知を足す。利用者の ID トークンでは通らない                    |
+| POST     | `/internal/patrol/webhook`         | 内部               | 見回り係の結果の通知（検証は `signature`）。頼まれた旅に通知を足す。利用者の ID トークンでは通らない             |
 | GET      | `*`                                | だれでも           | 画面のファイル（画面のビルドを配るときだけ）                                                                     |
 
 利用者 A のデータを、利用者 B とログインなしの人が読めず変えられないことは、この表の経路ごとに自動テストで確かめます（`apps/server/src/routes/isolation.test.ts`）。経路を足すと、表に足すまでテストが落ちます。
 
 ### 内部の入口
 
-定期実行と Webhook のための入口は `/internal/…` に置き（経路はこれから足す）、合言葉やログインとは別の検証を通します。検証の設定は省略でき、なければその入口だけが断り、サーバーは起動して相談はそのまま動きます。署名の鍵が空（`whsec_` だけなど）のときは、設定がないものとして扱います。
+定期実行と Webhook のための入口は `/internal/…` に置き、合言葉やログインとは別の検証を通します。検証の設定は省略でき、なければその入口だけが断り、サーバーは起動して相談はそのまま動きます。署名の鍵が空（`whsec_` だけなど）のときは、設定がないものとして扱います。
 
 | 検証        | 呼び出し元                  | 確かめること                                                                                                                                                         | 設定                                                   |
 | ----------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
 | `oidc`      | 定期実行（Cloud Scheduler） | `Authorization: Bearer` の Google の OIDC トークンの署名・期限・宛先（audience）と、決めたサービスアカウントのメールアドレス                                         | `INTERNAL_OIDC_AUDIENCE`・`INTERNAL_OIDC_CALLER_EMAIL` |
 | `signature` | Managed Agents の Webhook   | `webhook-id`・`webhook-timestamp`・`webhook-signature`（Standard Webhooks の形）。`{id}.{timestamp}.{本文}` の HMAC-SHA256 が合うこと、時刻のずれが5分以内であること | `ANTHROPIC_WEBHOOK_SIGNING_KEY`                        |
+
+見回りの入口は、検証を通っても、見回りを動かしていない環境（mock、または `PATROL_ANTHROPIC_API_KEY` がないとき）では 404 で断ります（[旅の見回り](operations.md#旅の見回り)）。
 
 ### 断るときの応答
 

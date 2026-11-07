@@ -71,6 +71,8 @@ const ROUTES: [string, string, RoutePolicy][] = [
   ["POST", "/api/guide/chat", "consultation"],
   ["POST", "/api/guide/memo/:id", "consultation"],
   ["POST", "/api/guide/memo/:id/delete", "consultation"],
+  ["POST", "/internal/patrol/start", "internal"],
+  ["POST", "/internal/patrol/webhook", "internal"],
 ];
 
 const POLICY_LABELS: Record<RoutePolicy, string> = {

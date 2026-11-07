@@ -196,7 +196,7 @@
     },
     {
       "file": "staff_hiyoko.glb",
-      "kilobytes": 185.9,
+      "kilobytes": 188.0,
       "triangles": 10806,
       "animations": [],
       "textures": 7
@@ -216,5 +216,5 @@
       "textures": 5
     }
   ],
-  "total_kilobytes": 5965.5
+  "total_kilobytes": 5967.6
 }

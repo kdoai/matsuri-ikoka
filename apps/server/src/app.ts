@@ -5,6 +5,7 @@ import type { IdTokenVerifier } from "./account/idToken";
 import type { InternalVerifiers } from "./account/internalAuth";
 import type { FestivalStore } from "./data/festivalStore";
 import { errorForLog } from "./log";
+import type { PatrolDeps } from "./patrol/runner";
 import { type ChatOptions, registerChatRoutes } from "./routes/chat";
 import { apiError } from "./routes/errors";
 import { type FestivalSearchOptions, registerFestivalSearchRoutes } from "./routes/festivalSearch";
@@ -13,6 +14,7 @@ import { registerFestivalTripRoutes } from "./routes/festivalTrips";
 import { passcodeGuard } from "./routes/guard";
 import { type GuideOptions, registerGuideRoutes } from "./routes/guide";
 import { registerItineraryRoutes } from "./routes/itinerary";
+import { registerPatrolRoutes } from "./routes/patrol";
 import { type DeclaredRoute, SecureRoutes } from "./routes/policy";
 import { registerTripRoutes } from "./routes/trips";
 import { registerWebRoutes } from "./routes/web";
@@ -46,6 +48,8 @@ export interface AppDeps extends ChatOptions, FestivalSearchOptions {
   shiori?: Shiori;
   /** しおりのあとのガイド。省略すると、ガイドの入口だけが 404 で断る */
   guide?: GuideOptions;
+  /** 旅の見回り。省略すると、見回りの入口だけが 404 で断る */
+  patrol?: PatrolDeps | null;
 }
 
 /** API の本文の大きさの上限（発言は1000字まで） */
@@ -103,6 +107,7 @@ export function createApp(appDeps: AppDeps) {
     authConfig: deps.authConfig ?? { enabled: false },
   });
   registerGuideRoutes(routes, deps);
+  registerPatrolRoutes(routes, deps.patrol ?? null);
   if (deps.webDist) {
     registerWebRoutes(routes, {
       webDist: deps.webDist,

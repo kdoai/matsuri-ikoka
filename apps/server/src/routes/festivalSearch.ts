@@ -12,7 +12,7 @@ import { todayInJapan } from "../domain/calendar";
 import { searchFestivalsByConditions } from "../domain/festivalSearch";
 import { errorForLog } from "../log";
 import { apiError } from "./errors";
-import { type ConcurrencyLimiter, type DailyLimiter, limitKey } from "./guard";
+import { type ConcurrencyLimiter, type DailyLimiter, turnQuota } from "./guard";
 import type { ConsultationAccess, SecureRoutes } from "./policy";
 
 // 祭りから探す API（docs/spec/festival-search.md）。検索はコードだけで行う。
@@ -38,6 +38,7 @@ export interface FestivalSearchDeps extends FestivalSearchOptions {
   festivals: FestivalStore;
   limiter: DailyLimiter;
   clientLimiter?: DailyLimiter;
+  trialLimiter?: DailyLimiter;
   concurrency?: ConcurrencyLimiter;
   clientIp?: (c: Context) => string;
 }
@@ -68,14 +69,12 @@ export function registerFestivalSearchRoutes(routes: SecureRoutes, deps: Festiva
   ): Promise<FestivalWishIntent | null> {
     const reader = deps.readFestivalWish;
     if (reader === undefined) return null;
-    const client = limitKey(viewer, deps.clientIp?.(c) ?? "unknown");
-    if (!deps.limiter.allows() || deps.clientLimiter?.allows(client) === false) {
-      return null;
-    }
-    const release = deps.concurrency === undefined ? () => {} : deps.concurrency.tryAcquire(client);
+    const quota = turnQuota(deps, viewer, deps.clientIp?.(c) ?? "unknown");
+    if (!quota.allows()) return null;
+    const release =
+      deps.concurrency === undefined ? () => {} : deps.concurrency.tryAcquire(quota.client);
     if (release === null) return null;
-    deps.limiter.consume();
-    deps.clientLimiter?.consume(client);
+    quota.consume();
     try {
       const read = await withTimeout(
         (signal) => reader(wish, signal),

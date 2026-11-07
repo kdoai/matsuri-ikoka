@@ -14,7 +14,9 @@
       "!data/stations",
       "!**/SKILL.md",
       "!managed-agents/agents",
-      "!managed-agents/claude-lock.json"
+      "!managed-agents/claude-lock.json",
+      "!managed-agents-patrol/agents",
+      "!managed-agents-patrol/claude-lock.json"
     ]
   },
   "formatter": {

@@ -24,7 +24,7 @@ blender -b --factory-startup --python-exit-code 1 -P assets/3d/scripts/build.py 
 | `exterior` | 店の外観と入店カメラ。プレビュー、焼き込み、GLB | `out/preview/exterior*.png`, `out/glb/exterior.glb` |
 | `ennichi` | 縁日の通りと6つの屋台。プレビュー（全景の消灯と点灯、屋台ごとの消灯と点灯、形だけの影）、焼き込み、GLB | `out/preview/ennichi_*.png`, `out/glb/ennichi.glb` |
 | `optimize` | meshopt 圧縮と WebP（1辺1024px以下）、サイズと三角形数の一覧 | `models/*.glb`, `models/manifest.json` |
-| `guide` | 帽子と旗のガイドのプレビューと、全モーションで帽子と旗が外れないことの確認（外れたら失敗で止まる）。`all` には含まない | `out/preview/guide.png`, `guide_motions.png`, `guide_attachment.json` |
+| `guide` | 帽子と旗のガイドのプレビューと、全モーションで帽子と旗が外れないことと、旗を出して使うモーションで竿が頭・体・はっぴに重ならないことの確認（どちらかが崩れたら失敗で止まる）。`all` には含まない | `out/preview/guide.png`, `guide_motions.png`, `guide_attachment.json` |
 | `stills` | しおり用のスタッフと旅人の静止画と、顔の静止画（透過の WebP）。`all` には含まない | `../shiori/staff/*.webp` |
 | `faces` | 顔の静止画だけ（正面に寄せた正方形。会話の窓と、しおりの吹き出しの顔の絵）。`all` には含まない | `../shiori/staff/face_*.webp` |
 
@@ -220,7 +220,7 @@ Blender は Z が上、glTF は Y が上です。書き出しで Blender の `(x
 | `run` | 1.2 s | ガイド | 駆け寄る。前かがみの小走り 6 歩で、旗は後ろへなびかせる。移動は 1.2 m/s 前後が目安 |
 
 ガイドの旗（`prop.guide_flag`）を出している間は、`idle`, `talk`, `nod`, `lead`, `wave_flag`, `run` を使います。
-ほかのモーションは竿が頭や体に重なるので、旗を隠して使ってください（`target guide` が、この6つで重ならないことを確かめます）。
+ほかのモーションは竿が頭や体に重なるので、旗を隠して使ってください（`target guide` が、この6つで竿が頭・体・はっぴに重ならないことを確かめます。旗を握る右の翼と袖には、竿がかかります）。
 
 ## 画面側での描き方
 
@@ -272,7 +272,7 @@ Blender は Z が上、glTF は Y が上です。書き出しで Blender の `(x
 | `motion_wave_flag.glb` | 0 | 10 KB |
 | `player_penguin.glb` | 9,294 | 138 KB |
 | `staff_hen.glb` | 10,254 | 209 KB |
-| `staff_hiyoko.glb` | 10,806 | 186 KB |
+| `staff_hiyoko.glb` | 10,806 | 188 KB |
 | `staff_owl.glb` | 10,342 | 189 KB |
 | `staff_sparrow.glb` | 10,362 | 154 KB |
 | 合計 | | 5.83 MB |

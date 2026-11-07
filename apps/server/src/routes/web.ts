@@ -18,7 +18,8 @@ const SERVER_PATHS = /^\/(?:api|shiori|internal)(?:\/|$)|^\/healthz?$/;
  * - img-src https://tile.openstreetmap.org：地図のタイル
  * - font-src data:：3D の文字の描画が埋め込んで読むフォント
  * - ログイン（Firebase Authentication）を用意しているときだけ：Google のログインの窓を開くスクリプト
- *   （apis.google.com）、ID トークンの発行（identitytoolkit・securetoken）、ログインの受け渡しの枠（authDomain）
+ *   （apis.google.com）、ID トークンの発行（identitytoolkit・securetoken）、ログインの受け渡しの枠（authDomain）。
+ *   frame-src に枠を足すと default-src は効かなくなるので、店内のしおり（同じオリジンの /shiori/…?embed=1）のために 'self' も書く
  * インラインのスクリプト・スタイルと eval は許さない
  */
 export function pageCsp(authDomain: string | null): string {
@@ -30,7 +31,7 @@ export function pageCsp(authDomain: string | null): string {
     "img-src 'self' data: blob: https://tile.openstreetmap.org",
     `connect-src 'self' blob:${login ? " https://identitytoolkit.googleapis.com https://securetoken.googleapis.com" : ""}`,
     "font-src 'self' data:",
-    ...(login ? [`frame-src https://${authDomain}`] : []),
+    ...(login ? [`frame-src 'self' https://${authDomain}`] : []),
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",

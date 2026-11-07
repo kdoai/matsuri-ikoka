@@ -41,8 +41,13 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PROJECT="$GCP_PROJECT_ID"
 APIS=(firestore.googleapis.com identitytoolkit.googleapis.com securetoken.googleapis.com
   firebase.googleapis.com firebaserules.googleapis.com)
-# expiresAt で消す集まり（コレクショングループ）。apps/server/src/storage/firestore.ts と同じにする
-TTL_GROUPS=(itineraries versions shares sessions notices proposals guideUsage)
+# expiresAt で消す集まり（コレクショングループ）。apps/server/src/storage/firestore.ts と
+# apps/server/src/patrol/firestoreStore.ts と同じにする
+TTL_GROUPS=(itineraries versions shares sessions notices proposals guideUsage patrolRuns patrolDeliveries)
+# 見回りが、頼まれた旅を集まりをまたいで探す索引（watch.status のコレクショングループ）。
+# gcloud の --index は範囲を指定できず、書かなかった索引を消すので、REST で入れる
+WATCH_INDEX_URL="https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/collectionGroups/watch/fields/status?updateMask=indexConfig"
+WATCH_INDEX_CONFIG='{"indexConfig":{"indexes":[{"queryScope":"COLLECTION","fields":[{"fieldPath":"status","order":"ASCENDING"}]},{"queryScope":"COLLECTION_GROUP","fields":[{"fieldPath":"status","order":"ASCENDING"}]}]}}'
 ROLE="roles/datastore.user"
 
 failed=0
@@ -95,6 +100,23 @@ check_ttl() {
       ng "TTL $group.expiresAt"
     fi
   done
+}
+
+watch_index_state() {
+  gcloud firestore indexes fields describe status --collection-group=watch --project "$PROJECT" \
+    --format=json 2>/dev/null \
+    | json 'data?.indexConfig?.indexes?.find((i)=>i.queryScope==="COLLECTION_GROUP"&&i.fields?.some((f)=>f.fieldPath==="status"&&f.order==="ASCENDING"))?.state' \
+    || true
+}
+
+check_watch_index() {
+  local state
+  state="$(watch_index_state)"
+  if [[ "$state" == "READY" || "$state" == "CREATING" ]]; then
+    ok "索引 watch.status のコレクショングループ（$state）"
+  else
+    ng "索引 watch.status のコレクショングループ"
+  fi
 }
 
 check_role() {
@@ -157,6 +179,7 @@ check_all() {
   check_apis
   check_database
   check_ttl
+  check_watch_index
   check_role
   check_run_env
   check_auth
@@ -177,6 +200,16 @@ apply_all() {
     gcloud firestore fields ttls update expiresAt --collection-group="$group" \
       --enable-ttl --project "$PROJECT" --async --quiet
   done
+
+  # 作っている途中に入れ直すと断られるので、ないときだけ入れる
+  local index_state
+  index_state="$(watch_index_state)"
+  if [[ "$index_state" != "READY" && "$index_state" != "CREATING" ]]; then
+    echo "索引（watch.status のコレクショングループ）を入れる"
+    curl -fsS -X PATCH -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+      -H "x-goog-user-project: $PROJECT" -H "Content-Type: application/json" \
+      -d "$WATCH_INDEX_CONFIG" "$WATCH_INDEX_URL" >/dev/null
+  fi
 
   echo "プロジェクトに Firebase を足し、セキュリティルール（ブラウザからはすべて断る）を入れる"
   if ! firebase projects:list --json | P="$PROJECT" json 'data.result.some((p)=>p.projectId===process.env.P)'; then

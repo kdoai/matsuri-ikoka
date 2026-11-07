@@ -629,6 +629,8 @@ describe("費用と回数の上限", () => {
         },
         limits: { turnsPerUser: 10, turnsPerTrip: 10, costUsdPerUser: 1, costUsdPerTrip: 10 },
       },
+      // 利用者ごとの枠だけを見るので、利用者ごとに別の IP にする
+      clientIp: (c) => c.req.header("authorization") ?? "anonymous",
     });
     const first = await context.consult(ALICE);
     const second = await context.consult(ALICE);
@@ -638,6 +640,28 @@ describe("費用と回数の上限", () => {
     expect((await context.chat(second.sessionId, "こんにちは", ALICE)).status).toBe(429);
     const other = await context.consult(BOB);
     expect((await context.chat(other.sessionId, "こんにちは", BOB)).status).toBe(200);
+  });
+
+  it("同じ IP の別の人にも、費用の上限が効く（登録し直しても回避できない）", async () => {
+    const context = setup({
+      guide: {
+        runner: {
+          mode: "mock",
+          today: () => "2026-08-03",
+          now: () => "2026-08-03T10:00:00+09:00",
+          runTurn: async ({ meter }) => {
+            meter.add(1.5);
+          },
+        },
+        limits: { turnsPerUser: 10, turnsPerTrip: 10, costUsdPerUser: 1, costUsdPerTrip: 10 },
+      },
+    });
+    const first = await context.consult(ALICE);
+    const other = await context.consult(BOB);
+
+    await (await context.chat(first.sessionId, "こんにちは", ALICE)).text();
+
+    expect((await context.chat(other.sessionId, "こんにちは", BOB)).status).toBe(429);
   });
 
   it("その発言に使える費用を、今日の残りまでに抑える", async () => {
