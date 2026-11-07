@@ -180,7 +180,7 @@ async function logStreamError(error: Error): Promise<void> {
   console.error(JSON.stringify({ kind: "sse_failed", ...errorForLog(error) }));
 }
 
-/** SSE を開く。相談を開く前から流せる（緊急の発言は、保存の口を待たずに連絡先を送る） */
+/** SSE を開く */
 export function openEventStream<E extends { type: string }>(
   c: Context,
   run: (signal: AbortSignal, emit: (event: E) => void, progress: () => void) => Promise<void>,

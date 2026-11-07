@@ -8,6 +8,7 @@ import { useActions, useApp, useT } from "../state/react";
 import { buttonPrimary, buttonSecondary, SourceLink } from "./common";
 import { KeyCap } from "./Hud";
 import { Portrait } from "./Portraits";
+import { TripDayCard } from "./TripDay";
 
 // 縁日の通りの、ガイドの屋台。旅のことは、すべてこのガイド1人に尋ねればよく、屋台を種類で分けない。
 // 3D に出ること（提灯が灯っているか＝新しい知らせ）は、ここですべて文字で読める。
@@ -397,6 +398,8 @@ export function GuideBoard({
         </button>
       </header>
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3">
+        {/* 3D の通りでも、旅の当日は次の予定・出発・帰りの最終を最初に見せる */}
+        <TripDayCard />
         <GuideBoardBody />
       </div>
       <footer className="border-line border-t border-dashed px-4 py-2">

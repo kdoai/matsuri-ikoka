@@ -12,6 +12,7 @@ import {
 } from "react";
 import { useAccountUser } from "../account/useAccountUser";
 import { prefetchModels, STREET_SCENE_MODELS } from "../scenes/modelFiles";
+import { useTripDayGlance } from "../state/clock";
 import { unreadNotices } from "../state/guide";
 import { playStore, usePlay } from "../state/play";
 import { useActions, useApp, useAppStore, useT } from "../state/react";
@@ -30,6 +31,7 @@ import { SceneLoading } from "./SceneLoading";
 import { LanguageButton, useFrameInsets } from "./Shop";
 import { GuideBoard, GuideStallFront } from "./StreetStalls";
 import { StreetScene, useScene3d } from "./scene3d";
+import { TripDayCard } from "./TripDay";
 
 // しおりのあとの画面。店の外の縁日の通りで、ガイドと話す。旅のことは、すべてガイド1人に尋ねればよい。
 // 3D が主役で、会話の窓とガイドの屋台の窓を重ねる。動きを減らす設定や 3D が使えないときは、ガイドの屋台の正面を主にする。
@@ -160,12 +162,15 @@ export function Street() {
   const store = useAppStore();
   const wants3d = useScene3d() && StreetScene !== null;
   const [failed, setFailed] = useState(false);
-  const use3d = wants3d && !failed;
   const wide = useMediaQuery("(min-width: 1024px)");
   const guideOpen = useApp((state) => state.guide.dialogueOpen);
   const openStall = useApp((state) => state.guide.openStall);
   const listOpen = useApp((state) => state.guide.listOpen);
   const phase = useApp((state) => state.guide.phase);
+  // 旅の当日のスマホでは 2D を主にして、次の予定・出発・帰りの最終を最初に見せる。
+  // 旅の日かは、サーバーの返事を待たず、手元の旅程と時計で決める（札と同じ値）
+  const tripDay = useTripDayGlance();
+  const use3d = wants3d && !failed && !(tripDay !== null && !wide);
   const notices = useApp((state) => state.guide.notices);
   const ready = useApp(shioriReady);
   const unread = useMemo(() => unreadNotices({ notices }).length, [notices]);
@@ -283,6 +288,8 @@ export function Street() {
           style={{ paddingTop: frame.top + 8 }}
           data-testid="street-board"
         >
+          {/* 旅の当日は、屋台より先に、次の予定・出発・帰りの最終を見せる */}
+          <TripDayCard />
           <GuideStallFront onTalk={talk} />
           <div className="mt-3">
             <GuestNote />

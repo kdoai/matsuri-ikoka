@@ -8,8 +8,6 @@ import {
   DecideProposalRequestSchema,
   DecideProposalResponseSchema,
   decodeGuideSseEvent,
-  EMERGENCY_CONTACTS,
-  EmergencyContactSchema,
   encodeGuideSseEvent,
   GUIDE_SSE_EVENT_TYPES,
   type GUIDE_STALLS,
@@ -30,6 +28,7 @@ import {
   PatrolReportSchema,
   PatrolRequestSchema,
   PatrolTargetSchema,
+  roundLocation,
   TripWatchSchema,
   tripPhase,
 } from "./guide";
@@ -601,7 +600,6 @@ function exampleGuideEvents(): GuideSseEvent[] {
         checkedAt: "2026-08-10T20:00:00+09:00",
       },
     },
-    { type: "guide.emergency", data: { contacts: [...EMERGENCY_CONTACTS] } },
     { type: "guide.notice", data: { notice: fictionalNotice() } },
     { type: "guide.proposal", data: { proposal: fictionalProposal() } },
     { type: "guide.memo", data: { item: fictionalMemoItem() } },
@@ -656,34 +654,21 @@ describe("GuideSseEventSchema", () => {
     ).toBe(false);
   });
 
-  it("緊急の知らせは連絡先が要り、119 と 110 を出せる", () => {
-    expect(EMERGENCY_CONTACTS.map((contact) => contact.number)).toEqual(["119", "110"]);
-    expect(
-      GuideSseEventSchema.safeParse({ type: "guide.emergency", data: { contacts: [] } }).success,
-    ).toBe(false);
-  });
-
-  it("決まった連絡先は、サービスと番号の組が合う", () => {
-    for (const contact of EMERGENCY_CONTACTS) {
-      expect(EmergencyContactSchema.safeParse(contact).success).toBe(true);
-    }
-  });
-
-  it.each([
-    { service: "ambulance_fire", number: "110" },
-    { service: "police", number: "119" },
-    { service: "ambulance_fire", number: "118" },
-    { service: "coast_guard", number: "118" },
-  ])("サービスと番号の誤った組は送らない（%j）", (contact) => {
-    expect(EmergencyContactSchema.safeParse(contact).success).toBe(false);
-    expect(
-      GuideSseEventSchema.safeParse({ type: "guide.emergency", data: { contacts: [contact] } })
-        .success,
-    ).toBe(false);
-  });
-
   it("不正なイベントは送らない", () => {
     const invalid = { type: "guide.memo", data: {} } as GuideSseEvent;
     expect(() => encodeGuideSseEvent(invalid)).toThrow();
+  });
+});
+
+describe("roundLocation", () => {
+  it("現在地を小数3桁（およそ100m）に丸める", () => {
+    expect(roundLocation({ lat: 35.123456, lng: 136.567891 })).toEqual({
+      lat: 35.123,
+      lng: 136.568,
+    });
+    expect(roundLocation({ lat: -33.86549, lng: 151.20929 })).toEqual({
+      lat: -33.865,
+      lng: 151.209,
+    });
   });
 });

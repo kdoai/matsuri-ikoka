@@ -1,4 +1,10 @@
-import type { IsoDate, Itinerary, LocalTime, ReminderSlot } from "@matsuri-ikoka/schema";
+import {
+  type IsoDate,
+  type Itinerary,
+  type LocalTime,
+  lastReturnMinutes,
+  type ReminderSlot,
+} from "@matsuri-ikoka/schema";
 import { addDays, fromMinutes, toMinutes } from "./calendar";
 
 // 旅程の時刻に合わせて、ガイドが声をかける時刻を決める（docs/spec/guide.md の「旅程の時刻に合わせた声かけ」）。
@@ -17,8 +23,6 @@ const DEPART_PREP_MINUTES = 30;
 const DEPART_FALLBACK_MINUTES = 60;
 /** 帰りの最終の60分前に声をかける */
 const LAST_RETURN_LEAD_MINUTES = 60;
-/** これより早い最終の時刻は、日をまたいだ深夜の便とみなす */
-const AFTER_MIDNIGHT = toMinutes("04:00");
 /**
  * 声をかける時刻を過ぎてから、まだ声をかけてよい時間。
  * 定期の起動が遅れたり止まったりしても、古い声かけをあとからまとめて届けない
@@ -131,8 +135,8 @@ export function guideCallSchedule(itinerary: Pick<Itinerary, "days">): GuideCall
     const departBy = day.lastReturn?.departBy ?? null;
     if (departBy !== null) {
       const minutes = toMinutes(departBy);
-      // 深夜0時を過ぎた最終は、その日の翌日の時刻
-      const lastDate = minutes < AFTER_MIDNIGHT ? addDays(day.date, 1) : day.date;
+      // 深夜0時を過ぎた最終は、その日の翌日の時刻（決まりは schema の lastReturnMinutes）
+      const lastDate = lastReturnMinutes(departBy) >= 1440 ? addDays(day.date, 1) : day.date;
       const lastMs = japanTimeMs(lastDate, departBy);
       const atMs = lastMs - LAST_RETURN_LEAD_MINUTES * 60 * 1000;
       calls.push({

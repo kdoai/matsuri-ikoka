@@ -29,7 +29,6 @@ export function guideTurnPrompt(input: {
   /** 新しい会話で続けるときの、コードが書いた要約。会話を続けるときは渡さない */
   resume?: GuideResumeSummary | undefined;
   location?: LatLng | undefined;
-  emergency: boolean;
   message: string;
 }): string {
   const { itinerary } = input;
@@ -49,11 +48,6 @@ export function guideTurnPrompt(input: {
   if (input.location !== undefined) {
     record.push(
       `利用者の現在地（この発言のときだけ使う。手帳に残さない。座標は調べる文に入れず、調べるときは駅や場所の名前で渡す）：緯度 ${input.location.lat}、経度 ${input.location.lng}`,
-    );
-  }
-  if (input.emergency) {
-    record.push(
-      "この発言には緊急かもしれない言葉があります。公的な連絡先（119・110）は画面に出してあります。診断も判断もしないでください。旅のふつうの相談だと分かるときは、そのまま答えてください",
     );
   }
   const memo = input.memo.map((item) => `- ${sanitizeMessage(item.text)}`);

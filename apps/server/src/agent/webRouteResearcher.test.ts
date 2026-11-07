@@ -3,10 +3,10 @@ import type {
   HookEvent,
   HookInput,
   Options,
-  SDKMessage,
 } from "@anthropic-ai/claude-agent-sdk";
 import { describe, expect, it } from "vitest";
 import type { QueryFn } from "./runner";
+import { initMessage, MAX_TURNS, resultMessage, type ScriptResult } from "./testSdkMessages";
 import {
   createWebRouteResearcher,
   ROUTE_RESEARCH_MS,
@@ -17,9 +17,9 @@ import {
 
 type Script = (
   hook: (event: HookEvent, input: Record<string, unknown>) => Promise<unknown>,
-) => Promise<string | null>;
+) => Promise<ScriptResult>;
 
-function setup(scripts: Script[], clock?: () => number) {
+function setup(scripts: Script[], clock?: () => number, forgotten: string[] = []) {
   const calls: { prompt: string; options: Options }[] = [];
   const query: QueryFn = (params) => {
     calls.push(params);
@@ -44,16 +44,10 @@ function setup(scripts: Script[], clock?: () => number) {
         }
       }
     };
+    const sessionId = `session-${calls.length}`;
     return (async function* () {
-      const text = await script(hook);
-      yield (text === null
-        ? { type: "result", subtype: "error_during_execution", is_error: true, errors: [] }
-        : {
-            type: "result",
-            subtype: "success",
-            is_error: false,
-            result: text,
-          }) as unknown as SDKMessage;
+      yield initMessage(sessionId);
+      yield resultMessage(await script(hook));
     })();
   };
   const researcher = createWebRouteResearcher({
@@ -63,6 +57,9 @@ function setup(scripts: Script[], clock?: () => number) {
     query,
     resolveHost: async () => ["8.8.8.8"],
     ...(clock ? { clock } : {}),
+    forgetTranscript: (id) => {
+      forgotten.push(id);
+    },
   });
   const research = () =>
     researcher.research({
@@ -113,6 +110,26 @@ describe("createWebRouteResearcher", () => {
 
     expect(await research()).toEqual(report);
     expect(calls).toHaveLength(1);
+  });
+
+  it("ターンの上限で終わったら、同じセッションを道具なしで続け、読んだ行き方を捨てない", async () => {
+    const forgotten: string[] = [];
+    const { calls, research } = setup(
+      [
+        async (hook) => {
+          await read(hook, "https://example.com/route");
+          return MAX_TURNS;
+        },
+        async () => ANSWER,
+      ],
+      undefined,
+      forgotten,
+    );
+
+    expect(await research()).toMatchObject({ minutes: [55, 70] });
+    expect(calls).toHaveLength(2);
+    expect(calls[1]?.options).toMatchObject({ resume: "session-1", tools: [], maxTurns: 1 });
+    expect(forgotten).toEqual(["session-1"]);
   });
 
   it("ページを読まずに答えたときや、分からないと答えたときは、調べ方を変えて1回だけ調べ直す", async () => {
@@ -250,6 +267,37 @@ describe("createWebRouteResearcher", () => {
 
     expect(await research()).toMatchObject({ minutes: [55, 70] });
     expect(calls[1]?.options.tools).toEqual([]);
+  });
+});
+
+describe("とっておく結果の分け方", () => {
+  it("同じ駅の組でも、時刻表の種類や着きたい時刻が違えば調べ直す", async () => {
+    const answer: Script = async (hook) => {
+      await read(hook, "https://example.com/route");
+      return ANSWER;
+    };
+    const { calls, researcher } = setup([answer, answer, answer, answer]);
+    const ask = (date: string, arriveBy?: string) =>
+      researcher.research({
+        from: "こがね台",
+        to: "鈴鳴駅",
+        date,
+        ...(arriveBy ? { arriveBy } : {}),
+        signal: new AbortController().signal,
+      });
+
+    await ask("2026-08-16");
+    // 同じ日曜の時刻表なら、とっておいた結果を使う
+    await ask("2026-08-23");
+    expect(calls).toHaveLength(1);
+    // 平日は時刻表が違う。土曜も日曜と分ける
+    await ask("2026-08-17");
+    expect(calls).toHaveLength(2);
+    await ask("2026-08-15");
+    expect(calls).toHaveLength(3);
+    // 着きたい時刻が違えば、乗る列車が違う
+    await ask("2026-08-16", "17:00");
+    expect(calls).toHaveLength(4);
   });
 });
 

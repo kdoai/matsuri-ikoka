@@ -17,6 +17,8 @@ import { createFestivalStore, type FestivalStore, loadFestivals } from "./data/f
 import { testFestival } from "./domain/testFestivals";
 import { ConcurrencyLimiter, DailyLimiter } from "./routes/guard";
 import { ItineraryStore, SessionStore } from "./session/sessionStore";
+import { MemoryTripStorage } from "./storage/memory";
+import type { SessionSnapshot, TripStorage } from "./storage/types";
 
 const root = (relative: string) => fileURLToPath(new URL(`../../../${relative}`, import.meta.url));
 
@@ -502,6 +504,64 @@ describe("PATCH /api/preferences", () => {
     expect(messages).toHaveLength(1);
     expect(messages[0]).toContain("子連れ");
     expect(messages[0]).toContain("旅程係にだけ頼んで");
+  });
+
+  it("保存を待つ間に発言が重なっても、1つの相談で返事を2本走らせない", async () => {
+    let running = 0;
+    let maxRunning = 0;
+    const finishes: (() => void)[] = [];
+    const runner: AgentRunner = {
+      mode: "live",
+      runTurn: async () => {
+        running += 1;
+        maxRunning = Math.max(maxRunning, running);
+        await new Promise<void>((resolve) => finishes.push(resolve));
+        running -= 1;
+      },
+    };
+    // 張ったあとの最初の相談の保存を、開けるまで止める
+    const storage = new MemoryTripStorage();
+    let armed = false;
+    let open = () => {};
+    const gated: TripStorage = new Proxy(storage, {
+      get(target, name) {
+        if (name === "saveSession") {
+          return async (snapshot: SessionSnapshot) => {
+            if (armed) {
+              armed = false;
+              await new Promise<void>((resolve) => {
+                open = resolve;
+              });
+            }
+            await target.saveSession(snapshot);
+          };
+        }
+        const value = Reflect.get(target, name, target);
+        return typeof value === "function" ? value.bind(target) : value;
+      },
+    });
+    const { post, newSession } = setup({ runner, storage: gated });
+    const sessionId = await newSession();
+    armed = true;
+
+    const patch = post(
+      "/api/preferences",
+      { sessionId, preferences: { ...DEFAULT_PREFERENCES, party: "kids" } },
+      {},
+      "PATCH",
+    );
+    const first = await post("/api/chat", chat(sessionId));
+    open();
+    await (await patch).text();
+    const second = await post("/api/chat", chat(sessionId));
+    const third = await post("/api/chat", chat(sessionId));
+
+    const statuses = [first.status, second.status, third.status];
+    expect(statuses.filter((status) => status === 200)).toHaveLength(1);
+    expect(statuses.filter((status) => status === 409)).toHaveLength(2);
+    expect(maxRunning).toBe(1);
+    for (const finish of finishes) finish();
+    await Promise.all([first.text(), second.text(), third.text()]);
   });
 });
 

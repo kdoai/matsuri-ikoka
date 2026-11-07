@@ -46,7 +46,7 @@ export function dialogueSpokenLine(input: {
 }
 
 /**
- * ガイドの会話の窓で読む文。窓に出ているガイドの文と同じにする（緊急の連絡先の欄は読まない）。
+ * ガイドの会話の窓で読む文。窓に出ているガイドの文と同じにする。
  * 考えている間、調べている様子、流れてくる途中の返事は読まない（null）
  */
 export function guideSpokenLine(input: {

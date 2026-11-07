@@ -103,6 +103,12 @@ test("2D だけで、ガイドの屋台の知らせ・相談がすべて使え�
   await expect(dialogue.getByRole("textbox", { name: "ガイドへの発言" })).toBeVisible();
   await expect(page.getByTestId("guide-emergency")).toHaveCount(0);
   await expect(dialogue.locator('a[href^="tel:"]')).toHaveCount(0);
+  const input = dialogue.getByRole("textbox", { name: "ガイドへの発言" });
+  await input.fill("雨が降ったらどうすればいいですか");
+  await input.press("Enter");
+  await expect(page.getByTestId("guide-line")).toContainText("小雨なら開催します", {
+    timeout: 20_000,
+  });
   await snap(page, info, "64-guide-dialogue-2d");
   await page.getByTestId("guide-dialogue-close").click();
 
@@ -115,6 +121,32 @@ test("2D だけで、ガイドの屋台の知らせ・相談がすべて使え�
   if (await closePanel.isVisible()) await closePanel.click();
   await page.getByTestId("greeting-bar").getByRole("button").click();
   await expect(page.getByTestId("reply-choices")).toContainText("旅のしおりを開く");
+});
+
+test("旅の当日のスマホの幅では、次の予定・出発・帰りの最終の札が最初の画面に入る", async ({
+  page,
+}, info) => {
+  test.skip(info.project.name !== "mobile", "スマホの幅だけで確かめる");
+  test.setTimeout(180_000);
+  // 架空の旅の日（8月16日）の朝。サーバーの返事を待たず、手元の旅程と時計で旅の日と決まる
+  await page.clock.setFixedTime(new Date("2026-08-16T09:00:00+09:00"));
+  await page.setViewportSize({ width: 375, height: 812 });
+  await enterShop(page);
+  await untilShiori(page);
+  await goOutside(page);
+
+  const card = page.getByTestId("trip-day");
+  await expect(card).toBeVisible();
+  await expect(card.getByTestId("trip-day-next")).toBeVisible();
+  await expect(card.getByTestId("trip-day-departure")).toBeVisible();
+  await expect(card.getByTestId("trip-day-last-return")).toContainText("22:45");
+  // 屋台より先にあり、スクロールしなくても見える
+  const box = await card.boundingBox();
+  expect(box).not.toBeNull();
+  expect((box?.y ?? 9999) + Math.min(box?.height ?? 0, 160)).toBeLessThanOrEqual(812);
+  const stall = await page.getByTestId("guide-stall").boundingBox();
+  expect(box?.y ?? 9999).toBeLessThan(stall?.y ?? 0);
+  await snap(page, info, "61-trip-day-mobile");
 });
 
 test("知らせの組み直しの案を承認すると旅程が新しい版になり、直す前の旅程に戻せる", async ({

@@ -17,6 +17,7 @@ import {
   buildVerifierOptions,
   createVerifierHooks,
   type FetchedPage,
+  type FinalReply,
   finalText,
 } from "./webVerifier";
 
@@ -90,6 +91,8 @@ export function createWebGuideResearcher(deps: {
   resolveHost?: ResolveHost;
   robots?: RobotsChecker;
   maxBudgetUsd?: number | undefined;
+  /** 残した会話の記録を消す（Agent SDK の deleteSession を包んだもの）。省略すると消さない（テスト） */
+  forgetTranscript?: ((sessionId: string) => void) | undefined;
 }): GuideWebResearcher {
   const systemPrompt = `${deps.prompt}\n\n${ANSWER_FORMAT}`;
   return {
@@ -120,9 +123,17 @@ export function createWebGuideResearcher(deps: {
       let costUsd = 0;
       let found = false;
       let rejected: ResearchAnswerRefusal | null = null;
+      let salvage: FinalReply["salvage"] = null;
       const ask = async (prompt: string, withTools: boolean) => {
-        const reply = await finalText(deps.query, prompt, options(withTools), onActivity);
+        const reply = await finalText(
+          deps.query,
+          prompt,
+          options(withTools),
+          onActivity,
+          deps.forgetTranscript,
+        );
         costUsd += reply.costUsd;
+        salvage ??= reply.salvage;
         return reply.text;
       };
       try {
@@ -162,6 +173,7 @@ export function createWebGuideResearcher(deps: {
             kind: "guide_research",
             found,
             ...(rejected === null ? {} : { rejected }),
+            ...(salvage === null ? {} : { salvage }),
             totalCostUsd: costUsd,
             elapsedMs: Date.now() - started,
             searches: log.searches.length,

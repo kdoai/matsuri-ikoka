@@ -34,6 +34,8 @@ import type { QueryFn } from "./runner";
 // - 本文を読まずに答えようとしたら（検索だけのときも、検索もしないときも）、1回だけ続けさせる
 // - 返答の JSON は parseJsonWithSchema で取り出し、取り出せなければ道具なしで1回だけ差し戻す
 // - 出典のうち、実際に読んでいないページは捨てる。結果と確度は domain/verification.ts で決め直す
+// - ターンの上限で終わったときは、同じセッションを道具なしで1ターンだけ続け、読んだ分から答えを救う（finalText）。
+//   そのために道具を使う呼び出しの会話は残し、調べが終わったら消す
 // - 今年の開催と書かれていたかは、自己申告させない。ページの日付の文を写させ、読んだページの本文と照らして
 //   コードで決める（yearStatedOnPage）
 
@@ -98,7 +100,9 @@ export function buildVerifierOptions(input: {
     thinking: { type: "adaptive" },
     effort: input.effort ?? "low",
     maxTurns: input.withTools ? (input.maxTurns ?? VERIFIER_MAX_TURNS) : 1,
-    persistSession: false,
+    // 道具を使う呼び出しは、ターンの上限で終わったときに resume で救えるよう会話を残す（finalText が終わったら消す）。
+    // 道具なしの差し戻しと救いの呼び出しは1ターンで終わるので残さない
+    persistSession: input.withTools,
     ...(input.maxBudgetUsd ? { maxBudgetUsd: input.maxBudgetUsd } : {}),
     abortController: input.abortController,
     ...(input.hooks ? { hooks: input.hooks } : {}),
@@ -188,34 +192,102 @@ export function createVerifierHooks(
   };
 }
 
+/** ターンの上限で終わった調べに、読んだ分から答えを出してもらう頼み */
+export const SALVAGE_PROMPT =
+  "ターンの上限に達したので、これ以上は検索もページの読み込みもできません。ここまでに読んだページから分かったことだけで、決めた形の JSON を1つだけ返してください。読んでいないページは sources に入れず、分からないことは推測で埋めないでください。";
+
+/** ターンの上限で終わった調べを、同じセッションで道具なしに1ターンだけ続ける設定 */
+function salvageOptions(options: Options, sessionId: string): Options {
+  const { hooks: _hooks, ...rest } = options;
+  return { ...rest, tools: [], allowedTools: [], maxTurns: 1, resume: sessionId };
+}
+
+export interface FinalReply {
+  /** 成功の結果の文。失敗なら null */
+  text: string | null;
+  /** 費用（SDK の推定。救いの分を含む） */
+  costUsd: number;
+  /** ターンの上限で終わり、読んだ分から答えを救ったときの費用と所要時間。救っていなければ null */
+  salvage: { costUsd: number; elapsedMs: number } | null;
+}
+
 /**
  * query を最後まで回し、成功の結果の文（失敗なら null）と費用（SDK の推定）を返す。
- * onMessage は Agent SDK の知らせが届くたびに呼ぶ（呼ぶ側の進みのない時間を数え直す）
+ * onMessage は Agent SDK の知らせが届くたびに呼ぶ（呼ぶ側の進みのない時間を数え直す）。
+ *
+ * 道具を使う呼び出しがターンの上限（error_max_turns）で終わったときは、それまでに読んだページを捨てず、
+ * 同じセッションを resume して道具なし・1ターンで「読んだ分から決めた形の JSON で答える」よう頼む。
+ * 救えなかったときだけ失敗にする。会話を残した呼び出しは、終わったら forgetTranscript で記録を消す
  */
 export async function finalText(
   query: QueryFn,
   prompt: string,
   options: Options,
   onMessage?: () => void,
-): Promise<{ text: string | null; costUsd: number }> {
-  let text: string | null = null;
-  let costUsd = 0;
+  forgetTranscript?: (sessionId: string) => void,
+): Promise<FinalReply> {
   // 発言ごとの費用を測っているときは（ガイド）、今日の残りで抑える。残りがなければ呼ばない
   const remaining = remainingCostBudget();
-  if (remaining !== null && remaining <= 0) return { text: null, costUsd: 0 };
+  if (remaining !== null && remaining <= 0) return { text: null, costUsd: 0, salvage: null };
   const bounded =
     remaining === null
       ? options
       : { ...options, maxBudgetUsd: Math.min(options.maxBudgetUsd ?? remaining, remaining) };
-  for await (const message of query({ prompt, options: bounded })) {
-    onMessage?.();
-    if (message.type === "result") {
-      text = message.subtype === "success" && !message.is_error ? message.result : null;
-      costUsd = message.total_cost_usd ?? 0;
-      chargeCost(costUsd);
+
+  /** 1回の query を最後まで回す。費用は結果の total_cost_usd（この呼び出しの累計） */
+  const run = async (text: string, runOptions: Options) => {
+    let result: string | null = null;
+    let subtype: string | null = null;
+    let totalCostUsd = 0;
+    let sessionId: string | null = null;
+    for await (const message of query({ prompt: text, options: runOptions })) {
+      onMessage?.();
+      if (message.type === "system" && message.subtype === "init") sessionId = message.session_id;
+      if (message.type === "result") {
+        subtype = message.subtype;
+        result = message.subtype === "success" && !message.is_error ? message.result : null;
+        totalCostUsd = message.total_cost_usd ?? 0;
+      }
+    }
+    return { result, subtype, totalCostUsd, sessionId };
+  };
+
+  const first = await run(prompt, bounded);
+  chargeCost(first.totalCostUsd);
+  let text = first.result;
+  let costUsd = first.totalCostUsd;
+  let salvage: FinalReply["salvage"] = null;
+  try {
+    const hadTools = Array.isArray(bounded.tools) && bounded.tools.length > 0;
+    const left = remainingCostBudget();
+    if (
+      first.subtype === "error_max_turns" &&
+      first.sessionId !== null &&
+      hadTools &&
+      (left === null || left > 0)
+    ) {
+      const started = Date.now();
+      const rescued = await run(SALVAGE_PROMPT, salvageOptions(bounded, first.sessionId));
+      // 続けたセッションの total_cost_usd は、記録に残した分（1回目）からの累計で届く。1回目より小さければ、
+      // 続けた分だけが届いたものとして扱う
+      const salvageCostUsd =
+        rescued.totalCostUsd >= first.totalCostUsd
+          ? rescued.totalCostUsd - first.totalCostUsd
+          : rescued.totalCostUsd;
+      chargeCost(salvageCostUsd);
+      costUsd += salvageCostUsd;
+      if (rescued.result !== null) {
+        text = rescued.result;
+        salvage = { costUsd: salvageCostUsd, elapsedMs: Date.now() - started };
+      }
+    }
+  } finally {
+    // 会話を残した呼び出しの記録は、救いを終えたら消す（会話の全文を残さない方針）
+    if (first.sessionId !== null && bounded.persistSession !== false) {
+      forgetTranscript?.(first.sessionId);
     }
   }
-  return { text, costUsd };
+  return { text, costUsd, salvage };
 }
 
 const NOT_CONFIRMED: VerificationReport = {
@@ -234,6 +306,8 @@ export function createWebVerifier(deps: {
   resolveHost?: ResolveHost;
   /** 1回の呼び出しの費用の上限（米ドル） */
   maxBudgetUsd?: number | undefined;
+  /** 残した会話の記録を消す（Agent SDK の deleteSession を包んだもの）。省略すると消さない（テスト） */
+  forgetTranscript?: ((sessionId: string) => void) | undefined;
 }): FestivalVerifier {
   const systemPrompt = verifierSystemPrompt(deps.prompt);
   return {
@@ -277,9 +351,17 @@ export function createWebVerifier(deps: {
       const started = Date.now();
       let costUsd = 0;
       let outcome: VerificationReport["result"] = "not_found";
+      let salvage: FinalReply["salvage"] = null;
       const ask = async (prompt: string, withTools: boolean) => {
-        const reply = await finalText(deps.query, prompt, options(withTools));
+        const reply = await finalText(
+          deps.query,
+          prompt,
+          options(withTools),
+          undefined,
+          deps.forgetTranscript,
+        );
         costUsd += reply.costUsd;
+        salvage ??= reply.salvage;
         return reply.text;
       };
       try {
@@ -329,6 +411,7 @@ export function createWebVerifier(deps: {
           JSON.stringify({
             kind: "verify",
             reported: outcome,
+            ...(salvage === null ? {} : { salvage }),
             totalCostUsd: costUsd,
             elapsedMs: Date.now() - started,
             searches: log.searches.length,

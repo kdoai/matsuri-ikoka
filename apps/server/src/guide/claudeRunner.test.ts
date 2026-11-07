@@ -100,7 +100,6 @@ function setup(script: Script) {
     options: {
       target?: Session;
       location?: LatLng;
-      emergency?: boolean;
       budgetUsd?: number;
       meter?: CostMeter;
     } = {},
@@ -115,7 +114,6 @@ function setup(script: Script) {
         trip: { itinerary, data: sessionGuideData(target.guide) },
         message,
         location: options.location,
-        emergency: options.emergency ?? false,
         budgetUsd: options.budgetUsd ?? 0.5,
         turn,
         meter,
@@ -206,16 +204,6 @@ describe("ClaudeGuideRunner", () => {
 
     expect(params[1]?.options.resume).toBe("sdk-1");
     expect(forgotten).toEqual([]);
-  });
-
-  it("緊急のときは、診断も判断もしないよう伝える", async () => {
-    const { run, params } = setup(async function* () {
-      yield result(0);
-    });
-
-    await run("連れが倒れました", { emergency: true });
-
-    expect(params[0]?.prompt).toContain("診断も判断もしないでください");
   });
 
   it("続きの発言は同じ会話を再開し、費用は累計との差を数える", async () => {
@@ -354,7 +342,6 @@ describe("ClaudeGuideRunner", () => {
         session,
         trip: { itinerary, data: sessionGuideData(session.guide) },
         message: "雨のとき",
-        emergency: false,
         budgetUsd: 0.5,
         turn,
         meter: new CostMeter(),

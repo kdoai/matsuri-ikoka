@@ -5,9 +5,9 @@ import {
   STRICT_JSON_RULES,
   ungroundedSources,
 } from "@matsuri-ikoka/agent-kit";
-import { MOVE_MEANS } from "@matsuri-ikoka/schema";
+import { type IsoDate, MOVE_MEANS } from "@matsuri-ikoka/schema";
 import { z } from "zod";
-import { formatMonthDayWithWeekday } from "../domain/calendar";
+import { formatMonthDayWithWeekday, weekdayOf } from "../domain/calendar";
 import { sameStationName } from "../domain/travelEstimate";
 import type { RouteLeg, RouteReport, RouteResearcher } from "../tools/routeResearch";
 import type { ResolveHost } from "./addressGuard";
@@ -16,6 +16,7 @@ import {
   buildVerifierOptions,
   createVerifierHooks,
   type FetchedPage,
+  type FinalReply,
   finalText,
 } from "./webVerifier";
 
@@ -101,6 +102,32 @@ function alignLegs(legs: readonly RouteLeg[], from: string, to: string): RouteLe
 /** 調べた結果をとっておく時間（行き方は日によって変わりにくい） */
 export const ROUTE_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
+/**
+ * 時刻表の種類（平日・土曜・日曜）。帰りの最終や本数は曜日で変わるので、とっておく結果を分ける。
+ * 祝日の一覧は持たないので、祝日は曜日どおりに扱う
+ */
+export function timetableDay(date: IsoDate): "weekday" | "sat" | "sun" {
+  const day = weekdayOf(date);
+  return day === "sat" || day === "sun" ? day : "weekday";
+}
+
+/** とっておく結果の鍵。向き・駅の組・時刻表の種類・着きたい時刻ごとに分ける */
+export function routeCacheKey(input: {
+  direction: "outbound" | "return";
+  from: string;
+  to: string;
+  date: IsoDate;
+  arriveBy?: string | undefined;
+}): string {
+  return JSON.stringify([
+    input.direction,
+    input.from,
+    input.to,
+    timetableDay(input.date),
+    input.arriveBy ?? null,
+  ]);
+}
+
 /** 調べ直しを含めて、調べを打ち切る時間（ミリ秒）。ツールの上限（research_route・research_trip）より短くする */
 export const ROUTE_RESEARCH_MS = 85_000;
 /** 調べ方を変えて調べ直すのに要る、時間の残り（ミリ秒）。ふつうの調べは30秒から1分かかる */
@@ -120,6 +147,8 @@ export function createWebRouteResearcher(deps: {
   query: QueryFn;
   resolveHost?: ResolveHost;
   maxBudgetUsd?: number | undefined;
+  /** 残した会話の記録を消す（Agent SDK の deleteSession を包んだもの）。省略すると消さない（テスト） */
+  forgetTranscript?: ((sessionId: string) => void) | undefined;
   clock?: () => number;
 }): RouteResearcher {
   const systemPrompt = `${deps.prompt}\n\n${ANSWER_FORMAT}`;
@@ -137,7 +166,7 @@ export function createWebRouteResearcher(deps: {
       onActivity,
     }) {
       // 調べ直し（focus があるとき）は、とっておいた結果を使わない
-      const key = `${direction}:${from}→${to}`;
+      const key = routeCacheKey({ direction, from, to, date, arriveBy });
       const hit = focus === undefined ? cache.get(key) : undefined;
       if (hit !== undefined && hit.expiresAt > clock()) return hit.value;
 
@@ -182,9 +211,17 @@ export function createWebRouteResearcher(deps: {
         let costUsd = 0;
         let found = false;
         let legCount = 0;
+        let salvage: FinalReply["salvage"] = null;
         const ask = async (text: string, withTools: boolean) => {
-          const reply = await finalText(deps.query, text, options(withTools), onActivity);
+          const reply = await finalText(
+            deps.query,
+            text,
+            options(withTools),
+            onActivity,
+            deps.forgetTranscript,
+          );
           costUsd += reply.costUsd;
+          salvage ??= reply.salvage;
           return reply.text;
         };
         try {
@@ -254,6 +291,7 @@ export function createWebRouteResearcher(deps: {
               kind: "route_research",
               found,
               legs: legCount,
+              ...(salvage === null ? {} : { salvage }),
               totalCostUsd: costUsd,
               elapsedMs: Date.now() - started,
               searches: log.searches.length,

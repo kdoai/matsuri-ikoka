@@ -39,7 +39,7 @@ function setup() {
   session.itineraryId = itinerary.id;
   const data = sessionGuideData(session.guide);
   const trip = { itinerary, data };
-  const say = async (message: string, emergency = false, target: Session = session) => {
+  const say = async (message: string, target: Session = session) => {
     const events: GuideSseEvent[] = [];
     const turn = newGuideTurn();
     await runner.runTurn(
@@ -47,7 +47,6 @@ function setup() {
         session: target,
         trip,
         message,
-        emergency,
         budgetUsd: 1,
         turn,
         meter: new CostMeter(),
@@ -110,7 +109,6 @@ describe("ReplayGuideRunner", () => {
         session,
         trip: { data, itinerary: { ...itinerary, mainFestivalId: "kazami-bon-odori" } },
         message: "留守の間に、何か変わったことはありましたか",
-        emergency: false,
         budgetUsd: 1,
         turn: newGuideTurn(),
         meter: new CostMeter(),
@@ -134,7 +132,7 @@ describe("ReplayGuideRunner", () => {
     expect(notice?.type === "guide.notice" && notice.data.notice.tripId).toBe(itinerary.id);
   });
 
-  it("発言が記録と同じならその返答を流し、連絡先と終わりのイベントは流さない", async () => {
+  it("発言が記録と同じならその返答を流し、終わりのイベントは流さない", async () => {
     const { say, data } = setup();
 
     const { events, turn } = await say("連れは歩くのがゆっくりなので、気にしてもらえますか");
@@ -150,24 +148,12 @@ describe("ReplayGuideRunner", () => {
     expect((await data.memo()).map((item) => item.text)).toEqual(["連れは歩くのがゆっくり"]);
   });
 
-  it("緊急なら緊急の案内の記録を流し、連絡先のイベントは呼び出し側に任せる", async () => {
-    const { say } = setup();
-
-    const { events } = await say("階段で転んで頭を打ちました", true);
-
-    expect(events.map((event) => event.type)).toEqual(["message.delta"]);
-    expect(JSON.stringify(events)).toContain("119");
-  });
-
-  it("違う発言には、まだ流していない次の記録を順に流し、緊急の案内は飛ばす", async () => {
+  it("違う発言には、まだ流していない次の記録を順に流す", async () => {
     const { say, sample } = setup();
-    const plain = sample.turns.filter(
-      (turn) => !turn.events.some(({ event }) => event.type === "guide.emergency"),
-    );
 
-    for (const _ of plain) {
+    for (const _ of sample.turns) {
       const { events } = await say("なんでも聞いてよいですか");
-      expect(events.map((event) => event.type)).not.toContain("guide.emergency");
+      expect(events.map((event) => event.type)).toContain("message.delta");
     }
     const { events } = await say("なんでも聞いてよいですか");
 

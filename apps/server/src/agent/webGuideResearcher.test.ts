@@ -1,6 +1,7 @@
 import type { HookInput, Options, SDKMessage } from "@anthropic-ai/claude-agent-sdk";
 import { describe, expect, it } from "vitest";
 import type { QueryFn } from "./runner";
+import { initMessage, MAX_TURNS, resultMessage } from "./testSdkMessages";
 import { createWebGuideResearcher, readPagesInReport } from "./webGuideResearcher";
 
 // Agent SDK の代わりに、架空のページを読んだことにする偽物の query で確かめる
@@ -70,13 +71,16 @@ function reading(
   };
 }
 
-function researcher(query: QueryFn) {
+function researcher(query: QueryFn, forgotten: string[] = []) {
   return createWebGuideResearcher({
     prompt: "ガイドの調べ役",
     cwd: "/tmp/matsuri-agent-test",
     env: { PATH: "/usr/bin" },
     query,
     resolveHost: async () => ["93.184.216.34"],
+    forgetTranscript: (id) => {
+      forgotten.push(id);
+    },
   });
 }
 
@@ -123,7 +127,8 @@ describe("ガイドの調べ役", () => {
     expect(options?.allowedTools).toEqual(["WebSearch", "WebFetch"]);
     expect(options?.settingSources).toEqual([]);
     expect(options?.mcpServers).toEqual({});
-    expect(options?.persistSession).toBe(false);
+    // 会話は、ターンの上限で救えるように残す（調べが終わったら消す）
+    expect(options?.persistSession).toBe(true);
   });
 
   it("答えと、実際に読んだページだけを返し、ページの文章や題名は返さない", async () => {
@@ -229,6 +234,39 @@ describe("ガイドの調べ役", () => {
     expect(
       await researcher(fake.query).research({ question: "開催の予定", signal: signal() }),
     ).toBeNull();
+  });
+
+  it("ターンの上限で終わったら、同じセッションを道具なしで続け、読んだ分から答えを救う", async () => {
+    const options: Options[] = [];
+    const forgotten: string[] = [];
+    const query: QueryFn = (params) => {
+      options.push(params.options);
+      return (async function* () {
+        yield initMessage("session-1");
+        if (options.length === 1) {
+          await runHook(params.options, "PostToolUse", {
+            tool_name: "WebFetch",
+            tool_input: { url: PAGE, prompt: "読む" },
+            tool_response: { result: "小雨決行" },
+          });
+          yield resultMessage(MAX_TURNS);
+          return;
+        }
+        yield resultMessage(
+          JSON.stringify({ found: true, answer: "小雨なら開催します", sources: [{ url: PAGE }] }),
+        );
+      })();
+    };
+
+    const report = await researcher(query, forgotten).research({
+      question: "雨でも開催しますか",
+      signal: signal(),
+    });
+
+    expect(report).toEqual({ answer: "小雨なら開催します", urls: [PAGE] });
+    expect(options).toHaveLength(2);
+    expect(options[1]).toMatchObject({ resume: "session-1", tools: [], maxTurns: 1 });
+    expect(forgotten).toEqual(["session-1"]);
   });
 
   it("JSON が崩れていれば、道具なしで1回だけ差し戻す", async () => {

@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { testFestival } from "../domain/testFestivals";
 import type { VerificationReport } from "../domain/verification";
-import { createCandidateChecker } from "./candidateCheck";
+import {
+  type CandidateCheck,
+  type CandidateCheckOutcome,
+  createCandidateChecker,
+} from "./candidateCheck";
 import type { FestivalVerifier } from "./verifier";
 
 // 架空の祭りの公式の出典は example.com（fictionalSource）
@@ -28,6 +32,10 @@ const today = () => "2026-08-03";
 const now = () => "2026-08-03T10:15:00+09:00";
 const signal = new AbortController().signal;
 
+/** 確かめた結果だけを取り出す（確かめなかったときは null） */
+const checked = (outcome: CandidateCheckOutcome): CandidateCheck | null =>
+  "skipped" in outcome ? null : outcome;
+
 describe("createCandidateChecker", () => {
   it("結果をコードのルールで決め直し、祭りと日付ごとにとっておく", async () => {
     let clock = 0;
@@ -44,7 +52,7 @@ describe("createCandidateChecker", () => {
 
     const first = await checker.check({ festival, date: "2026-08-16", session, signal });
     expect(first).toMatchObject({ result: "as_planned", cached: false, date: "2026-08-16" });
-    expect(first?.sources[0]?.confidence).toBe("official");
+    expect(checked(first)?.sources[0]?.confidence).toBe("official");
 
     const again = await checker.check({ festival, date: "2026-08-16", session: {}, signal });
     expect(again).toMatchObject({ result: "as_planned", cached: true });
@@ -67,7 +75,7 @@ describe("createCandidateChecker", () => {
       session: {},
       signal,
     });
-    expect(check?.result).toBe("not_found");
+    expect(checked(check)?.result).toBe("not_found");
   });
 
   it("3件を並べて動かす", async () => {
@@ -90,15 +98,53 @@ describe("createCandidateChecker", () => {
     expect(most).toBe(3);
   });
 
-  it("時間の上限を超えたら「確認できず」にし、とっておかない", async () => {
+  it("時間の上限を超えたら「確認できず」にし、短い時間だけとっておく", async () => {
+    let clock = 0;
     const verifier = verifierOf(() => new Promise(() => {}));
-    const checker = createCandidateChecker({ verifier, today, now, timeoutMs: 20 });
+    const checker = createCandidateChecker({
+      verifier,
+      today,
+      now,
+      timeoutMs: 20,
+      clock: () => clock,
+      failureTtlMs: 1000,
+    });
     const festival = testFestival({ id: "suzunari-toro" });
 
     const check = await checker.check({ festival, date: "2026-08-16", session: {}, signal });
     expect(check).toMatchObject({ result: "not_found", cached: false });
+    const again = await checker.check({ festival, date: "2026-08-16", session: {}, signal });
+    expect(again).toMatchObject({ result: "not_found", cached: true });
+    expect(verifier.calls).toHaveLength(1);
+    // 失敗の結果は、確定の前の再確認には引き継がない
+    expect(checker.peek?.("suzunari-toro", "2026-08-16")).toBeNull();
+
+    clock = 2000;
     await checker.check({ festival, date: "2026-08-16", session: {}, signal });
     expect(verifier.calls).toHaveLength(2);
+  });
+
+  it("失敗や時間切れは、1つの相談で新しく確かめる数の上限を消費しない", async () => {
+    const verifier = verifierOf(async (id) => {
+      if (id === "slow-matsuri") throw Object.assign(new Error("unauthorized"), { status: 401 });
+      return official;
+    });
+    const checker = createCandidateChecker({ verifier, today, now, maxPerSession: 1 });
+    const session = {};
+    const failed = await checker.check({
+      festival: testFestival({ id: "slow-matsuri", confidence: "single" }),
+      date: "2026-08-16",
+      session,
+      signal,
+    });
+    expect(checked(failed)?.result).not.toBe("as_planned");
+    const next = await checker.check({
+      festival: testFestival({ id: "suzunari-toro" }),
+      date: "2026-08-16",
+      session,
+      signal,
+    });
+    expect(next).toMatchObject({ result: "as_planned", cached: false });
   });
 
   it("時間切れでも、祭りのデータの公式の出典で確かめてあれば予定どおりにする", async () => {
@@ -132,7 +178,19 @@ describe("createCandidateChecker", () => {
         }),
       );
     }
-    expect(results.map((r) => r?.result ?? null)).toEqual(["as_planned", "as_planned", null]);
+    expect(results.map((r) => checked(r)?.result ?? r)).toEqual([
+      "as_planned",
+      "as_planned",
+      { skipped: "limit" },
+    ]);
+    // とってある結果は、上限に達しても使う
+    const cached = await checker.check({
+      festival: testFestival({ id: "suzunari-toro" }),
+      date: "2026-08-14",
+      session,
+      signal,
+    });
+    expect(cached).toMatchObject({ result: "as_planned", cached: true });
   });
 
   it("止められた相談では確かめない", async () => {
@@ -146,7 +204,7 @@ describe("createCandidateChecker", () => {
       session: {},
       signal: controller.signal,
     });
-    expect(check).toBeNull();
+    expect(check).toEqual({ skipped: "aborted" });
     expect(verifier.calls).toEqual([]);
   });
 });
@@ -176,7 +234,7 @@ describe("createCandidateChecker の、一時的な失敗のやり直し", () =>
 
     const result = await checker.check({ festival, date: "2026-08-16", session: {}, signal });
     expect(verifier.calls).toHaveLength(1);
-    expect(result?.result).not.toBe("as_planned");
+    expect(checked(result)?.result).not.toBe("as_planned");
   });
 
   it("2回目も失敗したら、それ以上はやり直さない", async () => {
