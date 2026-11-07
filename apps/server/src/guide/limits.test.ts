@@ -1,53 +1,76 @@
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_GUIDE_LIMITS,
+  type GuideLimits,
   guideTurnBudgetUsd,
   MemoryGuideUsage,
   overGuideLimit,
+  ownerAndIpLedger,
+  trialLedger,
 } from "./limits";
 
-const usage = (user: [number, number], trip: [number, number]) => ({
-  user: { turns: user[0], costUsd: user[1] },
-  trip: { turns: trip[0], costUsd: trip[1] },
-});
-const limits = { turnsPerUser: 5, turnsPerTrip: 3, costUsdPerUser: 2, costUsdPerTrip: 1 };
+const LIMITS: GuideLimits = {
+  turnsPerUser: 2,
+  turnsPerTrip: 10,
+  costUsdPerUser: 1,
+  costUsdPerTrip: 10,
+  costUsdTrialTotal: 1.5,
+};
+const usage = () => new MemoryGuideUsage(() => "2026-08-03");
 
-describe("overGuideLimit", () => {
-  it("利用者と旅の、回数と費用のどれかが上限に達したら止める", () => {
-    expect(overGuideLimit(usage([4, 1.9], [2, 0.9]), limits)).toBe(false);
-    expect(overGuideLimit(usage([5, 0], [0, 0]), limits)).toBe(true);
-    expect(overGuideLimit(usage([0, 2], [0, 0]), limits)).toBe(true);
-    expect(overGuideLimit(usage([0, 0], [3, 0]), limits)).toBe(true);
-    expect(overGuideLimit(usage([0, 0], [0, 1]), limits)).toBe(true);
+describe("trialLedger", () => {
+  it("IP ごとに数えるので、1人が使い切っても、ほかの IP の人は使える", async () => {
+    const memory = usage();
+    const mine = trialLedger(memory, "203.0.113.1", "trip-1", LIMITS);
+    const other = trialLedger(memory, "203.0.113.2", "trip-2", LIMITS);
+
+    await mine.add({ turns: 2, costUsd: 0.1 });
+
+    expect(overGuideLimit(await mine.read(), LIMITS)).toBe(true);
+    expect(overGuideLimit(await other.read(), LIMITS)).toBe(false);
   });
 
-  it("既定の上限があり、上限なしにはならない", () => {
-    expect(DEFAULT_GUIDE_LIMITS.turnsPerUser).toBeGreaterThan(0);
-    expect(DEFAULT_GUIDE_LIMITS.costUsdPerTrip).toBeGreaterThan(0);
+  it("全員を合わせた費用の上限で、今日の残りが減り、使い切ると全員が止まる", async () => {
+    const memory = usage();
+    const mine = trialLedger(memory, "203.0.113.1", "trip-1", LIMITS);
+    const other = trialLedger(memory, "203.0.113.2", "trip-2", LIMITS);
+    const third = trialLedger(memory, "203.0.113.3", "trip-3", LIMITS);
+
+    await mine.add({ turns: 1, costUsd: 0.9 });
+    expect(guideTurnBudgetUsd(await other.read(), LIMITS, undefined)).toBeCloseTo(0.6);
+
+    await other.add({ turns: 1, costUsd: 0.6 });
+    expect(overGuideLimit(await third.read(), LIMITS)).toBe(true);
+  });
+
+  it("全員の上限を省くと、既定の値を使う", async () => {
+    const ledger = trialLedger(usage(), "203.0.113.1", "trip-1", DEFAULT_GUIDE_LIMITS);
+
+    expect(overGuideLimit(await ledger.read(), DEFAULT_GUIDE_LIMITS)).toBe(false);
   });
 });
 
-describe("guideTurnBudgetUsd", () => {
-  it("1回の上限と、今日の残りの小さいほうを使う", () => {
-    expect(guideTurnBudgetUsd(usage([0, 0], [0, 0]), limits, 0.5)).toBe(0.5);
-    expect(guideTurnBudgetUsd(usage([0, 1.8], [0, 0]), limits, 0.5)).toBeCloseTo(0.2);
-    expect(guideTurnBudgetUsd(usage([0, 0], [0, 0.9]), limits, 0.5)).toBeCloseTo(0.1);
-    expect(guideTurnBudgetUsd(usage([0, 0], [0, 0]), limits, undefined)).toBe(1);
-  });
-});
+describe("ownerAndIpLedger", () => {
+  it("利用者が変わっても、同じ IP の分は数え直さない", async () => {
+    const memory = usage();
+    const stored = new MemoryGuideUsage(() => "2026-08-03");
+    const alice = ownerAndIpLedger(
+      stored.ledger("alice", "trip-1"),
+      memory.ledger("203.0.113.1", "trip-1"),
+    );
+    const renamed = ownerAndIpLedger(
+      stored.ledger("bob", "trip-2"),
+      memory.ledger("203.0.113.1", "trip-2"),
+    );
+    const elsewhere = ownerAndIpLedger(
+      stored.ledger("carol", "trip-3"),
+      memory.ledger("203.0.113.2", "trip-3"),
+    );
 
-describe("MemoryGuideUsage", () => {
-  it("利用者と旅ごとに数え、日付が変わったら数え直す", async () => {
-    let today = "2026-08-03";
-    const memory = new MemoryGuideUsage(() => today);
-    const mine = memory.ledger("203.0.113.1", "trip-a");
+    await alice.add({ turns: 2, costUsd: 0.2 });
 
-    await mine.add({ turns: 1, costUsd: 0.25 });
-    await memory.ledger("203.0.113.1", "trip-b").add({ turns: 1, costUsd: 0.25 });
-    await memory.ledger("203.0.113.2", "trip-c").add({ turns: 1, costUsd: 1 });
-
-    expect(await mine.read()).toEqual(usage([2, 0.5], [1, 0.25]));
-    today = "2026-08-04";
-    expect(await mine.read()).toEqual(usage([0, 0], [0, 0]));
+    expect((await renamed.read()).user).toEqual({ turns: 2, costUsd: 0.2 });
+    expect((await renamed.read()).trip).toEqual({ turns: 0, costUsd: 0 });
+    expect((await elsewhere.read()).user).toEqual({ turns: 0, costUsd: 0 });
   });
 });

@@ -18,7 +18,7 @@ import type { StoragePersistence } from "../session/persistence";
 import type { Session } from "../session/sessionStore";
 import type { OwnerId } from "../storage/owner";
 import { apiError } from "./errors";
-import { type ConcurrencyLimiter, type DailyLimiter, limitKey } from "./guard";
+import { type ConcurrencyLimiter, type DailyLimiter, turnQuota } from "./guard";
 import type { SecureRoutes } from "./policy";
 import { streamTurn } from "./turnStream";
 
@@ -36,8 +36,10 @@ export interface ChatOptions {
   today?: () => string;
   /** 1日の相談の回数の上限（全体） */
   limiter: DailyLimiter;
-  /** 1日の相談の回数の上限（利用者ごと。ログインしていなければ IP ごと） */
+  /** 1日の相談の回数の上限（IP ごとと、ログインしていれば利用者ごと） */
   clientLimiter?: DailyLimiter;
+  /** お試し用のアカウントの、1日の相談の回数の上限（全体）。なければ全体の枠で数える */
+  trialLimiter?: DailyLimiter;
   /** live で同時に返事を作る数の上限（全体と、利用者ごと） */
   concurrency?: ConcurrencyLimiter;
   /** 利用者の IP を決める関数（前に置いたプロキシの数で変わる） */
@@ -91,8 +93,8 @@ function reserveTurn(
       409,
     );
   }
-  const client = limitKey(viewer, deps.clientIp?.(c) ?? "unknown");
-  if (!deps.limiter.allows() || deps.clientLimiter?.allows(client) === false) {
+  const quota = turnQuota(deps, viewer, deps.clientIp?.(c) ?? "unknown");
+  if (!quota.allows()) {
     return c.json(
       apiError("rate_limited", "今日の相談の受付は終わりました。また明日お越しください。", false),
       429,
@@ -100,7 +102,7 @@ function reserveTurn(
   }
   let release = () => {};
   if (deps.runner.mode === "live" && deps.concurrency !== undefined) {
-    const acquired = deps.concurrency.tryAcquire(client);
+    const acquired = deps.concurrency.tryAcquire(quota.client);
     if (acquired === null) {
       return c.json(
         apiError(
@@ -113,8 +115,7 @@ function reserveTurn(
     }
     release = acquired;
   }
-  deps.limiter.consume();
-  deps.clientLimiter?.consume(client);
+  quota.consume();
   return { session, release };
 }
 

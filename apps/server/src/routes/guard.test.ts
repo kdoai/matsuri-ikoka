@@ -1,6 +1,7 @@
+import { TRIAL_ACCOUNT_UID } from "@matsuri-ikoka/schema";
 import { Hono } from "hono";
 import { describe, expect, it } from "vitest";
-import { PASSCODE_HEADER, passcodeGuard } from "./guard";
+import { DailyLimiter, PASSCODE_HEADER, passcodeGuard, turnQuota } from "./guard";
 
 // 合言葉の入口。値はテストのためだけのもの。
 
@@ -38,5 +39,51 @@ describe("passcodeGuard", () => {
   it("合言葉を設定していなければ、確かめずに通す", async () => {
     expect((await guarded(null)()).status).toBe(200);
     expect((await guarded(null)("anything")).status).toBe(200);
+  });
+});
+
+describe("turnQuota", () => {
+  const day = () => "2026-08-03";
+
+  it("ログインしている人は、利用者と IP の両方で数える", () => {
+    const clientLimiter = new DailyLimiter(1, day);
+    const limits = { limiter: new DailyLimiter(null, day), clientLimiter };
+
+    const first = turnQuota(limits, "alice", "203.0.113.1");
+    expect(first.client).toBe("uid:alice");
+    expect(first.allows()).toBe(true);
+    first.consume();
+
+    expect(turnQuota(limits, "alice", "203.0.113.2").allows()).toBe(false);
+    expect(turnQuota(limits, "bob", "203.0.113.1").allows()).toBe(false);
+    expect(turnQuota(limits, null, "203.0.113.1").allows()).toBe(false);
+    expect(turnQuota(limits, "bob", "203.0.113.3").allows()).toBe(true);
+  });
+
+  it("お試し用のアカウントは IP で数え、全体はお試し用の枠で数える", () => {
+    const limiter = new DailyLimiter(1, day);
+    const trialLimiter = new DailyLimiter(2, day);
+    const clientLimiter = new DailyLimiter(1, day);
+    const limits = { limiter, trialLimiter, clientLimiter };
+
+    const first = turnQuota(limits, TRIAL_ACCOUNT_UID, "203.0.113.1");
+    expect(first.client).toBe("203.0.113.1");
+    first.consume();
+
+    expect(turnQuota(limits, TRIAL_ACCOUNT_UID, "203.0.113.1").allows()).toBe(false);
+    expect(limiter.allows()).toBe(true);
+    const second = turnQuota(limits, TRIAL_ACCOUNT_UID, "203.0.113.2");
+    expect(second.allows()).toBe(true);
+    second.consume();
+    // お試し用の全体の枠を使い切っても、ほかの人の枠は残っている
+    expect(turnQuota(limits, TRIAL_ACCOUNT_UID, "203.0.113.3").allows()).toBe(false);
+    expect(turnQuota(limits, "alice", "203.0.113.3").allows()).toBe(true);
+  });
+
+  it("お試し用の枠がなければ、全体の枠で数える", () => {
+    const limiter = new DailyLimiter(1, day);
+    turnQuota({ limiter }, TRIAL_ACCOUNT_UID, "203.0.113.1").consume();
+
+    expect(limiter.allows()).toBe(false);
   });
 });

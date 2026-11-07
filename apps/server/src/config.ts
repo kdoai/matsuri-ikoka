@@ -2,7 +2,14 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import type { AgentModels } from "./agent/options";
 import type { AgentMode } from "./agent/runner";
-import { DEFAULT_GUIDE_LIMITS, type GuideLimits } from "./guide/limits";
+import {
+  DEFAULT_GUIDE_LIMITS,
+  DEFAULT_TRIAL_GUIDE_COST_USD,
+  type GuideLimits,
+} from "./guide/limits";
+
+/** お試し用のアカウントの、1日の相談の回数の上限（全体）の既定 */
+export const DEFAULT_DAILY_TRIAL_CHAT_LIMIT = 100;
 
 // 接客サーバーの設定。値は環境変数から読む（.env.example に名前と説明がある）。
 
@@ -22,6 +29,8 @@ export interface ServerConfig {
   dailyChatLimit: number | null;
   /** 1日の相談の回数の、利用者ごと（ログインしていなければ IP ごと）の上限。なければ上限なし */
   dailyChatLimitPerIp: number | null;
+  /** お試し用のアカウントの、1日の相談の回数の上限（全体） */
+  dailyTrialChatLimit: number;
   /** live で同時に返事を作る数の上限 */
   maxConcurrentTurns: number;
   /** live で同時に返事を作る数の、利用者ごと（ログインしていなければ IP ごと）の上限 */
@@ -125,6 +134,9 @@ export function readConfig(env: NodeJS.ProcessEnv, cwd: string = process.cwd()):
     accessPasscode: nonEmpty(env.ACCESS_PASSCODE) ?? null,
     dailyChatLimit: limitOf("DAILY_CHAT_LIMIT", env.DAILY_CHAT_LIMIT),
     dailyChatLimitPerIp: limitOf("DAILY_CHAT_LIMIT_PER_IP", env.DAILY_CHAT_LIMIT_PER_IP),
+    dailyTrialChatLimit:
+      limitOf("DAILY_TRIAL_CHAT_LIMIT", env.DAILY_TRIAL_CHAT_LIMIT) ??
+      DEFAULT_DAILY_TRIAL_CHAT_LIMIT,
     maxConcurrentTurns,
     maxConcurrentTurnsPerClient:
       limitOf("MAX_CONCURRENT_TURNS_PER_CLIENT", env.MAX_CONCURRENT_TURNS_PER_CLIENT) ??
@@ -149,6 +161,9 @@ export function readConfig(env: NodeJS.ProcessEnv, cwd: string = process.cwd()):
       costUsdPerTrip:
         positiveNumber("GUIDE_DAILY_COST_USD_PER_TRIP", env.GUIDE_DAILY_COST_USD_PER_TRIP) ??
         DEFAULT_GUIDE_LIMITS.costUsdPerTrip,
+      costUsdTrialTotal:
+        positiveNumber("GUIDE_DAILY_COST_USD_TRIAL_TOTAL", env.GUIDE_DAILY_COST_USD_TRIAL_TOTAL) ??
+        DEFAULT_TRIAL_GUIDE_COST_USD,
     },
   };
   checkProductionConfig(config, env);
