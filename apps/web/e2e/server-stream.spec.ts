@@ -24,7 +24,7 @@ test.beforeEach(async ({ page }, info) => {
 
 test("done の前に接続が切れたら「もう一度送る」を出し、送り直せる", async ({ page }) => {
   // サーバーは動いている（接続だけが切れた）
-  await page.route("**/healthz", (route) => route.fulfill({ json: { status: "ok" } }));
+  await page.route("**/health", (route) => route.fulfill({ json: { status: "ok" } }));
   let calls = 0;
   const bodies: unknown[] = [];
   await page.route("**/api/chat", async (route) => {
@@ -76,7 +76,7 @@ test("done の前に接続が切れたら「もう一度送る」を出し、送
 });
 
 test("done の前に切れて、サーバーも応答しなければ、つながらないことを伝える", async ({ page }) => {
-  await page.route("**/healthz", (route) => route.abort("connectionrefused"));
+  await page.route("**/health", (route) => route.abort("connectionrefused"));
   await page.route("**/api/chat", (route) =>
     route.fulfill({
       status: 200,
