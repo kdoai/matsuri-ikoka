@@ -22,6 +22,7 @@ import { bySourcePriority, verificationQueries } from "../domain/searchQueries";
 import { officialHosts, type VerificationReport, yearStatedOnPage } from "../domain/verification";
 import type { FestivalVerifier } from "../tools/verifier";
 import { checkHostAddresses, type ResolveHost, resolveHost } from "./addressGuard";
+import { chargeCost } from "./costMeter";
 import { deny } from "./hooks";
 import type { RobotsChecker } from "./robots";
 import type { QueryFn } from "./runner";
@@ -203,6 +204,7 @@ export async function finalText(
     if (message.type === "result") {
       text = message.subtype === "success" && !message.is_error ? message.result : null;
       costUsd = message.total_cost_usd ?? 0;
+      chargeCost(costUsd);
     }
   }
   return { text, costUsd };

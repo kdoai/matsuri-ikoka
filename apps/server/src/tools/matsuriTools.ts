@@ -228,7 +228,7 @@ function destinationStation(ctx: ToolContext, festival: Festival): string | null
   return ctx.stations?.nearest({ lat: festival.venue.lat, lng: festival.venue.lng })?.name ?? null;
 }
 
-const ItineraryItemDraftSchema = z
+export const ItineraryItemDraftSchema = z
   .strictObject({ ...ItineraryItemSchema.shape })
   .omit({ changedInVersion: true });
 
@@ -1710,90 +1710,11 @@ export const updateItinerary = defineTool({
     } else {
       throw new ToolError("itinerary か addDay のどちらかを渡してください");
     }
-    // 祭りを固定しているときは、主役の祭り・祭りの日・旅の日付を先に確かめる
-    const anchorChecks = checkAnchorOnSave(ctx, written);
-    if (anchorChecks.errors.length > 0) {
-      console.info(
-        JSON.stringify({
-          kind: "itinerary_rejected",
-          codes: anchorChecks.errors.map((e) => e.code),
-        }),
-      );
-      return { saved: false, errors: anchorChecks.errors, warnings: [] };
+    const prepared = await prepareItinerary(ctx, written, previous);
+    if (!prepared.ok) {
+      return { saved: false, errors: prepared.errors, warnings: prepared.warnings };
     }
-    // こだわりと予算と出発の駅は相談の状態を正とする。泊まりの宿の候補は、調べた結果だけをサーバーが付ける
-    const origin = session.conditions.origin;
-    const draft: ItineraryDraft = attachLodging(
-      { ...written, preferences: session.preferences, ...(origin ? { origin } : {}) },
-      { searches: session.lodging, previous },
-    );
-    // 旅程は出発の駅から始める。始まりの移動の時間が、出発の駅からの目安より明らかに短いものは保存しない
-    if (origin !== undefined) {
-      // 移動の時間を比べるのは、1日目に主役の祭りへ向かうときだけ（何日かの旅の1日目は別の場所へ向かうことがある）
-      const firstDay = draft.days[0]?.items ?? [];
-      const main = firstDay.some((item) => item.festivalId === draft.mainFestivalId)
-        ? ctx.festivals.get(draft.mainFestivalId)
-        : undefined;
-      const startIssues = checkStartsAtOrigin(
-        firstDay,
-        origin,
-        main === undefined ? null : travelEstimateFor(ctx, main, origin),
-      );
-      // 日帰りの片道の上限は必ず守る条件なので、候補の絞り込みだけでなく、保存する旅程でも確かめる
-      const { nights, maxTravelMinutes } = session.conditions;
-      if (startIssues.length === 0 && nights === 0 && maxTravelMinutes !== undefined) {
-        startIssues.push(...checkDayTripLimit(firstDay, maxTravelMinutes));
-      }
-      if (startIssues.length > 0) {
-        console.info(
-          JSON.stringify({ kind: "itinerary_rejected", codes: startIssues.map((e) => e.code) }),
-        );
-        return { saved: false, errors: startIssues, warnings: [] };
-      }
-    }
-    // 天気は日ごとに、その日の祭りの開催地（祭りのない日は主役の祭りの開催地）で調べる。
-    // 調べた天気は相談に残し、気象庁の予報も地域ごとにキャッシュしているので、何日分でも軽い
-    const weatherByDate = new Map<IsoDate, Weather>();
-    for (const day of draft.days) {
-      const festivalId =
-        day.items.find((item) => item.type === "festival" && item.festivalId)?.festivalId ??
-        draft.mainFestivalId;
-      const key = weatherKey(festivalId, day.date);
-      let weather = session.weather.get(key);
-      const prefecture = ctx.festivals.get(festivalId)?.municipalities[0]?.prefecture;
-      if (weather === undefined && prefecture !== undefined) {
-        weather = (await ctx.weather.forecast(prefecture, day.date, ctx.today())).weather;
-        session.weather.set(key, weather);
-      }
-      weatherByDate.set(day.date, weather ?? { status: "unavailable" });
-    }
-
-    const result = buildItinerary(draft, {
-      id: previous?.id ?? randomId("trip"),
-      previous,
-      budget: session.conditions.budget,
-      weatherFor: (date) => weatherByDate.get(date) ?? { status: "unavailable" },
-      findFestival: (id) => ctx.festivals.get(id),
-      // 周辺係が調べた場所も照らす。前の版に入っている調べた場所は、相談を戻したあとでも直せるよう前の版から引く
-      extraSpots: new Map([
-        ...(previous === null ? [] : researchedSpotsInItinerary(previous)),
-        ...session.researchedSpots,
-      ]),
-      // 行き方の調べで読んだページも出典として認める。前の版の移動の出典も引き継ぐ
-      extraSources: new Map([
-        ...(previous === null ? [] : routeSourcesInItinerary(previous)),
-        ...session.researchedSources,
-      ]),
-      researched: researchedPlaces(ctx, draft),
-    });
-    if (!result.ok) {
-      // 旅程係の組み方の傾向をつかむため、断った理由の種類だけを残す（予定の名前や文は残さない）
-      console.info(
-        JSON.stringify({ kind: "itinerary_rejected", codes: result.errors.map((e) => e.code) }),
-      );
-      return { saved: false, errors: result.errors, warnings: result.warnings };
-    }
-    const warnings = [...result.warnings, ...anchorChecks.warnings];
+    const { result, warnings } = prepared;
     // 時間切れや接続の切断のあとに、旅程を書き換えない
     if (signal.aborted) throw new ToolError("止められたので、旅程は保存しません");
     // 保存する旅程を評価する（評価して作り直すループの1回）。前と同じ旅程なら、評価し直さない
@@ -1837,6 +1758,113 @@ export const updateItinerary = defineTool({
     };
   },
 });
+
+export type PreparedItinerary =
+  | {
+      ok: true;
+      result: Extract<ReturnType<typeof buildItinerary>, { ok: true }>;
+      warnings: Issue[];
+    }
+  | { ok: false; errors: readonly Issue[]; warnings: readonly Issue[] };
+
+type Issue = { code: string; itemId?: string | null; message: string };
+
+/**
+ * 旅程の下書きを、保存できる旅程にする（保存はしない）。祭りの固定・出発の駅・片道の上限・天気・出典・点検を通す。
+ * findFestival を渡すと、祭りのデータの代わりに使う（通知で分かった変更を入れて照らすとき）
+ */
+export async function prepareItinerary(
+  ctx: ToolContext,
+  written: ItineraryDraft,
+  previous: Itinerary | null,
+  options: { findFestival?: (id: string) => Festival | undefined } = {},
+): Promise<PreparedItinerary> {
+  const { session } = ctx;
+  // 祭りを固定しているときは、主役の祭り・祭りの日・旅の日付を先に確かめる
+  const anchorChecks = checkAnchorOnSave(ctx, written);
+  if (anchorChecks.errors.length > 0) {
+    console.info(
+      JSON.stringify({
+        kind: "itinerary_rejected",
+        codes: anchorChecks.errors.map((e) => e.code),
+      }),
+    );
+    return { ok: false, errors: anchorChecks.errors, warnings: [] };
+  }
+  // こだわりと予算と出発の駅は相談の状態を正とする。泊まりの宿の候補は、調べた結果だけをサーバーが付ける
+  const origin = session.conditions.origin;
+  const draft: ItineraryDraft = attachLodging(
+    { ...written, preferences: session.preferences, ...(origin ? { origin } : {}) },
+    { searches: session.lodging, previous },
+  );
+  // 旅程は出発の駅から始める。始まりの移動の時間が、出発の駅からの目安より明らかに短いものは保存しない
+  if (origin !== undefined) {
+    // 移動の時間を比べるのは、1日目に主役の祭りへ向かうときだけ（何日かの旅の1日目は別の場所へ向かうことがある）
+    const firstDay = draft.days[0]?.items ?? [];
+    const main = firstDay.some((item) => item.festivalId === draft.mainFestivalId)
+      ? ctx.festivals.get(draft.mainFestivalId)
+      : undefined;
+    const startIssues = checkStartsAtOrigin(
+      firstDay,
+      origin,
+      main === undefined ? null : travelEstimateFor(ctx, main, origin),
+    );
+    // 日帰りの片道の上限は必ず守る条件なので、候補の絞り込みだけでなく、保存する旅程でも確かめる
+    const { nights, maxTravelMinutes } = session.conditions;
+    if (startIssues.length === 0 && nights === 0 && maxTravelMinutes !== undefined) {
+      startIssues.push(...checkDayTripLimit(firstDay, maxTravelMinutes));
+    }
+    if (startIssues.length > 0) {
+      console.info(
+        JSON.stringify({ kind: "itinerary_rejected", codes: startIssues.map((e) => e.code) }),
+      );
+      return { ok: false, errors: startIssues, warnings: [] };
+    }
+  }
+  // 天気は日ごとに、その日の祭りの開催地（祭りのない日は主役の祭りの開催地）で調べる。
+  // 調べた天気は相談に残し、気象庁の予報も地域ごとにキャッシュしているので、何日分でも軽い
+  const weatherByDate = new Map<IsoDate, Weather>();
+  for (const day of draft.days) {
+    const festivalId =
+      day.items.find((item) => item.type === "festival" && item.festivalId)?.festivalId ??
+      draft.mainFestivalId;
+    const key = weatherKey(festivalId, day.date);
+    let weather = session.weather.get(key);
+    const prefecture = ctx.festivals.get(festivalId)?.municipalities[0]?.prefecture;
+    if (weather === undefined && prefecture !== undefined) {
+      weather = (await ctx.weather.forecast(prefecture, day.date, ctx.today())).weather;
+      session.weather.set(key, weather);
+    }
+    weatherByDate.set(day.date, weather ?? { status: "unavailable" });
+  }
+
+  const result = buildItinerary(draft, {
+    id: previous?.id ?? randomId("trip"),
+    previous,
+    budget: session.conditions.budget,
+    weatherFor: (date) => weatherByDate.get(date) ?? { status: "unavailable" },
+    findFestival: options.findFestival ?? ((id) => ctx.festivals.get(id)),
+    // 周辺係が調べた場所も照らす。前の版に入っている調べた場所は、相談を戻したあとでも直せるよう前の版から引く
+    extraSpots: new Map([
+      ...(previous === null ? [] : researchedSpotsInItinerary(previous)),
+      ...session.researchedSpots,
+    ]),
+    // 行き方の調べで読んだページも出典として認める。前の版の移動の出典も引き継ぐ
+    extraSources: new Map([
+      ...(previous === null ? [] : routeSourcesInItinerary(previous)),
+      ...session.researchedSources,
+    ]),
+    researched: researchedPlaces(ctx, draft),
+  });
+  if (!result.ok) {
+    // 旅程係の組み方の傾向をつかむため、断った理由の種類だけを残す（予定の名前や文は残さない）
+    console.info(
+      JSON.stringify({ kind: "itinerary_rejected", codes: result.errors.map((e) => e.code) }),
+    );
+    return { ok: false, errors: result.errors, warnings: result.warnings };
+  }
+  return { ok: true, result, warnings: [...result.warnings, ...anchorChecks.warnings] };
+}
 
 /** 祭りを固定した旅程の決まりを確かめる。中止と分かった祭りの旅程は、固定を外したあとでも保存しない */
 function checkAnchorOnSave(
@@ -1903,7 +1931,7 @@ function researchedPlaces(ctx: ToolContext, draft: ItineraryDraft): ResearchedPl
 }
 
 /** 評価係に渡す、聞き取った条件の要約（会話の文は渡さない） */
-function shopRecordForReview(ctx: ToolContext): string {
+export function shopRecordForReview(ctx: ToolContext): string {
   const { conditions, preferences } = ctx.session;
   return JSON.stringify({
     origin: conditions.origin ?? null,

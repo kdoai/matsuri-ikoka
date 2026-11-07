@@ -1,4 +1,9 @@
-import { DoneEventSchema, encodeSseEvent, type SseEvent } from "@matsuri-ikoka/schema";
+import {
+  DoneEventSchema,
+  encodeSseEvent,
+  type SseEvent,
+  type SseMessage,
+} from "@matsuri-ikoka/schema";
 import type { Context } from "hono";
 import { streamSSE } from "hono/streaming";
 import { AgentError, type EmitEvent } from "../agent/runner";
@@ -74,17 +79,59 @@ export function doneEvent(session: Session): SseEvent {
   };
 }
 
+export interface TurnTiming {
+  idleMs?: number;
+  maxMs?: number;
+  heartbeatMs?: number;
+}
+
+/** イベントの種類（店内の相談・ガイド）ごとの、SSE の作り方 */
+export interface TurnEvents<E extends { type: string }> {
+  /** 送る前に検証する。形が違えば例外を投げる */
+  encode(event: E): SseMessage;
+  error(body: ErrorBody): E;
+  /** 最後に必ず送るイベント。失敗で落とさない */
+  done(): E | Promise<E>;
+  /** 失敗を送る前に、それまでに送ったイベントの種類を見て、文を変える */
+  adjustError?(body: ErrorBody, sent: ReadonlySet<string>): ErrorBody;
+}
+
+/** 店内の相談の SSE。done は相談の状態から作る */
 export function streamTurn(
   c: Context,
   session: Session,
   run: (signal: AbortSignal, emit: EmitEvent, progress: () => void) => Promise<void>,
-  options: { idleMs?: number; maxMs?: number; heartbeatMs?: number } = {},
+  options: TurnTiming = {},
+): Response {
+  return streamEvents<SseEvent>(c, session, run, options, {
+    encode: encodeSseEvent,
+    error: (data) => ({ type: "error", data }),
+    done: () => doneEvent(session),
+    adjustError: (body, sent) =>
+      // 旅程の案は届いているので、送り直しを求めず、案を見てもらう
+      body.code === "timeout" && sent.has("itinerary.updated")
+        ? {
+            ...body,
+            retryable: false,
+            message:
+              "旅程の案はできています。説明の途中で時間がかかったので、ここで止めました。変えたいところがあれば教えてください。",
+          }
+        : body,
+  });
+}
+
+export function streamEvents<E extends { type: string }>(
+  c: Context,
+  session: Session,
+  run: (signal: AbortSignal, emit: (event: E) => void, progress: () => void) => Promise<void>,
+  options: TurnTiming,
+  kinds: TurnEvents<E>,
 ): Response {
   session.busy = true;
   return streamSSE(c, async (stream) => {
     const started = Date.now();
     let events = 0;
-    let itineraryUpdated = false;
+    const sent = new Set<string>();
     const controller = new AbortController();
     const timeout = () => controller.abort(new TurnTimeoutError());
     const idleMs = options.idleMs ?? TURN_IDLE_MS;
@@ -108,10 +155,10 @@ export function streamTurn(
       () => write(() => stream.write(": keep-alive\n\n")),
       options.heartbeatMs ?? HEARTBEAT_MS,
     );
-    const emit = (event: SseEvent): boolean => {
-      let message: ReturnType<typeof encodeSseEvent>;
+    const emit = (event: E): boolean => {
+      let message: SseMessage;
       try {
-        message = encodeSseEvent(event);
+        message = kinds.encode(event);
       } catch (error) {
         // 形の違うイベントは送らない（画面のストアを壊さない）
         console.error(
@@ -121,7 +168,7 @@ export function streamTurn(
       }
       progress();
       events += 1;
-      if (event.type === "itinerary.updated") itineraryUpdated = true;
+      sent.add(event.type);
       write(() => stream.writeSSE(message));
       return true;
     };
@@ -131,22 +178,16 @@ export function streamTurn(
       await run(controller.signal, emit, progress);
     } catch (error) {
       errorBody = toErrorBody(error, controller.signal);
-      // 旅程の案は届いているので、送り直しを求めず、案を見てもらう
-      if (errorBody?.code === "timeout" && itineraryUpdated) {
-        errorBody = {
-          ...errorBody,
-          retryable: false,
-          message:
-            "旅程の案はできています。説明の途中で時間がかかったので、ここで止めました。変えたいところがあれば教えてください。",
-        };
+      if (errorBody !== null) {
+        errorBody = kinds.adjustError?.(errorBody, sent) ?? errorBody;
+        emit(kinds.error(errorBody));
       }
-      if (errorBody !== null) emit({ type: "error", data: errorBody });
     } finally {
       clearTimeout(idle);
       clearTimeout(overall);
       clearInterval(heartbeat);
       // done を送れないと、画面は「接続が切れた」と受け取る。送れなかったこともログに残す
-      const doneSent = emit(doneEvent(session));
+      const doneSent = emit(await kinds.done());
       await writes;
       session.busy = false;
       console.info(
