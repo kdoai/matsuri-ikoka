@@ -34,4 +34,4 @@ gh pr create --base main --title "fix(server): 日帰りの移動の上限を超
 
 ## CI が落ちたとき
 
-`gh pr checks <番号>` で落ちたジョブを見て、`gh run view <run-id> --log-failed` で理由を読む。ジョブの中身は [開発の流れ](../../../docs/development.md#ci) にある。
+`gh pr checks <番号>` で落ちたジョブを見て、`gh run view <run-id> --log-failed` で理由を読む。ジョブの中身は [開発の流れ](../../../docs/development.md#5-ci) にある。

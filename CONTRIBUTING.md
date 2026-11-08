@@ -14,7 +14,7 @@ pnpm install
 pnpm dev
 ```
 
-画面は http://localhost:5173 、接客サーバーは http://localhost:8787 で開きます。API キーは要りません。Claude と実際に話して試すときは、[`.env.example`](.env.example) をルートの `.env` にコピーして値を入れます（`pnpm dev` と `check:live` が読みます。本番のイメージは読みません。手順は README の「Claude と話す（live）」）。
+画面は http://localhost:5173 、接客サーバーは http://localhost:8787 で開きます。API キーは要りません。Claude と実際に話して試すときは、[`.env.example`](.env.example) をルートの `.env` にコピーして値を入れます（`pnpm dev` と `check:live` が読みます。本番のイメージは読みません。手順は [README の「Claude と話す」](README.md#claude-と話す)）。
 
 ## コマンド
 
@@ -29,7 +29,7 @@ pnpm dev
 | `pnpm validate:data`                        | 祭りのデータを検証する                                        |
 | `pnpm --filter @matsuri-ikoka/web test:e2e` | 画面の通しテスト（Playwright）                                |
 
-PR を出す前に、`pnpm lint`・`pnpm typecheck`・`pnpm test`・`pnpm build` がすべて通ることを確かめてください。CI では、これらと e2e・コンテナの確かめ・秘密情報の検査が別々のジョブで走ります（[CI のジョブ](docs/development.md#5-ci)）。
+PR を出す前に、`pnpm lint`・`pnpm typecheck`・`pnpm test`・`pnpm build` がすべて通ることを確かめてください。CI では、これらとコンテナの確かめ・秘密情報の検査が別々のジョブで走ります（画面の通しテストは手で起動したときだけ）（[CI のジョブ](docs/development.md#5-ci)）。
 
 ## ディレクトリ
 
