@@ -1,9 +1,21 @@
 {
   "id": "kasama-akutai-matsuri",
-  "name": { "ja": "悪態まつり", "en": "Kasama Akutai Festival" },
+  "name": {
+    "ja": "悪態まつり",
+    "en": "Kasama Akutai Festival"
+  },
   "category": "ritual",
-  "municipalities": [{ "prefecture": "茨城県", "name": "笠間市" }],
-  "venue": { "name": "愛宕神社の北側の飯綱神社と愛宕山", "lat": 36.2917, "lng": 140.2546 },
+  "municipalities": [
+    {
+      "prefecture": "茨城県",
+      "name": "笠間市"
+    }
+  ],
+  "venue": {
+    "name": "愛宕神社の北側の飯綱神社と愛宕山",
+    "lat": 36.2917,
+    "lng": 140.2546
+  },
   "scaleTier": "S",
   "popularity": "local",
   "listedIn": [],
@@ -104,9 +116,9 @@
       "sources": [
         {
           "url": "https://www.city.kasama.lg.jp/page/page002298.html",
-          "title": "笠間市 年間行事（12月第3日曜日 悪態まつり 愛宕神社）",
-          "checkedAt": "2026-11-04",
-          "confidence": "inferred"
+          "title": "年間行事 | 笠間市公式ホームページ",
+          "checkedAt": "2026-11-08",
+          "confidence": "official"
         },
         {
           "url": "https://kasamablog.com/?p=2712",
@@ -153,7 +165,10 @@
       }
     ]
   },
-  "food": { "stalls": "unknown", "local": [] },
+  "food": {
+    "stalls": "unknown",
+    "local": []
+  },
   "nearby": [],
   "sources": [
     {
@@ -187,5 +202,6 @@
     "巡拝の道のどこで見物できるか",
     "主要駅から岩間駅までの所要時間",
     "周辺の観光と食事の場所（確かめられた場所がない）"
-  ]
+  ],
+  "optOut": false
 }

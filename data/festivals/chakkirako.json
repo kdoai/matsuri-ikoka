@@ -148,8 +148,14 @@
       "sources": [
         {
           "url": "https://www.city.miura.kanagawa.jp/soshiki/bunkasportska/bunkasportska_bunka/shiteibunkazai_soshiki/682.html",
-          "title": "三浦市 チャッキラコ/ユネスコ無形文化遺産「風流踊」（毎年1月15日）",
-          "checkedAt": "2026-11-04",
+          "title": "チャッキラコ/ユネスコ無形文化遺産「風流踊」|三浦市",
+          "checkedAt": "2026-11-08",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kanagawa-kankou.or.jp/event/6054",
+          "title": "チャッキラコ【三浦市】｜イベント｜観光かながわNOW",
+          "checkedAt": "2026-11-08",
           "confidence": "official"
         },
         {
@@ -255,5 +261,6 @@
     "駐車場の有無と台数",
     "露店の有無",
     "周辺の観光の場所（祭りの日に開いていると確かめられた場所がない）"
-  ]
+  ],
+  "optOut": false
 }

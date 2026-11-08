@@ -187,12 +187,19 @@
     },
     {
       "date": "2027-01-13",
+      "endDate": "2027-01-15",
       "start": null,
       "end": null,
       "status": "expected",
       "rainPolicy": null,
       "note": "例年、行修者が1月13日から佐女川神社にこもる（2027年の発表はまだない）。2026年はこの日の18:00に参籠報告祭",
       "sources": [
+        {
+          "url": "http://www.town.kikonai.hokkaido.jp/tourism/midokoro/samegawajinja/",
+          "title": "寒中みそぎ（佐女川神社）｜木古内町観光協会",
+          "checkedAt": "2026-11-08",
+          "confidence": "official"
+        },
         {
           "url": "https://www.town.kikonai.hokkaido.jp/kanko/event/kantyu.html",
           "title": "木古内町 第196回寒中みそぎ祭り＆寒中みそぎフェスティバル2026",
@@ -422,5 +429,6 @@
     "見学者数の公表値",
     "周辺の観光の場所（郷土資料館いかりん館は位置を確かめられず、冬は臨時休館があるため入れていない）",
     "どうなんde'sの営業時間（昼11:00〜14:30・夜17:30〜21:00で、1つの時間帯にできない）"
-  ]
+  ],
+  "optOut": false
 }

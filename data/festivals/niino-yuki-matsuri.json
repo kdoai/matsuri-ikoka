@@ -125,6 +125,18 @@
       "note": "毎年1月14日・15日に行う決まりから見込んだ日（2027年の発表はまだ見つからない）。14日の夜から15日の明け方まで夜通し舞い、深夜1時ごろに大松明に火をつける",
       "sources": [
         {
+          "url": "http://www.town.anan.nagano.jp/tourism/niino_yukimatsuri/",
+          "title": "新野の雪祭り – 阿南町",
+          "checkedAt": "2026-11-08",
+          "confidence": "official"
+        },
+        {
+          "url": "https://mg.minami.nagano.jp/group/niinoyuki",
+          "title": "新野の雪祭り | 南信州民俗芸能ナビ",
+          "checkedAt": "2026-11-08",
+          "confidence": "official"
+        },
+        {
           "url": "https://www.go-nagano.net/tradition-and-culture/id22634",
           "title": "長野県観光機構 Go! NAGANO 南信州で楽しむ民俗芸能（毎年1月14日・15日）",
           "checkedAt": "2026-11-04",
@@ -178,5 +190,6 @@
     "周辺の観光と食の場所（道の駅 信州新野千石平は、営業時間と1〜2月の休みが情報源で食い違うため入れていない）",
     "会場の緯度・経度は、国土地理院の住所検索で阿南町新野の地区の代表点を取ったもの（伊豆神社そのものの位置ではない）",
     "見物客の数（規模は、1つの神社で夜通し行う行事として S にした）"
-  ]
+  ],
+  "optOut": false
 }

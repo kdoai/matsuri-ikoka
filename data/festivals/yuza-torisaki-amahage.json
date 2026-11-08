@@ -145,14 +145,20 @@
       "sources": [
         {
           "url": "https://www.town.yuza.yamagata.jp/ou/kyoiku/bunka/8207.html",
-          "title": "遊佐町 遊佐の小正月行事（アマハゲ）実施日（鳥崎 1月6日、三上神社を18時30分頃出発）",
-          "checkedAt": "2026-11-04",
+          "title": "国指定重要無形民俗文化財 遊佐の小正月行事（アマハゲ）｜遊佐町公式サイト",
+          "checkedAt": "2026-11-08",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.yuzachokai.jp/spot/event0101/",
+          "title": "【毎年1月1日・3日・6日】アマハゲ（ユネスコ無形文化遺産）｜遊佐鳥海観光協会",
+          "checkedAt": "2026-11-08",
           "confidence": "official"
         },
         {
           "url": "https://mokkedano.net/event/30712",
-          "title": "やまがた庄内観光サイト 遊佐の小正月行事（アマハゲ）（毎年1月6日 鳥崎集落）",
-          "checkedAt": "2026-11-04",
+          "title": "遊佐の小正月行事（アマハゲ）｜やまがた庄内観光サイト",
+          "checkedAt": "2026-11-08",
           "confidence": "official"
         }
       ]
@@ -246,5 +252,6 @@
     "主要駅から吹浦駅までの所要時間",
     "見物人の数",
     "祭りの夜に開いている周辺の食事の場所"
-  ]
+  ],
+  "optOut": false
 }

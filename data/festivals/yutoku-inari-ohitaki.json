@@ -82,27 +82,27 @@
       "date": "2026-12-08",
       "start": null,
       "end": null,
-      "status": "expected",
+      "status": "announced",
       "rainPolicy": null,
       "note": "神社の年中行事にある「十二月八日」からの見込み（神社の2026年の告知はまだない）。2025年は20:00から。宮司の祝詞のあと、神前の浄火を松明に移して「お山」に点火する",
       "sources": [
         {
           "url": "https://www.yutokusan.jp/event/annual/autumn/",
           "title": "年中行事（10月～12月） | 年中行事 | 神社行事 | 祐徳稲荷神社",
-          "checkedAt": "2026-11-06",
+          "checkedAt": "2026-11-08",
           "confidence": "official"
+        },
+        {
+          "url": "https://rurubu.jp/andmore/spot/20004915",
+          "title": "祐徳稲荷神社 秋季大祭（お火たき）（佐賀県／鹿島市）｜開催期間・アクセス｜るるぶ&more.",
+          "checkedAt": "2026-11-08",
+          "confidence": "single"
         },
         {
           "url": "https://www.yutokusan.jp/event/annual/",
           "title": "年中行事 | 神社行事 | 祐徳稲荷神社",
           "checkedAt": "2026-11-06",
           "confidence": "official"
-        },
-        {
-          "url": "https://rurubu.jp/andmore/spot/20004915",
-          "title": "るるぶ&more. 祐徳稲荷神社 秋季大祭（お火たき）（2026年12月8日）",
-          "checkedAt": "2026-11-04",
-          "confidence": "single"
         },
         {
           "url": "https://tabi-mag.jp/yutoku-ohitaki/",
