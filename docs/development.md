@@ -78,6 +78,25 @@ GitHub の Issue Types は、組織のアカウントのリポジトリでしか
 
 main のルールセットは、上のすべてのジョブを必須の検査にします（`setup-github.sh` の `REQUIRED_CHECKS`）。ジョブの名前と `REQUIRED_CHECKS` が食い違うと、`scripts/github-config.test.ts` が落ちます。
 
+### 変わったファイルに関係するジョブだけを走らせる
+
+PR では、最初の `changes` ジョブが変わったファイルの一覧から走らせるジョブを決めます（[`scripts/ci-changes.ts`](../scripts/ci-changes.ts)）。飛ばしたジョブは skipped になり、必須の検査としては通ったことになります。迷うものは走らせる側に倒し、各ジョブは「関係ないと分かっているファイル」だけが変わったときに飛ばします。
+
+| 変わったもの                                                                            | 走らせるジョブ                                   |
+| --------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| 文書だけ（`docs/`・`.claude/`・ソースの外の `.md`・`LICENSE`）                          | `lint`・`secrets`・`dependency-review` だけ      |
+| 単体テスト（`*.test.ts`）・開発のスクリプト（`scripts/`）                               | ＋ `typecheck`・`test`                           |
+| 通しテスト（`apps/web/e2e/`・`playwright.config.ts`）                                   | ＋ `typecheck`・`test`・`e2e`                    |
+| `Dockerfile`・イメージを確かめるスクリプト                                              | ＋ `typecheck`・`test`・`docker`                 |
+| 画面・接客サーバー・パッケージ・データ・素材（接客エージェントの指示の `.md` も）       | ＋ `typecheck`・`test`・`build`・`e2e`・`docker` |
+| 祭りのデータ・スキーマ・データの検証のスクリプト                                        | ＋ `validate-data`                               |
+| ワークフローと共通のアクション                                                          | ＋ `actionlint`                                  |
+| 依存（`package.json`・lockfile）・Node と TypeScript の設定・`ci.yml`・判定のスクリプト | すべて                                           |
+
+main への push と手での起動（`workflow_dispatch`）では、取りこぼしがないようにすべて走らせます。[`deploy.yml`](../.github/workflows/deploy.yml) と [`codeql.yml`](../.github/workflows/codeql.yml) は、文書だけの変更では動きません（`paths-ignore`。2つの一覧は同じにし、外すファイルがイメージに入らないことを `scripts/github-config.test.ts` が確かめます）。
+
+ファイルの置き場所を足したり、ビルドやイメージが読むものを変えたりしたら、`scripts/ci-changes.ts` の一覧も合わせて直します。
+
 ほかに [`codeql.yml`](../.github/workflows/codeql.yml) が、コード（TypeScript）とワークフローを CodeQL で解析し、結果を GitHub の Security の画面に出します（PR、main への push、毎週）。依存の更新は Dependabot が毎週 PR にします。
 
 ### 手元で CI と同じことをする

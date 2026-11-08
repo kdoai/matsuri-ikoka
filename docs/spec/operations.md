@@ -433,6 +433,8 @@ main ブランチには直接 push しません。人の変更も自動の更新
 
 GitHub Actions から Workload Identity 連携でデプロイ用のサービスアカウントとして入り、鍵のファイルを作りません。
 
+文書だけの変更（`docs/`・`.claude/`・リポジトリの根の `.md`・各所の `README.md`・`LICENSE`・Issue と PR のテンプレート）が main に入ったときは、イメージが変わらないのでデプロイしません（`deploy.yml` の `paths-ignore`）。
+
 - Workload Identity 連携のプロバイダは、このリポジトリ（リポジトリと持ち主の ID で照合）の `refs/heads/main` からのトークンだけを受け付ける
 - デプロイ用のアカウントの権限は、このサービスの `roles/run.developer`、イメージのリポジトリへの書き込み（`roles/artifactregistry.writer`）、実行用のアカウントとして動かす権限（`roles/iam.serviceAccountUser`）だけ
 - ワークフローは、次の GitHub Actions の変数（`vars`）を読む。どれも秘密情報ではないが、ワークフローには書き込まない
