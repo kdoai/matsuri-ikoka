@@ -150,6 +150,12 @@ export const ja = {
     loadingScene: (percent: number) => `店の明かりを灯しています　${percent}%`,
     preparingScene: "店を整えています……",
     restart: "最初から",
+    restartConfirm:
+      "最初からやり直します。いまの旅程は画面から消えます（しおりの URL と、残した旅はそのまま開けます）。よろしいですか。",
+    resumed:
+      "前回の相談の続きです。組んだ旅程はそのまま残っています。変えたいところがあれば話しかけてください。",
+    resumedTrip: (title: string) =>
+      `残した旅「${title}」の続きです。変えたいところがあれば話しかけてください。`,
     language: "言語",
     switchTo: "English",
     soundOn: "音：オン",
@@ -161,7 +167,8 @@ export const ja = {
     soundChoiceNote: "店に入ってからも、設定で変えられます",
     reload: "ページを読み込み直す",
     troubleTitle: "画面を表示できませんでした",
-    troubleBody: "ページを読み込み直すと、また使えます。いまの相談は最初からになります。",
+    troubleBody:
+      "ページを読み込み直すと、また使えます。組んだ旅程は戻りますが、会話は最初からになります。",
   },
   dialogue: {
     thinking: "少々お待ちください",
@@ -868,7 +875,7 @@ export const ja = {
     noLocations: "地図に打てる場所がまだありません。",
     troubleTitle: "地図を読み込めませんでした",
     troubleBody:
-      "ページを読み込み直すと地図が出ますが、いまの相談は最初からになります。地図の地点は、下の文字で読めます。",
+      "ページを読み込み直すと地図が出ます。組んだ旅程は戻りますが、会話は最初からになります。地図の地点は、下の文字で読めます。",
   },
   sources: {
     title: "使った出典",
@@ -915,6 +922,10 @@ export const ja = {
     prepareFailed: "しおりを用意できませんでした。通信のようすを確かめて、もう一度お試しください。",
     retry: "もう一度試す",
     close: "店内に戻る",
+    keep: "この旅を残す",
+    kept: "残しました。「ログインと自分の旅」から、いつでも開けます",
+    keepLogin: "ログインして、この旅を残す",
+    keepFailed: "残せませんでした。少し待ってから、もう一度お試しください。",
     party: "同行者",
     date: "日付",
     weather: "天気",
@@ -1169,7 +1180,8 @@ export const ja = {
     history: "これまでの話",
     you: "あなた",
     phase: { before: "出発の前", during: "旅の間", after: "旅のあと" },
-    guestNote: "この旅は、最後に使ってから6時間で開けなくなります。",
+    guestNote:
+      "この旅は、この端末から、最後に使ってから30日（先の旅なら、旅の最終日の3日後）まで開けます。",
     guestKeep: "旅を残すと、あとで開いて、この通りに戻れます。",
     guestLogin: "ログインと自分の旅",
     dismiss: "閉じる",

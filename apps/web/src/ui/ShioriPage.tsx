@@ -3,6 +3,7 @@ import { useAccountClient } from "../account/context";
 import { useActions, useApp, useT } from "../state/react";
 import { shioriReady } from "../state/selectors";
 import { buttonPrimary, buttonSecondary } from "./common";
+import { KeepTrip } from "./KeepTrip";
 import { resolveShioriUrl } from "./links";
 
 // 旅のしおり。サーバーが作る冊子のしおり（GET /shiori/:id。PDF と同じ A4 の紙）を、そのまま埋め込んで見せる。
@@ -105,6 +106,7 @@ export function ShioriPage() {
             {t.street.goOutside}
           </button>
         ) : null}
+        <KeepTrip />
         <h1
           id="shiori-title"
           ref={headingRef}

@@ -15,6 +15,7 @@ import {
   type MarkNoticesReadRequest,
   type PreferencesRequest,
   type RevertTripRequest,
+  type SessionStateResponse,
   type SetTripWatchRequest,
   type SseMessage,
   type TripChange,
@@ -31,6 +32,13 @@ export type OnSseMessage = (message: SseMessage) => void;
 export interface ChatTransport {
   /** 相談を始めて、セッション ID を受け取る */
   startSession(signal?: AbortSignal): Promise<string>;
+  /**
+   * 端末に控えた相談の ID で、相談の続き（段階・こだわり・旅程）を受け取る。
+   * ない相談・ほかの人の相談は 404 の TransportError
+   */
+  resumeSession?(sessionId: string, signal?: AbortSignal): Promise<SessionStateResponse>;
+  /** 残した旅を店に戻し、続きを相談する新しい相談を受け取る（ログインが要る） */
+  resumeSavedTrip?(tripId: string): Promise<SessionStateResponse>;
   /** 発言を送り、返答のイベントを受け取る。接続が閉じたら終わる */
   chat(request: ChatRequest, onMessage: OnSseMessage, signal: AbortSignal): Promise<void>;
   /** こだわりの切り替えを送り、組み直しのイベントを受け取る */

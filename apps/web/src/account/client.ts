@@ -106,7 +106,7 @@ export interface AccountClient {
   listTrips(): Promise<TripSummary[]>;
   /** 相談の旅程を、自分の旅として残す */
   saveTrip(sessionId: string): Promise<TripSummary>;
-  /** しおりを30日だけ共有する URL のパス */
+  /** しおりを共有する URL のパス（作ってから30日と、旅の最終日の3日後の遅い方まで開ける） */
   shareTrip(itineraryId: string): Promise<string>;
   /**
    * ログインしていれば ID トークン。していなければ null。
