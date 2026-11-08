@@ -139,7 +139,7 @@ export interface ToolContext {
 /** ツールごとの時間の上限（ミリ秒） */
 export const TOOL_TIMEOUT_MS: Readonly<Record<AgentToolName, number>> = {
   note_conditions: 5_000,
-  // 候補の確かめ（1件30秒、3件を並べて動かす）を含む
+  // 候補の確かめ（1件50秒、候補の数の2倍まで並べて動かす）を含む
   search_festivals: 70_000,
   // 会場の周りの店を Web で調べる。1回目と、合う店がなければ広げた2回目を含めて NEARBY_RESEARCH_MS で打ち切り、
   // 祭りのデータの場所に戻す。調べの間は ToolContext.progress で進みを知らせるので、進みのない時間の上限には掛からない
