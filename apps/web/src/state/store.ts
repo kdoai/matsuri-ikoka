@@ -454,6 +454,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
         (onMessage, signal) =>
           transport.chat({ sessionId, message, preferences, ...extra }, onMessage, signal),
       );
+      await sendEditedPreferences();
     };
 
     const sendPreferences = async () => {
@@ -466,6 +467,18 @@ export function createAppStore(deps: StoreDeps): AppStore {
       await runStream({ kind: "preferences", preferences }, (onMessage, signal) =>
         transport.updatePreferences({ sessionId, preferences }, onMessage, signal),
       );
+      await sendEditedPreferences();
+    };
+
+    /**
+     * 返答の途中で切り替えたこだわりを、返答が終わってから送る（サーバーは返答の途中の切り替えを断る）。
+     * 旅程がなければ送らない。次の発言にいまのこだわりが載る
+     */
+    const sendEditedPreferences = async () => {
+      const { session, itinerary } = get();
+      if (session.streaming || !session.sawDone || session.editedPreferences.length === 0) return;
+      if (itinerary.current === null) return;
+      await sendPreferences();
     };
 
     const updateFestivalSearch = (change: (state: FestivalSearchState) => FestivalSearchState) =>

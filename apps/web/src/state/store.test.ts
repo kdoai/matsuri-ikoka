@@ -343,6 +343,29 @@ describe("ストア：通信のエラー", () => {
     expect(state.session.streaming).toBe(false);
   });
 
+  it("返答の途中でこだわりを切り替えると、返答のあとに保ったまま組み直しを頼む", async () => {
+    const store = makeStore(instantReplay());
+    const { actions } = store.getState();
+    await actions.enterShop();
+    await actions.send(sample.turns[0]!.request.message);
+    const before = sample.turns[1]!.request.preferences.party;
+    const changed = before === "kids" ? "adults" : "kids";
+    const unsubscribe = store.subscribe((state, previous) => {
+      // 返答の途中（最初の届いたイベントのあと）に切り替える
+      if (state.session.streaming && !previous.session.streaming) {
+        void store.getState().actions.setPreference("party", changed);
+      }
+    });
+    await actions.send(sample.turns[1]!.request.message);
+    unsubscribe();
+    const state = store.getState();
+    expect(state.itinerary.current).not.toBeNull();
+    expect(state.preferences.party).toBe(changed);
+    // 返答のあとに、切り替えたこだわりを送った
+    expect(state.session.lastWasPreferences).toBe(true);
+    expect(state.session.streaming).toBe(false);
+  });
+
   it("SSE の前に断られたら、サーバーの一文と送り直せるかを会話欄に出す", async () => {
     const store = makeStore(
       failing(async () => {
