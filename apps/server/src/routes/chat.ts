@@ -3,6 +3,8 @@ import {
   PreferencesRequestSchema,
   SessionRequestSchema,
   type SessionResponse,
+  SessionResumeRequestSchema,
+  type SessionStateResponse,
   type TripAnchor,
 } from "@matsuri-ikoka/schema";
 import type { Context } from "hono";
@@ -196,6 +198,27 @@ export function registerChatRoutes(routes: SecureRoutes, deps: ChatDeps) {
     }
     const session = await deps.consultations.start(await viewer(), replay);
     return c.json({ sessionId: session.id, mode: deps.runner.mode } satisfies SessionResponse, 201);
+  });
+
+  // 端末に控えた相談の ID で、再読み込みのあとに相談の続きを開く。持ち主の確かめは open が行う
+  routes.consultation("POST", "/api/session/resume", async (c, { open }) => {
+    const request = SessionResumeRequestSchema.safeParse(await readJson(c).catch(() => undefined));
+    if (!request.success) return badRequest(c);
+    const session = await open(request.data.sessionId);
+    if (session === undefined) return sessionNotFound(c);
+    if (!session.busy) await deps.persistence.releaseDeletedTrip(session);
+    const itinerary =
+      session.itineraryId === null || session.tripDeleted
+        ? null
+        : (deps.persistence.itineraryOf(session.itineraryId) ?? null);
+    c.header("Cache-Control", "private, no-store");
+    return c.json({
+      sessionId: session.id,
+      mode: deps.runner.mode,
+      stage: session.stage,
+      preferences: session.preferences,
+      itinerary,
+    } satisfies SessionStateResponse);
   });
 
   routes.consultation("POST", "/api/chat", async (c, { viewer, open }) => {

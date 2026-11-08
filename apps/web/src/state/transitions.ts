@@ -45,13 +45,20 @@ export function passcodeAccepted(state: AppData): AppData {
 }
 
 /**
- * サーバーが相談を覚えていなかった。旅程や候補は新しい相談では使えないので片付け、
+ * サーバーが相談を覚えていなかった（期限切れなど）。候補は新しい相談では使えないので片付け、
  * 会話の記録・こだわり・送り直す発言は残す。新しい相談はストアが始める。
+ * 組んだ旅程は、こだわりの切り替えなどで確認なしに画面から消えないよう、読めるまま残す
+ * （新しい相談が旅程を組むと、それに置き換わる）
  */
 export function resetForNewSession(state: AppData): AppData {
   const fresh = initialData({ locale: state.ui.locale });
   const next: AppData = {
     ...fresh,
+    itinerary:
+      state.itinerary.current === null
+        ? fresh.itinerary
+        : { current: state.itinerary.current, previous: null, diff: null },
+    verify: state.itinerary.current === null ? fresh.verify : state.verify,
     session: {
       ...fresh.session,
       turn: state.session.turn,

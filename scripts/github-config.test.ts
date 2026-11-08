@@ -113,9 +113,10 @@ describe("main の必須の検査", () => {
       .match(/^REQUIRED_CHECKS=\((.*)\)$/m)?.[1]
       ?.split(/\s+/)
       .filter(Boolean);
-    const jobs = [
-      ...read(".github/workflows/ci.yml").matchAll(/^ {2}[\w-]+:\n {4}name: (.+)$/gm),
-    ].map((m) => m[1]?.trim());
+    const jobs = [...read(".github/workflows/ci.yml").matchAll(/^ {2}[\w-]+:\n {4}name: (.+)$/gm)]
+      .map((m) => m[1]?.trim())
+      // 分けて走らせるジョブ（名前に matrix の値が入る）は、まとめのジョブの名前で必須にする
+      .filter((name) => !name?.includes("${{"));
     expect(required).toBeDefined();
     expect([...(required ?? [])].sort()).toEqual([...jobs].sort());
   });

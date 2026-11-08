@@ -3,6 +3,7 @@ import type { Context } from "hono";
 import { html } from "hono/html";
 import type { HtmlEscapedString } from "hono/utils/html";
 import type { FestivalStore } from "../data/festivalStore";
+import { lastOpenDay } from "../domain/retention";
 import { hasOfficialSource } from "../domain/verification";
 import {
   createShiori,
@@ -18,7 +19,9 @@ import { routeParam, type SecureRoutes } from "./policy";
 
 // 旅のしおり。GET /shiori/:id は画面で見る HTML、GET /shiori/:id.pdf は同じテンプレートから作る A4 の PDF。
 // しおりは URL で共有するので、合言葉はいらない（ID は推測されにくい乱数）。
-// 開けるのは、共有の ID と、持ち主のない旅程の ID だけ。持ち主のある旅程の ID では、ないものとして断る。
+// 開けるのは、共有の ID と、持ち主のない旅程の ID と、持ち主自身の旅程の ID。ほかの人の旅程の ID では、ないものとして断る。
+// 持ち主が付く前に渡した旅程の ID の URL では、付く前の最新の版だけを出す（付いたあとの版は、持ち主にしか見せない）。
+// 画面で見るときは、この URL で開ける期限を出す（残した旅を持ち主が開くときは出さない）。
 // 祭りのデータとモデルの文章は、すべて文字列として埋め込む（エスケープする）。スクリプトは使わず、
 // Content-Security-Policy で読み込める先を、このサーバーのフォントと画像だけに絞る。
 // 店内の画面は、しおりをそのまま埋め込んで見せる（?embed=1。同じオリジンからだけ埋め込める）。
@@ -31,8 +34,14 @@ export const SHIORI_CSP =
 type Html = HtmlEscapedString | Promise<HtmlEscapedString>;
 
 export interface ShioriDeps {
-  /** ID（共有の ID か、持ち主のない旅程の ID）から旅程を読む。期限を過ぎた・消した・ほかの人の旅程は undefined */
-  readItinerary: (id: string, viewer: OwnerId | null) => Promise<Itinerary | undefined>;
+  /**
+   * ID（共有の ID か、旅程の ID）から旅程と、その URL で開ける期限（期限のないものは null）を読む。
+   * 期限を過ぎた・消した・ほかの人の旅程は undefined
+   */
+  readItinerary: (
+    id: string,
+    viewer: OwnerId | null,
+  ) => Promise<{ itinerary: Itinerary; expiresAt: number | null } | undefined>;
   festivals: FestivalStore;
   /** 省略すると、assets/shiori と Chromium を使うものを作る */
   shiori?: Shiori;
@@ -40,20 +49,38 @@ export interface ShioriDeps {
 
 type NoticeKind = "not_found" | "not_confirmed";
 
-const NOTICES: Record<Locale, Record<NoticeKind, { title: string; message: string }>> = {
+/** 案内のページの文。link は店へ戻る入口の文 */
+const NOTICES: Record<
+  Locale,
+  Record<NoticeKind, { title: string; message: string; link: string }>
+> = {
   ja: {
-    not_found: { title: "しおりが見つかりません", message: "URL を確かめてください。" },
+    // 期限切れ・消した・URL の誤りを、あるかどうかを見せずに同じ文で伝える
+    not_found: {
+      title: "しおりが見つかりません",
+      message:
+        "URL が違うか、開ける期限を過ぎたか、旅が消されました。しおりの URL は、最後に保存してから30日と、旅の最終日の3日後の遅い方まで開けます。旅を残した人は、「ログインと自分の旅」からしおりを開き直せます。",
+      link: "店へ行く",
+    },
     not_confirmed: {
       title: "まだ確定していない旅程です",
-      message: "開催予定を公式の情報で確かめてから、しおりをお渡しします。",
+      message:
+        "開催予定を公式の情報で確かめてから、しおりをお渡しします。店で続きを相談すると、確かめて旅程を仕上げます。旅を残してあれば、「ログインと自分の旅」の「店で続ける」から開けます。",
+      link: "店で続きを相談する",
     },
   },
   en: {
-    not_found: { title: "Travel booklet not found", message: "Please check the URL." },
+    not_found: {
+      title: "Travel booklet not found",
+      message:
+        "The URL may be wrong, the link may have expired, or the trip was deleted. A travel booklet URL opens until 30 days after the last save or 3 days after the last day of the trip, whichever is later. If you kept the trip, you can open the booklet again from Sign in and my trips.",
+      link: "Go to the shop",
+    },
     not_confirmed: {
       title: "This itinerary is not confirmed yet",
       message:
-        "We will hand over the travel booklet after confirming the festival schedule with official information.",
+        "We will hand over the travel booklet after confirming the festival schedule with official information. Continue the consultation in the shop to confirm it and finish the itinerary. If you kept the trip, open it with Continue in the shop under Sign in and my trips.",
+      link: "Continue in the shop",
     },
   },
 };
@@ -81,9 +108,10 @@ function localeOf(c: Context): Locale {
   return noticeLocale(c.req.query("lang"), c.req.header("Accept-Language"));
 }
 
-/** しおりをまだ出せないときの短いページ */
+/** しおりをまだ出せないときの短いページ。店へ戻る入口を添える */
 export function renderShioriNotice(kind: NoticeKind, locale: Locale = DEFAULT_LOCALE): Html {
-  const { title, message } = NOTICES[locale][kind];
+  const { title, message, link: label } = NOTICES[locale][kind];
+  const link = { href: "/", label };
   return html`<!doctype html>
 <html lang="${locale}">
   <head>
@@ -94,7 +122,7 @@ export function renderShioriNotice(kind: NoticeKind, locale: Locale = DEFAULT_LO
     <style>body{margin:0;padding:32px 20px;font-family:sans-serif;color:#1e1a17;background:#fffaf2;line-height:1.7}main{max-width:640px;margin:0 auto}</style>
   </head>
   <body>
-    <main><h1>${title}</h1><p>${message}</p></main>
+    <main><h1>${title}</h1><p>${message}</p>${link === null ? "" : html`<p><a href="${link.href}" target="_top">${link.label}</a></p>`}</main>
   </body>
 </html>`;
 }
@@ -149,12 +177,28 @@ export function registerShioriRoutes(routes: SecureRoutes, deps: ShioriDeps) {
     return c.html(
       await shiori.html(found.trip, lookup, {
         pdfHref: embedded ? null : `${encodeURIComponent(id)}.pdf`,
+        expiryNote: found.expiresAt === null ? null : expiryNote(found.expiresAt),
       }),
     );
   });
 }
 
-type Found = { ok: true; trip: ShioriTrip } | { ok: false; notice: Html; status: 404 | 409 };
+type Found =
+  | { ok: true; trip: ShioriTrip; expiresAt: number | null }
+  | { ok: false; notice: Html; status: 404 | 409 };
+
+/** この URL で開ける期限の一文 */
+export function expiryNote(expiresAt: number): string {
+  const [year, month, day] = lastOpenDay(expiresAt).split("-").map(Number);
+  return `この URL は ${year}年${month}月${day}日まで開けます`;
+}
+
+/** しおりが見つからないとき。期限切れ・消した・URL の誤りを、あるかどうかを見せずに同じ文で伝える */
+export const SHIORI_NOT_FOUND = {
+  title: "しおりが見つかりません",
+  message:
+    "URL が違うか、開ける期限を過ぎたか、旅が消されました。しおりの URL は、最後に保存してから30日と、旅の最終日の3日後の遅い方まで開けます。旅を残した人は、「ログインと自分の旅」からしおりを開き直せます。",
+} as const;
 
 /**
  * 確定した旅程を、しおりとして出す。公式の情報で開催予定を確かめられた旅程と、
@@ -166,10 +210,11 @@ async function confirmedTrip(
   viewer: OwnerId | null,
   locale: Locale,
 ): Promise<Found> {
-  const itinerary = await deps.readItinerary(id, viewer);
-  if (itinerary === undefined) {
+  const found = await deps.readItinerary(id, viewer);
+  if (found === undefined) {
     return { ok: false, notice: renderShioriNotice("not_found", locale), status: 404 };
   }
+  const { itinerary, expiresAt } = found;
   const { verification } = itinerary;
   const confirmed = verification.status === "as_planned" && hasOfficialSource(verification.sources);
   const needsCheck = verification.status === "needs_check" && verification.sources.length > 0;
@@ -180,5 +225,5 @@ async function confirmedTrip(
       status: 409,
     };
   }
-  return { ok: true, trip: toShioriTrip(itinerary) };
+  return { ok: true, trip: toShioriTrip(itinerary), expiresAt };
 }

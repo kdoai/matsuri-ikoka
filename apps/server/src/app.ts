@@ -103,6 +103,9 @@ export function createApp(appDeps: AppDeps) {
   registerTripRoutes(routes, {
     persistence,
     authConfig: deps.authConfig ?? { enabled: false },
+    consultations,
+    itineraries: deps.itineraries,
+    mode: deps.runner.mode,
   });
   registerGuideRoutes(routes, deps);
   registerPatrolRoutes(routes, deps.patrol ?? null);

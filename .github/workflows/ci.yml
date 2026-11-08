@@ -133,13 +133,20 @@ jobs:
   # 画面の通しテスト。Playwright が接客サーバーをモック（MATSURI_AGENT_MODE=mock）で起動し、
   # 画面の開発サーバーからつなぐ（apps/web/playwright.config.ts）。
   # 手で起動して e2e を選んだときだけ走らせる（上の説明）。PR ごとに戻すときは、
-  # if を needs.changes.outputs.e2e == 'true' にする
-  e2e:
-    name: e2e
+  # e2e-shard の if を needs.changes.outputs.e2e == 'true' にし、e2e の if をそれに always() && を付けたものにする
+  # GPU のないランナーでは 3D の描画が CPU を使い切るので、1つのジョブではワーカーを1つにし
+  # （apps/web/playwright.config.ts）、かわりにテストのファイルを3つのジョブに分けて並べて走らせる。
+  # 結果は下の e2e でまとめる
+  e2e-shard:
+    name: e2e (${{ matrix.shard }}/3)
     needs: changes
     if: github.event_name == 'workflow_dispatch' && inputs.e2e
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -162,15 +169,33 @@ jobs:
         run: pnpm --filter @matsuri-ikoka/web exec playwright install-deps chromium
 
       - name: 通しテスト（Playwright）
-        run: pnpm --filter @matsuri-ikoka/web test:e2e
+        env:
+          SHARD: ${{ matrix.shard }}
+        run: pnpm --filter @matsuri-ikoka/web test:e2e --shard="$SHARD/3"
 
       - name: 失敗したときの記録を残す
         if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: e2e-results
+          name: e2e-results-${{ matrix.shard }}
           path: apps/web/test-results
           retention-days: 7
+
+  # 分けた通しテストの結果をまとめる。main のルールセットが必須にしている名前なので残す。
+  # 走らせなかったとき（PR と push）は skipped にして、必須の検査を通す
+  e2e:
+    name: e2e
+    needs: e2e-shard
+    if: always() && github.event_name == 'workflow_dispatch' && inputs.e2e
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: どの通しテストも失敗していないかを確かめる
+        env:
+          RESULT: ${{ needs.e2e-shard.result }}
+        run: |
+          echo "結果：$RESULT"
+          [[ "$RESULT" == "success" ]]
 
   # デプロイと同じイメージを作り、モックで動かして、相談・しおりの PDF・3D のモデルが配られるかを確かめる
   docker:

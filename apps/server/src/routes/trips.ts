@@ -3,13 +3,16 @@ import {
   type DeleteTripsResponse,
   isTrialAccount,
   SaveTripRequestSchema,
+  type SessionStateResponse,
   type ShareResponse,
   type TripListResponse,
   type TripResponse,
   type TripSummary,
 } from "@matsuri-ikoka/schema";
 import type { Context } from "hono";
+import type { Consultations } from "../session/consultations";
 import { parseStoredItinerary, type StoragePersistence } from "../session/persistence";
+import type { ItineraryStore } from "../session/sessionStore";
 import type { StoredTrip, StoredTripDetail } from "../storage/types";
 import { apiError } from "./errors";
 import { routeParam, type SecureRoutes } from "./policy";
@@ -22,6 +25,11 @@ export interface TripDeps {
   persistence: StoragePersistence;
   /** 画面に渡すログインの公開の設定 */
   authConfig: AuthConfig;
+  /** 残した旅から続きを相談するときに、新しい相談を始める入口と、旅程の手元の写し */
+  consultations: Consultations;
+  itineraries: ItineraryStore;
+  /** 接客サーバーの動き方（画面が見本の再生かを知るのに使う） */
+  mode: SessionStateResponse["mode"];
 }
 
 function summaryOf(trip: StoredTrip): TripSummary {
@@ -78,6 +86,28 @@ export function registerTripRoutes(routes: SecureRoutes, deps: TripDeps) {
     await deps.persistence.flush(id);
     const detail = await trips.getTrip(id);
     return detail === null ? notFound(c) : c.json(tripResponse(detail));
+  });
+
+  // 自分の旅を店に戻し、続きを相談する新しい相談を始める。確定する前の旅も開ける
+  routes.owner("POST", "/api/trips/:id/resume", async (c, { owner, trips }) => {
+    const id = routeParam(c, "id");
+    await deps.persistence.flush(id);
+    const detail = await trips.getTrip(id);
+    const itinerary = detail === null ? undefined : parseStoredItinerary(detail.itinerary);
+    if (itinerary === undefined) return notFound(c);
+    // 手元の写しのほうが新しければ、そちらの版で開く
+    const latest = deps.itineraries.rememberLatest(itinerary);
+    const session = await deps.consultations.resumeTrip(owner, latest);
+    return c.json(
+      {
+        sessionId: session.id,
+        ...(deps.mode === undefined ? {} : { mode: deps.mode }),
+        stage: session.stage,
+        preferences: session.preferences,
+        itinerary: latest,
+      } satisfies SessionStateResponse,
+      201,
+    );
   });
 
   routes.owner("GET", "/api/trips/:id/versions/:version{[0-9]{1,6}}", async (c, { trips }) => {

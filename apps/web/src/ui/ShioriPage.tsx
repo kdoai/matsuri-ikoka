@@ -3,6 +3,7 @@ import { useAccountClient } from "../account/context";
 import { useActions, useApp, useT } from "../state/react";
 import { shioriReady } from "../state/selectors";
 import { buttonPrimary, buttonSecondary } from "./common";
+import { KeepTrip } from "./KeepTrip";
 import { resolveShioriUrl } from "./links";
 import { fetchShioriPdf, saveBlob } from "./pdfDownload";
 
@@ -150,6 +151,7 @@ export function ShioriPage() {
             {t.street.goOutside}
           </button>
         ) : null}
+        <KeepTrip />
         <h1
           id="shiori-title"
           ref={headingRef}

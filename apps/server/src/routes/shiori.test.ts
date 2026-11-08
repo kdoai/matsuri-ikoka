@@ -16,6 +16,9 @@ import { MemoryTripStorage } from "../storage/memory";
 import { SecureRoutes } from "./policy";
 import { noticeLocale, registerShioriRoutes } from "./shiori";
 
+/** しおりの URL で開ける期限（11/6 の終わり。日本時間）*/
+const EXPIRES_AT = Date.parse("2026-11-06T15:00:00Z");
+
 function setup(engine?: PdfEngine, verified: boolean | "needs_check" | "not_found" = true) {
   const itineraries = new ItineraryStore();
   const itinerary = fictionalItinerary();
@@ -55,7 +58,10 @@ function setup(engine?: PdfEngine, verified: boolean | "needs_check" | "not_foun
     consultations: new Consultations({ sessions, persistence }),
   });
   registerShioriRoutes(routes, {
-    readItinerary: async (id) => itineraries.get(id),
+    readItinerary: async (id) => {
+      const itinerary = itineraries.get(id);
+      return itinerary === undefined ? undefined : { itinerary, expiresAt: EXPIRES_AT };
+    },
     festivals: createFestivalStore([FestivalSchema.parse(fictionalFestival())]),
     shiori: createShiori({
       engine: fake,
@@ -127,6 +133,29 @@ describe("GET /shiori/:id", () => {
     expect(res.status).toBe(200);
     expect(res.headers.get("content-security-policy")).toContain("font-src 'self'");
     expect(page).toContain(`href="${id}.pdf"`);
+    expect(page).toContain("この URL は 2026年11月6日まで開けます");
+  });
+
+  it("店に埋め込むときも、開ける期限を出す。PDF には出さない", async () => {
+    const { app, id, renders } = setup();
+
+    const embedded = await (await app.request(`/shiori/${id}?embed=1`)).text();
+    await app.request(`/shiori/${id}.pdf`);
+
+    expect(embedded).toContain("2026年11月6日まで開けます");
+    expect(embedded).not.toContain("PDF で保存");
+    expect(renders[0]).not.toContain("まで開けます");
+  });
+
+  it("見つからないときは、期限と開き直し方を伝え、確定していないときは店で続ける入口を出す", async () => {
+    const missing = await (await setup().app.request("/shiori/no-such")).text();
+    const draft = setup(undefined, false);
+    const unconfirmed = await (await draft.app.request(`/shiori/${draft.id}`)).text();
+
+    expect(missing).toContain("開ける期限を過ぎた");
+    expect(missing).toContain("旅の最終日の3日後");
+    expect(unconfirmed).toContain("店で続きを相談する");
+    expect(unconfirmed).toContain('href="/"');
   });
 });
 

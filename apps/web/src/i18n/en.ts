@@ -282,6 +282,12 @@ export const en: Messages = {
     loadingScene: (percent: number) => `Lighting up the shop  ${percent}%`,
     preparingScene: "Getting the shop ready…",
     restart: "Start over",
+    restartConfirm:
+      "Start over? The current plan will leave this screen (its guide link and any kept trip still open).",
+    resumed:
+      "Picking up where we left off. Your plan is still here — tell me anything you'd like to change.",
+    resumedTrip: (title: string) =>
+      `Here's your kept trip "${title}". Tell me anything you'd like to change.`,
     language: "Language",
     switchTo: "日本語",
     soundOn: "Sound: on",
@@ -293,7 +299,8 @@ export const en: Messages = {
     soundChoiceNote: "You can change this in the settings once inside",
     reload: "Reload the page",
     troubleTitle: "We couldn't show this screen",
-    troubleBody: "Reload the page to carry on. Your current conversation will start over.",
+    troubleBody:
+      "Reload the page to carry on. Your plan comes back, but the conversation starts over.",
   },
   dialogue: {
     thinking: "One moment, please",
@@ -1070,7 +1077,7 @@ export const en: Messages = {
     noLocations: "Nothing to show on the map yet.",
     troubleTitle: "We couldn't load the map",
     troubleBody:
-      "Reloading the page brings the map back, but your current conversation will start over. The places are listed below.",
+      "Reloading the page brings the map back. Your plan comes back, but the conversation starts over. The places are listed below.",
   },
   sources: {
     title: "Sources used",
@@ -1118,6 +1125,10 @@ export const en: Messages = {
     prepareFailed: "We couldn't prepare your booklet. Check your connection and try again.",
     retry: "Try again",
     close: "Back to the shop",
+    keep: "Keep this trip",
+    kept: "Kept. You can open it any time from Sign in and my trips.",
+    keepLogin: "Sign in to keep this trip",
+    keepFailed: "Couldn't keep it. Please try again in a moment.",
     share: "Booklet URL",
     shareNote: "Share this URL to show the booklet to the people coming with you.",
     copy: "Copy URL",
@@ -1325,7 +1336,8 @@ export const en: Messages = {
     history: "Conversation so far",
     you: "You",
     phase: { before: "Before you leave", during: "On your trip", after: "After your trip" },
-    guestNote: "This trip closes 6 hours after you last use it.",
+    guestNote:
+      "On this device, this trip stays open for 30 days after you last use it (or until 3 days after a later trip).",
     guestKeep: "Keep it to open it later and come back to this street.",
     guestLogin: "Sign in and my trips",
     dismiss: "Close",

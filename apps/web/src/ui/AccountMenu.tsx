@@ -1,5 +1,5 @@
 import type { TripSummary } from "@matsuri-ikoka/schema";
-import { BookOpen, Trash2, UserRound } from "lucide-react";
+import { BookOpen, MessageCircle, Trash2, UserRound } from "lucide-react";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { LoginError } from "../account/client";
 import { useAccountClient } from "../account/context";
@@ -23,6 +23,8 @@ const MESSAGES = {
     saved: "残しました",
     empty: "まだ残した旅はありません。",
     open: "しおりを開く",
+    resume: "店で続ける",
+    resumeFailed: "この旅を店で開けませんでした。少し待ってから、もう一度お試しください。",
     delete: "消す",
     confirmDelete: (title: string) =>
       `「${title}」を消します。共有したしおりの URL も開けなくなります。`,
@@ -39,7 +41,8 @@ const MESSAGES = {
     deleteAll: "旅とログインの記録をすべて消す",
     confirmDeleteAll:
       "残した旅と共有したしおり、このアプリのログインの記録をすべて消して、ログアウトします。元に戻せません。",
-    keepNote: "残した旅は、消すまで残ります。しおりの共有の URL は30日で開けなくなります。",
+    keepNote:
+      "残した旅は、消すまで残ります。「店で続ける」から続きを相談できます。しおりの共有の URL は、作ってから30日と、旅の最終日の3日後の遅い方まで開けます。",
     close: "閉じる",
     untitled: "名前のない旅",
   },
@@ -51,6 +54,8 @@ const MESSAGES = {
     saved: "Kept",
     empty: "No trips kept yet.",
     open: "Open guide",
+    resume: "Continue in the shop",
+    resumeFailed: "Couldn't open this trip in the shop. Please try again in a moment.",
     delete: "Delete",
     confirmDelete: (title: string) =>
       `Delete "${title}"? Shared guide links will stop working too.`,
@@ -66,7 +71,8 @@ const MESSAGES = {
     deleteAll: "Delete all trips and my sign-in record",
     confirmDeleteAll:
       "This deletes your kept trips, shared guides, and this app's sign-in record, then signs you out. This cannot be undone.",
-    keepNote: "Kept trips stay until you delete them. Shared guide links expire after 30 days.",
+    keepNote:
+      "Kept trips stay until you delete them. Use Continue in the shop to keep planning. Shared guide links open for 30 days or until 3 days after the trip, whichever is later.",
     close: "Close",
     untitled: "Untitled trip",
   },
@@ -89,7 +95,7 @@ function openLater(): (path: string) => void {
 
 export function AccountMenu() {
   const client = useAccountClient();
-  const { restart } = useActions();
+  const { restart, resumeSavedTrip } = useActions();
   const locale = useApp((state) => state.ui.locale);
   const sessionId = useApp((state) => state.session.id);
   const itineraryId = useApp((state) => state.itinerary.current?.id ?? null);
@@ -242,6 +248,21 @@ export function AccountMenu() {
                         >
                           <BookOpen className="size-4" />
                           {m.open}
+                        </button>
+                        <button
+                          type="button"
+                          className={buttonQuiet}
+                          disabled={busy}
+                          onClick={() =>
+                            void run(async () => {
+                              // 確定する前の旅も、店に戻して続きを相談できる
+                              if (await resumeSavedTrip(trip.itineraryId)) setOpen(false);
+                              else setError(m.resumeFailed);
+                            })
+                          }
+                        >
+                          <MessageCircle className="size-4" />
+                          {m.resume}
                         </button>
                         <button
                           type="button"

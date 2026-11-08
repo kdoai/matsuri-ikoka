@@ -225,6 +225,7 @@ export function IconButtons({
   const actions = useActions();
   const locale = useApp((state) => state.ui.locale);
   const soundOn = useApp((state) => state.ui.soundOn);
+  const hasItinerary = useApp((state) => state.itinerary.current !== null);
   const toggle = (panel: Exclude<Panel, null>) => onMenu(menu === panel ? null : panel);
   const close = () => onMenu(null);
 
@@ -300,6 +301,8 @@ export function IconButtons({
               type="button"
               className="min-h-11 rounded-xl border-2 border-shu-500/60 bg-white px-3 font-bold text-shu-700"
               onClick={() => {
+                // 組んだ旅程があるときは、消える前に確かめる
+                if (hasItinerary && !window.confirm(t.app.restartConfirm)) return;
                 close();
                 void actions.restart();
               }}

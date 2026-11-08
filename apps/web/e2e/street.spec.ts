@@ -83,8 +83,8 @@ test("3D を描けないときも、ガイドの知らせ・相談がすべて�
   await expect(stall).toHaveCount(0);
   await expect(page.getByTestId("street-lit")).toHaveText("");
 
-  // ログインなしの旅は相談の間だけ続くと分かる
-  await expect(page.getByTestId("guest-note")).toContainText("6時間");
+  // ログインなしの旅を、この端末からいつまで開けるかが分かる
+  await expect(page.getByTestId("guest-note")).toContainText("旅の最終日の3日後");
   await snap(page, info, "62-street-no-3d");
 
   // ガイドに話しかけて、選択肢から聞ける。もう読んだ知らせは灯り直さない

@@ -740,11 +740,13 @@ describe("時間切れのあと（終わっていないツールの tool.end が
 });
 
 describe("相談を覚えていなかったとき", () => {
-  it("旅程や候補を片付け、会話・こだわり・送り直す発言は残して、知らせる", () => {
+  it("候補を片付け、会話・こだわり・送り直す発言と、組んだ旅程は読めるまま残して、知らせる", () => {
     let state = playTurns(2);
     const lastRequest = state.session.lastRequest;
+    const itinerary = state.itinerary.current;
+    expect(itinerary).not.toBeNull();
     state = resetForNewSession(state);
-    expect(state.itinerary.current).toBeNull();
+    expect(state.itinerary).toEqual({ current: itinerary, previous: null, diff: null });
     expect(state.candidates).toEqual([]);
     expect(state.session).toMatchObject({ id: null, status: "closed", lastRequest });
     expect(state.preferences.spot).toBe("hidden");
@@ -754,6 +756,12 @@ describe("相談を覚えていなかったとき", () => {
       code: "session_lost",
       retryable: true,
     });
+  });
+
+  it("旅程がまだなければ、旅程も確かめの結果も空のまま", () => {
+    const state = resetForNewSession(playTurns(1));
+    expect(state.itinerary.current).toBeNull();
+    expect(state.verify.status).toBe("idle");
   });
 });
 

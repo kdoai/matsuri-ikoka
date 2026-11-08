@@ -101,7 +101,7 @@ main への push と手での起動（`workflow_dispatch`）では、取りこ�
 gh workflow run ci.yml --ref <ブランチ> -f e2e=true
 ```
 
-PR ごとに走らせる形に戻すときは、`ci.yml` の `e2e` ジョブの `if` を `needs.changes.outputs.e2e == 'true'` にします。[`deploy.yml`](../.github/workflows/deploy.yml) と [`codeql.yml`](../.github/workflows/codeql.yml) は、文書だけの変更では動きません（`paths-ignore`。2つの一覧は同じにし、外すファイルがイメージに入らないことを `scripts/github-config.test.ts` が確かめます）。
+走らせるときは、GPU のないランナーで 3D の画面が CPU を取り合わないよう、1つのジョブのワーカーを1つにし、テストのファイルを3つのジョブ（`e2e (1/3)` など、`--shard`）に分けて並べます。結果は `e2e` のジョブがまとめます。PR ごとに走らせる形に戻すときは、`ci.yml` の `e2e-shard` ジョブの `if` を `needs.changes.outputs.e2e == 'true'` にし、`e2e` ジョブの `if` をそれに `always() &&` を付けたものにします。[`deploy.yml`](../.github/workflows/deploy.yml) と [`codeql.yml`](../.github/workflows/codeql.yml) は、文書だけの変更では動きません（`paths-ignore`。2つの一覧は同じにし、外すファイルがイメージに入らないことを `scripts/github-config.test.ts` が確かめます）。
 
 ファイルの置き場所を足したり、ビルドやイメージが読むものを変えたりしたら、`scripts/ci-changes.ts` の一覧も合わせて直します。
 

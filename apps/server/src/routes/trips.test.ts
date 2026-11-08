@@ -2,13 +2,14 @@ import {
   AuthConfigSchema,
   DEFAULT_PREFERENCES,
   type Itinerary,
+  SessionStateResponseSchema,
   ShareResponseSchema,
   TRIAL_ACCOUNT_UID,
   TripListResponseSchema,
   TripResponseSchema,
   TripSummarySchema,
 } from "@matsuri-ikoka/schema";
-import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
+import { fictionalItinerary, fictionalSource } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
 import type { IdTokenVerifier } from "../account/idToken";
 import type { AgentRunner } from "../agent/runner";
@@ -32,12 +33,21 @@ const fakeVerifier: IdTokenVerifier = {
 const runner: AgentRunner = { mode: "mock", runTurn: async () => {} };
 
 function setup(
-  options: { login?: boolean; runner?: AgentRunner; itineraries?: ItineraryStore } = {},
+  options: {
+    login?: boolean;
+    runner?: AgentRunner;
+    itineraries?: ItineraryStore;
+    /** 時刻を進めるテストで使う時計 */
+    clock?: { now: number };
+  } = {},
 ) {
-  const itineraries = options.itineraries ?? new ItineraryStore();
-  const sessions = new SessionStore();
-  const storage = new MemoryTripStorage();
-  const persistence = new StoragePersistence({ storage, itineraries, sessions });
+  const clock = options.clock;
+  const now = clock === undefined ? undefined : () => clock.now;
+  const timing = now === undefined ? {} : { now };
+  const itineraries = options.itineraries ?? new ItineraryStore(timing);
+  const sessions = new SessionStore(timing);
+  const storage = new MemoryTripStorage(timing);
+  const persistence = new StoragePersistence({ storage, itineraries, sessions, ...timing });
   const app = createApp({
     runner: options.runner ?? runner,
     persistence,
@@ -414,5 +424,140 @@ describe("ログインと自分の旅の API", () => {
 
     expect(TripResponseSchema.parse(await res.json()).itinerary?.version).toBe(itinerary.version);
     expect(missing.status).toBe(404);
+  });
+});
+
+describe("組んだ旅をあとから開く", () => {
+  const HOUR = 60 * 60 * 1000;
+
+  /** 時計を進められる相談と、保存の口に書いた旅程のある相談 */
+  const later = async () => {
+    const clock = { now: Date.UTC(2026, 7, 3) };
+    const context = setup({ clock });
+    const { session, itinerary } = context.sessionWithItinerary();
+    await context.persistence.saveSession(session);
+    await context.persistence.flush();
+    return { ...context, clock, session, itinerary };
+  };
+
+  it("旅程を組んだ翌日でも、その相談から旅を残せる。旅程のない相談は6時間で消える", async () => {
+    const { call, clock, session, itinerary, sessions, persistence } = await later();
+    const empty = sessions.create();
+    await persistence.saveSession(empty);
+
+    clock.now += 24 * HOUR;
+    const saved = await call("/api/trips", {
+      method: "POST",
+      user: "alice",
+      body: { sessionId: session.id },
+    });
+    const lost = await call("/api/trips", {
+      method: "POST",
+      user: "alice",
+      body: { sessionId: empty.id },
+    });
+
+    expect(saved.status).toBe(201);
+    expect(TripSummarySchema.parse(await saved.json()).itineraryId).toBe(itinerary.id);
+    expect(lost.status).toBe(404);
+  });
+
+  it("端末に控えた相談の ID で、翌日も段階・こだわり・旅程を戻せる。ほかの人には 404", async () => {
+    const { call, clock, session, itinerary } = await later();
+
+    clock.now += 24 * HOUR;
+    const res = await call("/api/session/resume", {
+      method: "POST",
+      body: { sessionId: session.id },
+    });
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get("cache-control")).toBe("private, no-store");
+    const state = SessionStateResponseSchema.parse(await res.json());
+    expect(state.sessionId).toBe(session.id);
+    expect(state.itinerary).toEqual(itinerary);
+    expect(state.preferences).toEqual(session.preferences);
+
+    // ログインして開くと、その人の相談になる。ほかの人とログインなしの人は、ない相談と同じ 404
+    const own = await call("/api/session/resume", {
+      method: "POST",
+      user: "alice",
+      body: { sessionId: session.id },
+    });
+    expect(own.status).toBe(200);
+    for (const user of ["bob", undefined]) {
+      const who = user === undefined ? {} : { user };
+      const other = await call("/api/session/resume", {
+        method: "POST",
+        ...who,
+        body: { sessionId: session.id },
+      });
+      const missing = await call("/api/session/resume", {
+        method: "POST",
+        ...who,
+        body: { sessionId: "s-no-such-session" },
+      });
+      expect(other.status).toBe(404);
+      expect(await other.text()).toBe(await missing.text());
+    }
+    expect((await call("/api/session/resume", { method: "POST", body: {} })).status).toBe(400);
+  });
+
+  it("旅程の期限を過ぎた相談は、戻せない", async () => {
+    const { call, clock, session } = await later();
+
+    clock.now += 31 * 24 * HOUR;
+    const res = await call("/api/session/resume", {
+      method: "POST",
+      body: { sessionId: session.id },
+    });
+
+    expect(res.status).toBe(404);
+  });
+
+  it("残した旅を店に戻し、続きを相談する新しい相談を始める。確定する前の旅も開ける", async () => {
+    const { call, clock, session, itinerary } = await later();
+    await call("/api/trips", { method: "POST", user: "alice", body: { sessionId: session.id } });
+
+    clock.now += 60 * 24 * HOUR;
+    const res = await call(`/api/trips/${itinerary.id}/resume`, { method: "POST", user: "alice" });
+
+    expect(res.status).toBe(201);
+    const state = SessionStateResponseSchema.parse(await res.json());
+    expect(state.sessionId).not.toBe(session.id);
+    expect(state.itinerary).toEqual(itinerary);
+    // 確かめていない旅程は、旅程の段階から続ける
+    expect(state.stage).toBe("itinerary");
+    expect(state.preferences).toEqual(itinerary.preferences);
+    const resume = (user: string) =>
+      call("/api/session/resume", { method: "POST", user, body: { sessionId: state.sessionId } });
+    expect((await resume("alice")).status).toBe(200);
+    expect((await resume("bob")).status).toBe(404);
+    const reopen = (user?: string) =>
+      call(`/api/trips/${itinerary.id}/resume`, {
+        method: "POST",
+        ...(user === undefined ? {} : { user }),
+      });
+    expect((await reopen("bob")).status).toBe(404);
+    expect((await reopen()).status).toBe(401);
+  });
+
+  it("確かめた旅程なら、しおりの段階から続ける", async () => {
+    const { call, session, itinerary, itineraries } = await later();
+    const verified: Itinerary = {
+      ...itinerary,
+      version: 2,
+      verification: {
+        status: "as_planned",
+        checkedAt: "2026-08-03T10:00:00+09:00",
+        sources: [fictionalSource("2026")],
+      },
+    };
+    itineraries.save(verified, null);
+    await call("/api/trips", { method: "POST", user: "alice", body: { sessionId: session.id } });
+
+    const res = await call(`/api/trips/${itinerary.id}/resume`, { method: "POST", user: "alice" });
+
+    expect(SessionStateResponseSchema.parse(await res.json()).stage).toBe("shiori");
   });
 });

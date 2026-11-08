@@ -15,6 +15,7 @@ export interface ItineraryDeps {
 
 // 旅程の読み取り。読めるのは、共有の ID、持ち主のない旅程の ID、ログインした持ち主自身の旅程の ID だけ。
 // ほかの人の旅程は、ない旅程と同じ 404 にする。
+// しおり（/shiori/:id）だけは、持ち主が付く前に渡した旅程の ID の URL で、付く前の版を出し続ける（routes/shiori.ts）。
 
 export function registerItineraryRoutes(routes: SecureRoutes, deps: ItineraryDeps) {
   routes.public("GET", "/api/itinerary/:id", async (c, { viewer }) => {
@@ -30,6 +31,6 @@ export function registerItineraryRoutes(routes: SecureRoutes, deps: ItineraryDep
 
   registerShioriRoutes(routes, {
     ...deps,
-    readItinerary: (id, viewer) => deps.persistence.readItinerary(id, viewer),
+    readItinerary: (id, viewer) => deps.persistence.readShioriItinerary(id, viewer),
   });
 }
