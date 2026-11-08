@@ -236,6 +236,8 @@ Web を読む役に利用者の情報を持たせず、利用者の情報を持�
 
 断るときの応答は [API の仕様](api.md#断るときの応答) と同じ `ApiErrorSchema` です。
 
+`POST /api/guide/chat` の本文の `locale`（任意。`ja` か `en`）は画面の言語です。`en` なら、旅の記録に「画面の言語：英語」の行を足し、ガイドに英語で返事を書いてもらいます。省略すると日本語です。調べものの吹き出し（`guide.tool.start`・`guide.tool.end`）は、英語の画面ではツールと成否から画面の辞書で言い直します（[画面の言語](api.md#画面の言語)）。
+
 ## SSE イベント
 
 店内の相談（`SseEventSchema`）とは別の接続で流します。形は `GuideSseEventSchema` で、送る前（`encodeGuideSseEvent`）と受け取ったあと（`decodeGuideSseEvent`）にスキーマで確かめます。画面は `apps/web/src/state/` でストアの更新に変えます。
