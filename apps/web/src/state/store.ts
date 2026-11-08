@@ -122,6 +122,8 @@ export const LEAD_OUT_MS = 2_400;
 export interface AppActions {
   /** 店に入り、相談を始める */
   enterShop(): Promise<void>;
+  /** 店の外観で、合言葉が要るかを先に確かめる。要るなら「入店する」の代わりに合言葉の欄を出す */
+  checkAccess(): Promise<void>;
   /** 発言を送る */
   send(text: string): Promise<void>;
   /** 最後の発言（またはこだわりの切り替え）を送り直す */
@@ -456,6 +458,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
         (onMessage, signal) =>
           transport.chat({ sessionId, message, preferences, locale, ...extra }, onMessage, signal),
       );
+      await sendEditedPreferences();
     };
 
     const sendPreferences = async () => {
@@ -469,6 +472,18 @@ export function createAppStore(deps: StoreDeps): AppStore {
       await runStream({ kind: "preferences", preferences }, (onMessage, signal) =>
         transport.updatePreferences({ sessionId, preferences, locale }, onMessage, signal),
       );
+      await sendEditedPreferences();
+    };
+
+    /**
+     * 返答の途中で切り替えたこだわりを、返答が終わってから送る（サーバーは返答の途中の切り替えを断る）。
+     * 旅程がなければ送らない。次の発言にいまのこだわりが載る
+     */
+    const sendEditedPreferences = async () => {
+      const { session, itinerary } = get();
+      if (session.streaming || !session.sawDone || session.editedPreferences.length === 0) return;
+      if (itinerary.current === null) return;
+      await sendPreferences();
     };
 
     const updateFestivalSearch = (change: (state: FestivalSearchState) => FestivalSearchState) =>
@@ -666,6 +681,15 @@ export function createAppStore(deps: StoreDeps): AppStore {
     };
 
     const actions: AppActions = {
+      async checkAccess() {
+        if (get().auth.needed || get().session.status !== "closed") return;
+        const access = (await transport.checkAccess?.()) ?? "unknown";
+        // 確かめている間に店に入っていたら、入店のあとの断りに任せる
+        const state = get();
+        if (access !== "passcode" || state.session.status !== "closed" || state.auth.needed) return;
+        update((current) => requirePasscode(current, transport.hasPasscode?.() ?? false));
+      },
+
       async enterShop() {
         setUi({ view: "shop" });
         if (get().session.status === "closed") {
@@ -744,6 +768,13 @@ export function createAppStore(deps: StoreDeps): AppStore {
           const last = get().guide.entries.at(-1);
           if (last?.kind === "error" && last.code === "unauthorized") await actions.retryGuide();
           else await actions.loadGuide(true);
+          return;
+        }
+        if (get().ui.view === "storefront" && get().session.status === "closed") {
+          // 入口で入れたら、通ってから店に入る（違っていれば、店を開かずに入口のまま聞き直す）
+          await startSession();
+          const after = get();
+          if (!after.auth.needed && after.session.status !== "closed") setUi({ view: "shop" });
           return;
         }
         if (get().session.status !== "ready") {

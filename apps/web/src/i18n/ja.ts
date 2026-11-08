@@ -676,6 +676,8 @@ export const ja = {
     submitRetry: "入れて送り直す",
     wrong: "合言葉が違います。",
     halfWidth: "合言葉は、半角の英数字と記号で入れてください。",
+    where:
+      "合言葉は、この URL を知らせた人から受け取ってください。合言葉がなくても、リポジトリの README の手順で手元で動かせば試せます。合言葉は端末に残さないので、再読み込みや別のタブでは入れ直してください。",
   },
   conditions: {
     title: "読み取れた条件",
@@ -914,6 +916,9 @@ export const ja = {
   shiori: {
     print: "印刷する",
     savePdf: "PDF で保存",
+    savingPdf: "PDF を用意しています…",
+    pdfBusy: "PDF を作るのが混み合っています。少し待ってから、もう一度押してください。",
+    pdfFailed: "PDF を保存できませんでした。通信のようすを確かめて、もう一度お試しください。",
     booklet: "旅のしおり（冊子）",
     notReady: "しおりは、開催予定を確かめてからお渡しします。",
     preparing: "しおりを用意しています…",

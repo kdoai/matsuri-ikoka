@@ -14,6 +14,7 @@ import { initialData } from "./initial";
 import { itemChange, shioriReady } from "./selectors";
 import {
   beginTurn,
+  changePreference,
   endTurn,
   resetForNewSession,
   setCandidatesOpen,
@@ -753,5 +754,57 @@ describe("相談を覚えていなかったとき", () => {
       code: "session_lost",
       retryable: true,
     });
+  });
+});
+
+describe("返答の途中のこだわりの切り替え", () => {
+  const done = (party: "adults" | "kids"): SseEvent => ({
+    type: "done",
+    data: {
+      stage: "hearing",
+      conditions: {},
+      preferences: { party, spot: "auto", food: "stalls", move: "train" },
+    },
+  });
+
+  it("返答の途中で切り替えたこだわりは、done で元に戻らず、送る分として残る", () => {
+    let state = beginTurn(fresh(), {
+      kind: "chat",
+      message: "こんにちは",
+      preferences: fresh().preferences,
+      retry: false,
+    });
+    state = changePreference(state, "party", "kids");
+    expect(state.session.editedPreferences).toEqual(["party"]);
+    state = applyEvent(state, done("adults"));
+    expect(state.preferences.party).toBe("kids");
+    expect(state.session.editedPreferences).toEqual(["party"]);
+  });
+
+  it("切り替えた値が done と同じなら、送る分に残さない", () => {
+    let state = beginTurn(fresh(), {
+      kind: "chat",
+      message: "こんにちは",
+      preferences: fresh().preferences,
+      retry: false,
+    });
+    state = changePreference(state, "party", "kids");
+    state = applyEvent(state, done("kids"));
+    expect(state.preferences.party).toBe("kids");
+    expect(state.session.editedPreferences).toEqual([]);
+  });
+
+  it("返答の外での切り替えは覚えず、done の値をそのまま使う", () => {
+    let state = changePreference(fresh(), "food", "local");
+    expect(state.session.editedPreferences).toEqual([]);
+    state = beginTurn(state, {
+      kind: "chat",
+      message: "こんにちは",
+      preferences: state.preferences,
+      retry: false,
+    });
+    // 会話で切り替わった（ツールが相談の状態を書き換えた）値は、そのまま受け取る
+    state = applyEvent(state, done("kids"));
+    expect(state.preferences.party).toBe("kids");
   });
 });

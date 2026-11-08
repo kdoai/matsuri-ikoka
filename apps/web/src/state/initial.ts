@@ -43,6 +43,7 @@ export function initialData({ locale = "ja", tutorialSeen = false }: InitialOpti
       turnTasks: [],
       turnTools: [],
       newCandidates: false,
+      editedPreferences: [],
     },
     preferences: { ...DEFAULT_PREFERENCES },
     consult: { ...INITIAL_CONSULT, answers: {} },
