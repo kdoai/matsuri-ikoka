@@ -1330,6 +1330,8 @@ export const en: Messages = {
     photoDefaultMessage: "Please tell me about this photo",
     photoPreparing: "Preparing the photo",
     photoRejected: "This photo can't be sent. Please choose a JPEG, PNG or WebP photo.",
+    afterTrip:
+      'Your trip is over. Your guide\'s company and the watch end here. You can delete your kept trip from "Sign in and my trips".',
     suggestionsLabel: "Things to ask",
     suggestions: [
       { label: "Anything new?", message: "Has anything changed while I was away?" },
