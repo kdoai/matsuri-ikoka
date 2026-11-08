@@ -371,7 +371,7 @@ flowchart LR
   </tr>
   <tr>
     <td><b>開発</b></td>
-    <td>Claude Code</td>
+    <td>Claude Code（Claude Desktop）</td>
     <td>Issue の起票・コミット・PR・見直し・リリースノートまでの各段を、このリポジトリの決まりをスキルにして任せます。祭りのデータの調査と検品も同じ Claude Code で行います。<code>resolve-issue</code> スキルは Issue を1件選び、専用の worktree で直して PR にし、CI が通ったらマージするところまでを、人がいなくても進められる形にしてあります</td>
   </tr>
   <tr>
