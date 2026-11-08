@@ -1,10 +1,12 @@
 import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it } from "vitest";
 import { testFestival } from "../domain/testFestivals";
+import { guideTurnPrompt } from "../guide/prompt";
 import { testToolContext } from "../tools/testContext";
 import {
   lodgingBudgetLabel,
   partyLabel,
+  replyLanguageLine,
   sanitizeMessage,
   shopRecord,
   staffBriefing,
@@ -158,6 +160,32 @@ describe("発言のプロンプト", () => {
     expect(prompt.match(/<\/お客さまの発言>/g)).toHaveLength(1);
     expect(prompt.match(/<お客さまの発言>/g)).toHaveLength(1);
     expect(prompt.match(/<店の記録>/g)).toHaveLength(1);
+  });
+
+  it("英語の画面なら、記録の中に返事の言語の行を足す。日本語と省略では足さない", () => {
+    const english = turnPrompt(ctx(), "Hello", "en");
+    const record = english.slice(0, english.indexOf("</店の記録>"));
+    expect(record).toContain("画面の言語：英語");
+    expect(record).toContain("名前は、データの日本語の表記のまま");
+    expect(turnPrompt(ctx(), "こんにちは", "ja")).not.toContain("画面の言語");
+    expect(turnPrompt(ctx(), "こんにちは")).not.toContain("画面の言語");
+    expect(replyLanguageLine("ja")).toBeNull();
+    expect(replyLanguageLine()).toBeNull();
+  });
+
+  it("ガイドのプロンプトにも、英語の画面なら旅の記録に返事の言語の行を足す", () => {
+    const base = {
+      itinerary: fictionalItinerary(),
+      today: "2026-08-10",
+      now: "2026-08-10T09:00:00+09:00",
+      memo: [],
+      unreadNotices: 0,
+      pendingProposals: 0,
+      message: "Do I need an umbrella?",
+    };
+    const english = guideTurnPrompt({ ...base, locale: "en" });
+    expect(english.slice(0, english.indexOf("</旅の記録>"))).toContain("画面の言語：英語");
+    expect(guideTurnPrompt(base)).not.toContain("画面の言語");
   });
 
   it("sanitizeMessage は山かっこを全角にする（文の中身は残す）", () => {

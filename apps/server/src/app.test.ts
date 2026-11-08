@@ -237,6 +237,25 @@ describe("POST /api/chat（mock）", () => {
     quiet.mockRestore();
   });
 
+  it("画面の言語を接客に渡す。送られなければ言語は渡さず、ほかの言語は 400 で断る", async () => {
+    const locales: (string | undefined)[] = [];
+    const runner: AgentRunner = {
+      mode: "live",
+      async runTurn({ locale }) {
+        locales.push(locale);
+      },
+    };
+    const { post, newSession } = setup({ runner });
+    const sessionId = await newSession();
+
+    await (await post("/api/chat", { ...chat(sessionId), locale: "en" })).text();
+    await (await post("/api/chat", chat(sessionId))).text();
+    const other = await post("/api/chat", { ...chat(sessionId), locale: "fr" });
+
+    expect(locales).toEqual(["en", undefined]);
+    expect(other.status).toBe(400);
+  });
+
   it("返事を作っている途中の相談には 409", async () => {
     const { post, newSession, sessions } = setup();
     const sessionId = await newSession();
@@ -481,10 +500,12 @@ describe("PATCH /api/preferences", () => {
 
   it("live で旅程があれば、旅程係に組み直しを頼む発言として動かす", async () => {
     const messages: string[] = [];
+    const locales: (string | undefined)[] = [];
     const runner: AgentRunner = {
       mode: "live",
-      async runTurn({ message }) {
+      async runTurn({ message, locale }) {
         messages.push(message);
+        locales.push(locale);
       },
     };
     const sessions = new SessionStore();
@@ -495,12 +516,17 @@ describe("PATCH /api/preferences", () => {
     await (
       await post(
         "/api/preferences",
-        { sessionId: session.id, preferences: { ...DEFAULT_PREFERENCES, party: "kids" } },
+        {
+          sessionId: session.id,
+          preferences: { ...DEFAULT_PREFERENCES, party: "kids" },
+          locale: "en",
+        },
         {},
         "PATCH",
       )
     ).text();
 
+    expect(locales).toEqual(["en"]);
     expect(messages).toHaveLength(1);
     expect(messages[0]).toContain("子連れ");
     expect(messages[0]).toContain("旅程係にだけ頼んで");

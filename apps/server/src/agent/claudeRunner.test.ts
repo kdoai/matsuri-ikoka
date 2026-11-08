@@ -99,20 +99,21 @@ function setup(scripts: Script[]) {
   });
   const sessions = new SessionStore();
   const session = sessions.create();
-  const runIn = async (target: Session, message: string) => {
+  const runIn = async (target: Session, message: string, locale?: "ja" | "en") => {
     const events: SseEvent[] = [];
     await runner.runTurn(
       {
         session: target,
         message,
         preferences: DEFAULT_PREFERENCES,
+        ...(locale === undefined ? {} : { locale }),
         signal: new AbortController().signal,
       },
       (e) => events.push(e),
     );
     return events;
   };
-  const run = (message: string) => runIn(session, message);
+  const run = (message: string, locale?: "ja" | "en") => runIn(session, message, locale);
   return { calls, session, sessions, run, runIn };
 }
 
@@ -204,6 +205,22 @@ describe("ClaudeAgentRunner", () => {
 
     await run("鈴鳴灯籠まつりにします");
     expect(calls[1]?.options.resume).toBe("sdk-1");
+  });
+
+  it("英語の画面から送られたら、プロンプトの店の記録で英語の返事を頼む", async () => {
+    const reply: Script = async function* () {
+      yield init();
+      yield text("Sure.");
+      yield blockStop();
+      yield success();
+    };
+    const { calls, run } = setup([reply, reply]);
+
+    await run("Hello", "en");
+    await run("こんにちは");
+
+    expect(calls[0]?.prompt).toContain("画面の言語：英語");
+    expect(calls[1]?.prompt).not.toContain("画面の言語");
   });
 
   it("会話の記録は、その相談が名乗った記録だけから続け、別の相談の記録からは続けない", async () => {

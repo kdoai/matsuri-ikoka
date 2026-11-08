@@ -249,6 +249,7 @@ interface AdmittedTurn extends OpenedTurn {
 interface TurnRequest {
   message: GuideChatRequest["message"];
   location: GuideChatRequest["location"];
+  locale: GuideChatRequest["locale"];
 }
 
 export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
@@ -357,6 +358,7 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
           trip,
           message: request.message,
           location: request.location,
+          ...(request.locale === undefined ? {} : { locale: request.locale }),
           budgetUsd,
           turn,
           meter,
@@ -444,13 +446,14 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
     if (guide === undefined) return notAvailable(c);
     const request = GuideChatRequestSchema.safeParse(await readJson(c));
     if (!request.success) return badRequest(c);
-    const { sessionId, message, location } = request.data;
+    const { sessionId, message, location, locale } = request.data;
     const { runner } = guide;
     const quota = turnQuota(deps, viewer, deps.clientIp?.(c) ?? "unknown");
     // 現在地は、端末が丸めていなくても、ここで要る細かさに丸めてから使う
     const said: TurnRequest = {
       message,
       location: location === undefined ? undefined : roundLocation(location),
+      locale,
     };
     const opened = await openTurn(runner, sessionId, quota, open);
     if (!opened.ok) return refuse(c, opened);

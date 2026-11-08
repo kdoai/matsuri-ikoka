@@ -2,6 +2,8 @@ import {
   type AnchorVisit,
   type ConversationStage,
   type DateWish,
+  DEFAULT_LOCALE,
+  type Locale,
   type LodgingBudget,
   type PartialTripConditions,
   type Party,
@@ -266,11 +268,27 @@ export function sanitizeMessage(message: string): string {
   return message.replaceAll("<", "＜").replaceAll(">", "＞");
 }
 
+/**
+ * 返事を書く言語の決まり。日本語の画面では足さない（null）。
+ * 祭り・駅・店の名前はデータの表記のまま書かせ、言い換えた名前で取り違えないようにする
+ */
+export function replyLanguageLine(locale: Locale = DEFAULT_LOCALE): string | null {
+  return locale === "en"
+    ? "画面の言語：英語。返事は英語で書く。祭り・駅・店などの名前は、データの日本語の表記のまま書き、要るなら英語の説明を添える"
+    : null;
+}
+
 /** コンシェルジュに渡す、1回の発言のプロンプト */
-export function turnPrompt(ctx: ToolContext, message: string): string {
+export function turnPrompt(
+  ctx: ToolContext,
+  message: string,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
+  const language = replyLanguageLine(locale);
   return [
     OPEN_RECORD,
     shopRecord(ctx),
+    ...(language === null ? [] : [language]),
     CLOSE_RECORD,
     OPEN_MESSAGE,
     sanitizeMessage(message),

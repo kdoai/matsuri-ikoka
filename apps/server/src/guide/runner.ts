@@ -6,6 +6,7 @@ import {
   type GuideToolName,
   type IsoDate,
   type LatLng,
+  type Locale,
   type Source,
 } from "@matsuri-ikoka/schema";
 import type { CostMeter } from "../agent/costMeter";
@@ -97,6 +98,8 @@ export interface GuideTurnInput {
   message: string;
   /** この発言のときだけ使う現在地。保存せず、ログにも残さない */
   location?: LatLng | undefined;
+  /** 画面の言語。ガイドはこの言語で返事を書く。省略すると日本語 */
+  locale?: Locale;
   /** この発言に使える費用（米ドル） */
   budgetUsd: number;
   turn: GuideTurnState;

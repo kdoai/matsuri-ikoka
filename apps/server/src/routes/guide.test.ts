@@ -360,6 +360,20 @@ describe("POST /api/guide/chat", () => {
     expect(runTurn.mock.calls[0]?.[0].location).toEqual({ lat: 35.123, lng: 136.568 });
   });
 
+  it("画面の言語をガイドに渡す。送られなければ渡さない", async () => {
+    const runner = new ReplayGuideRunner(guides, { speed: 0 });
+    const runTurn = vi.spyOn(runner, "runTurn");
+    const context = setup({ guide: { runner } });
+    const { sessionId } = await context.consult();
+
+    await (
+      await context.chat(sessionId, "Do I need an umbrella?", undefined, { locale: "en" })
+    ).text();
+    await (await context.chat(sessionId, "傘は要りますか")).text();
+
+    expect(runTurn.mock.calls.map((call) => call[0].locale)).toEqual(["en", undefined]);
+  });
+
   it("発言の本文と現在地をログに残さない", async () => {
     const logged: string[] = [];
     for (const method of ["log", "info", "warn", "error", "debug"] as const) {

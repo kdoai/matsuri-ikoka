@@ -130,6 +130,7 @@ export class ClaudeGuideRunner implements GuideRunner {
       ).length,
       ...(guide.agentSessionId === null ? { resume: guide.resume } : {}),
       location: input.location,
+      ...(input.locale === undefined ? {} : { locale: input.locale }),
       message: input.message,
     });
   }

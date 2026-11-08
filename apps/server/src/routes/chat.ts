@@ -260,6 +260,7 @@ export function registerChatRoutes(routes: SecureRoutes, deps: ChatDeps) {
                 message: request.message,
                 preferences: request.preferences,
                 ...(retry === undefined ? {} : { searchRetry: retry }),
+                ...(request.locale === undefined ? {} : { locale: request.locale }),
                 signal,
                 progress,
               },
@@ -313,7 +314,14 @@ export function registerChatRoutes(routes: SecureRoutes, deps: ChatDeps) {
         release,
         (signal, emit, progress) =>
           deps.runner.runTurn(
-            { session, message, preferences: request.preferences, signal, progress },
+            {
+              session,
+              message,
+              preferences: request.preferences,
+              ...(request.locale === undefined ? {} : { locale: request.locale }),
+              signal,
+              progress,
+            },
             emit,
           ),
         persistOf(deps, session),
