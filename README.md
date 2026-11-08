@@ -410,9 +410,9 @@ Claude の機能も、目的ごとに使い分けています。
     <td>祭りの検索・開催の確かめ・行き方・天気・宿・旅程の保存など10個の自作ツール。絞り込みと検証をコードで行い、結果だけを Claude に返します</td>
   </tr>
   <tr>
-    <td>フック<br><sub><a href="apps/server/src/agent/hooks.ts">apps/server/src/agent/hooks.ts</a></sub></td>
+    <td>フック<br><sub><a href="apps/server/src/agent/hooks.ts">apps/server/src/agent/hooks.ts</a>、<a href=".claude/hooks/">.claude/hooks/</a></sub></td>
     <td>ツールの前後を画面に伝える、決まりを守らせる</td>
-    <td>ツールの前後で SSE のイベントを出し、画面のスタッフと吹き出しを動かします。スタッフと道具の組み合わせや、スタッフを呼ぶ回数もここで守ります</td>
+    <td>製品では、ツールの前後で SSE のイベントを出し、画面のスタッフと吹き出しを動かします。スタッフと道具の組み合わせや、スタッフを呼ぶ回数もここで守ります。開発では、祭りのデータを書き換えたら <code>pnpm validate:data</code> を自動で走らせ、スキーマや出典の決まりに合わないデータをその場で Claude に知らせます</td>
   </tr>
   <tr>
     <td>権限の設定<br><sub><a href=".claude/settings.json">.claude/settings.json</a></sub></td>
