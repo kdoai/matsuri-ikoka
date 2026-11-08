@@ -69,7 +69,7 @@ GitHub の Issue Types は、組織のアカウントのリポジトリでしか
 | `test`              | Vitest                                                                                                |
 | `validate-data`     | 祭りのデータの検証（`pnpm validate:data`）                                                            |
 | `build`             | 画面と接客サーバーのビルド                                                                            |
-| `e2e`               | 接客サーバーをモック（`MATSURI_AGENT_MODE=mock`）で起動し、Playwright で画面の通しテスト              |
+| `e2e`               | 接客サーバーをモックで起動し、Playwright で画面の通しテスト（手で起動したときだけ。下の説明）         |
 | `docker`            | デプロイと同じイメージを作り、モックで動かして、相談・しおりの PDF・3D のモデルが配られるかを確かめる |
 | `secrets`           | gitleaks で、履歴全体に秘密情報が混ざっていないかを見る                                               |
 | `actionlint`        | ワークフローの書き方（`run` の中のシェルも shellcheck で）                                            |
@@ -82,18 +82,26 @@ main のルールセットは、上のすべてのジョブを必須の検査に
 
 PR では、最初の `changes` ジョブが変わったファイルの一覧から走らせるジョブを決めます（[`scripts/ci-changes.ts`](../scripts/ci-changes.ts)）。飛ばしたジョブは skipped になり、必須の検査としては通ったことになります。迷うものは走らせる側に倒し、各ジョブは「関係ないと分かっているファイル」だけが変わったときに飛ばします。
 
-| 変わったもの                                                                            | 走らせるジョブ                                   |
-| --------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| 文書だけ（`docs/`・`.claude/`・ソースの外の `.md`・`LICENSE`）                          | `lint`・`secrets`・`dependency-review` だけ      |
-| 単体テスト（`*.test.ts`）・開発のスクリプト（`scripts/`）                               | ＋ `typecheck`・`test`                           |
-| 通しテスト（`apps/web/e2e/`・`playwright.config.ts`）                                   | ＋ `typecheck`・`test`・`e2e`                    |
-| `Dockerfile`・イメージを確かめるスクリプト                                              | ＋ `typecheck`・`test`・`docker`                 |
-| 画面・接客サーバー・パッケージ・データ・素材（接客エージェントの指示の `.md` も）       | ＋ `typecheck`・`test`・`build`・`e2e`・`docker` |
-| 祭りのデータ・スキーマ・データの検証のスクリプト                                        | ＋ `validate-data`                               |
-| ワークフローと共通のアクション                                                          | ＋ `actionlint`                                  |
-| 依存（`package.json`・lockfile）・Node と TypeScript の設定・`ci.yml`・判定のスクリプト | すべて                                           |
+| 変わったもの                                                                            | 走らせるジョブ                              |
+| --------------------------------------------------------------------------------------- | ------------------------------------------- |
+| 文書だけ（`docs/`・`.claude/`・ソースの外の `.md`・`LICENSE`）                          | `lint`・`secrets`・`dependency-review` だけ |
+| 単体テスト（`*.test.ts`）・開発のスクリプト（`scripts/`）                               | ＋ `typecheck`・`test`                      |
+| 通しテスト（`apps/web/e2e/`・`playwright.config.ts`）                                   | ＋ `typecheck`・`test`                      |
+| `Dockerfile`・イメージを確かめるスクリプト                                              | ＋ `typecheck`・`test`・`docker`            |
+| 画面・接客サーバー・パッケージ・データ・素材（接客エージェントの指示の `.md` も）       | ＋ `typecheck`・`test`・`build`・`docker`   |
+| 祭りのデータ・スキーマ・データの検証のスクリプト                                        | ＋ `validate-data`                          |
+| ワークフローと共通のアクション                                                          | ＋ `actionlint`                             |
+| 依存（`package.json`・lockfile）・Node と TypeScript の設定・`ci.yml`・判定のスクリプト | すべて                                      |
 
-main への push と手での起動（`workflow_dispatch`）では、取りこぼしがないようにすべて走らせます。[`deploy.yml`](../.github/workflows/deploy.yml) と [`codeql.yml`](../.github/workflows/codeql.yml) は、文書だけの変更では動きません（`paths-ignore`。2つの一覧は同じにし、外すファイルがイメージに入らないことを `scripts/github-config.test.ts` が確かめます）。
+main への push と手での起動（`workflow_dispatch`）では、取りこぼしがないようにすべて走らせます。
+
+`e2e` だけは、手で起動して `e2e` を選んだときにしか走りません（PR と push では skipped）。GPU のないランナーでは 3D の通しテストに 25 分近くかかり、時間切れで落ちやすいためです。画面に触れたときは手元で `pnpm --filter @matsuri-ikoka/web test:e2e` を通すか、ブランチを指定して CI を起動します。
+
+```bash
+gh workflow run ci.yml --ref <ブランチ> -f e2e=true
+```
+
+PR ごとに走らせる形に戻すときは、`ci.yml` の `e2e` ジョブの `if` を `needs.changes.outputs.e2e == 'true'` にします。[`deploy.yml`](../.github/workflows/deploy.yml) と [`codeql.yml`](../.github/workflows/codeql.yml) は、文書だけの変更では動きません（`paths-ignore`。2つの一覧は同じにし、外すファイルがイメージに入らないことを `scripts/github-config.test.ts` が確かめます）。
 
 ファイルの置き場所を足したり、ビルドやイメージが読むものを変えたりしたら、`scripts/ci-changes.ts` の一覧も合わせて直します。
 

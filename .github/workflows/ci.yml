@@ -5,11 +5,20 @@ name: CI
 # PR では、変わったファイルに関係するジョブだけを走らせる（changes ジョブ。scripts/ci-changes.ts）。
 # 飛ばしたジョブは skipped になり、必須の検査としては通ったことになる。
 # main への push と手での起動では、取りこぼしがないようにすべて走らせる。
+# ただし e2e は、手で起動して e2e を選んだときだけ走らせる（GPU のないランナーでは 3D の通しテストに
+# 25 分近くかかり、時間切れで落ちやすいため）。PR と push では skipped になり、必須の検査は通る。
 
 on:
   push:
     branches: [main]
   pull_request:
+  # 通しテストを走らせたいときに、Actions の画面か gh workflow run ci.yml -f e2e=true で起動する
+  workflow_dispatch:
+    inputs:
+      e2e:
+        description: 画面の通しテスト（Playwright）も走らせる
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -122,11 +131,13 @@ jobs:
         run: pnpm build
 
   # 画面の通しテスト。Playwright が接客サーバーをモック（MATSURI_AGENT_MODE=mock）で起動し、
-  # 画面の開発サーバーからつなぐ（apps/web/playwright.config.ts）
+  # 画面の開発サーバーからつなぐ（apps/web/playwright.config.ts）。
+  # 手で起動して e2e を選んだときだけ走らせる（上の説明）。PR ごとに戻すときは、
+  # if を needs.changes.outputs.e2e == 'true' にする
   e2e:
     name: e2e
     needs: changes
-    if: needs.changes.outputs.e2e == 'true'
+    if: github.event_name == 'workflow_dispatch' && inputs.e2e
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
