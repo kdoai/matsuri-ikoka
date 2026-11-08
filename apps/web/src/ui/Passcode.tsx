@@ -4,7 +4,9 @@ import { isSendablePasscode } from "../transport/server";
 import { buttonPrimary } from "./common";
 
 // 合言葉の入力。公開している URL で、接客サーバーが合言葉を求めたときだけ出す。
-// 合言葉はメモリにだけ持ち、URL にも保存にも入れない。
+// 合言葉はメモリにだけ持ち、URL にも保存にも入れない。端末に残すと、同じ端末を使うほかの人も
+// 入れてしまい、漏れたときに消す手立てもないため。そのため再読み込みや別のタブでは入れ直してもらい、
+// そのことを欄の案内（passcode.where）で伝える。
 
 export function PasscodeForm({ retry }: { retry: boolean }) {
   const t = useT();
@@ -42,6 +44,7 @@ export function PasscodeForm({ retry }: { retry: boolean }) {
           </span>
         ) : null}
         {retry ? t.passcode.again : t.passcode.lead}
+        <span className="mt-1 block text-ink-soft text-xs leading-relaxed">{t.passcode.where}</span>
       </p>
       <div className="flex items-end gap-2">
         <div className="flex-1">
@@ -84,7 +87,7 @@ export function PasscodeDialog() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="passcode-dialog-title"
-        className="w-full max-w-md rounded-2xl border-4 border-wood-800 bg-kinari-50 p-5 shadow-2xl"
+        className="max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-2xl border-4 border-wood-800 bg-kinari-50 p-5 shadow-2xl"
       >
         <h2 id="passcode-dialog-title" className="mb-2 font-bold text-ink text-lg">
           {t.passcode.title}

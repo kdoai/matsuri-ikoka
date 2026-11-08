@@ -370,3 +370,31 @@ describe("接客サーバーとの通信", () => {
     expect(await createServerFestivalSource({ fetch: fetchMock }).initial()).toEqual([]);
   });
 });
+
+describe("入店の前の合言葉の確かめ", () => {
+  it("相談を始めずに、合言葉が要るかを確かめる", async () => {
+    const guarded = vi.fn<typeof fetch>(async () =>
+      json({ code: "unauthorized", message: "合言葉が違います。", retryable: false }, 401),
+    );
+    expect(await createServerTransport({ fetch: guarded }).checkAccess?.()).toBe("passcode");
+    expect(guarded.mock.calls[0]?.[0]).toBe("/api/auth/config");
+
+    const open = vi.fn<typeof fetch>(async () => json({ enabled: false }, 200));
+    expect(await createServerTransport({ fetch: open }).checkAccess?.()).toBe("open");
+
+    const down = vi.fn<typeof fetch>(async () => {
+      throw new TypeError("Failed to fetch");
+    });
+    expect(await createServerTransport({ fetch: down }).checkAccess?.()).toBe("unknown");
+    const proxyError = vi.fn<typeof fetch>(async () => new Response("", { status: 500 }));
+    expect(await createServerTransport({ fetch: proxyError }).checkAccess?.()).toBe("unknown");
+  });
+
+  it("覚えている合言葉があれば、ヘッダーで付けて確かめる", async () => {
+    const fetchMock = vi.fn<typeof fetch>(async () => json({ enabled: false }, 200));
+    const passcode = createPasscodeHolder();
+    passcode.set("matsuri");
+    await createServerTransport({ passcode, fetch: fetchMock }).checkAccess?.();
+    expect(headerOf(fetchMock.mock.calls[0]?.[1], PASSCODE_HEADER)).toBe("matsuri");
+  });
+});

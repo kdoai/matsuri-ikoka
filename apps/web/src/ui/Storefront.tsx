@@ -85,6 +85,10 @@ export function Storefront() {
   const onReady = useCallback(() => setBackdrop("ready"), []);
   const onError = useCallback(() => setBackdrop("failed"), []);
 
+  // 入店の前に合言葉が要るかを確かめる。要るなら、店を開かずにここで聞く
+  useEffect(() => {
+    void actions.checkAccess();
+  }, [actions]);
   // 3D のコードを待たずに、店内と外観のモデルを取り始める（コードとモデルを同時に取る）
   useEffect(() => {
     if (use3d) prefetchModels(SET_MODELS).catch(() => undefined);

@@ -2,11 +2,23 @@ name: CI
 
 # PR と main への push で、検査を別々のジョブで並べて走らせる。
 # ジョブの name は main のルールセットの必須の検査（scripts/setup-github.sh の REQUIRED_CHECKS）と同じにする。
+# PR では、変わったファイルに関係するジョブだけを走らせる（changes ジョブ。scripts/ci-changes.ts）。
+# 飛ばしたジョブは skipped になり、必須の検査としては通ったことになる。
+# main への push と手での起動では、取りこぼしがないようにすべて走らせる。
+# ただし e2e は、手で起動して e2e を選んだときだけ走らせる（GPU のないランナーでは 3D の通しテストに
+# 25 分近くかかり、時間切れで落ちやすいため）。PR と push では skipped になり、必須の検査は通る。
 
 on:
   push:
     branches: [main]
   pull_request:
+  # 通しテストを走らせたいときに、Actions の画面か gh workflow run ci.yml -f e2e=true で起動する
+  workflow_dispatch:
+    inputs:
+      e2e:
+        description: 画面の通しテスト（Playwright）も走らせる
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -17,6 +29,39 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  # 変わったファイルから、走らせるジョブを決める。必須の検査にはしない（結果は「検査とビルド」が見る）
+  changes:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      code: ${{ steps.affected.outputs.code }}
+      build: ${{ steps.affected.outputs.build }}
+      e2e: ${{ steps.affected.outputs.e2e }}
+      docker: ${{ steps.affected.outputs.docker }}
+      data: ${{ steps.affected.outputs.data }}
+      workflows: ${{ steps.affected.outputs.workflows }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # PR のマージのコミットと、その1つ目の親（取り込む先の main）を比べる
+          fetch-depth: 2
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+
+      - name: 走らせるジョブを決める
+        id: affected
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            git diff --name-only --no-renames HEAD^1 HEAD | node scripts/ci-changes.ts >> "$GITHUB_OUTPUT"
+          else
+            node scripts/ci-changes.ts --all < /dev/null >> "$GITHUB_OUTPUT"
+          fi
+
   lint:
     name: lint
     runs-on: ubuntu-24.04
@@ -31,6 +76,8 @@ jobs:
 
   typecheck:
     name: typecheck
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -43,6 +90,8 @@ jobs:
 
   test:
     name: test
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -55,6 +104,8 @@ jobs:
 
   validate-data:
     name: validate-data
+    needs: changes
+    if: needs.changes.outputs.data == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -67,6 +118,8 @@ jobs:
 
   build:
     name: build
+    needs: changes
+    if: needs.changes.outputs.build == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -79,10 +132,15 @@ jobs:
 
   # 画面の通しテスト。Playwright が接客サーバーをモック（MATSURI_AGENT_MODE=mock）で起動し、
   # 画面の開発サーバーからつなぐ（apps/web/playwright.config.ts）。
-  # GPU のないランナーでは 3D の描画が CPU を使い切るので、1つのジョブではワーカーを1つにし、
-  # かわりにテストのファイルを3つのジョブに分けて並べて走らせる。結果は下の e2e でまとめる
+  # 手で起動して e2e を選んだときだけ走らせる（上の説明）。PR ごとに戻すときは、
+  # e2e-shard の if を needs.changes.outputs.e2e == 'true' にし、e2e の if をそれに always() && を付けたものにする
+  # GPU のないランナーでは 3D の描画が CPU を使い切るので、1つのジョブではワーカーを1つにし
+  # （apps/web/playwright.config.ts）、かわりにテストのファイルを3つのジョブに分けて並べて走らせる。
+  # 結果は下の e2e でまとめる
   e2e-shard:
     name: e2e (${{ matrix.shard }}/3)
+    needs: changes
+    if: github.event_name == 'workflow_dispatch' && inputs.e2e
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     strategy:
@@ -123,11 +181,12 @@ jobs:
           path: apps/web/test-results
           retention-days: 7
 
-  # 分けた通しテストの結果をまとめる。main のルールセットが必須にしている名前なので残す
+  # 分けた通しテストの結果をまとめる。main のルールセットが必須にしている名前なので残す。
+  # 走らせなかったとき（PR と push）は skipped にして、必須の検査を通す
   e2e:
     name: e2e
-    if: always()
     needs: e2e-shard
+    if: always() && github.event_name == 'workflow_dispatch' && inputs.e2e
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -141,6 +200,8 @@ jobs:
   # デプロイと同じイメージを作り、モックで動かして、相談・しおりの PDF・3D のモデルが配られるかを確かめる
   docker:
     name: docker
+    needs: changes
+    if: needs.changes.outputs.docker == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
@@ -206,6 +267,8 @@ jobs:
   # ワークフローの書き方を確かめる（run の中のシェルは、ランナーにある shellcheck でも見る）
   actionlint:
     name: actionlint
+    needs: changes
+    if: needs.changes.outputs.workflows == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     env:
@@ -243,11 +306,14 @@ jobs:
           fail-on-severity: moderate
 
   # すべてのジョブの結果をまとめる。main のルールセットが前から必須にしている名前なので残す
-  # （ジョブを足しても、この名前を必須にしておけば漏れない）
+  # （ジョブを足しても、この名前を必須にしておけば漏れない）。
+  # 変わったファイルに関係がなくて飛ばしたジョブ（skipped）は通ったものとして扱う。
+  # changes が失敗したときは、ほかのジョブが走らずに skipped になるので、changes の結果も見る
   required:
     name: 検査とビルド
     if: always()
     needs:
+      - changes
       - lint
       - typecheck
       - test

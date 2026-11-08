@@ -74,6 +74,11 @@ export interface ChatTransport {
   agentMode?(): AgentMode | null;
   /** 接続が切れたあとに、サーバーが応答するかを確かめる（つながらなければ false） */
   checkServer?(): Promise<boolean>;
+  /**
+   * 入店の前に、合言葉が要るかを確かめる（相談は始めない）。
+   * 要らなければ open、要る（または覚えている合言葉が違う）なら passcode、分からなければ unknown
+   */
+  checkAccess?(): Promise<"open" | "passcode" | "unknown">;
   /** 接客サーバーのときだけ：合言葉を覚えて、これからの呼び出しに付ける */
   setPasscode?(passcode: string): void;
   /** 接客サーバーのときだけ：合言葉を覚えているか */

@@ -14,6 +14,16 @@ name: デプロイ
 on:
   push:
     branches: [main]
+    # 文書だけの変更では出し直さない（どれもイメージに入らない）。
+    # 一覧は codeql.yml と同じにする（scripts/github-config.test.ts で突き合わせる）
+    paths-ignore:
+      - "docs/**"
+      - ".claude/**"
+      - "*.md"
+      - "**/README.md"
+      - "LICENSE"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/pull_request_template.md"
   workflow_dispatch:
 
 permissions:

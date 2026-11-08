@@ -62,21 +62,48 @@ GitHub の Issue Types は、組織のアカウントのリポジトリでしか
 
 [`ci.yml`](../.github/workflows/ci.yml) が、PR と main への push で次のジョブを並べて走らせます。同じ PR に新しい push があると、古い実行は止まります。pnpm のストア、Playwright のブラウザ、Docker のビルドの層はキャッシュします。
 
-| ジョブ              | 中身                                                                                                                                                    |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `lint`              | Biome（lint と format）                                                                                                                                 |
-| `typecheck`         | すべてのパッケージの型                                                                                                                                  |
-| `test`              | Vitest                                                                                                                                                  |
-| `validate-data`     | 祭りのデータの検証（`pnpm validate:data`）                                                                                                              |
-| `build`             | 画面と接客サーバーのビルド                                                                                                                              |
-| `e2e`               | 接客サーバーをモック（`MATSURI_AGENT_MODE=mock`）で起動し、Playwright で画面の通しテスト。3つのジョブ（`e2e (1/3)` など）に分けて走らせ、結果をまとめる |
-| `docker`            | デプロイと同じイメージを作り、モックで動かして、相談・しおりの PDF・3D のモデルが配られるかを確かめる                                                   |
-| `secrets`           | gitleaks で、履歴全体に秘密情報が混ざっていないかを見る                                                                                                 |
-| `actionlint`        | ワークフローの書き方（`run` の中のシェルも shellcheck で）                                                                                              |
-| `dependency-review` | PR で足した依存に既知の脆弱性がないか（PR のときだけ）                                                                                                  |
-| `検査とビルド`      | 上のすべての結果をまとめる                                                                                                                              |
+| ジョブ              | 中身                                                                                                  |
+| ------------------- | ----------------------------------------------------------------------------------------------------- |
+| `lint`              | Biome（lint と format）                                                                               |
+| `typecheck`         | すべてのパッケージの型                                                                                |
+| `test`              | Vitest                                                                                                |
+| `validate-data`     | 祭りのデータの検証（`pnpm validate:data`）                                                            |
+| `build`             | 画面と接客サーバーのビルド                                                                            |
+| `e2e`               | 接客サーバーをモックで起動し、Playwright で画面の通しテスト（手で起動したときだけ。下の説明）         |
+| `docker`            | デプロイと同じイメージを作り、モックで動かして、相談・しおりの PDF・3D のモデルが配られるかを確かめる |
+| `secrets`           | gitleaks で、履歴全体に秘密情報が混ざっていないかを見る                                               |
+| `actionlint`        | ワークフローの書き方（`run` の中のシェルも shellcheck で）                                            |
+| `dependency-review` | PR で足した依存に既知の脆弱性がないか（PR のときだけ）                                                |
+| `検査とビルド`      | 上のすべての結果をまとめる                                                                            |
 
 main のルールセットは、上のすべてのジョブを必須の検査にします（`setup-github.sh` の `REQUIRED_CHECKS`）。ジョブの名前と `REQUIRED_CHECKS` が食い違うと、`scripts/github-config.test.ts` が落ちます。
+
+### 変わったファイルに関係するジョブだけを走らせる
+
+PR では、最初の `changes` ジョブが変わったファイルの一覧から走らせるジョブを決めます（[`scripts/ci-changes.ts`](../scripts/ci-changes.ts)）。飛ばしたジョブは skipped になり、必須の検査としては通ったことになります。迷うものは走らせる側に倒し、各ジョブは「関係ないと分かっているファイル」だけが変わったときに飛ばします。
+
+| 変わったもの                                                                            | 走らせるジョブ                              |
+| --------------------------------------------------------------------------------------- | ------------------------------------------- |
+| 文書だけ（`docs/`・`.claude/`・ソースの外の `.md`・`LICENSE`）                          | `lint`・`secrets`・`dependency-review` だけ |
+| 単体テスト（`*.test.ts`）・開発のスクリプト（`scripts/`）                               | ＋ `typecheck`・`test`                      |
+| 通しテスト（`apps/web/e2e/`・`playwright.config.ts`）                                   | ＋ `typecheck`・`test`                      |
+| `Dockerfile`・イメージを確かめるスクリプト                                              | ＋ `typecheck`・`test`・`docker`            |
+| 画面・接客サーバー・パッケージ・データ・素材（接客エージェントの指示の `.md` も）       | ＋ `typecheck`・`test`・`build`・`docker`   |
+| 祭りのデータ・スキーマ・データの検証のスクリプト                                        | ＋ `validate-data`                          |
+| ワークフローと共通のアクション                                                          | ＋ `actionlint`                             |
+| 依存（`package.json`・lockfile）・Node と TypeScript の設定・`ci.yml`・判定のスクリプト | すべて                                      |
+
+main への push と手での起動（`workflow_dispatch`）では、取りこぼしがないようにすべて走らせます。
+
+`e2e` だけは、手で起動して `e2e` を選んだときにしか走りません（PR と push では skipped）。GPU のないランナーでは 3D の通しテストに 25 分近くかかり、時間切れで落ちやすいためです。画面に触れたときは手元で `pnpm --filter @matsuri-ikoka/web test:e2e` を通すか、ブランチを指定して CI を起動します。
+
+```bash
+gh workflow run ci.yml --ref <ブランチ> -f e2e=true
+```
+
+走らせるときは、GPU のないランナーで 3D の画面が CPU を取り合わないよう、1つのジョブのワーカーを1つにし、テストのファイルを3つのジョブ（`e2e (1/3)` など、`--shard`）に分けて並べます。結果は `e2e` のジョブがまとめます。PR ごとに走らせる形に戻すときは、`ci.yml` の `e2e-shard` ジョブの `if` を `needs.changes.outputs.e2e == 'true'` にし、`e2e` ジョブの `if` をそれに `always() &&` を付けたものにします。[`deploy.yml`](../.github/workflows/deploy.yml) と [`codeql.yml`](../.github/workflows/codeql.yml) は、文書だけの変更では動きません（`paths-ignore`。2つの一覧は同じにし、外すファイルがイメージに入らないことを `scripts/github-config.test.ts` が確かめます）。
+
+ファイルの置き場所を足したり、ビルドやイメージが読むものを変えたりしたら、`scripts/ci-changes.ts` の一覧も合わせて直します。
 
 ほかに [`codeql.yml`](../.github/workflows/codeql.yml) が、コード（TypeScript）とワークフローを CodeQL で解析し、結果を GitHub の Security の画面に出します（PR、main への push、毎週）。依存の更新は Dependabot が毎週 PR にします。
 
@@ -86,7 +113,7 @@ main のルールセットは、上のすべてのジョブを必須の検査に
 pnpm lint && pnpm typecheck && pnpm test && pnpm validate:data && pnpm build
 ```
 
-e2e は、Playwright が接客サーバーをモックで起動し、画面の開発サーバーからつなぎます（`apps/web/playwright.config.ts`。ポートは 35179 と 38787）。CI では GPU のないランナーで 3D を描くので、1つのジョブのワーカーを1つにし、テストのファイルを3つのジョブに分けています（`--shard`）。
+e2e は、Playwright が接客サーバーをモックで起動し、画面の開発サーバーからつなぎます（`apps/web/playwright.config.ts`。ポートは 35179 と 38787）。
 
 ```bash
 pnpm --filter @matsuri-ikoka/web test:e2e

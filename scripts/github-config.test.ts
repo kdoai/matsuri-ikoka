@@ -1,6 +1,8 @@
+import { execFileSync } from "node:child_process";
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
+import { affectedJobs } from "./ci-changes";
 
 // GitHub の設定のファイル（ラベル・Issue テンプレート・CI・setup-github.sh）が互いに食い違わないことを確かめる。
 
@@ -117,5 +119,53 @@ describe("main の必須の検査", () => {
       .filter((name) => !name?.includes("${{"));
     expect(required).toBeDefined();
     expect([...(required ?? [])].sort()).toEqual([...jobs].sort());
+  });
+});
+
+describe("変わったファイルで走らせるものを絞る", () => {
+  /** on.<event>.paths-ignore の一覧を読む */
+  function pathsIgnore(file: string, event: string): string[] {
+    const block = read(file).match(new RegExp(`^ {2}${event}:\\n((?: {4}.*\\n)+)`, "m"))?.[1] ?? "";
+    const list = block.split(/^ {4}paths-ignore:\n/m)[1] ?? "";
+    return [...list.matchAll(/^ {6}- "([^"]+)"$/gm)].map((m) => m[1] as string);
+  }
+
+  /** GitHub の paths の書き方（** は / をまたぐ、* はまたがない）を正規表現にする */
+  function toRegExp(pattern: string): RegExp {
+    const body = pattern
+      .split("**/")
+      .map((part) =>
+        part
+          .split("**")
+          .map((p) =>
+            p
+              .split("*")
+              .map((s) => s.replace(/[.+?^${}()|[\]\\]/g, "\\$&"))
+              .join("[^/]*"),
+          )
+          .join(".*"),
+      )
+      .join("(?:.*/)?");
+    return new RegExp(`^${body}$`);
+  }
+
+  const ignored = pathsIgnore(".github/workflows/deploy.yml", "push");
+
+  it("デプロイと CodeQL は、同じ文書の一覧を外す", () => {
+    expect(ignored.length).toBeGreaterThan(0);
+    expect(pathsIgnore(".github/workflows/codeql.yml", "push")).toEqual(ignored);
+    expect(pathsIgnore(".github/workflows/codeql.yml", "pull_request")).toEqual(ignored);
+  });
+
+  it("デプロイが外すファイルは、どれもイメージに入らない（ci.yml でも docker を走らせない）", () => {
+    const files = execFileSync("git", ["ls-files"], { cwd: root, encoding: "utf8" })
+      .split("\n")
+      .filter(Boolean);
+    const patterns = ignored.map(toRegExp);
+    const skipped = files.filter((f) => patterns.some((p) => p.test(f)));
+    // 一覧が効いていること（文書があるのに1つも当たらないなら、書き方が違う）
+    expect(skipped).toContain("README.md");
+    expect(skipped).toContain("docs/architecture.md");
+    expect(skipped.filter((f) => affectedJobs([f]).docker)).toEqual([]);
   });
 });
