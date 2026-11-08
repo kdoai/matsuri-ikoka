@@ -114,6 +114,7 @@ export function beginTurn(state: AppData, start: TurnStart): AppData {
       turnTasks: [],
       turnTools: [],
       newCandidates: false,
+      editedPreferences: [],
     },
     messages,
     ui: { ...state.ui, candidatesOpen: false, draft: start.kind === "chat" ? "" : state.ui.draft },
@@ -184,8 +185,16 @@ export function changePreference<K extends keyof Preferences>(
     key,
     value,
   };
+  const { session } = state;
+  // 返答の途中の切り替えは、done で上書きされないように覚えておく
+  const edited =
+    session.streaming && !session.editedPreferences.includes(key)
+      ? [...session.editedPreferences, key]
+      : session.editedPreferences;
   return {
     ...state,
+    session:
+      edited === session.editedPreferences ? session : { ...session, editedPreferences: edited },
     preferences: { ...state.preferences, [key]: value },
     messages: [...state.messages, entry],
   };

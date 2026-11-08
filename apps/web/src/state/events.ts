@@ -1,4 +1,11 @@
-import type { Itinerary, SseEvent, SseEventOf, StaffId, ToolName } from "@matsuri-ikoka/schema";
+import type {
+  Itinerary,
+  Preferences,
+  SseEvent,
+  SseEventOf,
+  StaffId,
+  ToolName,
+} from "@matsuri-ikoka/schema";
 import {
   closeRelay,
   conciergeSpeaks,
@@ -341,8 +348,27 @@ export function closeTurn(state: AppData): AppData {
   return next;
 }
 
+/**
+ * done で届いたこだわりに、返答の途中で利用者が切り替えた分を重ねる。
+ * 届いた値と違うまま残った項目だけを、返答のあとに送る分として返す
+ */
+function mergePreferences(
+  state: AppData,
+  received: Preferences,
+): { preferences: Preferences; edited: Array<keyof Preferences> } {
+  const edited = state.session.editedPreferences.filter(
+    (key) => state.preferences[key] !== received[key],
+  );
+  const preferences = { ...received };
+  for (const key of edited) {
+    Object.assign(preferences, { [key]: state.preferences[key] });
+  }
+  return { preferences, edited };
+}
+
 function onDone(state: AppData, data: SseEventOf<"done">["data"]): AppData {
   const next = closeTurn(state);
+  const { preferences, edited } = mergePreferences(state, data.preferences);
   const reachedShiori =
     data.stage === "shiori" &&
     state.session.stage !== "shiori" &&
@@ -354,8 +380,9 @@ function onDone(state: AppData, data: SseEventOf<"done">["data"]): AppData {
       stage: data.stage,
       conditions: data.conditions,
       sawDone: true,
+      editedPreferences: edited,
     },
-    preferences: data.preferences,
+    preferences,
     ui: {
       ...next.ui,
       // 候補を開くのは、返答が終わって選べるようになったとき（endTurn）。ここでは開かない
