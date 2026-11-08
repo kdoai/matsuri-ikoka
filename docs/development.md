@@ -155,6 +155,8 @@ main に入ると [`deploy.yml`](../.github/workflows/deploy.yml) が Cloud Run 
 
 フック：[`.claude/hooks/validate-festivals.mjs`](../.claude/hooks/validate-festivals.mjs)（`PostToolUse`）。Edit か Write で `data/festivals/*.json` か `data/research-ledger.json` を変えたら `pnpm validate:data` を走らせ、エラーがあれば結果をそのまま Claude に返す。スキーマ・出典・確度の決まりを、プロンプトでなくコードで確かめるためのもの。設定は [`.claude/settings.json`](../.claude/settings.json)、テストは [`scripts/claude-hooks.test.ts`](../scripts/claude-hooks.test.ts)。
 
+フック：[`.claude/hooks/japanese-reply.mjs`](../.claude/hooks/japanese-reply.mjs)（`UserPromptSubmit` と `Stop`）。このリポジトリの文書・コミット・PR・Issue は日本語なので、会話もそろえる。発言のたびに「日本語で答える」ことを文脈に足し、回答に英語の文が混ざっていたら止めて日本語で書き直させる。コード・コマンド・URL・パスは数えない。書き直しのあとは止めない。テストは同じ `scripts/claude-hooks.test.ts`。
+
 ### マーケットプレイスのプラグイン
 
 公式のマーケットプレイス（`claude-plugins-official`）のプラグインは、共有の設定（`.claude/settings.json`）では有効にしていません。

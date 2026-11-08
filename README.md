@@ -412,7 +412,7 @@ Claude の機能も、目的ごとに使い分けています。
   <tr>
     <td>フック<br><sub><a href="apps/server/src/agent/hooks.ts">apps/server/src/agent/hooks.ts</a>、<a href=".claude/hooks/">.claude/hooks/</a></sub></td>
     <td>ツールの前後を画面に伝える、決まりを守らせる</td>
-    <td>製品では、ツールの前後で SSE のイベントを出し、画面のスタッフと吹き出しを動かします。スタッフと道具の組み合わせや、スタッフを呼ぶ回数もここで守ります。開発では、祭りのデータを書き換えたら <code>pnpm validate:data</code> を自動で走らせ、スキーマや出典の決まりに合わないデータをその場で Claude に知らせます</td>
+    <td>製品では、ツールの前後で SSE のイベントを出し、画面のスタッフと吹き出しを動かします。スタッフと道具の組み合わせや、スタッフを呼ぶ回数もここで守ります。開発では、祭りのデータを書き換えたら <code>pnpm validate:data</code> を自動で走らせ、スキーマや出典の決まりに合わないデータをその場で Claude に知らせます。会話が英語に寄ったら、日本語で書き直させます（文書・コミット・PR をそろえるため）</td>
   </tr>
   <tr>
     <td>権限の設定<br><sub><a href=".claude/settings.json">.claude/settings.json</a></sub></td>
