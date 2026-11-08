@@ -6,8 +6,6 @@ export type { Messages };
 
 export const MESSAGES: Record<Locale, Messages> = { ja, en };
 
-export const LOCALES: readonly Locale[] = ["ja", "en"];
-
 export function otherLocale(locale: Locale): Locale {
   return locale === "ja" ? "en" : "ja";
 }

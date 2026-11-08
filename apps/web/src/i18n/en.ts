@@ -184,9 +184,7 @@ export const en: Messages = {
   dialogue: {
     thinking: "One moment, please",
     close: "Put the dialogue away",
-    greeting: "Welcome! Talk to me to plan your festival trip.",
     talkToConcierge: "Talk to the concierge",
-    openLog: "Conversation log",
     log: "Conversation log",
     closeLog: "Close",
     more: "Read more",
@@ -527,7 +525,6 @@ export const en: Messages = {
   },
   hud: {
     sections: {
-      guide: "Trip guide",
       candidates: "Festivals",
       shiori: "Travel booklet",
       confirm: "Check",
@@ -705,8 +702,6 @@ export const en: Messages = {
   conditions: {
     title: "What we understood",
     origin: (station: string) => `From ${station}`,
-    nights: (nights: number) =>
-      nights === 0 ? "Day trip" : `${plural(nights, "night", "nights")}, ${nights + 1} days`,
     party: (adults: number, children: number) =>
       children > 0
         ? `${plural(adults, "adult", "adults")}, ${plural(children, "child", "children")}`
@@ -717,8 +712,6 @@ export const en: Messages = {
         ? `Budget up to ${amount(yen)} per person${converted === null ? "" : ` (${amount(converted)} for everyone)`}`
         : `Budget up to ${amount(yen)} for everyone${converted === null ? "" : ` (${amount(converted)} per person)`}`;
     },
-    move: { train: "Train", car: "Car" },
-    range: (from: string, to: string) => `${from} – ${to}`,
   },
   preferences: {
     title: "Trip preferences",
@@ -837,7 +830,6 @@ export const en: Messages = {
       "This year's schedule was confirmed with non-official sources. Please check the organizer's notice before you go.",
     timeUnknown: "Time not announced",
     whyFits: "Why it fits",
-    highlight: "Highlight",
     onlyHere: "Only here",
     source: "Source",
     correction: "Report a correction",
@@ -852,7 +844,6 @@ export const en: Messages = {
     },
   },
   itinerary: {
-    day: (n: number, date: string) => `Day ${n} · ${date}`,
     stay: (area: string) => `Overnight around ${area}`,
     lodging: {
       heading: "Places to stay",
@@ -881,7 +872,6 @@ export const en: Messages = {
     route: "Route",
     tabs: { itinerary: "Plan", map: "Trip guide", sources: "Packing & checks" },
     panelLabel: "Travel booklet (plan, trip guide, packing and checks)",
-    openPanel: "Open the travel booklet to see the plan",
     closePanel: "Close the panel",
     empty: "No plan yet. Choose a festival and your plan will appear here.",
     version: (n: number) => `Version ${n}`,
@@ -980,80 +970,18 @@ export const en: Messages = {
     sub: "The schedule was confirmed with official information",
   },
   shiori: {
-    title: "Travel booklet",
     print: "Print",
     savePdf: "Save as PDF",
-    openBooklet: "Open the booklet",
     booklet: "Travel booklet",
     notReady: "We will hand you the booklet once the festival dates are confirmed.",
     preparing: "Preparing your booklet…",
     prepareFailed: "We couldn't prepare your booklet. Check your connection and try again.",
     retry: "Try again",
     close: "Back to the shop",
-    party: "Party",
-    date: "Date",
-    weather: "Weather",
-    stamps: "Stamps collected",
-    sections: {
-      main: "Today's festival",
-      flow: "Your day",
-      map: "Map",
-      food: "Local flavors",
-      firstTime: "First time here?",
-      rain: "Rainy-day plan",
-      sources: "Sources",
-    },
-    when: "When",
-    where: "Where",
-    scale: "Size",
-    scales: {
-      XS: "A very small festival",
-      S: "A small festival",
-      M: "A mid-sized festival",
-      L: "A large festival",
-    },
-    highlights: "Highlights",
-    background: "Festival trivia",
-    rainPolicy: "If it rains",
-    stations: "Nearest station",
-    walk: (min: number, max: number) => `${range(min, max)} min walk (estimate)`,
-    toilets: "Toilets",
-    toiletsUnknown: "Not in our data. Please check the signs on site",
-    stalls: {
-      yes: "There are food stalls",
-      no: "There are no food stalls",
-      unknown: "Not known whether there are food stalls",
-    },
-    localFood: "Local dishes",
-    mealsInPlan: "Meals in your plan",
-    noAlternatives: "No rainy-day plan yet.",
-    festivalLoading:
-      "The festival details are not available right now. Please see the plan and sources.",
-    verified: (date: string) => `Schedule confirmed with official information (${date})`,
-    needsCheck:
-      "Check before you go: the schedule was confirmed with non-official sources. Please check the organizer's notice before you leave.",
-    finalCheck: "On the day, please check the official website one last time.",
     share: "Booklet URL",
     shareNote: "Share this URL to show the booklet to the people coming with you.",
     copy: "Copy URL",
     copied: "Copied",
-    homeward: "Getting home",
-    cautions: "Please note",
-    start: "Start",
-    goal: "Goal",
-    lines: {
-      main: "Don't miss these!",
-      flow: "Times are estimates. Moving early keeps it relaxed",
-      food: "Enjoy the stalls and the local flavors too",
-      firstTime: "Follow the organizers' requests and enjoy it with the locals",
-      rain: "Here is a plan for a rainy day, too",
-    },
-    parking: {
-      available: "Parking is available",
-      limited: "Parking is limited",
-      none: "No parking. We recommend going by train",
-      unknown: "Not known whether there is parking",
-    },
   },
   play: {
     controlsTitle: "Controls",
@@ -1075,7 +1003,6 @@ export const en: Messages = {
     ],
     near: "Nearby",
     nothingNear: "Nothing to use nearby",
-    use: "Use",
     sitting: "Sitting (move to stand up)",
     talk: (name: string) => `Talk to the ${name.toLowerCase()}`,
     sit: "Sit down",
@@ -1167,8 +1094,6 @@ export const en: Messages = {
     backToShop: "Back to the shop",
     lookStall: "See your guide's stall",
     labelled: (label: string, value: string) => `${label}: ${value}`,
-    dated: (label: string, date: string) => `${label} (${date})`,
-    joined: (parts: readonly string[]) => parts.join(", "),
     dotted: (parts: readonly string[]) => parts.join(" · "),
     list: "News at your guide's stall",
     stallName: "Trip help desk",
