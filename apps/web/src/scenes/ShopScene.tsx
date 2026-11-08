@@ -19,6 +19,7 @@ import { staffActivity } from "../state/relay";
 import { NO_INSETS, type ShopSceneProps } from "../state/scene";
 import type { StaffState } from "../state/types";
 import { SpeechBubble, StatusChip } from "../ui/SpeechBubble";
+import { staffLineText } from "../ui/text";
 import {
   exteriorOpacity,
   SCENE_MOTIONS,
@@ -849,8 +850,8 @@ export default function ShopScene(props: ShopSceneProps) {
               ? chatterText
               : id === "concierge" && requestText !== null
                 ? requestText
-                : showsBubble(staff)
-                  ? staff.bubble
+                : showsBubble(staff) && staff.bubble !== null
+                  ? staffLineText(staff.bubble, staff.cue, t)
                   : null;
           // 頭の上のいまのようす（調べている・確かめている・まとめている など）
           const activity = props.celebrating ? null : staffActivity(id, staff, props.relay);

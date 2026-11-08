@@ -6,6 +6,7 @@ import type {
   FestivalCandidate,
   Itinerary,
   ItineraryDiff,
+  Locale,
   PartialTripConditions,
   Preferences,
   RedoSubject,
@@ -45,7 +46,7 @@ export interface ClientError {
   retryable: boolean;
 }
 
-export type Locale = "ja" | "en";
+export type { Locale };
 
 // ---------------------------------------------------------------------------
 // スタッフ
@@ -68,6 +69,18 @@ export const STAFF_MOTIONS = [
 ] as const;
 export type StaffMotion = (typeof STAFF_MOTIONS)[number];
 
+/**
+ * 吹き出しとくわしい文を、画面の辞書で言い直すための型。イベントに型で届いた値だけで作る。
+ * 辞書が文を持たない言語（日本語）では、サーバーが決まった型から作った文（bubble・detail）をそのまま出す。
+ * start 作業を始めた（replan：旅程があるときの組み直し） / tool_start・tool_end ツールの前後
+ * （top：いちばん上の祭りの名前） / redo 調べ直しの頼み（request）と受け（accept）
+ */
+export type StaffCue =
+  | { kind: "start"; task: StaffTask; replan: boolean }
+  | { kind: "tool_start"; tool: ToolName }
+  | { kind: "tool_end"; tool: ToolName; ok: boolean; count: number | null; top: string | null }
+  | { kind: "redo"; redo: "request" | "accept"; to: StaffId; subject: RedoSubject };
+
 export interface StaffState {
   phase: StaffPhase;
   motion: StaffMotion;
@@ -77,6 +90,8 @@ export interface StaffState {
   bubble: string | null;
   /** 店内のようすの窓に出す、くわしい文（サーバーが決まった型から作る）。なければ吹き出しを出す */
   detail: string | null;
+  /** 吹き出しとくわしい文を辞書で言い直すための型。吹き出しがなければ null */
+  cue: StaffCue | null;
   /** 変わるたびに1つ増える。うなずき・はんこのような1回きりの動きを出し直すのに使う */
   seq: number;
 }
@@ -140,6 +155,9 @@ export type ChatEntry =
       status: WorkStatus;
       bubble: string;
       result: string | null;
+      /** bubble と result を辞書で言い直すための型 */
+      cue: StaffCue;
+      resultCue: StaffCue | null;
     }
   /** こだわりを切り替えた記録 */
   | { kind: "preference"; id: string; key: keyof Preferences; value: string }

@@ -168,7 +168,11 @@ describe("発言と返答", () => {
       type: "guide.tool.start",
       data: { toolCallId: "c1", tool: "get_weather", bubble: "天気を調べています" },
     });
-    expect(guideLine(guide)).toEqual({ kind: "tool", bubble: "天気を調べています" });
+    expect(guideLine(guide)).toEqual({
+      kind: "tool",
+      tool: "get_weather",
+      bubble: "天気を調べています",
+    });
     guide = applyGuideEvent(guide, {
       type: "guide.tool.end",
       data: { toolCallId: "c1", tool: "get_weather", ok: true, bubble: "調べました" },

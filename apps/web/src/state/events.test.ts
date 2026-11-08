@@ -103,6 +103,14 @@ describe("記録した相談を通す", () => {
         status: "ok",
         bubble: "8月16日に、みなと中央駅から片道2時間以内の日帰りで行ける祭りを探しています",
         result: "1件見つかりました。いちばん上は「鈴鳴灯籠まつり」",
+        cue: { kind: "tool_start", tool: "search_festivals" },
+        resultCue: {
+          kind: "tool_end",
+          tool: "search_festivals",
+          ok: true,
+          count: 1,
+          top: "鈴鳴灯籠まつり",
+        },
       },
     ]);
   });
@@ -288,6 +296,7 @@ describe("スタッフの動き", () => {
     expect(state.staff.planner).toMatchObject({
       motion: "talk",
       bubble: "昼ごはんの店がまだです。もう一度探してもらえますか",
+      cue: { kind: "redo", redo: "request", to: "scout", subject: "lunch" },
     });
     expect(state.relay.focus).toBe("scout");
     state = applyEvent(state, {
@@ -312,6 +321,29 @@ describe("スタッフの動き", () => {
       ["redo_accept", "scout", "planner", "lunch"],
     ]);
     expect(state.relay.log[0]?.task).toBe("find_nearby");
+  });
+
+  it("吹き出しを辞書で言い直す型を持ち、旅程があるときの旅程係の出だしは組み直しにする", () => {
+    const start = {
+      type: "staff.start",
+      data: { staff: "planner", task: "plan_route", bubble: "道のりを調べます" },
+    } as const;
+    expect(applyEvent(fresh(), start).staff.planner.cue).toEqual({
+      kind: "start",
+      task: "plan_route",
+      replan: false,
+    });
+    const planned = {
+      ...fresh(),
+      itinerary: { ...fresh().itinerary, current: fictionalItinerary() },
+    };
+    expect(applyEvent(planned, start).staff.planner.cue).toMatchObject({ replan: true });
+    // 返答が終われば、コンシェルジュの吹き出しと一緒に型も消す
+    const talked = applyEvent(fresh(), {
+      type: "staff.start",
+      data: { staff: "concierge", task: "find_festivals", bubble: "調べてきますね" },
+    });
+    expect(endTurn(talked, null).staff.concierge.cue).toBeNull();
   });
 
   it("返答を話している間、コンシェルジュは話す動きになる", () => {

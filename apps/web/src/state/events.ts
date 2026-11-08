@@ -7,7 +7,7 @@ import {
   requestRedo,
   requestWork,
 } from "./relay";
-import type { AppData, ChatEntry, StaffMotion, StaffState, VerifyState } from "./types";
+import type { AppData, ChatEntry, StaffCue, StaffMotion, StaffState, VerifyState } from "./types";
 
 // SSE のイベントを、ストアの更新に変える。ここだけがイベントを読み、部品はストアだけを読む。
 // どれも純粋な関数にして、同じ状態と同じイベントからは、いつも同じ状態を返す。
@@ -96,6 +96,11 @@ function onStaffStart(state: AppData, data: SseEventOf<"staff.start">["data"]): 
     tool: null,
     bubble: data.bubble,
     detail: null,
+    cue: {
+      kind: "start",
+      task: data.task,
+      replan: data.task === "plan_route" && state.itinerary.current !== null,
+    },
   });
   return {
     ...next,
@@ -104,12 +109,14 @@ function onStaffStart(state: AppData, data: SseEventOf<"staff.start">["data"]): 
 }
 
 function onToolStart(state: AppData, data: SseEventOf<"tool.start">["data"]): AppData {
+  const cue: StaffCue = { kind: "tool_start", tool: data.tool };
   let next = patchStaff(state, data.staff, {
     phase: "working",
     motion: TOOL_MOTION[data.tool],
     tool: data.tool,
     bubble: data.bubble,
     detail: data.detail ?? null,
+    cue,
   });
   const entry: ChatEntry = {
     kind: "work",
@@ -119,6 +126,8 @@ function onToolStart(state: AppData, data: SseEventOf<"tool.start">["data"]): Ap
     status: "running",
     bubble: data.bubble,
     result: null,
+    cue,
+    resultCue: null,
   };
   next = {
     ...next,
@@ -133,12 +142,20 @@ function onToolStart(state: AppData, data: SseEventOf<"tool.start">["data"]): Ap
 }
 
 function onToolEnd(state: AppData, data: SseEventOf<"tool.end">["data"]): AppData {
+  const cue: StaffCue = {
+    kind: "tool_end",
+    tool: data.tool,
+    ok: data.ok,
+    count: data.count,
+    top: data.candidates?.[0]?.name ?? null,
+  };
   let next = patchStaff(finishTool(state, data.staff, data.ok), data.staff, {
     phase: "working",
     motion: "nod",
     tool: null,
     bubble: data.bubble,
     detail: data.detail ?? null,
+    cue,
   });
 
   const id = `w-${data.toolCallId}`;
@@ -148,7 +165,7 @@ function onToolEnd(state: AppData, data: SseEventOf<"tool.end">["data"]): AppDat
     ...next,
     messages: hasEntry
       ? updateEntry(next.messages, id, (entry) =>
-          entry.kind === "work" ? { ...entry, status, result: data.bubble } : entry,
+          entry.kind === "work" ? { ...entry, status, result: data.bubble, resultCue: cue } : entry,
         )
       : [
           ...next.messages,
@@ -160,6 +177,8 @@ function onToolEnd(state: AppData, data: SseEventOf<"tool.end">["data"]): AppDat
             status,
             bubble: data.bubble,
             result: data.bubble,
+            cue,
+            resultCue: cue,
           },
         ],
   };
@@ -195,6 +214,7 @@ function onStaffRedo(state: AppData, data: SseEventOf<"staff.redo">["data"]): Ap
     motion: data.kind === "request" ? "talk" : "nod",
     bubble: data.bubble,
     detail: data.detail ?? null,
+    cue: { kind: "redo", redo: data.kind, to: data.to, subject: data.subject },
   });
 }
 
@@ -332,6 +352,7 @@ export function closeTurn(state: AppData): AppData {
           tool: null,
           bubble: null,
           detail: null,
+          cue: null,
         });
       }
     } else if (staff.phase !== "idle" && staff.phase !== "returning") {

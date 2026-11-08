@@ -444,6 +444,8 @@ export function createAppStore(deps: StoreDeps): AppStore {
         return;
       }
       const { preferences } = state;
+      // 画面の言語を添えて、コンシェルジュに同じ言語で返事を書いてもらう
+      const { locale } = state.ui;
       if (!state.ui.dialogueOpen) setUi({ dialogueOpen: true });
       const extra = {
         ...(search === undefined ? {} : { search }),
@@ -452,7 +454,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
       await runStream(
         { kind: "chat", message, preferences, retry, ...extra },
         (onMessage, signal) =>
-          transport.chat({ sessionId, message, preferences, ...extra }, onMessage, signal),
+          transport.chat({ sessionId, message, preferences, locale, ...extra }, onMessage, signal),
       );
     };
 
@@ -463,8 +465,9 @@ export function createAppStore(deps: StoreDeps): AppStore {
         return;
       }
       const { preferences } = state;
+      const { locale } = state.ui;
       await runStream({ kind: "preferences", preferences }, (onMessage, signal) =>
-        transport.updatePreferences({ sessionId, preferences }, onMessage, signal),
+        transport.updatePreferences({ sessionId, preferences, locale }, onMessage, signal),
       );
     };
 
@@ -548,14 +551,19 @@ export function createAppStore(deps: StoreDeps): AppStore {
     };
 
     const runGuideTurn = async (message: string, retry: boolean, location?: LatLng) => {
-      const { session, guide } = get();
+      const { session, guide, ui } = get();
       if (guide.streaming || session.id === null || transport.guideChat === undefined) {
         return;
       }
       const request =
         location === undefined
-          ? { sessionId: session.id, message }
-          : { sessionId: session.id, message, location: roundLocation(location) };
+          ? { sessionId: session.id, message, locale: ui.locale }
+          : {
+              sessionId: session.id,
+              message,
+              location: roundLocation(location),
+              locale: ui.locale,
+            };
       updateGuide((current) => beginGuideTurn(current, message, retry));
       const current = new AbortController();
       guideController = current;

@@ -219,10 +219,10 @@ test("接客サーバーとしおりまで進むと、しおりの URL を出し
   // しおりは、共有と同じ URL の冊子をそのまま埋め込む
   await expect(page.getByTestId("shiori-booklet")).toHaveAttribute(
     "src",
-    //shiori/trip-suzunari-sample?embed=1$/,
+    /\/shiori\/trip-suzunari-sample\?embed=1&lang=ja$/,
   );
   await expect(page.getByTestId("shiori-pdf")).toHaveAttribute(
     "href",
-    //shiori/trip-suzunari-sample.pdf$/,
+    /\/shiori\/trip-suzunari-sample\.pdf$/,
   );
 });

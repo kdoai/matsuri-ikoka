@@ -1,4 +1,5 @@
-import type { FestivalSearchNext, SearchSuggestion } from "@matsuri-ikoka/schema";
+import type { FestivalSearchNext, GuideToolName, SearchSuggestion } from "@matsuri-ikoka/schema";
+import type { StaffCue } from "../state/types";
 
 // 日本語の文言。データとモデルの文章（祭りの名前や吹き出し）は、ここには入れない。
 
@@ -617,6 +618,17 @@ export const ja = {
       delivering: "届けている",
     },
   },
+  /**
+   * スタッフとガイドの吹き出しを、イベントの型から言い直す文。null ならサーバーの文をそのまま出す。
+   * 日本語は、サーバーが決まった型から作った文（日付や出発地まで入る）を使う
+   */
+  lines: {
+    bubble: (_cue: StaffCue): string | null => null,
+    detail: (_cue: StaffCue): string | null => null,
+    guideTool: (_tool: GuideToolName, _status: "running" | "ok" | "failed"): string | null => null,
+    /** 吹き出しや発言を、かぎかっこでくくる */
+    quote: (text: string) => `「${text}」`,
+  },
   chat: {
     title: "相談",
     greeting:
@@ -628,12 +640,16 @@ export const ja = {
     retry: "もう一度送る",
     you: "あなた",
     concierge: "コンシェルジュ",
+    /** 話し手の名前と文の間 */
+    labelSeparator: "：",
     work: { running: "作業中", ok: "完了", failed: "うまくいきませんでした" },
     preferenceChanged: (label: string, value: string) =>
       `こだわり「${label}」を「${value}」にしました`,
     tooLong: (max: number) => `${max}字までで書いてください`,
     starting: "相談の準備をしています",
     shioriReady: "旅のしおりができました",
+    /** 前の返事を作っている間に送ったとき（送り直せる bad_request） */
+    busy: "前の返事を作っています。終わってから送ってください。",
     errors: {
       bad_request: "送った内容の形が正しくありませんでした。",
       unauthorized: "合言葉が違います。",
