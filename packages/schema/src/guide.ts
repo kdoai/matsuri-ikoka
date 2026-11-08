@@ -5,6 +5,7 @@ import {
   IsoDateTimeSchema,
   type LatLng,
   LatLngSchema,
+  LocaleSchema,
   LocalTimeSchema,
   SessionIdSchema,
   SlugSchema,
@@ -555,6 +556,8 @@ export const GuideChatRequestSchema = z.strictObject({
   message: z.string().trim().min(1).max(MAX_MESSAGE_LENGTH),
   /** この発言のときだけ使う現在地。保存せず、ログにも残さない */
   location: LatLngSchema.optional(),
+  /** 画面の言語。ガイドはこの言語で返事を書く。省略すると日本語 */
+  locale: LocaleSchema.optional(),
 });
 export type GuideChatRequest = z.infer<typeof GuideChatRequestSchema>;
 

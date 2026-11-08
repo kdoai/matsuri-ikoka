@@ -57,6 +57,11 @@ export const SourceSchema = z.strictObject({
   confidence: ConfidenceSchema,
 });
 
+/** 画面の言語。ja 日本語 / en 英語。送られなければ日本語として扱う */
+export const LOCALES = ["ja", "en"] as const;
+export const LocaleSchema = z.enum(LOCALES);
+export const DEFAULT_LOCALE = "ja";
+
 /** 分からないことを、空欄ではなく明示するための値 */
 export const UNKNOWN = "unknown";
 
@@ -74,6 +79,7 @@ export type Weekday = z.infer<typeof WeekdaySchema>;
 export type OpeningHours = z.infer<typeof OpeningHoursSchema>;
 export type Confidence = z.infer<typeof ConfidenceSchema>;
 export type Source = z.infer<typeof SourceSchema>;
+export type Locale = z.infer<typeof LocaleSchema>;
 
 /** 出典のうち、いちばん強い確度を返す。出典がなければ null */
 export function strongestConfidence(sources: readonly Source[]): Confidence | null {

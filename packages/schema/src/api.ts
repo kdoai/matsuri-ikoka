@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { SessionIdSchema, SlugSchema } from "./common";
+import { LocaleSchema, SessionIdSchema, SlugSchema } from "./common";
 import { ErrorEventSchema } from "./events";
 import { FestivalSchema } from "./festival";
 import { TripAnchorSchema } from "./festivalSearch";
@@ -41,6 +41,8 @@ export const ChatRequestSchema = z.strictObject({
   search: SearchRetrySchema.optional(),
   /** 祭りから探して決めた祭り。あれば、この祭りを必ず行く場所にして旅程を組む */
   anchor: TripAnchorSchema.optional(),
+  /** 画面の言語。コンシェルジュはこの言語で返事を書く。省略すると日本語 */
+  locale: LocaleSchema.optional(),
 });
 export type ChatRequest = z.infer<typeof ChatRequestSchema>;
 
@@ -48,6 +50,8 @@ export type ChatRequest = z.infer<typeof ChatRequestSchema>;
 export const PreferencesRequestSchema = z.strictObject({
   sessionId: SessionIdSchema,
   preferences: PreferencesSchema,
+  /** 画面の言語。旅程を組み直すときの返事の言語。省略すると日本語 */
+  locale: LocaleSchema.optional(),
 });
 export type PreferencesRequest = z.infer<typeof PreferencesRequestSchema>;
 
