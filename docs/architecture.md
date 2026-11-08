@@ -17,7 +17,7 @@ flowchart LR
   subgraph Server["apps/server（Hono）"]
     ST["festivalStore<br/>起動時に読み込み、掲載停止を除く"]
     DM["domain/<br/>日程のルール・到着の余裕・旅程の検証"]
-    TL["tools/（MCP）×10<br/>候補を出す前の開催の確かめを含む"]
+    TL["tools/（MCP ×10）<br/>候補を出す前の開催の確かめを含む"]
     WR["Web の調べ（1回きりの query）<br/>開催の確かめ・行き方・寄り道・宿"]
     AR["AgentRunner<br/>live：Agent SDK / mock：記録の再生"]
     HK["hooks → SSE イベント"]
