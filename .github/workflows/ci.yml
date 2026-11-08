@@ -245,6 +245,8 @@ jobs:
     env:
       GITLEAKS_VERSION: 8.30.1
       GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+      # リリースの配布が止まっているときに使う、同じ版の公式イメージ（digest で固定）
+      GITLEAKS_IMAGE: ghcr.io/gitleaks/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -255,10 +257,21 @@ jobs:
       - name: gitleaks を入れる
         run: |
           archive="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
-          curl -sSfL -o "$RUNNER_TEMP/$archive" \
-            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/$archive"
-          echo "${GITLEAKS_SHA256}  $RUNNER_TEMP/$archive" | sha256sum --check
-          tar -xzf "$RUNNER_TEMP/$archive" -C "$RUNNER_TEMP" gitleaks
+          # リリースの配布が一時的に 5xx を返すことがあるので、間を置いて取り直す
+          if curl -sSfL --retry 4 --retry-delay 15 --retry-all-errors -o "$RUNNER_TEMP/$archive" \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/$archive"; then
+            echo "${GITLEAKS_SHA256}  $RUNNER_TEMP/$archive" | sha256sum --check
+            tar -xzf "$RUNNER_TEMP/$archive" -C "$RUNNER_TEMP" gitleaks
+          else
+            # 取れなければ、同じ版の公式イメージを digest で固定して使う
+            echo "::warning::gitleaks のリリースを取れなかったので、公式イメージを使う"
+            docker pull "$GITLEAKS_IMAGE"
+            cat > "$RUNNER_TEMP/gitleaks" <<'SH'
+          #!/usr/bin/env bash
+          exec docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/repo" -w /repo "$GITLEAKS_IMAGE" "$@"
+          SH
+            chmod +x "$RUNNER_TEMP/gitleaks"
+          fi
           echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
 
       - name: 秘密情報の混入チェック（gitleaks）
@@ -282,7 +295,8 @@ jobs:
       - name: actionlint を入れる
         run: |
           archive="actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
-          curl -sSfL -o "$RUNNER_TEMP/$archive" \
+          # リリースの配布が一時的に 5xx を返すことがあるので、間を置いて取り直す
+          curl -sSfL --retry 10 --retry-delay 30 --retry-all-errors -o "$RUNNER_TEMP/$archive" \
             "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/$archive"
           echo "${ACTIONLINT_SHA256}  $RUNNER_TEMP/$archive" | sha256sum --check
           tar -xzf "$RUNNER_TEMP/$archive" -C "$RUNNER_TEMP" actionlint

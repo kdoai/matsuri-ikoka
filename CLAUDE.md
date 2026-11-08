@@ -7,7 +7,7 @@
 ## 構成
 
 ```text
-apps/server/       接客サーバー（Hono）。domain・data・tools・agent・routes・mock
+apps/server/       接客サーバー（Hono）。domain・data・tools・agent・guide・patrol・routes・session・storage・account・shiori
 apps/web/          画面（Vite + React + Tailwind CSS）。state・ui・scenes・i18n
 packages/schema/   Zod のスキーマ（唯一の定義）。テスト用の架空のデータは ./testing
 packages/agent-kit/ Claude を呼ぶ処理の共通の部品（JSON の取り出し、URL の確認、出典の照合、失敗の分類）

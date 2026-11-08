@@ -121,7 +121,7 @@ pnpm --filter @matsuri-ikoka/web test:e2e
 
 ### live で相談からしおりまで確かめる
 
-CI はキーなしのモックで走るので、Claude を実際に呼ぶ確認は手元で行います。エージェントやプロンプト、ツールを変えたときは、`check:live -- --shiori` で、候補 → 祭りを選ぶ → 旅程 → 決定 → 確定前の再確認 → しおり（HTML と PDF）までを流し、段階ごとの OK / NG と、かかった時間・費用の合計を PR の「確かめたこと」に書きます。実在の祭りのデータで流す使い方（`--festivals` と `--say`）は [README の「Claude と話す（live）」](../README.md#claude-と話すlive) にあります。
+CI はキーなしのモックで走るので、Claude を実際に呼ぶ確認は手元で行います。エージェントやプロンプト、ツールを変えたときは、`check:live -- --shiori` で、候補 → 祭りを選ぶ → 旅程 → 決定 → 確定前の再確認 → しおり（HTML と PDF）までを流し、段階ごとの OK / NG と、かかった時間・費用の合計を PR の「確かめたこと」に書きます。実在の祭りのデータで流す使い方（`--festivals` と `--say`）は [README の「Claude と話す」](../README.md#claude-と話す) にあります。
 
 ```bash
 MATSURI_AGENT_MODE=live MODEL_CONCIERGE=<モデル名> MODEL_STAFF=<モデル名> \
@@ -140,16 +140,17 @@ main に入ると [`deploy.yml`](../.github/workflows/deploy.yml) が Cloud Run 
 
 開発用のスキル・エージェント・フックは、リポジトリの根の [`.claude/`](../.claude) にだけ置きます。
 
-| スキル              | 使いどころ                                                                 |
-| ------------------- | -------------------------------------------------------------------------- |
-| `commit`            | 決まり（種類・スコープ・パスを指定した `git add`）に沿ってコミットする     |
-| `create-issue`      | テンプレートとラベルを選んで Issue を起票する                              |
-| `create-pr`         | PR のテンプレートに沿って PR を作る                                        |
-| `review-pr`         | このリポジトリの決まり（`CLAUDE.md` の「守ること」）に照らして差分を見直す |
-| `resolve-issue`     | Issue を1件選び、worktree で直して PR にし、CI が通ったらマージする        |
-| `release-notes`     | main に入った変更から、使う人に向けた変更の一覧を作る                      |
-| `setup-github-repo` | GitHub のリポジトリの設定（保護・必須の検査・ラベル）を入れる・確かめる    |
-| `festival-research` | 公開の情報から祭りを調べ、出典と確度つきの祭りのデータにする               |
+| スキル              | 使いどころ                                                                  |
+| ------------------- | --------------------------------------------------------------------------- |
+| `commit`            | 決まり（種類・スコープ・パスを指定した `git add`）に沿ってコミットする      |
+| `create-issue`      | テンプレートとラベルを選んで Issue を起票する                               |
+| `create-pr`         | PR のテンプレートに沿って PR を作る                                         |
+| `review-pr`         | このリポジトリの決まり（`CLAUDE.md` の「守ること」）に照らして差分を見直す  |
+| `resolve-issue`     | Issue を1件選び、worktree で直して PR にし、CI が通ったらマージする         |
+| `release-notes`     | main に入った変更から、使う人に向けた変更の一覧を作る                       |
+| `setup-github-repo` | GitHub のリポジトリの設定（保護・必須の検査・ラベル）を入れる・確かめる     |
+| `festival-research` | 公開の情報から祭りを調べ、出典と確度つきの祭りのデータにする                |
+| `shiori`            | 旅のしおり（HTML と A4 の PDF）の見た目・改ページを直し、書き出して確かめる |
 
 エージェント：`data-auditor`（祭りのデータを検品し、見つけたことを報告する。書き換えない）。
 

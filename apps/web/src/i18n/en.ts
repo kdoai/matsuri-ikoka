@@ -271,6 +271,10 @@ const prefectures = {
 };
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+/** Minutes as "2 h 30 min" (under an hour: "45 min") */
+const duration = (m: number) =>
+  m < 60 ? `${m} min` : m % 60 === 0 ? `${m / 60} h` : `${Math.floor(m / 60)} h ${m % 60} min`;
+
 export const en: Messages = {
   app: {
     name: "MATSURI IKOKA",
@@ -283,7 +287,7 @@ export const en: Messages = {
     preparingScene: "Getting the shop ready…",
     restart: "Start over",
     restartConfirm:
-      "Start over? The current plan will leave this screen (its guide link and any kept trip still open).",
+      "Start over? The current plan will leave this screen (its booklet link and any kept trip still open).",
     resumed:
       "Picking up where we left off. Your plan is still here — tell me anything you'd like to change.",
     resumedTrip: (title: string) =>
@@ -304,7 +308,7 @@ export const en: Messages = {
   },
   dialogue: {
     thinking: "One moment, please",
-    close: "Put the dialogue away",
+    close: "Hide the conversation",
     talkToConcierge: "Talk to the concierge",
     log: "Conversation log",
     closeLog: "Close",
@@ -355,7 +359,7 @@ export const en: Messages = {
     readAloudTitle: (label: string, hint: string) => `${label} (${hint})`,
     readAloudRemoteTitle: "Before turning on read aloud",
     readAloudRemote:
-      "No reading voice was found on this device. Some browsers send the text to the browser maker's servers to read it aloud.",
+      "No text-to-speech voice was found on this device. Some browsers send the text to the browser maker's servers to read it aloud.",
     readAloudConfirm: "Turn on",
     readAloudCancel: "Cancel",
     hold: "Hold to speak",
@@ -418,7 +422,7 @@ export const en: Messages = {
     members: consultMembers,
     prefectures,
     travelLabel: "From your station (one way, for a day trip)",
-    travelOption: (minutes: number) => `Within ${minutes / 60} h`,
+    travelOption: (minutes: number) => `Within ${duration(minutes)}`,
     transportLabel: "How you'd like to travel (choose any, or leave it to us)",
     transport: consultTransport,
     dietaryLabel: "Dietary needs (if any, choose any)",
@@ -457,14 +461,14 @@ export const en: Messages = {
     stationSourceLink: "Open the source page (new tab)",
     station: (name: string) => `${name} Station`,
     amountLabel: (basis: string) => `Or enter an amount (${basis})`,
-    basisLabel: "Count the budget",
+    basisLabel: "Budget basis",
     amountUnit: "yen",
     notePlaceholder: "e.g. Our kids get tired walking long distances",
     decide: "OK",
     skip: "Nothing else",
     back: "Previous step",
     forward: "Next step",
-    submit: "Ask with these",
+    submit: "Ask about this",
     edit: "Change",
     unanswered: "Not answered yet",
     needOne: "Answer at least one to ask",
@@ -509,7 +513,7 @@ export const en: Messages = {
     },
     entry: {
       label: "How to start",
-      prompt: "Welcome! How would you like to look today?",
+      prompt: "Welcome! How would you like to search today?",
       note: "If you haven't settled on a festival yet, start from festivals. If your dates or starting point come first, start from a trip plan.",
       festival: "Start from festivals",
       trip: "Start from a trip plan",
@@ -538,8 +542,7 @@ export const en: Messages = {
         nights === 0 ? "day trip" : `${plural(nights, "night", "nights")}`,
       amount: (yen: number) => `¥${yen.toLocaleString("en-US")}`,
       budgetBasis: { perPerson: "per person", total: "for everyone" },
-      travel: (minutes: number) =>
-        `Within ${minutes / 60} hour${minutes === 60 ? "" : "s"} one way from your station`,
+      travel: (minutes: number) => `Within ${duration(minutes)} one way from your station`,
       dietary: (needs: string[]) => `dietary needs: ${needs.join(", ")}`,
       dietaryOptions: consultDietary,
       transport: (modes: string[]) => `getting around by ${modes.join(", ")}`,
@@ -576,7 +579,7 @@ export const en: Messages = {
     areaAuto: "Up to you (all of Japan)",
     wishLabel: "Anything else",
     wishPlaceholder: "e.g. beautiful lights at night, fun with children",
-    search: "Search with these",
+    search: "Search",
     searching: "Looking for festivals that match. One moment, please",
     retry: "Search again",
     results: {
@@ -642,7 +645,7 @@ export const en: Messages = {
     marker: "Ask here",
   },
   activity: {
-    title: "In the shop",
+    title: "Inside the shop",
   },
   hud: {
     sections: {
@@ -661,7 +664,7 @@ export const en: Messages = {
       "Talk to the concierge and choose to start from festivals or from a trip plan. You can also just write freely.",
       "Starting from festivals, pick the kind, season and area, then compare the festivals that match.",
       "Starting from a trip plan, pick who, when and where. Choose “Other” to write freely.",
-      "Pick one of the festivals, and the staff will plan your day.",
+      "Pick one of the festivals, and the staff will plan your trip.",
       "Open “Plan details” (X) to see the plan, the map and the sources.",
       "We check that the festival is on before suggesting it. Say you've decided, and we hand you the travel booklet.",
       "Walk with WASD, the arrow keys, a gamepad or a tap. Get close to the staff to talk, and press E to use things in the shop.",
@@ -861,14 +864,14 @@ export const en: Messages = {
     title: "Trip preferences",
     labels: { party: "With", spot: "Places", food: "Food", move: "Travel" },
     party: { adults: "Adults only", kids: "With kids", seniors: "With seniors" },
-    spot: { classic: "Classic", auto: "Mix", hidden: "Hidden gems" },
+    spot: { classic: "Classic", auto: "Up to you", hidden: "Hidden gems" },
     food: { stalls: "Stalls are fine", local: "Local restaurants too" },
     move: { train: "Train", car: "Car" },
   },
   confidence: {
     official: "Official",
     corroborated: "Corroborated",
-    single: "Check again",
+    single: "One source",
     inferred: "Estimated",
     label: "Confidence",
   },
@@ -891,13 +894,7 @@ export const en: Messages = {
     noneFound: "No festivals match your conditions",
     noneFoundLine: "No festivals match your conditions. Try another way to search",
     travel: (lower: number, upper: number, estimate: boolean) => {
-      const span = (m: number) =>
-        m < 60
-          ? `${m} min`
-          : m % 60 === 0
-            ? `${m / 60} h`
-            : `${Math.floor(m / 60)} h ${m % 60} min`;
-      const range = lower === upper ? span(lower) : `${span(lower)}–${span(upper)}`;
+      const range = lower === upper ? duration(lower) : `${duration(lower)}–${duration(upper)}`;
       return `About ${range} one way from your station${estimate ? " (estimate)" : ""}`;
     },
     next: {
@@ -920,7 +917,7 @@ export const en: Messages = {
             return `Search on later dates (${dates})`;
           }
           case "longer_travel":
-            return `Allow up to ${(retry?.maxTravelMinutes ?? 0) / 60} h one way`;
+            return `Allow up to ${duration(retry?.maxTravelMinutes ?? 0)} one way`;
           case "wider_area":
             return retry?.widen === "nationwide"
               ? "Search all of Japan"
@@ -1014,8 +1011,8 @@ export const en: Messages = {
     },
     dayHeading: (n: number, date: string) => `Day ${n} (${date})`,
     route: "Route",
-    tabs: { itinerary: "Plan", map: "Trip guide", sources: "Packing & checks" },
-    panelLabel: "Travel booklet (plan, trip guide, packing and checks)",
+    tabs: { itinerary: "Plan", map: "Trip info", sources: "Packing & checks" },
+    panelLabel: "Travel booklet (plan, trip info, packing and checks)",
     closePanel: "Close the panel",
     empty: "No plan yet. Choose a festival and your plan will appear here.",
     version: (n: number) => `Version ${n}`,
@@ -1111,7 +1108,7 @@ export const en: Messages = {
   },
   celebration: {
     title: "Travel booklet complete",
-    sub: "The schedule was confirmed with official information",
+    sub: "The schedule has been checked",
   },
   shiori: {
     print: "Print",
@@ -1126,7 +1123,7 @@ export const en: Messages = {
     retry: "Try again",
     close: "Back to the shop",
     keep: "Keep this trip",
-    kept: "Kept. You can open it any time from Sign in and my trips.",
+    kept: "Kept. You can open it any time from “Sign in and my trips.”",
     keepLogin: "Sign in to keep this trip",
     keepFailed: "Couldn't keep it. Please try again in a moment.",
     share: "Booklet URL",
@@ -1299,7 +1296,7 @@ export const en: Messages = {
     proposalsTitle: "Suggested changes from your guide",
     outcome: {
       applied: (version: number) =>
-        `Your plan is updated (version ${version}). You can see what changed in your trip guide.`,
+        `Your plan is updated (version ${version}). You can see what changed in your travel booklet.`,
       reverted: (version: number) => `Your plan is back to before the change (version ${version}).`,
       rejected: "We kept your current plan.",
       stale:
@@ -1337,7 +1334,7 @@ export const en: Messages = {
     you: "You",
     phase: { before: "Before you leave", during: "On your trip", after: "After your trip" },
     guestNote:
-      "On this device, this trip stays open for 30 days after you last use it (or until 3 days after a later trip).",
+      "On this device, this trip stays open for 30 days after it was last saved, or until 3 days after the trip ends if that is later.",
     guestKeep: "Keep it to open it later and come back to this street.",
     guestLogin: "Sign in and my trips",
     dismiss: "Close",

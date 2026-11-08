@@ -3,6 +3,9 @@ import type { StaffCue } from "../state/types";
 
 // 日本語の文言。データとモデルの文章（祭りの名前や吹き出し）は、ここには入れない。
 
+/** 分を「2時間30分」の形にする（60分未満は「45分」） */
+const duration = (m: number) =>
+  m < 60 ? `${m}分` : m % 60 === 0 ? `${m / 60}時間` : `${Math.floor(m / 60)}時間${m % 60}分`;
 const range = (min: number, max: number) => (min === max ? `${min}` : `${min}〜${max}`);
 
 // カレンダーの曜日（日曜はじまり）。日付の曜日は、暦の日付から数える
@@ -260,7 +263,7 @@ export const ja = {
     steps: {
       party: "だれと",
       schedule: "日程",
-      origin: "出発地",
+      origin: "出発する駅",
       destination: "行き先",
       activities: "楽しみ",
       food: "食べたいもの",
@@ -288,7 +291,7 @@ export const ja = {
     members: consultMembers,
     prefectures,
     travelLabel: "出発の駅から（片道・日帰りのとき）",
-    travelOption: (minutes: number) => `${minutes / 60}時間以内`,
+    travelOption: (minutes: number) => `${duration(minutes)}以内`,
     transportLabel: "使いたい交通手段（いくつでも・選ばなければおまかせ）",
     transport: consultTransport,
     dietaryLabel: "食事で気をつけたいこと（あれば・いくつでも）",
@@ -397,7 +400,7 @@ export const ja = {
       nights: (nights: number) => (nights === 0 ? "日帰り" : `${nights}泊${nights + 1}日`),
       amount: (yen: number) => `${yen.toLocaleString("ja-JP")}円`,
       budgetBasis: { perPerson: "1人あたり", total: "全員で" },
-      travel: (minutes: number) => `出発の駅から片道${minutes / 60}時間以内`,
+      travel: (minutes: number) => `出発の駅から片道${duration(minutes)}以内`,
       dietary: (needs: string[]) => `気をつけたいこと：${needs.join("・")}`,
       dietaryOptions: consultDietary,
       transport: (modes: string[]) => `交通手段：${modes.join("・")}`,
@@ -427,8 +430,8 @@ export const ja = {
       community: "地域の祭り",
       traditional: "伝統的な祭り",
       participatory: "参加型の祭り",
-      hidden: "マイナーなお祭り",
-      famous: "メジャーなお祭り",
+      hidden: "穴場の祭り",
+      famous: "よく知られた祭り",
     },
     seasons: { spring: "春", summer: "夏", autumn: "秋", winter: "冬" },
     areaAuto: "おまかせ（全国）",
@@ -512,7 +515,7 @@ export const ja = {
       "祭りから探すときは、種類・季節・地域を選ぶと、合う祭りを見比べられます。",
       "旅行計画から探すときは、誰と・いつ・どこへなどを選びます。「その他」を選ぶと、自由に書けます。",
       "祭りの候補から1つ選ぶと、スタッフが旅程を組みます。",
-      "旅程は「旅程詳細」（X）で開く旅のしおりで、地図と出典もいっしょに見られます。",
+      "旅程は「旅程詳細」（X）で開けます。地図と出典もいっしょに見られます。",
       "開催は候補を出す前に確かめてあります。「決定」と伝えると、そのまま旅のしおりができます。",
       "旅人は WASD・矢印・ゲームパッド・タップで歩けます。スタッフに近づくと話せて、店の中の仕掛けも E で使えます。",
     ],
@@ -710,7 +713,7 @@ export const ja = {
   confidence: {
     official: "公式で確認",
     corroborated: "複数で確認",
-    single: "要確認",
+    single: "情報源1つ",
     inferred: "推定",
     label: "確度",
   },
@@ -724,15 +727,13 @@ export const ja = {
       days === 0 ? "ご希望の日" : days > 0 ? `ご希望の${days}日後` : `ご希望の${-days}日前`,
     unconfirmed: "未確認",
     needsCheck: "要事前確認",
-    found: (place: string) => `${place}で、ちょっと珍しいお祭りを見つけたよ！`,
+    found: (place: string) => `${place}で、ちょっと珍しい祭りを見つけたよ！`,
     foundMany: (count: number) => `${count}つ、おすすめの祭りを見つけたよ！`,
     noneFound: "条件に合う祭りは見つかりませんでした",
     noneFoundLine: "条件に合う祭りは見つかりませんでした。ほかの探し方を選べます",
     /** 片道の所要時間（分の幅）。駅の位置からの見積もりなら「目安」と添える */
     travel: (lower: number, upper: number, estimate: boolean) => {
-      const span = (m: number) =>
-        m < 60 ? `${m}分` : m % 60 === 0 ? `${m / 60}時間` : `${Math.floor(m / 60)}時間${m % 60}分`;
-      const range = lower === upper ? span(lower) : `${span(lower)}〜${span(upper)}`;
+      const range = lower === upper ? duration(lower) : `${duration(lower)}〜${duration(upper)}`;
       return `出発の駅から片道およそ${range}${estimate ? "（目安）" : ""}`;
     },
     next: {
@@ -749,7 +750,7 @@ export const ja = {
     hideDetails: "詳細を閉じる",
     filters: {
       label: "絞り込み",
-      area: "エリア",
+      area: "地域",
       month: "時期",
       theme: "テーマ",
       all: "すべて",
@@ -918,17 +919,17 @@ export const ja = {
   },
   celebration: {
     title: "旅のしおり完成",
-    sub: "開催予定を公式情報で確認しました",
+    sub: "開催予定を確かめました",
   },
   shiori: {
     print: "印刷する",
     savePdf: "PDF で保存",
-    savingPdf: "PDF を用意しています…",
+    savingPdf: "PDF を用意しています……",
     pdfBusy: "PDF を作るのが混み合っています。少し待ってから、もう一度押してください。",
     pdfFailed: "PDF を保存できませんでした。通信のようすを確かめて、もう一度お試しください。",
     booklet: "旅のしおり（冊子）",
     notReady: "しおりは、開催予定を確かめてからお渡しします。",
-    preparing: "しおりを用意しています…",
+    preparing: "しおりを用意しています……",
     prepareFailed: "しおりを用意できませんでした。通信のようすを確かめて、もう一度お試しください。",
     retry: "もう一度試す",
     close: "店内に戻る",
@@ -1138,7 +1139,7 @@ export const ja = {
     you: "あなた",
     phase: { before: "出発の前", during: "旅の間", after: "旅のあと" },
     guestNote:
-      "この旅は、この端末から、最後に使ってから30日（先の旅なら、旅の最終日の3日後）まで開けます。",
+      "この旅は、この端末から、最後の保存から30日と、旅の最終日の3日後の遅いほうまで開けます。",
     guestKeep: "旅を残すと、あとで開いて、この通りに戻れます。",
     guestLogin: "ログインと自分の旅",
     dismiss: "閉じる",
