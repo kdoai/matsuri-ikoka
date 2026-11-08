@@ -444,4 +444,11 @@ Issue からデプロイ、祭りのデータの週次の更新までの流れ�
 
 ## ライセンス
 
-[MIT](LICENSE)
+[MIT](LICENSE)。ただし、次のものは元の条件に従います。
+
+| 場所                                              | 中身                                     | 条件                                                                                       |
+| ------------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------ |
+| [`data/places/`](data/places/README.md)           | OpenStreetMap から抜き出した店と宿の一覧 | [ODbL 1.0](https://opendatacommons.org/licenses/odbl/1-0/)（© OpenStreetMap contributors） |
+| [`assets/shiori/fonts/`](assets/shiori/README.md) | Zen Maru Gothic                          | [SIL Open Font License 1.1](assets/shiori/fonts/OFL.txt)                                   |
+
+BGM（[`assets/audio/`](assets/audio/README.md)）は Suno の Pro プランで作った曲で、権利はこのリポジトリの作者が持ち、MIT で公開します。
