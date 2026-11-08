@@ -39,6 +39,7 @@
 - [できないこと](#できないこと)
 - [個人情報の扱い](#個人情報の扱い)
 - [仕組み](#仕組み)
+- [Claude の使い方](#claude-の使い方)
 - [評価](#評価)
 - [開発](#開発)
 - [ライセンス](#ライセンス)
@@ -357,6 +358,70 @@ flowchart LR
 | [設計判断の記録（ADR）](docs/adr/README.md) | Agent SDK、データの持ち方、3D、ログイン、宿、週次の調査、見回りなど |
 | [評価](docs/evaluation.md)                  | 何を測り、何を測っていないか                                        |
 | [開発の流れ](docs/development.md)           | Issue からデプロイまで、CI のジョブ、Claude Code のスキル           |
+
+## Claude の使い方
+
+開発・製品・運用の3つを同じ Claude で回し、場面ごとに使う形を分けています。
+
+<table>
+  <tr>
+    <th align="left" width="120">場面</th>
+    <th align="left" width="200">使う形</th>
+    <th align="left">何をするか</th>
+  </tr>
+  <tr>
+    <td><b>開発</b></td>
+    <td>Claude Code</td>
+    <td>Issue の起票・コミット・PR・見直し・リリースノートまでの各段を、このリポジトリの決まりをスキルにして任せます。祭りのデータの調査と検品も同じ Claude Code で行います。<code>resolve-issue</code> スキルは Issue を1件選び、専用の worktree で直して PR にし、CI が通ったらマージするところまでを、人がいなくても進められる形にしてあります</td>
+  </tr>
+  <tr>
+    <td><b>製品（接客）</b></td>
+    <td>Claude Agent SDK</td>
+    <td>コンシェルジュと3人のスタッフ（サブエージェント）のマルチエージェント。使える道具はプロセス内の MCP サーバーの自作のツールだけで、ファイルやシェルは渡しません。開発用の設定・スキル・<code>CLAUDE.md</code> は読まず、コンテナにも入れません</td>
+  </tr>
+  <tr>
+    <td><b>運用</b></td>
+    <td>Claude Managed Agents</td>
+    <td>祭りのデータの週次の調査（<a href="managed-agents/">managed-agents/</a>）と、頼まれた旅の見回り（<a href="managed-agents-patrol/">managed-agents-patrol/</a>）。定期実行で動き、結果はコードが検査してから PR や通知にします。調査員には、開発で使う <code>festival-research</code> スキルだけを渡します</td>
+  </tr>
+</table>
+
+Claude の機能も、目的ごとに使い分けています。
+
+<table>
+  <tr>
+    <th align="left" width="200">機能</th>
+    <th align="left" width="200">目的</th>
+    <th align="left">このリポジトリでの中身</th>
+  </tr>
+  <tr>
+    <td>スキル<br><sub><a href=".claude/skills/">.claude/skills/</a></sub></td>
+    <td>手順と決まりを渡す</td>
+    <td>開発の各段の <code>commit</code>・<code>create-issue</code>・<code>create-pr</code>・<code>review-pr</code>・<code>resolve-issue</code>・<code>release-notes</code>・<code>setup-github-repo</code>、祭りの調査の <code>festival-research</code>、しおりの作り直しの <code>shiori</code></td>
+  </tr>
+  <tr>
+    <td>サブエージェント<br><sub><a href=".claude/agents/">.claude/agents/</a>、<a href="apps/server/src/agent/">apps/server/src/agent/</a></sub></td>
+    <td>別の目で見る、役割を分ける</td>
+    <td>開発では <code>data-auditor</code> が、祭りのデータの出典・確度・推測の混入・確認日の古さを、ファイルを書き換えずに検品して報告します。製品では祭り調査係・周辺係・旅程係が、それぞれに許したツールだけで調べます</td>
+  </tr>
+  <tr>
+    <td>MCP ツール<br><sub><a href="apps/server/src/tools/">apps/server/src/tools/</a></sub></td>
+    <td>判断は Claude、計算はコード</td>
+    <td>祭りの検索・開催の確かめ・行き方・天気・宿・旅程の保存など10個の自作ツール。絞り込みと検証をコードで行い、結果だけを Claude に返します</td>
+  </tr>
+  <tr>
+    <td>フック<br><sub><a href="apps/server/src/agent/hooks.ts">apps/server/src/agent/hooks.ts</a></sub></td>
+    <td>ツールの前後を画面に伝える、決まりを守らせる</td>
+    <td>ツールの前後で SSE のイベントを出し、画面のスタッフと吹き出しを動かします。スタッフと道具の組み合わせや、スタッフを呼ぶ回数もここで守ります</td>
+  </tr>
+  <tr>
+    <td>権限の設定<br><sub><a href=".claude/settings.json">.claude/settings.json</a></sub></td>
+    <td>読ませないものを決める</td>
+    <td><code>.env</code> の読み取りを共有の設定で拒否します</td>
+  </tr>
+</table>
+
+Issue からデプロイ、祭りのデータの週次の更新までの流れと CI のジョブは[開発の流れ](docs/development.md)、開発用のものとアプリを分ける決まりは[同じ文書の「開発用のものとアプリを分ける」](docs/development.md#開発用のものとアプリを分ける)にあります。
 
 ## 評価
 
