@@ -708,6 +708,8 @@ export const en: Messages = {
     submitRetry: "Enter and resend",
     wrong: "The passcode is not correct.",
     halfWidth: "Please use half-width letters, numbers and symbols for the passcode.",
+    where:
+      "Please get the passcode from the person who shared this URL. Without one, you can still try the app by running it on your own computer, following the repository README. The passcode is not kept on this device, so enter it again after reloading or in a new tab.",
   },
   conditions: {
     title: "What we understood",
@@ -990,6 +992,9 @@ export const en: Messages = {
     title: "Travel booklet",
     print: "Print",
     savePdf: "Save as PDF",
+    savingPdf: "Preparing the PDF…",
+    pdfBusy: "We're busy making PDFs right now. Please wait a moment, then try again.",
+    pdfFailed: "We couldn't save the PDF. Please check your connection and try again.",
     openBooklet: "Open the booklet",
     booklet: "Travel booklet",
     notReady: "We will hand you the booklet once the festival dates are confirmed.",

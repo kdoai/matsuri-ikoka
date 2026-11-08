@@ -291,6 +291,19 @@ export function createServerTransport(options: ServerTransportOptions = {}): Cha
         return false;
       }
     },
+    async checkAccess() {
+      // 合言葉の確かめは /api のすべてに掛かる。相談を始めずに済む、ログインの設定の口で確かめる
+      try {
+        const response = await fetchImpl("/api/auth/config", {
+          headers: authHeaders(passcode),
+          signal: AbortSignal.timeout(SERVER_CHECK_TIMEOUT_MS),
+        });
+        if (response.status === 401) return "passcode";
+        return response.ok ? "open" : "unknown";
+      } catch {
+        return "unknown";
+      }
+    },
     setPasscode(value) {
       passcode.set(value);
     },
