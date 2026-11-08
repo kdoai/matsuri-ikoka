@@ -267,12 +267,14 @@ pnpm --filter @matsuri-ikoka/server check:live -- --festivals "$PWD/data/festiva
 ## 仕組み
 
 ```mermaid
-flowchart TB
+flowchart LR
   subgraph Data["データ（Git で管理）"]
+    direction TB
     MA["Claude Managed Agents<br/>週次の調査（120日先まで）→ PR"]
     FJ["data/festivals/*.json<br/>出典・確認した日・確度つき"]
   end
   subgraph Server["接客サーバー（Hono）"]
+    direction TB
     ST["祭りのデータ<br/>起動時に読み込み、掲載停止を除く"]
     DM["domain/<br/>日程・移動・旅程の検証（コード）"]
     TL["自作の MCP ツール"]
@@ -283,18 +285,23 @@ flowchart TB
     SH["しおり<br/>HTML と A4 の PDF"]
   end
   subgraph Web["画面（Vite + React）"]
+    direction TB
     SE["state/：SSE → ストア"]
     UI["会話の窓・旅程・地図・しおり"]
     TD["3D の店と縁日の通り"]
   end
-  MA --> FJ --> ST --> TL
-  DM --> TL --> AG
+  MA --> FJ
+  ST --> TL
+  DM --> TL
+  TL --> AG
   WEB --> AG
-  AG -->|SSE| SE
-  AG --> SV --> SH --> UI
-  SV --> GD -->|SSE| SE
+  AG --> SV
+  SV --> SH
+  SV --> GD
   SE --> UI
   SE --> TD
+  Data -->|起動時に読み込む| Server
+  Server -->|SSE・しおり| Web
 ```
 
 <table>
