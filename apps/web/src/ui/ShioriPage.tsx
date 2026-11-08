@@ -4,9 +4,52 @@ import { useActions, useApp, useT } from "../state/react";
 import { shioriReady } from "../state/selectors";
 import { buttonPrimary, buttonSecondary } from "./common";
 import { resolveShioriUrl } from "./links";
+import { fetchShioriPdf, saveBlob } from "./pdfDownload";
 
 // 旅のしおり。サーバーが作る冊子のしおり（GET /shiori/:id。PDF と同じ A4 の紙）を、そのまま埋め込んで見せる。
 // しおりの中は見開きで2ページずつ並び、左右の矢印でめくる。印刷と PDF も同じ紙になる。
+
+/** PDF の保存のボタン。取って確かめてから保存し、失敗したらその旨を出す */
+function SavePdfButton({ url }: { url: string }) {
+  const t = useT();
+  const [status, setStatus] = useState<"idle" | "saving" | "busy" | "failed">("idle");
+  const save = async () => {
+    setStatus("saving");
+    const result = await fetchShioriPdf(url);
+    if (!result.ok) {
+      setStatus(result.reason);
+      return;
+    }
+    saveBlob(result.blob, result.filename);
+    setStatus("idle");
+  };
+  return (
+    <>
+      <a
+        href={url}
+        download
+        aria-disabled={status === "saving"}
+        className={`${buttonPrimary} inline-flex items-center`}
+        data-testid="shiori-pdf"
+        onClick={(event) => {
+          event.preventDefault();
+          if (status !== "saving") void save();
+        }}
+      >
+        {status === "saving" ? t.shiori.savingPdf : t.shiori.savePdf}
+      </a>
+      {status === "busy" || status === "failed" ? (
+        <p
+          role="alert"
+          className="basis-full rounded-lg bg-kinari-50 px-3 py-1 text-ink text-sm"
+          data-testid="shiori-pdf-error"
+        >
+          {status === "busy" ? t.shiori.pdfBusy : t.shiori.pdfFailed}
+        </p>
+      ) : null}
+    </>
+  );
+}
 
 /** しおりの URL と、コピーのボタン */
 function ShareBox({ url }: { url: string }) {
@@ -123,14 +166,7 @@ export function ShioriPage() {
             >
               {t.shiori.print}
             </button>
-            <a
-              href={`${shareUrl}.pdf`}
-              download
-              className={`${buttonPrimary} inline-flex items-center`}
-              data-testid="shiori-pdf"
-            >
-              {t.shiori.savePdf}
-            </a>
+            <SavePdfButton key={shareUrl} url={`${shareUrl}.pdf`} />
           </div>
         )}
         {shareUrl === null ? null : <ShareBox url={shareUrl} />}

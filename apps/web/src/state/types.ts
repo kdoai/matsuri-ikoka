@@ -186,6 +186,11 @@ export interface SessionState {
   turnTools: ToolName[];
   /** この発言で候補が届き、まだ見せていないか。返答が終わって選べるようになったら候補を開く */
   newCandidates: boolean;
+  /**
+   * 返答の途中で利用者が切り替えたこだわり。done で届いたこだわりより先に使い、
+   * 返答のあとにサーバーへ送る（返答の途中はサーバーが受け付けないため）
+   */
+  editedPreferences: Array<keyof Preferences>;
 }
 
 export interface ItineraryState {
