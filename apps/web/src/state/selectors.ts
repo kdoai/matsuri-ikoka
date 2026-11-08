@@ -9,7 +9,7 @@ import {
   type SpotPin,
   type StaffId,
 } from "@matsuri-ikoka/schema";
-import type { AppData, ChatEntry } from "./types";
+import type { AppData, ChatEntry, StaffCue } from "./types";
 
 // ストアから画面に出す形を取り出す。部品はここを通して読む。
 
@@ -166,7 +166,7 @@ export type DialogueLine =
   /** 送ったあと、何か届くまで */
   | { kind: "waiting"; userText: string }
   /** スタッフが調べている間の吹き出し（コンシェルジュが話し始める前） */
-  | { kind: "work"; staff: StaffId; text: string }
+  | { kind: "work"; staff: StaffId; text: string; cue: StaffCue }
   | { kind: "concierge"; id: string; text: string; streaming: boolean }
   | { kind: "error"; entry: Extract<ChatEntry, { kind: "error" }> };
 
@@ -190,7 +190,12 @@ export function currentLine(state: Pick<AppData, "messages" | "session">): Dialo
   if (state.session.streaming) {
     const work = since.findLast((entry) => entry.kind === "work");
     if (work?.kind === "work") {
-      return { kind: "work", staff: work.staff, text: work.result ?? work.bubble };
+      return {
+        kind: "work",
+        staff: work.staff,
+        text: work.result ?? work.bubble,
+        cue: work.resultCue ?? work.cue,
+      };
     }
     const user = messages[lastUser];
     return { kind: "waiting", userText: user?.kind === "user" ? user.text : "" };

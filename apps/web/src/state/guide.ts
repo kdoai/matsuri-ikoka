@@ -438,7 +438,7 @@ export type GuideLine =
   | { kind: "unavailable" }
   | { kind: "report"; notice: GuideNotice }
   | { kind: "waiting" }
-  | { kind: "tool"; bubble: string }
+  | { kind: "tool"; tool: GuideToolName; bubble: string }
   | { kind: "guide"; id: string; text: string; streaming: boolean }
   | {
       kind: "error";
@@ -471,7 +471,9 @@ export function guideLine(guide: GuideState): GuideLine {
         said: said?.kind === "guide" ? said.text : null,
       };
     }
-    if (entry.kind === "tool" && entry.running) return { kind: "tool", bubble: entry.bubble };
+    if (entry.kind === "tool" && entry.running) {
+      return { kind: "tool", tool: entry.tool, bubble: entry.bubble };
+    }
   }
   return guide.availability === "unavailable" ? { kind: "unavailable" } : { kind: "greeting" };
 }

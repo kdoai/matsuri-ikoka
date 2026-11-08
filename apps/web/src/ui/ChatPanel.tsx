@@ -7,7 +7,7 @@ import type { ChatEntry } from "../state/types";
 import { VoiceInput } from "../voice/VoiceInput";
 import { buttonPrimary, buttonSecondary } from "./common";
 import { STAFF_LOOK } from "./StaffPanel";
-import { errorText } from "./text";
+import { errorText, staffLineText } from "./text";
 
 // 会話欄：コンシェルジュの返答、利用者の発言、作業の記録。返答は流れてくるそばから出す。
 
@@ -63,9 +63,14 @@ function Entry({ entry, isLastError }: { entry: ChatEntry; isLastError: boolean 
             {WORK_MARK[entry.status]}
           </span>
           <p className="text-ink-soft">
-            <span className="font-bold text-ink">{t.staff.names[entry.staff]}</span>：{entry.bubble}
+            <span className="font-bold text-ink">{t.staff.names[entry.staff]}</span>
+            {t.chat.labelSeparator}
+            {staffLineText(entry.bubble, entry.cue, t)}
             {entry.result !== null && entry.result !== entry.bubble ? (
-              <span className={`font-semibold ${WORK_STYLE[entry.status]}`}> → {entry.result}</span>
+              <span className={`font-semibold ${WORK_STYLE[entry.status]}`}>
+                {" "}
+                → {staffLineText(entry.result, entry.resultCue, t)}
+              </span>
             ) : null}
             <span className="sr-only">（{t.chat.work[entry.status]}）</span>
           </p>

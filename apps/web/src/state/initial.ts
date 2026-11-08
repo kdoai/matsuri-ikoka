@@ -12,6 +12,7 @@ export const IDLE_STAFF: StaffState = Object.freeze({
   tool: null,
   bubble: null,
   detail: null,
+  cue: null,
   seq: 0,
 });
 

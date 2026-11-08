@@ -17,7 +17,7 @@ import { guideSpokenLine } from "../voice/readAloud";
 import { VoiceInput } from "../voice/VoiceInput";
 import { SourceLink } from "./common";
 import { Portrait } from "./Portraits";
-import { guideErrorText, shortLine } from "./text";
+import { guideErrorText, guideToolText, shortLine } from "./text";
 
 // ガイドとの会話の窓。店の会話の窓と同じ、話し手の名札と顔の絵つきのセリフの枠。
 // ガイドは店のコンシェルジュと同じひよこなので、同じ顔の絵を使う。チャット欄にせず、いまのひとことだけを出す。
@@ -47,7 +47,7 @@ function HistoryEntry({ entry }: { entry: GuideEntry }) {
         <p className="whitespace-pre-wrap">{t.street.labelled(t.street.guideName, entry.text)}</p>
       );
     case "tool":
-      return <p className="text-ink-soft">{entry.bubble}</p>;
+      return <p className="text-ink-soft">{guideToolText(entry, t)}</p>;
     case "memo":
       return <p className="text-ink-soft">{t.street.memoSaved(entry.text)}</p>;
     case "sources":
@@ -157,7 +157,7 @@ export function GuideDialogue() {
       text = t.street.thinking;
       break;
     case "tool":
-      text = line.bubble;
+      text = guideToolText(line, t);
       break;
     case "guide": {
       const short = shortLine(line.text);

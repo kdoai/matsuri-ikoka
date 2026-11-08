@@ -215,7 +215,7 @@ export class ClaudeAgentRunner implements AgentRunner {
   }
 
   async runTurn(
-    { session, message, signal, progress, searchRetry }: TurnInput,
+    { session, message, signal, progress, searchRetry, locale }: TurnInput,
     emit: EmitEvent,
   ): Promise<void> {
     const deps = this.#deps;
@@ -250,7 +250,7 @@ export class ClaudeAgentRunner implements AgentRunner {
     // 祭りを固定した旅程は、組み始める前に開催を確かめる（中止と分かったら店の記録で伝え、旅程を組まない）
     await confirmAnchor(ctx);
     progress?.();
-    const prompt = turnPrompt(ctx, message);
+    const prompt = turnPrompt(ctx, message, locale);
     /** 直前の試みで、Agent SDK がセッションを名乗ったか（続きの会話を読めたか） */
     let initSeen = false;
     let usage: Record<string, number> | null = null;

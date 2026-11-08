@@ -50,7 +50,12 @@ describe("dialogueSpokenLine", () => {
     expect(
       dialogueSpokenLine({
         ...base,
-        line: { kind: "work", staff: "researcher", text: "調べています" },
+        line: {
+          kind: "work",
+          staff: "researcher",
+          text: "調べています",
+          cue: { kind: "tool_start", tool: "search_festivals" },
+        },
       }),
     ).toBeNull();
   });
@@ -168,7 +173,10 @@ describe("guideSpokenLine", () => {
   it("考えている間、調べている様子、流れてくる途中の返事は読まない", () => {
     expect(guideSpokenLine({ ...guide, line: { kind: "waiting" } })).toBeNull();
     expect(
-      guideSpokenLine({ ...guide, line: { kind: "tool", bubble: "調べています" } }),
+      guideSpokenLine({
+        ...guide,
+        line: { kind: "tool", tool: "research_web", bubble: "調べています" },
+      }),
     ).toBeNull();
     expect(
       guideSpokenLine({

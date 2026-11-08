@@ -325,6 +325,7 @@ describe("ガイドとの相談", () => {
     expect(guideChat.mock.calls[0]?.[0]).toEqual({
       sessionId: "session-1",
       message: "傘は要りますか",
+      locale: "ja",
     });
     const { guide } = store.getState();
     expect(guide.streaming).toBe(false);
@@ -341,11 +342,13 @@ describe("ガイドとの相談", () => {
       sessionId: "session-1",
       message: "ここから会場へ",
       location: { lat: 35.123, lng: 136.568 },
+      locale: "ja",
     });
     await store.getState().actions.retryGuide();
     expect(guideChat.mock.calls[1]?.[0]).toEqual({
       sessionId: "session-1",
       message: "ここから会場へ",
+      locale: "ja",
     });
     // 現在地は手元の状態にも残さない
     expect(JSON.stringify(store.getState())).not.toContain("136.56");

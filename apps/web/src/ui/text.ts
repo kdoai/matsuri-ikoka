@@ -1,19 +1,56 @@
+import type { GuideToolName } from "@matsuri-ikoka/schema";
 import type { Messages } from "../i18n";
 import type { GuideErrorCode } from "../state/guide";
-import type { ChatEntry, Locale } from "../state/types";
+import type { ChatEntry, Locale, StaffCue } from "../state/types";
 
 // 画面に出す文を、ストアの値と辞書から組み立てる。
 
 /**
  * エラーの一文。サーバーの一文は日本語なので、日本語の画面でだけ出す。
- * 英語の画面や、サーバーの一文がないときは辞書の文言を出す。
+ * 英語の画面や、サーバーの一文がないときは、種類（code）から辞書の文言を出す。
+ * 送り直せる bad_request は、前の返事を作っている間に送ったときだけなので、そう言う
  */
 export function errorText(
-  entry: Pick<Extract<ChatEntry, { kind: "error" }>, "code" | "message">,
+  entry: Pick<Extract<ChatEntry, { kind: "error" }>, "code" | "message"> & {
+    retryable?: boolean;
+  },
   locale: Locale,
   t: Messages,
 ): string {
-  return locale === "ja" && entry.message !== null ? entry.message : t.chat.errors[entry.code];
+  if (locale === "ja" && entry.message !== null) return entry.message;
+  return entry.code === "bad_request" && entry.retryable === true
+    ? t.chat.busy
+    : t.chat.errors[entry.code];
+}
+
+/** スタッフの吹き出し。辞書に言い直す文があればそれを、なければサーバーが決まった型で作った文を出す */
+export function staffLineText(text: string, cue: StaffCue | null, t: Messages): string {
+  return (cue === null ? null : t.lines.bubble(cue)) ?? text;
+}
+
+/**
+ * 店内のようすの窓に出す、くわしい文。辞書に文があれば辞書の文（くわしい文がなければ辞書の吹き出し）を、
+ * なければサーバーのくわしい文か吹き出しを出す。吹き出しがなければ null
+ */
+export function staffDetailText(
+  staff: { bubble: string | null; detail: string | null; cue: StaffCue | null },
+  t: Messages,
+): string | null {
+  if (staff.bubble === null) return null;
+  if (staff.cue !== null) {
+    const own = t.lines.detail(staff.cue) ?? t.lines.bubble(staff.cue);
+    if (own !== null) return own;
+  }
+  return staff.detail ?? staff.bubble;
+}
+
+/** ガイドの調べものの吹き出し。辞書に文があればそれを、なければサーバーの文を出す */
+export function guideToolText(
+  entry: { tool: GuideToolName; bubble: string; running?: boolean; ok?: boolean },
+  t: Messages,
+): string {
+  const status = entry.running !== false ? "running" : entry.ok === false ? "failed" : "ok";
+  return t.lines.guideTool(entry.tool, status) ?? entry.bubble;
 }
 
 /** 印刷したときに URL を読めるよう、タイトルのある出典にだけ URL を添える */
@@ -53,11 +90,19 @@ export function shortLine(text: string): { head: string; rest: string | null } {
 
 /** ガイドの相談のエラーの一文。相談が切れたときは、次にできることを書いた文を出す */
 export function guideErrorText(
-  entry: { code: GuideErrorCode; message: string | null },
+  entry: { code: GuideErrorCode; message: string | null; retryable?: boolean },
   locale: Locale,
   t: Messages,
 ): string {
   return entry.code === "guide_gone"
     ? t.street.gone
-    : errorText({ code: entry.code, message: entry.message }, locale, t);
+    : errorText(
+        {
+          code: entry.code,
+          message: entry.message,
+          ...(entry.retryable === undefined ? {} : { retryable: entry.retryable }),
+        },
+        locale,
+        t,
+      );
 }

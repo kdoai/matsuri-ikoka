@@ -27,7 +27,7 @@ import { ConsultPanel, useConsultLine } from "./Consult";
 import { openTripPanel } from "./Hud";
 import { Portrait, type Speaker } from "./Portraits";
 import { useScene3d } from "./scene3d";
-import { errorText, shortLine } from "./text";
+import { errorText, shortLine, staffLineText } from "./text";
 import { useNow, useWaitClock } from "./waitClock";
 
 // 会話の窓。話すときだけ画面の下に出す、クリーム色のセリフの枠。
@@ -344,7 +344,7 @@ export function DialogueBox() {
         text = waitText;
         break;
       case "work":
-        text = line.text;
+        text = staffLineText(line.text, line.cue, t);
         break;
       case "concierge": {
         const short = shortLine(line.text);
@@ -416,7 +416,11 @@ export function DialogueBox() {
         >
           {line.kind === "waiting" && !consultOpen ? (
             <p className="line-clamp-1 text-base text-ink-soft">
-              <span className="sr-only">{t.chat.you}：</span>「{line.userText}」
+              <span className="sr-only">
+                {t.chat.you}
+                {t.chat.labelSeparator}
+              </span>
+              {t.lines.quote(line.userText)}
             </p>
           ) : null}
           <p

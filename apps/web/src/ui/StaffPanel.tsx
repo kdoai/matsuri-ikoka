@@ -4,6 +4,7 @@ import { useApp, useT } from "../state/react";
 import { staffActivity, turnRelays } from "../state/relay";
 import type { RelayEntry, StaffState } from "../state/types";
 import { GameWindow, windowScroll } from "./GameWindow";
+import { staffDetailText, staffLineText } from "./text";
 import { formatElapsed, useNow, useWaitClock } from "./waitClock";
 
 // スタッフの状態（待機・移動・作業・戻る）と吹き出しを、文字の一覧で出す。
@@ -118,13 +119,13 @@ export function StaffList({ showBubbles }: { showBubbles: boolean }) {
                   <span className="mr-1 font-bold text-ink">{t.staff.names[id]}</span>
                   <span className="text-ink-soft">{summarize(id, state)}</span>
                 </p>
-                {showBubbles && showsBubble(state) ? (
+                {showBubbles && showsBubble(state) && state.bubble !== null ? (
                   // 一覧の高さをそろえるため2行までにする（同じ文は会話欄の作業の記録にも出る）
                   <p
                     className="mt-0.5 line-clamp-2 font-medium text-ink"
-                    title={state.bubble ?? ""}
+                    title={staffLineText(state.bubble, state.cue, t)}
                   >
-                    「{state.bubble}」
+                    {t.lines.quote(staffLineText(state.bubble, state.cue, t))}
                   </p>
                 ) : null}
               </div>
@@ -180,9 +181,7 @@ export function StaffActivity() {
               activity === null ? t.staff.phases[state.phase] : t.relay.activities[activity];
             // 吹き出しより、くわしい文があればそれを出す。
             // 吹き出しがなく、ようすが札と同じ言葉だけなら、下の行は出さない
-            const detail = showsBubble(state)
-              ? (state.detail ?? state.bubble)
-              : summarize(id, state);
+            const detail = showsBubble(state) ? staffDetailText(state, t) : summarize(id, state);
             return (
               <li
                 key={id}

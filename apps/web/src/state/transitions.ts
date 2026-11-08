@@ -171,7 +171,13 @@ export function settleStaff(state: AppData): AppData {
   let next = state;
   for (const id of Object.keys(state.staff) as StaffId[]) {
     if (state.staff[id].phase === "returning") {
-      next = patchStaff(next, id, { phase: "idle", motion: "idle", bubble: null, detail: null });
+      next = patchStaff(next, id, {
+        phase: "idle",
+        motion: "idle",
+        bubble: null,
+        detail: null,
+        cue: null,
+      });
     }
   }
   return next;

@@ -1,10 +1,124 @@
-import type { FestivalSearchNext, SearchSuggestion } from "@matsuri-ikoka/schema";
+import type {
+  FestivalSearchNext,
+  GuideToolName,
+  RedoSubject,
+  SearchSuggestion,
+  StaffId,
+  ToolName,
+} from "@matsuri-ikoka/schema";
+import type { StaffCue } from "../state/types";
 import type { Messages } from "./ja";
 
 // English. Festival data and model text (names, bubbles) stay as they arrive.
 
 const range = (min: number, max: number) => (min === max ? `${min}` : `${min}–${max}`);
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+
+const staffNames: Record<StaffId, string> = {
+  concierge: "Concierge",
+  researcher: "Festival researcher",
+  scout: "Area scout",
+  planner: "Route planner",
+};
+
+const redoSubjects: Record<RedoSubject, string> = {
+  lunch: "a lunch spot",
+  dinner: "a dinner spot",
+  sightseeing: "side-trip spots",
+  route: "the train route",
+  last_mile: "the way from the station to the venue",
+  lodging: "a place to stay",
+};
+
+// Staff bubbles, rebuilt from the event's typed values (the server writes its own text in Japanese)
+const startLines = {
+  find_festivals: "I'll go look it up",
+  find_nearby: "I'll look for places to stop by",
+  plan_route: "I'll check the route",
+};
+
+const toolStartLines: Record<ToolName, string> = {
+  search_festivals: "Looking for festivals that fit your plans",
+  search_nearby: "Looking for places near the venue",
+  get_access: "Checking the travel time to the venue",
+  research_route: "Looking up the train connections",
+  get_weather: "Checking the weather for the day",
+  search_lodging: "Looking for a place to stay",
+  update_itinerary: "Writing up the itinerary",
+  verify_festival: "Finalizing the itinerary",
+};
+
+/** A failed tool: the staff read the reason and keep going, so it never sounds like a stop */
+const toolRetryLines: Partial<Record<ToolName, string>> = {
+  update_itinerary: "Tidying up the itinerary",
+  verify_festival: "Checking the festival details",
+};
+
+function toolEndLine(cue: Extract<StaffCue, { kind: "tool_end" }>): string {
+  if (!cue.ok) return toolRetryLines[cue.tool] ?? "Looking into it a little more";
+  const count = cue.count ?? 0;
+  switch (cue.tool) {
+    case "search_festivals":
+      return count === 0
+        ? "No festivals matched your plans"
+        : `Found ${plural(count, "festival", "festivals")}`;
+    case "search_nearby":
+      return count === 0
+        ? "No places to stop by were found"
+        : `Found ${plural(count, "place", "places")} nearby`;
+    case "get_access":
+      return "Checked the travel time";
+    case "research_route":
+      return "Checked the route";
+    case "get_weather":
+      return "Checked the forecast";
+    case "search_lodging":
+      return count === 0
+        ? "No lodging with openings was found"
+        : `Found ${plural(count, "place", "places")} to stay`;
+    case "update_itinerary":
+      return "Saved the itinerary";
+    case "verify_festival":
+      return "Checked the festival schedule";
+  }
+}
+
+const RETRYING = "Checking a little more";
+
+const guideToolLines: Record<GuideToolName, { running: string; ok: string; failed: string }> = {
+  read_trip: { running: "Reading your trip", ok: "Read your trip", failed: RETRYING },
+  list_notices: {
+    running: "Looking at your notices",
+    ok: "Looked at your notices",
+    failed: RETRYING,
+  },
+  research_web: {
+    running: "Looking it up",
+    ok: "Looked it up",
+    failed: "Couldn't find out by looking it up",
+  },
+  get_weather: { running: "Checking the weather", ok: "Checked the weather", failed: RETRYING },
+  research_route: {
+    running: "Looking up the way there",
+    ok: "Checked the way there",
+    failed: RETRYING,
+  },
+  search_nearby: {
+    running: "Looking around the area",
+    ok: "Looked around the area",
+    failed: RETRYING,
+  },
+  propose_change: {
+    running: "Drafting a change",
+    ok: "Drafted a change",
+    failed: "Couldn't draft a change",
+  },
+  save_memo: {
+    running: "Writing in your notebook",
+    ok: "Wrote it in your notebook",
+    failed: "Didn't write it in your notebook",
+  },
+};
 
 // Weekdays for the calendar (Sunday first). A date's weekday is counted from the calendar date
 const EN_WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
@@ -191,9 +305,7 @@ export const en: Messages = {
   dialogue: {
     thinking: "One moment, please",
     close: "Put the dialogue away",
-    greeting: "Welcome! Talk to me to plan your festival trip.",
     talkToConcierge: "Talk to the concierge",
-    openLog: "Conversation log",
     log: "Conversation log",
     closeLog: "Close",
     more: "Read more",
@@ -534,7 +646,6 @@ export const en: Messages = {
   },
   hud: {
     sections: {
-      guide: "Trip guide",
       candidates: "Festivals",
       shiori: "Travel booklet",
       confirm: "Check",
@@ -592,12 +703,7 @@ export const en: Messages = {
   },
   staff: {
     title: "Inside the shop",
-    names: {
-      concierge: "Concierge",
-      researcher: "Festival researcher",
-      scout: "Area scout",
-      planner: "Route planner",
-    },
+    names: staffNames,
     phases: {
       idle: "Waiting",
       walking: "Heading to the post",
@@ -645,14 +751,7 @@ export const en: Messages = {
     },
     requestLine: (from: string, to: string, task: string) => `${from} → ${to}: asks for "${task}"`,
     handoffLine: (from: string, to: string, item: string) => `${from} → ${to}: hands over ${item}`,
-    redoSubjects: {
-      lunch: "a lunch spot",
-      dinner: "a dinner spot",
-      sightseeing: "side-trip spots",
-      route: "the train route",
-      last_mile: "the way from the station to the venue",
-      lodging: "a place to stay",
-    },
+    redoSubjects,
     redoRequestLine: (from: string, to: string, subject: string) =>
       `${from} → ${to}: asks to look again for ${subject}`,
     redoAcceptLine: (from: string, to: string, subject: string) =>
@@ -666,6 +765,37 @@ export const en: Messages = {
       delivering: "Delivering",
     },
   },
+  lines: {
+    bubble: (cue: StaffCue): string | null => {
+      switch (cue.kind) {
+        case "start":
+          return cue.replan ? "I'll rework the plan" : startLines[cue.task];
+        case "tool_start":
+          return toolStartLines[cue.tool];
+        case "tool_end":
+          return toolEndLine(cue);
+        case "redo":
+          return cue.redo === "request"
+            ? `We still need ${redoSubjects[cue.subject]}. Could you look again?`
+            : `Sure, I'll look again for ${redoSubjects[cue.subject]}`;
+      }
+    },
+    detail: (cue: StaffCue): string | null => {
+      if (cue.kind === "tool_end" && cue.ok && cue.top !== null) {
+        return `${toolEndLine(cue)}. The top one is ${cue.top}`;
+      }
+      if (cue.kind === "redo") {
+        const to = staffNames[cue.to].toLowerCase();
+        return cue.redo === "request"
+          ? `The itinerary doesn't have ${redoSubjects[cue.subject]} yet. Asking the ${to} to look again`
+          : `Looking again for ${redoSubjects[cue.subject]}, as the ${to} asked`;
+      }
+      return null;
+    },
+    guideTool: (tool: GuideToolName, status: "running" | "ok" | "failed"): string | null =>
+      guideToolLines[tool][status],
+    quote: (text: string) => `“${text}”`,
+  },
   chat: {
     title: "Conversation",
     greeting:
@@ -677,11 +807,13 @@ export const en: Messages = {
     retry: "Send again",
     you: "You",
     concierge: "Concierge",
+    labelSeparator: ": ",
     work: { running: "Working", ok: "Done", failed: "Did not work" },
     preferenceChanged: (label: string, value: string) => `Preference "${label}" set to "${value}"`,
     tooLong: (max: number) => `Please keep it within ${max} characters`,
     starting: "Getting ready",
     shioriReady: "Your travel booklet is ready",
+    busy: "We're still working on the previous reply. Please send it once that's done.",
     errors: {
       bad_request: "The message was not in the expected form.",
       unauthorized: "The passcode is not correct.",
@@ -714,8 +846,6 @@ export const en: Messages = {
   conditions: {
     title: "What we understood",
     origin: (station: string) => `From ${station}`,
-    nights: (nights: number) =>
-      nights === 0 ? "Day trip" : `${plural(nights, "night", "nights")}, ${nights + 1} days`,
     party: (adults: number, children: number) =>
       children > 0
         ? `${plural(adults, "adult", "adults")}, ${plural(children, "child", "children")}`
@@ -726,8 +856,6 @@ export const en: Messages = {
         ? `Budget up to ${amount(yen)} per person${converted === null ? "" : ` (${amount(converted)} for everyone)`}`
         : `Budget up to ${amount(yen)} for everyone${converted === null ? "" : ` (${amount(converted)} per person)`}`;
     },
-    move: { train: "Train", car: "Car" },
-    range: (from: string, to: string) => `${from} – ${to}`,
   },
   preferences: {
     title: "Trip preferences",
@@ -846,7 +974,6 @@ export const en: Messages = {
       "This year's schedule was confirmed with non-official sources. Please check the organizer's notice before you go.",
     timeUnknown: "Time not announced",
     whyFits: "Why it fits",
-    highlight: "Highlight",
     onlyHere: "Only here",
     source: "Source",
     correction: "Report a correction",
@@ -861,7 +988,6 @@ export const en: Messages = {
     },
   },
   itinerary: {
-    day: (n: number, date: string) => `Day ${n} · ${date}`,
     stay: (area: string) => `Overnight around ${area}`,
     lodging: {
       heading: "Places to stay",
@@ -890,7 +1016,6 @@ export const en: Messages = {
     route: "Route",
     tabs: { itinerary: "Plan", map: "Trip guide", sources: "Packing & checks" },
     panelLabel: "Travel booklet (plan, trip guide, packing and checks)",
-    openPanel: "Open the travel booklet to see the plan",
     closePanel: "Close the panel",
     empty: "No plan yet. Choose a festival and your plan will appear here.",
     version: (n: number) => `Version ${n}`,
@@ -989,13 +1114,11 @@ export const en: Messages = {
     sub: "The schedule was confirmed with official information",
   },
   shiori: {
-    title: "Travel booklet",
     print: "Print",
     savePdf: "Save as PDF",
     savingPdf: "Preparing the PDF…",
     pdfBusy: "We're busy making PDFs right now. Please wait a moment, then try again.",
     pdfFailed: "We couldn't save the PDF. Please check your connection and try again.",
-    openBooklet: "Open the booklet",
     booklet: "Travel booklet",
     notReady: "We will hand you the booklet once the festival dates are confirmed.",
     preparing: "Preparing your booklet…",
@@ -1006,70 +1129,10 @@ export const en: Messages = {
     kept: "Kept. You can open it any time from Sign in and my trips.",
     keepLogin: "Sign in to keep this trip",
     keepFailed: "Couldn't keep it. Please try again in a moment.",
-    party: "Party",
-    date: "Date",
-    weather: "Weather",
-    stamps: "Stamps collected",
-    sections: {
-      main: "Today's festival",
-      flow: "Your day",
-      map: "Map",
-      food: "Local flavors",
-      firstTime: "First time here?",
-      rain: "Rainy-day plan",
-      sources: "Sources",
-    },
-    when: "When",
-    where: "Where",
-    scale: "Size",
-    scales: {
-      XS: "A very small festival",
-      S: "A small festival",
-      M: "A mid-sized festival",
-      L: "A large festival",
-    },
-    highlights: "Highlights",
-    background: "Festival trivia",
-    rainPolicy: "If it rains",
-    stations: "Nearest station",
-    walk: (min: number, max: number) => `${range(min, max)} min walk (estimate)`,
-    toilets: "Toilets",
-    toiletsUnknown: "Not in our data. Please check the signs on site",
-    stalls: {
-      yes: "There are food stalls",
-      no: "There are no food stalls",
-      unknown: "Not known whether there are food stalls",
-    },
-    localFood: "Local dishes",
-    mealsInPlan: "Meals in your plan",
-    noAlternatives: "No rainy-day plan yet.",
-    festivalLoading:
-      "The festival details are not available right now. Please see the plan and sources.",
-    verified: (date: string) => `Schedule confirmed with official information (${date})`,
-    needsCheck:
-      "Check before you go: the schedule was confirmed with non-official sources. Please check the organizer's notice before you leave.",
-    finalCheck: "On the day, please check the official website one last time.",
     share: "Booklet URL",
     shareNote: "Share this URL to show the booklet to the people coming with you.",
     copy: "Copy URL",
     copied: "Copied",
-    homeward: "Getting home",
-    cautions: "Please note",
-    start: "Start",
-    goal: "Goal",
-    lines: {
-      main: "Don't miss these!",
-      flow: "Times are estimates. Moving early keeps it relaxed",
-      food: "Enjoy the stalls and the local flavors too",
-      firstTime: "Follow the organizers' requests and enjoy it with the locals",
-      rain: "Here is a plan for a rainy day, too",
-    },
-    parking: {
-      available: "Parking is available",
-      limited: "Parking is limited",
-      none: "No parking. We recommend going by train",
-      unknown: "Not known whether there is parking",
-    },
   },
   play: {
     controlsTitle: "Controls",
@@ -1091,7 +1154,6 @@ export const en: Messages = {
     ],
     near: "Nearby",
     nothingNear: "Nothing to use nearby",
-    use: "Use",
     sitting: "Sitting (move to stand up)",
     talk: (name: string) => `Talk to the ${name.toLowerCase()}`,
     sit: "Sit down",
@@ -1183,8 +1245,6 @@ export const en: Messages = {
     backToShop: "Back to the shop",
     lookStall: "See your guide's stall",
     labelled: (label: string, value: string) => `${label}: ${value}`,
-    dated: (label: string, date: string) => `${label} (${date})`,
-    joined: (parts: readonly string[]) => parts.join(", "),
     dotted: (parts: readonly string[]) => parts.join(" · "),
     list: "News at your guide's stall",
     stallName: "Trip help desk",

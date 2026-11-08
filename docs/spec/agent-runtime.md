@@ -42,7 +42,7 @@ Claude Agent SDK（TypeScript）で接客エージェントを動かすときの
 
 変わらない部分（守るルール・口調・ツールの使い方）と、相談ごとに変わる部分（今日の日付・聞き取れた条件・旅程）を分け、変わらない部分を前に置きます。前に置いた部分は、ほかの相談とキャッシュを共有できます。分け方は次のどちらでもかまいません。
 
-- system prompt はまったく変わらない文字列にし、相談ごとに変わるものは発言のプロンプトに入れる。スタッフには `SubagentStart` のフックの `additionalContext` で渡す
+- system prompt はまったく変わらない文字列にし、相談ごとに変わるものは発言のプロンプトに入れる。スタッフには `SubagentStart` のフックの `additionalContext` で渡す。返事の言語（画面が英語のときの「画面の言語：英語」の行）も、system prompt を変えずに発言のプロンプトの店の記録に入れる（[画面の言語](api.md#画面の言語)）
 - `systemPrompt` を文字列の配列にし、`SYSTEM_PROMPT_DYNAMIC_BOUNDARY` で分ける
 
 ```ts

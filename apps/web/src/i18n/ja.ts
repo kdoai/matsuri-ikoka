@@ -1,4 +1,5 @@
-import type { FestivalSearchNext, SearchSuggestion } from "@matsuri-ikoka/schema";
+import type { FestivalSearchNext, GuideToolName, SearchSuggestion } from "@matsuri-ikoka/schema";
+import type { StaffCue } from "../state/types";
 
 // 日本語の文言。データとモデルの文章（祭りの名前や吹き出し）は、ここには入れない。
 
@@ -173,9 +174,7 @@ export const ja = {
   dialogue: {
     thinking: "少々お待ちください",
     close: "会話の窓をしまう",
-    greeting: "いらっしゃいませ！ 旅の相談は、わたしに話しかけてね",
     talkToConcierge: "コンシェルジュに話しかける",
-    openLog: "会話の記録",
     log: "会話の記録",
     closeLog: "閉じる",
     more: "つづきを読む",
@@ -497,7 +496,6 @@ export const ja = {
   },
   hud: {
     sections: {
-      guide: "旅程の案内",
       candidates: "祭りの候補",
       shiori: "旅のしおり",
       confirm: "確認",
@@ -627,6 +625,17 @@ export const ja = {
       delivering: "届けている",
     },
   },
+  /**
+   * スタッフとガイドの吹き出しを、イベントの型から言い直す文。null ならサーバーの文をそのまま出す。
+   * 日本語は、サーバーが決まった型から作った文（日付や出発地まで入る）を使う
+   */
+  lines: {
+    bubble: (_cue: StaffCue): string | null => null,
+    detail: (_cue: StaffCue): string | null => null,
+    guideTool: (_tool: GuideToolName, _status: "running" | "ok" | "failed"): string | null => null,
+    /** 吹き出しや発言を、かぎかっこでくくる */
+    quote: (text: string) => `「${text}」`,
+  },
   chat: {
     title: "相談",
     greeting:
@@ -638,12 +647,16 @@ export const ja = {
     retry: "もう一度送る",
     you: "あなた",
     concierge: "コンシェルジュ",
+    /** 話し手の名前と文の間 */
+    labelSeparator: "：",
     work: { running: "作業中", ok: "完了", failed: "うまくいきませんでした" },
     preferenceChanged: (label: string, value: string) =>
       `こだわり「${label}」を「${value}」にしました`,
     tooLong: (max: number) => `${max}字までで書いてください`,
     starting: "相談の準備をしています",
     shioriReady: "旅のしおりができました",
+    /** 前の返事を作っている間に送ったとき（送り直せる bad_request） */
+    busy: "前の返事を作っています。終わってから送ってください。",
     errors: {
       bad_request: "送った内容の形が正しくありませんでした。",
       unauthorized: "合言葉が違います。",
@@ -676,7 +689,6 @@ export const ja = {
   conditions: {
     title: "読み取れた条件",
     origin: (station: string) => `${station}から`,
-    nights: (nights: number) => (nights === 0 ? "日帰り" : `${nights}泊${nights + 1}日`),
     party: (adults: number, children: number) =>
       children > 0 ? `大人${adults}・子ども${children}` : `大人${adults}`,
     /** 旅の予算。言われた数え方と、換算したもう一方（人数が分からなければ出さない） */
@@ -686,8 +698,6 @@ export const ja = {
         ? `予算 1人あたり ${amount(yen)}まで${converted === null ? "" : `（全員で ${amount(converted)}）`}`
         : `予算 全員で ${amount(yen)}まで${converted === null ? "" : `（1人あたり ${amount(converted)}）`}`;
     },
-    move: { train: "電車", car: "車" },
-    range: (from: string, to: string) => `${from}〜${to}`,
   },
   preferences: {
     title: "旅のこだわり",
@@ -772,7 +782,6 @@ export const ja = {
       "公式以外の情報源などで今年の開催を確かめました。出発の前に、主催者の案内で確かめてください。",
     timeUnknown: "時間は未発表",
     whyFits: "合う理由",
-    highlight: "見どころ",
     onlyHere: "ここでしか",
     source: "出典",
     correction: "情報の訂正を送る",
@@ -787,7 +796,6 @@ export const ja = {
     },
   },
   itinerary: {
-    day: (n: number, date: string) => `${n}日目・${date}`,
     stay: (area: string) => `この夜は${area}に泊まる`,
     lodging: {
       heading: "泊まる宿の候補",
@@ -816,7 +824,6 @@ export const ja = {
     route: "道のり",
     tabs: { itinerary: "旅程", map: "旅の案内", sources: "持ち物と確認" },
     panelLabel: "旅のしおり（旅程・旅の案内・持ち物と確認）",
-    openPanel: "旅のしおりを開いて、旅程を見る",
     closePanel: "パネルを閉じる",
     empty: "旅程はまだありません。祭りを選ぶと、ここに旅程ができます。",
     version: (n: number) => `第${n}版`,
@@ -914,13 +921,11 @@ export const ja = {
     sub: "開催予定を公式情報で確認しました",
   },
   shiori: {
-    title: "旅のしおり",
     print: "印刷する",
     savePdf: "PDF で保存",
     savingPdf: "PDF を用意しています…",
     pdfBusy: "PDF を作るのが混み合っています。少し待ってから、もう一度押してください。",
     pdfFailed: "PDF を保存できませんでした。通信のようすを確かめて、もう一度お試しください。",
-    openBooklet: "冊子で見る",
     booklet: "旅のしおり（冊子）",
     notReady: "しおりは、開催予定を確かめてからお渡しします。",
     preparing: "しおりを用意しています…",
@@ -931,60 +936,10 @@ export const ja = {
     kept: "残しました。「ログインと自分の旅」から、いつでも開けます",
     keepLogin: "ログインして、この旅を残す",
     keepFailed: "残せませんでした。少し待ってから、もう一度お試しください。",
-    party: "同行者",
-    date: "日付",
-    weather: "天気",
-    stamps: "集めたスタンプ",
-    sections: {
-      main: "今日の主役",
-      flow: "1日の流れ",
-      map: "地図",
-      food: "地元の味",
-      firstTime: "はじめての方へ",
-      rain: "雨の日の案",
-      sources: "出典",
-    },
-    when: "日時",
-    where: "場所",
-    scale: "規模",
-    scales: { XS: "ごく小さな祭り", S: "小さな祭り", M: "中くらいの祭り", L: "大きな祭り" },
-    highlights: "見どころ",
-    background: "祭りの小話",
-    rainPolicy: "雨のとき",
-    stations: "最寄り駅",
-    walk: (min: number, max: number) => `徒歩 ${range(min, max)}分（目安）`,
-    toilets: "トイレ",
-    toiletsUnknown: "データにありません。現地の案内を確かめてください",
-    stalls: { yes: "屋台が出ます", no: "屋台は出ません", unknown: "屋台が出るかは不明です" },
-    localFood: "その土地の味",
-    mealsInPlan: "旅程の食事",
-    noAlternatives: "雨の日の案はまだありません。",
-    festivalLoading: "祭りの詳しい情報は、いまはお出しできません。旅程と出典をご覧ください。",
-    verified: (date: string) => `公式情報で開催予定を確認しました（${date}）`,
-    needsCheck:
-      "要事前確認：開催は公式以外の情報源などで確かめています。出発の前に、主催者の案内で開催を確かめてください",
-    finalCheck: "当日は、公式サイトで最終確認をしてください。",
     share: "しおりの URL",
     shareNote: "この URL で、同行する人にもしおりを見せられます。",
     copy: "URL をコピー",
     copied: "コピーしました",
-    homeward: "帰りの混雑",
-    cautions: "注意",
-    start: "ふりだし",
-    goal: "あがり",
-    lines: {
-      main: "ここは見のがさないで！",
-      flow: "時刻は目安。早めに動くと安心です",
-      food: "屋台や地元の味も楽しんで",
-      firstTime: "お願いを守って、地元の人と一緒に楽しもう",
-      rain: "雨でも楽しめる案も用意しました",
-    },
-    parking: {
-      available: "駐車場があります",
-      limited: "駐車場は少なめです",
-      none: "駐車場はありません。電車で行くのがおすすめです",
-      unknown: "駐車場の有無は不明です",
-    },
   },
   play: {
     controlsTitle: "操作の案内",
@@ -1003,7 +958,6 @@ export const ja = {
     ],
     near: "近くにあるもの",
     nothingNear: "近くに使えるものはありません",
-    use: "使う",
     sitting: "座っています（動くと立ちます）",
     talk: (name: string) => `${name}と話す`,
     sit: "座る",
@@ -1096,8 +1050,6 @@ export const ja = {
     lookStall: "ガイドの屋台を見る",
     // 区切りは言語ごとに変わるので、組み立ての形も辞書に持つ
     labelled: (label: string, value: string) => `${label}：${value}`,
-    dated: (label: string, date: string) => `${label}（${date}）`,
-    joined: (parts: readonly string[]) => parts.join("、"),
     dotted: (parts: readonly string[]) => parts.join("・"),
     list: "ガイドの屋台の知らせ",
     stallName: "旅の相談処",

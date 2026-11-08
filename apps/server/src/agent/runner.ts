@@ -3,6 +3,7 @@ import type {
   AgentMode,
   ConversationStage,
   ErrorCode,
+  Locale,
   Preferences,
   SearchRetry,
   SseEvent,
@@ -23,6 +24,8 @@ export interface TurnInput {
   preferences: Preferences;
   /** 候補の窓の次の手（ボタン）から送られた、変えて探し直す条件 */
   searchRetry?: SearchRetry;
+  /** 画面の言語。コンシェルジュはこの言語で返事を書く。省略すると日本語 */
+  locale?: Locale;
   /** 時間の上限や接続の切断で止めるための signal */
   signal: AbortSignal;
   /** 進みがあったことを知らせる（イベントを出さない作業の途中。進みのない時間の上限を数え直す） */

@@ -299,7 +299,7 @@ describe("ストア：通信のエラー", () => {
 
     await actions.retry();
     expect(chat).toHaveBeenCalledTimes(2);
-    expect(chat.mock.calls[1]?.[0]).toMatchObject({ message: "8月16日に行ける祭り" });
+    expect(chat.mock.calls[1]?.[0]).toMatchObject({ message: "8月16日に行ける祭り", locale: "ja" });
     const users = store.getState().messages.filter((entry) => entry.kind === "user");
     expect(users).toHaveLength(1);
     expect(

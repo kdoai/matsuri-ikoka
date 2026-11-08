@@ -93,6 +93,8 @@ export function ShioriPage() {
   const ready = useApp(shioriReady);
   const shioriOpen = ready;
   const checkedAt = useApp((state) => state.verify.checkedAt);
+  // しおりをまだ出せないときの案内のページを、画面と同じ言語で出してもらう
+  const locale = useApp((state) => state.ui.locale);
   const account = useAccountClient();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const frameRef = useRef<HTMLIFrameElement>(null);
@@ -196,7 +198,7 @@ export function ShioriPage() {
       ) : (
         <iframe
           ref={frameRef}
-          src={`${shareUrl}?embed=1`}
+          src={`${shareUrl}?embed=1&lang=${locale}`}
           title={t.shiori.booklet}
           className="min-h-0 w-full flex-1 border-0"
           data-testid="shiori-booklet"

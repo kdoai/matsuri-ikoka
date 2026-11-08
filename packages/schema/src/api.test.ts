@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   ApiErrorSchema,
+  ChatRequestSchema,
   FestivalsResponseSchema,
   PreferencesRequestSchema,
   SessionRequestSchema,
@@ -9,6 +10,19 @@ import {
 import { DEFAULT_PREFERENCES } from "./preferences";
 
 describe("API の本文と応答", () => {
+  it("POST /api/chat と PATCH /api/preferences の言語は ja か en で、省略できる", () => {
+    const chat = { sessionId: "s-1", message: "こんにちは", preferences: DEFAULT_PREFERENCES };
+    expect(ChatRequestSchema.parse(chat)).not.toHaveProperty("locale");
+    expect(ChatRequestSchema.parse({ ...chat, locale: "en" }).locale).toBe("en");
+    expect(ChatRequestSchema.safeParse({ ...chat, locale: "fr" }).success).toBe(false);
+    const preferences = { sessionId: "s-1", preferences: DEFAULT_PREFERENCES };
+    expect(PreferencesRequestSchema.safeParse(preferences).success).toBe(true);
+    expect(PreferencesRequestSchema.safeParse({ ...preferences, locale: "ja" }).success).toBe(true);
+    expect(PreferencesRequestSchema.safeParse({ ...preferences, locale: "EN" }).success).toBe(
+      false,
+    );
+  });
+
   it("POST /api/session の本文は空か、サンプルの相談の ID だけ", () => {
     expect(SessionRequestSchema.safeParse({}).success).toBe(true);
     expect(SessionRequestSchema.safeParse({ sample: "suzunari-day-trip" }).success).toBe(true);

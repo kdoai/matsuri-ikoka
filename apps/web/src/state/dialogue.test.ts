@@ -34,7 +34,12 @@ describe("会話の窓のいまの一言", () => {
         bubble: "探しています",
       },
     });
-    expect(currentLine(state)).toEqual({ kind: "work", staff: "researcher", text: "探しています" });
+    expect(currentLine(state)).toEqual({
+      kind: "work",
+      staff: "researcher",
+      text: "探しています",
+      cue: { kind: "tool_start", tool: "search_festivals" },
+    });
     state = applyEvent(state, {
       type: "tool.end",
       data: {
@@ -46,7 +51,11 @@ describe("会話の窓のいまの一言", () => {
         count: 2,
       },
     });
-    expect(currentLine(state)).toMatchObject({ kind: "work", text: "2件見つかりました" });
+    expect(currentLine(state)).toMatchObject({
+      kind: "work",
+      text: "2件見つかりました",
+      cue: { kind: "tool_end", tool: "search_festivals", ok: true, count: 2, top: null },
+    });
     expect(busyStaff(state)).toEqual(["researcher"]);
   });
 

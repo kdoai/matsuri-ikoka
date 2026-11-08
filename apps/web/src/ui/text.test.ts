@@ -3,7 +3,14 @@ import { describe, expect, it } from "vitest";
 import { MESSAGES } from "../i18n";
 import type { ChatEntry } from "../state/types";
 import { resolveShioriUrl, shioriShareUrl } from "./links";
-import { errorText, printedUrl, shortLine } from "./text";
+import {
+  errorText,
+  guideToolText,
+  printedUrl,
+  shortLine,
+  staffDetailText,
+  staffLineText,
+} from "./text";
 
 const fromServer: Extract<ChatEntry, { kind: "error" }> = {
   kind: "error",
@@ -27,6 +34,110 @@ describe("エラーの一文", () => {
     expect(errorText({ ...fromServer, message: null }, "ja", MESSAGES.ja)).toBe(
       MESSAGES.ja.chat.errors.rate_limited,
     );
+  });
+});
+
+describe("送り直せる bad_request の一文", () => {
+  const busy = {
+    code: "bad_request" as const,
+    message: "前の返事を作っています。",
+    retryable: true,
+  };
+
+  it("英語の画面では、前の返事を作っている途中だと言う", () => {
+    expect(errorText(busy, "en", MESSAGES.en)).toBe(MESSAGES.en.chat.busy);
+    expect(errorText({ ...busy, retryable: false }, "en", MESSAGES.en)).toBe(
+      MESSAGES.en.chat.errors.bad_request,
+    );
+  });
+
+  it("日本語の画面では、サーバーの一文を出す", () => {
+    expect(errorText(busy, "ja", MESSAGES.ja)).toBe("前の返事を作っています。");
+  });
+});
+
+describe("スタッフの吹き出し", () => {
+  const search = {
+    kind: "tool_end",
+    tool: "search_festivals",
+    ok: true,
+    count: 2,
+    top: "架空の灯籠まつり",
+  } as const;
+
+  it("日本語の画面では、サーバーが決まった型で作った文をそのまま出す", () => {
+    expect(staffLineText("2件見つかりました", search, MESSAGES.ja)).toBe("2件見つかりました");
+    expect(
+      staffDetailText(
+        { bubble: "2件見つかりました", detail: "希望の日に2件", cue: search },
+        MESSAGES.ja,
+      ),
+    ).toBe("希望の日に2件");
+  });
+
+  it("英語の画面では、イベントの型から辞書で言い直す", () => {
+    expect(staffLineText("2件見つかりました", search, MESSAGES.en)).toBe("Found 2 festivals");
+    expect(
+      staffDetailText(
+        { bubble: "2件見つかりました", detail: "希望の日に2件", cue: search },
+        MESSAGES.en,
+      ),
+    ).toBe("Found 2 festivals. The top one is 架空の灯籠まつり");
+    // くわしい文を持たない型は、辞書の吹き出しを出す（サーバーの日本語には戻らない）
+    expect(
+      staffDetailText(
+        {
+          bubble: "天気を確かめています",
+          detail: "8月16日の天気",
+          cue: { kind: "tool_start", tool: "get_weather" },
+        },
+        MESSAGES.en,
+      ),
+    ).toBe("Checking the weather for the day");
+  });
+
+  it("英語の辞書は、すべての作業・ツール・調べ直しに文を持つ", () => {
+    const t = MESSAGES.en;
+    const texts = [
+      ...(["find_festivals", "find_nearby", "plan_route"] as const).flatMap((task) => [
+        t.lines.bubble({ kind: "start", task, replan: false }),
+        t.lines.bubble({ kind: "start", task, replan: true }),
+      ]),
+      ...(Object.keys(t.staff.tools) as (keyof typeof t.staff.tools)[]).flatMap((tool) => [
+        t.lines.bubble({ kind: "tool_start", tool }),
+        t.lines.bubble({ kind: "tool_end", tool, ok: true, count: 1, top: null }),
+        t.lines.bubble({ kind: "tool_end", tool, ok: true, count: 0, top: null }),
+        t.lines.bubble({ kind: "tool_end", tool, ok: false, count: null, top: null }),
+      ]),
+      ...(Object.keys(t.relay.redoSubjects) as (keyof typeof t.relay.redoSubjects)[]).flatMap(
+        (subject) =>
+          (["request", "accept"] as const).flatMap((redo) => [
+            t.lines.bubble({ kind: "redo", redo, to: "scout", subject }),
+            t.lines.detail({ kind: "redo", redo, to: "scout", subject }),
+          ]),
+      ),
+    ];
+    for (const text of texts) {
+      expect(text).toMatch(/^[\x20-\x7e“”’]+$/);
+    }
+  });
+
+  it("吹き出しがなければ、くわしい文もない", () => {
+    expect(staffDetailText({ bubble: null, detail: null, cue: null }, MESSAGES.en)).toBeNull();
+  });
+
+  it("ガイドの調べものは、ツールと進みから辞書で言い直す", () => {
+    const entry = {
+      tool: "get_weather",
+      bubble: "天気を確かめました",
+      running: false,
+      ok: true,
+    } as const;
+    expect(guideToolText(entry, MESSAGES.ja)).toBe("天気を確かめました");
+    expect(guideToolText(entry, MESSAGES.en)).toBe("Checked the weather");
+    expect(
+      guideToolText({ tool: "get_weather", bubble: "天気を確かめています" }, MESSAGES.en),
+    ).toBe("Checking the weather");
   });
 });
 
