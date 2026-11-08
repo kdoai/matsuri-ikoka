@@ -267,7 +267,7 @@ pnpm --filter @matsuri-ikoka/server check:live -- --festivals "$PWD/data/festiva
 ## 仕組み
 
 ```mermaid
-flowchart LR
+flowchart TB
   subgraph Data["データ（Git で管理）"]
     MA["Claude Managed Agents<br/>週次の調査（120日先まで）→ PR"]
     FJ["data/festivals/*.json<br/>出典・確認した日・確度つき"]
