@@ -94,14 +94,20 @@
       "note": "夜祭りの1日目（毎年11月22日。山梨県の観光サイトによる。2026年の発表はまだ見つからない）。神楽殿で太々神楽と巫女の舞を奉納する。過去の案内では、2024年は10:00〜22:00、2025年は9:00〜22:00",
       "sources": [
         {
-          "url": "https://www.yamanashi-kankou.jp/kankou/spot/p1_3966.html",
-          "title": "高尾穂見神社／富士の国やまなし観光ネット 山梨県公式観光情報",
-          "checkedAt": "2026-11-06",
+          "url": "https://minami-alpskankou.jp/?p=1133",
+          "title": "高尾山穂見神社 秋季例大祭（夜祭）のお知らせ | 一般社団法人 南アルプス市観光協会",
+          "checkedAt": "2026-11-08",
           "confidence": "official"
         },
         {
           "url": "https://www.city.minami-alps.yamanashi.jp/docs/takao-homijinjya-daikagura.html",
           "title": "高尾穂見神社太太神楽 - 山梨県 南アルプス市",
+          "checkedAt": "2026-11-08",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.yamanashi-kankou.jp/kankou/spot/p1_3966.html",
+          "title": "高尾穂見神社／富士の国やまなし観光ネット 山梨県公式観光情報",
           "checkedAt": "2026-11-06",
           "confidence": "official"
         },

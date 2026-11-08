@@ -135,12 +135,30 @@
     },
     {
       "date": "2027-01-15",
-      "start": null,
+      "start": "14:00",
       "end": null,
-      "status": "expected",
+      "status": "announced",
       "rainPolicy": null,
-      "note": "毎年1月15日の決まりから見込んだ日（市と主催者の2027年の発表はまだない）。例年、14:00ごろ始まり、むこ投げ、15:00ごろからすみ塗り、16:00ごろまで",
+      "note": "十日町市観光協会が2027年1月15日（金）の開催を案内している。予定では、14:00ごろからむこ投げ、15:00ごろからすみ塗り。終わりの時刻の2027年の発表はまだない（例年は16:00ごろまで）",
       "sources": [
+        {
+          "url": "https://www.tokamachishikankou.jp/event/mukonagesuminuri/",
+          "title": "むこ投げ・すみ塗り | 十日町市観光協会",
+          "checkedAt": "2026-11-08",
+          "confidence": "official"
+        },
+        {
+          "url": "https://niigata-kankou.or.jp/event/2083",
+          "title": "むこ投げ・すみ塗り｜新潟のイベント｜にいがた観光ナビ",
+          "checkedAt": "2026-11-08",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.matsunoyama.com/mukonage-suminuri",
+          "title": "1月15日 むこ投げすみ塗り | 松之山ドットコム",
+          "checkedAt": "2026-11-08",
+          "confidence": "official"
+        },
         {
           "url": "https://niigata-kankou.or.jp/event/detail_2083.html",
           "title": "新潟県観光協会 にいがた観光ナビ むこ投げ・すみ塗り（毎年1月15日。2027年1月15日と掲載）",
@@ -199,5 +217,6 @@
     "屋台の有無と、この日だけの食べもの",
     "周辺の観光と食の場所、日帰り温泉や店の営業時間",
     "見物客の数"
-  ]
+  ],
+  "optOut": false
 }

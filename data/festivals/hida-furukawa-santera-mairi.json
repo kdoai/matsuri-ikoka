@@ -136,8 +136,20 @@
       "sources": [
         {
           "url": "https://www.hida-kankou.jp/event/407",
-          "title": "飛騨市公式観光サイト 飛騨の旅 三寺まいり（毎年1月15日の夜）",
-          "checkedAt": "2026-11-04",
+          "title": "三寺まいり | イベント | 飛騨市公式観光サイト「飛騨の旅」",
+          "checkedAt": "2026-11-08",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.hida.gifu.jp/soshiki/15/santeramairi.html",
+          "title": "飛騨古川「三寺まいり」 - 飛騨市公式ウェブサイト",
+          "checkedAt": "2026-11-08",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.kankou-gifu.jp/event/detail_1286.html",
+          "title": "三寺まいり｜イベント｜岐阜県観光公式サイト 「岐阜の旅ガイド」",
+          "checkedAt": "2026-11-08",
           "confidence": "official"
         }
       ]
@@ -248,5 +260,6 @@
     "三つの寺の間の徒歩の時間と、参る順の決まり",
     "見物客の数",
     "周辺の食事の場所（営業時間と定休日を公式の情報で確かめられた店がなかった）"
-  ]
+  ],
+  "optOut": false
 }
