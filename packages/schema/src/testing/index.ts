@@ -7,6 +7,8 @@ import type {
   CheckedChange,
   GuideMemoItem,
   GuideNotice,
+  GuidePhoto,
+  GuidePhotoType,
   GuideProposal,
   PatrolReport,
   PatrolRequest,
@@ -445,6 +447,30 @@ export function fictionalMemoItem(): GuideMemoItem {
     createdAt: "2026-08-10T20:00:00+09:00",
     updatedAt: "2026-08-10T20:00:00+09:00",
   };
+}
+
+const PHOTO_HEADERS: Record<GuidePhotoType, number[]> = {
+  "image/jpeg": [0xff, 0xd8, 0xff, 0xe0],
+  "image/png": [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a],
+  "image/webp": [0x52, 0x49, 0x46, 0x46, 0, 0, 0, 0, 0x57, 0x45, 0x42, 0x50],
+};
+
+/**
+ * 架空の写真。先頭のバイトだけ形式に合わせ、残りは埋め草（text を渡すと、その文字列の UTF-8 を入れる）。
+ * 画像としては開けないが、形式と大きさの検証と、写真の中の文字を指示として扱わないことを確かめるのに使う
+ */
+export function fictionalPhoto(
+  options: { mediaType?: GuidePhotoType; bytes?: number; text?: string } = {},
+): GuidePhoto {
+  const mediaType = options.mediaType ?? "image/jpeg";
+  const header = PHOTO_HEADERS[mediaType];
+  const text = Array.from(new TextEncoder().encode(options.text ?? ""));
+  const size = Math.max(options.bytes ?? 300, header.length + text.length);
+  const bytes = [...header, ...text];
+  while (bytes.length < size) bytes.push(0x20);
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return { mediaType, data: btoa(binary) };
 }
 
 /** 架空の宿の空き（鈴鳴町に1泊、大人2人）。宿も予約のページも架空で、URL は example.com にする */

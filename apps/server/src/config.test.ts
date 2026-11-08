@@ -130,6 +130,7 @@ describe("readConfig", () => {
       costUsdPerUser: 1.5,
       costUsdPerTrip: 0.5,
       costUsdTrialTotal: DEFAULT_GUIDE_LIMITS.costUsdTrialTotal,
+      photosPerUser: DEFAULT_GUIDE_LIMITS.photosPerUser,
     });
     expect(() => readConfig({ GUIDE_DAILY_TURNS_PER_USER: "many" }, here)).toThrow(
       "GUIDE_DAILY_TURNS_PER_USER",

@@ -11,7 +11,12 @@ export interface GuideLimits {
   costUsdPerTrip: number;
   /** お試し用のアカウントの、全員を合わせた1日の費用の上限。省くと既定の値 */
   costUsdTrialTotal?: number;
+  /** 写真を付けた発言の、利用者（と IP）ごとの1日の回数の上限。省くと既定の値 */
+  photosPerUser?: number;
 }
+
+/** 写真を付けた発言の、利用者（と IP）ごとの1日の回数の上限の既定 */
+export const DEFAULT_GUIDE_PHOTOS_PER_USER = 10;
 
 /** お試し用のアカウントの、全員を合わせた1日の費用の上限の既定 */
 export const DEFAULT_TRIAL_GUIDE_COST_USD = 5;
@@ -23,6 +28,7 @@ export const DEFAULT_GUIDE_LIMITS: GuideLimits = {
   costUsdPerUser: 3,
   costUsdPerTrip: 2,
   costUsdTrialTotal: DEFAULT_TRIAL_GUIDE_COST_USD,
+  photosPerUser: DEFAULT_GUIDE_PHOTOS_PER_USER,
 };
 
 /**

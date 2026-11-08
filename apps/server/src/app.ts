@@ -1,5 +1,5 @@
-import type { AuthConfig } from "@matsuri-ikoka/schema";
-import { Hono } from "hono";
+import { type AuthConfig, MAX_GUIDE_PHOTO_BYTES } from "@matsuri-ikoka/schema";
+import { type Context, Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
 import type { IdTokenVerifier } from "./account/idToken";
 import type { InternalVerifiers } from "./account/internalAuth";
@@ -53,6 +53,12 @@ export interface AppDeps extends ChatOptions, FestivalSearchOptions {
 /** API の本文の大きさの上限（発言は1000字まで） */
 const API_BODY_LIMIT = 32 * 1024;
 
+/** 写真を付けられるガイドの発言の本文の上限。写真（base64）と発言が入る大きさ */
+const GUIDE_CHAT_BODY_LIMIT = Math.ceil(MAX_GUIDE_PHOTO_BYTES / 3) * 4 + API_BODY_LIMIT;
+
+/** 写真を付けられる経路。ほかの経路は API_BODY_LIMIT のまま */
+const PHOTO_PATHS: ReadonlySet<string> = new Set(["/api/guide/chat"]);
+
 const declaredByApp = new WeakMap<Hono, readonly DeclaredRoute[]>();
 
 /** このアプリの経路と、宣言した認可の決まりの一覧 */
@@ -88,11 +94,13 @@ export function createApp(appDeps: AppDeps) {
     routes.public("GET", path, (c) => c.json({ status: "ok" }));
   }
 
-  const limitBody = bodyLimit({
-    maxSize: API_BODY_LIMIT,
-    onError: (c) => c.json(apiError("bad_request", "送った内容が大きすぎます。", false), 413),
-  });
-  routes.use("/api/*", limitBody);
+  const tooLarge = (c: Context) =>
+    c.json(apiError("bad_request", "送った内容が大きすぎます。", false), 413);
+  const limitBody = bodyLimit({ maxSize: API_BODY_LIMIT, onError: tooLarge });
+  const limitPhotoBody = bodyLimit({ maxSize: GUIDE_CHAT_BODY_LIMIT, onError: tooLarge });
+  routes.use("/api/*", (c, next) =>
+    PHOTO_PATHS.has(c.req.path) ? limitPhotoBody(c, next) : limitBody(c, next),
+  );
   routes.use("/internal/*", limitBody);
   routes.use("/api/*", passcodeGuard(deps.accessPasscode));
   registerChatRoutes(routes, deps);

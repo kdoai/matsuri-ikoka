@@ -1323,6 +1323,13 @@ export const en: Messages = {
     composerPlaceholder: "Write about your trip",
     send: "Send",
     waiting: "Waiting for a reply",
+    photoAttach: "Ask with a photo",
+    photoAttached:
+      "One photo attached. Your guide looks at it only for this message and doesn't keep it.",
+    photoRemove: "Remove the photo",
+    photoDefaultMessage: "Please tell me about this photo",
+    photoPreparing: "Preparing the photo",
+    photoRejected: "This photo can't be sent. Please choose a JPEG, PNG or WebP photo.",
     suggestionsLabel: "Things to ask",
     suggestions: [
       { label: "Anything new?", message: "Has anything changed while I was away?" },

@@ -1,6 +1,7 @@
 import {
   type AgentMode,
   GUIDE_TOPICS,
+  type GuidePhoto,
   type GuideResumeSummary,
   type GuideSseEvent,
   type GuideToolName,
@@ -98,6 +99,8 @@ export interface GuideTurnInput {
   message: string;
   /** この発言のときだけ使う現在地。保存せず、ログにも残さない */
   location?: LatLng | undefined;
+  /** この発言のときだけ見せる写真。保存せず、ログにも残さない */
+  photo?: GuidePhoto | undefined;
   /** 画面の言語。ガイドはこの言語で返事を書く。省略すると日本語 */
   locale?: Locale;
   /** この発言に使える費用（米ドル） */

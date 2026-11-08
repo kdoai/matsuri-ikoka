@@ -550,12 +550,78 @@ export function roundLocation(location: LatLng): LatLng {
   };
 }
 
+/** ガイドに見せられる写真の形式。端末で JPEG に縮めて送るが、縮められない端末のために PNG と WebP も受ける */
+export const GUIDE_PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
+export type GuidePhotoType = (typeof GUIDE_PHOTO_TYPES)[number];
+
+/** 写真の大きさの上限（バイト、base64 に直す前）。看板や会場の様子が読める大きさに足りる */
+export const MAX_GUIDE_PHOTO_BYTES = 1_000_000;
+
+/** 写真を送る前に縮める、長い辺の画素数 */
+export const GUIDE_PHOTO_MAX_EDGE = 1280;
+
+const MAX_PHOTO_BASE64_LENGTH = Math.ceil(MAX_GUIDE_PHOTO_BYTES / 3) * 4;
+
+/** base64 の文字列が表すバイト数 */
+export function base64ByteLength(data: string): number {
+  const padding = data.endsWith("==") ? 2 : data.endsWith("=") ? 1 : 0;
+  return (data.length / 4) * 3 - padding;
+}
+
+/** 先頭のバイトから、写真の形式を見分ける。見分けられなければ null */
+export function sniffPhotoType(data: string): GuidePhotoType | null {
+  let head: string;
+  try {
+    head = atob(data.slice(0, 16));
+  } catch {
+    return null;
+  }
+  const bytes = Array.from(head, (char) => char.charCodeAt(0));
+  const starts = (...expected: number[]) => expected.every((byte, i) => bytes[i] === byte);
+  if (starts(0xff, 0xd8, 0xff)) return "image/jpeg";
+  if (starts(0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a)) return "image/png";
+  // RIFF....WEBP
+  if (starts(0x52, 0x49, 0x46, 0x46) && head.slice(8, 12) === "WEBP") return "image/webp";
+  return null;
+}
+
+/**
+ * この発言のときだけガイドに見せる写真。保存せず、ログにも残さない。
+ * 名乗った形式と中身の先頭のバイトが合わないもの、大きすぎるものは受けない
+ */
+export const GuidePhotoSchema = z
+  .strictObject({
+    mediaType: z.enum(GUIDE_PHOTO_TYPES),
+    /** 写真の中身（base64。data: の前置きを付けない） */
+    data: z
+      .string()
+      .min(16)
+      .max(MAX_PHOTO_BASE64_LENGTH)
+      .regex(/^[A-Za-z0-9+/]+={0,2}$/)
+      .refine((data) => data.length % 4 === 0, { message: "base64 の長さが正しくありません" }),
+  })
+  .superRefine((photo, ctx) => {
+    if (base64ByteLength(photo.data) > MAX_GUIDE_PHOTO_BYTES) {
+      ctx.addIssue({ code: "custom", path: ["data"], message: "写真が大きすぎます" });
+    }
+    if (sniffPhotoType(photo.data) !== photo.mediaType) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["mediaType"],
+        message: "写真の形式が中身と合いません",
+      });
+    }
+  });
+export type GuidePhoto = z.infer<typeof GuidePhotoSchema>;
+
 /** POST /api/guide/chat の本文。返答は SSE（GuideSseEventSchema）で返す */
 export const GuideChatRequestSchema = z.strictObject({
   sessionId: SessionIdSchema,
   message: z.string().trim().min(1).max(MAX_MESSAGE_LENGTH),
   /** この発言のときだけ使う現在地。保存せず、ログにも残さない */
   location: LatLngSchema.optional(),
+  /** この発言のときだけ見せる写真。保存せず、ログにも残さない */
+  photo: GuidePhotoSchema.optional(),
   /** 画面の言語。ガイドはこの言語で返事を書く。省略すると日本語 */
   locale: LocaleSchema.optional(),
 });

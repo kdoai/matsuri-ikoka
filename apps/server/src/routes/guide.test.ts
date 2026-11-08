@@ -5,15 +5,18 @@ import {
   type GuideMemoItem,
   type GuideSseEvent,
   GuideStateResponseSchema,
+  MAX_GUIDE_PHOTO_BYTES,
   type SampleConversation,
   type SampleGuide,
   SessionResponseSchema,
 } from "@matsuri-ikoka/schema";
+import { fictionalPhoto } from "@matsuri-ikoka/schema/testing";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import type { IdTokenVerifier } from "../account/idToken";
 import { loadSampleConversations, ReplayAgentRunner } from "../agent/replayRunner";
 import { type AppDeps, createApp } from "../app";
 import { type FestivalStore, loadFestivals } from "../data/festivalStore";
+import { DEFAULT_GUIDE_LIMITS } from "../guide/limits";
 import { proposalContentHash } from "../guide/proposal";
 import { loadSampleGuides, ReplayGuideRunner } from "../guide/replayRunner";
 import type { GuideRunner } from "../guide/runner";
@@ -393,6 +396,88 @@ describe("POST /api/guide/chat", () => {
     expect(logged.length).toBeGreaterThan(0);
     expect(logged.join("\n")).not.toContain("ひみつの発言7f3a");
     expect(logged.join("\n")).not.toContain("35.1234");
+  });
+});
+
+describe("写真で聞く", () => {
+  it("写真を、そのままガイドに渡す", async () => {
+    const runner = new ReplayGuideRunner(guides, { speed: 0 });
+    const runTurn = vi.spyOn(runner, "runTurn");
+    const context = setup({ guide: { runner } });
+    const { sessionId } = await context.consult();
+    const photo = fictionalPhoto({ mediaType: "image/png", bytes: 200_000 });
+
+    const res = await context.chat(sessionId, "これは何ですか", undefined, { photo });
+
+    expect(res.status).toBe(200);
+    await res.text();
+    expect(runTurn.mock.calls[0]?.[0].photo).toEqual(photo);
+  });
+
+  it("形式が中身と合わない写真と、大きすぎる写真は 400 で断り、ガイドを動かさない", async () => {
+    const runner = new ReplayGuideRunner(guides, { speed: 0 });
+    const runTurn = vi.spyOn(runner, "runTurn");
+    const context = setup({ guide: { runner } });
+    const { sessionId } = await context.consult();
+    const png = fictionalPhoto({ mediaType: "image/png" });
+
+    const mismatch = await context.chat(sessionId, "これは何ですか", undefined, {
+      photo: { ...png, mediaType: "image/jpeg" },
+    });
+    const large = await context.chat(sessionId, "これは何ですか", undefined, {
+      photo: fictionalPhoto({ bytes: MAX_GUIDE_PHOTO_BYTES + 3 }),
+    });
+
+    expect(mismatch.status).toBe(400);
+    expect([400, 413]).toContain(large.status);
+    expect(runTurn).not.toHaveBeenCalled();
+  });
+
+  it("写真を付けられるのはガイドの発言だけで、ほかの経路の本文の上限は変えない", async () => {
+    const context = setup();
+    const big = "x".repeat(64 * 1024);
+
+    const res = await context.call("/api/session", { body: { padding: big } });
+
+    expect(res.status).toBe(413);
+  });
+
+  it("写真の回数の上限に達したら 429 で断り、写真なしなら続けて話せる", async () => {
+    const context = setup({
+      guide: {
+        runner: new ReplayGuideRunner(guides, { speed: 0 }),
+        limits: { ...DEFAULT_GUIDE_LIMITS, photosPerUser: 1 },
+      },
+    });
+    const { sessionId } = await context.consult();
+    const photo = fictionalPhoto();
+
+    await (await context.chat(sessionId, "これは何ですか", undefined, { photo })).text();
+    const refused = await context.chat(sessionId, "これは何ですか", undefined, { photo });
+
+    expect(refused.status).toBe(429);
+    expect(JSON.stringify(await refused.json())).toContain("写真なしでは");
+    expect((await context.chat(sessionId, "こんにちは")).status).toBe(200);
+  });
+
+  it("写真を、保存の口・相談の状態・ログに残さない", async () => {
+    const logged: string[] = [];
+    for (const method of ["log", "info", "warn", "error", "debug"] as const) {
+      vi.spyOn(console, method).mockImplementation((...args: unknown[]) => {
+        logged.push(args.map(String).join(" "));
+      });
+    }
+    const context = setup();
+    const { sessionId } = await context.consult();
+    const photo = fictionalPhoto({ text: "写真の中の架空の看板9d1e" });
+
+    await (await context.chat(sessionId, "これは何ですか", undefined, { photo })).text();
+
+    const saved = await context.storage.getSession(sessionId);
+    expect(JSON.stringify(saved)).not.toContain(photo.data);
+    expect(JSON.stringify(context.sessions.get(sessionId))).not.toContain(photo.data);
+    expect(logged.length).toBeGreaterThan(0);
+    expect(logged.join("\n")).not.toContain(photo.data.slice(0, 40));
   });
 });
 

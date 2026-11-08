@@ -3,22 +3,26 @@ import { z } from "zod";
 import { MAX_MESSAGE_LENGTH } from "./api";
 import { SSE_EVENT_TYPES, SseEventSchema } from "./events";
 import {
+  base64ByteLength,
   CheckedChangeSchema,
   CheckedSourceSchema,
   DecideProposalRequestSchema,
   DecideProposalResponseSchema,
   decodeGuideSseEvent,
   encodeGuideSseEvent,
+  GUIDE_PHOTO_TYPES,
   GUIDE_SSE_EVENT_TYPES,
   type GUIDE_STALLS,
   GuideChatRequestSchema,
   GuideMemoItemSchema,
   GuideNoticeSchema,
+  GuidePhotoSchema,
   GuideProposalSchema,
   GuideResumeSummarySchema,
   type GuideSseEvent,
   GuideSseEventSchema,
   GuideStateResponseSchema,
+  MAX_GUIDE_PHOTO_BYTES,
   MAX_PENDING_PROPOSALS,
   type NoticeContent,
   NoticeContentSchema,
@@ -39,6 +43,7 @@ import {
   fictionalNotice,
   fictionalPatrolReport,
   fictionalPatrolRequest,
+  fictionalPhoto,
   fictionalProposal,
   fictionalSource,
   fictionalTripWatch,
@@ -501,6 +506,47 @@ describe("GuideChatRequestSchema", () => {
 
   it.each(["tripId", "uid", "itineraryId"])("本文に %s を持たない", (key) => {
     expect(GuideChatRequestSchema.safeParse({ ...request, [key]: "x" }).success).toBe(false);
+  });
+
+  it("写真は JPEG・PNG・WebP で、名乗った形式と中身が合うものだけを受ける", () => {
+    for (const mediaType of GUIDE_PHOTO_TYPES) {
+      const photo = fictionalPhoto({ mediaType });
+      expect(GuideChatRequestSchema.safeParse({ ...request, photo }).success).toBe(true);
+    }
+    const png = fictionalPhoto({ mediaType: "image/png" });
+    expect(
+      GuideChatRequestSchema.safeParse({ ...request, photo: { ...png, mediaType: "image/jpeg" } })
+        .success,
+    ).toBe(false);
+    expect(
+      GuideChatRequestSchema.safeParse({
+        ...request,
+        photo: { mediaType: "image/gif", data: btoa("GIF89a0000000000") },
+      }).success,
+    ).toBe(false);
+    // 画像でない中身（HTML）を画像と名乗っても受けない
+    expect(
+      GuideChatRequestSchema.safeParse({
+        ...request,
+        photo: { mediaType: "image/jpeg", data: btoa("<html><script>x</script></html>") },
+      }).success,
+    ).toBe(false);
+  });
+
+  it("写真の大きさの上限を超えるもの、base64 でないものは受けない", () => {
+    const largest = fictionalPhoto({ bytes: MAX_GUIDE_PHOTO_BYTES });
+    expect(base64ByteLength(largest.data)).toBe(MAX_GUIDE_PHOTO_BYTES);
+    expect(GuidePhotoSchema.safeParse(largest).success).toBe(true);
+    expect(
+      GuidePhotoSchema.safeParse(fictionalPhoto({ bytes: MAX_GUIDE_PHOTO_BYTES + 1 })).success,
+    ).toBe(false);
+    const photo = fictionalPhoto();
+    expect(
+      GuidePhotoSchema.safeParse({ ...photo, data: `data:image/jpeg;base64,${photo.data}` })
+        .success,
+    ).toBe(false);
+    expect(GuidePhotoSchema.safeParse({ ...photo, data: `${photo.data}A` }).success).toBe(false);
+    expect(GuidePhotoSchema.safeParse({ ...photo, extra: 1 }).success).toBe(false);
   });
 
   it("発言の長さは店内の相談と同じ", () => {

@@ -4,6 +4,7 @@ import type { AgentModels } from "./agent/options";
 import type { AgentMode } from "./agent/runner";
 import {
   DEFAULT_GUIDE_LIMITS,
+  DEFAULT_GUIDE_PHOTOS_PER_USER,
   DEFAULT_TRIAL_GUIDE_COST_USD,
   type GuideLimits,
 } from "./guide/limits";
@@ -206,6 +207,7 @@ export function readConfig(env: NodeJS.ProcessEnv, cwd: string = process.cwd()):
       costUsdTrialTotal:
         positiveNumber("GUIDE_DAILY_COST_USD_TRIAL_TOTAL", env.GUIDE_DAILY_COST_USD_TRIAL_TOTAL) ??
         DEFAULT_TRIAL_GUIDE_COST_USD,
+      photosPerUser: DEFAULT_GUIDE_PHOTOS_PER_USER,
     },
   };
   checkProductionConfig(config, env);

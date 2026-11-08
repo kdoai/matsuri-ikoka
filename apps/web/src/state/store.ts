@@ -5,6 +5,7 @@ import {
   type FestivalCandidate,
   type FestivalSearchNext,
   type FestivalSearchResult,
+  type GuidePhoto,
   type GuideSseEvent,
   type GuideStall,
   type Itinerary,
@@ -212,7 +213,8 @@ export interface AppActions {
    * ガイドに話す。location はこの発言のときだけ使う現在地で、丸めてから送る。保存しない。
    * 送り直し（retryGuide）では現在地を送らない（使うたびに利用者が選ぶ）
    */
-  sendGuide(text: string, options?: { location?: LatLng }): Promise<void>;
+  /** 現在地と写真は、この発言のときだけ送る。ストアに残さず、送り直しでは送らない */
+  sendGuide(text: string, options?: { location?: LatLng; photo?: GuidePhoto }): Promise<void>;
   /** 最後の発言をガイドに送り直す */
   retryGuide(): Promise<void>;
   /** 屋台を開く。その屋台の通知は読んだことになり、提灯が消える */
@@ -678,20 +680,23 @@ export function createAppStore(deps: StoreDeps): AppStore {
       void get().actions.loadGuide(true);
     };
 
-    const runGuideTurn = async (message: string, retry: boolean, location?: LatLng) => {
+    const runGuideTurn = async (
+      message: string,
+      retry: boolean,
+      extras: { location?: LatLng | undefined; photo?: GuidePhoto | undefined } = {},
+    ) => {
       const { session, guide, ui } = get();
       if (guide.streaming || session.id === null || transport.guideChat === undefined) {
         return;
       }
-      const request =
-        location === undefined
-          ? { sessionId: session.id, message, locale: ui.locale }
-          : {
-              sessionId: session.id,
-              message,
-              location: roundLocation(location),
-              locale: ui.locale,
-            };
+      const { location, photo } = extras;
+      const request = {
+        sessionId: session.id,
+        message,
+        ...(location === undefined ? {} : { location: roundLocation(location) }),
+        ...(photo === undefined ? {} : { photo }),
+        locale: ui.locale,
+      };
       updateGuide((current) => beginGuideTurn(current, message, retry));
       const current = new AbortController();
       guideController = current;
@@ -1207,7 +1212,10 @@ export function createAppStore(deps: StoreDeps): AppStore {
       async sendGuide(text, options) {
         const message = text.trim();
         if (message.length === 0 || message.length > MAX_MESSAGE_LENGTH) return;
-        await runGuideTurn(message, false, options?.location);
+        await runGuideTurn(message, false, {
+          location: options?.location,
+          photo: options?.photo,
+        });
       },
       async retryGuide() {
         const { lastMessage } = get().guide;
