@@ -480,17 +480,28 @@ describe("ストア：合言葉", () => {
     expect(store.getState().auth).toEqual({ needed: false, rejected: false });
   });
 
-  it("合言葉が要るときは、店を開かずに入口で聞く。違う合言葉でも店を開かない", async () => {
+  it("外観で合言葉が要ると分かったら、店を開かずに入口で聞く。違う合言葉でも店を開かない", async () => {
     const { transport } = guarded();
-    const store = makeStore(transport);
+    let passcodeKnown = false;
+    const checkAccess = vi.fn<NonNullable<ChatTransport["checkAccess"]>>(async () =>
+      passcodeKnown ? "open" : "passcode",
+    );
+    const store = makeStore({
+      ...transport,
+      checkAccess,
+      setPasscode: (value) => {
+        passcodeKnown = value === "matsuri";
+        transport.setPasscode?.(value);
+      },
+    });
     const views: string[] = [];
     const unsubscribe = store.subscribe((state) => views.push(state.ui.view));
     const { actions } = store.getState();
-    const entering = actions.enterShop();
-    // 確かめている間は、入口のまま
-    expect(store.getState().session.status).toBe("opening");
-    expect(store.getState().ui.view).toBe("storefront");
-    await entering;
+    await actions.checkAccess();
+    expect(store.getState().auth).toEqual({ needed: true, rejected: false });
+    // 相談はまだ始めない
+    expect(store.getState().session.status).toBe("closed");
+
     await actions.submitPasscode("wrong");
     expect(views).not.toContain("shop");
     expect(store.getState().auth).toEqual({ needed: true, rejected: true });
@@ -498,30 +509,33 @@ describe("ストア：合言葉", () => {
     await actions.submitPasscode("matsuri");
     unsubscribe();
     expect(store.getState().ui.view).toBe("shop");
-    expect(views.filter((view) => view === "shop").length).toBeGreaterThan(0);
+    expect(store.getState().session).toMatchObject({ id: "s-1", status: "ready" });
   });
 
-  it("合言葉が要らなければ、相談を始めてそのまま店に入る", async () => {
-    const store = makeStore(instantReplay());
-    await store.getState().actions.enterShop();
+  it("合言葉が要らなければ、外観はそのままで、入店するとすぐ店に入る", async () => {
+    const store = makeStore({ ...instantReplay(), checkAccess: async () => "open" as const });
+    const { actions } = store.getState();
+    await actions.checkAccess();
+    expect(store.getState().auth.needed).toBe(false);
+    const entering = actions.enterShop();
     expect(store.getState().ui.view).toBe("shop");
+    await entering;
     expect(store.getState().session.status).toBe("ready");
   });
 
-  it("相談を始められなかったときは、店の中で知らせる", async () => {
+  it("確かめている間に入店したら、確かめの結果では入口へ戻さない", async () => {
+    let answer: (value: "passcode") => void = () => {};
     const store = makeStore({
-      startSession: async () => {
-        throw new TransportError("internal");
-      },
-      chat: async () => {},
-      updatePreferences: async () => {},
-      searchFestivals: noSearch,
-      previewFestivalTrip: noPreview,
+      ...instantReplay(),
+      checkAccess: () => new Promise((resolve) => (answer = resolve)),
     });
-    await store.getState().actions.enterShop();
+    const { actions } = store.getState();
+    const checking = actions.checkAccess();
+    await actions.enterShop();
+    answer("passcode");
+    await checking;
     expect(store.getState().ui.view).toBe("shop");
-    expect(store.getState().session.status).toBe("failed");
-    expect(store.getState().messages.at(-1)).toMatchObject({ kind: "error", code: "internal" });
+    expect(store.getState().auth.needed).toBe(false);
   });
 
   it("相談の途中で断られたら合言葉を聞き直し、入れ直すと同じ発言を送り直す", async () => {

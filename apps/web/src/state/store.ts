@@ -122,6 +122,8 @@ export const LEAD_OUT_MS = 2_400;
 export interface AppActions {
   /** 店に入り、相談を始める */
   enterShop(): Promise<void>;
+  /** 店の外観で、合言葉が要るかを先に確かめる。要るなら「入店する」の代わりに合言葉の欄を出す */
+  checkAccess(): Promise<void>;
   /** 発言を送る */
   send(text: string): Promise<void>;
   /** 最後の発言（またはこだわりの切り替え）を送り直す */
@@ -671,18 +673,20 @@ export function createAppStore(deps: StoreDeps): AppStore {
     };
 
     const actions: AppActions = {
+      async checkAccess() {
+        if (get().auth.needed || get().session.status !== "closed") return;
+        const access = (await transport.checkAccess?.()) ?? "unknown";
+        // 確かめている間に店に入っていたら、入店のあとの断りに任せる
+        const state = get();
+        if (access !== "passcode" || state.session.status !== "closed" || state.auth.needed) return;
+        update((current) => requirePasscode(current, transport.hasPasscode?.() ?? false));
+      },
+
       async enterShop() {
-        const { status } = get().session;
-        if (status === "opening") return;
-        if (status !== "closed") {
-          setUi({ view: "shop" });
-          return;
+        setUi({ view: "shop" });
+        if (get().session.status === "closed") {
+          await startSession();
         }
-        // 相談を始めてから店に入る。合言葉が要るなら、店を開かずに入口で聞く（入ってすぐ外観へ戻さない）
-        await startSession();
-        const after = get();
-        if (after.auth.needed || after.session.status === "closed") return;
-        if (after.ui.view === "storefront") setUi({ view: "shop" });
       },
 
       async send(text) {
@@ -759,8 +763,10 @@ export function createAppStore(deps: StoreDeps): AppStore {
           return;
         }
         if (get().ui.view === "storefront" && get().session.status === "closed") {
-          // 入口で入れたら、通ってから店に入る（違っていれば、入口のまま聞き直す）
-          await actions.enterShop();
+          // 入口で入れたら、通ってから店に入る（違っていれば、店を開かずに入口のまま聞き直す）
+          await startSession();
+          const after = get();
+          if (!after.auth.needed && after.session.status !== "closed") setUi({ view: "shop" });
           return;
         }
         if (get().session.status !== "ready") {
