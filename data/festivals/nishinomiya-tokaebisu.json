@@ -156,10 +156,9 @@
     },
     {
       "date": "2027-01-09",
-      "endDate": "2027-01-11",
       "start": null,
       "end": null,
-      "status": "announced",
+      "status": "expected",
       "rainPolicy": null,
       "note": "宵えびす（例年の決まり。2027年の発表はまだない）。例年、14時ごろ有馬温泉献湯式、16時に十日戎宵宮祭。前日の8日9時半ごろに大まぐろ奉納式があり、大まぐろは3日間拝殿に供えられる。夜12時に境内のすべての門が閉ざされる",
       "sources": [
@@ -168,18 +167,6 @@
           "title": "１月（睦月）の祭典・行事案内 - えびす宮総本社 西宮神社 公式サイト",
           "checkedAt": "2026-11-08",
           "confidence": "official"
-        },
-        {
-          "url": "https://nishinomiya-ebisu.com/event/mutsuki/",
-          "title": "１月（睦月）の祭典・行事案内 - えびす宮総本社 西宮神社 公式サイト",
-          "checkedAt": "2026-11-08",
-          "confidence": "official"
-        },
-        {
-          "url": "https://www.yasiro.co.jp/eitaikuyo/media/archives/13891",
-          "title": "商売繁盛の神様、十日戎「えべっさん」とは？目的や2027年はいつどこで開催される？",
-          "checkedAt": "2026-11-08",
-          "confidence": "single"
         },
         {
           "url": "https://www.walkerplus.com/spot/ar0728s30573/",
