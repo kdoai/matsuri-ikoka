@@ -7,7 +7,7 @@ import {
   type SseEvent,
   TRIAL_ACCOUNT_UID,
 } from "@matsuri-ikoka/schema";
-import { fictionalItinerary } from "@matsuri-ikoka/schema/testing";
+import { fictionalItinerary, fictionalSource } from "@matsuri-ikoka/schema/testing";
 import { beforeAll, describe, expect, it } from "vitest";
 import type { IdTokenVerifier } from "../account/idToken";
 import { loadSampleConversations, ReplayAgentRunner } from "../agent/replayRunner";
@@ -200,6 +200,17 @@ const TABLE: {
     anonymous: 404,
   },
   {
+    route: "POST /api/session/resume",
+    request: ({ sessionId }) => ({
+      method: "POST",
+      path: "/api/session/resume",
+      body: { sessionId },
+    }),
+    owner: 200,
+    other: 404,
+    anonymous: 404,
+  },
+  {
     route: "POST /api/festivals/search",
     request: ({ sessionId }) => ({
       method: "POST",
@@ -240,6 +251,13 @@ const TABLE: {
     route: "GET /api/trips/:id",
     request: ({ itineraryId }) => ({ path: `/api/trips/${itineraryId}` }),
     owner: 200,
+    other: 404,
+    anonymous: 401,
+  },
+  {
+    route: "POST /api/trips/:id/resume",
+    request: ({ itineraryId }) => ({ method: "POST", path: `/api/trips/${itineraryId}/resume` }),
+    owner: 201,
     other: 404,
     anonymous: 401,
   },
@@ -610,6 +628,64 @@ describe("ログインなしの相談は、いままでどおり", () => {
     expect((await call(`/api/itinerary/${itineraryId}`, { user: ALICE })).status).toBe(200);
   });
 
+  it("ログインする前に渡したしおりの URL は、ログインする前の版だけを出し、あとの版は持ち主にしか見せない", async () => {
+    const itineraries = new ItineraryStore();
+    const titles = ["鈴鳴の旅その一", "鈴鳴の旅その二", "鈴鳴の旅その三"];
+    /** 発言のたびに、名前の違う確定した旅程の新しい版を保存する接客 */
+    const saving: AgentRunner = {
+      mode: "live",
+      runTurn: async ({ session }) => {
+        const id = session.itineraryId ?? `trip-${session.id}`;
+        const version = (itineraries.get(id)?.version ?? 0) + 1;
+        itineraries.save(
+          {
+            ...fictionalItinerary(),
+            id,
+            version,
+            title: titles[version - 1] ?? "鈴鳴の旅",
+            verification: {
+              status: "as_planned",
+              checkedAt: "2026-08-03T10:00:00+09:00",
+              sources: [fictionalSource("2026")],
+            },
+          },
+          session.ownerUid,
+        );
+        session.itineraryId = id;
+      },
+    };
+    const { call, chat, start } = setup({ itineraries, runner: saving });
+    const sessionId = await start();
+    await (await chat(sessionId)).text();
+    const itineraryId = `trip-${sessionId}`;
+
+    // A がログインして続け、版が2つ増える
+    await (await chat(sessionId, ALICE)).text();
+    await (await chat(sessionId, ALICE)).text();
+
+    for (const init of [{}, { user: BOB }]) {
+      const page = await call(`/shiori/${itineraryId}`, init);
+      const text = await page.text();
+      expect(page.status).toBe(200);
+      expect(text).toContain("鈴鳴の旅その一");
+      expect(text).not.toContain("鈴鳴の旅その二");
+      expect(text).not.toContain("鈴鳴の旅その三");
+      expect(text).toContain("まで開けます");
+      expect((await call(`/api/itinerary/${itineraryId}`, init)).status).toBe(404);
+      expect((await call(`/api/trips/${itineraryId}`, init)).status).toBe(
+        "user" in init ? 404 : 401,
+      );
+    }
+    const own = await (await call(`/shiori/${itineraryId}`, { user: ALICE })).text();
+    expect(own).toContain("鈴鳴の旅その三");
+
+    // 持ち主が旅を消すと、前に渡した URL も開けなくなる
+    expect(
+      (await call(`/api/trips/${itineraryId}`, { method: "DELETE", user: ALICE })).status,
+    ).toBe(204);
+    expect((await call(`/shiori/${itineraryId}`)).status).toBe(404);
+  });
+
   it("ログインした人への旅程の応答は、ブラウザや途中のキャッシュに残さない", async () => {
     const { call, consult } = setup();
     const { itineraryId } = await consult(ALICE);
@@ -631,7 +707,10 @@ describe("ログインなしの相談は、いままでどおり", () => {
     expect((await save(ALICE)).status).toBe(201);
     expect(sessions.get(sessionId)?.ownerUid).toBe(ALICE);
     expect((await save(BOB)).status).toBe(404);
-    expect((await call(`/shiori/${itineraryId}`)).status).toBe(404);
+    // 残す前に渡したしおりの URL は、残したときの版のまま開ける。旅程の API では読めない
+    expect((await call(`/shiori/${itineraryId}`)).status).toBe(200);
+    expect((await call(`/api/itinerary/${itineraryId}`)).status).toBe(404);
+    expect((await call(`/api/trips/${itineraryId}`, { user: BOB })).status).toBe(404);
   });
 });
 

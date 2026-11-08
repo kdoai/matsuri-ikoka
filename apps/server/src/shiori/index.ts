@@ -18,7 +18,7 @@ export interface Shiori {
   html(
     trip: ShioriTrip,
     lookup: FestivalLookup,
-    options: { pdfHref: string | null },
+    options: { pdfHref: string | null; expiryNote?: string | null },
   ): Promise<string>;
   pdf(trip: ShioriTrip, lookup: FestivalLookup): Promise<Buffer>;
   /** /shiori/assets/ の下のファイル */
@@ -48,11 +48,18 @@ export function createShiori(options: ShioriOptions = {}): Shiori {
     );
     return service;
   };
-  const html = async (trip: ShioriTrip, lookup: FestivalLookup, pdfHref: string | null) =>
-    String(await renderShioriHtml(buildShioriView(trip, lookup), getAssets(), { pdfHref }));
+  const html = async (
+    trip: ShioriTrip,
+    lookup: FestivalLookup,
+    pdfHref: string | null,
+    expiryNote: string | null = null,
+  ) =>
+    String(
+      await renderShioriHtml(buildShioriView(trip, lookup), getAssets(), { pdfHref, expiryNote }),
+    );
 
   return {
-    html: (trip, lookup, { pdfHref }) => html(trip, lookup, pdfHref),
+    html: (trip, lookup, { pdfHref, expiryNote }) => html(trip, lookup, pdfHref, expiryNote),
     async pdf(trip, lookup) {
       const page = await html(trip, lookup, null);
       return getService().get({ key: pdfCacheKey(trip.id, trip.version, page), html: page });

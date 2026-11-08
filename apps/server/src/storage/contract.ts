@@ -569,6 +569,93 @@ export function tripStorageContract(make: (clock: Clock) => TripStorage): void {
     expect(await storage.getSession(snapshot.id)).toBeNull();
   });
 
+  it("旅程を持つ相談は、渡した期限まで残す。期限のない前の形の保存は6時間", async () => {
+    const { clock, storage } = setup();
+    const snapshot = snapshotAt(clock.now);
+    const expiresAt = clock.now + SHARE_TTL_MS;
+    await storage.saveSession({ ...snapshot, expiresAt });
+
+    clock.now += SESSION_STATE_TTL_MS + 1;
+    expect((await storage.getSession(snapshot.id))?.itineraryId).toBe("it-1");
+    clock.now = expiresAt + 1;
+    expect(await storage.getSession(snapshot.id)).toBeNull();
+  });
+
+  it("先の旅の旅程と共有は、旅の最終日の数日後まで読める", async () => {
+    const { clock, storage, itinerary, mine } = setup();
+    const later = itinerary();
+    const [day] = fictionalItinerary().days;
+    if (day === undefined) throw new Error("架空の旅程に日がありません");
+    later.days = [{ ...day, date: "2026-11-03" }];
+    await storage.saveItinerary(later, null);
+    const draft = itinerary();
+    await storage.saveItinerary(draft, mine.owner);
+    const share = await mine.createShare(draft.id);
+    const farDraft = { ...draft, version: 2, days: later.days };
+    await storage.saveItinerary(farDraft, mine.owner);
+    const farShare = await mine.createShare(draft.id);
+    if (share === null || farShare === null) throw new Error("共有を作れませんでした");
+
+    // 11/3 の3日後の終わり（日本時間）
+    const end = Date.parse("2026-11-06T15:00:00Z");
+    expect(share.expiresAt).toBe(clock.now + SHARE_TTL_MS);
+    expect(farShare.expiresAt).toBe(end);
+    expect((await storage.readUnowned(later.id))?.expiresAt).toBe(end);
+    clock.now += SHARE_TTL_MS + 1;
+    expect((await storage.readUnowned(later.id))?.version).toBe(1);
+    expect(await storage.readShare(share.shareId)).toBeNull();
+    expect((await storage.readShare(farShare.shareId))?.version).toBe(2);
+    clock.now = end + 1;
+    expect(await storage.readUnowned(later.id)).toBeNull();
+    expect(await storage.readShare(farShare.shareId)).toBeNull();
+  });
+
+  it("持ち主が付く前に渡した URL の版は、付く前の最新の版だけを、その期限まで読む", async () => {
+    const { clock, storage, itinerary, mine } = setup();
+    const v1 = itinerary(1);
+    await storage.saveItinerary(v1, null);
+    await storage.saveItinerary({ ...v1, version: 2, title: "二つめの版" }, null);
+    expect(await storage.readBeforeOwner(v1.id)).toBeNull();
+    const expiresAt = (await storage.readUnowned(v1.id))?.expiresAt;
+
+    // 途中でログインした相談が、次の版を保存する
+    await storage.saveItinerary({ ...v1, version: 3, title: "三つめの版" }, mine.owner);
+    const before = await storage.readBeforeOwner(v1.id);
+
+    expect(await storage.readUnowned(v1.id)).toBeNull();
+    expect(before?.version).toBe(2);
+    expect((before?.itinerary as Itinerary | undefined)?.title).toBe("二つめの版");
+    expect(before?.expiresAt).toBe(expiresAt);
+    // 残しても、渡した URL の版と期限は変わらない
+    await mine.claimTrip(v1.id);
+    expect((await storage.readBeforeOwner(v1.id))?.version).toBe(2);
+    clock.now = (expiresAt ?? 0) + 1;
+    expect(await storage.readBeforeOwner(v1.id)).toBeNull();
+    expect((await mine.getTrip(v1.id))?.version).toBe(3);
+  });
+
+  it("はじめから持ち主のある旅程には、持ち主が付く前の版がない", async () => {
+    const { storage, itinerary, mine } = setup();
+    const v1 = itinerary(1);
+    await storage.saveItinerary(v1, mine.owner);
+    await storage.saveItinerary({ ...v1, version: 2 }, mine.owner);
+    await mine.claimTrip(v1.id);
+
+    expect(await storage.readBeforeOwner(v1.id)).toBeNull();
+  });
+
+  it("持ち主のない旅程を残すと、残したときの版を、前に渡した URL で読む", async () => {
+    const { storage, itinerary, mine } = setup();
+    const v1 = itinerary(1);
+    await storage.saveItinerary(v1, null);
+
+    await mine.claimTrip(v1.id);
+    await storage.saveItinerary({ ...v1, version: 2, title: "残したあとの版" }, mine.owner);
+
+    expect((await storage.readBeforeOwner(v1.id))?.version).toBe(1);
+    expect(await storage.readUnowned(v1.id)).toBeNull();
+  });
+
   it("相談の持ち主は残り、持ち主のない書き込みでは消えない", async () => {
     const { clock, storage, owner } = setup();
     const snapshot = snapshotAt(clock.now);

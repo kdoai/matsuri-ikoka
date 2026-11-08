@@ -300,7 +300,8 @@ b, strong, h1, h2, h3, h4 { font-weight: 900; }
 @media screen {
   html, body { height: 100%; }
   body { display: flex; flex-direction: column; overflow: hidden; background: #4a3a2c; }
-  .toolbar { flex: none; display: flex; justify-content: center; gap: 12px; padding: 8px 16px; }
+  .toolbar { flex: none; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; padding: 8px 16px; }
+  .toolbar .expiry { margin: 0; color: #fffaf2; font-size: 14px; }
   .toolbar a { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: var(--on-accent); font-weight: 900; text-decoration: none; padding: 8px 20px; border-radius: 99px; font-size: 16px; }
   .book { flex: 1; min-height: 0; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-behavior: smooth;
     overscroll-behavior-x: contain; scrollbar-width: none; container: book / size; }
