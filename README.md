@@ -171,20 +171,20 @@ pnpm dev
 MATSURI_AGENT_MODE=live MODEL_CONCIERGE=<モデル名> MODEL_STAFF=<モデル名> pnpm dev
 ```
 
-| 変数                                                                   | 中身                                                                                                         |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `MATSURI_AGENT_MODE`                                                   | `live` にする                                                                                                |
-| `ANTHROPIC_API_KEY`                                                    | Claude の API キー。Claude Code にログイン済みの手元の環境では、空のままでも動く                             |
-| `MODEL_CONCIERGE`・`MODEL_STAFF`                                       | コンシェルジュと、スタッフ（祭り調査係・周辺係・候補を出す前の開催の確かめ）のモデル名                       |
-| `MODEL_PLANNER`・`MODEL_EVALUATOR`                                     | 旅程係と、旅程の評価係のモデル名。省略すると旅程係は `MODEL_STAFF`、評価係は旅程係と同じ。強いモデルを勧める |
-| `MODEL_VERIFIER`                                                       | 確定前の再確認のモデル名。省略すると `MODEL_STAFF`                                                           |
-| `MODEL_GUIDE`                                                          | しおりのあとの旅のガイドのモデル名。空なら、ガイドの入口だけが断り、店内の相談は動く                         |
-| `MODEL_WISH_READER`                                                    | 祭りから探すときの、自由記述の読み取り。省略すると軽いモデル                                                 |
-| `AGENT_MAX_BUDGET_USD`                                                 | 1回の発言の費用の上限（米ドル）。省略すると上限なし                                                          |
-| `MATSURI_FESTIVALS_DIR`                                                | 祭りのデータを読む場所。省略すると、live は `data/festivals`、モックは架空の祭り                             |
-| `ACCESS_PASSCODE`                                                      | 合言葉。設定すると、`/api` を呼ぶたびに合言葉を確かめる。手元では空のままでよい                              |
-| `MATSURI_STORAGE`                                                      | 旅程の置き場所。`memory`（既定。再起動で消える）か `firestore`                                               |
-| `RAKUTEN_APPLICATION_ID`・`RAKUTEN_ACCESS_KEY`・`RAKUTEN_ALLOWED_SITE` | 宿の空きを調べる楽天トラベルの API（ID とキーの両方がそろうと使う）。なければ、手元では架空の宿を返す        |
+| 変数                                                                   | 中身                                                                                                                                                       |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `MATSURI_AGENT_MODE`                                                   | `live` にする                                                                                                                                              |
+| `ANTHROPIC_API_KEY`                                                    | Claude の API キー。Claude Code にログイン済みの手元の環境では、空のままでも動く                                                                           |
+| `MODEL_CONCIERGE`・`MODEL_STAFF`                                       | コンシェルジュと、スタッフ（祭り調査係・周辺係・候補を出す前の開催の確かめ）のモデル名                                                                     |
+| `MODEL_PLANNER`・`MODEL_EVALUATOR`                                     | 旅程係と、旅程の評価係のモデル名。省略すると旅程係は `MODEL_STAFF`、評価係は旅程係と同じ。強いモデルを勧める                                               |
+| `MODEL_VERIFIER`                                                       | 確定前の再確認のモデル名。省略すると `MODEL_STAFF`                                                                                                         |
+| `MODEL_GUIDE`                                                          | しおりのあとの旅のガイドのモデル名。空なら、ガイドの入口だけが断り、店内の相談は動く                                                                       |
+| `MODEL_WISH_READER`                                                    | 祭りから探すときの、自由記述の読み取り。省略すると軽いモデル                                                                                               |
+| `AGENT_MAX_BUDGET_USD`                                                 | 1回の発言の費用の上限（米ドル）。省略すると上限なし                                                                                                        |
+| `MATSURI_FESTIVALS_DIR`                                                | 祭りのデータを読む場所。省略すると、live は `data/festivals`、モックは架空の祭り                                                                           |
+| `ACCESS_PASSCODE`                                                      | 合言葉。設定すると、`/api` を呼ぶたびに合言葉を確かめる。手元では空のままでよい                                                                            |
+| `MATSURI_STORAGE`                                                      | 旅程の置き場所。`memory`（既定。再起動で消える）か `firestore`                                                                                             |
+| `RAKUTEN_APPLICATION_ID`・`RAKUTEN_ACCESS_KEY`・`RAKUTEN_ALLOWED_SITE` | 宿の空きと料金を調べる楽天トラベルの API（ID とキーの両方がそろうと使う）。なければ、本番は実在の宿を Web で調べ（空きは調べない）、手元は見本の宿で試せる |
 
 役割ごとの勧める値と、宿の空き・ログイン・見回りなどの変数は、[`.env.example`](.env.example) と[環境変数の一覧](docs/spec/operations.md#環境変数)にあります。
 
