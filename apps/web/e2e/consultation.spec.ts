@@ -90,7 +90,7 @@ test("相談からしおりまで、画面で通せる", async ({ page }, info) 
   await expect(nearMiss).toHaveCount(1);
   await expect(nearMiss).toContainText("未確認");
   await expect(nearMiss).toContainText("ご希望の日の1日前（8月15日）に開きます");
-  await expect(nearMiss).toContainText("要確認");
+  await expect(nearMiss).toContainText("情報源1つ");
   await expect(cards.nth(0).getByRole("link", { name: "情報の訂正を送る" })).toHaveAttribute(
     "href",
     /issues\/new\?template=festival-correction\.yml/,

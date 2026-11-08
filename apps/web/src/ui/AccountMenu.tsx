@@ -53,12 +53,12 @@ const MESSAGES = {
     save: "Keep this trip",
     saved: "Kept",
     empty: "No trips kept yet.",
-    open: "Open guide",
+    open: "Open booklet",
     resume: "Continue in the shop",
     resumeFailed: "Couldn't open this trip in the shop. Please try again in a moment.",
     delete: "Delete",
     confirmDelete: (title: string) =>
-      `Delete "${title}"? Shared guide links will stop working too.`,
+      `Delete "${title}"? Shared booklet links will stop working too.`,
     logout: "Sign out",
     trialNote:
       "This is the trial account. Others using it can see kept trips, and they're removed when the account is reset.",
@@ -70,9 +70,9 @@ const MESSAGES = {
     cancel: "Cancel",
     deleteAll: "Delete all trips and my sign-in record",
     confirmDeleteAll:
-      "This deletes your kept trips, shared guides, and this app's sign-in record, then signs you out. This cannot be undone.",
+      "This deletes your kept trips, shared booklets, and this app's sign-in record, then signs you out. This cannot be undone.",
     keepNote:
-      "Kept trips stay until you delete them. Use Continue in the shop to keep planning. Shared guide links open for 30 days or until 3 days after the trip, whichever is later.",
+      "Kept trips stay until you delete them. Use Continue in the shop to keep planning. Shared booklet links open for 30 days or until 3 days after the trip, whichever is later.",
     close: "Close",
     untitled: "Untitled trip",
   },

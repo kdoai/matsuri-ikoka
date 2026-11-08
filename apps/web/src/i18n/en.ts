@@ -271,6 +271,10 @@ const prefectures = {
 };
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+/** Minutes as "2 h 30 min" (under an hour: "45 min") */
+const duration = (m: number) =>
+  m < 60 ? `${m} min` : m % 60 === 0 ? `${m / 60} h` : `${Math.floor(m / 60)} h ${m % 60} min`;
+
 export const en: Messages = {
   app: {
     name: "MATSURI IKOKA",
@@ -418,7 +422,7 @@ export const en: Messages = {
     members: consultMembers,
     prefectures,
     travelLabel: "From your station (one way, for a day trip)",
-    travelOption: (minutes: number) => `Within ${minutes / 60} h`,
+    travelOption: (minutes: number) => `Within ${duration(minutes)}`,
     transportLabel: "How you'd like to travel (choose any, or leave it to us)",
     transport: consultTransport,
     dietaryLabel: "Dietary needs (if any, choose any)",
@@ -457,7 +461,7 @@ export const en: Messages = {
     stationSourceLink: "Open the source page (new tab)",
     station: (name: string) => `${name} Station`,
     amountLabel: (basis: string) => `Or enter an amount (${basis})`,
-    basisLabel: "Count the budget",
+    basisLabel: "Budget basis",
     amountUnit: "yen",
     notePlaceholder: "e.g. Our kids get tired walking long distances",
     decide: "OK",
@@ -538,8 +542,7 @@ export const en: Messages = {
         nights === 0 ? "day trip" : `${plural(nights, "night", "nights")}`,
       amount: (yen: number) => `¥${yen.toLocaleString("en-US")}`,
       budgetBasis: { perPerson: "per person", total: "for everyone" },
-      travel: (minutes: number) =>
-        `Within ${minutes / 60} hour${minutes === 60 ? "" : "s"} one way from your station`,
+      travel: (minutes: number) => `Within ${duration(minutes)} one way from your station`,
       dietary: (needs: string[]) => `dietary needs: ${needs.join(", ")}`,
       dietaryOptions: consultDietary,
       transport: (modes: string[]) => `getting around by ${modes.join(", ")}`,
@@ -861,14 +864,14 @@ export const en: Messages = {
     title: "Trip preferences",
     labels: { party: "With", spot: "Places", food: "Food", move: "Travel" },
     party: { adults: "Adults only", kids: "With kids", seniors: "With seniors" },
-    spot: { classic: "Classic", auto: "Mix", hidden: "Hidden gems" },
+    spot: { classic: "Classic", auto: "Up to you", hidden: "Hidden gems" },
     food: { stalls: "Stalls are fine", local: "Local restaurants too" },
     move: { train: "Train", car: "Car" },
   },
   confidence: {
     official: "Official",
     corroborated: "Corroborated",
-    single: "Check again",
+    single: "One source",
     inferred: "Estimated",
     label: "Confidence",
   },
@@ -891,13 +894,7 @@ export const en: Messages = {
     noneFound: "No festivals match your conditions",
     noneFoundLine: "No festivals match your conditions. Try another way to search",
     travel: (lower: number, upper: number, estimate: boolean) => {
-      const span = (m: number) =>
-        m < 60
-          ? `${m} min`
-          : m % 60 === 0
-            ? `${m / 60} h`
-            : `${Math.floor(m / 60)} h ${m % 60} min`;
-      const range = lower === upper ? span(lower) : `${span(lower)}–${span(upper)}`;
+      const range = lower === upper ? duration(lower) : `${duration(lower)}–${duration(upper)}`;
       return `About ${range} one way from your station${estimate ? " (estimate)" : ""}`;
     },
     next: {
@@ -920,7 +917,7 @@ export const en: Messages = {
             return `Search on later dates (${dates})`;
           }
           case "longer_travel":
-            return `Allow up to ${(retry?.maxTravelMinutes ?? 0) / 60} h one way`;
+            return `Allow up to ${duration(retry?.maxTravelMinutes ?? 0)} one way`;
           case "wider_area":
             return retry?.widen === "nationwide"
               ? "Search all of Japan"
@@ -1126,7 +1123,7 @@ export const en: Messages = {
     retry: "Try again",
     close: "Back to the shop",
     keep: "Keep this trip",
-    kept: "Kept. You can open it any time from Sign in and my trips.",
+    kept: "Kept. You can open it any time from “Sign in and my trips.”",
     keepLogin: "Sign in to keep this trip",
     keepFailed: "Couldn't keep it. Please try again in a moment.",
     share: "Booklet URL",
@@ -1337,7 +1334,7 @@ export const en: Messages = {
     you: "You",
     phase: { before: "Before you leave", during: "On your trip", after: "After your trip" },
     guestNote:
-      "On this device, this trip stays open for 30 days after you last use it, or until 3 days after the trip ends if that is later.",
+      "On this device, this trip stays open for 30 days after it was last saved, or until 3 days after the trip ends if that is later.",
     guestKeep: "Keep it to open it later and come back to this street.",
     guestLogin: "Sign in and my trips",
     dismiss: "Close",

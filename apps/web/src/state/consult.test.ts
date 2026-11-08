@@ -455,7 +455,7 @@ describe("composeConsultMessage", () => {
       "・行き先：出発の駅から片道2時間以内、関東",
     );
     expect(composeConsultMessage(answers, MESSAGES.en.consult.wording, "2030-06-05")).toContain(
-      "Within 2 hours one way from your station",
+      "Within 2 h one way from your station",
     );
   });
 
