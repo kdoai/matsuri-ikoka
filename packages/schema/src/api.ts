@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { SessionIdSchema, SlugSchema } from "./common";
-import { ErrorEventSchema } from "./events";
+import { ConversationStageSchema, ErrorEventSchema } from "./events";
 import { FestivalSchema } from "./festival";
 import { TripAnchorSchema } from "./festivalSearch";
+import { ItinerarySchema } from "./itinerary";
 import { PreferencesSchema } from "./preferences";
 import { SearchRetrySchema } from "./search";
 
@@ -27,6 +28,24 @@ export const SessionResponseSchema = z.strictObject({
   mode: AgentModeSchema.optional(),
 });
 export type SessionResponse = z.infer<typeof SessionResponseSchema>;
+
+/** POST /api/session/resume の本文。端末に控えた相談の ID で、相談の続きを開く */
+export const SessionResumeRequestSchema = z.strictObject({ sessionId: SessionIdSchema });
+export type SessionResumeRequest = z.infer<typeof SessionResumeRequestSchema>;
+
+/**
+ * POST /api/session/resume と POST /api/trips/:id/resume の応答。
+ * 画面を戻すのに要る、相談の段階・こだわり・旅程。会話の文章は残していないので返さない
+ */
+export const SessionStateResponseSchema = z.strictObject({
+  sessionId: SessionIdSchema,
+  mode: AgentModeSchema.optional(),
+  stage: ConversationStageSchema,
+  preferences: PreferencesSchema,
+  /** 相談の旅程。まだない・読めなければ null */
+  itinerary: ItinerarySchema.nullable(),
+});
+export type SessionStateResponse = z.infer<typeof SessionStateResponseSchema>;
 
 /** GET /api/festivals の応答。掲載停止の祭りは含めない */
 export const FestivalsResponseSchema = z.strictObject({ festivals: z.array(FestivalSchema) });

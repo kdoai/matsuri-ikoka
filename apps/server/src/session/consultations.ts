@@ -1,3 +1,4 @@
+import type { ConversationStage, Itinerary } from "@matsuri-ikoka/schema";
 import type { OwnerId } from "../storage/owner";
 import type { StoragePersistence } from "./persistence";
 import type { Session, SessionStore } from "./sessionStore";
@@ -18,6 +19,36 @@ export class Consultations {
   /** 相談を始める。ログインしていれば、はじめからその利用者の相談にする */
   async start(owner: OwnerId | null, replay: Session["replay"]): Promise<Session> {
     const session = this.#sessions.create({ replay, ownerUid: owner });
+    await this.#persistence.saveSession(session);
+    return session;
+  }
+
+  /**
+   * 持ち主が残した旅（持ち主と確かめた旅程）から、続きを相談できる新しい相談を始める。
+   * 旅程の条件（出発地・帰り・同行者・予算）とこだわりを相談に戻し、確定した旅程ならしおりの段階から続ける。
+   * stage を渡すと、その段階から続ける（ガイドは、しおりのあとの旅として開く）
+   */
+  async resumeTrip(
+    owner: OwnerId,
+    itinerary: Itinerary,
+    options: { stage?: ConversationStage } = {},
+  ): Promise<Session> {
+    const session = this.#sessions.create({ replay: null, ownerUid: owner });
+    session.itineraryId = itinerary.id;
+    session.selectedFestivalId = itinerary.mainFestivalId;
+    const { verification } = itinerary;
+    const handed =
+      (verification.status === "as_planned" || verification.status === "needs_check") &&
+      verification.sources.length > 0;
+    session.stage = options.stage ?? (handed ? "shiori" : "itinerary");
+    session.preferences = itinerary.preferences;
+    // 組み直しや提案を、今の旅程の条件で確かめられるようにする
+    session.conditions = {
+      origin: itinerary.origin,
+      returnTo: itinerary.returnTo,
+      party: itinerary.party,
+      ...(itinerary.budget === undefined ? {} : { budget: itinerary.budget }),
+    };
     await this.#persistence.saveSession(session);
     return session;
   }

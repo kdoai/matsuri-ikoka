@@ -11,10 +11,12 @@ import {
   TripWatchSchema,
 } from "@matsuri-ikoka/schema";
 import { z } from "zod";
+import { sessionRetentionUntil } from "../domain/retention";
 import { errorForLog } from "../log";
 import { type OwnerId, ownerIdOf } from "../storage/owner";
 import {
   isShareId,
+  lastDateOf,
   type OwnerTripStorage,
   type SessionSnapshot,
   type TripStorage,
@@ -149,6 +151,14 @@ export class StoragePersistence {
   }
 
   /**
+   * 開いた相談の旅程の、手元の写し。相談を開く（load）と、読める旅程は写しに置かれる。
+   * 相談の持ち主と確かめたあとの、その相談の旅程の ID にだけ使う
+   */
+  itineraryOf(itineraryId: string): Itinerary | undefined {
+    return this.#itineraries.get(itineraryId);
+  }
+
+  /**
    * 旅を消す前に呼ぶ。その旅を指す相談に印を付けて流している返事を止め、手元の写しと相談の中のガイドのデータを捨てる。
    * 印のある間は旅程を保存しないので、返事の途中に消しても旅は作り直されない。
    * 相談の旅程は、次の発言の前に外す（releaseDeletedTrip）。ガイドの入口で「旅が消された」と分かるよう、それまで残す。
@@ -234,6 +244,31 @@ export class StoragePersistence {
     if (viewer === null) return undefined;
     const own = await this.#storage.forOwner(viewer).getTrip(id);
     return own === null ? undefined : parseStoredItinerary(own.itinerary);
+  }
+
+  /**
+   * しおりの URL（/shiori/{ID}）で出す旅程と、その URL で開ける期限（残した旅は null）。
+   * readItinerary で読めるものに加え、持ち主が付く前に渡した旅程の ID の URL では、付く前の最新の版を出す
+   * （付いたあとの版は、持ち主にしか見せない）
+   */
+  async readShioriItinerary(
+    id: string,
+    viewer: OwnerId | null,
+  ): Promise<{ itinerary: Itinerary; expiresAt: number | null } | undefined> {
+    await this.flush(id);
+    const read = (stored: { itinerary: unknown; expiresAt: number | null } | null) => {
+      if (stored === null) return undefined;
+      const itinerary = parseStoredItinerary(stored.itinerary);
+      return itinerary === undefined ? undefined : { itinerary, expiresAt: stored.expiresAt };
+    };
+    if (isShareId(id)) return read(await this.#storage.readShare(id));
+    const unowned = await this.#storage.readUnowned(id);
+    if (unowned !== null) return read(unowned);
+    if (viewer !== null) {
+      const own = await this.#storage.forOwner(viewer).getTrip(id);
+      if (own !== null) return read({ itinerary: own.itinerary, expiresAt: own.trip.expiresAt });
+    }
+    return read(await this.#storage.readBeforeOwner(id));
   }
 
   /**
@@ -347,7 +382,18 @@ export class StoragePersistence {
       return;
     }
     try {
-      await this.#storage.saveSession(snapshotOf(session, this.#now()));
+      const now = this.#now();
+      // 旅程を持つ相談は、旅程と同じ期限まで残す（翌日以降も、その相談から旅を残し、続きを相談できる）
+      const itinerary =
+        session.itineraryId === null ? undefined : this.#itineraries.get(session.itineraryId);
+      const trip =
+        session.itineraryId === null
+          ? null
+          : { lastDate: itinerary === undefined ? null : lastDateOf(itinerary) };
+      await this.#storage.saveSession({
+        ...snapshotOf(session, now),
+        expiresAt: sessionRetentionUntil(now, trip),
+      });
     } catch (error) {
       console.error(
         JSON.stringify({ kind: "storage_failed", what: "session", ...errorForLog(error) }),

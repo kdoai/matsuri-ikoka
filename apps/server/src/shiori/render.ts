@@ -951,6 +951,8 @@ function book(sheets: readonly Sheet[]): Html {
 export interface RenderOptions {
   /** 画面で見るときの「PDF で保存」のリンク（PDF の中には出さない） */
   pdfHref: string | null;
+  /** 画面で見るときに出す、この URL で開ける期限の一文（PDF の中には出さない）。なければ出さない */
+  expiryNote?: string | null;
 }
 
 /** しおりの HTML 全体 */
@@ -972,8 +974,12 @@ export function renderShioriHtml(
   <body class="${design.largeText ? "large" : ""}" data-length="${design.length}" data-season="${design.season}" data-category="${design.category}">
     ${raw(assets.sprite)}
     ${
-      options.pdfHref
-        ? html`<nav class="toolbar"><a href="${options.pdfHref}" download>${icon("bag")}PDF で保存・印刷する</a></nav>`
+      options.pdfHref || options.expiryNote
+        ? html`<nav class="toolbar">${
+            options.pdfHref
+              ? html`<a href="${options.pdfHref}" download>${icon("bag")}PDF で保存・印刷する</a>`
+              : ""
+          }${options.expiryNote ? html`<p class="expiry">${options.expiryNote}</p>` : ""}</nav>`
         : ""
     }
     ${book(buildSheets(view))}

@@ -1,4 +1,5 @@
 import {
+  type ConversationStage,
   decodeGuideSseEvent,
   decodeSseEvent,
   type FestivalCandidate,
@@ -6,6 +7,7 @@ import {
   type FestivalSearchResult,
   type GuideSseEvent,
   type GuideStall,
+  type Itinerary,
   type LatLng,
   MAX_MESSAGE_LENGTH,
   MarkNoticesReadResponseSchema,
@@ -233,6 +235,8 @@ export interface AppActions {
   revertGuideChange(): Promise<void>;
   /** 残した旅を開いて、縁日の通りに戻る。開けなければ false */
   openSavedTrip(tripId: string): Promise<boolean>;
+  /** 残した旅を店に戻し、続きを相談する。開けなければ false */
+  resumeSavedTrip(tripId: string): Promise<boolean>;
   nextTrivia(): void;
   prevTrivia(): void;
   /** 豆知識のあいだに出したクイズに答える */
@@ -240,6 +244,17 @@ export interface AppActions {
   /** 祭りのデータを読み込む（読み込み済みのものは読まない） */
   ensureFestivals(ids: readonly string[]): Promise<void>;
 }
+
+/**
+ * この端末に控える、いまの相談の ID。再読み込みやタブの破棄のあとに、相談の続きを開くのに使う。
+ * 持ち主の確かめはサーバーが行う（控えた ID だけでは、ほかの人の相談は開けない）
+ */
+export interface SessionMemory {
+  load(): string | null;
+  save(sessionId: string | null): void;
+}
+
+const NO_SESSION_MEMORY: SessionMemory = { load: () => null, save: () => {} };
 
 export type AppState = AppData & { actions: AppActions };
 export type AppStore = StoreApi<AppState>;
@@ -252,6 +267,8 @@ export interface StoreDeps {
   tutorialSeen?: boolean;
   /** 日本の今日（YYYY-MM-DD）。「今週末」などの日付の計算に使う */
   today?: () => string;
+  /** 相談の ID を端末に控える口。省くと控えない */
+  sessionMemory?: SessionMemory;
   random?: () => number;
   setTimer?: (callback: () => void, ms: number) => unknown;
   clearTimer?: (handle: unknown) => void;
@@ -259,6 +276,7 @@ export interface StoreDeps {
 
 export function createAppStore(deps: StoreDeps): AppStore {
   const { transport, festivals } = deps;
+  const memory = deps.sessionMemory ?? NO_SESSION_MEMORY;
   const random = deps.random ?? Math.random;
   const today = deps.today ?? (() => todayInJapan());
   const setTimer = deps.setTimer ?? ((callback, ms) => setTimeout(callback, ms));
@@ -402,6 +420,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
           return;
         }
         const mode = transport.agentMode?.() ?? null;
+        memory.save(id);
         update((state) =>
           passcodeAccepted({ ...state, session: { ...state.session, id, mode, status: "ready" } }),
         );
@@ -432,6 +451,100 @@ export function createAppStore(deps: StoreDeps): AppStore {
           addError({ ...state, session: { ...state.session, status: "failed" } }, error),
         );
       }
+    };
+
+    /** 前の相談の通信を止め、前の会話や確認の結果を残さない */
+    const stopAll = () => {
+      controller?.abort();
+      controller = null;
+      sessionController?.abort();
+      searchController?.abort();
+      previewController?.abort();
+      stopGuide();
+      clearTimers();
+    };
+
+    /**
+     * 開いた相談と旅程で、画面を作り直す。会話の文章は残していないので、続きからだと一言だけ出す。
+     * 旅程があるので、選んで進める聞き取りはしまっておく（「選び直す」でまた開ける）
+     */
+    const adoptSession = (opened: {
+      sessionId: string | null;
+      stage: ConversationStage;
+      preferences: Preferences;
+      itinerary: Itinerary;
+      note: string | null;
+    }) => {
+      const { sessionId, itinerary } = opened;
+      if (sessionId !== null) memory.save(sessionId);
+      update((state) => {
+        const { ui, festivals: known, festivalLoad, auth } = state;
+        const fresh = initialData({ locale: ui.locale, tutorialSeen: ui.tutorialSeen });
+        return {
+          ...fresh,
+          quiz: { ...fresh.quiz, deck: shuffleDeck(fresh.quiz.deck, random) },
+          session: {
+            ...fresh.session,
+            id: sessionId,
+            mode: transport.agentMode?.() ?? null,
+            status: sessionId === null ? "closed" : "ready",
+            stage: opened.stage,
+          },
+          preferences: opened.preferences,
+          consult: { ...fresh.consult, active: false },
+          itinerary: { current: itinerary, previous: null, diff: null },
+          verify: verifyFromItinerary(itinerary),
+          messages:
+            opened.note === null
+              ? []
+              : [{ kind: "concierge", id: "resumed", text: opened.note, streaming: false }],
+          festivals: known,
+          festivalLoad,
+          auth,
+          ui: { ...fresh.ui, soundOn: ui.soundOn, readAloud: ui.readAloud },
+        };
+      });
+      void get().actions.ensureFestivals([itinerary.mainFestivalId]);
+    };
+
+    /**
+     * 端末に控えた相談の続きを開く。旅程のある相談だけを戻す（会話の文章は戻せないので、旅程のない相談は始め直す）。
+     * 戻せたら true。ない相談（期限切れ・ほかの人の相談）なら控えを消す
+     */
+    const resumeRemembered = async (): Promise<boolean> => {
+      const saved = memory.load();
+      if (saved === null || transport.resumeSession === undefined) return false;
+      sessionController?.abort();
+      const current = new AbortController();
+      sessionController = current;
+      update((state) => ({ ...state, session: { ...state.session, status: "opening" } }));
+      let opened: Awaited<ReturnType<NonNullable<ChatTransport["resumeSession"]>>>;
+      try {
+        opened = await transport.resumeSession(saved, current.signal);
+      } catch (caught) {
+        if (current.signal.aborted) return true;
+        if (caught instanceof TransportError && caught.status === 404) memory.save(null);
+        return false;
+      }
+      if (current.signal.aborted) return true;
+      const { itinerary } = opened;
+      if (itinerary === null) return false;
+      adoptSession({
+        sessionId: opened.sessionId,
+        stage: opened.stage,
+        preferences: opened.preferences,
+        itinerary,
+        note: MESSAGES[get().ui.locale].app.resumed,
+      });
+      update(passcodeAccepted);
+      setUi({ view: "shop" });
+      return true;
+    };
+
+    /** 店に入って相談を開く。控えた相談の続きがあれば開き、なければ新しく始める */
+    const openSession = async () => {
+      if (await resumeRemembered()) return;
+      await startSession();
     };
 
     const sendChat = async (
@@ -685,7 +798,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
       async enterShop() {
         setUi({ view: "shop" });
         if (get().session.status === "closed") {
-          await startSession();
+          await openSession();
         }
       },
 
@@ -771,7 +884,7 @@ export function createAppStore(deps: StoreDeps): AppStore {
         }
         if (get().session.status !== "ready") {
           setUi({ view: "shop" });
-          await startSession();
+          await openSession();
           return;
         }
         const { festivalSearch, consult } = get();
@@ -1222,37 +1335,37 @@ export function createAppStore(deps: StoreDeps): AppStore {
           return false;
         }
         // 前の相談の通信を止め、前の人の会話や確認の結果を残さない
-        controller?.abort();
-        controller = null;
-        sessionController?.abort();
-        searchController?.abort();
-        previewController?.abort();
-        stopGuide();
-        clearTimers();
+        stopAll();
         const { sessionId, itinerary } = opened;
-        update((state) => {
-          const { ui, festivals: known, festivalLoad, auth } = state;
-          const fresh = initialData({ locale: ui.locale, tutorialSeen: ui.tutorialSeen });
-          return {
-            ...fresh,
-            quiz: { ...fresh.quiz, deck: shuffleDeck(fresh.quiz.deck, random) },
-            session: {
-              ...fresh.session,
-              id: sessionId,
-              mode: transport.agentMode?.() ?? null,
-              status: sessionId === null ? "closed" : "ready",
-              stage: "shiori",
-            },
-            preferences: itinerary.preferences,
-            itinerary: { current: itinerary, previous: null, diff: null },
-            verify: verifyFromItinerary(itinerary),
-            festivals: known,
-            festivalLoad,
-            auth,
-            ui: { ...fresh.ui, soundOn: ui.soundOn, readAloud: ui.readAloud },
-          };
+        adoptSession({
+          sessionId,
+          stage: "shiori",
+          preferences: itinerary.preferences,
+          itinerary,
+          note: null,
         });
         arriveOnStreet();
+        return true;
+      },
+      async resumeSavedTrip(tripId) {
+        if (transport.resumeSavedTrip === undefined) return false;
+        let opened: Awaited<ReturnType<NonNullable<ChatTransport["resumeSavedTrip"]>>>;
+        try {
+          opened = await transport.resumeSavedTrip(tripId);
+        } catch {
+          return false;
+        }
+        const { itinerary } = opened;
+        if (itinerary === null) return false;
+        stopAll();
+        adoptSession({
+          sessionId: opened.sessionId,
+          stage: opened.stage,
+          preferences: opened.preferences,
+          itinerary,
+          note: MESSAGES[get().ui.locale].app.resumedTrip(itinerary.title),
+        });
+        setUi({ view: "shop", dialogueOpen: true });
         return true;
       },
       nextTrivia() {

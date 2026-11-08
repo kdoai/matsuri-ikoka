@@ -1,5 +1,6 @@
 import { randomBytes } from "node:crypto";
 import type { Itinerary } from "@matsuri-ikoka/schema";
+import { retentionUntil } from "../domain/retention";
 import { isDocumentId, type OwnerId, ownerTripPath } from "./owner";
 import {
   type ClaimResult,
@@ -7,17 +8,18 @@ import {
   type DailyGuideUsage,
   GUIDE_USAGE_TTL_MS,
   type GuideUsage,
+  lastDateOf,
   MAX_TRIP_DOCS,
   MAX_VERSIONS,
   type OwnerTripDocs,
   type OwnerTripStorage,
-  SESSION_STATE_TTL_MS,
+  publicBeforeOwner,
   type SessionSnapshot,
   SHARE_REUSE_MIN_REMAINING_MS,
-  SHARE_TTL_MS,
   type SharedItinerary,
   type StoredTrip,
   type StoredTripDetail,
+  sessionExpiresAt,
   summarize,
   TRIP_WATCH_DOC_ID,
   type TripDocKind,
@@ -77,7 +79,7 @@ export class MemoryTripStorage implements TripStorage {
   readonly #shares = new Map<string, ShareEntry>();
   readonly #sessions = new Map<
     string,
-    { json: string; updatedAt: number; ownerUid: string | null }
+    { json: string; expiresAt: number; ownerUid: string | null }
   >();
   /** 持ち主の旅の置き場のパス → 「種類/ID」→ 文書 */
   readonly #tripDocs = new Map<string, Map<string, TripDocEntry>>();
@@ -91,10 +93,11 @@ export class MemoryTripStorage implements TripStorage {
     this.#max = options.max ?? MAX_MEMORY_ENTRIES;
   }
 
-  /** 残されていない旅程は、最後の保存から30日で消える */
+  /** 残されていない旅程は、期限（最後の保存から30日と、旅の最終日の数日後の遅い方）で消える */
   #alive(entry: ItineraryEntry | undefined): ItineraryEntry | undefined {
     if (entry === undefined) return undefined;
-    if (entry.head.ownerUid === null && this.#now() - entry.head.updatedAt > SHARE_TTL_MS) {
+    const { expiresAt } = entry.head;
+    if (entry.head.ownerUid === null && expiresAt !== null && this.#now() > expiresAt) {
       this.#itineraries.delete(entry.head.itineraryId);
       return undefined;
     }
@@ -257,9 +260,13 @@ export class MemoryTripStorage implements TripStorage {
         version: itinerary.version,
         createdAt: now,
         updatedAt: now,
+        expiresAt: null,
+        publicVersion: null,
+        publicExpiresAt: null,
       },
       versions: new Map(),
     };
+    const before = { ...entry.head };
     entry.versions.set(itinerary.version, JSON.stringify(itinerary));
     for (const version of [...entry.versions.keys()].sort((a, b) => a - b)) {
       if (entry.versions.size <= MAX_VERSIONS) break;
@@ -270,6 +277,15 @@ export class MemoryTripStorage implements TripStorage {
     }
     entry.head.updatedAt = now;
     entry.head.consultOwnerUid ??= consultOwner;
+    if (entry.head.ownerUid === null) {
+      // 期限は縮めない（前の版より旅が早く終わっても、渡した URL を先に切らない）
+      const until = retentionUntil(now, lastDateOf(itinerary));
+      entry.head.expiresAt = Math.max(until, existing?.head.expiresAt ?? 0);
+    }
+    // 持ち主が付く前に渡したしおりの URL は、その前の版だけを出し続ける
+    if (existing !== undefined && tripOwner(entry.head) !== null) {
+      Object.assign(entry.head, publicBeforeOwner(before, before));
+    }
     // 保存した順を保つ（上限で消すのは、いちばん長く保存されていない旅程から）
     this.#itineraries.delete(itinerary.id);
     this.#itineraries.set(itinerary.id, entry);
@@ -287,17 +303,35 @@ export class MemoryTripStorage implements TripStorage {
       itineraryId: share.itineraryId,
       version: share.version,
       itinerary: JSON.parse(share.json),
+      expiresAt: share.expiresAt,
     };
   }
 
   async readUnowned(itineraryId: string, version?: number): Promise<SharedItinerary | null> {
     const entry = this.#alive(this.#itineraries.get(itineraryId));
     if (entry === undefined || tripOwner(entry.head) !== null) return null;
-    if (this.#now() - entry.head.updatedAt > SHARE_TTL_MS) return null;
+    const { expiresAt } = entry.head;
+    if (expiresAt === null) return null;
     const wanted = version ?? entry.head.version;
     const json = entry.versions.get(wanted);
     if (json === undefined) return null;
-    return { itineraryId, version: wanted, itinerary: JSON.parse(json) };
+    return { itineraryId, version: wanted, itinerary: JSON.parse(json), expiresAt };
+  }
+
+  async readBeforeOwner(itineraryId: string): Promise<SharedItinerary | null> {
+    const entry = this.#alive(this.#itineraries.get(itineraryId));
+    if (entry === undefined || tripOwner(entry.head) === null) return null;
+    const { publicVersion, publicExpiresAt } = entry.head;
+    if (publicVersion === null || publicExpiresAt === null) return null;
+    if (this.#now() > publicExpiresAt) return null;
+    const json = entry.versions.get(publicVersion);
+    if (json === undefined) return null;
+    return {
+      itineraryId,
+      version: publicVersion,
+      itinerary: JSON.parse(json),
+      expiresAt: publicExpiresAt,
+    };
   }
 
   async #claimTrip(uid: string, itineraryId: string): Promise<ClaimResult> {
@@ -305,7 +339,11 @@ export class MemoryTripStorage implements TripStorage {
     if (entry === undefined) return { status: "not_found" };
     const owner = tripOwner(entry.head);
     if (owner !== null && owner !== uid) return { status: "not_found" };
-    entry.head.ownerUid = uid;
+    // 持ち主のなかった旅程なら、前に渡したしおりの URL で、いまの版を出し続ける
+    Object.assign(entry.head, publicBeforeOwner(entry.head, entry.head), {
+      ownerUid: uid,
+      expiresAt: null,
+    });
     return { status: "saved", trip: { ...entry.head } };
   }
 
@@ -385,7 +423,8 @@ export class MemoryTripStorage implements TripStorage {
       }
     }
     const shareId = newShareId();
-    const expiresAt = now + SHARE_TTL_MS;
+    // 先の旅でも、旅の当日まで開けるようにする
+    const expiresAt = retentionUntil(now, lastDateOf(JSON.parse(json)));
     this.#shares.set(shareId, {
       itineraryId,
       ownerUid: uid,
@@ -402,7 +441,7 @@ export class MemoryTripStorage implements TripStorage {
     this.#sessions.delete(snapshot.id);
     this.#sessions.set(snapshot.id, {
       json: JSON.stringify({ ...snapshot, ownerUid }),
-      updatedAt: snapshot.updatedAt,
+      expiresAt: sessionExpiresAt(snapshot),
       ownerUid,
     });
     trim(this.#sessions, this.#max);
@@ -411,7 +450,7 @@ export class MemoryTripStorage implements TripStorage {
   async getSession(id: string): Promise<SessionSnapshot | null> {
     const entry = this.#sessions.get(id);
     if (entry === undefined) return null;
-    if (this.#now() - entry.updatedAt > SESSION_STATE_TTL_MS) {
+    if (this.#now() > entry.expiresAt) {
       this.#sessions.delete(id);
       return null;
     }

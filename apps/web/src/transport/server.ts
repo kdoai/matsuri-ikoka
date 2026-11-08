@@ -7,6 +7,8 @@ import {
   GuideStateResponseSchema,
   type SessionRequest,
   SessionResponseSchema,
+  type SessionStateResponse,
+  SessionStateResponseSchema,
   TripResponseSchema,
 } from "@matsuri-ikoka/schema";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
@@ -123,6 +125,21 @@ export function createServerTransport(options: ServerTransportOptions = {}): Cha
   const sessionRequest: SessionRequest = options.sample ? { sample: options.sample } : {};
   let mode: AgentMode | null = null;
 
+  /** 相談の続きの応答を読む。404 はない相談（呼ぶ側が状態コードで見分ける） */
+  const readSessionState = async (response: Response): Promise<SessionStateResponse> => {
+    if (!response.ok) {
+      throw await errorFromResponse(response, false);
+    }
+    const parsed = SessionStateResponseSchema.safeParse(
+      await response.json().catch(() => undefined),
+    );
+    if (!parsed.success) {
+      throw new TransportError("invalid_event", { status: response.status });
+    }
+    mode = parsed.data.mode ?? null;
+    return parsed.data;
+  };
+
   return {
     async startSession(signal) {
       const response = await fetchImpl("/api/session", {
@@ -140,6 +157,22 @@ export function createServerTransport(options: ServerTransportOptions = {}): Cha
       }
       mode = parsed.data.mode ?? null;
       return parsed.data.sessionId;
+    },
+    async resumeSession(sessionId, signal) {
+      const response = await fetchImpl("/api/session/resume", {
+        method: "POST",
+        headers: await consultHeaders(),
+        body: JSON.stringify({ sessionId }),
+        ...(signal === undefined ? {} : { signal }),
+      });
+      return readSessionState(response);
+    },
+    async resumeSavedTrip(tripId) {
+      const response = await fetchImpl(`/api/trips/${encodeURIComponent(tripId)}/resume`, {
+        method: "POST",
+        headers: await consultHeaders(),
+      });
+      return readSessionState(response);
     },
     agentMode() {
       return mode;

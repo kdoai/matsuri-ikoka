@@ -390,19 +390,7 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
     }
     // 手元の写しのほうが新しければ、そちらの版で開く
     const latest = deps.itineraries.rememberLatest(itinerary);
-    const session = await deps.consultations.start(owner, null);
-    session.itineraryId = latest.id;
-    session.selectedFestivalId = latest.mainFestivalId;
-    session.stage = "shiori";
-    session.preferences = latest.preferences;
-    // 組み直しの提案を、今の旅程の条件で確かめられるようにする
-    session.conditions = {
-      origin: latest.origin,
-      returnTo: latest.returnTo,
-      party: latest.party,
-      ...(latest.budget === undefined ? {} : { budget: latest.budget }),
-    };
-    await deps.persistence.saveSession(session);
+    const session = await deps.consultations.resumeTrip(owner, latest, { stage: "shiori" });
     return c.json(
       { sessionId: session.id, mode: guide.runner.mode } satisfies SessionResponse,
       201,

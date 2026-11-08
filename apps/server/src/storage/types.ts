@@ -8,6 +8,7 @@ import type {
   TripAnchor,
   VerificationResult,
 } from "@matsuri-ikoka/schema";
+import { SESSION_WITHOUT_TRIP_MS } from "../domain/retention";
 import type { OwnerId } from "./owner";
 
 // 保存の口（docs/spec/account.md）。Firestore の実装（firestore.ts）と、テストと手元用のメモリの実装（memory.ts）がある。
@@ -15,12 +16,15 @@ import type { OwnerId } from "./owner";
 // 会話の全文は残さない。
 // 利用者の旅は forOwner(持ち主) を通してしか読み書きできない。持ち主を決めずに呼ぶ口はない。
 
-/** 共有の URL で読める期間と、持ち主のない旅程を残す期間（最後の保存から） */
+/**
+ * 共有と残さなかった旅程を、少なくとも読める期間（作った・最後の保存から）。
+ * 実際の期限は、旅の最終日の数日後と比べた遅い方（domain/retention.ts の retentionUntil）
+ */
 export const SHARE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 /** 共有を使い回すときに残っているべき期間。これより短ければ、受け取った人がすぐ開けなくなるので新しく作る */
 export const SHARE_REUSE_MIN_REMAINING_MS = SHARE_TTL_MS / 2;
-/** 相談の途中の状態を残す期間（最後に使ってから） */
-export const SESSION_STATE_TTL_MS = 6 * 60 * 60 * 1000;
+/** 旅程のない相談の途中の状態を残す期間（最後に使ってから）。旅程を持つ相談は、旅程と同じ期限まで残す */
+export const SESSION_STATE_TTL_MS = SESSION_WITHOUT_TRIP_MS;
 /** 1つの旅程に残す版の数。超えたら古い版から消す */
 export const MAX_VERSIONS = 20;
 /** ガイドの1日の使った量を残す期間。上限を数え終えたら要らない */
@@ -47,6 +51,14 @@ export interface StoredTrip {
   version: number;
   createdAt: number;
   updatedAt: number;
+  /** 残さなかった旅程の期限（ミリ秒）。残した旅は null（消さない） */
+  expiresAt: number | null;
+  /**
+   * 持ち主のなかった旅程に持ち主が付いたときの、その前の最新の版。
+   * その前に渡したしおりの URL（/shiori/{旅程の ID}）は、この版だけを publicExpiresAt まで出す。なければ null
+   */
+  publicVersion: number | null;
+  publicExpiresAt: number | null;
 }
 
 /** 版を指して読んだ旅程。itinerary は保存した JSON をそのまま戻したもの（スキーマは通していない） */
@@ -63,6 +75,8 @@ export interface SharedItinerary {
   itineraryId: string;
   version: number;
   itinerary: unknown;
+  /** この URL で読める期限（ミリ秒） */
+  expiresAt: number;
 }
 
 export interface CreatedShare {
@@ -94,6 +108,30 @@ export interface SessionSnapshot {
   anchorCheck?: VerificationResult | null;
   cancelledAnchor?: (TripAnchor & { name: string; note: string | null }) | null;
   replay: { sampleId: string; nextTurn: number; itineraryIds?: Record<string, string> } | null;
+  /**
+   * この状態を消す時刻（ミリ秒）。旅程を持つ相談は旅程と同じ期限（domain/retention.ts）。
+   * ない前の形の保存は、最後に使ってから6時間
+   */
+  expiresAt?: number;
+}
+
+/** 相談の途中の状態の期限。項目のない前の形の保存は、最後に使ってから6時間 */
+export function sessionExpiresAt(snapshot: Pick<SessionSnapshot, "updatedAt" | "expiresAt">) {
+  return snapshot.expiresAt ?? snapshot.updatedAt + SESSION_STATE_TTL_MS;
+}
+
+/**
+ * 持ち主が付いたときに、前に渡したしおりの URL で出し続ける版と期限。
+ * 持ち主のなかった旅程に、はじめて持ち主が付くときだけ決める。すでに決まっていれば変えない
+ */
+export function publicBeforeOwner(
+  before: Pick<StoredTrip, "ownerUid" | "consultOwnerUid" | "version" | "expiresAt">,
+  previous: Pick<StoredTrip, "publicVersion" | "publicExpiresAt">,
+): Pick<StoredTrip, "publicVersion" | "publicExpiresAt"> {
+  if (previous.publicVersion !== null || tripOwner(before) !== null || before.expiresAt === null) {
+    return { publicVersion: previous.publicVersion, publicExpiresAt: previous.publicExpiresAt };
+  }
+  return { publicVersion: before.version, publicExpiresAt: before.expiresAt };
 }
 
 export type ClaimResult =
@@ -192,15 +230,28 @@ export interface TripStorage {
   /** 共有の ID（sh-…）から、作ってから30日以内の、作ったときの版を読む */
   readShare(shareId: string): Promise<SharedItinerary | null>;
   /**
-   * 持ち主のない旅程を、最後の保存から30日以内なら読む。version を省くと最新の版。
-   * 持ち主のある旅程と、残っていない版は null
+   * 持ち主のない旅程を、期限（最後の保存から30日と、旅の最終日の数日後の遅い方）までなら読む。
+   * version を省くと最新の版。持ち主のある旅程と、残っていない版は null
    */
   readUnowned(itineraryId: string, version?: number): Promise<SharedItinerary | null>;
+  /**
+   * 持ち主が付く前に渡した、しおりの URL（/shiori/{旅程の ID}）で読める版。
+   * 持ち主が付く前の最新の版だけを、その版の期限まで読む。持ち主のない旅程・付いたあとの版は読まない（null）
+   */
+  readBeforeOwner(itineraryId: string): Promise<SharedItinerary | null>;
 
   /** 一度書いた持ち主は、持ち主のない書き込みでも、別の持ち主の書き込みでも変わらない */
   saveSession(snapshot: SessionSnapshot): Promise<void>;
-  /** 最後に使ってから6時間を過ぎた相談は null */
+  /** 期限（旅程のない相談は最後に使ってから6時間、旅程を持つ相談は旅程と同じ）を過ぎた相談は null */
   getSession(id: string): Promise<SessionSnapshot | null>;
+}
+
+/** 旅程の最終日（YYYY-MM-DD）。旅程の形が変わっても動くよう、型に頼らずに読む。分からなければ null */
+export function lastDateOf(itinerary: unknown): string | null {
+  const record = (itinerary ?? {}) as Record<string, unknown>;
+  const days = Array.isArray(record.days) ? record.days : [];
+  const last = (days.at(-1) ?? {}) as Record<string, unknown>;
+  return typeof last.date === "string" ? last.date : null;
 }
 
 /** 旅程から一覧の見出しを取り出す。旅程の形が変わっても動くよう、型に頼らずに読む */

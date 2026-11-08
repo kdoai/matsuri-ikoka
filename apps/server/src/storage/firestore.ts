@@ -1,5 +1,6 @@
 import type { Itinerary } from "@matsuri-ikoka/schema";
 import type { DocumentData, DocumentSnapshot, Firestore } from "firebase-admin/firestore";
+import { retentionUntil } from "../domain/retention";
 import { newShareId } from "./memory";
 import { isDocumentId, type OwnerId, ownerTripPath } from "./owner";
 import {
@@ -8,17 +9,19 @@ import {
   type DailyGuideUsage,
   GUIDE_USAGE_TTL_MS,
   type GuideUsage,
+  lastDateOf,
   MAX_TRIP_DOCS,
   MAX_VERSIONS,
   type OwnerTripDocs,
   type OwnerTripStorage,
-  SESSION_STATE_TTL_MS,
+  publicBeforeOwner,
   type SessionSnapshot,
   SHARE_REUSE_MIN_REMAINING_MS,
   SHARE_TTL_MS,
   type SharedItinerary,
   type StoredTrip,
   type StoredTripDetail,
+  sessionExpiresAt,
   summarize,
   type TripDocKind,
   TripGoneError,
@@ -39,6 +42,8 @@ import {
 //   users/{利用者}/guideUsage/{日}          ガイドのその日の使った量（利用者全体と旅ごと）・expiresAt
 //
 // expiresAt は TTL ポリシーで消す時刻。残した旅程とその版は null（消さない）。
+// 持ち主のなかった旅程に持ち主が付いたら、その前の最新の版（publicVersion）を、その期限（publicExpiresAt）まで、
+// 前に渡したしおりの URL で出す。
 // TTL で消えるまでには時間がかかるので、読むときにも期限を確かめる。
 // 新しい種類のデータは、持ち主を含むパス（owner.ts の ownerTripPath）に置く。
 
@@ -72,18 +77,30 @@ function millis(value: unknown): number {
   return typeof toMillis === "function" ? Number(toMillis.call(value)) : 0;
 }
 
+/** 読んだタイムスタンプをミリ秒にする。ない（null）なら null */
+function millisOrNull(value: unknown): number | null {
+  return value == null ? null : millis(value);
+}
+
 function tripOf(snapshot: DocumentSnapshot): StoredTrip | null {
   const data = snapshot.data();
   if (data === undefined) return null;
+  const ownerUid = typeof data.ownerUid === "string" ? data.ownerUid : null;
+  const updatedAt = millis(data.updatedAt);
   return {
     itineraryId: snapshot.id,
-    ownerUid: typeof data.ownerUid === "string" ? data.ownerUid : null,
+    ownerUid,
     consultOwnerUid: typeof data.consultOwnerUid === "string" ? data.consultOwnerUid : null,
     title: typeof data.title === "string" ? data.title : "",
     date: typeof data.date === "string" ? data.date : null,
     version: typeof data.version === "number" ? data.version : 1,
     createdAt: millis(data.createdAt),
-    updatedAt: millis(data.updatedAt),
+    updatedAt,
+    // 期限の項目のない前の形の見出しは、最後の保存から30日
+    expiresAt:
+      ownerUid === null ? (millisOrNull(data.expiresAt) ?? updatedAt + SHARE_TTL_MS) : null,
+    publicVersion: typeof data.publicVersion === "number" ? data.publicVersion : null,
+    publicExpiresAt: millisOrNull(data.publicExpiresAt),
   };
 }
 
@@ -115,10 +132,10 @@ export class FirestoreTripStorage implements TripStorage {
     return this.#db.collection(ITINERARIES).doc(itineraryId);
   }
 
-  /** 残されていない旅程は、最後の保存から30日で消えたものとして扱う */
+  /** 残されていない旅程は、期限（最後の保存から30日と、旅の最終日の数日後の遅い方）で消えたものとして扱う */
   #alive(trip: StoredTrip | null): StoredTrip | null {
     if (trip === null) return null;
-    if (trip.ownerUid === null && this.#now() - trip.updatedAt > SHARE_TTL_MS) return null;
+    if (trip.expiresAt !== null && this.#now() > trip.expiresAt) return null;
     return trip;
   }
 
@@ -232,17 +249,31 @@ export class FirestoreTripStorage implements TripStorage {
       const now = this.#now();
       const existing = this.#alive(tripOf(await tx.get(head)));
       const ownerUid = existing?.ownerUid ?? null;
-      const expiresAt = ownerUid === null ? at(now + SHARE_TTL_MS) : null;
+      const consultOwnerUid = existing?.consultOwnerUid ?? consultOwner;
+      // 期限は縮めない（前の版より旅が早く終わっても、渡した URL を先に切らない）
+      const until =
+        ownerUid === null
+          ? Math.max(retentionUntil(now, lastDateOf(itinerary)), existing?.expiresAt ?? 0)
+          : null;
+      const expiresAt = until === null ? null : at(until);
       const newest = existing === null || itinerary.version >= existing.version;
+      // 持ち主が付く前に渡したしおりの URL は、その前の版だけを出し続ける
+      const publicBefore =
+        existing === null || tripOwner({ ownerUid, consultOwnerUid }) === null
+          ? { publicVersion: null, publicExpiresAt: null }
+          : publicBeforeOwner(existing, existing);
       tx.set(head, {
         ownerUid,
-        consultOwnerUid: existing?.consultOwnerUid ?? consultOwner,
+        consultOwnerUid,
         ...(newest
           ? { ...summarize(itinerary), version: itinerary.version }
           : { title: existing.title, date: existing.date, version: existing.version }),
         createdAt: at(existing?.createdAt ?? now),
         updatedAt: at(now),
         expiresAt,
+        publicVersion: publicBefore.publicVersion,
+        publicExpiresAt:
+          publicBefore.publicExpiresAt === null ? null : at(publicBefore.publicExpiresAt),
       });
       tx.set(head.collection(VERSIONS).doc(versionDocId(itinerary.version)), {
         version: itinerary.version,
@@ -269,23 +300,48 @@ export class FirestoreTripStorage implements TripStorage {
     if (!isDocumentId(shareId)) return null;
     const share = await this.#db.collection(SHARES).doc(shareId).get();
     const data = share.data();
-    if (data === undefined || this.#now() > millis(data.expiresAt)) return null;
+    const expiresAt = millis(data?.expiresAt);
+    if (data === undefined || this.#now() > expiresAt) return null;
     return {
       itineraryId: String(data.itineraryId),
       version: Number(data.version),
       itinerary: parseJson(data),
+      expiresAt,
     };
   }
 
   async readUnowned(itineraryId: string, wanted?: number): Promise<SharedItinerary | null> {
     const trip = await this.#readHead(itineraryId);
-    if (trip === null || tripOwner(trip) !== null) return null;
-    if (this.#now() - trip.updatedAt > SHARE_TTL_MS) return null;
+    if (trip === null || tripOwner(trip) !== null || trip.expiresAt === null) return null;
     const at = wanted ?? trip.version;
     if (!Number.isInteger(at) || at < 1 || at > trip.version) return null;
     const version = await this.#head(itineraryId).collection(VERSIONS).doc(versionDocId(at)).get();
     if (!version.exists) return null;
-    return { itineraryId, version: at, itinerary: parseJson(version.data()) };
+    return {
+      itineraryId,
+      version: at,
+      itinerary: parseJson(version.data()),
+      expiresAt: trip.expiresAt,
+    };
+  }
+
+  async readBeforeOwner(itineraryId: string): Promise<SharedItinerary | null> {
+    const trip = await this.#readHead(itineraryId);
+    if (trip === null || tripOwner(trip) === null) return null;
+    const { publicVersion, publicExpiresAt } = trip;
+    if (publicVersion === null || publicExpiresAt === null) return null;
+    if (this.#now() > publicExpiresAt) return null;
+    const version = await this.#head(itineraryId)
+      .collection(VERSIONS)
+      .doc(versionDocId(publicVersion))
+      .get();
+    if (!version.exists) return null;
+    return {
+      itineraryId,
+      version: publicVersion,
+      itinerary: parseJson(version.data()),
+      expiresAt: publicExpiresAt,
+    };
   }
 
   async #claimTrip(uid: string, itineraryId: string): Promise<ClaimResult> {
@@ -296,8 +352,15 @@ export class FirestoreTripStorage implements TripStorage {
       if (trip === null) return { status: "not_found" };
       const owner = tripOwner(trip);
       if (owner !== null && owner !== uid) return { status: "not_found" };
-      tx.update(head, { ownerUid: uid, expiresAt: null });
-      return { status: "saved", trip: { ...trip, ownerUid: uid } };
+      // 持ち主のなかった旅程なら、前に渡したしおりの URL で、いまの版を出し続ける
+      const before = publicBeforeOwner(trip, trip);
+      tx.update(head, {
+        ownerUid: uid,
+        expiresAt: null,
+        publicVersion: before.publicVersion,
+        publicExpiresAt: before.publicExpiresAt === null ? null : at(before.publicExpiresAt),
+      });
+      return { status: "saved", trip: { ...trip, ...before, ownerUid: uid, expiresAt: null } };
     });
     if (result.status === "saved") {
       // 残っている版も消えないようにする
@@ -439,7 +502,8 @@ export class FirestoreTripStorage implements TripStorage {
     const reusable = await this.#reusableShare(uid, itineraryId, data.itinerary, now);
     if (reusable !== null) return reusable;
     const shareId = newShareId();
-    const expiresAt = now + SHARE_TTL_MS;
+    // 先の旅でも、旅の当日まで開けるようにする
+    const expiresAt = retentionUntil(now, lastDateOf(JSON.parse(data.itinerary)));
     await this.#db
       .collection(SHARES)
       .doc(shareId)
@@ -463,7 +527,7 @@ export class FirestoreTripStorage implements TripStorage {
       tx.set(doc, {
         state: JSON.stringify({ ...snapshot, ownerUid }),
         updatedAt: at(snapshot.updatedAt),
-        expiresAt: at(snapshot.updatedAt + SESSION_STATE_TTL_MS),
+        expiresAt: at(sessionExpiresAt(snapshot)),
         ...(ownerUid === null ? {} : { ownerUid }),
       });
     });
@@ -474,7 +538,12 @@ export class FirestoreTripStorage implements TripStorage {
     const doc = await this.#db.collection(SESSIONS).doc(id).get();
     const data = doc.data();
     if (data === undefined || typeof data.state !== "string") return null;
-    if (this.#now() - millis(data.updatedAt) > SESSION_STATE_TTL_MS) return null;
+    // 期限の項目のない前の形の保存は、最後に使ってから6時間
+    const expiresAt =
+      data.expiresAt == null
+        ? sessionExpiresAt({ updatedAt: millis(data.updatedAt) })
+        : millis(data.expiresAt);
+    if (this.#now() > expiresAt) return null;
     const ownerUid = typeof data.ownerUid === "string" ? data.ownerUid : null;
     return { ...(JSON.parse(data.state) as SessionSnapshot), ownerUid };
   }

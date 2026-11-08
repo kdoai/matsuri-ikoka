@@ -11,7 +11,7 @@ import {
   SampleConversationSchema,
   type SearchOutcome,
 } from "@matsuri-ikoka/schema";
-import { fictionalSource } from "@matsuri-ikoka/schema/testing";
+import { fictionalItinerary, fictionalSource } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it, vi } from "vitest";
 import sampleJson from "../../../../data/samples/conversations/suzunari-day-trip.json";
 import kazamiJson from "../../../../data/samples/festivals/kazami-bon-odori.json";
@@ -1175,5 +1175,130 @@ describe("ストア：条件に合う祭りが見つからないとき", () => {
     expect(transport.requests).toHaveLength(1);
     expect(store.getState().ui.candidatesOpen).toBe(false);
     expect(store.getState().consult.active).toBe(true);
+  });
+});
+
+describe("ストア：組んだ旅を失わない", () => {
+  /** 端末の控えの代わり */
+  const memoryOf = (initial: string | null) => {
+    let saved = initial;
+    return {
+      load: () => saved,
+      save: (id: string | null) => {
+        saved = id;
+      },
+      get: () => saved,
+    };
+  };
+  const base = (): ChatTransport => ({
+    startSession: async () => "s-new",
+    chat: async () => {},
+    updatePreferences: async () => {},
+    searchFestivals: noSearch,
+    previewFestivalTrip: noPreview,
+  });
+
+  it("始めた相談の ID を端末に控える", async () => {
+    const memory = memoryOf(null);
+    const store = makeStore(base(), { sessionMemory: memory });
+
+    await store.getState().actions.enterShop();
+
+    expect(memory.get()).toBe("s-new");
+  });
+
+  it("再読み込みのあと、控えた相談の旅程とこだわりを戻し、新しい相談は始めない", async () => {
+    const itinerary = fictionalItinerary();
+    const startSession = vi.fn<ChatTransport["startSession"]>().mockResolvedValue("s-new");
+    const resumeSession = vi.fn<NonNullable<ChatTransport["resumeSession"]>>().mockResolvedValue({
+      sessionId: "s-kept",
+      stage: "itinerary",
+      preferences: itinerary.preferences,
+      itinerary,
+    });
+    const store = makeStore(
+      { ...base(), startSession, resumeSession },
+      { sessionMemory: memoryOf("s-kept") },
+    );
+
+    await store.getState().actions.enterShop();
+
+    const state = store.getState();
+    expect(resumeSession).toHaveBeenCalledWith("s-kept", expect.anything());
+    expect(startSession).not.toHaveBeenCalled();
+    expect(state.session).toMatchObject({ id: "s-kept", status: "ready", stage: "itinerary" });
+    expect(state.itinerary.current).toEqual(itinerary);
+    expect(state.preferences).toEqual(itinerary.preferences);
+    expect(state.consult.active).toBe(false);
+    expect(state.ui.view).toBe("shop");
+    expect(state.messages).toEqual([expect.objectContaining({ kind: "concierge" })]);
+  });
+
+  it("控えた相談がもうなければ（404）、控えを消して新しい相談を始める", async () => {
+    const memory = memoryOf("s-gone");
+    const resumeSession = vi
+      .fn<NonNullable<ChatTransport["resumeSession"]>>()
+      .mockRejectedValue(new TransportError("session_lost", { status: 404 }));
+    const store = makeStore({ ...base(), resumeSession }, { sessionMemory: memory });
+
+    await store.getState().actions.enterShop();
+
+    expect(store.getState().session).toMatchObject({ id: "s-new", status: "ready" });
+    expect(store.getState().itinerary.current).toBeNull();
+    expect(memory.get()).toBe("s-new");
+  });
+
+  it("控えた相談に旅程がなければ、戻さずに新しい相談を始める", async () => {
+    const resumeSession = vi.fn<NonNullable<ChatTransport["resumeSession"]>>().mockResolvedValue({
+      sessionId: "s-hearing",
+      stage: "hearing",
+      preferences: DEFAULT_PREFERENCES,
+      itinerary: null,
+    });
+    const store = makeStore({ ...base(), resumeSession }, { sessionMemory: memoryOf("s-hearing") });
+
+    await store.getState().actions.enterShop();
+
+    expect(store.getState().session.id).toBe("s-new");
+  });
+
+  it("残した旅を店に戻すと、その相談で続きを相談でき、端末にも控える", async () => {
+    const memory = memoryOf("s-old");
+    const itinerary = fictionalItinerary();
+    const chat = vi.fn<ChatTransport["chat"]>().mockResolvedValue();
+    const store = makeStore(
+      {
+        ...base(),
+        chat,
+        resumeSavedTrip: async () => ({
+          sessionId: "s-trip",
+          stage: "itinerary",
+          preferences: itinerary.preferences,
+          itinerary,
+        }),
+      },
+      { sessionMemory: memory },
+    );
+
+    expect(await store.getState().actions.resumeSavedTrip(itinerary.id)).toBe(true);
+    await store.getState().actions.send("2日目をもう少しゆっくりにしたい");
+
+    expect(store.getState().ui.view).toBe("shop");
+    expect(store.getState().itinerary.current).toEqual(itinerary);
+    expect(memory.get()).toBe("s-trip");
+    expect(chat.mock.calls[0]?.[0]).toMatchObject({ sessionId: "s-trip" });
+  });
+
+  it("残した旅を開けなければ false を返し、いまの相談はそのまま", async () => {
+    const store = makeStore({
+      ...base(),
+      resumeSavedTrip: async () => {
+        throw new TransportError("session_lost", { status: 404 });
+      },
+    });
+    await store.getState().actions.enterShop();
+
+    expect(await store.getState().actions.resumeSavedTrip("trip-gone")).toBe(false);
+    expect(store.getState().session.id).toBe("s-new");
   });
 });
