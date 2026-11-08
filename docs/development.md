@@ -62,19 +62,19 @@ GitHub の Issue Types は、組織のアカウントのリポジトリでしか
 
 [`ci.yml`](../.github/workflows/ci.yml) が、PR と main への push で次のジョブを並べて走らせます。同じ PR に新しい push があると、古い実行は止まります。pnpm のストア、Playwright のブラウザ、Docker のビルドの層はキャッシュします。
 
-| ジョブ              | 中身                                                                                                  |
-| ------------------- | ----------------------------------------------------------------------------------------------------- |
-| `lint`              | Biome（lint と format）                                                                               |
-| `typecheck`         | すべてのパッケージの型                                                                                |
-| `test`              | Vitest                                                                                                |
-| `validate-data`     | 祭りのデータの検証（`pnpm validate:data`）                                                            |
-| `build`             | 画面と接客サーバーのビルド                                                                            |
-| `e2e`               | 接客サーバーをモック（`MATSURI_AGENT_MODE=mock`）で起動し、Playwright で画面の通しテスト              |
-| `docker`            | デプロイと同じイメージを作り、モックで動かして、相談・しおりの PDF・3D のモデルが配られるかを確かめる |
-| `secrets`           | gitleaks で、履歴全体に秘密情報が混ざっていないかを見る                                               |
-| `actionlint`        | ワークフローの書き方（`run` の中のシェルも shellcheck で）                                            |
-| `dependency-review` | PR で足した依存に既知の脆弱性がないか（PR のときだけ）                                                |
-| `検査とビルド`      | 上のすべての結果をまとめる                                                                            |
+| ジョブ              | 中身                                                                                                                                                    |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `lint`              | Biome（lint と format）                                                                                                                                 |
+| `typecheck`         | すべてのパッケージの型                                                                                                                                  |
+| `test`              | Vitest                                                                                                                                                  |
+| `validate-data`     | 祭りのデータの検証（`pnpm validate:data`）                                                                                                              |
+| `build`             | 画面と接客サーバーのビルド                                                                                                                              |
+| `e2e`               | 接客サーバーをモック（`MATSURI_AGENT_MODE=mock`）で起動し、Playwright で画面の通しテスト。3つのジョブ（`e2e (1/3)` など）に分けて走らせ、結果をまとめる |
+| `docker`            | デプロイと同じイメージを作り、モックで動かして、相談・しおりの PDF・3D のモデルが配られるかを確かめる                                                   |
+| `secrets`           | gitleaks で、履歴全体に秘密情報が混ざっていないかを見る                                                                                                 |
+| `actionlint`        | ワークフローの書き方（`run` の中のシェルも shellcheck で）                                                                                              |
+| `dependency-review` | PR で足した依存に既知の脆弱性がないか（PR のときだけ）                                                                                                  |
+| `検査とビルド`      | 上のすべての結果をまとめる                                                                                                                              |
 
 main のルールセットは、上のすべてのジョブを必須の検査にします（`setup-github.sh` の `REQUIRED_CHECKS`）。ジョブの名前と `REQUIRED_CHECKS` が食い違うと、`scripts/github-config.test.ts` が落ちます。
 
@@ -86,7 +86,7 @@ main のルールセットは、上のすべてのジョブを必須の検査に
 pnpm lint && pnpm typecheck && pnpm test && pnpm validate:data && pnpm build
 ```
 
-e2e は、Playwright が接客サーバーをモックで起動し、画面の開発サーバーからつなぎます（`apps/web/playwright.config.ts`。ポートは 35179 と 38787）。
+e2e は、Playwright が接客サーバーをモックで起動し、画面の開発サーバーからつなぎます（`apps/web/playwright.config.ts`。ポートは 35179 と 38787）。CI では GPU のないランナーで 3D を描くので、1つのジョブのワーカーを1つにし、テストのファイルを3つのジョブに分けています（`--shard`）。
 
 ```bash
 pnpm --filter @matsuri-ikoka/web test:e2e

@@ -15,6 +15,9 @@ export default defineConfig({
   fullyParallel: false,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
+  // CI のランナーには GPU がなく、3D の描画が CPU を使う。2つの画面を同時に描くと取り合って
+  // 入力やクリックが終わらなくなるので、CI では1つずつ走らせる（並べるのはジョブを分けて行う）
+  workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI ? "github" : "list",
   timeout: 60_000,
   use: {
