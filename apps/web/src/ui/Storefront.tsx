@@ -3,6 +3,7 @@ import { Component, type ReactNode, Suspense, useCallback, useEffect, useState }
 import { prefetchModels, SET_MODELS } from "../scenes/modelFiles";
 import { useActions, useApp, useT } from "../state/react";
 import { buttonPrimary } from "./common";
+import { No3dNotice } from "./No3d";
 import { PasscodeForm } from "./Passcode";
 import { SavedTrips } from "./SavedTrips";
 import { SceneLoading } from "./SceneLoading";
@@ -11,7 +12,7 @@ import { preloadShopScene, StorefrontScene, useScene3d } from "./scene3d";
 import { playSound } from "./sound";
 
 // 店の外観：タイトルと「入店する」ボタン。すぐに相談を始められる入り口。
-// 3D が使えるときは、通りから見上げた店の外観を背景に出す（読み込めなければ 2D の飾りのまま）。
+// 通りから見上げた店の外観（3D）を背景に出す。描けないときは、その知らせを出す（2D の飾りには切り替えない）。
 
 class BackdropBoundary extends Component<{ children: ReactNode; onError: () => void }> {
   override state = { failed: false };
@@ -94,11 +95,7 @@ export function Storefront() {
   }, [backdrop]);
 
   return (
-    <main
-      className={`relative flex min-h-dvh flex-col items-center overflow-hidden bg-wood-800 px-4 py-10 text-center ${
-        use3d ? "justify-end" : "justify-center"
-      }`}
-    >
+    <main className="relative flex min-h-dvh flex-col items-center justify-end overflow-hidden bg-wood-800 px-4 py-10 text-center">
       {use3d && StorefrontScene !== null ? (
         <BackdropBoundary onError={onError}>
           <Suspense fallback={null}>
@@ -112,20 +109,13 @@ export function Storefront() {
       <div className="absolute top-3 right-3 z-10">
         <LanguageButton className="min-h-10 rounded-lg border border-kinari-300/60 px-3 py-1 font-semibold text-kinari-50 text-sm hover:bg-wood-700" />
       </div>
-      {/* のれん（藍の布に3つの切れ目）。3D の外観を出すときは出さない */}
-      <div aria-hidden="true" className={`flex w-full max-w-xl gap-1 ${use3d ? "hidden" : ""}`}>
-        {[0, 1, 2].map((i) => (
-          <div
-            key={i}
-            className="h-28 flex-1 rounded-b-md bg-ai-700 shadow-[inset_0_-10px_0_rgb(0_0_0/0.15)]"
-          />
-        ))}
-      </div>
-      <div
-        className={`relative w-full max-w-xl rounded-2xl border-4 border-wood-900 px-6 py-8 shadow-2xl ${
-          use3d ? "bg-kinari-50/95" : "-mt-20 bg-kinari-50"
-        }`}
-      >
+      {/* 3D を描けないときは、その知らせを出す */}
+      {use3d && backdrop !== "failed" ? null : (
+        <div className="-translate-x-1/2 absolute top-1/4 left-1/2 w-[min(28rem,calc(100vw-2rem))]">
+          <No3dNotice className="mx-auto" />
+        </div>
+      )}
+      <div className="relative w-full max-w-xl rounded-2xl border-4 border-wood-900 bg-kinari-50/95 px-6 py-8 shadow-2xl">
         <p className="font-bold text-shu-700 tracking-[0.3em]">{t.app.tagline}</p>
         <h1 className="mt-2 font-bold text-4xl text-ink tracking-wider sm:text-5xl">
           {t.app.name}
@@ -148,15 +138,6 @@ export function Storefront() {
           </button>
         )}
         <SavedTrips />
-      </div>
-      {/* 提灯の明かり */}
-      <div aria-hidden="true" className={`mt-8 flex gap-10 ${use3d ? "hidden" : ""}`}>
-        {[0, 1, 2].map((i) => (
-          <span
-            key={i}
-            className="h-12 w-9 rounded-[45%] bg-shu-500 shadow-[0_0_24px_6px_rgb(233_181_40/0.45)] ring-2 ring-wood-900"
-          />
-        ))}
       </div>
     </main>
   );

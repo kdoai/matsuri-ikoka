@@ -164,6 +164,7 @@ export const en: Messages = {
     lead: "Don't leave meeting a festival to chance.\nWe take care of everything from trip planning to your travel booklet.",
     enter: "Come in",
     entering: "Stepping inside…",
+    no3d: "This device can't draw 3D. Please open the page in a browser with WebGL. You can keep talking here.",
     loadingScene: (percent: number) => `Lighting up the shop  ${percent}%`,
     preparingScene: "Getting the shop ready…",
     restart: "Start over",
@@ -590,12 +591,6 @@ export const en: Messages = {
       scout: "Area scout",
       planner: "Route planner",
     },
-    posts: {
-      concierge: "Counter",
-      researcher: "Archive shelf",
-      scout: "Map wall",
-      planner: "Timetable",
-    },
     phases: {
       idle: "Waiting",
       walking: "Heading to the post",
@@ -628,7 +623,6 @@ export const en: Messages = {
       update_itinerary: "Writing the plan",
       verify_festival: "Finalizing the plan",
     },
-    sceneLabel: "Floor plan of the shop: where each staff member works and what they are doing",
   },
   relay: {
     title: "Requests and handoffs",
@@ -1178,8 +1172,6 @@ export const en: Messages = {
     dotted: (parts: readonly string[]) => parts.join(" · "),
     list: "News at your guide's stall",
     stallName: "Trip help desk",
-    stallGreeting:
-      "Where to stay, how to get there, food, weather — ask me anything about your trip.",
     unreadNotices: (count: number) => `${count} new ${count === 1 ? "update" : "updates"} for you`,
     noNotices: "No new updates right now. Talk to your guide about anything on your mind.",
     closeStall: "Close the stall",

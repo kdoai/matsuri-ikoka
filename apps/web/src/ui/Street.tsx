@@ -24,18 +24,19 @@ import { openAccountMenu } from "./accountMenuEntry";
 import { focusGuideDialogue, GuideDialogue } from "./GuideDialogue";
 import { KeyCap, Logo, ModeBadge, useHudKeys } from "./Hud";
 import { useMediaQuery } from "./hooks";
+import { No3dNotice } from "./No3d";
 import { PasscodeDialog } from "./Passcode";
 import { PlayPrompt, PlayStatus } from "./Play";
 import { Portrait } from "./Portraits";
 import { SceneLoading } from "./SceneLoading";
 import { LanguageButton, useFrameInsets } from "./Shop";
-import { GuideBoard, GuideStallFront } from "./StreetStalls";
+import { GuideBoard } from "./StreetStalls";
 import { StreetScene, useScene3d } from "./scene3d";
 import { TripDayCard } from "./TripDay";
 
 // しおりのあとの画面。店の外の縁日の通りで、ガイドと話す。旅のことは、すべてガイド1人に尋ねればよい。
-// 3D が主役で、会話の窓とガイドの屋台の窓を重ねる。動きを減らす設定や 3D が使えないときは、ガイドの屋台の正面を主にする。
-// どちらでも、知らせ・組み直しの案・相談がすべて使える。店へ戻る口はいつも出す。
+// 3D の通りが主役で、会話の窓とガイドの屋台の窓を重ねる。2D の通りには切り替えない。
+// 3D を描けないときは、その知らせを出し、知らせ・組み直しの案・相談は屋台の窓と会話の窓で使える。店へ戻る口はいつも出す。
 
 class StreetBoundary extends Component<{ onError: () => void; children: ReactNode }> {
   override state = { failed: false };
@@ -45,7 +46,7 @@ class StreetBoundary extends Component<{ onError: () => void; children: ReactNod
   }
 
   override componentDidCatch(error: unknown) {
-    console.warn("[scene] 3D の通りを出せなかったので、ガイドの屋台の正面にします", error);
+    console.warn("[scene] 3D の通りを出せませんでした", error);
     this.props.onError();
   }
 
@@ -167,10 +168,10 @@ export function Street() {
   const openStall = useApp((state) => state.guide.openStall);
   const listOpen = useApp((state) => state.guide.listOpen);
   const phase = useApp((state) => state.guide.phase);
-  // 旅の当日のスマホでは 2D を主にして、次の予定・出発・帰りの最終を最初に見せる。
+  // 旅の当日は、次の予定・出発・帰りの最終を通りの上に重ねて最初に見せる。
   // 旅の日かは、サーバーの返事を待たず、手元の旅程と時計で決める（札と同じ値）
   const tripDay = useTripDayGlance();
-  const use3d = wants3d && !failed && !(tripDay !== null && !wide);
+  const use3d = wants3d && !failed;
   const notices = useApp((state) => state.guide.notices);
   const ready = useApp(shioriReady);
   const unread = useMemo(() => unreadNotices({ notices }).length, [notices]);
@@ -206,9 +207,9 @@ export function Street() {
 
   return (
     <div
-      className={`relative h-dvh w-full bg-wood-900 text-ink ${use3d ? "overflow-hidden" : "overflow-y-auto"}`}
+      className="relative h-dvh w-full overflow-hidden bg-wood-900 text-ink"
       data-testid="street"
-      data-mode={use3d ? "3d" : "2d"}
+      data-mode={use3d ? "3d" : "no-3d"}
     >
       {use3d ? <StreetStage frame={frame} onTalk={talk} onFail={() => setFailed(true)} /> : null}
 
@@ -228,24 +229,22 @@ export function Street() {
         </div>
         <div className="flex items-center gap-1.5 justify-self-end sm:gap-2">
           <AccountMenu />
-          {use3d ? (
-            <button
-              type="button"
-              className={roundButton}
-              aria-label={t.street.list}
-              title={t.street.list}
-              aria-expanded={listOpen}
-              data-testid="stall-list-button"
-              onClick={() => actions.setStallList(!listOpen)}
-            >
-              <Tent aria-hidden="true" className="size-5" />
-              {unread > 0 ? (
-                <span className="-top-1 -right-1 absolute grid min-w-5 place-items-center rounded-full bg-shu-600 px-1 font-bold text-white text-xs">
-                  {unread}
-                </span>
-              ) : null}
-            </button>
-          ) : null}
+          <button
+            type="button"
+            className={roundButton}
+            aria-label={t.street.list}
+            title={t.street.list}
+            aria-expanded={listOpen}
+            data-testid="stall-list-button"
+            onClick={() => actions.setStallList(!listOpen)}
+          >
+            <Tent aria-hidden="true" className="size-5" />
+            {unread > 0 ? (
+              <span className="-top-1 -right-1 absolute grid min-w-5 place-items-center rounded-full bg-shu-600 px-1 font-bold text-white text-xs">
+                {unread}
+              </span>
+            ) : null}
+          </button>
           {ready ? (
             <button
               type="button"
@@ -281,29 +280,20 @@ export function Street() {
         </p>
       </div>
 
-      {/* 2D を主にするときは、ガイドの屋台の正面がそのまま通りになる */}
-      {use3d ? null : (
-        <main
-          className="mx-auto w-full max-w-2xl px-3 pb-44"
-          style={{ paddingTop: frame.top + 8 }}
-          data-testid="street-board"
-        >
-          {/* 旅の当日は、屋台より先に、次の予定・出発・帰りの最終を見せる */}
-          <TripDayCard />
-          <GuideStallFront onTalk={talk} />
-          <div className="mt-3">
-            <GuestNote />
-          </div>
-        </main>
-      )}
-
-      {/* ログインなしの旅の案内（2D ではガイドの屋台の下に出す） */}
-      {use3d && !guideOpen && openStall === null && !listOpen ? (
+      {/* 旅の当日の札（会話の窓を開いていても出す）と、ログインなしの旅の案内。屋台の窓を開いている間は出さない */}
+      {/* 3D を描けないときは、その知らせも同じ列の先頭に出す（屋台の窓と会話の窓はそのまま使える） */}
+      {openStall === null && !listOpen && (tripDay !== null || !guideOpen || !use3d) ? (
         <div
-          className="absolute left-2 z-20 w-[min(22rem,calc(100vw-1rem))] sm:left-3"
+          className="absolute left-2 z-20 flex w-[min(22rem,calc(100vw-1rem))] flex-col gap-2 sm:left-3"
           style={{ top: frame.top + 8 }}
         >
-          <GuestNote />
+          {use3d ? null : (
+            <div data-testid="street-no-3d">
+              <No3dNotice />
+            </div>
+          )}
+          {tripDay === null ? null : <TripDayCard />}
+          {guideOpen ? null : <GuestNote />}
         </div>
       ) : null}
 

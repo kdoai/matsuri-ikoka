@@ -16,6 +16,7 @@ import {
   tabTo,
   talkToConcierge,
   waitForReply,
+  withoutWebgl,
 } from "./helpers";
 
 // 接客サーバー（mock）が再生する記録した架空の相談を、相談 → 候補 → 旅程と地図 → 修正 → 確認 → しおり まで通す
@@ -61,7 +62,8 @@ test("地図の部品を読み込めなくても、しおりの窓は消えず�
 test("相談からしおりまで、画面で通せる", async ({ page }, info) => {
   // 記録を記録の間隔のとおりに再生するので、相談の4回の返答だけで20秒ほどかかる
   test.setTimeout(150_000);
-  await page.goto("/?scene=2d");
+  await withoutWebgl(page);
+  await page.goto("/");
   await expect(page.getByRole("heading", { name: "MATSURI IKOKA" })).toBeVisible();
   await snap(page, info, "00-storefront");
   await page.getByRole("button", { name: "入店する" }).click();
@@ -453,7 +455,8 @@ test("キーボードだけで、候補を閉じ、タブを移れる", async ({
 test("キーボードだけで、入店から相談・候補選び・しおりまで進める", async ({ page }, info) => {
   test.setTimeout(150_000);
   test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
-  await page.goto("/?scene=2d");
+  await withoutWebgl(page);
+  await page.goto("/");
   await tabTo(page, page.getByRole("button", { name: "入店する" }));
   await page.keyboard.press("Enter");
   // 会話の窓は、E で話しかけると出る。焦点は選んで進める相談の最初の選択肢へ移る
@@ -524,24 +527,10 @@ test("キーボードだけで、入店から相談・候補選び・しおり�
   await expect(page.getByTestId("shiori").getByRole("heading", { level: 1 })).toBeVisible();
 });
 
-test("動きを減らす設定では、2D の店内とスタッフの文字の一覧を出す", async ({ page }, info) => {
-  test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await enterShop(page);
-  await expect(page.getByTestId("staff-floor")).toBeVisible();
-  await sendSampleMessage(page, 0);
-  await expect(page.getByTestId("staff-activity")).toContainText("祭り調査係");
-  await expect(page.getByTestId("staff-researcher")).toHaveAttribute(
-    "data-phase",
-    /walking|working/,
-  );
-  await waitForReply(page);
-  await snap(page, info, "20-reduced-motion");
-});
-
 test("英語に切り替えられる", async ({ page }, info) => {
   test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
-  await page.goto("/?scene=2d");
+  await withoutWebgl(page);
+  await page.goto("/");
   await page.getByRole("button", { name: /English/ }).click();
   await expect(page.getByRole("button", { name: "Come in" })).toBeVisible();
   await page.getByRole("button", { name: "Come in" }).click();

@@ -31,9 +31,25 @@ export const SAMPLE = SampleConversationSchema.parse(
   ),
 );
 
-/** 店に入り、相談を始められる状態にする */
-export async function enterShop(page: Page, query = "?scene=2d"): Promise<void> {
-  await page.goto(`/${query}`);
+/**
+ * WebGL を使えなくする。3D を描く時間を省いて、相談の流れだけを確かめるときに使う
+ * （画面は 2D に切り替えず、3D を描けない知らせを出したまま、会話の窓で相談を進める）
+ */
+export async function withoutWebgl(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    const original = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, ...args) {
+      const [kind] = args as [string];
+      if (kind === "webgl" || kind === "webgl2") return null;
+      return (original as (...a: unknown[]) => RenderingContext | null).apply(this, args);
+    } as typeof HTMLCanvasElement.prototype.getContext;
+  });
+}
+
+/** 店に入り、相談を始められる状態にする。with3d でなければ、3D を描かずに進める */
+export async function enterShop(page: Page, { with3d = false } = {}): Promise<void> {
+  if (!with3d) await withoutWebgl(page);
+  await page.goto("/");
   await page.getByRole("button", { name: "入店する" }).click();
   await talkToConcierge(page);
 }

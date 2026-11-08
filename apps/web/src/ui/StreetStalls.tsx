@@ -3,16 +3,12 @@ import { MessageCircle, Tent, X } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 import { useAccountUser } from "../account/useAccountUser";
 import { formatDateTime } from "../i18n";
-import { unreadNotices } from "../state/guide";
 import { useActions, useApp, useT } from "../state/react";
 import { buttonPrimary, buttonSecondary, SourceLink } from "./common";
-import { KeyCap } from "./Hud";
-import { Portrait } from "./Portraits";
 import { TripDayCard } from "./TripDay";
 
 // 縁日の通りの、ガイドの屋台。旅のことは、すべてこのガイド1人に尋ねればよく、屋台を種類で分けない。
 // 3D に出ること（提灯が灯っているか＝新しい知らせ）は、ここですべて文字で読める。
-// 3D を使わない画面では、この屋台の正面が通りの主役になる。
 
 /**
  * 見回りを頼む・止める。旅が終わったら出さない。
@@ -237,101 +233,6 @@ function GuideBoardBody() {
       )}
       <WatchControl />
     </div>
-  );
-}
-
-/** 提灯の列。灯っているのは新しい知らせがあるとき。同じことを文字でも出すので、飾りは読み上げない */
-function Lanterns({ lit }: { lit: boolean }) {
-  return (
-    <div aria-hidden="true" className="relative flex justify-around px-4">
-      <span className="absolute inset-x-2 top-0 h-0.5 bg-wood-700" />
-      {[0, 1, 2, 3, 4].map((index) => (
-        <span key={index} className="relative flex flex-col items-center">
-          <span className="h-2 w-px bg-wood-700" />
-          <span
-            className={`h-10 w-7 rounded-[45%] border-wood-800 border-y-4 sm:h-12 sm:w-9 ${
-              lit
-                ? "bg-shu-500 shadow-[0_0_22px_8px_rgb(233_181_40/0.6)]"
-                : "bg-shu-600 shadow-[0_0_14px_3px_rgb(233_181_40/0.3)]"
-            }`}
-          />
-        </span>
-      ))}
-    </div>
-  );
-}
-
-/**
- * ガイドの屋台の正面（3D を使わない画面の主役）。提灯と紅白の幕の下に、ガイドが立っている。
- * 話しかけると会話の窓が開き、旅のことは何でもここで尋ねられる。知らせはカウンターの上に並べる
- */
-export function GuideStallFront({ onTalk }: { onTalk: () => void }) {
-  const t = useT();
-  const notices = useApp((state) => state.guide.notices);
-  const unread = useMemo(() => unreadNotices({ notices }).length, [notices]);
-  return (
-    <section aria-labelledby="guide-stall-title" data-testid="guide-stall" className="text-ink">
-      <Lanterns lit={unread > 0} />
-      {/* 屋根の紅白の幕。下の縁は波の形にする */}
-      <div
-        aria-hidden="true"
-        className="mt-2 h-12 rounded-t-2xl border-2 border-wood-800 sm:h-14"
-        style={{
-          background:
-            "repeating-linear-gradient(90deg, var(--color-shu-500) 0 36px, var(--color-kinari-50) 36px 72px)",
-        }}
-      />
-      <div
-        aria-hidden="true"
-        className="h-4"
-        style={{
-          background:
-            "radial-gradient(circle at 18px 0, var(--color-shu-500) 17px, transparent 18px) 0 0 / 72px 16px repeat-x, radial-gradient(circle at 18px 0, var(--color-kinari-50) 17px, transparent 18px) 36px 0 / 72px 16px repeat-x",
-        }}
-      />
-      {/* 看板 */}
-      <div className="-mt-2 relative z-10 mx-auto w-fit rounded-lg border-2 border-wood-800 bg-wood-700 px-5 py-1.5 shadow-soft">
-        <h2
-          id="guide-stall-title"
-          className="flex items-center gap-2 font-bold text-kinari-50 text-lg tracking-widest sm:text-xl"
-        >
-          <Tent aria-hidden="true" className="size-5 text-yamabuki-400" />
-          {t.street.stallName}
-        </h2>
-      </div>
-      {/* 屋台の中：柱のあいだにガイドが立つ */}
-      <div className="-mt-4 grid grid-cols-[0.75rem_1fr_0.75rem] sm:grid-cols-[1rem_1fr_1rem]">
-        <span aria-hidden="true" className="bg-wood-700" />
-        <div className="bg-wood-800/60 px-3 pt-8 pb-3 sm:px-6">
-          <div className="flex items-end gap-3 sm:gap-5">
-            <Portrait speaker="concierge" className="size-20 shrink-0 sm:size-28" />
-            <div className="washi mb-2 min-w-0 flex-1 rounded-2xl border-2 border-line-strong px-3 py-2 shadow-soft">
-              <p className="font-bold leading-relaxed sm:text-lg">{t.street.stallGreeting}</p>
-              {unread > 0 ? (
-                <p className="mt-0.5 font-bold text-shu-700 text-sm" data-testid="street-unread">
-                  {t.street.unreadNotices(unread)}
-                </p>
-              ) : null}
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={onTalk}
-            data-testid="guide-stall-talk"
-            className={`${buttonPrimary} mt-3 w-full`}
-          >
-            <MessageCircle aria-hidden="true" className="size-5" />
-            {t.street.talk}
-            <KeyCap small>E</KeyCap>
-          </button>
-        </div>
-        <span aria-hidden="true" className="bg-wood-700" />
-      </div>
-      {/* カウンター：知らせと案を並べる */}
-      <div className="rounded-b-2xl border-2 border-wood-800 border-t-8 bg-kinari-50 px-4 py-3 shadow-lift">
-        <GuideBoardBody />
-      </div>
-    </section>
   );
 }
 
