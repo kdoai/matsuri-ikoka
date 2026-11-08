@@ -1128,6 +1128,14 @@ export const ja = {
     composerPlaceholder: "旅のことを書いてください",
     send: "送る",
     waiting: "返答を待っています",
+    photoAttach: "写真で聞く",
+    photoAttached: "写真を1枚つけています。送ると、この発言のときだけガイドが見て、残しません。",
+    photoRemove: "写真を外す",
+    photoDefaultMessage: "この写真について教えてください",
+    photoPreparing: "写真を整えています",
+    photoRejected: "この写真は送れません。JPEG・PNG・WebP の写真を選んでください。",
+    afterTrip:
+      "旅は終わりました。付き添いと見回りはここまでです。残した旅は「ログインと自分の旅」から消せます。",
     suggestionsLabel: "聞いてみること",
     suggestions: [
       { label: "変わったことは？", message: "留守の間に、何か変わったことはありましたか" },

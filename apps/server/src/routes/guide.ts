@@ -43,6 +43,7 @@ import {
 } from "../guide/decision";
 import {
   DEFAULT_GUIDE_LIMITS,
+  DEFAULT_GUIDE_PHOTOS_PER_USER,
   type GuideLimits,
   type GuideUsageLedger,
   guideTurnBudgetUsd,
@@ -64,7 +65,7 @@ import {
 import { type ItineraryStore, randomId, type Session } from "../session/sessionStore";
 import { type DailyGuideUsage, TripGoneError } from "../storage/types";
 import { apiError, type ErrorBody } from "./errors";
-import { type ConcurrencyLimiter, type DailyLimiter, type TurnQuota, turnQuota } from "./guard";
+import { type ConcurrencyLimiter, DailyLimiter, type TurnQuota, turnQuota } from "./guard";
 import { routeParam, type SecureRoutes } from "./policy";
 import { streamEvents, type TurnTiming } from "./turnStream";
 
@@ -140,6 +141,12 @@ const DAILY_LIMIT = refusal(
   429,
   "rate_limited",
   "今日のガイドへの相談の受付は終わりました。また明日お越しください。",
+  false,
+);
+const PHOTO_LIMIT = refusal(
+  429,
+  "rate_limited",
+  "今日の写真での相談の受付は終わりました。写真なしでは、続けて相談できます。",
   false,
 );
 const CROWDED = refusal(
@@ -249,12 +256,20 @@ interface AdmittedTurn extends OpenedTurn {
 interface TurnRequest {
   message: GuideChatRequest["message"];
   location: GuideChatRequest["location"];
+  photo: GuideChatRequest["photo"];
   locale: GuideChatRequest["locale"];
 }
 
 export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
   const limits = deps.guide?.limits ?? DEFAULT_GUIDE_LIMITS;
   const anonymousUsage = new MemoryGuideUsage(() => deps.guide?.runner.today() ?? "");
+  // 写真の相談の回数。利用者（していなければ IP）と IP ごとに、このインスタンスのメモリで数える。写真は残さない
+  const photoLimiter = new DailyLimiter(
+    limits.photosPerUser ?? DEFAULT_GUIDE_PHOTOS_PER_USER,
+    () => deps.guide?.runner.today() ?? "",
+  );
+  const photoKeys = (quota: TurnQuota) =>
+    quota.client === quota.ip ? [quota.ip] : [quota.ip, quota.client];
   /** 見回りが動く環境か。動かなければ、見回りを始められない */
   const watchAvailable = deps.patrol !== undefined && deps.patrol !== null;
 
@@ -315,10 +330,13 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
     runner: GuideRunner,
     opened: OpenedTurn,
     quota: TurnQuota,
+    withPhoto: boolean,
   ): AdmittedTurn | TurnRefusal => {
     const { session, usage } = opened;
     if (session.busy) return TURN_BUSY;
     if (overGuideLimit(usage, limits) || !quota.allows()) return DAILY_LIMIT;
+    const keys = photoKeys(quota);
+    if (withPhoto && !keys.every((key) => photoLimiter.allows(key))) return PHOTO_LIMIT;
     let release = () => {};
     if (runner.mode === "live" && deps.concurrency !== undefined) {
       const acquired = deps.concurrency.tryAcquire(quota.client);
@@ -326,6 +344,7 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
       release = acquired;
     }
     quota.consume();
+    if (withPhoto) for (const key of keys) photoLimiter.consume(key);
     session.busy = true;
     return {
       ...opened,
@@ -358,6 +377,7 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
           trip,
           message: request.message,
           location: request.location,
+          photo: request.photo,
           ...(request.locale === undefined ? {} : { locale: request.locale }),
           budgetUsd,
           turn,
@@ -434,19 +454,20 @@ export function registerGuideRoutes(routes: SecureRoutes, deps: GuideDeps) {
     if (guide === undefined) return notAvailable(c);
     const request = GuideChatRequestSchema.safeParse(await readJson(c));
     if (!request.success) return badRequest(c);
-    const { sessionId, message, location, locale } = request.data;
+    const { sessionId, message, location, photo, locale } = request.data;
     const { runner } = guide;
     const quota = turnQuota(deps, viewer, deps.clientIp?.(c) ?? "unknown");
     // 現在地は、端末が丸めていなくても、ここで要る細かさに丸めてから使う
     const said: TurnRequest = {
       message,
       location: location === undefined ? undefined : roundLocation(location),
+      photo,
       locale,
     };
     const opened = await openTurn(runner, sessionId, quota, open);
     if (!opened.ok) return refuse(c, opened);
     // ここから返答を始めるまで待たない
-    const admitted = admitTurn(runner, opened, quota);
+    const admitted = admitTurn(runner, opened, quota, photo !== undefined);
     if (!admitted.ok) return refuse(c, admitted);
     return streamEvents<GuideSseEvent>(
       c,

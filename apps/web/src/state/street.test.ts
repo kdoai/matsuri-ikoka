@@ -10,6 +10,7 @@ import {
 import {
   fictionalFestival,
   fictionalItinerary,
+  fictionalPhoto,
   fictionalSource,
 } from "@matsuri-ikoka/schema/testing";
 import { describe, expect, it, vi } from "vitest";
@@ -352,6 +353,22 @@ describe("ガイドとの相談", () => {
     });
     // 現在地は手元の状態にも残さない
     expect(JSON.stringify(store.getState())).not.toContain("136.56");
+  });
+
+  it("写真はその発言にだけ付けて送り、送り直しでは送らず、手元の状態にも残さない", async () => {
+    const guideChat = streaming([]);
+    const { store } = await onStreet({ guideChat });
+    const photo = fictionalPhoto();
+    await store.getState().actions.sendGuide("これは何ですか", { photo });
+    expect(guideChat.mock.calls[0]?.[0]).toEqual({
+      sessionId: "session-1",
+      message: "これは何ですか",
+      photo,
+      locale: "ja",
+    });
+    await store.getState().actions.retryGuide();
+    expect(guideChat.mock.calls[1]?.[0]).not.toHaveProperty("photo");
+    expect(JSON.stringify(store.getState())).not.toContain(photo.data);
   });
 
   it("guide.done が来ないまま閉じたら、もう一度送れるようにする", async () => {

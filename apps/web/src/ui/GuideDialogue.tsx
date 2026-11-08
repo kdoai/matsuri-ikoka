@@ -1,5 +1,11 @@
-import { MAX_MESSAGE_LENGTH, noticeStall } from "@matsuri-ikoka/schema";
 import {
+  GUIDE_PHOTO_TYPES,
+  type GuidePhoto,
+  MAX_MESSAGE_LENGTH,
+  noticeStall,
+} from "@matsuri-ikoka/schema";
+import {
+  Camera,
   Clock,
   Flag,
   MessageCircle,
@@ -8,9 +14,17 @@ import {
   Send,
   X,
 } from "lucide-react";
-import { type FormEvent, type KeyboardEvent, useMemo, useRef, useState } from "react";
+import {
+  type ChangeEvent,
+  type FormEvent,
+  type KeyboardEvent,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { formatDateTime } from "../i18n";
 import { type GuideEntry, guideLine } from "../state/guide";
+import { preparePhoto } from "../state/photo";
 import { useActions, useApp, useT } from "../state/react";
 import { useReadAloud } from "../voice/hooks";
 import { guideSpokenLine } from "../voice/readAloud";
@@ -71,15 +85,36 @@ function Composer({ placeholder }: { placeholder: string }) {
   const actions = useActions();
   const streaming = useApp((state) => state.guide.streaming);
   const [draft, setDraft] = useState("");
+  // 写真は送るまでこの部品の中だけに持ち、ストアにも端末の保存にも残さない
+  const [photo, setPhoto] = useState<GuidePhoto | null>(null);
+  const [photoState, setPhotoState] = useState<"idle" | "preparing" | "rejected">("idle");
   const input = useRef<HTMLInputElement>(null);
+  const picker = useRef<HTMLInputElement>(null);
   // 声で入れた文も切らずに残し、長すぎるときは店の窓と同じく知らせて、送れないようにする
   const tooLong = draft.trim().length > MAX_MESSAGE_LENGTH;
+  const preparing = photoState === "preparing";
   const submit = (event: FormEvent) => {
     event.preventDefault();
-    const text = draft.trim();
-    if (text === "" || streaming || tooLong) return;
+    // 写真だけで送るときは、決まった問いを添える
+    const text =
+      draft.trim() === "" && photo !== null ? t.street.photoDefaultMessage : draft.trim();
+    if (text === "" || streaming || tooLong || preparing) return;
     setDraft("");
-    void actions.sendGuide(text);
+    setPhoto(null);
+    setPhotoState("idle");
+    void actions.sendGuide(text, photo === null ? undefined : { photo });
+  };
+  const choosePhoto = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    // 同じ写真を選び直しても届くよう、選んだものを外しておく
+    event.target.value = "";
+    if (file === undefined) return;
+    setPhoto(null);
+    setPhotoState("preparing");
+    const prepared = await preparePhoto(file);
+    setPhoto(prepared);
+    setPhotoState(prepared === null ? "rejected" : "idle");
+    window.requestAnimationFrame(() => input.current?.focus());
   };
   // 押し続けて繰り返し届く Enter では送らない（声の入力のボタンから焦点が移ったときなど）
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -110,9 +145,31 @@ function Composer({ placeholder }: { placeholder: string }) {
         onDraft={setDraft}
         onFilled={() => window.requestAnimationFrame(() => input.current?.focus())}
       />
+      <input
+        ref={picker}
+        type="file"
+        accept={GUIDE_PHOTO_TYPES.join(",")}
+        className="hidden"
+        tabIndex={-1}
+        aria-hidden="true"
+        onChange={(event) => void choosePhoto(event)}
+        data-testid="guide-photo-input"
+      />
+      <button
+        type="button"
+        disabled={streaming || preparing}
+        aria-label={t.street.photoAttach}
+        title={t.street.photoAttach}
+        aria-pressed={photo !== null}
+        onClick={() => picker.current?.click()}
+        data-testid="guide-photo"
+        className="grid size-11 shrink-0 place-items-center rounded-xl border-2 border-line-strong bg-white text-ink shadow-sm transition hover:border-yamabuki-400 disabled:cursor-not-allowed disabled:opacity-60 aria-pressed:border-ai-700"
+      >
+        <Camera aria-hidden="true" className="size-5" />
+      </button>
       <button
         type="submit"
-        disabled={streaming || draft.trim() === "" || tooLong}
+        disabled={streaming || preparing || (draft.trim() === "" && photo === null) || tooLong}
         aria-label={streaming ? t.street.waiting : t.street.send}
         className="grid size-11 shrink-0 place-items-center rounded-xl bg-ai-700 text-white shadow-sm transition hover:bg-ai-800 disabled:cursor-not-allowed disabled:bg-stone-400"
       >
@@ -122,6 +179,32 @@ function Composer({ placeholder }: { placeholder: string }) {
           <Send aria-hidden="true" className="size-5" />
         )}
       </button>
+      {photo !== null ? (
+        <p
+          className="flex basis-full items-center gap-2 pt-1 text-sm"
+          role="status"
+          data-testid="guide-photo-attached"
+        >
+          <span className="min-w-0 flex-1">{t.street.photoAttached}</span>
+          <button
+            type="button"
+            className="grid size-8 shrink-0 place-items-center rounded-lg border border-line-strong bg-white"
+            aria-label={t.street.photoRemove}
+            title={t.street.photoRemove}
+            onClick={() => setPhoto(null)}
+          >
+            <X aria-hidden="true" className="size-4" />
+          </button>
+        </p>
+      ) : photoState === "preparing" ? (
+        <p className="basis-full pt-1 text-sm" role="status">
+          {t.street.photoPreparing}
+        </p>
+      ) : photoState === "rejected" ? (
+        <p className="basis-full pt-1 font-semibold text-shu-700 text-sm" role="status">
+          {t.street.photoRejected}
+        </p>
+      ) : null}
       {tooLong ? (
         <p id="guide-too-long" className="basis-full pt-1 font-semibold text-shu-700 text-sm">
           {t.chat.tooLong(MAX_MESSAGE_LENGTH)}

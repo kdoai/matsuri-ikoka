@@ -1,11 +1,16 @@
 import { setTimeout as sleep } from "node:timers/promises";
-import { type Options, query as sdkQuery } from "@anthropic-ai/claude-agent-sdk";
+import {
+  type Options,
+  type SDKMessage,
+  type SDKUserMessage,
+  query as sdkQuery,
+} from "@anthropic-ai/claude-agent-sdk";
 import { backoffMs, classifyFailure } from "@matsuri-ikoka/agent-kit";
-import type { IsoDate } from "@matsuri-ikoka/schema";
+import type { GuidePhoto, IsoDate } from "@matsuri-ikoka/schema";
 import { ReplyStream } from "../agent/claudeRunner";
 import { toAgentError } from "../agent/failures";
 import { buildGuideOptions } from "../agent/options";
-import { AgentError, type QueryFn } from "../agent/runner";
+import { AgentError } from "../agent/runner";
 import type { FestivalStore } from "../data/festivalStore";
 import type { OsmPlaceIndex } from "../domain/osmPlaces";
 import type { StationPointIndex } from "../domain/travelEstimate";
@@ -29,6 +34,12 @@ import type { GuideToolContext, GuideWebResearcher } from "./tools";
 // 会話は Agent SDK のセッションを resume して続ける。記録はインスタンスの一時ディレクトリだけにあるので、
 // 別のインスタンスに届いたら、旅の記録とコードが書いた要約から新しい会話で続ける。
 
+/** Agent SDK の query。写真を付けた発言は、文字列でなくメッセージの列で渡す */
+export type GuideQueryFn = (params: {
+  prompt: string | AsyncIterable<SDKUserMessage>;
+  options: Options;
+}) => AsyncIterable<SDKMessage>;
+
 export interface ClaudeGuideRunnerDeps {
   prompt: string;
   model: string;
@@ -49,16 +60,40 @@ export interface ClaudeGuideRunnerDeps {
   env: Record<string, string>;
   today: () => IsoDate;
   now: () => string;
-  query?: QueryFn;
-  /** 会話の記録を消す。現在地を入れた発言のあと、次の発言で読み直さないように使う */
+  query?: GuideQueryFn;
+  /** 会話の記録を消す。現在地や写真を入れた発言のあと、次の発言で読み直さないように使う */
   forgetTranscript?: (id: string) => void;
   stderr?: (data: string) => void;
+}
+
+/**
+ * 写真を付けた発言を、Agent SDK に渡す形にする。写真は画像のブロックとして渡し、
+ * 文字に起こしてプロンプトに混ぜない（写真の中の文字を、決まりや指示の文として読ませない）
+ */
+export async function* photoPrompt(
+  text: string,
+  photo: GuidePhoto,
+): AsyncGenerator<SDKUserMessage> {
+  yield {
+    type: "user",
+    message: {
+      role: "user",
+      content: [
+        {
+          type: "image",
+          source: { type: "base64", media_type: photo.mediaType, data: photo.data },
+        },
+        { type: "text", text },
+      ],
+    },
+    parent_tool_use_id: null,
+  };
 }
 
 export class ClaudeGuideRunner implements GuideRunner {
   readonly mode = "live" as const;
   readonly #deps: ClaudeGuideRunnerDeps;
-  readonly #query: QueryFn;
+  readonly #query: GuideQueryFn;
 
   constructor(deps: ClaudeGuideRunnerDeps) {
     this.#deps = deps;
@@ -130,6 +165,7 @@ export class ClaudeGuideRunner implements GuideRunner {
       ).length,
       ...(guide.agentSessionId === null ? { resume: guide.resume } : {}),
       location: input.location,
+      withPhoto: input.photo !== undefined,
       ...(input.locale === undefined ? {} : { locale: input.locale }),
       message: input.message,
     });
@@ -162,7 +198,8 @@ export class ClaudeGuideRunner implements GuideRunner {
       initSeen = false;
       try {
         // 試みごとに作る。続きを読めず新しい会話でやり直すときは、要約の行が要る
-        const prompt = await this.#prompt(input);
+        const text = await this.#prompt(input);
+        const prompt = input.photo === undefined ? text : photoPrompt(text, input.photo);
         const options: Options = buildGuideOptions({
           prompt: deps.prompt,
           model: deps.model,
@@ -220,8 +257,8 @@ export class ClaudeGuideRunner implements GuideRunner {
         counted({ type: "guide.sources", data: { messageId, ...attached } });
       }
     } finally {
-      // 現在地はその発言のときだけ使う。入れた会話を次の発言で読み直さないよう、記録を消して要約から続ける
-      if (input.location !== undefined) {
+      // 現在地と写真はその発言のときだけ使う。入れた会話を次の発言で読み直さないよう、記録を消して要約から続ける
+      if (input.location !== undefined || input.photo !== undefined) {
         const id = guide.agentSessionId;
         guide.agentSessionId = null;
         guide.agentCostUsd = 0;

@@ -15,6 +15,21 @@ import { TripDayCard } from "./TripDay";
  * 見回りはログインして残した旅だけを探すので、ログインしていなければボタンを出さず、ログインすれば頼めることを出す
  * （ログインを用意していない環境では、頼めないので出さない）
  */
+/** 旅が終わったら、付き添いと見回りの終わりと、残した旅を消せることを知らせる */
+export function AfterTripNote() {
+  const t = useT();
+  const phase = useApp((state) => state.guide.phase);
+  if (phase !== "after") return null;
+  return (
+    <p
+      className="rounded-xl border border-line bg-white/80 px-3 py-2 text-sm"
+      data-testid="after-trip"
+    >
+      {t.street.afterTrip}
+    </p>
+  );
+}
+
 export function WatchControl() {
   const t = useT();
   const actions = useActions();
@@ -231,6 +246,7 @@ function GuideBoardBody() {
           {t.street.noNotices}
         </p>
       )}
+      <AfterTripNote />
       <WatchControl />
     </div>
   );
