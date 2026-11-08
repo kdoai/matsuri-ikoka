@@ -37,7 +37,6 @@
 - [使ってみる](#使ってみる)
 - [できること](#できること)
 - [できないこと](#できないこと)
-- [祭りを運営する方へ](#祭りを運営する方へ)
 - [個人情報の扱い](#個人情報の扱い)
 - [仕組み](#仕組み)
 - [評価](#評価)
@@ -252,31 +251,6 @@ pnpm --filter @matsuri-ikoka/server check:live -- --festivals "$PWD/data/festiva
 - 体調や事故の診断と判断
 - 当日の開催の保証。**出かける前に、必ず公式サイトで最終確認をしてください**
 
-## 祭りを運営する方へ
-
-祭りの側で登録や更新をしていただかなくても、公開されている情報から調べて載せます。そのうえで、次の3つの窓口を用意しています。
-
-<table>
-  <tr>
-    <th align="left" width="180">窓口</th>
-    <th align="left">使う場面</th>
-  </tr>
-  <tr>
-    <td><a href="../../issues/new?template=festival-listing-request.yml"><b>載せてほしい</b></a></td>
-    <td>来る人に知ってほしい見どころもあわせて書けます。いただいた情報は手がかりにし、公式の情報と照らし合わせてから載せます</td>
-  </tr>
-  <tr>
-    <td><a href="../../issues/new?template=festival-correction.yml"><b>直してほしい</b></a></td>
-    <td>掲載している情報の誤りを知らせてください</td>
-  </tr>
-  <tr>
-    <td><a href="../../issues/new?template=festival-opt-out.yml"><b>載せないでほしい</b></a></td>
-    <td>理由は要りません。受け付けたら、候補に出さないようにし、情報の収集の対象からも外します</td>
-  </tr>
-</table>
-
-Issue は公開されます。電話番号やメールアドレスなど、個人の連絡先は書かないでください。祭りの紹介は、公開されている情報をもとにした要約と、出典へのリンクだけです。ページの文章や写真はコピーしません。
-
 ## 個人情報の扱い
 
 - 出発地は駅名までにとどめ、住所は聞きません
@@ -291,6 +265,37 @@ Issue は公開されます。電話番号やメールアドレスなど、個�
 くわしくは[運用と安全の仕様](docs/spec/operations.md#個人情報)と[ログインと保存の仕様](docs/spec/account.md)にあります。
 
 ## 仕組み
+
+```mermaid
+flowchart LR
+  subgraph Data["データ（Git で管理）"]
+    MA["Claude Managed Agents<br/>週次の調査（120日先まで）→ PR"]
+    FJ["data/festivals/*.json<br/>出典・確認した日・確度つき"]
+  end
+  subgraph Server["接客サーバー（Hono）"]
+    ST["祭りのデータ<br/>起動時に読み込み、掲載停止を除く"]
+    DM["domain/<br/>日程・移動・旅程の検証（コード）"]
+    TL["自作の MCP ツール"]
+    AG["Claude Agent SDK<br/>コンシェルジュ＋祭り調査係・周辺係・旅程係"]
+    WEB["Web の調べ<br/>開催の確かめ・行き方・宿"]
+    GD["旅のガイド・見回り"]
+    SV["旅程の保存<br/>Firestore"]
+    SH["しおり<br/>HTML と A4 の PDF"]
+  end
+  subgraph Web["画面（Vite + React）"]
+    SE["state/：SSE → ストア"]
+    UI["会話の窓・旅程・地図・しおり"]
+    TD["3D の店と縁日の通り"]
+  end
+  MA --> FJ --> ST --> TL
+  DM --> TL --> AG
+  WEB --> AG
+  AG -->|SSE| SE
+  AG --> SV --> SH --> UI
+  SV --> GD -->|SSE| SE
+  SE --> UI
+  SE --> TD
+```
 
 <table>
   <tr>
