@@ -14,7 +14,7 @@ import { createShiori } from "../shiori";
 import type { PdfEngine } from "../shiori/pdf";
 import { MemoryTripStorage } from "../storage/memory";
 import { SecureRoutes } from "./policy";
-import { registerShioriRoutes } from "./shiori";
+import { noticeLocale, registerShioriRoutes } from "./shiori";
 
 function setup(engine?: PdfEngine, verified: boolean | "needs_check" | "not_found" = true) {
   const itineraries = new ItineraryStore();
@@ -127,6 +127,60 @@ describe("GET /shiori/:id", () => {
     expect(res.status).toBe(200);
     expect(res.headers.get("content-security-policy")).toContain("font-src 'self'");
     expect(page).toContain(`href="${id}.pdf"`);
+  });
+});
+
+describe("しおりの案内のページの言語", () => {
+  it("?lang= を先に見て、なければブラウザの言語の初めの1つ。日本語でなければ英語、なければ日本語", () => {
+    expect(noticeLocale("en", "ja-JP,ja;q=0.9")).toBe("en");
+    expect(noticeLocale("ja", "en-US")).toBe("ja");
+    expect(noticeLocale(undefined, "en-US,en;q=0.9,ja;q=0.8")).toBe("en");
+    expect(noticeLocale(undefined, "ja;q=0.9,en;q=0.8")).toBe("ja");
+    expect(noticeLocale(undefined, "fr-FR")).toBe("en");
+    expect(noticeLocale("fr", undefined)).toBe("ja");
+    expect(noticeLocale(undefined, undefined)).toBe("ja");
+    expect(noticeLocale(undefined, "*")).toBe("ja");
+  });
+
+  it("404 と 409 の案内を、画面の言語かブラウザの言語で出す", async () => {
+    const { app, id } = setup(undefined, false);
+
+    const ja = await app.request("/shiori/no-such");
+    expect(ja.status).toBe(404);
+    expect(ja.headers.get("vary")).toContain("Accept-Language");
+    const jaPage = await ja.text();
+    expect(jaPage).toContain('<html lang="ja">');
+    expect(jaPage).toContain("しおりが見つかりません");
+
+    const en = await app.request("/shiori/no-such", { headers: { "Accept-Language": "en-US" } });
+    const enPage = await en.text();
+    expect(en.status).toBe(404);
+    expect(enPage).toContain('<html lang="en">');
+    expect(enPage).toContain("Travel booklet not found");
+    expect(enPage).not.toContain("しおり");
+
+    const pending = await app.request(`/shiori/${id}?embed=1&lang=en`, {
+      headers: { "Accept-Language": "ja-JP" },
+    });
+    expect(pending.status).toBe(409);
+    expect(await pending.text()).toContain("This itinerary is not confirmed yet");
+    const pdf = await app.request(`/shiori/${id}.pdf?lang=en`);
+    expect(pdf.status).toBe(409);
+    expect(await pdf.text()).toContain("not confirmed yet");
+  });
+
+  it("PDF が混み合っているときの一文も、言語に合わせる", async () => {
+    const never: PdfEngine = { render: () => new Promise(() => {}), close: async () => {} };
+    const { app, id } = setup(never);
+
+    void app.request(`/shiori/${id}.pdf`);
+    await new Promise((r) => setTimeout(r, 10));
+    const res = await app.request(`/shiori/${id}-2.pdf`, {
+      headers: { "Accept-Language": "en" },
+    });
+
+    expect(res.status).toBe(503);
+    expect(((await res.json()) as { message: string }).message).toContain("Please wait");
   });
 });
 
