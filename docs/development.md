@@ -153,6 +153,8 @@ main に入ると [`deploy.yml`](../.github/workflows/deploy.yml) が Cloud Run 
 
 エージェント：`data-auditor`（祭りのデータを検品し、見つけたことを報告する。書き換えない）。
 
+フック：[`.claude/hooks/validate-festivals.mjs`](../.claude/hooks/validate-festivals.mjs)（`PostToolUse`）。Edit か Write で `data/festivals/*.json` か `data/research-ledger.json` を変えたら `pnpm validate:data` を走らせ、エラーがあれば結果をそのまま Claude に返す。スキーマ・出典・確度の決まりを、プロンプトでなくコードで確かめるためのもの。設定は [`.claude/settings.json`](../.claude/settings.json)、テストは [`scripts/claude-hooks.test.ts`](../scripts/claude-hooks.test.ts)。
+
 ### マーケットプレイスのプラグイン
 
 公式のマーケットプレイス（`claude-plugins-official`）のプラグインは、共有の設定（`.claude/settings.json`）では有効にしていません。
