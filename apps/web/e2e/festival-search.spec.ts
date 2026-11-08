@@ -17,6 +17,7 @@ import {
   tabTo,
   talkToConcierge,
   waitForReply,
+  withoutWebgl,
 } from "./helpers";
 
 // 祭りから探す相談を、入口から祭りを決めるまで通す。検索の応答は架空の祭りの偽の応答で返す。
@@ -67,7 +68,8 @@ async function fakeSearch(page: Page, replies: FestivalSearchResponse[]) {
 }
 
 async function open(page: Page) {
-  await page.goto("/?scene=2d");
+  await withoutWebgl(page);
+  await page.goto("/");
   await page.getByRole("button", { name: "入店する" }).click();
   await talkToConcierge(page);
 }
@@ -313,7 +315,8 @@ const FIXED_FESTIVAL: FestivalSearchResult = {
 async function planFixedFestival(page: Page, sample: string | null = "suzunari-fixed-festival") {
   await page.clock.setFixedTime(new Date(SAMPLE_TODAY));
   await fakeSearch(page, [reply({ results: [FIXED_FESTIVAL, result(2)] })]);
-  await page.goto(`/?scene=2d${sample === null ? "" : `&sample=${sample}`}`);
+  await withoutWebgl(page);
+  await page.goto(`/${sample === null ? "" : `?sample=${sample}`}`);
   await page.getByRole("button", { name: "入店する" }).click();
   await talkToConcierge(page);
   await answerAll(page);

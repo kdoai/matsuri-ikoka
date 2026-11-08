@@ -6,14 +6,14 @@ import { type FrameInsets, selectSceneProps } from "../state/scene";
 import { shioriReady } from "../state/selectors";
 import { TalkButton } from "./Hud";
 import { useReducedMotion } from "./hooks";
+import { No3dNotice } from "./No3d";
 import { GreetingBubble, PlayPrompt } from "./Play";
 import { SceneLoading } from "./SceneLoading";
-import { StaffFloor } from "./StaffPanel";
 import { ShopScene, StorefrontScene, useModelProgress, useScene3d } from "./scene3d";
 
 // ゲームの画面の背景になる店。3D の部品（src/scenes/ShopScene.tsx）は ShopSceneProps を受け取り、
-// ストアの状態だけを読む。読み込むまでは 2D の見取り図を出しておき、3D が描けたら上に重ねる。
-// WebGL が使えない・読み込めない・動きを減らす設定のときは、2D の見取り図を主にする。
+// ストアの状態だけを読む。読み込む間は店の外観を出したまま待つ。2D の見取り図には切り替えない。
+// WebGL が使えない・読み込めないときは、その知らせと「話しかける」を出す（相談はそのまま続けられる）。
 
 class SceneBoundary extends Component<{ fallback: ReactNode; children: ReactNode }> {
   override state = { failed: false };
@@ -23,9 +23,9 @@ class SceneBoundary extends Component<{ fallback: ReactNode; children: ReactNode
   }
 
   override componentDidCatch(error: unknown) {
-    // 2D の見取り図にしたら、入店の途中の扱いをやめる（案内と「話しかける」を出す）
+    // 3D を描けなかったら、入店の途中の扱いをやめる（案内と「話しかける」を出す）
     playStore.getState().setEntering(false);
-    console.warn("[scene] 3D の店内を出せなかったので、2D の見取り図にします", error);
+    console.warn("[scene] 3D の店内を出せませんでした", error);
   }
 
   override render() {
@@ -33,33 +33,20 @@ class SceneBoundary extends Component<{ fallback: ReactNode; children: ReactNode
   }
 }
 
-/** 2D の見取り図は、会話の窓やパネルに隠れない場所に置く */
-function FloorBox({
-  frame,
-  hidden = false,
-  onTalk,
-}: {
-  frame: FrameInsets;
-  hidden?: boolean;
-  onTalk?: () => void;
-}) {
+/** 3D を描けないとき：知らせと「話しかける」を、会話の窓やパネルに隠れない場所に置く */
+function SceneUnavailable({ frame, onTalk }: { frame: FrameInsets; onTalk: () => void }) {
   return (
     <div
-      className="absolute overflow-hidden rounded-3xl shadow-2xl ring-4 ring-wood-700/60"
+      className="absolute flex flex-col items-center justify-center gap-4 bg-wood-900"
       style={{
         top: frame.top + 8,
         right: frame.right + 12,
         bottom: frame.bottom + 16,
         left: frame.left + 12,
       }}
-      aria-hidden={hidden}
     >
-      <StaffFloor />
-      {hidden || onTalk === undefined ? null : (
-        <div className="-translate-x-1/2 absolute bottom-3 left-1/2">
-          <TalkButton onTalk={onTalk} />
-        </div>
-      )}
+      <No3dNotice />
+      <TalkButton onTalk={onTalk} />
     </div>
   );
 }
@@ -116,8 +103,8 @@ export function GameStage({
   return (
     <div className="absolute inset-0" data-testid="game-stage">
       {use3d && ShopScene !== null ? (
-        <SceneBoundary fallback={<FloorBox frame={frame} onTalk={onTalk} />}>
-          {/* 店内を描けるまでは、店の外観を出したまま待つ（2D の見取り図は出さない） */}
+        <SceneBoundary fallback={<SceneUnavailable frame={frame} onTalk={onTalk} />}>
+          {/* 店内を描けるまでは、店の外観を出したまま待つ */}
           {ready ? null : <Entering />}
           <Suspense fallback={null}>
             <div className="absolute inset-0">
@@ -137,7 +124,7 @@ export function GameStage({
           </Suspense>
         </SceneBoundary>
       ) : (
-        <FloorBox frame={frame} onTalk={onTalk} />
+        <SceneUnavailable frame={frame} onTalk={onTalk} />
       )}
     </div>
   );

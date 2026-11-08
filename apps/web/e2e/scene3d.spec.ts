@@ -1,17 +1,17 @@
 import { expect, type Page, test } from "@playwright/test";
 import {
   blockMapTiles,
-  enterShop,
   recordTexts,
   seenTexts,
   sendSampleMessage,
   snap,
   talkToConcierge,
   waitForReply,
+  withoutWebgl,
 } from "./helpers";
 
 // 3D の店：外観から入店し、店内でスタッフがストアの状態どおりに動く。
-// WebGL が使えないとき・動きを減らす設定のときは、2D の見取り図に落ちる。
+// 動きを減らす設定でも 3D を出す。WebGL が使えないときは 2D に切り替えず、その知らせを出して相談を続けられる。
 
 test.beforeEach(async ({ page }, info) => {
   test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
@@ -29,8 +29,7 @@ test("店の外観を見せてから入店し、店内のスタッフが持ち�
   });
   await snap(page, info, "40-storefront-3d");
 
-  // 店内を読み込む間も、2D の見取り図は出さず、店の外観のまま待つ
-  await recordTexts(page, ['[data-testid="staff-floor"]']);
+  // 店内を読み込む間は、店の外観のまま待つ
   await page.getByRole("button", { name: "入店する" }).click();
   await expect(page.getByTestId("shop-entering")).toBeVisible();
   const scene = page.locator('[data-testid="shop-scene"]');
@@ -38,7 +37,6 @@ test("店の外観を見せてから入店し、店内のスタッフが持ち�
   // 入店のカメラが終わると、コンシェルジュが「話しかけてね」と案内する。会話の窓はまだ出さない
   await expect(page.getByTestId("greeting-bubble")).toBeVisible({ timeout: 60_000 });
   await expect(page.getByTestId("dialogue")).toBeHidden();
-  expect(await seenTexts(page, '[data-testid="staff-floor"]')).toEqual([]);
   await snap(page, info, "41-shop-3d");
   await talkToConcierge(page);
 
@@ -189,32 +187,29 @@ test("聞き取りの入力欄の段階で窓のどこをクリックしても�
   await expect(scene).toHaveAttribute("data-player", `${start.x.toFixed(2)},${start.z.toFixed(2)}`);
 });
 
-test("WebGL が使えないときは、店の外観も店内も 2D で出す", async ({ page }) => {
-  await page.addInitScript(() => {
-    const original = HTMLCanvasElement.prototype.getContext;
-    HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, ...args) {
-      const [kind] = args as [string];
-      if (kind === "webgl" || kind === "webgl2") return null;
-      return (original as (...a: unknown[]) => RenderingContext | null).apply(this, args);
-    } as typeof HTMLCanvasElement.prototype.getContext;
-  });
+test("WebGL が使えないときは、2D に切り替えずに知らせを出し、相談は続けられる", async ({
+  page,
+}) => {
+  await withoutWebgl(page);
   await page.goto("/");
   await expect(page.getByTestId("storefront-scene")).toHaveCount(0);
-  await enterShop(page, "");
-  await expect(page.getByTestId("staff-floor")).toBeVisible();
+  await expect(page.getByTestId("no-3d")).toBeVisible();
+  await page.getByRole("button", { name: "入店する" }).click();
+  await talkToConcierge(page);
   await expect(page.getByTestId("shop-scene")).toHaveCount(0);
+  await expect(page.getByTestId("no-3d")).toBeVisible();
   await sendSampleMessage(page, 0);
-  await expect(page.getByTestId("staff-researcher")).toHaveAttribute(
-    "data-phase",
-    /walking|working/,
-  );
+  await expect(page.getByTestId("staff-activity")).toContainText("祭り調査係");
+  await waitForReply(page);
 });
 
-test("動きを減らす設定では、3D を出さずに 2D の見取り図を主にする", async ({ page }) => {
+test("動きを減らす設定でも、3D の店の外観を出す", async ({ page }) => {
+  // GPU のない環境では 3D の読み込みと描画が遅いので、余裕を持たせる
+  test.setTimeout(180_000);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await expect(page.getByTestId("storefront-scene")).toHaveCount(0);
-  await enterShop(page, "");
-  await expect(page.getByTestId("staff-floor")).toBeVisible();
-  await expect(page.getByTestId("shop-scene")).toHaveCount(0);
+  await expect(page.locator('[data-testid="storefront-scene"][data-ready="true"]')).toBeVisible({
+    timeout: 60_000,
+  });
+  await expect(page.getByTestId("no-3d")).toHaveCount(0);
 });

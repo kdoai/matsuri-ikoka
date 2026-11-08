@@ -3,13 +3,15 @@ import {
   fakeSpeechRecognition as fakeRecognition,
   FAKE_HEARD as HEARD,
   talkToConcierge,
+  withoutWebgl,
 } from "./helpers";
 
 // 声で話すボタン。ブラウザの音声認識の代わりを差し込み、押し方・焦点の移り方・送る前に確かめられることを見る。
 // 実際の声やマイクの許可は使わない。
 
 async function open(page: Page) {
-  await page.goto("/?scene=2d");
+  await withoutWebgl(page);
+  await page.goto("/");
   await page.getByRole("button", { name: "入店する" }).click();
   await talkToConcierge(page);
 }

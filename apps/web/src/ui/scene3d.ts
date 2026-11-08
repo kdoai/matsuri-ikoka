@@ -6,10 +6,9 @@ import {
   subscribeModelProgress,
 } from "../scenes/modelFiles";
 import type { ShopSceneProps, StreetSceneProps } from "../state/scene";
-import { useReducedMotion } from "./hooks";
 
-// 3D の部品（src/scenes/）は遅れて読み込む。最初の画面は 2D で出し、3D は読み込めたら重ねる。
-// WebGL が使えないとき・動きを減らす設定のときは、3D を使わない。
+// 3D の部品（src/scenes/）は遅れて読み込む。画面は 3D の店と通りが主で、2D に切り替えない。
+// 動きを減らす設定でも 3D を出し、カメラの動きだけを抑える。WebGL が使えないときは、その知らせを出す。
 
 const shopModules = import.meta.glob<{ default: ComponentType<ShopSceneProps> }>(
   "../scenes/ShopScene.tsx",
@@ -57,14 +56,7 @@ export function webglAvailable(): boolean {
   return webgl;
 }
 
-/** ?scene=2d で、3D を使わない軽い表示にする（性能の低い端末向け） */
-export function prefers2d(search: string): boolean {
-  return new URLSearchParams(search).get("scene") === "2d";
-}
-
-/** 3D の店を出すか */
+/** 3D を描けるか（WebGL が使えるか） */
 export function useScene3d(): boolean {
-  const reducedMotion = useReducedMotion();
-  const supported = useMemo(() => webglAvailable() && !prefers2d(window.location.search), []);
-  return supported && !reducedMotion;
+  return useMemo(() => webglAvailable(), []);
 }

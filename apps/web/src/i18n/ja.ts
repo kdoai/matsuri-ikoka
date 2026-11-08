@@ -146,6 +146,7 @@ export const ja = {
     lead: "祭りとの出会いを偶然任せにしない\n旅行計画から旅のしおり作成まで承ります",
     enter: "入店する",
     entering: "店に入っています……",
+    no3d: "この端末では 3D を描けません。WebGL を使えるブラウザで開いてください。相談はこのまま続けられます。",
     loadingScene: (percent: number) => `店の明かりを灯しています　${percent}%`,
     preparingScene: "店を整えています……",
     restart: "最初から",
@@ -547,12 +548,6 @@ export const ja = {
       scout: "周辺係",
       planner: "旅程係",
     },
-    posts: {
-      concierge: "カウンター",
-      researcher: "資料棚",
-      scout: "地図の壁",
-      planner: "時刻表",
-    },
     phases: {
       idle: "待機中",
       walking: "持ち場へ向かっています",
@@ -585,7 +580,6 @@ export const ja = {
       update_itinerary: "旅程の書き込み",
       verify_festival: "旅程の確定",
     },
-    sceneLabel: "店内の見取り図。スタッフの持ち場と、いまの動き",
   },
   relay: {
     title: "頼みと受け渡し",
@@ -1091,7 +1085,6 @@ export const ja = {
     dotted: (parts: readonly string[]) => parts.join("・"),
     list: "ガイドの屋台の知らせ",
     stallName: "旅の相談処",
-    stallGreeting: "宿も、行き方も、食べ物も、天気も。旅のことは、なんでもわたしに聞いてください。",
     unreadNotices: (count: number) => `新しい知らせが${count}件あります`,
     noNotices: "いまは新しい知らせはありません。気になることは、ガイドに話しかけてください。",
     closeStall: "屋台を閉じる",

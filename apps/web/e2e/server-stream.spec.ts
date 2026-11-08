@@ -6,6 +6,7 @@ import {
   openLog,
   say,
   talkToConcierge,
+  withoutWebgl,
 } from "./helpers";
 
 // 接客サーバーにつなぐときの受け取り方。サーバーの代わりに、SSE の返答をテストの中で返す。
@@ -52,7 +53,8 @@ test("done の前に接続が切れたら「もう一度送る」を出し、送
     await route.fulfill({ status: 200, headers: { "content-type": "text/event-stream" }, body });
   });
 
-  await page.goto("/?scene=2d");
+  await withoutWebgl(page);
+  await page.goto("/");
   await page.getByRole("button", { name: "入店する" }).click();
   await talkToConcierge(page);
   await say(page, "みなと中央駅から行ける祭りはありますか");
@@ -87,7 +89,8 @@ test("done の前に切れて、サーバーも応答しなければ、つなが
     }),
   );
 
-  await page.goto("/?scene=2d");
+  await withoutWebgl(page);
+  await page.goto("/");
   await page.getByRole("button", { name: "入店する" }).click();
   await talkToConcierge(page);
   await say(page, "みなと中央駅から行ける祭りはありますか");
@@ -104,12 +107,13 @@ test("見本の相談を再生しているサーバー（mock）のときだけ�
     route.fulfill({ status: 201, json: { sessionId: "s-test", mode } }),
   );
 
-  await page.goto("/?scene=2d");
+  await withoutWebgl(page);
+  await page.goto("/");
   await page.getByRole("button", { name: "入店する" }).click();
   await expect(page.getByTestId("mode-badge")).toContainText("見本の相談を再生しています");
 
   mode = "live";
-  await page.goto("/?scene=2d");
+  await page.goto("/");
   await page.getByRole("button", { name: "入店する" }).click();
   await talkToConcierge(page);
   await expect(page.getByTestId("mode-badge")).toHaveCount(0);
@@ -136,7 +140,8 @@ test("サーバーのエラーは一文だけを出し、HTML として埋め込
       ]),
     }),
   );
-  await page.goto("/?scene=2d");
+  await withoutWebgl(page);
+  await page.goto("/");
   await page.getByRole("button", { name: "入店する" }).click();
   await talkToConcierge(page);
   await say(page, "こんにちは");
@@ -163,7 +168,8 @@ test("英語の画面では、サーバーの日本語の一文ではなく辞�
       ]),
     }),
   );
-  await page.goto("/?scene=2d");
+  await withoutWebgl(page);
+  await page.goto("/");
   await page.getByRole("button", { name: /English/ }).click();
   await page.getByRole("button", { name: "Come in" }).click();
   await talkToConcierge(page, "Talk to the concierge");

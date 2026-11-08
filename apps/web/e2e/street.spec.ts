@@ -45,20 +45,20 @@ async function goOutside(page: Page): Promise<void> {
     .getByTestId("reply-choices")
     .getByRole("button", { name: "ガイドと店の外へ出る" })
     .click();
-  await expect(page.getByTestId("street")).toBeVisible({ timeout: 10_000 });
+  // 3D の店では、ガイドと歩いて店を出るので、通りに着くまで余裕を持たせる
+  await expect(page.getByTestId("street")).toBeVisible({ timeout: 120_000 });
 }
 
-test("2D だけで、ガイドの屋台の知らせ・相談がすべて使え、店内へ戻れる", async ({ page }, info) => {
+test("3D を描けないときも、ガイドの知らせ・相談がすべて使え、店内へ戻れる", async ({
+  page,
+}, info) => {
   test.setTimeout(180_000);
   await enterShop(page);
   await untilShiori(page);
   await goOutside(page);
-  await expect(page.getByTestId("street")).toHaveAttribute("data-mode", "2d");
-
-  // ガイドの屋台が主役。屋台を種類で分けず、旅のことはガイド1人に尋ねる
-  const front = page.getByTestId("guide-stall");
-  await expect(front).toBeVisible();
-  await expect(front).toContainText("旅の相談処");
+  await expect(page.getByTestId("street")).toHaveAttribute("data-mode", "no-3d");
+  // 2D の通りには切り替えず、3D を描けない知らせを出す
+  await expect(page.getByTestId("street-no-3d")).toBeVisible();
 
   // 留守の間の変化があれば、提灯が灯り、ガイドが会話の窓で報告する
   const dialogue = page.getByTestId("guide-dialogue");
@@ -66,9 +66,8 @@ test("2D だけで、ガイドの屋台の知らせ・相談がすべて使え�
   await expect(page.getByTestId("guide-line")).toHaveAttribute("data-line", "report");
   await expect(page.getByTestId("guide-line")).toContainText("鈴鳴灯籠まつりの開始");
   await expect(page.getByTestId("guide-line")).toContainText("調べました");
-  await expect(page.getByTestId("street-unread")).toBeVisible();
   await expect(page.getByTestId("street-lit")).toContainText("新しい知らせ");
-  await snap(page, info, "60-guide-report-2d");
+  await snap(page, info, "60-guide-report-no-3d");
 
   // 案内してもらうと、ガイドの屋台の窓が開き、読むと提灯が消える。旅程はまだ変わらない
   await page.getByTestId("guide-lead").click();
@@ -79,17 +78,17 @@ test("2D だけで、ガイドの屋台の知らせ・相談がすべて使え�
     "href",
     /^https:\/\/example\.com\//,
   );
-  await snap(page, info, "61-stall-notice-2d");
+  await snap(page, info, "61-stall-notice-no-3d");
   await page.keyboard.press("Escape");
   await expect(stall).toHaveCount(0);
-  await expect(page.getByTestId("street-unread")).toHaveCount(0);
+  await expect(page.getByTestId("street-lit")).toHaveText("");
 
   // ログインなしの旅は相談の間だけ続くと分かる
   await expect(page.getByTestId("guest-note")).toContainText("6時間");
-  await snap(page, info, "62-street-2d");
+  await snap(page, info, "62-street-no-3d");
 
   // ガイドに話しかけて、選択肢から聞ける。もう読んだ知らせは灯り直さない
-  await front.getByTestId("guide-stall-talk").click();
+  await page.getByTestId("guide-bar").getByRole("button").click();
   await dialogue.getByRole("button", { name: "変わったことは？" }).click();
   await expect(page.getByTestId("guide-line")).toHaveAttribute("data-line", "guide", {
     timeout: 20_000,
@@ -97,7 +96,7 @@ test("2D だけで、ガイドの屋台の知らせ・相談がすべて使え�
   await expect(dialogue.getByRole("button", { name: "変わったことは？" })).toBeEnabled({
     timeout: 20_000,
   });
-  await expect(page.getByTestId("street-unread")).toHaveCount(0);
+  await expect(page.getByTestId("street-lit")).toHaveText("");
 
   // 自分の言葉でも聞ける。電話をかけるボタンは出さない
   await expect(dialogue.getByRole("textbox", { name: "ガイドへの発言" })).toBeVisible();
@@ -109,7 +108,7 @@ test("2D だけで、ガイドの屋台の知らせ・相談がすべて使え�
   await expect(page.getByTestId("guide-line")).toContainText("小雨なら開催します", {
     timeout: 20_000,
   });
-  await snap(page, info, "64-guide-dialogue-2d");
+  await snap(page, info, "64-guide-dialogue-no-3d");
   await page.getByTestId("guide-dialogue-close").click();
 
   // 通りから店内へ戻れて、今の相談はそのまま続く
@@ -140,12 +139,10 @@ test("旅の当日のスマホの幅では、次の予定・出発・帰りの�
   await expect(card.getByTestId("trip-day-next")).toBeVisible();
   await expect(card.getByTestId("trip-day-departure")).toBeVisible();
   await expect(card.getByTestId("trip-day-last-return")).toContainText("22:45");
-  // 屋台より先にあり、スクロールしなくても見える
+  // 通りの上に重ねて出し、スクロールしなくても見える
   const box = await card.boundingBox();
   expect(box).not.toBeNull();
   expect((box?.y ?? 9999) + Math.min(box?.height ?? 0, 160)).toBeLessThanOrEqual(812);
-  const stall = await page.getByTestId("guide-stall").boundingBox();
-  expect(box?.y ?? 9999).toBeLessThan(stall?.y ?? 0);
   await snap(page, info, "61-trip-day-mobile");
 });
 
@@ -167,14 +164,15 @@ test("知らせの組み直しの案を承認すると旅程が新しい版に�
   const outcome = stall.getByTestId("guide-outcome");
   await expect(outcome).toHaveAttribute("data-outcome", "applied");
   await expect(stall.getByTestId("stall-proposal")).toHaveCount(0);
-  await snap(page, info, "64-proposal-applied-2d");
+  await snap(page, info, "64-proposal-applied");
 
-  // 窓を閉じても、ガイドの屋台から直す前の旅程に戻せる
+  // 窓を閉じても、上の段からガイドの屋台の窓を開いて、直す前の旅程に戻せる
   await stall.getByRole("button", { name: "屋台を閉じる" }).click();
-  const front = page.getByTestId("guide-stall");
-  await front.getByTestId("guide-revert").click();
-  await expect(front.getByTestId("guide-outcome")).toHaveAttribute("data-outcome", "reverted");
-  await expect(front.getByTestId("guide-revert")).toHaveCount(0);
+  await page.getByTestId("stall-list-button").click();
+  const board = page.getByTestId("stall-window");
+  await board.getByTestId("guide-revert").click();
+  await expect(board.getByTestId("guide-outcome")).toHaveAttribute("data-outcome", "reverted");
+  await expect(board.getByTestId("guide-revert")).toHaveCount(0);
 });
 
 test("ガイドにつながらないときも、入力欄は残り、電話をかけるボタンは出さない", async ({
@@ -250,47 +248,37 @@ test("通りの案内からログインの窓を開け、窓は画面に収ま�
   await snap(page, info, "67-account-panel-over-dialogue");
 });
 
-test("通りのモデルを読めないときは、ガイドの屋台を主にし、案内はすぐに屋台を開く", async ({
+test("通りのモデルを読めないときは、3D を描けない知らせを出し、案内はすぐに屋台を開く", async ({
   page,
 }, info) => {
-  test.setTimeout(150_000);
+  // GPU のない環境では、店内の 3D の読み込みと描画が遅いので、余裕を持たせる
+  test.setTimeout(420_000);
   test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
   // モデルの取得だけを止める（開発サーバーの ?import の付いた読み込みは止めない）
   await page.route(/ennichi[^/?]*\.glb$/, (route) => route.abort());
-  await enterShop(page);
+  await enterShop(page, { with3d: true });
   await untilShiori(page);
-  await page.evaluate(() => window.history.replaceState(null, "", "/"));
   await goOutside(page);
-  await expect(page.getByTestId("street")).toHaveAttribute("data-mode", "2d", { timeout: 60_000 });
-  await expect(page.getByTestId("guide-stall")).toBeVisible();
+  await expect(page.getByTestId("street")).toHaveAttribute("data-mode", "no-3d", {
+    timeout: 60_000,
+  });
+  await expect(page.getByTestId("street-no-3d")).toBeVisible();
   await page.getByTestId("guide-lead").click();
   await expect(page.getByTestId("stall-window")).toHaveAttribute("data-stall", "headquarters");
 });
 
 test("3D の読み込み中に案内を頼んでも、すぐに屋台が開く", async ({ page }, info) => {
-  test.setTimeout(150_000);
+  // GPU のない環境では、店内の 3D の読み込みと描画が遅いので、余裕を持たせる
+  test.setTimeout(420_000);
   test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
   // 通りのモデルを返さないまま待たせる
   await page.route(/ennichi[^/?]*\.glb$/, () => undefined);
-  await enterShop(page);
+  await enterShop(page, { with3d: true });
   await untilShiori(page);
-  await page.evaluate(() => window.history.replaceState(null, "", "/"));
   await goOutside(page);
   await expect(page.getByTestId("street")).toHaveAttribute("data-mode", "3d");
   await page.getByTestId("guide-lead").click();
   await expect(page.getByTestId("stall-window")).toHaveAttribute("data-stall", "headquarters");
-});
-
-test("動きを減らす設定では、3D を出さずにガイドの屋台を主にする", async ({ page }, info) => {
-  test.setTimeout(150_000);
-  test.skip(info.project.name !== "desktop", "デスクトップだけで確かめる");
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await enterShop(page, "");
-  await untilShiori(page);
-  await goOutside(page);
-  await expect(page.getByTestId("street")).toHaveAttribute("data-mode", "2d");
-  await expect(page.getByTestId("street-scene")).toHaveCount(0);
-  await expect(page.getByTestId("guide-stall")).toBeVisible();
 });
 
 test("3D の通りで、提灯が灯り、ガイドに案内されて歩いて屋台を開け、店内へ戻れる", async ({
@@ -302,10 +290,8 @@ test("3D の通りで、提灯が灯り、ガイドに案内されて歩いて�
     info.project.name !== "desktop" && process.env.E2E_STREET_3D_ALL !== "1",
     "デスクトップだけで確かめる",
   );
-  // 相談は 2D で進め（店内の 3D は scene3d.spec.ts で確かめる）、通りだけを 3D で描く
-  await enterShop(page);
+  await enterShop(page, { with3d: true });
   await untilShiori(page);
-  await page.evaluate(() => window.history.replaceState(null, "", "/"));
   await goOutside(page);
   const scene = page.getByTestId("street-scene");
   await expect(scene).toHaveAttribute("data-ready", "true", { timeout: 120_000 });
