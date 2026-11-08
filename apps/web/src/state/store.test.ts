@@ -457,6 +457,50 @@ describe("ストア：合言葉", () => {
     expect(store.getState().auth).toEqual({ needed: false, rejected: false });
   });
 
+  it("合言葉が要るときは、店を開かずに入口で聞く。違う合言葉でも店を開かない", async () => {
+    const { transport } = guarded();
+    const store = makeStore(transport);
+    const views: string[] = [];
+    const unsubscribe = store.subscribe((state) => views.push(state.ui.view));
+    const { actions } = store.getState();
+    const entering = actions.enterShop();
+    // 確かめている間は、入口のまま
+    expect(store.getState().session.status).toBe("opening");
+    expect(store.getState().ui.view).toBe("storefront");
+    await entering;
+    await actions.submitPasscode("wrong");
+    expect(views).not.toContain("shop");
+    expect(store.getState().auth).toEqual({ needed: true, rejected: true });
+
+    await actions.submitPasscode("matsuri");
+    unsubscribe();
+    expect(store.getState().ui.view).toBe("shop");
+    expect(views.filter((view) => view === "shop").length).toBeGreaterThan(0);
+  });
+
+  it("合言葉が要らなければ、相談を始めてそのまま店に入る", async () => {
+    const store = makeStore(instantReplay());
+    await store.getState().actions.enterShop();
+    expect(store.getState().ui.view).toBe("shop");
+    expect(store.getState().session.status).toBe("ready");
+  });
+
+  it("相談を始められなかったときは、店の中で知らせる", async () => {
+    const store = makeStore({
+      startSession: async () => {
+        throw new TransportError("internal");
+      },
+      chat: async () => {},
+      updatePreferences: async () => {},
+      searchFestivals: noSearch,
+      previewFestivalTrip: noPreview,
+    });
+    await store.getState().actions.enterShop();
+    expect(store.getState().ui.view).toBe("shop");
+    expect(store.getState().session.status).toBe("failed");
+    expect(store.getState().messages.at(-1)).toMatchObject({ kind: "error", code: "internal" });
+  });
+
   it("相談の途中で断られたら合言葉を聞き直し、入れ直すと同じ発言を送り直す", async () => {
     const chat = vi
       .fn<ChatTransport["chat"]>()

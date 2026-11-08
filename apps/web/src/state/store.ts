@@ -659,10 +659,17 @@ export function createAppStore(deps: StoreDeps): AppStore {
 
     const actions: AppActions = {
       async enterShop() {
-        setUi({ view: "shop" });
-        if (get().session.status === "closed") {
-          await startSession();
+        const { status } = get().session;
+        if (status === "opening") return;
+        if (status !== "closed") {
+          setUi({ view: "shop" });
+          return;
         }
+        // 相談を始めてから店に入る。合言葉が要るなら、店を開かずに入口で聞く（入ってすぐ外観へ戻さない）
+        await startSession();
+        const after = get();
+        if (after.auth.needed || after.session.status === "closed") return;
+        if (after.ui.view === "storefront") setUi({ view: "shop" });
       },
 
       async send(text) {
@@ -736,6 +743,11 @@ export function createAppStore(deps: StoreDeps): AppStore {
           const last = get().guide.entries.at(-1);
           if (last?.kind === "error" && last.code === "unauthorized") await actions.retryGuide();
           else await actions.loadGuide(true);
+          return;
+        }
+        if (get().ui.view === "storefront" && get().session.status === "closed") {
+          // 入口で入れたら、通ってから店に入る（違っていれば、入口のまま聞き直す）
+          await actions.enterShop();
           return;
         }
         if (get().session.status !== "ready") {

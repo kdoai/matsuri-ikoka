@@ -80,6 +80,8 @@ export function Storefront() {
   const t = useT();
   const actions = useActions();
   const passcodeNeeded = useApp((state) => state.auth.needed);
+  // 入店の前に相談を始め、合言葉が要るかを確かめる。確かめている間は押せない
+  const opening = useApp((state) => state.session.status === "opening");
   const use3d = useScene3d() && StorefrontScene !== null;
   const [backdrop, setBackdrop] = useState<"loading" | "ready" | "failed">("loading");
   const onReady = useCallback(() => setBackdrop("ready"), []);
@@ -132,9 +134,11 @@ export function Storefront() {
           <button
             type="button"
             className={`${buttonPrimary} mt-6 px-10 py-3 text-lg`}
+            disabled={opening}
+            aria-busy={opening}
             onClick={() => void actions.enterShop()}
           >
-            {t.app.enter}
+            {opening ? t.app.entering : t.app.enter}
           </button>
         )}
         <SavedTrips />

@@ -701,6 +701,8 @@ export const en: Messages = {
     submitRetry: "Enter and resend",
     wrong: "The passcode is not correct.",
     halfWidth: "Please use half-width letters, numbers and symbols for the passcode.",
+    where:
+      "Please get the passcode from the person who shared this URL. Without one, you can still try the app by running it on your own computer, following the repository README. The passcode is not kept on this device, so enter it again after reloading or in a new tab.",
   },
   conditions: {
     title: "What we understood",
