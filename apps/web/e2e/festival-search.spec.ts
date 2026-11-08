@@ -80,7 +80,7 @@ async function answerAll(page: Page, wish = "") {
   const choose = (name: string) => consult.getByRole("button", { name, exact: true }).click();
   await choose("祭りから探す");
   await choose("伝統的な祭り");
-  await choose("マイナーなお祭り");
+  await choose("穴場の祭り");
   await consult.getByTestId("consult-decide").click();
   await choose("夏");
   await choose("四国");
@@ -138,7 +138,7 @@ test("入口の2択から祭りを探し、続きを見て、選んでここで�
     "aria-pressed",
     "false",
   );
-  await consult.getByRole("button", { name: "マイナーなお祭り", exact: true }).click();
+  await consult.getByRole("button", { name: "穴場の祭り", exact: true }).click();
   await consult.getByTestId("consult-decide").click();
   await expect(page.getByTestId("dialogue")).toContainText("どの季節");
   await consult.getByRole("button", { name: "夏", exact: true }).click();
