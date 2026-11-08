@@ -283,7 +283,7 @@ export const en: Messages = {
     preparingScene: "Getting the shop ready…",
     restart: "Start over",
     restartConfirm:
-      "Start over? The current plan will leave this screen (its guide link and any kept trip still open).",
+      "Start over? The current plan will leave this screen (its booklet link and any kept trip still open).",
     resumed:
       "Picking up where we left off. Your plan is still here — tell me anything you'd like to change.",
     resumedTrip: (title: string) =>
@@ -304,7 +304,7 @@ export const en: Messages = {
   },
   dialogue: {
     thinking: "One moment, please",
-    close: "Put the dialogue away",
+    close: "Hide the conversation",
     talkToConcierge: "Talk to the concierge",
     log: "Conversation log",
     closeLog: "Close",
@@ -355,7 +355,7 @@ export const en: Messages = {
     readAloudTitle: (label: string, hint: string) => `${label} (${hint})`,
     readAloudRemoteTitle: "Before turning on read aloud",
     readAloudRemote:
-      "No reading voice was found on this device. Some browsers send the text to the browser maker's servers to read it aloud.",
+      "No text-to-speech voice was found on this device. Some browsers send the text to the browser maker's servers to read it aloud.",
     readAloudConfirm: "Turn on",
     readAloudCancel: "Cancel",
     hold: "Hold to speak",
@@ -464,7 +464,7 @@ export const en: Messages = {
     skip: "Nothing else",
     back: "Previous step",
     forward: "Next step",
-    submit: "Ask with these",
+    submit: "Ask about this",
     edit: "Change",
     unanswered: "Not answered yet",
     needOne: "Answer at least one to ask",
@@ -509,7 +509,7 @@ export const en: Messages = {
     },
     entry: {
       label: "How to start",
-      prompt: "Welcome! How would you like to look today?",
+      prompt: "Welcome! How would you like to search today?",
       note: "If you haven't settled on a festival yet, start from festivals. If your dates or starting point come first, start from a trip plan.",
       festival: "Start from festivals",
       trip: "Start from a trip plan",
@@ -576,7 +576,7 @@ export const en: Messages = {
     areaAuto: "Up to you (all of Japan)",
     wishLabel: "Anything else",
     wishPlaceholder: "e.g. beautiful lights at night, fun with children",
-    search: "Search with these",
+    search: "Search",
     searching: "Looking for festivals that match. One moment, please",
     retry: "Search again",
     results: {
@@ -642,7 +642,7 @@ export const en: Messages = {
     marker: "Ask here",
   },
   activity: {
-    title: "In the shop",
+    title: "Inside the shop",
   },
   hud: {
     sections: {
@@ -661,7 +661,7 @@ export const en: Messages = {
       "Talk to the concierge and choose to start from festivals or from a trip plan. You can also just write freely.",
       "Starting from festivals, pick the kind, season and area, then compare the festivals that match.",
       "Starting from a trip plan, pick who, when and where. Choose “Other” to write freely.",
-      "Pick one of the festivals, and the staff will plan your day.",
+      "Pick one of the festivals, and the staff will plan your trip.",
       "Open “Plan details” (X) to see the plan, the map and the sources.",
       "We check that the festival is on before suggesting it. Say you've decided, and we hand you the travel booklet.",
       "Walk with WASD, the arrow keys, a gamepad or a tap. Get close to the staff to talk, and press E to use things in the shop.",
@@ -1014,8 +1014,8 @@ export const en: Messages = {
     },
     dayHeading: (n: number, date: string) => `Day ${n} (${date})`,
     route: "Route",
-    tabs: { itinerary: "Plan", map: "Trip guide", sources: "Packing & checks" },
-    panelLabel: "Travel booklet (plan, trip guide, packing and checks)",
+    tabs: { itinerary: "Plan", map: "Trip info", sources: "Packing & checks" },
+    panelLabel: "Travel booklet (plan, trip info, packing and checks)",
     closePanel: "Close the panel",
     empty: "No plan yet. Choose a festival and your plan will appear here.",
     version: (n: number) => `Version ${n}`,
@@ -1111,7 +1111,7 @@ export const en: Messages = {
   },
   celebration: {
     title: "Travel booklet complete",
-    sub: "The schedule was confirmed with official information",
+    sub: "The schedule has been checked",
   },
   shiori: {
     print: "Print",
@@ -1299,7 +1299,7 @@ export const en: Messages = {
     proposalsTitle: "Suggested changes from your guide",
     outcome: {
       applied: (version: number) =>
-        `Your plan is updated (version ${version}). You can see what changed in your trip guide.`,
+        `Your plan is updated (version ${version}). You can see what changed in your travel booklet.`,
       reverted: (version: number) => `Your plan is back to before the change (version ${version}).`,
       rejected: "We kept your current plan.",
       stale:
@@ -1337,7 +1337,7 @@ export const en: Messages = {
     you: "You",
     phase: { before: "Before you leave", during: "On your trip", after: "After your trip" },
     guestNote:
-      "On this device, this trip stays open for 30 days after you last use it (or until 3 days after a later trip).",
+      "On this device, this trip stays open for 30 days after you last use it, or until 3 days after the trip ends if that is later.",
     guestKeep: "Keep it to open it later and come back to this street.",
     guestLogin: "Sign in and my trips",
     dismiss: "Close",
