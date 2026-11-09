@@ -102,22 +102,28 @@
       "note": "市と神社の案内にある「毎年12月20日」から見込んだ日（2026年の発表は見つかっていない）。御面が祀られている神社から、受け渡す先の神社まで約1キロを行列し、着いた神社で御面を鎮める神事を行う。この日は御面が一般に公開される",
       "sources": [
         {
+          "url": "https://ehime-jinjacho.jp/jinja/?p=4816",
+          "title": "浮嶋神社 « 愛媛県神社庁",
+          "checkedAt": "2026-11-09",
+          "confidence": "corroborated"
+        },
+        {
+          "url": "https://www.iyokannet.jp/spot/4483",
+          "title": "浮嶋神社｜愛媛のスポット・体験｜愛媛県の公式観光サイト【いよ観ネット】",
+          "checkedAt": "2026-11-09",
+          "confidence": "official"
+        },
+        {
+          "url": "https://ehimeshinsei.net/e-traditional/",
+          "title": "愛媛県神道青年会",
+          "checkedAt": "2026-11-09",
+          "confidence": "corroborated"
+        },
+        {
           "url": "https://www.city.toon.ehime.jp/soshiki/23/2007.html",
           "title": "東温市 東温市の文化財（毎年12月20日を御面渡御祭と定めた）",
           "checkedAt": "2026-11-04",
           "confidence": "inferred"
-        },
-        {
-          "url": "https://ehime-jinjacho.jp/jinja/?p=4816",
-          "title": "愛媛県神社庁 浮嶋神社（12月20日 御面渡御祭・隔年鎮座）",
-          "checkedAt": "2026-11-04",
-          "confidence": "inferred"
-        },
-        {
-          "url": "https://ehimeshinsei.net/e-traditional/",
-          "title": "愛媛県神道青年会 愛媛の伝統行事（毎年12月20日、約1キロの行列）",
-          "checkedAt": "2026-11-04",
-          "confidence": "single"
         }
       ]
     }
@@ -173,5 +179,6 @@
     "2025年の開催の記録（毎年の決まりは公式で確かめたが、2025年に行われた報告は見つからない）",
     "屋台やふるまいの有無",
     "周辺の観光と食の場所（祭りの日の営業を公式で確かめたものがない）"
-  ]
+  ],
+  "optOut": false
 }

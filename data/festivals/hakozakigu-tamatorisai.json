@@ -174,8 +174,8 @@
       "sources": [
         {
           "url": "https://hakozakigu.or.jp/omatsuri/tamatorisai/",
-          "title": "筥崎宮 玉取祭（1月3日）",
-          "checkedAt": "2026-11-04",
+          "title": "玉取祭 | 日本三大八幡宮 筥崎宮【公式】",
+          "checkedAt": "2026-11-09",
           "confidence": "official"
         },
         {
@@ -268,5 +268,6 @@
     "屋台の有無と、この日だけの食べもの",
     "周辺の観光と食の場所（1月3日に開いていると確かめられた場所がまだない）",
     "玉せせりの道筋の正確な位置（玉取恵比須神社から楼門まで）"
-  ]
+  ],
+  "optOut": false
 }

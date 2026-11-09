@@ -137,6 +137,18 @@
       "note": "毎年1月4日・5日に行う決まりから見込んだ日（2027年の発表はまだ見つからない）。例年は4日18:30ごろにお練り、5日の朝5時ごろにたいきり面、昼12時ごろに終わる",
       "sources": [
         {
+          "url": "https://www.vill-tenryu.jp/tourism/discovery/sakabefuyumatsuri/",
+          "title": "坂部の冬祭り – 天龍村",
+          "checkedAt": "2026-11-09",
+          "confidence": "official"
+        },
+        {
+          "url": "https://mg.minami.nagano.jp/group/sakabe",
+          "title": "坂部の冬祭り | 南信州民俗芸能ナビ",
+          "checkedAt": "2026-11-09",
+          "confidence": "official"
+        },
+        {
           "url": "https://www.go-nagano.net/tradition-and-culture/id22634",
           "title": "長野県観光機構 Go! NAGANO 南信州で楽しむ民俗芸能（坂部の冬祭り 1月4日・5日）",
           "checkedAt": "2026-11-04",
@@ -205,5 +217,6 @@
     "屋台の有無と、この日だけの食べもの",
     "周辺の観光と食の場所",
     "見物客の数"
-  ]
+  ],
+  "optOut": false
 }

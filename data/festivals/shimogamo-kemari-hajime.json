@@ -25,6 +25,7 @@
     "世界遺産・下鴨神社で、新年の神事に続いて保存会が奉納する",
     "境内の茶店で、140年以上ぶりに復元された申餅を味わえる"
   ],
+  "styles": [],
   "trivia": [
     {
       "text": "蹴鞠は勝ち負けを競わず、相手が蹴りやすい鞠を返して長く続けることを楽しむ",
@@ -121,15 +122,15 @@
       "note": "例年1月4日（下鴨神社の年間祭典一覧）。神事のあと保存会が奉納する。2027年の時刻と有料拝観席はまだ発表がない（2026年は13:30開始、席の受付は正午から）",
       "sources": [
         {
-          "url": "https://www.shimogamo-jinja.or.jp/saiji",
-          "title": "下鴨神社 祭典行事（年間祭典一覧表）",
-          "checkedAt": "2026-11-02",
+          "url": "https://www.shimogamo-jinja.or.jp/saiji/kemari",
+          "title": "蹴鞠 | 下鴨神社",
+          "checkedAt": "2026-11-09",
           "confidence": "official"
         },
         {
-          "url": "https://www.shimogamo-jinja.or.jp/saiji/kemari",
-          "title": "下鴨神社 蹴鞠",
-          "checkedAt": "2026-11-02",
+          "url": "https://www.shimogamo-jinja.or.jp/saiji",
+          "title": "祭典行事 | 下鴨神社 | 賀茂御祖神社（かもみおやじんじゃ）",
+          "checkedAt": "2026-11-09",
           "confidence": "official"
         },
         {
@@ -323,5 +324,6 @@
     "規模の根拠になる見学者数の公表値（公式の数がない）",
     "さるやの席の有無と申餅の値段、1月4日の営業（年中無休だが変更の場合あり）",
     "さるやの境内での正確な位置（緯度・経度は神社の所在地で代用）"
-  ]
+  ],
+  "optOut": false
 }
