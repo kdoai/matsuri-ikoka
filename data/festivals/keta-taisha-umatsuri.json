@@ -122,6 +122,24 @@
       "note": "毎年12月16日の未明（神社の案内。2026年の神社の発表は見つからない）。開始は3:00ごろとする観光サイトの案内が2つある。鵜は14日の夕方ごろ神社に着き、神事の後に近くの海岸で放たれる。鵜が捕れずに開けなかった年もある",
       "sources": [
         {
+          "url": "https://keta.jp/event/umatsuri/",
+          "title": "鵜祭 - 氣多大社",
+          "checkedAt": "2026-11-09",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.city.hakui.lg.jp/soshiki/sangyoukensetsubu/syoukoukankouka/12/2/710.html",
+          "title": "【12月16日】気多大社・鵜祭｜羽咋市公式ホームページ",
+          "checkedAt": "2026-11-09",
+          "confidence": "official"
+        },
+        {
+          "url": "https://www.hot-ishikawa.jp/event/detail_21878.html",
+          "title": "鵜祭（羽咋市 気多大社）｜ほっと石川旅ねっと",
+          "checkedAt": "2026-11-09",
+          "confidence": "official"
+        },
+        {
           "url": "https://keta.jp/event",
           "title": "氣多大社 祭典・神事（鵜祭は12月16日未明の神事）",
           "checkedAt": "2026-11-04",
@@ -297,5 +315,6 @@
     "屋台・露店の有無と、祭りの日だけの食べ物",
     "神事の所要時間と見学者数の公表値",
     "周辺の食事の場所（営業時間を公式の案内で確かめられた店がない）"
-  ]
+  ],
+  "optOut": false
 }

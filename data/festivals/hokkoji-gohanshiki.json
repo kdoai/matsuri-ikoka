@@ -141,8 +141,14 @@
       "sources": [
         {
           "url": "https://www.city.kanuma.tochigi.jp/0299/info-0000001963-0.html",
-          "title": "鹿沼市 発光路の強飯式（毎年1月3日、1月3日はバス運休）",
-          "checkedAt": "2026-11-04",
+          "title": "発光路の強飯式 | 鹿沼市 公式ホームページ",
+          "checkedAt": "2026-11-09",
+          "confidence": "official"
+        },
+        {
+          "url": "https://kanuma-kanko.jp/purpose/%E7%99%BA%E5%85%89%E8%B7%AF%E3%81%AE%E5%BC%B7%E9%A3%AF%E5%BC%8F/",
+          "title": "発光路の強飯式 - 鹿沼市観光情報サイト「鹿沼日和」",
+          "checkedAt": "2026-11-09",
           "confidence": "official"
         },
         {
@@ -208,5 +214,6 @@
     "公共の交通での行き方（1月3日はバスが運休する）と、主要駅からの所要時間",
     "露店の有無",
     "周辺の観光と食事の場所（1月3日に開いていると確かめられた場所がない）"
-  ]
+  ],
+  "optOut": false
 }

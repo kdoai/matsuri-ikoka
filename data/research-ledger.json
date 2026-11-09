@@ -1,10 +1,24 @@
 {
   "festivals": {
+    "akiha-no-himatsuri": {
+      "occurrenceDate": "2026-12-15",
+      "lastResearchedAt": "2026-11-09",
+      "result": "failed",
+      "nextResearchOn": "2026-11-16",
+      "failures": 1
+    },
     "chakkirako": {
       "occurrenceDate": "2027-01-15",
       "lastResearchedAt": "2026-11-08",
       "result": "found",
       "nextResearchOn": "2026-12-16",
+      "failures": 0
+    },
+    "dainichido-bugaku": {
+      "occurrenceDate": "2027-01-02",
+      "lastResearchedAt": "2026-11-09",
+      "result": "found",
+      "nextResearchOn": "2026-12-03",
       "failures": 0
     },
     "daizenji-tamataregu-oniyo": {
@@ -21,6 +35,20 @@
       "nextResearchOn": "2026-11-15",
       "failures": 1
     },
+    "haguro-shoreisai": {
+      "occurrenceDate": "2026-12-31",
+      "lastResearchedAt": "2026-11-09",
+      "result": "found",
+      "nextResearchOn": "2026-12-01",
+      "failures": 0
+    },
+    "hakozakigu-tamatorisai": {
+      "occurrenceDate": "2027-01-03",
+      "lastResearchedAt": "2026-11-09",
+      "result": "found",
+      "nextResearchOn": "2026-12-04",
+      "failures": 0
+    },
     "hida-furukawa-santera-mairi": {
       "occurrenceDate": "2027-01-15",
       "lastResearchedAt": "2026-11-08",
@@ -28,11 +56,18 @@
       "nextResearchOn": "2026-12-16",
       "failures": 0
     },
-    "horowasan-shimotsuki-kagura": {
-      "occurrenceDate": "2026-11-07",
-      "lastResearchedAt": "2026-11-06",
+    "hokkaido-gishisai": {
+      "occurrenceDate": "2026-12-12",
+      "lastResearchedAt": "2026-11-09",
       "result": "found",
-      "nextResearchOn": null,
+      "nextResearchOn": "2026-11-12",
+      "failures": 0
+    },
+    "hokkoji-gohanshiki": {
+      "occurrenceDate": "2027-01-03",
+      "lastResearchedAt": "2026-11-09",
+      "result": "found",
+      "nextResearchOn": "2026-12-04",
       "failures": 0
     },
     "izanagi-jingu-kayuurasai": {
@@ -63,6 +98,20 @@
       "nextResearchOn": "2026-12-10",
       "failures": 0
     },
+    "keta-taisha-umatsuri": {
+      "occurrenceDate": "2026-12-16",
+      "lastResearchedAt": "2026-11-09",
+      "result": "found",
+      "nextResearchOn": "2026-11-16",
+      "failures": 0
+    },
+    "kibitsu-jinja-yatate-shinji": {
+      "occurrenceDate": "2027-01-03",
+      "lastResearchedAt": "2026-11-09",
+      "result": "found",
+      "nextResearchOn": "2026-12-04",
+      "failures": 0
+    },
     "kikonai-kanchu-misogi": {
       "occurrenceDate": "2027-01-13",
       "lastResearchedAt": "2026-11-08",
@@ -91,6 +140,13 @@
       "nextResearchOn": "2026-11-19",
       "failures": 0
     },
+    "mima-shamisen-mochitsuki": {
+      "occurrenceDate": "2026-12-28",
+      "lastResearchedAt": "2026-11-09",
+      "result": "found",
+      "nextResearchOn": "2026-11-28",
+      "failures": 0
+    },
     "nagataki-hakusan-jinja-muikamatsuri": {
       "occurrenceDate": "2027-01-06",
       "lastResearchedAt": "2026-11-08",
@@ -98,18 +154,18 @@
       "nextResearchOn": "2026-11-15",
       "failures": 1
     },
-    "nangu-taisha-kanayama-taisai": {
-      "occurrenceDate": "2026-11-08",
-      "lastResearchedAt": "2026-11-06",
-      "result": "found",
-      "nextResearchOn": null,
-      "failures": 0
-    },
     "niino-yuki-matsuri": {
       "occurrenceDate": "2027-01-14",
       "lastResearchedAt": "2026-11-08",
       "result": "found",
       "nextResearchOn": "2026-12-15",
+      "failures": 0
+    },
+    "nikko-futarasan-mushasai": {
+      "occurrenceDate": "2027-01-04",
+      "lastResearchedAt": "2026-11-09",
+      "result": "found",
+      "nextResearchOn": "2026-12-05",
       "failures": 0
     },
     "nishinomiya-tokaebisu": {
@@ -119,6 +175,13 @@
       "nextResearchOn": "2026-12-10",
       "failures": 0
     },
+    "nozawa-onsen-dosojin-matsuri": {
+      "occurrenceDate": "2027-01-15",
+      "lastResearchedAt": "2026-11-09",
+      "result": "failed",
+      "nextResearchOn": "2026-11-16",
+      "failures": 1
+    },
     "omi-jingu-karuta-matsuri": {
       "occurrenceDate": "2027-01-10",
       "lastResearchedAt": "2026-11-08",
@@ -126,12 +189,47 @@
       "nextResearchOn": "2026-11-15",
       "failures": 1
     },
+    "omiwa-nyodosai": {
+      "occurrenceDate": "2027-01-01",
+      "lastResearchedAt": "2026-11-09",
+      "result": "found",
+      "nextResearchOn": "2026-12-02",
+      "failures": 0
+    },
+    "sakabe-no-fuyumatsuri": {
+      "occurrenceDate": "2027-01-04",
+      "lastResearchedAt": "2026-11-09",
+      "result": "found",
+      "nextResearchOn": "2026-12-05",
+      "failures": 0
+    },
+    "shimogamo-kemari-hajime": {
+      "occurrenceDate": "2027-01-04",
+      "lastResearchedAt": "2026-11-09",
+      "result": "found",
+      "nextResearchOn": "2026-12-05",
+      "failures": 0
+    },
+    "shurijo-shinshun-no-utage": {
+      "occurrenceDate": "2027-01-01",
+      "lastResearchedAt": "2026-11-09",
+      "result": "found",
+      "nextResearchOn": "2026-12-02",
+      "failures": 0
+    },
     "sumiyoshi-taisha-toka-shinji": {
       "occurrenceDate": "2027-01-04",
       "lastResearchedAt": "2026-11-08",
       "result": "failed",
       "nextResearchOn": "2026-11-15",
       "failures": 1
+    },
+    "taisha-kiccho-shinji": {
+      "occurrenceDate": "2027-01-03",
+      "lastResearchedAt": "2026-11-09",
+      "result": "found",
+      "nextResearchOn": "2026-12-04",
+      "failures": 0
     },
     "takao-homi-jinja-yomatsuri": {
       "occurrenceDate": "2026-11-22",
@@ -147,11 +245,39 @@
       "nextResearchOn": "2026-11-12",
       "failures": 0
     },
+    "takemizuwake-daitosai": {
+      "occurrenceDate": "2026-12-10",
+      "lastResearchedAt": "2026-11-09",
+      "result": "found",
+      "nextResearchOn": "2026-11-10",
+      "failures": 0
+    },
+    "tenteko-matsuri": {
+      "occurrenceDate": "2027-01-03",
+      "lastResearchedAt": "2026-11-09",
+      "result": "found",
+      "nextResearchOn": "2026-12-04",
+      "failures": 0
+    },
+    "toon-gomen-togyosai": {
+      "occurrenceDate": "2026-12-20",
+      "lastResearchedAt": "2026-11-09",
+      "result": "found",
+      "nextResearchOn": "2026-11-20",
+      "failures": 0
+    },
     "tsuruga-senbeiyaki": {
       "occurrenceDate": "2026-11-20",
       "lastResearchedAt": "2026-11-06",
       "result": "found",
       "nextResearchOn": "2026-11-13",
+      "failures": 0
+    },
+    "tsurugi-amanoiwato-kagura": {
+      "occurrenceDate": "2027-01-01",
+      "lastResearchedAt": "2026-11-09",
+      "result": "found",
+      "nextResearchOn": "2026-12-02",
       "failures": 0
     },
     "yasui-kagura": {
@@ -176,5 +302,11 @@
       "failures": 0
     }
   },
-  "officialNotFound": []
+  "officialNotFound": [
+    {
+      "festivalId": "nangu-taisha-kanayama-taisai",
+      "occurrenceDate": "2026-11-08",
+      "lastResearchedAt": "2026-11-06"
+    }
+  ]
 }

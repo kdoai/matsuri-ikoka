@@ -125,40 +125,6 @@
   },
   "occurrences": [
     {
-      "date": "2027-01-01",
-      "start": null,
-      "end": null,
-      "status": "expected",
-      "rainPolicy": null,
-      "note": "例年は、0:00 禁足地でご神火を切り出し、1:00 拝殿で祭典。小松明から先入道・後入道（約3m）と神饌松明の3本に火を継ぎ、氏子の若者が担いで山麓の摂社・末社19社を巡拝する。参拝者は持参した火縄やカイロにご神火を移し取れる",
-      "sources": [
-        {
-          "url": "https://oomiwa.or.jp/saiten/01-nyoudousai/",
-          "title": "大神神社 【1月】繞道祭",
-          "checkedAt": "2026-11-02",
-          "confidence": "official"
-        },
-        {
-          "url": "https://oomiwa.or.jp/omatsuri/1gatsu/",
-          "title": "大神神社 1月のおまつり（令和8年）",
-          "checkedAt": "2026-11-02",
-          "confidence": "official"
-        },
-        {
-          "url": "https://oomiwa.or.jp/info/%EF%BC%91%E6%9C%88%E3%81%AE%E3%81%8A%E7%A5%AD%E3%82%8A%E3%81%AE%E3%81%94%E6%A1%88%E5%86%85-5/",
-          "title": "大神神社 1月のお祭りのご案内（令和7年）",
-          "checkedAt": "2026-11-02",
-          "confidence": "official"
-        },
-        {
-          "url": "https://prtimes.jp/main/html/rd/p/000002437.000095753.html",
-          "title": "JR西日本 大晦日 イベント臨時列車運転のお知らせ（2026年10月30日）",
-          "checkedAt": "2026-11-02",
-          "confidence": "official"
-        }
-      ]
-    },
-    {
       "date": "2026-01-01",
       "start": "01:00",
       "end": null,
@@ -183,6 +149,46 @@
           "title": "ウォーカープラス 繞道祭（2026年）",
           "checkedAt": "2026-11-02",
           "confidence": "single"
+        }
+      ]
+    },
+    {
+      "date": "2027-01-01",
+      "start": null,
+      "end": null,
+      "status": "announced",
+      "rainPolicy": null,
+      "note": "例年は、0:00 禁足地でご神火を切り出し、1:00 拝殿で祭典。小松明から先入道・後入道（約3m）と神饌松明の3本に火を継ぎ、氏子の若者が担いで山麓の摂社・末社19社を巡拝する。参拝者は持参した火縄やカイロにご神火を移し取れる",
+      "sources": [
+        {
+          "url": "https://oomiwa.or.jp/saiten/01-nyoudousai/",
+          "title": "【1月】繞道祭(にょうどうさい) | 大神神社（おおみわじんじゃ）",
+          "checkedAt": "2026-11-09",
+          "confidence": "official"
+        },
+        {
+          "url": "https://naratrip.com/nyoudousai",
+          "title": "大神神社繞道祭2027年1月1日（摂社・末社19社巡拝）",
+          "checkedAt": "2026-11-09",
+          "confidence": "single"
+        },
+        {
+          "url": "https://oomiwa.or.jp/omatsuri/1gatsu/",
+          "title": "大神神社 1月のおまつり（令和8年）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://oomiwa.or.jp/info/%EF%BC%91%E6%9C%88%E3%81%AE%E3%81%8A%E7%A5%AD%E3%82%8A%E3%81%AE%E3%81%94%E6%A1%88%E5%86%85-5/",
+          "title": "大神神社 1月のお祭りのご案内（令和7年）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
+        },
+        {
+          "url": "https://prtimes.jp/main/html/rd/p/000002437.000095753.html",
+          "title": "JR西日本 大晦日 イベント臨時列車運転のお知らせ（2026年10月30日）",
+          "checkedAt": "2026-11-02",
+          "confidence": "official"
         }
       ]
     }
@@ -454,5 +460,6 @@
     "大阪駅・京都駅からの所要時間は、神社の案内図の区間ごとの目安から出したもので、乗り換えの待ち時間を含まない",
     "そうめん處 森正の毎月1日の閉店の時刻（8:00から開くとだけある）",
     "宝物収蔵庫の正確な位置（境内の地図から引けず、拝殿の位置で置いた）"
-  ]
+  ],
+  "optOut": false
 }
